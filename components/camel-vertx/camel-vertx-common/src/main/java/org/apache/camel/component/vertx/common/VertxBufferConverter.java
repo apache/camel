@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.common;
 
 import java.io.ByteArrayInputStream;
@@ -37,8 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @Converter(generateBulkLoader = true)
 public final class VertxBufferConverter {
 
-    private VertxBufferConverter() {
-    }
+    private VertxBufferConverter() {}
 
     @Converter
     public static Buffer toBuffer(String string, Exchange exchange) {

@@ -28,5 +28,4 @@ public interface SolrInfraService extends InfrastructureService {
     default String getHttpHostAddress() {
         return String.format("%s:%d", getSolrHost(), getPort());
     }
-
 }

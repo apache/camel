@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.Map;
@@ -32,16 +33,16 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
 @YamlType(
-          types = OutputAwareFromDefinition.class,
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "uri", type = "string", required = true),
-                  @YamlProperty(name = "variableReceive", type = "string"),
-                  @YamlProperty(name = "id", type = "string"),
-                  @YamlProperty(name = "description", type = "string"),
-                  @YamlProperty(name = "parameters", type = "object"),
-                  @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
-          })
+        types = OutputAwareFromDefinition.class,
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        properties = {
+            @YamlProperty(name = "uri", type = "string", required = true),
+            @YamlProperty(name = "variableReceive", type = "string"),
+            @YamlProperty(name = "id", type = "string"),
+            @YamlProperty(name = "description", type = "string"),
+            @YamlProperty(name = "parameters", type = "object"),
+            @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
+        })
 public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<OutputAwareFromDefinition> {
 
     public OutputAwareFromDefinitionDeserializer() {
@@ -106,8 +107,8 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
 
         if (target.getDelegate() == null) {
             ObjectHelper.notNull(uri, "The uri must be set");
-            FromDefinition from
-                    = new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters));
+            FromDefinition from =
+                    new FromDefinition(YamlSupport.createEndpointUri(dc.getCamelContext(), node, uri, parameters));
             // enrich model with line number
             if (line != -1) {
                 from.setLineNumber(line);

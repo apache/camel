@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,5 +31,4 @@ public class TransactionalClientDataSourceWithDefaultErrorHandlerTest extends Tr
         super.setUp();
         useTransactionErrorHandler = false;
     }
-
 }

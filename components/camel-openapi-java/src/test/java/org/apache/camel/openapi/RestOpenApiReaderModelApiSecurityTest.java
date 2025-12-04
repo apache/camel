@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
@@ -26,10 +31,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
 
@@ -46,40 +47,68 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                rest("/user").tag("dude").description("User rest service")
+                rest("/user")
+                        .tag("dude")
+                        .description("User rest service")
                         // setup security definitions
-                        .securityDefinitions().oauth2("petstore_auth")
-                        .authorizationUrl("http://petstore.swagger.io/oauth/dialog").end().apiKey("api_key")
-                        .withHeader("myHeader").end()
-                        .end().consumes("application/json").produces("application/json")
-
-                        .get("/{id}/{date}").description("Find user by id and date").outType(User.class).responseMessage()
-                        .message("The user returned").endResponseMessage()
+                        .securityDefinitions()
+                        .oauth2("petstore_auth")
+                        .authorizationUrl("http://petstore.swagger.io/oauth/dialog")
+                        .end()
+                        .apiKey("api_key")
+                        .withHeader("myHeader")
+                        .end()
+                        .end()
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .get("/{id}/{date}")
+                        .description("Find user by id and date")
+                        .outType(User.class)
+                        .responseMessage()
+                        .message("The user returned")
+                        .endResponseMessage()
                         // setup security for this rest verb
-                        .security("api_key").param().name("id").type(RestParamType.path)
-                        .description("The id of the user to get").endParam().param().name("date")
-                        .type(RestParamType.path).description("The date").dataFormat("date").endParam()
+                        .security("api_key")
+                        .param()
+                        .name("id")
+                        .type(RestParamType.path)
+                        .description("The id of the user to get")
+                        .endParam()
+                        .param()
+                        .name("date")
+                        .type(RestParamType.path)
+                        .description("The date")
+                        .dataFormat("date")
+                        .endParam()
                         .to("bean:userService?method=getUser(${header.id})")
-
-                        .put().description("Updates or create a user").type(User.class)
+                        .put()
+                        .description("Updates or create a user")
+                        .type(User.class)
                         // setup security for this rest verb
-                        .security("petstore_auth", "write:pets,read:pets").param().name("body").type(RestParamType.body)
-                        .description("The user to update or create").endParam()
+                        .security("petstore_auth", "write:pets,read:pets")
+                        .param()
+                        .name("body")
+                        .type(RestParamType.body)
+                        .description("The user to update or create")
+                        .endParam()
                         .to("bean:userService?method=updateUser")
-
-                        .get("/findAll").description("Find all users").outType(User[].class).responseMessage()
-                        .message("All the found users").endResponseMessage()
+                        .get("/findAll")
+                        .description("Find all users")
+                        .outType(User[].class)
+                        .responseMessage()
+                        .message("All the found users")
+                        .endResponseMessage()
                         .to("bean:userService?method=listUsers");
             }
         };
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0" })
+    @ValueSource(strings = {"3.1", "3.0"})
     public void testReaderReadV3(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -87,8 +116,8 @@ public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
         config.setVersion(version);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);

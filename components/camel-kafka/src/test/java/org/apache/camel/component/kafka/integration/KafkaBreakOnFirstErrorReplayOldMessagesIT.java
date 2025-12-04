@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,20 +49,21 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * this will test breakOnFirstError functionality and the issue that was surfaced in CAMEL-20044 regarding incorrectly
  * handling the offset commit resulting in replaying messages
  *
  * mimics the reproduction of the problem in https://github.com/CodeSmell/CamelKafkaOffset
  */
-@Tags({ @Tag("breakOnFirstError") })
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
-             architectures = { "amd64", "aarch64" },
-             disabledReason = "This test does not run reliably on some platforms")
+@Tags({@Tag("breakOnFirstError")})
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS},
+        architectures = {"amd64", "aarch64"},
+        disabledReason = "This test does not run reliably on some platforms")
 class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseKafkaTestSupport {
 
     public static final String ROUTE_ID = "breakOnFirstError-20044";
@@ -105,8 +109,7 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseKafkaTestSupport {
     void testCamel20044TestFix() throws Exception {
         to.reset();
         to.expectedMessageCount(13);
-        to.expectedBodiesReceivedInAnyOrder("1", "2", "3", "4", "5", "ERROR",
-                "6", "7", "ERROR", "8", "9", "10", "11");
+        to.expectedBodiesReceivedInAnyOrder("1", "2", "3", "4", "5", "ERROR", "6", "7", "ERROR", "8", "9", "10", "11");
 
         contextExtension.getContext().getRouteController().stopRoute(ROUTE_ID);
 
@@ -137,18 +140,18 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseKafkaTestSupport {
                         .end();
 
                 from("kafka:" + TOPIC
-                     + "?groupId=" + ROUTE_ID
-                     + "&autoOffsetReset=earliest"
-                     + "&autoCommitEnable=false"
-                     + "&allowManualCommit=true"
-                     + "&breakOnFirstError=true"
-                     + "&maxPollRecords=1"
-                // here multiple threads was an issue
-                     + "&consumersCount=3"
-                     + "&pollTimeoutMs=1000"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=" + ROUTE_ID
+                                + "&autoOffsetReset=earliest"
+                                + "&autoCommitEnable=false"
+                                + "&allowManualCommit=true"
+                                + "&breakOnFirstError=true"
+                                + "&maxPollRecords=1"
+                                // here multiple threads was an issue
+                                + "&consumersCount=3"
+                                + "&pollTimeoutMs=1000"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId(ROUTE_ID)
                         .autoStartup(false)
                         .process(exchange -> {
@@ -175,25 +178,23 @@ class KafkaBreakOnFirstErrorReplayOldMessagesIT extends BaseKafkaTestSupport {
     }
 
     private void publishMessagesToKafka() {
-        final List<String> producedRecords = List.of("1", "2", "3", "4", "5", "ERROR",
-                "6", "7", "ERROR", "8", "9", "10", "11");
+        final List<String> producedRecords =
+                List.of("1", "2", "3", "4", "5", "ERROR", "6", "7", "ERROR", "8", "9", "10", "11");
 
         producedRecords.forEach(v -> {
             ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, null, v);
             producer.send(data);
         });
-
     }
 
     private void doCommitOffset(Exchange exchange) {
         LOG.debug(CamelKafkaUtil.buildKafkaLogMessage("Committing", exchange, true));
-        KafkaManualCommit manual = exchange.getMessage()
-                .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        KafkaManualCommit manual =
+                exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         if (Objects.nonNull(manual)) {
             manual.commit();
         } else {
             LOG.error("KafkaManualCommit is MISSING");
         }
     }
-
 }

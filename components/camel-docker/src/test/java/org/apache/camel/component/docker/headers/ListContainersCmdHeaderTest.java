@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates List Containers Request headers are applied properly
@@ -59,7 +60,6 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         Mockito.verify(mockObject, Mockito.times(1)).withLimit(eq(limit));
         Mockito.verify(mockObject, Mockito.times(1)).withSince(eq(since));
         Mockito.verify(mockObject, Mockito.times(1)).withBefore(eq(before));
-
     }
 
     @Override
@@ -71,5 +71,4 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
     protected DockerOperation getOperation() {
         return DockerOperation.LIST_CONTAINERS;
     }
-
 }

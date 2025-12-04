@@ -27,8 +27,9 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
-@DataTypeTransformer(name = "aws2-ddb:application-x-struct",
-                     description = "Transforms DynamoDB record into a Json node")
+@DataTypeTransformer(
+        name = "aws2-ddb:application-x-struct",
+        description = "Transforms DynamoDB record into a Json node")
 public class Ddb2JsonStructDataTypeTransformer extends Transformer {
 
     private final Gson gson = new GsonBuilder()

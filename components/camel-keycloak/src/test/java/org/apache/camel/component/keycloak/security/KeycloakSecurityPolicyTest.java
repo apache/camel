@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class KeycloakSecurityPolicyTest extends CamelTestSupport {
 
@@ -86,7 +87,8 @@ public class KeycloakSecurityPolicyTest extends CamelTestSupport {
         policy.setAllPermissionsRequired(false);
 
         assertEquals("read:documents,write:documents,delete:documents", policy.getRequiredPermissions());
-        assertEquals(Arrays.asList("read:documents", "write:documents", "delete:documents"),
+        assertEquals(
+                Arrays.asList("read:documents", "write:documents", "delete:documents"),
                 policy.getRequiredPermissionsAsList());
         assertFalse(policy.isAllPermissionsRequired());
     }
@@ -120,9 +122,7 @@ public class KeycloakSecurityPolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:protected")
-                        .policy(policy)
-                        .to("mock:result");
+                from("direct:protected").policy(policy).to("mock:result");
             }
         };
     }

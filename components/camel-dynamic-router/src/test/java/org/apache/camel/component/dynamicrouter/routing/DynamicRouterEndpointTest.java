@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.BiFunction;
 
@@ -38,11 +44,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.COMPONENT_SCHEME_ROUTING;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterEndpointTest {
@@ -94,7 +95,8 @@ class DynamicRouterEndpointTest {
         processorFactory = new DynamicRouterProcessorFactory() {
             @Override
             public DynamicRouterProcessor getInstance(
-                    CamelContext camelContext, DynamicRouterConfiguration configuration,
+                    CamelContext camelContext,
+                    DynamicRouterConfiguration configuration,
                     DynamicRouterFilterService filterService,
                     BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
                 return processor;
@@ -103,7 +105,8 @@ class DynamicRouterEndpointTest {
         producerFactory = new DynamicRouterProducerFactory() {
             @Override
             public DynamicRouterProducer getInstance(
-                    DynamicRouterEndpoint endpoint, DynamicRouterComponent component,
+                    DynamicRouterEndpoint endpoint,
+                    DynamicRouterComponent component,
                     DynamicRouterConfiguration configuration) {
                 return producer;
             }
@@ -111,12 +114,21 @@ class DynamicRouterEndpointTest {
         prioritizedFilterFactory = new PrioritizedFilterFactory() {
             @Override
             public PrioritizedFilter getInstance(
-                    String id, int priority, Predicate predicate, String endpoint, PrioritizedFilterStatistics statistics) {
+                    String id,
+                    int priority,
+                    Predicate predicate,
+                    String endpoint,
+                    PrioritizedFilterStatistics statistics) {
                 return prioritizedFilter;
             }
         };
         endpoint = new DynamicRouterEndpoint(
-                BASE_URI, component, configuration, () -> processorFactory, () -> producerFactory, recipientListSupplier,
+                BASE_URI,
+                component,
+                configuration,
+                () -> processorFactory,
+                () -> producerFactory,
+                recipientListSupplier,
                 filterService);
     }
 
@@ -133,16 +145,22 @@ class DynamicRouterEndpointTest {
 
     @Test
     void testGetInstanceWithDefaults() {
-        DynamicRouterEndpoint endpoint = new DynamicRouterEndpointFactory()
-                .getInstance(BASE_URI, component, configuration, filterService);
+        DynamicRouterEndpoint endpoint =
+                new DynamicRouterEndpointFactory().getInstance(BASE_URI, component, configuration, filterService);
         assertNotNull(endpoint);
     }
 
     @Test
     void testGetInstance() {
         DynamicRouterEndpoint endpoint = new DynamicRouterEndpointFactory()
-                .getInstance(BASE_URI, component, configuration, () -> processorFactory, () -> producerFactory,
-                        recipientListSupplier, filterService);
+                .getInstance(
+                        BASE_URI,
+                        component,
+                        configuration,
+                        () -> processorFactory,
+                        () -> producerFactory,
+                        recipientListSupplier,
+                        filterService);
         assertNotNull(endpoint);
     }
 }

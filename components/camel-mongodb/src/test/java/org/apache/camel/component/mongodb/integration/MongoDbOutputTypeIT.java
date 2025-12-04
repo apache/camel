@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +42,6 @@ import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -92,8 +93,11 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements Con
             assertNotNull(document.get("fixedField"), "Document in returned list should contain all fields");
         }
 
-        for (Exchange resultExchange : contextExtension.getMockEndpoint("mock:resultFindAll").getReceivedExchanges()) {
-            assertEquals(1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE),
+        for (Exchange resultExchange :
+                contextExtension.getMockEndpoint("mock:resultFindAll").getReceivedExchanges()) {
+            assertEquals(
+                    1000,
+                    resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE),
                     "Result total size header should equal 1000");
         }
     }
@@ -108,12 +112,13 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements Con
             }
         };
 
-        Exception ex = assertThrows(FailedToStartRouteException.class,
+        Exception ex = assertThrows(
+                FailedToStartRouteException.class,
                 () -> template.getCamelContext().addRoutes(taillableRouteBuilder),
                 "Endpoint should not be initialized with a non compatible outputType");
 
-        assertInstanceOf(IllegalArgumentException.class, ex.getCause(),
-                "Exception is not of type IllegalArgumentException");
+        assertInstanceOf(
+                IllegalArgumentException.class, ex.getCause(), "Exception is not of type IllegalArgumentException");
     }
 
     @Test
@@ -122,14 +127,17 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements Con
             @Override
             public void configure() {
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&outputType=MongoIterable")
-                        .id("tailableCursorConsumer1").autoStartup(false).to("mock:test");
+                        .id("tailableCursorConsumer1")
+                        .autoStartup(false)
+                        .to("mock:test");
             }
         };
-        Exception ex = assertThrows(FailedToStartRouteException.class,
+        Exception ex = assertThrows(
+                FailedToStartRouteException.class,
                 () -> template.getCamelContext().addRoutes(taillableRouteBuilder),
                 "Endpoint should not be initialized with a non compatible outputType");
-        assertInstanceOf(IllegalArgumentException.class, ex.getCause(),
-                "Exception is not of type IllegalArgumentException");
+        assertInstanceOf(
+                IllegalArgumentException.class, ex.getCause(), "Exception is not of type IllegalArgumentException");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -137,12 +145,13 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements Con
             public void configure() {
 
                 from("direct:findAllDBCursor")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true&outputType=MongoIterable")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true&outputType=MongoIterable")
                         .to("mock:resultFindAllDBCursor");
-                from("direct:findAllDocumentList").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&outputType=DocumentList")
+                from("direct:findAllDocumentList")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&outputType=DocumentList")
                         .to("mock:resultFindAllDocumentList");
-
             }
         };
     }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -25,11 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Logger formatter test.
@@ -43,32 +44,36 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendMessageToLogAllOff() {
-        assertDoesNotThrow(
-                () -> template.sendBody("log:org.apache.camel.TEST?showBody=false&showBodyType=false&showExchangePattern=false",
-                        "Hello World"));
+        assertDoesNotThrow(() -> template.sendBody(
+                "log:org.apache.camel.TEST?showBody=false&showBodyType=false&showExchangePattern=false",
+                "Hello World"));
     }
 
     @Test
     public void testSendMessageToLogSingleOptions() {
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World"));
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World"));
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showExchangePattern=false", "Hello World"));
+        assertDoesNotThrow(
+                () -> template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World"));
+        assertDoesNotThrow(
+                () -> template.sendBody("log:org.apache.camel.TEST?showExchangePattern=false", "Hello World"));
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showProperties=true", "Hello World"));
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World"));
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showBodyType=true", "Hello World"));
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showBody=true", "Hello World"));
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World"));
 
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(() -> "foo")));
+        assertDoesNotThrow(
+                () -> template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(() -> "foo")));
 
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(() -> "bar")));
+        assertDoesNotThrow(
+                () -> template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(() -> "bar")));
     }
 
     @Test
     public void testSendMessageToLogMultiOptions() {
         assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World"));
-        assertDoesNotThrow(
-                () -> template.sendBody("log:org.apache.camel.TEST?showAllProperties=true&showHeaders=true", "Hello World"));
+        assertDoesNotThrow(() ->
+                template.sendBody("log:org.apache.camel.TEST?showAllProperties=true&showHeaders=true", "Hello World"));
     }
 
     @Test
@@ -88,13 +93,16 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendMessageToLogMaxChars() {
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST",
+        assertDoesNotThrow(() -> template.sendBody(
+                "log:org.apache.camel.TEST",
                 "Hello World this is a very long string that is NOT going to be chopped by maxchars"));
 
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?maxChars=50",
+        assertDoesNotThrow(() -> template.sendBody(
+                "log:org.apache.camel.TEST?maxChars=50",
                 "Hello World this is a very long string that is going to be chopped by maxchars"));
 
-        assertDoesNotThrow(() -> template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
+        assertDoesNotThrow(() -> template.sendBody(
+                "log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
                 "Hello World this is a very long string that is going to be chopped by maxchars"));
     }
 
@@ -128,7 +136,8 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendCaughtExchangeWithExceptionAndMultiline() throws Exception {
-        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&multiline=true");
+        Endpoint endpoint =
+                resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&multiline=true");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new IllegalArgumentException("I am caught"));
@@ -142,7 +151,8 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendExchangeWithExceptionAndStackTrace() throws Exception {
-        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true&showStackTrace=true");
+        Endpoint endpoint =
+                resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true&showStackTrace=true");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.setException(new IllegalArgumentException("Damn"));
@@ -156,7 +166,8 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendCaughtExchangeWithExceptionAndStackTrace() throws Exception {
-        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&showStackTrace=true");
+        Endpoint endpoint =
+                resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&showStackTrace=true");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new IllegalArgumentException("I am caught"));

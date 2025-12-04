@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -24,21 +29,17 @@ import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Secu
 import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class AnnotationModuleLoaderTest {
 
     @Test
     public void testLoadModels() {
         AnnotationModelLoader loader = new AnnotationModelLoader(new DefaultPackageScanClassResolver());
-        Set<Class<?>> classes = loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
+        Set<Class<?>> classes =
+                loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
         assertNotNull(classes, "The findForFormattingOptions classes should not be null");
         assertEquals(3, classes.size(), "There should have 3 classes");
         assertTrue(classes.contains(Client.class));
         assertTrue(classes.contains(Order.class));
         assertTrue(classes.contains(Security.class));
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -57,20 +60,20 @@ import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link FhirConfiguration} APIs.
  */
 public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirCreateApiMethod.class)
+            .getName();
 
-    private static final String TEST_URI_CUSTOM_CLIENT
-            = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&client=#customClient";
+    private static final String TEST_URI_CUSTOM_CLIENT =
+            "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&client=#customClient";
 
-    private static final String TEST_URI_CUSTOM_CLIENT_FACTORY
-            = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&clientFactory=#customClientFactory&serverUrl=foobar";
+    private static final String TEST_URI_CUSTOM_CLIENT_FACTORY = "fhir://" + PATH_PREFIX
+            + "/resource?inBody=resourceAsString&clientFactory=#customClientFactory&serverUrl=foobar";
 
     @BindToRegistry("customClient")
     private CustomClient client = new CustomClient();
@@ -122,8 +125,11 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
         @Override
         public IHttpClient getHttpClient(
-                StringBuilder theUrl, Map<String, List<String>> theIfNoneExistParams, String theIfNoneExistString,
-                RequestTypeEnum theRequestType, List<Header> theHeaders) {
+                StringBuilder theUrl,
+                Map<String, List<String>> theIfNoneExistParams,
+                String theIfNoneExistString,
+                RequestTypeEnum theRequestType,
+                List<Header> theHeaders) {
             return null;
         }
 
@@ -163,65 +169,41 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void setConnectionRequestTimeout(int theConnectionRequestTimeout) {
-
-        }
+        public void setConnectionRequestTimeout(int theConnectionRequestTimeout) {}
 
         @Override
-        public void setConnectTimeout(int theConnectTimeout) {
-
-        }
+        public void setConnectTimeout(int theConnectTimeout) {}
 
         @Override
-        public <T> void setHttpClient(T theHttpClient) {
-
-        }
+        public <T> void setHttpClient(T theHttpClient) {}
 
         @Override
-        public void setProxy(String theHost, Integer thePort) {
-
-        }
+        public void setProxy(String theHost, Integer thePort) {}
 
         @Override
-        public void setProxyCredentials(String theUsername, String thePassword) {
-
-        }
+        public void setProxyCredentials(String theUsername, String thePassword) {}
 
         @Override
-        public void setServerValidationModeEnum(ServerValidationModeEnum theServerValidationMode) {
-
-        }
+        public void setServerValidationModeEnum(ServerValidationModeEnum theServerValidationMode) {}
 
         @Override
-        public void setServerValidationMode(ServerValidationModeEnum theServerValidationMode) {
-
-        }
+        public void setServerValidationMode(ServerValidationModeEnum theServerValidationMode) {}
 
         @Override
-        public void setSocketTimeout(int theSocketTimeout) {
-
-        }
+        public void setSocketTimeout(int theSocketTimeout) {}
 
         @Override
-        public void setPoolMaxTotal(int thePoolMaxTotal) {
-
-        }
+        public void setPoolMaxTotal(int thePoolMaxTotal) {}
 
         @Override
-        public void setPoolMaxPerRoute(int thePoolMaxPerRoute) {
-
-        }
+        public void setPoolMaxPerRoute(int thePoolMaxPerRoute) {}
 
         @Override
-        public void validateServerBase(String theServerBase, IHttpClient theHttpClient, IRestfulClient theClient) {
-
-        }
+        public void validateServerBase(String theServerBase, IHttpClient theHttpClient, IRestfulClient theClient) {}
 
         @Override
         public void validateServerBaseIfConfiguredToDoSo(
-                String theServerBase, IHttpClient theHttpClient, IRestfulClient theClient) {
-
-        }
+                String theServerBase, IHttpClient theHttpClient, IRestfulClient theClient) {}
     }
 
     private class CustomClient implements IGenericClient {
@@ -247,9 +229,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void forceConformanceCheck() throws FhirClientConnectionException {
-
-        }
+        public void forceConformanceCheck() throws FhirClientConnectionException {}
 
         @Override
         public IHistory history() {
@@ -302,9 +282,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void registerInterceptor(Object o) {
-
-        }
+        public void registerInterceptor(Object o) {}
 
         @Override
         public IInterceptorService getInterceptorService() {
@@ -312,9 +290,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void setInterceptorService(IInterceptorService theInterceptorService) {
-
-        }
+        public void setInterceptorService(IInterceptorService theInterceptorService) {}
 
         @Override
         public <T extends IBaseResource> T fetchResourceFromUrl(Class<T> theResourceType, String theUrl) {
@@ -342,19 +318,13 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void setEncoding(EncodingEnum theEncoding) {
-
-        }
+        public void setEncoding(EncodingEnum theEncoding) {}
 
         @Override
-        public void setPrettyPrint(Boolean thePrettyPrint) {
-
-        }
+        public void setPrettyPrint(Boolean thePrettyPrint) {}
 
         @Override
-        public void setSummary(SummaryEnum theSummary) {
-
-        }
+        public void setSummary(SummaryEnum theSummary) {}
 
         @Override
         public <T extends IBaseBundle> IUntypedQuery<T> search() {
@@ -362,9 +332,7 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void setLogRequestAndResponse(boolean theLogRequestAndResponse) {
-
-        }
+        public void setLogRequestAndResponse(boolean theLogRequestAndResponse) {}
 
         @Override
         public ITransaction transaction() {
@@ -372,14 +340,10 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
-        public void unregisterInterceptor(Object o) {
-
-        }
+        public void unregisterInterceptor(Object o) {}
 
         @Override
-        public void setFormatParamStyle(RequestFormatParamStyleEnum requestFormatParamStyleEnum) {
-
-        }
+        public void setFormatParamStyle(RequestFormatParamStyleEnum requestFormatParamStyleEnum) {}
 
         @Override
         public IUpdate update() {

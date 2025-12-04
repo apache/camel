@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Session;
@@ -31,14 +35,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JmsClientAckTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -76,7 +78,10 @@ public class JmsClientAckTest extends AbstractJMSTest {
                             Session session = jms.getJmsSession();
                             assertNotNull(session, "Should have JMS session");
 
-                            assertEquals(Session.CLIENT_ACKNOWLEDGE, session.getAcknowledgeMode(), "Should be client ACK mode");
+                            assertEquals(
+                                    Session.CLIENT_ACKNOWLEDGE,
+                                    session.getAcknowledgeMode(),
+                                    "Should be client ACK mode");
                             jms.getJmsMessage().acknowledge();
                         })
                         .to("mock:result");

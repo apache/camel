@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.aggregation;
 
 import java.util.List;
@@ -30,9 +31,10 @@ import org.opensearch.client.opensearch.core.bulk.BulkOperation;
 /**
  * Aggregates two {@link BulkOperation}s into a single {@link BulkRequest}.
  */
-@Metadata(label = "bean",
-          description = "Aggregates two OpenSearch BulkOperation into a single BulkRequest",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Metadata(
+        label = "bean",
+        description = "Aggregates two OpenSearch BulkOperation into a single BulkRequest",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class OpensearchBulkRequestAggregationStrategy implements AggregationStrategy {
 

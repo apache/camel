@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
 
@@ -98,14 +99,15 @@ public class MyBatisShutdownCurrentTaskOnlyTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("mybatis:selectAllAccounts").routeId("route1")
+                from("mybatis:selectAllAccounts")
+                        .routeId("route1")
                         // let it complete only current task so we shutdown faster
                         .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                        .delay(1000).to("seda:foo");
+                        .delay(1000)
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }
         };
     }
-
 }

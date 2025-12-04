@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import org.apache.camel.Endpoint;
@@ -39,7 +40,8 @@ public class DataLakeProducer extends DefaultProducer {
         super(endpoint);
         configuration = getEndpoint().getConfiguration();
         configurationProxy = new DataLakeConfigurationOptionsProxy(configuration);
-        dataLakeServiceClientWrapper = new DataLakeServiceClientWrapper(getEndpoint().getDataLakeServiceClient());
+        dataLakeServiceClientWrapper =
+                new DataLakeServiceClientWrapper(getEndpoint().getDataLakeServiceClient());
     }
 
     @Override
@@ -115,24 +117,24 @@ public class DataLakeProducer extends DefaultProducer {
     }
 
     private DataLakeFileSystemOperations getFileSystemOperations(final Exchange exchange) {
-        final DataLakeFileSystemClientWrapper clientWrapper
-                = dataLakeServiceClientWrapper.getDataLakeFileSystemClientWrapper(determineFileSystemName(exchange));
+        final DataLakeFileSystemClientWrapper clientWrapper =
+                dataLakeServiceClientWrapper.getDataLakeFileSystemClientWrapper(determineFileSystemName(exchange));
 
         return new DataLakeFileSystemOperations(configuration, clientWrapper);
     }
 
     private DataLakeDirectoryOperations getDirectoryOperations(final Exchange exchange) {
-        final DataLakeDirectoryClientWrapper clientWrapper
-                = dataLakeServiceClientWrapper.getDataLakeFileSystemClientWrapper(determineFileSystemName(exchange))
-                        .getDataLakeDirectoryClientWrapper(determineDirectoryName(exchange));
+        final DataLakeDirectoryClientWrapper clientWrapper = dataLakeServiceClientWrapper
+                .getDataLakeFileSystemClientWrapper(determineFileSystemName(exchange))
+                .getDataLakeDirectoryClientWrapper(determineDirectoryName(exchange));
 
         return new DataLakeDirectoryOperations(configuration, clientWrapper);
     }
 
     private DataLakeFileOperations getFileOperations(final Exchange exchange) {
-        final DataLakeFileClientWrapper clientWrapper
-                = dataLakeServiceClientWrapper.getDataLakeFileSystemClientWrapper(determineFileSystemName(exchange))
-                        .getDataLakeFileClientWrapper(determineFileName(exchange));
+        final DataLakeFileClientWrapper clientWrapper = dataLakeServiceClientWrapper
+                .getDataLakeFileSystemClientWrapper(determineFileSystemName(exchange))
+                .getDataLakeFileClientWrapper(determineFileName(exchange));
 
         return new DataLakeFileOperations(configuration, clientWrapper);
     }
@@ -161,5 +163,4 @@ public class DataLakeProducer extends DefaultProducer {
         }
         return fileName;
     }
-
 }

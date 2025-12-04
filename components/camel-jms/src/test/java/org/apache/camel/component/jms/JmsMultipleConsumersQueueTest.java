@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +37,7 @@ public class JmsMultipleConsumersQueueTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -64,9 +66,7 @@ public class JmsMultipleConsumersQueueTest extends AbstractJMSTest {
                         .routeId("route-1")
                         .to("mock:result");
 
-                from("direct:JmsMultipleConsumersQueueTest")
-                        .routeId("route-2")
-                        .to("mock:result");
+                from("direct:JmsMultipleConsumersQueueTest").routeId("route-2").to("mock:result");
 
                 from("jms:queue:JmsMultipleConsumersQueueTest")
                         .routeId("route-3")

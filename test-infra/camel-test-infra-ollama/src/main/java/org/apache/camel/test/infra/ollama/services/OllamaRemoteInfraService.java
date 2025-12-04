@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.services;
 
 import org.apache.camel.test.infra.ollama.commons.OllamaProperties;
@@ -86,5 +87,4 @@ public class OllamaRemoteInfraService implements OllamaInfraService {
     public String apiKey() {
         return System.getProperty(OllamaProperties.API_KEY);
     }
-
 }

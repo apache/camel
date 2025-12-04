@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BatchGetItemsCommandTest {
 
@@ -53,7 +54,8 @@ public class BatchGetItemsCommandTest {
         Map<String, AttributeValue> unprocessedKey = new HashMap<>();
         unprocessedKey.put("1", AttributeValue.builder().s("UNPROCESSED_KEY").build());
         Map<String, KeysAndAttributes> keysAndAttributesMap = new HashMap<>();
-        KeysAndAttributes keysAndAttributes = KeysAndAttributes.builder().keys(key).build();
+        KeysAndAttributes keysAndAttributes =
+                KeysAndAttributes.builder().keys(key).build();
         keysAndAttributesMap.put("DOMAIN1", keysAndAttributes);
         exchange.getIn().setHeader(Ddb2Constants.BATCH_ITEMS, keysAndAttributesMap);
 
@@ -62,12 +64,15 @@ public class BatchGetItemsCommandTest {
         assertEquals(keysAndAttributesMap, ddbClient.batchGetItemRequest.requestItems());
 
         List<Map<String, AttributeValue>> batchResponse = (List<Map<String, AttributeValue>>) exchange.getIn()
-                .getHeader(Ddb2Constants.BATCH_RESPONSE, Map.class).get("DOMAIN1");
+                .getHeader(Ddb2Constants.BATCH_RESPONSE, Map.class)
+                .get("DOMAIN1");
         AttributeValue value = batchResponse.get(0).get("attrName");
 
-        KeysAndAttributes unProcessedAttributes
-                = (KeysAndAttributes) exchange.getIn().getHeader(Ddb2Constants.UNPROCESSED_KEYS, Map.class).get("DOMAIN1");
-        Map<String, AttributeValue> next = unProcessedAttributes.keys().iterator().next();
+        KeysAndAttributes unProcessedAttributes = (KeysAndAttributes) exchange.getIn()
+                .getHeader(Ddb2Constants.UNPROCESSED_KEYS, Map.class)
+                .get("DOMAIN1");
+        Map<String, AttributeValue> next =
+                unProcessedAttributes.keys().iterator().next();
 
         assertEquals(AttributeValue.builder().s("attrValue").build(), value);
         assertEquals(unprocessedKey, next);

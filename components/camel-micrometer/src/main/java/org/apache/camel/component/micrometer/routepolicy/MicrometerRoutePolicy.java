@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_ROUTE;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +46,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_ROUTE;
-import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link MeterRegistry}.
@@ -82,9 +83,12 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         private Timer timer;
         private LongTaskTimer longTaskTimer;
 
-        MetricsStatistics(MeterRegistry meterRegistry, CamelContext camelContext, Route route,
-                          MicrometerRoutePolicyNamingStrategy namingStrategy,
-                          MicrometerRoutePolicyConfiguration configuration) {
+        MetricsStatistics(
+                MeterRegistry meterRegistry,
+                CamelContext camelContext,
+                Route route,
+                MicrometerRoutePolicyNamingStrategy namingStrategy,
+                MicrometerRoutePolicyConfiguration configuration) {
             this.configuration = ObjectHelper.notNull(configuration, "MicrometerRoutePolicyConfiguration", this);
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
@@ -97,24 +101,25 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
         private void initAdditionalCounters() {
             if (configuration.isExchangesSucceeded()) {
-                this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route),
-                        "Number of successfully completed exchanges");
+                this.exchangesSucceeded = createCounter(
+                        namingStrategy.getExchangesSucceededName(route), "Number of successfully completed exchanges");
             }
             if (configuration.isExchangesFailed()) {
-                this.exchangesFailed
-                        = createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
+                this.exchangesFailed =
+                        createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
             }
             if (configuration.isExchangesTotal()) {
-                this.exchangesTotal
-                        = createCounter(namingStrategy.getExchangesTotalName(route), "Total number of processed exchanges");
+                this.exchangesTotal = createCounter(
+                        namingStrategy.getExchangesTotalName(route), "Total number of processed exchanges");
             }
             if (configuration.isExternalRedeliveries()) {
-                this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route),
+                this.externalRedeliveries = createCounter(
+                        namingStrategy.getExternalRedeliveriesName(route),
                         "Number of external initiated redeliveries (such as from JMS broker)");
             }
             if (configuration.isFailuresHandled()) {
-                this.failuresHandled
-                        = createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
+                this.failuresHandled =
+                        createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
             }
             if (configuration.isLongTask()) {
                 LongTaskTimer.Builder builder = LongTaskTimer.builder(namingStrategy.getLongTaskName(route))
@@ -141,7 +146,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                 if (timer == null) {
                     Timer.Builder builder = Timer.builder(namingStrategy.getName(route))
                             .tags(route != null ? namingStrategy.getTags(route) : namingStrategy.getTags(camelContext))
-                            .description(route != null ? "Route performance metrics" : "CamelContext performance metrics");
+                            .description(
+                                    route != null ? "Route performance metrics" : "CamelContext performance metrics");
                     if (configuration.getTimerInitiator() != null) {
                         configuration.getTimerInitiator().accept(builder);
                     }
@@ -149,8 +155,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                 }
                 sample.stop(timer);
             }
-            LongTaskTimer.Sample ltSampler
-                    = (LongTaskTimer.Sample) exchange.removeProperty(propertyName(exchange) + "_long_task");
+            LongTaskTimer.Sample ltSampler =
+                    (LongTaskTimer.Sample) exchange.removeProperty(propertyName(exchange) + "_long_task");
             if (ltSampler != null) {
                 ltSampler.stop();
             }
@@ -216,8 +222,10 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
 
         private Counter createCounter(String meterName, String description) {
             return Counter.builder(meterName)
-                    .tags(route != null
-                            ? namingStrategy.getExchangeStatusTags(route) : namingStrategy.getExchangeStatusTags(camelContext))
+                    .tags(
+                            route != null
+                                    ? namingStrategy.getExchangeStatusTags(route)
+                                    : namingStrategy.getExchangeStatusTags(camelContext))
                     .description(description)
                     .register(meterRegistry);
         }
@@ -294,8 +302,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                     route.getCamelContext().getRegistry(), METRICS_REGISTRY_NAME));
         }
         try {
-            MicrometerRoutePolicyService registryService
-                    = route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
+            MicrometerRoutePolicyService registryService =
+                    route.getCamelContext().hasService(MicrometerRoutePolicyService.class);
             if (registryService == null) {
                 registryService = new MicrometerRoutePolicyService();
                 registryService.setSkipCamelInfo(isSkipCamelInfo());
@@ -328,25 +336,24 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // create statistics holder
         // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
-        statisticsMap.computeIfAbsent(route,
-                it -> {
-                    boolean skip = !configuration.isRouteEnabled();
-                    // skip routes that should not be included
-                    if (!skip) {
-                        skip = (it.isCreatedByKamelet() && !registerKamelets)
-                                || (it.isCreatedByRouteTemplate() && !registerTemplates);
-                    }
-                    if (!skip && configuration.getExcludePattern() != null) {
-                        String[] patterns = configuration.getExcludePattern().split(",");
-                        skip = PatternHelper.matchPatterns(route.getRouteId(), patterns);
-                    }
-                    LOG.debug("Capturing metrics for route: {} -> {}", route.getRouteId(), skip);
-                    if (skip) {
-                        return null;
-                    }
-                    return new MetricsStatistics(
-                            getMeterRegistry(), it.getCamelContext(), it, getNamingStrategy(), configuration);
-                });
+        statisticsMap.computeIfAbsent(route, it -> {
+            boolean skip = !configuration.isRouteEnabled();
+            // skip routes that should not be included
+            if (!skip) {
+                skip = (it.isCreatedByKamelet() && !registerKamelets)
+                        || (it.isCreatedByRouteTemplate() && !registerTemplates);
+            }
+            if (!skip && configuration.getExcludePattern() != null) {
+                String[] patterns = configuration.getExcludePattern().split(",");
+                skip = PatternHelper.matchPatterns(route.getRouteId(), patterns);
+            }
+            LOG.debug("Capturing metrics for route: {} -> {}", route.getRouteId(), skip);
+            if (skip) {
+                return null;
+            }
+            return new MetricsStatistics(
+                    getMeterRegistry(), it.getCamelContext(), it, getNamingStrategy(), configuration);
+        });
     }
 
     @Override
@@ -363,8 +370,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         if (contextStatistic != null) {
             contextStatistic.onExchangeBegin(exchange);
         }
-        Optional.ofNullable(statisticsMap.get(route))
-                .ifPresent(statistics -> statistics.onExchangeBegin(exchange));
+        Optional.ofNullable(statisticsMap.get(route)).ifPresent(statistics -> statistics.onExchangeBegin(exchange));
     }
 
     @Override
@@ -372,8 +378,6 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         if (contextStatistic != null) {
             contextStatistic.onExchangeDone(exchange);
         }
-        Optional.ofNullable(statisticsMap.get(route))
-                .ifPresent(statistics -> statistics.onExchangeDone(exchange));
+        Optional.ofNullable(statisticsMap.get(route)).ifPresent(statistics -> statistics.onExchangeDone(exchange));
     }
-
 }

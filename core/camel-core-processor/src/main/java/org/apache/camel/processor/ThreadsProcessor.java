@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
@@ -98,8 +99,11 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
         }
     }
 
-    public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService, boolean shutdownExecutorService,
-                            ThreadPoolRejectedPolicy rejectedPolicy) {
+    public ThreadsProcessor(
+            CamelContext camelContext,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            ThreadPoolRejectedPolicy rejectedPolicy) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(executorService, "executorService");
         ObjectHelper.notNull(rejectedPolicy, "rejectedPolicy");
@@ -118,7 +122,9 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
         // we cannot execute this asynchronously for transacted exchanges, as the transaction manager doesn't support
         // using different threads in the same transaction
         if (exchange.isTransacted()) {
-            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(),
+            LOG.trace(
+                    "Transacted Exchange must be routed synchronously for exchangeId: {} -> {}",
+                    exchange.getExchangeId(),
                     exchange);
             callback.done(true);
             return true;
@@ -199,5 +205,4 @@ public class ThreadsProcessor extends BaseProcessorSupport implements IdAware, R
         }
         super.doShutdown();
     }
-
 }

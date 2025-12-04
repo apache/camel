@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
@@ -226,9 +227,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        RuntimeCamelException e
-                = assertThrows(RuntimeCamelException.class, () -> template.extractFutureBody(future, Exchange.class),
-                        "Should have thrown exception");
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.extractFutureBody(future, Exchange.class),
+                "Should have thrown exception");
 
         assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
@@ -245,9 +247,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        RuntimeCamelException e
-                = assertThrows(RuntimeCamelException.class, () -> template.extractFutureBody(future, String.class),
-                        "Should have thrown exception");
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.extractFutureBody(future, String.class),
+                "Should have thrown exception");
 
         assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
@@ -260,7 +263,11 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").delay(200).asyncDelayed().transform(body().append(" World")).to("mock:result");
+                from("direct:start")
+                        .delay(200)
+                        .asyncDelayed()
+                        .transform(body().append(" World"))
+                        .to("mock:result");
 
                 from("direct:error").delay(200).asyncDelayed().process(new Processor() {
                     public void process(Exchange exchange) {
@@ -274,5 +281,4 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
@@ -40,7 +41,6 @@ public class InfoCmdHeaderTest extends BaseDockerHeaderTest<InfoCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).infoCmd();
-
     }
 
     @Override
@@ -52,5 +52,4 @@ public class InfoCmdHeaderTest extends BaseDockerHeaderTest<InfoCmd> {
     protected DockerOperation getOperation() {
         return DockerOperation.INFO;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.HashSet;
@@ -95,5 +96,4 @@ final class ExchangeVariableRepository extends AbstractVariableRepository {
     public String getId() {
         return "exchange";
     }
-
 }

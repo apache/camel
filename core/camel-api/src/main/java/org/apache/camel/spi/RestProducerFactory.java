@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -45,8 +46,15 @@ public interface RestProducerFactory {
      * @throws Exception       can be thrown
      */
     Producer createProducer(
-            CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            String host,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String queryParameters,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception;
 }

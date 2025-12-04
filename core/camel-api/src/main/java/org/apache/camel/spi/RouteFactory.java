@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -39,8 +40,11 @@ public interface RouteFactory {
      * @return                  the created route
      */
     Route createRoute(
-            CamelContext camelContext, NamedNode routeDefinition,
-            String routeId, String routeDescription, String routeNote,
-            Endpoint endpoint, Resource resource);
-
+            CamelContext camelContext,
+            NamedNode routeDefinition,
+            String routeId,
+            String routeDescription,
+            String routeNote,
+            Endpoint endpoint,
+            Resource resource);
 }

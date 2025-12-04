@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -31,10 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
 
@@ -80,7 +81,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         simpleTest(10000, new TestRouteWithXPathBuilder());
     }
 
-    //the textnode appears to have siblings!
+    // the textnode appears to have siblings!
     @Test
     public void size10000DomTest() throws Exception {
         simpleTest(10000, new TestRouteWithDomBuilder());
@@ -131,32 +132,33 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         }
     }
 
-    //implementation simular to xpath() in route: no data loss
+    // implementation simular to xpath() in route: no data loss
     private class XPathStringResultProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Object obj = exchange.getIn().getBody();
-            //xpath expression directly results in a: String
-            String content = (String) XPathBuilder.xpath("//xml/text()").stringResult().evaluate(context, obj, Object.class);
+            // xpath expression directly results in a: String
+            String content =
+                    (String) XPathBuilder.xpath("//xml/text()").stringResult().evaluate(context, obj, Object.class);
             exchange.getMessage().setBody(content);
             exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         }
     }
 
-    //this version leads to data loss
+    // this version leads to data loss
     private class XPathProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Object obj = exchange.getIn().getBody();
-            //xpath expression results in a: net.sf.saxon.dom.DOMNodeList
-            //after which it is converted to a String
+            // xpath expression results in a: net.sf.saxon.dom.DOMNodeList
+            // after which it is converted to a String
             String content = XPathBuilder.xpath("//xml/text()").evaluate(context, obj, String.class);
             exchange.getMessage().setBody(content);
             exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         }
     }
 
-    //this version leads to data loss
+    // this version leads to data loss
     private class DomFirstOneOnlyProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -183,7 +185,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             b.append(textnode.getNodeValue());
             textnode = (Text) textnode.getNextSibling();
             while (textnode != null) {
-                //the textnode appears to have siblings!
+                // the textnode appears to have siblings!
                 b.append(textnode.getNodeValue());
                 textnode = (Text) textnode.getNextSibling();
             }
@@ -217,14 +219,14 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         exchgIn.setPattern(ExchangePattern.InOut);
         exchgIn.getIn().setBody(msgIn);
 
-        //Execute
+        // Execute
         Exchange exchgOut = template.send(builder.getTestAddress(), exchgIn);
 
-        //Verify
+        // Verify
         String result = exchgOut.getMessage().getBody(String.class);
         assertNotNull(result, "response on http call");
 
-        //check for data loss in received input (after xpath)
+        // check for data loss in received input (after xpath)
         String headerSize = exchgOut.getMessage().getHeader(HEADER_SIZE, String.class);
         assertEquals(Integer.toString(repeat), headerSize);
 
@@ -243,15 +245,14 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
 
     private String getAvailableUrl(String pathEnd) {
         int availablePort = AvailablePortFinder.getNextAvailable();
-        String url = "http://localhost:" + availablePort
-                     + "/" + getClass().getSimpleName();
+        String url = "http://localhost:" + availablePort + "/" + getClass().getSimpleName();
         return url + "/" + pathEnd;
     }
 
     private String constructSoapMessage(String content) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-               + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-               + "<soapenv:Body><xml>" + content + "</xml></soapenv:Body>"
-               + "</soapenv:Envelope>";
+                + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                + "<soapenv:Body><xml>" + content + "</xml></soapenv:Body>"
+                + "</soapenv:Envelope>";
     }
 }

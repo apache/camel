@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -24,9 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpSendFileTest extends BaseJettyTest {
 
@@ -54,14 +55,17 @@ public class HttpSendFileTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myapp/myservice").to("mock:result").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        assertNotNull(body, "Body should not be null");
-                    }
-                }).transform(constant("OK")).setHeader("Content-Type", constant("text/plain"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                        .to("mock:result")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                assertNotNull(body, "Body should not be null");
+                            }
+                        })
+                        .transform(constant("OK"))
+                        .setHeader("Content-Type", constant("text/plain"));
             }
         };
     }
-
 }

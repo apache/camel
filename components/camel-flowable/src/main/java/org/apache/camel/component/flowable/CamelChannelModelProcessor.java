@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
 
 import org.apache.camel.CamelContext;
@@ -54,7 +55,9 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
 
     @Override
     public void registerChannelModel(
-            ChannelModel channelModel, String tenantId, EventRegistry eventRegistry,
+            ChannelModel channelModel,
+            String tenantId,
+            EventRegistry eventRegistry,
             EventRepositoryService eventRepositoryService,
             boolean fallbackToDefaultTenant) {
 
@@ -71,7 +74,8 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
     }
 
     protected void processInboundDefinition(CamelInboundChannelModel channelModel, String tenantId) {
-        EventRegistryEngineConfiguration eventRegistryEngineConfiguration = CommandContextUtil.getEventRegistryConfiguration();
+        EventRegistryEngineConfiguration eventRegistryEngineConfiguration =
+                CommandContextUtil.getEventRegistryConfiguration();
         try (FlowableEndpoint endpoint = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration)) {
 
             camelContext.addEndpoint(endpoint.getEndpointUri(), endpoint);
@@ -80,7 +84,9 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
 
                     @Override
                     public void configure() throws Exception {
-                        from(channelModel.getSourceUri()).routeId(channelModel.getKey()).to(endpoint.getEndpointUri());
+                        from(channelModel.getSourceUri())
+                                .routeId(channelModel.getKey())
+                                .to(endpoint.getEndpointUri());
                     }
                 });
             }
@@ -101,7 +107,8 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
     protected OutboundEventChannelAdapter<String> createOutboundEventChannelAdapter(
             CamelOutboundChannelModel channelModel, String tenantId) {
 
-        EventRegistryEngineConfiguration eventRegistryEngineConfiguration = CommandContextUtil.getEventRegistryConfiguration();
+        EventRegistryEngineConfiguration eventRegistryEngineConfiguration =
+                CommandContextUtil.getEventRegistryConfiguration();
         String destination = resolve(channelModel.getDestination());
         try (FlowableEndpoint endpoint = new FlowableEndpoint(channelModel, eventRegistryEngineConfiguration)) {
             camelContext.addEndpoint(endpoint.getEndpointUri(), endpoint);
@@ -123,9 +130,7 @@ public class CamelChannelModelProcessor implements ChannelModelProcessor {
 
     @Override
     public void unregisterChannelModel(
-            ChannelModel channelModel, String tenantId, EventRepositoryService eventRepositoryService) {
-
-    }
+            ChannelModel channelModel, String tenantId, EventRepositoryService eventRepositoryService) {}
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;

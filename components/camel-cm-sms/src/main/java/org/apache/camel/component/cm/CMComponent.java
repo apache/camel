@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 import java.util.Map;
@@ -38,8 +39,7 @@ public class CMComponent extends DefaultComponent {
 
     private Validator validator;
 
-    public CMComponent() {
-    }
+    public CMComponent() {}
 
     public CMComponent(final CamelContext context) {
         super(context);
@@ -53,14 +53,13 @@ public class CMComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         // Validate configuration
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations
-                = getValidator().validate(endpoint.getConfiguration());
+        final Set<ConstraintViolation<CMConfiguration>> constraintViolations =
+                getValidator().validate(endpoint.getConfiguration());
         if (!constraintViolations.isEmpty()) {
             final StringBuilder msg = new StringBuilder();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
-                msg.append(String.format("- Invalid value for %s: %s",
-                        cv.getPropertyPath().toString(),
-                        cv.getMessage()));
+                msg.append(String.format(
+                        "- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
             }
             throw new ResolveEndpointFailedException(uri, msg.toString());
         }

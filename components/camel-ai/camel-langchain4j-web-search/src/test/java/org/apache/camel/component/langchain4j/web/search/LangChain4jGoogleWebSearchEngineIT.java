@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.web.search;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -26,9 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // Instruction to generate one https://developers.google.com/custom-search/v1/overview
 @EnabledIfEnvironmentVariable(named = "GOOGLE_API_KEY", matches = ".*")
@@ -54,7 +55,8 @@ public class LangChain4jGoogleWebSearchEngineIT extends CamelTestSupport {
     @Test
     void testSimpleSearch() {
         String uri = String.format("%s?resultType=%s", WEB_SEARCH_URI, LangChain4jWebSearchResultType.SNIPPET);
-        Exchange result = fluentTemplate.to(uri)
+        Exchange result = fluentTemplate
+                .to(uri)
                 .withBody("Who won the European Cup in 2024?")
                 .request(Exchange.class);
 
@@ -66,10 +68,11 @@ public class LangChain4jGoogleWebSearchEngineIT extends CamelTestSupport {
 
     @Test
     void testSearchWithParams() {
-        String uri = String.format("%s?maxResults=2&language=fr&resultType=%s", WEB_SEARCH_URI,
-                LangChain4jWebSearchResultType.SNIPPET);
+        String uri = String.format(
+                "%s?maxResults=2&language=fr&resultType=%s", WEB_SEARCH_URI, LangChain4jWebSearchResultType.SNIPPET);
 
-        Exchange result = fluentTemplate.to(uri)
+        Exchange result = fluentTemplate
+                .to(uri)
                 .withBody("Qui a gagné la coupe d'Europe en 2024?")
                 .request(Exchange.class);
 
@@ -77,7 +80,9 @@ public class LangChain4jGoogleWebSearchEngineIT extends CamelTestSupport {
 
         List<String> listResult = result.getIn().getBody(List.class);
         assertNotNull(listResult, "The list results from the Google Search Engine shouldn't be null.");
-        assertNotEquals(0, listResult.get(0),
+        assertNotEquals(
+                0,
+                listResult.get(0),
                 "The list results from the Google Search Engine shouldn't be empty. It's the value of the snippet as a Strng");
     }
 

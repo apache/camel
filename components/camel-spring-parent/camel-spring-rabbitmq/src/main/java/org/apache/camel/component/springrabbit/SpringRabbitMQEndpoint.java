@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
+
+import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
 
 import java.util.Map;
 
@@ -49,14 +52,16 @@ import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 
-import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
-
 /**
  * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "spring-rabbitmq", title = "Spring RabbitMQ",
-             syntax = "spring-rabbitmq:exchangeName",
-             category = { Category.MESSAGING }, headersClass = SpringRabbitMQConstants.class)
+@UriEndpoint(
+        firstVersion = "3.8.0",
+        scheme = "spring-rabbitmq",
+        title = "Spring RabbitMQ",
+        syntax = "spring-rabbitmq:exchangeName",
+        category = {Category.MESSAGING},
+        headersClass = SpringRabbitMQConstants.class)
 public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
     public static final String ARG_PREFIX = "arg.";
@@ -71,136 +76,248 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     private static final Logger LOG = LoggerFactory.getLogger(SpringRabbitMQEndpoint.class);
 
     @UriPath
-    @Metadata(required = true,
-              description = "The exchange name determines the exchange to which the produced messages will be sent to."
-                            + " In the case of consumers, the exchange name determines the exchange the queue will be bound to."
-                            + " Note: to use default exchange then do not use empty name, but use default instead.")
+    @Metadata(
+            required = true,
+            description = "The exchange name determines the exchange to which the produced messages will be sent to."
+                    + " In the case of consumers, the exchange name determines the exchange the queue will be bound to."
+                    + " Note: to use default exchange then do not use empty name, but use default instead.")
     private String exchangeName;
-    @UriParam(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
-              description = "The type of the exchange")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "direct",
+            enums = "direct,fanout,headers,topic",
+            description = "The type of the exchange")
     private String exchangeType = "direct";
-    @UriParam(label = "common",
-              description = "The value of a routing key to use. Default is empty which is not helpful when using the default (or any direct) exchange, but fine if the exchange is a headers exchange for instance.")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "The value of a routing key to use. Default is empty which is not helpful when using the default (or any direct) exchange, but fine if the exchange is a headers exchange for instance.")
     private String routingKey = "";
-    @UriParam(label = "common",
-              description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @UriParam(label = "common",
-              description = "The queue(s) to use for consuming or producing messages. Multiple queue names can be separated by comma."
+
+    @UriParam(
+            label = "common",
+            description =
+                    "The queue(s) to use for consuming or producing messages. Multiple queue names can be separated by comma."
                             + " If none has been configured then Camel will generate an unique id as the queue name.")
     private String queues;
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "Specifies whether the consumer container should auto-startup.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description = "Specifies whether the consumer container should auto-startup.")
     private boolean autoStartup = true;
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "Specifies whether the consumer should auto declare binding between exchange, queue and routing key when starting.")
     private boolean autoDeclare = true;
-    @UriParam(label = "consumer",
-              description = "Whether the consumer processes the Exchange asynchronously."
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Whether the consumer processes the Exchange asynchronously."
                             + " If enabled then the consumer may pickup the next message from the queue,"
                             + " while the previous message is being processed asynchronously (by the Asynchronous Routing Engine)."
                             + " This means that messages may be processed not 100% strictly in order. If disabled (as default)"
                             + " then the Exchange is fully processed before the consumer will pickup the next message from the queue.")
     private boolean asyncConsumer;
-    @UriParam(description = "Specifies whether to test the connection on startup."
-                            + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
-                            + " If a connection cannot be granted then Camel throws an exception on startup."
-                            + " This ensures that Camel is not started with failed connections."
-                            + " The JMS producers is tested as well.")
+
+    @UriParam(
+            description = "Specifies whether to test the connection on startup."
+                    + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
+                    + " If a connection cannot be granted then Camel throws an exception on startup."
+                    + " This ensures that Camel is not started with failed connections."
+                    + " The JMS producers is tested as well.")
     private boolean testConnectionOnStartup;
-    @UriParam(label = "advanced",
-              description = "To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message.")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "To use a custom MessageConverter so you can be in control how to map to/from a org.springframework.amqp.core.Message.")
     private MessageConverter messageConverter;
-    @UriParam(label = "advanced",
-              description = "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "To use a custom MessagePropertiesConverter so you can be in control how to map to/from a org.springframework.amqp.core.MessageProperties.")
     private MessagePropertiesConverter messagePropertiesConverter;
-    @UriParam(label = "advanced", prefix = ARG_PREFIX, multiValue = true,
-              description = "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
+
+    @UriParam(
+            label = "advanced",
+            prefix = ARG_PREFIX,
+            multiValue = true,
+            description =
+                    "Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each element:"
                             + " arg.consumer. arg.exchange. arg.queue. arg.binding. arg.dlq.exchange. arg.dlq.queue. arg.dlq.binding."
                             + " For example to declare a queue with message ttl argument: args=arg.queue.x-message-ttl=60000")
     private Map<String, Object> args;
-    @UriParam(label = "consumer",
-              description = "Flag controlling the behaviour of the container with respect to message acknowledgement. The most common usage is to let the container handle the acknowledgements"
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Flag controlling the behaviour of the container with respect to message acknowledgement. The most common usage is to let the container handle the acknowledgements"
                             + " (so the listener doesn't need to know about the channel or the message)."
                             + " Set to AcknowledgeMode.MANUAL if the listener will send the acknowledgements itself using Channel.basicAck(long, boolean). Manual acks are consistent with either a transactional or non-transactional channel,"
                             + " but if you are doing no other work on the channel at the same other than receiving a single message then the transaction is probably unnecessary."
                             + " Set to AcknowledgeMode.NONE to tell the broker not to expect any acknowledgements, and it will assume all messages are acknowledged as soon as they are sent (this is autoack in native Rabbit broker terms)."
                             + " If AcknowledgeMode.NONE then the channel cannot be transactional (so the container will fail on start up if that flag is accidentally set).")
     private AcknowledgeMode acknowledgeMode = AcknowledgeMode.AUTO;
+
     @UriParam(label = "consumer", description = "Set to true for an exclusive consumer")
     private boolean exclusive;
+
     @UriParam(label = "consumer", description = "Set to true for an no-local consumer")
     private boolean noLocal;
+
     @UriParam(label = "common", description = "The name of the dead letter exchange")
     private String deadLetterExchange;
+
     @UriParam(label = "common", description = "The name of the dead letter queue")
     private String deadLetterQueue;
+
     @UriParam(label = "common", description = "The routing key for the dead letter exchange")
     private String deadLetterRoutingKey;
-    @UriParam(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic",
-              description = "The type of the dead letter exchange")
+
+    @UriParam(
+            label = "common",
+            defaultValue = "direct",
+            enums = "direct,fanout,headers,topic",
+            description = "The type of the dead letter exchange")
     private String deadLetterExchangeType = "direct";
-    @UriParam(label = "common",
-              description = "Specifies whether Camel ignores the ReplyTo header in messages. If true, Camel does not send a reply back to"
+
+    @UriParam(
+            label = "common",
+            description =
+                    "Specifies whether Camel ignores the ReplyTo header in messages. If true, Camel does not send a reply back to"
                             + " the destination specified in the ReplyTo header. You can use this option if you want Camel to consume from a"
                             + " route and you do not want Camel to automatically send back a reply message because another component in your code"
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
-    @UriParam(label = "producer",
-              description = "Specifies whether the producer should auto declare binding between exchange, queue and routing key when starting.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "Specifies whether the producer should auto declare binding between exchange, queue and routing key when starting.")
     private boolean autoDeclareProducer;
-    @UriParam(label = "producer",
-              description = "This can be used if we need to declare the queue but not the exchange.")
+
+    @UriParam(
+            label = "producer",
+            description = "This can be used if we need to declare the queue but not the exchange.")
     private boolean skipDeclareExchange;
-    @UriParam(label = "producer",
-              description = "If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key.")
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "If true the producer will not declare and bind a queue. This can be used for directing messages via an existing routing key.")
     private boolean skipDeclareQueue;
-    @UriParam(label = "producer",
-              description = "If true the queue will not be bound to the exchange after declaring it.")
+
+    @UriParam(
+            label = "producer",
+            description = "If true the queue will not be bound to the exchange after declaring it.")
     private boolean skipBindQueue;
-    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "30000",
-              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
+
+    @UriParam(
+            label = "producer",
+            javaType = "java.time.Duration",
+            defaultValue = "30000",
+            description =
+                    "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
                             + " The default value is 30 seconds. A negative value indicates an indefinite timeout (Beware that this will cause a memory leak if a reply is not received).")
     private long replyTimeout = 30000;
-    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
-              description = "Specify the timeout in milliseconds to be used when waiting for a message sent to be confirmed by RabbitMQ when doing send only messaging (InOnly)."
+
+    @UriParam(
+            label = "producer",
+            javaType = "java.time.Duration",
+            defaultValue = "5000",
+            description =
+                    "Specify the timeout in milliseconds to be used when waiting for a message sent to be confirmed by RabbitMQ when doing send only messaging (InOnly)."
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long confirmTimeout = 5000;
-    @UriParam(label = "producer", enums = "auto,enabled,disabled", defaultValue = "auto",
-              description = "Controls whether to wait for confirms. The connection factory must be configured for publisher confirms and this method."
+
+    @UriParam(
+            label = "producer",
+            enums = "auto,enabled,disabled",
+            defaultValue = "auto",
+            description =
+                    "Controls whether to wait for confirms. The connection factory must be configured for publisher confirms and this method."
                             + " auto = Camel detects if the connection factory uses confirms or not. disabled = Confirms is disabled. enabled = Confirms is enabled.")
     private String confirm = "auto";
-    @UriParam(label = "producer", defaultValue = "false",
-              description = "Use a separate connection for publishers and consumers")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "false",
+            description = "Use a separate connection for publishers and consumers")
     private boolean usePublisherConnection;
-    @UriParam(label = "producer", defaultValue = "false",
-              description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "false",
+            description =
+                    "Whether to allow sending messages with no body. If this option is false and the message body is null, then an MessageConversionException is thrown.")
     private boolean allowNullBody;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
-    @UriParam(label = "consumer,advanced",
-              description = "Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Tell the broker how many messages to send in a single request. Often this can be set quite high to improve throughput.")
     private Integer prefetchCount;
-    @UriParam(label = "consumer,advanced", defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER, enums = "DMLC,SMLC",
-              description = "The type of the MessageListenerContainer")
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = DIRECT_MESSAGE_LISTENER_CONTAINER,
+            enums = "DMLC,SMLC",
+            description = "The type of the MessageListenerContainer")
     private String messageListenerContainerType = DIRECT_MESSAGE_LISTENER_CONTAINER;
+
     @UriParam(label = "consumer,advanced", description = "The number of consumers")
     private Integer concurrentConsumers;
+
     @UriParam(label = "consumer,advanced", description = "The maximum number of consumers (available only with SMLC)")
     private Integer maxConcurrentConsumers;
-    @UriParam(label = "consumer,advanced", description = "Custom retry configuration to use. "
-                                                         + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Custom retry configuration to use. "
+                            + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
     private RetryOperationsInterceptor retry;
-    @UriParam(label = "consumer", defaultValue = "5",
-              description = "How many times a Rabbitmq consumer will try the same message if Camel failed to process the message (The number of attempts includes the initial try)")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "5",
+            description =
+                    "How many times a Rabbitmq consumer will try the same message if Camel failed to process the message (The number of attempts includes the initial try)")
     private int maximumRetryAttempts = 5;
-    @UriParam(label = "consumer", defaultValue = "1000",
-              description = "Delay in millis a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "1000",
+            description =
+                    "Delay in millis a Rabbitmq consumer will wait before redelivering a message that Camel failed to process")
     private int retryDelay = 1000;
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "Whether a Rabbitmq consumer should reject the message without requeuing. This enables failed messages to be sent to a Dead Letter Exchange/Queue, if the broker is so configured.")
     private boolean rejectAndDontRequeue = true;
 
     public SpringRabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
@@ -578,8 +695,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         Exchange exchange = super.createExchange();
         exchange.getMessage().setBody(body);
 
-        Map<String, Object> headers
-                = getMessagePropertiesConverter().fromMessageProperties(message.getMessageProperties(), exchange);
+        Map<String, Object> headers =
+                getMessagePropertiesConverter().fromMessageProperties(message.getMessageProperties(), exchange);
         if (!headers.isEmpty()) {
             exchange.getMessage().setHeaders(headers);
         }
@@ -708,12 +825,16 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                     admin.declareQueue(rabbitQueue);
 
                     Binding binding = new Binding(
-                            rabbitQueue.getName(), Binding.DestinationType.QUEUE, rabbitExchange.getName(),
+                            rabbitQueue.getName(),
+                            Binding.DestinationType.QUEUE,
+                            rabbitExchange.getName(),
                             deadLetterRoutingKey,
                             getDlqBindingArgs());
                     admin.declareBinding(binding);
 
-                    LOG.info("Auto-declaring durable DeadLetterExchange: {} routingKey: {}", deadLetterExchange,
+                    LOG.info(
+                            "Auto-declaring durable DeadLetterExchange: {} routingKey: {}",
+                            deadLetterExchange,
                             deadLetterRoutingKey);
                 }
             }
@@ -724,10 +845,13 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 boolean durable = parseArgsBoolean(map, "durable", "true");
                 boolean autoDelete = parseArgsBoolean(map, "autoDelete", "false");
                 if (!durable || autoDelete) {
-                    LOG.info("Auto-declaring a non-durable or auto-delete Exchange ({}) durable:{}, auto-delete:{}. "
-                             + "It will be deleted by the broker if it shuts down, and can be redeclared by closing and "
-                             + "reopening the connection.",
-                            exchangeName, durable, autoDelete);
+                    LOG.info(
+                            "Auto-declaring a non-durable or auto-delete Exchange ({}) durable:{}, auto-delete:{}. "
+                                    + "It will be deleted by the broker if it shuts down, and can be redeclared by closing and "
+                                    + "reopening the connection.",
+                            exchangeName,
+                            durable,
+                            autoDelete);
                 }
 
                 ExchangeBuilder eb = new ExchangeBuilder(exchangeName, getExchangeType());
@@ -745,7 +869,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             String autoDeleteDefault = "false";
             boolean generateUniqueQueue = false;
             if (queuesToDeclare == null) {
-                // no explicit queue names so use a single blank so we can create a single new unique queue for the consumer
+                // no explicit queue names so use a single blank so we can create a single new unique queue for the
+                // consumer
                 queuesToDeclare = " ";
                 generateUniqueQueue = true;
             }
@@ -785,10 +910,14 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 String qn = queue;
                 if (!skipDeclareQueue) {
                     if (!durable || autoDelete || exclusive) {
-                        LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ({})"
-                                 + "durable:{}, auto-delete:{}, exclusive:{}. It will be redeclared if the broker stops and "
-                                 + "is restarted while the connection factory is alive, but all messages will be lost.",
-                                rabbitQueue.getName(), durable, autoDelete, exclusive);
+                        LOG.info(
+                                "Auto-declaring a non-durable, auto-delete, or exclusive Queue ({})"
+                                        + "durable:{}, auto-delete:{}, exclusive:{}. It will be redeclared if the broker stops and "
+                                        + "is restarted while the connection factory is alive, but all messages will be lost.",
+                                rabbitQueue.getName(),
+                                durable,
+                                autoDelete,
+                                exclusive);
                     }
                     qn = admin.declareQueue(rabbitQueue);
                     // if we auto created a new unique queue then the container needs to know the queue name
@@ -798,9 +927,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                 }
                 if (!skipBindQueue) {
                     // bind queue to exchange
-                    Binding binding = new Binding(
-                            qn, Binding.DestinationType.QUEUE, exchangeName, routingKey,
-                            getBindingArgs());
+                    Binding binding =
+                            new Binding(qn, Binding.DestinationType.QUEUE, exchangeName, routingKey, getBindingArgs());
                     admin.declareBinding(binding);
                 }
             }
@@ -847,5 +975,4 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
             args.put(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean((String) arg));
         }
     }
-
 }

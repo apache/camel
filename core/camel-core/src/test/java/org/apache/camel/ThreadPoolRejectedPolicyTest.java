@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -31,15 +34,13 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
     @Test
     public void testAbortAsRejectedExecutionHandler() {
 
-        final ExecutorService executorService
-                = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
+        final ExecutorService executorService =
+                createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
 
         final MockCallable<String> task1 = new MockCallable<>();
         final Future<?> result1 = executorService.submit(task1);
@@ -47,7 +48,9 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         final Future<?> result2 = executorService.submit(task2);
         final MockCallable<String> task3 = new MockCallable<>();
 
-        Assertions.assertThrows(RejectedExecutionException.class, () -> executorService.submit(task3),
+        Assertions.assertThrows(
+                RejectedExecutionException.class,
+                () -> executorService.submit(task3),
                 "Third task should have been rejected by a threadpool is full with 1 task and queue is full with 1 task.");
 
         shutdownAndAwait(executorService);
@@ -60,8 +63,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testAbortAsRejectedExecutionHandlerWithRejectableTasks() {
 
-        final ExecutorService executorService
-                = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
+        final ExecutorService executorService =
+                createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -84,8 +87,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testCallerRunsAsRejectedExecutionHandler() {
 
-        final ExecutorService executorService
-                = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
+        final ExecutorService executorService =
+                createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
 
         final MockRunnable task1 = new MockRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -104,8 +107,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     @Test
     public void testCallerRunsAsRejectedExecutionHandlerWithRejectableTasks() {
 
-        final ExecutorService executorService
-                = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
+        final ExecutorService executorService =
+                createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
 
         final MockRejectableRunnable task1 = new MockRejectableRunnable();
         final Future<?> result1 = executorService.submit(task1);
@@ -129,7 +132,8 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
     private void shutdownAndAwait(final ExecutorService executorService) {
         executorService.shutdown();
         try {
-            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
+            assertTrue(
+                    executorService.awaitTermination(10, TimeUnit.SECONDS),
                     "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
         } catch (InterruptedException e) {
             fail("Test ExecutorService shutdown is not expected to be interrupted.");

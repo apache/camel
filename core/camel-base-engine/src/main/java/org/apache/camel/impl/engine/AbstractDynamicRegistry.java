@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.AbstractMap;
@@ -95,7 +96,9 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
         // we want endpoint or transformer to be static if they are part of
         // starting up camel, or if new routes are being setup/added or routes started later
-        if (!context.isStarted() || context.getCamelContextExtension().isSetupRoutes() || routeController.isStartingRoutes()) {
+        if (!context.isStarted()
+                || context.getCamelContextExtension().isSetupRoutes()
+                || routeController.isStartingRoutes()) {
             answer = staticMap.put(key, obj);
         } else {
             answer = dynamicMap.put(key, obj);
@@ -152,9 +155,8 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
         return new AbstractSet<>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
-                return new CompoundIterator<>(
-                        Arrays.asList(
-                                staticMap.entrySet().iterator(), dynamicMap.entrySet().iterator()));
+                return new CompoundIterator<>(Arrays.asList(
+                        staticMap.entrySet().iterator(), dynamicMap.entrySet().iterator()));
             }
 
             @Override
@@ -246,5 +248,4 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
     public String toString() {
         return "Registry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
     }
-
 }

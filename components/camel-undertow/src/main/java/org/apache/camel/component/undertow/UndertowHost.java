@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
@@ -44,7 +45,8 @@ public interface UndertowHost {
      * @return                  the given {@code handler} or a different {@link HttpHandler} that has been registered
      *                          with the given {@link HttpHandlerRegistrationInfo} earlier.
      */
-    HttpHandler registerHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
+    HttpHandler registerHandler(
+            UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler);
 
     /**
      * Unregister a handler with the given {@link HttpHandlerRegistrationInfo}. Note that if
@@ -54,5 +56,4 @@ public interface UndertowHost {
      * to unregister the associated handler completely.
      */
     void unregisterHandler(UndertowConsumer consumer, HttpHandlerRegistrationInfo registrationInfo);
-
 }

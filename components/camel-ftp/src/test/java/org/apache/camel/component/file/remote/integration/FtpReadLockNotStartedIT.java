@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.nio.file.Path;
@@ -46,7 +47,7 @@ public class FtpReadLockNotStartedIT extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/notstarted?password=admin&processStrategy=#myLock&idempotent=true";
+                + "/notstarted?password=admin&processStrategy=#myLock&idempotent=true";
     }
 
     @Test
@@ -54,7 +55,8 @@ public class FtpReadLockNotStartedIT extends FtpServerTestSupport {
         FtpConsumer consumer = (FtpConsumer) context.getRoute("myRoute").getConsumer();
         Assertions.assertTrue(consumer.getEndpoint().isIdempotent());
         Assertions.assertTrue(consumer.getEndpoint().getIdempotentEager());
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) consumer.getEndpoint().getIdempotentRepository();
+        MemoryIdempotentRepository repo =
+                (MemoryIdempotentRepository) consumer.getEndpoint().getIdempotentRepository();
         Assertions.assertEquals(0, repo.getCacheSize());
 
         context.getRouteController().startAllRoutes();
@@ -62,16 +64,14 @@ public class FtpReadLockNotStartedIT extends FtpServerTestSupport {
         // this file is not okay and is not started
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        template.sendBodyAndHeader("file:{{ftp.root.dir}}/notstarted", "Bye World", Exchange.FILE_NAME,
-                "bye.txt");
+        template.sendBodyAndHeader("file:{{ftp.root.dir}}/notstarted", "Bye World", Exchange.FILE_NAME, "bye.txt");
         mock.assertIsSatisfied(2000);
         Assertions.assertEquals(0, repo.getCacheSize());
 
         // this file is okay
         mock.reset();
         mock.expectedMessageCount(1);
-        template.sendBodyAndHeader("file:{{ftp.root.dir}}/notstarted", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader("file:{{ftp.root.dir}}/notstarted", "Hello World", Exchange.FILE_NAME, "hello.txt");
         mock.assertIsSatisfied();
 
         Awaitility.await().untilAsserted(() -> {
@@ -84,7 +84,9 @@ public class FtpReadLockNotStartedIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).routeId("myRoute").autoStartup(false)
+                from(getFtpUrl())
+                        .routeId("myRoute")
+                        .autoStartup(false)
                         .to(TestSupport.fileUri(testDirectory, "out"), "mock:result");
             }
         };
@@ -100,5 +102,4 @@ public class FtpReadLockNotStartedIT extends FtpServerTestSupport {
             return "hello.txt".equals(name);
         }
     }
-
 }

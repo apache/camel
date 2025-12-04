@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
@@ -63,7 +64,8 @@ public class SourceDevConsole extends AbstractDevConsole {
                 loc = LoggerHelper.stripSourceLocationLineNumber(loc);
                 StringBuilder code = new StringBuilder();
                 try {
-                    Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
+                    Resource resource =
+                            PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
                     if (resource != null) {
                         if (!sb.isEmpty()) {
                             sb.append("\n");
@@ -135,7 +137,8 @@ public class SourceDevConsole extends AbstractDevConsole {
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             List<Route> routes = getCamelContext().getRoutes();
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
@@ -166,5 +169,4 @@ public class SourceDevConsole extends AbstractDevConsole {
         // sort by id
         return o1.getRouteId().compareTo(o2.getRouteId());
     }
-
 }

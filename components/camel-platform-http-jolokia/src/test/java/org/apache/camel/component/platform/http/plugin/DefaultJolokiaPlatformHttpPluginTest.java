@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.plugin;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -29,17 +33,15 @@ import org.jolokia.server.core.http.HttpRequestHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
 
     @Test
     public void jolokiaPlatformHttpPluginContextTest() throws Exception {
         PlatformHttpPluginRegistry registry = resolvePlatformHttpPluginRegistry();
         Assertions.assertNotNull(registry);
-        DefaultJolokiaPlatformHttpPlugin plugin = registry
-                .resolvePluginById("jolokia", DefaultJolokiaPlatformHttpPlugin.class).orElseThrow();
+        DefaultJolokiaPlatformHttpPlugin plugin = registry.resolvePluginById(
+                        "jolokia", DefaultJolokiaPlatformHttpPlugin.class)
+                .orElseThrow();
         Assertions.assertNotNull(plugin);
         HttpRequestHandler handler = plugin.getJolokiaRequestHandler();
 
@@ -60,9 +62,7 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
 
     private PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
         Optional<PlatformHttpPluginRegistry> result = ResolverHelper.resolveService(
-                context,
-                PlatformHttpPluginRegistry.FACTORY,
-                PlatformHttpPluginRegistry.class);
+                context, PlatformHttpPluginRegistry.FACTORY, PlatformHttpPluginRegistry.class);
         return result.orElse(null);
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit.rule.mllp;
 
 import java.io.BufferedOutputStream;
@@ -66,9 +67,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
     /**
      * Use this constructor to avoid having the connection started by JUnit (since the port is still -1)
      */
-    public MllpClientResource() {
-
-    }
+    public MllpClientResource() {}
 
     public MllpClientResource(int port) {
         this.mllpPort = port;
@@ -354,7 +353,8 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
                         throw new MllpJUnitResourceCorruptFrameException("Received START_OF_BLOCK before END_OF_BLOCK");
                     case END_OF_BLOCK:
                         if (END_OF_DATA != inputStream.read()) {
-                            throw new MllpJUnitResourceCorruptFrameException("END_OF_BLOCK was not followed by END_OF_DATA");
+                            throw new MllpJUnitResourceCorruptFrameException(
+                                    "END_OF_BLOCK was not followed by END_OF_DATA");
                         }
                         readingMessage = false;
                         break;
@@ -366,7 +366,9 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
             if (0 < acknowledgement.length()) {
                 log.error("Timeout waiting for acknowledgement", timeoutEx);
             } else {
-                log.error("Timeout while reading acknowledgement\n{}", acknowledgement.toString().replace('\r', '\n'),
+                log.error(
+                        "Timeout while reading acknowledgement\n{}",
+                        acknowledgement.toString().replace('\r', '\n'),
                         timeoutEx);
             }
             throw new MllpJUnitResourceTimeoutException("Timeout while reading acknowledgement", timeoutEx);

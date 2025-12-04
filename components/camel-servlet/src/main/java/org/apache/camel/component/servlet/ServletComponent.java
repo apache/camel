@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import java.net.URI;
@@ -49,27 +50,35 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
     private static final Logger LOG = LoggerFactory.getLogger(ServletComponent.class);
 
-    @Metadata(label = "consumer", defaultValue = "CamelServlet",
-              description = "Default name of servlet to use. The default name is CamelServlet.")
+    @Metadata(
+            label = "consumer",
+            defaultValue = "CamelServlet",
+            description = "Default name of servlet to use. The default name is CamelServlet.")
     private String servletName = "CamelServlet";
-    @Metadata(label = "consumer,advanced", description = "To use a custom org.apache.camel.component.servlet.HttpRegistry.")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description = "To use a custom org.apache.camel.component.servlet.HttpRegistry.")
     private HttpRegistry httpRegistry;
-    @Metadata(label = "consumer,advanced",
-              description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange."
+
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange."
                             + " The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
                             + " Remove disableStreamCache to use AttachmentMultipartBinding."
                             + " This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.")
     private boolean attachmentMultipartBinding;
-    @Metadata(label = "consumer,advanced",
-              description = "Whitelist of accepted filename extensions for accepting uploaded files."
-                            + " Multiple extensions can be separated by comma, such as txt,xml.")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description = "Whitelist of accepted filename extensions for accepting uploaded files."
+                    + " Multiple extensions can be separated by comma, such as txt,xml.")
     private String fileNameExtWhitelist;
 
-    public ServletComponent() {
-    }
+    public ServletComponent() {}
 
-    public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {
-    }
+    public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -82,15 +91,16 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
         String filteredServletName = getAndRemoveParameter(parameters, "servletName", String.class, getServletName());
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
-        HeaderFilterStrategy headerFilterStrategy
-                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        HeaderFilterStrategy headerFilterStrategy =
+                resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
-        Boolean filteredAttachmentMultipartBinding
-                = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
+        Boolean filteredAttachmentMultipartBinding =
+                getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
         Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
 
         if (lenientContextPath()) {
-            // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
+            // the uri must have a leading slash for the context-path matching to work with servlet, and it can be
+            // something people
             // forget to add and then the servlet consumer cannot match the context-path as would have been expected
             String scheme = StringHelper.before(uri, ":");
             String after = StringHelper.after(uri, ":");
@@ -161,7 +171,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             } else if (!disableStreamCache) {
                 throw new IllegalArgumentException(
                         "The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
-                                                   + " Remove disableStreamCache to use AttachmentMultipartBinding");
+                                + " Remove disableStreamCache to use AttachmentMultipartBinding");
             }
         }
 
@@ -260,25 +270,40 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
     @Override
     public Consumer createConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
-        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, configuration,
-                parameters, false);
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, configuration, parameters, false);
     }
 
     @Override
     public Consumer createApiConsumer(
-            CamelContext camelContext, Processor processor, String contextPath,
-            RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            Processor processor,
+            String contextPath,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
         return doCreateConsumer(camelContext, processor, "GET", contextPath, null, configuration, parameters, true);
     }
 
     Consumer doCreateConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            RestConfiguration configuration, Map<String, Object> parameters, boolean api)
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            RestConfiguration configuration,
+            Map<String, Object> parameters,
+            boolean api)
             throws Exception {
 
         String path = basePath;
@@ -329,7 +354,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+        if (config.getConsumerProperties() != null
+                && !config.getConsumerProperties().isEmpty()) {
             setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
@@ -344,7 +370,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), "servlet");
 
             // configure additional options on servlet configuration
-            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            if (config.getComponentProperties() != null
+                    && !config.getComponentProperties().isEmpty()) {
                 setProperties(this, config.getComponentProperties());
             }
         } catch (IllegalArgumentException e) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.Map;
@@ -43,7 +44,11 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
     }
 
     protected String buildPathParameter(
-            String syntax, String uri, String name, Object defaultValue, boolean required,
+            String syntax,
+            String uri,
+            String name,
+            Object defaultValue,
+            boolean required,
             Map<String, Object> parameters) {
         Object obj = parameters.remove(name);
         if (ObjectHelper.isEmpty(obj) && defaultValue != null && required) {
@@ -125,5 +130,4 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
         }
         return uri;
     }
-
 }

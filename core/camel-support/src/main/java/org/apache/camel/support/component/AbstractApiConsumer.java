@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.HashMap;
@@ -28,8 +29,7 @@ import org.apache.camel.support.ScheduledPollConsumer;
 /**
  * Abstract base class for API Component Consumers.
  */
-public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
-        extends ScheduledPollConsumer
+public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extends ScheduledPollConsumer
         implements PropertyNamesInterceptor, PropertiesInterceptor, ResultInterceptor {
 
     // API Endpoint

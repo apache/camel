@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -24,21 +25,23 @@ import org.junit.jupiter.api.Test;
 public class ScriptingWithPipesITCase extends JBangTestSupport {
     @Test
     public void testPipeScript() throws IOException {
-        newFileInDataFolder("UpperCase.java",
-                "///usr/bin/env jbang --quiet camel@apache/camel script \"$0\" \"$@\" ; exit $?\n" +
-                                              "import org.apache.camel.builder.RouteBuilder;\n" +
-                                              "\n" +
-                                              "public class UpperCase extends RouteBuilder {\n" +
-                                              "    @Override\n" +
-                                              "    public void configure() {\n" +
-                                              "        from(\"stream:in\")\n" +
-                                              "                .setBody()\n" +
-                                              "                .simple(\"${body.toUpperCase()}\")\n" +
-                                              "                .to(\"stream:out\");\n" +
-                                              "    }\n" +
-                                              "}");
+        newFileInDataFolder(
+                "UpperCase.java",
+                "///usr/bin/env jbang --quiet camel@apache/camel script \"$0\" \"$@\" ; exit $?\n"
+                        + "import org.apache.camel.builder.RouteBuilder;\n"
+                        + "\n"
+                        + "public class UpperCase extends RouteBuilder {\n"
+                        + "    @Override\n"
+                        + "    public void configure() {\n"
+                        + "        from(\"stream:in\")\n"
+                        + "                .setBody()\n"
+                        + "                .simple(\"${body.toUpperCase()}\")\n"
+                        + "                .to(\"stream:out\");\n"
+                        + "    }\n"
+                        + "}");
         execInContainer(String.format("chmod +x %s/UpperCase.java", mountPoint()));
-        execInContainer(String.format("echo \"hello camel\" | %s/UpperCase.java > %s/hello.txt", mountPoint(), mountPoint()));
+        execInContainer(
+                String.format("echo \"hello camel\" | %s/UpperCase.java > %s/hello.txt", mountPoint(), mountPoint()));
         assertFileInDataFolderContains("hello.txt", "HELLO CAMEL");
     }
 }

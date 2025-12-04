@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -139,8 +140,10 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("gold-customer[foo]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith(
-                    "Cannot set property: gold-customer[foo] as either a Map/List/array because target bean is not a Map, List or array type"));
+            assertTrue(
+                    iae.getMessage()
+                            .startsWith(
+                                    "Cannot set property: gold-customer[foo] as either a Map/List/array because target bean is not a Map, List or array type"));
         }
     }
 
@@ -169,7 +172,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Map<String, Company> works; // should auto-create this via the
-                                           // setter
+        // setter
         private boolean goldCustomer;
 
         public int getAge() {
@@ -204,5 +207,4 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
             this.goldCustomer = goldCustomer;
         }
     }
-
 }

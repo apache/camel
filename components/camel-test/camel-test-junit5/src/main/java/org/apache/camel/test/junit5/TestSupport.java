@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5;
+
+import static org.apache.camel.test.junit5.util.ExtensionHelper.normalizeUri;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,12 +60,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.util.ExtensionHelper.normalizeUri;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Provides utility methods for camel test purpose (builders, assertions, endpoint resolutions, file helpers).
  */
@@ -66,8 +67,7 @@ public final class TestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
-    private TestSupport() {
-    }
+    private TestSupport() {}
 
     // -------------------------------------------------------------------------
     // Builder methods for expressions used when testing
@@ -124,8 +124,10 @@ public final class TestSupport {
      */
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
-        assertTrue(expectedType.isInstance(value), "Object should be of type " + expectedType.getName() + " but was: " + value
-                                                   + " with the type: " + value.getClass().getName());
+        assertTrue(
+                expectedType.isInstance(value),
+                "Object should be of type " + expectedType.getName() + " but was: " + value + " with the type: "
+                        + value.getClass().getName());
         return expectedType.cast(value);
     }
 
@@ -154,7 +156,8 @@ public final class TestSupport {
     /**
      * Asserts that the given exchange has a given expectedBody on the IN message.
      */
-    public static void assertInMessageBodyEquals(Exchange exchange, Object expectedBody) throws InvalidPayloadException {
+    public static void assertInMessageBodyEquals(Exchange exchange, Object expectedBody)
+            throws InvalidPayloadException {
         assertNotNull(exchange, "Should have a response exchange");
 
         Object actualBody;
@@ -260,7 +263,8 @@ public final class TestSupport {
         Language language = assertResolveLanguage(context, languageName);
 
         Expression expression = language.createExpression(expressionText);
-        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         assertExpression(expression, exchange, expectedValue);
     }
@@ -285,7 +289,9 @@ public final class TestSupport {
      * prefix.
      */
     public static <T> List<T> assertListSize(String brokenAssertionMessagePrefix, List<T> list, int expectedSize) {
-        assertEquals(expectedSize, list.size(),
+        assertEquals(
+                expectedSize,
+                list.size(),
                 brokenAssertionMessagePrefix + " should be of size: " + expectedSize + " but is: " + list);
         return list;
     }
@@ -301,9 +307,11 @@ public final class TestSupport {
      * Asserts that a given collection has a given size. When the assertion is broken, the error message starts with a
      * given prefix.
      */
-    public static <
-            T> Collection<T> assertCollectionSize(String brokenAssertionMessagePrefix, Collection<T> list, int expectedSize) {
-        assertEquals(expectedSize, list.size(),
+    public static <T> Collection<T> assertCollectionSize(
+            String brokenAssertionMessagePrefix, Collection<T> list, int expectedSize) {
+        assertEquals(
+                expectedSize,
+                list.size(),
                 brokenAssertionMessagePrefix + " should be of size: " + expectedSize + " but is: " + list);
         return list;
     }
@@ -420,7 +428,8 @@ public final class TestSupport {
         Language language = assertResolveLanguage(context, languageName);
 
         Predicate predicate = language.createPredicate(expressionText);
-        assertNotNull(predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
 
         assertPredicate(predicate, exchange, expected);
     }
@@ -443,8 +452,8 @@ public final class TestSupport {
     /**
      * Resolves an endpoint and asserts that it is found.
      */
-    public static <
-            T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String endpointUri, Class<T> endpointType) {
+    public static <T extends Endpoint> T resolveMandatoryEndpoint(
+            CamelContext context, String endpointUri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(endpointUri, endpointType);
 
         assertNotNull(endpoint, "No endpoint found for URI: " + endpointUri);
@@ -625,9 +634,9 @@ public final class TestSupport {
     public static boolean isCamelDebugPresent() {
         // Needs to be detected before initializing and starting the camel context
         return Thread.currentThread()
-                .getContextClassLoader()
-                .getResource(String.format("%s%s", FactoryFinder.DEFAULT_PATH, Debugger.FACTORY))
-               != null;
+                        .getContextClassLoader()
+                        .getResource(String.format("%s%s", FactoryFinder.DEFAULT_PATH, Debugger.FACTORY))
+                != null;
     }
 
     public static String fileUri(Path testDirectory) {
@@ -761,28 +770,25 @@ public final class TestSupport {
         return loadExternalProperties(properties, loader, path);
     }
 
-    public static Properties loadExternalProperties(Properties properties, Class<?> clazz, String path) throws IOException {
+    public static Properties loadExternalProperties(Properties properties, Class<?> clazz, String path)
+            throws IOException {
         try (var stream = clazz.getResourceAsStream(path)) {
             properties.load(stream);
 
             return properties;
         } catch (Exception e) {
-            throw new IOException(
-                    String.format("%s could not be loaded: %s", path, e.getMessage()),
-                    e);
+            throw new IOException(String.format("%s could not be loaded: %s", path, e.getMessage()), e);
         }
     }
 
-    public static Properties loadExternalProperties(Properties properties, ClassLoader loader, String path) throws IOException {
+    public static Properties loadExternalProperties(Properties properties, ClassLoader loader, String path)
+            throws IOException {
         try (var stream = loader.getResourceAsStream(path)) {
             properties.load(stream);
 
             return properties;
         } catch (Exception e) {
-            throw new IOException(
-                    String.format("%s could not be loaded: %s", path, e.getMessage()),
-                    e);
+            throw new IOException(String.format("%s could not be loaded: %s", path, e.getMessage()), e);
         }
     }
-
 }

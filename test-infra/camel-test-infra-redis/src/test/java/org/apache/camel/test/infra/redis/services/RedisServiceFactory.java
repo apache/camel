@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class RedisServiceFactory {
-    private RedisServiceFactory() {
-
-    }
+    private RedisServiceFactory() {}
 
     public static SimpleTestServiceBuilder<RedisService> builder() {
         return new SimpleTestServiceBuilder<>("redis");
@@ -34,9 +33,7 @@ public final class RedisServiceFactory {
                 .build();
     }
 
-    public static class RedisRemoteService extends RedisRemoteInfraService implements RedisService {
-    }
+    public static class RedisRemoteService extends RedisRemoteInfraService implements RedisService {}
 
-    public static class RedisLocalContainerService extends RedisLocalContainerInfraService implements RedisService {
-    }
+    public static class RedisLocalContainerService extends RedisLocalContainerInfraService implements RedisService {}
 }

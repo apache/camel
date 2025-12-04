@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -81,13 +82,17 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
-                from("direct:start").log("Aggregator received ${body}")
+                from("direct:start")
+                        .log("Aggregator received ${body}")
                         // aggregated all use same expression and group the
                         // exchanges so we get one single exchange containing all
                         // the others
-                        .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2)
+                        .aggregate(new GroupedExchangeAggregationStrategy())
+                        .constant(true)
+                        .completionSize(2)
                         // wait for 0.5 seconds to aggregate
-                        .completionTimeout(500L).to("mock:result");
+                        .completionTimeout(500L)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

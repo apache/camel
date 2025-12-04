@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.support;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +31,8 @@ public class ReactiveStreamsTestServiceFactory implements CamelReactiveStreamsSe
      * @return               the ReactiveStreams service
      */
     @Override
-    public CamelReactiveStreamsService newInstance(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
+    public CamelReactiveStreamsService newInstance(
+            CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
         return new ReactiveStreamsTestService("test-service");
     }
 }

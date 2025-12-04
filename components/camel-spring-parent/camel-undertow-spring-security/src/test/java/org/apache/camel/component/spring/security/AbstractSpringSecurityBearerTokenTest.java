@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
 
 import java.time.Instant;
@@ -62,12 +63,13 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
 
         context.getPropertiesComponent().setLocation("ref:prop");
 
-        context.getComponent("undertow", UndertowComponent.class).setSecurityConfiguration(new SpringSecurityConfiguration() {
-            @Override
-            public Filter getSecurityFilter() {
-                return mockFilter;
-            }
-        });
+        context.getComponent("undertow", UndertowComponent.class)
+                .setSecurityConfiguration(new SpringSecurityConfiguration() {
+                    @Override
+                    public Filter getSecurityFilter() {
+                        return mockFilter;
+                    }
+                });
 
         return context;
     }
@@ -93,7 +95,8 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
         Map<String, Object> headers = new HashMap<>();
         headers.put("type", "JWT");
         headers.put("alg", "RS256");
-        Map<String, Object> claims = new KeycloakUsernameSubClaimAdapter("preffered_name").convert(claimsSet.getClaims());
+        Map<String, Object> claims =
+                new KeycloakUsernameSubClaimAdapter("preffered_name").convert(claimsSet.getClaims());
 
         JSONArray roles = new JSONArray();
         roles.appendElement(role);

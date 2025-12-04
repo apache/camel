@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test based on user forum problem.
@@ -82,9 +83,7 @@ public class ChoicePredicateThrowExceptionTest extends ContextTestSupport {
             @Override
             public void configure() {
 
-                from("direct:start")
-                        .to("direct:sub")
-                        .to("mock:result");
+                from("direct:start").to("direct:sub").to("mock:result");
 
                 from("direct:sub")
                         .errorHandler(noErrorHandler())
@@ -121,5 +120,4 @@ public class ChoicePredicateThrowExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.io.IOException;
@@ -104,7 +105,8 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
         Map<String, String> imports = new HashMap<>();
         try (ScanResult scanResult = new ClassGraph().acceptPaths("/").scan()) {
             try {
-                scanResult.getResourcesWithExtension("libsonnet")
+                scanResult
+                        .getResourcesWithExtension("libsonnet")
                         .forEachByteArrayThrowingIOException((resource, bytes) -> {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Loading DataSonnet library: {}", resource.getPath());

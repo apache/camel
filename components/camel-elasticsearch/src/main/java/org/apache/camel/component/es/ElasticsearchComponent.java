@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es;
 
 import java.util.ArrayList;
@@ -37,28 +38,40 @@ public class ElasticsearchComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private RestClient client;
+
     @Metadata
     private String hostAddresses;
+
     @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
+
     @Metadata(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT)
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
+
     @Metadata(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
+
     @Metadata(defaultValue = "false")
     private boolean enableDocumentOnlyMode;
+
     @Metadata(label = "security", secret = true)
     private String user;
+
     @Metadata(label = "security", secret = true)
     private String password;
+
     @Metadata(label = "security")
     private boolean enableSSL;
+
     @Metadata(label = "security")
     private String certificatePath;
+
     @Metadata(label = "advanced")
     private boolean enableSniffer;
+
     @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
+
     @Metadata(label = "advanced", defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
 
@@ -264,5 +277,4 @@ public class ElasticsearchComponent extends DefaultComponent {
     public void setSniffAfterFailureDelay(int sniffAfterFailureDelay) {
         this.sniffAfterFailureDelay = sniffAfterFailureDelay;
     }
-
 }

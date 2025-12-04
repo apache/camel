@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,17 +34,13 @@ import org.xnio.XnioIoThread;
 import org.xnio.channels.EmptyStreamSourceChannel;
 import org.xnio.channels.StreamSourceChannel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class DefaultUndertowHttpBindingTest {
 
     @Timeout(10)
     @Test
     public void readEntireDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
-                "",
-                "chunk",
+            "", "chunk",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -55,9 +55,7 @@ public class DefaultUndertowHttpBindingTest {
     @Test
     public void readEntireMultiDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
-                "",
-                "first ",
-                "second",
+            "", "first ", "second",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -76,10 +74,7 @@ public class DefaultUndertowHttpBindingTest {
     @Test
     public void readEntireMultiDelayedWithPausePayload() throws Exception {
         String[] delayedPayloads = new String[] {
-                "",
-                "first ",
-                "",
-                "second",
+            "", "first ", "", "second",
         };
 
         StreamSourceChannel source = source(delayedPayloads);
@@ -95,7 +90,7 @@ public class DefaultUndertowHttpBindingTest {
 
         return new EmptyStreamSourceChannel(thread()) {
             int chunk;
-            boolean mustWait;  // make sure that the caller is not spinning on read==0
+            boolean mustWait; // make sure that the caller is not spinning on read==0
 
             @Override
             public int read(ByteBuffer dst) {

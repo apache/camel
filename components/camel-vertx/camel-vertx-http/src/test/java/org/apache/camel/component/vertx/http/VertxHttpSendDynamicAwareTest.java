@@ -14,28 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.NormalizedUri;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class VertxHttpSendDynamicAwareTest extends VertxHttpTestSupport {
 
     @Test
     public void testDynamicAware() {
-        String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
+        String out =
+                fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
         assertEquals("Drinking beer", out);
 
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
-        NormalizedUri uri = NormalizedUri
-                .newNormalizedUri("vertx-http://http://localhost:" + getPort() + "?throwExceptionOnFailure=false", false);
+        NormalizedUri uri = NormalizedUri.newNormalizedUri(
+                "vertx-http://http://localhost:" + getPort() + "?throwExceptionOnFailure=false", false);
 
         // and there should only be one http endpoint as they are both on same host
         assertTrue(context.getEndpointRegistry().containsKey(uri), "Should find static uri");
@@ -51,16 +53,16 @@ public class VertxHttpSendDynamicAwareTest extends VertxHttpTestSupport {
             public void configure() {
                 from("direct:moes")
                         .toD("vertx-http:http://localhost:" + getPort()
-                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                                + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
                         .toD("vertx-http:http://localhost:" + getPort()
-                             + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                                + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("undertow:http://localhost:" + getPort() + "/?matchOnUriPrefix=true")
-                        .transform().simple("Drinking ${header.drink[0]}");
+                        .transform()
+                        .simple("Drinking ${header.drink[0]}");
             }
         };
     }
-
 }

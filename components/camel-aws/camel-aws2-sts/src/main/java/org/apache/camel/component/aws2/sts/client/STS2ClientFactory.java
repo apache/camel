@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts.client;
 
 import org.apache.camel.component.aws2.sts.STS2Configuration;
@@ -26,8 +27,7 @@ import org.apache.camel.component.aws2.sts.client.impl.STS2ClientStandardImpl;
  */
 public final class STS2ClientFactory {
 
-    private STS2ClientFactory() {
-    }
+    private STS2ClientFactory() {}
 
     /**
      * Return the correct aws STS client (based on remote vs local).

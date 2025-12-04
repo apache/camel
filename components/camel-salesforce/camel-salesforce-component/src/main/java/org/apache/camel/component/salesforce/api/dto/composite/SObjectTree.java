@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static java.util.Objects.requireNonNull;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -38,8 +41,6 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.Attributes;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.util.ObjectHelper;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Payload and response for the SObject tree Composite API. The main interface for specifying what to include in the
@@ -106,7 +107,8 @@ public final class SObjectTree implements Serializable {
      * Create new SObject tree with custom {@link ReferenceGenerator}.
      */
     public SObjectTree(final ReferenceGenerator referenceGenerator) {
-        this.referenceGenerator = requireNonNull(referenceGenerator, "You must specify the ReferenceGenerator implementation");
+        this.referenceGenerator =
+                requireNonNull(referenceGenerator, "You must specify the ReferenceGenerator implementation");
     }
 
     /**
@@ -197,8 +199,8 @@ public final class SObjectTree implements Serializable {
         if (objectType != null && !objectType.equals(givenObjectType)) {
             throw new IllegalArgumentException(
                     "SObjectTree can hold only records of the same type, previously given: " + objectType
-                                               + ", and now trying to add: "
-                                               + givenObjectType);
+                            + ", and now trying to add: "
+                            + givenObjectType);
         }
         objectType = givenObjectType;
 
@@ -236,7 +238,8 @@ public final class SObjectTree implements Serializable {
             }
         }
 
-        return StreamSupport.stream(node.getChildNodes().spliterator(), false).anyMatch(n -> setIdFor(n, referenceId, id));
+        return StreamSupport.stream(node.getChildNodes().spliterator(), false)
+                .anyMatch(n -> setIdFor(n, referenceId, id));
     }
 
     boolean updateBaseObjectId(final String id, final AbstractSObjectBase object) {
@@ -256,8 +259,9 @@ public final class SObjectTree implements Serializable {
 
         final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 
-        final Optional<PropertyDescriptor> maybeIdProperty
-                = Arrays.stream(propertyDescriptors).filter(pd -> "id".equals(pd.getName())).findFirst();
+        final Optional<PropertyDescriptor> maybeIdProperty = Arrays.stream(propertyDescriptors)
+                .filter(pd -> "id".equals(pd.getName()))
+                .findFirst();
 
         if (maybeIdProperty.isPresent()) {
             final Method readMethod = maybeIdProperty.get().getReadMethod();

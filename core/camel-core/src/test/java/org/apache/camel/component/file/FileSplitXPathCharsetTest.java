@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.InputStream;
@@ -69,10 +70,15 @@ public class FileSplitXPathCharsetTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // input: *.csv
-                from(fileUri("?charset=ISO-8859-1&include=.*\\.csv")).split().tokenize(",").to("mock:result");
+                from(fileUri("?charset=ISO-8859-1&include=.*\\.csv"))
+                        .split()
+                        .tokenize(",")
+                        .to("mock:result");
 
                 // input: *.xml
-                fromF(fileUri("?charset=ISO-8859-1&include=.*\\.xml")).split().xpath("/foo/bar/text()")
+                fromF(fileUri("?charset=ISO-8859-1&include=.*\\.xml"))
+                        .split()
+                        .xpath("/foo/bar/text()")
                         .to("mock:result");
             }
         };

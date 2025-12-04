@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +35,6 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for idempotent repository.
@@ -63,7 +64,8 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
 
         // windows need a little slack
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(0, jones.getInbox().getNewMessageCount()));
 
         // they are removed on confirm
@@ -99,7 +101,8 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(jones.uriPrefix(Protocol.pop3) + "&idempotentRepository=#myRepo&initialDelay=100&delay=100")
-                        .routeId("foo").noAutoStartup()
+                        .routeId("foo")
+                        .noAutoStartup()
                         .to("mock:result");
             }
         };

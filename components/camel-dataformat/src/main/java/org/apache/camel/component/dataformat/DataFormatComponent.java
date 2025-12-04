@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataformat;
 
 import java.util.Map;
@@ -34,8 +35,7 @@ import org.apache.camel.util.StringHelper;
 @Component("dataformat")
 public class DataFormatComponent extends DefaultComponent {
 
-    public DataFormatComponent() {
-    }
+    public DataFormatComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

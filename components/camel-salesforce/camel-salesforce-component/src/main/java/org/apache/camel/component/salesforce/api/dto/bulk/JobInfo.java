@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -66,25 +67,46 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JobInfo",
-         propOrder = {
-                 "id", "operation", "object", "createdById", "createdDate", "systemModstamp", "state", "externalIdFieldName",
-                 "concurrencyMode",
-                 "contentType", "numberBatchesQueued", "numberBatchesInProgress", "numberBatchesCompleted",
-                 "numberBatchesFailed", "numberBatchesTotal",
-                 "numberRecordsProcessed", "numberRetries", "apiVersion", "assignmentRuleId", "numberRecordsFailed",
-                 "totalProcessingTime",
-                 "apiActiveProcessingTime", "apexProcessingTime" })
+@XmlType(
+        name = "JobInfo",
+        propOrder = {
+            "id",
+            "operation",
+            "object",
+            "createdById",
+            "createdDate",
+            "systemModstamp",
+            "state",
+            "externalIdFieldName",
+            "concurrencyMode",
+            "contentType",
+            "numberBatchesQueued",
+            "numberBatchesInProgress",
+            "numberBatchesCompleted",
+            "numberBatchesFailed",
+            "numberBatchesTotal",
+            "numberRecordsProcessed",
+            "numberRetries",
+            "apiVersion",
+            "assignmentRuleId",
+            "numberRecordsFailed",
+            "totalProcessingTime",
+            "apiActiveProcessingTime",
+            "apexProcessingTime"
+        })
 public class JobInfo {
 
     protected String id;
     protected OperationEnum operation;
     protected String object;
     protected String createdById;
+
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar createdDate;
+
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar systemModstamp;
+
     protected JobStateEnum state;
     protected String externalIdFieldName;
     protected ConcurrencyModeEnum concurrencyMode;
@@ -516,5 +538,4 @@ public class JobInfo {
     public void setApexProcessingTime(Long value) {
         this.apexProcessingTime = value;
     }
-
 }

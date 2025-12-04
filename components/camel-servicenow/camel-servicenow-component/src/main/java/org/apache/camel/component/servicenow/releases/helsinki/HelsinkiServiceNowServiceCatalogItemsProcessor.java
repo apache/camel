@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.helsinki;
+
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_CART;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_CHECKOUT_GUIDE;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_PRODUCER;
+import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_SUBMIT_GUIDE;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.MediaType;
@@ -26,13 +34,6 @@ import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_RETRIEVE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_CART;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_CHECKOUT_GUIDE;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_PRODUCER;
-import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_SUBMIT_GUIDE;
 
 class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowProcessor {
 

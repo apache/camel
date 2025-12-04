@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.messagehistory;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -26,12 +33,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicrometerMessageHistoryTest extends CamelTestSupport {
 
@@ -72,11 +73,17 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
         // there should be 3 names
         assertEquals(4, registry.getMeters().size());
 
-        Timer fooTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "foo").timer();
+        Timer fooTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME)
+                .tag(NODE_ID_TAG, "foo")
+                .timer();
         assertEquals(count / 2, fooTimer.count());
-        Timer barTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "bar").timer();
+        Timer barTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME)
+                .tag(NODE_ID_TAG, "bar")
+                .timer();
         assertEquals(count / 2, barTimer.count());
-        Timer bazTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).tag(NODE_ID_TAG, "baz").timer();
+        Timer bazTimer = registry.find(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME)
+                .tag(NODE_ID_TAG, "baz")
+                .timer();
         assertEquals(count / 2, bazTimer.count());
 
         // get the message history service
@@ -96,12 +103,9 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo")
-                        .to("mock:foo").id("foo");
+                from("direct:foo").to("mock:foo").id("foo");
 
-                from("direct:bar")
-                        .to("mock:bar").id("bar")
-                        .to("mock:baz").id("baz");
+                from("direct:bar").to("mock:bar").id("bar").to("mock:baz").id("baz");
             }
         };
     }

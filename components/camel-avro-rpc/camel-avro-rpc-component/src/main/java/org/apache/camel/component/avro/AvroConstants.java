@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import org.apache.camel.spi.Metadata;
@@ -24,8 +25,9 @@ public final class AvroConstants {
     public static final String AVRO_HTTP_TRANSPORT = "http";
     public static final String AVRO_MESSAGE_NAME_SEPARATOR = "/";
 
-    @Metadata(description = "The name of the message to send. In consumer overrides message name from URI (if any)",
-              javaType = "String")
+    @Metadata(
+            description = "The name of the message to send. In consumer overrides message name from URI (if any)",
+            javaType = "String")
     public static final String AVRO_MESSAGE_NAME = "CamelAvroMessageName";
 
     private AvroConstants() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import java.io.Closeable;
@@ -143,13 +144,11 @@ public class JCacheManager<K, V> implements Closeable {
             cache = manager.getCache(cacheName);
             if (cache == null) {
                 if (!configuration.isCreateCacheIfNotExists()) {
-                    throw new IllegalStateException(
-                            "Cache " + cacheName + " does not exist and should not be created (createCacheIfNotExists=false)");
+                    throw new IllegalStateException("Cache " + cacheName
+                            + " does not exist and should not be created (createCacheIfNotExists=false)");
                 }
 
-                cache = manager.createCache(
-                        cacheName,
-                        getOrCreateCacheConfiguration());
+                cache = manager.createCache(cacheName, getOrCreateCacheConfiguration());
             }
         }
 

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IgniteCreationTest extends AbstractIgniteTest {
 
@@ -50,5 +51,4 @@ public class IgniteCreationTest extends AbstractIgniteTest {
             Ignition.stop(ignite.name(), true);
         }
     }
-
 }

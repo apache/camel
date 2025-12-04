@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RomeksExceptionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RomeksExceptionTest.class);
@@ -50,7 +51,8 @@ public class RomeksExceptionTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedBodiesReceived("<exception/>");
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.sendBodyAndHeader("direct:start", "<body/>", "route", route),
                 "Should have thrown exception");
 
@@ -82,11 +84,20 @@ public class RomeksExceptionTest extends ContextTestSupport {
 
                 onException(IllegalArgumentException.class).to("mock:exception");
 
-                from("direct:start").recipientList().simple("direct:${header.route}").to("mock:result");
+                from("direct:start")
+                        .recipientList()
+                        .simple("direct:${header.route}")
+                        .to("mock:result");
 
-                from("direct:a").setBody(constant("<some-value/>")).process(exceptionThrower).to("mock:result");
+                from("direct:a")
+                        .setBody(constant("<some-value/>"))
+                        .process(exceptionThrower)
+                        .to("mock:result");
 
-                from("direct:b").process(exceptionThrower).setBody(constant("<some-value/>")).to("mock:result");
+                from("direct:b")
+                        .process(exceptionThrower)
+                        .setBody(constant("<some-value/>"))
+                        .to("mock:result");
             }
         };
     }

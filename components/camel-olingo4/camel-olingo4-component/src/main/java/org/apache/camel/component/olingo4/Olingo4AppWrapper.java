@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
 
 import java.util.Map;
@@ -63,26 +64,27 @@ public class Olingo4AppWrapper {
 
                     final CountDownLatch latch = new CountDownLatch(1);
                     final Exception[] error = new Exception[1];
-                    olingo4App.read(null, Constants.METADATA, null, endpointHttpHeaders, new Olingo4ResponseHandler<Edm>() {
+                    olingo4App.read(
+                            null, Constants.METADATA, null, endpointHttpHeaders, new Olingo4ResponseHandler<Edm>() {
 
-                        @Override
-                        public void onResponse(Edm response, Map<String, String> responseHeaders) {
-                            edm = response;
-                            latch.countDown();
-                        }
+                                @Override
+                                public void onResponse(Edm response, Map<String, String> responseHeaders) {
+                                    edm = response;
+                                    latch.countDown();
+                                }
 
-                        @Override
-                        public void onException(Exception ex) {
-                            error[0] = ex;
-                            latch.countDown();
-                        }
+                                @Override
+                                public void onException(Exception ex) {
+                                    error[0] = ex;
+                                    latch.countDown();
+                                }
 
-                        @Override
-                        public void onCanceled() {
-                            error[0] = new RuntimeCamelException("OData HTTP request cancelled!");
-                            latch.countDown();
-                        }
-                    });
+                                @Override
+                                public void onCanceled() {
+                                    error[0] = new RuntimeCamelException("OData HTTP request cancelled!");
+                                    latch.countDown();
+                                }
+                            });
 
                     try {
                         // wait until response or timeout
@@ -93,7 +95,9 @@ public class Olingo4AppWrapper {
                             if (ex instanceof RuntimeCamelException) {
                                 throw (RuntimeCamelException) ex;
                             } else {
-                                final String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
+                                final String message = ex.getMessage() != null
+                                        ? ex.getMessage()
+                                        : ex.getClass().getName();
                                 throw new RuntimeCamelException("Error reading EDM: " + message, ex);
                             }
                         }

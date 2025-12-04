@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
+
+import static org.apache.camel.Exchange.FILE_NAME;
+import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
+import static org.apache.camel.dataformat.tarfile.TarUtils.toEntries;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,17 +54,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.Exchange.FILE_NAME;
-import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
-import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
-import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
-import static org.apache.camel.dataformat.tarfile.TarUtils.toEntries;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link TarFileDataFormat}.
@@ -169,8 +170,7 @@ class TarFileDataFormatTest extends CamelTestSupport {
     void testUntarWithCorruptedTarFile() {
         final File body = new File("src/test/resources/data/corrupt.tar");
 
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:corruptUntar", body));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:corruptUntar", body));
     }
 
     @Test
@@ -246,7 +246,6 @@ class TarFileDataFormatTest extends CamelTestSupport {
         EntryMetadata entryMetadata = tarData.get("poem.txt");
         assertEquals(TEXT.getBytes(StandardCharsets.UTF_8).length, entryMetadata.size);
         assertFalse(entryMetadata.isDirectory);
-
     }
 
     @Test
@@ -293,8 +292,7 @@ class TarFileDataFormatTest extends CamelTestSupport {
         final byte[] files = getTaredText("file");
 
         // We are only allowing 10 bytes to be decompressed, so we expect an error
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:untarMaxDecompressedSize", files));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:untarMaxDecompressedSize", files));
     }
 
     @AfterEach
@@ -312,8 +310,8 @@ class TarFileDataFormatTest extends CamelTestSupport {
                 }
                 out.write(buffer, 0, readCount);
             } catch (IllegalStateException e) {
-                //There is a change in TarArchiveInputStreamClass (since 1.20). It is possible to receive
-                //IllegalStateException("No current tar entry") instead of result -1
+                // There is a change in TarArchiveInputStreamClass (since 1.20). It is possible to receive
+                // IllegalStateException("No current tar entry") instead of result -1
                 break;
             }
         }
@@ -336,25 +334,25 @@ class TarFileDataFormatTest extends CamelTestSupport {
 
                 from("direct:tar").marshal(tar).to("mock:tar");
                 from("direct:untar").unmarshal(tar).to("mock:untar");
-                from("direct:untarWithEmptyDirectory").unmarshal(tar)
+                from("direct:untarWithEmptyDirectory")
+                        .unmarshal(tar)
                         .split(bodyAs(Iterator.class))
-                        //.streaming()
-                        //.to("file:hello_out?autoCreate=true")
+                        // .streaming()
+                        // .to("file:hello_out?autoCreate=true")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 InputStream is = new FileInputStream("src/test/resources/data/hello.tar");
 
-                                TarArchiveEntry entry
-                                        = new TarArchiveEntry((String) exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                TarArchiveEntry entry = new TarArchiveEntry(
+                                        (String) exchange.getIn().getHeader(Exchange.FILE_NAME));
                                 File outputFile = new File("hello_out", entry.getName());
                                 if (entry.isDirectory()) {
                                     outputFile.mkdirs();
                                 } else {
                                     outputFile.getParentFile().mkdirs();
-                                    try (TarArchiveInputStream debInputStream
-                                            = new ArchiveStreamFactory().createArchiveInputStream("tar",
-                                                    is)) {
+                                    try (TarArchiveInputStream debInputStream =
+                                            new ArchiveStreamFactory().createArchiveInputStream("tar", is)) {
                                         copy(debInputStream, outputFile);
                                     }
                                 }
@@ -362,7 +360,10 @@ class TarFileDataFormatTest extends CamelTestSupport {
                         })
                         .end();
                 from("direct:tarAndUntar").marshal(tar).unmarshal(tar).to("mock:tarAndUntar");
-                from("direct:tarToFile").marshal(tar).to("file:" + TEST_DIR.getPath()).to("mock:tarToFile");
+                from("direct:tarToFile")
+                        .marshal(tar)
+                        .to("file:" + TEST_DIR.getPath())
+                        .to("mock:tarToFile");
                 from("direct:dslTar").marshal(tar).to("mock:dslTar");
                 from("direct:dslUntar").unmarshal(tar).to("mock:dslUntar");
                 from("direct:corruptUntar").unmarshal(tar).to("mock:corruptUntar");
@@ -370,7 +371,9 @@ class TarFileDataFormatTest extends CamelTestSupport {
                 TarFileDataFormat maxDecompressedSizeTar = new TarFileDataFormat();
                 // Only allow 10 bytes to be decompressed
                 maxDecompressedSizeTar.setMaxDecompressedSize(10L);
-                from("direct:untarMaxDecompressedSize").unmarshal(maxDecompressedSizeTar).to("mock:untar");
+                from("direct:untarMaxDecompressedSize")
+                        .unmarshal(maxDecompressedSizeTar)
+                        .to("mock:untar");
             }
         };
     }

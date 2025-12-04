@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -109,34 +110,35 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
                 String stacktrace = "";
                 if (result.getError().isPresent()) {
-                    stacktrace = ExceptionHelper.stackTraceToString(result.getError().get());
+                    stacktrace =
+                            ExceptionHelper.stackTraceToString(result.getError().get());
                 }
 
                 CompositeData data = new CompositeDataSupport(
                         type,
                         new String[] {
-                                "id",
-                                "group",
-                                "state",
-                                "enabled",
-                                "message",
-                                "failureUri",
-                                "failureCount",
-                                "failureStackTrace",
-                                "readiness",
-                                "liveness"
+                            "id",
+                            "group",
+                            "state",
+                            "enabled",
+                            "message",
+                            "failureUri",
+                            "failureCount",
+                            "failureStackTrace",
+                            "readiness",
+                            "liveness"
                         },
                         new Object[] {
-                                result.getCheck().getId(),
-                                result.getCheck().getGroup(),
-                                result.getState().name(),
-                                result.getCheck().isEnabled(),
-                                result.getMessage().orElse(""),
-                                failureUri,
-                                failureCount,
-                                stacktrace,
-                                result.getCheck().isReadiness(),
-                                result.getCheck().isLiveness()
+                            result.getCheck().getId(),
+                            result.getCheck().getGroup(),
+                            result.getState().name(),
+                            result.getCheck().isEnabled(),
+                            result.getMessage().orElse(""),
+                            failureUri,
+                            failureCount,
+                            stacktrace,
+                            result.getCheck().isReadiness(),
+                            result.getCheck().isLiveness()
                         });
 
                 answer.put(data);

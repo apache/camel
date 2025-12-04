@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -38,23 +39,30 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @XmlAttribute(required = true)
     private String message;
+
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "INFO",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String loggingLevel;
+
     @XmlAttribute
     private String logName;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String marker;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.slf4j.Logger")
     private String logger;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String logLanguage;
 
-    public LogDefinition() {
-    }
+    public LogDefinition() {}
 
     protected LogDefinition(LogDefinition source) {
         super(source);

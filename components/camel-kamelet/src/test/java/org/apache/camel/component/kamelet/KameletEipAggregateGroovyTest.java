@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -48,19 +49,22 @@ public class KameletEipAggregateGroovyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 routeTemplate("my-aggregate")
-                        .templateBean("myAgg", "groovy",
-                                // for aggregation we need a class that has the method with how to aggregate the messages
+                        .templateBean(
+                                "myAgg",
+                                "groovy",
+                                // for aggregation we need a class that has the method with how to aggregate the
+                                // messages
                                 // the logic can of course be much more than just to append with comma
                                 "class MyAgg { String agg(b1, b2) { b1 + ',' + b2 } }; new MyAgg()")
                         // the groovy is evaluated as a script so must return an instance of the class
                         .templateParameter("count")
                         .from("kamelet:source")
                         .aggregate(constant(true))
-                            .completionSize("{{count}}")
-                            // use the groovy script bean for aggregation
-                            .aggregationStrategy("{{myAgg}}")
-                            .to("log:aggregate")
-                            .to("kamelet:sink")
+                        .completionSize("{{count}}")
+                        // use the groovy script bean for aggregation
+                        .aggregationStrategy("{{myAgg}}")
+                        .to("log:aggregate")
+                        .to("kamelet:sink")
                         .end();
 
                 from("direct:start")

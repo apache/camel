@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,20 +40,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxGroupsManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxGroupsManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxGroupsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxGroupsManagerApiMethod.class).getName();
+            .getApiName(BoxGroupsManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_GROUP_DESCRIPTION = "CamelTestGroupDescription";
     private static final String CAMEL_TEST_GROUP_NAME = "CamelTestGroup";
     private static final String CAMEL_TEST_CREATE_GROUP_NAME = "CamelTestCreateGroup";
@@ -66,8 +69,8 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.BoxGroupMembership.Role
         headers.put("CamelBox.role", null);
 
-        final com.box.sdk.BoxGroupMembership result = requestBodyAndHeaders("direct://ADDGROUPMEMBERSHIP", null,
-                headers);
+        final com.box.sdk.BoxGroupMembership result =
+                requestBodyAndHeaders("direct://ADDGROUPMEMBERSHIP", null, headers);
 
         assertNotNull(result, "addGroupMembership result");
         LOG.debug("addGroupMembership: {}", result);
@@ -188,8 +191,8 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.BoxGroupMembership.Info
         headers.put("CamelBox.info", info);
 
-        final com.box.sdk.BoxGroupMembership result = requestBodyAndHeaders("direct://UPDATEGROUPMEMBERSHIPINFO", null,
-                headers);
+        final com.box.sdk.BoxGroupMembership result =
+                requestBodyAndHeaders("direct://UPDATEGROUPMEMBERSHIPINFO", null, headers);
 
         assertNotNull(result, "updateGroupMembershipInfo result");
         LOG.debug("updateGroupMembershipInfo: {}", result);
@@ -223,15 +226,13 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
                         .to("box://" + PATH_PREFIX + "/getGroupMembershipInfo?inBody=groupMembershipId");
 
                 // test route for getGroupMemberships
-                from("direct://GETGROUPMEMBERSHIPS")
-                        .to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
+                from("direct://GETGROUPMEMBERSHIPS").to("box://" + PATH_PREFIX + "/getGroupMemberships?inBody=groupId");
 
                 // test route for updateGroupInfo
                 from("direct://UPDATEGROUPINFO").to("box://" + PATH_PREFIX + "/updateGroupInfo");
 
                 // test route for updateGroupMembershipInfo
                 from("direct://UPDATEGROUPMEMBERSHIPINFO").to("box://" + PATH_PREFIX + "/updateGroupMembershipInfo");
-
             }
         };
     }
@@ -286,12 +287,10 @@ public class BoxGroupsManagerIT extends AbstractBoxITSupport {
             return ((Collection<?>) it).size();
         } else {
             int i = 0;
-            for (@SuppressWarnings("unused")
-            Object obj : it) {
+            for (@SuppressWarnings("unused") Object obj : it) {
                 i++;
             }
             return i;
         }
-
     }
 }

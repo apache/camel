@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -41,9 +42,13 @@ public class SedaFromRouteIdTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("foo", foo.getReceivedExchanges().get(0).getFromRouteId());
-        assertEquals("seda://foo", foo.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
+        assertEquals(
+                "seda://foo",
+                foo.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
         assertEquals("bar", bar.getReceivedExchanges().get(0).getFromRouteId());
-        assertEquals("seda://bar", bar.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
+        assertEquals(
+                "seda://bar",
+                bar.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 
     @Override

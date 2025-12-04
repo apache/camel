@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -99,8 +100,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
 
     @Override
     @SuppressWarnings("unchecked")
-    public Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args)
-            throws Exception {
+    public Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args) throws Exception {
         if ("SendDynamicProcessor".equals(definitionName)) {
             String uri = (String) args[0];
             Expression expression = (Expression) args[1];
@@ -116,8 +116,20 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
             ExecutorService executor = (ExecutorService) args[1];
             boolean shutdownExecutorService = (boolean) args[2];
             return new MulticastProcessor(
-                    camelContext, null, processors, null, true, executor, shutdownExecutorService, false, false, 0,
-                    null, false, false, 0);
+                    camelContext,
+                    null,
+                    processors,
+                    null,
+                    true,
+                    executor,
+                    shutdownExecutorService,
+                    false,
+                    false,
+                    0,
+                    null,
+                    false,
+                    false,
+                    0);
         } else if ("Pipeline".equals(definitionName)) {
             List<Processor> processors = (List<Processor>) args[0];
             return Pipeline.newInstance(camelContext, processors);

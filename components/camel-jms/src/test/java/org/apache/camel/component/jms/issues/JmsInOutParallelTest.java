@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,13 +33,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsInOutParallelTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -64,21 +66,21 @@ public class JmsInOutParallelTest extends AbstractJMSTest {
                 from("direct:test")
                         .setBody(constant("1,2,3,4,5"))
                         .to(ExchangePattern.InOut, "activemq:queue:JmsInOutParallelTest.1?requestTimeout=2000")
-                        .split().tokenize(",").parallelProcessing()
+                        .split()
+                        .tokenize(",")
+                        .parallelProcessing()
                         .to(ExchangePattern.InOut, "activemq:queue:JmsInOutParallelTest.2?requestTimeout=2000")
                         .to("mock:received")
                         .end()
                         .setBody(constant("Fully done"))
                         .log("Finished");
 
-                from("activemq:queue:JmsInOutParallelTest.1")
-                        .log("Received on queue test1");
+                from("activemq:queue:JmsInOutParallelTest.1").log("Received on queue test1");
 
                 from("activemq:queue:JmsInOutParallelTest.2")
                         .log("Received on queue test2")
                         .setBody(constant("Some reply"))
                         .delay(constant(100));
-
             }
         };
     }

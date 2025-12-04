@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import java.io.InputStream;
@@ -81,7 +82,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         for (var e : openAPI.getPaths().entrySet()) {
             for (var o : e.getValue().readOperationsMap().entrySet()) {
                 Operation op = o.getValue();
-                String id = op.getOperationId() != null ? op.getOperationId() : generateOperationId(e.getKey(), o.getKey());
+                String id =
+                        op.getOperationId() != null ? op.getOperationId() : generateOperationId(e.getKey(), o.getKey());
                 ids.add(component + "://" + id);
             }
         }
@@ -95,14 +97,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         // all ids must have a route
         ids.removeAll(existing);
         if (!ids.isEmpty()) {
-            String missing = ids.stream()
-                    .sorted()
-                    .map(id -> id.replace("://", ":"))
-                    .collect(Collectors.joining("\n\t"));
+            String missing =
+                    ids.stream().sorted().map(id -> id.replace("://", ":")).collect(Collectors.joining("\n\t"));
             String msg = String.format(
                     "OpenAPI specification has %d unmapped operations to corresponding routes: %n\t%s",
-                    ids.size(),
-                    missing);
+                    ids.size(), missing);
 
             if ("fail".equalsIgnoreCase(missingOperation)) {
                 throw new IllegalArgumentException(msg);
@@ -190,9 +189,12 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     @Override
     public boolean process(
             OpenAPI openAPI,
-            Operation operation, String verb, String path,
+            Operation operation,
+            String verb,
+            String path,
             RestBindingAdvice binding,
-            Exchange exchange, AsyncCallback callback) {
+            Exchange exchange,
+            AsyncCallback callback) {
 
         exchange.setProperty(Exchange.REST_OPENAPI, openAPI);
 
@@ -351,7 +353,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                                 body = mt.getExample();
                             } else if (mt.getExamples() != null) {
                                 // grab first example
-                                Example ex = mt.getExamples().values().iterator().next();
+                                Example ex =
+                                        mt.getExamples().values().iterator().next();
                                 body = ex.getValue();
                             }
                         }
@@ -418,7 +421,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
         // automatic adjust missing operation to fail, and ignore if you use developer mode
         if (missingOperation == null) {
-            boolean dev = "dev".equalsIgnoreCase(camelContext.getCamelContextExtension().getProfile());
+            boolean dev = "dev"
+                    .equalsIgnoreCase(camelContext.getCamelContextExtension().getProfile());
             missingOperation = dev ? "mock" : "fail";
         }
     }
@@ -440,5 +444,4 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
             }
         }
     }
-
 }

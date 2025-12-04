@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import com.datasonnet.document.Document;
@@ -24,7 +25,8 @@ import org.junit.jupiter.api.Disabled;
 /**
  * Ensures that the "datasonnet" language is compliant with the typed language expectations.
  */
-class DatasonnetLanguageTest extends AbstractSingleInputTypedLanguageTest<DatasonnetExpression.Builder, DatasonnetExpression> {
+class DatasonnetLanguageTest
+        extends AbstractSingleInputTypedLanguageTest<DatasonnetExpression.Builder, DatasonnetExpression> {
 
     DatasonnetLanguageTest() {
         super("payload", LanguageBuilderFactory::datasonnet);
@@ -32,8 +34,7 @@ class DatasonnetLanguageTest extends AbstractSingleInputTypedLanguageTest<Dataso
 
     @Disabled("In this case a DefaultDocument is received and this type has no equal method implemented")
     @Override
-    void testExpressionOnly() {
-    }
+    void testExpressionOnly() {}
 
     @Override
     protected TestContext testWithTypeContext() {

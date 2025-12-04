@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.example;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringExpressionTrimTest extends SpringTestSupport {
 
@@ -48,5 +49,4 @@ public class SpringExpressionTrimTest extends SpringTestSupport {
         // the xml has whitespace noise which is not trimmed
         assertEquals("\n          Hello World\n        ", out);
     }
-
 }

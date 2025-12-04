@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -28,8 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated("This test is regularly flaky")
 public class KeyManagersParametersTest extends AbstractJsseParametersTest {
@@ -99,7 +100,9 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
     @Test
     public void testExplicitProvider() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
-        kmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).getProvider().getName());
+        kmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+                .getProvider()
+                .getName());
 
         KeyManager[] kms = kmp.createKeyManagers();
         validateKeyManagers(kms);

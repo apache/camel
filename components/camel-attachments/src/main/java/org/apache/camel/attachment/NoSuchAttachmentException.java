@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
 
 import org.apache.camel.CamelExchangeException;
@@ -34,8 +35,10 @@ public class NoSuchAttachmentException extends CamelExchangeException {
     }
 
     public NoSuchAttachmentException(Exchange exchange, String attachmentName, Class<?> type) {
-        super("No '" + attachmentName + "' attachment available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, attachmentName), exchange);
+        super(
+                "No '" + attachmentName + "' attachment available" + (type != null ? " of type: " + type.getName() : "")
+                        + reason(exchange, attachmentName),
+                exchange);
         this.attachmentName = attachmentName;
         this.type = type;
     }

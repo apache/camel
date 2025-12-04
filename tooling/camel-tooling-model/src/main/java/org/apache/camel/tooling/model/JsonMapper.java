@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.io.IOException;
@@ -41,8 +42,7 @@ import org.apache.camel.util.json.Jsoner;
 
 public final class JsonMapper {
 
-    private JsonMapper() {
-    }
+    private JsonMapper() {}
 
     public static BaseModel<?> generateModel(Path file) {
         try {
@@ -151,7 +151,10 @@ public final class JsonMapper {
             for (Map.Entry<String, Object> entry : mprap.entrySet()) {
                 JsonObject mp = (JsonObject) entry.getValue();
                 String name = entry.getKey();
-                ApiModel am = model.getApiOptions().stream().filter(a -> a.getName().equals(name)).findFirst().orElse(null);
+                ApiModel am = model.getApiOptions().stream()
+                        .filter(a -> a.getName().equals(name))
+                        .findFirst()
+                        .orElse(null);
                 if (am == null) {
                     throw new RuntimeException("Invalid json. Cannot find ApiModel with name: " + name);
                 }
@@ -160,8 +163,10 @@ public final class JsonMapper {
                     for (Map.Entry<String, Object> mme : mm.entrySet()) {
                         JsonObject mmp = (JsonObject) mme.getValue();
                         String mname = mme.getKey();
-                        ApiMethodModel amm
-                                = am.getMethods().stream().filter(a -> a.getName().equals(mname)).findFirst().orElse(null);
+                        ApiMethodModel amm = am.getMethods().stream()
+                                .filter(a -> a.getName().equals(mname))
+                                .findFirst()
+                                .orElse(null);
                         if (amm == null) {
                             throw new RuntimeException("Invalid json. Cannot find ApiMethodModel with name: " + mname);
                         }
@@ -668,7 +673,8 @@ public final class JsonMapper {
             JsonObject json = new JsonObject();
             root.put(a.getName(), json);
             if (!options) {
-                // lets be less verbose and only output these details for the api summary and not when we have all options included
+                // lets be less verbose and only output these details for the api summary and not when we have all
+                // options included
                 json.put("consumerOnly", a.isConsumerOnly());
                 json.put("producerOnly", a.isProducerOnly());
                 if (a.getDescription() != null) {
@@ -683,7 +689,8 @@ public final class JsonMapper {
             a.getMethods().forEach(m -> {
                 JsonObject mJson = new JsonObject();
                 if (!options) {
-                    // lets be less verbose and only output these details for the api summary and not when we have all options included
+                    // lets be less verbose and only output these details for the api summary and not when we have all
+                    // options included
                     if (m.getDescription() != null) {
                         mJson.put("description", m.getDescription());
                     }

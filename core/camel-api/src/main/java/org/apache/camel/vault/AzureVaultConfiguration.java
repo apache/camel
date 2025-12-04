@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,26 +26,37 @@ public class AzureVaultConfiguration extends VaultConfiguration {
 
     @Metadata
     private String vaultName;
+
     @Metadata(secret = true)
     private String clientId;
+
     @Metadata(secret = true)
     private String clientSecret;
+
     @Metadata(secret = true)
     private String tenantId;
+
     @Metadata
     private boolean azureIdentityEnabled;
+
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
+
     @Metadata
     private String secrets;
+
     @Metadata(secret = true)
     private String eventhubConnectionString;
+
     @Metadata(secret = true)
     private String blobAccessKey;
+
     @Metadata
     private String blobAccountName;
+
     @Metadata
     private String blobContainerName;
 

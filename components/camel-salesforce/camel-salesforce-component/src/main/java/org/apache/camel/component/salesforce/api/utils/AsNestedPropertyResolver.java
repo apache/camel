@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.util.Collection;
@@ -30,16 +31,12 @@ public class AsNestedPropertyResolver extends StdTypeResolverBuilder {
 
     @Override
     public TypeDeserializer buildTypeDeserializer(
-            DeserializationConfig config, JavaType baseType,
-            Collection<NamedType> subtypes) {
+            DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
 
         final PolymorphicTypeValidator subTypeValidator = verifyBaseTypeValidity(config, baseType);
 
-        TypeIdResolver idResolver = idResolver(config, baseType, subTypeValidator, subtypes,
-                false, true);
+        TypeIdResolver idResolver = idResolver(config, baseType, subTypeValidator, subtypes, false, true);
 
-        return new AsNestedPropertyDeserializer(
-                baseType, idResolver, _typeProperty, _typeIdVisible,
-                null, _includeAs);
+        return new AsNestedPropertyDeserializer(baseType, idResolver, _typeProperty, _typeIdVisible, null, _includeAs);
     }
 }

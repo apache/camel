@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyRestProducerGetUriParameterTest extends BaseJettyTest {
 
@@ -38,7 +39,11 @@ public class JettyRestProducerGetUriParameterTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort());
+                restConfiguration()
+                        .component("jetty")
+                        .producerComponent("http")
+                        .host("localhost")
+                        .port(getPort());
 
                 from("direct:start").to("rest:get:users/basic?id={id}");
 
@@ -54,5 +59,4 @@ public class JettyRestProducerGetUriParameterTest extends BaseJettyTest {
             }
         };
     }
-
 }

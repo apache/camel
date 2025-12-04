@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AggregateCompletionByBatchConsumerTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
@@ -38,7 +39,7 @@ public class AggregateCompletionByBatchConsumerTest extends ContextTestSupport {
         // we expect 4 messages since we group 4 batches
         result.expectedMessageCount(4);
 
-        //BATCH_SIZE and not BATCH_COMPLETE is used by aggregate to test for batch completion
+        // BATCH_SIZE and not BATCH_COMPLETE is used by aggregate to test for batch completion
         final Integer batch_size = Integer.valueOf(8);
 
         // then we sent the batch of message

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -47,8 +48,7 @@ public class IncomingVideo implements Serializable {
     @JsonProperty("file_size")
     private Long fileSize;
 
-    public IncomingVideo() {
-    }
+    public IncomingVideo() {}
 
     public String getFileId() {
         return fileId;

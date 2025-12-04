@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.IOException;
@@ -31,8 +32,7 @@ public final class LocalBeanRegistry extends SupplierRegistry {
 
     private final Map<String, String> destroyMethods = new HashMap<>();
 
-    public LocalBeanRegistry() {
-    }
+    public LocalBeanRegistry() {}
 
     public void registerDestroyMethod(String id, String method) {
         destroyMethods.put(id, method);

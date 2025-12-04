@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ref;
 
 import org.apache.camel.Category;
@@ -32,8 +33,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Route messages to an endpoint looked up dynamically by name in the Camel Registry.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name",
-             remote = false, category = { Category.CORE })
+@UriEndpoint(
+        firstVersion = "1.2.0",
+        scheme = "ref",
+        title = "Ref",
+        syntax = "ref:name",
+        remote = false,
+        category = {Category.CORE})
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
@@ -89,5 +95,4 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
         }
         super.doInit();
     }
-
 }

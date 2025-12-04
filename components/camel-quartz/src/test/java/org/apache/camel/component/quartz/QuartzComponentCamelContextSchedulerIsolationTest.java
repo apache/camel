@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -22,14 +26,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-
 public class QuartzComponentCamelContextSchedulerIsolationTest {
 
     @AfterAll
-    public static void afterTests() {
-    }
+    public static void afterTests() {}
 
     @Test
     public void testSchedulerIsolationUnmanaged() throws Exception {
@@ -74,5 +74,4 @@ public class QuartzComponentCamelContextSchedulerIsolationTest {
     private Scheduler getDefaultScheduler(CamelContext context) {
         return getQuartzComponent(context).getScheduler();
     }
-
 }

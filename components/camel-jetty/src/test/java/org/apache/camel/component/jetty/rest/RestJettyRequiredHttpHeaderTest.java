@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -26,26 +31,27 @@ import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 @Isolated("Run isolatedly to reduce flakiness on the CI")
 public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
 
     @Test
     public void testJettyValid() {
-        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
-                .withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
-                .withHeader("country", "uk").withBody("{ \"name\": \"Donald Duck\" }")
-                .to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
+        String out = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/json")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withHeader("country", "uk")
+                .withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update")
+                .request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
     }
 
     @Test
     public void testJettyInvalid() {
-        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader("Accept", "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{ \"name\": \"Donald Duck\" }")
@@ -64,18 +70,27 @@ public class RestJettyRequiredHttpHeaderTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         // turn on client request validation
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").param()
-                        .name("country").required(true).type(RestParamType.header).endParam().to("direct:update");
+                rest("/users/")
+                        .post("{id}/update")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .param()
+                        .name("country")
+                        .required(true)
+                        .type(RestParamType.header)
+                        .endParam()
+                        .to("direct:update");
 
-                from("direct:update")
-                        .setBody(constant("{ \"status\": \"ok\" }"));
+                from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }
-
 }

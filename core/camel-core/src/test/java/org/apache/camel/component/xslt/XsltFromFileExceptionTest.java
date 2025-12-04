@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,9 +63,12 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?moveFailed=error&move=ok&initialDelay=0&delay=10")).onException(Exception.class)
-                        .to("mock:error").end()
-                        .to("xslt:org/apache/camel/component/xslt/example.xsl").to("mock:result");
+                from(fileUri("?moveFailed=error&move=ok&initialDelay=0&delay=10"))
+                        .onException(Exception.class)
+                        .to("mock:error")
+                        .end()
+                        .to("xslt:org/apache/camel/component/xslt/example.xsl")
+                        .to("mock:result");
             }
         };
     }

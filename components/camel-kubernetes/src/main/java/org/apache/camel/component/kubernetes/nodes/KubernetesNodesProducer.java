@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.nodes;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -36,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesNodesProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesNodesProducer.class);
@@ -56,7 +57,6 @@ public class KubernetesNodesProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_NODES:
                 doList(exchange);
                 break;
@@ -94,10 +94,8 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     protected void doListNodesByLabels(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
-        NodeList nodeList = getEndpoint().getKubernetesClient()
-                .nodes()
-                .withLabels(labels)
-                .list();
+        NodeList nodeList =
+                getEndpoint().getKubernetesClient().nodes().withLabels(labels).list();
 
         prepareOutboundMessage(exchange, nodeList.getItems());
     }
@@ -121,12 +119,14 @@ public class KubernetesNodesProducer extends DefaultProducer {
         doCreateOrUpdateNode(exchange, "Create", Resource::create);
     }
 
-    private void doCreateOrUpdateNode(Exchange exchange, String operationName, Function<Resource<Node>, Node> operation) {
+    private void doCreateOrUpdateNode(
+            Exchange exchange, String operationName, Function<Resource<Node>, Node> operation) {
         String nodeName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         NodeSpec nodeSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, NodeSpec.class);
         if (ObjectHelper.isEmpty(nodeName)) {
             LOG.error("{} a specific node require specify a node name", operationName);
-            throw new IllegalArgumentException(String.format("%s a specific node require specify a node name", operationName));
+            throw new IllegalArgumentException(
+                    String.format("%s a specific node require specify a node name", operationName));
         }
         if (ObjectHelper.isEmpty(nodeSpec)) {
             LOG.error("{} a specific node require specify a node spec bean", operationName);
@@ -134,8 +134,13 @@ public class KubernetesNodesProducer extends DefaultProducer {
                     String.format("%s a specific node require specify a node spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata()
-                .withSpec(nodeSpec).build();
+        Node nodeCreating = new NodeBuilder()
+                .withNewMetadata()
+                .withName(nodeName)
+                .withLabels(labels)
+                .endMetadata()
+                .withSpec(nodeSpec)
+                .build();
         Node node = operation.apply(getEndpoint().getKubernetesClient().nodes().resource(nodeCreating));
 
         prepareOutboundMessage(exchange, node);
@@ -148,7 +153,8 @@ public class KubernetesNodesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Deleting a specific Node require specify a Node name");
         }
 
-        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();
+        List<StatusDetails> statusDetails =
+                getEndpoint().getKubernetesClient().nodes().withName(nodeName).delete();
         boolean nodeDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, nodeDeleted);

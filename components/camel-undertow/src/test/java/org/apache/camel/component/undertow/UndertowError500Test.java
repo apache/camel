@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowError500Test extends BaseUndertowTest {
 
@@ -49,7 +50,8 @@ public class UndertowError500Test extends BaseUndertowTest {
                         .to("mock:input")
                         // trigger failure by setting error code to 500
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
-                        .setBody().constant("Camel cannot do this");
+                        .setBody()
+                        .constant("Camel cannot do this");
             }
         };
     }

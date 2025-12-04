@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,15 +34,16 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
 
     @XmlAttribute
     private String message;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String markRollbackOnly;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String markRollbackOnlyLast;
 
-    public RollbackDefinition() {
-    }
+    public RollbackDefinition() {}
 
     protected RollbackDefinition(RollbackDefinition source) {
         super(source);
@@ -112,5 +114,4 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
     public void setMarkRollbackOnlyLast(String markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
     }
-
 }

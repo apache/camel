@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks;
+
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.xmlunit.builder.DiffBuilder;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -23,10 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.smooks.support.StreamUtils;
-import org.xmlunit.builder.DiffBuilder;
-
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SmooksComponentTest extends CamelTestSupport {
 
@@ -40,9 +42,13 @@ public class SmooksComponentTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.assertExchangeReceived(0);
 
-        assertFalse(DiffBuilder
-                .compare(StreamUtils.readStreamAsString(getClass().getResourceAsStream("/xml/expected-order.xml"), "UTF-8"))
-                .withTest(exchange.getIn().getBody(String.class)).ignoreComments().ignoreWhitespace().build().hasDifferences());
+        assertFalse(DiffBuilder.compare(StreamUtils.readStreamAsString(
+                        getClass().getResourceAsStream("/xml/expected-order.xml"), "UTF-8"))
+                .withTest(exchange.getIn().getBody(String.class))
+                .ignoreComments()
+                .ignoreWhitespace()
+                .build()
+                .hasDifferences());
     }
 
     @Override

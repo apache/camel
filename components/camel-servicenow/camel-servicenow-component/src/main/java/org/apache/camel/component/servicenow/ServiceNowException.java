@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.util.Collections;
@@ -61,9 +62,6 @@ public class ServiceNowException extends CamelException {
 
     @Override
     public String toString() {
-        return getMessage() != null
-                ? "" + this.status + ": " + getMessage()
-                : super.toString();
+        return getMessage() != null ? "" + this.status + ": " + getMessage() : super.toString();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
@@ -33,8 +34,9 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri(
-                        "?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10"))
-                        .convertBodyTo(String.class).to("mock:result");
+                                "?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -60,5 +62,4 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
 
         assertMockEndpointsSatisfied();
     }
-
 }

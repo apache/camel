@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -64,9 +65,11 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
                         // as we have not configured more on the aggregator it will
                         // default to aggregate the
                         // latest exchange only
-                        .aggregate(header("id")).aggregationStrategy(new UseLatestAggregationStrategy())
+                        .aggregate(header("id"))
+                        .aggregationStrategy(new UseLatestAggregationStrategy())
                         // wait for 0.5 seconds to aggregate
-                        .completionTimeout(500L).to("mock:result");
+                        .completionTimeout(500L)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

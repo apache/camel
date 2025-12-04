@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -22,6 +23,4 @@ import org.apache.camel.ErrorHandlerFactory;
  * Legacy error handler for XML DSL in camel-spring-xml
  */
 @Deprecated(since = "3.17.0")
-public interface LegacyErrorHandlerBuilder extends ErrorHandlerFactory {
-
-}
+public interface LegacyErrorHandlerBuilder extends ErrorHandlerFactory {}

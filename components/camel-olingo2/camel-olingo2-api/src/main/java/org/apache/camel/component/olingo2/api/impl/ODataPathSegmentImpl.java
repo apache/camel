@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.util.Collections;
@@ -54,5 +55,4 @@ public class ODataPathSegmentImpl implements PathSegment {
     public Map<String, List<String>> getMatrixParameters() {
         return matrixParameter;
     }
-
 }

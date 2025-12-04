@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "resume-route",
-                     description = "Resume Camel routes", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "resume-route",
+        description = "Resume Camel routes",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelRouteResumeAction extends CamelRouteAction {
 
     public CamelRouteResumeAction(CamelJBangMain main) {
@@ -32,5 +36,4 @@ public class CamelRouteResumeAction extends CamelRouteAction {
     protected void onAction(JsonObject root) {
         root.put("command", "resume");
     }
-
 }

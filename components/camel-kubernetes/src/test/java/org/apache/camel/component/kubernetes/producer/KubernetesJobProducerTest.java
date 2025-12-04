@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -39,9 +43,6 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnableKubernetesMockClient
 public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
@@ -55,17 +56,35 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
     @Test
     void listTest() {
-        server.expect().withPath("/apis/batch/v1/jobs")
-                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/apis/batch/v1/jobs")
+                .andReturn(
+                        200,
+                        new JobListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs")
-                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/apis/batch/v1/namespaces/test/jobs")
+                .andReturn(
+                        200,
+                        new JobListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
 
-        Exchange ex = template.request("direct:list",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        Exchange ex = template.request("direct:list", exchange -> exchange.getIn()
+                .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
         assertEquals(2, ex.getMessage().getBody(List.class).size());
     }
 
@@ -75,17 +94,36 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
                 "key1", "value1",
                 "key2", "value2");
 
-        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(",")));
 
-        server.expect().withPath("/apis/batch/v1/jobs?labelSelector=" + urlEncodedLabels)
-                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/apis/batch/v1/jobs?labelSelector=" + urlEncodedLabels)
+                .andReturn(
+                        200,
+                        new JobListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs?labelSelector=" + urlEncodedLabels)
-                .andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/apis/batch/v1/namespaces/test/jobs?labelSelector=" + urlEncodedLabels)
+                .andReturn(
+                        200,
+                        new JobListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
-        Exchange ex = template.request("direct:listByLabels",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels));
+        Exchange ex = template.request("direct:listByLabels", exchange -> exchange.getIn()
+                .setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels));
 
         assertEquals(3, ex.getMessage().getBody(List.class).size());
 
@@ -99,9 +137,17 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
     @Test
     void getJobTest() {
-        Job sc1 = new JobBuilder().withNewMetadata().withName("sc1").withNamespace("test").and().build();
+        Job sc1 = new JobBuilder()
+                .withNewMetadata()
+                .withName("sc1")
+                .withNamespace("test")
+                .and()
+                .build();
 
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs/sc1").andReturn(200, sc1).once();
+        server.expect()
+                .withPath("/apis/batch/v1/namespaces/test/jobs/sc1")
+                .andReturn(200, sc1)
+                .once();
         Exchange ex = template.request("direct:get", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_NAME, "sc1");
@@ -116,9 +162,19 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     void createJobTest() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).build();
-        Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").withLabels(labels).and()
-                .withSpec(spec).build();
-        server.expect().post().withPath("/apis/batch/v1/namespaces/test/jobs").andReturn(200, j1).once();
+        Job j1 = new JobBuilder()
+                .withNewMetadata()
+                .withName("j1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .post()
+                .withPath("/apis/batch/v1/namespaces/test/jobs")
+                .andReturn(200, j1)
+                .once();
 
         Exchange ex = template.request("direct:create", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -140,10 +196,20 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         Map<String, String> annotations = Map.of("my.annotation.key", "my.annotation.value");
         JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).build();
-        Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").withLabels(labels)
-                .withAnnotations(annotations).and()
-                .withSpec(spec).build();
-        server.expect().post().withPath("/apis/batch/v1/namespaces/test/jobs").andReturn(200, j1).once();
+        Job j1 = new JobBuilder()
+                .withNewMetadata()
+                .withName("j1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .withAnnotations(annotations)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .post()
+                .withPath("/apis/batch/v1/namespaces/test/jobs")
+                .andReturn(200, j1)
+                .once();
 
         Exchange ex = template.request("direct:createWithAnnotations", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -165,17 +231,41 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     @Test
     void updateJobTest() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
-        JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).withSelector(new LabelSelector())
-                .withTemplate(new PodTemplateSpecBuilder().build()).build();
-        Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").withLabels(labels).and()
-                .withSpec(spec).build();
-        server.expect().get().withPath("/apis/batch/v1/namespaces/test/jobs/j1")
-                .andReturn(200, new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").endMetadata()
-                        .withSpec(new JobSpecBuilder()
-                                .withTemplate(new PodTemplateSpecBuilder().withMetadata(new ObjectMeta()).build()).build())
-                        .build())
+        JobSpec spec = new JobSpecBuilder()
+                .withBackoffLimit(13)
+                .withSelector(new LabelSelector())
+                .withTemplate(new PodTemplateSpecBuilder().build())
+                .build();
+        Job j1 = new JobBuilder()
+                .withNewMetadata()
+                .withName("j1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .get()
+                .withPath("/apis/batch/v1/namespaces/test/jobs/j1")
+                .andReturn(
+                        200,
+                        new JobBuilder()
+                                .withNewMetadata()
+                                .withName("j1")
+                                .withNamespace("test")
+                                .endMetadata()
+                                .withSpec(new JobSpecBuilder()
+                                        .withTemplate(new PodTemplateSpecBuilder()
+                                                .withMetadata(new ObjectMeta())
+                                                .build())
+                                        .build())
+                                .build())
                 .times(2);
-        server.expect().put().withPath("/apis/batch/v1/namespaces/test/jobs/j1").andReturn(200, j1).once();
+        server.expect()
+                .put()
+                .withPath("/apis/batch/v1/namespaces/test/jobs/j1")
+                .andReturn(200, j1)
+                .once();
 
         Exchange ex = template.request("direct:update", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -194,8 +284,16 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
     @Test
     void deleteJobTest() {
-        Job j1 = new JobBuilder().withNewMetadata().withName("j1").withNamespace("test").and().build();
-        server.expect().delete().withPath("/apis/batch/v1/namespaces/test/jobs/j1").andReturn(200, j1)
+        Job j1 = new JobBuilder()
+                .withNewMetadata()
+                .withName("j1")
+                .withNamespace("test")
+                .and()
+                .build();
+        server.expect()
+                .delete()
+                .withPath("/apis/batch/v1/namespaces/test/jobs/j1")
+                .andReturn(200, j1)
                 .once();
 
         Exchange ex = template.request("direct:delete", exchange -> {

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import net.sf.saxon.expr.instruct.TerminationException;
 import net.sf.saxon.trans.XPathException;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
 
@@ -49,7 +50,9 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
         Exception error = out.getProperty(Exchange.XSLT_FATAL_ERROR, Exception.class);
         assertNotNull(error);
         assertIsInstanceOf(TerminationException.class, error);
-        assertEquals("Error: DOB is an empty string!", ((XPathException) error).getErrorObject().head().getStringValue());
+        assertEquals(
+                "Error: DOB is an empty string!",
+                ((XPathException) error).getErrorObject().head().getStringValue());
     }
 
     @Override
@@ -59,12 +62,13 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true").routeId("foo").noAutoStartup()
+                from("file:src/test/data/?fileName=terminate.xml&noop=true")
+                        .routeId("foo")
+                        .noAutoStartup()
                         .to("xslt-saxon:org/apache/camel/component/xslt/terminate.xsl")
                         .to("log:foo")
                         .to("mock:result");
             }
         };
     }
-
 }

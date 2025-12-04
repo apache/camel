@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -53,8 +54,13 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         super(projectHelper, buildContext);
     }
 
-    PackageOtherMojo(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
-                     File schemaOutDir, BuildContext buildContext) {
+    PackageOtherMojo(
+            Log log,
+            MavenProject project,
+            MavenProjectHelper projectHelper,
+            File otherOutDir,
+            File schemaOutDir,
+            BuildContext buildContext) {
         this(projectHelper, buildContext);
 
         setLog(log);
@@ -100,7 +106,10 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         // can stop the build before the end and eclipse always needs to know
         // about that directory
         if (projectHelper != null) {
-            projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"),
+            projectHelper.addResource(
+                    project,
+                    otherOutDir.getPath(),
+                    Collections.singletonList("**/other.properties"),
                     Collections.emptyList());
         }
 
@@ -135,7 +144,8 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             if (level != null) {
                 model.setSupportLevel(SupportLevel.safeValueOf(level));
             } else {
-                model.setSupportLevel(SupportLevelHelper.defaultSupportLevel(model.getFirstVersion(), model.getVersion()));
+                model.setSupportLevel(
+                        SupportLevelHelper.defaultSupportLevel(model.getFirstVersion(), model.getVersion()));
             }
 
             if (log.isDebugEnabled()) {
@@ -162,5 +172,4 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         updateResource(camelMetaDir.toPath(), "other.properties", properties);
         log.info("Generated other.properties containing 1 Camel other: " + name);
     }
-
 }

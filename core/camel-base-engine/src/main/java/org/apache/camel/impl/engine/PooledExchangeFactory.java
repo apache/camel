@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.Consumer;
@@ -35,8 +36,7 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
 
     private final ReleaseOnDoneTask onDone = new ReleaseOnDoneTask();
 
-    public PooledExchangeFactory() {
-    }
+    public PooledExchangeFactory() {}
 
     public PooledExchangeFactory(Consumer consumer) {
         super(consumer);
@@ -129,7 +129,8 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
         }
         answer.setAutoRelease(autoRelease);
         if (autoRelease) {
-            // the consumer will either always be in auto release mode or not, so its safe to initialize the task only once when the exchange is created
+            // the consumer will either always be in auto release mode or not, so its safe to initialize the task only
+            // once when the exchange is created
             answer.onDone(onDone);
         }
         return answer;
@@ -160,5 +161,4 @@ public final class PooledExchangeFactory extends PrototypeExchangeFactory {
             release(exchange);
         }
     }
-
 }

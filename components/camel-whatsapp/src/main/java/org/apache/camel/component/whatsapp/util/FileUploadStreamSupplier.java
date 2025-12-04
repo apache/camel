@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.util;
 
 import java.io.ByteArrayInputStream;
@@ -44,7 +45,9 @@ public class FileUploadStreamSupplier {
 
         List<byte[]> byteArrays = new ArrayList<>();
         byte[] boundaryBytes = boundary.getBytes();
-        ByteBuffer separatorBuffer = RestAdapterUtils.generateByteBuffer(RestAdapterUtils.EXTRA_BYTES, boundaryBytes,
+        ByteBuffer separatorBuffer = RestAdapterUtils.generateByteBuffer(
+                RestAdapterUtils.EXTRA_BYTES,
+                boundaryBytes,
                 RestAdapterUtils.NEW_LINE_BYTES,
                 RestAdapterUtils.CONTENT_DISPOSITION_BYTES);
 
@@ -61,15 +64,22 @@ public class FileUploadStreamSupplier {
                 generateUploadMediaStream(byteArrays, keyBytes, uploadMedia);
             } else {
                 byte[] entryStringBytes = entry.getValue().toString().getBytes();
-                ByteBuffer stringBuffer = RestAdapterUtils.generateByteBuffer(RestAdapterUtils.QUOTE_BYTES, keyBytes,
+                ByteBuffer stringBuffer = RestAdapterUtils.generateByteBuffer(
+                        RestAdapterUtils.QUOTE_BYTES,
+                        keyBytes,
                         RestAdapterUtils.NEW_LINE_BYTES,
-                        RestAdapterUtils.NEW_LINE_BYTES, entryStringBytes, RestAdapterUtils.NEW_LINE_BYTES);
+                        RestAdapterUtils.NEW_LINE_BYTES,
+                        entryStringBytes,
+                        RestAdapterUtils.NEW_LINE_BYTES);
 
                 byteArrays.add(stringBuffer.array());
             }
         }
-        ByteBuffer endBuffer = RestAdapterUtils.generateByteBuffer(RestAdapterUtils.EXTRA_BYTES, boundaryBytes,
-                RestAdapterUtils.EXTRA_BYTES, RestAdapterUtils.NEW_LINE_BYTES);
+        ByteBuffer endBuffer = RestAdapterUtils.generateByteBuffer(
+                RestAdapterUtils.EXTRA_BYTES,
+                boundaryBytes,
+                RestAdapterUtils.EXTRA_BYTES,
+                RestAdapterUtils.NEW_LINE_BYTES);
 
         byteArrays.add(endBuffer.array());
 
@@ -80,7 +90,8 @@ public class FileUploadStreamSupplier {
     private void generateUploadMediaStream(List<byte[]> byteArrays, byte[] keyBytes, UploadMedia uploadMedia) {
         byte[] fileNameBytes;
         if (uploadMedia.getFile() != null) {
-            fileNameBytes = uploadMedia.getFile().toPath().getFileName().toString().getBytes();
+            fileNameBytes =
+                    uploadMedia.getFile().toPath().getFileName().toString().getBytes();
 
             try {
                 fileIS = new FileInputStream(uploadMedia.getFile());
@@ -93,9 +104,14 @@ public class FileUploadStreamSupplier {
         }
 
         byte[] contentTypeBytes = uploadMedia.getContentType().getBytes();
-        ByteBuffer uploadMediaBuffer = RestAdapterUtils.generateByteBuffer(RestAdapterUtils.QUOTE_BYTES, keyBytes,
-                RestAdapterUtils.FILE_NAME_HEADER_BYTES, fileNameBytes,
-                RestAdapterUtils.CONTENT_TYPE_HEADER_BYTES, contentTypeBytes, RestAdapterUtils.NEW_LINE_BYTES,
+        ByteBuffer uploadMediaBuffer = RestAdapterUtils.generateByteBuffer(
+                RestAdapterUtils.QUOTE_BYTES,
+                keyBytes,
+                RestAdapterUtils.FILE_NAME_HEADER_BYTES,
+                fileNameBytes,
+                RestAdapterUtils.CONTENT_TYPE_HEADER_BYTES,
+                contentTypeBytes,
+                RestAdapterUtils.NEW_LINE_BYTES,
                 RestAdapterUtils.NEW_LINE_BYTES);
 
         byteArrays.add(uploadMediaBuffer.array());
@@ -109,8 +125,8 @@ public class FileUploadStreamSupplier {
     }
 
     public Supplier<? extends InputStream> generate() {
-        return (Supplier<SequenceInputStream>) () -> new SequenceInputStream(
-                preFileIS, new SequenceInputStream(fileIS, postFileIS));
+        return (Supplier<SequenceInputStream>)
+                () -> new SequenceInputStream(preFileIS, new SequenceInputStream(fileIS, postFileIS));
     }
 
     public Map<Object, Object> getData() {

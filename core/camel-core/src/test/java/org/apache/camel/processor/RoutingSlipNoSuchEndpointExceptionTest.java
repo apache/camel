@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,11 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(Exception.class).to("mock:error").end().routingSlip(method(Router.class));
+                from("direct:start")
+                        .onException(Exception.class)
+                        .to("mock:error")
+                        .end()
+                        .routingSlip(method(Router.class));
             }
         });
         context.start();
@@ -60,7 +65,11 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(Exception.class).to("mock:error").end().to("direct:child");
+                from("direct:start")
+                        .onException(Exception.class)
+                        .to("mock:error")
+                        .end()
+                        .to("direct:child");
 
                 from("direct:child").errorHandler(noErrorHandler()).routingSlip(method(Router.class));
             }
@@ -74,5 +83,4 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

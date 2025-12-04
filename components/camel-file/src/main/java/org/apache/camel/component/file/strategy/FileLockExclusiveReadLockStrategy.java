@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +37,6 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
-
 /**
  * Acquires exclusive read lock to the given file. Will wait until the lock is granted. After granting the read lock it
  * is released, we just want to make sure that when we start consuming the file its not currently in progress of being
@@ -53,8 +54,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -86,7 +87,9 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 }
 
                 if (!target.exists()) {
-                    CamelLogger.log(LOG, readLockLoggingLevel,
+                    CamelLogger.log(
+                            LOG,
+                            readLockLoggingLevel,
                             "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                     return false;
                 }
@@ -155,16 +158,16 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    protected void doReleaseExclusiveReadLock(GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    protected void doReleaseExclusiveReadLock(GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
         super.doReleaseExclusiveReadLock(file, exchange);
 
-        FileLock lock = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
-        RandomAccessFile rac
-                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
-        Channel channel
-                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
+        FileLock lock =
+                exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
+        RandomAccessFile rac = exchange.getProperty(
+                asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
+        Channel channel =
+                exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
 
         String target = file.getFileName();
         if (lock != null) {
@@ -210,5 +213,4 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
-
 }

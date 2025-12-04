@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -31,7 +32,8 @@ public class JsonPathSplitWriteAsStringResultTypeStringTest extends CamelTestSup
             @Override
             public void configure() {
                 from("direct:start")
-                        .setBody().jsonpathWriteAsString("$.content[?(@.id == 456)]", String.class)
+                        .setBody()
+                        .jsonpathWriteAsString("$.content[?(@.id == 456)]", String.class)
                         .to("mock:result");
             }
         };
@@ -42,11 +44,12 @@ public class JsonPathSplitWriteAsStringResultTypeStringTest extends CamelTestSup
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(String.class);
-        mock.message(1).body().isEqualTo("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}");
+        mock.message(1)
+                .body()
+                .isEqualTo("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}");
 
         template.sendBody("direct:start", new File("src/test/resources/content.json"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

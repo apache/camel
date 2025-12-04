@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import java.util.Map;
@@ -32,8 +33,7 @@ public class HashicorpVaultComponent extends DefaultComponent {
     @Metadata
     private HashicorpVaultConfiguration configuration = new HashicorpVaultConfiguration();
 
-    public HashicorpVaultComponent() {
-    }
+    public HashicorpVaultComponent() {}
 
     public HashicorpVaultComponent(final CamelContext context) {
         super(context);
@@ -45,8 +45,8 @@ public class HashicorpVaultComponent extends DefaultComponent {
             throw new IllegalArgumentException("A vault name must be specified.");
         }
 
-        final HashicorpVaultConfiguration epConfiguration
-                = this.configuration != null ? this.configuration.copy() : new HashicorpVaultConfiguration();
+        final HashicorpVaultConfiguration epConfiguration =
+                this.configuration != null ? this.configuration.copy() : new HashicorpVaultConfiguration();
 
         // set account or topic name
         epConfiguration.setSecretsEngine(remaining);
@@ -54,10 +54,8 @@ public class HashicorpVaultComponent extends DefaultComponent {
         final HashicorpVaultEndpoint endpoint = new HashicorpVaultEndpoint(uri, this, epConfiguration);
         setProperties(endpoint, parameters);
 
-        if (epConfiguration.getVaultTemplate() == null
-                && epConfiguration.getToken() == null) {
-            throw new IllegalArgumentException(
-                    "Vault Template or token must be specified");
+        if (epConfiguration.getVaultTemplate() == null && epConfiguration.getToken() == null) {
+            throw new IllegalArgumentException("Vault Template or token must be specified");
         }
 
         return endpoint;

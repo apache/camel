@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
-//START SNIPPET: marker
+// START SNIPPET: marker
 public class Views {
 
-    static class Age {
-    }
+    static class Age {}
 
-    static class Weight {
-    }
+    static class Weight {}
 }
-//END SNIPPET: marker
+// END SNIPPET: marker

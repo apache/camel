@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -187,7 +188,8 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
                 LOG.trace("Renaming file: [{}] to: [{}]", tempTarget, target);
                 boolean renamed = operations.renameFile(tempTarget, target);
                 if (!renamed) {
-                    throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
+                    throw new GenericFileOperationFailedException(
+                            "Cannot rename file from: " + tempTarget + " to: " + target);
                 }
             }
 
@@ -212,8 +214,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
     }
 
     private static void throwFileAlreadyExistException(String target) {
-        throw new GenericFileOperationFailedException(
-                "File already exist: " + target + ". Cannot write new file.");
+        throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
     }
 
     private static boolean doIgnore(String target) {
@@ -377,7 +378,8 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
             LOG.warn(
                     "Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).",
-                    value, FileConstants.FILE_NAME);
+                    value,
+                    FileConstants.FILE_NAME);
         }
 
         // expression support
@@ -443,10 +445,9 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         String compatchAnswer = FileUtil.compactPath(answer);
         String compatchBaseDir = FileUtil.compactPath(baseDir);
         if (!compatchAnswer.startsWith(compatchBaseDir)) {
-            throw new IllegalArgumentException(
-                    "Cannot write file with name: " + compatchAnswer
-                                               + " as the filename is jailed to the starting directory: "
-                                               + compatchBaseDir);
+            throw new IllegalArgumentException("Cannot write file with name: " + compatchAnswer
+                    + " as the filename is jailed to the starting directory: "
+                    + compatchBaseDir);
         }
     }
 
@@ -526,5 +527,4 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         super.doStop();
         ServiceHelper.stopService(locks);
     }
-
 }

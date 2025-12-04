@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleRegistryWrapTest {
 
@@ -62,5 +63,4 @@ public class SimpleRegistryWrapTest {
         assertEquals("unwrapwrap123", map.get("a"));
         assertEquals("unwrapwrap456", map.get("b"));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
@@ -41,9 +42,12 @@ import org.slf4j.LoggerFactory;
  * @deprecated since 4.7
  */
 @Deprecated(since = "4.7")
-public class DefaultServiceLoadBalancer
-        extends ServiceSupport
-        implements CamelContextAware, ServiceDiscoveryAware, ServiceChooserAware, ServiceFilterAware, ServiceLoadBalancer {
+public class DefaultServiceLoadBalancer extends ServiceSupport
+        implements CamelContextAware,
+                ServiceDiscoveryAware,
+                ServiceChooserAware,
+                ServiceFilterAware,
+                ServiceLoadBalancer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceLoadBalancer.class);
 
@@ -52,8 +56,7 @@ public class DefaultServiceLoadBalancer
     private ServiceChooser serviceChooser;
     private ServiceFilter serviceFilter;
 
-    public DefaultServiceLoadBalancer() {
-    }
+    public DefaultServiceLoadBalancer() {}
 
     // *************************************
     // Bean
@@ -130,7 +133,8 @@ public class DefaultServiceLoadBalancer
     // *************************************
 
     @Override
-    public <T> T process(Exchange exchange, String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception {
+    public <T> T process(Exchange exchange, String serviceName, ServiceLoadBalancerFunction<T> function)
+            throws Exception {
         ServiceDefinition service;
 
         List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
@@ -140,7 +144,8 @@ public class DefaultServiceLoadBalancer
             // filter services
             services = serviceFilter.apply(exchange, services);
             // let the client service chooser find which server to use
-            service = services.isEmpty() ? null : services.size() > 1 ? serviceChooser.choose(services) : services.get(0);
+            service =
+                    services.isEmpty() ? null : services.size() > 1 ? serviceChooser.choose(services) : services.get(0);
             if (service == null) {
                 throw new RejectedExecutionException("No active services with name " + serviceName);
             }

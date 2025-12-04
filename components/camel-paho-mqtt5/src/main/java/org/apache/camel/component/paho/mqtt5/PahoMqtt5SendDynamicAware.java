@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import org.apache.camel.CamelContext;
@@ -115,5 +116,4 @@ public class PahoMqtt5SendDynamicAware extends ServiceSupport implements SendDyn
             return null;
         }
     }
-
 }

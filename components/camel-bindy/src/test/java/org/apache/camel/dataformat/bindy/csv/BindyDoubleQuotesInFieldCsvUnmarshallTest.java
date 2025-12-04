@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -30,8 +33,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -52,7 +53,8 @@ public class BindyDoubleQuotesInFieldCsvUnmarshallTest {
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "\"10\",\"A9\",\"Pauline de \"\"Quotes\"\"\",\"M\",\"ISIN\",\"XD12345678\",\"BUY\",\"Share\",\"2500.45\",\"USD\",\"08-01-2009\"";
+        expected =
+                "\"10\",\"A9\",\"Pauline de \"\"Quotes\"\"\",\"M\",\"ISIN\",\"XD12345678\",\"BUY\",\"Share\",\"2500.45\",\"USD\",\"08-01-2009\"";
 
         template.sendBody(expected);
 
@@ -70,7 +72,6 @@ public class BindyDoubleQuotesInFieldCsvUnmarshallTest {
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
 
     @CsvRecord(separator = ",")
@@ -200,11 +201,11 @@ public class BindyDoubleQuotesInFieldCsvUnmarshallTest {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

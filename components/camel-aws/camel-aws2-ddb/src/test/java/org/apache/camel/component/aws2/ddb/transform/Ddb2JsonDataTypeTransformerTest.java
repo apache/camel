@@ -44,18 +44,15 @@ public class Ddb2JsonDataTypeTransformerTest {
 
     private final Ddb2JsonDataTypeTransformer transformer = new Ddb2JsonDataTypeTransformer();
 
-    private final String keyJson = "{" +
-                                   "\"name\": \"Rajesh Koothrappali\"" +
-                                   "}";
+    private final String keyJson = "{" + "\"name\": \"Rajesh Koothrappali\"" + "}";
 
-    private final String itemJson = "{" +
-                                    "\"name\": \"Rajesh Koothrappali\"," +
-                                    "\"age\": 29," +
-                                    "\"super-heroes\": [\"batman\", \"spiderman\", \"wonderwoman\"]," +
-                                    "\"issues\": [5, 3, 9, 1]," +
-                                    "\"girlfriend\": null," +
-                                    "\"doctorate\": true" +
-                                    "}";
+    private final String itemJson = "{" + "\"name\": \"Rajesh Koothrappali\","
+            + "\"age\": 29,"
+            + "\"super-heroes\": [\"batman\", \"spiderman\", \"wonderwoman\"],"
+            + "\"issues\": [5, 3, 9, 1],"
+            + "\"girlfriend\": null,"
+            + "\"doctorate\": true"
+            + "}";
 
     @BeforeEach
     void setup() {
@@ -69,11 +66,13 @@ public class Ddb2JsonDataTypeTransformerTest {
 
         exchange.getMessage().setBody(Json.mapper().readTree(itemJson));
         exchange.setProperty("operation", Ddb2Operations.PutItem.name());
-        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+        transformer.transform(
+                exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertEquals(Ddb2Operations.PutItem, exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
-        Assertions.assertEquals(ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+        Assertions.assertEquals(
+                ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
 
         assertAttributeValueMap(exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class));
     }
@@ -84,18 +83,22 @@ public class Ddb2JsonDataTypeTransformerTest {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.getMessage()
-                .setBody(Json.mapper().readTree("{\"operation\": \"" + Ddb2Operations.UpdateItem.name() + "\", \"key\": "
-                                                + keyJson + ", \"item\": " + itemJson + "}"));
+                .setBody(Json.mapper()
+                        .readTree("{\"operation\": \"" + Ddb2Operations.UpdateItem.name() + "\", \"key\": " + keyJson
+                                + ", \"item\": " + itemJson + "}"));
 
-        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+        transformer.transform(
+                exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertEquals(Ddb2Operations.UpdateItem, exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
-        Assertions.assertEquals(ReturnValue.ALL_NEW.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+        Assertions.assertEquals(
+                ReturnValue.ALL_NEW.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
 
         Map<String, AttributeValue> attributeValueMap = exchange.getMessage().getHeader(Ddb2Constants.KEY, Map.class);
         Assertions.assertEquals(1L, attributeValueMap.size());
-        Assertions.assertEquals(AttributeValue.builder().s("Rajesh Koothrappali").build(), attributeValueMap.get("name"));
+        Assertions.assertEquals(
+                AttributeValue.builder().s("Rajesh Koothrappali").build(), attributeValueMap.get("name"));
 
         assertAttributeValueUpdateMap(exchange.getMessage().getHeader(Ddb2Constants.UPDATE_VALUES, Map.class));
     }
@@ -108,15 +111,18 @@ public class Ddb2JsonDataTypeTransformerTest {
         exchange.getMessage().setBody(Json.mapper().readTree("{\"key\": " + keyJson + "}"));
         exchange.setProperty("operation", Ddb2Operations.DeleteItem.name());
 
-        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+        transformer.transform(
+                exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertEquals(Ddb2Operations.DeleteItem, exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
-        Assertions.assertEquals(ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+        Assertions.assertEquals(
+                ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
 
         Map<String, AttributeValue> attributeValueMap = exchange.getMessage().getHeader(Ddb2Constants.KEY, Map.class);
         Assertions.assertEquals(1L, attributeValueMap.size());
-        Assertions.assertEquals(AttributeValue.builder().s("Rajesh Koothrappali").build(), attributeValueMap.get("name"));
+        Assertions.assertEquals(
+                AttributeValue.builder().s("Rajesh Koothrappali").build(), attributeValueMap.get("name"));
     }
 
     @Test
@@ -126,21 +132,23 @@ public class Ddb2JsonDataTypeTransformerTest {
 
         exchange.getMessage().setBody(Json.mapper().readTree("{\"user\":" + itemJson + "}"));
         exchange.setProperty("operation", Ddb2Operations.PutItem.name());
-        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+        transformer.transform(
+                exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertEquals(Ddb2Operations.PutItem, exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
-        Assertions.assertEquals(ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+        Assertions.assertEquals(
+                ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
 
         Map<String, AttributeValue> attributeValueMap = exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class);
         Assertions.assertEquals(1L, attributeValueMap.size());
 
-        Assertions.assertEquals("AttributeValue(M={name=AttributeValue(S=Rajesh Koothrappali), " +
-                                "age=AttributeValue(N=29), " +
-                                "super-heroes=AttributeValue(SS=[batman, spiderman, wonderwoman]), " +
-                                "issues=AttributeValue(NS=[5, 3, 9, 1]), " +
-                                "girlfriend=AttributeValue(NUL=true), " +
-                                "doctorate=AttributeValue(BOOL=true)})",
+        Assertions.assertEquals(
+                "AttributeValue(M={name=AttributeValue(S=Rajesh Koothrappali), " + "age=AttributeValue(N=29), "
+                        + "super-heroes=AttributeValue(SS=[batman, spiderman, wonderwoman]), "
+                        + "issues=AttributeValue(NS=[5, 3, 9, 1]), "
+                        + "girlfriend=AttributeValue(NUL=true), "
+                        + "doctorate=AttributeValue(BOOL=true)})",
                 attributeValueMap.get("user").toString());
     }
 
@@ -152,11 +160,13 @@ public class Ddb2JsonDataTypeTransformerTest {
         exchange.getMessage().setBody("{}");
         exchange.getMessage().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem.name());
 
-        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+        transformer.transform(
+                exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertEquals(Ddb2Operations.PutItem, exchange.getMessage().getHeader(Ddb2Constants.OPERATION));
-        Assertions.assertEquals(ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+        Assertions.assertEquals(
+                ReturnValue.ALL_OLD.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
 
         Map<String, AttributeValue> attributeValueMap = exchange.getMessage().getHeader(Ddb2Constants.ITEM, Map.class);
         Assertions.assertEquals(0L, attributeValueMap.size());
@@ -168,8 +178,10 @@ public class Ddb2JsonDataTypeTransformerTest {
 
         exchange.getMessage().setBody("Hello");
 
-        Assertions.assertThrows(CamelExecutionException.class, () -> transformer.transform(exchange.getMessage(), DataType.ANY,
-                new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
+        Assertions.assertThrows(
+                CamelExecutionException.class,
+                () -> transformer.transform(
+                        exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
     }
 
     @Test
@@ -179,43 +191,76 @@ public class Ddb2JsonDataTypeTransformerTest {
         exchange.getMessage().setBody(Json.mapper().readTree("{}"));
         exchange.setProperty("operation", Ddb2Operations.BatchGetItems.name());
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> transformer.transform(exchange.getMessage(),
-                DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
+        Assertions.assertThrows(
+                UnsupportedOperationException.class,
+                () -> transformer.transform(
+                        exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
     }
 
     @Test
     public void shouldLookupDataType() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey(DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
+                .resolveTransformer(
+                        new TransformerKey(DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER)));
         Assertions.assertNotNull(transformer);
     }
 
     private void assertAttributeValueMap(Map<String, AttributeValue> attributeValueMap) {
         Assertions.assertEquals(6L, attributeValueMap.size());
-        Assertions.assertEquals(AttributeValue.builder().s("Rajesh Koothrappali").build(), attributeValueMap.get("name"));
+        Assertions.assertEquals(
+                AttributeValue.builder().s("Rajesh Koothrappali").build(), attributeValueMap.get("name"));
         Assertions.assertEquals(AttributeValue.builder().n("29").build(), attributeValueMap.get("age"));
-        Assertions.assertEquals(AttributeValue.builder().ss("batman", "spiderman", "wonderwoman").build(),
+        Assertions.assertEquals(
+                AttributeValue.builder()
+                        .ss("batman", "spiderman", "wonderwoman")
+                        .build(),
                 attributeValueMap.get("super-heroes"));
-        Assertions.assertEquals(AttributeValue.builder().ns("5", "3", "9", "1").build(), attributeValueMap.get("issues"));
+        Assertions.assertEquals(
+                AttributeValue.builder().ns("5", "3", "9", "1").build(), attributeValueMap.get("issues"));
         Assertions.assertEquals(AttributeValue.builder().nul(true).build(), attributeValueMap.get("girlfriend"));
         Assertions.assertEquals(AttributeValue.builder().bool(true).build(), attributeValueMap.get("doctorate"));
     }
 
     private void assertAttributeValueUpdateMap(Map<String, AttributeValueUpdate> attributeValueMap) {
         Assertions.assertEquals(6L, attributeValueMap.size());
-        Assertions.assertEquals(AttributeValueUpdate.builder().value(AttributeValue.builder().s("Rajesh Koothrappali").build())
-                .action(AttributeAction.PUT).build(), attributeValueMap.get("name"));
-        Assertions.assertEquals(AttributeValueUpdate.builder().value(AttributeValue.builder().n("29").build())
-                .action(AttributeAction.PUT).build(), attributeValueMap.get("age"));
         Assertions.assertEquals(
-                AttributeValueUpdate.builder().value(AttributeValue.builder().ss("batman", "spiderman", "wonderwoman").build())
-                        .action(AttributeAction.PUT).build(),
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder().s("Rajesh Koothrappali").build())
+                        .action(AttributeAction.PUT)
+                        .build(),
+                attributeValueMap.get("name"));
+        Assertions.assertEquals(
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder().n("29").build())
+                        .action(AttributeAction.PUT)
+                        .build(),
+                attributeValueMap.get("age"));
+        Assertions.assertEquals(
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder()
+                                .ss("batman", "spiderman", "wonderwoman")
+                                .build())
+                        .action(AttributeAction.PUT)
+                        .build(),
                 attributeValueMap.get("super-heroes"));
-        Assertions.assertEquals(AttributeValueUpdate.builder().value(AttributeValue.builder().ns("5", "3", "9", "1").build())
-                .action(AttributeAction.PUT).build(), attributeValueMap.get("issues"));
-        Assertions.assertEquals(AttributeValueUpdate.builder().value(AttributeValue.builder().nul(true).build())
-                .action(AttributeAction.PUT).build(), attributeValueMap.get("girlfriend"));
-        Assertions.assertEquals(AttributeValueUpdate.builder().value(AttributeValue.builder().bool(true).build())
-                .action(AttributeAction.PUT).build(), attributeValueMap.get("doctorate"));
+        Assertions.assertEquals(
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder().ns("5", "3", "9", "1").build())
+                        .action(AttributeAction.PUT)
+                        .build(),
+                attributeValueMap.get("issues"));
+        Assertions.assertEquals(
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder().nul(true).build())
+                        .action(AttributeAction.PUT)
+                        .build(),
+                attributeValueMap.get("girlfriend"));
+        Assertions.assertEquals(
+                AttributeValueUpdate.builder()
+                        .value(AttributeValue.builder().bool(true).build())
+                        .action(AttributeAction.PUT)
+                        .build(),
+                attributeValueMap.get("doctorate"));
     }
 }

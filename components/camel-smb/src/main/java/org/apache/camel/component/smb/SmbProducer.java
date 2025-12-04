@@ -33,7 +33,8 @@ public class SmbProducer extends GenericFileProducer<FileIdBothDirectoryInformat
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbProducer.class);
 
-    protected SmbProducer(final SmbEndpoint endpoint, GenericFileOperations<FileIdBothDirectoryInformation> operations) {
+    protected SmbProducer(
+            final SmbEndpoint endpoint, GenericFileOperations<FileIdBothDirectoryInformation> operations) {
         super(endpoint, operations);
     }
 
@@ -56,7 +57,9 @@ public class SmbProducer extends GenericFileProducer<FileIdBothDirectoryInformat
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Exception occurred during disconnecting from: {} {}. This exception is ignored.", getEndpoint(),
+            LOG.warn(
+                    "Exception occurred during disconnecting from: {} {}. This exception is ignored.",
+                    getEndpoint(),
                     e.getMessage());
         }
     }
@@ -64,5 +67,4 @@ public class SmbProducer extends GenericFileProducer<FileIdBothDirectoryInformat
     private SmbOperations getOperations() {
         return (SmbOperations) operations;
     }
-
 }

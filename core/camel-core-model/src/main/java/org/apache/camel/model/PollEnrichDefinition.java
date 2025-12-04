@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -42,36 +43,44 @@ public class PollEnrichDefinition extends ExpressionNode
 
     @XmlAttribute
     private String variableReceive;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodAllowNull;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregateOnException;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration", defaultValue = "-1")
     private String timeout;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String cacheSize;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidEndpoint;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowOptimisedComponents;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String autoStartComponents;
 
-    public PollEnrichDefinition() {
-    }
+    public PollEnrichDefinition() {}
 
     public PollEnrichDefinition(AggregationStrategy aggregationStrategy, long timeout) {
         this.aggregationStrategyBean = aggregationStrategy;

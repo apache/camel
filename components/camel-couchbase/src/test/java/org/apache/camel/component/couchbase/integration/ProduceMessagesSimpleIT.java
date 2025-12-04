@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +25,11 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Too resource intensive for most systems to run reliably")
-@Tags({ @Tag("couchbase-7") })
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too resource intensive for most systems to run reliably")
+@Tags({@Tag("couchbase-7")})
 public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
 
     @Test
@@ -37,7 +40,6 @@ public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
         template.sendBody("direct:start", "couchbase persist");
         MockEndpoint.assertIsSatisfied(context);
         mock.message(0).body().equals("couchbase persist");
-
     }
 
     @Override
@@ -47,10 +49,10 @@ public class ProduceMessagesSimpleIT extends CouchbaseIntegrationTestBase {
             public void configure() {
 
                 // need couchbase installed on localhost
-                from("direct:start").setHeader(CouchbaseConstants.HEADER_ID, constant("SimpleDocument_1"))
+                from("direct:start")
+                        .setHeader(CouchbaseConstants.HEADER_ID, constant("SimpleDocument_1"))
                         .to(getConnectionUri())
                         .to("mock:result");
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.ArrayList;
@@ -88,8 +89,9 @@ public class BlacklistServiceFilter implements ServiceFilter {
 
     @Override
     public List<ServiceDefinition> apply(Exchange exchange, List<ServiceDefinition> services) {
-        return services.stream().filter(
-                s -> this.services.stream().noneMatch(b -> b.matches(s))).toList();
+        return services.stream()
+                .filter(s -> this.services.stream().noneMatch(b -> b.matches(s)))
+                .toList();
     }
 
     List<ServiceDefinition> getBlacklistedServices() {

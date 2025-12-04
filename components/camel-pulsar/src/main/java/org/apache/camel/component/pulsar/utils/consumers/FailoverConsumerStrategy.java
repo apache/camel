@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import java.util.Collection;
@@ -51,13 +52,17 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
         for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
             final String consumerName = configuration.getConsumerNamePrefix() + i;
             try {
-                ConsumerBuilder<byte[]> builder
-                        = CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
+                ConsumerBuilder<byte[]> builder =
+                        CommonCreationStrategyImpl.getBuilder(consumerName, pulsarEndpoint, pulsarConsumer);
 
-                consumers.add(builder.subscriptionType(SubscriptionType.Failover).subscribe());
+                consumers.add(
+                        builder.subscriptionType(SubscriptionType.Failover).subscribe());
             } catch (PulsarClientException exception) {
-                LOGGER.error("A PulsarClientException occurred when creating Consumer {}, {}", consumerName,
-                        exception.getMessage(), exception);
+                LOGGER.error(
+                        "A PulsarClientException occurred when creating Consumer {}, {}",
+                        consumerName,
+                        exception.getMessage(),
+                        exception);
             }
         }
         return consumers;

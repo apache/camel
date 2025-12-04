@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.internal;
 
 import java.io.IOException;
@@ -37,13 +38,13 @@ public final class AS2ConnectionHelper {
 
     private static final Map<Integer, AS2ServerConnection> serverConnections = new ConcurrentHashMap<>();
 
-    private static final Map<Integer, AS2AsyncMDNServerConnection> asyncMdnServerConnections = new ConcurrentHashMap<>();
+    private static final Map<Integer, AS2AsyncMDNServerConnection> asyncMdnServerConnections =
+            new ConcurrentHashMap<>();
 
     /**
      * Prevent instantiation
      */
-    private AS2ConnectionHelper() {
-    }
+    private AS2ConnectionHelper() {}
 
     /**
      * Create an AS2 client connection.
@@ -54,10 +55,16 @@ public final class AS2ConnectionHelper {
      */
     public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration) throws IOException {
         return new AS2ClientConnection(
-                configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
-                configuration.getTargetHostname(), configuration.getTargetPortNumber(), configuration.getHttpSocketTimeout(),
-                configuration.getHttpConnectionTimeout(), configuration.getHttpConnectionPoolSize(),
-                configuration.getHttpConnectionPoolTtl(), configuration.getSslContext(),
+                configuration.getAs2Version(),
+                configuration.getUserAgent(),
+                configuration.getClientFqdn(),
+                configuration.getTargetHostname(),
+                configuration.getTargetPortNumber(),
+                configuration.getHttpSocketTimeout(),
+                configuration.getHttpConnectionTimeout(),
+                configuration.getHttpConnectionPoolSize(),
+                configuration.getHttpConnectionPoolTtl(),
+                configuration.getSslContext(),
                 configuration.getHostnameVerifier());
     }
 
@@ -71,16 +78,14 @@ public final class AS2ConnectionHelper {
     public static AS2AsyncMDNServerConnection createAS2AsyncMDNServerConnection(AS2Configuration configuration)
             throws IOException {
         try {
-            return asyncMdnServerConnections.computeIfAbsent(
-                    configuration.getAsyncMdnPortNumber(),
-                    key -> {
-                        try {
-                            return new AS2AsyncMDNServerConnection(
-                                    configuration.getAsyncMdnPortNumber(), configuration.getSslContext());
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+            return asyncMdnServerConnections.computeIfAbsent(configuration.getAsyncMdnPortNumber(), key -> {
+                try {
+                    return new AS2AsyncMDNServerConnection(
+                            configuration.getAsyncMdnPortNumber(), configuration.getSslContext());
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
@@ -95,26 +100,27 @@ public final class AS2ConnectionHelper {
      */
     public static AS2ServerConnection createAS2ServerConnection(AS2Configuration configuration) throws IOException {
         try {
-            return serverConnections.computeIfAbsent(
-                    configuration.getServerPortNumber(),
-                    key -> {
-                        try {
-                            return new AS2ServerConnection(
-                                    configuration.getAs2Version(), configuration.getServer(),
-                                    configuration.getServerFqdn(), configuration.getServerPortNumber(),
-                                    configuration.getSigningAlgorithm(),
-                                    configuration.getSigningCertificateChain(),
-                                    configuration.getSigningPrivateKey(),
-                                    configuration.getDecryptingPrivateKey(),
-                                    configuration.getMdnMessageTemplate(),
-                                    configuration.getValidateSigningCertificateChain(),
-                                    configuration.getSslContext(),
-                                    configuration.getMdnUserName(), configuration.getMdnPassword(),
-                                    configuration.getMdnAccessToken());
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
+            return serverConnections.computeIfAbsent(configuration.getServerPortNumber(), key -> {
+                try {
+                    return new AS2ServerConnection(
+                            configuration.getAs2Version(),
+                            configuration.getServer(),
+                            configuration.getServerFqdn(),
+                            configuration.getServerPortNumber(),
+                            configuration.getSigningAlgorithm(),
+                            configuration.getSigningCertificateChain(),
+                            configuration.getSigningPrivateKey(),
+                            configuration.getDecryptingPrivateKey(),
+                            configuration.getMdnMessageTemplate(),
+                            configuration.getValidateSigningCertificateChain(),
+                            configuration.getSslContext(),
+                            configuration.getMdnUserName(),
+                            configuration.getMdnPassword(),
+                            configuration.getMdnAccessToken());
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
         } catch (UncheckedIOException e) {
             throw e.getCause();
         }
@@ -134,8 +140,10 @@ public final class AS2ConnectionHelper {
                 conn.close();
             } catch (Exception e) {
                 // ignore
-                LOG.debug("Error stopping and closing AS2ServerConnection due to {}. This exception is ignored",
-                        e.getMessage(), e);
+                LOG.debug(
+                        "Error stopping and closing AS2ServerConnection due to {}. This exception is ignored",
+                        e.getMessage(),
+                        e);
             }
         }
         serverConnections.clear();
@@ -148,8 +156,10 @@ public final class AS2ConnectionHelper {
                 LOG.debug("Stopping and closing AsyncMdnServerConnection on port: {}", port);
                 entry.getValue().close();
             } catch (Exception e) {
-                LOG.debug("Error stopping and closing AsyncMdnServerConnection due to {}. This exception is ignored",
-                        e.getMessage(), e);
+                LOG.debug(
+                        "Error stopping and closing AsyncMdnServerConnection due to {}. This exception is ignored",
+                        e.getMessage(),
+                        e);
             }
         }
         asyncMdnServerConnections.clear();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch;
 
 import org.apache.camel.RuntimeCamelException;
@@ -32,22 +33,29 @@ public class StitchConfiguration implements Cloneable {
 
     @UriPath
     private String tableName;
+
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String token;
+
     @UriParam(label = "producer", defaultValue = "EUROPE")
     private StitchRegion region = StitchRegion.EUROPE;
+
     @UriParam(label = "producer")
     @Metadata(autowired = true)
     private StitchSchema stitchSchema;
+
     @UriParam(label = "producer")
     private String keyNames;
+
     @UriParam(label = "producer,advanced")
     @Metadata(autowired = true)
     private HttpClient httpClient;
+
     @UriParam(label = "producer,advanced")
     @Metadata(autowired = true)
     private ConnectionProvider connectionProvider;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private StitchClient stitchClient;

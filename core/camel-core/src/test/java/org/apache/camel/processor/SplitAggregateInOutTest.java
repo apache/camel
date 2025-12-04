@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -25,8 +28,6 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitAggregateInOutTest extends ContextTestSupport {
 
@@ -67,7 +68,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
                 // to be able to aggregate what response we need to send back,
                 // so we provide our
                 // own strategy with the class MyOrderStrategy.
-                from("direct:start").split(body().tokenize("@"), new MyOrderStrategy())
+                from("direct:start")
+                        .split(body().tokenize("@"), new MyOrderStrategy())
                         // each split message is then send to this bean where we
                         // can process it
                         .to("bean:MyOrderService?method=handleOrder")

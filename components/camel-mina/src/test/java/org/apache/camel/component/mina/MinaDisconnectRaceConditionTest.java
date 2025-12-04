@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -25,9 +29,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.mina.core.session.IoSession;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
 
     /**
@@ -37,8 +38,8 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
      */
     @Test
     public void testCloseSessionWhenCompleteManyTimes() throws Exception {
-        final String endpointUri
-                = String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true&minaLogger=true", getPort());
+        final String endpointUri = String.format(
+                "mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true&minaLogger=true", getPort());
         MinaProducer producer = (MinaProducer) context.getEndpoint(endpointUri).createProducer();
         // Access session to check that the session is really closed
         Field field = producer.getClass().getDeclaredField("session");
@@ -60,10 +61,11 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()).process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    exchange.getMessage().setBody("Bye " + body);
-                });
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Bye " + body);
+                        });
             }
         };
     }

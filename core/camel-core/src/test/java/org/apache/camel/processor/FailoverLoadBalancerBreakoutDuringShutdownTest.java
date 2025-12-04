@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that the failover load balancer will break out if CamelContext is shutting down.
@@ -57,9 +58,15 @@ public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestS
             @Override
             public void configure() {
 
-                from("seda:start").to("mock:before")
+                from("seda:start")
+                        .to("mock:before")
                         // just keep on failover
-                        .loadBalance().failover(-1, false, true).to("direct:a").to("direct:b").end().to("mock:after");
+                        .loadBalance()
+                        .failover(-1, false, true)
+                        .to("direct:a")
+                        .to("direct:b")
+                        .end()
+                        .to("mock:after");
 
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) {

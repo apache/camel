@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.freemarker;
 
 import java.net.URL;
@@ -37,18 +38,22 @@ public class FreemarkerComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata
     private boolean allowContextMapAll;
+
     @Metadata
     private boolean localizedLookup;
+
     @Metadata(label = "advanced")
     private Configuration configuration;
+
     private Configuration noCacheConfiguration;
 
-    public FreemarkerComponent() {
-    }
+    public FreemarkerComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -100,7 +105,8 @@ public class FreemarkerComponent extends DefaultComponent {
                         try {
                             return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext(), name);
                         } catch (Exception e) {
-                            // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback without locale
+                            // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback
+                            // without locale
                             // so we should return null to signal the resource could not be found
                             return null;
                         }
@@ -183,5 +189,4 @@ public class FreemarkerComponent extends DefaultComponent {
             lock.unlock();
         }
     }
-
 }

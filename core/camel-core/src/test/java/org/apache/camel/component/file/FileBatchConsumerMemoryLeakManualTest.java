@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -53,18 +54,19 @@ public class FileBatchConsumerMemoryLeakManualTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("c/?sortBy=ignoreCase:file:name")).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        StringBuilder buf = new StringBuilder(10000000);
-                        buf.setLength(1000000);
-                        exchange.getIn().setBody(buf.toString());
-                    }
-                }).to(fileUri("archiv"));
+                from(fileUri("c/?sortBy=ignoreCase:file:name"))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                StringBuilder buf = new StringBuilder(10000000);
+                                buf.setLength(1000000);
+                                exchange.getIn().setBody(buf.toString());
+                            }
+                        })
+                        .to(fileUri("archiv"));
             }
         });
         context.start();
 
         Thread.sleep(30 * 1000L);
     }
-
 }

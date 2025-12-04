@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -29,8 +30,8 @@ public class MetricsObservabilityITCase extends JBangTestSupport {
         copyResourceInDataFolder(TestResources.SERVER_ROUTE);
         executeBackground(String.format("run %s/server.yaml --metrics", mountPoint()));
         checkLogContains("http://0.0.0.0:8080/observe/metrics");
-        Assertions.assertThat(
-                execInHost(String.format("curl http://localhost:%s/observe/metrics", containerService.getDevConsolePort())))
+        Assertions.assertThat(execInHost(String.format(
+                        "curl http://localhost:%s/observe/metrics", containerService.getDevConsolePort())))
                 .as("server should list metrics")
                 .contains("# HELP camel_exchanges_total Total number of processed exchanges");
     }

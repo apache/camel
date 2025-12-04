@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
 
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ public final class CamelXmlTreeParserHelper {
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public List<CamelNodeDetails> parseCamelRouteTree(
-            Node xmlNode, CamelNodeDetails route,
-            String fullyQualifiedFileName) {
+            Node xmlNode, CamelNodeDetails route, String fullyQualifiedFileName) {
 
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
         List<CamelNodeDetails> answer = new ArrayList<>();
@@ -107,7 +107,6 @@ public final class CamelXmlTreeParserHelper {
                 walkXmlTree(nodeFactory, child, newNode != null ? newNode : parent);
             }
         }
-
     }
 
     private boolean hasOutput(String name) {
@@ -119,5 +118,4 @@ public final class CamelXmlTreeParserHelper {
         String json = camelCatalog.modelJSonSchema(name);
         return JsonMapper.generateEipModel(json).isInput();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,5 +44,4 @@ public class DefaultBackOffTimerFactory implements BackOffTimerFactory {
     public BackOffTimer newBackOffTimer(String name, ScheduledExecutorService scheduler) {
         return new DefaultBackOffTimer(camelContext, name, scheduler);
     }
-
 }

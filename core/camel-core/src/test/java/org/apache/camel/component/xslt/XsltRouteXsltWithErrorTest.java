@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -22,8 +25,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
 
@@ -41,9 +42,7 @@ public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
             }
         });
 
-        Exception e = assertThrows(Exception.class,
-                () -> context.start(),
-                "Should have thrown exception");
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
 
         TransformerConfigurationException cause = ObjectHelper.getException(TransformerConfigurationException.class, e);
         assertNotNull(cause);
@@ -51,5 +50,4 @@ public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
         // just check for the spelling mistake of select -> slect
         assertTrue(cause.getMessage().contains("slect"));
     }
-
 }

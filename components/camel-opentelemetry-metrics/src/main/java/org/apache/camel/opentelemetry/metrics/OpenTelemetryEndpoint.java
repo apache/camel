@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Map;
@@ -33,10 +34,15 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "4.17.0", scheme = "opentelemetry-metrics", title = "OpenTelemetry Metrics",
-             remote = false, syntax = "opentelemetry-metrics:metricType:metricName", producerOnly = true,
-             category = { Category.MONITORING },
-             headersClass = OpenTelemetryConstants.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = "opentelemetry-metrics",
+        title = "OpenTelemetry Metrics",
+        remote = false,
+        syntax = "opentelemetry-metrics:metricType:metricName",
+        producerOnly = true,
+        category = {Category.MONITORING},
+        headersClass = OpenTelemetryConstants.class)
 public class OpenTelemetryEndpoint extends DefaultEndpoint {
 
     protected Meter meter;
@@ -44,26 +50,34 @@ public class OpenTelemetryEndpoint extends DefaultEndpoint {
     @UriPath(description = "Type of metrics", enums = "counter,summary,timer")
     @Metadata(required = true)
     protected final InstrumentType metricType;
+
     @UriPath(description = "Name of metric")
     @Metadata(required = true)
     protected final String metricName;
+
     @UriParam(description = "Description of metrics")
     protected String metricsDescription;
+
     @UriParam(description = "metric attributes", multiValue = true, prefix = "attributes.")
     protected Map<String, String> attributes;
+
     @UriParam(description = "Action expression when using timer type", enums = "start,stop")
     private String action;
+
     @UriParam(description = "The time unit when using the timer type", defaultValue = "MILLISECONDS")
     private TimeUnit unit = TimeUnit.MILLISECONDS;
+
     @UriParam(description = "Value expression when using histogram type")
     private String value;
+
     @UriParam(description = "Increment value expression when using counter type")
     private String increment;
+
     @UriParam(description = "Decrement value expression when using counter type")
     private String decrement;
 
-    public OpenTelemetryEndpoint(String uri, Component component, Meter meter, InstrumentType metricType,
-                                 String metricName) {
+    public OpenTelemetryEndpoint(
+            String uri, Component component, Meter meter, InstrumentType metricType, String metricName) {
         super(uri, component);
         this.meter = meter;
         this.metricType = metricType;

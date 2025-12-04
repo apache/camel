@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox;
 
 import org.apache.camel.Category;
@@ -41,8 +42,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation",
-             category = { Category.CLOUD, Category.FILE, Category.API }, headersClass = DropboxConstants.class)
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "dropbox",
+        title = "Dropbox",
+        syntax = "dropbox:operation",
+        category = {Category.CLOUD, Category.FILE, Category.API},
+        headersClass = DropboxConstants.class)
 public class DropboxEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
@@ -50,8 +56,7 @@ public class DropboxEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam
     private DropboxConfiguration configuration;
 
-    public DropboxEndpoint() {
-    }
+    public DropboxEndpoint() {}
 
     public DropboxEndpoint(String uri, DropboxComponent component, DropboxConfiguration configuration) {
         super(uri, component);
@@ -123,5 +128,4 @@ public class DropboxEndpoint extends DefaultEndpoint implements EndpointServiceL
             throw new DropboxException("Operation specified is not valid for consumer!");
         }
     }
-
 }

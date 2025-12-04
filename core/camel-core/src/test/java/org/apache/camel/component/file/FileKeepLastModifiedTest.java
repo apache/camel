@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.util.UUID;
 
@@ -25,11 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileKeepLastModifiedTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
@@ -38,7 +40,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10)
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
+                        .delay(10)
                         .to(fileUri("out?keepLastModified=true"), "mock:result");
             }
         });
@@ -63,7 +66,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10)
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
+                        .delay(10)
                         .to(fileUri("out?keepLastModified=false"), "mock:result");
             }
         });
@@ -88,8 +92,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10).to(fileUri("out"),
-                        "mock:result");
+                from(fileUri("?noop=true&initialDelay=0&delay=10")).delay(10).to(fileUri("out"), "mock:result");
             }
         });
         context.start();
@@ -112,5 +115,4 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

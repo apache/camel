@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test to test preMove option.
  */
@@ -35,7 +36,7 @@ public class FromFtpPreMoveFileExpressionIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&binary=false&delay=5000"
-               + "&preMove=../inprogress/${file:name.noext}.bak";
+                + "&preMove=../inprogress/${file:name.noext}.bak";
     }
 
     @Override
@@ -74,13 +75,16 @@ public class FromFtpPreMoveFileExpressionIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // assert the file is pre moved
-                        File file = service.ftpFile("inprogress/hello.bak").toFile();
-                        assertTrue(file.exists(), "The file should have been moved");
-                    }
-                }).to("mock:result");
+                from(getFtpUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // assert the file is pre moved
+                                File file =
+                                        service.ftpFile("inprogress/hello.bak").toFile();
+                                assertTrue(file.exists(), "The file should have been moved");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.test;
 
 import java.io.IOException;
@@ -37,9 +38,7 @@ public abstract class WordpressMockServerTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(WordpressMockServerTestSupport.class);
     private static final int PORT = 9009;
 
-    public WordpressMockServerTestSupport() {
-
-    }
+    public WordpressMockServerTestSupport() {}
 
     @BeforeAll
     public static void setUpMockServer() throws IOException {
@@ -58,9 +57,10 @@ public abstract class WordpressMockServerTestSupport {
         serviceProvider = WordpressServiceProvider.getInstance();
         serviceProvider.init(getServerBaseUrl());
         // @formatter:on
-        LOGGER.info("Local server up and running on address {} and port {}", localServer.getInetAddress(),
+        LOGGER.info(
+                "Local server up and running on address {} and port {}",
+                localServer.getInetAddress(),
                 localServer.getLocalPort());
-
     }
 
     private static HttpServer createServer(int port) {
@@ -83,7 +83,9 @@ public abstract class WordpressMockServerTestSupport {
         usersSingleUpdateRequestHandlers.put("DELETE", "/data/users/delete.json");
 
         // @formatter:off
-        return ServerBootstrap.bootstrap().setCanonicalHostName("localhost").setListenerPort(port)
+        return ServerBootstrap.bootstrap()
+                .setCanonicalHostName("localhost")
+                .setListenerPort(port)
                 .register("/wp/v2/posts", new WordpressServerHttpRequestHandler(postsListCreateRequestHandlers))
                 .register("/wp/v2/posts/*", new WordpressServerHttpRequestHandler(postsSingleUpdateRequestHandlers))
                 .register("/wp/v2/users", new WordpressServerHttpRequestHandler(usersListCreateRequestHandlers))

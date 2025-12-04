@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.Enumeration;
@@ -73,7 +74,10 @@ public class DefaultMailUidGenerator implements MailUidGenerator {
             Enumeration<?> it = message.getAllHeaders();
             while (it.hasMoreElements()) {
                 Header header = (Header) it.nextElement();
-                buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");
+                buffer.append(header.getName())
+                        .append("=")
+                        .append(header.getValue())
+                        .append("\n");
             }
             if (buffer.length() > 0) {
                 LOG.trace("Generating UID from the following:\n {}", buffer);

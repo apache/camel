@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support.resume;
 
 import java.util.Collection;
@@ -36,8 +37,12 @@ public class ResumeRebalanceListener implements ConsumerRebalanceListener {
     private final CommitManager commitManager;
     private final KafkaResumeAdapter resumeAdapter;
 
-    public ResumeRebalanceListener(String threadId, KafkaConfiguration configuration,
-                                   CommitManager commitManager, Consumer<?, ?> consumer, ResumeStrategy resumeStrategy) {
+    public ResumeRebalanceListener(
+            String threadId,
+            KafkaConfiguration configuration,
+            CommitManager commitManager,
+            Consumer<?, ?> consumer,
+            ResumeStrategy resumeStrategy) {
         this.threadId = threadId;
         this.configuration = configuration;
         this.commitManager = commitManager;
@@ -66,5 +71,4 @@ public class ResumeRebalanceListener implements ConsumerRebalanceListener {
 
         resumeAdapter.resume();
     }
-
 }

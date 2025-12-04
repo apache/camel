@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class MainExampleTest {
 
@@ -30,7 +31,8 @@ public class MainExampleTest {
             main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("file://src/test/data?initialDelay=0&delay=10&noop=true").process(new MyProcessor())
+                    from("file://src/test/data?initialDelay=0&delay=10&noop=true")
+                            .process(new MyProcessor())
                             .to("file://target/mainTest");
                 }
             });
@@ -41,7 +43,6 @@ public class MainExampleTest {
 
             main.stop();
         });
-
     }
 
     @Test
@@ -57,9 +58,6 @@ public class MainExampleTest {
             main.configure().setDurationMaxSeconds(1);
 
             main.stop();
-
         });
-
     }
-
 }

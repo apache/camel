@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyPostJsonPojoDisableFeatureTest extends BaseJettyTest {
 
@@ -51,14 +52,16 @@ public class RestJettyPostJsonPojoDisableFeatureTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure json to not fail on unknown properties
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
-                        .dataFormatProperty("json.in.disableFeatures",
-                                "FAIL_ON_UNKNOWN_PROPERTIES");
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.json)
+                        .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
 
                 // use the rest DSL to define the rest services
                 rest("/users/").post("new").type(UserPojo.class).to("mock:input");
             }
         };
     }
-
 }

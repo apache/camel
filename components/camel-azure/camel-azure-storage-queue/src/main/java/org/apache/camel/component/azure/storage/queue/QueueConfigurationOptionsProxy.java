@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import java.time.Duration;
@@ -78,15 +79,18 @@ public class QueueConfigurationOptionsProxy {
     }
 
     public QueueOperationDefinition getQueueOperation(final Exchange exchange) {
-        return getOption(QueueExchangeHeaders::getQueueOperationsDefinitionFromHeaders, configuration::getOperation, exchange);
+        return getOption(
+                QueueExchangeHeaders::getQueueOperationsDefinitionFromHeaders, configuration::getOperation, exchange);
     }
 
     public QueueConfiguration getConfiguration() {
         return configuration;
     }
 
-    private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+    private <R> R getOption(
+            final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))
                 ? fallbackFn.get()
                 : exchangeFn.apply(exchange);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -54,5 +55,4 @@ public interface SmbFileOperations extends GenericFileOperations<FileIdBothDirec
      * @throws GenericFileOperationFailedException can be thrown
      */
     void forceDisconnect() throws GenericFileOperationFailedException;
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql.server;
 
 public class BookInput {
@@ -21,8 +22,7 @@ public class BookInput {
     private String name;
     private String authorId;
 
-    public BookInput() {
-    }
+    public BookInput() {}
 
     public BookInput(String name, String authorId) {
         this.name = name;

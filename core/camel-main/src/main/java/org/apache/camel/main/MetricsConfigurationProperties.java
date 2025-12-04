@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -29,29 +30,42 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private MainConfigurationProperties parent;
 
     private boolean enabled;
+
     @Metadata(defaultValue = "default", enums = "default,legacy")
     private String namingStrategy;
+
     @Metadata(defaultValue = "true")
     private boolean enableRoutePolicy = true;
+
     @Metadata(defaultValue = "all", enums = "all,route,context")
     private String routePolicyLevel = "all";
+
     private boolean enableMessageHistory;
+
     @Metadata(defaultValue = "true")
     private boolean enableExchangeEventNotifier = true;
+
     @Metadata(defaultValue = "true")
     private boolean baseEndpointURIExchangeEventNotifier = true;
+
     @Metadata(defaultValue = "true")
     private boolean enableRouteEventNotifier = true;
+
     @Metadata(defaultValue = "false")
     private boolean enableInstrumentedThreadPoolFactory;
+
     @Metadata(defaultValue = "true")
     private boolean clearOnReload = true;
+
     @Metadata(defaultValue = "false")
     private boolean skipCamelInfo = false;
+
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
+
     @Metadata
     private String binders;
+
     @Metadata(defaultValue = "/observe/metrics")
     private String path = "/observe/metrics";
 
@@ -310,7 +324,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      * Set whether to gather performance information about Camel Thread Pools by injecting an
      * InstrumentedThreadPoolFactory.
      */
-    public MetricsConfigurationProperties withEnableInstrumentedThreadPoolFactory(boolean enableInstrumentedThreadPoolFactory) {
+    public MetricsConfigurationProperties withEnableInstrumentedThreadPoolFactory(
+            boolean enableInstrumentedThreadPoolFactory) {
         this.enableInstrumentedThreadPoolFactory = enableInstrumentedThreadPoolFactory;
         return this;
     }
@@ -354,5 +369,4 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.binders = binders;
         return this;
     }
-
 }

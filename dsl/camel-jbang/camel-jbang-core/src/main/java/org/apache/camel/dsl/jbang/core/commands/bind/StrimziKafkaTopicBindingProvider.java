@@ -34,10 +34,14 @@ public class StrimziKafkaTopicBindingProvider extends ObjectReferenceBindingProv
 
     @Override
     public String getEndpoint(
-            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+            EndpointType type,
+            String uriExpression,
+            Map<String, Object> endpointProperties,
+            TemplateProvider templateProvider)
             throws Exception {
         if (uriExpression.startsWith(prefix)) {
-            return super.getEndpoint(type, StringHelper.after(uriExpression, prefix), endpointProperties, templateProvider);
+            return super.getEndpoint(
+                    type, StringHelper.after(uriExpression, prefix), endpointProperties, templateProvider);
         }
 
         return super.getEndpoint(type, uriExpression, endpointProperties, templateProvider);

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,11 +39,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for Mail using camel headers to set recipient subject.
@@ -72,7 +73,8 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         getMockEndpoint("mock:mail").expectedMessageCount(1);
         template.sendBodyAndHeaders(
-                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword(), body,
+                "smtp://davsclaus@localhost:" + Mailbox.getPort(Protocol.smtp) + "?password=" + davsclaus.getPassword(),
+                body,
                 map);
         MockEndpoint.assertIsSatisfied(context);
 
@@ -157,7 +159,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
         InputStream is = getClass().getResourceAsStream("/SignedMailTestCaseHurz.txt");
         Message hurzMsg = new MimeMessage(sender.getSession(), is);
-        Message[] messages = new Message[] { hurzMsg };
+        Message[] messages = new Message[] {hurzMsg};
 
         // insert one signed message
         folder.appendMessages(messages);
@@ -171,11 +173,11 @@ public class RawMailMessageTest extends CamelTestSupport {
                 from(davsclaus.uriPrefix(Protocol.pop3) + "&closeFolder=false").to("mock:mail");
 
                 from(jonesRawPop3.uriPrefix(Protocol.pop3)
-                     + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
+                                + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessagePop3");
 
                 from(jonesImap.uriPrefix(Protocol.imap)
-                     + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
+                                + "&closeFolder=false&initialDelay=100&delay=100&delete=true&mapMailMessage=false")
                         .to("mock://rawMessageImap");
 
                 from(jonesPop3.uriPrefix(Protocol.pop3) + "&closeFolder=false&initialDelay=100&delay=100&delete=true")

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -29,26 +30,37 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     private MainConfigurationProperties parent;
 
     private String typedGuard;
+
     @Metadata(defaultValue = "5")
     private Long delay;
+
     @Metadata(defaultValue = "1")
     private Integer successThreshold;
+
     @Metadata(defaultValue = "20")
     private Integer requestVolumeThreshold;
+
     @Metadata(defaultValue = "50")
     private Integer failureRatio;
+
     @Metadata(defaultValue = "false")
     private Boolean timeoutEnabled;
+
     @Metadata(defaultValue = "1000")
     private Long timeoutDuration;
+
     @Metadata(defaultValue = "10")
     private Integer timeoutPoolSize;
+
     @Metadata(defaultValue = "false")
     private Boolean bulkheadEnabled;
+
     @Metadata(defaultValue = "10")
     private Integer bulkheadMaxConcurrentCalls;
+
     @Metadata(defaultValue = "10")
     private Integer bulkheadWaitingTaskQueue;
+
     private String threadOffloadExecutorService;
 
     public FaultToleranceConfigurationProperties(MainConfigurationProperties parent) {
@@ -298,7 +310,8 @@ public class FaultToleranceConfigurationProperties implements BootstrapCloseable
     /**
      * References a custom thread pool to use when offloading a guarded action to another thread.
      */
-    public FaultToleranceConfigurationProperties withThreadOffloadExecutorServiceRef(String threadOffloadExecutorServiceRef) {
+    public FaultToleranceConfigurationProperties withThreadOffloadExecutorServiceRef(
+            String threadOffloadExecutorServiceRef) {
         this.threadOffloadExecutorService = threadOffloadExecutorServiceRef;
         return this;
     }

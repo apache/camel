@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,10 +33,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -42,8 +43,10 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
@@ -68,7 +71,8 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     response.addHeader("foo", "456");
                     response.setEntity(new StringEntity("OK", StandardCharsets.US_ASCII));
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 
@@ -82,8 +86,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
 
     @Test
     public void testTwoHeadersWithSameKeyHeader() {
-        String endpointUri
-                = "http://localhost:" + localServer.getLocalPort() + "/myapp";
+        String endpointUri = "http://localhost:" + localServer.getLocalPort() + "/myapp";
 
         Exchange out = template.request(endpointUri, exchange -> {
             exchange.getIn().setBody(null);
@@ -105,5 +108,4 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
         assertEquals("123", foo.get(0));
         assertEquals("456", foo.get(1));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import org.apache.camel.BindToRegistry;
@@ -29,9 +30,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Extremely unreliable on virtual machines")
-public class InfinispanRemoteCustomListenerIT extends InfinispanRemoteTestSupport implements InfinispanConsumerTestSupport {
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Extremely unreliable on virtual machines")
+public class InfinispanRemoteCustomListenerIT extends InfinispanRemoteTestSupport
+        implements InfinispanConsumerTestSupport {
     @Test
     public void consumerReceivedEventNotifications() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -85,12 +89,8 @@ public class InfinispanRemoteCustomListenerIT extends InfinispanRemoteTestSuppor
         @ClientCacheEntryCreated
         public void entryCreated(ClientCacheEntryCreatedEvent<?> event) {
             if (isAccepted(event.getType())) {
-                getEventProcessor().processEvent(
-                        event.getType().toString(),
-                        getCacheName(),
-                        event.getKey(),
-                        null,
-                        null);
+                getEventProcessor()
+                        .processEvent(event.getType().toString(), getCacheName(), event.getKey(), null, null);
             }
         }
     }

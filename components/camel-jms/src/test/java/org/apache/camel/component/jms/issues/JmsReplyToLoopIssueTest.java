@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
 
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,7 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -52,7 +54,9 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
         template.sendBodyAndHeader("direct:start", "World", "JMSReplyTo", "queue:JmsReplyToLoopIssueTest.bar");
 
         // sleep a little to ensure we do not do endless loop
-        Awaitility.await().atMost(250, TimeUnit.MILLISECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await()
+                .atMost(250, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     @Override
@@ -74,8 +78,7 @@ public class JmsReplyToLoopIssueTest extends AbstractJMSTest {
                         .to("log:foo?showAll=true", "mock:foo")
                         .transform(body().prepend("Bye "));
 
-                from("activemq:queue:JmsReplyToLoopIssueTest.bar")
-                        .to("log:bar?showAll=true", "mock:bar");
+                from("activemq:queue:JmsReplyToLoopIssueTest.bar").to("log:bar?showAll=true", "mock:bar");
             }
         };
     }

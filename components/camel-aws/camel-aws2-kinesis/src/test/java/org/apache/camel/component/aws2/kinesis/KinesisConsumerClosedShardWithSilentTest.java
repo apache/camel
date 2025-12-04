@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -48,19 +57,12 @@ import software.amazon.awssdk.services.kinesis.model.Shard;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class KinesisConsumerClosedShardWithSilentTest {
     @Mock
     private KinesisClient kinesisClient;
+
     @Mock
     private AsyncProcessor processor;
 
@@ -71,28 +73,31 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
     @BeforeEach
     public void setup() {
-        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("2").build();
-        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
+        SequenceNumberRange range =
+                SequenceNumberRange.builder().endingSequenceNumber("2").build();
+        Shard shard =
+                Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
         var r1 = GetRecordsResponse.builder()
                 .nextShardIterator(null)
                 .records(
-                        Record.builder().sequenceNumber("1")
+                        Record.builder()
+                                .sequenceNumber("1")
                                 .data(SdkBytes.fromString("Hello", Charset.defaultCharset()))
                                 .build(),
-                        Record.builder().sequenceNumber("2")
+                        Record.builder()
+                                .sequenceNumber("2")
                                 .data(SdkBytes.fromString("Bye", Charset.defaultCharset()))
                                 .build())
                 .build();
-        when(kinesisClient
-                .getRecords(any(GetRecordsRequest.class))).thenReturn(r1);
-        when(kinesisClient
-                .getShardIterator(any(GetShardIteratorRequest.class)))
-                .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
-        when(kinesisClient
-                .listShards(any(ListShardsRequest.class)))
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class))).thenReturn(r1);
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenReturn(GetShardIteratorResponse.builder()
+                        .shardIterator("shardIterator")
+                        .build());
+        when(kinesisClient.listShards(any(ListShardsRequest.class)))
                 .thenReturn(ListShardsResponse.builder().shards(shardList).build());
 
         component.start();
@@ -116,9 +121,10 @@ public class KinesisConsumerClosedShardWithSilentTest {
     public void itObtainsAShardIteratorOnFirstPoll() throws Exception {
         underTest.poll();
 
-        final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
-                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap =
+                ArgumentCaptor.forClass(DescribeStreamRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap =
+                ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
         assertThat(getShardIteratorReqCap.getValue().streamName(), is("streamName"));
@@ -129,21 +135,25 @@ public class KinesisConsumerClosedShardWithSilentTest {
     @Test
     public void itDoesNotMakeADescribeStreamRequestIfShardIdIsSet() throws Exception {
 
-        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
-        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
+        SequenceNumberRange range =
+                SequenceNumberRange.builder().endingSequenceNumber("20").build();
+        Shard shard =
+                Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
         when(kinesisClient.describeStream(any(DescribeStreamRequest.class)))
                 .thenReturn(DescribeStreamResponse.builder()
-                        .streamDescription(StreamDescription.builder().shards(shardList).build()).build());
+                        .streamDescription(
+                                StreamDescription.builder().shards(shardList).build())
+                        .build());
 
         underTest.getEndpoint().getConfiguration().setShardId("shardId");
 
         underTest.poll();
 
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
-                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap =
+                ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
         assertThat(getShardIteratorReqCap.getValue().streamName(), is("streamName"));
@@ -158,16 +168,16 @@ public class KinesisConsumerClosedShardWithSilentTest {
 
         underTest.poll();
 
-        final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
-                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap =
+                ArgumentCaptor.forClass(DescribeStreamRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap =
+                ArgumentCaptor.forClass(GetShardIteratorRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
         assertThat(getShardIteratorReqCap.getValue().streamName(), is("streamName"));
         assertThat(getShardIteratorReqCap.getValue().shardId(), is("shardId"));
         assertThat(getShardIteratorReqCap.getValue().shardIteratorType(), is(ShardIteratorType.AFTER_SEQUENCE_NUMBER));
         assertThat(getShardIteratorReqCap.getValue().startingSequenceNumber(), is("12345"));
-
     }
 
     @Test

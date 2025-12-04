@@ -67,9 +67,7 @@ public interface ResumeStrategy extends Service {
      *
      * @throws Exception
      */
-    default void loadCache() throws Exception {
-
-    }
+    default void loadCache() throws Exception {}
 
     /**
      * Updates the last processed offset

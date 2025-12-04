@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.pinecone.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class PineconeServiceFactory {
-    private PineconeServiceFactory() {
-
-    }
+    private PineconeServiceFactory() {}
 
     public static class SingletonPineconeService extends SingletonService<PineconeService> implements PineconeService {
 
@@ -63,9 +62,8 @@ public final class PineconeServiceFactory {
                 .build();
     }
 
-    public static class PineconeLocalContainerService extends PineconeLocalContainerInfraService implements PineconeService {
-    }
+    public static class PineconeLocalContainerService extends PineconeLocalContainerInfraService
+            implements PineconeService {}
 
-    public static class PineconeRemoteService extends PineconeRemoteInfraService implements PineconeService {
-    }
+    public static class PineconeRemoteService extends PineconeRemoteInfraService implements PineconeService {}
 }

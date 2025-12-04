@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.util.ResourceLeakDetector;
 import org.apache.camel.BindToRegistry;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.component.netty.http.RestNettyHttpBinding;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyCircuitBreakerLeakTest extends BaseNettyTest {
 
@@ -46,7 +47,10 @@ public class RestNettyCircuitBreakerLeakTest extends BaseNettyTest {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
                 // configure to use netty-http on localhost with the given port
-                restConfiguration().component("netty-http").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("netty-http")
+                        .host("localhost")
+                        .port(getPort())
                         .endpointProperty("nettyHttpBinding", "#mybinding");
 
                 rest().get("/demo").produces("text/plain").to("direct:demo");
@@ -54,15 +58,18 @@ public class RestNettyCircuitBreakerLeakTest extends BaseNettyTest {
 
                 rest().get("/demo/get").to("direct:get");
                 from("direct:get")
-                    .circuitBreaker()
-                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(10000).end()
-                            .log("incoming request")
-                            .to("rest:get:demo?host=localhost:" + getPort())
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(10000)
+                        .end()
+                        .log("incoming request")
+                        .to("rest:get:demo?host=localhost:" + getPort())
                         .onFallback()
-                            .transform().constant("timeout")
-                    .end();
+                        .transform()
+                        .constant("timeout")
+                        .end();
             }
         };
     }
-
 }

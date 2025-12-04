@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
 
@@ -61,13 +62,15 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be clipped after 20 chars
-        TraceExchangeFormatter myFormatter
-                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter =
+                context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: 01234567890123456789... [Body clipped after 20 chars, total length is 1000]]"));
 
         // but body and clipped should not be the same
-        assertNotSame(msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class),
+        assertNotSame(
+                msg,
+                mock.getReceivedExchanges().get(0).getIn().getBody(String.class),
                 "clipped log and real body should not be the same");
     }
 
@@ -81,13 +84,15 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should not be clipped as the message is < 20 chars
-        TraceExchangeFormatter myFormatter
-                = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        TraceExchangeFormatter myFormatter =
+                context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
         String msg = myFormatter.getMessage();
         assertTrue(msg.endsWith("Body: 1234567890]"));
 
         // but body and clipped should not be the same
-        assertNotSame(msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class),
+        assertNotSame(
+                msg,
+                mock.getReceivedExchanges().get(0).getIn().getBody(String.class),
                 "clipped log and real body should not be the same");
     }
 

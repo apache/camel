@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -43,12 +50,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitProducerTest extends GitTestSupport {
 
@@ -250,7 +251,8 @@ public class GitProducerTest extends GitTestSupport {
         // Test camel-git commit (with allowEmpty set to false)
         Map<String, Object> headers = new HashMap<>();
         headers.put(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers));
 
         // Check : An exception should have been raised
@@ -287,7 +289,11 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
         validateGitLogs(git, commitMessage);
-        git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
+        git.checkout()
+                .setCreateBranch(true)
+                .setName(branchTest)
+                .setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM)
+                .call();
 
         // Test camel-git commit (with branch)
         template.send("direct:commit-branch", new Processor() {
@@ -330,7 +336,11 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
         validateGitLogs(git, commitMessage);
-        git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
+        git.checkout()
+                .setCreateBranch(true)
+                .setName(branchTest)
+                .setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM)
+                .call();
         File fileToAdd1 = new File(getGitDir(), filenameBranchToAdd);
         fileToAdd1.createNewFile();
 
@@ -367,7 +377,11 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
         validateGitLogs(git, commitMessage);
-        git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
+        git.checkout()
+                .setCreateBranch(true)
+                .setName(branchTest)
+                .setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM)
+                .call();
         File fileToAdd1 = new File(getGitDir(), filenameBranchToAdd);
         fileToAdd1.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
@@ -793,8 +807,8 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
 
         // Test camel-git add
-        Set<String> cleaned
-                = template.requestBodyAndHeader("direct:clean", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Set.class);
+        Set<String> cleaned =
+                template.requestBodyAndHeader("direct:clean", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Set.class);
 
         File gitDir = new File(getGitDir(), ".git");
         assertEquals(true, gitDir.exists());
@@ -821,8 +835,8 @@ public class GitProducerTest extends GitTestSupport {
         validateGitLogs(git, commitMessage, commitMessage);
 
         // Test camel-git add
-        Properties gcResult
-                = template.requestBodyAndHeader("direct:gc", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Properties.class);
+        Properties gcResult = template.requestBodyAndHeader(
+                "direct:gc", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Properties.class);
 
         assertNotNull(gcResult);
         git.close();
@@ -841,7 +855,11 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
         validateGitLogs(git, commitMessage);
-        git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
+        git.checkout()
+                .setCreateBranch(true)
+                .setName(branchTest)
+                .setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM)
+                .call();
 
         // Test camel-git commit (with branch)
         template.send("direct:commit-branch", new Processor() {
@@ -899,10 +917,10 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
 
-        template.sendBody("direct:create-targetBranch", ""); //create target branch
-        template.sendBody("direct:checkout", ""); //checkout test branch
+        template.sendBody("direct:create-targetBranch", ""); // create target branch
+        template.sendBody("direct:checkout", ""); // checkout test branch
 
-        //add file to test branch and commit
+        // add file to test branch and commit
         fileToAdd = new File(getGitDir(), filenameBranchToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
@@ -910,10 +928,10 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameBranchToAdd));
         git.commit().setMessage(commitMessageMergeBranch).call();
 
-        //merge test branch into target branch
+        // merge test branch into target branch
         MergeResult result = template.requestBody("direct:merge-targetBranch", "", MergeResult.class);
         assertEquals("Fast-forward", result.getMergeStatus().toString());
-        assertTrue(Files.exists(fileToAdd.toPath())); //file exists in target branch, so merge was successful
+        assertTrue(Files.exists(fileToAdd.toPath())); // file exists in target branch, so merge was successful
         git.close();
     }
 
@@ -926,8 +944,9 @@ public class GitProducerTest extends GitTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:clone").to("git://" + cloneDir
-                                        + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
+                from("direct:clone")
+                        .to("git://" + cloneDir
+                                + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init").to("git://" + dir + "?operation=init");
                 from("direct:add").to("git://" + dir + "?operation=add");
                 from("direct:checkout").to("git://" + dir + "?operation=checkout&branchName=" + branchTest);
@@ -941,13 +960,15 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:commit-branch").to("git://" + dir + "?operation=commit&branchName=" + branchTest);
                 from("direct:commit-all").to("git://" + dir + "?operation=commit");
                 from("direct:commit-all-branch").to("git://" + dir + "?operation=commit&branchName=" + branchTest);
-                from("direct:add-status-commit").to("git://" + dir + "?operation=add")
+                from("direct:add-status-commit")
+                        .to("git://" + dir + "?operation=add")
                         .to("git://" + dir + "?operation=status")
                         .choice()
-                            .when(simple("${body.hasUncommittedChanges()}")).log("Commiting changes...")
-                                .to("git://" + dir + "?operation=commit")
-                            .otherwise()
-                                .log("Nothing to commit")
+                        .when(simple("${body.hasUncommittedChanges()}"))
+                        .log("Commiting changes...")
+                        .to("git://" + dir + "?operation=commit")
+                        .otherwise()
+                        .log("Nothing to commit")
                         .end();
                 from("direct:create-branch").to("git://" + dir + "?operation=createBranch&branchName=" + branchTest);
                 from("direct:delete-branch").to("git://" + dir + "?operation=deleteBranch&branchName=" + branchTest);
@@ -965,17 +986,18 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:clean").to("git://" + dir + "?operation=clean");
                 from("direct:gc").to("git://" + dir + "?operation=gc");
                 from("direct:remoteAdd")
-                        .to("git://" + dir
-                            + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
+                        .to(
+                                "git://" + dir
+                                        + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
                 from("direct:remoteList").to("git://" + dir + "?operation=remoteList");
                 from("direct:merge").to("git://" + dir + "?operation=merge&branchName=" + branchTest);
                 from("direct:show-tags").to("git://" + dir + "?operation=showTags");
                 from("direct:create-targetBranch")
                         .to("git://" + getGitDir() + "?operation=createBranch&branchName=" + targetBranchTest);
-                from("direct:merge-targetBranch").to("git://" + dir + "?operation=merge&targetBranchName="
-                                                     + targetBranchTest + "&branchName=" + branchTest);
+                from("direct:merge-targetBranch")
+                        .to("git://" + dir + "?operation=merge&targetBranchName=" + targetBranchTest + "&branchName="
+                                + branchTest);
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
@@ -28,8 +29,8 @@ public class HttpProducerUnsafeCharsTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("http://localhost:{{port}}/test?bridgeEndpoint=true", "Hello World", Exchange.HTTP_URI,
-                "/<>{}");
+        template.sendBodyAndHeader(
+                "http://localhost:{{port}}/test?bridgeEndpoint=true", "Hello World", Exchange.HTTP_URI, "/<>{}");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -43,5 +44,4 @@ public class HttpProducerUnsafeCharsTest extends BaseJettyTest {
             }
         };
     }
-
 }

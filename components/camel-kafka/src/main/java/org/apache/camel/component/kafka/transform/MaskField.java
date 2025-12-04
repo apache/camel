@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.math.BigDecimal;
@@ -65,8 +66,7 @@ public class MaskField {
         ObjectMapper mapper = new ObjectMapper();
         List<String> splittedFields = new ArrayList<>();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
-        });
+        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {});
         if (ObjectHelper.isNotEmpty(fields)) {
             splittedFields = Arrays.stream(fields.split(",")).collect(Collectors.toList());
         }
@@ -75,7 +75,8 @@ public class MaskField {
         for (Map.Entry<Object, Object> entry : body.entrySet()) {
             final String fieldName = (String) entry.getKey();
             final Object origFieldValue = entry.getValue();
-            updatedBody.put(fieldName,
+            updatedBody.put(
+                    fieldName,
                     filterNames(fieldName, splittedFields) ? masked(origFieldValue, replacement) : origFieldValue);
         }
         if (!updatedBody.isEmpty()) {
@@ -113,12 +114,9 @@ public class MaskField {
     private static Object maskWithNullValue(Object value) {
         Object maskedValue = BASIC_MAPPING.get(value.getClass());
         if (maskedValue == null) {
-            if (value instanceof List)
-                maskedValue = Collections.emptyList();
-            else if (value instanceof Map)
-                maskedValue = Collections.emptyMap();
-            else
-                throw new IllegalArgumentException("Unable to mask value of type: " + value.getClass());
+            if (value instanceof List) maskedValue = Collections.emptyList();
+            else if (value instanceof Map) maskedValue = Collections.emptyMap();
+            else throw new IllegalArgumentException("Unable to mask value of type: " + value.getClass());
         }
         return maskedValue;
     }

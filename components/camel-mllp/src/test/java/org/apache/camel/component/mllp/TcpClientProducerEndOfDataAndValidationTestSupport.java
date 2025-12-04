@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,39 +36,40 @@ import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
     static final int READ_TIMEOUT = 500;
 
-    static final String TEST_MESSAGE
-            = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
-              + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
-              + '\r'
-              + "NTE|1||Free text for entering clinical details|" + '\r'
-              + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
-              + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
-              + '\r'
-              + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + '\n';
+    static final String TEST_MESSAGE =
+            "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
+                    + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
+                    + '\r'
+                    + "NTE|1||Free text for entering clinical details|" + '\r'
+                    + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+                    + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
+                    + '\r'
+                    + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + '\n';
 
-    static final String EXPECTED_AA = "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
-                                      + "MSA|AA|00001|" + '\r'
-                                      + '\n';
+    static final String EXPECTED_AA =
+            "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
+                    + "MSA|AA|00001|" + '\r'
+                    + '\n';
 
-    static final String EXPECTED_AR = "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
-                                      + "MSA|AR|00001|" + '\r'
-                                      + '\n';
+    static final String EXPECTED_AR =
+            "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
+                    + "MSA|AR|00001|" + '\r'
+                    + '\n';
 
-    static final String EXPECTED_AE = "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
-                                      + "MSA|AE|00001|" + '\r'
-                                      + '\n';
+    static final String EXPECTED_AE =
+            "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
+                    + "MSA|AE|00001|" + '\r'
+                    + '\n';
 
     @RegisterExtension
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
@@ -75,8 +79,10 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
     @EndpointInject("mock://aa-ack")
     protected MockEndpoint aa;
+
     @EndpointInject("mock://ae-nack")
     protected MockEndpoint ae;
+
     @EndpointInject("mock://ar-nack")
     protected MockEndpoint ar;
 
@@ -148,16 +154,19 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
                         .to(invalid)
                         .log(LoggingLevel.ERROR, routeId, "Invalid Acknowledgement");
 
-                onCompletion()
-                        .onFailureOnly()
-                        .to(failed)
-                        .log(LoggingLevel.DEBUG, routeId, "Exchange failed");
+                onCompletion().onFailureOnly().to(failed).log(LoggingLevel.DEBUG, routeId, "Exchange failed");
 
-                from(source.getDefaultEndpoint()).routeId(routeId)
+                from(source.getDefaultEndpoint())
+                        .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
-                        .toF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b",
-                                mllpServer.getListenHost(), mllpServer.getListenPort(),
-                                RECEIVE_TIMEOUT, READ_TIMEOUT, validatePayload(), requireEndOfData())
+                        .toF(
+                                "mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b",
+                                mllpServer.getListenHost(),
+                                mllpServer.getListenPort(),
+                                RECEIVE_TIMEOUT,
+                                READ_TIMEOUT,
+                                validatePayload(),
+                                requireEndOfData())
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
                         .to(aa);
             }
@@ -365,7 +374,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         expectedEndpoint.expectedMessageCount(1);
         expectedEndpoint.expectedBodiesReceived(TEST_MESSAGE);
-        expectedEndpoint.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
+        expectedEndpoint.expectedHeaderReceived(
+                MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
         expectedEndpoint.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
 
         mllpServer.setAcknowledgementString(badAcknowledgement);
@@ -473,7 +483,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
      * @throws Exception
      */
     public void runInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
-        final String badAcknowledgement = EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + MllpProtocolConstants.START_OF_BLOCK);
+        final String badAcknowledgement =
+                EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + MllpProtocolConstants.START_OF_BLOCK);
 
         setExpectedCounts();
 
@@ -490,11 +501,11 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
      *
      */
     protected void runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() {
-        final String badAcknowledgement = EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + MllpProtocolConstants.END_OF_BLOCK);
+        final String badAcknowledgement =
+                EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + MllpProtocolConstants.END_OF_BLOCK);
 
         mllpServer.setAcknowledgementString(badAcknowledgement);
 
         source.sendBody(TEST_MESSAGE);
     }
-
 }

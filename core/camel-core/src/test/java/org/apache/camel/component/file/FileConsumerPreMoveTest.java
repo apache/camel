@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,8 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
@@ -67,7 +68,8 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?preMove=work/work-${file:name}&initialDelay=0&delay=10"))
-                        .process(new MyPreMoveCheckerProcessor()).to("mock:result");
+                        .process(new MyPreMoveCheckerProcessor())
+                        .to("mock:result");
             }
         };
     }
@@ -76,8 +78,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) {
-            Path testDirectory = (Path) exchange.getContext().getRegistry()
-                    .lookupByName("testDirectory");
+            Path testDirectory = (Path) exchange.getContext().getRegistry().lookupByName("testDirectory");
             Path file = testDirectory.resolve("work/work-" + TEST_FILE_NAME);
             assertTrue(Files.exists(file), "Pre move file should exist");
         }

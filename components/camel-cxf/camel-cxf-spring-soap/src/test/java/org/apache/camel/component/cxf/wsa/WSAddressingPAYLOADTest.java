@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wsa;
 
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration
-public class WSAddressingPAYLOADTest extends WSAddressingTest {
-
-}
+public class WSAddressingPAYLOADTest extends WSAddressingTest {}

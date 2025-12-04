@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -41,8 +42,10 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        final Animal aAnimal = getMockEndpoint("mock:a").getExchanges().get(0).getIn().getBody(Animal.class);
-        final Animal bAnimal = getMockEndpoint("mock:b").getExchanges().get(0).getIn().getBody(Animal.class);
+        final Animal aAnimal =
+                getMockEndpoint("mock:a").getExchanges().get(0).getIn().getBody(Animal.class);
+        final Animal bAnimal =
+                getMockEndpoint("mock:b").getExchanges().get(0).getIn().getBody(Animal.class);
 
         assertSame(original, bAnimal, "Original instance should stay in main route");
         assertNotSame(original, aAnimal, "Copy should go to Wire Tap Endpoint");
@@ -54,7 +57,11 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").wireTap("direct:a").copy().onPrepare(new AnimalDeepClonePrepare()).to("direct:b");
+                from("direct:start")
+                        .wireTap("direct:a")
+                        .copy()
+                        .onPrepare(new AnimalDeepClonePrepare())
+                        .to("direct:b");
                 // END SNIPPET: e1
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");
@@ -85,5 +92,4 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
             assertEquals("Tiger", body.getName());
         }
     }
-
 }

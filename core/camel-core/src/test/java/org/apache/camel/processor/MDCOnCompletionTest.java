@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MDCOnCompletionTest extends ContextTestSupport {
 
@@ -61,28 +62,38 @@ public class MDCOnCompletionTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a").onCompletion().process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                from("direct:a")
+                        .routeId("route-a")
+                        .onCompletion()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
 
-                        assertEquals("1", MDC.get("custom.id"));
+                                assertEquals("1", MDC.get("custom.id"));
 
-                        LOG.info("From onCompletion after route-a");
-                    }
-                }).end().to("log:foo").to("direct:b");
+                                LOG.info("From onCompletion after route-a");
+                            }
+                        })
+                        .end()
+                        .to("log:foo")
+                        .to("direct:b");
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-b", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
 
-                        MDC.put("custom.id", "1");
-                        LOG.info("From processor in route-b");
-                    }
-                }).to("log:bar").to("mock:result");
+                                MDC.put("custom.id", "1");
+                                LOG.info("From processor in route-b");
+                            }
+                        })
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }

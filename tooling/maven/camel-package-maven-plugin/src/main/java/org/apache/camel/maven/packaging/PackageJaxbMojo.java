@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -110,9 +111,14 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
         Map<String, Set<String>> byPackage = new HashMap<>();
 
         Stream.of(XmlRootElement.class, XmlEnum.class, XmlType.class)
-                .map(Class::getName).map(DotName::createSimple)
-                .map(index::getAnnotations).flatMap(Collection::stream)
-                .map(AnnotationInstance::target).map(AnnotationTarget::asClass).map(ClassInfo::name).map(DotName::toString)
+                .map(Class::getName)
+                .map(DotName::createSimple)
+                .map(index::getAnnotations)
+                .flatMap(Collection::stream)
+                .map(AnnotationInstance::target)
+                .map(AnnotationTarget::asClass)
+                .map(ClassInfo::name)
+                .map(DotName::toString)
                 .forEach(name -> {
                     int idx = name.lastIndexOf('.');
                     String p = name.substring(0, idx);
@@ -128,7 +134,9 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
         int count = 0;
         for (Map.Entry<String, Set<String>> entry : byPackage.entrySet()) {
             String fn = entry.getKey().replace('.', '/') + "/jaxb.index";
-            if (project.getCompileSourceRoots().stream().map(Paths::get).map(p -> p.resolve(fn))
+            if (project.getCompileSourceRoots().stream()
+                    .map(Paths::get)
+                    .map(p -> p.resolve(fn))
                     .anyMatch(Files::isRegularFile)) {
                 continue;
             }
@@ -159,8 +167,13 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
         }
         try {
             Indexer indexer = new Indexer();
-            locations.stream().map(this::asFolder).filter(Files::isDirectory).flatMap(this::walk).filter(Files::isRegularFile)
-                    .filter(p -> p.getFileName().toString().endsWith(".class")).forEach(p -> index(indexer, p));
+            locations.stream()
+                    .map(this::asFolder)
+                    .filter(Files::isDirectory)
+                    .flatMap(this::walk)
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().endsWith(".class"))
+                    .forEach(p -> index(indexer, p));
             return indexer.complete();
         } catch (IOError e) {
             throw new MojoExecutionException("Error", e);
@@ -173,7 +186,8 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
             try (FileSystem fs = FileSystems.newFileSystem(URI.create("jar:" + fp.toURI()), Collections.emptyMap())) {
                 return fs.getPath("/");
             } catch (FileSystemAlreadyExistsException e) {
-                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI())).getPath("/");
+                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI()))
+                        .getPath("/");
             } catch (IOException e) {
                 throw new IOError(e);
             }
@@ -197,5 +211,4 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
             throw new IOError(e);
         }
     }
-
 }

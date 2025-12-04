@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
@@ -86,8 +87,10 @@ class RouteTemplateChoicePredicateTest extends ContextTestSupport {
                         .templateParameter("color")
                         .from("direct:{{start}}")
                         .choice()
-                            .when(simple("'{{color}}' == 'red'")).to("mock:red")
-                            .otherwise().to("mock:other")
+                        .when(simple("'{{color}}' == 'red'"))
+                        .to("mock:red")
+                        .otherwise()
+                        .to("mock:other")
                         .end()
                         .to("mock:end");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.CamelContext;
@@ -29,5 +30,4 @@ public abstract class BaseReactiveTest extends CamelTestSupport {
         context.getCamelContextExtension().setExchangeFactory(new PrototypeExchangeFactory());
         return context;
     }
-
 }

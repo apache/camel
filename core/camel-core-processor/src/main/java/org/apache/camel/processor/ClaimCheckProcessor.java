@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AggregationStrategy;
@@ -198,8 +199,8 @@ public class ClaimCheckProcessor extends BaseProcessorSupport implements IdAware
     }
 
     private static ClaimCheckRepository getClaimCheckRepository(Exchange exchange) {
-        ClaimCheckRepository repo
-                = exchange.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
+        ClaimCheckRepository repo =
+                exchange.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
         if (repo == null) {
             repo = new DefaultClaimCheckRepository();
             exchange.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, repo);

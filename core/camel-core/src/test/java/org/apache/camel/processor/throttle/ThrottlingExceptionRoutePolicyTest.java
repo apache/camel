@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
 
 public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
     private static final Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyTest.class);
@@ -108,11 +109,16 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
                 int threshold = 2;
                 long failureWindow = 30;
                 long halfOpenAfter = 1000;
-                ThrottlingExceptionRoutePolicy policy
-                        = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
+                ThrottlingExceptionRoutePolicy policy =
+                        new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new NeverCloseHandler());
 
-                from(url).routeId("foo").routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
+                from(url)
+                        .routeId("foo")
+                        .routePolicy(policy)
+                        .log("${body}")
+                        .to("log:foo?groupSize=10")
+                        .to("mock:result");
             }
         };
     }
@@ -123,6 +129,5 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         public boolean isReadyToBeClosed() {
             return false;
         }
-
     }
 }

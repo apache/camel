@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron;
+
+import static org.apache.camel.component.schematron.constant.Constants.LINE_NUMBERING;
+import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,14 +46,17 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.schematron.constant.Constants.LINE_NUMBERING;
-import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
-
 /**
  * Validate XML payload using the Schematron Library.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path",
-             remote = false, producerOnly = true, category = { Category.VALIDATION })
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "schematron",
+        title = "Schematron",
+        syntax = "schematron:path",
+        remote = false,
+        producerOnly = true,
+        category = {Category.VALIDATION})
 public class SchematronEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchematronEndpoint.class);
@@ -59,15 +66,17 @@ public class SchematronEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true, supportFileReference = true)
     private String path;
+
     @UriParam
     private boolean abort;
+
     @UriParam
     private Templates rules;
+
     @UriParam(label = "advanced")
     private URIResolver uriResolver;
 
-    public SchematronEndpoint() {
-    }
+    public SchematronEndpoint() {}
 
     public SchematronEndpoint(String uri, String path, SchematronComponent component) {
         super(uri, component);
@@ -169,14 +178,17 @@ public class SchematronEndpoint extends DefaultEndpoint {
 
     private void createTransformerFactory() throws ClassNotFoundException {
         // provide the class loader of this component to work in OSGi environments
-        Class<TransformerFactory> factoryClass
-                = getCamelContext().getClassResolver().resolveMandatoryClass(SAXON_TRANSFORMER_FACTORY_CLASS_NAME,
-                        TransformerFactory.class, SchematronComponent.class.getClassLoader());
+        Class<TransformerFactory> factoryClass = getCamelContext()
+                .getClassResolver()
+                .resolveMandatoryClass(
+                        SAXON_TRANSFORMER_FACTORY_CLASS_NAME,
+                        TransformerFactory.class,
+                        SchematronComponent.class.getClassLoader());
 
         LOG.debug("Using TransformerFactoryClass {}", factoryClass);
         transformerFactory = getCamelContext().getInjector().newInstance(factoryClass);
-        transformerFactory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, this.uriResolver));
+        transformerFactory.setURIResolver(
+                new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, this.uriResolver));
         transformerFactory.setAttribute(LINE_NUMBERING, true);
     }
-
 }

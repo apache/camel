@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.config;
 
 import java.time.Duration;
@@ -22,8 +23,7 @@ public final class ConnectorConfigGeneratorUtils {
 
     private static final int ONE_UNIT = 1;
 
-    private ConnectorConfigGeneratorUtils() {
-    }
+    private ConnectorConfigGeneratorUtils() {}
 
     /**
      * This will print time in human readable format from milliseconds. Examples: 500 -> will produce 500ms 1300 -> will
@@ -44,20 +44,20 @@ public final class ConnectorConfigGeneratorUtils {
 
     private static long scanTimeUnits(final long timeInMillis, final StringBuilder timeBuilder) {
         if (timeInMillis >= Duration.ofDays(ONE_UNIT).toMillis()) {
-            final long proceededTime
-                    = processSingleTimeUnit(timeInMillis, Duration.ofDays(ONE_UNIT).toMillis(), timeBuilder, "d");
+            final long proceededTime = processSingleTimeUnit(
+                    timeInMillis, Duration.ofDays(ONE_UNIT).toMillis(), timeBuilder, "d");
             return scanTimeUnits(proceededTime, timeBuilder);
         } else if (timeInMillis >= Duration.ofHours(ONE_UNIT).toMillis()) {
-            final long proceededTime
-                    = processSingleTimeUnit(timeInMillis, Duration.ofHours(ONE_UNIT).toMillis(), timeBuilder, "h");
+            final long proceededTime = processSingleTimeUnit(
+                    timeInMillis, Duration.ofHours(ONE_UNIT).toMillis(), timeBuilder, "h");
             return scanTimeUnits(proceededTime, timeBuilder);
         } else if (timeInMillis >= Duration.ofMinutes(ONE_UNIT).toMillis()) {
-            final long proceededTime
-                    = processSingleTimeUnit(timeInMillis, Duration.ofMinutes(ONE_UNIT).toMillis(), timeBuilder, "m");
+            final long proceededTime = processSingleTimeUnit(
+                    timeInMillis, Duration.ofMinutes(ONE_UNIT).toMillis(), timeBuilder, "m");
             return scanTimeUnits(proceededTime, timeBuilder);
         } else if (timeInMillis >= Duration.ofSeconds(ONE_UNIT).toMillis()) {
-            final long proceededTime
-                    = processSingleTimeUnit(timeInMillis, Duration.ofSeconds(ONE_UNIT).toMillis(), timeBuilder, "s");
+            final long proceededTime = processSingleTimeUnit(
+                    timeInMillis, Duration.ofSeconds(ONE_UNIT).toMillis(), timeBuilder, "s");
             return scanTimeUnits(proceededTime, timeBuilder);
         } else if (timeInMillis >= ONE_UNIT) {
             final long proceededTime = processSingleTimeUnit(timeInMillis, ONE_UNIT, timeBuilder, "ms");
@@ -67,7 +67,10 @@ public final class ConnectorConfigGeneratorUtils {
     }
 
     private static long processSingleTimeUnit(
-            final long timeInMillis, final long timeUnitMillis, final StringBuilder timeBuilder, final String timeSymbol) {
+            final long timeInMillis,
+            final long timeUnitMillis,
+            final StringBuilder timeBuilder,
+            final String timeSymbol) {
         timeBuilder.append(calculateTimeUnit(timeInMillis, timeUnitMillis)).append(timeSymbol);
         return timeInMillis % timeUnitMillis;
     }
@@ -75,5 +78,4 @@ public final class ConnectorConfigGeneratorUtils {
     private static long calculateTimeUnit(final long timeInMillis, final long baseTimeUnit) {
         return timeInMillis / baseTimeUnit;
     }
-
 }

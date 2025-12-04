@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.mosquitto.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class MosquittoServiceFactory {
-    private MosquittoServiceFactory() {
-
-    }
+    private MosquittoServiceFactory() {}
 
     public static SimpleTestServiceBuilder<MosquittoService> builder() {
         return new SimpleTestServiceBuilder<>("mosquitto");
@@ -33,5 +32,4 @@ public final class MosquittoServiceFactory {
                 .addRemoteMapping(MosquittoRemoteService::new)
                 .build();
     }
-
 }

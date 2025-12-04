@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-
 public class PlatformHttpReturnHttpRequestHeadersTest extends AbstractPlatformHttpTest {
 
     @Test
     void testReturnHttpRequestHeadersFalse() {
-        given()
-                .header("Accept", "application/json")
+        given().header("Accept", "application/json")
                 .header("User-Agent", "User-Agent-Camel")
                 .port(port)
                 .expect()
@@ -41,8 +41,7 @@ public class PlatformHttpReturnHttpRequestHeadersTest extends AbstractPlatformHt
 
     @Test
     void testReturnHttpRequestHeadersTrue() {
-        given()
-                .header("Accept", "application/json")
+        given().header("Accept", "application/json")
                 .header("User-Agent", "User-Agent-Camel")
                 .port(port)
                 .expect()
@@ -55,8 +54,7 @@ public class PlatformHttpReturnHttpRequestHeadersTest extends AbstractPlatformHt
 
     @Test
     void testReturnHttpRequestHeadersDefault() {
-        given()
-                .header("Accept", "application/json")
+        given().header("Accept", "application/json")
                 .header("User-Agent", "User-Agent-Camel")
                 .port(port)
                 .expect()
@@ -69,8 +67,7 @@ public class PlatformHttpReturnHttpRequestHeadersTest extends AbstractPlatformHt
 
     @Test
     void testReturnHttpRequestHeadersFalseWithCustomHeaderFilterStrategy() {
-        given()
-                .header("Accept", "application/json")
+        given().header("Accept", "application/json")
                 .header("User-Agent", "User-Agent-Camel")
                 .header("Custom_In_Header", "Custom_In_Header_Value")
                 .header("Custom_Out_Header", "Custom_Out_Header_Value")
@@ -97,16 +94,17 @@ public class PlatformHttpReturnHttpRequestHeadersTest extends AbstractPlatformHt
                 getContext().getRegistry().bind("testHeaderFilterStrategy", testHeaderFilterStrategy);
 
                 from("platform-http:/getWithoutRequestHeadersReturn?returnHttpRequestHeaders=false")
-                        .setBody().constant("getWithoutRequestHeadersReturn");
+                        .setBody()
+                        .constant("getWithoutRequestHeadersReturn");
                 from("platform-http:/getWithRequestHeadersReturn?returnHttpRequestHeaders=true")
-                        .setBody().constant("getWithRequestHeadersReturn");
+                        .setBody()
+                        .constant("getWithRequestHeadersReturn");
                 from("platform-http:/getWithCustomHeaderFilterStrategy?headerFilterStrategy=#testHeaderFilterStrategy")
                         .setBody()
-                        .simple("Custom_In_Header=${header.Custom_In_Header}, Custom_Out_Header=${header.Custom_Out_Header}");
-                from("platform-http:/get")
-                        .setBody().constant("get");
+                        .simple(
+                                "Custom_In_Header=${header.Custom_In_Header}, Custom_Out_Header=${header.Custom_Out_Header}");
+                from("platform-http:/get").setBody().constant("get");
             }
         };
     }
-
 }

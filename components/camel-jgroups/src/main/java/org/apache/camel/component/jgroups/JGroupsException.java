@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
 
 public class JGroupsException extends RuntimeException {
@@ -23,5 +24,4 @@ public class JGroupsException extends RuntimeException {
     public JGroupsException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

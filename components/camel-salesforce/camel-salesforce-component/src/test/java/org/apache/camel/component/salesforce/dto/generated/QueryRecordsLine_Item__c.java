@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.dto.generated;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 
-public class QueryRecordsLine_Item__c extends AbstractQueryRecordsBase<Line_Item__c> {
-}
+public class QueryRecordsLine_Item__c extends AbstractQueryRecordsBase<Line_Item__c> {}

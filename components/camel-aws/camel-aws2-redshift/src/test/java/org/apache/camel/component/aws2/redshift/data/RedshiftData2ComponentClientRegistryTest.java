@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.redshift.data;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.redshift.data;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class RedshiftData2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -31,7 +32,8 @@ public class RedshiftData2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonRedshiftDataClientMock clientMock = new AmazonRedshiftDataClientMock();
         context.getRegistry().bind("amazonRedshiftDataClient", clientMock);
         RedshiftData2Component component = context.getComponent("aws2-redshift-data", RedshiftData2Component.class);
-        RedshiftData2Endpoint endpoint = (RedshiftData2Endpoint) component.createEndpoint("aws2-redshift-data://TestDomain");
+        RedshiftData2Endpoint endpoint =
+                (RedshiftData2Endpoint) component.createEndpoint("aws2-redshift-data://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getAwsRedshiftDataClient());
     }
@@ -51,8 +53,8 @@ public class RedshiftData2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonRedshiftDataClientMock clientMock = new AmazonRedshiftDataClientMock();
         context.getRegistry().bind("awsRedshiftDataClient", clientMock);
         RedshiftData2Component component = context.getComponent("aws2-redshift-data", RedshiftData2Component.class);
-        RedshiftData2Endpoint endpoint = (RedshiftData2Endpoint) component
-                .createEndpoint("aws2-redshift-data://TestDomain?accessKey=xxx&secretKey=yyy");
+        RedshiftData2Endpoint endpoint = (RedshiftData2Endpoint)
+                component.createEndpoint("aws2-redshift-data://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getAwsRedshiftDataClient());
     }

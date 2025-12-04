@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import org.slf4j.Logger;
@@ -23,8 +24,7 @@ public final class TestStoredFunction {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestStoredFunction.class);
 
-    private TestStoredFunction() {
-    }
+    private TestStoredFunction() {}
 
     public static int subnumbers(int val1, int val2) {
         LOG.info("calling subnumbers:{} - {}", val1, val2);

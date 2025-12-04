@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.aggregator;
 
-import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.processor.aggregator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
+import org.junit.jupiter.api.Test;
 
 class OptimisticLockRetryPolicyTest {
 

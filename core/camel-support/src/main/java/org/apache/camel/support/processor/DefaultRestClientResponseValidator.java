@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
+
+import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.RestClientResponseValidator;
@@ -23,8 +26,6 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
-
-import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 public class DefaultRestClientResponseValidator implements RestClientResponseValidator {
 
@@ -48,7 +49,8 @@ public class DefaultRestClientResponseValidator implements RestClientResponseVal
             }
             if (found != null) {
                 if (!isValidOrAcceptedContentType(found, contentType)) {
-                    return new ValidationError(500, "Invalid content-type: " + contentType + " for response code: " + code);
+                    return new ValidationError(
+                            500, "Invalid content-type: " + contentType + " for response code: " + code);
                 }
             }
         }
@@ -75,5 +77,4 @@ public class DefaultRestClientResponseValidator implements RestClientResponseVal
         // success
         return null;
     }
-
 }

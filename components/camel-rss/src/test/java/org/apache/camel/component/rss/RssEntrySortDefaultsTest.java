@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,10 +24,12 @@ public class RssEntrySortDefaultsTest extends RssEntrySortTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50").to("mock:sorted");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50")
+                        .to("mock:sorted");
 
                 // should NOT sort by default
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=50").to("mock:unsorted");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=50")
+                        .to("mock:unsorted");
             }
         };
     }

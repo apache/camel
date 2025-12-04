@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.cluster;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
@@ -32,12 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Platform file locking impl prevents cluster data move / deletion")
 class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceTestBase {
@@ -83,7 +84,8 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
             Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
                 assertTrue(getClusterMember(clusterLeader).isLeader());
 
-                FileLockClusterLeaderInfo recoveredClusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(dataFile);
+                FileLockClusterLeaderInfo recoveredClusterLeaderInfo =
+                        FileLockClusterUtils.readClusterLeaderInfo(dataFile);
                 assertNotNull(recoveredClusterLeaderInfo);
 
                 String recoveredLeaderId = recoveredClusterLeaderInfo.getId();
@@ -178,7 +180,8 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
     }
 
     @Test
-    void notStaleLockFileForRestoredFileSystemElectsOriginalLeader(@TempDir Path clusterMovedLocation) throws Exception {
+    void notStaleLockFileForRestoredFileSystemElectsOriginalLeader(@TempDir Path clusterMovedLocation)
+            throws Exception {
         ClusterConfig leaderConfig = new ClusterConfig();
         leaderConfig.setTimerRepeatCount(-1);
 
@@ -307,13 +310,11 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
             // Make the cluster data file appear stale (i.e. not updated within acceptable bounds)
             long staleHeartbeatTimestamp = leaderInfo.get().getHeartbeatNanoseconds() - TimeUnit.SECONDS.toNanos(100);
 
-            FileLockClusterLeaderInfo updatedInfo
-                    = new FileLockClusterLeaderInfo(
-                            leaderInfo.get().getId(), TimeUnit.NANOSECONDS.toNanos(2), staleHeartbeatTimestamp);
+            FileLockClusterLeaderInfo updatedInfo = new FileLockClusterLeaderInfo(
+                    leaderInfo.get().getId(), TimeUnit.NANOSECONDS.toNanos(2), staleHeartbeatTimestamp);
             Path data = clusterMovedLocation.resolve(NAMESPACE + ".data");
             try (RandomAccessFile file = new RandomAccessFile(data.toFile(), "rw")) {
-                FileLockClusterUtils.writeClusterLeaderInfo(data, file.getChannel(), updatedInfo,
-                        true);
+                FileLockClusterUtils.writeClusterLeaderInfo(data, file.getChannel(), updatedInfo, true);
             }
 
             // Simulate reattaching the file system by moving the cluster directory back to the original location

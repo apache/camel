@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,9 +30,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -36,7 +37,8 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -60,7 +62,12 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").transform().simple("Hello ${body}").to("mock:result").id("myMock");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .transform()
+                        .simple("Hello ${body}")
+                        .to("mock:result")
+                        .id("myMock");
             }
         };
     }

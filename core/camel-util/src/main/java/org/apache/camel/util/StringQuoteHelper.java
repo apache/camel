@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ import java.util.List;
  */
 public final class StringQuoteHelper {
 
-    private StringQuoteHelper() {
-    }
+    private StringQuoteHelper() {}
 
     /**
      * Returns the text wrapped double quotes
@@ -115,7 +115,7 @@ public final class StringQuoteHelper {
                 }
             }
             // no separator in data, so return single string with input as is
-            return new String[] { input };
+            return new String[] {input};
         }
 
         List<String> answer = new ArrayList<>();
@@ -222,5 +222,4 @@ public final class StringQuoteHelper {
 
         return answer.toArray(new String[0]);
     }
-
 }

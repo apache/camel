@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +37,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
@@ -56,14 +57,14 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         notify.matchesWaitTime();
 
         // the original file should have been deleted
-        Awaitility.await().atMost(Duration.ofSeconds(10))
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(10))
                 .untilAsserted(() -> assertFalse(new File(zipFile).exists(), "File should been deleted"));
     }
 
     @Test
     public void testDeleteZipFileWhenUnmarshalWithSplitter() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(2);
         String zipFile = createZipFile("testDeleteZipFileWhenUnmarshalWithSplitter");
 
@@ -72,7 +73,8 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
         notify.matchesWaitTime();
 
         // the original file should have been deleted
-        Awaitility.await().atMost(Duration.ofSeconds(10))
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(10))
                 .untilAsserted(() -> assertFalse(new File(zipFile).exists(), "File should been deleted"));
     }
 
@@ -86,13 +88,15 @@ public class ZipFileSplitAndDeleteTest extends CamelTestSupport {
 
                 from("file://target/testDeleteZipFileWhenUnmarshalWithDataFormat?delay=10&delete=true")
                         .unmarshal(dataFormat)
-                        .split(bodyAs(Iterator.class)).streaming()
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();
 
                 from("file://target/testDeleteZipFileWhenUnmarshalWithSplitter?delay=10&delete=true")
-                        .split(new ZipSplitter()).streaming()
+                        .split(new ZipSplitter())
+                        .streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
                         .end();

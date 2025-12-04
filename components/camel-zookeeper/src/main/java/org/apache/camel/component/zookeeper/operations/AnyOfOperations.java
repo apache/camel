@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
 import java.util.concurrent.ExecutionException;
@@ -60,7 +61,8 @@ public class AnyOfOperations extends ZooKeeperOperation implements WatchedEventP
     }
 
     @Override
-    public OperationResult get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public OperationResult get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
         return get();
     }
 

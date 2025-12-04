@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.legacy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.PropertyInject;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,8 +27,6 @@ import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.Greetings;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The test class ensuring that an existing bean can be replaced with a bean bound from the test class.

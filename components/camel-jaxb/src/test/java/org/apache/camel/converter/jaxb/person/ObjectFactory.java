@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb.person;
 
 import jakarta.xml.bind.annotation.XmlRegistry;
@@ -35,8 +36,7 @@ public class ObjectFactory {
      * org.apache.camel.converter.jaxb.person
      *
      */
-    public ObjectFactory() {
-    }
+    public ObjectFactory() {}
 
     /**
      * Create an instance of {@link Person }
@@ -45,5 +45,4 @@ public class ObjectFactory {
     public Person createPerson() {
         return new Person();
     }
-
 }

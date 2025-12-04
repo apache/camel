@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
@@ -34,15 +35,13 @@ public final class AtomUtils {
     public static List<Item> readItems(CamelContext camelContext, String uri, RssReader reader, boolean sort)
             throws IOException {
         if (ResourceHelper.isHttpUri(uri)) {
-            return reader
-                    .read(uri)
+            return reader.read(uri)
                     .sorted(sort ? ItemComparator.oldestItemFirst() : Comparator.naturalOrder())
                     .collect(Collectors.toList());
         } else {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri);
             try {
-                return reader
-                        .read(is)
+                return reader.read(is)
                         .sorted(sort ? ItemComparator.oldestItemFirst() : Comparator.naturalOrder())
                         .collect(Collectors.toList());
             } finally {

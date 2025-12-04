@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 /**
@@ -35,5 +36,4 @@ public interface HttpRegistry {
     void unregister(HttpRegistryProvider provider);
 
     HttpRegistryProvider getCamelServlet(String servletName);
-
 }

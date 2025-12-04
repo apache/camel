@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jbang.console;
 
 import java.io.InputStream;
@@ -25,8 +26,7 @@ import org.apache.camel.util.IOHelper;
 
 public final class VersionHelper {
 
-    private VersionHelper() {
-    }
+    private VersionHelper() {}
 
     public static String getJBangVersion() {
         try {
@@ -42,5 +42,4 @@ public final class VersionHelper {
         }
         return null;
     }
-
 }

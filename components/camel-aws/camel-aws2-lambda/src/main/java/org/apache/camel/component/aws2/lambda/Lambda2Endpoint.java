@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda;
 
 import org.apache.camel.Category;
@@ -30,9 +31,14 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 /**
  * Manage and invoke AWS Lambda functions.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-lambda", title = "AWS Lambda", syntax = "aws2-lambda:function",
-             producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
-             headersClass = Lambda2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.2.0",
+        scheme = "aws2-lambda",
+        title = "AWS Lambda",
+        syntax = "aws2-lambda:function",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.SERVERLESS},
+        headersClass = Lambda2Constants.class)
 public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private LambdaClient awsLambdaClient;
@@ -40,6 +46,7 @@ public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceL
     @UriPath
     @Metadata(required = true)
     private String function;
+
     @UriParam
     private Lambda2Configuration configuration;
 

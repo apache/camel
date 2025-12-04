@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,7 +37,6 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
         public String apply(String remainder) {
             return "mock:" + remainder.toLowerCase();
         }
-
     }
 
     @Override
@@ -53,7 +53,10 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("log:{{sys:os.name}}").to("{{beer:FOO}}").to("{{beer:BAR}}");
+                from("direct:start")
+                        .to("log:{{sys:os.name}}")
+                        .to("{{beer:FOO}}")
+                        .to("{{beer:BAR}}");
             }
         });
         context.start();
@@ -73,5 +76,4 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
         // function should be stopped by camel also
         Assertions.assertTrue(func.isStopped());
     }
-
 }

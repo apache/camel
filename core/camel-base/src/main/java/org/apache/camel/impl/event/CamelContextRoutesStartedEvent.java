@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import java.io.Serial;
@@ -21,7 +22,8 @@ import java.io.Serial;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 
-public class CamelContextRoutesStartedEvent extends AbstractContextEvent implements CamelEvent.CamelContextRoutesStartedEvent {
+public class CamelContextRoutesStartedEvent extends AbstractContextEvent
+        implements CamelEvent.CamelContextRoutesStartedEvent {
     private static final @Serial long serialVersionUID = -1120225323715688981L;
 
     public CamelContextRoutesStartedEvent(CamelContext source) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.policy;
 
 import java.util.UUID;
@@ -32,9 +33,9 @@ public class JCachePolicyTestBase extends CamelTestSupport {
 
     @BeforeEach
     public void before() {
-        //Setup mock
-        getMockEndpoint("mock:value")
-                .whenAnyExchangeReceived(e -> e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
+        // Setup mock
+        getMockEndpoint("mock:value").whenAnyExchangeReceived(e -> e.getMessage()
+                .setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
     public static String randomString() {
@@ -42,7 +43,7 @@ public class JCachePolicyTestBase extends CamelTestSupport {
     }
 
     public static Cache lookupCache(String cacheName) {
-        //This will also open a closed cache
+        // This will also open a closed cache
         return Caching.getCachingProvider().getCacheManager().getCache(cacheName);
     }
 
@@ -52,7 +53,7 @@ public class JCachePolicyTestBase extends CamelTestSupport {
 
     @AfterEach
     public void after() {
-        //The RouteBuilder code is called for every test, so we destroy cache after each test
+        // The RouteBuilder code is called for every test, so we destroy cache after each test
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
         cacheManager.getCacheNames().forEach(s -> cacheManager.destroyCache(s));
         Caching.getCachingProvider().close();

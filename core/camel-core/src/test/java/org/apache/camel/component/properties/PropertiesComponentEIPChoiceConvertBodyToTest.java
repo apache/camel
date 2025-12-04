@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.nio.charset.StandardCharsets;
@@ -54,8 +55,13 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(body().isNotNull()).convertBodyTo(byte[].class, "{{myCoolCharset}}")
-                        .to("mock:result").otherwise().to("mock:null");
+                from("direct:start")
+                        .choice()
+                        .when(body().isNotNull())
+                        .convertBodyTo(byte[].class, "{{myCoolCharset}}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:null");
             }
         };
     }
@@ -63,8 +69,8 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

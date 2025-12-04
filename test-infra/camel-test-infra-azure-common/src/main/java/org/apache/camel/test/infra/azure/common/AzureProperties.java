@@ -20,7 +20,5 @@ package org.apache.camel.test.infra.azure.common;
 public final class AzureProperties {
     public static final String AZURE_CONTAINER = "azure.container";
 
-    private AzureProperties() {
-
-    }
+    private AzureProperties() {}
 }

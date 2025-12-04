@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class FtpUtilsExtractDirNameFromAbsolutePathTest {
 
@@ -44,5 +45,4 @@ public class FtpUtilsExtractDirNameFromAbsolutePathTest {
         path = "test\\depth1";
         assertEquals("depth1", FtpUtils.extractDirNameFromAbsolutePath(path));
     }
-
 }

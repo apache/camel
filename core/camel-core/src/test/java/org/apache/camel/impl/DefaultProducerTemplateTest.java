@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +38,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for DefaultProducerTemplate
@@ -90,9 +91,10 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        RuntimeCamelException e
-                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:exception", "Hello World"),
-                        "Should have thrown RuntimeCamelException");
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBody("direct:exception", "Hello World"),
+                "Should have thrown RuntimeCamelException");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced exception by unit test", e.getCause().getMessage());
@@ -104,7 +106,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.requestBody("direct:exception", "Hello World", Integer.class),
                 "Should have thrown RuntimeCamelException");
 
@@ -151,7 +154,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.requestBody("direct:exception", "Hello World"),
                 "Should have thrown RuntimeCamelException");
 
@@ -265,26 +269,32 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                 // for faster unit test
                 errorHandler(noErrorHandler());
 
-                from("direct:in").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:in")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setBody("Bye World");
+                            }
+                        })
+                        .to("mock:result");
 
-                from("direct:out").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        exchange.getMessage().setBody("Bye Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:out")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody("Bye Bye World");
+                            }
+                        })
+                        .to("mock:result");
 
-                from("direct:exception").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        throw new IllegalArgumentException("Forced exception by unit test");
-                    }
-                }).to("mock:result");
+                from("direct:exception")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                throw new IllegalArgumentException("Forced exception by unit test");
+                            }
+                        })
+                        .to("mock:result");
 
                 from("direct:inout").transform(constant(123));
             }

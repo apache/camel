@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.management;
 
 import java.lang.reflect.Method;
@@ -77,8 +78,12 @@ public class MBeanInfoAssembler implements Service {
     public void stop() {
         if (cache != null) {
             if (LOG.isDebugEnabled() && cache instanceof LRUCache<Class<?>, MBeanAttributesAndOperations> lruCache) {
-                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", lruCache.size(), lruCache.getHits(),
-                        lruCache.getMisses(), lruCache.getEvicted());
+                LOG.debug(
+                        "Clearing cache[size={}, hits={}, misses={}, evicted={}]",
+                        lruCache.size(),
+                        lruCache.getHits(),
+                        lruCache.getMisses(),
+                        lruCache.getEvicted());
             }
             cache.clear();
         }
@@ -137,22 +142,22 @@ public class MBeanInfoAssembler implements Service {
 
         // create the ModelMBeanInfo
         String name = getName(customManagedBean != null ? customManagedBean : defaultManagedBean);
-        String description = getDescription(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
-        ModelMBeanAttributeInfo[] arrayAttributes
-                = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[0]);
-        ModelMBeanOperationInfo[] arrayOperations
-                = mBeanOperations.toArray(new ModelMBeanOperationInfo[0]);
-        ModelMBeanNotificationInfo[] arrayNotifications
-                = mBeanNotifications.toArray(new ModelMBeanNotificationInfo[0]);
+        String description =
+                getDescription(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
+        ModelMBeanAttributeInfo[] arrayAttributes = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[0]);
+        ModelMBeanOperationInfo[] arrayOperations = mBeanOperations.toArray(new ModelMBeanOperationInfo[0]);
+        ModelMBeanNotificationInfo[] arrayNotifications = mBeanNotifications.toArray(new ModelMBeanNotificationInfo[0]);
 
-        ModelMBeanInfo info
-                = new ModelMBeanInfoSupport(name, description, arrayAttributes, null, arrayOperations, arrayNotifications);
+        ModelMBeanInfo info = new ModelMBeanInfoSupport(
+                name, description, arrayAttributes, null, arrayOperations, arrayNotifications);
         LOG.trace("Created ModelMBeanInfo {}", info);
         return info;
     }
 
     private void extractAttributesAndOperations(
-            CamelContext camelContext, Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
+            CamelContext camelContext,
+            Class<?> managedClass,
+            Map<String, ManagedAttributeInfo> attributes,
             Set<ManagedOperationInfo> operations) {
         MBeanAttributesAndOperations cached = cache.get(managedClass);
         if (cached == null) {
@@ -174,8 +179,7 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void doExtractAttributesAndOperations(
-            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
-            Set<ManagedOperationInfo> operations) {
+            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         // extract the class
         doDoExtractAttributesAndOperations(managedClass, attributes, operations);
 
@@ -202,8 +206,7 @@ public class MBeanInfoAssembler implements Service {
     }
 
     private void doDoExtractAttributesAndOperations(
-            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes,
-            Set<ManagedOperationInfo> operations) {
+            Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
         LOG.trace("Extracting attributes and operations from class: {}", managedClass);
 
         // introspect the class, and leverage the cache to have better performance
@@ -231,9 +234,8 @@ public class MBeanInfoAssembler implements Service {
                     key = cacheInfo.getterOrSetterShorthandName;
                     setter = cacheInfo.method;
                 } else {
-                    throw new IllegalArgumentException(
-                            "@ManagedAttribute can only be used on Java bean methods, was: " + cacheInfo.method + " on bean: "
-                                                       + managedClass);
+                    throw new IllegalArgumentException("@ManagedAttribute can only be used on Java bean methods, was: "
+                            + cacheInfo.method + " on bean: " + managedClass);
                 }
 
                 // they key must be capitalized
@@ -268,12 +270,13 @@ public class MBeanInfoAssembler implements Service {
 
     private void extractMbeanAttributes(
             Map<String, ManagedAttributeInfo> attributes,
-            Set<ModelMBeanAttributeInfo> mBeanAttributes, Set<ModelMBeanOperationInfo> mBeanOperations)
+            Set<ModelMBeanAttributeInfo> mBeanAttributes,
+            Set<ModelMBeanOperationInfo> mBeanOperations)
             throws IntrospectionException {
 
         for (ManagedAttributeInfo info : attributes.values()) {
-            ModelMBeanAttributeInfo mbeanAttribute
-                    = new ModelMBeanAttributeInfo(info.getKey(), info.getDescription(), info.getGetter(), info.getSetter());
+            ModelMBeanAttributeInfo mbeanAttribute = new ModelMBeanAttributeInfo(
+                    info.getKey(), info.getDescription(), info.getGetter(), info.getSetter());
 
             // add missing attribute descriptors, this is needed to have attributes accessible
             Descriptor desc = mbeanAttribute.getDescriptor();
@@ -391,5 +394,4 @@ public class MBeanInfoAssembler implements Service {
             return "ManagedOperationInfo: [" + operation + "]";
         }
     }
-
 }

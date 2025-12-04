@@ -61,11 +61,7 @@ class TransactionLog {
 
         @Override
         public String toString() {
-            return "LayerInfo{" +
-                   "index=" + index +
-                   ", layer=" + layer +
-                   ", isRollingOver=" + isRollingOver +
-                   '}';
+            return "LayerInfo{" + "index=" + index + ", layer=" + layer + ", isRollingOver=" + isRollingOver + '}';
         }
     }
 
@@ -113,8 +109,8 @@ class TransactionLog {
             rollingOver = true;
         }
 
-        final EntryContainer entryContainer
-                = new EntryContainer(new LayerInfo(currentIndex, currentLayer, rollingOver), logEntry);
+        final EntryContainer entryContainer =
+                new EntryContainer(new LayerInfo(currentIndex, currentLayer, rollingOver), logEntry);
         logEntries[currentIndex] = entryContainer;
         currentIndex++;
 

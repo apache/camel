@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.kafka;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for eager idempotentRepository usage.
@@ -42,8 +43,8 @@ public class KafkaIdempotentRepositoryEagerIT extends SimpleIdempotentTest {
     }
 
     @BindToRegistry("kafkaIdempotentRepositoryEager")
-    private final KafkaIdempotentRepository idempotentRepository
-            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, service.getBootstrapServers());
+    private final KafkaIdempotentRepository idempotentRepository =
+            new KafkaIdempotentRepository(REPOSITORY_TOPIC, service.getBootstrapServers());
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -52,8 +53,12 @@ public class KafkaIdempotentRepositoryEagerIT extends SimpleIdempotentTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in").to("mock:before").idempotentConsumer(header("id"))
-                        .idempotentRepository("kafkaIdempotentRepositoryEager").to("mock:out").end();
+                from("direct:in")
+                        .to("mock:before")
+                        .idempotentConsumer(header("id"))
+                        .idempotentRepository("kafkaIdempotentRepositoryEager")
+                        .to("mock:out")
+                        .end();
             }
         };
     }
@@ -92,11 +97,14 @@ public class KafkaIdempotentRepositoryEagerIT extends SimpleIdempotentTest {
             }
         }
 
-        assertEquals(5, mockOut.getReceivedCounter(),
+        assertEquals(
+                5,
+                mockOut.getReceivedCounter(),
                 "Only the 5 messages from the previous test should have been received ");
         MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
-        assertEquals(20, mockBefore.getReceivedCounter(),
+        assertEquals(
+                20,
+                mockBefore.getReceivedCounter(),
                 "Test should have received 20 messages in total from all the tests");
     }
-
 }

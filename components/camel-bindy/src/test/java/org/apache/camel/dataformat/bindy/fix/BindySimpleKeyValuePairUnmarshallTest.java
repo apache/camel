@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
@@ -23,8 +26,6 @@ import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
@@ -38,8 +39,10 @@ public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
         Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
         assertTrue(order.getTrailer().toString().contains("10: 220"));
         assertTrue(order.getHeader().toString().contains("FIX.4.1, 9: 20, 34: 1 , 35: 0, 49: INVMGR, 56: BRKR"));
-        assertTrue(order.toString()
-                .contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
+        assertTrue(
+                order.toString()
+                        .contains(
+                                "BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
     }
 
     public static class ContextConfig extends RouteBuilder {
@@ -50,5 +53,4 @@ public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
             from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
     }
-
 }

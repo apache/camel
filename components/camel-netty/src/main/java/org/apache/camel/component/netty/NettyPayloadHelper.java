@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
@@ -33,13 +34,14 @@ import org.apache.camel.support.DefaultExchangeHolder;
 public final class NettyPayloadHelper {
 
     private NettyPayloadHelper() {
-        //Helper class
+        // Helper class
     }
 
     public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
-            return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
+            return DefaultExchangeHolder.marshal(
+                    exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
         } else {
             if (endpoint.getConfiguration().isUseByteBuf()) {
                 // Just leverage the type converter
@@ -105,5 +107,4 @@ public final class NettyPayloadHelper {
             exchange.getOut().setBody(payload);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import javax.inject.Inject;
@@ -29,8 +30,11 @@ import org.codehaus.plexus.build.BuildContext;
 /**
  * Used by Apache Camel project itself - do NOT use as end user.
  */
-@Mojo(name = "generate-postcompile", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "generate-postcompile",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class GeneratePostCompileMojo extends AbstractGenerateMojo {
 
     @Inject
@@ -42,5 +46,4 @@ public class GeneratePostCompileMojo extends AbstractGenerateMojo {
         // jandex
         invoke(PackageJandexMojo.class);
     }
-
 }

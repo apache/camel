@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.apache.camel.builder.Builder.constant;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.Builder.constant;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PredicateAssertHelperTest extends ContextTestSupport {
 
@@ -43,7 +44,8 @@ public class PredicateAssertHelperTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Predicate notNull = PredicateBuilder.isNotNull(constant(null));
 
-        assertThrows(AssertionError.class, () -> PredicateAssertHelper.assertMatches(notNull, "foo is not null", exchange));
+        assertThrows(
+                AssertionError.class, () -> PredicateAssertHelper.assertMatches(notNull, "foo is not null", exchange));
         assertThrows(AssertionError.class, () -> PredicateAssertHelper.assertMatches(notNull, null, exchange));
     }
 }

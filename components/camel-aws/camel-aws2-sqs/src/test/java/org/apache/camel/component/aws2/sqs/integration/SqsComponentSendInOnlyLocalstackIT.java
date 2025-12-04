@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sqs.Sqs2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsComponentSendInOnlyLocalstackIT extends Aws2SQSBaseTest {
 
@@ -65,7 +66,10 @@ public class SqsComponentSendInOnlyLocalstackIT extends Aws2SQSBaseTest {
     protected RouteBuilder createRouteBuilder() {
         final String sqsEndpointUri = String.format(
                 "aws2-sqs://%s?messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&autoCreateQueue=true",
-                sharedNameGenerator.getName(), "1209600", "65536", "60",
+                sharedNameGenerator.getName(),
+                "1209600",
+                "65536",
+                "60",
                 "file:src/test/resources/org/apache/camel/component/aws2/sqs/policy.txt");
 
         return new RouteBuilder() {

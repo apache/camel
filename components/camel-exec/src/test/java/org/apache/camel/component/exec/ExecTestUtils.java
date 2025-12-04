@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import java.io.File;
@@ -28,8 +29,7 @@ public final class ExecTestUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExecTestUtils.class);
 
-    private ExecTestUtils() {
-    }
+    private ExecTestUtils() {}
 
     /**
      * Where on the file system is located the <code>classpathResource</code>?
@@ -64,5 +64,4 @@ public final class ExecTestUtils {
         File java = new File(javaHome + File.separator + "bin" + File.separator + "java");
         return java.getAbsolutePath();
     }
-
 }

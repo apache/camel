@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config.routebuilder.my;
 
 import org.apache.camel.spring.config.routebuilder.AbstractRouteBuilder;
@@ -24,5 +25,4 @@ public class MyRouteBuilder extends AbstractRouteBuilder {
     protected String getResult() {
         return "mock:result";
     }
-
 }

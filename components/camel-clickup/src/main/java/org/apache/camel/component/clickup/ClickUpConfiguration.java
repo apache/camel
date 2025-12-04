@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup;
 
 import java.util.Arrays;
@@ -32,15 +33,22 @@ public class ClickUpConfiguration {
     @Metadata(required = true)
     private Long workspaceId;
 
-    @UriParam(description = "Can be used to set an alternative base URL, e.g. when you want to test the component against a mock ClickUp API",
-              label = "advanced")
+    @UriParam(
+            description =
+                    "Can be used to set an alternative base URL, e.g. when you want to test the component against a mock ClickUp API",
+            label = "advanced")
     private String baseUrl;
 
-    @UriParam(description = "The authorization token for authenticating against the ClickUp API.", label = "security",
-              secret = true)
+    @UriParam(
+            description = "The authorization token for authenticating against the ClickUp API.",
+            label = "security",
+            secret = true)
     private String authorizationToken;
 
-    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security", secret = true)
+    @UriParam(
+            description = "The shared secret obtained in the webhook creation response.",
+            label = "security",
+            secret = true)
     private String webhookSecret;
 
     @UriParam(description = "The comma separated list of events to which the webhook must subscribe")
@@ -80,8 +88,7 @@ public class ClickUpConfiguration {
     }
 
     public Set<String> getEvents() {
-        return Arrays.stream(events.split(","))
-                .collect(Collectors.toSet());
+        return Arrays.stream(events.split(",")).collect(Collectors.toSet());
     }
 
     public void setEvents(String events) {
@@ -90,12 +97,10 @@ public class ClickUpConfiguration {
 
     @Override
     public String toString() {
-        return "ClickUpConfiguration{" +
-               "workspaceId=" + workspaceId +
-               ", webhookSecret='" + webhookSecret + '\'' +
-               ", authorizationToken='" + authorizationToken + '\'' +
-               ", baseUrl='" + baseUrl + '\'' +
-               '}';
+        return "ClickUpConfiguration{" + "workspaceId="
+                + workspaceId + ", webhookSecret='"
+                + webhookSecret + '\'' + ", authorizationToken='"
+                + authorizationToken + '\'' + ", baseUrl='"
+                + baseUrl + '\'' + '}';
     }
-
 }

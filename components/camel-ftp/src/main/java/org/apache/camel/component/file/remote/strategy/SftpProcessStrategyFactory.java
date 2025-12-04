@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.strategy;
 
 import java.util.Map;
@@ -91,8 +92,8 @@ public final class SftpProcessStrategyFactory implements GenericFileProcessStrat
     }
 
     private static GenericFileExclusiveReadLockStrategy getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy strategy
-                = (GenericFileExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy strategy =
+                (GenericFileExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -103,8 +104,8 @@ public final class SftpProcessStrategyFactory implements GenericFileProcessStrat
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<SftpRemoteFile> readLockStrategy
-                        = new GenericFileRenameExclusiveReadLockStrategy<>();
+                GenericFileRenameExclusiveReadLockStrategy<SftpRemoteFile> readLockStrategy =
+                        new GenericFileRenameExclusiveReadLockStrategy<>();
 
                 StrategyUtil.setup(readLockStrategy, params);
 

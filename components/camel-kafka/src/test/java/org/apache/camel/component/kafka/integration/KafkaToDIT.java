@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KafkaToDIT extends BaseKafkaTestSupport {
 
@@ -29,7 +30,8 @@ public class KafkaToDIT extends BaseKafkaTestSupport {
         contextExtension.getProducerTemplate().sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one kafka endpoint
-        long count = contextExtension.getContext().getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("kafka:"))
+        long count = contextExtension.getContext().getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("kafka:"))
                 .count();
         assertEquals(1, count, "There should only be 1 kafka endpoint");
     }
@@ -44,5 +46,4 @@ public class KafkaToDIT extends BaseKafkaTestSupport {
             }
         };
     }
-
 }

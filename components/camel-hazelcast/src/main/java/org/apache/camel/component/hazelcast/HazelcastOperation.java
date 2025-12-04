@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 public enum HazelcastOperation {
@@ -78,7 +79,8 @@ public enum HazelcastOperation {
             return null;
         }
         for (HazelcastOperation hazelcastOperation : VALUES) {
-            if (hazelcastOperation.toString().equalsIgnoreCase(name) || hazelcastOperation.name().equalsIgnoreCase(name)) {
+            if (hazelcastOperation.toString().equalsIgnoreCase(name)
+                    || hazelcastOperation.name().equalsIgnoreCase(name)) {
                 return hazelcastOperation;
             }
         }
@@ -89,5 +91,4 @@ public enum HazelcastOperation {
     public String toString() {
         return operation;
     }
-
 }

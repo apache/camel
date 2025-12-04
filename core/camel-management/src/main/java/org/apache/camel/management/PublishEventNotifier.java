@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.EventObject;
@@ -124,5 +125,4 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
     public String toString() {
         return "PublishEventNotifier[" + (endpoint != null ? endpoint : URISupport.sanitizeUri(endpointUri)) + "]";
     }
-
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.pause;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -43,12 +50,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
@@ -94,7 +95,8 @@ public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
         }
         // clean all test topics
         KafkaTestUtil.createAdminClient(service)
-                .deleteTopics(Collections.singletonList(SOURCE_TOPIC)).all();
+                .deleteTopics(Collections.singletonList(SOURCE_TOPIC))
+                .all();
 
         executorService.shutdownNow();
     }
@@ -110,17 +112,21 @@ public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from("kafka:" + SOURCE_TOPIC
-                     + "?groupId=KafkaPausableConsumerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=KafkaPausableConsumerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .pausable(testConsumerListener, o -> canContinue())
                         .routeId("pausable-it")
-                        .process(exchange -> LOG.info("Got record from Kafka: {}", exchange.getMessage().getBody()))
+                        .process(exchange -> LOG.info(
+                                "Got record from Kafka: {}",
+                                exchange.getMessage().getBody()))
                         .to("direct:intermediate");
 
                 from("direct:intermediate")
                         .process(exchange -> {
-                            LOG.info("Got record on the intermediate processor: {}", exchange.getMessage().getBody());
+                            LOG.info(
+                                    "Got record on the intermediate processor: {}",
+                                    exchange.getMessage().getBody());
 
                             if (getCount() <= RETRY_COUNT) {
                                 throw new RuntimeCamelException("Error");
@@ -147,7 +153,8 @@ public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
 
         // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
         // exchange because autoCommitEnable=true
-        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+        to.expectedHeaderValuesReceivedInAnyOrder(
+                KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
         to.expectedHeaderReceived(propagatedHeaderKey, propagatedHeaderValue);
 
         for (int k = 0; k < 5; k++) {
@@ -161,11 +168,11 @@ public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
         await().atMost(30, TimeUnit.SECONDS).untilAdder(count, greaterThan(10L));
 
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(testConsumerListener.afterConsumeCalled,
-                        "The afterConsume method should have been called"));
+                .untilAsserted(() -> assertTrue(
+                        testConsumerListener.afterConsumeCalled, "The afterConsume method should have been called"));
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(testConsumerListener.afterProcessCalled,
-                        "The afterProcess method should have been called"));
+                .untilAsserted(() -> assertTrue(
+                        testConsumerListener.afterProcessCalled, "The afterProcess method should have been called"));
 
         to.assertIsSatisfied();
         assertEquals(5, to.getExchanges().size(), "Did not receive the expected amount of messages");

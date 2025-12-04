@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -43,17 +44,23 @@ public class LegacyDeadLetterChannelReifier extends LegacyDefaultErrorHandlerRei
         ObjectHelper.notNull(definition.getDeadLetterUri(), "deadLetterUri", this);
 
         // optimize to use shared default instance if using out of the box settings
-        RedeliveryPolicy redeliveryPolicy
-                = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
+        RedeliveryPolicy redeliveryPolicy = definition.hasRedeliveryPolicy()
+                ? definition.getRedeliveryPolicy()
+                : definition.getDefaultRedeliveryPolicy();
         CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
 
         Processor deadLetterProcessor = createDeadLetterChannelProcessor(definition.getDeadLetterUri());
 
         DeadLetterChannel answer = new DeadLetterChannel(
-                camelContext, processor, logger,
+                camelContext,
+                processor,
+                logger,
                 getProcessor(definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
-                redeliveryPolicy, deadLetterProcessor,
-                definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
+                redeliveryPolicy,
+                deadLetterProcessor,
+                definition.getDeadLetterUri(),
+                definition.isDeadLetterHandleNewException(),
+                definition.isUseOriginalMessage(),
                 definition.isUseOriginalBody(),
                 definition.getRetryWhilePolicy(camelContext),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
@@ -72,5 +79,4 @@ public class LegacyDeadLetterChannelReifier extends LegacyDefaultErrorHandlerRei
         // a reply if the MEP was InOut
         return new FatalFallbackErrorHandler(child, true);
     }
-
 }

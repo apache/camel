@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import java.math.BigInteger;
@@ -52,8 +53,8 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
     @Override
     protected void doStart() throws Exception {
-        this.scheduledExecutorService
-                = this.executorServiceManager.newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
+        this.scheduledExecutorService =
+                this.executorServiceManager.newSingleThreadScheduledExecutor(this, "ConsulEventConsumer");
         super.doStart();
     }
 
@@ -78,8 +79,11 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
         @Override
         public void watch(final EventClient client) {
-            Runnable runnable = () -> client.listEvents(key,
-                    QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(), EventWatcher.this);
+            Runnable runnable = () -> client.listEvents(
+                    key,
+                    QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get())
+                            .build(),
+                    EventWatcher.this);
             scheduledExecutorService.schedule(runnable, configuration.getBlockSeconds(), TimeUnit.SECONDS);
         }
 
@@ -115,13 +119,19 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
                 message.setHeader(ConsulConstants.CONSUL_VERSION, event.getVersion());
 
                 if (event.getNodeFilter().isPresent()) {
-                    message.setHeader(ConsulConstants.CONSUL_NODE_FILTER, event.getNodeFilter().get());
+                    message.setHeader(
+                            ConsulConstants.CONSUL_NODE_FILTER,
+                            event.getNodeFilter().get());
                 }
                 if (event.getServiceFilter().isPresent()) {
-                    message.setHeader(ConsulConstants.CONSUL_SERVICE_FILTER, event.getServiceFilter().get());
+                    message.setHeader(
+                            ConsulConstants.CONSUL_SERVICE_FILTER,
+                            event.getServiceFilter().get());
                 }
                 if (event.getTagFilter().isPresent()) {
-                    message.setHeader(ConsulConstants.CONSUL_TAG_FILTER, event.getTagFilter().get());
+                    message.setHeader(
+                            ConsulConstants.CONSUL_TAG_FILTER,
+                            event.getTagFilter().get());
                 }
 
                 message.setBody(event.getPayload().orElse(null));

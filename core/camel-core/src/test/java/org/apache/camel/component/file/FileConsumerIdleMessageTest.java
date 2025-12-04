@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -34,7 +35,8 @@ public class FileConsumerIdleMessageTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -49,5 +51,4 @@ public class FileConsumerIdleMessageTest extends ContextTestSupport {
         assertNull(mock.getExchanges().get(0).getIn().getBody());
         assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
-
 }

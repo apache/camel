@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_INVALID_PREDICATE_EXPRESSION;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_NO_PREDICATE_BEAN_FOUND;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_CLASS;
 
 import java.util.List;
 import java.util.Map;
@@ -33,10 +38,6 @@ import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
 import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilterStatistics;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.service.ServiceSupport;
-
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_INVALID_PREDICATE_EXPRESSION;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_NO_PREDICATE_BEAN_FOUND;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_CLASS;
 
 /**
  * A service for managing dynamic routing subscriptions.
@@ -58,8 +59,7 @@ public class DynamicRouterControlService extends ServiceSupport {
      * @param camelContext  the camel context
      * @param filterService the filter service
      */
-    public DynamicRouterControlService(CamelContext camelContext,
-                                       DynamicRouterFilterService filterService) {
+    public DynamicRouterControlService(CamelContext camelContext, DynamicRouterFilterService filterService) {
         this.camelContext = camelContext;
         this.filterService = filterService;
     }
@@ -73,9 +73,7 @@ public class DynamicRouterControlService extends ServiceSupport {
      * @return                    the predicate
      */
     static Predicate obtainPredicateFromExpression(
-            final CamelContext camelContext,
-            final String predExpression,
-            final String expressionLanguage) {
+            final CamelContext camelContext, final String predExpression, final String expressionLanguage) {
         try {
             return camelContext.resolveLanguage(expressionLanguage).createPredicate(predExpression);
         } catch (Exception e) {
@@ -92,9 +90,7 @@ public class DynamicRouterControlService extends ServiceSupport {
      * @return                   the predicate
      */
     @Converter
-    static Predicate obtainPredicateFromBeanName(
-            final String predicateBeanName,
-            final CamelContext camelContext) {
+    static Predicate obtainPredicateFromBeanName(final String predicateBeanName, final CamelContext camelContext) {
         return Optional.ofNullable(CamelContextHelper.lookup(camelContext, predicateBeanName, Predicate.class))
                 .orElseThrow(() -> new IllegalStateException(ERROR_NO_PREDICATE_BEAN_FOUND));
     }
@@ -134,9 +130,13 @@ public class DynamicRouterControlService extends ServiceSupport {
             String predicate,
             String expressionLanguage,
             boolean update) {
-        return filterService.addFilterForChannel(subscriptionId, priority,
+        return filterService.addFilterForChannel(
+                subscriptionId,
+                priority,
                 obtainPredicateFromExpression(camelContext, predicate, expressionLanguage),
-                destinationUri, subscribeChannel, update);
+                destinationUri,
+                subscribeChannel,
+                update);
     }
 
     /**
@@ -158,9 +158,13 @@ public class DynamicRouterControlService extends ServiceSupport {
             int priority,
             String predicateBean,
             boolean update) {
-        return filterService.addFilterForChannel(subscriptionId, priority,
+        return filterService.addFilterForChannel(
+                subscriptionId,
+                priority,
                 obtainPredicateFromBeanName(predicateBean, camelContext),
-                destinationUri, subscribeChannel, update);
+                destinationUri,
+                subscribeChannel,
+                update);
     }
 
     /**
@@ -182,8 +186,13 @@ public class DynamicRouterControlService extends ServiceSupport {
             int priority,
             Object predicate,
             boolean update) {
-        return filterService.addFilterForChannel(subscriptionId, priority, obtainPredicateFromInstance(predicate),
-                destinationUri, subscribeChannel, update);
+        return filterService.addFilterForChannel(
+                subscriptionId,
+                priority,
+                obtainPredicateFromInstance(predicate),
+                destinationUri,
+                subscribeChannel,
+                update);
     }
 
     /**
@@ -194,9 +203,7 @@ public class DynamicRouterControlService extends ServiceSupport {
      * @return                  true if the subscription was removed, false otherwise
      */
     @ManagedOperation(description = "Unsubscribe for dynamic routing on a channel by subscription ID")
-    public boolean removeSubscription(
-            String subscribeChannel,
-            String subscriptionId) {
+    public boolean removeSubscription(String subscribeChannel, String subscriptionId) {
         return filterService.removeFilterById(subscriptionId, subscribeChannel);
     }
 
@@ -258,8 +265,7 @@ public class DynamicRouterControlService extends ServiceSupport {
          * @return                            a new {@link DynamicRouterControlService}
          */
         public DynamicRouterControlService getInstance(
-                final CamelContext camelContext,
-                final DynamicRouterFilterService dynamicRouterFilterService) {
+                final CamelContext camelContext, final DynamicRouterFilterService dynamicRouterFilterService) {
             return new DynamicRouterControlService(camelContext, dynamicRouterFilterService);
         }
     }

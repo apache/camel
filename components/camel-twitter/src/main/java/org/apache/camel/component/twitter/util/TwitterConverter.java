@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.util;
 
 import org.apache.camel.Converter;
@@ -35,16 +36,12 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Status status) {
-        return status.getCreatedAt() + " (" +
-               status.getUser().getScreenName() + ") " +
-               status.getText();
+        return status.getCreatedAt() + " (" + status.getUser().getScreenName() + ") " + status.getText();
     }
 
     @Converter
     public static String toString(DirectMessage dm) {
-        return dm.getCreatedAt() +
-               " (" + dm.getSenderId() + ") " +
-               dm.getText();
+        return dm.getCreatedAt() + " (" + dm.getSenderId() + ") " + dm.getText();
     }
 
     @Converter
@@ -55,9 +52,7 @@ public final class TwitterConverter {
     @Converter
     public static String toString(Trends trends) {
         StringBuilder s = new StringBuilder();
-        s.append("(")
-                .append(trends.getTrendAt().toString())
-                .append(") ");
+        s.append("(").append(trends.getTrendAt().toString()).append(") ");
 
         boolean first = true;
         for (Trend trend : trends.getTrends()) {
@@ -73,11 +68,10 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(UserList userList) {
-        return userList.getCreatedAt() +
-               " (" + userList.getUser().getScreenName() + ") " +
-               userList.getFullName() +
-               ',' +
-               userList.getURI() +
-               ',';
+        return userList.getCreatedAt() + " ("
+                + userList.getUser().getScreenName() + ") " + userList.getFullName()
+                + ','
+                + userList.getURI()
+                + ',';
     }
 }

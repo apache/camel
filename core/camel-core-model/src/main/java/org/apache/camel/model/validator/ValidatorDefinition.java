@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.validator;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -44,8 +45,7 @@ public abstract class ValidatorDefinition implements CopyableDefinition<Validato
         return type;
     }
 
-    public ValidatorDefinition() {
-    }
+    public ValidatorDefinition() {}
 
     protected ValidatorDefinition(ValidatorDefinition source) {
         this.type = source.type;

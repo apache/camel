@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,12 +38,15 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String usingIterator;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowEmptyDirectory;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String preservePathElements;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Long", defaultValue = "1073741824")
     private String maxDecompressedSize;

@@ -89,8 +89,8 @@ public class MetadataHelper {
         ProcessorReifier.registerReifier(CircuitBreakerDefinition.class, DisabledReifier::new);
 
         COMPONENT_CUSTOMIZERS = new HashMap<>();
-        COMPONENT_CUSTOMIZERS.put(Capability.PlatformHttp.getValue(),
-                (catalog, meta) -> meta.capabilities.add(Capability.PlatformHttp));
+        COMPONENT_CUSTOMIZERS.put(
+                Capability.PlatformHttp.getValue(), (catalog, meta) -> meta.capabilities.add(Capability.PlatformHttp));
     }
 
     private MetadataHelper() {
@@ -152,13 +152,11 @@ public class MetadataHelper {
 
             // determine capabilities based on EIP
             for (RouteDefinition definition : model.getRouteDefinitions()) {
-                navigateRoute(
-                        definition,
-                        d -> {
-                            if (d instanceof CircuitBreakerDefinition) {
-                                meta.capabilities.add(Capability.CircuitBreaker);
-                            }
-                        });
+                navigateRoute(definition, d -> {
+                    if (d instanceof CircuitBreakerDefinition) {
+                        meta.capabilities.add(Capability.CircuitBreaker);
+                    }
+                });
             }
 
             meta.dependencies.addAll(deps(context, catalog));
@@ -173,19 +171,22 @@ public class MetadataHelper {
         for (String name : context.getComponentNames()) {
             ComponentModel model = catalog.componentModel(name);
             if (model != null) {
-                answer.add(String.format("mvn:%s/%s/%s", model.getGroupId(), model.getArtifactId(), model.getVersion()));
+                answer.add(
+                        String.format("mvn:%s/%s/%s", model.getGroupId(), model.getArtifactId(), model.getVersion()));
             }
         }
         for (String name : context.getLanguageNames()) {
             LanguageModel model = catalog.languageModel(name);
             if (model != null) {
-                answer.add(String.format("mvn:%s/%s/%s", model.getGroupId(), model.getArtifactId(), model.getVersion()));
+                answer.add(
+                        String.format("mvn:%s/%s/%s", model.getGroupId(), model.getArtifactId(), model.getVersion()));
             }
         }
         for (String name : context.getDataFormatNames()) {
             DataFormatModel model = catalog.dataFormatModel(name);
             if (model != null) {
-                answer.add(String.format("mvn:%s/%s/%s", model.getGroupId(), model.getArtifactId(), model.getVersion()));
+                answer.add(
+                        String.format("mvn:%s/%s/%s", model.getGroupId(), model.getArtifactId(), model.getVersion()));
             }
         }
 
@@ -219,7 +220,8 @@ public class MetadataHelper {
 
                     @Override
                     public String parseUri(String uri, boolean keepUnresolvedOptional) {
-                        // we are not interested in the query part of endpoint uris, remove it to avoid unresolvable properties
+                        // we are not interested in the query part of endpoint uris, remove it to avoid unresolvable
+                        // properties
                         return URISupport.stripQuery(uri);
                     }
                 };
@@ -236,8 +238,8 @@ public class MetadataHelper {
         ec.addContextPlugin(LanguageResolver.class, languageResolver);
         ec.addContextPlugin(TransformerResolver.class, transformerResolver);
 
-        ec.getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
-                new DependencyDownloaderStrategy(context));
+        ec.getRegistry()
+                .bind(DependencyDownloaderStrategy.class.getSimpleName(), new DependencyDownloaderStrategy(context));
 
         ClassLoader cl = createClassLoader(context);
         context.setApplicationContextClassLoader(cl);
@@ -245,7 +247,8 @@ public class MetadataHelper {
         PluginHelper.getPackageScanResourceResolver(context).addClassLoader(cl);
 
         ClassResolver classResolver = new DependencyDownloaderClassResolver(
-                context, new KnownDependenciesResolver(context, RuntimeType.SPRING_BOOT_VERSION, RuntimeType.QUARKUS_VERSION),
+                context,
+                new KnownDependenciesResolver(context, RuntimeType.SPRING_BOOT_VERSION, RuntimeType.QUARKUS_VERSION),
                 true);
         context.setClassResolver(classResolver);
         // re-create factory finder with download class-resolver
@@ -300,7 +303,8 @@ public class MetadataHelper {
     }
 
     private static ClassLoader createClassLoader(CamelContext context) {
-        return new DependencyDownloaderClassLoader(new CamelCustomClassLoader(MetadataHelper.class.getClassLoader(), context));
+        return new DependencyDownloaderClassLoader(
+                new CamelCustomClassLoader(MetadataHelper.class.getClassLoader(), context));
     }
 
     private static final class AgentModelReifierFactory extends DefaultModelReifierFactory {

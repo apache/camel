@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j;
+
+import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParameter;
 
 import io.reactivex.disposables.Disposable;
 import org.apache.camel.Exchange;
@@ -27,8 +30,6 @@ import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.Transaction;
-
-import static org.apache.camel.component.web3j.Web3jHelper.toDefaultBlockParameter;
 
 /**
  * The web3j consumer.
@@ -60,54 +61,63 @@ public class Web3jConsumer extends DefaultConsumer {
         LOG.info("Subscribing to: {}", endpoint.getNodeAddress());
         switch (configuration.getOperation()) {
             case Web3jConstants.ETH_LOG_OBSERVABLE:
-                EthFilter ethFilter = Web3jEndpoint.buildEthFilter(toDefaultBlockParameter(configuration.getFromBlock()),
-                        toDefaultBlockParameter(configuration.getToBlock()), configuration.getAddressesAsList(),
+                EthFilter ethFilter = Web3jEndpoint.buildEthFilter(
+                        toDefaultBlockParameter(configuration.getFromBlock()),
+                        toDefaultBlockParameter(configuration.getToBlock()),
+                        configuration.getAddressesAsList(),
                         configuration.getTopicsAsList());
-                subscription = web3j.ethLogFlowable(ethFilter).subscribe(
-                        this::ethLogObservable,
-                        t -> processError(t, Web3jConstants.ETH_LOG_OBSERVABLE),
-                        () -> processDone(Web3jConstants.ETH_LOG_OBSERVABLE));
+                subscription = web3j.ethLogFlowable(ethFilter)
+                        .subscribe(
+                                this::ethLogObservable,
+                                t -> processError(t, Web3jConstants.ETH_LOG_OBSERVABLE),
+                                () -> processDone(Web3jConstants.ETH_LOG_OBSERVABLE));
                 break;
 
             case Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE:
-                subscription = web3j.ethBlockHashFlowable().subscribe(
-                        this::ethBlockHashObservable,
-                        t -> processError(t, Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE),
-                        () -> processDone(Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE));
+                subscription = web3j.ethBlockHashFlowable()
+                        .subscribe(
+                                this::ethBlockHashObservable,
+                                t -> processError(t, Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE),
+                                () -> processDone(Web3jConstants.ETH_BLOCK_HASH_OBSERVABLE));
                 break;
 
             case Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE:
-                subscription = web3j.ethPendingTransactionHashFlowable().subscribe(
-                        this::ethPendingTransactionHashObservable,
-                        t -> processError(t, Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE),
-                        () -> processDone(Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE));
+                subscription = web3j.ethPendingTransactionHashFlowable()
+                        .subscribe(
+                                this::ethPendingTransactionHashObservable,
+                                t -> processError(t, Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE),
+                                () -> processDone(Web3jConstants.ETH_PENDING_TRANSACTION_HASH_OBSERVABLE));
                 break;
 
             case Web3jConstants.TRANSACTION_OBSERVABLE:
-                subscription = web3j.transactionFlowable().subscribe(
-                        this::processTransaction,
-                        t -> processError(t, Web3jConstants.TRANSACTION_OBSERVABLE),
-                        () -> processDone(Web3jConstants.TRANSACTION_OBSERVABLE));
+                subscription = web3j.transactionFlowable()
+                        .subscribe(
+                                this::processTransaction,
+                                t -> processError(t, Web3jConstants.TRANSACTION_OBSERVABLE),
+                                () -> processDone(Web3jConstants.TRANSACTION_OBSERVABLE));
                 break;
 
             case Web3jConstants.PENDING_TRANSACTION_OBSERVABLE:
-                subscription = web3j.pendingTransactionFlowable().subscribe(
-                        this::processTransaction,
-                        t -> processError(t, Web3jConstants.PENDING_TRANSACTION_OBSERVABLE),
-                        () -> processDone(Web3jConstants.PENDING_TRANSACTION_OBSERVABLE));
+                subscription = web3j.pendingTransactionFlowable()
+                        .subscribe(
+                                this::processTransaction,
+                                t -> processError(t, Web3jConstants.PENDING_TRANSACTION_OBSERVABLE),
+                                () -> processDone(Web3jConstants.PENDING_TRANSACTION_OBSERVABLE));
                 break;
 
             case Web3jConstants.BLOCK_OBSERVABLE:
-                subscription = web3j.blockFlowable(configuration.isFullTransactionObjects()).subscribe(
-                        this::blockObservable,
-                        t -> processError(t, Web3jConstants.BLOCK_OBSERVABLE),
-                        () -> processDone(Web3jConstants.BLOCK_OBSERVABLE));
+                subscription = web3j.blockFlowable(configuration.isFullTransactionObjects())
+                        .subscribe(
+                                this::blockObservable,
+                                t -> processError(t, Web3jConstants.BLOCK_OBSERVABLE),
+                                () -> processDone(Web3jConstants.BLOCK_OBSERVABLE));
                 break;
 
             case Web3jConstants.REPLAY_BLOCKS_OBSERVABLE:
-                subscription = web3j
-                        .replayPastBlocksFlowable(toDefaultBlockParameter(configuration.getFromBlock()),
-                                toDefaultBlockParameter(configuration.getToBlock()), configuration.isFullTransactionObjects())
+                subscription = web3j.replayPastBlocksFlowable(
+                                toDefaultBlockParameter(configuration.getFromBlock()),
+                                toDefaultBlockParameter(configuration.getToBlock()),
+                                configuration.isFullTransactionObjects())
                         .subscribe(
                                 this::blockObservable,
                                 t -> processError(t, Web3jConstants.REPLAY_BLOCKS_OBSERVABLE),
@@ -115,8 +125,10 @@ public class Web3jConsumer extends DefaultConsumer {
                 break;
 
             case Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE:
-                subscription = web3j.replayPastTransactionsFlowable(toDefaultBlockParameter(configuration.getFromBlock()),
-                        toDefaultBlockParameter(configuration.getToBlock())).subscribe(
+                subscription = web3j.replayPastTransactionsFlowable(
+                                toDefaultBlockParameter(configuration.getFromBlock()),
+                                toDefaultBlockParameter(configuration.getToBlock()))
+                        .subscribe(
                                 this::processTransaction,
                                 t -> processError(t, Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE),
                                 () -> processDone(Web3jConstants.REPLAY_TRANSACTIONS_OBSERVABLE));

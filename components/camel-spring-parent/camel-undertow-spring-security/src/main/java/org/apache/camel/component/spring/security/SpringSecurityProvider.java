@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
 
 import java.util.Collection;
@@ -57,7 +58,8 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
         ServletRequest request = servletRequestContext.getServletRequest();
         ServletResponse response = servletRequestContext.getServletResponse();
 
-        //new filter has to be added into the filter chain. If is successfully called it means that security allows access.
+        // new filter has to be added into the filter chain. If is successfully called it means that security allows
+        // access.
         FilterChain fc = (servletRequest, servletResponse) -> {
             Authentication a = SecurityContextHolder.getContext().getAuthentication();
             if (a instanceof JwtAuthenticationToken) {
@@ -66,7 +68,8 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
                 Collection<GrantedAuthority> grantedAuthorities = ((JwtAuthenticationToken) a).getAuthorities();
                 for (GrantedAuthority grantedAuthority : grantedAuthorities) {
                     if (allowedRoles.contains(grantedAuthority.getAuthority())) {
-                        LOG.debug("Authenticated principal {} has authority to access resource.",
+                        LOG.debug(
+                                "Authenticated principal {} has authority to access resource.",
                                 ((JwtAuthenticationToken) a).getName());
                         allowed = true;
                         break;
@@ -78,13 +81,14 @@ public class SpringSecurityProvider implements UndertowSecurityProvider {
                     httpExchange.setStatusCode(StatusCodes.OK);
                     return;
                 } else {
-                    LOG.debug("Authenticated principal {} doesn't have authority to access resource.",
+                    LOG.debug(
+                            "Authenticated principal {} doesn't have authority to access resource.",
                             ((JwtAuthenticationToken) a).getName());
                 }
 
             } else {
-                //this is logged as warn, because it shows an error in configuration
-                //spring-security shouldn't allow to access this code if configuration is correct
+                // this is logged as warn, because it shows an error in configuration
+                // spring-security shouldn't allow to access this code if configuration is correct
                 LOG.warn("Authentication token is not present. Access is FORBIDDEN.");
             }
             httpExchange.setStatusCode(StatusCodes.FORBIDDEN);

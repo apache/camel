@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.w3c.dom.Document;
 
@@ -25,11 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSupport {
 
     @Test
@@ -39,7 +40,8 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
 
         // we send in a bar string as header which cannot be converted to a
         // number so it should fail
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBodyAndHeader("direct:start", "Hello World", "foo", 555),
                 "Should have thrown an exception");
 
@@ -48,8 +50,8 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         assertTrue(pbe.getMethod().getName().contains("hello"));
         assertEquals(555, pbe.getParameterValue());
 
-        NoTypeConversionAvailableException ntae
-                = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+        NoTypeConversionAvailableException ntae = assertIsInstanceOf(
+                NoTypeConversionAvailableException.class, e.getCause().getCause());
         assertEquals(Integer.class, ntae.getFromType());
         assertEquals(Document.class, ntae.getToType());
         assertEquals(555, ntae.getValue());

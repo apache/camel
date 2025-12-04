@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
 
@@ -47,8 +48,13 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().useOriginalBody().parallelProcessing().to("mock:before").delay(1000)
-                        .setBody(simple("OnComplete:${body}")).to("mock:after");
+                onCompletion()
+                        .useOriginalBody()
+                        .parallelProcessing()
+                        .to("mock:before")
+                        .delay(1000)
+                        .setBody(simple("OnComplete:${body}"))
+                        .to("mock:after");
 
                 from("direct:start").process(new MyProcessor()).to("mock:result");
             }
@@ -57,8 +63,7 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {
@@ -68,5 +73,4 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
             exchange.getIn().setBody("Bye World");
         }
     }
-
 }

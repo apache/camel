@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Timeout(60)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsInOutWithNoOutBodyTest extends AbstractJMSTest {
@@ -38,6 +39,7 @@ public class JmsInOutWithNoOutBodyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -63,8 +65,7 @@ public class JmsInOutWithNoOutBodyTest extends AbstractJMSTest {
                         .to("log:after")
                         .to("mock:result");
 
-                from("activemq:JmsInOutWithNoOutBodyTest")
-                        .to("log:receivedRequest");
+                from("activemq:JmsInOutWithNoOutBodyTest").to("log:receivedRequest");
             }
         };
     }

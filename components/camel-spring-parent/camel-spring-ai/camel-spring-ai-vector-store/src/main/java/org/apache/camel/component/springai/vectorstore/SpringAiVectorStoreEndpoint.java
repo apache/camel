@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.vectorstore;
 
 import org.apache.camel.Category;
@@ -30,10 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Spring AI Vector Store
  */
-@UriEndpoint(firstVersion = "4.17.0", scheme = SpringAiVectorStore.SCHEME, title = "Spring AI Vector Store",
-             syntax = "spring-ai-vector-store:storeId", producerOnly = true, category = {
-                     Category.AI
-             }, headersClass = SpringAiVectorStoreHeaders.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = SpringAiVectorStore.SCHEME,
+        title = "Spring AI Vector Store",
+        syntax = "spring-ai-vector-store:storeId",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = SpringAiVectorStoreHeaders.class)
 public class SpringAiVectorStoreEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -44,10 +49,7 @@ public class SpringAiVectorStoreEndpoint extends DefaultEndpoint {
     private SpringAiVectorStoreConfiguration configuration;
 
     public SpringAiVectorStoreEndpoint(
-                                       String endpointUri,
-                                       Component component,
-                                       String storeId,
-                                       SpringAiVectorStoreConfiguration configuration) {
+            String endpointUri, Component component, String storeId, SpringAiVectorStoreConfiguration configuration) {
 
         super(endpointUri, component);
 

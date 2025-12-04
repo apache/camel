@@ -20,6 +20,4 @@ package org.apache.camel.test.infra.elasticsearch.services;
 import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface ElasticSearchService extends TestService, ContainerTestService, ElasticSearchInfraService {
-
-}
+public interface ElasticSearchService extends TestService, ContainerTestService, ElasticSearchInfraService {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import java.util.Map;
@@ -57,5 +58,4 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
         }
         span.setTag(TagConstants.DB_STATEMENT, queryParameters.toString());
     }
-
 }

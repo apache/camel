@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
 
 import java.util.ArrayList;
@@ -72,7 +73,9 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         super.doInit();
 
         // register this so we can find it
-        camelContext.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class, this);
+        camelContext
+                .getRegistry()
+                .bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_NAME, PlatformHttpEngine.class, this);
     }
 
     @Override
@@ -88,36 +91,36 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
     @Override
     public PlatformHttpConsumer createConsumer(PlatformHttpEndpoint endpoint, Processor processor) {
         return new VertxPlatformHttpConsumer(
-                endpoint,
-                processor,
-                handlers,
-                VertxPlatformHttpRouter.getRouterNameFromPort(getServerPort()));
+                endpoint, processor, handlers, VertxPlatformHttpRouter.getRouterNameFromPort(getServerPort()));
     }
 
     @Override
     public int getServerPort() {
         if (port == 0) {
-            VertxPlatformHttpServer server = CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpServer.class);
+            VertxPlatformHttpServer server =
+                    CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpServer.class);
             if (server != null && server.getServer() != null) {
                 port = server.getServer().actualPort();
             }
             if (port == 0) {
-                VertxPlatformHttpServerConfiguration config
-                        = CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpServerConfiguration.class);
+                VertxPlatformHttpServerConfiguration config =
+                        CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpServerConfiguration.class);
                 if (config != null) {
                     port = config.getBindPort();
                 }
             }
             if (port == 0) {
-                VertxPlatformHttpRouter router
-                        = CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpRouter.class);
-                if (router != null && router.getServer() != null && router.getServer().getServer() != null) {
+                VertxPlatformHttpRouter router =
+                        CamelContextHelper.findSingleByType(camelContext, VertxPlatformHttpRouter.class);
+                if (router != null
+                        && router.getServer() != null
+                        && router.getServer().getServer() != null) {
                     port = router.getServer().getServer().actualPort();
                 }
             }
 
             if (port == 0) {
-                //fallback to default
+                // fallback to default
                 return VertxPlatformHttpServerConfiguration.DEFAULT_BIND_PORT;
             }
         }

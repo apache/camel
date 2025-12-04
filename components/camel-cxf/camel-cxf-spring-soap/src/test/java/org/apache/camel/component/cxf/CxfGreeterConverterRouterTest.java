@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import jakarta.xml.ws.Endpoint;
@@ -37,14 +38,13 @@ public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest 
     @BeforeAll
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + getPort1()
-                         + "/CxfGreeterConverterRouterTest/SoapContext/SoapPort";
+        String address = "http://localhost:" + getPort1() + "/CxfGreeterConverterRouterTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterConverterEndpointsRouterContext.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/GreeterConverterEndpointsRouterContext.xml");
     }
-
 }

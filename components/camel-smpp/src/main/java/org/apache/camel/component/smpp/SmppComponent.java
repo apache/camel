@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.net.URI;
@@ -31,8 +32,7 @@ public class SmppComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private SmppConfiguration configuration;
 
-    public SmppComponent() {
-    }
+    public SmppComponent() {}
 
     public SmppComponent(SmppConfiguration configuration) {
         this();
@@ -43,7 +43,7 @@ public class SmppComponent extends DefaultComponent {
         super(context);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         if (this.configuration == null) {

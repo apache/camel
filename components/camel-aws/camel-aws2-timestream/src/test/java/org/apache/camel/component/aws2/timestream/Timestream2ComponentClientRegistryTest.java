@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.component.aws2.timestream.query.AmazonTimestreamQueryClientMock;
 import org.apache.camel.component.aws2.timestream.query.Timestream2QueryEndpoint;
@@ -22,10 +27,6 @@ import org.apache.camel.component.aws2.timestream.write.AmazonTimestreamWriteCli
 import org.apache.camel.component.aws2.timestream.write.Timestream2WriteEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Timestream2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -35,8 +36,8 @@ public class Timestream2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonTimestreamWriteClientMock clientMock = new AmazonTimestreamWriteClientMock();
         context.getRegistry().bind("awsTimestreamWriteClient", clientMock);
         Timestream2Component component = context.getComponent("aws2-timestream", Timestream2Component.class);
-        Timestream2WriteEndpoint endpoint
-                = (Timestream2WriteEndpoint) component.createEndpoint("aws2-timestream:write:TestDomain");
+        Timestream2WriteEndpoint endpoint =
+                (Timestream2WriteEndpoint) component.createEndpoint("aws2-timestream:write:TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getAwsTimestreamWriteClient());
     }
@@ -47,8 +48,8 @@ public class Timestream2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonTimestreamQueryClientMock clientMock = new AmazonTimestreamQueryClientMock();
         context.getRegistry().bind("awsTimestreamQueryClient", clientMock);
         Timestream2Component component = context.getComponent("aws2-timestream", Timestream2Component.class);
-        Timestream2QueryEndpoint endpoint
-                = (Timestream2QueryEndpoint) component.createEndpoint("aws2-timestream://query:TestDomain");
+        Timestream2QueryEndpoint endpoint =
+                (Timestream2QueryEndpoint) component.createEndpoint("aws2-timestream://query:TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getAwsTimestreamQueryClient());
     }
@@ -77,10 +78,9 @@ public class Timestream2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonTimestreamQueryClientMock clientMock = new AmazonTimestreamQueryClientMock();
         context.getRegistry().bind("awsTimestreamQueryClient", clientMock);
         Timestream2Component component = context.getComponent("aws2-timestream", Timestream2Component.class);
-        Timestream2QueryEndpoint endpoint = (Timestream2QueryEndpoint) component
-                .createEndpoint("aws2-timestream://query:TestDomain?accessKey=xxx&secretKey=yyy");
+        Timestream2QueryEndpoint endpoint = (Timestream2QueryEndpoint)
+                component.createEndpoint("aws2-timestream://query:TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getAwsTimestreamQueryClient());
     }
-
 }

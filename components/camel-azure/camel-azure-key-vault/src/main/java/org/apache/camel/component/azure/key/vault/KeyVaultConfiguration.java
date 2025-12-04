@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
+
+import static org.apache.camel.component.azure.key.vault.CredentialType.CLIENT_SECRET;
 
 import com.azure.security.keyvault.secrets.SecretClient;
 import org.apache.camel.RuntimeCamelException;
@@ -23,26 +26,29 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.key.vault.CredentialType.CLIENT_SECRET;
-
 @UriParams
 public class KeyVaultConfiguration implements Cloneable {
 
     @UriPath
     private String vaultName;
+
     @UriParam
     @Metadata(autowired = true)
     private SecretClient secretClient;
+
     @UriParam(label = "security", secret = true)
     private String clientId;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String tenantId;
+
     @UriParam(label = "producer")
     private KeyVaultOperation operation = KeyVaultOperation.createSecret;
-    @UriParam(label = "common", enums = "CLIENT_SECRET,AZURE_IDENTITY",
-              defaultValue = "CLIENT_SECRET")
+
+    @UriParam(label = "common", enums = "CLIENT_SECRET,AZURE_IDENTITY", defaultValue = "CLIENT_SECRET")
     private CredentialType credentialType = CLIENT_SECRET;
 
     /**

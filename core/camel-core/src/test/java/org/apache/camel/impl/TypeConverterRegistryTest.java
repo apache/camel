@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,8 +30,6 @@ import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TypeConverterRegistryTest {
 
@@ -85,9 +86,10 @@ public class TypeConverterRegistryTest {
         context.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Fail);
 
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
-        assertThrows(TypeConverterExistsException.class,
-                () -> context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class,
-                        new MyOrderTypeConverter()),
+        assertThrows(
+                TypeConverterExistsException.class,
+                () -> context.getTypeConverterRegistry()
+                        .addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter()),
                 "Should have thrown exception");
     }
 

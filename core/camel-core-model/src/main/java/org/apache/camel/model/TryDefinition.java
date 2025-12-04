@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -43,18 +44,21 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @DslProperty
     @XmlTransient
     private List<CatchDefinition> catchClauses;
+
     @DslProperty
     @XmlTransient
     private FinallyDefinition finallyClause;
+
     @XmlTransient
     private boolean initialized;
+
     @XmlTransient
     private List<ProcessorDefinition<?>> outputsWithoutCatches;
+
     @XmlTransient
     private int endCounter; // used for detecting multiple nested doTry blocks
 
-    public TryDefinition() {
-    }
+    public TryDefinition() {}
 
     protected TryDefinition(TryDefinition source) {
         super(source);
@@ -96,7 +100,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // this method is introduced to avoid compiler warnings about the
         // generic Class arrays in the case we've got only one single Class
         // to build a TryDefinition for
-        return doCatch(new Class[] { exceptionType });
+        return doCatch(new Class[] {exceptionType});
     }
 
     /**
@@ -142,7 +146,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // TryDefinition
         // to configure all with try .. catch .. finally
         // set the onWhen predicate on all the catch definitions
-        Collection<CatchDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
+        Collection<CatchDefinition> col =
+                ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
         for (CatchDefinition doCatch : col) {
             doCatch.setOnWhen(new OnWhenDefinition(predicate));
         }
@@ -214,7 +219,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
     @Override
     public void preCreateProcessor() {
-        // force re-creating initialization to ensure its up-to-date (yaml-dsl creates this EIP specially via @DslProperty)
+        // force re-creating initialization to ensure its up-to-date (yaml-dsl creates this EIP specially via
+        // @DslProperty)
         initialized = false;
         checkInitialized();
     }
@@ -243,8 +249,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
                 }
             }
             if (doFinallyCounter > 1) {
-                throw new IllegalArgumentException(
-                        "Multiple finally clauses added: " + doFinallyCounter);
+                throw new IllegalArgumentException("Multiple finally clauses added: " + doFinallyCounter);
             }
             // initialize parent
             for (CatchDefinition cd : catchClauses) {
@@ -255,5 +260,4 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             }
         }
     }
-
 }

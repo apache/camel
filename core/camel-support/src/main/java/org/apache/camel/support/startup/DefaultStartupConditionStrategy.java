@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.startup;
 
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ import org.slf4j.LoggerFactory;
  * Default {@link StartupConditionStrategy}.
  */
 @DeferredContextBinding
-public class DefaultStartupConditionStrategy extends ServiceSupport implements StartupConditionStrategy, CamelContextAware {
+public class DefaultStartupConditionStrategy extends ServiceSupport
+        implements StartupConditionStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStartupConditionStrategy.class);
 
@@ -123,16 +125,19 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
                 if (classNames != null) {
                     for (String fqn : classNames.split(",")) {
                         fqn = fqn.trim();
-                        Class<? extends StartupCondition> clazz
-                                = camelContext.getClassResolver().resolveMandatoryClass(fqn, StartupCondition.class);
+                        Class<? extends StartupCondition> clazz =
+                                camelContext.getClassResolver().resolveMandatoryClass(fqn, StartupCondition.class);
                         list.add(camelContext.getInjector().newInstance(clazz));
                     }
                 }
                 list.sort(OrderedComparator.get());
 
                 if (!list.isEmpty()) {
-                    StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
-                    StartupStep step = recorder.beginStep(CamelContext.class, camelContext.getCamelContextExtension().getName(),
+                    StartupStepRecorder recorder =
+                            camelContext.getCamelContextExtension().getStartupStepRecorder();
+                    StartupStep step = recorder.beginStep(
+                            CamelContext.class,
+                            camelContext.getCamelContextExtension().getName(),
                             "Check Startup Conditions");
                     doCheckConditions(list);
                     recorder.endStep(step);
@@ -174,7 +179,8 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
                         LOG.debug("canContinue attempt #{}: {} -> {}", counter, startup.getName(), ok);
                     } catch (Exception e) {
                         throw new VetoCamelContextStartException(
-                                "Startup condition " + startup.getName() + " failed due to: " + e.getMessage(), e,
+                                "Startup condition " + startup.getName() + " failed due to: " + e.getMessage(),
+                                e,
                                 camelContext);
                     }
                 }
@@ -227,5 +233,4 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
     private boolean isCamelStopping() {
         return camelContext.isStopping();
     }
-
 }

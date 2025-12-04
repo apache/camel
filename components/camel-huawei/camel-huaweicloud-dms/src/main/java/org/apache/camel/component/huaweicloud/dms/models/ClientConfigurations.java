@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import java.util.Collection;
@@ -43,8 +44,7 @@ public class ClientConfigurations {
     private String kafkaManagerPassword;
     private String storageSpecCode;
 
-    public ClientConfigurations() {
-    }
+    public ClientConfigurations() {}
 
     public String getOperation() {
         return operation;

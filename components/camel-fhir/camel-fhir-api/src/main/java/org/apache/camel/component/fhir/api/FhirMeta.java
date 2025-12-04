@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -45,7 +46,8 @@ public class FhirMeta {
      * @return                 the {@link IBaseMetaType}
      */
     public <T extends IBaseMetaType> T getFromServer(Class<T> metaType, Map<ExtraParameters, Object> extraParameters) {
-        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable = client.meta().get(metaType).fromServer();
+        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable =
+                client.meta().get(metaType).fromServer();
         ExtraParameters.process(extraParameters, clientExecutable);
         return clientExecutable.execute();
     }
@@ -61,7 +63,8 @@ public class FhirMeta {
      */
     public <T extends IBaseMetaType> T getFromResource(
             Class<T> metaType, IIdType id, Map<ExtraParameters, Object> extraParameters) {
-        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable = client.meta().get(metaType).fromResource(id);
+        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable =
+                client.meta().get(metaType).fromResource(id);
         ExtraParameters.process(extraParameters, clientExecutable);
         return clientExecutable.execute();
     }
@@ -77,7 +80,8 @@ public class FhirMeta {
      */
     public <T extends IBaseMetaType> T getFromType(
             Class<T> metaType, String resourceType, Map<ExtraParameters, Object> extraParameters) {
-        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable = client.meta().get(metaType).fromType(resourceType);
+        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable =
+                client.meta().get(metaType).fromType(resourceType);
         ExtraParameters.process(extraParameters, clientExecutable);
         return clientExecutable.execute();
     }
@@ -92,7 +96,8 @@ public class FhirMeta {
      * @return                 the {@link IBaseMetaType}
      */
     public <T extends IBaseMetaType> T add(T meta, IIdType id, Map<ExtraParameters, Object> extraParameters) {
-        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable = client.meta().add().onResource(id).meta(meta);
+        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable =
+                client.meta().add().onResource(id).meta(meta);
         ExtraParameters.process(extraParameters, clientExecutable);
         return clientExecutable.execute();
     }
@@ -107,7 +112,8 @@ public class FhirMeta {
      * @return                 the {@link IBaseMetaType}
      */
     public <T extends IBaseMetaType> T delete(T meta, IIdType id, Map<ExtraParameters, Object> extraParameters) {
-        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable = client.meta().delete().onResource(id).meta(meta);
+        IClientExecutable<IClientExecutable<?, T>, T> clientExecutable =
+                client.meta().delete().onResource(id).meta(meta);
         ExtraParameters.process(extraParameters, clientExecutable);
         return clientExecutable.execute();
     }

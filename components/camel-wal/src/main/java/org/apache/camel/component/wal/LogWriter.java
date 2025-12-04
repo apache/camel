@@ -39,6 +39,7 @@ public final class LogWriter implements AutoCloseable {
      * The default buffer capacity: 512 KiB
      */
     public static final int DEFAULT_CAPACITY = 1024 * 512;
+
     private static final Logger LOG = LoggerFactory.getLogger(LogWriter.class);
 
     private final Lock lock = new ReentrantLock();
@@ -72,7 +73,10 @@ public final class LogWriter implements AutoCloseable {
      * @throws IOException    in case of I/O errors
      */
     LogWriter(File logFile, LogSupervisor logSupervisor, int maxRecordCount) throws IOException {
-        this.fileChannel = FileChannel.open(logFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+        this.fileChannel = FileChannel.open(
+                logFile.toPath(),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.WRITE,
                 StandardOpenOption.TRUNCATE_EXISTING);
 
         final Header header = Header.WA_DEFAULT_V1;
@@ -154,7 +158,8 @@ public final class LogWriter implements AutoCloseable {
 
         final List<EntryInfo> collect = transactionLog.stream()
                 .filter(c -> c != null && c.layerInfo.getLayer() != transactionLog.currentLayer())
-                .map(e -> tryPersist(layerInfo, e.logEntry)).collect(Collectors.toList());
+                .map(e -> tryPersist(layerInfo, e.logEntry))
+                .collect(Collectors.toList());
 
         if (!collect.isEmpty()) {
             final EntryInfo lastOnLayer = collect.get(0);
@@ -240,11 +245,11 @@ public final class LogWriter implements AutoCloseable {
         final TransactionLog.LayerInfo layerInfo = entryInfo.getLayerInfo();
 
         /*
-         If it has layer information, then it's a hot record kept in the cache. In this case, just
-         update the cache and let the LogSupervisor flush to disk.
+        If it has layer information, then it's a hot record kept in the cache. In this case, just
+        update the cache and let the LogSupervisor flush to disk.
 
-         Trying to update a persisted entry here is not acceptable
-         */
+        Trying to update a persisted entry here is not acceptable
+        */
         assert layerInfo != null;
 
         final LogEntry logEntry = transactionLog.update(layerInfo, state);
@@ -265,7 +270,12 @@ public final class LogWriter implements AutoCloseable {
     public void updateState(PersistedLogEntry entry, LogEntry.EntryState state) throws IOException {
         ByteBuffer updateBuffer = ByteBuffer.allocate(entry.size());
 
-        IOUtil.serialize(updateBuffer, state.getCode(), entry.getKeyMetadata(), entry.getKey(), entry.getValueMetadata(),
+        IOUtil.serialize(
+                updateBuffer,
+                state.getCode(),
+                entry.getKeyMetadata(),
+                entry.getKey(),
+                entry.getValueMetadata(),
                 entry.getValue());
 
         final EntryInfo entryInfo = entry.getEntryInfo();
@@ -279,5 +289,4 @@ public final class LogWriter implements AutoCloseable {
             LOG.warn("No bytes written for the given record!");
         }
     }
-
 }

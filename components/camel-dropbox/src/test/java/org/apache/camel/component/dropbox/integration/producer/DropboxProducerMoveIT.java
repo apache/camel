@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import java.io.IOException;
@@ -64,21 +65,20 @@ public class DropboxProducerMoveIT extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(String.format("dropbox://move?accessToken={{accessToken}}" +
-                                          "&expireIn={{expireIn}}" +
-                                          "&refreshToken={{refreshToken}}" +
-                                          "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                                          "&remotePath=%s&newRemotePath=%s",
+                        .to(String.format(
+                                "dropbox://move?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                        + "&refreshToken={{refreshToken}}"
+                                        + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                        + "&remotePath=%s&newRemotePath=%s",
                                 workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE))
                         .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant(COPY_WORKDIR + "/" + FILE))
-                        .to("dropbox://move?accessToken={{accessToken}}" +
-                            "&expireIn={{expireIn}}" +
-                            "&refreshToken={{refreshToken}}" +
-                            "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
+                        .to("dropbox://move?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                + "&refreshToken={{refreshToken}}"
+                                + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}")
                         .to("mock:result");
             }
         };

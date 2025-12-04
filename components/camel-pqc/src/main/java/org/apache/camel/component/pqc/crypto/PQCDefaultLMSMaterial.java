@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -40,8 +41,8 @@ public class PQCDefaultLMSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
-                    PQCSignatureAlgorithms.LMS.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.LMS.getAlgorithm(), PQCSignatureAlgorithms.LMS.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,8 +50,8 @@ public class PQCDefaultLMSMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
-                PQCSignatureAlgorithms.LMS.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.LMS.getAlgorithm(), PQCSignatureAlgorithms.LMS.getBcProvider());
         kpGen.initialize(new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w1));
         return kpGen;
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,9 +32,6 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
@@ -69,8 +70,9 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         LOG.info(payload);
 
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains(
-                "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
+        assertTrue(
+                payload.contains(
+                        "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
         assertTrue(payload.contains("<firstName>Christian</firstName>"));
         assertTrue(payload.contains("<lastName>Mueller</lastName>"));
         assertTrue(payload.contains("<age>36</age>"));
@@ -85,7 +87,8 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         mockUnmarshall.expectedMessageCount(testCount);
 
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
+                .append(
+                        "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
                 .append("<firstName>Christian</firstName>")
                 .append("<lastName>Mueller</lastName>")
                 .append("<age>36</age>")

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -29,12 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ConsumerTest extends SplunkMockTestSupport {
@@ -62,7 +63,8 @@ public class ConsumerTest extends SplunkMockTestSupport {
         assertNotNull(received);
         Map<String, String> data = received.getEventData();
         assertEquals("indexertpool", data.get("name"));
-        assertEquals(true, searchMock.getReceivedExchanges().get(2).getProperty(Exchange.BATCH_COMPLETE, Boolean.class));
+        assertEquals(
+                true, searchMock.getReceivedExchanges().get(2).getProperty(Exchange.BATCH_COMPLETE, Boolean.class));
         stream.close();
     }
 

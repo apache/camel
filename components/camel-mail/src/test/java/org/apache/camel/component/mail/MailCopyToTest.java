@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for copyTo.
@@ -52,7 +53,8 @@ public class MailCopyToTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // windows need a little slack
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(0, jones.getInbox().getNewMessageCount()));
         assertEquals(5, jones.getFolder("backup").getNewMessageCount());
     }
@@ -82,7 +84,8 @@ public class MailCopyToTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(jones.uriPrefix(Protocol.imap) + "&copyTo=backup&initialDelay=100&delay=100").to("mock:result");
+                from(jones.uriPrefix(Protocol.imap) + "&copyTo=backup&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

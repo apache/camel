@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +28,6 @@ import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.builder.Namespaces;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultNamespaceContextTest extends ContextTestSupport {
 
@@ -67,8 +68,9 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     @Test
     public void testDefaultNamespaceContextDualNamespaces() {
-        XPathBuilder builder
-                = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
+        XPathBuilder builder = XPathBuilder.xpath("/foo")
+                .namespace("pre", "http://acme/cheese")
+                .namespace("bar", "http://acme/bar");
         builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);

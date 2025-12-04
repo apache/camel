@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Concurreny test for idempotent consumer
@@ -51,7 +52,8 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .to("mock:result");
             }
         });
@@ -74,10 +76,14 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
@@ -85,7 +91,8 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -110,7 +117,8 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
@@ -118,7 +126,8 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -147,8 +156,10 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .delay(1).to("mock:result");
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .delay(1)
+                        .to("mock:result");
             }
         });
         context.start();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.model.Context;
@@ -31,5 +32,4 @@ public interface WordpressServicePosts extends WordpressCrudService<Post, PostSe
      * @return
      */
     Post retrieve(Integer postId, Context context, String password);
-
 }

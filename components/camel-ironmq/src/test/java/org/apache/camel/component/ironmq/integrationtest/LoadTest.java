@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq.integrationtest;
 
 import java.util.concurrent.TimeUnit;
@@ -37,8 +38,8 @@ public class LoadTest extends CamelTestSupport {
     // replace with your token
     private final String token = "replace-this";
 
-    private final String ironMQEndpoint = "ironmq:testqueue?preserveHeaders=true&projectId=" + projectId + "&token=" + token
-                                          + "&maxMessagesPerPoll=100&delay=3000&wait=30&ironMQCloud=" + IRONMQCLOUD;
+    private final String ironMQEndpoint = "ironmq:testqueue?preserveHeaders=true&projectId=" + projectId + "&token="
+            + token + "&maxMessagesPerPoll=100&delay=3000&wait=30&ironMQCloud=" + IRONMQCLOUD;
     private final String datasetEndpoint = "dataset:foo?produceDelay=5";
     private InputDataset dataSet = new InputDataset(1000);
 
@@ -81,6 +82,5 @@ public class LoadTest extends CamelTestSupport {
         protected Object createMessageBody(long messageIndex) {
             return "<hello>" + messageIndex;
         }
-
     }
 }

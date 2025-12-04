@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,10 +32,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
 
@@ -68,7 +69,6 @@ public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(DevTrace trace, String expectedBody) {
@@ -107,7 +107,6 @@ public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
                     log.getLogEntries().get(0).getFields().get("message"));
         }
-
     }
 
     @Override
@@ -115,12 +114,8 @@ public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

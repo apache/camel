@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -31,7 +32,8 @@ public class JsonPathSplitWriteAsStringTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split().jsonpathWriteAsString("$.content")
+                        .split()
+                        .jsonpathWriteAsString("$.content")
                         .to("mock:line")
                         .to("log:line")
                         .end();
@@ -45,12 +47,15 @@ public class JsonPathSplitWriteAsStringTest extends CamelTestSupport {
         mock.expectedMessageCount(2);
         // we want the output as JSON string
         mock.allMessages().body().isInstanceOf(String.class);
-        mock.message(0).body().isEqualTo("{\"action\":\"CU\",\"id\":123,\"modifiedTime\":\"2015-07-28T11:40:09.520+02:00\"}");
-        mock.message(1).body().isEqualTo("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}");
+        mock.message(0)
+                .body()
+                .isEqualTo("{\"action\":\"CU\",\"id\":123,\"modifiedTime\":\"2015-07-28T11:40:09.520+02:00\"}");
+        mock.message(1)
+                .body()
+                .isEqualTo("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}");
 
         template.sendBody("direct:start", new File("src/test/resources/content.json"));
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

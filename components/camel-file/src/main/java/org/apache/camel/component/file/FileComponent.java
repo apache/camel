@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -39,8 +40,7 @@ public class FileComponent extends GenericFileComponent<File> {
      */
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
-    public FileComponent() {
-    }
+    public FileComponent() {}
 
     public FileComponent(CamelContext context) {
         super(context);
@@ -54,7 +54,7 @@ public class FileComponent extends GenericFileComponent<File> {
         if (StringHelper.hasStartToken(remaining, "simple")) {
             throw new IllegalArgumentException(
                     "Invalid directory: " + remaining + ". Dynamic expressions with ${ } placeholders is not allowed."
-                                               + " Use the fileName option to set the dynamic expression.");
+                            + " Use the fileName option to set the dynamic expression.");
         }
 
         File file = new File(remaining);
@@ -73,5 +73,4 @@ public class FileComponent extends GenericFileComponent<File> {
     protected void afterPropertiesSet(GenericFileEndpoint<File> endpoint) throws Exception {
         // noop
     }
-
 }

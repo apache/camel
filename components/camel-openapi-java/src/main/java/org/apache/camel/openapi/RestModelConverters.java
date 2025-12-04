@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.util.Iterator;
@@ -113,12 +114,15 @@ public class RestModelConverters {
         }
 
         @Override
-        public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+        public Schema resolve(
+                AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
             Schema<?> result = delegate.resolve(annotatedType, context, next);
             if (result != null) {
                 String rt = result.getType();
                 if (rt == null && result.getTypes() != null) {
-                    rt = result.getTypes().size() == 1 ? result.getTypes().iterator().next() : null;
+                    rt = result.getTypes().size() == 1
+                            ? result.getTypes().iterator().next()
+                            : null;
                 }
                 if (Objects.equals("object", rt)) {
                     JavaType type;

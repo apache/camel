@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
@@ -89,10 +90,10 @@ public class EnumTypeConverter extends TypeConverterSupport implements CamelCont
                 }
             }
 
-            throw new IllegalArgumentException("Enum class " + type + " does not have any constant with value: " + text);
+            throw new IllegalArgumentException(
+                    "Enum class " + type + " does not have any constant with value: " + text);
         }
 
         return null;
     }
-
 }

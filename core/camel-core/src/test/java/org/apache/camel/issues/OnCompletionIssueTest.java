@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OnCompletionIssueTest extends ContextTestSupport {
 
@@ -44,13 +45,15 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         template.sendBody("direct:input", "ile");
         template.sendBody("direct:input", "markRollback");
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:input", "npe"),
                 "Should have thrown exception");
 
         assertEquals("Darn NPE", e.getCause().getMessage());
 
-        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+        CamelExecutionException ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:input", "rollback"),
                 "Should have thrown exception");
 
@@ -64,17 +67,40 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onCompletion().onFailureOnly().parallelProcessing().log("failing ${body}").to("mock:failed");
+                onCompletion()
+                        .onFailureOnly()
+                        .parallelProcessing()
+                        .log("failing ${body}")
+                        .to("mock:failed");
 
-                onCompletion().onCompleteOnly().parallelProcessing().log("completing ${body}").to("mock:complete");
+                onCompletion()
+                        .onCompleteOnly()
+                        .parallelProcessing()
+                        .log("completing ${body}")
+                        .to("mock:complete");
 
-                from("direct:input").onException(IllegalArgumentException.class).handled(true).end().choice()
-                        .when(simple("${body} == 'stop'")).log("stopping").stop()
-                        .when(simple("${body} == 'ile'")).log("excepting")
-                        .throwException(new IllegalArgumentException("Exception requested")).when(simple("${body} == 'npe'"))
-                        .log("excepting").throwException(new NullPointerException("Darn NPE"))
-                        .when(simple("${body} == 'rollback'")).log("rollback").rollback()
-                        .when(simple("${body} == 'markRollback'")).log("markRollback").markRollbackOnly().end().log("finishing")
+                from("direct:input")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .end()
+                        .choice()
+                        .when(simple("${body} == 'stop'"))
+                        .log("stopping")
+                        .stop()
+                        .when(simple("${body} == 'ile'"))
+                        .log("excepting")
+                        .throwException(new IllegalArgumentException("Exception requested"))
+                        .when(simple("${body} == 'npe'"))
+                        .log("excepting")
+                        .throwException(new NullPointerException("Darn NPE"))
+                        .when(simple("${body} == 'rollback'"))
+                        .log("rollback")
+                        .rollback()
+                        .when(simple("${body} == 'markRollback'"))
+                        .log("markRollback")
+                        .markRollbackOnly()
+                        .end()
+                        .log("finishing")
                         .to("mock:end");
             }
         };

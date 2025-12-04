@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.interceptor;
 
 import java.io.IOException;
@@ -33,7 +34,8 @@ public class RequestBasicAuth implements HttpRequestInterceptor {
     }
 
     @Override
-    public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+    public void process(HttpRequest request, EntityDetails entity, HttpContext context)
+            throws HttpException, IOException {
         context.setAttribute("creds", this.authTokenExtractor.extract(request));
     }
 }

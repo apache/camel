@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.xml.ws.Endpoint;
 
@@ -26,10 +31,6 @@ import org.apache.cxf.binding.soap.SoapFault;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
 
@@ -63,13 +64,12 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     private Exchange sendJaxWsMessage(final String personIdString) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString
-                              + "</personId></GetPerson>\n";
+                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>"
+                        + personIdString + "</personId></GetPerson>\n";
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "GetPerson");
             }
         });
         return exchange;
     }
-
 }

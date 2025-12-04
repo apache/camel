@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
 
 import java.util.Map;
@@ -39,8 +40,8 @@ public class MiloClientComponent extends DefaultComponent {
         final MiloClientConfiguration configuration = new MiloClientConfiguration(this.configuration);
         configuration.setEndpointUri(remaining);
 
-        final MiloClientEndpoint endpoint
-                = new MiloClientEndpoint(uri, this, configuration.getEndpointUri(), miloClientConnectionManager);
+        final MiloClientEndpoint endpoint =
+                new MiloClientEndpoint(uri, this, configuration.getEndpointUri(), miloClientConnectionManager);
         endpoint.setConfiguration(configuration);
         setProperties(endpoint, parameters);
 

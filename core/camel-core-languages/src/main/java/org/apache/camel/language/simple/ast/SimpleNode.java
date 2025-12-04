@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.CamelContext;
@@ -52,5 +53,4 @@ public interface SimpleNode {
      * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
      */
     String createCode(CamelContext camelContext, String expression) throws SimpleParserException;
-
 }

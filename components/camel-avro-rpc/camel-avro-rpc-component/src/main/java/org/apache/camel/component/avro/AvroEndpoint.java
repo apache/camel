@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import java.lang.reflect.Field;
@@ -34,8 +35,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Produce or consume Apache Avro RPC services.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro RPC", syntax = "avro:transport:host:port/messageName",
-             category = { Category.RPC }, headersClass = AvroConstants.class)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "avro",
+        title = "Avro RPC",
+        syntax = "avro:transport:host:port/messageName",
+        category = {Category.RPC},
+        headersClass = AvroConstants.class)
 public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam
@@ -94,7 +100,8 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
             throw new IllegalArgumentException("Avro configuration does not contain protocol");
         }
 
-        if (config.getMessageName() != null && !config.getProtocol().getMessages().containsKey(config.getMessageName())) {
+        if (config.getMessageName() != null
+                && !config.getProtocol().getMessages().containsKey(config.getMessageName())) {
             throw new IllegalArgumentException("Message " + config.getMessageName() + " is not defined in protocol");
         }
 
@@ -105,11 +112,10 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
                     : Collections.singleton(messageMap.get(config.getMessageName()));
             for (Protocol.Message message : messagesToCheck) {
                 if (message.getRequest().getFields().size() != 1) {
-                    throw new IllegalArgumentException(
-                            "Single parameter option can't be used with message "
-                                                       + message.getName() + " because it has "
-                                                       + message.getRequest().getFields().size()
-                                                       + " parameters defined");
+                    throw new IllegalArgumentException("Single parameter option can't be used with message "
+                            + message.getName() + " because it has "
+                            + message.getRequest().getFields().size()
+                            + " parameters defined");
                 }
             }
         }

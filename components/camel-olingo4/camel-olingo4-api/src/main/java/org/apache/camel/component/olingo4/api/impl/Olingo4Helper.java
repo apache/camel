@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4.api.impl;
 
 import org.apache.http.HttpHeaders;
@@ -25,18 +26,17 @@ import org.apache.olingo.commons.api.format.ContentType;
  */
 public final class Olingo4Helper {
 
-    private Olingo4Helper() {
-    }
+    private Olingo4Helper() {}
 
     /**
      * Gets the content type header in a safe way
      */
     public static ContentType getContentTypeHeader(HttpResponse response) {
         if (response.containsHeader(HttpHeaders.CONTENT_TYPE)) {
-            return ContentType.parse(response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+            return ContentType.parse(
+                    response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
         } else {
             return null;
         }
     }
-
 }

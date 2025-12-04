@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
@@ -34,12 +41,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class DataLakeFileSystemOperationTest extends CamelTestSupport {
@@ -57,10 +58,10 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
 
     @Test
     void testCreateFileSystem() {
-        when(client.createFileSystem(any(), any(), any()))
-                .thenReturn(createFileSystemHeaderMock());
+        when(client.createFileSystem(any(), any(), any())).thenReturn(createFileSystemHeaderMock());
 
-        final DataLakeFileSystemOperations fileSystemOperations = new DataLakeFileSystemOperations(configuration, client);
+        final DataLakeFileSystemOperations fileSystemOperations =
+                new DataLakeFileSystemOperations(configuration, client);
         final DataLakeOperationResponse response = fileSystemOperations.createFileSystem(null);
 
         assertNotNull(response);
@@ -70,8 +71,7 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
 
     @Test
     void testDeleteFileSystem() {
-        when(client.deleteFileSystem(any(), any()))
-                .thenReturn(deleteFileSystemHeaderMock());
+        when(client.deleteFileSystem(any(), any())).thenReturn(deleteFileSystemHeaderMock());
 
         final DataLakeFileSystemOperations operations = new DataLakeFileSystemOperations(configuration, client);
         final DataLakeOperationResponse response = operations.deleteFileSystem(null);
@@ -83,8 +83,7 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
 
     @Test
     void testListPaths() {
-        when(client.listPaths(any(), any()))
-                .thenReturn(listPathsMock());
+        when(client.listPaths(any(), any())).thenReturn(listPathsMock());
 
         final DataLakeFileSystemOperations operations = new DataLakeFileSystemOperations(configuration, client);
         final DataLakeOperationResponse response = operations.listPaths(null);
@@ -97,8 +96,10 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
         assertTrue(pathNames.contains("item1"));
         assertTrue(pathNames.contains("item2"));
 
-        final List<PathItem> directories = body.stream().filter(PathItem::isDirectory).toList();
-        final List<PathItem> files = body.stream().filter(pathItem -> !pathItem.isDirectory()).toList();
+        final List<PathItem> directories =
+                body.stream().filter(PathItem::isDirectory).toList();
+        final List<PathItem> files =
+                body.stream().filter(pathItem -> !pathItem.isDirectory()).toList();
         assertEquals(1, directories.size());
         assertEquals(1, files.size());
     }
@@ -107,8 +108,7 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
     void testListPathWithRegex() {
         configuration.setRegex(".*\\.pdf");
 
-        when(client.listPaths(any(), any()))
-                .thenReturn(listPathsForRegexMock());
+        when(client.listPaths(any(), any())).thenReturn(listPathsForRegexMock());
 
         final DataLakeFileSystemOperations operations = new DataLakeFileSystemOperations(configuration, client);
         final DataLakeOperationResponse response = operations.listPaths(null);
@@ -140,9 +140,12 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
     private List<PathItem> listPathsForRegexMock() {
         final List<PathItem> paths = listPathsMock();
 
-        final PathItem itemPdf1 = new PathItem("testTag1", OffsetDateTime.now(), 0, null, false, "file1.pdf", null, null);
-        final PathItem itemPdf2 = new PathItem("testTag2", OffsetDateTime.now(), 0, null, false, "file2.pdf", null, null);
-        final PathItem itemPdf3 = new PathItem("testTag3", OffsetDateTime.now(), 0, null, false, "file5.pdf", null, null);
+        final PathItem itemPdf1 =
+                new PathItem("testTag1", OffsetDateTime.now(), 0, null, false, "file1.pdf", null, null);
+        final PathItem itemPdf2 =
+                new PathItem("testTag2", OffsetDateTime.now(), 0, null, false, "file2.pdf", null, null);
+        final PathItem itemPdf3 =
+                new PathItem("testTag3", OffsetDateTime.now(), 0, null, false, "file5.pdf", null, null);
         final PathItem itemExe1 = new PathItem("testTag4", OffsetDateTime.now(), 0, null, false, "a.exe", null, null);
         final PathItem itemExe2 = new PathItem("testTag5", OffsetDateTime.now(), 0, null, false, "b.exe", null, null);
         final PathItem itemExe3 = new PathItem("testTag6", OffsetDateTime.now(), 0, null, false, "c.exe", null, null);
@@ -155,7 +158,6 @@ public class DataLakeFileSystemOperationTest extends CamelTestSupport {
         paths.add(itemExe3);
 
         return paths;
-
     }
 
     private HttpHeaders deleteFileSystemHeaderMock() {

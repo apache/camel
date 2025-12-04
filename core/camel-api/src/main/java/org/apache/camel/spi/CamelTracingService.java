@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
@@ -22,6 +23,4 @@ import org.apache.camel.Service;
 /**
  * A Camel tracing service is a factory for telemetry tracers.
  */
-public interface CamelTracingService extends Service, CamelContextAware {
-
-}
+public interface CamelTracingService extends Service, CamelContextAware {}

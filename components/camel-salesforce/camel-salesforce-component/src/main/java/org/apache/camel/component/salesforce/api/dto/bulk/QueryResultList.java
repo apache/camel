@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import java.util.ArrayList;
@@ -44,7 +45,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "QueryResultList", propOrder = { "result" })
+@XmlType(
+        name = "QueryResultList",
+        propOrder = {"result"})
 public class QueryResultList {
 
     protected List<String> result;
@@ -74,5 +77,4 @@ public class QueryResultList {
         }
         return this.result;
     }
-
 }

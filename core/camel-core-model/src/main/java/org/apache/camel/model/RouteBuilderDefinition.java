@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,8 +40,7 @@ public class RouteBuilderDefinition extends IdentifiedType {
     @XmlAttribute(required = true)
     private String ref;
 
-    public RouteBuilderDefinition() {
-    }
+    public RouteBuilderDefinition() {}
 
     public RouteBuilderDefinition(String ref) {
         this.ref = ref;

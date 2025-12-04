@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
+
+import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
 public class GroovySetFixedHeaderTest extends CamelTestSupport {
 
@@ -41,9 +42,7 @@ public class GroovySetFixedHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setHeader("beer", groovy("'Carlsberg'"))
-                        .to("mock:result");
+                from("direct:start").setHeader("beer", groovy("'Carlsberg'")).to("mock:result");
             }
         };
     }

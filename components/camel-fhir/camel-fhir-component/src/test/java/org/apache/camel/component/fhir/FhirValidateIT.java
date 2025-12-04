@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -31,10 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirValidate} APIs. The class source won't be generated
  * again if the generator MOJO finds it under src/test/java.
@@ -42,12 +43,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FhirValidateIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirValidateIT.class);
-    private static final String PATH_PREFIX
-            = FhirApiCollection.getCollection().getApiName(FhirValidateApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirValidateApiMethod.class)
+            .getName();
 
     @Test
     public void testResource() {
-        Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        Patient bobbyHebb =
+                new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         bobbyHebb.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
         bobbyHebb.getText().setDivAsString("<div>This is the narrative text</div>");
 
@@ -62,19 +65,19 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
         List<OperationOutcomeIssueComponent> issue = operationOutcome.getIssue();
         assertNotNull(issue);
         assertEquals(1, issue.size());
-        assertTrue(issue.get(0).getDiagnostics()
-                .contains("No issues detected during validation"));
+        assertTrue(issue.get(0).getDiagnostics().contains("No issues detected during validation"));
     }
 
     @Test
     public void testResourceAsString() {
-        Patient bobbyHebb = new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
+        Patient bobbyHebb =
+                new Patient().addName(new HumanName().addGiven("Bobby").setFamily("Hebb"));
         bobbyHebb.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
         bobbyHebb.getText().setDivAsString("<div>This is the narrative text</div>");
 
         // using org.hl7.fhir.instance.model.api.IBaseResource message body for single parameter "resource"
-        MethodOutcome result
-                = requestBody("direct://RESOURCE_AS_STRING", this.fhirContext.newXmlParser().encodeResourceToString(bobbyHebb));
+        MethodOutcome result = requestBody(
+                "direct://RESOURCE_AS_STRING", this.fhirContext.newXmlParser().encodeResourceToString(bobbyHebb));
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: {}", result);
@@ -84,8 +87,7 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
         List<OperationOutcomeIssueComponent> issue = operationOutcome.getIssue();
         assertNotNull(issue);
         assertEquals(1, issue.size());
-        assertTrue(issue.get(0).getDiagnostics()
-                .contains("No issues detected during validation"));
+        assertTrue(issue.get(0).getDiagnostics().contains("No issues detected during validation"));
     }
 
     @Override
@@ -93,13 +95,10 @@ public class FhirValidateIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resource
-                from("direct://RESOURCE")
-                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
+                from("direct://RESOURCE").to("fhir://" + PATH_PREFIX + "/resource?inBody=resource");
 
                 // test route for resource
-                from("direct://RESOURCE_AS_STRING")
-                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString");
-
+                from("direct://RESOURCE_AS_STRING").to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString");
             }
         };
     }

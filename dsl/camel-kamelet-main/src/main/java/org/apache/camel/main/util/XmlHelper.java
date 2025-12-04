@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.util;
 
 import javax.xml.XMLConstants;
@@ -26,8 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class XmlHelper {
 
-    private XmlHelper() {
-    }
+    private XmlHelper() {}
 
     public static DocumentBuilderFactory createDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -71,5 +71,4 @@ public final class XmlHelper {
         }
         return null;
     }
-
 }

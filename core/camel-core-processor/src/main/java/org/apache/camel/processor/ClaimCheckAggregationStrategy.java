@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.HashSet;
@@ -47,8 +48,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ClaimCheckAggregationStrategy.class);
     private String filter;
 
-    public ClaimCheckAggregationStrategy() {
-    }
+    public ClaimCheckAggregationStrategy() {}
 
     public String getFilter() {
         return filter;
@@ -69,7 +69,10 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             oldExchange.getMessage().setBody(newExchange.getMessage().getBody());
             LOG.trace("Including: body");
             if (newExchange.getMessage().hasHeaders()) {
-                oldExchange.getMessage().getHeaders().putAll(newExchange.getMessage().getHeaders());
+                oldExchange
+                        .getMessage()
+                        .getHeaders()
+                        .putAll(newExchange.getMessage().getHeaders());
                 LOG.trace("Including: headers");
             }
             return oldExchange;
@@ -84,7 +87,10 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
         // headers is by default often included
         if (isHeadersEnabled()) {
             if (newExchange.getMessage().hasHeaders()) {
-                oldExchange.getMessage().getHeaders().putAll(newExchange.getMessage().getHeaders());
+                oldExchange
+                        .getMessage()
+                        .getHeaders()
+                        .putAll(newExchange.getMessage().getHeaders());
                 LOG.trace("Including: headers");
             }
         }
@@ -92,7 +98,8 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
         // filter specific header if they are somehow enabled by the filter
         if (hasHeaderPatterns()) {
             boolean excludeOnly = isExcludeOnlyHeaderPatterns();
-            for (Map.Entry<String, Object> header : newExchange.getMessage().getHeaders().entrySet()) {
+            for (Map.Entry<String, Object> header :
+                    newExchange.getMessage().getHeaders().entrySet()) {
                 String key = header.getKey();
                 if (hasHeaderPattern(key)) {
                     boolean include = isIncludedHeader(key);
@@ -121,7 +128,10 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
                     oldExchange.getMessage().setBody(newExchange.getMessage().getBody());
                     LOG.trace("Including: body");
                 } else if ("headers".equals(part) || "+headers".equals(part)) {
-                    oldExchange.getMessage().getHeaders().putAll(newExchange.getMessage().getHeaders());
+                    oldExchange
+                            .getMessage()
+                            .getHeaders()
+                            .putAll(newExchange.getMessage().getHeaders());
                     LOG.trace("Including: headers");
                 }
             }
@@ -142,7 +152,8 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
                 Set<String> toRemoveKeys = new HashSet<>();
                 for (Object o : i) {
                     String pattern = o.toString();
-                    for (Map.Entry<String, Object> header : oldExchange.getMessage().getHeaders().entrySet()) {
+                    for (Map.Entry<String, Object> header :
+                            oldExchange.getMessage().getHeaders().entrySet()) {
                         String key = header.getKey();
                         boolean matched = PatternHelper.matchPattern(key, pattern);
                         if (matched) {
@@ -280,5 +291,4 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
         // headers is enabled if we only have exclude patterns
         return onlyExclude;
     }
-
 }

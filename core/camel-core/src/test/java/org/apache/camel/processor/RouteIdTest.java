@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteIdTest extends ContextTestSupport {
 
@@ -59,9 +60,18 @@ public class RouteIdTest extends ContextTestSupport {
             public void configure() {
                 onException(Exception.class).handled(true).to("mock:error").end();
 
-                from("direct:start").onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(5).end()
-                        .routeId("myCoolRoute").choice().when(body().contains("Kaboom"))
-                        .throwException(new IllegalArgumentException("Damn")).otherwise().to("mock:result").end();
+                from("direct:start")
+                        .onException(IOException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(5)
+                        .end()
+                        .routeId("myCoolRoute")
+                        .choice()
+                        .when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .otherwise()
+                        .to("mock:result")
+                        .end();
             }
         };
     }

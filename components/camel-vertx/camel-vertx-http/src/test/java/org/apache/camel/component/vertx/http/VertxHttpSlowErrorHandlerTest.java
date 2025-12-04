@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.BindToRegistry;
@@ -23,9 +27,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class VertxHttpSlowErrorHandlerTest extends VertxHttpTestSupport {
     private static final BlockedThreadReporter reporter = new BlockedThreadReporter();
@@ -60,20 +61,13 @@ public class VertxHttpSlowErrorHandlerTest extends VertxHttpTestSupport {
                         .redeliveryDelay(0)
                         .to("direct:slow");
 
-                from(getTestServerUri() + "/test")
-                        .to("direct:start");
+                from(getTestServerUri() + "/test").to("direct:start");
 
-                from("direct:start")
-                        .removeHeaders("CamelHttp*")
-                        .to(getProducerUri());
+                from("direct:start").removeHeaders("CamelHttp*").to(getProducerUri());
 
-                from(getTestServerUri())
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500));
+                from(getTestServerUri()).setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500));
 
-                from("direct:slow")
-                        .delay(600)
-                        .syncDelayed()
-                        .setBody().constant(SLOW_SERVICE_RESPONSE);
+                from("direct:slow").delay(600).syncDelayed().setBody().constant(SLOW_SERVICE_RESPONSE);
             }
         };
     }

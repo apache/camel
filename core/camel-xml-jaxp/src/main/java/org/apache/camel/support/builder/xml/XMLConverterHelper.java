@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder.xml;
 
 import java.lang.reflect.InvocationTargetException;
@@ -54,16 +55,15 @@ public class XMLConverterHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLConverterHelper.class);
     private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
-    private static final String DOCUMENT_BUILDER_FACTORY_FEATURE
-            = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
-    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY
-            = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final String DOCUMENT_BUILDER_FACTORY_FEATURE =
+            "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY =
+            "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
     private volatile TransformerFactory transformerFactory;
 
-    public XMLConverterHelper() {
-    }
+    public XMLConverterHelper() {}
 
     public XMLConverterHelper(DocumentBuilderFactory documentBuilderFactory) {
         this.documentBuilderFactory = documentBuilderFactory;
@@ -126,29 +126,42 @@ public class XMLConverterHelper {
             // Set secure processing
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    XMLConstants.FEATURE_SECURE_PROCESSING, true, e.getMessage());
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    XMLConstants.FEATURE_SECURE_PROCESSING,
+                    true,
+                    e.getMessage());
         }
         try {
             // Set secure processing
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    "http://apache.org/xml/features/disallow-doctype-decl", true, e.getMessage());
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    "http://apache.org/xml/features/disallow-doctype-decl",
+                    true,
+                    e.getMessage());
         }
         try {
             // disable DOCTYPE declaration
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    "http://apache.org/xml/features/disallow-doctype-decl", true, e.getMessage(), e);
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    "http://apache.org/xml/features/disallow-doctype-decl",
+                    true,
+                    e.getMessage(),
+                    e);
         }
         try {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    "http://xml.org/sax/features/external-general-entities",
+                    false,
+                    e.getMessage());
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -159,8 +172,10 @@ public class XMLConverterHelper {
                 factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
             }
         } catch (Exception e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
-                    "http://apache.org/xml/properties/security-manager", e.getMessage());
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
+                    "http://apache.org/xml/properties/security-manager",
+                    e.getMessage());
         }
         // setup the feature from the system property
         setupFeatures(factory);
@@ -178,7 +193,8 @@ public class XMLConverterHelper {
             try {
                 LOG.debug(
                         "Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}",
-                        e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                        e.getMessage(),
+                        JDK_FALLBACK_TRANSFORMER_FACTORY);
                 factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
             } catch (Exception t) {
                 // okay we cannot load fallback then throw original exception
@@ -191,8 +207,12 @@ public class XMLConverterHelper {
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
-            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage(), e);
+            LOG.warn(
+                    "TransformerFactory doesn't support the feature {} with value {}, due to {}.",
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING,
+                    "true",
+                    e.getMessage(),
+                    e);
         }
         LOG.debug("Configuring TransformerFactory to not allow access to external DTD/Stylesheet");
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -229,7 +249,7 @@ public class XMLConverterHelper {
                         messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
                     } catch (ClassNotFoundException e) {
                         LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
-                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                                + " <xsl:message> output will not be redirected to the ErrorListener!");
                     }
                 } else {
                     try {
@@ -237,7 +257,7 @@ public class XMLConverterHelper {
                         messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
                     } catch (ClassNotFoundException cnfe2) {
                         LOG.warn("Error loading Saxon's net.sf.saxon.event.MessageWarner class from the classpath!"
-                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                                + " <xsl:message> output will not be redirected to the ErrorListener!");
                     }
                 }
 
@@ -302,8 +322,12 @@ public class XMLConverterHelper {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri,
-                            value, e.getMessage(), e);
+                    LOG.warn(
+                            "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                            uri,
+                            value,
+                            e.getMessage(),
+                            e);
                 }
             }
         }
@@ -318,7 +342,6 @@ public class XMLConverterHelper {
             }
             LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString);
         }
-
     }
 
     private static class DocumentBuilderLoggingErrorHandler implements ErrorHandler {

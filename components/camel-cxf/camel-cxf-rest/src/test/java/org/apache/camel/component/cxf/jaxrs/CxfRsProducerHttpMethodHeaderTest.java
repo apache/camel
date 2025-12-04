@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import jakarta.ws.rs.core.Response;
 
@@ -28,32 +32,35 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
 
     @Test
     public void testHttpMethodHeader() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         // should not leak internal cxf headers
-        getMockEndpoint("mock:result").message(0).header("org.apache.cxf.request.uri").isNull();
-        getMockEndpoint("mock:result").message(0).header("org.apache.cxf.request.method").isNull();
+        getMockEndpoint("mock:result")
+                .message(0)
+                .header("org.apache.cxf.request.uri")
+                .isNull();
+        getMockEndpoint("mock:result")
+                .message(0)
+                .header("org.apache.cxf.request.method")
+                .isNull();
 
-        Exchange exchange = context.createProducerTemplate().send(
-                "cxfrs://http://localhost:" + CXFTestSupport.getPort7() + "/CxfRsProducerHttpMethodHeaderTest",
-                new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.setPattern(ExchangePattern.InOut);
-                        Message inMessage = exchange.getIn();
-                        inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-                        inMessage.setHeader(Exchange.HTTP_PATH, "/CxfRsProducerHttpMethodHeaderTest/");
-                        inMessage.setHeader(Exchange.HTTP_QUERY, "q=1");
-                        inMessage.setHeader(Exchange.CONTENT_TYPE, "application/text");
-                        inMessage.setBody("Hello World");
-                    }
-
-                });
+        Exchange exchange = context.createProducerTemplate()
+                .send(
+                        "cxfrs://http://localhost:" + CXFTestSupport.getPort7() + "/CxfRsProducerHttpMethodHeaderTest",
+                        new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.setPattern(ExchangePattern.InOut);
+                                Message inMessage = exchange.getIn();
+                                inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                                inMessage.setHeader(Exchange.HTTP_PATH, "/CxfRsProducerHttpMethodHeaderTest/");
+                                inMessage.setHeader(Exchange.HTTP_QUERY, "q=1");
+                                inMessage.setHeader(Exchange.CONTENT_TYPE, "application/text");
+                                inMessage.setBody("Hello World");
+                            }
+                        });
 
         // get the response message
         Response response = (Response) exchange.getMessage().getBody();
@@ -63,7 +70,8 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
 
         Exchange e1 = getMockEndpoint("mock:result").getReceivedExchanges().get(0);
         // should not contain CXF headers
-        assertFalse(() -> e1.getMessage().getHeaders().keySet().stream().anyMatch(k -> k.startsWith("org.apache.cxf")),
+        assertFalse(
+                () -> e1.getMessage().getHeaders().keySet().stream().anyMatch(k -> k.startsWith("org.apache.cxf")),
                 "Should not contain CXF headers");
     }
 
@@ -72,8 +80,9 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("undertow://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
-                        CXFTestSupport.getPort7())
+                fromF(
+                                "undertow://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
+                                CXFTestSupport.getPort7())
                         .to("mock:result");
             }
         };

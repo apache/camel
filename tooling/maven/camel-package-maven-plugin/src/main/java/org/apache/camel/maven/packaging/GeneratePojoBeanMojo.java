@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
+import static org.apache.camel.maven.packaging.MojoHelper.getType;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -46,16 +50,16 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 
-import static org.apache.camel.maven.packaging.MojoHelper.annotationValue;
-import static org.apache.camel.maven.packaging.MojoHelper.getType;
-
 /**
  * Factory for generating code for Camel pojo beans that are intended for end user to use with Camel EIPs and
  * components.
  */
-@Mojo(name = "generate-pojo-bean", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-      requiresDependencyCollection = ResolutionScope.COMPILE,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "generate-pojo-bean",
+        threadSafe = true,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
 
     public static final DotName METADATA = DotName.createSimple("org.apache.camel.spi.Metadata");
@@ -140,8 +144,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private static class BeanPojoOptionModel extends BaseOptionModel {
-    }
+    private static class BeanPojoOptionModel extends BaseOptionModel {}
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -206,9 +209,8 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                     JsonObject jo = asJsonObject(model);
                     String json = JsonMapper.serialize(jo);
                     String fn = sanitizeFileName(model.getName()) + PackageHelper.JSON_SUFIX;
-                    boolean updated = updateResource(resourcesOutputDir.toPath(),
-                            "META-INF/services/org/apache/camel/bean/" + fn,
-                            json + NL);
+                    boolean updated = updateResource(
+                            resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/bean/" + fn, json + NL);
                     if (updated) {
                         getLog().info("Updated bean json: " + model.getName());
                     }
@@ -220,7 +222,7 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
                 String properties = createProperties(project, "bean", names.toString());
                 updateResource(camelMetaDir.toPath(), "bean.properties", properties);
                 getLog().info("Generated bean.properties containing " + count + " Camel "
-                              + (count > 1 ? "beans: " : "bean: ") + names);
+                        + (count > 1 ? "beans: " : "bean: ") + names);
             } catch (Exception e) {
                 throw new MojoExecutionException(e);
             }
@@ -230,8 +232,9 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
     private void extractFields(ClassInfo ci, BeanPojoModel model) {
         // need to load the class so we can get the field in the order they are declared in the source code
         Class<?> classElement = loadClass(ci.name().toString());
-        List<Field> fields
-                = Stream.of(classElement.getDeclaredFields()).filter(f -> f.getAnnotation(Metadata.class) != null).toList();
+        List<Field> fields = Stream.of(classElement.getDeclaredFields())
+                .filter(f -> f.getAnnotation(Metadata.class) != null)
+                .toList();
 
         for (Field fi : fields) {
             BeanPojoOptionModel o = new BeanPojoOptionModel();
@@ -320,5 +323,4 @@ public class GeneratePojoBeanMojo extends AbstractGeneratorMojo {
     private String asTitle(String name) {
         return Strings.asTitle(name);
     }
-
 }

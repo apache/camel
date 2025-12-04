@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.Arrays;
@@ -42,8 +43,8 @@ public final class StitchRequestBody implements StitchModel {
     private final Collection<StitchMessage> messages;
     private final Collection<String> keyNames;
 
-    private StitchRequestBody(String tableName, StitchSchema schema, Collection<StitchMessage> messages,
-                              Collection<String> keyNames) {
+    private StitchRequestBody(
+            String tableName, StitchSchema schema, Collection<StitchMessage> messages, Collection<String> keyNames) {
         this.tableName = tableName;
         this.schema = schema;
         this.messages = messages;
@@ -60,7 +61,6 @@ public final class StitchRequestBody implements StitchModel {
                 .withTableName(body.getTableName())
                 .withKeyNames(body.getKeyNames())
                 .addMessages(body.getMessages());
-
     }
 
     @SuppressWarnings("unchecked")
@@ -69,14 +69,12 @@ public final class StitchRequestBody implements StitchModel {
         final StitchSchema schema = StitchSchema.builder()
                 .addKeywords(ObjectHelper.cast(Map.class, data.getOrDefault(SCHEMA, Collections.emptyMap())))
                 .build();
-        final Collection<StitchMessage> messages = (Collection<StitchMessage>) ObjectHelper
-                .cast(Collection.class, data.getOrDefault(MESSAGES, Collections.emptyList()))
-                .stream()
-                .filter(ObjectHelper::isNotEmpty)
-                .map(message -> StitchMessage
-                        .fromMap(ObjectHelper.cast(Map.class, message))
-                        .build())
-                .collect(Collectors.toList());
+        final Collection<StitchMessage> messages = (Collection<StitchMessage>)
+                ObjectHelper.cast(Collection.class, data.getOrDefault(MESSAGES, Collections.emptyList())).stream()
+                        .filter(ObjectHelper::isNotEmpty)
+                        .map(message -> StitchMessage.fromMap(ObjectHelper.cast(Map.class, message))
+                                .build())
+                        .collect(Collectors.toList());
         final Collection<String> keyNames = ObjectHelper.cast(Collection.class, data.get(KEY_NAMES));
 
         return new Builder()
@@ -121,8 +119,7 @@ public final class StitchRequestBody implements StitchModel {
         private Collection<StitchMessage> messages = new LinkedList<>();
         private Collection<String> keyNames = new LinkedHashSet<>();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         /**
          * The name of the destination table the data is being pushed to. Table names must be unique in each destination

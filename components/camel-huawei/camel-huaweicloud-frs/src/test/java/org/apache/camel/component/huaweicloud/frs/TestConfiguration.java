@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs;
 
 import java.util.*;
@@ -38,7 +39,8 @@ public class TestConfiguration {
             String propertyFileName = "test_configuration.properties";
             try {
 
-                properties = TestSupport.loadExternalProperties(getClass().getClassLoader(), "test_configuration.properties");
+                properties = TestSupport.loadExternalProperties(
+                        getClass().getClassLoader(), "test_configuration.properties");
 
                 for (String key : properties.stringPropertyNames()) {
                     propertyMap.put(key, properties.getProperty(key));
@@ -46,7 +48,6 @@ public class TestConfiguration {
             } catch (Exception e) {
                 LOGGER.error("Cannot load property file {}, reason {}", propertyFileName, e.getMessage());
             }
-
         }
     }
 

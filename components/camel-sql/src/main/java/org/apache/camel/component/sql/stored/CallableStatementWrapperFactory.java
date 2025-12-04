@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import java.sql.SQLException;
@@ -37,10 +38,12 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
     boolean function;
 
     @SuppressWarnings("unchecked")
-    private final Map<String, TemplateStoredProcedure> templateCache = LRUCacheFactory.newLRUCache(TEMPLATE_CACHE_DEFAULT_SIZE);
+    private final Map<String, TemplateStoredProcedure> templateCache =
+            LRUCacheFactory.newLRUCache(TEMPLATE_CACHE_DEFAULT_SIZE);
+
     @SuppressWarnings("unchecked")
-    private final Map<String, BatchCallableStatementCreatorFactory> batchTemplateCache
-            = LRUCacheFactory.newLRUCache(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
+    private final Map<String, BatchCallableStatementCreatorFactory> batchTemplateCache =
+            LRUCacheFactory.newLRUCache(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
 
     public CallableStatementWrapperFactory(JdbcTemplate jdbcTemplate, TemplateParser templateParser, boolean function) {
         this.jdbcTemplate = jdbcTemplate;
@@ -70,7 +73,8 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
             return templateStoredProcedure;
         }
 
-        templateStoredProcedure = new TemplateStoredProcedure(jdbcTemplate, templateParser.parseTemplate(sql), function);
+        templateStoredProcedure =
+                new TemplateStoredProcedure(jdbcTemplate, templateParser.parseTemplate(sql), function);
 
         this.templateCache.put(sql, templateStoredProcedure);
 
@@ -82,8 +86,7 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
+    protected void doStart() throws Exception {}
 
     @Override
     protected void doStop() throws Exception {
@@ -91,13 +94,13 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
             // clear cache when we are stopping
             templateCache.clear();
         } catch (Exception ex) {
-            //noop
+            // noop
         }
         try {
             // clear cache when we are stopping
             batchTemplateCache.clear();
         } catch (Exception ex) {
-            //noop
+            // noop
         }
     }
 }

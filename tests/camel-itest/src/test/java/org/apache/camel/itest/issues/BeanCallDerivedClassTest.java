@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
@@ -37,5 +38,4 @@ public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertEquals("Hello World", derived.getBody());
     }
-
 }

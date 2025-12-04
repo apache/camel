@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.routing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,8 +26,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.smooks.Smooks;
 import org.smooks.io.source.StreamSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanRouterFunctionalTest extends CamelTestSupport {
     @Test

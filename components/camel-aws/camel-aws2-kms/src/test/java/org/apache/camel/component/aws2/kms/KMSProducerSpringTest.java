@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,9 +32,6 @@ import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
 import software.amazon.awssdk.services.kms.model.ListKeysRequest;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
@@ -86,7 +87,6 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Test
@@ -102,7 +102,6 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Test
@@ -119,7 +118,8 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ScheduleKeyDeletionResponse resultGet = (ScheduleKeyDeletionResponse) exchange.getIn().getBody();
+        ScheduleKeyDeletionResponse resultGet =
+                (ScheduleKeyDeletionResponse) exchange.getIn().getBody();
         assertEquals("test", resultGet.keyId());
     }
 
@@ -164,6 +164,7 @@ public class KMSProducerSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/kms/KMSComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/kms/KMSComponentSpringTest-context.xml");
     }
 }

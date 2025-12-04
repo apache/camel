@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.integration.sql;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
+import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
+import static org.assertj.core.api.InstanceOfAssertFactories.iterator;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,15 +39,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
-import static org.assertj.core.api.InstanceOfAssertFactories.iterator;
-import static org.assertj.core.api.InstanceOfAssertFactories.list;
-import static org.assertj.core.api.InstanceOfAssertFactories.map;
-
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+        disabledReason = "Credentials were not provided")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SqlQuerySelectAndStreamIT extends BigQueryITSupport {
 
@@ -55,9 +57,7 @@ public class SqlQuerySelectAndStreamIT extends BigQueryITSupport {
             public void configure() {
                 String baseUri = "google-bigquery-sql:{{project.id}}:classpath:sql/select.sql";
 
-                from("direct:selectListPaged")
-                        .toD(baseUri + "?pageSize=1")
-                        .to("mock:selectResult");
+                from("direct:selectListPaged").toD(baseUri + "?pageSize=1").to("mock:selectResult");
 
                 from("direct:streamList")
                         .toD(baseUri + "?outputType=STREAM_LIST&pageSize=1")
@@ -97,7 +97,8 @@ public class SqlQuerySelectAndStreamIT extends BigQueryITSupport {
 
         Message firstPageMessage = selectResult.getExchanges().get(0).getMessage();
         Object firstPageRows = firstPageMessage.getBody();
-        assertThat(firstPageRows).asInstanceOf(list(Map.class))
+        assertThat(firstPageRows)
+                .asInstanceOf(list(Map.class))
                 .hasSize(1)
                 .first(map(String.class, Object.class))
                 .satisfies(row -> assertRowContent(row, 1));
@@ -121,20 +122,20 @@ public class SqlQuerySelectAndStreamIT extends BigQueryITSupport {
 
         Message secondPageMessage = selectResult.getExchanges().get(0).getMessage();
         Object secondPageRows = secondPageMessage.getBody(List.class);
-        assertThat(secondPageRows).asInstanceOf(list(Map.class))
+        assertThat(secondPageRows)
+                .asInstanceOf(list(Map.class))
                 .hasSize(1)
                 .first(map(String.class, Object.class))
                 .satisfies(row -> assertRowContent(row, 2));
     }
 
     private void assertRowContent(Map<String, Object> row, int seq) {
-        assertThat(row.get("address")).asInstanceOf(MAP)
-                .containsEntry("city", "City" + seq);
+        assertThat(row.get("address")).asInstanceOf(MAP).containsEntry("city", "City" + seq);
 
-        assertThat(row.get("tags")).asInstanceOf(LIST)
-                .contains("tag" + seq);
+        assertThat(row.get("tags")).asInstanceOf(LIST).contains("tag" + seq);
 
-        assertThat(row.get("contacts")).asInstanceOf(LIST)
+        assertThat(row.get("contacts"))
+                .asInstanceOf(LIST)
                 .hasSize(2)
                 .first(MAP)
                 .containsEntry("value", "user" + seq + "ATexample.com");

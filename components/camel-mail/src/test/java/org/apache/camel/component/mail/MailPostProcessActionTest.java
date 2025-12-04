@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,8 +36,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests if post process action is called if it is set
@@ -65,7 +66,9 @@ public class MailPostProcessActionTest extends CamelTestSupport {
 
     private void waitForActionCalled() throws InterruptedException {
         // Wait for a maximum of 500 ms for the action to be called
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(true, action.hasBeenCalled()));
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertEquals(true, action.hasBeenCalled()));
     }
 
     private void prepareMailbox() throws Exception {

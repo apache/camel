@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,15 +32,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class XsltUriResolverTest {
 
     @Test
     public void testResolveUriUsingClasspath() throws Exception {
         CamelContext context = new DefaultCamelContext();
         XsltUriResolver xsltUriResolver = new XsltUriResolver(context, "classpath:xslt/staff/staff.xsl");
-        Source source = xsltUriResolver.resolve("../../xslt/common/staff_template.xsl", "classpath:xslt/staff/staff.xsl");
+        Source source =
+                xsltUriResolver.resolve("../../xslt/common/staff_template.xsl", "classpath:xslt/staff/staff.xsl");
         assertNotNull(source);
         assertEquals("classpath:xslt/common/staff_template.xsl", source.getSystemId());
     }

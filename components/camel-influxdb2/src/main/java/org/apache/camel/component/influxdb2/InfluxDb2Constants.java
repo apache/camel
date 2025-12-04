@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2;
 
 import org.apache.camel.spi.Metadata;
@@ -21,16 +22,17 @@ import org.apache.camel.spi.Metadata;
 public final class InfluxDb2Constants {
     @Metadata(description = "The name of measurement", javaType = "String")
     public static final String MEASUREMENT = "CamelInfluxDB2MeasurementName";
-    @Metadata(description = "The string that defines the retention policy to the data created by the endpoint",
-              javaType = "String")
+
+    @Metadata(
+            description = "The string that defines the retention policy to the data created by the endpoint",
+            javaType = "String")
     public static final String RETENTION_POLICY = "camelInfluxDB.RetentionPolicy";
+
     public static final String ORG = "CamelInfluxDB2Org";
     public static final String BUCKET = "CamelInfluxDB2Bucket";
+
     @Metadata(description = "InfluxDb Write precision.", javaType = "com.influxdb.client.domain.WritePrecision")
     public static final String WRITE_PRECISION = "CamelInfluxDB2WritePrecision";
 
-    private InfluxDb2Constants() {
-
-    }
-
+    private InfluxDb2Constants() {}
 }

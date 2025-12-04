@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -54,8 +55,11 @@ public class TryProcessor extends BaseProcessorSupport
     protected final List<Processor> catchClauses;
     protected final Processor finallyProcessor;
 
-    public TryProcessor(CamelContext camelContext, Processor tryProcessor, List<Processor> catchClauses,
-                        Processor finallyProcessor) {
+    public TryProcessor(
+            CamelContext camelContext,
+            Processor tryProcessor,
+            List<Processor> catchClauses,
+            Processor finallyProcessor) {
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.tryProcessor = tryProcessor;

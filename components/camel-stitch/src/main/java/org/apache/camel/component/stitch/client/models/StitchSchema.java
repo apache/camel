@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.LinkedHashMap;
@@ -48,8 +49,7 @@ public final class StitchSchema implements StitchModel {
     public static final class Builder {
         private Map<String, Object> keywords = new LinkedHashMap<>();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         /**
          * The JSON schema that records in the data property must conform to. Refer to the JSON schema docs for more

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.validation;
+
+import static org.apache.camel.support.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,8 +55,6 @@ import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
 /**
  * A processor which validates the XML version of the inbound message body against some schema either in XSD or RelaxNG
@@ -155,7 +156,8 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                 // create a new errorHandler and set it on the validator
                 // must be a local instance to avoid problems with concurrency
                 // (to be thread safe)
-                ValidatorErrorHandler handler = errorHandler.getClass().getDeclaredConstructor().newInstance();
+                ValidatorErrorHandler handler =
+                        errorHandler.getClass().getDeclaredConstructor().newInstance();
                 validator.setErrorHandler(handler);
 
                 try {
@@ -165,7 +167,10 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                 } catch (SAXParseException e) {
                     // can be thrown for non-well-formed XML
                     throw new SchemaValidationException(
-                            exchange, schema, Collections.singletonList(e), Collections.emptyList(),
+                            exchange,
+                            schema,
+                            Collections.singletonList(e),
+                            Collections.emptyList(),
                             Collections.emptyList());
                 }
             }
@@ -374,7 +379,8 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
             return new StreamSource(stream);
         }
         if (content != null) {
-            TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(Source.class, content.getClass());
+            TypeConverter tc =
+                    exchange.getContext().getTypeConverterRegistry().lookup(Source.class, content.getClass());
             if (tc != null) {
                 source = tc.convertTo(Source.class, exchange, content);
             }
@@ -405,5 +411,4 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
         }
         return source;
     }
-
 }

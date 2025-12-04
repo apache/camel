@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,13 +26,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ByteArrayInputStreamCacheTest extends ContextTestSupport {
 
     @Test
     public void testByteArrayInputStream() throws Exception {
-        ByteArrayInputStreamCache cache = new ByteArrayInputStreamCache(new ByteArrayInputStream("<foo>bar</foo>".getBytes()));
+        ByteArrayInputStreamCache cache =
+                new ByteArrayInputStreamCache(new ByteArrayInputStream("<foo>bar</foo>".getBytes()));
         assertEquals(0, cache.position());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         cache.writeTo(bos);
@@ -48,5 +50,4 @@ public class ByteArrayInputStreamCacheTest extends ContextTestSupport {
 
         IOHelper.close(cache, bos);
     }
-
 }

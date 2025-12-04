@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,10 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
 
@@ -44,8 +45,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
                 return true;
             }
 
-            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
-            }
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {}
 
             public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
                 if (e == expectedException) {
@@ -123,5 +123,4 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         consumer.run();
         consumer.stop();
     }
-
 }

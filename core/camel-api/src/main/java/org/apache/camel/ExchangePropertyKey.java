@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import org.apache.camel.spi.CircuitBreakerConstants;
@@ -22,7 +23,6 @@ import org.apache.camel.spi.CircuitBreakerConstants;
  * An enum of common and known keys for exchange properties used by camel-core.
  */
 public enum ExchangePropertyKey {
-
     AGGREGATED_COMPLETED_BY(Exchange.AGGREGATED_COMPLETED_BY),
     AGGREGATED_CORRELATION_KEY(Exchange.AGGREGATED_CORRELATION_KEY),
     AGGREGATED_SIZE(Exchange.AGGREGATED_SIZE),

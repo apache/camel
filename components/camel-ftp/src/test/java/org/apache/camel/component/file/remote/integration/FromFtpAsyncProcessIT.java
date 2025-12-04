@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -28,9 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 /**
  *
  */
@@ -42,8 +43,7 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
 
     @Test
     public void testFtpAsyncProcess() throws Exception {
-        template.sendBodyAndHeader("file:{{ftp.root.dir}}/async", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader("file:{{ftp.root.dir}}/async", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file:{{ftp.root.dir}}/async", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
@@ -67,14 +67,17 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
         File bye = service.ftpFile("async/bye.txt").toFile();
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertFalse(bye.exists(), "File should not exist " + bye));
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().process(new MyAsyncProcessor()).to("mock:result");
+                from(getFtpUrl())
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .process(new MyAsyncProcessor())
+                        .to("mock:result");
             }
         };
     }
@@ -86,7 +89,6 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
         @Override
         public boolean process(final Exchange exchange, final AsyncCallback callback) {
             executor.submit(() -> {
-
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -99,6 +101,5 @@ public class FromFtpAsyncProcessIT extends FtpServerTestSupport {
 
             return false;
         }
-
     }
 }

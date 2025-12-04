@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import java.util.List;
@@ -36,7 +37,8 @@ public class JqCustomScopeTest extends JqTestSupport {
 
     @Test
     public void testCustomScopeFunction() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "camel bar"));
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "camel bar"));
 
         template.sendBody("direct:containsCamel", MAPPER.createObjectNode().put("foo", "baz"));
         template.sendBody("direct:containsCamel", MAPPER.createObjectNode().put("foo", "camel bar"));
@@ -46,7 +48,8 @@ public class JqCustomScopeTest extends JqTestSupport {
 
     @Test
     public void testCustomScopeFunctionFromRegistry() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "beer"));
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "beer"));
 
         template.sendBody("direct:containsBeer", MAPPER.createObjectNode().put("foo", "baz"));
         template.sendBody("direct:containsBeer", MAPPER.createObjectNode().put("foo", "beer"));
@@ -56,7 +59,8 @@ public class JqCustomScopeTest extends JqTestSupport {
 
     @Test
     public void testCustomScopeBuiltInFunction() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "123456"));
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "123456"));
 
         template.sendBody("direct:builtInFunction", MAPPER.createObjectNode().put("foo", "12345"));
         template.sendBody("direct:builtInFunction", MAPPER.createObjectNode().put("foo", "123456"));
@@ -70,7 +74,8 @@ public class JqCustomScopeTest extends JqTestSupport {
         JqFunctions.load(context, scope);
         scope.addFunction("containsCamel", new Function() {
             @Override
-            public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+            public void apply(
+                    Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
                     throws JsonQueryException {
                 args.get(0).apply(scope, in, (value) -> {
                     output.emit(BooleanNode.valueOf(value.asText().contains("camel")), null);
@@ -84,7 +89,8 @@ public class JqCustomScopeTest extends JqTestSupport {
     public Function containsBeer() {
         return new Function() {
             @Override
-            public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+            public void apply(
+                    Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
                     throws JsonQueryException {
                 args.get(0).apply(scope, in, (value) -> {
                     output.emit(BooleanNode.valueOf(value.asText().contains("beer")), null);
@@ -98,18 +104,11 @@ public class JqCustomScopeTest extends JqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:containsCamel")
-                        .filter().jq("containsCamel(.foo)")
-                        .to("mock:result");
+                from("direct:containsCamel").filter().jq("containsCamel(.foo)").to("mock:result");
 
-                from("direct:containsBeer")
-                        .filter().jq("containsBeer(.foo)")
-                        .to("mock:result");
+                from("direct:containsBeer").filter().jq("containsBeer(.foo)").to("mock:result");
 
-                from("direct:builtInFunction")
-                        .filter().jq(".foo | length > 5")
-                        .to("mock:result");
-
+                from("direct:builtInFunction").filter().jq(".foo | length > 5").to("mock:result");
             }
         };
     }

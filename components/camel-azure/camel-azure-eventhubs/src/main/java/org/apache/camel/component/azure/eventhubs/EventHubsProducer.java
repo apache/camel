@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
@@ -57,7 +58,6 @@ public class EventHubsProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
-
     }
 
     @Override

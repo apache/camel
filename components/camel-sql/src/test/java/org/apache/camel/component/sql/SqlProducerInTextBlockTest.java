@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.builder.RouteBuilder;
 
 public class SqlProducerInTextBlockTest extends SqlProducerInTest {
 
-    private static final String SQL = """
+    private static final String SQL =
+            """
                 select *
                 from projects
                 where project in (:#in:names)
@@ -35,10 +37,7 @@ public class SqlProducerInTextBlockTest extends SqlProducerInTest {
                 // required for the sql component
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:query")
-                        .to("sql:" + SQL)
-                        .to("log:query")
-                        .to("mock:query");
+                from("direct:query").to("sql:" + SQL).to("log:query").to("mock:query");
             }
         };
     }

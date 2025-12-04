@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud.integration;
 
 import java.util.Collections;
@@ -39,7 +40,9 @@ public class ZooKeeperServiceRegistrationWithServiceComponentIT extends ZooKeepe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper", SERVICE_NAME, SERVICE_PORT)
+                fromF(
+                                "service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=zookeeper",
+                                SERVICE_NAME, SERVICE_PORT)
                         .routeId(SERVICE_ID)
                         .routeGroup(SERVICE_NAME)
                         .noAutoStartup()

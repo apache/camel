@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.simple.oneclassmath;
 
 import java.math.BigDecimal;
@@ -29,14 +30,14 @@ public class Math {
 
     @DataField(pos = 2, precision = 2)
     /*
-       Pattern is not yet supported by BigDecimal.
-       FormatFactory class -->
+     Pattern is not yet supported by BigDecimal.
+     FormatFactory class -->
 
-               } else if (clazz == BigDecimal.class) {
-            return new BigDecimalFormat(impliedDecimalSeparator, precision, getLocale(locale));
+             } else if (clazz == BigDecimal.class) {
+          return new BigDecimalFormat(impliedDecimalSeparator, precision, getLocale(locale));
 
-        So we should remove it from the model pattern = "00.00"
-      */
+      So we should remove it from the model pattern = "00.00"
+    */
     private BigDecimal bigDecimal;
 
     public Integer getIntAmount() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import javax.inject.Inject;
@@ -30,8 +31,10 @@ import org.eclipse.aether.RepositorySystem;
  * The maven goal allowing to automatically set up the Camel application to debug the Camel routes thanks to the Camel
  * textual Route Debugger.
  */
-@Mojo(name = "debug", defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
-      requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(
+        name = "debug",
+        defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DebugMojo extends DevMojo {
 
     /**
@@ -55,10 +58,9 @@ public class DebugMojo extends DevMojo {
         System.setProperty(BacklogDebugger.SUSPEND_MODE_SYSTEM_PROP_NAME, Boolean.toString(suspend));
         String suspendMode = System.getenv(BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME);
         if (suspendMode != null && Boolean.parseBoolean(suspendMode) != suspend) {
-            throw new MojoExecutionException(
-                    String.format(
-                            "The environment variable %s has been set and prevents to configure the suspend mode. Please remove it first.",
-                            BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME));
+            throw new MojoExecutionException(String.format(
+                    "The environment variable %s has been set and prevents to configure the suspend mode. Please remove it first.",
+                    BacklogDebugger.SUSPEND_MODE_ENV_VAR_NAME));
         }
     }
 
@@ -66,5 +68,4 @@ public class DebugMojo extends DevMojo {
     protected String goal() {
         return "camel:debug";
     }
-
 }

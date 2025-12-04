@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.format.factories;
 
-import org.apache.camel.dataformat.bindy.FormattingOptions;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.dataformat.bindy.format.factories;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.dataformat.bindy.FormattingOptions;
+import org.junit.jupiter.api.Test;
 
 public class DefaultFactoryRegistryTest {
 

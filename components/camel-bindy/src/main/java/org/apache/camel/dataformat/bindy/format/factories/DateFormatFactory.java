@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.text.DateFormat;
@@ -37,9 +38,7 @@ public class DateFormatFactory extends AbstractFormatFactory {
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
         return new DatePatternFormat(
-                formattingOptions.getPattern(),
-                formattingOptions.getTimezone(),
-                formattingOptions.getLocale());
+                formattingOptions.getPattern(), formattingOptions.getTimezone(), formattingOptions.getLocale());
     }
 
     private static class DatePatternFormat implements PatternFormat<Date> {
@@ -86,7 +85,6 @@ public class DateFormatFactory extends AbstractFormatFactory {
             } else {
                 throw new FormatException("Date provided does not fit the pattern defined");
             }
-
         }
 
         protected java.text.DateFormat getDateFormat() {

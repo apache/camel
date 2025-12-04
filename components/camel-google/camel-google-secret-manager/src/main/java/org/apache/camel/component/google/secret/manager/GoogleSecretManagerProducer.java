@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager;
 
 import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
@@ -75,16 +76,17 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
         } else {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
             Secret secret = Secret.newBuilder()
-                    .setReplication(
-                            Replication.newBuilder()
-                                    .setAutomatic(Replication.Automatic.newBuilder().build())
-                                    .build())
+                    .setReplication(Replication.newBuilder()
+                            .setAutomatic(Replication.Automatic.newBuilder().build())
+                            .build())
                     .build();
 
-            Secret createdSecret = client.createSecret(ProjectName.of(getConfiguration().getProject()), secretId, secret);
+            Secret createdSecret =
+                    client.createSecret(ProjectName.of(getConfiguration().getProject()), secretId, secret);
 
             SecretPayload payload = SecretPayload.newBuilder()
-                    .setData(ByteString.copyFromUtf8(exchange.getMessage().getBody(String.class))).build();
+                    .setData(ByteString.copyFromUtf8(exchange.getMessage().getBody(String.class)))
+                    .build();
             response = client.addSecretVersion(createdSecret.getName(), payload);
         }
         Message message = getMessageForResponse(exchange);
@@ -99,8 +101,8 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
             response = client.accessSecretVersion(request);
         } else {
             String secretId = exchange.getMessage().getHeader(GoogleSecretManagerConstants.SECRET_ID, String.class);
-            String versionId
-                    = exchange.getMessage().getHeader(GoogleSecretManagerConstants.VERSION_ID, defaultVersion, String.class);
+            String versionId = exchange.getMessage()
+                    .getHeader(GoogleSecretManagerConstants.VERSION_ID, defaultVersion, String.class);
             String projectId = getConfiguration().getProject();
             SecretVersionName secretVersionName = SecretVersionName.of(projectId, secretId, versionId);
             response = client.accessSecretVersion(secretVersionName);
@@ -133,8 +135,8 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
     }
 
     private GoogleSecretManagerOperations determineOperation(Exchange exchange) {
-        GoogleSecretManagerOperations operation = exchange.getIn().getHeader(GoogleSecretManagerConstants.OPERATION,
-                GoogleSecretManagerOperations.class);
+        GoogleSecretManagerOperations operation =
+                exchange.getIn().getHeader(GoogleSecretManagerConstants.OPERATION, GoogleSecretManagerOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation() == null
                     ? GoogleSecretManagerOperations.createSecret
@@ -150,5 +152,4 @@ public class GoogleSecretManagerProducer extends DefaultProducer {
     private GoogleSecretManagerConfiguration getConfiguration() {
         return this.endpoint.getConfiguration();
     }
-
 }

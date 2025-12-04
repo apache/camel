@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -63,7 +64,7 @@ public class NeilSplitterTest extends ContextTestSupport {
                 Message in = exchange.getIn();
                 CatFight catFight = new CatFight();
                 catFight.setName("blueydart");
-                catFight.setCats(new String[] { "Ginger", "Mr Boots" });
+                catFight.setCats(new String[] {"Ginger", "Mr Boots"});
                 in.setBody(catFight);
                 in.setHeader("foo", "bar");
             }

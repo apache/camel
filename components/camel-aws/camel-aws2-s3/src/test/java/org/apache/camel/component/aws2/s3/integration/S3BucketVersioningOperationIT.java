@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.BucketVersioningStatus;
 import software.amazon.awssdk.services.s3.model.GetBucketVersioningResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class S3BucketVersioningOperationIT extends Aws2S3Base {
 
@@ -63,7 +64,8 @@ public class S3BucketVersioningOperationIT extends Aws2S3Base {
         MockEndpoint.assertIsSatisfied(context);
 
         Exchange getVersioningExchange = result.getExchanges().get(1);
-        GetBucketVersioningResponse response = getVersioningExchange.getMessage().getBody(GetBucketVersioningResponse.class);
+        GetBucketVersioningResponse response =
+                getVersioningExchange.getMessage().getBody(GetBucketVersioningResponse.class);
         assertNotNull(response);
         assertEquals(BucketVersioningStatus.ENABLED, response.status());
     }
@@ -75,13 +77,9 @@ public class S3BucketVersioningOperationIT extends Aws2S3Base {
             public void configure() {
                 String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
-                from("direct:putBucketVersioning")
-                        .to(awsEndpoint)
-                        .to("mock:result");
+                from("direct:putBucketVersioning").to(awsEndpoint).to("mock:result");
 
-                from("direct:getBucketVersioning")
-                        .to(awsEndpoint)
-                        .to("mock:result");
+                from("direct:getBucketVersioning").to(awsEndpoint).to("mock:result");
             }
         };
     }

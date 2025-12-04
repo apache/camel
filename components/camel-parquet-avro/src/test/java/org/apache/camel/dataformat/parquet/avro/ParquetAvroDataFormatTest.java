@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,16 +28,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
 public class ParquetAvroDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-        Collection<Pojo> in = List.of(
-                new Pojo(1, "airport"),
-                new Pojo(2, "penguin"),
-                new Pojo(3, "verb"));
+        Collection<Pojo> in = List.of(new Pojo(1, "airport"), new Pojo(2, "penguin"), new Pojo(3, "verb"));
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.message(0).body().isEqualTo(in);
 
@@ -42,7 +40,9 @@ public class ParquetAvroDataFormatTest extends CamelTestSupport {
         template.sendBody("direct:back", marshalled);
         mock.assertIsSatisfied();
         List<Exchange> receivedExchanges = mock.getReceivedExchanges();
-        assertArrayEquals(in.toArray(), receivedExchanges.get(0).getIn().getBody(List.class).toArray());
+        assertArrayEquals(
+                in.toArray(),
+                receivedExchanges.get(0).getIn().getBody(List.class).toArray());
     }
 
     @Override

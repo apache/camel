@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +41,6 @@ import software.amazon.awssdk.services.mq.model.ListBrokersResponse;
 import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MQProducerSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
@@ -61,7 +62,9 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
         assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
-        assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
+        assertEquals(
+                BrokerState.RUNNING.toString(),
+                resultGet.brokerSummaries().get(0).brokerState().toString());
     }
 
     @Test
@@ -72,7 +75,8 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(MQ2Constants.OPERATION, MQ2Operations.listBrokers);
-                exchange.getIn().setBody(ListBrokersRequest.builder().maxResults(10).build());
+                exchange.getIn()
+                        .setBody(ListBrokersRequest.builder().maxResults(10).build());
             }
         });
 
@@ -81,7 +85,9 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         ListBrokersResponse resultGet = (ListBrokersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.brokerSummaries().size());
         assertEquals("mybroker", resultGet.brokerSummaries().get(0).brokerName());
-        assertEquals(BrokerState.RUNNING.toString(), resultGet.brokerSummaries().get(0).brokerState().toString());
+        assertEquals(
+                BrokerState.RUNNING.toString(),
+                resultGet.brokerSummaries().get(0).brokerState().toString());
     }
 
     @Test
@@ -185,12 +191,14 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        DescribeBrokerResponse resultGet = (DescribeBrokerResponse) exchange.getIn().getBody();
+        DescribeBrokerResponse resultGet =
+                (DescribeBrokerResponse) exchange.getIn().getBody();
         assertEquals("1", resultGet.brokerId());
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/mq/MQComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/mq/MQComponentSpringTest-context.xml");
     }
 }

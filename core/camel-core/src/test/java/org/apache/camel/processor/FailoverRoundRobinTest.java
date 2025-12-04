@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -61,7 +62,9 @@ public class FailoverRoundRobinTest extends ContextTestSupport {
                         // as it does NOT inherit error handler. It will also keep
                         // retrying as
                         // its configured to newer exhaust.
-                        .loadBalance().failover(-1, false, true).to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
+                        .loadBalance()
+                        .failover(-1, false, true)
+                        .to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
                 // END SNIPPET: e1
 
                 from("direct:bad").to("mock:bad").throwException(new IllegalArgumentException("Damn"));
@@ -74,5 +77,4 @@ public class FailoverRoundRobinTest extends ContextTestSupport {
             }
         };
     }
-
 }

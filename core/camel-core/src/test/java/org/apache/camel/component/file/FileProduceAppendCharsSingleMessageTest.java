@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -45,10 +46,10 @@ public class FileProduceAppendCharsSingleMessageTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
+                from("direct:start")
+                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
                         .to(fileUri("?fileExist=Append&appendChars=@@@"), "mock:result");
             }
         };
     }
-
 }

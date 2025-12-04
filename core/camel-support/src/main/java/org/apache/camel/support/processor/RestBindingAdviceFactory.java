@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.HashMap;
@@ -58,8 +59,8 @@ public class RestBindingAdviceFactory {
                 // must only be a name, not refer to an existing instance
                 Object instance = lookupByName(camelContext, name);
                 if (instance != null) {
-                    throw new IllegalArgumentException(
-                            "JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+                    throw new IllegalArgumentException("JsonDataFormat name: " + name
+                            + " must not be an existing bean instance from the registry");
                 }
             } else {
                 name = "jackson";
@@ -78,10 +79,15 @@ public class RestBindingAdviceFactory {
             }
 
             if (json != null) {
-                setupJson(camelContext, config,
-                        bc.getType(), bc.getTypeClass(),
-                        bc.getOutType(), bc.getOutTypeClass(),
-                        json, outJson);
+                setupJson(
+                        camelContext,
+                        config,
+                        bc.getType(),
+                        bc.getTypeClass(),
+                        bc.getOutType(),
+                        bc.getOutTypeClass(),
+                        json,
+                        outJson);
             }
         }
 
@@ -112,16 +118,28 @@ public class RestBindingAdviceFactory {
             if (xml != null) {
                 if ("jacksonXml".equalsIgnoreCase(name)) {
                     // to setup jackson we need to use camel-jacksonxml
-                    PluginHelper.getRestBindingJacksonXmlDataFormatFactory(camelContext).setupJacksonXml(camelContext, config,
-                            bc.getType(), bc.getTypeClass(),
-                            bc.getOutType(), bc.getOutTypeClass(),
-                            xml, outXml);
+                    PluginHelper.getRestBindingJacksonXmlDataFormatFactory(camelContext)
+                            .setupJacksonXml(
+                                    camelContext,
+                                    config,
+                                    bc.getType(),
+                                    bc.getTypeClass(),
+                                    bc.getOutType(),
+                                    bc.getOutTypeClass(),
+                                    xml,
+                                    outXml);
                 } else {
                     // to setup JAXB we need to use camel-jaxb
-                    PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).setupJaxb(camelContext, config,
-                            bc.getType(), bc.getTypeClass(),
-                            bc.getOutType(), bc.getOutTypeClass(),
-                            xml, outXml);
+                    PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext)
+                            .setupJaxb(
+                                    camelContext,
+                                    config,
+                                    bc.getType(),
+                                    bc.getTypeClass(),
+                                    bc.getOutType(),
+                                    bc.getOutTypeClass(),
+                                    xml,
+                                    outXml);
                 }
             }
         }
@@ -136,16 +154,39 @@ public class RestBindingAdviceFactory {
         }
 
         return new RestBindingAdvice(
-                camelContext, json, xml, outJson, outXml,
-                bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
-                bc.isClientResponseValidation(), bc.isEnableCORS(), bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
-                bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),
-                bc.getRequiredHeaders(), bc.getResponseCodes(), bc.getResponseHeaders(), requestValidator, responseValidator);
+                camelContext,
+                json,
+                xml,
+                outJson,
+                outXml,
+                bc.getConsumes(),
+                bc.getProduces(),
+                mode,
+                bc.isSkipBindingOnErrorCode(),
+                bc.isClientRequestValidation(),
+                bc.isClientResponseValidation(),
+                bc.isEnableCORS(),
+                bc.isEnableNoContentResponse(),
+                bc.getCorsHeaders(),
+                bc.getQueryDefaultValues(),
+                bc.getQueryAllowedValues(),
+                bc.isRequiredBody(),
+                bc.getRequiredQueryParameters(),
+                bc.getRequiredHeaders(),
+                bc.getResponseCodes(),
+                bc.getResponseHeaders(),
+                requestValidator,
+                responseValidator);
     }
 
     protected static void setupJson(
             CamelContext camelContext,
-            RestConfiguration config, String type, Class<?> typeClass, String outType, Class<?> outTypeClass, DataFormat json,
+            RestConfiguration config,
+            String type,
+            Class<?> typeClass,
+            String outType,
+            Class<?> outTypeClass,
+            DataFormat json,
             DataFormat outJson)
             throws Exception {
 
@@ -161,10 +202,8 @@ public class RestBindingAdviceFactory {
         }
         final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
         if (clazz != null) {
-            beanIntrospection.setProperty(camelContext, json,
-                    "unmarshalType", clazz);
-            beanIntrospection.setProperty(camelContext, json, "useList",
-                    useList);
+            beanIntrospection.setProperty(camelContext, json, "unmarshalType", clazz);
+            beanIntrospection.setProperty(camelContext, json, "useList", useList);
         }
         setAdditionalConfiguration(camelContext, config, json, "json.in.");
 
@@ -180,17 +219,16 @@ public class RestBindingAdviceFactory {
                 outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (outClazz != null) {
-                beanIntrospection.setProperty(camelContext, outJson,
-                        "unmarshalType", outClazz);
-                beanIntrospection.setProperty(camelContext, outJson, "useList",
-                        outUseList);
+                beanIntrospection.setProperty(camelContext, outJson, "unmarshalType", outClazz);
+                beanIntrospection.setProperty(camelContext, outJson, "useList", outUseList);
             }
             setAdditionalConfiguration(camelContext, config, outJson, "json.out.");
         }
     }
 
     protected static RestClientRequestValidator lookupRestClientRequestValidator(CamelContext camelContext) {
-        RestClientRequestValidator answer = CamelContextHelper.findSingleByType(camelContext, RestClientRequestValidator.class);
+        RestClientRequestValidator answer =
+                CamelContextHelper.findSingleByType(camelContext, RestClientRequestValidator.class);
         if (answer == null) {
             // lookup via classpath to find custom factory
             Optional<RestClientRequestValidator> result = ResolverHelper.resolveService(
@@ -205,8 +243,8 @@ public class RestBindingAdviceFactory {
     }
 
     protected static RestClientResponseValidator lookupRestClientResponseValidator(CamelContext camelContext) {
-        RestClientResponseValidator answer
-                = CamelContextHelper.findSingleByType(camelContext, RestClientResponseValidator.class);
+        RestClientResponseValidator answer =
+                CamelContextHelper.findSingleByType(camelContext, RestClientResponseValidator.class);
         if (answer == null) {
             // lookup via classpath to find custom factory
             Optional<RestClientResponseValidator> result = ResolverHelper.resolveService(
@@ -222,7 +260,8 @@ public class RestBindingAdviceFactory {
 
     private static void setAdditionalConfiguration(
             CamelContext camelContext, RestConfiguration config, DataFormat dataFormat, String prefix) {
-        if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
+        if (config.getDataFormatProperties() != null
+                && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties
             Map<String, Object> copy = new HashMap<>();
@@ -230,7 +269,8 @@ public class RestBindingAdviceFactory {
             // filter keys on prefix
             // - either its a known prefix and must match the prefix parameter
             // - or its a common configuration that we should always use
-            for (Map.Entry<String, Object> entry : config.getDataFormatProperties().entrySet()) {
+            for (Map.Entry<String, Object> entry :
+                    config.getDataFormatProperties().entrySet()) {
                 String key = entry.getKey();
                 String copyKey;
                 boolean known = isKeyKnownPrefix(key);
@@ -251,7 +291,9 @@ public class RestBindingAdviceFactory {
     }
 
     private static boolean isKeyKnownPrefix(String key) {
-        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
+        return key.startsWith("json.in.")
+                || key.startsWith("json.out.")
+                || key.startsWith("xml.in.")
                 || key.startsWith("xml.out.");
     }
 
@@ -266,5 +308,4 @@ public class RestBindingAdviceFactory {
             return camelContext.getRegistry().lookupByName(name);
         }
     }
-
 }

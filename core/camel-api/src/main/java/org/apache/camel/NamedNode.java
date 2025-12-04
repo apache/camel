@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -106,5 +107,4 @@ public interface NamedNode extends LineNumberAware {
     default NamedNode findMatchingOtherwise(String id) {
         return null;
     }
-
 }

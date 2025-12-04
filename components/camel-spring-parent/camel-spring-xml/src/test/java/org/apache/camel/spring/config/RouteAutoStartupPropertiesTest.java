@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RouteAutoStartupPropertiesTest {
 
     private AbstractXmlApplicationContext ac;
@@ -35,7 +36,8 @@ public class RouteAutoStartupPropertiesTest {
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupFalseTest.xml");
 
-        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext camel =
+                ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
         assertEquals(false, camel.getRouteController().getRouteStatus("foo").isStarted());
 
@@ -59,7 +61,8 @@ public class RouteAutoStartupPropertiesTest {
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupTrueTest.xml");
 
-        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext camel =
+                ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
         assertEquals(true, camel.getRouteController().getRouteStatus("bar").isStarted());
 
@@ -78,6 +81,5 @@ public class RouteAutoStartupPropertiesTest {
     @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(ac);
-
     }
 }

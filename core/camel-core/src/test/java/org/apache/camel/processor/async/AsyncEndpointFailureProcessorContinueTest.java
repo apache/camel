@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointFailureProcessorContinueTest extends ContextTestSupport {
 
@@ -53,21 +54,29 @@ public class AsyncEndpointFailureProcessorContinueTest extends ContextTestSuppor
 
                 // the onException can be asynchronous as well so we have to
                 // test for that
-                onException(IllegalArgumentException.class).continued(true).to("mock:before").to("log:before")
+                onException(IllegalArgumentException.class)
+                        .continued(true)
+                        .to("mock:before")
+                        .to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
-                        }).to("async:MyFailureHandler").process(new Processor() {
+                        })
+                        .to("async:MyFailureHandler")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:after");
+                        })
+                        .to("log:after")
+                        .to("mock:after");
 
-                from("direct:start").throwException(new IllegalArgumentException("Damn")).to("mock:result")
+                from("direct:start")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .to("mock:result")
                         .transform(constant("Bye Camel"));
             }
         };
     }
-
 }

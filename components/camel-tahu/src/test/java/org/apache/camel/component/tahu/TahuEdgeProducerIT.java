@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -26,14 +29,13 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "CAMEL-21143: requires too much resources and blocks the CI")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "CAMEL-21143: requires too much resources and blocks the CI")
 public class TahuEdgeProducerIT extends TahuTestSupport {
 
     enum EdgeNodeTestProfile {
-
         SESSION_ESTABLISHMENT_TEST("edge SessionEstablishmentTest IamHost G2 E2 D2", false, 0),
         SESSION_TERMINATION_TEST("edge SessionTerminationTest IamHost G2 E2 D2", false, 3),
         SEND_DATA_TEST("edge SendDataTest IamHost G2 E2 D2", false, 15),

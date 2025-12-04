@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.interceptors;
 
 import jakarta.xml.soap.SOAPMessage;
@@ -39,6 +40,5 @@ public class CxfMessageSoapHeaderOutInterceptor extends AbstractPhaseInterceptor
             // need to clean up the soap Header from message to avoid endless loop
             message.getHeaders().clear();
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -37,25 +38,29 @@ public class HeaderValidationHandler extends BasicValidationHandler {
     // (e.g. for testing filtering).
     protected List<String> absentHeaders;
 
-    public HeaderValidationHandler(String expectedMethod, String expectedQuery,
-                                   Object expectedContent, String responseContent,
-                                   Map<String, String> expectedHeaders) {
+    public HeaderValidationHandler(
+            String expectedMethod,
+            String expectedQuery,
+            Object expectedContent,
+            String responseContent,
+            Map<String, String> expectedHeaders) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
         this.expectedHeaders = expectedHeaders;
     }
 
-    public HeaderValidationHandler(String expectedMethod, String expectedQuery,
-                                   Object expectedContent, String responseContent,
-                                   Map<String, String> expectedHeaders,
-                                   List<String> absentHeaders) {
+    public HeaderValidationHandler(
+            String expectedMethod,
+            String expectedQuery,
+            Object expectedContent,
+            String responseContent,
+            Map<String, String> expectedHeaders,
+            List<String> absentHeaders) {
         this(expectedMethod, expectedQuery, expectedContent, responseContent, expectedHeaders);
         this.absentHeaders = absentHeaders;
     }
 
     @Override
-    public void handle(
-            final ClassicHttpRequest request, final ClassicHttpResponse response,
-            final HttpContext context)
+    public void handle(final ClassicHttpRequest request, final ClassicHttpResponse response, final HttpContext context)
             throws HttpException, IOException {
 
         if (expectedHeaders != null) {
@@ -88,5 +93,4 @@ public class HeaderValidationHandler extends BasicValidationHandler {
 
         super.handle(request, response, context);
     }
-
 }

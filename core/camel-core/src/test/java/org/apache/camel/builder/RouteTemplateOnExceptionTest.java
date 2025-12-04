@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.Map;
@@ -56,11 +57,12 @@ public class RouteTemplateOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
                         .from("direct:{{foo}}")
                         .onException(Exception.class)
-                            .to("mock:error")
-                            .markRollbackOnly()
+                        .to("mock:error")
+                        .markRollbackOnly()
                         .end()
                         .throwException(new IllegalArgumentException("Forced"))
                         .to("mock:result");

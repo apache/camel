@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-
 class VertxHttpBridgeEndpointTest extends VertxHttpTestSupport {
     private static final int PORT = AvailablePortFinder.getNextAvailable();
 
@@ -39,8 +40,7 @@ class VertxHttpBridgeEndpointTest extends VertxHttpTestSupport {
         mockEndpoint.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         Map<String, String> queryParams = Map.of("q1", "1", "q2", "2", "q3", "3");
-        String queryString = queryParams.entrySet()
-                .stream()
+        String queryString = queryParams.entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
 
@@ -94,11 +94,9 @@ class VertxHttpBridgeEndpointTest extends VertxHttpTestSupport {
                 from(getTestServerUri() + "/upstream/prefix?matchOnUriPrefix=true")
                         .toF("vertx-http:http://localhost:%d/downstream?bridgeEndpoint=true", PORT);
 
-                fromF("undertow:http://localhost:%d/downstream", PORT)
-                        .to("mock:result");
+                fromF("undertow:http://localhost:%d/downstream", PORT).to("mock:result");
 
-                fromF("undertow:http://localhost:%d/downstream/test", PORT)
-                        .to("mock:result");
+                fromF("undertow:http://localhost:%d/downstream/test", PORT).to("mock:result");
             }
         };
     }

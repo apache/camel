@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -39,9 +40,15 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
             public void configure() {
                 onException(Exception.class).log("Error due ${exception.message}");
 
-                from("direct:start").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("mock:foo")
+                        .to("direct:bar")
+                        .to("mock:result");
 
-                from("direct:bar").routeId("bar").to("mock:bar")
+                from("direct:bar")
+                        .routeId("bar")
+                        .to("mock:bar")
                         .throwException(new IllegalArgumentException("Forced bar error"));
             }
         });
@@ -68,8 +75,12 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
             public void configure() {
                 onException(Exception.class).log("Error due ${exception.message}");
 
-                from("direct:start").routeId("foo").to("mock:foo")
-                        .throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("mock:foo")
+                        .throwException(new IllegalArgumentException("Forced foo error"))
+                        .to("direct:bar")
+                        .to("mock:result");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
 
@@ -91,5 +102,4 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

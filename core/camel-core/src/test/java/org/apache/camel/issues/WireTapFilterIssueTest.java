@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -56,12 +57,12 @@ public class WireTapFilterIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                //@formatter:off
+                // @formatter:off
                 from(DIRECT_START_REGULAR_TO_ROUTE)
                         .to(BEFORE_FILTER)
                         .filter(header(HEADER_FILTER))
-                            .to(MOCK_IN_FILTER)
-                            .to(DIRECT_SUBROUTE_ENDPOINT)
+                        .to(MOCK_IN_FILTER)
+                        .to(DIRECT_SUBROUTE_ENDPOINT)
                         .end()
                         .to(MOCK_AFTER_FILTER)
                         .end();
@@ -69,17 +70,15 @@ public class WireTapFilterIssueTest extends ContextTestSupport {
                 from(DIRECT_START_WIRETAP_ROUTE)
                         .to(BEFORE_FILTER)
                         .filter(header(HEADER_FILTER))
-                            .to(MOCK_IN_FILTER)
-                            .wireTap(DIRECT_SUBROUTE_ENDPOINT)
-                            .end()
+                        .to(MOCK_IN_FILTER)
+                        .wireTap(DIRECT_SUBROUTE_ENDPOINT)
+                        .end()
                         .end()
                         .to(MOCK_AFTER_FILTER)
                         .end();
 
-                from(DIRECT_SUBROUTE_ENDPOINT)
-                        .to(MOCK_IN_SUBROUTE)
-                        .end();
-                //@formatter:on
+                from(DIRECT_SUBROUTE_ENDPOINT).to(MOCK_IN_SUBROUTE).end();
+                // @formatter:on
             }
         };
     }
@@ -125,5 +124,4 @@ public class WireTapFilterIssueTest extends ContextTestSupport {
 
         template.send(directStart, exchange);
     }
-
 }

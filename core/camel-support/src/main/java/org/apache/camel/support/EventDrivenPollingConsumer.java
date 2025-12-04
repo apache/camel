@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -64,16 +65,16 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         } else {
             this.queue = new ArrayBlockingQueue<>(queueSize);
         }
-        this.interruptedExceptionHandler
-                = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
+        this.interruptedExceptionHandler =
+                new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
         super(endpoint);
         this.queue = queue;
         this.queueCapacity = queue.remainingCapacity();
-        this.interruptedExceptionHandler
-                = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
+        this.interruptedExceptionHandler =
+                new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     @Override
@@ -128,7 +129,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     public Exchange receive() {
         // must be started
         if (!isRunAllowed() || !isStarted()) {
-            throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
+            throw new RejectedExecutionException(
+                    this + " is not started, but in state: " + getStatus().name());
         }
 
         while (isRunAllowed()) {
@@ -156,7 +158,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     public Exchange receive(long timeout) {
         // must be started
         if (!isRunAllowed() || !isStarted()) {
-            throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
+            throw new RejectedExecutionException(
+                    this + " is not started, but in state: " + getStatus().name());
         }
 
         // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
@@ -215,7 +218,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
 
         // we want the copy to have an uow
-        UnitOfWork uow = PluginHelper.getUnitOfWorkFactory(getEndpoint().getCamelContext()).createUnitOfWork(copy);
+        UnitOfWork uow = PluginHelper.getUnitOfWorkFactory(getEndpoint().getCamelContext())
+                .createUnitOfWork(copy);
         copy.getExchangeExtension().setUnitOfWork(uow);
 
         return copy;

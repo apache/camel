@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.nio.file.Files;
@@ -24,8 +25,7 @@ import org.apache.camel.util.StringHelper;
 
 public final class VersionHelper {
 
-    private VersionHelper() {
-    }
+    private VersionHelper() {}
 
     public static String getJBangVersion() {
         try {

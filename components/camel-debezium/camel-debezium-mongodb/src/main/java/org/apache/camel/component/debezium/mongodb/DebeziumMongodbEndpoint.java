@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.mongodb;
 
 import java.util.Map;
@@ -31,23 +32,29 @@ import org.apache.kafka.connect.data.Schema;
 /**
  * Capture changes from a MongoDB database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector",
-             syntax = "debezium-mongodb:name", category = { Category.DATABASE }, consumerOnly = true,
-             headersClass = DebeziumConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "debezium-mongodb",
+        title = "Debezium MongoDB Connector",
+        syntax = "debezium-mongodb:name",
+        category = {Category.DATABASE},
+        consumerOnly = true,
+        headersClass = DebeziumConstants.class)
 public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 
     @UriParam
     private MongoDbConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumMongodbEndpoint(final String uri, final DebeziumMongodbComponent component,
-                                   final MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumMongodbEndpoint(
+            final String uri,
+            final DebeziumMongodbComponent component,
+            final MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public DebeziumMongodbEndpoint() {
-    }
+    public DebeziumMongodbEndpoint() {}
 
     @Override
     public String getServiceUrl() {
@@ -79,7 +86,8 @@ public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConne
 
     @Override
     protected Object extractBodyValueFromValueStruct(Schema schema, Object value) {
-        // according to DBZ docs, `after` field only presents on the create events, however for updates there is field `patch`
+        // according to DBZ docs, `after` field only presents on the create events, however for updates there is field
+        // `patch`
         // https://debezium.io/documentation/reference/0.10/connectors/mongodb.html
         // hence first we test for `after`, if null we return `patch` instead
         final Object after = extractFieldValueFromValueStruct(schema, value, Envelope.FieldName.AFTER);

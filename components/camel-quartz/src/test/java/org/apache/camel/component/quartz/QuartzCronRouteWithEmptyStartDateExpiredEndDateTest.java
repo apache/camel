@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import java.text.SimpleDateFormat;
@@ -50,8 +51,10 @@ public class QuartzCronRouteWithEmptyStartDateExpiredEndDateTest extends BaseQua
                 calendar.add(Calendar.YEAR, -2);
                 Date endDate = calendar.getTime();
 
-                fromF("quartz://myGroup/myTimerName?cron=0/1 * * * * ?&ignoreExpiredNextFireTime=true&trigger.endAt=%s",
-                         dateFormat.format(endDate)).to("mock:result");
+                fromF(
+                                "quartz://myGroup/myTimerName?cron=0/1 * * * * ?&ignoreExpiredNextFireTime=true&trigger.endAt=%s",
+                                dateFormat.format(endDate))
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.engine;
 
 import java.util.Collection;
@@ -83,9 +84,13 @@ public class CamelSubscription implements Subscription {
      */
     private boolean sending;
 
-    public CamelSubscription(String id, ExecutorService workerPool, CamelPublisher publisher, String streamName,
-                             ReactiveStreamsBackpressureStrategy backpressureStrategy,
-                             Subscriber<? super Exchange> subscriber) {
+    public CamelSubscription(
+            String id,
+            ExecutorService workerPool,
+            CamelPublisher publisher,
+            String streamName,
+            ReactiveStreamsBackpressureStrategy backpressureStrategy,
+            Subscriber<? super Exchange> subscriber) {
         this.id = id;
         this.workerPool = workerPool;
         this.publisher = publisher;
@@ -124,7 +129,6 @@ public class CamelSubscription implements Subscription {
 
         if (shouldFlush) {
             workerPool.execute(() -> {
-
                 this.flush();
 
                 mutex.lock();
@@ -232,14 +236,15 @@ public class CamelSubscription implements Subscription {
                 if (!discarded.isEmpty()) {
                     discardedMessages = new HashMap<>();
                     for (Exchange ex : discarded) {
-                        discardedMessages.put(ex,
+                        discardedMessages.put(
+                                ex,
                                 "Exchange " + ex + " discarded by backpressure strategy " + this.backpressureStrategy);
                     }
                 }
             } else {
                 // acknowledge
-                discardedMessages
-                        = Collections.singletonMap(message, "Exchange " + message + " discarded: subscription closed");
+                discardedMessages =
+                        Collections.singletonMap(message, "Exchange " + message + " discarded: subscription closed");
             }
         } finally {
             mutex.unlock();
@@ -250,7 +255,8 @@ public class CamelSubscription implements Subscription {
             for (Exchange exchange : discardedMessages.keySet()) {
                 ReactiveStreamsHelper.invokeDispatchCallback(
                         exchange,
-                        new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, streamName));
+                        new ReactiveStreamsDiscardedException(
+                                "Discarded by backpressure strategy", exchange, streamName));
             }
         }
 

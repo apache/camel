@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored.template.ast;
 
 import java.lang.reflect.Field;
@@ -27,8 +28,7 @@ import org.springframework.util.ReflectionUtils;
 
 public final class ParseHelper {
 
-    private ParseHelper() {
-    }
+    private ParseHelper() {}
 
     public static int parseSqlType(Token sqlTypeToken, ClassResolver classResolver) {
 
@@ -39,7 +39,7 @@ public final class ParseHelper {
             return Integer.parseInt(sqlType);
         }
 
-        //if contains .
+        // if contains .
         if (sqlType.contains(".")) {
             String className;
             String fieldName;
@@ -57,7 +57,7 @@ public final class ParseHelper {
             }
         }
 
-        //Loop-up from "Standard" types
+        // Loop-up from "Standard" types
         return getFieldInt(Types.class, sqlType);
     }
 

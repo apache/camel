@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.io.Serializable;
@@ -40,14 +41,14 @@ public class LogCaptureAppender extends AbstractAppender {
         super(name, filter, layout);
     }
 
-    public LogCaptureAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions) {
+    public LogCaptureAppender(
+            String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions) {
         super(name, filter, layout, ignoreExceptions);
     }
 
     @PluginFactory
     public static LogCaptureAppender createAppender(
-            @PluginAttribute("name") final String name,
-            @PluginElement("Filter") final Filter filter) {
+            @PluginAttribute("name") final String name, @PluginElement("Filter") final Filter filter) {
         return new LogCaptureAppender(name, filter, null);
     }
 
@@ -69,7 +70,9 @@ public class LogCaptureAppender extends AbstractAppender {
     }
 
     public static Collection<LogEvent> getEvents(Class<?> cls) {
-        return LOG_EVENTS.stream().filter(e -> e.getLoggerName().equals(cls.getName())).collect(Collectors.toList());
+        return LOG_EVENTS.stream()
+                .filter(e -> e.getLoggerName().equals(cls.getName()))
+                .collect(Collectors.toList());
     }
 
     public static boolean hasEventsFor(Class<?> cls) {

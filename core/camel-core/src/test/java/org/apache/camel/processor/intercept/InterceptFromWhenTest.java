@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,7 +50,10 @@ public class InterceptFromWhenTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                interceptFrom().onWhen(simple("${body} contains 'Goofy'")).to("mock:goofy").stop();
+                interceptFrom()
+                        .onWhen(simple("${body} contains 'Goofy'"))
+                        .to("mock:goofy")
+                        .stop();
 
                 from("direct:start").to("mock:end");
             }

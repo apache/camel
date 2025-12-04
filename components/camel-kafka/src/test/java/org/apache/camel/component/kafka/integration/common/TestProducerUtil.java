@@ -24,9 +24,7 @@ import org.apache.camel.ProducerTemplate;
 
 public final class TestProducerUtil {
 
-    private TestProducerUtil() {
-
-    }
+    private TestProducerUtil() {}
 
     public static void sendMessagesInRoute(
             String uri, int messages, ProducerTemplate template, Object bodyOther, String... headersWithValue) {

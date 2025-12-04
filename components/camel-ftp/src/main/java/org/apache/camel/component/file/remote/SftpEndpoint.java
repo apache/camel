@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import com.jcraft.jsch.Proxy;
@@ -31,21 +32,28 @@ import org.apache.camel.spi.UriParam;
 /**
  * Upload and download files to/from SFTP servers.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
-             syntax = "sftp:host:port/directoryName", category = { Category.FILE }, headersClass = FtpConstants.class)
-@Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
-                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                              + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous")
+@UriEndpoint(
+        firstVersion = "1.1.0",
+        scheme = "sftp",
+        extendsScheme = "file",
+        title = "SFTP",
+        syntax = "sftp:host:port/directoryName",
+        category = {Category.FILE},
+        headersClass = FtpConstants.class)
+@Metadata(
+        excludeProperties = "appendChars,bufferSize,siteCommand,"
+                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
+                + "renameUsingCopy,synchronous")
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @UriParam
     protected SftpConfiguration configuration;
+
     @UriParam(label = "advanced")
     protected Proxy proxy;
 
-    public SftpEndpoint() {
-    }
+    public SftpEndpoint() {}
 
     public SftpEndpoint(String uri, SftpComponent component, SftpConfiguration configuration) {
         super(uri, component, configuration);
@@ -70,7 +78,9 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
     @Override
     protected RemoteFileConsumer<SftpRemoteFile> buildConsumer(Processor processor) {
         return new SftpConsumer(
-                this, processor, createRemoteFileOperations(),
+                this,
+                processor,
+                createRemoteFileOperations(),
                 processStrategy != null ? processStrategy : createGenericFileStrategy());
     }
 

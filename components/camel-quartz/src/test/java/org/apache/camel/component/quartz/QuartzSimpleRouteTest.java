@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,9 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * This not only set SimpleTrigger as a timer endpoint in a route, and also test the trigger.XXX properties setter.
@@ -52,7 +53,8 @@ public class QuartzSimpleRouteTest extends BaseQuartzTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=-1").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=-1")
+                        .to("mock:result");
             }
         };
     }

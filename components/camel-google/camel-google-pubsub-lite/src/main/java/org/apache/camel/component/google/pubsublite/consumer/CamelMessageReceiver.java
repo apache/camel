@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite.consumer;
 
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
@@ -35,7 +36,8 @@ public class CamelMessageReceiver implements MessageReceiver {
     private final GooglePubsubLiteEndpoint endpoint;
     private final Processor processor;
 
-    public CamelMessageReceiver(GooglePubsubLiteConsumer consumer, GooglePubsubLiteEndpoint endpoint, Processor processor) {
+    public CamelMessageReceiver(
+            GooglePubsubLiteConsumer consumer, GooglePubsubLiteEndpoint endpoint, Processor processor) {
         this.consumer = consumer;
         this.endpoint = endpoint;
         this.processor = processor;

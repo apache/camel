@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql;
 
 import java.io.IOException;
@@ -54,42 +55,66 @@ import org.apache.hc.core5.http.message.BasicHeader;
 /**
  * Send GraphQL queries and mutations to external systems.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
-             category = { Category.API }, producerOnly = true, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "graphql",
+        title = "GraphQL",
+        syntax = "graphql:httpUri",
+        category = {Category.API},
+        producerOnly = true,
+        lenientProperties = true)
 public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private URI httpUri;
+
     @UriParam
     private String proxyHost;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "security", defaultValue = "Bearer")
     private String jwtAuthorizationType;
+
     @UriParam
     private String query;
+
     @UriParam
     private String queryFile;
+
     @UriParam
     private String operationName;
+
     @UriParam
     private JsonObject variables;
+
     @UriParam
     private String variablesHeader;
+
     @UriParam
     private String queryHeader;
+
     @UriParam(label = "advanced")
     private HttpClient httpClient;
-    @UriParam(label = "producer", defaultValue = "true",
-              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "true",
+            description =
+                    "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "common,advanced",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+
+    @UriParam(
+            label = "common,advanced",
+            description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
     public GraphqlEndpoint(String uri, Component component) {
@@ -154,8 +179,7 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
         if (username != null && password != null) {
             CredentialsStore credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(
-                    new AuthScope(null, -1),
-                    new UsernamePasswordCredentials(username, password.toCharArray()));
+                    new AuthScope(null, -1), new UsernamePasswordCredentials(username, password.toCharArray()));
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
         return httpClientBuilder.build();

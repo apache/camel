@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 /**
@@ -24,7 +25,6 @@ public class FromFtpMoveFileRecursiveNotStepwiseIT extends FromFtpMoveFileRecurs
     @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&recursive=true&binary=false"
-               + "&move=.done/${file:name}.old&initialDelay=2500&delay=5000&stepwise=false";
+                + "&move=.done/${file:name}.old&initialDelay=2500&delay=5000&stepwise=false";
     }
-
 }

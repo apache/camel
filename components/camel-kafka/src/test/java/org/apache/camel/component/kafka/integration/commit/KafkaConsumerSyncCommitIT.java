@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.commit;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
@@ -22,8 +25,6 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
 
@@ -37,15 +38,16 @@ public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         String from = "kafka:" + TOPIC
-                      + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
-                      + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
+                + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
+                + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
 
         return new RouteBuilder() {
 
             @Override
             public void configure() {
                 from(from).routeId("foo").to(KafkaTestUtil.MOCK_RESULT).process(e -> {
-                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                    KafkaManualCommit manual =
+                            e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                     assertNotNull(manual);
                     manual.commit();
                 });
@@ -58,5 +60,4 @@ public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
     public void kafkaManualCommit() throws Exception {
         kafkaManualCommitTest(TOPIC);
     }
-
 }

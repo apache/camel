@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import java.util.List;
@@ -65,9 +66,9 @@ public class SimplePredicateParserNodesTest extends ExchangeTestSupport {
         LiteralNode ln = (LiteralNode) qe.getBlock().getChildren().get(0);
         Assertions.assertEquals("Hello ", ln.getText());
 
-        SimpleFunctionStart fe = (SimpleFunctionStart) qe.getBlock().getChildren().get(1);
+        SimpleFunctionStart fe =
+                (SimpleFunctionStart) qe.getBlock().getChildren().get(1);
         ln = (LiteralNode) fe.getBlock().getChildren().get(0);
         Assertions.assertEquals("header.bar", ln.toString());
     }
-
 }

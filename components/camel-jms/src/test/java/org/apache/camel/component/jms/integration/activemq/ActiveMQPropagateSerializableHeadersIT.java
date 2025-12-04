@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.activemq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -40,13 +43,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ActiveMQPropagateSerializableHeadersIT extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final Object expectedBody = "<time>" + new Date() + "</time>";
     protected ActiveMQQueue replyQueue = new ActiveMQQueue("ActiveMQPropagateSerializableHeadersTest.reply.queue");
     protected String correlationID = "ABC-123";
@@ -110,13 +112,16 @@ public class ActiveMQPropagateSerializableHeadersIT extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:ActiveMQPropagateSerializableHeadersTest.a").process(exchange -> {
-                    // set the JMS headers
-                    Message in = exchange.getIn();
-                    in.setHeader("myString", "stringValue");
-                    in.setHeader("myMap", mapValue);
-                    in.setHeader("myCal", calValue);
-                }).to("activemq:ActiveMQPropagateSerializableHeadersTest.b?transferExchange=true&allowSerializedHeaders=true");
+                from("activemq:ActiveMQPropagateSerializableHeadersTest.a")
+                        .process(exchange -> {
+                            // set the JMS headers
+                            Message in = exchange.getIn();
+                            in.setHeader("myString", "stringValue");
+                            in.setHeader("myMap", mapValue);
+                            in.setHeader("myCal", calValue);
+                        })
+                        .to(
+                                "activemq:ActiveMQPropagateSerializableHeadersTest.b?transferExchange=true&allowSerializedHeaders=true");
 
                 from("activemq:ActiveMQPropagateSerializableHeadersTest.b").to("mock:result");
             }

@@ -31,6 +31,5 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.TYPE, ElementType.METHOD })
-public @interface ContextProvider {
-}
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface ContextProvider {}

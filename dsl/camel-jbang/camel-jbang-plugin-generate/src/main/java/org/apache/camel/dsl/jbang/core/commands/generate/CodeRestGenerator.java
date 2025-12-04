@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.generate;
+
+import static org.openapitools.codegen.CodegenConstants.GENERATE_MODELS;
+import static org.openapitools.codegen.CodegenConstants.SERIALIZABLE_MODEL;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,58 +45,76 @@ import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
 import picocli.CommandLine;
 
-import static org.openapitools.codegen.CodegenConstants.GENERATE_MODELS;
-import static org.openapitools.codegen.CodegenConstants.SERIALIZABLE_MODEL;
-
 @CommandLine.Command(name = "rest", description = "Generate REST DSL source code from OpenApi specification")
 public class CodeRestGenerator extends CamelCommand {
 
     public static class OpenApiVersionCompletionCandidates implements Iterable<String> {
 
-        public OpenApiVersionCompletionCandidates() {
-        }
+        public OpenApiVersionCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("3.0", "3.1").iterator();
         }
-
     }
 
     public static class OpenApiTypeCompletionCandidates implements Iterable<String> {
 
-        public OpenApiTypeCompletionCandidates() {
-        }
+        public OpenApiTypeCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("xml", "yaml").iterator();
         }
-
     }
 
-    @CommandLine.Option(names = { "--input" }, required = true, description = "OpenApi specification file name")
+    @CommandLine.Option(
+            names = {"--input"},
+            required = true,
+            description = "OpenApi specification file name")
     private String input;
-    @CommandLine.Option(names = { "--output" }, description = "Output REST DSL file name")
+
+    @CommandLine.Option(
+            names = {"--output"},
+            description = "Output REST DSL file name")
     private String output;
-    @CommandLine.Option(names = { "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml",
-                        completionCandidates = OpenApiTypeCompletionCandidates.class)
+
+    @CommandLine.Option(
+            names = {"--type"},
+            description = "REST DSL type (YAML or XML)",
+            defaultValue = "yaml",
+            completionCandidates = OpenApiTypeCompletionCandidates.class)
     private String type;
-    @CommandLine.Option(names = { "--routes" }, description = "Generate routes (only in YAML)")
+
+    @CommandLine.Option(
+            names = {"--routes"},
+            description = "Generate routes (only in YAML)")
     private boolean generateRoutes;
-    @CommandLine.Option(names = { "--dto" }, description = "Generate Java Data Objects")
+
+    @CommandLine.Option(
+            names = {"--dto"},
+            description = "Generate Java Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        defaultValue = "quarkus",
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+
+    @CommandLine.Option(
+            names = {"--runtime"},
+            completionCandidates = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class,
+            defaultValue = "quarkus",
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.quarkus;
-    @CommandLine.Option(names = { "--package" }, description = "Package for generated Java models",
-                        defaultValue = "model")
+
+    @CommandLine.Option(
+            names = {"--package"},
+            description = "Package for generated Java models",
+            defaultValue = "model")
     private String packageName;
-    @CommandLine.Option(names = { "--openapi-version" }, description = "Openapi specification 3.0 or 3.1",
-                        defaultValue = "3.0", completionCandidates = OpenApiVersionCompletionCandidates.class)
+
+    @CommandLine.Option(
+            names = {"--openapi-version"},
+            description = "Openapi specification 3.0 or 3.1",
+            defaultValue = "3.0",
+            completionCandidates = OpenApiVersionCompletionCandidates.class)
     private String openApiVersion = "3.0";
 
     public CodeRestGenerator(CamelJBangMain main) {
@@ -150,20 +172,27 @@ public class CodeRestGenerator extends CamelCommand {
                 .setLibrary(library)
                 .setInputSpec(input)
                 .setModelPackage(packageName)
-                .setAdditionalProperties(
-                        Map.of(
-                                SERIALIZABLE_MODEL, "false",
-                                "useJakartaEe", "false",
-                                "useSwaggerAnnotations", "false",
-                                GENERATE_MODELS, "true",
-                                "generatePom", "false",
-                                "generateApis", "false",
-                                "sourceFolder", code))
+                .setAdditionalProperties(Map.of(
+                        SERIALIZABLE_MODEL,
+                        "false",
+                        "useJakartaEe",
+                        "false",
+                        "useSwaggerAnnotations",
+                        "false",
+                        GENERATE_MODELS,
+                        "true",
+                        "generatePom",
+                        "false",
+                        "generateApis",
+                        "false",
+                        "sourceFolder",
+                        code))
                 .setOutputDir(output.getAbsolutePath());
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();
         new DefaultGenerator().opts(clientOptInput).generate();
-        File generated = new File(Paths.get(output.getAbsolutePath(), code, packageName).toUri());
+        File generated =
+                new File(Paths.get(output.getAbsolutePath(), code, packageName).toUri());
         generated.renameTo(new File(packageName));
     }
 }

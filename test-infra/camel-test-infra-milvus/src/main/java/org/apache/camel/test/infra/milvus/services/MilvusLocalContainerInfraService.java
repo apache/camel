@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.milvus.services;
 
 import java.net.MalformedURLException;
@@ -31,9 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.milvus.MilvusContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = MilvusInfraService.class,
-              description = "Milvus Vector Database",
-              serviceAlias = { "milvus" })
+@InfraService(
+        service = MilvusInfraService.class,
+        description = "Milvus Vector Database",
+        serviceAlias = {"milvus"})
 public class MilvusLocalContainerInfraService implements MilvusInfraService, ContainerService<MilvusContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MilvusLocalContainerInfraService.class);
@@ -41,7 +43,8 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
     private final MilvusContainer container;
 
     public MilvusLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(MilvusLocalContainerInfraService.class, MilvusProperties.MILVUS_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                MilvusLocalContainerInfraService.class, MilvusProperties.MILVUS_CONTAINER));
     }
 
     public MilvusLocalContainerInfraService(String imageName) {

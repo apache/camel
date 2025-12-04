@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -56,5 +57,4 @@ public interface BinaryPredicate extends Predicate {
      * @return          <tt>null</tt> if the predicate matches.
      */
     String matchesReturningFailureMessage(Exchange exchange);
-
 }

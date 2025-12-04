@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,7 @@ public class FileToFtpsWithDefaultSettingsIPV6IT extends FtpsServerExplicitTLSWi
 
     private String getFtpUrl() {
         return "ftps://admin@[::1]:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true";
+                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true";
     }
 
     @Test

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.URI;
@@ -47,9 +51,6 @@ import org.springframework.jms.support.JmsUtils;
 import org.springframework.util.Assert;
 import org.testcontainers.containers.Container;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test to prove that using org.springframework.jms.supportJmsUtils.commitIfNecessary, if a broker restart or a network
@@ -117,8 +118,10 @@ public class RestartBrokerBeforeCommitIT extends CamelTestSupport {
     }
 
     private void createQueue() throws IOException, InterruptedException {
-        Container.ExecResult createQueueResult = broker.execInContainer(ARTEMIS_COMMAND,
-                "queue", "create",
+        Container.ExecResult createQueueResult = broker.execInContainer(
+                ARTEMIS_COMMAND,
+                "queue",
+                "create",
                 "--user=" + broker.username(),
                 "--password=" + broker.password(),
                 "--address=" + ARTEMIS_ADDRESS_NAME,
@@ -139,18 +142,18 @@ public class RestartBrokerBeforeCommitIT extends CamelTestSupport {
     protected int getMessageAdded(int webConsolePort) throws URISyntaxException, IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(
-                        broker.adminURL() + "/console/jolokia/read/org.apache.activemq.artemis:" +
-                             "broker=!%22broker!%22,component=addresses,address=!%22artemis-demo-topic!%22,subcomponent=queues,"
-                             +
-                             "routing-type=!%22multicast!%22,queue=!%22sub1-artemis-demo-topic!%22/MessagesAdded"))
+                .uri(new URI(broker.adminURL() + "/console/jolokia/read/org.apache.activemq.artemis:"
+                        + "broker=!%22broker!%22,component=addresses,address=!%22artemis-demo-topic!%22,subcomponent=queues,"
+                        + "routing-type=!%22multicast!%22,queue=!%22sub1-artemis-demo-topic!%22/MessagesAdded"))
                 .GET()
-                .header("Authorization",
-                        "Basic " + Base64.getEncoder().encodeToString((broker.username() + ":" + broker.password()).getBytes()))
+                .header(
+                        "Authorization",
+                        "Basic "
+                                + Base64.getEncoder()
+                                        .encodeToString((broker.username() + ":" + broker.password()).getBytes()))
                 .build();
-        HttpResponse<String> response = HttpClient.newBuilder()
-                .build()
-                .send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString());
 
         assertThat(response.statusCode()).isLessThan(300);
 
@@ -165,10 +168,9 @@ public class RestartBrokerBeforeCommitIT extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) {
-        //Coonection Factory
-        ActiveMQConnectionFactory factory
-                = new ActiveMQConnectionFactory(
-                        "tcp://" + broker.getHost() + ":" + broker.defaultAcceptorPort(), broker.username(), broker.password());
+        // Coonection Factory
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(
+                "tcp://" + broker.getHost() + ":" + broker.defaultAcceptorPort(), broker.username(), broker.password());
         registry.bind("factory", factory);
 
         // Connection Pool
@@ -185,7 +187,7 @@ public class RestartBrokerBeforeCommitIT extends CamelTestSupport {
         final JmsConfiguration jmsConfiguration = getCustomJmsConfiguration(jmsPoolConnectionFactory);
         registry.bind("jmsConfiguration", jmsConfiguration);
 
-        //jms component
+        // jms component
         JmsComponent jmsComponent = new JmsComponent();
         jmsComponent.setConfiguration(jmsConfiguration);
         registry.bind("jms", jmsComponent);
@@ -213,13 +215,13 @@ public class RestartBrokerBeforeCommitIT extends CamelTestSupport {
                         .to(SERVICE_ADDRESS)
                         .to("mock:ok")
                         .log(LoggingLevel.INFO, "MESSAGE SENT: ${header.TMPL_uuid}")
-
                         .onException(JMSException.class)
                         .id("onJMSException")
                         .handled(true)
                         .maximumRedeliveries(0)
                         .logStackTrace(false)
-                        .log(LoggingLevel.ERROR,
+                        .log(
+                                LoggingLevel.ERROR,
                                 "MESSAGE Failed: ${header.TMPL_uuid} \n***** JMSException received *****: ${exception.message}")
                         .to("mock:jmsException")
                         .end()

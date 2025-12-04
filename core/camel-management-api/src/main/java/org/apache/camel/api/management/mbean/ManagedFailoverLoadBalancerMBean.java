@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -26,7 +27,8 @@ public interface ManagedFailoverLoadBalancerMBean extends ManagedProcessorMBean,
     @ManagedAttribute(description = "Number of processors in the load balancer")
     Integer getSize();
 
-    @ManagedAttribute(description = "Whether or not the failover load balancer should operate in round robin mode or not.")
+    @ManagedAttribute(
+            description = "Whether or not the failover load balancer should operate in round robin mode or not.")
     Boolean isRoundRobin();
 
     @ManagedAttribute(description = "Whether or not the failover load balancer should operate in sticky mode or not.")
@@ -38,11 +40,11 @@ public interface ManagedFailoverLoadBalancerMBean extends ManagedProcessorMBean,
     @ManagedAttribute(description = "The class names of the exceptions the load balancer uses (separated by comma)")
     String getExceptions();
 
-    @ManagedAttribute(description = "Processor id of the last known good processor that succeed processing the exchange")
+    @ManagedAttribute(
+            description = "Processor id of the last known good processor that succeed processing the exchange")
     String getLastGoodProcessorId();
 
     @Override
     @ManagedOperation(description = "Statistics of the content based router for each exception")
     TabularData extendedInformation();
-
 }

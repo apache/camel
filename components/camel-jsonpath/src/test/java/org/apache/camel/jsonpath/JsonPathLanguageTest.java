@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
@@ -31,12 +38,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonPathLanguageTest extends CamelTestSupport {
 
@@ -130,8 +131,8 @@ public class JsonPathLanguageTest extends CamelTestSupport {
 
         JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
-        Expression exp = lan.createExpression("$.foo",
-                new Object[] { null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS });
+        Expression exp = lan.createExpression(
+                "$.foo", new Object[] {null, null, null, null, null, null, null, Option.SUPPRESS_EXCEPTIONS});
         String nofoo = exp.evaluate(exchange, String.class);
 
         assertNull(nofoo);
@@ -144,8 +145,8 @@ public class JsonPathLanguageTest extends CamelTestSupport {
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
-        Expression expression = language.createExpression("$.store.book",
-                new Object[] { null, null, null, null, null, null, true, true });
+        Expression expression = language.createExpression(
+                "$.store.book", new Object[] {null, null, null, null, null, null, true, true});
         String json = expression.evaluate(exchange, String.class);
 
         // check that a single json object is returned, not an array
@@ -159,12 +160,11 @@ public class JsonPathLanguageTest extends CamelTestSupport {
 
         JsonPathLanguage language = (JsonPathLanguage) context.resolveLanguage("jsonpath");
 
-        Expression expression = language.createExpression("$.store.book",
-                new Object[] { null, null, null, null, false, true });
+        Expression expression =
+                language.createExpression("$.store.book", new Object[] {null, null, null, null, false, true});
         String json = expression.evaluate(exchange, String.class);
 
         // check that an array is returned, not a single object
         assertTrue(json.startsWith("[") && json.endsWith("]"));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -84,9 +85,14 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=10").choice().when().xpath("/person/name = 'Claus'").to("mock:result")
-                        .otherwise().to("mock:other").end();
-
+                from("seda:foo?concurrentConsumers=10")
+                        .choice()
+                        .when()
+                        .xpath("/person/name = 'Claus'")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
             }
         };
     }

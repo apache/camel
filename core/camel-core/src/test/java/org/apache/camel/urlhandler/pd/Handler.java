@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.urlhandler.pd;
 
 import java.io.ByteArrayInputStream;
@@ -36,18 +37,18 @@ public class Handler extends ResourceResolverSupport {
     private static final Logger LOG = LoggerFactory.getLogger(Handler.class);
 
     // wrong  element name will cause the validation to fail
-    private static final String XSD_TEMPLATE_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                                                 "<xsd:schema targetNamespace=\"http://apache.camel.org/test\" " +
-                                                 "            xmlns=\"http://apache.camel.org/test\" " +
-                                                 "            xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
-                                                 "    <xsd:complexType name=\"TestMessage\">" +
-                                                 "        <xsd:sequence>" +
-                                                 "            <xsd:element name=\"Content\" type=\"xsd:string\" />" +
-                                                 "        </xsd:sequence>" +
-                                                 "        <xsd:attribute name=\"attr\" type=\"xsd:string\" default=\"xsd1\"/>" +
-                                                 "    </xsd:complexType>" +
-                                                 "    <xsd:element name=\"TestMessage\" type=\"TestMessage\" />" +
-                                                 "</xsd:schema>";
+    private static final String XSD_TEMPLATE_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<xsd:schema targetNamespace=\"http://apache.camel.org/test\" "
+            + "            xmlns=\"http://apache.camel.org/test\" "
+            + "            xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">"
+            + "    <xsd:complexType name=\"TestMessage\">"
+            + "        <xsd:sequence>"
+            + "            <xsd:element name=\"Content\" type=\"xsd:string\" />"
+            + "        </xsd:sequence>"
+            + "        <xsd:attribute name=\"attr\" type=\"xsd:string\" default=\"xsd1\"/>"
+            + "    </xsd:complexType>"
+            + "    <xsd:element name=\"TestMessage\" type=\"TestMessage\" />"
+            + "</xsd:schema>";
 
     // correct element name, the validation will be corerct
     private static final String XSD_TEMPLATE_2 = XSD_TEMPLATE_1.replace("\"Content\"", "\"MessageContent\"");

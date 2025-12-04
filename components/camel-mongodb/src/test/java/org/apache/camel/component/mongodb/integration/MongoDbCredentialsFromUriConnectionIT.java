@@ -17,15 +17,15 @@
 
 package org.apache.camel.component.mongodb.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Test class performs the same tests as DBOperationsIT but with modified URIs
 public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
@@ -66,46 +66,54 @@ public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
             public void configure() {
 
                 String uriHostnameOnly = String.format("mongodb:mongo?hosts=%s&", service.getConnectionAddress());
-                //connecting with credentials for created user
-                String uriWithCredentials = String.format("%susername=%s&password=%s&", uriHostnameOnly, USER, PASSWORD);
+                // connecting with credentials for created user
+                String uriWithCredentials =
+                        String.format("%susername=%s&password=%s&", uriHostnameOnly, USER, PASSWORD);
 
                 String uriWithAuthSource = String.format(
                         "%susername=%s&password=%s&authSource=%s&",
                         uriHostnameOnly, AUTH_SOURCE_USER, AUTH_SOURCE_PASSWORD, dbName);
 
-                from("direct:count").to(
-                        uriHostnameOnly + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
+                from("direct:count")
+                        .to(
+                                uriHostnameOnly
+                                        + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
                 from("direct:insert")
                         .to(uriWithCredentials
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                                + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:testStoreOidOnInsert")
                         .to(uriHostnameOnly
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+                                + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
                         .setBody()
                         .header(MongoDbConstants.OID);
                 from("direct:save")
                         .to(uriWithCredentials
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save");
+                                + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save");
                 from("direct:testStoreOidOnSave")
                         .to(uriWithCredentials
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save")
+                                + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save")
                         .setBody()
                         .header(MongoDbConstants.OID);
                 from("direct:update")
                         .to(uriWithCredentials
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update");
+                                + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update");
                 from("direct:remove")
                         .to(uriWithCredentials
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove");
-                from("direct:aggregate").to(
-                        uriHostnameOnly + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
+                                + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove");
+                from("direct:aggregate")
+                        .to(
+                                uriHostnameOnly
+                                        + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
                 from("direct:getDbStats").to(uriWithCredentials + "database={{mongodb.testDb}}&operation=getDbStats");
-                from("direct:getColStats").to(
-                        uriWithCredentials + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
+                from("direct:getColStats")
+                        .to(
+                                uriWithCredentials
+                                        + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
                 from("direct:command").to(uriWithCredentials + "database={{mongodb.testDb}}&operation=command");
                 from("direct:testAuthSource")
-                        .to(uriWithAuthSource
-                            + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
+                        .to(
+                                uriWithAuthSource
+                                        + "database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
             }
         };
     }

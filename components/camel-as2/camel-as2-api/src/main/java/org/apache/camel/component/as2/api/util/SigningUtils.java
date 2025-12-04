@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.io.ByteArrayInputStream;
@@ -57,8 +58,7 @@ public final class SigningUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(SigningUtils.class);
 
-    private SigningUtils() {
-    }
+    private SigningUtils() {}
 
     public static AS2SignedDataGenerator createSigningGenerator(
             AS2SignatureAlgorithm signingAlgorithm, Certificate[] certificateChain, PrivateKey privateKey)
@@ -82,14 +82,14 @@ public final class SigningUtils {
 
         // Create signing attributes
         ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(
-                new IssuerAndSerialNumber(
-                        new X500Name(signingCert.getIssuerX500Principal().getName()), signingCert.getSerialNumber())));
+        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(
+                new X500Name(signingCert.getIssuerX500Principal().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
         SignerInfoGenerator signerInfoGenerator = null;
         try {
-            signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
+            signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder()
+                    .setProvider("BC")
                     .setSignedAttributeGenerator(new AttributeTable(attributes))
                     .build(signingAlgorithm.getSignatureAlgorithmName(), privateKey, signingCert);
 
@@ -107,7 +107,6 @@ public final class SigningUtils {
         }
 
         return gen;
-
     }
 
     public static boolean isValidSigned(byte[] signedContent, byte[] signature, Certificate[] signingCertificateChain) {
@@ -116,13 +115,14 @@ public final class SigningUtils {
         }
 
         try {
-            CMSSignedData signedData
-                    = new CMSSignedData(new CMSProcessableByteArray(signedContent), new ByteArrayInputStream(signature));
+            CMSSignedData signedData =
+                    new CMSSignedData(new CMSProcessableByteArray(signedContent), new ByteArrayInputStream(signature));
 
             SignerInformationVerifierProvider sivp = (SignerId sid) -> {
                 for (Certificate knownCert : signingCertificateChain) {
-                    SignerInformationVerifier siv
-                            = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build((X509Certificate) knownCert);
+                    SignerInformationVerifier siv = new JcaSimpleSignerInfoVerifierBuilder()
+                            .setProvider("BC")
+                            .build((X509Certificate) knownCert);
                     if (siv.getAssociatedCertificate().getIssuer().equals(sid.getIssuer())
                             && siv.getAssociatedCertificate().getSerialNumber().equals(sid.getSerialNumber())) {
                         return siv;
@@ -133,7 +133,8 @@ public final class SigningUtils {
 
             return signedData.verifySignatures(sivp);
         } catch (CMSException e) {
-            //Probably the signature was created with an unknown certificate or something else is wrong with the signature
+            // Probably the signature was created with an unknown certificate or something else is wrong with the
+            // signature
             LOG.debug(e.getMessage(), e);
         } catch (Exception e) {
             LOG.debug(e.getMessage(), e);
@@ -150,10 +151,10 @@ public final class SigningUtils {
 
         try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
             signedEntity.writeTo(o);
-            return isValidSigned(o.toByteArray(), applicationPkcs7SignatureEntity.getSignature(), signingCertificateChain);
+            return isValidSigned(
+                    o.toByteArray(), applicationPkcs7SignatureEntity.getSignature(), signingCertificateChain);
         } catch (IOException e) {
             return false;
         }
     }
-
 }

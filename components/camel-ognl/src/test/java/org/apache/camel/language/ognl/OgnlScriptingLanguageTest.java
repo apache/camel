@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.ognl;
 
 import java.util.LinkedHashMap;
@@ -44,5 +45,4 @@ public class OgnlScriptingLanguageTest extends CamelTestSupport {
         String out = slan.evaluate("resource:classpath:myuser.txt", bindings, String.class);
         Assertions.assertEquals("Hello Scott you are 33 years old", out);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import org.apache.camel.Exchange;
@@ -53,12 +54,16 @@ public final class XmlSignatureConstants {
      */
     @Metadata(javaType = "Boolean")
     public static final String HEADER_OMIT_XML_DECLARATION = "CamelXmlSignatureOmitXmlDeclaration";
+
     @Metadata(description = "The content reference URI", javaType = "String", applicableFor = SCHEME_SIGN)
     public static final String HEADER_CONTENT_REFERENCE_URI = "CamelXmlSignatureContentReferenceUri";
+
     @Metadata(description = "The content reference type", javaType = "String", applicableFor = SCHEME_SIGN)
     public static final String HEADER_CONTENT_REFERENCE_TYPE = "CamelXmlSignatureContentReferenceType";
+
     @Metadata(description = "The schema resource URI", javaType = "String")
     public static final String HEADER_SCHEMA_RESOURCE_URI = "CamelXmlSignatureSchemaResourceUri";
+
     @Metadata(description = "XPaths to id attributes", javaType = "String")
     public static final String HEADER_XPATHS_TO_ID_ATTRIBUTES = "CamelXmlSignatureXpathsToIdAttributes";
 
@@ -87,22 +92,25 @@ public final class XmlSignatureConstants {
      *
      */
     @Metadata(description = "for the 'Id' attribute value of `SignedDataObjectProperties` element", javaType = "String")
-    public static final String HEADER_XADES_SIGNED_DATA_OBJECT_PROPERTIES_ID
-            = "CamelXmlSignatureXAdESSignedDataObjectPropertiesId";
+    public static final String HEADER_XADES_SIGNED_DATA_OBJECT_PROPERTIES_ID =
+            "CamelXmlSignatureXAdESSignedDataObjectPropertiesId";
 
     /**
      * Header for the 'Id' attribute value of the XAdES element 'SignedSignatureProperties'
      *
      */
     @Metadata(description = "for the 'Id' attribute value of `SignedSignatureProperties` element", javaType = "String")
-    public static final String HEADER_XADES_SIGNED_SIGNATURE_PROPERTIES_ID
-            = "CamelXmlSignatureXAdESSignedSignaturePropertiesId";
+    public static final String HEADER_XADES_SIGNED_SIGNATURE_PROPERTIES_ID =
+            "CamelXmlSignatureXAdESSignedSignaturePropertiesId";
 
     /**
      * Header for the "Encoding" element contained in the "DataObjectFormat" XAdES element.
      */
-    @Metadata(description = "for the value of the Encoding element of the `DataObjectFormat` element", javaType = "String")
-    public static final String HEADER_XADES_DATA_OBJECT_FORMAT_ENCODING = "CamelXmlSignatureXAdESDataObjectFormatEncoding";
+    @Metadata(
+            description = "for the value of the Encoding element of the `DataObjectFormat` element",
+            javaType = "String")
+    public static final String HEADER_XADES_DATA_OBJECT_FORMAT_ENCODING =
+            "CamelXmlSignatureXAdESDataObjectFormatEncoding";
 
     /**
      * Header for the XAdES namespace. Different namespaces represent different XAdES specification versions. Currently
@@ -125,11 +133,11 @@ public final class XmlSignatureConstants {
      */
     @Metadata(description = "overwrites the XAdES prefix parameter value", javaType = "String")
     public static final String HEADER_XADES_PREFIX = "CamelXmlSignatureXAdESPrefix";
+
     @Metadata(description = "The name of the charset", javaType = "String")
     public static final String CHARSET_NAME = Exchange.CHARSET_NAME;
 
     private XmlSignatureConstants() {
         // no instance
     }
-
 }

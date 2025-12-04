@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,14 +34,12 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
             throw new Exception("Exception raised");
         });
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:error").expectedFileExists(
-                testFile("outbox/hello.txt"), "A");
+        getMockEndpoint("mock:error").expectedFileExists(testFile("outbox/hello.txt"), "A");
     }
 
     @Test
     public void testRecipientListUseOriginalMessageIssue() throws Exception {
-        template.sendBodyAndHeader(fileUri("inbox"), "A",
-                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("inbox"), "A", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +49,10 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).useOriginalMessage().to(fileUri("outbox"))
+                onException(Exception.class)
+                        .handled(true)
+                        .useOriginalMessage()
+                        .to(fileUri("outbox"))
                         .to("mock:error");
 
                 from(fileUri("inbox?initialDelay=100&delay=10"))
@@ -58,7 +60,8 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
                         .setHeader("path", constant("mock:throwException"))
                         // must enable share uow to let the onException use
                         // the original message from the route input
-                        .recipientList(header("path")).shareUnitOfWork();
+                        .recipientList(header("path"))
+                        .shareUnitOfWork();
             }
         };
     }

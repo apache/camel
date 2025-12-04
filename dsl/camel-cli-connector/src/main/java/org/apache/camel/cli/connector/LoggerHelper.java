@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cli.connector;
 
 import java.lang.management.ManagementFactory;
@@ -35,8 +36,7 @@ public final class LoggerHelper {
     // log4j support
     private static final String LOG4J_MBEAN = "org.apache.logging.log4j2";
 
-    private LoggerHelper() {
-    }
+    private LoggerHelper() {}
 
     /**
      * Change logging level in the logging system.
@@ -54,7 +54,8 @@ public final class LoggerHelper {
         try {
             MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
             if (ms != null) {
-                Set<ObjectName> set = ms.queryNames(new ObjectName(LOG4J_MBEAN + ":type=*,component=Loggers,name=*"), null);
+                Set<ObjectName> set =
+                        ms.queryNames(new ObjectName(LOG4J_MBEAN + ":type=*,component=Loggers,name=*"), null);
                 for (ObjectName on : set) {
                     if (ms.isRegistered(on)) {
                         String name = (String) ms.getAttribute(on, "Name");
@@ -106,5 +107,4 @@ public final class LoggerHelper {
             return null;
         }
     }
-
 }

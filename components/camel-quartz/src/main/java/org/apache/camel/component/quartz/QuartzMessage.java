@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import java.util.Map;
@@ -61,7 +62,9 @@ public class QuartzMessage extends DefaultMessage {
             map.put("triggerName", trigger.getKey().getName());
             map.put("triggerGroup", trigger.getKey().getGroup());
             if (jobExecutionContext.getFireTime() != null) {
-                map.put(Exchange.MESSAGE_TIMESTAMP, jobExecutionContext.getFireTime().getTime());
+                map.put(
+                        Exchange.MESSAGE_TIMESTAMP,
+                        jobExecutionContext.getFireTime().getTime());
             }
         }
     }

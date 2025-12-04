@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.saga;
 
 import org.apache.camel.AsyncCallback;
@@ -37,7 +38,8 @@ public class SagaProducer extends DefaultAsyncProducer {
 
         CamelSagaService sagaService = endpoint.getCamelContext().hasService(CamelSagaService.class);
         if (sagaService == null) {
-            sagaService = CamelContextHelper.mandatoryFindSingleByType(endpoint.getCamelContext(), CamelSagaService.class);
+            sagaService =
+                    CamelContextHelper.mandatoryFindSingleByType(endpoint.getCamelContext(), CamelSagaService.class);
         }
         this.camelSagaService = sagaService;
     }
@@ -52,24 +54,27 @@ public class SagaProducer extends DefaultAsyncProducer {
             return true;
         }
 
-        camelSagaService.getSaga(currentSaga).thenApply(coordinator -> {
-            if (coordinator == null) {
-                throw new IllegalStateException("No coordinator found for saga id " + currentSaga);
-            }
-            return coordinator;
-        }).thenCompose(coordinator -> {
-            if (success) {
-                return coordinator.complete(exchange);
-            } else {
-                return coordinator.compensate(exchange);
-            }
-        }).whenComplete((res, ex) -> {
-            if (ex != null) {
-                exchange.setException(ex);
-            }
-            callback.done(false);
-        });
+        camelSagaService
+                .getSaga(currentSaga)
+                .thenApply(coordinator -> {
+                    if (coordinator == null) {
+                        throw new IllegalStateException("No coordinator found for saga id " + currentSaga);
+                    }
+                    return coordinator;
+                })
+                .thenCompose(coordinator -> {
+                    if (success) {
+                        return coordinator.complete(exchange);
+                    } else {
+                        return coordinator.compensate(exchange);
+                    }
+                })
+                .whenComplete((res, ex) -> {
+                    if (ex != null) {
+                        exchange.setException(ex);
+                    }
+                    callback.done(false);
+                });
         return false;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.component;
 
 import java.util.Map;
@@ -33,5 +34,4 @@ public class OAIPMHComponent extends HealthCheckComponent {
         endpoint.setQueryParameters(parameters);
         return endpoint;
     }
-
 }

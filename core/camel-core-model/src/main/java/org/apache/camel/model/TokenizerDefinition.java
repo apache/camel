@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,19 +40,18 @@ import org.apache.camel.spi.Metadata;
 public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition> {
 
     @XmlElements({
-            @XmlElement(name = "langChain4jCharacterTokenizer", type = LangChain4jCharacterTokenizerDefinition.class),
-            @XmlElement(name = "langChain4jLineTokenizer", type = LangChain4jLineTokenizerDefinition.class),
-            @XmlElement(name = "langChain4jParagraphTokenizer", type = LangChain4jParagraphTokenizerDefinition.class),
-            @XmlElement(name = "langChain4jSentenceTokenizer", type = LangChain4jSentenceTokenizerDefinition.class),
-            @XmlElement(name = "langChain4jWordTokenizer", type = LangChain4jWordTokenizerDefinition.class),
+        @XmlElement(name = "langChain4jCharacterTokenizer", type = LangChain4jCharacterTokenizerDefinition.class),
+        @XmlElement(name = "langChain4jLineTokenizer", type = LangChain4jLineTokenizerDefinition.class),
+        @XmlElement(name = "langChain4jParagraphTokenizer", type = LangChain4jParagraphTokenizerDefinition.class),
+        @XmlElement(name = "langChain4jSentenceTokenizer", type = LangChain4jSentenceTokenizerDefinition.class),
+        @XmlElement(name = "langChain4jWordTokenizer", type = LangChain4jWordTokenizerDefinition.class),
     })
     private TokenizerImplementationDefinition tokenizerImplementation;
 
     @XmlTransient
     private String tokenizerName;
 
-    public TokenizerDefinition() {
-    }
+    public TokenizerDefinition() {}
 
     protected TokenizerDefinition(TokenizerDefinition source) {
         this.tokenizerName = source.tokenizerName;

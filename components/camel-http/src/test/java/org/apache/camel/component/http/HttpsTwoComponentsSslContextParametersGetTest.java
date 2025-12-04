@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Collections;
 
@@ -29,8 +32,6 @@ import org.apache.hc.core5.http.impl.routing.RequestRouter;
 import org.apache.hc.core5.http.protocol.UriPatternType;
 import org.apache.hc.core5.net.URIAuthority;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest {
 
@@ -62,8 +63,10 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                         Collections.EMPTY_LIST,
                         RequestRouter.LOCAL_AUTHORITY_RESOLVER,
                         null))
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setSslContext(getSSLContext()).create();
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
+                .setSslContext(getSSLContext())
+                .create();
         localServer.start();
     }
 
@@ -91,12 +94,14 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                 port2 = AvailablePortFinder.getNextAvailable();
 
                 from("direct:foo")
-                        .to("https-foo://localhost:" + localServer.getLocalPort()
-                            + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
+                        .to(
+                                "https-foo://localhost:" + localServer.getLocalPort()
+                                        + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https-bar://localhost:" + port2
-                            + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
+                        .to(
+                                "https-bar://localhost:" + port2
+                                        + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
 
@@ -107,5 +112,4 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
 
         context.stop();
     }
-
 }

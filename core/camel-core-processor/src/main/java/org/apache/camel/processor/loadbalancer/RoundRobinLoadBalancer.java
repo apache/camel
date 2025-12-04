@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,5 +38,4 @@ public class RoundRobinLoadBalancer extends QueueLoadBalancer {
     public int getLastChosenProcessorIndex() {
         return counter.get();
     }
-
 }

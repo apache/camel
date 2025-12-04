@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -47,7 +48,9 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
     }
 
     public EndpointRegistry getEndpointRegistry() {
@@ -100,7 +103,7 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
                 boolean fromDynamic = endpointRegistry.isDynamic(url);
 
                 CompositeData data = new CompositeDataSupport(
-                        ct, new String[] { "url", "static", "dynamic" }, new Object[] { url, fromStatic, fromDynamic });
+                        ct, new String[] {"url", "static", "dynamic"}, new Object[] {url, fromStatic, fromDynamic});
                 answer.put(data);
             }
             return answer;
@@ -108,5 +111,4 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

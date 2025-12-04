@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4.api;
 
 import java.io.InputStream;
@@ -88,7 +89,10 @@ public interface Olingo4App {
      * @param responseHandler     callback handler
      */
     <T> void read(
-            Edm edm, String resourcePath, Map<String, String> queryParams, Map<String, String> endpointHttpHeaders,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> queryParams,
+            Map<String, String> endpointHttpHeaders,
             Olingo4ResponseHandler<T> responseHandler);
 
     /**
@@ -103,7 +107,10 @@ public interface Olingo4App {
      * @param responseHandler     callback handler
      */
     void uread(
-            Edm edm, String resourcePath, Map<String, String> queryParams, Map<String, String> endpointHttpHeaders,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> queryParams,
+            Map<String, String> endpointHttpHeaders,
             Olingo4ResponseHandler<InputStream> responseHandler);
 
     /**
@@ -115,7 +122,8 @@ public interface Olingo4App {
      * @param responseHandler     {@link org.apache.olingo.commons.api.http.HttpStatusCode} callback handler
      */
     void delete(
-            String resourcePath, Map<String, String> endpointHttpHeaders,
+            String resourcePath,
+            Map<String, String> endpointHttpHeaders,
             Olingo4ResponseHandler<HttpStatusCode> responseHandler);
 
     /**
@@ -128,7 +136,10 @@ public interface Olingo4App {
      * @param responseHandler     callback handler
      */
     <T> void create(
-            Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> endpointHttpHeaders,
+            Object data,
             Olingo4ResponseHandler<T> responseHandler);
 
     /**
@@ -141,7 +152,10 @@ public interface Olingo4App {
      * @param responseHandler     {@link org.apache.olingo.client.api.domain.ClientEntity} callback handler
      */
     <T> void update(
-            Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> endpointHttpHeaders,
+            Object data,
             Olingo4ResponseHandler<T> responseHandler);
 
     /**
@@ -154,7 +168,10 @@ public interface Olingo4App {
      * @param responseHandler     {@link org.apache.olingo.client.api.domain.ClientEntity} callback handler
      */
     <T> void patch(
-            Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> endpointHttpHeaders,
+            Object data,
             Olingo4ResponseHandler<T> responseHandler);
 
     /**
@@ -167,7 +184,10 @@ public interface Olingo4App {
      * @param responseHandler     {@link org.apache.olingo.client.api.domain.ClientEntity} callback handler
      */
     <T> void merge(
-            Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> endpointHttpHeaders,
+            Object data,
             Olingo4ResponseHandler<T> responseHandler);
 
     /**
@@ -179,7 +199,9 @@ public interface Olingo4App {
      * @param responseHandler     callback handler
      */
     void batch(
-            Edm edm, Map<String, String> endpointHttpHeaders, Object data,
+            Edm edm,
+            Map<String, String> endpointHttpHeaders,
+            Object data,
             Olingo4ResponseHandler<List<Olingo4BatchResponse>> responseHandler);
 
     /**
@@ -192,6 +214,9 @@ public interface Olingo4App {
      * @param responseHandler     {@link org.apache.olingo.client.api.domain.ClientEntity} callback handler
      */
     <T> void action(
-            Edm edm, String resourcePath, Map<String, String> endpointHttpHeaders, Object data,
+            Edm edm,
+            String resourcePath,
+            Map<String, String> endpointHttpHeaders,
+            Object data,
             Olingo4ResponseHandler<T> responseHandler);
 }

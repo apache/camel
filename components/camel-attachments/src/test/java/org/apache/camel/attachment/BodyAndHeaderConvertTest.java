@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 
@@ -29,9 +33,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BodyAndHeaderConvertTest {
     protected Exchange exchange;
@@ -71,7 +72,7 @@ public class BodyAndHeaderConvertTest {
         AttachmentMessage message = exchange.getIn(AttachmentMessage.class);
         message.setBody("<hello>world!</hello>");
         message.setHeader("bar", 567);
-        message.addAttachmentObject("att",
-                new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
+        message.addAttachmentObject(
+                "att", new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
     }
 }

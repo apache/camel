@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,17 +37,20 @@ public class TransactionalClientDataSourceTransactionErrorHandlerTest extends Tr
 
                 from("direct:okay")
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
                 from("direct:fail")
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

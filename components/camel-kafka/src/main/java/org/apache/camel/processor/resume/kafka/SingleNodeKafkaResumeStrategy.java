@@ -76,9 +76,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
     private CountDownLatch initLatch;
     private CamelContext camelContext;
 
-    public SingleNodeKafkaResumeStrategy() {
-
-    }
+    public SingleNodeKafkaResumeStrategy() {}
 
     /**
      * Builds an instance of this class
@@ -94,8 +92,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
      *
      * @param resumeStrategyConfiguration the configuration to use for this strategy instance
      */
-    public SingleNodeKafkaResumeStrategy(KafkaResumeStrategyConfiguration resumeStrategyConfiguration,
-                                         ExecutorService executorService) {
+    public SingleNodeKafkaResumeStrategy(
+            KafkaResumeStrategyConfiguration resumeStrategyConfiguration, ExecutorService executorService) {
         this.resumeStrategyConfiguration = resumeStrategyConfiguration;
         this.executorService = executorService;
     }
@@ -108,8 +106,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
      *
      */
     protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack) {
-        ProducerRecord<byte[], byte[]> producerRecord
-                = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
+        ProducerRecord<byte[], byte[]> producerRecord =
+                new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
         producer.send(producerRecord, (recordMetadata, e) -> {
             if (e != null) {
@@ -151,7 +149,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
     }
 
     @Override
-    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception {
+    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack)
+            throws Exception {
         ByteBuffer keyBuffer = offsetKey.serialize();
         ByteBuffer valueBuffer = offset.serialize();
 
@@ -176,8 +175,9 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
         initLatch = new CountDownLatch(resumeStrategyConfiguration.getMaxInitializationRetries());
         if (executorService == null) {
-            executorService
-                    = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "SingleNodeKafkaResumeStrategy");
+            executorService = camelContext
+                    .getExecutorServiceManager()
+                    .newSingleThreadExecutor(this, "SingleNodeKafkaResumeStrategy");
         }
 
         executorService.submit(() -> refresh(initLatch));
@@ -186,8 +186,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
     private void waitForInitialization() {
         try {
             LOG.trace("Waiting for kafka resume strategy async initialization");
-            if (!initLatch.await(resumeStrategyConfiguration.getMaxInitializationDuration().toMillis(),
-                    TimeUnit.MILLISECONDS)) {
+            if (!initLatch.await(
+                    resumeStrategyConfiguration.getMaxInitializationDuration().toMillis(), TimeUnit.MILLISECONDS)) {
                 LOG.debug("The initialization timed out");
             }
             LOG.trace("Kafka resume strategy initialization complete");
@@ -238,12 +238,15 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
                 byte[] value = consumerRecord.value();
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Read from Kafka at {} ({}): {}", Instant.ofEpochMilli(consumerRecord.timestamp()),
-                            consumerRecord.timestampType(), value);
+                    LOG.trace(
+                            "Read from Kafka at {} ({}): {}",
+                            Instant.ofEpochMilli(consumerRecord.timestamp()),
+                            consumerRecord.timestampType(),
+                            value);
                 }
 
-                if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()),
-                        ByteBuffer.wrap(consumerRecord.value()))) {
+                if (!deserializable.deserialize(
+                        ByteBuffer.wrap(consumerRecord.key()), ByteBuffer.wrap(consumerRecord.value()))) {
                     LOG.warn("Deserializer indicates that this is the last record to deserialize");
                 }
             }
@@ -455,9 +458,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
         if (resumeStrategyConfiguration instanceof KafkaResumeStrategyConfiguration kafkaResumeStrategyConfiguration) {
             this.resumeStrategyConfiguration = kafkaResumeStrategyConfiguration;
         } else {
-            throw new RuntimeCamelException(
-                    "Invalid resume strategy configuration of type " +
-                                            ObjectHelper.className(resumeStrategyConfiguration));
+            throw new RuntimeCamelException("Invalid resume strategy configuration of type "
+                    + ObjectHelper.className(resumeStrategyConfiguration));
         }
     }
 

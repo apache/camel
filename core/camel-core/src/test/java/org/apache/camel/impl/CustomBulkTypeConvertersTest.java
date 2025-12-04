@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -25,9 +29,6 @@ import org.apache.camel.spi.BulkTypeConverters;
 import org.apache.camel.spi.TypeConvertible;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class CustomBulkTypeConvertersTest extends ContextTestSupport {
 
     @Override
@@ -36,10 +37,10 @@ public class CustomBulkTypeConvertersTest extends ContextTestSupport {
 
         final CustomBulkTypeConverters customBulkTypeConverters = new CustomBulkTypeConverters();
         context.getTypeConverterRegistry().addBulkTypeConverters(customBulkTypeConverters);
-        context.getTypeConverterRegistry().addConverter(new TypeConvertible<>(String.class, MyOrder.class),
-                customBulkTypeConverters);
-        context.getTypeConverterRegistry().addConverter(new TypeConvertible<>(Integer.class, MyOrder.class),
-                customBulkTypeConverters);
+        context.getTypeConverterRegistry()
+                .addConverter(new TypeConvertible<>(String.class, MyOrder.class), customBulkTypeConverters);
+        context.getTypeConverterRegistry()
+                .addConverter(new TypeConvertible<>(Integer.class, MyOrder.class), customBulkTypeConverters);
         return context;
     }
 
@@ -75,7 +76,8 @@ public class CustomBulkTypeConvertersTest extends ContextTestSupport {
         }
 
         @Override
-        public <T> T convertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {
+        public <T> T convertTo(Class<?> from, Class<T> to, Exchange exchange, Object value)
+                throws TypeConversionException {
             if (from == String.class && to == MyOrder.class) {
                 MyOrder order = new MyOrder();
                 order.setId(Integer.parseInt(value.toString()));
@@ -93,5 +95,4 @@ public class CustomBulkTypeConvertersTest extends ContextTestSupport {
             return 2;
         }
     }
-
 }

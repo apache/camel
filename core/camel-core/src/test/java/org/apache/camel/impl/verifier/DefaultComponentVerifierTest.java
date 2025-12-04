@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.verifier;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +31,6 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Verificat
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultComponentVerifierTest extends ContextTestSupport {
     private ComponentVerifierExtension verifier;
@@ -70,7 +71,9 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         assertEquals(Result.Status.ERROR, result.getStatus());
 
         assertEquals(1, result.getErrors().size());
-        assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(
+                VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("timerName"));
     }
 
@@ -85,8 +88,11 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         assertEquals(Result.Status.ERROR, result.getStatus());
 
         assertEquals(1, result.getErrors().size());
-        assertEquals(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE, result.getErrors().get(0).getCode());
-        assertEquals("fixedRate has wrong value (wrong)", result.getErrors().get(0).getDescription());
+        assertEquals(
+                VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE,
+                result.getErrors().get(0).getCode());
+        assertEquals(
+                "fixedRate has wrong value (wrong)", result.getErrors().get(0).getDescription());
         assertTrue(result.getErrors().get(0).getParameterKeys().contains("fixedRate"));
     }
 

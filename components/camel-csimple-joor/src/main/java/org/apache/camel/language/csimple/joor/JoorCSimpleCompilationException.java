@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 /**
@@ -54,5 +55,4 @@ public class JoorCSimpleCompilationException extends RuntimeException {
         }
         return sb.toString();
     }
-
 }

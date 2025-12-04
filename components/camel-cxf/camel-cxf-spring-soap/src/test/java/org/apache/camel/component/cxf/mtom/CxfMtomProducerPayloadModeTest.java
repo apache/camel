@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.image.BufferedImage;
 import java.io.StringReader;
@@ -59,9 +63,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
  */
@@ -75,13 +76,13 @@ public class CxfMtomProducerPayloadModeTest {
 
     @Autowired
     protected CamelContext context;
+
     protected Endpoint endpoint;
 
     @BeforeEach
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:" + port + "/" + getClass().getSimpleName()
-                                    + "/jaxws-mtom/hello",
-                getServiceImpl());
+        endpoint = Endpoint.publish(
+                "http://localhost:" + port + "/" + getClass().getSimpleName() + "/jaxws-mtom/hello", getServiceImpl());
         SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(isMtomEnabled());
     }
@@ -107,19 +108,21 @@ public class CxfMtomProducerPayloadModeTest {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<>();
-                elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<>(
-                        new ArrayList<SoapHeader>(),
-                        elements, null);
+                elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.REQ_MESSAGE))
+                        .getDocumentElement()));
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(), elements, null);
                 exchange.getIn().setBody(body);
-                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
-                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                MtomTestHelper.REQ_PHOTO_CID,
+                                new DataHandler(new ByteArrayDataSource(
+                                        MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
-                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
-
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                MtomTestHelper.REQ_IMAGE_CID,
+                                new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
             }
-
         });
 
         // process response
@@ -133,12 +136,10 @@ public class CxfMtomProducerPayloadModeTest {
 
         XPathUtils xu = new XPathUtils(ns);
         Element oute = new XmlConverter().toDOMElement(out.getBody().get(0));
-        Element ele = (Element) xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
-                XPathConstants.NODE);
+        Element ele = (Element) xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute, XPathConstants.NODE);
         String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-        ele = (Element) xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
-                XPathConstants.NODE);
+        ele = (Element) xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute, XPathConstants.NODE);
         String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 
         DataHandler dr = exchange.getMessage(AttachmentMessage.class).getAttachment(decodingReference(photoId));
@@ -168,5 +169,4 @@ public class CxfMtomProducerPayloadModeTest {
     protected Object getServiceImpl() {
         return new HelloImpl();
     }
-
 }

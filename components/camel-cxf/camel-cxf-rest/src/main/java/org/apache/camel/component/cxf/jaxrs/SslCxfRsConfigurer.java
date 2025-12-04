@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
@@ -27,8 +28,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 
 public final class SslCxfRsConfigurer extends AbstractSslEndpointConfigurer implements CxfRsConfigurer {
 
-    private SslCxfRsConfigurer(SSLContextParameters sslContextParameters,
-                               CamelContext camelContext) {
+    private SslCxfRsConfigurer(SSLContextParameters sslContextParameters, CamelContext camelContext) {
         super(sslContextParameters, camelContext);
     }
 
@@ -41,8 +41,7 @@ public final class SslCxfRsConfigurer extends AbstractSslEndpointConfigurer impl
     }
 
     @Override
-    public void configure(AbstractJAXRSFactoryBean factoryBean) {
-    }
+    public void configure(AbstractJAXRSFactoryBean factoryBean) {}
 
     @Override
     public void configureClient(Client client) {
@@ -51,6 +50,5 @@ public final class SslCxfRsConfigurer extends AbstractSslEndpointConfigurer impl
     }
 
     @Override
-    public void configureServer(Server server) {
-    }
+    public void configureServer(Server server) {}
 }

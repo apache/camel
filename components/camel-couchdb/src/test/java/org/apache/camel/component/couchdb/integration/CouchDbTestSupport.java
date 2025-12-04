@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb.integration;
 
 import org.apache.camel.test.infra.couchdb.services.CouchDbService;
@@ -25,5 +26,4 @@ public class CouchDbTestSupport extends CamelTestSupport {
     @SuppressWarnings("unused")
     @RegisterExtension
     static CouchDbService service = CouchDbServiceFactory.createSingletonService();
-
 }

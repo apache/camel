@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.io.IOException;
@@ -33,15 +34,18 @@ public class HttpMessage extends DefaultMessage {
     private HttpCommonEndpoint endpoint;
     private boolean requestRead;
 
-    public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request,
-                       HttpServletResponse response) {
+    public HttpMessage(
+            Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
         super(exchange);
         init(exchange, endpoint, request, response);
     }
 
-    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange,
-                        HttpCommonEndpoint endpoint,
-                        boolean requestRead) {
+    private HttpMessage(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Exchange exchange,
+            HttpCommonEndpoint endpoint,
+            boolean requestRead) {
         super(exchange);
         this.request = request;
         this.response = response;
@@ -50,8 +54,7 @@ public class HttpMessage extends DefaultMessage {
     }
 
     public void init(
-            Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request,
-            HttpServletResponse response) {
+            Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
         setExchange(exchange);
         this.requestRead = false;
         this.endpoint = endpoint;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
@@ -70,5 +71,4 @@ public interface PropertyConfigurerGetter {
      * @return            the property value
      */
     Object getOptionValue(Object target, String name, boolean ignoreCase);
-
 }

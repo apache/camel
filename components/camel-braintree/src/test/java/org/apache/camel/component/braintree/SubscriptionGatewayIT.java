@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,14 +31,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(SubscriptionGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(SubscriptionGatewayApiMethod.class)
+            .getName();
 
     // TODO provide parameter values for cancel
     @Disabled
@@ -145,29 +147,21 @@ public class SubscriptionGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for cancel
-                from("direct://CANCEL")
-                        .to("braintree://" + PATH_PREFIX + "/cancel?inBody=id");
+                from("direct://CANCEL").to("braintree://" + PATH_PREFIX + "/cancel?inBody=id");
                 // test route for create
-                from("direct://CREATE")
-                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                from("direct://CREATE").to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for delete
-                from("direct://DELETE")
-                        .to("braintree://" + PATH_PREFIX + "/delete");
+                from("direct://DELETE").to("braintree://" + PATH_PREFIX + "/delete");
                 // test route for find
-                from("direct://FIND")
-                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                from("direct://FIND").to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for retryCharge
-                from("direct://RETRYCHARGE")
-                        .to("braintree://" + PATH_PREFIX + "/retryCharge?inBody=subscriptionId");
+                from("direct://RETRYCHARGE").to("braintree://" + PATH_PREFIX + "/retryCharge?inBody=subscriptionId");
                 // test route for retryCharge
-                from("direct://RETRYCHARGE_1")
-                        .to("braintree://" + PATH_PREFIX + "/retryCharge");
+                from("direct://RETRYCHARGE_1").to("braintree://" + PATH_PREFIX + "/retryCharge");
                 // test route for search
-                from("direct://SEARCH")
-                        .to("braintree://" + PATH_PREFIX + "/search?inBody=searchRequest");
+                from("direct://SEARCH").to("braintree://" + PATH_PREFIX + "/search?inBody=searchRequest");
                 // test route for update
-                from("direct://UPDATE")
-                        .to("braintree://" + PATH_PREFIX + "/update");
+                from("direct://UPDATE").to("braintree://" + PATH_PREFIX + "/update");
             }
         };
     }

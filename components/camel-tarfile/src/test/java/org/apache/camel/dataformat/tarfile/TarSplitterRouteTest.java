@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -40,14 +41,14 @@ public class TarSplitterRouteTest extends CamelTestSupport {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data?delay=1000&noop=true")
                         .log("Start processing big file: ${header.CamelFileName}")
-                        .split(new TarSplitter()).streaming()
-                        .convertBodyTo(String.class).to("mock:processTarEntry")
+                        .split(new TarSplitter())
+                        .streaming()
+                        .convertBodyTo(String.class)
+                        .to("mock:processTarEntry")
                         .to("log:entry")
                         .end()
                         .log("Done processing big file: ${header.CamelFileName}");
             }
         };
-
     }
-
 }

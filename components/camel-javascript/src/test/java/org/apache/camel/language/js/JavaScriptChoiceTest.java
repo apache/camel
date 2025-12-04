@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.js;
 
 import org.apache.camel.RoutesBuilder;
@@ -46,11 +47,15 @@ public class JavaScriptChoiceTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .choice()
-                        .when().js("body == 'Hello'").to("mock:foo")
-                        .when().js("body == 'Bye'").to("mock:bar")
-                        .otherwise().to("mock:other");
+                        .when()
+                        .js("body == 'Hello'")
+                        .to("mock:foo")
+                        .when()
+                        .js("body == 'Bye'")
+                        .to("mock:bar")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }
-
 }

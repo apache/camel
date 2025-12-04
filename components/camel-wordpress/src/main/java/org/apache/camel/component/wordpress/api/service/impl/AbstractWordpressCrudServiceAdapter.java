@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.Objects;
@@ -29,8 +30,8 @@ import org.apache.camel.component.wordpress.api.service.WordpressCrudService;
  * @param <A>
  * @param <T>
  */
-abstract class AbstractWordpressCrudServiceAdapter<A, T, S extends SearchCriteria> extends AbstractWordpressServiceAdapter<A>
-        implements WordpressCrudService<T, S> {
+abstract class AbstractWordpressCrudServiceAdapter<A, T, S extends SearchCriteria>
+        extends AbstractWordpressServiceAdapter<A> implements WordpressCrudService<T, S> {
 
     AbstractWordpressCrudServiceAdapter(final String wordpressUrl, final String apiVersion) {
         super(wordpressUrl, apiVersion);
@@ -98,5 +99,4 @@ abstract class AbstractWordpressCrudServiceAdapter<A, T, S extends SearchCriteri
     }
 
     protected abstract T doRetrieve(Integer entityID, Context context);
-
 }

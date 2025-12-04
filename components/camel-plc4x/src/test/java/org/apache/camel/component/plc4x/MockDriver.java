@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
+
+import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -34,8 +37,6 @@ import org.apache.plc4x.java.spi.messages.DefaultPlcSubscriptionResponse;
 import org.apache.plc4x.java.spi.messages.PlcSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mockito.Mockito.*;
 
 public class MockDriver implements PlcDriver {
 
@@ -60,7 +61,8 @@ public class MockDriver implements PlcDriver {
         when(plcConnectionMock.getMetadata().isReadSupported()).thenReturn(true);
         when(plcConnectionMock.getMetadata().isWriteSupported()).thenReturn(true);
         when(plcConnectionMock.readRequestBuilder()).thenReturn(mock(PlcReadRequest.Builder.class, RETURNS_DEEP_STUBS));
-        when(plcConnectionMock.writeRequestBuilder()).thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
+        when(plcConnectionMock.writeRequestBuilder())
+                .thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
         when(plcConnectionMock.subscriptionRequestBuilder())
                 .thenReturn(mock(PlcSubscriptionRequest.Builder.class, RETURNS_DEEP_STUBS));
         when(plcConnectionMock.unsubscriptionRequestBuilder())
@@ -91,8 +93,8 @@ public class MockDriver implements PlcDriver {
                         mock(PlcSubscriptionHandle.class, RETURNS_DEEP_STUBS), PlcResponseCode.OK);
                 }).collect(Collectors.toList());
             PlcSubscriptionResponse response = new PlcSubscriptionResponse(subscriptionRequest, responseItems);*/
-            PlcSubscriptionResponse response
-                    = new DefaultPlcSubscriptionResponse(mock(PlcSubscriptionRequest.class), new HashMap<>());
+            PlcSubscriptionResponse response =
+                    new DefaultPlcSubscriptionResponse(mock(PlcSubscriptionRequest.class), new HashMap<>());
             return CompletableFuture.completedFuture(response);
         });
         return plcConnectionMock;
@@ -102,5 +104,4 @@ public class MockDriver implements PlcDriver {
     public PlcConnection getConnection(String url, PlcAuthentication authentication) throws PlcConnectionException {
         return getConnection(null);
     }
-
 }

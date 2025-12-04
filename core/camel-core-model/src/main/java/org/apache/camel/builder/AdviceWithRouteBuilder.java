@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.spi.FactoryFinder.DEFAULT_PATH;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.spi.FactoryFinder.DEFAULT_PATH;
-
 /**
  * A {@link RouteBuilder} which has extended capabilities when using the
  * <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
@@ -44,8 +45,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     private final List<AdviceWithTask> adviceWithTasks = new ArrayList<>();
     private boolean logRouteAsXml = true;
 
-    public AdviceWithRouteBuilder() {
-    }
+    public AdviceWithRouteBuilder() {}
 
     public AdviceWithRouteBuilder(CamelContext context) {
         super(context);
@@ -103,7 +103,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @throws Exception can be thrown if error occurred
      */
     public void mockEndpoints() throws Exception {
-        getContext().getCamelContextExtension()
+        getContext()
+                .getCamelContextExtension()
                 .registerEndpointCallback(createMockEndpointStrategy(getCamelContext(), null, false));
     }
 
@@ -118,7 +119,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
         for (String s : pattern) {
             // the text based input may be property placeholders
             s = getContext().resolvePropertyPlaceholders(s);
-            getContext().getCamelContextExtension()
+            getContext()
+                    .getCamelContextExtension()
                     .registerEndpointCallback(createMockEndpointStrategy(getCamelContext(), s, false));
         }
     }
@@ -135,7 +137,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
         for (String s : pattern) {
             // the text based input may be property placeholders
             s = getContext().resolvePropertyPlaceholders(s);
-            getContext().getCamelContextExtension()
+            getContext()
+                    .getCamelContextExtension()
                     .registerEndpointCallback(createMockEndpointStrategy(getCamelContext(), s, true));
         }
     }
@@ -228,7 +231,9 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddFirst() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, "*", null, null, null).selectFirst().before();
+        return new AdviceWithBuilder<T>(this, "*", null, null, null)
+                .selectFirst()
+                .before();
     }
 
     /**
@@ -238,24 +243,26 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddLast() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder<T>(this, "*", null, null, null).maxDeep(1).selectLast().after();
+        return new AdviceWithBuilder<T>(this, "*", null, null, null)
+                .maxDeep(1)
+                .selectLast()
+                .after();
     }
 
     /**
      * To advice and mock endpoints when Camel is sending messages to endpoints that matches the given pattern. This
      * requires having camel-mock on the classpath.
      */
-    public static EndpointStrategy createMockEndpointStrategy(
-            CamelContext camelContext, String pattern, boolean skip) {
+    public static EndpointStrategy createMockEndpointStrategy(CamelContext camelContext, String pattern, boolean skip) {
         // the text based input may be property placeholders
         pattern = camelContext.resolvePropertyPlaceholders(pattern);
-        MockSendToEndpointStrategyFactory factory = camelContext.getCamelContextExtension()
+        MockSendToEndpointStrategyFactory factory = camelContext
+                .getCamelContextExtension()
                 .getFactoryFinder(DEFAULT_PATH)
                 .newInstance(MockSendToEndpointStrategyFactory.FACTORY, MockSendToEndpointStrategyFactory.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find MockSendToEndpointStrategyFactory on classpath. "
-                                                                + "Add camel-mock to classpath."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Cannot find MockSendToEndpointStrategyFactory on classpath. "
+                                + "Add camel-mock to classpath."));
         return factory.mock(pattern, skip);
     }
-
 }

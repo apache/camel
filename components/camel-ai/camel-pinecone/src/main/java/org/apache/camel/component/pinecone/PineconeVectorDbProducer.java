@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone;
 
 import java.util.List;
@@ -60,12 +61,15 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
         // header take precedence
-        final PineconeVectorDbAction action = in.getHeader(PineconeVectorDbHeaders.ACTION,
-                getEndpoint().getConfiguration().getAction(), PineconeVectorDbAction.class);
+        final PineconeVectorDbAction action = in.getHeader(
+                PineconeVectorDbHeaders.ACTION,
+                getEndpoint().getConfiguration().getAction(),
+                PineconeVectorDbAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, PineconeVectorDbHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is a required header", exchange, PineconeVectorDbHeaders.ACTION);
             }
 
             switch (action) {
@@ -120,15 +124,16 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
 
         // header can override default value
-        String indexName = in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, getEndpoint().getConfiguration().getIndexName(),
+        String indexName = in.getHeader(
+                PineconeVectorDbHeaders.INDEX_NAME,
+                getEndpoint().getConfiguration().getIndexName(),
                 String.class);
-        String collectionName
-                = in.getHeader(PineconeVectorDbHeaders.COLLECTION_NAME, getEndpoint().getCollection(), String.class);
+        String collectionName = in.getHeader(
+                PineconeVectorDbHeaders.COLLECTION_NAME, getEndpoint().getCollection(), String.class);
 
         CollectionModel result = this.client.createCollection(collectionName, indexName);
 
         populateCollectionResponse(result, exchange);
-
     }
 
     private void createServerlessIndex(Exchange exchange) throws Exception {
@@ -142,7 +147,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         int collectionDimension = PineconeVectorDb.DEFAULT_COLLECTION_DIMENSION;
 
         if (getEndpoint().getConfiguration().getCollectionDimension() != null) {
-            collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+            collectionDimension =
+                    getEndpoint().getConfiguration().getCollectionDimension().intValue();
         }
 
         if (in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class) != null) {
@@ -150,7 +156,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         }
 
         if (in.getHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, String.class) != null) {
-            collectionSimilarityMetricName = in.getHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, String.class);
+            collectionSimilarityMetricName =
+                    in.getHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, String.class);
         }
 
         if (in.getHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, Integer.class) != null) {
@@ -164,11 +171,15 @@ public class PineconeVectorDbProducer extends DefaultProducer {
             collectionCloudRegionName = in.getHeader(PineconeVectorDbHeaders.COLLECTION_CLOUD_REGION, String.class);
         }
 
-        IndexModel result = this.client.createServerlessIndex(indexName, collectionSimilarityMetricName, collectionDimension,
-                collectionCloudName, collectionCloudRegionName, DeletionProtection.DISABLED);
+        IndexModel result = this.client.createServerlessIndex(
+                indexName,
+                collectionSimilarityMetricName,
+                collectionDimension,
+                collectionCloudName,
+                collectionCloudRegionName,
+                DeletionProtection.DISABLED);
 
         populateIndexResponse(result, exchange);
-
     }
 
     private void createPodIndex(Exchange exchange) throws Exception {
@@ -178,7 +189,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         int collectionDimension = PineconeVectorDb.DEFAULT_COLLECTION_DIMENSION;
 
         if (getEndpoint().getConfiguration().getCollectionDimension() != null) {
-            collectionDimension = getEndpoint().getConfiguration().getCollectionDimension().intValue();
+            collectionDimension =
+                    getEndpoint().getConfiguration().getCollectionDimension().intValue();
         }
 
         if (in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class) != null) {
@@ -186,7 +198,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         }
 
         if (in.getHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, String.class) != null) {
-            collectionSimilarityMetricName = in.getHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, String.class);
+            collectionSimilarityMetricName =
+                    in.getHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, String.class);
         }
 
         if (in.getHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, Integer.class) != null) {
@@ -196,11 +209,10 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         String indexPodType = in.getHeader(PineconeVectorDbHeaders.INDEX_POD_TYPE, String.class);
         String indexPodEnv = in.getHeader(PineconeVectorDbHeaders.INDEX_POD_ENVIRONMENT, String.class);
 
-        IndexModel result = this.client.createPodsIndex(indexName, collectionDimension,
-                indexPodEnv, indexPodType, collectionSimilarityMetricName);
+        IndexModel result = this.client.createPodsIndex(
+                indexName, collectionDimension, indexPodEnv, indexPodType, collectionSimilarityMetricName);
 
         populateIndexResponse(result, exchange);
-
     }
 
     private void upsert(Exchange exchange) throws Exception {
@@ -218,7 +230,6 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         UpsertResponse result = index.upsert(indexId, elements, null, null, null, namespace);
 
         populateUpsertResponse(result, exchange);
-
     }
 
     private void update(Exchange exchange) throws Exception {
@@ -236,7 +247,6 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         UpdateResponse result = index.update(indexId, elements, namespace);
 
         populateUpdateResponse(result, exchange);
-
     }
 
     private void deleteIndex(Exchange exchange) throws Exception {
@@ -251,8 +261,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void deleteCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String collectionName
-                = in.getHeader(PineconeVectorDbHeaders.COLLECTION_NAME, getEndpoint().getCollection(), String.class);
+        String collectionName = in.getHeader(
+                PineconeVectorDbHeaders.COLLECTION_NAME, getEndpoint().getCollection(), String.class);
         this.client.deleteCollection(collectionName);
     }
 
@@ -267,8 +277,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
         Index index = this.client.getIndexConnection(indexName);
 
-        DeleteResponse result
-                = index.deleteByIds(elements);
+        DeleteResponse result = index.deleteByIds(elements);
 
         populateDeleteResponse(result, exchange);
     }
@@ -284,8 +293,7 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
         Index index = this.client.getIndexConnection(indexName);
 
-        FetchResponse result
-                = index.fetch(elements);
+        FetchResponse result = index.fetch(elements);
 
         populateFetchResponse(result, exchange);
     }
@@ -306,12 +314,14 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         String namespace = in.getHeader(PineconeVectorDbHeaders.NAMESPACE, String.class);
         Struct filter = in.getHeader(PineconeVectorDbHeaders.QUERY_FILTER, Struct.class);
         boolean includeValues = (in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, Boolean.class) == null)
-                ? false : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, Boolean.class);
+                ? false
+                : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, Boolean.class);
         boolean includeMetadata = (in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, Boolean.class) == null)
-                ? false : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, Boolean.class);
+                ? false
+                : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, Boolean.class);
 
-        QueryResponseWithUnsignedIndices result
-                = index.queryByVector(topK, elements, namespace, filter, includeValues, includeMetadata);
+        QueryResponseWithUnsignedIndices result =
+                index.queryByVector(topK, elements, namespace, filter, includeValues, includeMetadata);
 
         populateQueryResponse(result, exchange);
     }
@@ -335,12 +345,14 @@ public class PineconeVectorDbProducer extends DefaultProducer {
         String namespace = in.getHeader(PineconeVectorDbHeaders.NAMESPACE, String.class);
         Struct filter = in.getHeader(PineconeVectorDbHeaders.QUERY_FILTER, Struct.class);
         boolean includeValues = (in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, Boolean.class) == null)
-                ? false : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, Boolean.class);
+                ? false
+                : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, Boolean.class);
         boolean includeMetadata = (in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, Boolean.class) == null)
-                ? false : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, Boolean.class);
+                ? false
+                : in.getHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, Boolean.class);
 
-        QueryResponseWithUnsignedIndices result
-                = index.queryByVectorId(topK, indexId, namespace, filter, includeValues, includeMetadata);
+        QueryResponseWithUnsignedIndices result =
+                index.queryByVectorId(topK, indexId, namespace, filter, includeValues, includeMetadata);
 
         populateQueryResponse(result, exchange);
     }

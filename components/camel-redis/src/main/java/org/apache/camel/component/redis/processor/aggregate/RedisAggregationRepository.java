@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.processor.aggregate;
 
 import java.util.Collections;
@@ -54,30 +55,43 @@ public class RedisAggregationRepository extends ServiceSupport
 
     @Metadata(label = "advanced", description = "To use an existing Redis client to connect to Redis server")
     private RedissonClient redisson;
+
     @Metadata(description = "URL to remote Redis server", required = true)
     private String endpoint;
+
     @Metadata(description = "Name of cache to use", required = true)
     private String mapName;
+
     @Metadata(label = "advanced", description = "Name of cache to use for completed exchanges")
     private String persistenceMapName;
+
     @Metadata(description = "Whether optimistic locking is in use")
     private boolean optimistic;
+
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+
+    @Metadata(
+            description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
+
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
-    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+
+    @Metadata(
+            description =
+                    "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
-              defaultValue = "3")
+            defaultValue = "3")
     private int maximumRedeliveries = 3;
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
-    public RedisAggregationRepository() {
-    }
+    public RedisAggregationRepository() {}
 
     public RedisAggregationRepository(final String mapName, final String endpoint) {
         this.mapName = mapName;
@@ -86,8 +100,7 @@ public class RedisAggregationRepository extends ServiceSupport
         this.endpoint = endpoint;
     }
 
-    public RedisAggregationRepository(final String mapName, final String persistenceMapName,
-                                      final String endpoint) {
+    public RedisAggregationRepository(final String mapName, final String persistenceMapName, final String endpoint) {
         this.mapName = mapName;
         this.persistenceMapName = persistenceMapName;
         this.optimistic = false;
@@ -99,8 +112,8 @@ public class RedisAggregationRepository extends ServiceSupport
         this.optimistic = optimistic;
     }
 
-    public RedisAggregationRepository(final String mapName, final String persistenceMapName,
-                                      final String endpoint, boolean optimistic) {
+    public RedisAggregationRepository(
+            final String mapName, final String persistenceMapName, final String endpoint, boolean optimistic) {
         this(mapName, persistenceMapName, endpoint);
         this.optimistic = optimistic;
     }
@@ -111,7 +124,8 @@ public class RedisAggregationRepository extends ServiceSupport
         if (!optimistic) {
             throw new UnsupportedOperationException();
         }
-        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
+        LOG.trace(
+                "Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
             DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
@@ -119,7 +133,8 @@ public class RedisAggregationRepository extends ServiceSupport
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
                 LOG.warn(
                         "Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
-                        key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
+                        key,
+                        misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
                 throw new OptimisticLockingException();
             }
         } else {
@@ -149,7 +164,8 @@ public class RedisAggregationRepository extends ServiceSupport
             DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
-            LOG.trace("Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             lock.unlock();
         }
     }
@@ -164,7 +180,8 @@ public class RedisAggregationRepository extends ServiceSupport
         } else {
             LOG.warn(
                     "What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
-                    camelContext.getName(), mapName);
+                    camelContext.getName(),
+                    mapName);
             return Collections.emptySet();
         }
     }
@@ -290,24 +307,37 @@ public class RedisAggregationRepository extends ServiceSupport
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removing an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (!cache.remove(key, holder)) {
                 LOG.warn(
                         "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
             }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace(
+                    "Removed an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(),
+                    key);
             if (useRecovery) {
-                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(),
+                        key);
                 persistedCache.put(exchange.getExchangeId(), holder);
-                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
-                        exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(),
+                        key);
             }
         } else {
             if (useRecovery) {
-                LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                LOG.trace(
+                        "Removing an exchange with ID {} for key {} in a thread-safe manner.",
+                        exchange.getExchangeId(),
+                        key);
                 TransactionOptions tOpts = TransactionOptions.defaults();
                 RTransaction transaction = redisson.createTransaction(tOpts);
 
@@ -316,15 +346,21 @@ public class RedisAggregationRepository extends ServiceSupport
                     RMap<String, DefaultExchangeHolder> tPersistentCache = transaction.getMap(persistenceMapName);
 
                     DefaultExchangeHolder removedHolder = tCache.remove(key);
-                    LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
+                    LOG.trace(
+                            "Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(),
+                            key);
                     tPersistentCache.put(exchange.getExchangeId(), removedHolder);
 
                     transaction.commit();
-                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(),
+                    LOG.trace(
+                            "Removed an exchange with ID {} for key {} in a thread-safe manner.",
+                            exchange.getExchangeId(),
                             key);
-                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
-                            exchange.getExchangeId(), key);
+                    LOG.trace(
+                            "Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(),
+                            key);
                 } catch (Exception throwable) {
                     transaction.rollback();
 

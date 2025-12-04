@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.multimap;
 
 import java.util.Map;
@@ -31,7 +32,8 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
 
     private final MultiMap<Object, Object> cache;
 
-    public HazelcastMultimapProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
+    public HazelcastMultimapProducer(
+            HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
         super(endpoint);
         this.cache = hazelcastInstance.getMultiMap(cacheName);
     }
@@ -84,9 +86,9 @@ public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

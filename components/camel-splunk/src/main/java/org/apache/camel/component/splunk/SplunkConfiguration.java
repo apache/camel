@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import com.splunk.SSLSecurityProtocol;
@@ -32,58 +33,82 @@ public class SplunkConfiguration {
     @UriPath(description = "Name has no purpose")
     @Metadata(required = true)
     private String name;
+
     @UriParam(defaultValue = "https")
     private String scheme = Service.DEFAULT_SCHEME;
+
     @UriParam(defaultValue = "localhost")
     private String host = Service.DEFAULT_HOST;
+
     @UriParam(defaultValue = "8089")
     private int port = Service.DEFAULT_PORT;
+
     @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2", label = "security")
     private SSLSecurityProtocol sslProtocol = SSLSecurityProtocol.TLSv1_2;
+
     @UriParam(defaultValue = "true", label = "security")
     private boolean validateCertificates = true;
+
     @UriParam
     private String app;
+
     @UriParam
     private String owner;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "security", secret = true)
     private String token;
+
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
+
     @UriParam(label = "security")
     private boolean useSunHttpsHandler;
 
     @UriParam(label = "producer")
     private String index;
+
     @UriParam(label = "producer")
     private String sourceType;
+
     @UriParam(label = "producer")
     private String source;
+
     @UriParam(label = "producer")
     private String eventHost;
+
     @UriParam(label = "producer")
     private int tcpReceiverPort;
+
     @UriParam(label = "producer")
     private Integer tcpReceiverLocalPort;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean raw;
 
     @UriParam(label = "consumer")
     private int count;
+
     @UriParam(label = "consumer")
     private String search;
+
     @UriParam(label = "consumer")
     private String savedSearch;
+
     @UriParam(label = "consumer")
     private String earliestTime;
+
     @UriParam(label = "consumer")
     private String latestTime;
+
     @UriParam(label = "consumer")
     private String initEarliestTime;
+
     @UriParam(label = "consumer")
     private boolean streaming;
 
@@ -416,5 +441,4 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setToken(getToken());
         return splunkConnectionFactory;
     }
-
 }

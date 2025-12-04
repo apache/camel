@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 public class CXFWsdlOnlyMessageModeNoSpringTest extends CXFWsdlOnlyPayloadModeNoSpringTest {
@@ -21,7 +22,5 @@ public class CXFWsdlOnlyMessageModeNoSpringTest extends CXFWsdlOnlyPayloadModeNo
     @Override
     protected String getDataFormat() {
         return "RAW";
-
     }
-
 }

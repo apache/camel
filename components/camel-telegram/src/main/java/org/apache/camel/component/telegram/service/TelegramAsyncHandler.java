@@ -44,8 +44,12 @@ public class TelegramAsyncHandler {
     private final Exchange exchange;
     private final AsyncCallback callback;
 
-    TelegramAsyncHandler(String uri, Class<? extends MessageResult> resultClass, ObjectMapper mapper, Exchange exchange,
-                         AsyncCallback callback) {
+    TelegramAsyncHandler(
+            String uri,
+            Class<? extends MessageResult> resultClass,
+            ObjectMapper mapper,
+            Exchange exchange,
+            AsyncCallback callback) {
         this.uri = uri;
         this.resultClass = resultClass;
         this.mapper = mapper;
@@ -75,7 +79,6 @@ public class TelegramAsyncHandler {
         }
 
         return charset;
-
     }
 
     public Object handleCompressedResponse(HttpResponse<InputStream> response) {
@@ -85,10 +88,11 @@ public class TelegramAsyncHandler {
         String charsetInfo = response.headers().firstValue("Content-Type").orElse(null);
         final String charset = extractCharset(charsetInfo, StandardCharsets.UTF_8.name());
 
-        final String contentEncoding = response.headers().firstValue("Content-Encoding").orElse(null);
+        final String contentEncoding =
+                response.headers().firstValue("Content-Encoding").orElse(null);
 
         try (InputStream is = GZIPHelper.uncompressGzip(contentEncoding, response.body());
-             Reader r = new InputStreamReader(is, charset)) {
+                Reader r = new InputStreamReader(is, charset)) {
 
             if (LOG.isDebugEnabled()) {
                 response.headers().map().forEach((key, value) -> LOG.debug("header {}={}", key, value));
@@ -105,8 +109,7 @@ public class TelegramAsyncHandler {
 
                 exchange.getMessage().setBody(result);
             } else {
-                throw new RuntimeCamelException(
-                        uri + " responded: " + response.statusCode() + IOHelper.toString(r));
+                throw new RuntimeCamelException(uri + " responded: " + response.statusCode() + IOHelper.toString(r));
             }
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException(ex);

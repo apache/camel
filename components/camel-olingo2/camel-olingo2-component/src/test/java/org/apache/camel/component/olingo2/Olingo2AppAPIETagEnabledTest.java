@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -45,10 +50,6 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests support for concurrency properties which generate and require reading eTags before patch, update and delete
@@ -117,9 +118,13 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
                         try {
                             if (recordedRequest.getPath().endsWith("/" + TEST_CREATE_MANUFACTURER)) {
 
-                                ODataResponse odataResponse = EntityProvider.writeEntry(TEST_FORMAT.getMimeType(),
-                                        manufacturersSet, getEntityData(),
-                                        EntityProviderWriteProperties.serviceRoot(getServiceUrl().uri()).build());
+                                ODataResponse odataResponse = EntityProvider.writeEntry(
+                                        TEST_FORMAT.getMimeType(),
+                                        manufacturersSet,
+                                        getEntityData(),
+                                        EntityProviderWriteProperties.serviceRoot(
+                                                        getServiceUrl().uri())
+                                                .build());
                                 InputStream entityStream = odataResponse.getEntityAsStream();
                                 mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode());
                                 mockResponse.setBody(new Buffer().readFrom(entityStream));
@@ -128,8 +133,11 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
                             } else if (recordedRequest.getPath().endsWith("/" + Olingo2AppImpl.METADATA)) {
 
                                 EdmServiceMetadata serviceMetadata = edm.getServiceMetadata();
-                                return mockResponse.setResponseCode(HttpStatusCodes.OK.getStatusCode())
-                                        .addHeader(ODataHttpHeaders.DATASERVICEVERSION, serviceMetadata.getDataServiceVersion())
+                                return mockResponse
+                                        .setResponseCode(HttpStatusCodes.OK.getStatusCode())
+                                        .addHeader(
+                                                ODataHttpHeaders.DATASERVICEVERSION,
+                                                serviceMetadata.getDataServiceVersion())
                                         .setBody(new Buffer().readFrom(serviceMetadata.getMetadata()));
                             }
 
@@ -156,7 +164,9 @@ public class Olingo2AppAPIETagEnabledTest extends AbstractOlingo2AppAPITestSuppo
                         break;
                 }
 
-                mockResponse.setResponseCode(HttpStatusCodes.NOT_FOUND.getStatusCode()).setBody("{ status: \"Not Found\"}");
+                mockResponse
+                        .setResponseCode(HttpStatusCodes.NOT_FOUND.getStatusCode())
+                        .setBody("{ status: \"Not Found\"}");
                 return mockResponse;
             }
         });

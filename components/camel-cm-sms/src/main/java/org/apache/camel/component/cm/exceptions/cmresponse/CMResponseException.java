@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.exceptions.cmresponse;
 
 import org.apache.camel.component.cm.exceptions.CMDirectException;
 
 public class CMResponseException extends CMDirectException {
 
-    public CMResponseException() {
-    }
+    public CMResponseException() {}
 
     public CMResponseException(final String message) {
         super(message);
@@ -35,8 +35,11 @@ public class CMResponseException extends CMDirectException {
         super(message, cause);
     }
 
-    public CMResponseException(final String message, final Throwable cause, final boolean enableSuppression,
-                               final boolean writableStackTrace) {
+    public CMResponseException(
+            final String message,
+            final Throwable cause,
+            final boolean enableSuppression,
+            final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

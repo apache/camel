@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.Exchange;
@@ -43,20 +44,23 @@ public class InOutConsumerTopicTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:topic:start.topic.InOutConsumerTopicTest").to("log:request")
-                        .to("sjms:topic:in.out.topic.InOutConsumerTopicTest?exchangePattern=InOut&replyTo=in.out.topic.response")
-                        .to("log:response").to("mock:result");
+                from("sjms:topic:start.topic.InOutConsumerTopicTest")
+                        .to("log:request")
+                        .to(
+                                "sjms:topic:in.out.topic.InOutConsumerTopicTest?exchangePattern=InOut&replyTo=in.out.topic.response")
+                        .to("log:response")
+                        .to("mock:result");
 
-                from("sjms:topic:in.out.topic.InOutConsumerTopicTest?exchangePattern=InOut").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = (String) exchange.getIn().getBody();
-                        if (body.contains("Camel")) {
-                            Thread.sleep(2000);
-                        }
-                    }
-                });
+                from("sjms:topic:in.out.topic.InOutConsumerTopicTest?exchangePattern=InOut")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = (String) exchange.getIn().getBody();
+                                if (body.contains("Camel")) {
+                                    Thread.sleep(2000);
+                                }
+                            }
+                        });
             }
         };
     }
-
 }

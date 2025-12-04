@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Optional;
@@ -41,5 +42,4 @@ public interface PeriodTaskResolver {
      * @return      a newly created instance (if exists)
      */
     <T> Optional<T> newInstance(String key, Class<T> type);
-
 }

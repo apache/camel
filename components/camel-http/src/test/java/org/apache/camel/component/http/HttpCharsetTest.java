@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.POST;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.POST;
 
 public class HttpCharsetTest extends BaseHttpTest {
 
@@ -36,10 +37,13 @@ public class HttpCharsetTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).create();
+                .register("/", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -53,33 +57,30 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendCharsetInExchangeProperty() {
-        Exchange exchange = template.request(
-                "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
-                    exchange1.getIn().setBody(getBody());
-                });
+        Exchange exchange = template.request("http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
+            exchange1.getIn().setBody(getBody());
+        });
 
         assertExchange(exchange);
     }
 
     @Test
     public void sendByteArrayCharsetInExchangeProperty() {
-        Exchange exchange = template.request(
-                "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
-                    exchange1.getIn().setBody(getBody().getBytes(charset));
-                });
+        Exchange exchange = template.request("http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
+            exchange1.getIn().setBody(getBody().getBytes(charset));
+        });
 
         assertExchange(exchange);
     }
 
     @Test
     public void sendInputStreamCharsetInExchangeProperty() {
-        Exchange exchange = template.request(
-                "http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
-                    exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
-                    exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
-                });
+        Exchange exchange = template.request("http://localhost:" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain;charset=iso8859-1");
+            exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
+        });
 
         assertExchange(exchange);
     }
@@ -91,9 +92,9 @@ public class HttpCharsetTest extends BaseHttpTest {
         char latinSmallLetterSharpS = 0x00DF;
 
         return "hl=de&q=camel+"
-               + latinSmallLetterAWithDiaeresis
-               + latinSmallLetterOWithDiaeresis
-               + latinSmallLetterUWithDiaeresis
-               + latinSmallLetterSharpS;
+                + latinSmallLetterAWithDiaeresis
+                + latinSmallLetterOWithDiaeresis
+                + latinSmallLetterUWithDiaeresis
+                + latinSmallLetterSharpS;
     }
 }

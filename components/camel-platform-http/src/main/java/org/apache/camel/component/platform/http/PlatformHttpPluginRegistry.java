@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import java.util.Comparator;
@@ -41,19 +42,22 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(PlatformHttpPluginRegistry.class);
 
-    private static final String PLATFORM_HTTP_PLUGIN_FACTORY_PATH
-            = "META-INF/services/org/apache/camel/platform-http/";
+    private static final String PLATFORM_HTTP_PLUGIN_FACTORY_PATH = "META-INF/services/org/apache/camel/platform-http/";
 
     private CamelContext camelContext;
     private final Set<PlatformHttpPlugin> plugins = new TreeSet<>(Comparator.comparing(PlatformHttpPlugin::getId));
 
     @Override
     public <T extends PlatformHttpPlugin> Optional<T> resolvePluginById(String id, Class<T> type) {
-        PlatformHttpPlugin answer = plugins.stream().filter(plugin -> plugin.getId().equals(id)).findFirst()
-                .orElse(getCamelContext().getRegistry().findByTypeWithName(PlatformHttpPlugin.class).get(id));
+        PlatformHttpPlugin answer = plugins.stream()
+                .filter(plugin -> plugin.getId().equals(id))
+                .findFirst()
+                .orElse(getCamelContext()
+                        .getRegistry()
+                        .findByTypeWithName(PlatformHttpPlugin.class)
+                        .get(id));
         if (answer == null) {
             answer = resolvePluginWithFactoryFinderById(id);
-
         }
         if (answer != null) {
             register(answer);
@@ -77,9 +81,7 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
     }
 
     private Optional<PlatformHttpPlugin> getPlugin(String id) {
-        return plugins.stream()
-                .filter(r -> ObjectHelper.equal(r.getId(), id))
-                .findFirst();
+        return plugins.stream().filter(r -> ObjectHelper.equal(r.getId(), id)).findFirst();
     }
 
     @Override
@@ -95,22 +97,21 @@ public class PlatformHttpPluginRegistry extends ServiceSupport
     private PlatformHttpPlugin resolvePluginWithFactoryFinderById(String id) {
         PlatformHttpPlugin answer = null;
 
-        FactoryFinder factoryFinder
-                = getCamelContext().getCamelContextExtension().getBootstrapFactoryFinder(PLATFORM_HTTP_PLUGIN_FACTORY_PATH);
+        FactoryFinder factoryFinder = getCamelContext()
+                .getCamelContextExtension()
+                .getBootstrapFactoryFinder(PLATFORM_HTTP_PLUGIN_FACTORY_PATH);
         Class<?> type = factoryFinder.findOptionalClass(id).orElse(null);
         if (type != null) {
             if (PlatformHttpPlugin.class.isAssignableFrom(type)) {
                 answer = (PlatformHttpPlugin) camelContext.getInjector().newInstance(type, false);
                 CamelContextAware.trySetCamelContext(answer, camelContext);
             } else {
-                throw new IllegalArgumentException(
-                        "Resolving platform-http-plugin: " + id
-                                                   + " detected type conflict: Not a PlatformHttpPlugin implementation. Found: "
-                                                   + type.getName());
+                throw new IllegalArgumentException("Resolving platform-http-plugin: " + id
+                        + " detected type conflict: Not a PlatformHttpPlugin implementation. Found: "
+                        + type.getName());
             }
         }
 
         return answer;
     }
-
 }

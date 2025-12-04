@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.spi.CamelEvent;
@@ -33,8 +34,6 @@ public class MyLoggingSentEventNotifer extends EventNotifierSupport {
         if (event instanceof ExchangeSentEvent sent) {
             LOG.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
         }
-
     }
-
 }
 // END SNIPPET: e1

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.security.PrivateKey;
@@ -40,8 +41,9 @@ public class AS2ServerTwoConsumerSecEncryptedIT extends AS2ServerTwoConsumerBase
 
     // verify message types that fail with insufficient security due to lack of encryption
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = { "PLAIN", "SIGNED", "PLAIN_COMPRESSED", "COMPRESSED_SIGNED", "SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {"PLAIN", "SIGNED", "PLAIN_COMPRESSED", "COMPRESSED_SIGNED", "SIGNED_COMPRESSED"})
     public void insufficientEncryptionFailureTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = sendToConsumerB(messageStructure);
         verifyOkResponse(context);
@@ -50,10 +52,15 @@ public class AS2ServerTwoConsumerSecEncryptedIT extends AS2ServerTwoConsumerBase
 
     // verify message types that are successfully decrypted
     @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = {
-                        "ENCRYPTED", "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED", "ENCRYPTED_COMPRESSED_SIGNED",
-                        "ENCRYPTED_SIGNED_COMPRESSED" })
+    @EnumSource(
+            value = AS2MessageStructure.class,
+            names = {
+                "ENCRYPTED",
+                "SIGNED_ENCRYPTED",
+                "ENCRYPTED_COMPRESSED",
+                "ENCRYPTED_COMPRESSED_SIGNED",
+                "ENCRYPTED_SIGNED_COMPRESSED"
+            })
     public void successfullyProcessedTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = sendToConsumerB(messageStructure);
         verifyOkResponse(context);

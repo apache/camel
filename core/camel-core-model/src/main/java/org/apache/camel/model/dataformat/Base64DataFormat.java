@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,9 +38,11 @@ public class Base64DataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "76", javaType = "java.lang.Integer")
     private String lineLength;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String lineSeparator;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String urlSafe;

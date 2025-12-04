@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,15 +38,16 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     @XmlAttribute(required = true)
     private String type;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String mandatory;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String charset;
 
-    public ConvertBodyDefinition() {
-    }
+    public ConvertBodyDefinition() {}
 
     protected ConvertBodyDefinition(ConvertBodyDefinition source) {
         super(source);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
@@ -65,7 +66,8 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      * @param  value the value to be converted
      * @return       the converted value, or <tt>null</tt> if not possible to convert
      */
-    default <T> T tryConvertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {
+    default <T> T tryConvertTo(Class<?> from, Class<T> to, Exchange exchange, Object value)
+            throws TypeConversionException {
         try {
             Object t = convertTo(from, to, exchange, value);
             if (t == Void.class) {

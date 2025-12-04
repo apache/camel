@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
@@ -29,9 +30,12 @@ public class GetItemCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        GetItemResponse result = ddbClient.getItem(GetItemRequest.builder().key(determineKey()).tableName(determineTableName())
+        GetItemResponse result = ddbClient.getItem(GetItemRequest.builder()
+                .key(determineKey())
+                .tableName(determineTableName())
                 .attributesToGet(determineAttributeNames())
-                .consistentRead(determineConsistentRead()).build());
+                .consistentRead(determineConsistentRead())
+                .build());
         addAttributesToResult(result.item());
     }
 }

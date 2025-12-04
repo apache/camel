@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.common.models;
 
 public class ServiceKeys {
     private String accessKey;
     private String secretKey;
 
-    public ServiceKeys() {
-    }
+    public ServiceKeys() {}
 
     public ServiceKeys(String accessKey, String secretKey) {
         this.accessKey = accessKey;

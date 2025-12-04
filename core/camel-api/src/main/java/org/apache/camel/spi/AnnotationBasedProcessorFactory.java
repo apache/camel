@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.AsyncProcessor;
@@ -47,5 +48,4 @@ public interface AnnotationBasedProcessorFactory {
      * Creates routing slip processor from the configured annotation.
      */
     AsyncProcessor createRoutingSlip(CamelContext camelContext, RoutingSlip annotation);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.config;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -28,5 +29,4 @@ public abstract class ResequencerConfig {
      * Makes a copy of this definition.
      */
     public abstract ResequencerConfig copyDefinition();
-
 }

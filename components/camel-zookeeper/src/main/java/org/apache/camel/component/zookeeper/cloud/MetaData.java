@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud;
 
 import java.util.HashMap;
@@ -24,8 +25,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("meta")
 @Deprecated
 public class MetaData extends HashMap<String, String> {
-    public MetaData() {
-    }
+    public MetaData() {}
 
     public MetaData(Map<? extends String, ? extends String> meta) {
         super(meta);

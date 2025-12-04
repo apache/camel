@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.File;
@@ -135,8 +136,10 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
         CamelBeanPostProcessor postProcessor = PluginHelper.getBeanPostProcessor(camelContext);
         // prepare the directly configured instances
         for (Object configuration : configs) {
-            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
-            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessBeforeInitialization(
+                    configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(
+                    configuration, configuration.getClass().getName());
         }
         // invoke configure on configurations
         for (CamelConfiguration config : configs) {
@@ -147,9 +150,10 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
     protected void basePackageScanQuarkus(String... basePackage) throws Exception {
         // we only want to scan via isolated classloader
         PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);
-        Set<Class<?>> found
-                = pscr.findByFilter(c -> AnnotationHelper.hasAnnotation(c, "jakarta.enterprise.context.ApplicationScoped")
-                        || AnnotationHelper.hasAnnotation(c, "jakarta.inject.Singleton"), basePackage);
+        Set<Class<?>> found = pscr.findByFilter(
+                c -> AnnotationHelper.hasAnnotation(c, "jakarta.enterprise.context.ApplicationScoped")
+                        || AnnotationHelper.hasAnnotation(c, "jakarta.inject.Singleton"),
+                basePackage);
         for (Class<?> clazz : found) {
             // avoid duplicate if we scan other JARs that can same class from previous downloads
             String fqn = clazz.getName();
@@ -181,9 +185,10 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
     protected void basePackageScanSpring(String... basePackage) throws Exception {
         // we only want to scan via isolated classloader
         PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);
-        Set<Class<?>> found
-                = pscr.findByFilter(c -> AnnotationHelper.hasAnnotation(c, "org.springframework.stereotype.Component")
-                        || AnnotationHelper.hasAnnotation(c, "org.springframework.stereotype.Service"), basePackage);
+        Set<Class<?>> found = pscr.findByFilter(
+                c -> AnnotationHelper.hasAnnotation(c, "org.springframework.stereotype.Component")
+                        || AnnotationHelper.hasAnnotation(c, "org.springframework.stereotype.Service"),
+                basePackage);
         for (Class<?> clazz : found) {
             // avoid duplicate if we scan other JARs that can same class from previous downloads
             String fqn = clazz.getName();
@@ -216,7 +221,8 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
         }
     }
 
-    private static void bindBean(CamelContext context, Class<?> type, String name, Supplier<Object> supplier, String kind) {
+    private static void bindBean(
+            CamelContext context, Class<?> type, String name, Supplier<Object> supplier, String kind) {
         // to support hot reloading of beans then we need to enable unbind mode in bean post processor
         Registry registry = context.getRegistry();
         CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(context);
@@ -232,5 +238,4 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
             bpp.setUnbindEnabled(false);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.lang.annotation.Annotation;
@@ -32,8 +33,10 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation,
-            LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
         String xQuery = getExpressionFromAnnotation(annotation);
         XQueryBuilder builder = XQueryBuilder.xquery(xQuery);
         if (annotation instanceof XQuery) {
@@ -83,5 +86,4 @@ public class XQueryAnnotationExpressionFactory extends DefaultAnnotationExpressi
         }
         return answer;
     }
-
 }

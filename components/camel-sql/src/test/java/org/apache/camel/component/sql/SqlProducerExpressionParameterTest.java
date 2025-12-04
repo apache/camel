@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +32,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerExpressionParameterTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
@@ -42,14 +43,12 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase.sql")
                 .build();
-
     }
 
     @Override
@@ -68,7 +67,8 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
 
         result.assertIsSatisfied();
 
-        List<?> received = assertIsInstanceOf(List.class, result.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, result.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(2, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row.get("PROJECT"));
@@ -84,7 +84,8 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
 
         resultSimple.assertIsSatisfied();
 
-        List<?> received = assertIsInstanceOf(List.class, resultSimple.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, resultSimple.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Linux", row.get("PROJECT"));
@@ -96,11 +97,13 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:start").to("sql:select * from projects where license = :#${exchangeProperty.license} order by id")
+                from("direct:start")
+                        .to("sql:select * from projects where license = :#${exchangeProperty.license} order by id")
                         .to("mock:result");
 
                 from("direct:start-simple")
-                        .to("sql:select * from projects where license = :#$simple{exchangeProperty.license} order by id")
+                        .to(
+                                "sql:select * from projects where license = :#$simple{exchangeProperty.license} order by id")
                         .to("mock:result-simple");
             }
         };

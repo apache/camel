@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
 
@@ -62,21 +63,23 @@ public class HttpStreamCacheFileIssueTest extends BaseJettyTest {
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
-                from("direct:start").to("http://localhost:{{port}}/myserver").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // there should be a temp cache file
-                        String[] files = testDirectory.list();
-                        assertTrue(files.length > 0, "There should be a temp cache file");
-                    }
-                })
+                from("direct:start")
+                        .to("http://localhost:{{port}}/myserver")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // there should be a temp cache file
+                                String[] files = testDirectory.list();
+                                assertTrue(files.length > 0, "There should be a temp cache file");
+                            }
+                        })
                         // TODO: CAMEL-3839: need to convert the body to a String as
                         // the tmp file will be deleted
                         // before the producer template can convert the result back
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
                 from("jetty://http://localhost:{{port}}/myserver").transform().constant(body);
             }
         };
     }
-
 }

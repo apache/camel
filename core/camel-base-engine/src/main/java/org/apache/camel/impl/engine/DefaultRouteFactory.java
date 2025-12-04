@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -30,9 +31,14 @@ public class DefaultRouteFactory implements RouteFactory {
 
     @Override
     public Route createRoute(
-            CamelContext camelContext, NamedNode routeDefinition, String routeId,
-            String routeDescription, String routeNote,
-            Endpoint endpoint, Resource resource) {
-        return new DefaultRoute(camelContext, routeDefinition, routeId, routeDescription, routeNote, endpoint, resource);
+            CamelContext camelContext,
+            NamedNode routeDefinition,
+            String routeId,
+            String routeDescription,
+            String routeNote,
+            Endpoint endpoint,
+            Resource resource) {
+        return new DefaultRoute(
+                camelContext, routeDefinition, routeId, routeDescription, routeNote, endpoint, resource);
     }
 }

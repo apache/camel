@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.tx;
 
 import org.apache.camel.Exchange;
@@ -33,10 +34,14 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
         port = AvailablePortFinder.getNextAvailable();
 
         // if its a 404 then regard it as handled
-        onException(HttpOperationFailedException.class).onWhen(exchange -> {
-            HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
-            return e != null && e.getStatusCode() == 404;
-        }).handled(true).to("mock:404").transform(constant(noAccess));
+        onException(HttpOperationFailedException.class)
+                .onWhen(exchange -> {
+                    HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
+                    return e != null && e.getStatusCode() == 404;
+                })
+                .handled(true)
+                .to("mock:404")
+                .transform(constant(noAccess));
 
         from("activemq:queue:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
                 // must setup policy to indicate transacted route
@@ -49,7 +54,8 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
                 // do a choice if the response is okay or not
                 .choice()
                 // do a xpath to compare if the status is NOT okay
-                .when().xpath("/reply/status != 'ok'")
+                .when()
+                .xpath("/reply/status != 'ok'")
                 // as this is based on an unit test we use mocks to verify how many times we did rollback
                 .to("mock:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
                 // response is not okay so force a rollback
@@ -84,5 +90,4 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             exchange.getMessage().setBody(ok);
         });
     }
-
 }

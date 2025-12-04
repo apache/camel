@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 
@@ -28,8 +31,6 @@ import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test that uses a dynamic proxy for CustomerService to send a request as SOAP and work with a static return SOAP
@@ -59,10 +60,11 @@ public class SoapClientTest extends CamelTestSupport {
                 ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
                 SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
                 final InputStream in = this.getClass().getResourceAsStream("response.xml");
-                from("direct:start").marshal(soapDataFormat).process(new FileReplyProcessor(in))
+                from("direct:start")
+                        .marshal(soapDataFormat)
+                        .process(new FileReplyProcessor(in))
                         .unmarshal(soapDataFormat);
             }
         };
     }
-
 }

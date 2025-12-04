@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -50,7 +51,8 @@ public class KameletBeanWithParametrizedConstructorTest extends CamelTestSupport
                 routeTemplate("salute")
                         .templateParameter("name")
                         .templateParameter("message")
-                        .templateBean("myBean", "#class:org.apache.camel.component.kamelet.MyBean({{message}}, {{name}})")
+                        .templateBean(
+                                "myBean", "#class:org.apache.camel.component.kamelet.MyBean({{message}}, {{name}})")
                         .from("kamelet:source")
                         .to("bean:{{myBean}}?method=salute");
 

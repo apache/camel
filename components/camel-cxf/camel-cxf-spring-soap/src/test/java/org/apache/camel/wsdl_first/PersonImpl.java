@@ -14,28 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.wsdl_first;
 
 import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 
-@WebService(serviceName = "PersonService",
-            targetNamespace = "http://camel.apache.org/wsdl-first",
-            endpointInterface = "org.apache.camel.wsdl_first.Person")
+@WebService(
+        serviceName = "PersonService",
+        targetNamespace = "http://camel.apache.org/wsdl-first",
+        endpointInterface = "org.apache.camel.wsdl_first.Person")
 public class PersonImpl implements Person {
 
-    public void getPerson(
-            Holder<String> personId, Holder<String> ssn,
-            Holder<String> name)
-            throws UnknownPersonFault {
+    public void getPerson(Holder<String> personId, Holder<String> ssn, Holder<String> name) throws UnknownPersonFault {
         if (personId.value == null || personId.value.length() == 0) {
-            org.apache.camel.wsdl_first.types.UnknownPersonFault fault
-                    = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
+            org.apache.camel.wsdl_first.types.UnknownPersonFault fault =
+                    new org.apache.camel.wsdl_first.types.UnknownPersonFault();
             fault.setPersonId(personId.value);
             throw new UnknownPersonFault("Get the null value of person name", fault);
         }
         name.value = "Bonjour";
         ssn.value = "000-000-0000";
     }
-
 }

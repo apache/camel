@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,42 +31,61 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean enabled;
+
     @Metadata(label = "advanced")
     private String provider;
+
     @Metadata(label = "advanced", defaultValue = "TLSv1.3")
     private String secureSocketProtocol;
+
     @Metadata(label = "advanced")
     private String certAlias;
+
     @Metadata(label = "advanced", defaultValue = "86400")
     private int sessionTimeout;
+
     @Metadata(label = "advanced")
     private String cipherSuites;
+
     @Metadata(label = "advanced")
     private String cipherSuitesInclude;
+
     @Metadata(label = "advanced")
     private String cipherSuitesExclude;
+
     @Metadata
     private String keyStore;
+
     @Metadata(label = "advanced")
     private String keyStoreType;
+
     @Metadata(label = "advanced")
     private String keyStoreProvider;
+
     @Metadata
     private String keystorePassword;
+
     @Metadata
     private String trustStore;
+
     @Metadata
     private String trustStorePassword;
+
     @Metadata
     private boolean trustAllCertificates;
+
     @Metadata(label = "advanced")
     private String keyManagerAlgorithm;
+
     @Metadata(label = "advanced")
     private String keyManagerProvider;
+
     @Metadata(label = "advanced")
     private String secureRandomAlgorithm;
+
     @Metadata(label = "advanced")
     private String secureRandomProvider;
+
     @Metadata(defaultValue = "NONE", enums = "NONE,WANT,REQUIRE")
     private String clientAuthentication = "NONE";
 
@@ -549,5 +569,4 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
         this.clientAuthentication = clientAuthentication;
         return this;
     }
-
 }

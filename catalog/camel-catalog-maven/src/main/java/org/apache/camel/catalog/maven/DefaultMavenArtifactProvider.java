@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
+
+import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
+import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
+import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentProperties;
+import static org.slf4j.helpers.NOPLogger.NOP_LOGGER;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -31,11 +37,6 @@ import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.eclipse.aether.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
-import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
-import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentProperties;
-import static org.slf4j.helpers.NOPLogger.NOP_LOGGER;
 
 /**
  * Default {@link MavenArtifactProvider} which uses Groovy Grape to download the artifact.
@@ -82,8 +83,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     @Override
     public Set<String> addArtifactToCatalog(
-            CamelCatalog camelCatalog,
-            String groupId, String artifactId, String version) {
+            CamelCatalog camelCatalog, String groupId, String artifactId, String version) {
         final Set<String> names = new LinkedHashSet<>();
 
         try {
@@ -91,7 +91,8 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             if (localRepository != null) {
                 logger.debug("Using cache directory: {}", localRepository);
                 // customize only local repository
-                mavenDownloader = mavenDownloader.customize(localRepository,
+                mavenDownloader = mavenDownloader.customize(
+                        localRepository,
                         ConfigurationProperties.DEFAULT_CONNECT_TIMEOUT,
                         ConfigurationProperties.DEFAULT_REQUEST_TIMEOUT);
             }
@@ -104,9 +105,8 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 }
                 String gav = String.format("%s:%s:%s", groupId, artifactId, version);
                 Set<String> extraRepositories = new LinkedHashSet<>(repositories.values());
-                List<MavenArtifact> artifacts
-                        = mavenDownloader.resolveArtifacts(Collections.singletonList(gav), extraRepositories,
-                                false, version.contains("SNAPSHOT"));
+                List<MavenArtifact> artifacts = mavenDownloader.resolveArtifacts(
+                        Collections.singletonList(gav), extraRepositories, false, version.contains("SNAPSHOT"));
 
                 for (MavenArtifact ma : artifacts) {
                     classLoader.addURL(ma.getFile().toURI().toURL());
@@ -119,8 +119,13 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             }
 
         } catch (Exception e) {
-            logger.warn("Error during add components from artifact {}:{}:{} due {}", groupId, artifactId, version,
-                    e.getMessage(), e);
+            logger.warn(
+                    "Error during add components from artifact {}:{}:{} due {}",
+                    groupId,
+                    artifactId,
+                    version,
+                    e.getMessage(),
+                    e);
         }
 
         return names;
@@ -152,5 +157,4 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             }
         }
     }
-
 }

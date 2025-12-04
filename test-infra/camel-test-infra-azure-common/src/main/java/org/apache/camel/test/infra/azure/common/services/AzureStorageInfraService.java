@@ -46,7 +46,8 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     }
 
     protected AzuriteContainer initContainer(String imageName) {
-        return new AzuriteContainer(imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass().getSuperclass()));
+        return new AzuriteContainer(
+                imageName, ContainerEnvironmentUtil.isFixedPort(this.getClass().getSuperclass()));
     }
 
     public AzuriteContainer getContainer() {
@@ -54,8 +55,10 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     }
 
     public void registerProperties() {
-        System.setProperty(AzureConfigs.ACCOUNT_NAME, container.azureCredentials().accountName());
-        System.setProperty(AzureConfigs.ACCOUNT_KEY, container.azureCredentials().accountKey());
+        System.setProperty(
+                AzureConfigs.ACCOUNT_NAME, container.azureCredentials().accountName());
+        System.setProperty(
+                AzureConfigs.ACCOUNT_KEY, container.azureCredentials().accountKey());
         System.setProperty(AzureConfigs.HOST, container.getHost());
     }
 
@@ -63,9 +66,13 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     public void initialize() {
         container.start();
 
-        LOG.info("Azurite local blob service running at address {}:{}", container.getHost(),
+        LOG.info(
+                "Azurite local blob service running at address {}:{}",
+                container.getHost(),
                 container.getMappedPort(AzureServices.BLOB_SERVICE));
-        LOG.info("Azurite local queue service running at address {}:{}", container.getHost(),
+        LOG.info(
+                "Azurite local queue service running at address {}:{}",
+                container.getHost(),
                 container.getMappedPort(AzureServices.QUEUE_SERVICE));
 
         registerProperties();

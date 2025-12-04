@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.lang.reflect.Field;
@@ -89,13 +90,12 @@ public abstract class ApiMethodPropertiesHelper<C> {
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             final String key = entry.getKey();
             if (key.startsWith(propertyPrefix)) {
-                properties.put(key.substring(prefixLength),
-                        entry.getValue());
+                properties.put(key.substring(prefixLength), entry.getValue());
                 nProperties++;
             } else if (camelCasePrefix != null && key.startsWith(camelCasePrefix)) {
                 // assuming all property names start with a lowercase character
-                final String propertyName = Character.toLowerCase(key.charAt(prefixLength - 1))
-                                            + key.substring(prefixLength);
+                final String propertyName =
+                        Character.toLowerCase(key.charAt(prefixLength - 1)) + key.substring(prefixLength);
                 properties.put(propertyName, entry.getValue());
                 nProperties++;
             }
@@ -104,15 +104,15 @@ public abstract class ApiMethodPropertiesHelper<C> {
         return properties;
     }
 
-    public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
+    public void getEndpointProperties(
+            CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
             useGetters(endpointConfiguration, properties, getter);
         } else {
-            PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties,
-                    null, false);
+            PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties, null, false);
         }
         // remove component config properties so we only have endpoint properties
         for (String key : componentConfigFields) {
@@ -151,15 +151,15 @@ public abstract class ApiMethodPropertiesHelper<C> {
         return Collections.unmodifiableSet(fields);
     }
 
-    public void getConfigurationProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
+    public void getConfigurationProperties(
+            CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter getter) {
             useGetters(endpointConfiguration, properties, getter);
         } else {
-            PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties,
-                    null, false);
+            PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties, null, false);
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found configuration properties {}", properties.keySet());
@@ -179,5 +179,4 @@ public abstract class ApiMethodPropertiesHelper<C> {
             }
         }
     }
-
 }

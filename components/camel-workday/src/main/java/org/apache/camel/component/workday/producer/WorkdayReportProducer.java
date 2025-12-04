@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday.producer;
 
 import java.util.Map;
@@ -39,7 +40,9 @@ public class WorkdayReportProducer extends WorkdayDefaultProducer {
         StringBuilder stringBuilder = new StringBuilder(configuration.getPath());
         stringBuilder.append("?");
         if (parameters.size() > 0) {
-            String params = parameters.keySet().stream().map(k -> k + "=" + parameters.get(k)).collect(Collectors.joining("&"));
+            String params = parameters.keySet().stream()
+                    .map(k -> k + "=" + parameters.get(k))
+                    .collect(Collectors.joining("&"));
             stringBuilder.append(params);
             stringBuilder.append("&");
         }
@@ -47,8 +50,10 @@ public class WorkdayReportProducer extends WorkdayDefaultProducer {
         stringBuilder.append("format=");
         stringBuilder.append(configuration.getReportFormat());
 
-        return String.format(WORKDAY_RASS_URL_TEMPLATE, configuration.getHost(), configuration.getTenant(),
+        return String.format(
+                WORKDAY_RASS_URL_TEMPLATE,
+                configuration.getHost(),
+                configuration.getTenant(),
                 stringBuilder.toString());
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,16 +35,11 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.Server.Status;
 import org.openstack4j.model.compute.ServerCreate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class OpenstackNovaServerTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-nova://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + NovaConstants.NOVA_SUBSYSTEM_SERVERS;
+    private static final String URI_FORMAT =
+            "openstack-nova://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + NovaConstants.NOVA_SUBSYSTEM_SERVERS;
 
     private static final String SERVER_NAME = "server-test-1";
     private static final String SERVER_ID = "e565cbdb-8e74-4044-ba6e-0155500b2c46";
@@ -73,7 +74,8 @@ public class OpenstackNovaServerTest extends OpenstackWiremockTestSupport {
     void getWrongIdShouldThrow() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.GET);
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, SERVER_WRONG_ID, Server.class),
                 "Getting nova server with wrong id should throw");
 
@@ -88,9 +90,10 @@ public class OpenstackNovaServerTest extends OpenstackWiremockTestSupport {
         assertNotNull(servers);
         assertEquals(1, servers.length);
         assertEquals(1, servers[0].getAddresses().getAddresses("private").size());
-        assertEquals("192.168.0.3", servers[0].getAddresses().getAddresses("private").get(0).getAddr());
+        assertEquals(
+                "192.168.0.3",
+                servers[0].getAddresses().getAddresses("private").get(0).getAddr());
         assertEquals(Status.ACTIVE, servers[0].getStatus());
         assertEquals("new-server-test", servers[0].getName());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,6 +35,7 @@ public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractC
 
     @XmlTransient
     private ConsumerTemplate template;
+
     @XmlAttribute
     @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
     private Integer maximumCacheSize;

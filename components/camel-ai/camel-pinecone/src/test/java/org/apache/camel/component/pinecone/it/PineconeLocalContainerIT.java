@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone.it;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.pinecone.PineconeTestSupport;
@@ -24,10 +27,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "pinecone.token", matches = ".*", disabledReason = "Pinecone token not provided"),
+    @DisabledIfSystemProperty(named = "pinecone.token", matches = ".*", disabledReason = "Pinecone token not provided"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PineconeLocalContainerIT extends PineconeTestSupport {
@@ -36,10 +37,10 @@ public class PineconeLocalContainerIT extends PineconeTestSupport {
     @Order(1)
     public void createServerlessIndex() {
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token=pclocal")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token=pclocal")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
-                .withBody(
-                        "hello")
+                .withBody("hello")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, "cosine")
                 .withHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, 3)
@@ -58,15 +59,14 @@ public class PineconeLocalContainerIT extends PineconeTestSupport {
     @Order(6)
     public void deleteIndex() {
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token=pclocal")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token=pclocal")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.DELETE_INDEX)
-                .withBody(
-                        "test")
+                .withBody("test")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
     }
-
 }

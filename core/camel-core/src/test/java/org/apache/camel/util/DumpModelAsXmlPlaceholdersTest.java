@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -22,14 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
+        String xml =
+                PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
         assertNotNull(xml);
         log.info(xml);
         assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/xml-io\" id=\"Gouda\">"));
@@ -38,12 +40,14 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
     }
 
     @Override
-
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start-{{cheese.type}}").routeId("{{cheese.type}}").to("direct:end-{{cheese.type}}").id("log");
+                from("direct:start-{{cheese.type}}")
+                        .routeId("{{cheese.type}}")
+                        .to("direct:end-{{cheese.type}}")
+                        .id("log");
             }
         };
     }
@@ -51,8 +55,8 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         return context;
     }
-
 }

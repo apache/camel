@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes;
 
 public final class KubernetesOperations {
@@ -58,7 +59,8 @@ public final class KubernetesOperations {
 
     // Persistent Volumes Claims
     public static final String LIST_PERSISTENT_VOLUMES_CLAIMS = "listPersistentVolumesClaims";
-    public static final String LIST_PERSISTENT_VOLUMES_CLAIMS_BY_LABELS_OPERATION = "listPersistentVolumesClaimsByLabels";
+    public static final String LIST_PERSISTENT_VOLUMES_CLAIMS_BY_LABELS_OPERATION =
+            "listPersistentVolumesClaimsByLabels";
     public static final String GET_PERSISTENT_VOLUME_CLAIM_OPERATION = "getPersistentVolumeClaim";
     public static final String CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION = "createPersistentVolumeClaim";
     public static final String UPDATE_PERSISTENT_VOLUME_CLAIM_OPERATION = "updatePersistentVolumeClaim";
@@ -172,7 +174,5 @@ public final class KubernetesOperations {
     public static final String UPDATE_DEPLOYMENT_CONFIG = "updateDeploymentConfig";
     public static final String SCALE_DEPLOYMENT_CONFIG = "scaleDeploymentConfig";
 
-    private KubernetesOperations() {
-
-    }
+    private KubernetesOperations() {}
 }

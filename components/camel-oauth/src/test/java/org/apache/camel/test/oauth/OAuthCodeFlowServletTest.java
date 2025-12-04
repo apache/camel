@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.oauth;
+
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_LOGOUT_REDIRECT_URI;
+import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 
 import io.undertow.Undertow;
 import org.apache.camel.CamelContext;
@@ -26,12 +33,6 @@ import org.apache.camel.oauth.OAuthLogoutProcessor;
 import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_BASE_URI;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_LOGOUT_REDIRECT_URI;
-import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 
 /**
  * Test OIDC CodeFlow for a simple WebApp deployed on servlet
@@ -73,12 +74,9 @@ class OAuthCodeFlowServletTest extends AbstractOAuthCodeFlowTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("servlet:/")
-                        .setBody(simple("resource:classpath:index.html"));
-                from("servlet:/static/styles.css")
-                        .setBody(simple("resource:classpath:styles.css"));
-                from("servlet:/auth")
-                        .process(new OAuthCodeFlowCallback());
+                from("servlet:/").setBody(simple("resource:classpath:index.html"));
+                from("servlet:/static/styles.css").setBody(simple("resource:classpath:styles.css"));
+                from("servlet:/auth").process(new OAuthCodeFlowCallback());
                 from("servlet:/protected")
                         .process(new OAuthCodeFlowProcessor())
                         .setBody(simple("resource:classpath:protected.html"));

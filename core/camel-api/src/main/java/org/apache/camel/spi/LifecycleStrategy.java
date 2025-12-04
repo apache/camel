@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -39,8 +40,7 @@ public interface LifecycleStrategy {
      *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
      *                                        starting itself.
      */
-    default void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
-    }
+    default void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {}
 
     /**
      * Notification on initialized {@link CamelContext}.
@@ -50,8 +50,7 @@ public interface LifecycleStrategy {
      *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
      *                                        starting itself.
      */
-    default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
-    }
+    default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {}
 
     /**
      * Notification on starting a {@link CamelContext}.
@@ -61,32 +60,28 @@ public interface LifecycleStrategy {
      *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
      *                                        starting itself.
      */
-    default void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
-    }
+    default void onContextStarting(CamelContext context) throws VetoCamelContextStartException {}
 
     /**
      * Notification on started {@link CamelContext}.
      *
      * @param context the camel context
      */
-    default void onContextStarted(CamelContext context) {
-    }
+    default void onContextStarted(CamelContext context) {}
 
     /**
      * Notification on stopping a {@link CamelContext}.
      *
      * @param context the camel context
      */
-    default void onContextStopping(CamelContext context) {
-    }
+    default void onContextStopping(CamelContext context) {}
 
     /**
      * Notification on stopped {@link CamelContext}.
      *
      * @param context the camel context
      */
-    default void onContextStopped(CamelContext context) {
-    }
+    default void onContextStopped(CamelContext context) {}
 
     /**
      * Notification on adding an {@link Component}.
@@ -124,8 +119,7 @@ public interface LifecycleStrategy {
      * @param name       the unique name of the {@link DataFormat}
      * @param dataFormat the resolved {@link DataFormat}
      */
-    default void onDataFormatCreated(String name, DataFormat dataFormat) {
-    }
+    default void onDataFormatCreated(String name, DataFormat dataFormat) {}
 
     /**
      * Notification on a {@link Language} instance being resolved.
@@ -133,8 +127,7 @@ public interface LifecycleStrategy {
      * @param name     the unique name of the {@link Language}
      * @param language the created {@link Language}
      */
-    default void onLanguageCreated(String name, Language language) {
-    }
+    default void onLanguageCreated(String name, Language language) {}
 
     /**
      * Notification on adding a {@link Service}.
@@ -198,8 +191,12 @@ public interface LifecycleStrategy {
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     void onThreadPoolAdd(
-            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-            String sourceId, String routeId, String threadPoolProfileId);
+            CamelContext camelContext,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
+            String threadPoolProfileId);
 
     /**
      * Notification on removing a thread pool.
@@ -208,5 +205,4 @@ public interface LifecycleStrategy {
      * @param threadPool   the thread pool
      */
     void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool);
-
 }

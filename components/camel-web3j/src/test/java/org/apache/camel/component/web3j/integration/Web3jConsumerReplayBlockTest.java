@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j.integration;
+
+import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
+import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
-import static org.apache.camel.component.web3j.Web3jConstants.REPLAY_BLOCKS_OBSERVABLE;
 
 @Disabled("Requires Ganache instance with 10 transactions")
 public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
@@ -41,13 +42,12 @@ public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                     + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
-                     + "fromBlock=0&"
-                     + "toBlock=2&"
-                     + "fullTransactionObjects=false")
+                                + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
+                                + "fromBlock=0&"
+                                + "toBlock=2&"
+                                + "fullTransactionObjects=false")
                         .to("mock:result");
             }
         };
     }
-
 }

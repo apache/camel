@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.lang.reflect.Modifier;
@@ -61,15 +62,13 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
     @Override
     public Collection<RoutesBuilder> collectRoutesFromRegistry(
-            CamelContext camelContext,
-            String excludePattern,
-            String includePattern) {
+            CamelContext camelContext, String excludePattern, String includePattern) {
 
         final List<RoutesBuilder> routes = new ArrayList<>();
         final AntPathMatcher matcher = new AntPathMatcher();
 
-        Collection<RoutesBuilder> additional
-                = collectAdditionalRoutesFromRegistry(camelContext, excludePattern, includePattern);
+        Collection<RoutesBuilder> additional =
+                collectAdditionalRoutesFromRegistry(camelContext, excludePattern, includePattern);
         if (additional != null) {
             routes.addAll(additional);
         }
@@ -149,7 +148,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
         // the route may have source code available so attempt to load as resource
         for (RoutesBuilder route : routes) {
             if (route instanceof ResourceAware ra && ra.getResource() == null) {
-                Resource r = ResourceHelper.resolveResource(camelContext, "source:" + route.getClass().getName());
+                Resource r = ResourceHelper.resolveResource(
+                        camelContext, "source:" + route.getClass().getName());
                 if (r != null && r.exists()) {
                     ra.setResource(r);
                 }
@@ -161,9 +161,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
     @Override
     public Collection<RoutesBuilder> collectRoutesFromDirectory(
-            CamelContext camelContext,
-            String excludePattern,
-            String includePattern) {
+            CamelContext camelContext, String excludePattern, String includePattern) {
 
         final List<RoutesBuilder> answer = new ArrayList<>();
         StopWatch watch = new StopWatch();
@@ -198,7 +196,10 @@ public class DefaultRoutesCollector implements RoutesCollector {
         }
 
         if (!answer.isEmpty()) {
-            log.debug("Loaded {} ({} millis) additional RoutesBuilder from: {}", answer.size(), watch.taken(),
+            log.debug(
+                    "Loaded {} ({} millis) additional RoutesBuilder from: {}",
+                    answer.size(),
+                    watch.taken(),
                     includePattern);
         } else {
             log.debug("No additional RoutesBuilder discovered from: {}", includePattern);
@@ -208,8 +209,11 @@ public class DefaultRoutesCollector implements RoutesCollector {
     }
 
     protected void doCollectRoutesFromDirectory(
-            CamelContext camelContext, List<RoutesBuilder> builders,
-            String excludePattern, String includePattern, boolean optional) {
+            CamelContext camelContext,
+            List<RoutesBuilder> builders,
+            String excludePattern,
+            String includePattern,
+            boolean optional) {
         RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
         Collection<Resource> accepted = findRouteResourcesFromDirectory(camelContext, excludePattern, includePattern);
         try {
@@ -229,9 +233,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
     @Override
     public Collection<Resource> findRouteResourcesFromDirectory(
-            CamelContext camelContext,
-            String excludePattern,
-            String includePattern) {
+            CamelContext camelContext, String excludePattern, String includePattern) {
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
         final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;
@@ -250,7 +252,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
             try {
                 for (Resource resource : resolver.findResources(include)) {
                     // filter unwanted resources
-                    if (!"false".equals(excludePattern) && AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
+                    if (!"false".equals(excludePattern)
+                            && AntPathMatcher.INSTANCE.anyMatch(excludes, resource.getLocation())) {
                         continue;
                     }
                     accepted.add(resource);
@@ -272,9 +275,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
      */
     @SuppressWarnings("unused")
     protected Collection<RoutesBuilder> collectAdditionalRoutesFromRegistry(
-            CamelContext camelContext,
-            String excludePattern,
-            String includePattern) {
+            CamelContext camelContext, String excludePattern, String includePattern) {
         return null;
     }
 
@@ -285,5 +286,4 @@ public class DefaultRoutesCollector implements RoutesCollector {
     protected <T> Collection<T> findByType(CamelContext camelContext, Class<T> type) {
         return camelContext.getRegistry().findByType(type);
     }
-
 }

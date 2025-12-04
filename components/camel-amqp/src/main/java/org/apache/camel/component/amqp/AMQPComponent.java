@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
 
 import java.util.Map;
@@ -44,33 +45,44 @@ public class AMQPComponent extends JmsComponent {
     public static final String AMQP_DEFAULT_HOST = "localhost";
     public static final int AMQP_DEFAULT_PORT = 5672;
 
-    @Metadata(description = "Remote URL to broker. The URL is used to setup connection factory and is broker specific (such as ActiveMQ).")
+    @Metadata(
+            description =
+                    "Remote URL to broker. The URL is used to setup connection factory and is broker specific (such as ActiveMQ).")
     private String brokerUrl;
+
     @Metadata(description = "The host name or IP address of the computer that hosts the AMQP Broker.")
     private String host;
+
     @Metadata(description = "The port number on which the AMPQ Broker listens.")
     private Integer port;
+
     @Metadata(description = "Whether to configure topics with a `topic://` prefix.")
     private Boolean useTopicPrefix;
+
     @Metadata(description = "Whether to enable SSL when connecting to the AMQP Broker.")
     private Boolean useSsl;
+
     @Metadata(description = "The SSL keystore location.")
     private String keyStoreLocation;
+
     @Metadata(defaultValue = "JKS", description = "The SSL keystore type.")
     private String keyStoreType = "JKS";
+
     @Metadata(label = "security", secret = true, description = "The SSL keystore password.")
     private String keyStorePassword;
+
     @Metadata(description = "The SSL truststore location.")
     private String trustStoreLocation;
+
     @Metadata(defaultValue = "JKS", description = "The SSL truststore type.")
     private String trustStoreType = "JKS";
+
     @Metadata(label = "security", secret = true, description = "The SSL truststore password.")
     private String trustStorePassword;
 
     // Constructors
 
-    public AMQPComponent() {
-    }
+    public AMQPComponent() {}
 
     public AMQPComponent(JmsConfiguration configuration) {
         super(configuration);
@@ -104,39 +116,46 @@ public class AMQPComponent extends JmsComponent {
     @Override
     protected void doInit() throws Exception {
         if (brokerUrl != null) {
-            JmsConnectionFactory connectionFactory
-                    = new JmsConnectionFactory(brokerUrl);
+            JmsConnectionFactory connectionFactory = new JmsConnectionFactory(brokerUrl);
             if (useTopicPrefix != Boolean.FALSE) {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
-        } else if (host != null || port != null || getUsername() != null || getPassword() != null || useTopicPrefix != null
+        } else if (host != null
+                || port != null
+                || getUsername() != null
+                || getPassword() != null
+                || useTopicPrefix != null
                 || useSsl != null) {
             StringBuilder sb = new StringBuilder();
             sb.append(useSsl == Boolean.TRUE ? "amqps://" : "amqp://");
-            sb.append(host == null ? AMQP_DEFAULT_HOST : host).append(":").append(port == null ? AMQP_DEFAULT_PORT : port);
+            sb.append(host == null ? AMQP_DEFAULT_HOST : host)
+                    .append(":")
+                    .append(port == null ? AMQP_DEFAULT_PORT : port);
             if (useSsl == Boolean.TRUE) {
-                sb.append("?transport.trustStoreLocation=").append(trustStoreLocation == null ? "" : trustStoreLocation);
+                sb.append("?transport.trustStoreLocation=")
+                        .append(trustStoreLocation == null ? "" : trustStoreLocation);
                 sb.append("&transport.trustStoreType=").append(trustStoreType);
-                sb.append("&transport.trustStorePassword=").append(trustStorePassword == null ? "" : trustStorePassword);
+                sb.append("&transport.trustStorePassword=")
+                        .append(trustStorePassword == null ? "" : trustStorePassword);
                 sb.append("&transport.keyStoreLocation=").append(keyStoreLocation == null ? "" : keyStoreLocation);
                 sb.append("&transport.keyStoreType=").append(keyStoreType);
                 sb.append("&transport.keyStorePassword=").append(keyStorePassword == null ? "" : keyStorePassword);
             }
-            JmsConnectionFactory connectionFactory
-                    = new JmsConnectionFactory(getUsername(), getPassword(), sb.toString());
+            JmsConnectionFactory connectionFactory =
+                    new JmsConnectionFactory(getUsername(), getPassword(), sb.toString());
             if (useTopicPrefix != Boolean.FALSE) {
                 connectionFactory.setTopicPrefix("topic://");
             }
             getConfiguration().setConnectionFactory(connectionFactory);
         } else {
-            Set<AMQPConnectionDetails> connectionDetails
-                    = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
+            Set<AMQPConnectionDetails> connectionDetails =
+                    getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
             if (connectionDetails.size() == 1) {
                 LOG.warn("Using AMQPConnectionDetails is deprecated");
                 AMQPConnectionDetails details = connectionDetails.iterator().next();
-                JmsConnectionFactory connectionFactory
-                        = new JmsConnectionFactory(details.username(), details.password(), details.uri());
+                JmsConnectionFactory connectionFactory =
+                        new JmsConnectionFactory(details.username(), details.password(), details.uri());
                 if (details.setTopicPrefix()) {
                     connectionFactory.setTopicPrefix("topic://");
                 }
@@ -189,8 +208,8 @@ public class AMQPComponent extends JmsComponent {
         Object includeAmqpAnnotations = parameters.remove("includeAmqpAnnotations");
         if (includeAmqpAnnotations != null) {
             ((AMQPConfiguration) ((JmsEndpoint) bean).getConfiguration())
-                    .setIncludeAmqpAnnotations(
-                            PropertyConfigurerSupport.property(getCamelContext(), boolean.class, includeAmqpAnnotations));
+                    .setIncludeAmqpAnnotations(PropertyConfigurerSupport.property(
+                            getCamelContext(), boolean.class, includeAmqpAnnotations));
         }
         super.setProperties(bean, parameters);
     }

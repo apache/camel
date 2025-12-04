@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -28,5 +29,4 @@ public class ManagedStep extends ManagedProcessor implements ManagedStepMBean {
     public ManagedStep(CamelContext context, StepProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
-
 }

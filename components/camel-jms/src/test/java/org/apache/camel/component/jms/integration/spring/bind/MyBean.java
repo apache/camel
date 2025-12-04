@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.bind;
 
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.apache.camel.ProducerTemplate;
 public class MyBean {
     private Map<?, ?> headers;
     private String body;
+
     @EndpointInject("mock:result")
     private ProducerTemplate producer;
 

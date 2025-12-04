@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.namespaces;
 
 import java.util.concurrent.ExecutorService;
@@ -85,18 +86,19 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>> w
-                    = getEndpoint().getKubernetesClient().namespaces();
+            NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>> w =
+                    getEndpoint().getKubernetesClient().namespaces();
 
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
             String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
 
             if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
-                w = (NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>>) w.withLabel(labelKey, labelValue);
+                w = (NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>>)
+                        w.withLabel(labelKey, labelValue);
             } else if (ObjectHelper.isNotEmpty(resourceName)) {
-                w = (NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>>) getEndpoint().getKubernetesClient()
-                        .namespaces().withName(resourceName);
+                w = (NonNamespaceOperation<Namespace, NamespaceList, Resource<Namespace>>)
+                        getEndpoint().getKubernetesClient().namespaces().withName(resourceName);
             }
 
             watch = w.watch(new Watcher<>() {
@@ -106,7 +108,8 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {

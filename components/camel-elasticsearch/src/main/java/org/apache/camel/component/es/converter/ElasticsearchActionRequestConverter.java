@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.converter;
 
 import java.io.ByteArrayInputStream;
@@ -55,8 +56,7 @@ public final class ElasticsearchActionRequestConverter {
 
     private static final String ES_QUERY_DSL_PREFIX = "query";
 
-    private ElasticsearchActionRequestConverter() {
-    }
+    private ElasticsearchActionRequestConverter() {}
 
     // Index requests
     private static IndexOperation.Builder<?> createIndexOperationBuilder(Object document, Exchange exchange)
@@ -79,8 +79,7 @@ public final class ElasticsearchActionRequestConverter {
         } else {
             builder.document(document);
         }
-        return builder
-                .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
+        return builder.index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
     }
 
     @Converter
@@ -104,25 +103,24 @@ public final class ElasticsearchActionRequestConverter {
         } else {
             builder.document(document);
         }
-        return builder
-                .waitForActiveShards(
-                        new WaitForActiveShards.Builder()
-                                .count(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS,
-                                        Integer.class))
-                                .build())
+        return builder.waitForActiveShards(new WaitForActiveShards.Builder()
+                        .count(exchange.getIn()
+                                .getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
+                        .build())
                 .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class))
                 .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
     }
 
     @Converter
-    public static UpdateRequest.Builder<?, ?> toUpdateRequestBuilder(Object document, Exchange exchange) throws IOException {
+    public static UpdateRequest.Builder<?, ?> toUpdateRequestBuilder(Object document, Exchange exchange)
+            throws IOException {
         if (document instanceof UpdateRequest.Builder) {
             UpdateRequest.Builder<?, ?> builder = (UpdateRequest.Builder<?, ?>) document;
             return builder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
         }
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
-        Boolean enableDocumentOnlyMode
-                = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.FALSE, Boolean.class);
+        Boolean enableDocumentOnlyMode =
+                exchange.getIn().getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.FALSE, Boolean.class);
         Mode mode = enableDocumentOnlyMode == Boolean.TRUE ? Mode.DOCUMENT_ONLY : Mode.DEFAULT;
         if (document instanceof byte[]) {
             mode.addDocToUpdateRequestBuilder(builder, new ByteArrayInputStream((byte[]) document));
@@ -139,12 +137,10 @@ public final class ElasticsearchActionRequestConverter {
             builder.doc(document);
         }
 
-        return builder
-                .waitForActiveShards(
-                        new WaitForActiveShards.Builder()
-                                .count(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS,
-                                        Integer.class))
-                                .build())
+        return builder.waitForActiveShards(new WaitForActiveShards.Builder()
+                        .count(exchange.getIn()
+                                .getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
+                        .build())
                 .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
                 .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
@@ -211,7 +207,8 @@ public final class ElasticsearchActionRequestConverter {
     }
 
     @Converter
-    public static SearchRequest.Builder toSearchRequestBuilder(Object queryObject, Exchange exchange) throws IOException {
+    public static SearchRequest.Builder toSearchRequestBuilder(Object queryObject, Exchange exchange)
+            throws IOException {
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
 
         if (queryObject instanceof SearchRequest.Builder) {
@@ -279,17 +276,22 @@ public final class ElasticsearchActionRequestConverter {
             builder.index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
             for (Object document : (List<?>) documents) {
                 if (document instanceof DeleteOperation.Builder) {
-                    builder.operations(
-                            new BulkOperation.Builder().delete(((DeleteOperation.Builder) document).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .delete(((DeleteOperation.Builder) document).build())
+                            .build());
                 } else if (document instanceof UpdateOperation.Builder) {
-                    builder.operations(
-                            new BulkOperation.Builder().update(((UpdateOperation.Builder<?, ?>) document).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .update(((UpdateOperation.Builder<?, ?>) document).build())
+                            .build());
                 } else if (document instanceof CreateOperation.Builder) {
-                    builder.operations(
-                            new BulkOperation.Builder().create(((CreateOperation.Builder<?>) document).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .create(((CreateOperation.Builder<?>) document).build())
+                            .build());
                 } else {
-                    builder.operations(
-                            new BulkOperation.Builder().index(createIndexOperationBuilder(document, exchange).build()).build());
+                    builder.operations(new BulkOperation.Builder()
+                            .index(createIndexOperationBuilder(document, exchange)
+                                    .build())
+                            .build());
                 }
             }
             return builder;
@@ -308,7 +310,6 @@ public final class ElasticsearchActionRequestConverter {
             protected void addDocToUpdateRequestBuilder(UpdateRequest.Builder<?, Object> builder, Reader in) {
                 builder.withJson(in);
             }
-
         },
         DOCUMENT_ONLY {
             @Override

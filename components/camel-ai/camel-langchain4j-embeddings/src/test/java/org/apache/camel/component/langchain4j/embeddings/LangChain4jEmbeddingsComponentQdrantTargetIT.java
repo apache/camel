@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,8 +43,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -69,12 +70,13 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
     @Test
     @Order(1)
     public void createCollection() {
-        Exchange result = fluentTemplate.to(QDRANT_URI)
+        Exchange result = fluentTemplate
+                .to(QDRANT_URI)
                 .withHeader(Qdrant.Headers.ACTION, QdrantAction.CREATE_COLLECTION)
-                .withBody(
-                        Collections.VectorParams.newBuilder()
-                                .setSize(384)
-                                .setDistance(Collections.Distance.Cosine).build())
+                .withBody(Collections.VectorParams.newBuilder()
+                        .setSize(384)
+                        .setDistance(Collections.Distance.Cosine)
+                        .build())
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -84,9 +86,7 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
     @Test
     @Order(2)
     public void upsert() {
-        Exchange result = fluentTemplate.to("direct:in")
-                .withBody("hi")
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("direct:in").withBody("hi").request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
@@ -95,7 +95,8 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
     @Test
     @Order(3)
     public void retrieve() {
-        Exchange result = fluentTemplate.to(QDRANT_URI)
+        Exchange result = fluentTemplate
+                .to(QDRANT_URI)
                 .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(POINT_ID))
                 .request(Exchange.class);
@@ -103,20 +104,20 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
+        assertThat(result.getIn().getBody())
+                .isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
     }
 
     @Test
     @Order(4)
     public void rag_similarity_search() {
-        Exchange result = fluentTemplate.to("direct:search")
-                .withBody("hi")
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("direct:search").withBody("hi").request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
+        assertThat(result.getIn().getBody())
+                .isInstanceOfSatisfying(Collection.class, c -> assertThat(c).hasSize(1));
         Assertions.assertTrue(result.getIn().getBody(List.class).contains("hi"));
     }
 
@@ -126,25 +127,24 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(Qdrant.Headers.ACTION).constant(QdrantAction.UPSERT)
-                        .setHeader(Qdrant.Headers.POINT_ID).constant(POINT_ID)
+                        .setHeader(Qdrant.Headers.ACTION)
+                        .constant(QdrantAction.UPSERT)
+                        .setHeader(Qdrant.Headers.POINT_ID)
+                        .constant(POINT_ID)
                         // transform data to embed to a vecto embeddings
-                        .transformDataType(
-                                new DataType("qdrant:embeddings"))
+                        .transformDataType(new DataType("qdrant:embeddings"))
                         .to(QDRANT_URI);
 
                 from("direct:search")
                         .to("langchain4j-embeddings:test")
                         // transform prompt into embeddings for search
-                        .transformDataType(
-                                new DataType("qdrant:embeddings"))
+                        .transformDataType(new DataType("qdrant:embeddings"))
                         .setHeader(Qdrant.Headers.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
                         .setHeader(Qdrant.Headers.INCLUDE_VECTORS, constant(true))
                         .setHeader(Qdrant.Headers.INCLUDE_PAYLOAD, constant(true))
                         .to(QDRANT_URI)
                         // decode retrieved embeddings for RAG
-                        .transformDataType(
-                                new DataType("qdrant:rag"));
+                        .transformDataType(new DataType("qdrant:rag"));
             }
         };
     }

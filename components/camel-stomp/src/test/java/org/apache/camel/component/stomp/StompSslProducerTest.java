@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,10 +31,10 @@ public class StompSslProducerTest extends StompProducerTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:foo")
-                        .toF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
+                        .toF(
+                                "stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
                                 sslServicePort);
             }
         };
     }
-
 }

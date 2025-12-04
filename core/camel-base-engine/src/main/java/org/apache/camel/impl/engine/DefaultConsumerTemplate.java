@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import java.util.List;
 
@@ -31,8 +34,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Default implementation of {@link ConsumerTemplate}.
@@ -218,15 +219,18 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
-                List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
+                List<Synchronization> synchronizations =
+                        exchange.getExchangeExtension().handoverCompletions();
                 UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
             } else {
                 // done the unit of work
                 exchange.getUnitOfWork().done(exchange);
             }
         } catch (Exception e) {
-            LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
-                    exchange, e);
+            LOG.warn(
+                    "Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
+                    exchange,
+                    e);
         }
     }
 
@@ -299,5 +303,4 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         ServiceHelper.stopAndShutdownService(consumerCache);
         consumerCache = null;
     }
-
 }

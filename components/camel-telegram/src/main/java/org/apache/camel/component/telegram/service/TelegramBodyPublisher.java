@@ -56,7 +56,6 @@ public class TelegramBodyPublisher {
         public void serialize(ByteBuffer buffer, String boundary) {
             buffer.put(body.getBytes());
         }
-
     }
 
     public static class MultilineBodyPart<T> implements TelegramBodyPart {
@@ -89,10 +88,11 @@ public class TelegramBodyPublisher {
             String contentDisposition = "Content-Disposition: form-data; ";
 
             // this creates the key-pair part of the content disposition (i.e.: name="myName"; file="myFile.doc")
-            contentDisposition += headers.entrySet()
-                    .stream()
-                    .map(e -> e.getKey().toLowerCase() + "=\"" + e.getValue().toString() + "\"")
-                    .collect(Collectors.joining("; ")) + "\r\n";
+            contentDisposition += headers.entrySet().stream()
+                            .map(e -> e.getKey().toLowerCase() + "=\""
+                                    + e.getValue().toString() + "\"")
+                            .collect(Collectors.joining("; "))
+                    + "\r\n";
             buffer.put(contentDisposition.getBytes());
 
             String contentTypePart = "Content-Type: " + contentType;

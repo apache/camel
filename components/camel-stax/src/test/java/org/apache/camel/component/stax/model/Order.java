@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -30,10 +31,13 @@ public class Order {
 
     @XmlElement(required = true)
     protected String id;
+
     @XmlElement(required = true)
     protected int amount;
+
     @XmlElement(required = true)
     protected int customerId;
+
     @XmlElement(required = true)
     protected String description;
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.Collections;
@@ -41,12 +42,8 @@ public abstract class InfinispanRemoteCustomListener extends InfinispanEventList
 
     protected void processEvent(ClientEvent event) {
         if (isAccepted(event.getType())) {
-            getEventProcessor().processEvent(
-                    event.getType().toString(),
-                    getCacheName(),
-                    getKey(event),
-                    getEventData(event),
-                    null);
+            getEventProcessor()
+                    .processEvent(event.getType().toString(), getCacheName(), getKey(event), getEventData(event), null);
         }
     }
 

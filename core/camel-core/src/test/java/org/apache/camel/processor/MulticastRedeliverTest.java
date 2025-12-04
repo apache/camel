@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -93,9 +94,20 @@ public class MulticastRedeliverTest extends ContextTestSupport {
 
                 from("direct:test1").multicast().stopOnException().to("mock:a").to("mock:b");
 
-                from("direct:test2").multicast().stopOnException().to("mock:a").to("direct:a").to("mock:b");
+                from("direct:test2")
+                        .multicast()
+                        .stopOnException()
+                        .to("mock:a")
+                        .to("direct:a")
+                        .to("mock:b");
 
-                from("direct:test3").multicast().stopOnException().to("mock:a").to("mock:b").to("direct:b").to("mock:c");
+                from("direct:test3")
+                        .multicast()
+                        .stopOnException()
+                        .to("mock:a")
+                        .to("mock:b")
+                        .to("direct:b")
+                        .to("mock:c");
 
                 from("direct:a").process(new Processor() {
                     @Override
@@ -128,5 +140,4 @@ public class MulticastRedeliverTest extends ContextTestSupport {
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PollTest extends ContextTestSupport {
 
@@ -102,9 +103,7 @@ public class PollTest extends ContextTestSupport {
                 from("direct:enricher-test-2").poll("seda:foo2", 1000).to("mock:mock");
 
                 from("direct:enricher-test-3").poll("seda:foo3", -1).to("mock:mock");
-
             }
         };
     }
-
 }

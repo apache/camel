@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,13 +35,6 @@ import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProducerBaseTest {
     protected TableResult nextPageTableResult;
@@ -144,19 +145,23 @@ public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProduc
         // Mock row data
         FieldList fieldList = FieldList.of(idField, nameField);
         FieldValueList row1 = FieldValueList.of(
-                Arrays.asList(FieldValue.of(FieldValue.Attribute.PRIMITIVE, 1L),
+                Arrays.asList(
+                        FieldValue.of(FieldValue.Attribute.PRIMITIVE, 1L),
                         FieldValue.of(FieldValue.Attribute.PRIMITIVE, "Alice")),
                 fieldList);
         FieldValueList row2 = FieldValueList.of(
-                Arrays.asList(FieldValue.of(FieldValue.Attribute.PRIMITIVE, 2L),
+                Arrays.asList(
+                        FieldValue.of(FieldValue.Attribute.PRIMITIVE, 2L),
                         FieldValue.of(FieldValue.Attribute.PRIMITIVE, "Bob")),
                 fieldList);
         FieldValueList row3 = FieldValueList.of(
-                Arrays.asList(FieldValue.of(FieldValue.Attribute.PRIMITIVE, 3L),
+                Arrays.asList(
+                        FieldValue.of(FieldValue.Attribute.PRIMITIVE, 3L),
                         FieldValue.of(FieldValue.Attribute.PRIMITIVE, "Charlie")),
                 fieldList);
         FieldValueList row4 = FieldValueList.of(
-                Arrays.asList(FieldValue.of(FieldValue.Attribute.PRIMITIVE, 4L),
+                Arrays.asList(
+                        FieldValue.of(FieldValue.Attribute.PRIMITIVE, 4L),
                         FieldValue.of(FieldValue.Attribute.PRIMITIVE, "Delta")),
                 fieldList);
 
@@ -173,5 +178,4 @@ public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProduc
         when(nextPageTableResult.getValues()).thenReturn(Arrays.asList(row3, row4));
         when(nextPageTableResult.getNextPageToken()).thenReturn("PAGE_THREE_TOKEN");
     }
-
 }

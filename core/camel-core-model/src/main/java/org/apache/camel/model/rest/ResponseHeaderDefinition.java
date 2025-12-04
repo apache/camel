@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -46,23 +47,30 @@ public class ResponseHeaderDefinition {
 
     @XmlAttribute(required = true)
     private String name;
+
     @XmlAttribute
     private String description;
+
     @XmlAttribute
     @Metadata(defaultValue = "csv")
     private CollectionFormat collectionFormat;
+
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String arrayType;
+
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String dataType;
+
     @XmlAttribute
     private String dataFormat;
+
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
     private List<ValueDefinition> allowableValues;
+
     @XmlAttribute
     private String example;
 
@@ -283,5 +291,4 @@ public class ResponseHeaderDefinition {
             return answer;
         }
     }
-
 }

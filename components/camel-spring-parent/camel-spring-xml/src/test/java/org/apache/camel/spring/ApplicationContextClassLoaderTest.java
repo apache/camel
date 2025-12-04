@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationContextClassLoaderTest extends SpringTestSupport {
 
@@ -36,5 +37,4 @@ public class ApplicationContextClassLoaderTest extends SpringTestSupport {
         assertNotNull(cl, "The application context class loader should not be null");
         assertEquals(this.getClass().getClassLoader(), cl, "Get a wrong class loader");
     }
-
 }

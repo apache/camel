@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -72,9 +73,13 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").to("bean:foo?method=bar(${body},true)").to("mock:result");
 
-                from("direct:start2").to("bean:foo?method=bar(${body.name}, true)").to("mock:result");
+                from("direct:start2")
+                        .to("bean:foo?method=bar(${body.name}, true)")
+                        .to("mock:result");
 
-                from("direct:start3").to("bean:foo?method=bar(${header.animal?.friend.name}, true)").to("mock:result");
+                from("direct:start3")
+                        .to("bean:foo?method=bar(${header.animal?.friend.name}, true)")
+                        .to("mock:result");
             }
         };
     }
@@ -137,5 +142,4 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
             return name;
         }
     }
-
 }

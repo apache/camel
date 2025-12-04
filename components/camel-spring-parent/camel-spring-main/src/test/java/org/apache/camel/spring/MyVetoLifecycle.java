@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
@@ -26,5 +27,4 @@ public class MyVetoLifecycle extends LifecycleStrategySupport {
     public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
         throw new VetoCamelContextStartException("We do not like this route", context, false);
     }
-
 }

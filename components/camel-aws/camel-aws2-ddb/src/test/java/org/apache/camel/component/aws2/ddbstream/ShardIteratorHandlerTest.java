@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
+
+import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,11 +30,6 @@ import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamI
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ShardIteratorHandlerTest extends CamelTestSupport {
 
@@ -157,5 +158,4 @@ class ShardIteratorHandlerTest extends CamelTestSupport {
 
         assertThrows(IllegalArgumentException.class, () -> underTest.getShardIterators());
     }
-
 }

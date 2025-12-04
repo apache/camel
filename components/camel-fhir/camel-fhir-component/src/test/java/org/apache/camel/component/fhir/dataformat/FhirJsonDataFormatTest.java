@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.dataformat;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,13 +34,11 @@ import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FhirJsonDataFormatTest extends CamelTestSupport {
 
     private static final String PATIENT = "{\"resourceType\":\"Patient\","
-                                          + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
-                                          + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
+            + "\"name\":[{\"family\":\"Holmes\",\"given\":[\"Sherlock\"]}],"
+            + "\"address\":[{\"line\":[\"221b Baker St, Marylebone, London NW1 6XE, UK\"]}]}";
 
     private MockEndpoint mockEndpoint;
 
@@ -70,7 +71,8 @@ public class FhirJsonDataFormatTest extends CamelTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        IBaseResource iBaseResource = FhirContext.forR4().newJsonParser().parseResource(new InputStreamReader(inputStream));
+        IBaseResource iBaseResource =
+                FhirContext.forR4().newJsonParser().parseResource(new InputStreamReader(inputStream));
         assertTrue(patient.equalsDeep((Base) iBaseResource), "Patients should be equal!");
     }
 
@@ -85,15 +87,10 @@ public class FhirJsonDataFormatTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:marshal")
-                        .marshal().fhirJson("R4")
-                        .to("mock:result");
+                from("direct:marshal").marshal().fhirJson("R4").to("mock:result");
 
-                from("direct:unmarshal")
-                        .unmarshal().fhirJson()
-                        .to("mock:result");
+                from("direct:unmarshal").unmarshal().fhirJson().to("mock:result");
             }
         };
     }
-
 }

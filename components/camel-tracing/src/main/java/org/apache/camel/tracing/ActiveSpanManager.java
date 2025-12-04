@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing;
 
 import org.apache.camel.Exchange;
@@ -30,13 +31,14 @@ public final class ActiveSpanManager {
     @Deprecated
     // Use specific MDC instrumentation provided by your tracing/telemetry SDK instead
     public static final String MDC_TRACE_ID = "trace_id";
+
     @Deprecated
     // Use specific MDC instrumentation provided by your tracing/telemetry SDK instead
     public static final String MDC_SPAN_ID = "span_id";
+
     private static final Logger LOG = LoggerFactory.getLogger(ActiveSpanManager.class);
 
-    private ActiveSpanManager() {
-    }
+    private ActiveSpanManager() {}
 
     /**
      * This method returns the current active span associated with the exchange.
@@ -61,13 +63,14 @@ public final class ActiveSpanManager {
      */
     public static void activate(Exchange exchange, SpanAdapter span) {
         if (exchange.getProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, Boolean.FALSE, Boolean.class)) {
-            //Check if we need to close the CLIENT scope created by
-            //DirectProducer in async mode before we create a new INTERNAL scope
-            //for the next DirectConsumer
+            // Check if we need to close the CLIENT scope created by
+            // DirectProducer in async mode before we create a new INTERNAL scope
+            // for the next DirectConsumer
             endScope(exchange);
             exchange.removeProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE);
         }
-        exchange.setProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN,
+        exchange.setProperty(
+                ExchangePropertyKey.OTEL_ACTIVE_SPAN,
                 new Holder(exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN, Holder.class), span));
         if (Boolean.TRUE.equals(exchange.getContext().isUseMDCLogging())) {
             MDC.put(MDC_TRACE_ID, span.traceId());

@@ -21,19 +21,21 @@ import java.lang.annotation.Annotation;
 
 final class ExtensionUtils {
 
-    private ExtensionUtils() {
-
-    }
+    private ExtensionUtils() {}
 
     private static String commonFixtureMessage(Class<? extends Annotation> annotationClass, Object instance) {
-        return "Unable to setup fixture " + annotationClass.getSimpleName() + " on " + instance.getClass().getName();
+        return "Unable to setup fixture " + annotationClass.getSimpleName() + " on "
+                + instance.getClass().getName();
     }
 
-    static String invocationTargetMessage(Class<? extends Annotation> annotationClass, Object instance, String methodName) {
-        return commonFixtureMessage(annotationClass, instance) + " due to invocation target exception to method: " + methodName;
+    static String invocationTargetMessage(
+            Class<? extends Annotation> annotationClass, Object instance, String methodName) {
+        return commonFixtureMessage(annotationClass, instance) + " due to invocation target exception to method: "
+                + methodName;
     }
 
-    static String illegalAccessMessage(Class<? extends Annotation> annotationClass, Object instance, String methodName) {
+    static String illegalAccessMessage(
+            Class<? extends Annotation> annotationClass, Object instance, String methodName) {
         return commonFixtureMessage(annotationClass, instance) + " due to illegal access to method: " + methodName;
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("issues")})
 public class JmsTXForceShutdownIssueManualIT extends CamelSpringTestSupport {
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 import java.util.List;
@@ -22,8 +23,7 @@ public final class EnvironmentBuilder {
     private Boolean enabled;
     private List<String> vars;
 
-    private EnvironmentBuilder() {
-    }
+    private EnvironmentBuilder() {}
 
     public static EnvironmentBuilder environment() {
         return new EnvironmentBuilder();

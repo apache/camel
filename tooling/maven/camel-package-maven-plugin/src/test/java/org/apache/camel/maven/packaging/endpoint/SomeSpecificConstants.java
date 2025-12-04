@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
@@ -26,6 +27,5 @@ public final class SomeSpecificConstants extends SomeCommonConstants {
     @Metadata
     static final String INTERNAL_KEY_FROM_SPECIFIC = "INTERNAL_KEY_FROM_SPECIFIC";
 
-    private SomeSpecificConstants() {
-    }
+    private SomeSpecificConstants() {}
 }

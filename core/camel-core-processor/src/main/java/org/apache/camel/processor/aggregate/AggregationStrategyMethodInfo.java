@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import java.lang.reflect.Method;
@@ -31,9 +32,10 @@ public class AggregationStrategyMethodInfo {
     private final List<AggregationStrategyParameterInfo> oldParameters;
     private final List<AggregationStrategyParameterInfo> newParameters;
 
-    public AggregationStrategyMethodInfo(Method method,
-                                         List<AggregationStrategyParameterInfo> oldParameters,
-                                         List<AggregationStrategyParameterInfo> newParameters) {
+    public AggregationStrategyMethodInfo(
+            Method method,
+            List<AggregationStrategyParameterInfo> oldParameters,
+            List<AggregationStrategyParameterInfo> newParameters) {
         this.method = method;
         this.oldParameters = oldParameters;
         this.newParameters = newParameters;
@@ -64,5 +66,4 @@ public class AggregationStrategyMethodInfo {
         Object[] args = list.toArray();
         return method.invoke(pojo, args);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class KmsCreateKeyIT extends Aws2KmsBase {
@@ -53,7 +54,12 @@ public class KmsCreateKeyIT extends Aws2KmsBase {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
-        assertNotNull(result.getExchanges().get(0).getIn().getBody(CreateKeyResponse.class).keyMetadata().keyId());
+        assertNotNull(result.getExchanges()
+                .get(0)
+                .getIn()
+                .getBody(CreateKeyResponse.class)
+                .keyMetadata()
+                .keyId());
     }
 
     @Override
@@ -61,8 +67,7 @@ public class KmsCreateKeyIT extends Aws2KmsBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-kms://default?operation=createKey";
+                String awsEndpoint = "aws2-kms://default?operation=createKey";
                 from("direct:createKey").to(awsEndpoint).to("mock:result");
             }
         };

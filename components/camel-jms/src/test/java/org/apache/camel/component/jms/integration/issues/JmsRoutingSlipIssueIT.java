@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.issues;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +36,7 @@ public class JmsRoutingSlipIssueIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -46,8 +48,8 @@ public class JmsRoutingSlipIssueIT extends AbstractJMSTest {
         getMockEndpoint("mock:JmsRoutingSlipIssueTest.c").expectedBodiesReceived("HelloAB");
         getMockEndpoint("mock:result").expectedBodiesReceived("HelloABC");
 
-        String slip
-                = "activemq:queue:JmsRoutingSlipIssueTest.a,activemq:queue:JmsRoutingSlipIssueTest.b,activemq:queue:JmsRoutingSlipIssueTest.c";
+        String slip =
+                "activemq:queue:JmsRoutingSlipIssueTest.a,activemq:queue:JmsRoutingSlipIssueTest.b,activemq:queue:JmsRoutingSlipIssueTest.c";
         template.sendBodyAndHeader("direct:start", "Hello", "mySlip", slip);
 
         MockEndpoint.assertIsSatisfied(context);

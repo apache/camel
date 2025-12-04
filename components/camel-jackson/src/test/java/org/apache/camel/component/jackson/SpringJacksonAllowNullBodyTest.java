@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,7 +37,7 @@ class SpringJacksonAllowNullBodyTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonAllowNullBodyTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jackson/SpringJacksonAllowNullBodyTest.xml");
     }
-
 }

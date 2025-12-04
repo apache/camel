@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.security.KeyFactory;
@@ -47,7 +48,8 @@ public class KeyFormatConverter {
     /**
      * Export a private key to the specified format
      */
-    public static byte[] exportPrivateKey(PrivateKey privateKey, KeyLifecycleManager.KeyFormat format) throws Exception {
+    public static byte[] exportPrivateKey(PrivateKey privateKey, KeyLifecycleManager.KeyFormat format)
+            throws Exception {
         switch (format) {
             case PEM:
                 return exportPrivateKeyToPEM(privateKey);
@@ -156,7 +158,8 @@ public class KeyFormatConverter {
      */
     private static byte[] parsePEMPublicKey(byte[] pemData) throws Exception {
         String pemString = new String(pemData);
-        pemString = pemString.replace("-----BEGIN PUBLIC KEY-----", "")
+        pemString = pemString
+                .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s", "");
         return Base64.getDecoder().decode(pemString);
@@ -167,7 +170,8 @@ public class KeyFormatConverter {
      */
     private static byte[] parsePEMPrivateKey(byte[] pemData) throws Exception {
         String pemString = new String(pemData);
-        pemString = pemString.replace("-----BEGIN PRIVATE KEY-----", "")
+        pemString = pemString
+                .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
         return Base64.getDecoder().decode(pemString);

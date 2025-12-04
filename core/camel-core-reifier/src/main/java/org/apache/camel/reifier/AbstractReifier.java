@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.time.Duration;
@@ -198,5 +199,4 @@ public abstract class AbstractReifier implements BeanRepository {
     public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
-
 }

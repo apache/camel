@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchdb;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.couchdb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
+
 public class CouchDbEndpointTest {
 
     @Test
     void assertSingleton() throws Exception {
-        try (CouchDbEndpoint endpoint
-                = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
+        try (CouchDbEndpoint endpoint =
+                new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
             assertTrue(endpoint.isSingleton());
         }
     }
@@ -43,8 +44,8 @@ public class CouchDbEndpointTest {
 
     @Test
     void testDefaultPortIsSet() throws Exception {
-        try (CouchDbEndpoint endpoint
-                = new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
+        try (CouchDbEndpoint endpoint =
+                new CouchDbEndpoint("couchdb:http://localhost/db", "http://localhost/db", new CouchDbComponent())) {
             assertEquals(CouchDbEndpoint.DEFAULT_PORT, endpoint.getPort());
         }
     }

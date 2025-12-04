@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -25,15 +30,12 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class RestJettyClientResponseValidationResponseCodeTest extends BaseJettyTest {
 
     @Test
     public void testResponseCode() {
-        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{\"name\": \"Donald\"}") // the body is ok
                 .to("http://localhost:" + getPort() + "/users/123/update");
@@ -47,7 +49,8 @@ public class RestJettyClientResponseValidationResponseCodeTest extends BaseJetty
 
     @Test
     public void testResponseHeader() {
-        FluentProducerTemplate requestTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+        FluentProducerTemplate requestTemplate = fluentTemplate
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withHeader(Exchange.HTTP_METHOD, "post")
                 .withBody("{\"name\": \"Donald\"}") // the body is ok
                 .to("http://localhost:" + getPort() + "/users/123/update2");
@@ -65,20 +68,36 @@ public class RestJettyClientResponseValidationResponseCodeTest extends BaseJetty
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
                         .bindingMode(RestBindingMode.json)
                         // turn on response validation
                         .clientResponseValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update")
-                        .consumes("application/json").produces("application/json")
-                        .responseMessage().code(200).contentType("application/json").message("updates an user").endResponseMessage()
+                rest("/users/")
+                        .post("{id}/update")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .responseMessage()
+                        .code(200)
+                        .contentType("application/json")
+                        .message("updates an user")
+                        .endResponseMessage()
                         .to("direct:update");
-                rest("/users/").post("{id}/update2")
-                        .consumes("application/json").produces("application/xml")
-                        .responseMessage().code(200).contentType("application/xml").message("updates an user")
-                        .header("category").description("The category of the user").endResponseHeader()
+                rest("/users/")
+                        .post("{id}/update2")
+                        .consumes("application/json")
+                        .produces("application/xml")
+                        .responseMessage()
+                        .code(200)
+                        .contentType("application/xml")
+                        .message("updates an user")
+                        .header("category")
+                        .description("The category of the user")
+                        .endResponseHeader()
                         .endResponseMessage()
                         .to("direct:update");
                 from("direct:update")
@@ -87,5 +106,4 @@ public class RestJettyClientResponseValidationResponseCodeTest extends BaseJetty
             }
         };
     }
-
 }

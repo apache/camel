@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.apache.camel.component.bean.issues.PrivateClasses.EXPECTED_OUTPUT;
+import static org.apache.camel.component.bean.issues.PrivateClasses.METHOD_NAME;
+import static org.apache.camel.component.bean.issues.PrivateClasses.newPackagePrivateHelloCamel;
+import static org.apache.camel.component.bean.issues.PrivateClasses.newPrivateHelloCamel;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.issues.PrivateClasses.HelloCamel;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.bean.issues.PrivateClasses.EXPECTED_OUTPUT;
-import static org.apache.camel.component.bean.issues.PrivateClasses.METHOD_NAME;
-import static org.apache.camel.component.bean.issues.PrivateClasses.newPackagePrivateHelloCamel;
-import static org.apache.camel.component.bean.issues.PrivateClasses.newPrivateHelloCamel;
 
 /**
  * Tests Bean binding for private & package-private classes where the target method is accessible through an interface.
@@ -63,12 +64,12 @@ public final class BeanPrivateClassWithInterfaceMethodTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:testPackagePrivateClass").bean(packagePrivateImpl, METHOD_NAME)
+                from("direct:testPackagePrivateClass")
+                        .bean(packagePrivateImpl, METHOD_NAME)
                         .to("mock:packagePrivateClassResult");
 
                 from("direct:testPrivateClass").bean(privateImpl, METHOD_NAME).to("mock:privateClassResult");
             }
         };
     }
-
 }

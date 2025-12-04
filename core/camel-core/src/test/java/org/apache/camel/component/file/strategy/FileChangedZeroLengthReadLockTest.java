@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.nio.file.Files;
@@ -45,9 +46,9 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0"))
-                        .to(fileUri("out"),
-                                "mock:result");
+                from(fileUri(
+                                "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0"))
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

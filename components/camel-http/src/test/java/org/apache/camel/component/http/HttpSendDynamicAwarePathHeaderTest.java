@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -24,9 +28,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpSendDynamicAwarePathHeaderTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -34,10 +35,13 @@ public class HttpSendDynamicAwarePathHeaderTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/mybar", new DrinkValidationHandler(GET.name(), null, null, "drink")).create();
+                .register("/mybar", new DrinkValidationHandler(GET.name(), null, null, "drink"))
+                .create();
         localServer.start();
     }
 
@@ -56,17 +60,18 @@ public class HttpSendDynamicAwarePathHeaderTest extends BaseHttpTest {
             public void configure() {
                 from("direct:moes")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "?throwExceptionOnFailure=false&drink=${header.drink}");
+                                + "?throwExceptionOnFailure=false&drink=${header.drink}");
             }
         };
     }
 
     @Test
     public void testEmptyPath() {
-        String out = fluentTemplate.to("direct:moes")
+        String out = fluentTemplate
+                .to("direct:moes")
                 .withHeader(Exchange.HTTP_PATH, "mybar")
-                .withHeader("drink", "beer").request(String.class);
+                .withHeader("drink", "beer")
+                .request(String.class);
         assertEquals("Drinking beer", out);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +27,11 @@ import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.junit.jupiter.api.Test;
 import org.openstack4j.model.storage.object.SwiftObject;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class OpenstackSwiftObjectTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-swift://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS;
+    private static final String URI_FORMAT =
+            "openstack-swift://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS;
 
     private static final String OBJECT_CONTAINER_NAME = "test-container";
     private static final String OBJECT_NAME = "test-file";
@@ -50,5 +51,4 @@ public class OpenstackSwiftObjectTest extends OpenstackWiremockTestSupport {
         assertEquals("application/json", swiftObject.getMimeType());
         assertEquals("12345678901234567890", swiftObject.getETag());
     }
-
 }

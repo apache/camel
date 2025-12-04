@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.beanclass;
 
 import java.util.Map;
@@ -39,8 +40,7 @@ public class ClassComponent extends BeanComponent {
     private ParameterMappingStrategy parameterMappingStrategy;
     private BeanComponent beanComponent;
 
-    public ClassComponent() {
-    }
+    public ClassComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

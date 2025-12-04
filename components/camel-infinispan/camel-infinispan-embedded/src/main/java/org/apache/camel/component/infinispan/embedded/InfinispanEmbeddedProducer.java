@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import org.apache.camel.Message;
@@ -22,12 +23,14 @@ import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.query.Query;
 
-public class InfinispanEmbeddedProducer extends InfinispanProducer<InfinispanEmbeddedManager, InfinispanEmbeddedConfiguration> {
+public class InfinispanEmbeddedProducer
+        extends InfinispanProducer<InfinispanEmbeddedManager, InfinispanEmbeddedConfiguration> {
 
-    public InfinispanEmbeddedProducer(InfinispanEmbeddedEndpoint endpoint,
-                                      String cacheName,
-                                      InfinispanEmbeddedManager manager,
-                                      InfinispanEmbeddedConfiguration configuration) {
+    public InfinispanEmbeddedProducer(
+            InfinispanEmbeddedEndpoint endpoint,
+            String cacheName,
+            InfinispanEmbeddedManager manager,
+            InfinispanEmbeddedConfiguration configuration) {
         super(endpoint, cacheName, manager, configuration);
     }
 

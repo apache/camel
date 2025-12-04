@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.List;
@@ -26,13 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class StorageQueueConsumerIT extends StorageQueueBase {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
     private String resultName = "mock:result";
 
     @BeforeAll
@@ -72,7 +74,6 @@ class StorageQueueConsumerIT extends StorageQueueBase {
             public void configure() {
                 from("azure-storage-queue://cameldev/" + queueName + "?maxMessages=5")
                         .to(resultName);
-
             }
         };
     }

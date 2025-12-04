@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import java.util.Collections;
@@ -33,8 +34,7 @@ import org.infinispan.commons.api.BasicCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class InfinispanAggregationRepository
-        extends ServiceSupport
+public abstract class InfinispanAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanAggregationRepository.class);
@@ -43,22 +43,31 @@ public abstract class InfinispanAggregationRepository
 
     @Metadata(description = "Name of cache", required = true)
     private String cacheName;
+
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+
+    @Metadata(
+            description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
+
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
-    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+
+    @Metadata(
+            description =
+                    "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
-              defaultValue = "3")
+            defaultValue = "3")
     private int maximumRedeliveries = 3;
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
-    public InfinispanAggregationRepository() {
-    }
+    public InfinispanAggregationRepository() {}
 
     /**
      * Creates new {@link InfinispanAggregationRepository} that defaults to non-optimistic locking with recoverable
@@ -204,5 +213,4 @@ public abstract class InfinispanAggregationRepository
     }
 
     protected abstract BasicCache<String, DefaultExchangeHolder> getCache();
-
 }

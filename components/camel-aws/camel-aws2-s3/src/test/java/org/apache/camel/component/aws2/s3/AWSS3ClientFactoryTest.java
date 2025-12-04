@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
@@ -23,8 +26,6 @@ import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMProfileOpti
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AWSS3ClientFactoryTest {
 

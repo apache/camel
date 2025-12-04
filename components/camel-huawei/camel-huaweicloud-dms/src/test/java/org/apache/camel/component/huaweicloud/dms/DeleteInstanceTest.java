@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DeleteInstanceTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -37,9 +38,8 @@ public class DeleteInstanceTest extends CamelTestSupport {
     DmsClient mockClient = Mockito.mock(DmsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -48,12 +48,11 @@ public class DeleteInstanceTest extends CamelTestSupport {
                 from("direct:operation")
                         .setProperty(DMSProperties.OPERATION, constant("deleteInstance"))
                         .setProperty(DMSProperties.INSTANCE_ID, constant(testConfiguration.getProperty("instanceId")))
-                        .to("hwcloud-dms:?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + testConfiguration.getProperty("projectId") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&dmsClient=#dmsClient")
+                        .to("hwcloud-dms:?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + testConfiguration.getProperty("projectId") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&dmsClient=#dmsClient")
                         .log("Operation successful")
                         .to("mock:operation_result");
             }
@@ -64,7 +63,8 @@ public class DeleteInstanceTest extends CamelTestSupport {
     public void testOperation() throws Exception {
         DeleteInstanceResponse response = new DeleteInstanceResponse();
 
-        Mockito.when(mockClient.deleteInstance(Mockito.any(DeleteInstanceRequest.class))).thenReturn(response);
+        Mockito.when(mockClient.deleteInstance(Mockito.any(DeleteInstanceRequest.class)))
+                .thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);

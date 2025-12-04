@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 /**
  * Based on user forum issue
  */
@@ -33,7 +34,8 @@ public class TwoDoTryAndThrowInInnerCatchIssueTest extends ContextTestSupport {
 
     @Test
     public void testSendThatIsCaught() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myroute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myroute"));
         log.info(xml);
 
         getMockEndpoint("mock:catch1").expectedMessageCount(0);
@@ -42,8 +44,7 @@ public class TwoDoTryAndThrowInInnerCatchIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:catch4").expectedMessageCount(1);
         getMockEndpoint("mock:catch5").expectedMessageCount(1);
 
-        assertDoesNotThrow(() -> template.requestBody("direct:test", "test", String.class),
-                "Should not fail");
+        assertDoesNotThrow(() -> template.requestBody("direct:test", "test", String.class), "Should not fail");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,34 +56,35 @@ public class TwoDoTryAndThrowInInnerCatchIssueTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("direct:test").routeId("myroute")
-                    .doTry().
-                        doTry().
-                            throwException(new IllegalArgumentException("Forced by me"))
+                from("direct:test")
+                        .routeId("myroute")
+                        .doTry()
+                        .doTry()
+                        .throwException(new IllegalArgumentException("Forced by me"))
                         .doCatch(IOException.class)
-                            .to("mock:catch1")
-                            .log("docatch 1")
-                            // end this doCatch block
-                            .endDoTry()
+                        .to("mock:catch1")
+                        .log("docatch 1")
+                        // end this doCatch block
+                        .endDoTry()
                         .doCatch(NullPointerException.class)
-                            .to("mock:catch2")
-                            .log("docatch 2")
-                            // no end this catch block as Camel can fix this itself
+                        .to("mock:catch2")
+                        .log("docatch 2")
+                        // no end this catch block as Camel can fix this itself
                         .doCatch(MalformedURLException.class)
-                            .to("mock:catch3")
-                            .log("docatch 3")
-                            // end this doCatch block
-                            .endDoTry()
+                        .to("mock:catch3")
+                        .log("docatch 3")
+                        // end this doCatch block
+                        .endDoTry()
                         .doCatch(Exception.class)
-                            .to("mock:catch4")
-                            .log("docatch 4")
-                            .throwException(new IllegalArgumentException("Second forced by me"))
-                            .endDoTry() // end catch block
+                        .to("mock:catch4")
+                        .log("docatch 4")
+                        .throwException(new IllegalArgumentException("Second forced by me"))
+                        .endDoTry() // end catch block
                         .endDoTry() // end inner doTry block
-                    .doCatch(Exception.class)
+                        .doCatch(Exception.class)
                         .to("mock:catch5")
                         .log("docatch 5")
-                    .end();
+                        .end();
             }
         };
     }

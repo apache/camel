@@ -73,10 +73,14 @@ class ExportMainApplicationProperties {
                 StandardCopyOption.REPLACE_EXISTING);
 
         // We need a real file as we want to test the generated content
-        Export command = createCommand(rt,
-                new String[] { "src/test/resources/route.yaml", "src/test/resources/sample-application.properties" },
-                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                "--property", "hello=test");
+        Export command = createCommand(
+                rt,
+                new String[] {"src/test/resources/route.yaml", "src/test/resources/sample-application.properties"},
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
+                "--property",
+                "hello=test");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -91,7 +95,11 @@ class ExportMainApplicationProperties {
 
     private Export createCommand(RuntimeType rt, String[] files, String... args) {
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
                 "--runtime=%s".formatted(rt.runtime()));
         if (args != null) {
             CommandLine.populateCommand(command, args);
@@ -99,5 +107,4 @@ class ExportMainApplicationProperties {
         command.files = Arrays.asList(files);
         return command;
     }
-
 }

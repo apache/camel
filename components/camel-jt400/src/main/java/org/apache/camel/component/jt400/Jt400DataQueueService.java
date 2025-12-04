@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
+
+import static org.apache.camel.component.jt400.Jt400Configuration.DEFAULT_SYSTEM_CCSID;
 
 import java.io.IOException;
 
@@ -27,8 +30,6 @@ import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jt400.Jt400Configuration.DEFAULT_SYSTEM_CCSID;
 
 /**
  * Pseudo-abstract class that encapsulates Service logic common to {@link Jt400DataQueueConsumer} and

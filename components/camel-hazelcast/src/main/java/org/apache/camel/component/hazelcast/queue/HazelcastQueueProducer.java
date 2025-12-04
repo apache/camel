@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.queue;
 
 import java.util.Collection;
@@ -36,7 +37,8 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
 
     private final IQueue<Object> queue;
 
-    public HazelcastQueueProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String queueName) {
+    public HazelcastQueueProducer(
+            HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String queueName) {
         super(endpoint);
         this.queue = hazelcastInstance.getQueue(queueName);
     }
@@ -56,7 +58,6 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-
             case ADD:
                 this.add(exchange);
                 break;
@@ -106,14 +107,13 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the QUEUE cache.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the QUEUE cache.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
         HazelcastComponentHelper.copyHeaders(exchange);
-
     }
 
     private void add(Exchange exchange) {

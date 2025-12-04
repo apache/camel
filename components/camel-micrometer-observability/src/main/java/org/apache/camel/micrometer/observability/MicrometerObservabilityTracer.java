@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -81,8 +82,8 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         }
         if (tracer == null) {
             tracer = new SimpleTracer();
-            LOG.warn("No tracer was provided. A default inmemory tracer is used. " +
-                     "This can be useful for development only, avoid this in a production environment.");
+            LOG.warn("No tracer was provided. A default inmemory tracer is used. "
+                    + "This can be useful for development only, avoid this in a production environment.");
         }
         if (observationRegistry == null) {
             observationRegistry = CamelContextHelper.findSingleByType(getCamelContext(), ObservationRegistry.class);
@@ -90,10 +91,11 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         if (observationRegistry == null) {
             MeterRegistry meterRegistry = new SimpleMeterRegistry();
             this.observationRegistry = ObservationRegistry.create();
-            this.observationRegistry.observationConfig().observationHandler(
-                    new DefaultMeterObservationHandler(meterRegistry));
-            LOG.warn("No observation registry was provided. A default inmemory observation registry is used. " +
-                     "This can be useful for development only, avoid this in a production environment.");
+            this.observationRegistry
+                    .observationConfig()
+                    .observationHandler(new DefaultMeterObservationHandler(meterRegistry));
+            LOG.warn("No observation registry was provided. A default inmemory observation registry is used. "
+                    + "This can be useful for development only, avoid this in a production environment.");
         }
 
         if (propagator == null) {
@@ -101,9 +103,9 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         }
         if (propagator == null) {
             propagator = Propagator.NOOP;
-            LOG.warn("No propagator was provided. A NOOP implementation is used, you won't be able to trace " +
-                     "upstream activity. " +
-                     "This can be useful for development only, avoid this in a production environment.");
+            LOG.warn("No propagator was provided. A NOOP implementation is used, you won't be able to trace "
+                    + "upstream activity. "
+                    + "This can be useful for development only, avoid this in a production environment.");
         }
 
         this.setSpanLifecycleManager(new MicrometerObservabilitySpanLifecycleManager());
@@ -118,8 +120,9 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
     private class MicrometerObservabilitySpanLifecycleManager implements SpanLifecycleManager {
 
         private MicrometerObservabilitySpanLifecycleManager() {
-            observationRegistry.observationConfig().observationHandler(
-                    new ObservationHandler.FirstMatchingCompositeObservationHandler(
+            observationRegistry
+                    .observationConfig()
+                    .observationHandler(new ObservationHandler.FirstMatchingCompositeObservationHandler(
                             new PropagatingSenderTracingObservationHandler<>(tracer, propagator),
                             new PropagatingReceiverTracingObservationHandler<>(tracer, propagator),
                             new DefaultTracingObservationHandler(tracer)));
@@ -165,14 +168,15 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         public void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing) {
             MicrometerObservabilitySpanAdapter microObsSpan = (MicrometerObservabilitySpanAdapter) span;
             propagator.inject(
-                    microObsSpan.getSpan().context(),
-                    injector,
-                    (carrier, key, value) -> carrier.put(key, value));
+                    microObsSpan.getSpan().context(), injector, (carrier, key, value) -> carrier.put(key, value));
             if (includeTracing) {
-                injector.put(org.apache.camel.telemetry.Tracer.TRACE_HEADER, microObsSpan.getSpan().context().traceId());
-                injector.put(org.apache.camel.telemetry.Tracer.SPAN_HEADER, microObsSpan.getSpan().context().spanId());
+                injector.put(
+                        org.apache.camel.telemetry.Tracer.TRACE_HEADER,
+                        microObsSpan.getSpan().context().traceId());
+                injector.put(
+                        org.apache.camel.telemetry.Tracer.SPAN_HEADER,
+                        microObsSpan.getSpan().context().spanId());
             }
         }
     }
-
 }

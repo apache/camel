@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelExchangeException;
@@ -33,7 +34,7 @@ public final class MinaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(MinaHelper.class);
 
     private MinaHelper() {
-        //Utility Class
+        // Utility Class
     }
 
     /**

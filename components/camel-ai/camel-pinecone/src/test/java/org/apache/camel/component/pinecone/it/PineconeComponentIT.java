@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone.it;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +32,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 // Must be manually tested. Provide your own accessKey and secretKey using -Dpinecone.token
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "pinecone.token", matches = ".*", disabledReason = "Pinecone token not provided"),
+    @EnabledIfSystemProperty(named = "pinecone.token", matches = ".*", disabledReason = "Pinecone token not provided"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PineconeComponentIT extends CamelTestSupport {
@@ -41,10 +42,10 @@ public class PineconeComponentIT extends CamelTestSupport {
     @Test
     @Order(1)
     public void createServerlessIndex() {
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
-                .withBody(
-                        "hello")
+                .withBody("hello")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, "cosine")
                 .withHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, 3)
@@ -62,10 +63,10 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.0f);
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.UPSERT)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
                 .request(Exchange.class);
@@ -80,10 +81,10 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.UPDATE)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
                 .request(Exchange.class);
@@ -98,17 +99,20 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 3)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+        assertThat(!result.getMessage()
+                .getBody(QueryResponseWithUnsignedIndices.class)
+                .getMatchesList()
+                .isEmpty());
     }
 
     @Test
@@ -117,29 +121,32 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 3)
                 .withHeader(PineconeVectorDbHeaders.NAMESPACE, "defaultNamespace")
                 .withHeader(PineconeVectorDbHeaders.QUERY_FILTER, "subject\": {\"$eq\": \"marine\"}")
                 .withHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_VALUES, true)
                 .withHeader(PineconeVectorDbHeaders.QUERY_INCLUDE_METADATA, true)
-
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+        assertThat(!result.getMessage()
+                .getBody(QueryResponseWithUnsignedIndices.class)
+                .getMatchesList()
+                .isEmpty());
     }
 
     @Test
     @Order(5)
     public void queryById() {
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY_BY_ID)
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
                 .withHeader(PineconeVectorDbHeaders.INDEX_ID, "elements")
@@ -148,14 +155,18 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(!result.getMessage().getBody(QueryResponseWithUnsignedIndices.class).getMatchesList().isEmpty());
+        assertThat(!result.getMessage()
+                .getBody(QueryResponseWithUnsignedIndices.class)
+                .getMatchesList()
+                .isEmpty());
     }
 
     @Test
     @Order(6)
     public void deleteIndex() {
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.DELETE_INDEX)
                 .withBody("test")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "test-serverless-index")
@@ -171,15 +182,14 @@ public class PineconeComponentIT extends CamelTestSupport {
 
         List<Float> elements = Arrays.asList(1.0f, 2.0f, 3.2f);
 
-        Exchange result = fluentTemplate.to("pinecone:test-collection?token={{pinecone.token}}")
+        Exchange result = fluentTemplate
+                .to("pinecone:test-collection?token={{pinecone.token}}")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.FETCH)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(FetchResponse.class).getVectorsCount() != 0);
     }
-
 }

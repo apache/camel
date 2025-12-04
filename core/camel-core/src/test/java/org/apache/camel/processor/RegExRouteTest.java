@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,9 @@ public class RegExRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setBody(regexReplaceAll(body(), "Foo", "Bar")).to("mock:result");
+                from("direct:start")
+                        .setBody(regexReplaceAll(body(), "Foo", "Bar"))
+                        .to("mock:result");
             }
         };
     }

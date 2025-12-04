@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.util.HashMap;
@@ -86,8 +87,7 @@ public class KubernetesLockConfiguration implements Cloneable {
      */
     private long retryPeriodMillis = DEFAULT_RETRY_PERIOD_MILLIS;
 
-    public KubernetesLockConfiguration() {
-    }
+    public KubernetesLockConfiguration() {}
 
     public LeaseResourceType getLeaseResourceType() {
         return leaseResourceType;
@@ -217,7 +217,9 @@ public class KubernetesLockConfiguration implements Cloneable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("KubernetesLockConfiguration{");
-        sb.append("kubernetesResourcesNamespace='").append(kubernetesResourcesNamespace).append('\'');
+        sb.append("kubernetesResourcesNamespace='")
+                .append(kubernetesResourcesNamespace)
+                .append('\'');
         sb.append(", kubernetesResourceName='").append(kubernetesResourceName).append('\'');
         sb.append(", groupName='").append(groupName).append('\'');
         sb.append(", podName='").append(podName).append('\'');

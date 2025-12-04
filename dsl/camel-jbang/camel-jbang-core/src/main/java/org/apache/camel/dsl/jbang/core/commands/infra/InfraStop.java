@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.nio.file.Files;
@@ -24,15 +25,19 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "stop",
-                     description = "Shuts down running external services", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "stop",
+        description = "Shuts down running external services",
+        sortOptions = false,
+        showDefaultValues = true)
 public class InfraStop extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--kill" },
-                        description = "To force killing the process (SIGKILL)")
+    @CommandLine.Option(
+            names = {"--kill"},
+            description = "To force killing the process (SIGKILL)")
     boolean kill;
 
     public InfraStop(CamelJBangMain main) {
@@ -63,5 +68,4 @@ public class InfraStop extends InfraBaseCommand {
 
         return 0;
     }
-
 }

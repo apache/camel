@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldif;
 
 import java.io.InputStreamReader;
@@ -155,7 +156,9 @@ public class LdifProducer extends DefaultProducer {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("attempting DN move of {}", ldifEntry);
                 }
-                conn.moveAndRename(ldifEntry.getDn(), new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()),
+                conn.moveAndRename(
+                        ldifEntry.getDn(),
+                        new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()),
                         ldifEntry.isDeleteOldRdn());
             } else if (ldifEntry.isChangeModRdn()) {
                 if (LOG.isDebugEnabled()) {

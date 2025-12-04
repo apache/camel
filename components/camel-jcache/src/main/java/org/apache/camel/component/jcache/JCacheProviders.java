@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 public enum JCacheProviders implements JCacheProvider {
@@ -58,7 +59,8 @@ public enum JCacheProviders implements JCacheProvider {
     public static JCacheProvider lookup(String providerName) {
         if (providerName != null) {
             for (JCacheProvider provider : values()) {
-                if (provider.shortName().equals(providerName) || provider.className().equals(providerName)) {
+                if (provider.shortName().equals(providerName)
+                        || provider.className().equals(providerName)) {
                     return provider;
                 }
             }

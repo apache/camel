@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster;
 
 import java.util.concurrent.Callable;
@@ -28,9 +29,6 @@ import org.apache.curator.framework.CuratorFramework;
 public interface ManagedGroupFactoryStrategy {
 
     ManagedGroupFactory createGroupFactory(
-            CuratorFramework curator,
-            ClassLoader loader,
-            CamelContext camelContext,
-            Callable<CuratorFramework> factory)
+            CuratorFramework curator, ClassLoader loader, CamelContext camelContext, Callable<CuratorFramework> factory)
             throws Exception;
 }

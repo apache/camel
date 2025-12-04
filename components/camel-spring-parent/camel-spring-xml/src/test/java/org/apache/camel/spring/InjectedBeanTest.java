@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InjectedBeanTest extends SpringTestSupport {
     protected InjectedBean bean;
@@ -43,22 +44,25 @@ public class InjectedBeanTest extends SpringTestSupport {
         assertNotNull(bean.getFieldInjectedProducer(), "No Producer injected for getFieldInjectedProducer()");
         assertNotNull(bean.getPropertyInjectedProducer(), "No Producer injected for getPropertyInjectedProducer()");
 
-        assertNotNull(bean.getFieldInjectedCamelTemplate(), "No CamelTemplate injected for getFieldInjectedCamelTemplate()");
-        assertNotNull(bean.getPropertyInjectedCamelTemplate(),
+        assertNotNull(
+                bean.getFieldInjectedCamelTemplate(), "No CamelTemplate injected for getFieldInjectedCamelTemplate()");
+        assertNotNull(
+                bean.getPropertyInjectedCamelTemplate(),
                 "No CamelTemplate injected for getPropertyInjectedCamelTemplate()");
 
         assertNotNull(bean.getInjectByFieldName(), "No ProducerTemplate injected for getInjectByFieldName()");
         assertNotNull(bean.getInjectByPropertyName(), "No ProducerTemplate injected for getInjectByPropertyName()");
 
-        assertNotNull(bean.getFieldInjectedPollingConsumer(),
+        assertNotNull(
+                bean.getFieldInjectedPollingConsumer(),
                 "No PollingConsumer injected for getFieldInjectedPollingConsumer()");
-        assertNotNull(bean.getPropertyInjectedPollingConsumer(),
+        assertNotNull(
+                bean.getPropertyInjectedPollingConsumer(),
                 "No PollingConsumer injected for getPropertyInjectedPollingConsumer()");
     }
 
     @Test
-    public void testSendAndReceive() throws Exception {
-    }
+    public void testSendAndReceive() throws Exception {}
 
     @Override
     @BeforeEach
@@ -71,5 +75,4 @@ public class InjectedBeanTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/injectedBean.xml");
     }
-
 }

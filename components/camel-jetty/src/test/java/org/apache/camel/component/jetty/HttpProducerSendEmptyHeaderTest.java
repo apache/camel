@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -47,7 +48,9 @@ public class HttpProducerSendEmptyHeaderTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myapp/mytest").convertBodyTo(String.class).to("mock:result");
+                from("jetty:http://localhost:{{port}}/myapp/mytest")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

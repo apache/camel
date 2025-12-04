@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.pgevent.integration;
 
 import org.apache.camel.Endpoint;
@@ -45,11 +46,12 @@ public class PgEventPubSubIT extends PgEventITSupport {
                 from(timerEndpoint)
                         .setBody(constant(TEST_MESSAGE_BODY))
                         .to(String.format(
-                                "pgevent://%s:%s/%s/testchannel?user=%s&pass=%s", getHost(), getMappedPort(), POSTGRES_DB,
-                                POSTGRES_USER, POSTGRES_PASSWORD));
+                                "pgevent://%s:%s/%s/testchannel?user=%s&pass=%s",
+                                getHost(), getMappedPort(), POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD));
 
-                from(String.format("pgevent://%s:%s/%s/testchannel?user=%s&pass=%s",
-                        getHost(), getMappedPort(), POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD))
+                from(String.format(
+                                "pgevent://%s:%s/%s/testchannel?user=%s&pass=%s",
+                                getHost(), getMappedPort(), POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD))
                         .to(mockEndpoint);
             }
         };

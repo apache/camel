@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.messagehistory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -37,10 +42,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMessageHistoryTest extends CamelTestSupport {
 
@@ -85,7 +86,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
     }
 
     private void cleanMbeanServer() throws Exception {
-        //Deleting data from other tests
+        // Deleting data from other tests
         for (ObjectName it : timerNames()) {
             getMBeanServer().unregisterMBean(it);
         }
@@ -121,14 +122,17 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         Set<ObjectName> set = timerNames();
         assertEquals(3, set.size());
 
-        ObjectName fooMBean = set.stream().filter(on -> on.getCanonicalName().contains("foo")).findFirst()
+        ObjectName fooMBean = set.stream()
+                .filter(on -> on.getCanonicalName().contains("foo"))
+                .findFirst()
                 .orElseThrow(() -> new AssertionError("Expected MBean with node Id foo"));
 
         Long testCount = (Long) getMBeanServer().getAttribute(fooMBean, "Count");
         assertEquals(count / 2, testCount.longValue());
 
         // get the message history service using JMX
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerMessageHistoryService",
+        String name = String.format(
+                "org.apache.camel:context=%s,type=services,name=MicrometerMessageHistoryService",
                 context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
         String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
@@ -138,7 +142,6 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertTrue(json.contains("\"nodeId\" : \"foo\""));
         assertTrue(json.contains("\"nodeId\" : \"bar\""));
         assertTrue(json.contains("\"nodeId\" : \"baz\""));
-
     }
 
     @Override
@@ -148,7 +151,12 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
             public void configure() {
                 from("seda:foo").routeId("route1").to("mock:foo").id("foo");
 
-                from("seda:bar").routeId("route2").to("mock:bar").id("bar").to("mock:baz").id("baz");
+                from("seda:bar")
+                        .routeId("route2")
+                        .to("mock:bar")
+                        .id("bar")
+                        .to("mock:baz")
+                        .id("baz");
             }
         };
     }

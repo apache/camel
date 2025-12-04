@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverters;
@@ -23,10 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTest {
 
@@ -59,11 +60,16 @@ public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTest 
             @Override
             public void configure() {
                 context.getTypeConverterRegistry().addTypeConverters(new MyTypeConverters());
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
+                restConfiguration()
+                        .component("netty-http")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.json);
 
                 rest("/users/")
                         // REST binding converts from JSON to UserPojo
-                        .post("new").type(UserPojo.class)
+                        .post("new")
+                        .type(UserPojo.class)
                         .to("direct:new");
 
                 from("direct:new")

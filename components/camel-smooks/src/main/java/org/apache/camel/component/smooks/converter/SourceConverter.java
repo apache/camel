@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.converter;
 
 import java.io.File;
@@ -39,8 +40,7 @@ import org.smooks.io.source.URLSource;
 @Converter(generateLoader = true)
 public class SourceConverter {
 
-    private SourceConverter() {
-    }
+    private SourceConverter() {}
 
     @Converter
     public static JavaSourceWithoutEventStream toJavaSourceWithoutEventStream(Object payload) {

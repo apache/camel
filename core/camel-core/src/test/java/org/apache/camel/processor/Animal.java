@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.Serializable;
@@ -27,8 +28,7 @@ public class Animal implements Serializable {
     private int id;
     private String name;
 
-    public Animal() {
-    }
+    public Animal() {}
 
     public Animal(int id, String name) {
         this.id = id;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.util.Collection;
@@ -162,7 +163,9 @@ public class JsonPathExpression extends ExpressionAdapter {
                 boolean singleElement = result instanceof List && ((List<?>) result).size() == 1;
                 if (singleElement && !resultTypeIsCollection) {
                     result = ((List<?>) result).get(0);
-                    LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result,
+                    LOG.trace(
+                            "Unwrapping result: {} from single element List before converting to: {}",
+                            result,
                             resultType);
                 }
             }
@@ -209,8 +212,7 @@ public class JsonPathExpression extends ExpressionAdapter {
 
         LOG.debug("Initializing {} using: {}", predicate ? "predicate" : "expression", exp);
         try {
-            engine = new JsonPathEngine(
-                    exp, source, writeAsString, suppressExceptions, allowSimple, options, context);
+            engine = new JsonPathEngine(exp, source, writeAsString, suppressExceptions, allowSimple, options, context);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(exp, e);
         }

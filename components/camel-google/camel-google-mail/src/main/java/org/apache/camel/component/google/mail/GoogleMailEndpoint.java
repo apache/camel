@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
 
 import java.util.Map;
@@ -38,13 +39,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage messages in Google Mail.
  */
-@UriEndpoint(firstVersion = "2.15.0",
-             scheme = "google-mail",
-             title = "Google Mail",
-             syntax = "google-mail:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             consumerPrefix = "consumer",
-             category = { Category.CLOUD, Category.API, Category.MAIL })
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "google-mail",
+        title = "Google Mail",
+        syntax = "google-mail:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        consumerPrefix = "consumer",
+        category = {Category.CLOUD, Category.API, Category.MAIL})
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration>
         implements EndpointServiceLocation {
 
@@ -53,10 +55,19 @@ public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, G
     @UriParam
     private GoogleMailConfiguration configuration;
 
-    public GoogleMailEndpoint(String uri, GoogleMailComponent component, GoogleMailApiName apiName, String methodName,
-                              GoogleMailConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleMailApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public GoogleMailEndpoint(
+            String uri,
+            GoogleMailComponent component,
+            GoogleMailApiName apiName,
+            String methodName,
+            GoogleMailConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                GoogleMailApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 

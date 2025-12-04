@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.io.UnsupportedEncodingException;
@@ -51,37 +52,36 @@ public final class SmppUtils {
      * See http://unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
      */
     public static final short[] ISO_GSM_0338 = {
-            64, 163, 36, 165, 232, 233, 249, 236,
-            242, 199, 10, 216, 248, 13, 197, 229,
-            0, 95, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 198, 230, 223, 201,
-            32, 33, 34, 35, 164, 37, 38, 39,
-            40, 41, 42, 43, 44, 45, 46, 47,
-            48, 49, 50, 51, 52, 53, 54, 55,
-            56, 57, 58, 59, 60, 61, 62, 63,
-            161, 65, 66, 67, 68, 69, 70, 71,
-            72, 73, 74, 75, 76, 77, 78, 79,
-            80, 81, 82, 83, 84, 85, 86, 87,
-            88, 89, 90, 196, 214, 209, 220, 167,
-            191, 97, 98, 99, 100, 101, 102, 103,
-            104, 105, 106, 107, 108, 109, 110, 111,
-            112, 113, 114, 115, 116, 117, 118, 119,
-            120, 121, 122, 228, 246, 241, 252, 224
+        64, 163, 36, 165, 232, 233, 249, 236,
+        242, 199, 10, 216, 248, 13, 197, 229,
+        0, 95, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 198, 230, 223, 201,
+        32, 33, 34, 35, 164, 37, 38, 39,
+        40, 41, 42, 43, 44, 45, 46, 47,
+        48, 49, 50, 51, 52, 53, 54, 55,
+        56, 57, 58, 59, 60, 61, 62, 63,
+        161, 65, 66, 67, 68, 69, 70, 71,
+        72, 73, 74, 75, 76, 77, 78, 79,
+        80, 81, 82, 83, 84, 85, 86, 87,
+        88, 89, 90, 196, 214, 209, 220, 167,
+        191, 97, 98, 99, 100, 101, 102, 103,
+        104, 105, 106, 107, 108, 109, 110, 111,
+        112, 113, 114, 115, 116, 117, 118, 119,
+        120, 121, 122, 228, 246, 241, 252, 224
     };
 
     /**
      * See http://unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
      */
     public static final short[][] ISO_GSM_0338_EXT = {
-            { 10, 12 }, { 20, 94 }, { 40, 123 }, { 41, 125 }, { 47, 92 },
-            { 60, 91 }, { 61, 126 }, { 62, 93 }, { 64, 124 }, { 101, 164 }
+        {10, 12}, {20, 94}, {40, 123}, {41, 125}, {47, 92},
+        {60, 91}, {61, 126}, {62, 93}, {64, 124}, {101, 164}
     };
 
     private static final Logger LOG = LoggerFactory.getLogger(SmppUtils.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
 
-    private SmppUtils() {
-    }
+    private SmppUtils() {}
 
     public static String formatTime(Date date) {
         return TIME_FORMATTER.format(date);
@@ -163,7 +163,8 @@ public final class SmppUtils {
      * @return          true if the characters can be represented in GSM 3.38
      */
     public static boolean isGsm0338Encodeable(byte[] aMessage) {
-        outer: for (int i = 0; i < aMessage.length; i++) {
+        outer:
+        for (int i = 0; i < aMessage.length; i++) {
             for (int j = 0; j < ISO_GSM_0338.length; j++) {
                 if (ISO_GSM_0338[j] == aMessage[i]) {
                     continue outer;
@@ -321,8 +322,11 @@ public final class SmppUtils {
     }
 
     public static BlockingTask newReconnectTask(
-            ScheduledExecutorService service, String taskName, long initialReconnectDelay,
-            long reconnectDelay, int maxReconnect) {
+            ScheduledExecutorService service,
+            String taskName,
+            long initialReconnectDelay,
+            long reconnectDelay,
+            int maxReconnect) {
         return Tasks.backgroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInitialDelay(Duration.ofMillis(initialReconnectDelay))

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,8 +57,7 @@ public class ProcessDefinitionResponse {
     @JsonProperty("version")
     private String version;
 
-    public ProcessDefinitionResponse() {
-    }
+    public ProcessDefinitionResponse() {}
 
     public String getId() {
         return id;
@@ -154,5 +154,4 @@ public class ProcessDefinitionResponse {
     public void setVersion(String version) {
         this.version = version;
     }
-
 }

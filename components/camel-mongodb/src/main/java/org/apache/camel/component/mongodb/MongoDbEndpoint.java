@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
+
+import static org.apache.camel.component.mongodb.MongoDbOperation.command;
+import static org.apache.camel.component.mongodb.MongoDbOperation.findAll;
+import static org.apache.camel.component.mongodb.MongoDbOperation.getDbStats;
+import static org.apache.camel.component.mongodb.MongoDbOperation.valueOf;
+import static org.apache.camel.component.mongodb.MongoDbOutputType.Document;
+import static org.apache.camel.component.mongodb.MongoDbOutputType.DocumentList;
+import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,19 +57,16 @@ import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mongodb.MongoDbOperation.command;
-import static org.apache.camel.component.mongodb.MongoDbOperation.findAll;
-import static org.apache.camel.component.mongodb.MongoDbOperation.getDbStats;
-import static org.apache.camel.component.mongodb.MongoDbOperation.valueOf;
-import static org.apache.camel.component.mongodb.MongoDbOutputType.Document;
-import static org.apache.camel.component.mongodb.MongoDbOutputType.DocumentList;
-import static org.apache.camel.component.mongodb.MongoDbOutputType.MongoIterable;
-
 /**
  * Perform operations on MongoDB documents and collections.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb", title = "MongoDB", syntax = "mongodb:connectionBean",
-             category = { Category.DATABASE }, headersClass = MongoDbConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "mongodb",
+        title = "MongoDB",
+        syntax = "mongodb:connectionBean",
+        category = {Category.DATABASE},
+        headersClass = MongoDbConstants.class)
 public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
@@ -68,127 +74,166 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database if no hosts parameter is present.")
+    @UriPath(
+            description =
+                    "Sets the connection bean reference used to lookup a client for connecting to a database if no hosts parameter is present.")
     @Metadata(required = true)
     private String connectionBean;
 
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam
     private String hosts;
-    //Authentication configuration
+    // Authentication configuration
     @UriParam(label = "security")
     private String authSource;
+
     @UriParam
     private String database;
+
     @UriParam
     private String collection;
+
     @UriParam
     private String collectionIndex;
+
     @UriParam
     private MongoDbOperation operation;
+
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
+
     @UriParam(label = "advanced")
     private boolean dynamicity;
+
     @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
+
     @UriParam(label = "consumer", enums = "tailable,changeStreams", defaultValue = "tailable")
     private String consumerType;
+
     @UriParam(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private long cursorRegenerationDelay = 1000L;
+
     @UriParam(label = "consumer")
     private String tailTrackIncreasingField;
+
     @UriParam(label = "consumer,changeStream")
     private String streamFilter;
+
     @UriParam(label = "consumer", enums = "default,updateLookup,required,whenAvailable", defaultValue = "default")
     private FullDocument fullDocument = FullDocument.DEFAULT;
     // persistent tail tracking
     @UriParam(label = "consumer")
     private boolean persistentTailTracking;
+
     @UriParam(label = "consumer")
     private String persistentId;
+
     @UriParam(label = "consumer")
     private String tailTrackDb;
+
     @UriParam(label = "consumer")
     private String tailTrackCollection;
+
     @UriParam(label = "consumer")
     private String tailTrackField;
+
     @UriParam(label = "common")
     private MongoDbOutputType outputType;
-    //Server Selection Configuration
+    // Server Selection Configuration
     @UriParam(label = "advanced", defaultValue = "30000")
     private Integer serverSelectionTimeoutMS = 30000;
+
     @UriParam(label = "advanced", defaultValue = "15")
     private Integer localThresholdMS = 15;
-    //Server Monitoring Configuration
+    // Server Monitoring Configuration
     @UriParam(label = "advanced")
     private Integer heartbeatFrequencyMS;
-    //Replica set configuration
+    // Replica set configuration
     @UriParam(label = "advanced")
     private String replicaSet;
-    //Connection Configuration
+    // Connection Configuration
     @UriParam(label = "security", defaultValue = "false")
     private boolean tls;
+
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsAllowInvalidHostnames;
+
     @UriParam(label = "advanced", defaultValue = "10000")
     private Integer connectTimeoutMS = 10000;
+
     @UriParam(label = "advanced", defaultValue = "0")
     private Integer socketTimeoutMS = 0;
+
     @UriParam(label = "advanced", defaultValue = "0")
     private Integer maxIdleTimeMS = 0;
+
     @UriParam(label = "advanced", defaultValue = "0")
     private Integer maxLifeTimeMS = 0;
-    //Connection Pool Configuration
+    // Connection Pool Configuration
     @UriParam(label = "advanced", defaultValue = "0")
     private Integer minPoolSize = 0;
+
     @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxPoolSize = 100;
+
     @UriParam(label = "advanced", defaultValue = "2")
     private Integer maxConnecting = 2;
+
     @UriParam(label = "advanced", defaultValue = "120000")
     private Integer waitQueueTimeoutMS = 120000;
-    //Write concern
-    @UriParam(label = "advanced", defaultValue = "ACKNOWLEDGED",
-              enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
+    // Write concern
+    @UriParam(
+            label = "advanced",
+            defaultValue = "ACKNOWLEDGED",
+            enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
     private String writeConcern = "ACKNOWLEDGED";
-    //Read Preference
-    @UriParam(label = "advanced",
-              defaultValue = "PRIMARY",
-              enums = "PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST")
+    // Read Preference
+    @UriParam(
+            label = "advanced",
+            defaultValue = "PRIMARY",
+            enums = "PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST")
     private String readPreference = "PRIMARY";
+
     @UriParam(label = "advanced")
     private String readPreferenceTags;
+
     @UriParam(label = "advanced", defaultValue = "-1")
     private Integer maxStalenessSeconds = -1;
-    //Server Handshake configuration
+    // Server Handshake configuration
     @UriParam(label = "advanced")
     private String appName;
-    //Compressor configuration
+    // Compressor configuration
     @UriParam(label = "advanced")
     private String compressors;
+
     @UriParam(label = "advanced")
     private Integer zlibCompressionLevel;
-    //SRV configuration
+    // SRV configuration
     @UriParam(label = "advanced", defaultValue = "mongodb")
     private String srvServiceName;
+
     @UriParam(label = "advanced")
     private Integer srvMaxHosts;
-    //General Configuration
+    // General Configuration
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean retryWrites = true;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean retryReads = true;
+
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean directConnection;
+
     @UriParam(label = "advanced")
     private boolean loadBalanced;
-    //additional properties
-    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.",
-              label = "common")
+    // additional properties
+    @UriParam(description = "Set the whole Connection String/Uri for mongodb endpoint.", label = "common")
     private String connectionUriString;
 
     // tailable cursor consumer by default
@@ -199,8 +244,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private MongoDatabase mongoDatabase;
     private MongoCollection<Document> mongoCollection;
 
-    public MongoDbEndpoint() {
-    }
+    public MongoDbEndpoint() {}
 
     public MongoDbEndpoint(String uri, MongoDbComponent component) {
         super(uri, component);
@@ -287,7 +331,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
                 throw new IllegalArgumentException("outputType DocumentList is only compatible with operation findAll");
             }
             if (MongoIterable.equals(outputType) && !(findAll.equals(operation))) {
-                throw new IllegalArgumentException("outputType MongoIterable is only compatible with operation findAll");
+                throw new IllegalArgumentException(
+                        "outputType MongoIterable is only compatible with operation findAll");
             }
             if (Document.equals(outputType) && (findAll.equals(operation))) {
                 throw new IllegalArgumentException("outputType Document is not compatible with operation findAll");
@@ -299,9 +344,12 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
         // make our best effort to validate, options with defaults are checked
         // against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
-        if (!ObjectHelper.isEmpty(dbConsumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb)
+        if (!ObjectHelper.isEmpty(dbConsumerType)
+                || persistentTailTracking
+                || !ObjectHelper.isEmpty(tailTrackDb)
                 || !ObjectHelper.isEmpty(tailTrackCollection)
-                || !ObjectHelper.isEmpty(tailTrackField) || cursorRegenerationDelay != 1000L) {
+                || !ObjectHelper.isEmpty(tailTrackField)
+                || cursorRegenerationDelay != 1000L) {
             throw new IllegalArgumentException(
                     "dbConsumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
         }
@@ -347,20 +395,23 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
 
         mongoDatabase = mongoConnection.getDatabase(database);
         if (mongoDatabase == null) {
-            throw new CamelMongoDbException("Could not initialise MongoDbComponent. Database " + database + " does not exist.");
+            throw new CamelMongoDbException(
+                    "Could not initialise MongoDbComponent. Database " + database + " does not exist.");
         }
         if (collection != null) {
             if (!createCollection && !databaseContainsCollection(collection)) {
-                throw new CamelMongoDbException(
-                        "Could not initialise MongoDbComponent. Collection "
-                                                + collection
-                                                + " does not exist on the database and createCollection is false.");
+                throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection "
+                        + collection
+                        + " does not exist on the database and createCollection is false.");
             }
             mongoCollection = mongoDatabase.getCollection(collection, Document.class);
 
-            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
-                      + "Cluster description: {}, Db: {}, Collection: {}",
-                    mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection);
+            LOG.debug(
+                    "MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
+                            + "Cluster description: {}, Db: {}, Collection: {}",
+                    mongoConnection.getClusterDescription(),
+                    mongoDatabase.getName(),
+                    collection);
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {
@@ -373,7 +424,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     private boolean databaseContainsCollection(String collectionName) {
-        return StreamSupport.stream(mongoDatabase.listCollectionNames().spliterator(), false).anyMatch(collectionName::equals);
+        return StreamSupport.stream(mongoDatabase.listCollectionNames().spliterator(), false)
+                .anyMatch(collectionName::equals);
     }
 
     /**
@@ -441,14 +493,17 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
             if (connectionUriString != null) {
                 mongoClient = MongoClients.create(connectionUriString);
             } else {
-                mongoClient = MongoClients.create(String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions));
+                mongoClient =
+                        MongoClients.create(String.format("mongodb://%s%s%s", credentials, hosts, connectionOptions));
             }
             LOG.debug("Connection created using provided credentials");
         } else {
             mongoClient = getComponent().getMongoConnection();
             if (mongoClient == null) {
                 mongoClient = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-                LOG.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
+                LOG.debug(
+                        "Resolved the connection provided by {} context reference as {}",
+                        connectionBean,
                         mongoConnection);
             }
         }
@@ -660,9 +715,12 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     public MongoDbTailTrackingConfig getTailTrackingConfig() {
         if (tailTrackingConfig == null) {
             tailTrackingConfig = new MongoDbTailTrackingConfig(
-                    persistentTailTracking, tailTrackIncreasingField, tailTrackDb == null ? database : tailTrackDb,
+                    persistentTailTracking,
+                    tailTrackIncreasingField,
+                    tailTrackDb == null ? database : tailTrackDb,
                     tailTrackCollection,
-                    tailTrackField, getPersistentId());
+                    tailTrackField,
+                    getPersistentId());
         }
         return tailTrackingConfig;
     }
@@ -764,7 +822,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     public WriteConcern getWriteConcernBean() {
         WriteConcern writeConcernBean = WriteConcern.valueOf(getWriteConcern());
         if (writeConcernBean == null) {
-            throw new IllegalArgumentException(String.format("Unknown WriteConcern configuration %s", getWriteConcern()));
+            throw new IllegalArgumentException(
+                    String.format("Unknown WriteConcern configuration %s", getWriteConcern()));
         }
         return writeConcernBean;
     }
@@ -1148,5 +1207,4 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     public String getConnectionUriString() {
         return connectionUriString;
     }
-
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for {@link AntPathMatcher}.
@@ -69,5 +70,4 @@ public class AntPathMatcherTest {
         // this is not a pattern
         assertEquals("org/apache/camel/mycamel.xml", matcher.determineRootDir("org/apache/camel/mycamel.xml"));
     }
-
 }

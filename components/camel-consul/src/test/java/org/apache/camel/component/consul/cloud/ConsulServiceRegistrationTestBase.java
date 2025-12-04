@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,9 +34,6 @@ import org.kiwiproject.consul.CatalogClient;
 import org.kiwiproject.consul.HealthClient;
 import org.kiwiproject.consul.model.catalog.CatalogService;
 import org.kiwiproject.consul.model.health.ServiceHealth;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
@@ -77,13 +78,15 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         assertEquals(SERVICE_PORT, services.get(0).getServicePort());
         assertEquals("localhost", services.get(0).getServiceAddress());
         assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PROTOCOL + "=http"));
-        assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint"));
+        assertTrue(
+                services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint"));
 
         getMetadata().forEach((k, v) -> {
             assertTrue(services.get(0).getServiceTags().contains(k + "=" + v));
         });
 
-        List<ServiceHealth> checks = health.getHealthyServiceInstances(SERVICE_NAME).getResponse();
+        List<ServiceHealth> checks =
+                health.getHealthyServiceInstances(SERVICE_NAME).getResponse();
         assertEquals(1, checks.size());
         assertEquals(SERVICE_PORT, checks.get(0).getService().getPort());
         assertEquals("localhost", checks.get(0).getService().getAddress());

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.LongAdder;
 
@@ -28,12 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test for issue CAMEL-706
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("issues") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("issues")})
 public class TransactionErrorHandlerRedeliveryDelayIT extends AbstractSpringJMSITSupport {
 
     private static final LongAdder COUNTER = new LongAdder();
@@ -55,8 +56,7 @@ public class TransactionErrorHandlerRedeliveryDelayIT extends AbstractSpringJMSI
 
     public static class MyFailureProcessor implements Processor {
 
-        public MyFailureProcessor() {
-        }
+        public MyFailureProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

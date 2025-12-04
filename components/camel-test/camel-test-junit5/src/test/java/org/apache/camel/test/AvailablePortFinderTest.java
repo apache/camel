@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -23,8 +26,6 @@ import java.net.MulticastSocket;
 import java.net.ServerSocket;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AvailablePortFinderTest {
 
@@ -56,5 +57,4 @@ public class AvailablePortFinderTest {
         assertNotEquals(p1, p2, "Port " + p1 + " Port2 " + p2);
         socket.close();
     }
-
 }

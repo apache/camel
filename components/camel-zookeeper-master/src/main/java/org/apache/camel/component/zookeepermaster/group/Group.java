@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
 
 import java.io.Closeable;
@@ -92,5 +93,4 @@ public interface Group<T extends NodeState> extends Closeable {
      * @return the state, or <tt>null</tt> if no last state yet.
      */
     T getLastState();
-
 }

@@ -51,8 +51,8 @@ import org.apache.camel.util.URISupport;
 
 public class KnativeTrait extends KnativeBaseTrait {
 
-    private static final Pattern knativeUriPattern
-            = Pattern.compile("^knative:/*(channel|endpoint|event)(?:[?].*|$|/([A-Za-z0-9.-]+)(?:[/?].*|$))");
+    private static final Pattern knativeUriPattern =
+            Pattern.compile("^knative:/*(channel|endpoint|event)(?:[?].*|$|/([A-Za-z0-9.-]+)(?:[/?].*|$))");
     private static final Pattern plainNamePattern = Pattern.compile("^[A-Za-z0-9.-]+$");
     private static final String K_SINK_URL = "{{k.sink:http://localhost:8080}}";
 
@@ -76,36 +76,40 @@ public class KnativeTrait extends KnativeBaseTrait {
         List<SourceMetadata> allSourcesMetadata = context.getSourceMetadata();
 
         if (knativeTrait.getChannelSources() == null) {
-            knativeTrait.setChannelSources(extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.CHANNEL, "from"));
+            knativeTrait.setChannelSources(
+                    extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.CHANNEL, "from"));
         }
 
         if (knativeTrait.getChannelSinks() == null) {
-            knativeTrait.setChannelSinks(extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.CHANNEL, "to"));
+            knativeTrait.setChannelSinks(
+                    extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.CHANNEL, "to"));
         }
 
         if (knativeTrait.getEndpointSources() == null) {
-            knativeTrait
-                    .setEndpointSources(extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.ENDPOINT, "from"));
+            knativeTrait.setEndpointSources(
+                    extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.ENDPOINT, "from"));
         }
 
         if (knativeTrait.getEndpointSinks() == null) {
-            knativeTrait.setEndpointSinks(extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.ENDPOINT, "to"));
+            knativeTrait.setEndpointSinks(
+                    extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.ENDPOINT, "to"));
         }
 
         if (knativeTrait.getEventSources() == null) {
-            knativeTrait.setEventSources(extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.EVENT, "from"));
+            knativeTrait.setEventSources(
+                    extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.EVENT, "from"));
         }
 
         if (knativeTrait.getEventSinks() == null) {
             knativeTrait.setEventSinks(extractKnativeEndpointUris(allSourcesMetadata, KnativeResourceType.EVENT, "to"));
         }
 
-        boolean hasKnativeEndpoint = !knativeTrait.getChannelSources().isEmpty() ||
-                !knativeTrait.getChannelSinks().isEmpty() ||
-                !knativeTrait.getEndpointSources().isEmpty() ||
-                !knativeTrait.getEndpointSinks().isEmpty() ||
-                !knativeTrait.getEventSources().isEmpty() ||
-                !knativeTrait.getEventSinks().isEmpty();
+        boolean hasKnativeEndpoint = !knativeTrait.getChannelSources().isEmpty()
+                || !knativeTrait.getChannelSinks().isEmpty()
+                || !knativeTrait.getEndpointSources().isEmpty()
+                || !knativeTrait.getEndpointSinks().isEmpty()
+                || !knativeTrait.getEventSources().isEmpty()
+                || !knativeTrait.getEventSinks().isEmpty();
 
         if (knativeTrait.getSinkBinding() == null) {
             knativeTrait.setSinkBinding(shouldCreateSinkBinding(knativeTrait));
@@ -131,9 +135,11 @@ public class KnativeTrait extends KnativeBaseTrait {
 
         if (!knativeResourcesConfig.isEmpty()) {
             try {
-                context.addConfigurationResource("knative.json", KubernetesHelper.json()
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(Collections.singletonMap("resources", knativeResourcesConfig)));
+                context.addConfigurationResource(
+                        "knative.json",
+                        KubernetesHelper.json()
+                                .writerWithDefaultPrettyPrinter()
+                                .writeValueAsString(Collections.singletonMap("resources", knativeResourcesConfig)));
                 Camel camelTrait = Optional.ofNullable(traitConfig.getCamel()).orElseGet(Camel::new);
                 if (camelTrait.getProperties() == null) {
                     camelTrait.setProperties(new ArrayList<>());
@@ -141,7 +147,8 @@ public class KnativeTrait extends KnativeBaseTrait {
                 camelTrait.getProperties().add("camel.component.knative.environmentPath=classpath:knative.json");
                 traitConfig.setCamel(camelTrait);
             } catch (JsonProcessingException e) {
-                context.printer().printf("Failed to write knative.json environment configuration - %s%n", e.getMessage());
+                context.printer()
+                        .printf("Failed to write knative.json environment configuration - %s%n", e.getMessage());
             }
         }
     }
@@ -154,13 +161,7 @@ public class KnativeTrait extends KnativeBaseTrait {
         for (String uri : knativeTrait.getChannelSinks()) {
             String channelName = extractKnativeResource(uri);
             addKnativeResourceConfiguration(new KnativeResourceConfiguration(
-                    channelName,
-                    KnativeResourceType.CHANNEL,
-                    "sink",
-                    K_SINK_URL,
-                    null,
-                    channelName,
-                    null));
+                    channelName, KnativeResourceType.CHANNEL, "sink", K_SINK_URL, null, channelName, null));
         }
     }
 
@@ -168,25 +169,13 @@ public class KnativeTrait extends KnativeBaseTrait {
         for (String uri : knativeTrait.getEndpointSources()) {
             String endpointName = extractKnativeResource(uri);
             addKnativeResourceConfiguration(new KnativeResourceConfiguration(
-                    endpointName,
-                    KnativeResourceType.ENDPOINT,
-                    "source",
-                    null,
-                    "/",
-                    endpointName,
-                    null));
+                    endpointName, KnativeResourceType.ENDPOINT, "source", null, "/", endpointName, null));
         }
 
         for (String uri : knativeTrait.getEndpointSinks()) {
             String endpointName = extractKnativeResource(uri);
             addKnativeResourceConfiguration(new KnativeResourceConfiguration(
-                    endpointName,
-                    KnativeResourceType.ENDPOINT,
-                    "sink",
-                    K_SINK_URL,
-                    null,
-                    endpointName,
-                    null));
+                    endpointName, KnativeResourceType.ENDPOINT, "sink", K_SINK_URL, null, endpointName, null));
         }
     }
 
@@ -200,13 +189,7 @@ public class KnativeTrait extends KnativeBaseTrait {
             String brokerName = extractBrokerName(uri);
             String serviceName = ObjectHelper.isNotEmpty(eventType) ? brokerName : "default";
             addKnativeResourceConfiguration(new KnativeResourceConfiguration(
-                    serviceName,
-                    KnativeResourceType.EVENT,
-                    "sink",
-                    K_SINK_URL,
-                    null,
-                    brokerName,
-                    null));
+                    serviceName, KnativeResourceType.EVENT, "sink", K_SINK_URL, null, brokerName, null));
         }
     }
 
@@ -214,7 +197,8 @@ public class KnativeTrait extends KnativeBaseTrait {
         String channelName = extractKnativeResource(uri);
 
         String subscriptionName = createSubscriptionName(context.getName(), channelName);
-        if (ObjectHelper.isEmpty(channelName) || context.getKnativeSubscription(subscriptionName).isPresent()) {
+        if (ObjectHelper.isEmpty(channelName)
+                || context.getKnativeSubscription(subscriptionName).isPresent()) {
             // no channel name given or same subscription already exists
             return;
         }
@@ -240,13 +224,7 @@ public class KnativeTrait extends KnativeBaseTrait {
         context.add(subscription);
 
         addKnativeResourceConfiguration(new KnativeResourceConfiguration(
-                channelName,
-                KnativeResourceType.CHANNEL,
-                "source",
-                null,
-                servicePath,
-                channelName,
-                null));
+                channelName, KnativeResourceType.CHANNEL, "source", null, servicePath, channelName, null));
     }
 
     private void createTrigger(String uri, Knative knativeTrait, TraitContext context) {
@@ -271,20 +249,16 @@ public class KnativeTrait extends KnativeBaseTrait {
                         .withRef(getSubscriberRef(context))
                         .withUri(servicePath)
                         .build())
-                .withFilter(new TriggerFilterBuilder().addToAttributes(getFilterAttributes(knativeTrait, eventType)).build())
+                .withFilter(new TriggerFilterBuilder()
+                        .addToAttributes(getFilterAttributes(knativeTrait, eventType))
+                        .build())
                 .endSpec();
 
         context.add(trigger);
 
         String serviceName = ObjectHelper.isNotEmpty(eventType) ? eventType : "default";
         addKnativeResourceConfiguration(new KnativeResourceConfiguration(
-                serviceName,
-                KnativeResourceType.EVENT,
-                "source",
-                null,
-                servicePath,
-                brokerName,
-                null));
+                serviceName, KnativeResourceType.EVENT, "source", null, servicePath, brokerName, null));
     }
 
     private Map<String, String> getFilterAttributes(Knative knativeTrait, String eventType) {
@@ -301,7 +275,8 @@ public class KnativeTrait extends KnativeBaseTrait {
             }
         }
 
-        if (!filterAttributes.containsKey("type") && Optional.ofNullable(knativeTrait.getFilterEventType()).orElse(true)
+        if (!filterAttributes.containsKey("type")
+                && Optional.ofNullable(knativeTrait.getFilterEventType()).orElse(true)
                 && ObjectHelper.isNotEmpty(eventType)) {
             // Apply default trigger filter attribute for the event type
             filterAttributes.put("type", eventType);
@@ -391,7 +366,9 @@ public class KnativeTrait extends KnativeBaseTrait {
 
     private static String extractBrokerName(String uri) {
         try {
-            return URISupport.parseQuery(URISupport.extractQuery(uri)).getOrDefault("name", "default").toString();
+            return URISupport.parseQuery(URISupport.extractQuery(uri))
+                    .getOrDefault("name", "default")
+                    .toString();
         } catch (Exception e) {
             return "default";
         }
@@ -404,8 +381,10 @@ public class KnativeTrait extends KnativeBaseTrait {
      * @return              true when single Knative sink is used, otherwise false.
      */
     private static boolean shouldCreateSinkBinding(Knative knativeTrait) {
-        return knativeTrait.getChannelSinks().size() + knativeTrait.getEndpointSinks().size()
-               + knativeTrait.getEventSinks().size() == 1;
+        return knativeTrait.getChannelSinks().size()
+                        + knativeTrait.getEndpointSinks().size()
+                        + knativeTrait.getEventSinks().size()
+                == 1;
     }
 
     private static List<String> extractKnativeEndpointUris(
@@ -475,8 +454,14 @@ public class KnativeTrait extends KnativeBaseTrait {
         }
     }
 
-    private record KnativeResourceConfiguration(String name, KnativeResourceType resourceType, String endpointKind, String url,
-            String path, String objectName, Map<String, String> ceOverrides) {
+    private record KnativeResourceConfiguration(
+            String name,
+            KnativeResourceType resourceType,
+            String endpointKind,
+            String url,
+            String path,
+            String objectName,
+            Map<String, String> ceOverrides) {
 
         public Map<String, Object> toJsonMap() {
             Map<String, Object> json = new LinkedHashMap<>();

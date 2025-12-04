@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Endpoint;
@@ -88,7 +89,8 @@ public class Ddb2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (ddbProducerToString == null) {
-            ddbProducerToString = "DdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ddbProducerToString =
+                    "DdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ddbProducerToString;
     }
@@ -102,9 +104,7 @@ public class Ddb2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -121,5 +121,4 @@ public class Ddb2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

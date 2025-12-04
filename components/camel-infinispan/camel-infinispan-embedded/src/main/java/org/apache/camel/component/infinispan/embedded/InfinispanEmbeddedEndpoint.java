@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_EMBEDDED;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -28,24 +31,32 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.SCHEME_EMBEDDED;
-
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = SCHEME_EMBEDDED, title = "Infinispan Embedded",
-             syntax = "infinispan-embedded:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = InfinispanConstants.class)
+@UriEndpoint(
+        firstVersion = "2.13.0",
+        scheme = SCHEME_EMBEDDED,
+        title = "Infinispan Embedded",
+        syntax = "infinispan-embedded:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = InfinispanConstants.class)
 public class InfinispanEmbeddedEndpoint extends InfinispanEndpoint {
 
-    @UriPath(description = "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
+    @UriPath(
+            description =
+                    "The name of the cache to use. Use current to use the existing cache name from the currently configured cached manager. Or use default for the default cache manager name.")
     @Metadata(required = true)
     private final String cacheName;
+
     @UriParam
     private final InfinispanEmbeddedConfiguration configuration;
 
-    public InfinispanEmbeddedEndpoint(String uri, String cacheName, InfinispanComponent component,
-                                      InfinispanEmbeddedConfiguration configuration) {
+    public InfinispanEmbeddedEndpoint(
+            String uri,
+            String cacheName,
+            InfinispanComponent component,
+            InfinispanEmbeddedConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;
@@ -63,8 +74,8 @@ public class InfinispanEmbeddedEndpoint extends InfinispanEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        InfinispanEmbeddedConsumer consumer
-                = new InfinispanEmbeddedConsumer(this, processor, cacheName, getComponent().getManager(), configuration);
+        InfinispanEmbeddedConsumer consumer = new InfinispanEmbeddedConsumer(
+                this, processor, cacheName, getComponent().getManager(), configuration);
 
         configureConsumer(consumer);
         return consumer;

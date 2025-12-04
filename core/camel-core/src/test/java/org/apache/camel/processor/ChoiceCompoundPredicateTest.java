@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.builder.PredicateBuilder.and;
+import static org.apache.camel.builder.PredicateBuilder.or;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +28,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.PredicateBuilder.and;
-import static org.apache.camel.builder.PredicateBuilder.or;
 
 public class ChoiceCompoundPredicateTest extends ContextTestSupport {
 
@@ -108,7 +109,8 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
 
                 // And God must be an admin and (either have type god or a
                 // special message containing Camel Rider)
-                Predicate god = and(admin, or(body().contains("Camel Rider"), header("type").isEqualTo("god")));
+                Predicate god = and(
+                        admin, or(body().contains("Camel Rider"), header("type").isEqualTo("god")));
 
                 // As you can see with the predicates above we can stack them to
                 // build compound predicates
@@ -119,11 +121,19 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
                 // We encourage you to define complex predicates outside the
                 // fluent router builder as
                 // it will just get a bit complex for humans to read
-                from("direct:start").choice().when(god).to("mock:god").when(admin).to("mock:admin").when(user).to("mock:user")
-                        .otherwise().to("mock:guest").end();
+                from("direct:start")
+                        .choice()
+                        .when(god)
+                        .to("mock:god")
+                        .when(admin)
+                        .to("mock:admin")
+                        .when(user)
+                        .to("mock:user")
+                        .otherwise()
+                        .to("mock:guest")
+                        .end();
                 // END SNIPPET: e1
             }
         };
     }
-
 }

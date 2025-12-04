@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
+
+import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -41,8 +44,6 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessage;
-
-import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
 
 public class SpringWebserviceConsumer extends DefaultConsumer implements MessageEndpoint {
 
@@ -114,7 +115,8 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                     // presumably breadcrumb generation strategy
                     // may be required to implement
                     if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
-                        exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
+                        exchange.getIn()
+                                .setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
                     }
                 }
             }
@@ -149,9 +151,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         extractAttachmentsFromRequest(request, exchange);
     }
 
-    private void populateExchangeWithPropertiesFromMessageContext(
-            MessageContext messageContext,
-            Exchange exchange) {
+    private void populateExchangeWithPropertiesFromMessageContext(MessageContext messageContext, Exchange exchange) {
         // convert WebserviceMessage properties (added through interceptors) to
         // Camel exchange properties
         String[] propertyNames = messageContext.getPropertyNames();
@@ -174,17 +174,17 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             SoapHeader soapHeader = soapMessage.getSoapHeader();
 
             if (soapHeader != null) {
-                //Set the raw soap header as a header in the exchange.
+                // Set the raw soap header as a header in the exchange.
                 headers.put(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
 
-                //Set header values for the soap header attributes
+                // Set header values for the soap header attributes
                 Iterator<QName> attIter = soapHeader.getAllAttributes();
                 while (attIter.hasNext()) {
                     QName name = attIter.next();
                     headers.put(name.getLocalPart(), soapHeader.getAttributeValue(name));
                 }
 
-                //Set header values for the soap header elements
+                // Set header values for the soap header elements
                 Iterator<SoapHeaderElement> elementIter = soapHeader.examineAllHeaderElements();
                 while (elementIter.hasNext()) {
                     SoapHeaderElement element = elementIter.next();
@@ -195,9 +195,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         }
     }
 
-    private void extractAttachmentsFromRequest(
-            final WebServiceMessage request,
-            final Exchange exchange) {
+    private void extractAttachmentsFromRequest(final WebServiceMessage request, final Exchange exchange) {
 
         DefaultAttachmentMessage dam = null;
 
@@ -229,5 +227,4 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         }
         super.doStart();
     }
-
 }

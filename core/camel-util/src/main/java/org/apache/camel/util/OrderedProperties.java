@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.Properties;
@@ -25,6 +26,4 @@ import java.util.Properties;
  * been designed to provide the needed functionality. The complex logic for loading properties has been kept from the
  * JDK {@link Properties} class.
  */
-public final class OrderedProperties extends BaseOrderedProperties {
-
-}
+public final class OrderedProperties extends BaseOrderedProperties {}

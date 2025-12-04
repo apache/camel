@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,7 @@ public class FtpConsumerIdempotentIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
+                + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
     }
 
     @Test

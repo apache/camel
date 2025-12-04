@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.printer;
 
 import org.apache.camel.Category;
@@ -36,8 +37,14 @@ import org.apache.camel.support.DefaultEndpoint;
  * The functionality allows for the payload to be printed on a default printer, named local, remote or wirelessly linked
  * printer using the javax printing API under the covers.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername",
-             producerOnly = true, category = { Category.DOCUMENT }, headersClass = PrinterEndpoint.class)
+@UriEndpoint(
+        firstVersion = "2.1.0",
+        scheme = "lpr",
+        title = "Printer",
+        syntax = "lpr:hostname:port/printername",
+        producerOnly = true,
+        category = {Category.DOCUMENT},
+        headersClass = PrinterEndpoint.class)
 public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(label = "producer", description = "The name of the job", javaType = "String")
@@ -46,8 +53,7 @@ public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriParam
     private PrinterConfiguration config;
 
-    public PrinterEndpoint() {
-    }
+    public PrinterEndpoint() {}
 
     public PrinterEndpoint(String endpointUri, Component component, PrinterConfiguration config) {
         super(endpointUri, component);
@@ -81,5 +87,4 @@ public class PrinterEndpoint extends DefaultEndpoint implements EndpointServiceL
     public void setConfig(PrinterConfiguration config) {
         this.config = config;
     }
-
 }

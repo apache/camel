@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,11 +34,9 @@ import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class SObjectCompositeTest {
 
-    @JsonPropertyOrder({ "account__c", "contactId__c" })
+    @JsonPropertyOrder({"account__c", "contactId__c"})
     public static class AccountContactJunction__c extends AbstractDescribedSObjectBase {
 
         public AccountContactJunction__c() {
@@ -68,12 +69,12 @@ public class SObjectCompositeTest {
         }
     }
 
-    @JsonPropertyOrder({ "Name", "BillingStreet", "BillingCity", "BillingState", "Industry" })
+    @JsonPropertyOrder({"Name", "BillingStreet", "BillingCity", "BillingState", "Industry"})
     public static class TestAccount extends Account {
         // just for property order
     }
 
-    @JsonPropertyOrder({ "LastName", "Phone" })
+    @JsonPropertyOrder({"LastName", "Phone"})
     public static class TestContact extends Contact {
         // just for property order
     }
@@ -106,15 +107,15 @@ public class SObjectCompositeTest {
     @Test
     public void shouldSerializeToJson() throws IOException {
 
-        final String expectedJson = IOUtils
-                .toString(
-                        SObjectCompositeTest.class.getResourceAsStream(
-                                "/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"),
-                        StandardCharsets.UTF_8);
+        final String expectedJson = IOUtils.toString(
+                SObjectCompositeTest.class.getResourceAsStream(
+                        "/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"),
+                StandardCharsets.UTF_8);
 
-        final ObjectMapper mapper
-                = JsonUtils.createObjectMapper().copy().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-                        .configure(SerializationFeature.INDENT_OUTPUT, true);
+        final ObjectMapper mapper = JsonUtils.createObjectMapper()
+                .copy()
+                .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);
         assertThat(serialized).as("Should serialize as expected by Salesforce").isEqualTo(expectedJson);

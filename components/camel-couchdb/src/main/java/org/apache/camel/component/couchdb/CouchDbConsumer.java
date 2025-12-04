@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
+
+import static org.apache.camel.component.couchdb.CouchDbConstants.COUCHDB_RESUME_ACTION;
 
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -31,8 +34,6 @@ import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.resume.ResumeStrategyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.couchdb.CouchDbConstants.COUCHDB_RESUME_ACTION;
 
 public class CouchDbConsumer extends ScheduledBatchPollingConsumer implements ResumeAware<ResumeStrategy> {
     private static final Logger LOG = LoggerFactory.getLogger(CouchDbConsumer.class);
@@ -74,10 +75,11 @@ public class CouchDbConsumer extends ScheduledBatchPollingConsumer implements Re
 
     @Override
     protected int poll() throws Exception {
-        Response<ChangesResult> changesResultResponse
-                = couchClient.pollChanges(endpoint.getStyle(), since, endpoint.getHeartbeat(), getMaxMessagesPerPoll());
+        Response<ChangesResult> changesResultResponse =
+                couchClient.pollChanges(endpoint.getStyle(), since, endpoint.getHeartbeat(), getMaxMessagesPerPoll());
 
-        for (ChangesResultItem changesResultItem : changesResultResponse.getResult().getResults()) {
+        for (ChangesResultItem changesResultItem :
+                changesResultResponse.getResult().getResults()) {
             if (changesResultItem.isDeleted() != null) {
                 if (changesResultItem.isDeleted() && !endpoint.isDeletes()) {
                     continue;
@@ -89,11 +91,18 @@ public class CouchDbConsumer extends ScheduledBatchPollingConsumer implements Re
 
             lastSequence = changesResultItem.getSeq();
 
-            Exchange exchange = this.createExchange(lastSequence, changesResultItem.getId(), changesResultItem,
+            Exchange exchange = this.createExchange(
+                    lastSequence,
+                    changesResultItem.getId(),
+                    changesResultItem,
                     changesResultItem.isDeleted() == null ? false : changesResultItem.isDeleted());
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Created exchange [exchange={}, _id={}, seq={}", exchange, changesResultItem.getId(), lastSequence);
+                LOG.trace(
+                        "Created exchange [exchange={}, _id={}, seq={}",
+                        exchange,
+                        changesResultItem.getId(),
+                        lastSequence);
             }
 
             try {
@@ -115,7 +124,6 @@ public class CouchDbConsumer extends ScheduledBatchPollingConsumer implements Re
         ResumeStrategyHelper.resume(getEndpoint().getCamelContext(), this, resumeStrategy, COUCHDB_RESUME_ACTION);
 
         super.doStart();
-
     }
 
     @Override

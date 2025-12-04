@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
 
 import java.lang.reflect.Array;
@@ -69,8 +70,10 @@ public class Olingo2Index {
     private int hash(EntryMetadata metadata) {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((metadata.getId() == null) ? 0 : metadata.getId().hashCode());
-        result = prime * result + ((metadata.getUri() == null) ? 0 : metadata.getUri().hashCode());
+        result = prime * result
+                + ((metadata.getId() == null) ? 0 : metadata.getId().hashCode());
+        result = prime * result
+                + ((metadata.getUri() == null) ? 0 : metadata.getUri().hashCode());
         return result;
     }
 
@@ -85,7 +88,8 @@ public class Olingo2Index {
         int result = 1;
         // Hash metadata to ignore certain entries
         result = prime * result + ((entry.getMetadata() == null) ? 0 : hash(entry.getMetadata()));
-        result = prime * result + ((entry.getProperties() == null) ? 0 : entry.getProperties().hashCode());
+        result = prime * result
+                + ((entry.getProperties() == null) ? 0 : entry.getProperties().hashCode());
 
         // Ignore mediaMetadata, expandSelectTree since its object changes each
         // time

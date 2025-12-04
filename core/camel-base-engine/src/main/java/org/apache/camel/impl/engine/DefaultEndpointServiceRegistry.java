@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -72,7 +73,8 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
         return answer;
     }
 
-    private EndpointService newEndpointService(Endpoint endpoint, Consumer consumer, String dir, EndpointServiceLocation esl) {
+    private EndpointService newEndpointService(
+            Endpoint endpoint, Consumer consumer, String dir, EndpointServiceLocation esl) {
         EndpointService answer = null;
         String adr = esl.getServiceUrl();
         if (adr != null) {
@@ -98,8 +100,15 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
                 }
             }
             answer = new DefaultEndpointService(
-                    component, endpoint.getEndpointUri(), adr, esl.getServiceProtocol(), esl.getServiceMetadata(),
-                    hosted, dir, hits, routeId);
+                    component,
+                    endpoint.getEndpointUri(),
+                    adr,
+                    esl.getServiceProtocol(),
+                    esl.getServiceMetadata(),
+                    hosted,
+                    dir,
+                    hits,
+                    routeId);
         }
         return answer;
     }
@@ -120,7 +129,8 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
             return Optional.empty();
         }
         return camelContext.getRuntimeEndpointRegistry().getEndpointStatistics().stream()
-                .filter(s -> uri.equals(s.getUri()) && (direction == null || s.getDirection().equals(direction)))
+                .filter(s -> uri.equals(s.getUri())
+                        && (direction == null || s.getDirection().equals(direction)))
                 .findFirst();
     }
 
@@ -135,9 +145,16 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
         private final long hits;
         private final String routeId;
 
-        public DefaultEndpointService(String component, String endpointUri, String serviceUrl, String serviceProtocol,
-                                      Map<String, String> serviceMetadata,
-                                      boolean hostedService, String direction, long hits, String routeId) {
+        public DefaultEndpointService(
+                String component,
+                String endpointUri,
+                String serviceUrl,
+                String serviceProtocol,
+                Map<String, String> serviceMetadata,
+                boolean hostedService,
+                String direction,
+                long hits,
+                String routeId) {
             this.component = component;
             this.endpointUri = endpointUri;
             this.serviceUrl = serviceUrl;
@@ -193,7 +210,5 @@ public class DefaultEndpointServiceRegistry extends ServiceSupport implements En
         public String getRouteId() {
             return routeId;
         }
-
     }
-
 }

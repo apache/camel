@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
 import org.apache.camel.component.http.HttpEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyTest extends BaseEndpointDslTest {
 
@@ -43,13 +44,13 @@ public class HttpProxyTest extends BaseEndpointDslTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to(https("hello-world")
-                                .proxyHost("{{prop.proxyHost}}")
-                                .proxyPort("{{prop.proxyPort}}"));
+                        .to(https("hello-world").proxyHost("{{prop.proxyHost}}").proxyPort("{{prop.proxyPort}}"));
             }
         });
 
-        HttpEndpoint he = (HttpEndpoint) context.getEndpoints().stream().filter(e -> e instanceof HttpEndpoint).findFirst()
+        HttpEndpoint he = (HttpEndpoint) context.getEndpoints().stream()
+                .filter(e -> e instanceof HttpEndpoint)
+                .findFirst()
                 .orElse(null);
         assertEquals("myproxy", he.getProxyHost());
         assertEquals(3280, he.getProxyPort());
@@ -76,7 +77,9 @@ public class HttpProxyTest extends BaseEndpointDslTest {
             }
         });
 
-        HttpEndpoint he = (HttpEndpoint) context.getEndpoints().stream().filter(e -> e instanceof HttpEndpoint).findFirst()
+        HttpEndpoint he = (HttpEndpoint) context.getEndpoints().stream()
+                .filter(e -> e instanceof HttpEndpoint)
+                .findFirst()
                 .orElse(null);
         assertEquals("myproxy", he.getProxyHost());
         assertEquals(0, he.getProxyPort());
@@ -84,5 +87,4 @@ public class HttpProxyTest extends BaseEndpointDslTest {
 
         context.stop();
     }
-
 }

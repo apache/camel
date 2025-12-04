@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExceptionTest extends ContextTestSupport {
 
@@ -58,9 +59,8 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedBodiesReceived("<exception/>");
         resultEndpoint.expectedMessageCount(0);
 
-        assertThrows(Exception.class,
-                () -> template.sendBody("direct:start", "<body/>"),
-                "Should have thrown exception");
+        assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "<body/>"), "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -75,9 +75,8 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedBodiesReceived("<not-handled/>");
         resultEndpoint.expectedMessageCount(0);
 
-        assertThrows(Exception.class,
-                () -> template.sendBody("direct:start", "<body/>"),
-                "Should have thrown exception");
+        assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "<body/>"), "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -92,9 +91,8 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedBodiesReceived("<exception/>");
         resultEndpoint.expectedMessageCount(0);
 
-        assertThrows(Exception.class,
-                () -> template.sendBody("direct:start2", "<body/>"),
-                "Should have thrown exception");
+        assertThrows(
+                Exception.class, () -> template.sendBody("direct:start2", "<body/>"), "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -112,14 +110,19 @@ public class ExceptionTest extends ContextTestSupport {
 
                 if (getName().endsWith("WithLongHandler")) {
                     log.debug("Using long exception handler");
-                    onException(IllegalArgumentException.class).setBody(constant("<not-handled/>")).to("mock:exception");
+                    onException(IllegalArgumentException.class)
+                            .setBody(constant("<not-handled/>"))
+                            .to("mock:exception");
                 } else if (getName().endsWith("WithHandler")) {
                     log.debug("Using exception handler");
                     onException(IllegalArgumentException.class).to("mock:exception");
                 }
                 from("direct:start").process(exceptionThrower).to("mock:result");
                 from("direct:start2").to("direct:intermediate").to("mock:result");
-                from("direct:intermediate").setBody(constant("<some-value/>")).process(exceptionThrower).to("mock:result");
+                from("direct:intermediate")
+                        .setBody(constant("<some-value/>"))
+                        .process(exceptionThrower)
+                        .to("mock:result");
             }
         };
     }

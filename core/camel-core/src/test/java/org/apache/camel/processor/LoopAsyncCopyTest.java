@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,14 @@ public class LoopAsyncCopyTest extends ContextTestSupport {
                         // copy of the input exchange
                         // for each loop iteration, instead of keep using the same
                         // exchange all over
-                        .loop(3).copy().threads(1).transform(body().append("B")).end().to("mock:loop").end().to("mock:result");
+                        .loop(3)
+                        .copy()
+                        .threads(1)
+                        .transform(body().append("B"))
+                        .end()
+                        .to("mock:loop")
+                        .end()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

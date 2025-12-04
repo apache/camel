@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromRestGetPolicyTest extends ContextTestSupport {
 
@@ -57,8 +58,7 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
 
                 rest("/say/hello").get().to("direct:hello");
 
-                from("direct:hello")
-                        .policy(new MyDummyPolicy()).to("mock:hello");
+                from("direct:hello").policy(new MyDummyPolicy()).to("mock:hello");
             }
         };
     }

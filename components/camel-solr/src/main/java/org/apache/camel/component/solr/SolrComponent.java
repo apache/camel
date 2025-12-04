@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import java.util.Map;
@@ -33,20 +34,28 @@ public class SolrComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private SolrClient solrClient;
+
     @Metadata
     private String host;
+
     @Metadata
     private int port;
+
     @Metadata
     private String defaultCollection;
+
     @Metadata(defaultValue = "" + SolrConstants.DEFAULT_REQUEST_TIMEOUT)
     private long requestTimeout = SolrConstants.DEFAULT_REQUEST_TIMEOUT;
+
     @Metadata(defaultValue = "" + SolrConstants.DEFAULT_CONNECT_TIMEOUT)
     private long connectionTimeout = SolrConstants.DEFAULT_CONNECT_TIMEOUT;
+
     @Metadata(label = "security", secret = true)
     private String username;
+
     @Metadata(label = "security", secret = true)
     private String password;
+
     @Metadata(label = "security")
     private boolean enableSSL;
 
@@ -183,5 +192,4 @@ public class SolrComponent extends DefaultComponent {
     public void setEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
     }
-
 }

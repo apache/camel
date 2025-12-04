@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,8 @@ public class XsltIncludeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
-                        .to("xslt:org/apache/camel/component/xslt/staff_include.xsl").to("log:foo")
+                        .to("xslt:org/apache/camel/component/xslt/staff_include.xsl")
+                        .to("log:foo")
                         .to("mock:result");
             }
         };

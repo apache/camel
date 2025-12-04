@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -54,9 +55,12 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri(FILE_QUERY)).routeId("foo").autoStartup(false).convertBodyTo(String.class).to("mock:result");
+                from(fileUri(FILE_QUERY))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import jakarta.ws.rs.HttpMethod;
@@ -46,9 +47,7 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
                 endpoint.setEndpointUriIfNotSpecified("cxfrs:simple");
                 endpoint.setCxfRsConfigurer(new MyCxfRsConfigurer());
 
-                from("direct:start")
-                        .to(endpoint)
-                        .to("mock:end");
+                from("direct:start").to(endpoint).to("mock:end");
 
                 from("undertow:http://localhost:8000?matchOnUriPrefix=true")
                         .to("mock:result")
@@ -102,8 +101,6 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
         }
 
         @Override
-        public void configureServer(Server server) {
-        }
+        public void configureServer(Server server) {}
     }
-
 }

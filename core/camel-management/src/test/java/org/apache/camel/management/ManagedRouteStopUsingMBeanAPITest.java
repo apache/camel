@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
@@ -47,8 +48,8 @@ public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
 
         ObjectName on = set.iterator().next();
 
-        ManagedRouteMBean mbean
-                = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+        ManagedRouteMBean mbean =
+                context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
 
         // the route has this starting endpoint uri
         assertEquals("direct://start", mbean.getEndpointUri());
@@ -71,5 +72,4 @@ public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JsonPathSplitWriteAsStringMapTest extends CamelTestSupport {
 
     @Override
@@ -34,7 +35,8 @@ public class JsonPathSplitWriteAsStringMapTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split().jsonpathWriteAsString("$.content")
+                        .split()
+                        .jsonpathWriteAsString("$.content")
                         .to("mock:line")
                         .to("log:line")
                         .end();
@@ -53,11 +55,12 @@ public class JsonPathSplitWriteAsStringMapTest extends CamelTestSupport {
 
         Map.Entry<?, ?> row = mock.getReceivedExchanges().get(0).getIn().getBody(Map.Entry.class);
         assertEquals("foo", row.getKey());
-        assertEquals("{\"action\":\"CU\",\"id\":123,\"modifiedTime\":\"2015-07-28T11:40:09.520+02:00\"}", row.getValue());
+        assertEquals(
+                "{\"action\":\"CU\",\"id\":123,\"modifiedTime\":\"2015-07-28T11:40:09.520+02:00\"}", row.getValue());
 
         row = mock.getReceivedExchanges().get(1).getIn().getBody(Map.Entry.class);
         assertEquals("bar", row.getKey());
-        assertEquals("{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}", row.getValue());
+        assertEquals(
+                "{\"action\":\"CU\",\"id\":456,\"modifiedTime\":\"2015-07-28T11:42:29.510+02:00\"}", row.getValue());
     }
-
 }

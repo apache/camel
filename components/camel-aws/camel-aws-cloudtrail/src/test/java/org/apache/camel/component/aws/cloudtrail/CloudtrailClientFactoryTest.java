@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws.cloudtrail.client.CloudtrailClientFactory;
 import org.apache.camel.component.aws.cloudtrail.client.CloudtrailInternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientIAM
 import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientSessionTokenImpl;
 import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CloudtrailClientFactoryTest {
 

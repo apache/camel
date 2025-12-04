@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
 
 import java.io.Serializable;
@@ -51,9 +52,12 @@ public final class Approvals implements Serializable {
         private final int sortOrder;
 
         @JsonCreator
-        Info(@JsonProperty("id") final String id, @JsonProperty("description") final String description,
-             @JsonProperty("name") final String name, @JsonProperty("object") final String object,
-             @JsonProperty("sortOrder") final int sortOrder) {
+        Info(
+                @JsonProperty("id") final String id,
+                @JsonProperty("description") final String description,
+                @JsonProperty("name") final String name,
+                @JsonProperty("object") final String object,
+                @JsonProperty("sortOrder") final int sortOrder) {
             this.description = description;
             this.id = id;
             this.name = name;

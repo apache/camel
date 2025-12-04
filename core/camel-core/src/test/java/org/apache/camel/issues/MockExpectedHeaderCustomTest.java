@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,16 +30,22 @@ public class MockExpectedHeaderCustomTest extends ContextTestSupport {
         mock.expectedMessageCount(2);
 
         // the header(num) becomes input to the custom expression
-        mock.message(0).header("num").expression(o -> {
-            int num = (int) o;
-            return num * 2;
-        }).isLessThan(10);
+        mock.message(0)
+                .header("num")
+                .expression(o -> {
+                    int num = (int) o;
+                    return num * 2;
+                })
+                .isLessThan(10);
 
         // the header(num) becomes input to the simple language as "body"
-        mock.message(1).header("num").expression(o -> {
-            int num = (int) o;
-            return num * 3;
-        }).isGreaterThan(10);
+        mock.message(1)
+                .header("num")
+                .expression(o -> {
+                    int num = (int) o;
+                    return num * 3;
+                })
+                .isGreaterThan(10);
 
         template.sendBodyAndHeader("direct:test", "message 1", "num", 3);
         template.sendBodyAndHeader("direct:test", "message 2", "num", 7);

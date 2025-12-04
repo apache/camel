@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -48,7 +49,9 @@ public class ManagedExchangeFactoryManager extends ManagedService implements Man
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
     }
 
     @Override
@@ -134,8 +137,10 @@ public class ManagedExchangeFactoryManager extends ManagedService implements Man
 
                 CompositeData data = new CompositeDataSupport(
                         ct,
-                        new String[] { "url", "routeId", "capacity", "pooled", "created", "acquired", "released", "discarded" },
-                        new Object[] { url, routeId, capacity, size, created, acquired, released, discarded });
+                        new String[] {
+                            "url", "routeId", "capacity", "pooled", "created", "acquired", "released", "discarded"
+                        },
+                        new Object[] {url, routeId, capacity, size, created, acquired, released, discarded});
                 answer.put(data);
             }
             return answer;

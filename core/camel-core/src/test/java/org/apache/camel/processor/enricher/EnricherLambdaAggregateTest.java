@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,8 @@ public class EnricherLambdaAggregateTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .enrich("direct:b", (e1, e2) -> {
-                            String b = e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
+                            String b = e1.getMessage().getBody(String.class) + "+"
+                                    + e2.getMessage().getBody(String.class);
                             e1.getMessage().setBody(b);
                             return e1;
                         })
@@ -48,5 +50,4 @@ public class EnricherLambdaAggregateTest extends ContextTestSupport {
             }
         };
     }
-
 }

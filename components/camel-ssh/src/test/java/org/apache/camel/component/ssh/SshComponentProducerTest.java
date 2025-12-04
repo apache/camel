@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.util.HashMap;
@@ -82,9 +83,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(true)
-                        .to("mock:error");
+                onException(Exception.class).handled(true).to("mock:error");
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port + "?timeout=3000")

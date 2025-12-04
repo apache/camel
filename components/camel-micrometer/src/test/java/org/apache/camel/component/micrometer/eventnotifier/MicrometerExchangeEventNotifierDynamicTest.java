@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -36,9 +40,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MicrometerExchangeEventNotifierDynamicTest extends AbstractMicrometerEventNotifierTest {
 
@@ -75,12 +76,13 @@ public class MicrometerExchangeEventNotifierDynamicTest extends AbstractMicromet
             assertEquals(16, mr.getMeters().size());
             int counter = 0;
             for (Meter m : mr.getMeters()) {
-                if (m.getId().getName().equals(MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME) &&
-                        m.getId().getTag("endpointName").startsWith("my://component")) {
+                if (m.getId().getName().equals(MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME)
+                        && m.getId().getTag("endpointName").startsWith("my://component")) {
                     counter++;
                     Measurement entry = null;
                     for (Measurement me : m.measure()) {
-                        if (Statistic.COUNT.equals(Statistic.valueOf(me.getStatistic().name()))) {
+                        if (Statistic.COUNT.equals(
+                                Statistic.valueOf(me.getStatistic().name()))) {
                             entry = me;
                         }
                     }
@@ -117,7 +119,6 @@ public class MicrometerExchangeEventNotifierDynamicTest extends AbstractMicromet
                 throws Exception {
             return new MyEndpoint(uri, this, parameters);
         }
-
     }
 
     private class MyEndpoint extends DefaultEndpoint {
@@ -145,7 +146,5 @@ public class MicrometerExchangeEventNotifierDynamicTest extends AbstractMicromet
         public Consumer createConsumer(Processor processor) throws Exception {
             throw new UnsupportedOperationException();
         }
-
     }
-
 }

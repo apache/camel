@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldif;
+
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,23 +59,14 @@ import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class LdifRouteIT extends LdifTestSupport {
     // Constants
     private static final String LDAP_CONN_NAME = "conn";
     private static final String ENDPOINT_LDIF = "ldif:" + LDAP_CONN_NAME;
     private static final String ENDPOINT_START = "direct:start";
     private static final String ENDPOINT_SETUP_START = "direct:setup";
-    private static final SearchControls SEARCH_CONTROLS
-            = new SearchControls(SearchControls.SUBTREE_SCOPE, 0, 0, null, true, true);
+    private static final SearchControls SEARCH_CONTROLS =
+            new SearchControls(SearchControls.SUBTREE_SCOPE, 0, 0, null, true, true);
 
     // Properties
     private CamelContext camel;
@@ -141,7 +142,8 @@ public class LdifRouteIT extends LdifTestSupport {
 
         // Check LDAP
         SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults =
+                ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
 
         checkDN("uid=test1", searchResults);
@@ -172,7 +174,8 @@ public class LdifRouteIT extends LdifTestSupport {
         assertThat(ldifResults.get(0), equalTo("success"));
 
         // Check LDAP
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults =
+                ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         // test2
         while (searchResults.hasMore()) {
             assertThat(searchResults.next().getName(), not(containsString("test2")));
@@ -230,7 +233,8 @@ public class LdifRouteIT extends LdifTestSupport {
 
         // Check LDAP
         SearchResult sr;
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults =
+                ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
 
         boolean uidFound = false;
@@ -277,7 +281,8 @@ public class LdifRouteIT extends LdifTestSupport {
         assertThat(ldifResults.get(0), equalTo("success"));
 
         // Check LDAP
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults =
+                ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
 
         checkDN("uid=test6", searchResults);
@@ -308,7 +313,8 @@ public class LdifRouteIT extends LdifTestSupport {
         assertThat(ldifResults.get(0), equalTo("success"));
 
         // Check LDAP
-        NamingEnumeration<SearchResult> searchResults = ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
+        NamingEnumeration<SearchResult> searchResults =
+                ldapContext.search("dc=example,dc=org", "(uid=test*)", SEARCH_CONTROLS);
         assertNotNull(searchResults);
 
         checkDN("uid=test7", searchResults);
@@ -320,7 +326,10 @@ public class LdifRouteIT extends LdifTestSupport {
         assertNotNull(out);
         assertNotNull(out.getMessage());
         List<String> data = out.getMessage().getBody(List.class);
-        assertNotNull(data, "out body could not be converted to a List - was: " + out.getMessage().getBody());
+        assertNotNull(
+                data,
+                "out body could not be converted to a List - was: "
+                        + out.getMessage().getBody());
         return data;
     }
 

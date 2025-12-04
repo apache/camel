@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.language;
 
 import org.apache.camel.CamelContext;
@@ -40,5 +41,4 @@ public class JavaExpressionReifier extends TypedExpressionReifier<JavaExpression
         // we handle this in camel-joor (joor is used for compiling java source at runtime)
         return false;
     }
-
 }

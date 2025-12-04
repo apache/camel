@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 class TarSplitterRouteIssueTest extends CamelTestSupport {
 
@@ -61,11 +62,12 @@ class TarSplitterRouteIssueTest extends CamelTestSupport {
                 errorHandler(deadLetterChannel("mock:errors"));
 
                 from("direct:decompressFiles")
-                        .split(new TarSplitter()).streaming().shareUnitOfWork()
+                        .split(new TarSplitter())
+                        .streaming()
+                        .shareUnitOfWork()
                         .to("log:entry")
                         .to("mock:entry");
             }
         };
     }
-
 }

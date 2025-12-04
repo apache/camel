@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.ringbuffer;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("hazelcast-ringbuffer")
 public class HazelcastRingbufferComponent extends HazelcastDefaultComponent {
 
-    public HazelcastRingbufferComponent() {
-    }
+    public HazelcastRingbufferComponent() {}
 
     public HazelcastRingbufferComponent(final CamelContext context) {
         super(context);
@@ -40,5 +40,4 @@ public class HazelcastRingbufferComponent extends HazelcastDefaultComponent {
             throws Exception {
         return new HazelcastRingbufferEndpoint(hzInstance, uri, this, remaining);
     }
-
 }

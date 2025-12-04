@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
 /**
  * A polling consumer that reads messages from a chat using the Telegram bot API.
@@ -65,7 +66,8 @@ public class TelegramConsumer extends ScheduledPollConsumer {
         }
 
         if (!updateResult.isOk()) {
-            throw new IllegalStateException("The server was unable to process the request. Response was " + updateResult);
+            throw new IllegalStateException(
+                    "The server was unable to process the request. Response was " + updateResult);
         }
 
         List<Update> updates = updateResult.getUpdates();
@@ -107,5 +109,4 @@ public class TelegramConsumer extends ScheduledPollConsumer {
         populateExchange(exchange, update);
         return exchange;
     }
-
 }

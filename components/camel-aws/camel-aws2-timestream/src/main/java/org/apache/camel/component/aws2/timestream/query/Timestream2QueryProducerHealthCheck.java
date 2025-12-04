@@ -68,5 +68,4 @@ public class Timestream2QueryProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

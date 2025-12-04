@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -40,9 +41,13 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                    from("direct:start")
+                            .aggregate(header("id"), new BodyInAggregatingStrategy())
                             // use an unknown executor service ref should fail
-                            .completionSize(3).executorService("myUnknownProfile").to("log:foo").to("mock:aggregated");
+                            .completionSize(3)
+                            .executorService("myUnknownProfile")
+                            .to("log:foo")
+                            .to("mock:aggregated");
                 }
             });
             context.start();
@@ -52,5 +57,4 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
             assertTrue(cause.getMessage().contains("myUnknownProfile"));
         }
     }
-
 }

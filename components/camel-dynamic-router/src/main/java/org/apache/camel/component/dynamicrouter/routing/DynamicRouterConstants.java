@@ -38,8 +38,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  */
 public final class DynamicRouterConstants {
 
-    private DynamicRouterConstants() {
-    }
+    private DynamicRouterConstants() {}
 
     /**
      * The camel version where the dynamic router eip component was first introduced.
@@ -85,22 +84,26 @@ public final class DynamicRouterConstants {
      * The {@link Expression} that is used to configure the recipient list to get recipient URIs from the
      * {@link #RECIPIENT_LIST_HEADER}.
      */
-    public static final Expression RECIPIENT_LIST_EXPRESSION = ExpressionBuilder.headerExpression(RECIPIENT_LIST_HEADER);
+    public static final Expression RECIPIENT_LIST_EXPRESSION =
+            ExpressionBuilder.headerExpression(RECIPIENT_LIST_HEADER);
 
     /**
      * Creates a {@link DynamicRouterEndpoint} instance.
      */
-    public static final Supplier<DynamicRouterEndpointFactory> ENDPOINT_FACTORY_SUPPLIER = DynamicRouterEndpointFactory::new;
+    public static final Supplier<DynamicRouterEndpointFactory> ENDPOINT_FACTORY_SUPPLIER =
+            DynamicRouterEndpointFactory::new;
 
     /**
      * Creates a {@link DynamicRouterProcessor} instance.
      */
-    public static final Supplier<DynamicRouterProcessorFactory> PROCESSOR_FACTORY_SUPPLIER = DynamicRouterProcessorFactory::new;
+    public static final Supplier<DynamicRouterProcessorFactory> PROCESSOR_FACTORY_SUPPLIER =
+            DynamicRouterProcessorFactory::new;
 
     /**
      * Creates a {@link DynamicRouterProducer} instance.
      */
-    public static final Supplier<DynamicRouterProducerFactory> PRODUCER_FACTORY_SUPPLIER = DynamicRouterProducerFactory::new;
+    public static final Supplier<DynamicRouterProducerFactory> PRODUCER_FACTORY_SUPPLIER =
+            DynamicRouterProducerFactory::new;
 
     /**
      * Creates a {@link PrioritizedFilter} instance.
@@ -110,20 +113,20 @@ public final class DynamicRouterConstants {
     /**
      * Creates a {@link DynamicRouterFilterService} instance.
      */
-    public static final Supplier<DynamicRouterFilterServiceFactory> FILTER_SERVICE_FACTORY_SUPPLIER
-            = DynamicRouterFilterServiceFactory::new;
+    public static final Supplier<DynamicRouterFilterServiceFactory> FILTER_SERVICE_FACTORY_SUPPLIER =
+            DynamicRouterFilterServiceFactory::new;
 
     /**
      * A comparator to sort {@link PrioritizedFilter}s by their priority field.
      */
-    public static final Comparator<PrioritizedFilter> FILTER_COMPARATOR = Comparator
-            .comparingInt(PrioritizedFilter::priority)
-            .thenComparing(PrioritizedFilter::id);
+    public static final Comparator<PrioritizedFilter> FILTER_COMPARATOR =
+            Comparator.comparingInt(PrioritizedFilter::priority).thenComparing(PrioritizedFilter::id);
 
     /**
      * Creates a {@link RecipientList} instance.
      */
-    public static final BiFunction<CamelContext, Expression, RecipientList> RECIPIENT_LIST_SUPPLIER = RecipientList::new;
+    public static final BiFunction<CamelContext, Expression, RecipientList> RECIPIENT_LIST_SUPPLIER =
+            RecipientList::new;
 
     /**
      * Template for a logging endpoint, showing all, and multiline.

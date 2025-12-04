@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -22,10 +27,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EnableCORSTest extends BaseJettyTest {
 
@@ -35,7 +36,7 @@ public class EnableCORSTest extends BaseJettyTest {
         httpMethod.addHeader("Origin", "http://localhost:9000");
         httpMethod.addHeader("Referer", "http://localhost:9000");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httpMethod)) {
+                CloseableHttpResponse response = client.execute(httpMethod)) {
 
             assertEquals(200, response.getCode(), "Get a wrong response status");
 
@@ -51,11 +52,12 @@ public class EnableCORSTest extends BaseJettyTest {
         httpMethod.addHeader("Referer", "http://localhost:9000");
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(httpMethod)) {
+                CloseableHttpResponse response = client.execute(httpMethod)) {
 
             assertEquals(200, response.getCode(), "Get a wrong response status");
 
-            String responseHeader = response.getFirstHeader("Access-Control-Allow-Credentials").getValue();
+            String responseHeader =
+                    response.getFirstHeader("Access-Control-Allow-Credentials").getValue();
             assertTrue(Boolean.parseBoolean(responseHeader), "CORS not enabled");
         }
     }

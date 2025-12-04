@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.junit.jupiter.api.Disabled;
@@ -21,7 +22,8 @@ import org.junit.jupiter.api.Disabled;
 /**
  * With the passthrough option
  */
-@Disabled("Characters like - or . have to be escaped in Artemis like JmsRouteWithCustomKeyFormatStrategyTest#40, the passthrough doesn't do this automatically")
+@Disabled(
+        "Characters like - or . have to be escaped in Artemis like JmsRouteWithCustomKeyFormatStrategyTest#40, the passthrough doesn't do this automatically")
 public class JmsRouteWithPassThroughKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
     @Override

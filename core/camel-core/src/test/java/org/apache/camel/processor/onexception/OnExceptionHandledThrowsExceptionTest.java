@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnExceptionHandledThrowsExceptionTest extends ContextTestSupport {
 
@@ -50,7 +51,9 @@ public class OnExceptionHandledThrowsExceptionTest extends ContextTestSupport {
                 onException(IOException.class)
                         .handled(e -> {
                             throw new IllegalArgumentException("Another Forced");
-                        }).to("log:foo?showAll=true").to("mock:handled");
+                        })
+                        .to("log:foo?showAll=true")
+                        .to("mock:handled");
 
                 from("direct:start").throwException(new IOException("Forced"));
             }

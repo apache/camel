@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
+import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -28,22 +36,15 @@ import org.infinispan.protostream.sampledomain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
-import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InfinispanEmbeddedQueryProducerTest extends InfinispanEmbeddedQueryTestSupport {
 
     @BindToRegistry("noResultQueryBuilder")
-    private InfinispanQueryBuilder noResultQueryBuilder = InfinispanQueryBuilder.create(
-            "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%abc'");
+    private InfinispanQueryBuilder noResultQueryBuilder =
+            InfinispanQueryBuilder.create("FROM org.infinispan.protostream.sampledomain.User WHERE name like '%abc'");
 
     @BindToRegistry("withResultQueryBuilder")
-    private InfinispanQueryBuilder withResultQueryBuilder = InfinispanQueryBuilder.create(
-            "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%A'");
+    private InfinispanQueryBuilder withResultQueryBuilder =
+            InfinispanQueryBuilder.create("FROM org.infinispan.protostream.sampledomain.User WHERE name like '%A'");
 
     // *****************************
     //
@@ -51,8 +52,8 @@ public class InfinispanEmbeddedQueryProducerTest extends InfinispanEmbeddedQuery
 
     @Test
     public void producerQueryOperationWithoutQueryBuilder() {
-        Exchange request = template.request("direct:start",
-                exchange -> exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY));
+        Exchange request = template.request(
+                "direct:start", exchange -> exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY));
         assertNull(request.getException());
 
         List<User> queryResult = request.getIn().getBody(List.class);
@@ -113,8 +114,7 @@ public class InfinispanEmbeddedQueryProducerTest extends InfinispanEmbeddedQuery
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .toF("infinispan-embedded:%s", getCacheName());
+                from("direct:start").toF("infinispan-embedded:%s", getCacheName());
                 from("direct:noQueryResults")
                         .toF("infinispan-embedded:%s?queryBuilder=#noResultQueryBuilder", getCacheName());
                 from("direct:queryWithResults")

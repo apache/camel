@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.iso8583;
+
+import static com.solab.iso8583.IsoType.AMOUNT;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -28,8 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static com.solab.iso8583.IsoType.AMOUNT;
 
 public class Iso8583DataFormatTest extends CamelTestSupport {
 
@@ -50,9 +51,9 @@ public class Iso8583DataFormatTest extends CamelTestSupport {
         MessageFactory mf = new MessageFactory();
         mf.setConfigPath("j8583-config.xml");
 
-        IsoMessage iso
-                = mf.parseMessage(context.getTypeConverter().convertTo(byte[].class, new File("src/test/resources/parse1.txt")),
-                        "ISO015000055".getBytes().length);
+        IsoMessage iso = mf.parseMessage(
+                context.getTypeConverter().convertTo(byte[].class, new File("src/test/resources/parse1.txt")),
+                "ISO015000055".getBytes().length);
         template.sendBody("direct:marshal", iso);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -63,7 +64,9 @@ public class Iso8583DataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:unmarshal").unmarshal().iso8583("0210")
+                from("direct:unmarshal")
+                        .unmarshal()
+                        .iso8583("0210")
                         .process(e -> {
                             IsoMessage iso = (IsoMessage) e.getMessage().getBody();
                             Assertions.assertNotNull(iso);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine;
 
 import java.util.concurrent.TimeUnit;
@@ -23,8 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class CaffeineHelper {
 
-    private CaffeineHelper() {
-    }
+    private CaffeineHelper() {}
 
     public static void defineBuilder(Caffeine<?, ?> builder, CaffeineConfiguration configuration) {
         if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
@@ -49,5 +49,4 @@ public final class CaffeineHelper {
             builder.removalListener(configuration.getRemovalListener());
         }
     }
-
 }

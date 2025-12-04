@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx;
 
 import java.io.InputStream;
@@ -50,7 +51,8 @@ public class VertxJsonArrayConverterTest extends CamelTestSupport {
 
     @Test
     public void testByteBufToJsonArray() {
-        JsonArray jsonArray = context.getTypeConverter().convertTo(JsonArray.class, Unpooled.wrappedBuffer(BODY.getBytes()));
+        JsonArray jsonArray =
+                context.getTypeConverter().convertTo(JsonArray.class, Unpooled.wrappedBuffer(BODY.getBytes()));
         Assertions.assertEquals(BODY, jsonArray.toString());
     }
 
@@ -69,25 +71,29 @@ public class VertxJsonArrayConverterTest extends CamelTestSupport {
 
     @Test
     public void testJsonArrayToBuffer() {
-        Buffer result = context.getTypeConverter().convertTo(Buffer.class, Buffer.buffer(BODY).toJsonArray());
+        Buffer result = context.getTypeConverter()
+                .convertTo(Buffer.class, Buffer.buffer(BODY).toJsonArray());
         Assertions.assertEquals(BODY, result.toString());
     }
 
     @Test
     public void testJsonArrayToString() {
-        String result = context.getTypeConverter().convertTo(String.class, Buffer.buffer(BODY).toJsonArray());
+        String result = context.getTypeConverter()
+                .convertTo(String.class, Buffer.buffer(BODY).toJsonArray());
         Assertions.assertEquals(BODY, result);
     }
 
     @Test
     public void testJsonArrayToByteArray() {
-        byte[] result = context.getTypeConverter().convertTo(byte[].class, Buffer.buffer(BODY.getBytes()).toJsonArray());
+        byte[] result = context.getTypeConverter()
+                .convertTo(byte[].class, Buffer.buffer(BODY.getBytes()).toJsonArray());
         Assertions.assertEquals(BODY, new String(result));
     }
 
     @Test
     public void testJsonArrayToList() {
-        List result = context.getTypeConverter().convertTo(List.class, Buffer.buffer(BODY).toJsonArray());
+        List result = context.getTypeConverter()
+                .convertTo(List.class, Buffer.buffer(BODY).toJsonArray());
         Assertions.assertEquals(BODY, new JsonArray(result).toString());
     }
 }

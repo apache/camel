@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpression;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -27,8 +30,6 @@ import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.builder.ExpressionBuilder.routeIdExpression;
 
 /**
  * An {@link ErrorHandler} used as a safe fallback when processing by other error handlers such as the
@@ -66,7 +67,10 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             exchange.setProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
         if (fatals.contains(id)) {
-            LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
+            LOG.warn(
+                    "Circular error-handler detected at route: {} - breaking out processing Exchange: {}",
+                    id,
+                    exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
@@ -87,10 +91,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         // an exception occurred during processing onException
 
                         // log detailed error message with as much detail as possible
-                        Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+                        Throwable previous =
+                                exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
 
                         // check if previous and this exception are set as the same exception
-                        // which happens when using global scoped onException and you call a direct route that causes the 2nd exception
+                        // which happens when using global scoped onException and you call a direct route that causes
+                        // the 2nd exception
                         // then we need to find the original previous exception as the suppressed exception
                         if (previous != null && previous == exchange.getException()) {
                             previous = null;
@@ -100,16 +106,21 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                             }
                         }
 
-                        String msg = "Exception occurred while trying to handle previously thrown exception on exchangeId: "
-                                     + exchange.getExchangeId() + " using: [" + processor + "].";
+                        String msg =
+                                "Exception occurred while trying to handle previously thrown exception on exchangeId: "
+                                        + exchange.getExchangeId() + " using: [" + processor + "].";
                         if (previous != null) {
                             msg += " The previous and the new exception will be logged in the following.";
                             log(msg);
                             log("\\--> Previous exception on exchangeId: " + exchange.getExchangeId(), previous);
-                            log("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                            log(
+                                    "\\--> New exception on exchangeId: " + exchange.getExchangeId(),
+                                    exchange.getException());
                         } else {
                             log(msg);
-                            log("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                            log(
+                                    "\\--> New exception on exchangeId: " + exchange.getExchangeId(),
+                                    exchange.getException());
                         }
 
                         // add previous as suppressed to exception if not already there
@@ -145,7 +156,8 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     }
                 } finally {
                     // no longer running under this fatal fallback error handler
-                    Deque<String> fatals = exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
+                    Deque<String> fatals =
+                            exchange.getProperty(ExchangePropertyKey.FATAL_FALLBACK_ERROR_HANDLER, Deque.class);
                     if (fatals != null) {
                         fatals.removeLastOccurrence(id);
                     }

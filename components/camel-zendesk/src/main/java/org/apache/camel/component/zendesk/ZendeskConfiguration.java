@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zendesk;
 
 import org.apache.camel.component.zendesk.internal.ZendeskApiMethod;
@@ -34,14 +35,19 @@ public class ZendeskConfiguration {
     @UriPath
     @Metadata(required = true)
     private ZendeskApiMethod methodName;
+
     @UriParam
     private String serverUrl;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String oauthToken;
+
     @UriParam(label = "security", secret = true)
     private String token;
+
     @UriParam(label = "security", secret = true)
     private String password;
 

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,24 +39,18 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @MockitoSettings
 public class RedisHashTest extends RedisTestSupport {
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+
     @Mock
     private HashOperations<String, String, String> hashOperations;
 
     @Override
     protected void bindToRegistry(Registry registry) {
-        when(redisTemplate.<String, String> opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.<String, String>opsForHash()).thenReturn(hashOperations);
 
         registry.bind("redisTemplate", redisTemplate);
     }
@@ -92,7 +94,7 @@ public class RedisHashTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteHKEYS() throws Exception {
-        Set<String> fields = new HashSet<>(Arrays.asList(new String[] { "field1, field2" }));
+        Set<String> fields = new HashSet<>(Arrays.asList(new String[] {"field1, field2"}));
         when(hashOperations.keys(anyString())).thenReturn(fields);
 
         Object result = sendHeaders(

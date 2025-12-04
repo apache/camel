@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.validation;
 
 import java.io.ByteArrayInputStream;
@@ -187,7 +188,8 @@ public class SchemaReader {
         if (getResourceResolver() != null) {
             factory.setResourceResolver(getResourceResolver());
         }
-        if (camelContext == null || !Boolean.parseBoolean(camelContext.getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
+        if (camelContext == null
+                || !Boolean.parseBoolean(camelContext.getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
             try {
                 LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
                 factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -254,7 +256,6 @@ public class SchemaReader {
         } finally {
             lock.unlock();
         }
-
     }
 
     protected byte[] readSchemaResource() throws IOException {
@@ -276,5 +277,4 @@ public class SchemaReader {
         IOHelper.copy(IOHelper.buffered(stream), bos);
         return bos.toByteArray();
     }
-
 }

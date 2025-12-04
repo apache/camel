@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -30,7 +31,8 @@ public class ControlBusStartRouteAsyncTest extends ContextTestSupport {
 
     @Test
     public void testControlBusAsync() throws Exception {
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         // store a pending message
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
@@ -42,7 +44,8 @@ public class ControlBusStartRouteAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // get status using async, but we cannot get result as we run task async
-        String status = template.requestBody("controlbus:route?routeId=foo&action=status&async=true", null, String.class);
+        String status =
+                template.requestBody("controlbus:route?routeId=foo&action=status&async=true", null, String.class);
         assertNull(status, "Cannot get result if async");
     }
 

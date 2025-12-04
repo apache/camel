@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
@@ -125,7 +126,8 @@ public class NotifyBuilder {
             public boolean onExchange(Exchange exchange) {
                 // filter non matching exchanges
                 if (exchange.getFromEndpoint() != null) {
-                    return EndpointHelper.matchEndpoint(context, exchange.getFromEndpoint().getEndpointUri(), endpointUri);
+                    return EndpointHelper.matchEndpoint(
+                            context, exchange.getFromEndpoint().getEndpointUri(), endpointUri);
                 } else {
                     return false;
                 }
@@ -246,7 +248,8 @@ public class NotifyBuilder {
                 // already done. For example by
                 // ProducerTemplate which creates the UoW before producing
                 // messages.
-                if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().getEndpointUri().startsWith("direct:")) {
+                if (exchange.getFromEndpoint() != null
+                        && exchange.getFromEndpoint().getEndpointUri().startsWith("direct:")) {
                     return true;
                 }
                 return PatternHelper.matchPattern(exchange.getFromRouteId(), "*");
@@ -1212,7 +1215,8 @@ public class NotifyBuilder {
      */
     public boolean matches() {
         if (!created) {
-            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+            throw new IllegalStateException(
+                    "NotifyBuilder has not been created. Invoke the create() method before matching.");
         }
         return matches;
     }
@@ -1229,7 +1233,8 @@ public class NotifyBuilder {
      */
     public boolean matches(long timeout, TimeUnit timeUnit) {
         if (!created) {
-            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+            throw new IllegalStateException(
+                    "NotifyBuilder has not been created. Invoke the create() method before matching.");
         }
         try {
             if (!latch.await(timeout, timeUnit)) {
@@ -1254,7 +1259,8 @@ public class NotifyBuilder {
      */
     public boolean matchesWaitTime() {
         if (!created) {
-            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+            throw new IllegalStateException(
+                    "NotifyBuilder has not been created. Invoke the create() method before matching.");
         }
 
         return matches(waitTime, TimeUnit.MILLISECONDS);
@@ -1663,5 +1669,4 @@ public class NotifyBuilder {
             return sb.toString();
         }
     }
-
 }

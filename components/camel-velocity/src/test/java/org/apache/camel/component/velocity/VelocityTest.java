@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.velocity.VelocityContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityTest extends CamelTestSupport {
 
@@ -41,7 +42,9 @@ public class VelocityTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals(
+                "Dear Christian. You ordered item 7 on Monday.",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -64,7 +67,9 @@ public class VelocityTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals(
+                "Dear Willem. You ordered item 7 on Monday.",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -73,8 +78,9 @@ public class VelocityTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").to(
-                        "velocity:org/apache/camel/component/velocity/example.vm?allowTemplateFromHeader=true&allowContextMapAll=true");
+                from("direct:a")
+                        .to(
+                                "velocity:org/apache/camel/component/velocity/example.vm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

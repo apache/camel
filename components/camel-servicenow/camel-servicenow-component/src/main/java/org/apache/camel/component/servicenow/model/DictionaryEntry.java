@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -27,10 +28,10 @@ public class DictionaryEntry {
 
     @JsonCreator
     public DictionaryEntry(
-                           @JsonProperty(value = "internal_type") Reference internalType,
-                           @JsonProperty(value = "reference") Reference reference,
-                           @JsonProperty(value = "max_length") Integer maxLength,
-                           @JsonProperty(value = "mandatory", defaultValue = "false") boolean mandatory) {
+            @JsonProperty(value = "internal_type") Reference internalType,
+            @JsonProperty(value = "reference") Reference reference,
+            @JsonProperty(value = "max_length") Integer maxLength,
+            @JsonProperty(value = "mandatory", defaultValue = "false") boolean mandatory) {
 
         this.internalType = internalType;
         this.reference = reference;

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME_ZERO;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.populateCamelHeaders;
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.writeResponse;
+import static org.apache.camel.util.CollectionHelper.appendEntry;
 
 import java.io.File;
 import java.util.HashMap;
@@ -59,19 +67,11 @@ import org.apache.camel.util.MimeTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME_ZERO;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.populateCamelHeaders;
-import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.writeResponse;
-import static org.apache.camel.util.CollectionHelper.appendEntry;
-
 /**
  * A {@link org.apache.camel.Consumer} for the {@link org.apache.camel.component.platform.http.spi.PlatformHttpEngine}
  * based on Vert.x Web.
  */
-public class VertxPlatformHttpConsumer extends DefaultConsumer
-        implements PlatformHttpConsumer, Suspendable {
+public class VertxPlatformHttpConsumer extends DefaultConsumer implements PlatformHttpConsumer, Suspendable {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
@@ -87,15 +87,17 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private CookieConfiguration cookieConfiguration;
     private final String routerName;
 
-    public VertxPlatformHttpConsumer(PlatformHttpEndpoint endpoint,
-                                     Processor processor,
-                                     List<Handler<RoutingContext>> handlers,
-                                     String routerName) {
+    public VertxPlatformHttpConsumer(
+            PlatformHttpEndpoint endpoint,
+            Processor processor,
+            List<Handler<RoutingContext>> handlers,
+            String routerName) {
         super(endpoint, processor);
 
         this.handlers = handlers;
-        this.fileNameExtWhitelist
-                = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.fileNameExtWhitelist = endpoint.getFileNameExtWhitelist() == null
+                ? null
+                : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
         this.muteExceptions = endpoint.isMuteException();
         this.handleWriteResponseError = endpoint.isHandleWriteResponseError();
         this.routerName = routerName;
@@ -117,7 +119,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), PLATFORM_HTTP_ROUTER_NAME_ZERO);
         }
         if (router == null) {
-            throw new IllegalArgumentException("No PlatformHttpEngine created and setup in registry with name: " + routerName);
+            throw new IllegalArgumentException(
+                    "No PlatformHttpEngine created and setup in registry with name: " + routerName);
         }
         if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
@@ -141,7 +144,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             newRoute.handler(TimeoutHandler.create(getEndpoint().getRequestTimeout()));
         }
 
-        if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
+        if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS()
+                && getEndpoint().getConsumes() != null) {
             ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);
         }
 
@@ -150,13 +154,13 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         }
 
         if (getEndpoint().getConsumes() != null) {
-            //comma separated contentTypes has to be registered one by one
+            // comma separated contentTypes has to be registered one by one
             for (String c : getEndpoint().getConsumes().split(",")) {
                 newRoute.consumes(c);
             }
         }
         if (getEndpoint().getProduces() != null) {
-            //comma separated contentTypes has to be registered one by one
+            // comma separated contentTypes has to be registered one by one
             for (String p : getEndpoint().getProduces().split(",")) {
                 newRoute.produces(p);
             }
@@ -256,9 +260,11 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     }
 
     private void handleFailure(Exchange exchange, RoutingContext ctx, Throwable failure) {
-        getExceptionHandler().handleException(
-                "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                failure);
+        getExceptionHandler()
+                .handleException(
+                        "Failed handling platform-http endpoint "
+                                + getEndpoint().getPath(),
+                        failure);
         ctx.fail(failure);
         if (handleWriteResponseError && failure != null) {
             Exception existing = exchange.getException();
@@ -322,8 +328,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         return httpRequestBodyHandler.handle(ctx, message);
     }
 
-    private void populateMultiFormData(
-            RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy) {
+    private void populateMultiFormData(RoutingContext ctx, Message message, HeaderFilterStrategy headerFilterStrategy) {
         final boolean isMultipartFormData = isMultiPartFormData(ctx);
         if (isFormUrlEncoded(ctx) || isMultipartFormData) {
             final MultiMap formData = ctx.request().formAttributes();
@@ -372,7 +377,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             }
             if (accepted) {
                 final File localFile = new File(upload.uploadedFileName());
-                final AttachmentMessage attachmentMessage = message.getExchange().getMessage(AttachmentMessage.class);
+                final AttachmentMessage attachmentMessage =
+                        message.getExchange().getMessage(AttachmentMessage.class);
                 attachmentMessage.addAttachment(name, new DataHandler(new CamelFileDataSource(localFile, fileName)));
 
                 // populate body in case there is only one attachment
@@ -392,7 +398,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             } else {
                 LOGGER.debug(
                         "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                        fileName, fileNameExtWhitelist);
+                        fileName,
+                        fileNameExtWhitelist);
             }
         }
     }

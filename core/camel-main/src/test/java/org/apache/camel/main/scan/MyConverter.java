@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.scan;
 
 import org.apache.camel.Converter;
@@ -22,12 +23,10 @@ import org.apache.camel.main.MyFoo;
 @Converter
 public final class MyConverter {
 
-    private MyConverter() {
-    }
+    private MyConverter() {}
 
     @Converter
     public static MyFoo toFoo(String name) {
         return new MyFoo(name);
     }
-
 }

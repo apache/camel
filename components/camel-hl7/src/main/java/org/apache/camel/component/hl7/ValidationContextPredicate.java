@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -53,8 +54,8 @@ public class ValidationContextPredicate implements Predicate {
             Message message = exchange.getIn().getBody(Message.class);
             ValidationContext context = validatorExpression != null
                     ? validatorExpression.evaluate(exchange, ValidationContext.class)
-                    : dynamicValidationContext(message,
-                            exchange.getIn().getHeader(HL7Constants.HL7_CONTEXT, HapiContext.class));
+                    : dynamicValidationContext(
+                            message, exchange.getIn().getHeader(HL7Constants.HL7_CONTEXT, HapiContext.class));
             MessageValidator validator = new MessageValidator(context, false);
             return validator.validate(message);
         } catch (HL7Exception e) {

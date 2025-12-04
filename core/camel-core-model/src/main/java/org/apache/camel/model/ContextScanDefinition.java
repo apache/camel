@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -39,13 +40,14 @@ public class ContextScanDefinition {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String includeNonSingletons;
+
     @XmlElement(name = "excludes")
     private List<String> excludes = new ArrayList<>();
+
     @XmlElement(name = "includes")
     private List<String> includes = new ArrayList<>();
 
-    public ContextScanDefinition() {
-    }
+    public ContextScanDefinition() {}
 
     public String getIncludeNonSingletons() {
         return includeNonSingletons;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -30,8 +31,14 @@ public class AggregateForceCompletionHeaderInAggregationStrategyTest extends Con
     @Test
     public void testCompletePreviousOnNewGroup() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("AAA", "BB");
-        getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS).isNull();
-        getMockEndpoint("mock:aggregated").allMessages().exchangeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS).isNull();
+        getMockEndpoint("mock:aggregated")
+                .allMessages()
+                .header(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS)
+                .isNull();
+        getMockEndpoint("mock:aggregated")
+                .allMessages()
+                .exchangeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS)
+                .isNull();
 
         template.sendBody("direct:start", "A,A,A,B,B");
 
@@ -43,9 +50,12 @@ public class AggregateForceCompletionHeaderInAggregationStrategyTest extends Con
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body()).to("log:input?showAll=true")
+                from("direct:start")
+                        .split(body())
+                        .to("log:input?showAll=true")
                         .aggregate(simple("${body}"), new MyAggregationStrategy())
-                        .completionPredicate(exchangeProperty(Exchange.SPLIT_COMPLETE)).to("log:aggregated", "mock:aggregated");
+                        .completionPredicate(exchangeProperty(Exchange.SPLIT_COMPLETE))
+                        .to("log:aggregated", "mock:aggregated");
             }
         };
     }

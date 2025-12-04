@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -27,8 +30,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Concurrent consumer with InOnly test.
@@ -57,8 +58,8 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory
-                = CamelJmsTestHelper.createPooledPersistentConnectionFactory(service.serviceAddress());
+        ConnectionFactory connectionFactory =
+                CamelJmsTestHelper.createPooledPersistentConnectionFactory(service.serviceAddress());
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -68,7 +69,8 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:JmsConcurrentConsumerInOnlyTest?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo")
+                from("activemq:JmsConcurrentConsumerInOnlyTest?concurrentConsumers=2&maxConcurrentConsumers=5")
+                        .routeId("foo")
                         .noAutoStartup()
                         .log("${threadName} got ${body}")
                         .delay(simple("${random(0,10)}"))
@@ -76,5 +78,4 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
             }
         };
     }
-
 }

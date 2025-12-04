@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.Body;
@@ -22,5 +23,4 @@ import org.apache.camel.Header;
 public interface MyAuditService {
 
     void auditMessage(@Header("uuid") String uuid, @Body String body);
-
 }

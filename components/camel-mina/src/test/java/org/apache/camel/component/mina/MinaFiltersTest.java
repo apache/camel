@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,6 @@ import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * For unit testing the <tt>filters</tt> option.
  */
@@ -39,14 +40,14 @@ public class MinaFiltersTest extends BaseMinaTest {
 
     @Test
     public void testFilterListRef() throws Exception {
-        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters",
-                getPort()));
+        testFilter(String.format(
+                "mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilters", getPort()));
     }
 
     @Test
     public void testFilterElementRef() throws Exception {
-        testFilter(String.format("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter",
-                getPort()));
+        testFilter(String.format(
+                "mina:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false&filters=#myFilter", getPort()));
     }
 
     @Override

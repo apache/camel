@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
 
 import java.util.Map;
@@ -34,8 +35,14 @@ import software.amazon.awssdk.services.athena.AthenaClient;
 /**
  * Access AWS Athena.
  */
-@UriEndpoint(firstVersion = "3.4.0", scheme = "aws2-athena", title = "AWS Athena", syntax = "aws2-athena:label",
-             producerOnly = true, category = { Category.CLOUD, Category.DATABASE }, headersClass = Athena2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.4.0",
+        scheme = "aws2-athena",
+        title = "AWS Athena",
+        syntax = "aws2-athena:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.DATABASE},
+        headersClass = Athena2Constants.class)
 public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private AthenaClient athenaClient;
@@ -70,7 +77,6 @@ public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceL
         athenaClient = configuration.getAmazonAthenaClient() != null
                 ? configuration.getAmazonAthenaClient()
                 : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
-
     }
 
     @Override

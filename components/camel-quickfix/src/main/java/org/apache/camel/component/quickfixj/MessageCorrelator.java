@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import java.util.List;
@@ -33,13 +34,13 @@ public class MessageCorrelator implements QuickfixjEventListener {
 
     public Callable<Message> getReply(Exchange exchange) {
 
-        MessagePredicate messageCriteria = (MessagePredicate) exchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
+        MessagePredicate messageCriteria =
+                (MessagePredicate) exchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
         final MessageCorrelationRule correlationRule = new MessageCorrelationRule(exchange, messageCriteria);
         rules.add(correlationRule);
 
         final long timeout = exchange.getProperty(
-                QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-                DEFAULT_CORRELATION_TIMEOUT, Long.class);
+                QuickfixjProducer.CORRELATION_TIMEOUT_KEY, DEFAULT_CORRELATION_TIMEOUT, Long.class);
 
         return new Callable<Message>() {
             @Override

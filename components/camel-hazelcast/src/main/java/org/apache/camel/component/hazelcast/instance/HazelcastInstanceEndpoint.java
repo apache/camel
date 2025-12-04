@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.instance;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_INSTANCE;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,17 +30,21 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_INSTANCE;
-
 /**
  * Consume join/leave events of a cache instance in a Hazelcast cluster.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_INSTANCE, title = "Hazelcast Instance",
-             syntax = "hazelcast-instance:cacheName",
-             consumerOnly = true, category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_INSTANCE,
+        title = "Hazelcast Instance",
+        syntax = "hazelcast-instance:cacheName",
+        consumerOnly = true,
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastInstanceEndpoint(HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {
+    public HazelcastInstanceEndpoint(
+            HazelcastInstance hazelcastInstance, String uri, HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component);
         setCommand(HazelcastCommand.instance);
     }
@@ -53,5 +60,4 @@ public class HazelcastInstanceEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("You cannot send messages to this endpoint: " + getEndpointUri());
     }
-
 }

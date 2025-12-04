@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
 
@@ -59,14 +60,17 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(3)
                         // use a 0.2 second timeout
                         .completionTimeout(200)
                         // speedup checker
                         .completionTimeoutCheckerInterval(10)
                         // and if timeout occurred then just discard the aggregated
                         // message
-                        .discardOnCompletionTimeout().to("mock:aggregated");
+                        .discardOnCompletionTimeout()
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

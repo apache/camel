@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -22,20 +23,19 @@ public final class HashicorpVaultConstants {
     private static final String HEADER_PREFIX = "CamelHashicorpVault";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Overrides the desired operation to be used in the producer.",
-              javaType = "String")
+    @Metadata(
+            label = "producer",
+            description = "Overrides the desired operation to be used in the producer.",
+            javaType = "String")
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret path as header.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "Set the desired secret path as header.", javaType = "String")
     public static final String SECRET_PATH = HEADER_PREFIX + "SecretPath";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret version as header.",
-              javaType = "String")
+    @Metadata(label = "producer", description = "Set the desired secret version as header.", javaType = "String")
     public static final String SECRET_VERSION = HEADER_PREFIX + "SecretVersion";
 
-    private HashicorpVaultConstants() {
-    }
+    private HashicorpVaultConstants() {}
 }

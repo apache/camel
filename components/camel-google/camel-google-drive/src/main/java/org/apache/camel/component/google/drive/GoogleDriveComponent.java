@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
 
 import com.google.api.services.drive.Drive;
@@ -36,12 +37,16 @@ public class GoogleDriveComponent
 
     @Metadata
     GoogleDriveConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Drive client;
+
     @Metadata(label = "advanced")
     private GoogleDriveClientFactory clientFactory;
+
     @Metadata(label = "proxy", description = "Proxy server host")
     private String proxyHost;
+
     @Metadata(label = "proxy", description = "Proxy server port")
     private Integer proxyPort;
 
@@ -60,14 +65,27 @@ public class GoogleDriveComponent
 
     public Drive getClient(GoogleDriveConfiguration config) {
         if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+            if (config.getClientId() != null
+                    && !config.getClientId().isBlank()
+                    && config.getClientSecret() != null
+                    && !config.getClientSecret().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                config.getClientId(),
+                                config.getClientSecret(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getRefreshToken(),
+                                config.getAccessToken());
+            } else if (config.getServiceAccountKey() != null
+                    && !config.getServiceAccountKey().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                config.getServiceAccountKey(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Google Drive client");
@@ -85,9 +103,10 @@ public class GoogleDriveComponent
                 int port = Integer.parseInt(getCamelContext().getGlobalOption("http.proxyPort"));
                 LOG.warn(
                         "CamelContext global options [http.proxyHost,http.proxyPort] detected."
-                         + " Using global option configuration is deprecated. Instead configure this on the component."
-                         + " Using http proxy host: {} port: {}",
-                        host, port);
+                                + " Using global option configuration is deprecated. Instead configure this on the component."
+                                + " Using http proxy host: {} port: {}",
+                        host,
+                        port);
 
                 clientFactory = new BatchGoogleDriveClientFactory(host, port);
             } else if (proxyHost != null && proxyPort != null) {
@@ -141,8 +160,7 @@ public class GoogleDriveComponent
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, GoogleDriveApiName apiName,
-            GoogleDriveConfiguration endpointConfiguration) {
+            String uri, String methodName, GoogleDriveApiName apiName, GoogleDriveConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         GoogleDriveEndpoint endpoint = new GoogleDriveEndpoint(uri, this, apiName, methodName, endpointConfiguration);

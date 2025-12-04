@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PREFIX;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -26,10 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PREFIX;
 
 public class MetricsComponentRouteTest extends CamelTestSupport {
 
@@ -106,9 +107,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
                         .to("metrics:timer:T?action=stop")
                         .to("mock:result");
 
-                from("direct:start-2")
-                        .to("metrics:meter:F?mark=88")
-                        .to("mock:result");
+                from("direct:start-2").to("metrics:meter:F?mark=88").to("mock:result");
             }
         };
     }

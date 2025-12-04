@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j.transformer;
 
 import java.util.UUID;
@@ -28,13 +29,14 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
-@DataTypeTransformer(name = "neo4j:embeddings",
-                     description = "Prepares the message to become an object writable by Neo4j component")
+@DataTypeTransformer(
+        name = "neo4j:embeddings",
+        description = "Prepares the message to become an object writable by Neo4j component")
 public class Neo4jEmbeddingDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        final Embedding embedding
-                = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        final Embedding embedding =
+                message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
 
         final TextSegment text = message.getBody(TextSegment.class);
 

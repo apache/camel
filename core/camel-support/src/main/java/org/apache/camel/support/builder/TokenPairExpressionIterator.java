@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder;
 
 import java.io.Closeable;
@@ -251,5 +252,4 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             scanner.close();
         }
     }
-
 }

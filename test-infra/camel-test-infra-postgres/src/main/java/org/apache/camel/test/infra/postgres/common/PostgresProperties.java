@@ -27,7 +27,5 @@ public final class PostgresProperties {
 
     public static final int DEFAULT_PORT = 5432;
 
-    private PostgresProperties() {
-
-    }
+    private PostgresProperties() {}
 }

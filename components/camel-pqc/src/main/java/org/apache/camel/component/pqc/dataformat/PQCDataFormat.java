@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.dataformat;
 
 import java.io.DataInputStream;
@@ -102,8 +103,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private String provider;
     private KeyGenerator keyGenerator;
 
-    public PQCDataFormat() {
-    }
+    public PQCDataFormat() {}
 
     public PQCDataFormat(String keyEncapsulationAlgorithm, String symmetricKeyAlgorithm, KeyPair keyPair) {
         this.keyEncapsulationAlgorithm = keyEncapsulationAlgorithm;
@@ -120,10 +120,9 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         KeyPair kp = getKeyPair(exchange);
         if (kp == null || kp.getPublic() == null) {
-            throw new IllegalStateException(
-                    "A valid KeyPair with public key is required for encryption. " +
-                                            "Either configure the PQCDataFormat with a KeyPair or provide one in a header using '"
-                                            + KEY_PAIR + "'");
+            throw new IllegalStateException("A valid KeyPair with public key is required for encryption. "
+                    + "Either configure the PQCDataFormat with a KeyPair or provide one in a header using '"
+                    + KEY_PAIR + "'");
         }
 
         String kemAlg = getKemAlgorithm(exchange);
@@ -134,9 +133,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         try {
             // Generate KEM encapsulation and shared secret
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(
-                    new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength),
-                    new SecureRandom());
+            kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), new SecureRandom());
 
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
             byte[] encapsulation = secretKey.getEncapsulation();
@@ -177,10 +174,9 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
         KeyPair kp = getKeyPair(exchange);
         if (kp == null || kp.getPrivate() == null) {
-            throw new IllegalStateException(
-                    "A valid KeyPair with private key is required for decryption. " +
-                                            "Either configure the PQCDataFormat with a KeyPair or provide one in a header using '"
-                                            + KEY_PAIR + "'");
+            throw new IllegalStateException("A valid KeyPair with private key is required for decryption. "
+                    + "Either configure the PQCDataFormat with a KeyPair or provide one in a header using '"
+                    + KEY_PAIR + "'");
         }
 
         String kemAlg = getKemAlgorithm(exchange);
@@ -196,16 +192,13 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
             byte[] encapsulation = new byte[encapsulationLength];
             int read = encryptedStream.read(encapsulation);
             if (read != encapsulationLength) {
-                throw new IOException(
-                        String.format("Expected to read %d bytes of encapsulation but got %d bytes",
-                                encapsulationLength, read));
+                throw new IOException(String.format(
+                        "Expected to read %d bytes of encapsulation but got %d bytes", encapsulationLength, read));
             }
 
             // Extract secret key from encapsulation
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(
-                    new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength),
-                    new SecureRandom());
+            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength), new SecureRandom());
 
             SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
 

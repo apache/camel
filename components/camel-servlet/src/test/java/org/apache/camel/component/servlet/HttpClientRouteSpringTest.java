@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import io.undertow.servlet.Servlets;
@@ -34,11 +35,11 @@ public class HttpClientRouteSpringTest extends HttpClientRouteTest {
                 .setClassLoader(getClass().getClassLoader())
                 .setContextPath(CONTEXT)
                 .setDeploymentName(getClass().getName())
-                .addInitParameter("contextConfigLocation", "classpath:org/apache/camel/component/servlet/camelContext.xml")
+                .addInitParameter(
+                        "contextConfigLocation", "classpath:org/apache/camel/component/servlet/camelContext.xml")
                 .addListener(Servlets.listener(ContextLoaderListener.class))
                 .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
                         .addInitParam("matchOnUriPrefix", "true")
                         .addMapping("/services/*"));
     }
-
 }

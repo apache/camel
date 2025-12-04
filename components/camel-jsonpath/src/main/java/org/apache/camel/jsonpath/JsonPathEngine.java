@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
+import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
+import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,10 +48,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
-import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
-import static com.jayway.jsonpath.Option.SUPPRESS_EXCEPTIONS;
-
 public class JsonPathEngine {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonPathEngine.class);
@@ -67,8 +68,14 @@ public class JsonPathEngine {
         this(expression, null, false, false, true, null, null);
     }
 
-    public JsonPathEngine(String expression, Expression source, boolean writeAsString, boolean suppressExceptions,
-                          boolean allowSimple, Option[] options, CamelContext context) {
+    public JsonPathEngine(
+            String expression,
+            Expression source,
+            boolean writeAsString,
+            boolean suppressExceptions,
+            boolean allowSimple,
+            Option[] options,
+            CamelContext context) {
         this.expression = expression;
         this.source = source;
         this.writeAsString = writeAsString;
@@ -176,7 +183,9 @@ public class JsonPathEngine {
     }
 
     private Object getPayload(Exchange exchange) {
-        return source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        return source != null
+                ? source.evaluate(exchange, Object.class)
+                : exchange.getMessage().getBody();
     }
 
     private Object doRead(String path, Exchange exchange) throws IOException, CamelExchangeException {
@@ -190,7 +199,9 @@ public class JsonPathEngine {
             if (genericFile.getCharset() != null) {
                 // special treatment for generic file with charset
                 InputStream inputStream = new FileInputStream((File) genericFile.getFile());
-                return JsonPath.using(configuration).parse(inputStream, genericFile.getCharset()).read(path);
+                return JsonPath.using(configuration)
+                        .parse(inputStream, genericFile.getCharset())
+                        .read(path);
             }
         }
 
@@ -208,7 +219,7 @@ public class JsonPathEngine {
             List list = (List) json;
             return JsonPath.using(configuration).parse(list).read(path);
         } else {
-            //try to auto convert into inputStream
+            // try to auto convert into inputStream
             answer = readWithInputStream(path, exchange);
             if (answer == null) {
                 // fallback and attempt an adapter which can read the message body/header
@@ -253,10 +264,13 @@ public class JsonPathEngine {
                 // json encoding specified in header
                 return JsonPath.using(configuration).parse(is, jsonEncoding).read(path);
             } else {
-                // No json encoding specified --> assume json encoding is unicode and determine the specific unicode encoding according to RFC-4627.
+                // No json encoding specified --> assume json encoding is unicode and determine the specific unicode
+                // encoding according to RFC-4627.
                 // This is a temporary solution, it can be removed as soon as jsonpath offers the encoding detection
                 JsonStream jsonStream = new JsonStream(is);
-                return JsonPath.using(configuration).parse(jsonStream, jsonStream.getEncoding().name()).read(path);
+                return JsonPath.using(configuration)
+                        .parse(jsonStream, jsonStream.getEncoding().name())
+                        .read(path);
             }
         }
 
@@ -279,7 +293,8 @@ public class JsonPathEngine {
 
             if (map != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("JacksonJsonAdapter converted object from: {} to: java.util.Map",
+                    LOG.debug(
+                            "JacksonJsonAdapter converted object from: {} to: java.util.Map",
                             ObjectHelper.classCanonicalName(json));
                 }
                 return JsonPath.using(configuration).parse(map).read(path);
@@ -293,7 +308,9 @@ public class JsonPathEngine {
         if (!initJsonAdapter) {
             try {
                 // need to load this adapter dynamically as its optional
-                LOG.debug("Attempting to enable JacksonJsonAdapter by resolving: {} from classpath", JACKSON_JSON_ADAPTER);
+                LOG.debug(
+                        "Attempting to enable JacksonJsonAdapter by resolving: {} from classpath",
+                        JACKSON_JSON_ADAPTER);
                 Class<?> clazz = exchange.getContext().getClassResolver().resolveClass(JACKSON_JSON_ADAPTER);
                 if (clazz != null) {
                     Object obj = exchange.getContext().getInjector().newInstance(clazz);
@@ -306,7 +323,8 @@ public class JsonPathEngine {
             } catch (Exception e) {
                 LOG.debug(
                         "Cannot load {} from classpath to enable JacksonJsonAdapter due {}. JacksonJsonAdapter is not enabled.",
-                        JACKSON_JSON_ADAPTER, e.getMessage(),
+                        JACKSON_JSON_ADAPTER,
+                        e.getMessage(),
                         e);
             }
             initJsonAdapter = true;

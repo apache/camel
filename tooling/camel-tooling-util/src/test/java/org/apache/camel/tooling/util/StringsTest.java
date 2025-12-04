@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tooling.util;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.tooling.util;
 
 import static org.apache.camel.tooling.util.Strings.asTitle;
 import static org.apache.camel.tooling.util.Strings.between;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 public class StringsTest {
 
     @Test
     public void testBetween() {
-        assertEquals("org.apache.camel.model.OnCompletionDefinition",
+        assertEquals(
+                "org.apache.camel.model.OnCompletionDefinition",
                 between("java.util.List<org.apache.camel.model.OnCompletionDefinition>", "<", ">"));
     }
 
@@ -36,5 +38,4 @@ public class StringsTest {
         assertEquals("Expose All Queues", asTitle("exposeAllQueues"));
         assertEquals("Reply To Concurrent Consumers", asTitle("replyToConcurrentConsumers"));
     }
-
 }

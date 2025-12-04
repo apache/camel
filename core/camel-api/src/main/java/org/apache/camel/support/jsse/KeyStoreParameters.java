@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
@@ -131,7 +132,11 @@ public class KeyStoreParameters extends JsseParameters {
                 List<String> aliases = extractAliases(keyStore);
                 LOG.debug(
                         "KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
-                        keyStore, this, keyStore.getProvider(), keyStore.getType(), aliases);
+                        keyStore,
+                        this,
+                        keyStore.getProvider(),
+                        keyStore.getType(),
+                        aliases);
             }
             return keyStore;
         }
@@ -170,8 +175,13 @@ public class KeyStoreParameters extends JsseParameters {
 
         if (LOG.isDebugEnabled()) {
             List<String> aliases = extractAliases(ks);
-            LOG.debug("KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
-                    ks, this, ks.getProvider(), ks.getType(), aliases);
+            LOG.debug(
+                    "KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
+                    ks,
+                    this,
+                    ks.getProvider(),
+                    ks.getType(),
+                    aliases);
         }
 
         return ks;

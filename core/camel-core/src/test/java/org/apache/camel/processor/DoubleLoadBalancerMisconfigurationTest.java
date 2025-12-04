@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
@@ -41,7 +42,8 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RoundRobinLoadBalancer",
+            assertEquals(
+                    "Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RoundRobinLoadBalancer",
                     e.getMessage());
         }
     }
@@ -57,7 +59,8 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RandomLoadBalancer",
+            assertEquals(
+                    "Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RandomLoadBalancer",
                     e.getMessage());
         }
     }
@@ -73,7 +76,8 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: FailoverLoadBalancer",
+            assertEquals(
+                    "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: FailoverLoadBalancer",
                     e.getMessage());
         }
     }

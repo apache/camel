@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
 
 import org.apache.camel.CamelContext;
@@ -64,9 +65,7 @@ public class CamelVehicleToCarTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .convertBodyTo(CarDto.class)
-                        .to("mock:result");
+                from("direct:start").convertBodyTo(CarDto.class).to("mock:result");
             }
         };
     }

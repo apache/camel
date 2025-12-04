@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,8 +35,11 @@ public class NormalizerTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
 
         result.expectedMessageCount(4);
-        result.expectedBodiesReceivedInAnyOrder("<person name=\"Jon\"/>", "<person name=\"Hadrian\"/>",
-                "<person name=\"Claus\"/>", "<person name=\"James\"/>");
+        result.expectedBodiesReceivedInAnyOrder(
+                "<person name=\"Jon\"/>",
+                "<person name=\"Hadrian\"/>",
+                "<person name=\"Claus\"/>",
+                "<person name=\"James\"/>");
 
         template.sendBody("direct:start", employeeBody1);
         template.sendBody("direct:start", employeeBody2);
@@ -58,9 +62,16 @@ public class NormalizerTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 // we need to normalize two types of incoming messages
-                from("direct:start").choice().when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").when()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("/employee")
+                        .to("bean:normalizer?method=employeeToPerson")
+                        .when()
                         .xpath("/customer")
-                        .to("bean:normalizer?method=customerToPerson").end().to("mock:result");
+                        .to("bean:normalizer?method=customerToPerson")
+                        .end()
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

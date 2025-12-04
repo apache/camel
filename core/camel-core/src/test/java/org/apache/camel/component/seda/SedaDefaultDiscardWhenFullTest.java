@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import java.time.Duration;
@@ -58,8 +59,7 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
                 seda.setDefaultDiscardWhenFull(true);
                 seda.setQueueSize(2);
 
-                from("seda:foo").routeId("foo").autoStartup(false)
-                        .to("mock:result");
+                from("seda:foo").routeId("foo").autoStartup(false).to("mock:result");
             }
         };
     }

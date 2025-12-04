@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -30,10 +35,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SqlTransactedRouteTest extends CamelTestSupport {
 
@@ -53,7 +54,8 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     protected void bindToRegistry(Registry registry) throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
-                .setType(EmbeddedDatabaseType.H2).build();
+                .setType(EmbeddedDatabaseType.H2)
+                .build();
         registry.bind("testdb", db);
 
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();
@@ -78,13 +80,16 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testCommit() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("commit")
+                from("direct:start")
+                        .routeId("commit")
                         .transacted("required")
                         .to(sqlEndpoint)
                         .process(new Processor() {
                             public void process(Exchange exchange) {
-                                exchange.getIn().setHeader(SqlConstants.SQL_QUERY,
-                                        "insert into customer values('cust2','muellerc')");
+                                exchange.getIn()
+                                        .setHeader(
+                                                SqlConstants.SQL_QUERY,
+                                                "insert into customer values('cust2','muellerc')");
                             }
                         })
                         .to(sqlEndpoint);
@@ -118,14 +123,17 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testRollbackAfterExceptionInSecondStatement() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("rollback")
+                from("direct:start")
+                        .routeId("rollback")
                         .transacted("required")
                         .to(sqlEndpoint)
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 // primary key violation
-                                exchange.getIn().setHeader(SqlConstants.SQL_QUERY,
-                                        "insert into customer values('cust1','muellerc')");
+                                exchange.getIn()
+                                        .setHeader(
+                                                SqlConstants.SQL_QUERY,
+                                                "insert into customer values('cust1','muellerc')");
                             }
                         })
                         .to(sqlEndpoint);
@@ -149,7 +157,8 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testRollbackAfterAnException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("rollback2")
+                from("direct:start")
+                        .routeId("rollback2")
                         .transacted("required")
                         .to(sqlEndpoint)
                         .process(new Processor() {

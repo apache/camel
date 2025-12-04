@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
  */
@@ -41,7 +42,7 @@ public class FromFtpToBinaryFileIT extends FtpServerTestSupport {
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/tmp4/camel?password=admin&binary=true"
-               + "&delay=5000&recursive=false";
+                + "&delay=5000&recursive=false";
     }
 
     @Override
@@ -83,7 +84,9 @@ public class FromFtpToBinaryFileIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 String fileUrl = TestSupport.fileUri(testDirectory, "?noop=true&fileExist=Override");
-                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg")).to(fileUrl, "mock:result");
+                from(getFtpUrl())
+                        .setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
+                        .to(fileUrl, "mock:result");
             }
         };
     }

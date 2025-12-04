@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import java.util.ArrayList;
@@ -53,8 +54,13 @@ class OperationVisitor<T> {
     private final String path;
     private final String dtoPackageName;
 
-    OperationVisitor(final OpenAPI openAPI, final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
-                     final DestinationGenerator destinationGenerator, final String dtoPackageName) {
+    OperationVisitor(
+            final OpenAPI openAPI,
+            final CodeEmitter<T> emitter,
+            final OperationFilter filter,
+            final String path,
+            final DestinationGenerator destinationGenerator,
+            final String dtoPackageName) {
         this.openAPI = openAPI;
         this.emitter = emitter;
         this.filter = filter;
@@ -118,7 +124,8 @@ class OperationVisitor<T> {
                 if (ObjectHelper.isNotEmpty(style)) {
                     if (style.equals(StyleEnum.FORM)) {
                         // Guard against null explode value
-                        // See: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
+                        // See:
+                        // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
                         if (Boolean.FALSE.equals(parameter.getExplode())) {
                             emit("collectionFormat", CollectionFormat.csv);
                         } else {
@@ -127,7 +134,8 @@ class OperationVisitor<T> {
                     }
                 }
                 if (ObjectHelper.isNotEmpty(schema.getDefault())) {
-                    final String value = StringHelper.removeLeadingAndEndingQuotes(schema.getDefault().toString());
+                    final String value = StringHelper.removeLeadingAndEndingQuotes(
+                            schema.getDefault().toString());
                     emit("defaultValue", value);
                 }
 
@@ -152,7 +160,7 @@ class OperationVisitor<T> {
             return emitter;
         }
 
-        return emitter.emit(method, new Object[] { values.toArray(new String[0]) });
+        return emitter.emit(method, new Object[] {values.toArray(new String[0])});
     }
 
     CodeEmitter<T> emit(final String method, final Object value) {
@@ -172,7 +180,8 @@ class OperationVisitor<T> {
             emit("description", operation.getDescription());
             Set<String> operationLevelConsumes = new LinkedHashSet<>();
             if (operation.getRequestBody() != null && operation.getRequestBody().getContent() != null) {
-                operationLevelConsumes.addAll(operation.getRequestBody().getContent().keySet());
+                operationLevelConsumes.addAll(
+                        operation.getRequestBody().getContent().keySet());
             }
             emit("consumes", operationLevelConsumes);
             Set<String> operationLevelProduces = new LinkedHashSet<>();
@@ -210,7 +219,8 @@ class OperationVisitor<T> {
                 final String ct = entry.getKey();
                 MediaType mt = entry.getValue();
                 if (ct.contains("form") && mt.getSchema().getProperties() != null) {
-                    final Set<Map.Entry<String, Schema>> entrySet = mt.getSchema().getProperties().entrySet();
+                    final Set<Map.Entry<String, Schema>> entrySet =
+                            mt.getSchema().getProperties().entrySet();
                     for (Map.Entry<String, Schema> entrySchema : entrySet) {
                         Schema openApi31Schema = entrySchema.getValue();
                         foundForm = true;
@@ -253,7 +263,8 @@ class OperationVisitor<T> {
             for (String key : operation.getResponses().keySet()) {
                 if ("200".equals(key)) {
                     ApiResponse response = operation.getResponses().get(key);
-                    for (final Entry<String, MediaType> entry : response.getContent().entrySet()) {
+                    for (final Entry<String, MediaType> entry :
+                            response.getContent().entrySet()) {
                         final MediaType mediaType = entry.getValue();
                         if (dto == null) {
                             Schema schema = mediaType.getSchema();
@@ -276,5 +287,4 @@ class OperationVisitor<T> {
 
         return emitter;
     }
-
 }

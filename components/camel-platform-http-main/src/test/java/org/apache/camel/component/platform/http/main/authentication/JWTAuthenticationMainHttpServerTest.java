@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main.authentication;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -27,10 +32,6 @@ import org.apache.camel.main.Main;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JWTAuthenticationMainHttpServerTest {
 
@@ -46,11 +47,15 @@ public class JWTAuthenticationMainHttpServerTest {
         main.enableTrace();
         main.start();
 
-        jwtAuth = JWTAuth.create(Vertx.vertx(), new JWTAuthOptions(
-                new JsonObject().put("keyStore", new JsonObject()
-                        .put("type", "jks")
-                        .put("path", "test-camel-main-auth-jwt.jks")
-                        .put("password", "changeme"))));
+        jwtAuth = JWTAuth.create(
+                Vertx.vertx(),
+                new JWTAuthOptions(new JsonObject()
+                        .put(
+                                "keyStore",
+                                new JsonObject()
+                                        .put("type", "jks")
+                                        .put("path", "test-camel-main-auth-jwt.jks")
+                                        .put("password", "changeme"))));
     }
 
     @AfterAll
@@ -66,23 +71,16 @@ public class JWTAuthenticationMainHttpServerTest {
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
 
-        given()
-                .when()
-                .get("/main-http-test")
-                .then()
-                .statusCode(401)
-                .body(equalTo("Unauthorized"));
+        given().when().get("/main-http-test").then().statusCode(401).body(equalTo("Unauthorized"));
 
-        given()
-                .header("Authorization", "Bearer " + validToken)
+        given().header("Authorization", "Bearer " + validToken)
                 .when()
                 .get("/main-http-test")
                 .then()
                 .statusCode(200)
                 .body(equalTo("main-http-auth-jwt-test-response"));
 
-        given()
-                .header("Authorization", "Bearer " + invalidToken)
+        given().header("Authorization", "Bearer " + invalidToken)
                 .when()
                 .get("/main-http-test")
                 .then()

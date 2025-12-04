@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,5 +30,4 @@ public class Counter implements ReferenceGenerator {
     public String nextReferenceFor(final Object object) {
         return "ref" + counter.incrementAndGet();
     }
-
 }

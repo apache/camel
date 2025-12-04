@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.HashMap;
@@ -46,8 +47,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     private static final Logger LOG = LoggerFactory.getLogger(DataFormatReifier.class);
 
     // for custom reifiers
-    private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<? extends DataFormatDefinition>,
+                    BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>>
+            DATAFORMATS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -96,7 +99,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
             // try to let resolver see if it can resolve it, its not always
             // possible
-            type = camelContext.getCamelContextExtension().getContextPlugin(Model.class).resolveDataFormatDefinition(ref);
+            type = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(Model.class)
+                    .resolveDataFormatDefinition(ref);
 
             if (type == null) {
                 dataFormat = camelContext.resolveDataFormat(ref);
@@ -119,8 +125,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         DataFormatReifier<? extends DataFormatDefinition> answer = null;
         if (!DATAFORMATS.isEmpty()) {
             // custom take precedence
-            BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier
-                    = DATAFORMATS.get(definition.getClass());
+            BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> reifier =
+                    DATAFORMATS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(camelContext, definition);
             }
@@ -250,9 +256,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                 configureDataFormat(dataFormat, definition.getDataFormatName());
             } else {
                 throw new IllegalArgumentException(
-                        "Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
-                                                   + "' could not be created. "
-                                                   + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                        "Data format '"
+                                + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
+                                + "' could not be created. "
+                                + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
             }
         }
         return dataFormat;
@@ -279,7 +286,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
      */
     protected void configureDataFormat(DataFormat dataFormat, String dataFormatName) {
         Map<String, Object> properties = new LinkedHashMap<>();
-        // is there a generic data format that has been auto-configured, then we need to grab the default configuration first
+        // is there a generic data format that has been auto-configured, then we need to grab the default configuration
+        // first
         if (dataFormatName != null && camelContext.getDataFormatNames().contains(dataFormatName)) {
             DataFormat df = camelContext.resolveDataFormat(dataFormatName);
             if (df != null) {
@@ -323,7 +331,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (dataFormat instanceof PropertyConfigurerAware propertyConfigurerAware) {
             configurer = propertyConfigurerAware.getPropertyConfigurer(dataFormat);
             if (LOG.isDebugEnabled() && configurer != null) {
-                LOG.debug("Discovered dataformat property configurer using the PropertyConfigurerAware: {} -> {}", name,
+                LOG.debug(
+                        "Discovered dataformat property configurer using the PropertyConfigurerAware: {} -> {}",
+                        name,
                         configurer);
             }
         }
@@ -351,5 +361,4 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
         return type;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.transformer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,8 +37,6 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.support.DefaultDataFormat;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransformerContractTest extends ContextTestSupport {
 
@@ -90,10 +91,19 @@ public class TransformerContractTest extends ContextTestSupport {
             @Override
             public void configure() {
                 transformer().scheme("xml").withDataFormat(new MyDataFormatDefinition());
-                from("direct:a").inputType("xml").outputType("xml").to("mock:a").to("direct:b").to("mock:a2");
-                from("direct:b").inputType("java").outputType("java").to("mock:b").process(ex -> {
-                    ex.getIn().setBody(new B());
-                });
+                from("direct:a")
+                        .inputType("xml")
+                        .outputType("xml")
+                        .to("mock:a")
+                        .to("direct:b")
+                        .to("mock:a2");
+                from("direct:b")
+                        .inputType("java")
+                        .outputType("java")
+                        .to("mock:b")
+                        .process(ex -> {
+                            ex.getIn().setBody(new B());
+                        });
             }
         });
         context.start();
@@ -149,9 +159,7 @@ public class TransformerContractTest extends ContextTestSupport {
         }
     }
 
-    public static class A {
-    }
+    public static class A {}
 
-    public static class B {
-    }
+    public static class B {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
@@ -37,7 +38,10 @@ public class PropertiesComponentOnExceptionDelayPatternTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).delayPattern("{{myDelayPattern}}").maximumRedeliveries(1).handled(true)
+                onException(Exception.class)
+                        .delayPattern("{{myDelayPattern}}")
+                        .maximumRedeliveries(1)
+                        .handled(true)
                         .to("mock:dead");
 
                 from("direct:start").throwException(new IllegalArgumentException("Forced"));
@@ -48,8 +52,8 @@ public class PropertiesComponentOnExceptionDelayPatternTest extends ContextTestS
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

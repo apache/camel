@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +26,13 @@ public class OnCatchHandledTest extends OnExceptionHandledTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().throwException(new IllegalArgumentException("Forced"))
-                        .doCatch(IllegalArgumentException.class).to("log:foo?showAll=true")
-                        .to("mock:handled").end();
+                from("direct:start")
+                        .doTry()
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .doCatch(IllegalArgumentException.class)
+                        .to("log:foo?showAll=true")
+                        .to("mock:handled")
+                        .end();
             }
         };
     }

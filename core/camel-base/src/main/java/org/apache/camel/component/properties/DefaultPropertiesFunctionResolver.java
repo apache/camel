@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.LinkedHashMap;
@@ -99,15 +100,21 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found PropertiesFunction: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), name);
+                LOG.debug(
+                        "Found PropertiesFunction: {} via: {}{}",
+                        type.getName(),
+                        factoryFinder.getResourcePath(),
+                        name);
             }
             if (PropertiesFunction.class.isAssignableFrom(type)) {
-                PropertiesFunction answer = (PropertiesFunction) context.getInjector().newInstance(type, false);
+                PropertiesFunction answer =
+                        (PropertiesFunction) context.getInjector().newInstance(type, false);
                 CamelContextAware.trySetCamelContext(answer, camelContext);
                 ServiceHelper.startService(answer);
                 return answer;
             } else {
-                throw new IllegalArgumentException("Type is not a PropertiesFunction implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Type is not a PropertiesFunction implementation. Found: " + type.getName());
             }
         }
 

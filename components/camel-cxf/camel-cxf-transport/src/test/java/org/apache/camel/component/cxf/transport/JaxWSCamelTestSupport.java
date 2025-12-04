@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
 
 import java.util.concurrent.Future;
@@ -42,13 +43,13 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
      * Expected SOAP answer for the 'SampleWS.getSomething' method
      */
     public static final String ANSWER = "<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'>"
-                                        + "<Body>" + "<getSomethingResponse xmlns='urn:test'>"
-                                        + "<result>Something</result>" + "</getSomethingResponse>"
-                                        + "</Body>" + "</Envelope>";
+            + "<Body>" + "<getSomethingResponse xmlns='urn:test'>"
+            + "<result>Something</result>" + "</getSomethingResponse>"
+            + "</Body>" + "</Envelope>";
 
     public static final String REQUEST = "<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'>"
-                                         + "<Body>" + "<getSomething xmlns='urn:test'/>"
-                                         + "</Body>" + "</Envelope>";
+            + "<Body>" + "<getSomething xmlns='urn:test'/>"
+            + "</Body>" + "</Envelope>";
 
     private Bus bus;
 
@@ -61,7 +62,6 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         @WebMethod(operationName = "getSomething")
         @WebResult(name = "result", targetNamespace = "urn:test")
         String getSomething();
-
     }
 
     @WebService(targetNamespace = "urn:test", serviceName = "testService", portName = "testPort")
@@ -74,7 +74,8 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         Response<String> getSomethingAsync();
 
         @WebMethod(operationName = "getSomething")
-        Future<?> getSomethingAsync(@WebParam(name = "asyncHandler", targetNamespace = "") AsyncHandler<String> asyncHandler);
+        Future<?> getSomethingAsync(
+                @WebParam(name = "asyncHandler", targetNamespace = "") AsyncHandler<String> asyncHandler);
     }
 
     public static class SampleWSImpl implements SampleWS {
@@ -83,7 +84,6 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         public String getSomething() {
             return "something!";
         }
-
     }
 
     /**
@@ -133,10 +133,8 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
      *
      * @param camelEndpoint
      */
-
     public Endpoint publishSampleWS(String camelEndpoint) {
         return Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
-
     }
 
     /**
@@ -144,13 +142,10 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
      *
      * @param camelEndpoint
      */
-
     public Endpoint publishSampleWSWithGzipEnabled(String camelEndpoint) {
         EndpointImpl endpoint = (EndpointImpl) Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
         endpoint.getInInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPInInterceptor());
         endpoint.getOutInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPOutInterceptor(0));
         return endpoint;
-
     }
-
 }

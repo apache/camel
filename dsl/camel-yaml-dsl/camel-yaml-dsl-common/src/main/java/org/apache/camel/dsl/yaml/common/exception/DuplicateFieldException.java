@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common.exception;
 
 import java.util.Optional;
@@ -24,7 +25,10 @@ import org.snakeyaml.engine.v2.nodes.Node;
 public class DuplicateFieldException extends MarkedYamlEngineException {
 
     public DuplicateFieldException(Node node, String field, String message) {
-        super(null, Optional.empty(), "Field: " + field + " has already been configured " + message, node.getStartMark());
+        super(
+                null,
+                Optional.empty(),
+                "Field: " + field + " has already been configured " + message,
+                node.getStartMark());
     }
-
 }

@@ -49,9 +49,7 @@ import software.amazon.awssdk.services.transcribe.TranscribeClient;
 public final class AWSSDKClientUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AWSSDKClientUtils.class);
 
-    private AWSSDKClientUtils() {
-
-    }
+    private AWSSDKClientUtils() {}
 
     private static URI getEndpoint() {
         String amazonHost = System.getProperty(AWSConfigs.AMAZON_AWS_HOST);
@@ -83,8 +81,7 @@ public final class AWSSDKClientUtils {
      * @return                       A new client of the given type
      */
     private static <T extends AwsClientBuilder<T, Y>, Y extends SdkClient> Y newClient(
-            String property, String name,
-            Supplier<T> clientBuilderSupplier) {
+            String property, String name, Supplier<T> clientBuilderSupplier) {
         T clientBuilder = clientBuilderSupplier.get();
 
         LOG.debug("Creating a new AWS v2 {} client", name);
@@ -124,8 +121,7 @@ public final class AWSSDKClientUtils {
      * @return                       A new client of the given type
      */
     private static <T extends AwsClientBuilder<T, Y>, Y extends SdkClient> Y newClient(
-            String name,
-            Supplier<T> clientBuilderSupplier) {
+            String name, Supplier<T> clientBuilderSupplier) {
         return newClient("aws-service.instance.type", name, clientBuilderSupplier);
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Locale;
@@ -27,7 +28,8 @@ import org.apache.camel.processor.SamplingThrottler;
 @ManagedResource(description = "Managed SamplingThrottler")
 public class ManagedSamplingThrottler extends ManagedProcessor implements ManagedSamplingThrottlerMBean {
 
-    public ManagedSamplingThrottler(CamelContext context, SamplingThrottler processor, ProcessorDefinition<?> definition) {
+    public ManagedSamplingThrottler(
+            CamelContext context, SamplingThrottler processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 

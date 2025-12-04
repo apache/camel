@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,13 +29,13 @@ import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FlowableSendAndReceiveChannelTest extends CamelFlowableTestCase {
 
     @BeforeEach
     public void deployEventRegistryModels() throws Exception {
-        eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+        eventRegistryEngineConfiguration
+                .getEventRepositoryService()
+                .createDeployment()
                 .addClasspathResource("channel/userOutboundChannel.channel")
                 .addClasspathResource("event/userEvent.event")
                 .addClasspathResource("channel/userInboundChannel.channel")
@@ -44,7 +47,9 @@ public class FlowableSendAndReceiveChannelTest extends CamelFlowableTestCase {
     public void testSendAndReceiveBasicEvent() throws Exception {
         String deploymentId = deployProcessDefinition("process/sendAndReceiveEvent.bpmn20.xml");
         try {
-            ProcessInstance processInstance = runtimeService.createProcessInstanceBuilder().processDefinitionKey("camelProcess")
+            ProcessInstance processInstance = runtimeService
+                    .createProcessInstanceBuilder()
+                    .processDefinitionKey("camelProcess")
                     .variable("name", "John Doe")
                     .variable("age", 23)
                     .start();
@@ -52,7 +57,10 @@ public class FlowableSendAndReceiveChannelTest extends CamelFlowableTestCase {
             assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "name"));
             assertEquals(23, runtimeService.getVariable(processInstance.getId(), "age"));
 
-            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            Task task = taskService
+                    .createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .singleResult();
             taskService.complete(task.getId());
 
             MockEndpoint mockEndpoint = (MockEndpoint) context.getEndpoint("mock:testQueue");
@@ -72,11 +80,19 @@ public class FlowableSendAndReceiveChannelTest extends CamelFlowableTestCase {
             assertEquals("John Doe", runtimeService.getVariable(processInstance.getId(), "correlationName"));
             assertEquals("Amsterdam", runtimeService.getVariable(processInstance.getId(), "city"));
 
-            task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            task = taskService
+                    .createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .singleResult();
             assertEquals("userTask2", task.getTaskDefinitionKey());
             taskService.complete(task.getId());
 
-            assertEquals(0, runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).count());
+            assertEquals(
+                    0,
+                    runtimeService
+                            .createProcessInstanceQuery()
+                            .processInstanceId(processInstance.getId())
+                            .count());
 
         } finally {
             repositoryService.deleteDeployment(deploymentId, true);

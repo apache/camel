@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,9 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerLastRecordHeaderIT extends BaseKafkaTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerLastRecordHeaderIT.class);
@@ -76,15 +77,18 @@ public class KafkaConsumerLastRecordHeaderIT extends BaseKafkaTestSupport {
         LOG.debug("There are {} exchanges in the result", exchanges.size());
 
         for (int i = 0; i < exchanges.size(); i++) {
-            final Boolean lastRecordCommit
-                    = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class);
-            final Boolean lastPollRecord = exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_POLL_RECORD, Boolean.class);
+            final Boolean lastRecordCommit =
+                    exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class);
+            final Boolean lastPollRecord =
+                    exchanges.get(i).getIn().getHeader(KafkaConstants.LAST_POLL_RECORD, Boolean.class);
 
             LOG.debug("Processing LAST_RECORD_BEFORE_COMMIT header for {}: {} ", i, lastRecordCommit);
             LOG.debug("Processing LAST_POLL_RECORD header for {}: {} ", i, lastPollRecord);
 
             assertNotNull(lastRecordCommit, "Header not set for #" + i);
-            assertEquals(lastRecordCommit, i == exchanges.size() - 1 || lastPollRecord.booleanValue(),
+            assertEquals(
+                    lastRecordCommit,
+                    i == exchanges.size() - 1 || lastPollRecord.booleanValue(),
                     "Header invalid for #" + i);
 
             assertNotNull(lastPollRecord, "Last record header not set for #" + i);

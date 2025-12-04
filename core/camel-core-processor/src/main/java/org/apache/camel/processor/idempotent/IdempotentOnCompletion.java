@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent;
 
 import org.apache.camel.Exchange;
@@ -36,8 +37,8 @@ public class IdempotentOnCompletion implements Synchronization {
     private final boolean eager;
     private final boolean removeOnFailure;
 
-    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId, boolean eager,
-                                  boolean removeOnFailure) {
+    public IdempotentOnCompletion(
+            IdempotentRepository idempotentRepository, String messageId, boolean eager, boolean removeOnFailure) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
         this.eager = eager;

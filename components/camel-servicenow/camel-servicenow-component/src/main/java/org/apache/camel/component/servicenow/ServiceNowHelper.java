@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.util.List;
@@ -28,8 +29,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 public final class ServiceNowHelper {
-    private ServiceNowHelper() {
-    }
+    private ServiceNowHelper() {}
 
     public static void findOffsets(Response response, BiConsumer<String, Object> consumer) throws Exception {
         List<String> links = response.getStringHeaders().get(HttpHeaders.LINK);

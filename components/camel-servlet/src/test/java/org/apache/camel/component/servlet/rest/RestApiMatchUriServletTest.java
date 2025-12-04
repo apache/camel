@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
 
@@ -42,19 +43,22 @@ public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("servlet")
+                restConfiguration()
+                        .component("servlet")
                         .apiContextPath("/api-doc")
                         .endpointProperty("matchOnUriPrefix", "true")
-                        .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")
+                        .apiProperty("cors", "true")
+                        .apiProperty("api.title", "The hello rest thing")
                         .apiProperty("api.version", "1.2.3")
                         .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .post("new").consumes("application/json").type(UserPojo.class)
+                        .post("new")
+                        .consumes("application/json")
+                        .type(UserPojo.class)
                         .to("mock:input");
             }
         };
     }
-
 }

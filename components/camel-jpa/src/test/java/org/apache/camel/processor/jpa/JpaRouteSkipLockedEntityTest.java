@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,8 +31,6 @@ import org.apache.camel.examples.VersionedItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Need the fix of OPENJPA-2461")
 public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
@@ -56,7 +57,7 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        //force test to wait till finished
+        // force test to wait till finished
         this.context.getRouteController().stopRoute("first");
         this.context.getRouteController().stopRoute("second");
 
@@ -70,11 +71,19 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String options = "?skipLockedEntity=true"; //&lockModeType=PESSIMISTIC_FORCE_INCREMENT";
-                from("jpa://" + VersionedItem.class.getName() + options).routeId("first").autoStartup(false)
-                        .bean(new WaitLatch()).log("route1: ${body}").to("mock:result1");
-                from("jpa2://select" + options + "&query=select s from VersionedItem s").routeId("second").autoStartup(false)
-                        .bean(new WaitLatch()).log("route2: ${body}").to("mock:result2");
+                String options = "?skipLockedEntity=true"; // &lockModeType=PESSIMISTIC_FORCE_INCREMENT";
+                from("jpa://" + VersionedItem.class.getName() + options)
+                        .routeId("first")
+                        .autoStartup(false)
+                        .bean(new WaitLatch())
+                        .log("route1: ${body}")
+                        .to("mock:result1");
+                from("jpa2://select" + options + "&query=select s from VersionedItem s")
+                        .routeId("second")
+                        .autoStartup(false)
+                        .bean(new WaitLatch())
+                        .log("route2: ${body}")
+                        .to("mock:result2");
             }
         };
     }
@@ -117,9 +126,9 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
     public void setLockTimeout(int timeout) throws SQLException {
         entityManager.getTransaction().begin();
         Connection connection = entityManager.unwrap(java.sql.Connection.class);
-        connection.createStatement()
+        connection
+                .createStatement()
                 .execute("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.locks.waitTimeout', '" + timeout + "')");
         entityManager.getTransaction().commit();
     }
-
 }

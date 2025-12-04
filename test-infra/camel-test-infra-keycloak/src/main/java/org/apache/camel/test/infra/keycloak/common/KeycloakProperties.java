@@ -24,7 +24,5 @@ public final class KeycloakProperties {
     public static final String KEYCLOAK_PASSWORD = "keycloak.password";
     public static final String KEYCLOAK_CONTAINER = "keycloak.container";
 
-    private KeycloakProperties() {
-
-    }
+    private KeycloakProperties() {}
 }

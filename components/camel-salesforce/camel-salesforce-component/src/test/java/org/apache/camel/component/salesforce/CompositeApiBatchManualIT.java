@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,19 +45,13 @@ import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Parameterized
 public class CompositeApiBatchManualIT extends AbstractSalesforceTestBase {
 
-    public static class Accounts extends AbstractQueryRecordsBase<Account> {
-    }
+    public static class Accounts extends AbstractQueryRecordsBase<Account> {}
 
-    private static final Set<String> VERSIONS
-            = new HashSet<>(Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0"));
+    private static final Set<String> VERSIONS =
+            new HashSet<>(Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0"));
 
     private static final String ACCOUNT_EXTERNAL_ID = "CompositeAPIBatch";
 
@@ -358,10 +358,13 @@ public class CompositeApiBatchManualIT extends AbstractSalesforceTestBase {
             @Override
             public void configure() throws Exception {
                 from("direct:deleteBatchAccounts")
-                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
-                            + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
-                        .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
-                        .to("salesforce:deleteSObject?sObjectName=Account").end();
+                        .to(
+                                "salesforce:query?sObjectClass=" + Accounts.class.getName()
+                                        + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
+                        .split(simple("${body.records}"))
+                        .setHeader("sObjectId", simple("${body.id}"))
+                        .to("salesforce:deleteSObject?sObjectName=Account")
+                        .end();
             }
         };
     }
@@ -378,7 +381,7 @@ public class CompositeApiBatchManualIT extends AbstractSalesforceTestBase {
 
     @Parameters(name = "format = {0}, version = {1}")
     public static Iterable<Object[]> formats() {
-        return VERSIONS.stream().map(v -> new Object[] { "JSON", v }).collect(Collectors.toList());
+        return VERSIONS.stream().map(v -> new Object[] {"JSON", v}).collect(Collectors.toList());
     }
 
     private String batchUri() {

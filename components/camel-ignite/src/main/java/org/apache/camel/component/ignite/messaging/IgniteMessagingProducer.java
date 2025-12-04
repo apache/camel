@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.messaging;
 
 import java.util.Collection;
@@ -68,5 +69,4 @@ public class IgniteMessagingProducer extends DefaultAsyncProducer {
     private String topicFor(Exchange exchange) {
         return exchange.getIn().getHeader(IgniteConstants.IGNITE_MESSAGING_TOPIC, endpoint.getTopic(), String.class);
     }
-
 }

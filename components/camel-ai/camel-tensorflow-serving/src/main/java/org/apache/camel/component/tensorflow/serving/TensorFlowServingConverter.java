@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tensorflow.serving;
 
 import org.apache.camel.Converter;
@@ -49,15 +50,15 @@ public class TensorFlowServingConverter {
     }
 
     @Converter
-    public static Classification.ClassificationRequest toClassificationRequest(
-            InputOuterClass.Input input) {
+    public static Classification.ClassificationRequest toClassificationRequest(InputOuterClass.Input input) {
         return Classification.ClassificationRequest.newBuilder().setInput(input).build();
     }
 
     @Converter
-    public static Classification.ClassificationRequest toClassificationRequest(
-            InputOuterClass.Input.Builder builder) {
-        return Classification.ClassificationRequest.newBuilder().setInput(builder).build();
+    public static Classification.ClassificationRequest toClassificationRequest(InputOuterClass.Input.Builder builder) {
+        return Classification.ClassificationRequest.newBuilder()
+                .setInput(builder)
+                .build();
     }
 
     @Converter
@@ -67,20 +68,21 @@ public class TensorFlowServingConverter {
     }
 
     @Converter
-    public static RegressionOuterClass.RegressionRequest toRegressionRequest(
-            InputOuterClass.Input input) {
-        return RegressionOuterClass.RegressionRequest.newBuilder().setInput(input).build();
+    public static RegressionOuterClass.RegressionRequest toRegressionRequest(InputOuterClass.Input input) {
+        return RegressionOuterClass.RegressionRequest.newBuilder()
+                .setInput(input)
+                .build();
     }
 
     @Converter
-    public static RegressionOuterClass.RegressionRequest toRegressionRequest(
-            InputOuterClass.Input.Builder builder) {
-        return RegressionOuterClass.RegressionRequest.newBuilder().setInput(builder).build();
+    public static RegressionOuterClass.RegressionRequest toRegressionRequest(InputOuterClass.Input.Builder builder) {
+        return RegressionOuterClass.RegressionRequest.newBuilder()
+                .setInput(builder)
+                .build();
     }
 
     @Converter
-    public static Predict.PredictRequest toPredictRequest(
-            Predict.PredictRequest.Builder builder) {
+    public static Predict.PredictRequest toPredictRequest(Predict.PredictRequest.Builder builder) {
         return builder.build();
     }
 }

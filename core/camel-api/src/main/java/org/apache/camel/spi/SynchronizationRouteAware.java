@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
@@ -55,5 +56,4 @@ public interface SynchronizationRouteAware {
      * @param exchange the exchange
      */
     void onAfterRoute(Route route, Exchange exchange);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.routing;
 
 import org.smooks.api.bean.context.BeanContext;
@@ -70,7 +71,8 @@ public class BeanRouterObserver implements BeanContextLifecycleObserver {
     }
 
     private boolean endEventAndBeanIdMatch(final BeanContextLifecycleEvent event) {
-        return event.getLifecycle() == BeanLifecycle.END_FRAGMENT && event.getBeanId().getName().equals(beanId);
+        return event.getLifecycle() == BeanLifecycle.END_FRAGMENT
+                && event.getBeanId().getName().equals(beanId);
     }
 
     public boolean conditionsMatch(BeanContextLifecycleEvent event) {

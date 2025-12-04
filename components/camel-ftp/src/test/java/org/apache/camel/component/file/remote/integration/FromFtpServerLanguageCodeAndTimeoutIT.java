@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Endpoint;
@@ -27,7 +28,7 @@ public class FromFtpServerLanguageCodeAndTimeoutIT extends FtpServerTestSupport 
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/codetimeout/?password=admin&ftpClientConfig.serverLanguageCode=fr&ftpClient.dataTimeout=4000";
+                + "/codetimeout/?password=admin&ftpClientConfig.serverLanguageCode=fr&ftpClient.dataTimeout=4000";
     }
 
     @Override

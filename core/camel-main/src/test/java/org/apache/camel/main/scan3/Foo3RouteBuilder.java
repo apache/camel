@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.scan3;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,7 +23,8 @@ public class Foo3RouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("direct:start3").routeId("foo2") // duplicate on purpose
+        from("direct:start3")
+                .routeId("foo2") // duplicate on purpose
                 .process("hello3");
     }
 }

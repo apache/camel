@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,21 +29,21 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private static final String MY_ID = "myId";
 
-    String intermediate = "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert";
+    String intermediate =
+            "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert";
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:insertJsonString").routeId("insert").to(intermediate);
-                from("direct:findById").routeId("find").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true");
+                from("direct:findById")
+                        .routeId("find")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true");
             }
         };
     }
@@ -53,7 +57,8 @@ public class MongoDbStopEndpointIT extends AbstractMongoDbITSupport implements C
     public void testStopEndpoint() {
         template.requestBody("direct:insertJsonString", "{\"scientist\": \"Newton\", \"_id\": \"" + MY_ID + "\"}");
 
-        context.getEndpoint("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+        context.getEndpoint(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
                 .stop();
 
         Document result = template.requestBody("direct:findById", MY_ID, Document.class);

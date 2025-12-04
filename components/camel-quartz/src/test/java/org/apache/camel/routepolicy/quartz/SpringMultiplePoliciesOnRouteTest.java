@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
+
+import static org.apache.camel.test.junit5.TestSupport.executeSlowly;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +26,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.executeSlowly;
 
 public class SpringMultiplePoliciesOnRouteTest extends CamelSpringTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
@@ -45,5 +46,4 @@ public class SpringMultiplePoliciesOnRouteTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/MultiplePolicies.xml");
     }
-
 }

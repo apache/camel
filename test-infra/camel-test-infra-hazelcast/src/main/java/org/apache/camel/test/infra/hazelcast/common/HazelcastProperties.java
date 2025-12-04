@@ -19,7 +19,5 @@ package org.apache.camel.test.infra.hazelcast.common;
 
 public final class HazelcastProperties {
 
-    private HazelcastProperties() {
-
-    }
+    private HazelcastProperties() {}
 }

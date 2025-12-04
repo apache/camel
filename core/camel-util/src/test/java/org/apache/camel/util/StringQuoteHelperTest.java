@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import org.junit.jupiter.api.Assertions;
@@ -46,5 +47,4 @@ public class StringQuoteHelperTest {
         Assertions.assertEquals("  String.class ${body}  ", arr[0]);
         Assertions.assertEquals(" String.class Mars   ", arr[1]);
     }
-
 }

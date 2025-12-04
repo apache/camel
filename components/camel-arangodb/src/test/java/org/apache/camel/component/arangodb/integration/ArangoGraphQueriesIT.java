@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
+import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 
@@ -25,26 +33,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
-import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
-                                  disabledReason = "Manually disabled tests")
+    @DisabledIfSystemProperty(
+            named = "ci.env.name",
+            matches = ".*",
+            disabledReason = "Apache CI nodes are too resource constrained for this test"),
+    @DisabledIfSystemProperty(
+            named = "arangodb.tests.disable",
+            matches = "true",
+            disabledReason = "Manually disabled tests")
 })
 public class ArangoGraphQueriesIT extends BaseGraph {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:query")
-                        .to("arangodb:{{arangodb.testDb}}?operation=AQL_QUERY");
+                from("direct:query").to("arangodb:{{arangodb.testDb}}?operation=AQL_QUERY");
             }
         };
     }
@@ -67,7 +71,8 @@ public class ArangoGraphQueriesIT extends BaseGraph {
     }
 
     private Exchange getResultOutboundQuery(int depth, String vertexId, String outInBound) {
-        String query = "FOR v IN 1.." + depth + outInBound + " '" + vertexId + "' GRAPH '" + GRAPH_NAME + "' RETURN v._key";
+        String query =
+                "FOR v IN 1.." + depth + outInBound + " '" + vertexId + "' GRAPH '" + GRAPH_NAME + "' RETURN v._key";
         return getResult(query);
     }
 
@@ -100,12 +105,11 @@ public class ArangoGraphQueriesIT extends BaseGraph {
 
     @Test
     public void queryShortestPathFromAToH() throws ArangoDBException {
-        String query = "FOR v, e IN OUTBOUND SHORTEST_PATH '" + vertexA.getId() + "' TO '" + vertexH.getId() + "' GRAPH '"
-                       + GRAPH_NAME + "' RETURN v._key";
+        String query = "FOR v, e IN OUTBOUND SHORTEST_PATH '" + vertexA.getId() + "' TO '" + vertexH.getId()
+                + "' GRAPH '" + GRAPH_NAME + "' RETURN v._key";
         Exchange result = getResult(query);
         Collection<String> list = (Collection<String>) result.getMessage().getBody();
         assertEquals(4, list.size());
         assertThat(list, hasItems("A", "B", "D", "H"));
     }
-
 }

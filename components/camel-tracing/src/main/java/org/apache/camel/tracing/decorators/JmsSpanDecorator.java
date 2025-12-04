@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Endpoint;
@@ -47,5 +48,4 @@ public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
     protected String getMessageId(Exchange exchange) {
         return exchange.getIn().getHeader(JMS_MESSAGE_ID, String.class);
     }
-
 }

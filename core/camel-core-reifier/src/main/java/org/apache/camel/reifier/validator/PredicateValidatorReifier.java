@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.validator;
 
 import org.apache.camel.CamelContext;
@@ -37,9 +38,9 @@ public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidat
         PredicateValidatingProcessor processor = new PredicateValidatingProcessor(pred);
         @SuppressWarnings("resource")
         // NOTE: the client must take care of closing this resource.
-        Validator v = new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
+        Validator v =
+                new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
 
         return v;
     }
-
 }

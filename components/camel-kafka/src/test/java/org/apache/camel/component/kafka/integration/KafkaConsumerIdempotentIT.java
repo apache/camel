@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -35,11 +38,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
-
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "false")
 @Timeout(60)
-@Tags({ @Tag("idempotent") })
+@Tags({@Tag("idempotent")})
 public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
 
     private static final String TOPIC;
@@ -63,8 +64,8 @@ public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSuppor
     }
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private final KafkaIdempotentRepository testIdempotent
-            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
+    private final KafkaIdempotentRepository testIdempotent =
+            new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
 
     @BeforeEach
     public void before() {
@@ -82,11 +83,12 @@ public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSuppor
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaConsumerIdempotentIT&autoOffsetReset=earliest"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor").routeId("foo")
+                                + "?groupId=KafkaConsumerIdempotentIT&autoOffsetReset=earliest"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                        .routeId("foo")
                         .idempotentConsumer(numericHeader("id"))
                         .idempotentRepository("kafkaIdempotentRepository")
                         .to(KafkaTestUtil.MOCK_RESULT);

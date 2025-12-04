@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import io.opentelemetry.api.trace.SpanKind;
@@ -24,25 +25,49 @@ import org.junit.jupiter.api.Test;
 class MulticastRouteTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setParentId(1),
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(4),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setParentId(3),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(4),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setParentId(5),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(6),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setParentId(7),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setKind(SpanKind.CLIENT)
+        new SpanTestData()
+                .setLabel("seda:b server")
+                .setUri("seda://b")
+                .setOperation("b")
+                .setParentId(1),
+        new SpanTestData()
+                .setLabel("seda:b server")
+                .setUri("seda://b")
+                .setOperation("b")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(4),
+        new SpanTestData()
+                .setLabel("seda:c server")
+                .setUri("seda://c")
+                .setOperation("c")
+                .setParentId(3),
+        new SpanTestData()
+                .setLabel("seda:c server")
+                .setUri("seda://c")
+                .setOperation("c")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(4),
+        new SpanTestData()
+                .setLabel("seda:a server")
+                .setUri("seda://a")
+                .setOperation("a")
+                .setParentId(5),
+        new SpanTestData()
+                .setLabel("seda:a server")
+                .setUri("seda://a")
+                .setOperation("a")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(6),
+        new SpanTestData()
+                .setLabel("direct:start server")
+                .setUri("direct://start")
+                .setOperation("start")
+                .setParentId(7),
+        new SpanTestData()
+                .setLabel("direct:start server")
+                .setUri("direct://start")
+                .setOperation("start")
+                .setKind(SpanKind.CLIENT)
     };
 
     MulticastRouteTest() {
@@ -63,7 +88,8 @@ class MulticastRouteTest extends CamelOpenTelemetryTestSupport {
             public void configure() {
                 from("direct:start").to("seda:a").routeId("start");
 
-                from("seda:a").routeId("a")
+                from("seda:a")
+                        .routeId("a")
                         .log("routing at ${routeId}")
                         .multicast()
                         .to("seda:b")
@@ -71,13 +97,9 @@ class MulticastRouteTest extends CamelOpenTelemetryTestSupport {
                         .end()
                         .log("End of routing");
 
-                from("seda:b").routeId("b")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"));
+                from("seda:b").routeId("b").log("routing at ${routeId}").delay(simple("${random(1000,2000)}"));
 
-                from("seda:c").routeId("c")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,100)}"));
+                from("seda:c").routeId("c").log("routing at ${routeId}").delay(simple("${random(0,100)}"));
             }
         };
     }

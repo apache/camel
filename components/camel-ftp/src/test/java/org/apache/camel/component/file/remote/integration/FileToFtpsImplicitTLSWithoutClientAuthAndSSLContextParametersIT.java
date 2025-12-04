@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.BindToRegistry;
@@ -42,7 +43,7 @@ public class FileToFtpsImplicitTLSWithoutClientAuthAndSSLContextParametersIT
     @Override
     protected String getFtpUrl() {
         return "ftps://admin@localhost:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-               + "&implicit=true&sslContextParameters=#sslContextParameters&delete=true";
+                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
+                + "&implicit=true&sslContextParameters=#sslContextParameters&delete=true";
     }
 }

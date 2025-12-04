@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Files;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileSplitInSplitTest extends ContextTestSupport {
 
@@ -69,7 +70,6 @@ public class FileSplitInSplitTest extends ContextTestSupport {
 
         lines = txt.split(LS);
         assertEquals(size + 1, lines.length, "Should be " + (size + 1) + " lines");
-
     }
 
     @Override
@@ -77,18 +77,24 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
-                        .split(body().tokenize(comma)).parallelProcessing().streaming()
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .split(body().tokenize(comma))
+                        .parallelProcessing()
+                        .streaming()
                         .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
-                        .split(body().tokenize(LS)).parallelProcessing().streaming()
+                        .split(body().tokenize(LS))
+                        .parallelProcessing()
+                        .streaming()
                         .setBody(body().append(":Status=OK").append(LS))
-                        .to(fileUri("outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")).end()
+                        .to(fileUri("outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt"))
+                        .end()
                         .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
-                        .to(fileUri("outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")).end()
+                        .to(fileUri("outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt"))
+                        .end()
                         .to("mock:result");
-
             }
         };
     }
-
 }

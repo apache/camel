@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import java.net.URISyntaxException;
@@ -90,7 +91,8 @@ public class SpringRabbitMQSendDynamicAware extends ServiceSupport implements Se
                 if (answer == null) {
                     answer = entry.getUri();
                 }
-                answer = StringHelper.replaceFirst(answer, "routingKey=" + routingKey, "routingKey=" + originalRoutingKey);
+                answer = StringHelper.replaceFirst(
+                        answer, "routingKey=" + routingKey, "routingKey=" + originalRoutingKey);
             }
         }
 
@@ -147,5 +149,4 @@ public class SpringRabbitMQSendDynamicAware extends ServiceSupport implements Se
         }
         return null;
     }
-
 }

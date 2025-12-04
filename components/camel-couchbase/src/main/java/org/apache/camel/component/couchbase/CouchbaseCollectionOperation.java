@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
 
 import java.time.Duration;
@@ -33,8 +34,7 @@ import org.slf4j.LoggerFactory;
 public final class CouchbaseCollectionOperation {
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseCollectionOperation.class);
 
-    private CouchbaseCollectionOperation() {
-    }
+    private CouchbaseCollectionOperation() {}
 
     /**
      * Adds or updates a document in a Collection
@@ -50,15 +50,21 @@ public final class CouchbaseCollectionOperation {
      * @return
      */
     protected static Boolean setDocument(
-            Collection collection, String id, int expiry, Object obj, PersistTo persistTo, ReplicateTo replicateTo,
-            long writeQueryTimeout, long producerRetryPause) {
+            Collection collection,
+            String id,
+            int expiry,
+            Object obj,
+            PersistTo persistTo,
+            ReplicateTo replicateTo,
+            long writeQueryTimeout,
+            long producerRetryPause) {
 
         UpsertOptions options = UpsertOptions.upsertOptions()
                 .expiry(Duration.ofSeconds(expiry))
                 .durability(persistTo, replicateTo)
                 .timeout(Duration.ofMillis(writeQueryTimeout))
-                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause),
-                        Duration.ofMillis(producerRetryPause), 1));
+                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(
+                        Duration.ofMillis(producerRetryPause), Duration.ofMillis(producerRetryPause), 1));
 
         MutationResult result = collection.upsert(id, obj, options);
         if (LOG.isDebugEnabled()) {
@@ -79,8 +85,8 @@ public final class CouchbaseCollectionOperation {
     protected static GetResult getDocument(Collection collection, String id, long queryTimeout, long retryPause) {
         GetOptions options = GetOptions.getOptions()
                 .timeout(Duration.ofMillis(queryTimeout))
-                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(retryPause),
-                        Duration.ofMillis(retryPause), 1));
+                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(
+                        Duration.ofMillis(retryPause), Duration.ofMillis(retryPause), 1));
         return collection.get(id, options);
     }
 
@@ -97,8 +103,8 @@ public final class CouchbaseCollectionOperation {
             Collection collection, String id, long writeQueryTimeout, long producerRetryPause) {
         RemoveOptions options = RemoveOptions.removeOptions()
                 .timeout(Duration.ofMillis(writeQueryTimeout))
-                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(Duration.ofMillis(producerRetryPause),
-                        Duration.ofMillis(producerRetryPause), 1));
+                .retryStrategy(BestEffortRetryStrategy.withExponentialBackoff(
+                        Duration.ofMillis(producerRetryPause), Duration.ofMillis(producerRetryPause), 1));
         return collection.remove(id, options);
     }
 }

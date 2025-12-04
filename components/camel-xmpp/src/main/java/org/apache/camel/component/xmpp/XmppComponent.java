@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.net.URI;
@@ -38,8 +39,7 @@ public class XmppComponent extends DefaultComponent {
     // keep a cache of endpoints so they can be properly cleaned up
     private final Map<String, XmppEndpoint> endpointCache = new HashMap<>();
 
-    public XmppComponent() {
-    }
+    public XmppComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

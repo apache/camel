@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,11 +83,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Integration test for {@link org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl} using the sample OData 4.0
  * remote TripPin service published on http://services.odata.org/TripPinRESTierService.
@@ -95,19 +96,19 @@ public class Olingo4AppAPITest {
     private static final String TEST_PEOPLE = "People('russellwhyte')";
     private static final String TEST_AIRLINE = "Airlines('FM')";
     private static final String TEST_AIRLINE_TO_UPDATE = "Airlines('AA')"; // Careful
-                                                                          // using
-                                                                          // this
-                                                                          // as
-                                                                          // it
-                                                                          // get
-                                                                          // updated!
+    // using
+    // this
+    // as
+    // it
+    // get
+    // updated!
     private static final String TEST_AIRLINE_TO_DELETE = "Airlines('MU')"; // Careful
-                                                                          // using
-                                                                          // this
-                                                                          // as
-                                                                          // it
-                                                                          // gets
-                                                                          // deleted!
+    // using
+    // this
+    // as
+    // it
+    // gets
+    // deleted!
     private static final String TRIPS = "Trips";
     private static final String TEST_CREATE_RESOURCE_CONTENT_ID = "1";
     private static final String TEST_UPDATE_RESOURCE_CONTENT_ID = "2";
@@ -119,8 +120,7 @@ public class Olingo4AppAPITest {
     private static final String TEST_AIRPORTS_SIMPLE_PROPERTY_VALUE = TEST_AIRPORTS_SIMPLE_PROPERTY + "/$value";
     private static final String COUNT_OPTION = "/$count";
     private static final String TEST_UNBOUND_ACTION_RESETDATASOURCE = "ResetDataSource";
-    private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP
-            = TEST_PEOPLE + "/Trippin.ShareTrip";
+    private static final String TEST_BOUND_ACTION_PEOPLE_SHARETRIP = TEST_PEOPLE + "/Trippin.ShareTrip";
 
     private static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
@@ -154,7 +154,9 @@ public class Olingo4AppAPITest {
         olingoApp.read(null, Constants.METADATA, null, null, responseHandler);
 
         edm = responseHandler.await();
-        LOG.info("Read default EntityContainer:  {}", responseHandler.await().getEntityContainer().getName());
+        LOG.info(
+                "Read default EntityContainer:  {}",
+                responseHandler.await().getEntityContainer().getName());
     }
 
     /*
@@ -173,7 +175,8 @@ public class Olingo4AppAPITest {
         HttpUriRequest currentReq = (HttpUriRequest) httpContext.getAttribute(ExecutionContext.HTTP_REQUEST);
         HttpHost currentHost = (HttpHost) httpContext.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
         String currentUrl = (currentReq.getURI().isAbsolute())
-                ? currentReq.getURI().toString() : (currentHost.toURI() + currentReq.getURI());
+                ? currentReq.getURI().toString()
+                : (currentHost.toURI() + currentReq.getURI());
 
         return currentUrl;
     }
@@ -292,8 +295,10 @@ public class Olingo4AppAPITest {
         // All properties updates (simple and complex) are performing through
         // ClientEntity object
         ClientEntity clientEntity = objFactory.newEntity(null);
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Middle")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Middle")));
         olingoApp.update(edm, TEST_PEOPLE, null, clientEntity, statusHandler);
         HttpStatusCode statusCode = statusHandler.await();
         assertEquals(HttpStatusCode.NO_CONTENT, statusCode);
@@ -379,8 +384,10 @@ public class Olingo4AppAPITest {
         TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
         ClientEntity clientEntity = objFactory.newEntity(null);
         String newAirlineName = "The Patched American Airlines";
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("Name", objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "Name", objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
 
         //
         // Call patch
@@ -422,8 +429,10 @@ public class Olingo4AppAPITest {
         TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
         ClientEntity clientEntity = objFactory.newEntity(null);
         String newAirlineName = "The Updated American Airlines";
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("Name", objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "Name", objFactory.newPrimitiveValueBuilder().buildString(newAirlineName)));
 
         //
         // Call update
@@ -456,15 +465,19 @@ public class Olingo4AppAPITest {
 
         final TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
         ClientEntity updateEntity = createEntity();
-        updateEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Middle")));
+        updateEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Middle")));
         olingoApp.update(edm, TEST_CREATE_PEOPLE, null, updateEntity, statusHandler);
         statusHandler.await();
 
         statusHandler.reset();
         updateEntity = createEntity();
-        updateEntity.getProperties().add(objFactory.newPrimitiveProperty("MiddleName",
-                objFactory.newPrimitiveValueBuilder().buildString("Middle Patched")));
+        updateEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Middle Patched")));
         olingoApp.patch(edm, TEST_CREATE_PEOPLE, null, updateEntity, statusHandler);
         statusHandler.await();
 
@@ -497,41 +510,62 @@ public class Olingo4AppAPITest {
         final List<Olingo4BatchRequest> batchParts = new ArrayList<>();
 
         // 1. Edm query
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(Constants.METADATA).resourceUri(TEST_SERVICE_BASE_URL).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(Constants.METADATA)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .build());
 
         // 2. Query entity set
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .build());
 
         // 3. Read entity
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .build());
 
         // 4. Read with expand
         final HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put(SystemQueryOptionKind.EXPAND.toString(), TRIPS);
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE).queryParams(queryParams)
-                .resourceUri(TEST_SERVICE_BASE_URL).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE)
+                .queryParams(queryParams)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .build());
 
         // 5. Create entity
         final ClientEntity clientEntity = createEntity();
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL)
-                .contentId(TEST_CREATE_RESOURCE_CONTENT_ID).operation(Operation.CREATE)
-                .body(clientEntity).build());
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(PEOPLE)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .contentId(TEST_CREATE_RESOURCE_CONTENT_ID)
+                .operation(Operation.CREATE)
+                .body(clientEntity)
+                .build());
 
         // 6. Update entity
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL)
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE)
+                .resourceUri(TEST_SERVICE_BASE_URL)
                 .contentId(TEST_UPDATE_RESOURCE_CONTENT_ID)
-                .operation(Operation.UPDATE).body(clientEntity).build());
+                .operation(Operation.UPDATE)
+                .body(clientEntity)
+                .build());
 
         // 7. Delete entity
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL)
-                .operation(Operation.DELETE).build());
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .operation(Operation.DELETE)
+                .build());
 
         // 8. Read to verify entity delete
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_CREATE_PEOPLE)
+                .resourceUri(TEST_SERVICE_BASE_URL)
+                .build());
 
-        final TestOlingo4ResponseHandler<List<Olingo4BatchResponse>> responseHandler = new TestOlingo4ResponseHandler<>();
+        final TestOlingo4ResponseHandler<List<Olingo4BatchResponse>> responseHandler =
+                new TestOlingo4ResponseHandler<>();
         olingoApp.batch(edm, null, batchParts, responseHandler);
 
         final List<Olingo4BatchResponse> responseParts = responseHandler.await(15, TimeUnit.MINUTES);
@@ -539,7 +573,8 @@ public class Olingo4AppAPITest {
 
         assertNotNull(responseParts.get(0).getBody());
 
-        final ClientEntitySet clientEntitySet = (ClientEntitySet) responseParts.get(1).getBody();
+        final ClientEntitySet clientEntitySet =
+                (ClientEntitySet) responseParts.get(1).getBody();
         assertNotNull(clientEntitySet);
         LOG.info("Batch entity set:  {}", prettyPrint(clientEntitySet));
 
@@ -556,10 +591,13 @@ public class Olingo4AppAPITest {
         assertEquals(TEST_CREATE_RESOURCE_CONTENT_ID, responseParts.get(4).getContentId());
         LOG.info("Batch created entity:  {}", prettyPrint(returnClientEntity));
 
-        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), responseParts.get(5).getStatusCode());
+        assertEquals(
+                HttpStatusCode.NO_CONTENT.getStatusCode(), responseParts.get(5).getStatusCode());
         assertEquals(TEST_UPDATE_RESOURCE_CONTENT_ID, responseParts.get(5).getContentId());
-        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), responseParts.get(6).getStatusCode());
-        assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
+        assertEquals(
+                HttpStatusCode.NO_CONTENT.getStatusCode(), responseParts.get(6).getStatusCode());
+        assertEquals(
+                HttpStatusCode.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
     }
 
     @Test
@@ -574,10 +612,14 @@ public class Olingo4AppAPITest {
     @Test
     public void testBoundActionRequest() throws Exception {
         final ClientEntity clientEntity = objFactory.newEntity(null);
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
 
         final TestOlingo4ResponseHandler<HttpStatusCode> responseHandler = new TestOlingo4ResponseHandler<>();
         olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, responseHandler);
@@ -617,10 +659,14 @@ public class Olingo4AppAPITest {
         final Edm edm = responseHandler.await();
 
         final ClientEntity clientEntity = objFactory.newEntity(null);
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
 
         final TestOlingo4ResponseHandler<ClientEntity> actionResponseHandler = new TestOlingo4ResponseHandler<>();
         olingoApp.action(edm, TEST_BOUND_ACTION_PEOPLE_SHARETRIP, null, clientEntity, actionResponseHandler);
@@ -632,12 +678,18 @@ public class Olingo4AppAPITest {
     private ClientEntity createEntity() {
         ClientEntity clientEntity = objFactory.newEntity(null);
 
-        clientEntity.getProperties().add(
-                objFactory.newPrimitiveProperty("UserName", objFactory.newPrimitiveValueBuilder().buildString("lewisblack")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("FirstName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("LastName", objFactory.newPrimitiveValueBuilder().buildString("Black")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "UserName", objFactory.newPrimitiveValueBuilder().buildString("lewisblack")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "FirstName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "LastName", objFactory.newPrimitiveValueBuilder().buildString("Black")));
 
         return clientEntity;
     }
@@ -704,7 +756,6 @@ public class Olingo4AppAPITest {
             } else {
                 b.append(property.toString()).append("\n");
             }
-
         }
         return b.toString();
     }

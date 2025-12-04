@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.ftp;
 
 import org.apache.camel.Endpoint;
@@ -36,19 +37,22 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @CamelSpringTest
 @ContextConfiguration
-@DisabledOnOs({ OS.AIX, OS.WINDOWS, OS.SOLARIS })
+@DisabledOnOs({OS.AIX, OS.WINDOWS, OS.SOLARIS})
 public class SpringFileAntPathMatcherRemoteFileFilterTest {
     @RegisterExtension
-    public static FtpServiceExtension ftpServiceExtension
-            = new FtpServiceExtension("SpringFileAntPathMatcherRemoteFileFilterTest.ftpPort");
+    public static FtpServiceExtension ftpServiceExtension =
+            new FtpServiceExtension("SpringFileAntPathMatcherRemoteFileFilterTest.ftpPort");
 
     protected FtpServer ftpServer;
 
     protected String expectedBody = "Godday World";
+
     @Autowired
     protected ProducerTemplate template;
+
     @EndpointInject("ref:myFTPEndpoint")
     protected Endpoint inputFTP;
+
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 

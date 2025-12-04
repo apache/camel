@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.PredicateBuilder.not;
 
 public class FilterNotTest extends ContextTestSupport {
 
@@ -50,9 +51,7 @@ public class FilterNotTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").filter(not(header("foo"))).to("mock:result");
-
             }
         };
     }
-
 }

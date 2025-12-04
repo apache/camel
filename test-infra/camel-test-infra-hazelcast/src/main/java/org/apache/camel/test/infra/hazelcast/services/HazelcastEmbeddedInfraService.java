@@ -20,25 +20,20 @@ package org.apache.camel.test.infra.hazelcast.services;
 import com.hazelcast.config.Config;
 import org.apache.camel.spi.annotations.InfraService;
 
-@InfraService(service = HazelcastInfraService.class,
-              description = "In Memory Database Hazelcast",
-              serviceAlias = { "hazelcast" })
+@InfraService(
+        service = HazelcastInfraService.class,
+        description = "In Memory Database Hazelcast",
+        serviceAlias = {"hazelcast"})
 public class HazelcastEmbeddedInfraService implements HazelcastInfraService {
 
     @Override
-    public void registerProperties() {
-
-    }
+    public void registerProperties() {}
 
     @Override
-    public void initialize() {
-
-    }
+    public void initialize() {}
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 
     @Override
     public Config createConfiguration(String name, int port, String instanceName, String componentName) {
@@ -68,7 +63,11 @@ public class HazelcastEmbeddedInfraService implements HazelcastInfraService {
             config.setInstanceName(instanceName);
             config.getMetricsConfig().setEnabled(false);
             config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
-            config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true).addMember("127.0.0.1");
+            config.getNetworkConfig()
+                    .getJoin()
+                    .getTcpIpConfig()
+                    .setEnabled(true)
+                    .addMember("127.0.0.1");
         }
         return config;
     }

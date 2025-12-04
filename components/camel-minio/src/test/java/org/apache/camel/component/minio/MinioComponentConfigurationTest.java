@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Properties;
 
@@ -22,18 +27,13 @@ import io.minio.MinioClient;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 class MinioComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     void createEndpointWithMinimalConfiguration() throws Exception {
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint) component
-                .createEndpoint(
-                        "minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
+        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint(
+                "minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
         assertEquals("TestDomain", endpoint.getConfiguration().getBucketName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -50,8 +50,8 @@ class MinioComponentConfigurationTest extends CamelTestSupport {
                 .build();
         context.getRegistry().bind("minioClient", client);
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint) component
-                .createEndpoint("minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
+        MinioEndpoint endpoint = (MinioEndpoint)
+                component.createEndpoint("minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(client, endpoint.getConfiguration().getMinioClient());
@@ -67,9 +67,8 @@ class MinioComponentConfigurationTest extends CamelTestSupport {
                 .build();
         context.getRegistry().bind("minioClient", client);
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint) component
-                .createEndpoint(
-                        "minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&endpoint=https://play.min.io");
+        MinioEndpoint endpoint = (MinioEndpoint) component.createEndpoint(
+                "minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&endpoint=https://play.min.io");
         context.setAutowiredEnabled(true);
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertNull(endpoint.getConfiguration().getMinioClient());

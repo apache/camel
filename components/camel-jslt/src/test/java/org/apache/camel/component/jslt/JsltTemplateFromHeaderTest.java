@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,50 +29,37 @@ public class JsltTemplateFromHeaderTest extends CamelTestSupport {
     @Test
     public void testTemplateInHeaderOnMoreExchanges() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                "\"foo\"",
-                "\"bar\"");
+        getMockEndpoint("mock:result").expectedBodiesReceived("\"foo\"", "\"bar\"");
 
-        template.sendBodyAndHeader("direct:start", TEST_BODY,
-                JsltConstants.HEADER_JSLT_STRING, ".foo");
+        template.sendBodyAndHeader("direct:start", TEST_BODY, JsltConstants.HEADER_JSLT_STRING, ".foo");
 
-        template.sendBodyAndHeader("direct:start", TEST_BODY,
-                JsltConstants.HEADER_JSLT_STRING, ".bar");
+        template.sendBodyAndHeader("direct:start", TEST_BODY, JsltConstants.HEADER_JSLT_STRING, ".bar");
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Test
     public void testTemplateInHeaderOverrideUri() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                "\"foo\"",
-                "\"bar\"");
+        getMockEndpoint("mock:result").expectedBodiesReceived("\"foo\"", "\"bar\"");
 
         template.sendBody("direct:start", TEST_BODY);
 
-        template.sendBodyAndHeader("direct:start", TEST_BODY,
-                JsltConstants.HEADER_JSLT_STRING, ".bar");
+        template.sendBodyAndHeader("direct:start", TEST_BODY, JsltConstants.HEADER_JSLT_STRING, ".bar");
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Test
     public void testTemplateInHeaderOverrideUriOnlyWhenSet() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                "\"bar\"",
-                "\"foo\"");
+        getMockEndpoint("mock:result").expectedBodiesReceived("\"bar\"", "\"foo\"");
 
-        template.sendBodyAndHeader("direct:start", TEST_BODY,
-                JsltConstants.HEADER_JSLT_STRING, ".bar");
+        template.sendBodyAndHeader("direct:start", TEST_BODY, JsltConstants.HEADER_JSLT_STRING, ".bar");
 
         template.sendBody("direct:start", TEST_BODY);
 
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override
@@ -80,10 +68,10 @@ public class JsltTemplateFromHeaderTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct://start")
-                        .to("jslt:org/apache/camel/component/jslt/simple/transformation.jslt?allowTemplateFromHeader=true")
+                        .to(
+                                "jslt:org/apache/camel/component/jslt/simple/transformation.jslt?allowTemplateFromHeader=true")
                         .to("mock:result");
             }
         };
     }
-
 }

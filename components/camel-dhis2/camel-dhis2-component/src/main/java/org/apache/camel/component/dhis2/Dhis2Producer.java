@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2;
 
 import java.util.Map;
@@ -38,5 +39,4 @@ public class Dhis2Producer extends AbstractApiProducer<Dhis2ApiName, Dhis2Config
         }
         return apiMethod;
     }
-
 }

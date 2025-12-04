@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
+
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.pauseConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.resumeConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 
 import java.util.Collection;
 import java.util.Queue;
@@ -32,11 +38,6 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.pauseConsumers;
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.resumeConsumers;
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 
 public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
@@ -89,10 +90,10 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     }
 
     private Collection<Consumer<byte[]>> createConsumers(
-            final PulsarEndpoint endpoint, final ConsumerCreationStrategyFactory factory)
-            throws Exception {
+            final PulsarEndpoint endpoint, final ConsumerCreationStrategyFactory factory) throws Exception {
 
-        ConsumerCreationStrategy strategy = factory.getStrategy(endpoint.getPulsarConfiguration().getSubscriptionType());
+        ConsumerCreationStrategy strategy =
+                factory.getStrategy(endpoint.getPulsarConfiguration().getSubscriptionType());
 
         return strategy.create(endpoint);
     }
@@ -100,14 +101,17 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     private Collection<ExecutorService> subscribeWithThreadPool(
             Collection<Consumer<byte[]>> consumers, PulsarEndpoint endpoint) {
         int numThreads = endpoint.getPulsarConfiguration().getNumberOfConsumerThreads();
-        return consumers.stream().map(consumer -> {
-            ExecutorService executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                    "pulsar-consumer", numThreads);
-            for (int i = 0; i < numThreads; i++) {
-                executor.submit(new PulsarConsumerLoop(endpoint, consumer));
-            }
-            return executor;
-        }).collect(Collectors.toList());
+        return consumers.stream()
+                .map(consumer -> {
+                    ExecutorService executor = endpoint.getCamelContext()
+                            .getExecutorServiceManager()
+                            .newFixedThreadPool(this, "pulsar-consumer", numThreads);
+                    for (int i = 0; i < numThreads; i++) {
+                        executor.submit(new PulsarConsumerLoop(endpoint, consumer));
+                    }
+                    return executor;
+                })
+                .collect(Collectors.toList());
     }
 
     private class PulsarConsumerLoop implements Runnable {

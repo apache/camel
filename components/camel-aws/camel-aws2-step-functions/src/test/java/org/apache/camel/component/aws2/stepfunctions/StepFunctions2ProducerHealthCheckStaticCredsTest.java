@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.stepfunctions;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,6 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class StepFunctions2ProducerHealthCheckStaticCredsTest extends CamelTestSupport {
 
@@ -84,12 +84,11 @@ public class StepFunctions2ProducerHealthCheckStaticCredsTest extends CamelTestS
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2SfnHealthCheck = res2.stream()
                     .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-step-functions"));
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+            boolean hasRegionMessage =
+                    res2.stream().anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2SfnHealthCheck, "aws2-step-functions check");
             Assertions.assertTrue(hasRegionMessage, "aws2-step-functions check error message");
         });
-
     }
 }

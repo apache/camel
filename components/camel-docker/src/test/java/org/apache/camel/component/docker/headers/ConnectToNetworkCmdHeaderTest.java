@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Connect To Network Request headers are applied properly
@@ -53,7 +54,6 @@ public class ConnectToNetworkCmdHeaderTest extends BaseDockerHeaderTest<ConnectT
 
         Mockito.verify(dockerClient.connectToNetworkCmd(), Mockito.times(1)).withContainerId(containerId);
         Mockito.verify(dockerClient.connectToNetworkCmd(), Mockito.times(1)).withNetworkId(networkId);
-
     }
 
     @Override
@@ -67,5 +67,4 @@ public class ConnectToNetworkCmdHeaderTest extends BaseDockerHeaderTest<ConnectT
     protected DockerOperation getOperation() {
         return DockerOperation.CONNECT_NETWORK;
     }
-
 }

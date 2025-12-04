@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsSelectorOptionTest extends JmsTestSupport {
 
@@ -56,7 +57,8 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
         template.sendBodyAndHeader("sjms:queue:consumer.JmsSelectorOptionTest", "Message3", "SIZE_NUMBER", 1300);
         template.sendBodyAndHeader("sjms:queue:consumer.JmsSelectorOptionTest", "Message2", "SIZE_NUMBER", 1600);
 
-        Exchange ex = consumer.receive("sjms:queue:consumer.JmsSelectorOptionTest?messageSelector=SIZE_NUMBER<1500", 5000L);
+        Exchange ex =
+                consumer.receive("sjms:queue:consumer.JmsSelectorOptionTest?messageSelector=SIZE_NUMBER<1500", 5000L);
         Message message = ex.getIn();
         int size = message.getHeader("SIZE_NUMBER", int.class);
         assertEquals(1300, size, "The message header SIZE_NUMBER should be less than 1500");
@@ -67,11 +69,13 @@ public class JmsSelectorOptionTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=color='blue'").to("mock:a");
-                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=color='red'").to("mock:b");
-                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=SIZE_NUMBER>1500").to("mock:c");
+                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=color='blue'")
+                        .to("mock:a");
+                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=color='red'")
+                        .to("mock:b");
+                from("sjms:queue:hello.JmsSelectorOptionTest?messageSelector=SIZE_NUMBER>1500")
+                        .to("mock:c");
             }
         };
     }
-
 }

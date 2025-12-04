@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +31,6 @@ import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpanPropagationUpstreamTest extends ExchangeTestSupport {
 
@@ -46,8 +47,7 @@ public class SpanPropagationUpstreamTest extends ExchangeTestSupport {
 
     @Test
     void testPropagateUpstreamTraceRequest() {
-        template.requestBodyAndHeader("direct:start", "sample body",
-                "traceparent", "123456789-123456");
+        template.requestBodyAndHeader("direct:start", "sample body", "traceparent", "123456789-123456");
         Map<String, MockTrace> traces = mockTracer.traces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
@@ -83,12 +83,8 @@ public class SpanPropagationUpstreamTest extends ExchangeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

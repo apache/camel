@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,12 +47,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableKubernetesMockClient
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -76,10 +77,16 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     @Test
     @Order(1)
     void createTest() {
-        server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
-                .andReturn(200, githubSourceString).once();
-        server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
-                .andReturn(200, githubSourceString).once();
+        server.expect()
+                .post()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, githubSourceString)
+                .once();
+        server.expect()
+                .delete()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString)
+                .once();
 
         Exchange ex = template.request("direct:createCustomResource", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "samplecr");
@@ -102,10 +109,16 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     @Test
     @Order(0)
     void updateTest() {
-        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
-                .andReturn(200, githubSourceString).once();
-        server.expect().put().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
-                .andReturn(200, githubSourceString).once();
+        server.expect()
+                .get()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString)
+                .once();
+        server.expect()
+                .put()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString)
+                .once();
 
         Exchange ex = template.request("direct:updateCustomResource", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "samplecr");
@@ -128,8 +141,11 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     @Test
     @Order(2)
     void listTest() throws Exception {
-        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
-                .andReturn(200, setupGithubSourceList()).once();
+        server.expect()
+                .get()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, setupGithubSourceList())
+                .once();
 
         Exchange ex = template.request("direct:listCustomResources", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
@@ -151,10 +167,12 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     @Test
     @Order(3)
     void listByLabelsTest() throws Exception {
-        server.expect().get()
+        server.expect()
+                .get()
                 .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources?labelSelector="
-                          + toUrlEncoded("key1=value1,key2=value2"))
-                .andReturn(200, setupGithubSourceList()).once();
+                        + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(200, setupGithubSourceList())
+                .once();
 
         Exchange ex = template.request("direct:listCustomResourcesByLabels", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
@@ -180,10 +198,16 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     @Test
     @Order(4)
     void deleteTest() {
-        server.expect().post().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
-                .andReturn(200, githubSourceString).once();
-        server.expect().delete().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
-                .andReturn(200, githubSourceString).once();
+        server.expect()
+                .post()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(200, githubSourceString)
+                .once();
+        server.expect()
+                .delete()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources/samplecr")
+                .andReturn(200, githubSourceString)
+                .once();
 
         Exchange ex3 = template.request("direct:deleteCustomResource", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE_NAME, "samplecr");
@@ -202,8 +226,11 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
     @Test
     @Order(5)
     void testListNotFound() {
-        server.expect().get().withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
-                .andReturn(404, "").once();
+        server.expect()
+                .get()
+                .withPath("/apis/sources.knative.dev/v1alpha1/namespaces/testnamespace/githubsources")
+                .andReturn(404, "")
+                .once();
         Exchange ex4 = template.request("direct:listCustomResources", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "testnamespace");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CRD_NAME, "githubsources.sources.knative.dev");
@@ -222,18 +249,22 @@ public class KubernetesCustomResourcesProducerTest extends KubernetesTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:listCustomResources").toF(
-                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources");
-                from("direct:listCustomResourcesByLabels").toF(
-                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResourcesByLabels");
-                from("direct:deleteCustomResource").toF(
-                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=deleteCustomResource");
-                from("direct:createCustomResource").toF(
-                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=createCustomResource");
-                from("direct:updateCustomResource").toF(
-                        "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=updateCustomResource");
+                from("direct:listCustomResources")
+                        .toF(
+                                "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResources");
+                from("direct:listCustomResourcesByLabels")
+                        .toF(
+                                "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=listCustomResourcesByLabels");
+                from("direct:deleteCustomResource")
+                        .toF(
+                                "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=deleteCustomResource");
+                from("direct:createCustomResource")
+                        .toF(
+                                "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=createCustomResource");
+                from("direct:updateCustomResource")
+                        .toF(
+                                "kubernetes-custom-resources:///?kubernetesClient=#kubernetesClient&operation=updateCustomResource");
             }
         };
     }
-
 }

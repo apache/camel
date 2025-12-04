@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,6 +34,7 @@ public class BeanConstructorDefinition {
 
     @XmlAttribute
     private Integer index;
+
     @XmlAttribute(required = true)
     private String value;
 
@@ -57,5 +59,4 @@ public class BeanConstructorDefinition {
     public void setValue(String value) {
         this.value = value;
     }
-
 }

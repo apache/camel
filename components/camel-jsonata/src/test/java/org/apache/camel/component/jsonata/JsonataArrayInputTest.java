@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
 
 import java.io.InputStream;
@@ -34,14 +35,15 @@ class JsonataArrayInputTest extends CamelTestSupport {
 
     @Test
     void testJsonArrayInputAsString() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jsonata/arrayinput/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jsonata/arrayinput/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start-string",
+        sendBody(
+                "direct://start-string",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jsonata/arrayinput/input.json"));
 
@@ -56,12 +58,12 @@ class JsonataArrayInputTest extends CamelTestSupport {
         JsonNode body = mapper.readTree(inputJson);
         inputJson.close();
 
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jsonata/arrayinput/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jsonata/arrayinput/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
         sendBody("direct://start-jackson", body);
 
@@ -79,11 +81,13 @@ class JsonataArrayInputTest extends CamelTestSupport {
             public void configure() {
                 from("direct://start-string")
                         .process(processor)
-                        .to("jsonata:org/apache/camel/component/jsonata/arrayinput/expressions.spec?inputType=JsonString&outputType=JsonString")
+                        .to(
+                                "jsonata:org/apache/camel/component/jsonata/arrayinput/expressions.spec?inputType=JsonString&outputType=JsonString")
                         .to("mock:result");
                 from("direct://start-jackson")
                         .process(processor)
-                        .to("jsonata:org/apache/camel/component/jsonata/arrayinput/expressions.spec?inputType=Jackson&outputType=JsonString")
+                        .to(
+                                "jsonata:org/apache/camel/component/jsonata/arrayinput/expressions.spec?inputType=Jackson&outputType=JsonString")
                         .to("mock:result");
             }
         };

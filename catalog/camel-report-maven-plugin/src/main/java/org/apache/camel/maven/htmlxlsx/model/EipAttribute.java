@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.Collections;
@@ -105,7 +106,8 @@ public class EipAttribute implements Comparable<EipAttribute> {
 
         if (value instanceof Map) {
             try {
-                String childJson = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
+                String childJson =
+                        objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
                 ChildEip childEip = objectMapper().readValue(childJson, ChildEip.class);
                 if (childEip.getId() == null) {
                     childEip.setId(id + "-" + childEipMap.size());
@@ -117,8 +119,10 @@ public class EipAttribute implements Comparable<EipAttribute> {
             }
         } else if (value instanceof List) {
             try {
-                String childJson = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
-                CollectionType javaType = objectMapper().getTypeFactory().constructCollectionType(List.class, ChildEip.class);
+                String childJson =
+                        objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
+                CollectionType javaType =
+                        objectMapper().getTypeFactory().constructCollectionType(List.class, ChildEip.class);
                 List<ChildEip> childEipList = objectMapper().readValue(childJson, javaType);
                 childEipMap.put(key, childEipList);
                 properties.remove(key);
@@ -175,13 +179,12 @@ public class EipAttribute implements Comparable<EipAttribute> {
     @Override
     public String toString() {
 
-        return "EipAttribute{" +
-               "id='" + id + '\'' +
-               ", exchangesTotal=" + exchangesTotal +
-               ", index=" + index +
-               ", totalProcessingTime=" + totalProcessingTime +
-               ", properties=" + properties +
-               ", childEipMap=" + childEipMap +
-               '}';
+        return "EipAttribute{" + "id='"
+                + id + '\'' + ", exchangesTotal="
+                + exchangesTotal + ", index="
+                + index + ", totalProcessingTime="
+                + totalProcessingTime + ", properties="
+                + properties + ", childEipMap="
+                + childEipMap + '}';
     }
 }

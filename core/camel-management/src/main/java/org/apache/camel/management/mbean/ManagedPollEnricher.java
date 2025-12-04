@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Map;
@@ -48,7 +49,9 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        sanitize = strategy.getManagementAgent().getMask() != null ? strategy.getManagementAgent().getMask() : true;
+        sanitize = strategy.getManagementAgent().getMask() != null
+                ? strategy.getManagementAgent().getMask()
+                : true;
         uri = getDefinition().getExpression().getExpression();
         if (sanitize) {
             uri = URISupport.sanitizeUri(uri);
@@ -147,8 +150,8 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
                         hits = 0L;
                     }
 
-                    CompositeData data
-                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
+                    CompositeData data =
+                            new CompositeDataSupport(ct, new String[] {"url", "hits"}, new Object[] {url, hits});
                     answer.put(data);
                 }
             }
@@ -157,5 +160,4 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

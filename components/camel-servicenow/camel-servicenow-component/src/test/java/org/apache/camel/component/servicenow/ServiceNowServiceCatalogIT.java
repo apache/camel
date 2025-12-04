@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Map;
@@ -26,11 +30,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
-                              disabledReason = "Service now instance was not provided")
+@EnabledIfEnvironmentVariable(
+        named = "SERVICENOW_INSTANCE",
+        matches = ".*",
+        disabledReason = "Service now instance was not provided")
 public class ServiceNowServiceCatalogIT extends ServiceNowITSupport {
     @Produce("direct:servicenow")
     ProducerTemplate template;
@@ -70,12 +73,9 @@ public class ServiceNowServiceCatalogIT extends ServiceNowITSupport {
                 .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
                 .build();
 
-        assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeaders(
-                        "direct:servicenow",
-                        null,
-                        invalid,
-                        List.class));
+        assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBodyAndHeaders("direct:servicenow", null, invalid, List.class));
     }
 
     // *************************************************************************

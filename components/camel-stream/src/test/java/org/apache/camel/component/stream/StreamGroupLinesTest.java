@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,10 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamGroupLinesTest extends CamelTestSupport {
 
@@ -84,7 +85,8 @@ public class StreamGroupLinesTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3").to("mock:result");
+                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3")
+                        .to("mock:result");
             }
         };
     }

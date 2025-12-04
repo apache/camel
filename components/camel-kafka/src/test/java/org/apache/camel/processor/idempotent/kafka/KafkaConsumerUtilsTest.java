@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.kafka;
+
+import static org.apache.camel.processor.idempotent.kafka.KafkaConsumerUtil.isReachedOffsets;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Map;
@@ -23,13 +31,6 @@ import java.util.Set;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.processor.idempotent.kafka.KafkaConsumerUtil.isReachedOffsets;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class KafkaConsumerUtilsTest {
 
@@ -41,14 +42,9 @@ public class KafkaConsumerUtilsTest {
 
         Consumer<String, String> consumer = mock(Consumer.class);
         when(consumer.assignment())
-                .thenReturn(
-                        Set.of(
-                                new TopicPartition("topic1", 0),
-                                new TopicPartition("topic1", 1)));
-        when(consumer.position(new TopicPartition("topic1", 0)))
-                .thenReturn(9L);
-        when(consumer.position(new TopicPartition("topic1", 1)))
-                .thenReturn(99L);
+                .thenReturn(Set.of(new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)));
+        when(consumer.position(new TopicPartition("topic1", 0))).thenReturn(9L);
+        when(consumer.position(new TopicPartition("topic1", 1))).thenReturn(99L);
 
         boolean result = isReachedOffsets(consumer, targetOffsets);
         assertFalse(result);
@@ -62,14 +58,9 @@ public class KafkaConsumerUtilsTest {
 
         Consumer<String, String> consumer = mock(Consumer.class);
         when(consumer.assignment())
-                .thenReturn(
-                        Set.of(
-                                new TopicPartition("topic1", 0),
-                                new TopicPartition("topic1", 1)));
-        when(consumer.position(new TopicPartition("topic1", 0)))
-                .thenReturn(10L);
-        when(consumer.position(new TopicPartition("topic1", 1)))
-                .thenReturn(100L);
+                .thenReturn(Set.of(new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)));
+        when(consumer.position(new TopicPartition("topic1", 0))).thenReturn(10L);
+        when(consumer.position(new TopicPartition("topic1", 1))).thenReturn(100L);
 
         boolean result = isReachedOffsets(consumer, targetOffsets);
         assertTrue(result);
@@ -83,14 +74,9 @@ public class KafkaConsumerUtilsTest {
 
         Consumer<String, String> consumer = mock(Consumer.class);
         when(consumer.assignment())
-                .thenReturn(
-                        Set.of(
-                                new TopicPartition("topic1", 0),
-                                new TopicPartition("topic1", 1)));
-        when(consumer.position(new TopicPartition("topic1", 0)))
-                .thenReturn(11L);
-        when(consumer.position(new TopicPartition("topic1", 1)))
-                .thenReturn(101L);
+                .thenReturn(Set.of(new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)));
+        when(consumer.position(new TopicPartition("topic1", 0))).thenReturn(11L);
+        when(consumer.position(new TopicPartition("topic1", 1))).thenReturn(101L);
 
         boolean result = isReachedOffsets(consumer, targetOffsets);
         assertTrue(result);
@@ -104,14 +90,9 @@ public class KafkaConsumerUtilsTest {
 
         Consumer<String, String> consumer = mock(Consumer.class);
         when(consumer.assignment())
-                .thenReturn(
-                        Set.of(
-                                new TopicPartition("topic1", 0),
-                                new TopicPartition("topic1", 1)));
-        when(consumer.position(new TopicPartition("topic1", 0)))
-                .thenReturn(10L);
-        when(consumer.position(new TopicPartition("topic1", 1)))
-                .thenReturn(99L);
+                .thenReturn(Set.of(new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)));
+        when(consumer.position(new TopicPartition("topic1", 0))).thenReturn(10L);
+        when(consumer.position(new TopicPartition("topic1", 1))).thenReturn(99L);
 
         boolean result = isReachedOffsets(consumer, targetOffsets);
         assertFalse(result);
@@ -119,19 +100,13 @@ public class KafkaConsumerUtilsTest {
 
     @Test
     public void testNotReachedOffsetsSomeTargetOffsetsUnspecified() {
-        Map<TopicPartition, Long> targetOffsets = Map.of(
-                new TopicPartition("topic1", 0), 10L);
+        Map<TopicPartition, Long> targetOffsets = Map.of(new TopicPartition("topic1", 0), 10L);
 
         Consumer<String, String> consumer = mock(Consumer.class);
         when(consumer.assignment())
-                .thenReturn(
-                        Set.of(
-                                new TopicPartition("topic1", 0),
-                                new TopicPartition("topic1", 1)));
-        when(consumer.position(new TopicPartition("topic1", 0)))
-                .thenReturn(9L);
-        when(consumer.position(new TopicPartition("topic1", 1)))
-                .thenReturn(99L);
+                .thenReturn(Set.of(new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)));
+        when(consumer.position(new TopicPartition("topic1", 0))).thenReturn(9L);
+        when(consumer.position(new TopicPartition("topic1", 1))).thenReturn(99L);
 
         boolean result = isReachedOffsets(consumer, targetOffsets);
         assertFalse(result);
@@ -139,19 +114,13 @@ public class KafkaConsumerUtilsTest {
 
     @Test
     public void testReachedOffsetsSomeTargetOffsetsUnspecified() {
-        Map<TopicPartition, Long> targetOffsets = Map.of(
-                new TopicPartition("topic1", 0), 10L);
+        Map<TopicPartition, Long> targetOffsets = Map.of(new TopicPartition("topic1", 0), 10L);
 
         Consumer<String, String> consumer = mock(Consumer.class);
         when(consumer.assignment())
-                .thenReturn(
-                        Set.of(
-                                new TopicPartition("topic1", 0),
-                                new TopicPartition("topic1", 1)));
-        when(consumer.position(new TopicPartition("topic1", 0)))
-                .thenReturn(10L);
-        when(consumer.position(new TopicPartition("topic1", 1)))
-                .thenReturn(99L);
+                .thenReturn(Set.of(new TopicPartition("topic1", 0), new TopicPartition("topic1", 1)));
+        when(consumer.position(new TopicPartition("topic1", 0))).thenReturn(10L);
+        when(consumer.position(new TopicPartition("topic1", 1))).thenReturn(99L);
 
         boolean result = isReachedOffsets(consumer, targetOffsets);
         assertTrue(result);
@@ -163,5 +132,4 @@ public class KafkaConsumerUtilsTest {
         Consumer<String, String> consumer = mock(Consumer.class);
         assertThrows(IllegalArgumentException.class, () -> isReachedOffsets(consumer, targetOffsets));
     }
-
 }

@@ -111,7 +111,6 @@ public class MockTracer extends Tracer {
             }
             return traces;
         }
-
     }
 
     private static String spanTraceId(Span span) {
@@ -127,5 +126,4 @@ public class MockTracer extends Tracer {
         }
         return span.toString().split("-")[1];
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
@@ -39,7 +40,6 @@ public class PingCmdHeaderTest extends BaseDockerHeaderTest<PingCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).pingCmd();
-
     }
 
     @Override
@@ -51,5 +51,4 @@ public class PingCmdHeaderTest extends BaseDockerHeaderTest<PingCmd> {
     protected DockerOperation getOperation() {
         return DockerOperation.PING;
     }
-
 }

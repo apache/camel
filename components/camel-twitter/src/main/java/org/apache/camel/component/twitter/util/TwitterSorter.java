@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.util;
 
 import java.util.List;
@@ -27,22 +28,23 @@ import twitter4j.v1.Status;
  */
 public final class TwitterSorter {
 
-    private TwitterSorter() {
-    }
+    private TwitterSorter() {}
 
     /**
      * Sorts the tweets status id
      */
     public static List<Exchange> sortByStatusId(List<Exchange> exchanges) {
-        return exchanges.stream().sorted((e1, e2) -> {
-            Object b1 = e1.getIn().getBody();
-            Object b2 = e2.getIn().getBody();
-            if (b1 instanceof Status && b2 instanceof Status) {
-                Status s1 = (Status) b1;
-                Status s2 = (Status) b2;
-                return Long.compare(s1.getId(), s2.getId());
-            }
-            return 0;
-        }).collect(Collectors.toList());
+        return exchanges.stream()
+                .sorted((e1, e2) -> {
+                    Object b1 = e1.getIn().getBody();
+                    Object b2 = e2.getIn().getBody();
+                    if (b1 instanceof Status && b2 instanceof Status) {
+                        Status s1 = (Status) b1;
+                        Status s2 = (Status) b2;
+                        return Long.compare(s1.getId(), s2.getId());
+                    }
+                    return 0;
+                })
+                .collect(Collectors.toList());
     }
 }

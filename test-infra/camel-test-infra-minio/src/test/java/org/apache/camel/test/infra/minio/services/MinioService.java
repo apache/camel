@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.minio.services;
 
 import org.apache.camel.test.infra.common.services.ContainerTestService;
@@ -22,5 +23,4 @@ import org.apache.camel.test.infra.common.services.TestService;
 /**
  * Test infra service for Minio
  */
-public interface MinioService extends TestService, MinioInfraService, ContainerTestService {
-}
+public interface MinioService extends TestService, MinioInfraService, ContainerTestService {}

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfileHealthTestSupport {
 
@@ -483,8 +484,7 @@ public class CamelMicroProfileHealthCheckRepositoryTest extends CamelMicroProfil
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("healthyRoute")
-                        .setBody(constant("Hello Camel MicroProfile Health"));
+                from("direct:start").routeId("healthyRoute").setBody(constant("Hello Camel MicroProfile Health"));
             }
         };
     }

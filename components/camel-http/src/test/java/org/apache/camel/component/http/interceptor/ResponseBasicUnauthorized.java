@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.interceptor;
 
 import java.io.IOException;
@@ -28,7 +29,8 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class ResponseBasicUnauthorized implements HttpResponseInterceptor {
     @Override
-    public void process(HttpResponse response, EntityDetails details, HttpContext context) throws HttpException, IOException {
+    public void process(HttpResponse response, EntityDetails details, HttpContext context)
+            throws HttpException, IOException {
         if (response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
             if (!response.containsHeader(HttpHeaders.WWW_AUTHENTICATE)) {
                 response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"test realm\"");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.util.ArrayList;
@@ -33,11 +34,13 @@ public class SftpServerHostKeysIT extends SftpServerTestSupport {
 
     @Test
     public void testNonExistingKey() {
-        Throwable exception = Assertions.assertThrows(CamelExecutionException.class,
-                () -> template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys" +
-                                                 "?password=admin" +
-                                                 "&serverHostKeys=not-supported-key",
-                        "a", Exchange.FILE_NAME,
+        Throwable exception = Assertions.assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(
+                        "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys" + "?password=admin"
+                                + "&serverHostKeys=not-supported-key",
+                        "a",
+                        Exchange.FILE_NAME,
                         "a.txt"));
 
         final List<String> errorMessages = new ArrayList<>();
@@ -46,7 +49,8 @@ public class SftpServerHostKeysIT extends SftpServerTestSupport {
             exception = exception.getCause();
         }
 
-        MatcherAssert.assertThat(errorMessages, Matchers.hasItem(Matchers.containsString("Algorithm negotiation fail")));
+        MatcherAssert.assertThat(
+                errorMessages, Matchers.hasItem(Matchers.containsString("Algorithm negotiation fail")));
     }
 
     @Test
@@ -54,10 +58,11 @@ public class SftpServerHostKeysIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys" +
-                                   "?password=admin" +
-                                   "&serverHostKeys=rsa-sha2-512",
-                "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys" + "?password=admin"
+                        + "&serverHostKeys=rsa-sha2-512",
+                "a",
+                Exchange.FILE_NAME,
                 "a.txt");
 
         mock.assertIsSatisfied();
@@ -68,10 +73,11 @@ public class SftpServerHostKeysIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys" +
-                                   "?password=admin" +
-                                   "&serverHostKeys=rsa-sha2-512,not-supported-key",
-                "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys" + "?password=admin"
+                        + "&serverHostKeys=rsa-sha2-512,not-supported-key",
+                "a",
+                Exchange.FILE_NAME,
                 "a.txt");
 
         mock.assertIsSatisfied();
@@ -89,6 +95,6 @@ public class SftpServerHostKeysIT extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/serverHostKeys/?password=admin"
-               + "&noop=true";
+                + "&noop=true";
     }
 }

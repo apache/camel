@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.mvel;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,7 +43,8 @@ public class MvelResourceTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .setHeader("multiplier", constant(2))
-                        .transform().mvel("resource:classpath:mymvel.txt")
+                        .transform()
+                        .mvel("resource:classpath:mymvel.txt")
                         .to("mock:result");
             }
         };

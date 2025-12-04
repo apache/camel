@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 
@@ -34,13 +39,10 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class OpenApiUtilsTest {
 
-    private static final String TAG_OPENAPI_YAML = """
+    private static final String TAG_OPENAPI_YAML =
+            """
             ---
             openapi: <openapi_version>
             info:
@@ -76,7 +78,8 @@ public class OpenApiUtilsTest {
                     - name
                     """;
 
-    private static final String NO_RESPONSE_BODY = """
+    private static final String NO_RESPONSE_BODY =
+            """
             openapi: <openapi_version>
             info:
               title: test
@@ -114,7 +117,7 @@ public class OpenApiUtilsTest {
 
     @Test
     public void shouldReturnCorrectRequestClassNameForSchemaName() {
-        //When the class name is provided in the schema name
+        // When the class name is provided in the schema name
         String schemaName = "Tag";
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
 
@@ -133,7 +136,7 @@ public class OpenApiUtilsTest {
     @Test
     public void shouldReturnCorrectRequestClassNameForSchemaTitle() {
         String schemaName = "TagSchema";
-        //When the class name is provided in the schema title instead of schema name
+        // When the class name is provided in the schema title instead of schema name
         String schemaTitle = "TagRequestDto";
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
 
@@ -151,7 +154,7 @@ public class OpenApiUtilsTest {
 
     @Test
     public void shouldReturnCorrectResponseClassNameForSchemaName() {
-        //When the class name is provided in the schema name
+        // When the class name is provided in the schema name
         String schemaName = "Tag";
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
         Schema<Object> tagSchema = createTagSchema();
@@ -171,7 +174,7 @@ public class OpenApiUtilsTest {
     @Test
     public void shouldReturnCorrectResponseClassNameForSchemaTitle() {
         String schemaName = "TagSchema";
-        //When the class name is provided in the schema title instead of schema name
+        // When the class name is provided in the schema title instead of schema name
         String schemaTitle = "TagResponseDto";
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
 
@@ -192,7 +195,8 @@ public class OpenApiUtilsTest {
     public void shouldManageResponseFromOpenApi31Parser() throws Exception {
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
-        OpenAPI openApi = parser.readContents(TAG_OPENAPI_YAML.replace("<openapi_version>", "3.1.0")).getOpenAPI();
+        OpenAPI openApi = parser.readContents(TAG_OPENAPI_YAML.replace("<openapi_version>", "3.1.0"))
+                .getOpenAPI();
         Operation operation = openApi.getPaths().get("/tag").getGet();
         OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
         assertEquals(TagResponseDto.class.getName() + "[]", utils.manageResponseBody(operation));
@@ -202,7 +206,8 @@ public class OpenApiUtilsTest {
     public void shouldManageRequestFromOpenApi30Parser() throws Exception {
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
-        OpenAPI openApi = parser.readContents(TAG_OPENAPI_YAML.replace("<openapi_version>", "3.0.0")).getOpenAPI();
+        OpenAPI openApi = parser.readContents(TAG_OPENAPI_YAML.replace("<openapi_version>", "3.0.0"))
+                .getOpenAPI();
         Operation operation = openApi.getPaths().get("/tag").getGet();
         OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
         assertEquals(TagResponseDto.class.getName() + "[]", utils.manageResponseBody(operation));
@@ -212,7 +217,8 @@ public class OpenApiUtilsTest {
     public void noResponseBody() throws Exception {
         String bindingPackagePath = OpenApiUtils.class.getPackage().getName();
         OpenAPIV3Parser parser = new OpenAPIV3Parser();
-        OpenAPI openApi = parser.readContents(NO_RESPONSE_BODY.replace("<openapi_version>", "3.1.0")).getOpenAPI();
+        OpenAPI openApi = parser.readContents(NO_RESPONSE_BODY.replace("<openapi_version>", "3.1.0"))
+                .getOpenAPI();
         Operation operation = openApi.getPaths().get("/test").getPost();
         OpenApiUtils utils = new OpenApiUtils(new DefaultCamelContext(), bindingPackagePath, openApi.getComponents());
         assertNull(utils.manageRequestBody(operation));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import java.text.DateFormat;
@@ -32,7 +33,7 @@ public final class AtomConverter {
     public static final String DATE_PATTERN_NO_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss";
 
     private AtomConverter() {
-        //Helper class
+        // Helper class
     }
 
     @Converter
@@ -40,5 +41,4 @@ public final class AtomConverter {
         DateFormat sdf = new SimpleDateFormat(DATE_PATTERN_NO_TIMEZONE);
         return sdf.parse(text);
     }
-
 }

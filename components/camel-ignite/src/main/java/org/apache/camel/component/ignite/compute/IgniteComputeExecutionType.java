@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.compute;
 
 /**
  * Enumeration of execution type for the Ignite Compute producer.
  */
 public enum IgniteComputeExecutionType {
-
     CALL,
     BROADCAST,
     APPLY,
@@ -28,5 +28,4 @@ public enum IgniteComputeExecutionType {
     RUN,
     AFFINITY_CALL,
     AFFINITY_RUN
-
 }

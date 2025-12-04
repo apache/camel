@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import org.apache.camel.Exchange;
@@ -60,7 +61,9 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
         final Long customerId = validCustomerId(entityManager);
         final Exchange result = doRunQueryTest(withBody(customerId));
 
-        Assertions.assertEquals(customerId, result.getIn().getHeader(TARGET_NAME, Customer.class).getId());
+        Assertions.assertEquals(
+                customerId,
+                result.getIn().getHeader(TARGET_NAME, Customer.class).getId());
     }
 
     @Test
@@ -80,7 +83,7 @@ public class JpaOutputTargetTest extends JpaWithOptionsTestSupport {
         final Long customerId = validCustomerId(entityManager);
         final Exchange result = doRunQueryTest(withBody(customerId));
 
-        Assertions.assertEquals(customerId, result.getProperty(TARGET_NAME, Customer.class).getId());
+        Assertions.assertEquals(
+                customerId, result.getProperty(TARGET_NAME, Customer.class).getId());
     }
-
 }

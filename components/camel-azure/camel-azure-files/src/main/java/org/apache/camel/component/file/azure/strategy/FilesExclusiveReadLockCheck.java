@@ -61,7 +61,8 @@ public class FilesExclusiveReadLockCheck {
             boolean match;
             if (fastExistsCheck) {
                 // uses the absolute file path as well
-                match = f.getName().equals(file.getAbsoluteFilePath()) || f.getName().equals(file.getFileNameOnly());
+                match = f.getName().equals(file.getAbsoluteFilePath())
+                        || f.getName().equals(file.getFileNameOnly());
             } else {
                 match = f.getName().equals(file.getFileNameOnly());
             }
@@ -99,7 +100,8 @@ public class FilesExclusiveReadLockCheck {
         return files;
     }
 
-    private ShareFileItem[] getFilesByFilter(GenericFileOperations<ShareFileItem> operations, GenericFile<ShareFileItem> file) {
+    private ShareFileItem[] getFilesByFilter(
+            GenericFileOperations<ShareFileItem> operations, GenericFile<ShareFileItem> file) {
         // fast option not enabled, so list the directory and filter the
         // file name
         String path = file.getParent();
@@ -116,7 +118,8 @@ public class FilesExclusiveReadLockCheck {
         }
     }
 
-    private ShareFileItem[] getFilesFast(GenericFileOperations<ShareFileItem> operations, GenericFile<ShareFileItem> file) {
+    private ShareFileItem[] getFilesFast(
+            GenericFileOperations<ShareFileItem> operations, GenericFile<ShareFileItem> file) {
         String path = file.getAbsoluteFilePath();
         if (path.equals("/") || path.equals("\\")) {
             // special for root (= home) directory
@@ -130,8 +133,9 @@ public class FilesExclusiveReadLockCheck {
 
     private boolean isReadLockAcquired(
             long lastModified, long length, long newLastModified, long newLength, long newOlderThan) {
-        return newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
-                || minAge != 0 && newLastModified < newOlderThan);
+        return newLength >= minLength
+                && (minAge == 0 && newLastModified == lastModified && newLength == length
+                        || minAge != 0 && newLastModified < newOlderThan);
     }
 
     private static long lastModified(ShareFileItem file) {

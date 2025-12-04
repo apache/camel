@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.spi;
 
 import org.apache.camel.CamelContextAware;
@@ -28,5 +29,4 @@ public interface PlatformHttpPlugin extends StaticService, CamelContextAware {
      * The ID of this plugin.
      */
     String getId();
-
 }

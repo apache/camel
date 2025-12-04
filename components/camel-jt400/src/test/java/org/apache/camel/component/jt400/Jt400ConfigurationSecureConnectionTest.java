@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jt400;
 
-import com.ibm.as400.access.AS400;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jt400;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import com.ibm.as400.access.AS400;
+import org.junit.jupiter.api.Test;
 
 public class Jt400ConfigurationSecureConnectionTest extends Jt400SecureTestSupport {
 
@@ -29,8 +30,8 @@ public class Jt400ConfigurationSecureConnectionTest extends Jt400SecureTestSuppo
 
     @Override
     public void doPostSetup() throws Exception {
-        jt400Configuration
-                = new Jt400Configuration("jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
+        jt400Configuration = new Jt400Configuration(
+                "jt400://USER:password@host/QSYS.LIB/LIBRARY.LIB/QUEUE.DTAQ", getConnectionPool());
         jt400Configuration.setCcsid(37);
         jt400Configuration.setSecured(true);
         connection = jt400Configuration.getConnection();
@@ -62,5 +63,4 @@ public class Jt400ConfigurationSecureConnectionTest extends Jt400SecureTestSuppo
     public void testGuiAvailable() {
         assertFalse(connection.isGuiAvailable());
     }
-
 }

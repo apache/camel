@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.scan;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
@@ -31,10 +36,6 @@ import org.apache.camel.support.scan.CompositePackageScanFilter;
 import org.apache.camel.support.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PackageScanFiltersTest {
 
@@ -79,8 +80,8 @@ public class PackageScanFiltersTest {
 
     @Test
     public void testAnnotatedWithPackageScanFilter() {
-        AnnotatedWithPackageScanFilter filter
-                = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
+        AnnotatedWithPackageScanFilter filter =
+                new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
         validateFilter(filter, ScanTargetOne.class);
         validateFilter(filter, ScanTargetTwo.class);
 
@@ -108,8 +109,8 @@ public class PackageScanFiltersTest {
 
     @Test
     public void testInvertingFilter() {
-        InvertingPackageScanFilter filter
-                = new InvertingPackageScanFilter(new AnnotatedWithPackageScanFilter(ScannableOne.class));
+        InvertingPackageScanFilter filter =
+                new InvertingPackageScanFilter(new AnnotatedWithPackageScanFilter(ScannableOne.class));
         validateFilter(filter, ScanTargetThree.class);
         assertEquals("![annotated with @ScannableOne]", filter.toString());
     }
@@ -118,5 +119,4 @@ public class PackageScanFiltersTest {
         assertTrue(filter.matches(type));
         assertFalse(new InvertingPackageScanFilter(filter).matches(type));
     }
-
 }

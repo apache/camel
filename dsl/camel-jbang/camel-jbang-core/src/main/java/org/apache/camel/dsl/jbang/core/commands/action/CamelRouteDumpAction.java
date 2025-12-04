@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
+
+import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,58 +36,64 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
-
-@Command(name = "route-dump", description = "Dump Camel route in XML or YAML format", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "route-dump",
+        description = "Dump Camel route in XML or YAML format",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelRouteDumpAction extends ActionBaseCommand {
 
     public static class NameIdCompletionCandidates implements Iterable<String> {
 
-        public NameIdCompletionCandidates() {
-        }
+        public NameIdCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("name", "id").iterator();
         }
-
     }
 
     public static class FormatCompletionCandidates implements Iterable<String> {
 
-        public FormatCompletionCandidates() {
-        }
+        public FormatCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("yaml", "xml").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--format" }, completionCandidates = FormatCompletionCandidates.class,
-                        description = "Output format (xml, or yaml)", defaultValue = "yaml")
+    @CommandLine.Option(
+            names = {"--format"},
+            completionCandidates = FormatCompletionCandidates.class,
+            description = "Output format (xml, or yaml)",
+            defaultValue = "yaml")
     String format;
 
-    @CommandLine.Option(names = { "--raw" },
-                        description = "To output raw without metadata")
+    @CommandLine.Option(
+            names = {"--raw"},
+            description = "To output raw without metadata")
     boolean raw;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
-                        defaultValue = "true")
+    @CommandLine.Option(
+            names = {"--uri-as-parameters"},
+            description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
+            defaultValue = "true")
     boolean uriAsParameters;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter route by filename or route id (multiple names can be separated by comma)")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter route by filename or route id (multiple names can be separated by comma)")
     String filter;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
-                        description = "Sort route by name or id", defaultValue = "name")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = NameIdCompletionCandidates.class,
+            description = "Sort route by name or id",
+            defaultValue = "name")
     String sort;
 
     private volatile long pid;
@@ -101,8 +110,9 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -153,8 +163,8 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                         if (!f.endsWith("*")) {
                             f += "*";
                         }
-                        boolean match
-                                = PatternHelper.matchPattern(row.location, f) || PatternHelper.matchPattern(row.routeId, f);
+                        boolean match = PatternHelper.matchPattern(row.location, f)
+                                || PatternHelper.matchPattern(row.routeId, f);
                         if (negate) {
                             match = !match;
                         }
@@ -250,15 +260,12 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             Row row = (Row) o;
 
-            if (!Objects.equals(location, row.location))
-                return false;
+            if (!Objects.equals(location, row.location)) return false;
             return routeId.equals(row.routeId);
         }
 
@@ -272,5 +279,4 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         int line;
         String code;
     }
-
 }

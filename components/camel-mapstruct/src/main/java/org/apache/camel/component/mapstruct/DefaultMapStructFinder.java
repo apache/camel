@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
 
 import java.lang.reflect.Modifier;
@@ -80,9 +81,14 @@ public class DefaultMapStructFinder extends ServiceSupport implements MapStructM
                         return;
                     }
                     // okay register this method as a Camel type converter
-                    camelContext.getTypeConverterRegistry()
-                            .addTypeConverter(to, from, new SimpleTypeConverter(
-                                    false, (type, exchange, value) -> ObjectHelper.invokeMethod(mc, mapper, value)));
+                    camelContext
+                            .getTypeConverterRegistry()
+                            .addTypeConverter(
+                                    to,
+                                    from,
+                                    new SimpleTypeConverter(
+                                            false,
+                                            (type, exchange, value) -> ObjectHelper.invokeMethod(mc, mapper, value)));
                     LOG.debug("Added MapStruct type converter: {} -> {}", from, to);
                     answer.incrementAndGet();
                 });
@@ -110,9 +116,11 @@ public class DefaultMapStructFinder extends ServiceSupport implements MapStructM
                 for (Class<?> clazz : set) {
                     converters += discoverMappings(clazz);
                 }
-                LOG.info("Discovered {} MapStruct type converters from classpath scanning: {}", converters, mapperPackageName);
+                LOG.info(
+                        "Discovered {} MapStruct type converters from classpath scanning: {}",
+                        converters,
+                        mapperPackageName);
             }
         }
     }
-
 }

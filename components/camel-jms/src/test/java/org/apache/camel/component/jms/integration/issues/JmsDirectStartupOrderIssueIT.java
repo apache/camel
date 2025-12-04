@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -59,13 +60,17 @@ public class JmsDirectStartupOrderIssueIT extends AbstractPersistentJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsDirectStartupOrderIssueTest").routeId("amq").startupOrder(100).autoStartup(false)
+                from("activemq:queue:JmsDirectStartupOrderIssueTest")
+                        .routeId("amq")
+                        .startupOrder(100)
+                        .autoStartup(false)
                         .to("direct:JmsDirectStartupOrderIssueTest");
 
-                from("direct:JmsDirectStartupOrderIssueTest").routeId("direct").startupOrder(1)
+                from("direct:JmsDirectStartupOrderIssueTest")
+                        .routeId("direct")
+                        .startupOrder(1)
                         .to("mock:result");
             }
         };
     }
-
 }

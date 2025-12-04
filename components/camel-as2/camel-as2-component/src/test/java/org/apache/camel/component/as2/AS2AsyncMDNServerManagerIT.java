@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -60,11 +66,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link AS2AsyncMDNServerManager}.
  */
@@ -81,31 +82,31 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     private static final String MDN_SUBJECT_PREFIX = "MDN Response:";
     private static final String MDN_MESSAGE_TEMPLATE = "TBD";
     private static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                              + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                              + "BGM+380+342459+9'\n"
-                                              + "DTM+3:20060515:102'\n"
-                                              + "RFF+ON:521052'\n"
-                                              + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                              + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                              + "CUX+1:USD'\n"
-                                              + "LIN+1++157870:IN'\n"
-                                              + "IMD+F++:::WIDGET'\n"
-                                              + "QTY+47:1020:EA'\n"
-                                              + "ALI+US'\n"
-                                              + "MOA+203:1202.58'\n"
-                                              + "PRI+INV:1.179'\n"
-                                              + "LIN+2++157871:IN'\n"
-                                              + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                              + "QTY+47:20:EA'\n"
-                                              + "ALI+JP'\n"
-                                              + "MOA+203:410'\n"
-                                              + "PRI+INV:20.5'\n"
-                                              + "UNS+S'\n"
-                                              + "MOA+39:2137.58'\n"
-                                              + "ALC+C+ABG'\n"
-                                              + "MOA+8:525'\n"
-                                              + "UNT+23+00000000000117'\n"
-                                              + "UNZ+1+00000000000778'\n";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'\n";
 
     private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
     private static final int PARTNER_TARGET_PORT = 8889;
@@ -140,8 +141,8 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // 'Receipt-Delivery-Option' header specifying the return-URL.
     @Test
     public void deliveryHeaderMultipartReportTest() throws Exception {
-        DispositionNotificationMultipartReportEntity reportEntity
-                = executeRequestWithAsyncResponseHeader("direct://SEND", RECEIPT_SERVER_PORT, "mock:as2RcvRcptMsgs");
+        DispositionNotificationMultipartReportEntity reportEntity =
+                executeRequestWithAsyncResponseHeader("direct://SEND", RECEIPT_SERVER_PORT, "mock:as2RcvRcptMsgs");
         verifyMultiPartReportParts(reportEntity);
         verifyMultiPartReportEntity(reportEntity);
     }
@@ -150,8 +151,8 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // 'Receipt-Delivery-Option' path variable specifying the return-URL.
     @Test
     public void deliveryPathMultipartReportTest() throws Exception {
-        DispositionNotificationMultipartReportEntity reportEntity
-                = executeRequestWithAsyncResponsePath("direct://SEND3", "mock:as2RcvRcptMsgs3");
+        DispositionNotificationMultipartReportEntity reportEntity =
+                executeRequestWithAsyncResponsePath("direct://SEND3", "mock:as2RcvRcptMsgs3");
         verifyMultiPartReportParts(reportEntity);
         verifyMultiPartReportEntity(reportEntity);
     }
@@ -160,15 +161,16 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // 'Receipt-Delivery-Option' header specifying the return-URL.
     @Test
     public void deliveryHeaderMultipartSignedEntityTest() throws Exception {
-        MultipartSignedEntity responseSignedEntity
-                = executeRequestWithSignedAsyncResponseHeader("direct://SEND", RECEIPT_SERVER_PORT2, "mock:as2RcvRcptMsgs2");
+        MultipartSignedEntity responseSignedEntity = executeRequestWithSignedAsyncResponseHeader(
+                "direct://SEND", RECEIPT_SERVER_PORT2, "mock:as2RcvRcptMsgs2");
 
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
-        assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
+        assertTrue(
+                responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
 
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseSignedEntity.getSignedDataEntity();
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseSignedEntity.getSignedDataEntity();
         verifyMultiPartReportParts(reportEntity);
         verifyMultiPartReportEntity(reportEntity);
 
@@ -181,15 +183,16 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     // 'Receipt-Delivery-Option' path variable specifying the return-URL.
     @Test
     public void deliveryPathMultipartSignedEntityTest() throws Exception {
-        MultipartSignedEntity responseSignedEntity
-                = executeRequestWithSignedAsyncResponsePath("direct://SEND4", "mock:as2RcvRcptMsgs4");
+        MultipartSignedEntity responseSignedEntity =
+                executeRequestWithSignedAsyncResponsePath("direct://SEND4", "mock:as2RcvRcptMsgs4");
 
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
-        assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
+        assertTrue(
+                responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
 
-        DispositionNotificationMultipartReportEntity reportEntity
-                = (DispositionNotificationMultipartReportEntity) responseSignedEntity.getSignedDataEntity();
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) responseSignedEntity.getSignedDataEntity();
         verifyMultiPartReportParts(reportEntity);
         verifyMultiPartReportEntity(reportEntity);
 
@@ -202,12 +205,16 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
         assertEquals(2, reportEntity.getPartCount(), "Unexpected number of body parts in report");
 
         MimeEntity reportPartOne = reportEntity.getPart(0);
-        assertEquals(ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII).toString(),
-                reportPartOne.getContentType(), "Unexpected content type in first body part of report");
+        assertEquals(
+                ContentType.create(AS2MimeType.TEXT_PLAIN, StandardCharsets.US_ASCII)
+                        .toString(),
+                reportPartOne.getContentType(),
+                "Unexpected content type in first body part of report");
 
         MimeEntity reportPartTwo = reportEntity.getPart(1);
-        assertEquals(ContentType.create(
-                AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(), reportPartTwo.getContentType(),
+        assertEquals(
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION).toString(),
+                reportPartTwo.getContentType(),
                 "Unexpected content type in second body part of report");
 
         assertTrue(reportPartTwo instanceof AS2MessageDispositionNotificationEntity);
@@ -215,37 +222,47 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     private void verifyMultiPartReportEntity(DispositionNotificationMultipartReportEntity reportEntity) {
         // second part of MDN report
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
 
-        assertEquals(ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA(),
+        assertEquals(
+                ORIGIN_SERVER_NAME,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected value for reporting UA");
 
-        assertEquals(AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                AS2_NAME,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected value for final recipient");
 
         String uniqueMessageId = HttpMessageUtils.getHeaderValue(requestHandler.getRequest(), AS2Header.MESSAGE_ID);
-        assertEquals(uniqueMessageId, messageDispositionNotificationEntity.getOriginalMessageId(),
+        assertEquals(
+                uniqueMessageId,
+                messageDispositionNotificationEntity.getOriginalMessageId(),
                 "Unexpected value for original message ID");
 
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                messageDispositionNotificationEntity.getDispositionMode(), "Unexpected value for disposition mode");
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                messageDispositionNotificationEntity.getDispositionMode(),
+                "Unexpected value for disposition mode");
 
-        assertEquals(AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                AS2DispositionType.PROCESSED,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected value for disposition type");
     }
 
     private void verifyMdnSignature(DispositionNotificationMultipartReportEntity reportEntity) throws HttpException {
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
 
         MicUtils.ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
-        MicUtils.ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic(
-                        (ClassicHttpRequest) requestHandler.getRequest(), new Certificate[] { clientCert },
-                        null);
+        MicUtils.ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic(
+                (ClassicHttpRequest) requestHandler.getRequest(), new Certificate[] {clientCert}, null);
 
-        assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
+        assertEquals(
+                computedContentMic.getEncodedMessageDigest(),
+                receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
 
@@ -269,17 +286,17 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     // Request asynchronous receipt by including a 'receiptDeliveryOption' header specifying the return url.
     private DispositionNotificationMultipartReportEntity executeRequestWithAsyncResponseHeader(
-            String endpointUri, int port, String mock)
-            throws Exception {
-        executeRequestAsyncHeader(endpointUri, getAS2HeadersForAsyncReceipt("http://localhost:" + port + "/handle-receipts"));
+            String endpointUri, int port, String mock) throws Exception {
+        executeRequestAsyncHeader(
+                endpointUri, getAS2HeadersForAsyncReceipt("http://localhost:" + port + "/handle-receipts"));
 
         return verifyAsyncResponse(mock);
     }
 
     // Request asynchronous receipt by including a 'receiptDeliveryOption' path parameter in the endpoint uri
     // specifying the return url.
-    private DispositionNotificationMultipartReportEntity executeRequestWithAsyncResponsePath(String endpointUri, String mock)
-            throws Exception {
+    private DispositionNotificationMultipartReportEntity executeRequestWithAsyncResponsePath(
+            String endpointUri, String mock) throws Exception {
         executeRequestAsyncPath(endpointUri, getAS2Headers());
 
         return verifyAsyncResponse(mock);
@@ -300,7 +317,8 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     // Request a signed asynchronous receipt by including a 'receiptDeliveryOption' path parameter in the endpoint uri
     // specifying the return url, and a 'signedReceiptMicAlgorithms' header specifying the signing algorithms.
-    private MultipartSignedEntity executeRequestWithSignedAsyncResponsePath(String endpointUri, String mock) throws Exception {
+    private MultipartSignedEntity executeRequestWithSignedAsyncResponsePath(String endpointUri, String mock)
+            throws Exception {
         Map<String, Object> headers = getAS2Headers();
         addSignedMessageHeaders(headers);
         // In order to receive signed MDN receipts the client must include both the 'signed-receipt-protocol' and
@@ -313,7 +331,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     private void addSignedMessageHeaders(Map<String, Object> headers) {
         headers.put("CamelAs2.as2MessageStructure", AS2MessageStructure.SIGNED);
         headers.put("CamelAs2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
-        headers.put("CamelAs2.signingCertificateChain", new Certificate[] { clientCert });
+        headers.put("CamelAs2.signingCertificateChain", new Certificate[] {clientCert});
         headers.put("CamelAs2.signingPrivateKey", clientKeyPair.getPrivate());
         headers.put("CamelAs2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
     }
@@ -356,16 +374,14 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     }
 
     private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequestAsyncHeader(
-            String endpointUri, Map<String, Object> headers)
-            throws Exception {
+            String endpointUri, Map<String, Object> headers) throws Exception {
         HttpEntity responseEntity = requestBodyAndHeaders(endpointUri, EDI_MESSAGE, headers);
 
         return new ImmutableTriple<>(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
     }
 
     private Triple<HttpEntity, HttpRequest, HttpResponse> executeRequestAsyncPath(
-            String endpointUri, Map<String, Object> headers)
-            throws Exception {
+            String endpointUri, Map<String, Object> headers) throws Exception {
         HttpEntity responseEntity = requestBodyAndHeaders(endpointUri, EDI_MESSAGE, headers);
 
         return new ImmutableTriple<>(responseEntity, requestHandler.getRequest(), requestHandler.getResponse());
@@ -382,28 +398,36 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
                 // with option for asynchronous receipt specified as path-param
                 from("direct://SEND3")
-                        .toF("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m"
-                             + "&receiptDeliveryOption=%s", "http://localhost:" + RECEIPT_SERVER_PORT3 + "/handle-receipts");
+                        .toF(
+                                "as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m"
+                                        + "&receiptDeliveryOption=%s",
+                                "http://localhost:" + RECEIPT_SERVER_PORT3 + "/handle-receipts");
 
                 from("direct://SEND4")
-                        .toF("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m"
-                             + "&receiptDeliveryOption=%s", "http://localhost:" + RECEIPT_SERVER_PORT4 + "/handle-receipts");
+                        .toF(
+                                "as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m"
+                                        + "&receiptDeliveryOption=%s",
+                                "http://localhost:" + RECEIPT_SERVER_PORT4 + "/handle-receipts");
 
                 // asynchronous AS2-MDN (receipt) server instance
-                fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT)
+                fromF(
+                                "as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
+                                RECEIPT_SERVER_PORT)
                         .to("mock:as2RcvRcptMsgs");
 
-                fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT2)
+                fromF(
+                                "as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
+                                RECEIPT_SERVER_PORT2)
                         .to("mock:as2RcvRcptMsgs2");
 
-                fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT3)
+                fromF(
+                                "as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
+                                RECEIPT_SERVER_PORT3)
                         .to("mock:as2RcvRcptMsgs3");
 
-                fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT4)
+                fromF(
+                                "as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
+                                RECEIPT_SERVER_PORT4)
                         .to("mock:as2RcvRcptMsgs4");
             }
         };
@@ -433,10 +457,20 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
-                AS2_VERSION, ORIGIN_SERVER_NAME,
-                SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                new Certificate[] { serverCert }, serverKP.getPrivate(), null,
-                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null, null, null, null);
+                AS2_VERSION,
+                ORIGIN_SERVER_NAME,
+                SERVER_FQDN,
+                PARTNER_TARGET_PORT,
+                AS2SignatureAlgorithm.SHA256WITHRSA,
+                new Certificate[] {serverCert},
+                serverKP.getPrivate(),
+                null,
+                MDN_MESSAGE_TEMPLATE,
+                new Certificate[] {clientCert},
+                null,
+                null,
+                null,
+                null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }

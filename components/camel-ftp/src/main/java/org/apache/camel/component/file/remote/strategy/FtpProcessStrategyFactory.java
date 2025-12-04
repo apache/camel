@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.strategy;
 
 import java.util.Map;
@@ -91,9 +92,10 @@ public final class FtpProcessStrategyFactory implements GenericFileProcessStrate
     }
 
     @SuppressWarnings("unchecked")
-    private static GenericFileExclusiveReadLockStrategy<FTPFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<FTPFile> strategy
-                = (GenericFileExclusiveReadLockStrategy<FTPFile>) params.get("exclusiveReadLockStrategy");
+    private static GenericFileExclusiveReadLockStrategy<FTPFile> getExclusiveReadLockStrategy(
+            Map<String, Object> params) {
+        GenericFileExclusiveReadLockStrategy<FTPFile> strategy =
+                (GenericFileExclusiveReadLockStrategy<FTPFile>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -104,8 +106,8 @@ public final class FtpProcessStrategyFactory implements GenericFileProcessStrate
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<FTPFile> readLockStrategy
-                        = new GenericFileRenameExclusiveReadLockStrategy<>();
+                GenericFileRenameExclusiveReadLockStrategy<FTPFile> readLockStrategy =
+                        new GenericFileRenameExclusiveReadLockStrategy<>();
 
                 StrategyUtil.setup(readLockStrategy, params);
 

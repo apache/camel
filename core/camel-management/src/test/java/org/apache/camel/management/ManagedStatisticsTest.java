@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Set;
 
@@ -26,10 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedStatisticsTest extends ManagementTestSupport {
@@ -92,11 +93,13 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("log:foo").id("foo")
-                        .to("log:bar").id("bar")
-                        .to("mock:result").id("mock");
+                        .to("log:foo")
+                        .id("foo")
+                        .to("log:bar")
+                        .id("bar")
+                        .to("mock:result")
+                        .id("mock");
             }
         };
     }
-
 }

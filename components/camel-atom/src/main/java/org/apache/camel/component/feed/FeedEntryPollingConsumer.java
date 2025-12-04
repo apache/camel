@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.feed;
 
 import java.util.List;
@@ -26,8 +27,10 @@ import org.apache.camel.Processor;
  */
 public abstract class FeedEntryPollingConsumer<E> extends FeedPollingConsumer {
     protected int entryIndex;
+
     @SuppressWarnings("rawtypes")
     protected List<E> list;
+
     protected boolean throttleEntries;
     protected Object feed;
 

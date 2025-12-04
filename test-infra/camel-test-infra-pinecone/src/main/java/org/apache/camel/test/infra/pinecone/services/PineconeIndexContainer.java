@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.pinecone.services;
 
 import org.slf4j.Logger;
@@ -27,8 +28,8 @@ public class PineconeIndexContainer extends GenericContainer<PineconeIndexContai
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PineconeIndexContainer.class);
 
-    private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse(
-            "ghcr.io/pinecone-io/pinecone-index");
+    private static final DockerImageName DEFAULT_IMAGE_NAME =
+            DockerImageName.parse("ghcr.io/pinecone-io/pinecone-index");
 
     public PineconeIndexContainer(String dockerImageName) {
         this(DockerImageName.parse(dockerImageName), false);

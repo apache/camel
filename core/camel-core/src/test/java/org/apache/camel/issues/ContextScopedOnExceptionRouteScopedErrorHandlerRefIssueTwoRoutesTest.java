@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.io.IOException;
@@ -63,12 +64,16 @@ public class ContextScopedOnExceptionRouteScopedErrorHandlerRefIssueTwoRoutesTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).to("mock:handled").end();
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .end();
 
-                from("direct:foo").errorHandler("myDLC").to("mock:foo")
-                        .throwException(new IOException("Damn IO"));
+                from("direct:foo").errorHandler("myDLC").to("mock:foo").throwException(new IOException("Damn IO"));
 
-                from("direct:start").errorHandler("myDLC").to("mock:a")
+                from("direct:start")
+                        .errorHandler("myDLC")
+                        .to("mock:a")
                         .throwException(new IllegalArgumentException("Damn"));
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.security.PrivateKey;
@@ -45,94 +46,137 @@ public class AS2Configuration {
     @UriPath
     @Metadata(required = true, enums = "client,server,receipt")
     private AS2ApiName apiName;
+
     @UriPath
     @Metadata(required = true)
     private String methodName;
+
     @UriParam(defaultValue = "1.1", enums = "1.0,1.1")
     private String as2Version = "1.1";
+
     @UriParam(defaultValue = "Camel AS2 Client Endpoint")
     private String userAgent = "Camel AS2 Client Endpoint";
+
     @UriParam(defaultValue = "Camel AS2 Server Endpoint")
     private String server = "Camel AS2 Server Endpoint";
+
     @UriParam(defaultValue = "camel.apache.org")
     private String serverFqdn = "camel.apache.org";
+
     @UriParam
     private String targetHostname;
+
     @UriParam(defaultValue = "80")
     private Integer targetPortNumber = 80;
+
     @UriParam(defaultValue = "camel.apache.org")
     private String clientFqdn = "camel.apache.org";
+
     @UriParam
     private Integer serverPortNumber;
+
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
+
     @UriParam(enums = "application/edifact,application/edi-x12,application/edi-consent,application/xml")
     private String ediMessageType;
+
     @UriParam(defaultValue = "us-ascii")
     private String ediMessageCharset;
+
     @UriParam
     private String ediMessageTransferEncoding;
+
     @UriParam
     private AS2MessageStructure as2MessageStructure;
+
     @UriParam
     private String subject;
+
     @UriParam
     private String from;
+
     @UriParam
     private String as2From;
+
     @UriParam
     private String as2To;
+
     @UriParam(label = "security")
     private AS2SignatureAlgorithm signingAlgorithm;
+
     @UriParam(label = "security")
     private Certificate[] signingCertificateChain;
+
     @UriParam(label = "security")
     private PrivateKey signingPrivateKey;
+
     @UriParam
     private AS2CompressionAlgorithm compressionAlgorithm;
+
     @UriParam
     private String dispositionNotificationTo;
+
     @UriParam(label = "security")
     private String signedReceiptMicAlgorithms;
+
     @UriParam(label = "security")
     private AS2EncryptionAlgorithm encryptingAlgorithm;
+
     @UriParam(label = "security")
     private Certificate[] encryptingCertificateChain;
+
     @UriParam(label = "security")
     private PrivateKey decryptingPrivateKey;
+
     @UriParam
     private String mdnMessageTemplate;
+
     @UriParam
     private String attachedFileName;
+
     @UriParam(defaultValue = "5s")
     private Duration httpSocketTimeout = Duration.ofSeconds(5);
+
     @UriParam(defaultValue = "5s")
     private Duration httpConnectionTimeout = Duration.ofSeconds(5);
+
     @UriParam(defaultValue = "5")
     private Integer httpConnectionPoolSize = 5;
+
     @UriParam(defaultValue = "15m")
     private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
+
     @UriParam(label = "security")
     private Certificate[] validateSigningCertificateChain;
+
     @UriParam(label = "security")
     private SSLContext sslContext;
     // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
     @UriParam(label = "security")
     private HostnameVerifier hostnameVerifier;
+
     @UriParam
     private Integer asyncMdnPortNumber;
+
     @UriParam
     private String receiptDeliveryOption;
+
     @UriParam(label = "security", secret = true)
     private String userName;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String mdnUserName;
+
     @UriParam(label = "security", secret = true)
     private String mdnPassword;
+
     @UriParam(label = "security", secret = true)
     private String mdnAccessToken;
 
@@ -167,9 +211,8 @@ public class AS2Configuration {
      */
     public void setAs2Version(String as2Version) {
         if (!as2Version.equals("1.0") && !as2Version.equals("1.1")) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Value '%s' of configuration parameter 'as2Version' must be either '1.0' or '1.1'", as2Version));
+            throw new IllegalArgumentException(String.format(
+                    "Value '%s' of configuration parameter 'as2Version' must be either '1.0' or '1.1'", as2Version));
         }
         this.as2Version = as2Version;
     }

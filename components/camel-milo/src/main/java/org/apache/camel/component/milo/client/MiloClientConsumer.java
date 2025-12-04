@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
 
 import org.apache.camel.Exchange;
@@ -71,7 +72,10 @@ public class MiloClientConsumer extends DefaultConsumer {
     private void handleValueUpdate(final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
 
-        if (omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)) {
+        if (omitNullValues
+                && (value == null
+                        || value.getValue() == null
+                        || value.getValue().getValue() == null)) {
             LOG.debug("Handle item update omitted due to null values (see omitNullValues parameter)");
             return;
         }
@@ -90,5 +94,4 @@ public class MiloClientConsumer extends DefaultConsumer {
             Messages.fillFromDataValue(value, message);
         }
     }
-
 }

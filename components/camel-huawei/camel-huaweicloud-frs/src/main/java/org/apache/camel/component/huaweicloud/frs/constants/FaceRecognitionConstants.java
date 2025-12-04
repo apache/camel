@@ -24,5 +24,4 @@ public interface FaceRecognitionConstants {
     String OPERATION_FACE_VERIFICATION = "faceVerification";
 
     String OPERATION_FACE_LIVE_DETECT = "faceLiveDetection";
-
 }

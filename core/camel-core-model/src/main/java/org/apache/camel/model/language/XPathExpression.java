@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -22,7 +23,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-// TODO: camel4 (need jakarta api)
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Expression;
@@ -38,36 +38,43 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     @XmlTransient
     private Class<?> documentType;
+
     @XmlTransient
     private XPathFactory xpathFactory;
 
     @XmlAttribute(name = "documentType")
     @Metadata(label = "advanced")
     private String documentTypeName;
+
     @XmlAttribute(name = "resultQName")
     @Metadata(defaultValue = "NODESET", enums = "NUMBER,STRING,BOOLEAN,NODESET,NODE")
     private String resultQName;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String saxon;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String factoryRef;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String objectModel;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String logNamespaces;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String threadSafety;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String preCompile;
 
-    public XPathExpression() {
-    }
+    public XPathExpression() {}
 
     protected XPathExpression(XPathExpression source) {
         super(source);

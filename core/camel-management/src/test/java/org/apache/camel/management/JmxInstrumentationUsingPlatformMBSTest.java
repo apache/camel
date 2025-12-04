@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
@@ -81,5 +82,4 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
         }
         return mbsc;
     }
-
 }

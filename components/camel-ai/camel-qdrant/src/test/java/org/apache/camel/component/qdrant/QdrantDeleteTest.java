@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
+
+import static io.qdrant.client.ConditionFactory.matchKeyword;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.qdrant.client.grpc.Common;
 import org.apache.camel.Exchange;
@@ -22,15 +26,13 @@ import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.qdrant.client.ConditionFactory.matchKeyword;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class QdrantDeleteTest extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to delete without passing the action name triggers a failure")
     @Test
     public void deleteWithoutRequiredParameters() {
-        Exchange result = fluentTemplate.to("qdrant:delete")
+        Exchange result = fluentTemplate
+                .to("qdrant:delete")
                 .withBody(Common.Filter.newBuilder()
                         .addMust(matchKeyword("foo", "hello"))
                         .build())

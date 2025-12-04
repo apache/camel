@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
 
 import org.apache.camel.ContextTestSupport;
@@ -103,9 +104,12 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(url).routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
+                from(url)
+                        .routePolicy(policy)
+                        .log("${body}")
+                        .to("log:foo?groupSize=10")
+                        .to("mock:result");
             }
         };
     }
-
 }

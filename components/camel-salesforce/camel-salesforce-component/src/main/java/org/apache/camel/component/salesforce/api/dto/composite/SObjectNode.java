@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -36,8 +39,6 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.util.ObjectHelper;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Represents one node in the SObject tree request. SObject trees ({@link SObjectTree}) are composed from instances of
@@ -151,7 +152,8 @@ public final class SObjectNode implements Serializable {
      * @param first       first child to add
      * @param others      any other children to add
      */
-    public void addChildren(final String labelPlural, final AbstractSObjectBase first, final AbstractSObjectBase... others) {
+    public void addChildren(
+            final String labelPlural, final AbstractSObjectBase first, final AbstractSObjectBase... others) {
         ObjectHelper.notNull(labelPlural, "labelPlural");
         ObjectHelper.notNull(first, "first");
         ObjectHelper.notNull(others, "others");
@@ -240,7 +242,10 @@ public final class SObjectNode implements Serializable {
      * @return number of objects within this branch
      */
     public int size() {
-        return 1 + records.values().stream().flatMapToInt(r -> r.stream().mapToInt(SObjectNode::size)).sum();
+        return 1
+                + records.values().stream()
+                        .flatMapToInt(r -> r.stream().mapToInt(SObjectNode::size))
+                        .sum();
     }
 
     @Override
@@ -268,7 +273,8 @@ public final class SObjectNode implements Serializable {
     }
 
     Stream<Class<?>> objectTypes() {
-        return Stream.concat(Stream.of((Class<?>) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
+        return Stream.concat(
+                Stream.of((Class<?>) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
     }
 
     void setErrors(final List<RestError> errors) {

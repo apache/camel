@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.Callable;
@@ -24,8 +25,7 @@ import org.apache.camel.util.function.ThrowingRunnable;
 import org.apache.camel.util.function.ThrowingSupplier;
 
 public final class LockHelper {
-    private LockHelper() {
-    }
+    private LockHelper() {}
 
     public static void doWithReadLock(StampedLock lock, Runnable task) {
         long stamp = lock.readLock();
@@ -67,7 +67,8 @@ public final class LockHelper {
         }
     }
 
-    public static <R, T extends Throwable> R supplyWithReadLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
+    public static <R, T extends Throwable> R supplyWithReadLockT(StampedLock lock, ThrowingSupplier<R, T> task)
+            throws T {
         long stamp = lock.readLock();
 
         try {
@@ -117,7 +118,8 @@ public final class LockHelper {
         }
     }
 
-    public static <R, T extends Throwable> R supplyWithWriteLockT(StampedLock lock, ThrowingSupplier<R, T> task) throws T {
+    public static <R, T extends Throwable> R supplyWithWriteLockT(StampedLock lock, ThrowingSupplier<R, T> task)
+            throws T {
         long stamp = lock.writeLock();
 
         try {

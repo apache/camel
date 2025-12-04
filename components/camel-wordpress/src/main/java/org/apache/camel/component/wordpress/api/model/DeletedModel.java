@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,9 +25,7 @@ public class DeletedModel<T> {
     private Boolean deleted;
     private T previous;
 
-    public DeletedModel() {
-
-    }
+    public DeletedModel() {}
 
     public Boolean getDeleted() {
         return deleted;
@@ -43,5 +42,4 @@ public class DeletedModel<T> {
     public void setPrevious(T previous) {
         this.previous = previous;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -28,8 +31,6 @@ import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AzureStorageDataLakeSpanDecoratorTest {
 
     @Test
@@ -39,7 +40,8 @@ public class AzureStorageDataLakeSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.OPERATION, String.class)).thenReturn(operation);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.OPERATION, String.class))
+                .thenReturn(operation);
 
         AbstractSpanDecorator decorator = new AzureStorageDataLakeSpanDecorator();
 
@@ -67,7 +69,8 @@ public class AzureStorageDataLakeSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn("azure-storage-datalake:myAccount/myFileSystem?operation=upload");
+        Mockito.when(endpoint.getEndpointUri())
+                .thenReturn("azure-storage-datalake:myAccount/myFileSystem?operation=upload");
         Mockito.when(exchange.getIn()).thenReturn(message);
 
         AbstractSpanDecorator decorator = new AzureStorageDataLakeSpanDecorator();
@@ -98,16 +101,22 @@ public class AzureStorageDataLakeSpanDecoratorTest {
                 .thenReturn(fileSystemName);
         Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.DIRECTORY_NAME, String.class))
                 .thenReturn(directoryName);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.FILE_NAME, String.class)).thenReturn(fileName);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.PATH, String.class)).thenReturn(path);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.EXPRESSION, String.class)).thenReturn(expression);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.CONTENT_TYPE, String.class)).thenReturn(contentType);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.TIMEOUT, Duration.class)).thenReturn(timeout);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.FILE_NAME, String.class))
+                .thenReturn(fileName);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.PATH, String.class))
+                .thenReturn(path);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.EXPRESSION, String.class))
+                .thenReturn(expression);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.CONTENT_TYPE, String.class))
+                .thenReturn(contentType);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.TIMEOUT, Duration.class))
+                .thenReturn(timeout);
         Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.METADATA, Map.class))
                 .thenReturn(metadata);
         Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.LAST_MODIFIED, OffsetDateTime.class))
                 .thenReturn(lastModified);
-        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.POSITION, Long.class)).thenReturn(position);
+        Mockito.when(message.getHeader(AzureStorageDataLakeSpanDecorator.POSITION, Long.class))
+                .thenReturn(position);
 
         AbstractSpanDecorator decorator = new AzureStorageDataLakeSpanDecorator();
 
@@ -124,7 +133,8 @@ public class AzureStorageDataLakeSpanDecoratorTest {
         assertEquals(contentType, span.tags().get(AzureStorageDataLakeSpanDecorator.STORAGE_DATALAKE_CONTENT_TYPE));
         assertEquals(timeout.toString(), span.tags().get(AzureStorageDataLakeSpanDecorator.STORAGE_DATALAKE_TIMEOUT));
         assertEquals(metadata.toString(), span.tags().get(AzureStorageDataLakeSpanDecorator.STORAGE_DATALAKE_METADATA));
-        assertEquals(lastModified.toString(),
+        assertEquals(
+                lastModified.toString(),
                 span.tags().get(AzureStorageDataLakeSpanDecorator.STORAGE_DATALAKE_LAST_MODIFIED));
         assertEquals(position, span.tags().get(AzureStorageDataLakeSpanDecorator.STORAGE_DATALAKE_POSITION));
     }
@@ -132,5 +142,4 @@ public class AzureStorageDataLakeSpanDecoratorTest {
     enum operationEnum {
         upload
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -182,5 +183,4 @@ public interface SupervisingRouteController extends RouteController {
      * @param reloaded whether the routes to be started is part of reloading routes
      */
     void startRoutes(boolean reloaded);
-
 }

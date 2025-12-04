@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,11 +34,11 @@ public class TemplatedRouteParameterDefinition {
 
     @XmlAttribute(required = true)
     private String name;
+
     @XmlAttribute(required = true)
     private String value;
 
-    public TemplatedRouteParameterDefinition() {
-    }
+    public TemplatedRouteParameterDefinition() {}
 
     public TemplatedRouteParameterDefinition(String name, String value) {
         this.name = name;
@@ -65,5 +66,4 @@ public class TemplatedRouteParameterDefinition {
     public void setValue(String value) {
         this.value = value;
     }
-
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.undertow;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.base.HttpOperationFailedException;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.undertow;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.junit.jupiter.api.Test;
 
 public class UndertowSuspendResumeTest extends BaseUndertowTest {
 
@@ -37,7 +38,8 @@ public class UndertowSuspendResumeTest extends BaseUndertowTest {
         assertEquals("Bye World", reply);
 
         // now suspend jetty
-        UndertowConsumer consumer = (UndertowConsumer) context.getRoute("route1").getConsumer();
+        UndertowConsumer consumer =
+                (UndertowConsumer) context.getRoute("route1").getConsumer();
         assertNotNull(consumer);
 
         // suspend

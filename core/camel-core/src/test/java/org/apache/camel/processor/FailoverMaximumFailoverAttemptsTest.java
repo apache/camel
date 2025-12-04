@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailoverMaximumFailoverAttemptsTest extends ContextTestSupport {
 
@@ -61,19 +62,25 @@ public class FailoverMaximumFailoverAttemptsTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").loadBalance().failover(2, false, true).to("direct:bad", "direct:bad2", "direct:bad3",
-                        "direct:good");
+                from("direct:start")
+                        .loadBalance()
+                        .failover(2, false, true)
+                        .to("direct:bad", "direct:bad2", "direct:bad3", "direct:good");
 
                 from("direct:bad").to("log:bad").to("mock:bad").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bad2").to("log:bad2").to("mock:bad2").throwException(new IllegalArgumentException("Damn Again"));
+                from("direct:bad2")
+                        .to("log:bad2")
+                        .to("mock:bad2")
+                        .throwException(new IllegalArgumentException("Damn Again"));
 
-                from("direct:bad3").to("log:bad3").to("mock:bad3")
+                from("direct:bad3")
+                        .to("log:bad3")
+                        .to("mock:bad3")
                         .throwException(new IllegalArgumentException("Damn Again Again"));
 
                 from("direct:good").to("log:good").to("mock:good");
             }
         };
     }
-
 }

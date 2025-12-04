@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParquetAvroDataFormatUnmarshalLazyLoadTest extends CamelTestSupport {
 
@@ -50,16 +51,24 @@ public class ParquetAvroDataFormatUnmarshalLazyLoadTest extends CamelTestSupport
 
     @Test
     public void testUnmarshalLazyLoadNoUnmarshalType() throws Exception {
-        Schema schema = SchemaBuilder
-                .record("Pojo")
+        Schema schema = SchemaBuilder.record("Pojo")
                 .fields()
                 .requiredString("data")
                 .requiredLong("id")
                 .endRecord();
 
-        Record expected1 = new GenericRecordBuilder(schema).set("data", "airport").set("id", 1L).build();
-        Record expected2 = new GenericRecordBuilder(schema).set("data", "penguin").set("id", 2L).build();
-        Record expected3 = new GenericRecordBuilder(schema).set("data", "verb").set("id", 3L).build();
+        Record expected1 = new GenericRecordBuilder(schema)
+                .set("data", "airport")
+                .set("id", 1L)
+                .build();
+        Record expected2 = new GenericRecordBuilder(schema)
+                .set("data", "penguin")
+                .set("id", 2L)
+                .build();
+        Record expected3 = new GenericRecordBuilder(schema)
+                .set("data", "verb")
+                .set("id", 3L)
+                .build();
 
         MockEndpoint mockResults = getMockEndpoint("mock:resultNoUnmarshalType");
 
@@ -88,10 +97,7 @@ public class ParquetAvroDataFormatUnmarshalLazyLoadTest extends CamelTestSupport
                 ParquetAvroDataFormat formatNoUnmarshalType = new ParquetAvroDataFormat();
                 formatNoUnmarshalType.setLazyLoad(true);
 
-                from("direct:start")
-                        .unmarshal(format)
-                        .split(body())
-                        .to("mock:result");
+                from("direct:start").unmarshal(format).split(body()).to("mock:result");
 
                 from("direct:startNoUnmarshalType")
                         .unmarshal(formatNoUnmarshalType)

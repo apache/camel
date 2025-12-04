@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.io.Writer;
@@ -38,7 +39,8 @@ import org.slf4j.LoggerFactory;
 public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateSimpleExpressionIssueManualTest.class);
-    private static final String DATA = "100,200,1,123456,2010-03-01T12:13:14,100,USD,Best Buy,5045,Santa Monica,CA,Type\n";
+    private static final String DATA =
+            "100,200,1,123456,2010-03-01T12:13:14,100,USD,Best Buy,5045,Santa Monica,CA,Type\n";
 
     private final MyBean myBean = new MyBean();
     private final AggStrategy aggStrategy = new AggStrategy();
@@ -79,10 +81,19 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri()).routeId("foo").autoStartup(false).log("Picked up ${file:name}").split()
-                        .tokenize("\n").streaming()
-                        .aggregate(constant(true), aggStrategy).completionSize(simple("1000")).completionTimeout(simple("500"))
-                        .bean(myBean).end().end();
+                from(fileUri())
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .log("Picked up ${file:name}")
+                        .split()
+                        .tokenize("\n")
+                        .streaming()
+                        .aggregate(constant(true), aggStrategy)
+                        .completionSize(simple("1000"))
+                        .completionTimeout(simple("500"))
+                        .bean(myBean)
+                        .end()
+                        .end();
             }
         };
     }
@@ -116,7 +127,5 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
 
             return oldExchange;
         }
-
     }
-
 }

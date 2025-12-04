@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.time.Duration;
@@ -78,23 +79,31 @@ import org.slf4j.Logger;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>>
+        extends OptionalIdentifiedDefinition<Type>
         implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     protected String disabled;
+
     @XmlTransient
     private final Deque<Block> blocks = new LinkedList<>();
+
     @XmlTransient
     private ProcessorDefinition<?> parent;
+
     @XmlTransient
     private RouteConfigurationDefinition routeConfiguration;
+
     @XmlTransient
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
+
     @XmlTransient
     private final int index;
+
     @XmlTransient
     private Boolean inheritErrorHandler; // used for camel-jta
 
@@ -215,17 +224,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
         boolean parentIsAlreadyTop = this.isTopLevelOnly();
         if (output.isTopLevelOnly() && !parentIsRoute && !parentIsAlreadyTop) {
-            throw new IllegalArgumentException(
-                    "The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
+            throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving "
+                    + output + " to the top of route.");
         }
 
         output.setParent(this);
         configureChild(output);
         getOutputs().add(output);
 
-        if (context != null && (context.isSourceLocationEnabled()
-                || context.isDebugging() || context.isDebugStandby()
-                || context.isTracing() || context.isTracingStandby())) {
+        if (context != null
+                && (context.isSourceLocationEnabled()
+                        || context.isDebugging()
+                        || context.isDebugStandby()
+                        || context.isTracing()
+                        || context.isTracingStandby())) {
             // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
             Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
             ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
@@ -345,7 +357,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                         the builder
      */
     public Type toD(
-            @AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, String variableSend, String variableReceive) {
+            @AsEndpointUri EndpointProducerBuilder endpointProducerBuilder,
+            String variableSend,
+            String variableReceive) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
         answer.setVariableSend(variableSend);
@@ -668,7 +682,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 if (cbr.getOtherwise().getOutputs().isEmpty()) {
                     cbr.getOtherwise().id(id);
                 } else {
-                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    var last = cbr.getOtherwise()
+                            .getOutputs()
+                            .get(cbr.getOtherwise().getOutputs().size() - 1);
                     last.id(id);
                 }
             } else if (!cbr.getWhenClauses().isEmpty()) {
@@ -839,7 +855,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 if (cbr.getOtherwise().getOutputs().isEmpty()) {
                     cbr.getOtherwise().description(description);
                 } else {
-                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    var last = cbr.getOtherwise()
+                            .getOutputs()
+                            .get(cbr.getOtherwise().getOutputs().size() - 1);
                     last.description(description);
                 }
             } else if (!cbr.getWhenClauses().isEmpty()) {
@@ -914,7 +932,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 if (cbr.getOtherwise().getOutputs().isEmpty()) {
                     cbr.getOtherwise().note(note);
                 } else {
-                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    var last = cbr.getOtherwise()
+                            .getOutputs()
+                            .get(cbr.getOtherwise().getOutputs().size() - 1);
                     last.note(note);
                 }
             } else if (!cbr.getWhenClauses().isEmpty()) {
@@ -1365,7 +1385,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public IdempotentConsumerDefinition idempotentConsumer(
             Expression messageIdExpression, IdempotentRepository idempotentRepository) {
-        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition(messageIdExpression, idempotentRepository);
+        IdempotentConsumerDefinition answer =
+                new IdempotentConsumerDefinition(messageIdExpression, idempotentRepository);
         addOutput(answer);
         return answer;
     }
@@ -2125,9 +2146,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                           the builder
      */
     public ThrottleDefinition throttle(Expression maximumConcurrentRequests, long correlationExpressionKey) {
-        ThrottleDefinition answer
-                = new ThrottleDefinition(
-                        maximumConcurrentRequests, ExpressionBuilder.constantExpression(correlationExpressionKey));
+        ThrottleDefinition answer = new ThrottleDefinition(
+                maximumConcurrentRequests, ExpressionBuilder.constantExpression(correlationExpressionKey));
         addOutput(answer);
         return answer;
     }
@@ -2476,13 +2496,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                the exception builder to configure
      */
     public OnExceptionDefinition onException(
-            Class<? extends Throwable> exceptionType1, Class<? extends Throwable> exceptionType2,
+            Class<? extends Throwable> exceptionType1,
+            Class<? extends Throwable> exceptionType2,
             Class<? extends Throwable> exceptionType3) {
         if (this.getRouteConfiguration() != null) {
             // this is part of route configuration
             return this.getRouteConfiguration().onException(exceptionType1, exceptionType2, exceptionType2);
         }
-        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
+        OnExceptionDefinition answer =
+                new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
         addOutput(answer);
         return answer;
     }
@@ -3491,7 +3513,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder.
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(
+            @AsEndpointUri String resourceUri, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, false);
         return clause;
@@ -3587,7 +3610,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException,
+            @AsEndpointUri String resourceUri,
+            AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException,
             boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(new ConstantExpression(resourceUri));
@@ -3611,7 +3636,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri EndpointProducerBuilder resourceUri,
+            AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
@@ -3630,8 +3656,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.Enricher
      */
     public Type enrich(
-            @AsEndpointUri EndpointProducerBuilder resourceUri, AggregationStrategy aggregationStrategy,
-            boolean aggregateOnException, boolean shareUnitOfWork) {
+            @AsEndpointUri EndpointProducerBuilder resourceUri,
+            AggregationStrategy aggregationStrategy,
+            boolean aggregateOnException,
+            boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(new SimpleExpression(resourceUri.getRawUri()));
         answer.setAggregationStrategy(aggregationStrategy);
@@ -3906,7 +3934,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri String resourceUri,
+            long timeout,
+            AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategy, aggregateOnException);
     }
@@ -3933,7 +3963,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+            @AsEndpointUri String resourceUri,
+            long timeout,
+            String aggregationStrategyRef,
+            boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategyRef, aggregateOnException);
     }
 
@@ -3980,7 +4013,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri EndpointConsumerBuilder resourceUri,
+            long timeout,
+            AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(getCamelContext()), timeout, aggregationStrategy, aggregateOnException);
     }
@@ -4007,7 +4042,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri EndpointConsumerBuilder resourceUri, long timeout, String aggregationStrategyRef,
+            @AsEndpointUri EndpointConsumerBuilder resourceUri,
+            long timeout,
+            String aggregationStrategyRef,
             boolean aggregateOnException) {
         return pollEnrich(resourceUri.expr(getCamelContext()), timeout, aggregationStrategyRef, aggregateOnException);
     }
@@ -4055,7 +4092,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+            @AsEndpointUri Expression expression,
+            long timeout,
+            String aggregationStrategyRef,
+            boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
         pollEnrich.setTimeout(Long.toString(timeout));
@@ -4087,7 +4127,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                         org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri Expression expression, long timeout, AggregationStrategy aggregationStrategy,
+            @AsEndpointUri Expression expression,
+            long timeout,
+            AggregationStrategy aggregationStrategy,
             boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);

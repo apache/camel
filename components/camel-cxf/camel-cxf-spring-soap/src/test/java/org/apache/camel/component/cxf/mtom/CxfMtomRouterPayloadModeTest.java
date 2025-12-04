@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -41,10 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  */
@@ -59,16 +60,15 @@ public class CxfMtomRouterPayloadModeTest {
 
     @Autowired
     protected CamelContext context;
+
     private Endpoint endpoint;
 
     @BeforeEach
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:" + port2 + "/"
-                                    + getClass().getSimpleName() + "/jaxws-mtom/hello",
-                getImpl());
+        endpoint = Endpoint.publish(
+                "http://localhost:" + port2 + "/" + getClass().getSimpleName() + "/jaxws-mtom/hello", getImpl());
         SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(true);
-
     }
 
     @AfterEach
@@ -100,7 +100,6 @@ public class CxfMtomRouterPayloadModeTest {
             assertEquals(560, ((BufferedImage) image.value).getWidth());
             assertEquals(300, ((BufferedImage) image.value).getHeight());
         }
-
     }
 
     protected Hello getPort() {
@@ -110,8 +109,10 @@ public class CxfMtomRouterPayloadModeTest {
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
         assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        ((BindingProvider) port).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) port)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port1 + "/CxfMtomRouterPayloadModeTest/jaxws-mtom/hello");
         return port;
     }
@@ -123,5 +124,4 @@ public class CxfMtomRouterPayloadModeTest {
     protected Object getImpl() {
         return new HelloImpl();
     }
-
 }

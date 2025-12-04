@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.lang.management.GarbageCollectorMXBean;
@@ -43,7 +44,8 @@ public class GarbageCollectorDevConsole extends AbstractDevConsole {
         List<GarbageCollectorMXBean> gcs = ManagementFactory.getGarbageCollectorMXBeans();
         if (gcs != null && !gcs.isEmpty()) {
             for (GarbageCollectorMXBean gc : gcs) {
-                sb.append(String.format("\n    %s: %s (%s ms)", gc.getName(), gc.getCollectionCount(), gc.getCollectionTime()));
+                sb.append(String.format(
+                        "\n    %s: %s (%s ms)", gc.getName(), gc.getCollectionCount(), gc.getCollectionTime()));
             }
         }
 

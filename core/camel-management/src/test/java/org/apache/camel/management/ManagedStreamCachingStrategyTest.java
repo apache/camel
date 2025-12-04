@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
+import static org.apache.camel.util.FileUtil.normalizePath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 import java.util.Set;
@@ -30,12 +37,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
-import static org.apache.camel.util.FileUtil.normalizePath;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
@@ -108,13 +109,11 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
 
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setSpoolEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory("#name#").toString());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory("#name#").toString());
 
-                from("direct:start").routeId("foo")
-                        .convertBodyTo(int.class)
-                        .to("mock:a");
+                from("direct:start").routeId("foo").convertBodyTo(int.class).to("mock:a");
             }
         };
     }
-
 }

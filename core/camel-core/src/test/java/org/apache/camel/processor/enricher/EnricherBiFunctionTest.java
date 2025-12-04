@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.function.BiFunction;
 
@@ -27,14 +30,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class EnricherBiFunctionTest extends ContextTestSupport {
 
     private final MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
-    private final BiFunction<Exchange, Exchange, Object> myAgg
-            = (Exchange e1, Exchange e2) -> e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
+    private final BiFunction<Exchange, Exchange, Object> myAgg = (Exchange e1, Exchange e2) ->
+            e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
 
     @Override
     protected Registry createCamelRegistry() throws Exception {

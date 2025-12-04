@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupport {
 
@@ -36,7 +37,10 @@ public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupp
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         // turn on runtime statistics in extended mode
-        camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
+        camelContext
+                .getManagementStrategy()
+                .getManagementAgent()
+                .setStatisticsLevel(ManagementStatisticsLevel.Extended);
         return camelContext;
     }
 
@@ -51,7 +55,8 @@ public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupp
 
         assertMockEndpointsSatisfied();
 
-        List<RuntimeEndpointRegistry.Statistic> stats = context.getRuntimeEndpointRegistry().getEndpointStatistics();
+        List<RuntimeEndpointRegistry.Statistic> stats =
+                context.getRuntimeEndpointRegistry().getEndpointStatistics();
         assertNotNull(stats);
         assertEquals(2, stats.size());
         assertEquals(4, stats.get(0).getHits());
@@ -67,5 +72,4 @@ public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupp
             }
         };
     }
-
 }

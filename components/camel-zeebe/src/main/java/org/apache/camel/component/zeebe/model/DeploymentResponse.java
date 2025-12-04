@@ -20,6 +20,4 @@ package org.apache.camel.component.zeebe.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeploymentResponse extends AbstractZeebeResponse {
-
-}
+public class DeploymentResponse extends AbstractZeebeResponse {}

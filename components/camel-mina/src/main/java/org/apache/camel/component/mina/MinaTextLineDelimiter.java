@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.mina.filter.codec.textline.LineDelimiter;
@@ -22,7 +23,6 @@ import org.apache.mina.filter.codec.textline.LineDelimiter;
  * Possible text line delimiters to be used with the textline codec.
  */
 public enum MinaTextLineDelimiter {
-
     DEFAULT(LineDelimiter.DEFAULT),
     AUTO(LineDelimiter.AUTO),
     UNIX(LineDelimiter.UNIX),

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
@@ -28,12 +29,14 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     private GenericFileRenamer<T> failureRenamer;
     private GenericFileRenamer<T> commitRenamer;
 
-    public GenericFileRenameProcessStrategy() {
-    }
+    public GenericFileRenameProcessStrategy() {}
 
     @Override
     public boolean begin(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception {
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
@@ -55,7 +58,6 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
                     to.bindToExchange(exchange);
                 }
             }
-
         }
 
         return true;
@@ -63,7 +65,10 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void rollback(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception {
         try {
             operations.releaseRetrievedFileResources(exchange);
@@ -94,7 +99,10 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void commit(
-            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            GenericFileOperations<T> operations,
+            GenericFileEndpoint<T> endpoint,
+            Exchange exchange,
+            GenericFile<T> file)
             throws Exception {
         try {
             operations.releaseRetrievedFileResources(exchange);

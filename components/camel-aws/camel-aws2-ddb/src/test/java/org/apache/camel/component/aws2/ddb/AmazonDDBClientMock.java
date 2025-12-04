@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import java.time.Instant;
@@ -70,8 +71,7 @@ public class AmazonDDBClientMock implements DynamoDbClient {
     ScanRequest scanRequest;
     QueryRequest queryRequest;
 
-    public AmazonDDBClientMock() {
-    }
+    public AmazonDDBClientMock() {}
 
     @Override
     public DescribeTableResponse describeTable(DescribeTableRequest describeTableRequest) {
@@ -83,12 +83,20 @@ public class AmazonDDBClientMock implements DynamoDbClient {
             return tableWithStatus(TableStatus.ACTIVE);
         } else if ("FULL_DESCRIBE_TABLE".equals(tableName)) {
             return DescribeTableResponse.builder()
-                    .table(TableDescription.builder().tableName(tableName).tableStatus(TableStatus.ACTIVE)
-                            .creationDateTime(Instant.now()).itemCount(100L)
-                            .keySchema(KeySchemaElement.builder().attributeName("name").build())
-                            .provisionedThroughput(ProvisionedThroughputDescription.builder().readCapacityUnits(20L)
-                                    .writeCapacityUnits(10L).build())
-                            .tableSizeBytes(1000L).build())
+                    .table(TableDescription.builder()
+                            .tableName(tableName)
+                            .tableStatus(TableStatus.ACTIVE)
+                            .creationDateTime(Instant.now())
+                            .itemCount(100L)
+                            .keySchema(KeySchemaElement.builder()
+                                    .attributeName("name")
+                                    .build())
+                            .provisionedThroughput(ProvisionedThroughputDescription.builder()
+                                    .readCapacityUnits(20L)
+                                    .writeCapacityUnits(10L)
+                                    .build())
+                            .tableSizeBytes(1000L)
+                            .build())
                     .build();
         }
         AwsServiceException.Builder builder = AwsServiceException.builder();
@@ -100,14 +108,19 @@ public class AmazonDDBClientMock implements DynamoDbClient {
     }
 
     private DescribeTableResponse tableWithStatus(TableStatus active) {
-        return DescribeTableResponse.builder().table(TableDescription.builder().tableStatus(active).build()).build();
+        return DescribeTableResponse.builder()
+                .table(TableDescription.builder().tableStatus(active).build())
+                .build();
     }
 
     @Override
     public CreateTableResponse createTable(CreateTableRequest createTableRequest) {
         this.createTableRequest = createTableRequest;
         return CreateTableResponse.builder()
-                .tableDescription(TableDescription.builder().tableStatus(TableStatus.CREATING).build()).build();
+                .tableDescription(TableDescription.builder()
+                        .tableStatus(TableStatus.CREATING)
+                        .build())
+                .build();
     }
 
     @Override
@@ -125,11 +138,16 @@ public class AmazonDDBClientMock implements DynamoDbClient {
     public DeleteTableResponse deleteTable(DeleteTableRequest deleteTableRequest) {
         this.deleteTableRequest = deleteTableRequest;
         return DeleteTableResponse.builder()
-                .tableDescription(
-                        TableDescription.builder().provisionedThroughput(ProvisionedThroughputDescription.builder().build())
-                                .tableName(deleteTableRequest.tableName())
-                                .creationDateTime(Instant.now()).itemCount(10L).keySchema(new ArrayList<KeySchemaElement>())
-                                .tableSizeBytes(20L).tableStatus(TableStatus.ACTIVE).build())
+                .tableDescription(TableDescription.builder()
+                        .provisionedThroughput(
+                                ProvisionedThroughputDescription.builder().build())
+                        .tableName(deleteTableRequest.tableName())
+                        .creationDateTime(Instant.now())
+                        .itemCount(10L)
+                        .keySchema(new ArrayList<KeySchemaElement>())
+                        .tableSizeBytes(20L)
+                        .tableStatus(TableStatus.ACTIVE)
+                        .build())
                 .build();
     }
 
@@ -176,7 +194,10 @@ public class AmazonDDBClientMock implements DynamoDbClient {
         Map<String, KeysAndAttributes> unprocessedKeys = new HashMap<>();
         unprocessedKeys.put("DOMAIN1", KeysAndAttributes.builder().keys(keysMap).build());
 
-        return BatchGetItemResponse.builder().responses(responseMap).unprocessedKeys(unprocessedKeys).build();
+        return BatchGetItemResponse.builder()
+                .responses(responseMap)
+                .unprocessedKeys(unprocessedKeys)
+                .build();
     }
 
     @SuppressWarnings("unchecked")
@@ -187,8 +208,13 @@ public class AmazonDDBClientMock implements DynamoDbClient {
         consumed.capacityUnits(1.0);
         Map<String, AttributeValue> lastEvaluatedKey = new HashMap<>();
         lastEvaluatedKey.put("1", AttributeValue.builder().s("LAST_KEY").build());
-        return ScanResponse.builder().consumedCapacity(consumed.build()).count(1).items(getAttributes()).scannedCount(10)
-                .lastEvaluatedKey(lastEvaluatedKey).build();
+        return ScanResponse.builder()
+                .consumedCapacity(consumed.build())
+                .count(1)
+                .items(getAttributes())
+                .scannedCount(10)
+                .lastEvaluatedKey(lastEvaluatedKey)
+                .build();
     }
 
     @SuppressWarnings("unchecked")
@@ -199,8 +225,12 @@ public class AmazonDDBClientMock implements DynamoDbClient {
         consumed.capacityUnits(1.0);
         Map<String, AttributeValue> lastEvaluatedKey = new HashMap<>();
         lastEvaluatedKey.put("1", AttributeValue.builder().s("LAST_KEY").build());
-        return QueryResponse.builder().consumedCapacity(consumed.build()).count(1).items(getAttributes())
-                .lastEvaluatedKey(lastEvaluatedKey).build();
+        return QueryResponse.builder()
+                .consumedCapacity(consumed.build())
+                .count(1)
+                .items(getAttributes())
+                .lastEvaluatedKey(lastEvaluatedKey)
+                .build();
     }
 
     @Override

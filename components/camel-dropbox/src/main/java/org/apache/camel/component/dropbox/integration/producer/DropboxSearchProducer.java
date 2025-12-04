@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import com.dropbox.core.v2.files.Metadata;
@@ -40,13 +41,16 @@ public class DropboxSearchProducer extends DropboxProducer {
 
         DropboxConfigurationValidator.validateSearchOp(remotePath);
 
-        DropboxSearchResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .search(remotePath, query);
+        DropboxSearchResult result =
+                new DropboxAPIFacade(configuration.getClient(), exchange).search(remotePath, query);
 
         StringBuilder fileExtracted = new StringBuilder();
         for (SearchMatchV2 entry : result.getFound()) {
             Metadata metadataValue = entry.getMetadata().getMetadataValue();
-            fileExtracted.append(metadataValue.getName()).append('-').append(metadataValue.getPathDisplay())
+            fileExtracted
+                    .append(metadataValue.getName())
+                    .append('-')
+                    .append(metadataValue.getPathDisplay())
                     .append('\n');
         }
         exchange.getIn().setHeader(DropboxConstants.FOUND_FILES, fileExtracted.toString());

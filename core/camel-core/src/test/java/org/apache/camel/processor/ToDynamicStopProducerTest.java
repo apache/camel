@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,8 +32,6 @@ import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ToDynamicStopProducerTest extends ContextTestSupport {
 
@@ -50,8 +51,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
-                from("direct:a")
-                        .toD("${header.myHeader}", -1).id("foo");
+                from("direct:a").toD("${header.myHeader}", -1).id("foo");
             }
         });
         context.start();
@@ -89,8 +89,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
-                from("direct:a")
-                        .toD("${header.myHeader}").id("foo");
+                from("direct:a").toD("${header.myHeader}").id("foo");
             }
         });
         context.start();
@@ -127,8 +126,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
-                from("direct:a")
-                        .toD("${header.myHeader}", 1).id("foo");
+                from("direct:a").toD("${header.myHeader}", 1).id("foo");
             }
         });
         context.start();
@@ -165,8 +163,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
-                from("direct:a")
-                        .toD("${header.myHeader}", 2).id("foo");
+                from("direct:a").toD("${header.myHeader}", 2).id("foo");
             }
         });
         context.start();
@@ -203,8 +200,7 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("mymock", new MyMockComponent());
 
-                from("direct:a")
-                        .toD("${header.myHeader}", 3).id("foo");
+                from("direct:a").toD("${header.myHeader}", 3).id("foo");
             }
         });
         context.start();
@@ -284,7 +280,5 @@ public class ToDynamicStopProducerTest extends ContextTestSupport {
             super.doStop();
             events += getEndpoint().getQueue();
         }
-
     }
-
 }

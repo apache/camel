@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
 
 import org.apache.camel.Exchange;
@@ -38,7 +39,8 @@ public class AsteriskProducer extends DefaultProducer {
         super(endpoint);
 
         this.endpoint = endpoint;
-        this.connection = new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
+        this.connection =
+                new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
     }
 
     @Override
@@ -74,5 +76,4 @@ public class AsteriskProducer extends DefaultProducer {
 
         exchange.getIn().setBody(managerResponse);
     }
-
 }

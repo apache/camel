@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -51,8 +52,7 @@ public class OutgoingGetGameHighScoresMessage extends OutgoingMessage {
         this.inlineMessageId = inlineMessageId;
     }
 
-    public OutgoingGetGameHighScoresMessage() {
-    }
+    public OutgoingGetGameHighScoresMessage() {}
 
     public Long getUserId() {
         return userId;

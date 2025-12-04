@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import io.netty.util.ResourceLeakDetector;
@@ -36,10 +37,10 @@ public class NettyEnricherLeakTest extends BaseNettyTest {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
                 from("netty-http:http://localhost:" + getPort() + "/test")
-                        .transform().simple("${body}");
+                        .transform()
+                        .simple("${body}");
 
-                from("direct:outer")
-                        .to("netty-http:http://localhost:" + getPort() + "/test?disconnect=true");
+                from("direct:outer").to("netty-http:http://localhost:" + getPort() + "/test?disconnect=true");
             }
         });
         context.start();
@@ -58,11 +59,15 @@ public class NettyEnricherLeakTest extends BaseNettyTest {
                 ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
                 from("netty-http:http://localhost:" + getPort() + "/test")
-                        .transform().simple("${body}");
+                        .transform()
+                        .simple("${body}");
 
                 from("direct:outer")
-                        .enrich("netty-http:http://localhost:" + getPort() + "/test?disconnect=true",
-                                AggregationStrategies.string(), false, false);
+                        .enrich(
+                                "netty-http:http://localhost:" + getPort() + "/test?disconnect=true",
+                                AggregationStrategies.string(),
+                                false,
+                                false);
             }
         });
         context.start();

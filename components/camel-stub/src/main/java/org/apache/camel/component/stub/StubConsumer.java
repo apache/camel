@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import org.apache.camel.Processor;
@@ -25,5 +26,4 @@ public class StubConsumer extends SedaConsumer {
     public StubConsumer(SedaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
-
 }

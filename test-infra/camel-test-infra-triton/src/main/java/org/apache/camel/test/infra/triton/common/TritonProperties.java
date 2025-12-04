@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.triton.common;
 
 public class TritonProperties {
@@ -22,6 +23,5 @@ public class TritonProperties {
     public static final String TRITON_METRICS_PORT = "triton.metrics.port";
     public static final String TRITON_CONTAINER = "triton.container";
 
-    private TritonProperties() {
-    }
+    private TritonProperties() {}
 }

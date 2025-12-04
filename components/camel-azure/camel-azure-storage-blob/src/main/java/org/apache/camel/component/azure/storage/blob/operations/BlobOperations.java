@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.io.File;
@@ -96,10 +97,11 @@ public class BlobOperations {
 
         if (outputStream == null) {
             // Then we create an input stream
-            final Map<String, Object> blobInputStream
-                    = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
-            final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders
-                    .createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
+            final Map<String, Object> blobInputStream =
+                    client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
+            final BlobExchangeHeaders blobExchangeHeaders =
+                    BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(
+                            (BlobProperties) blobInputStream.get("properties"));
 
             return BlobOperationResponse.create(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
         }
@@ -107,12 +109,17 @@ public class BlobOperations {
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
         try {
-            final ResponseBase<BlobDownloadHeaders, Void> response = client.downloadWithResponse(outputStream, blobRange,
-                    downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
-                    blobCommonRequestOptions.getContentMD5() != null, blobCommonRequestOptions.getTimeout());
+            final ResponseBase<BlobDownloadHeaders, Void> response = client.downloadWithResponse(
+                    outputStream,
+                    blobRange,
+                    downloadRetryOptions,
+                    blobCommonRequestOptions.getBlobRequestConditions(),
+                    blobCommonRequestOptions.getContentMD5() != null,
+                    blobCommonRequestOptions.getTimeout());
 
-            final BlobExchangeHeaders blobExchangeHeaders
-                    = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(response.getDeserializedHeaders())
+            final BlobExchangeHeaders blobExchangeHeaders =
+                    BlobExchangeHeaders.createBlobExchangeHeadersFromBlobDownloadHeaders(
+                                    response.getDeserializedHeaders())
                             .httpHeaders(response.getHeaders());
 
             return BlobOperationResponse.create(outputStream, blobExchangeHeaders.toMap());
@@ -127,7 +134,8 @@ public class BlobOperations {
         // check for fileDir
         final String fileDir = configurationProxy.getFileDir(exchange);
         if (ObjectHelper.isEmpty(fileDir)) {
-            throw new IllegalArgumentException("In order to download a blob, you will need to specify the fileDir in the URI");
+            throw new IllegalArgumentException(
+                    "In order to download a blob, you will need to specify the fileDir in the URI");
         }
 
         final File fileToDownload = new File(fileDir, client.getBlobName());
@@ -136,26 +144,32 @@ public class BlobOperations {
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
-        final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), blobRange,
-                parallelTransferOptions, downloadRetryOptions,
-                commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getContentMD5() != null,
+        final Response<BlobProperties> response = client.downloadToFileWithResponse(
+                fileToDownload.toString(),
+                blobRange,
+                parallelTransferOptions,
+                downloadRetryOptions,
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getContentMD5() != null,
                 commonRequestOptions.getTimeout());
 
-        final BlobExchangeHeaders exchangeHeaders
-                = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(response.getValue())
-                        .httpHeaders(response.getHeaders())
-                        .fileName(fileToDownload.toString());
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.createBlobExchangeHeadersFromBlobProperties(
+                        response.getValue())
+                .httpHeaders(response.getHeaders())
+                .fileName(fileToDownload.toString());
 
         return BlobOperationResponse.create(fileToDownload, exchangeHeaders.toMap());
     }
 
     public BlobOperationResponse deleteBlob(final Exchange exchange) {
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
-        final DeleteSnapshotsOptionType deleteSnapshotsOptionType = configurationProxy.getDeleteSnapshotsOptionType(exchange);
+        final DeleteSnapshotsOptionType deleteSnapshotsOptionType =
+                configurationProxy.getDeleteSnapshotsOptionType(exchange);
 
-        return BlobOperationResponse
-                .createWithEmptyBody(client.delete(deleteSnapshotsOptionType, commonRequestOptions.getBlobRequestConditions(),
-                        commonRequestOptions.getTimeout()));
+        return BlobOperationResponse.createWithEmptyBody(client.delete(
+                deleteSnapshotsOptionType,
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout()));
     }
 
     public BlobOperationResponse downloadLink(final Exchange exchange) {
@@ -171,8 +185,8 @@ public class BlobOperations {
             offsetDateTimeToSet = offsetDateTime.plusSeconds(defaultExpirationTime);
         }
 
-        final BlobServiceSasSignatureValues serviceSasSignatureValues
-                = new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
+        final BlobServiceSasSignatureValues serviceSasSignatureValues =
+                new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
         final String url = client.getBlobUrl() + "?" + client.generateSas(serviceSasSignatureValues);
 
         final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
@@ -183,19 +197,27 @@ public class BlobOperations {
     public BlobOperationResponse uploadBlockBlob(final Exchange exchange) throws IOException {
         ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
 
-        final BlobStreamAndLength blobStreamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
+        final BlobStreamAndLength blobStreamAndLength =
+                BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Putting a block blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+            LOG.trace(
+                    "Putting a block blob [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
+                    exchange);
         }
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
-            final Response<BlockBlobItem> response = client.uploadBlockBlob(blobStreamAndLength.getInputStream(),
-                    blobStreamAndLength.getStreamLength(), commonRequestOptions.getBlobHttpHeaders(),
-                    commonRequestOptions.getMetadata(), commonRequestOptions.getAccessTier(),
-                    commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
+            final Response<BlockBlobItem> response = client.uploadBlockBlob(
+                    blobStreamAndLength.getInputStream(),
+                    blobStreamAndLength.getStreamLength(),
+                    commonRequestOptions.getBlobHttpHeaders(),
+                    commonRequestOptions.getMetadata(),
+                    commonRequestOptions.getAccessTier(),
+                    commonRequestOptions.getContentMD5(),
+                    commonRequestOptions.getBlobRequestConditions(),
                     commonRequestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
@@ -222,7 +244,9 @@ public class BlobOperations {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Putting a blob [{}] from blocks from exchange [{}]...", configurationProxy.getBlobName(exchange),
+            LOG.trace(
+                    "Putting a blob [{}] from blocks from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
                     exchange);
         }
 
@@ -232,7 +256,8 @@ public class BlobOperations {
 
         blobBlocks.forEach(blobBlock -> {
             blockEntries.add(blobBlock.getBlockEntry());
-            client.stageBlockBlob(blobBlock.getBlockEntry().getName(),
+            client.stageBlockBlob(
+                    blobBlock.getBlockEntry().getName(),
                     blobBlock.getBlockStream(),
                     blobBlock.getBlockEntry().getSizeLong(),
                     commonRequestOptions.getContentMD5(),
@@ -268,19 +293,22 @@ public class BlobOperations {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Putting a blob [{}] block list from exchange [{}]...", configurationProxy.getBlobName(exchange),
+            LOG.trace(
+                    "Putting a blob [{}] block list from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
                     exchange);
         }
 
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
 
-        final List<String> blockIds = blockEntries.stream()
-                .map(Block::getName)
-                .toList();
+        final List<String> blockIds = blockEntries.stream().map(Block::getName).toList();
 
-        final Response<BlockBlobItem> response = client.commitBlockBlob(blockIds, commonRequestOptions.getBlobHttpHeaders(),
+        final Response<BlockBlobItem> response = client.commitBlockBlob(
+                blockIds,
+                commonRequestOptions.getBlobHttpHeaders(),
                 commonRequestOptions.getMetadata(),
-                commonRequestOptions.getAccessTier(), commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getAccessTier(),
+                commonRequestOptions.getBlobRequestConditions(),
                 commonRequestOptions.getTimeout());
 
         return BlobOperationResponse.createWithEmptyBody(response);
@@ -288,50 +316,64 @@ public class BlobOperations {
 
     public BlobOperationResponse getBlobBlockList(final Exchange exchange) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting the blob block list [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange),
+            LOG.trace(
+                    "Getting the blob block list [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
                     exchange);
         }
 
         final BlockListType blockListType = configurationProxy.getBlockListType(exchange);
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
 
-        final Response<BlockList> response
-                = client.listBlobBlocks(blockListType, commonRequestOptions.leaseId(), commonRequestOptions.getTimeout());
+        final Response<BlockList> response =
+                client.listBlobBlocks(blockListType, commonRequestOptions.leaseId(), commonRequestOptions.getTimeout());
 
         return BlobOperationResponse.create(response);
     }
 
     public BlobOperationResponse createAppendBlob(final Exchange exchange) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating an append blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+            LOG.trace(
+                    "Creating an append blob [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
+                    exchange);
         }
 
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
 
-        final Response<AppendBlobItem> response
-                = client.createAppendBlob(commonRequestOptions.getBlobHttpHeaders(), commonRequestOptions.getMetadata(),
-                        commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
+        final Response<AppendBlobItem> response = client.createAppendBlob(
+                commonRequestOptions.getBlobHttpHeaders(),
+                commonRequestOptions.getMetadata(),
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout());
 
         return BlobOperationResponse.createWithEmptyBody(response);
     }
 
     public BlobOperationResponse copyBlob(final Exchange exchange) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating an append blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+            LOG.trace(
+                    "Creating an append blob [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
+                    exchange);
         }
 
         String sourceBlobName = configurationProxy.getBlobName(exchange);
-        String sourceAccountName = exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, String.class);
+        String sourceAccountName =
+                exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, String.class);
         if (ObjectHelper.isEmpty(sourceAccountName)) {
             throw new IllegalArgumentException("Source Account Name must be specified for copyBlob Operation");
         }
-        String sourceContainerName = exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, String.class);
+        String sourceContainerName =
+                exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, String.class);
         if (ObjectHelper.isEmpty(sourceAccountName)) {
             throw new IllegalArgumentException("Source Container Name must be specified for copyBlob Operation");
         }
-        final String response
-                = client.copyBlob(sourceBlobName, sourceAccountName, sourceContainerName,
-                        configurationProxy.getConfiguration().getSourceBlobAccessKey());
+        final String response = client.copyBlob(
+                sourceBlobName,
+                sourceAccountName,
+                sourceContainerName,
+                configurationProxy.getConfiguration().getSourceBlobAccessKey());
 
         return BlobOperationResponse.create(response);
     }
@@ -347,14 +389,17 @@ public class BlobOperations {
             createAppendBlob(exchange);
         }
 
-        final BlobStreamAndLength streamAndLength = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
+        final BlobStreamAndLength streamAndLength =
+                BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
-            final Response<AppendBlobItem> response
-                    = client.appendBlobBlock(streamAndLength.getInputStream(), streamAndLength.getStreamLength(),
-                            commonRequestOptions.getContentMD5(), commonRequestOptions.getBlobRequestConditions(),
-                            commonRequestOptions.getTimeout());
+            final Response<AppendBlobItem> response = client.appendBlobBlock(
+                    streamAndLength.getInputStream(),
+                    streamAndLength.getStreamLength(),
+                    commonRequestOptions.getContentMD5(),
+                    commonRequestOptions.getBlobRequestConditions(),
+                    commonRequestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -365,7 +410,10 @@ public class BlobOperations {
 
     public BlobOperationResponse createPageBlob(final Exchange exchange) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating a page blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+            LOG.trace(
+                    "Creating a page blob [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
+                    exchange);
         }
 
         final Long pageSize = getPageBlobSize(exchange);
@@ -374,10 +422,13 @@ public class BlobOperations {
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
-            final Response<PageBlobItem> response
-                    = client.createPageBlob(pageSize, sequenceNumber, requestOptions.getBlobHttpHeaders(),
-                            requestOptions.getMetadata(), requestOptions.getBlobRequestConditions(),
-                            requestOptions.getTimeout());
+            final Response<PageBlobItem> response = client.createPageBlob(
+                    pageSize,
+                    sequenceNumber,
+                    requestOptions.getBlobHttpHeaders(),
+                    requestOptions.getMetadata(),
+                    requestOptions.getBlobRequestConditions(),
+                    requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -404,9 +455,12 @@ public class BlobOperations {
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
-            final Response<PageBlobItem> response
-                    = client.uploadPageBlob(pageRange, is, requestOptions.getContentMD5(),
-                            requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+            final Response<PageBlobItem> response = client.uploadPageBlob(
+                    pageRange,
+                    is,
+                    requestOptions.getContentMD5(),
+                    requestOptions.getBlobRequestConditions(),
+                    requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -417,7 +471,10 @@ public class BlobOperations {
 
     public BlobOperationResponse resizePageBlob(final Exchange exchange) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Resizing a page blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+            LOG.trace(
+                    "Resizing a page blob [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
+                    exchange);
         }
 
         final Long pageSize = getPageBlobSize(exchange);
@@ -425,8 +482,8 @@ public class BlobOperations {
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
-            final Response<PageBlobItem> response
-                    = client.resizePageBlob(pageSize, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+            final Response<PageBlobItem> response = client.resizePageBlob(
+                    pageSize, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -446,8 +503,8 @@ public class BlobOperations {
         BlobLeaseClient leaseClient = null;
         try {
             leaseClient = acquireLeaseIfConfigured(requestOptions.getBlobRequestConditions(), exchange);
-            final Response<PageBlobItem> response
-                    = client.clearPagesBlob(pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
+            final Response<PageBlobItem> response = client.clearPagesBlob(
+                    pageRange, requestOptions.getBlobRequestConditions(), requestOptions.getTimeout());
 
             return BlobOperationResponse.createWithEmptyBody(response);
         } finally {
@@ -462,13 +519,14 @@ public class BlobOperations {
         final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting the page blob ranges [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange),
+            LOG.trace(
+                    "Getting the page blob ranges [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange),
                     exchange);
         }
 
-        final PagedIterable<PageRangeItem> response
-                = client.getPageBlobRanges(blobRange, commonRequestOptions.getBlobRequestConditions(),
-                        commonRequestOptions.getTimeout());
+        final PagedIterable<PageRangeItem> response = client.getPageBlobRanges(
+                blobRange, commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getTimeout());
 
         return BlobOperationResponse.create(response);
     }
@@ -485,14 +543,15 @@ public class BlobOperations {
         final Duration timeout = configurationProxy.getTimeout(exchange);
         final byte[] contentMD5 = configurationProxy.getContentMd5(exchange);
 
-        return new BlobCommonRequestOptions(blobHttpHeaders, metadata, accessTier, blobRequestConditions, contentMD5, timeout);
+        return new BlobCommonRequestOptions(
+                blobHttpHeaders, metadata, accessTier, blobRequestConditions, contentMD5, timeout);
     }
 
     private Long getPageBlobSize(final Exchange exchange) {
         // we try to get the size from the page range if exists
         final PageRange pageRange = configurationProxy.getPageRange(exchange);
         if (pageRange != null) {
-            return pageRange.getEnd() - pageRange.getStart() + 1; //e.g: 1023-0+1 = 1024 size
+            return pageRange.getEnd() - pageRange.getStart() + 1; // e.g: 1023-0+1 = 1024 size
         }
         // now we try the page size
         final Long pageSize = configurationProxy.getPageBlobSize(exchange);

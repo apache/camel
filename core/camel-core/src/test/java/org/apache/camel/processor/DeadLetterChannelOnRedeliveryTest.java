@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for testing possibility to modify exchange before redelivering
@@ -70,20 +71,24 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                 // we configure our Dead Letter Channel to invoke
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).onRedelivery(new MyRedeliverProcessor())
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(5)
+                        .onRedelivery(new MyRedeliverProcessor())
                         // setting delay to zero is just to make unit testing faster
                         .redeliveryDelay(0L));
                 // END SNIPPET: e1
 
-                from("direct:start").routeId("myRoute").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // force some error so Camel will do redelivery
-                        if (++counter <= 3) {
-                            throw new IllegalArgumentException("Forced by unit test");
-                        }
-                    }
-                }).to("mock:result");
-
+                from("direct:start")
+                        .routeId("myRoute")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // force some error so Camel will do redelivery
+                                if (++counter <= 3) {
+                                    throw new IllegalArgumentException("Forced by unit test");
+                                }
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -113,7 +118,6 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
             String rid = exchange.getProperty(Exchange.FAILURE_ROUTE_ID, String.class);
             assertEquals("myRoute", rid);
         }
-
     }
     // END SNIPPET: e2
 

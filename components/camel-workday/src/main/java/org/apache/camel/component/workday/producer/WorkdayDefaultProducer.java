@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday.producer;
 
 import org.apache.camel.Exchange;
@@ -56,42 +57,43 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        PoolingHttpClientConnectionManager httpClientConnectionManager
-                = endpoint.getWorkdayConfiguration().getHttpConnectionManager();
-        CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(httpClientConnectionManager).build();
+        PoolingHttpClientConnectionManager httpClientConnectionManager =
+                endpoint.getWorkdayConfiguration().getHttpConnectionManager();
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+                .setConnectionManager(httpClientConnectionManager)
+                .build();
         String workdayUri = prepareUri(endpoint.getWorkdayConfiguration());
 
         HttpGet httpGet = new HttpGet(workdayUri);
         this.authenticationClient.configure(httpClient, httpGet);
 
         try {
-            httpClient.execute(
-                    httpGet,
-                    httpResponse -> {
-                        if (httpResponse.getCode() != HttpStatus.SC_OK) {
-                            throw new IllegalStateException(
-                                    "Got the invalid http status value '" + new StatusLine(httpResponse)
-                                                            + "' as the result of the RAAS '"
-                                                            + workdayUri + "'");
-                        }
+            httpClient.execute(httpGet, httpResponse -> {
+                if (httpResponse.getCode() != HttpStatus.SC_OK) {
+                    throw new IllegalStateException("Got the invalid http status value '" + new StatusLine(httpResponse)
+                            + "' as the result of the RAAS '"
+                            + workdayUri + "'");
+                }
 
-                        try {
-                            String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class,
-                                    httpResponse.getEntity().getContent());
+                try {
+                    String report = getEndpoint()
+                            .getCamelContext()
+                            .getTypeConverter()
+                            .mandatoryConvertTo(
+                                    String.class, httpResponse.getEntity().getContent());
 
-                            if (report.isEmpty()) {
-                                throw new IllegalStateException(
-                                        "Got the unexpected value '" + report + "' as the result of the report '" + workdayUri
-                                                                + "'");
-                            }
+                    if (report.isEmpty()) {
+                        throw new IllegalStateException("Got the unexpected value '" + report
+                                + "' as the result of the report '" + workdayUri + "'");
+                    }
 
-                            exchange.getIn().setBody(report);
-                            exchange.getIn().setHeader(WORKDAY_URL_HEADER, workdayUri);
-                            return null;
-                        } catch (NoTypeConversionAvailableException e) {
-                            throw new RuntimeCamelException(e);
-                        }
-                    });
+                    exchange.getIn().setBody(report);
+                    exchange.getIn().setHeader(WORKDAY_URL_HEADER, workdayUri);
+                    return null;
+                } catch (NoTypeConversionAvailableException e) {
+                    throw new RuntimeCamelException(e);
+                }
+            });
         } catch (RuntimeCamelException e) {
             if (e.getCause() instanceof Exception ex) {
                 throw ex;
@@ -101,5 +103,4 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
     }
 
     public abstract String prepareUri(WorkdayConfiguration configuration) throws Exception;
-
 }

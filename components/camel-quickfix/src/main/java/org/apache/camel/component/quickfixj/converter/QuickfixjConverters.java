@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj.converter;
+
+import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.EVENT_CATEGORY_KEY;
+import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.MESSAGE_TYPE_KEY;
+import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.SESSION_ID_KEY;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -39,16 +44,12 @@ import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.field.MsgType;
 
-import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.EVENT_CATEGORY_KEY;
-import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.MESSAGE_TYPE_KEY;
-import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.SESSION_ID_KEY;
-
 @Converter(generateLoader = true)
 public final class QuickfixjConverters {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjConverters.class);
 
     private QuickfixjConverters() {
-        //Utility class
+        // Utility class
     }
 
     @Converter
@@ -86,8 +87,7 @@ public final class QuickfixjConverters {
     }
 
     @Converter
-    public static InputStream toInputStream(Message value, Exchange exchange)
-            throws UnsupportedEncodingException {
+    public static InputStream toInputStream(Message value, Exchange exchange) throws UnsupportedEncodingException {
         if (exchange != null) {
             String charsetName = ExchangeHelper.getCharsetName(exchange);
             if (charsetName != null) {
@@ -124,7 +124,10 @@ public final class QuickfixjConverters {
     }
 
     public static Exchange toExchange(
-            Endpoint endpoint, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory,
+            Endpoint endpoint,
+            SessionID sessionID,
+            Message message,
+            QuickfixjEventCategory eventCategory,
             ExchangePattern exchangePattern) {
         Exchange exchange = endpoint.createExchange(exchangePattern);
 
@@ -145,7 +148,10 @@ public final class QuickfixjConverters {
     }
 
     public static Exchange toExchange(
-            Consumer consumer, SessionID sessionID, Message message, QuickfixjEventCategory eventCategory,
+            Consumer consumer,
+            SessionID sessionID,
+            Message message,
+            QuickfixjEventCategory eventCategory,
             ExchangePattern exchangePattern) {
         Exchange exchange = consumer.createExchange(false);
         exchange.setPattern(exchangePattern);
@@ -165,5 +171,4 @@ public final class QuickfixjConverters {
 
         return exchange;
     }
-
 }

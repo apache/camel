@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +41,6 @@ import software.amazon.awssdk.services.redshiftdata.model.ListSchemasResponse;
 import software.amazon.awssdk.services.redshiftdata.model.ListStatementsResponse;
 import software.amazon.awssdk.services.redshiftdata.model.ListTablesResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RedshiftData2ProducerTest extends CamelTestSupport {
 
     @BindToRegistry("awsRedshiftDataClient")
@@ -61,7 +62,8 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListDatabasesResponse resultGet = (ListDatabasesResponse) exchange.getIn().getBody();
+        ListDatabasesResponse resultGet =
+                (ListDatabasesResponse) exchange.getIn().getBody();
         List<String> resultList = new ArrayList<>();
         resultList.add("database1");
         resultList.add("database2");
@@ -99,7 +101,8 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListStatementsResponse resultGet = (ListStatementsResponse) exchange.getIn().getBody();
+        ListStatementsResponse resultGet =
+                (ListStatementsResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.statements().get(0).statementName());
     }
 
@@ -133,7 +136,8 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeTableResponse resultGet = (DescribeTableResponse) exchange.getIn().getBody();
+        DescribeTableResponse resultGet =
+                (DescribeTableResponse) exchange.getIn().getBody();
         assertEquals("table1", resultGet.tableName());
     }
 
@@ -150,7 +154,8 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ExecuteStatementResponse resultGet = (ExecuteStatementResponse) exchange.getIn().getBody();
+        ExecuteStatementResponse resultGet =
+                (ExecuteStatementResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.id());
     }
 
@@ -161,13 +166,15 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:batchExecuteStatement", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.batchExecuteStatement);
+                exchange.getIn()
+                        .setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.batchExecuteStatement);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        BatchExecuteStatementResponse resultGet = (BatchExecuteStatementResponse) exchange.getIn().getBody();
+        BatchExecuteStatementResponse resultGet =
+                (BatchExecuteStatementResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.id());
     }
 
@@ -184,7 +191,8 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CancelStatementResponse resultGet = (CancelStatementResponse) exchange.getIn().getBody();
+        CancelStatementResponse resultGet =
+                (CancelStatementResponse) exchange.getIn().getBody();
         assertEquals(true, resultGet.status());
     }
 
@@ -201,7 +209,8 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeStatementResponse resultGet = (DescribeStatementResponse) exchange.getIn().getBody();
+        DescribeStatementResponse resultGet =
+                (DescribeStatementResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.id());
     }
 
@@ -212,13 +221,15 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:getStatementResult", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.getStatementResult);
+                exchange.getIn()
+                        .setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.getStatementResult);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetStatementResultResponse resultGet = (GetStatementResultResponse) exchange.getIn().getBody();
+        GetStatementResultResponse resultGet =
+                (GetStatementResultResponse) exchange.getIn().getBody();
         assertEquals(10, resultGet.totalNumRows());
     }
 
@@ -228,37 +239,48 @@ public class RedshiftData2ProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:listDatabases")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases")
                         .to("mock:result");
                 from("direct:listDatabasesPojo")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases&pojoRequest=true")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listDatabases&pojoRequest=true")
                         .to("mock:result");
                 from("direct:listSchemas")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listSchemas")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listSchemas")
                         .to("mock:result");
                 from("direct:listStatements")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listStatements")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listStatements")
                         .to("mock:result");
                 from("direct:listTables")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listTables")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=listTables")
                         .to("mock:result");
                 from("direct:describeTable")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=describeTable")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=describeTable")
                         .to("mock:result");
                 from("direct:executeStatement")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=executeStatement")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=executeStatement")
                         .to("mock:result");
                 from("direct:batchExecuteStatement")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=batchExecuteStatement")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=batchExecuteStatement")
                         .to("mock:result");
                 from("direct:cancelStatement")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=cancelStatement")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=cancelStatement")
                         .to("mock:result");
                 from("direct:describeStatement")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=describeStatement")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=describeStatement")
                         .to("mock:result");
                 from("direct:getStatementResult")
-                        .to("aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=getStatementResult")
+                        .to(
+                                "aws2-redshift-data://test?awsRedshiftDataClient=#awsRedshiftDataClient&operation=getStatementResult")
                         .to("mock:result");
             }
         };

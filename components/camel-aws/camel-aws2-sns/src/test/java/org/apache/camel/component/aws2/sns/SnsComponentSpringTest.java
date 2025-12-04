@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SnsComponentSpringTest extends CamelSpringTestSupport {
 
@@ -48,11 +49,13 @@ public class SnsComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
+        assertEquals(
+                "dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/sns/SnsComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/sns/SnsComponentSpringTest-context.xml");
     }
 }

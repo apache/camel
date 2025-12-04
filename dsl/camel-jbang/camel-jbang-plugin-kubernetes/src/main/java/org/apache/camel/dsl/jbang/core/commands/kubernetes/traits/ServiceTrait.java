@@ -57,10 +57,12 @@ public class ServiceTrait extends BaseTrait {
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
         Service serviceTrait = Optional.ofNullable(traitConfig.getService()).orElseGet(Service::new);
-        String serviceType = Optional.ofNullable(serviceTrait.getType()).map(Service.Type::getValue)
+        String serviceType = Optional.ofNullable(serviceTrait.getType())
+                .map(Service.Type::getValue)
                 .orElse(Service.Type.CLUSTERIP.getValue());
 
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
 
         ServiceBuilder service = new ServiceBuilder()
                 .withNewMetadata()
@@ -72,17 +74,15 @@ public class ServiceTrait extends BaseTrait {
                 .addToPorts(new ServicePortBuilder()
                         .withName(Optional.ofNullable(containerTrait.getServicePortName())
                                 .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME))
-                        .withPort(Optional.ofNullable(containerTrait.getServicePort()).map(Long::intValue)
+                        .withPort(Optional.ofNullable(containerTrait.getServicePort())
+                                .map(Long::intValue)
                                 .orElse(DEFAULT_SERVICE_PORT))
-                        .withTargetPort(
-                                new IntOrString(
-                                        Optional.ofNullable(containerTrait.getPortName())
-                                                .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME)))
+                        .withTargetPort(new IntOrString(Optional.ofNullable(containerTrait.getPortName())
+                                .orElse(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME)))
                         .withProtocol("TCP")
                         .build())
                 .endSpec();
 
         context.add(service);
     }
-
 }

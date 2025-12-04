@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
 
 import java.io.ByteArrayOutputStream;
@@ -32,7 +33,7 @@ import org.apache.camel.test.junit5.params.Parameters;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 @Parameterized
 public abstract class LevelDBTestSupport extends CamelTestSupport {
 
@@ -48,9 +49,7 @@ public abstract class LevelDBTestSupport extends CamelTestSupport {
 
     @Parameters
     public static Collection<Object[]> serializers() {
-        Object[][] serializers = {
-                { SerializerType.JAVA_SERIALIZATION },
-                { SerializerType.JACKSON } };
+        Object[][] serializers = {{SerializerType.JAVA_SERIALIZATION}, {SerializerType.JACKSON}};
         return Arrays.asList(serializers);
     }
 
@@ -111,11 +110,10 @@ public abstract class LevelDBTestSupport extends CamelTestSupport {
 
                 oldExchange.getIn().setBody(outputStream.toByteArray());
             } catch (IOException e) {
-                //ignore
+                // ignore
             }
 
             return oldExchange;
-
         }
     }
 

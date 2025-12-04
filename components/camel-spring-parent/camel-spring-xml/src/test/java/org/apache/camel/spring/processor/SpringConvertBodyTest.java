@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.converter.ConvertBodyTest;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 public class SpringConvertBodyTest extends ConvertBodyTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/convertBody.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
     }
 }

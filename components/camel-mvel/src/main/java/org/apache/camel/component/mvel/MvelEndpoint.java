@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mvel;
 
 import java.io.InputStreamReader;
@@ -37,12 +38,20 @@ import org.mvel2.templates.TemplateRuntime;
 /**
  * Transform messages using an MVEL template.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "mvel", title = "MVEL", syntax = "mvel:resourceUri", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION, Category.SCRIPT }, headersClass = MvelConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "mvel",
+        title = "MVEL",
+        syntax = "mvel:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION, Category.SCRIPT},
+        headersClass = MvelConstants.class)
 public class MvelEndpoint extends ResourceEndpoint {
 
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam
     private String encoding;
 
@@ -110,7 +119,9 @@ public class MvelEndpoint extends ResourceEndpoint {
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(MvelConstants.MVEL_RESOURCE_URI);
 
-                log.debug("{} set to {} creating new endpoint to handle exchange", MvelConstants.MVEL_RESOURCE_URI,
+                log.debug(
+                        "{} set to {} creating new endpoint to handle exchange",
+                        MvelConstants.MVEL_RESOURCE_URI,
                         newResourceUri);
                 MvelEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
@@ -129,14 +140,20 @@ public class MvelEndpoint extends ResourceEndpoint {
         if (content != null) {
             // use content from header
             if (log.isDebugEnabled()) {
-                log.debug("Mvel content read from header {} for endpoint {}", MvelConstants.MVEL_TEMPLATE, getEndpointUri());
+                log.debug(
+                        "Mvel content read from header {} for endpoint {}",
+                        MvelConstants.MVEL_TEMPLATE,
+                        getEndpointUri());
             }
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(MvelConstants.MVEL_TEMPLATE);
             compiled = TemplateCompiler.compileTemplate(content, mvelContext);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path,
+                log.debug(
+                        "Mvel content read from resource {} with resourceUri: {} for endpoint {}",
+                        getResourceUri(),
+                        path,
                         getEndpointUri());
             }
             // getResourceAsInputStream also considers the content cache
@@ -164,5 +181,4 @@ public class MvelEndpoint extends ResourceEndpoint {
         log.debug("Getting endpoint with URI: {}", newUri);
         return getCamelContext().getEndpoint(newUri, MvelEndpoint.class);
     }
-
 }

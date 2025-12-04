@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
@@ -76,17 +77,18 @@ public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("route-a")
-                        .to("log:foo").id("foo")
+                from("direct:start")
+                        .routeId("route-a")
+                        .to("log:foo")
+                        .id("foo")
                         .split(body().tokenize(","))
                         .to("direct:split")
                         .end()
-                        .to("mock:result").id("mock");
+                        .to("mock:result")
+                        .id("mock");
 
-                from("direct:split").routeId("route-b")
-                        .to("log:bar").id("bar");
+                from("direct:split").routeId("route-b").to("log:bar").id("bar");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup;
 
 import java.io.InputStream;
@@ -35,16 +36,17 @@ import org.slf4j.LoggerFactory;
 
 public class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ClickUpWebhookCallTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClickUpWebhookCallTest.class);
 
-    private final static Long WORKSPACE_ID = 12345L;
-    private final static String AUTHORIZATION_TOKEN = "mock-authorization-token";
-    private final static String WEBHOOK_SECRET = "mock-webhook-secret";
-    private final static Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
+    private static final Long WORKSPACE_ID = 12345L;
+    private static final String AUTHORIZATION_TOKEN = "mock-authorization-token";
+    private static final String WEBHOOK_SECRET = "mock-webhook-secret";
+    private static final Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
 
-    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME = "messages/events/time-tracking-created.json";
-    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE
-            = "ac99f10017e28db6839941c184964890ec3262b1d6b1756d33ff53d972d5a361";
+    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME =
+            "messages/events/time-tracking-created.json";
+    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE =
+            "ac99f10017e28db6839941c184964890ec3262b1d6b1756d33ff53d972d5a361";
 
     private static int port;
 
@@ -55,14 +57,14 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
     @Test
     public void testWebhookCall() throws Exception {
-        WebhookConfiguration config
-                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        WebhookConfiguration config =
+                ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
         LOGGER.info("Webhook external url: {}", url);
 
-        try (InputStream content
-                = getClass().getClassLoader().getResourceAsStream(MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME)) {
+        try (InputStream content =
+                getClass().getClassLoader().getResourceAsStream(MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME)) {
             LOGGER.info("message content: {}", content);
 
             MockEndpoint mock = getMockEndpoint("mock:endpoint");
@@ -83,12 +85,11 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration()
-                        .host("localhost")
-                        .port(port);
+                restConfiguration().host("localhost").port(port);
 
-                from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN + "&webhookSecret="
-                     + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS) + "&webhookAutoRegister=false")
+                from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN
+                                + "&webhookSecret=" + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS)
+                                + "&webhookAutoRegister=false")
                         .id("webhook")
                         .to("mock:endpoint");
             }

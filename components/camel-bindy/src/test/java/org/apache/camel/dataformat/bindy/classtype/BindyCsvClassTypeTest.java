@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.classtype;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -29,8 +32,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  *
  */
@@ -38,7 +39,8 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
 
     @Test
     public void testMarshallMessage() throws Exception {
-        String expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,17-02-2010 23:21:59\r\n";
+        String expected =
+                "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,17-02-2010 23:21:59\r\n";
 
         getMockEndpoint("mock:in").expectedBodiesReceived(expected);
 
@@ -57,7 +59,11 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Order order = getMockEndpoint("mock:out").getReceivedExchanges().get(0).getIn().getBody(Order.class);
+        Order order = getMockEndpoint("mock:out")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(Order.class);
         assertEquals(1, order.getOrderNr());
         assertEquals("BUY", order.getOrderType());
         assertEquals("B2", order.getClientNr());
@@ -113,13 +119,9 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
                         .locale("en")
                         .csv();
 
-                from("direct:in")
-                        .marshal(bindy)
-                        .to("mock:in");
+                from("direct:in").marshal(bindy).to("mock:in");
 
-                from("direct:out")
-                        .unmarshal().bindy(BindyType.Csv, Order.class)
-                        .to("mock:out");
+                from("direct:out").unmarshal().bindy(BindyType.Csv, Order.class).to("mock:out");
             }
         };
     }

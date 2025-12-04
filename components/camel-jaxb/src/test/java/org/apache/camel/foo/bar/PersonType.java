@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.foo.bar;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -47,11 +48,14 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "Person")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PersonType", propOrder = { "firstName", "lastName" })
+@XmlType(
+        name = "PersonType",
+        propOrder = {"firstName", "lastName"})
 public class PersonType {
 
     @XmlElement(required = true)
     protected String firstName;
+
     @XmlElement(required = true)
     protected String lastName;
 
@@ -109,5 +113,4 @@ public class PersonType {
     public int hashCode() {
         return firstName.hashCode() + lastName.hashCode() * 100;
     }
-
 }

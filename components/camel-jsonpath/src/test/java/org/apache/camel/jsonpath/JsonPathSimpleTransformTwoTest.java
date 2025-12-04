@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,9 +29,7 @@ public class JsonPathSimpleTransformTwoTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .transform().simple("${jsonpath($.id)}")
-                        .to("mock:result");
+                from("direct:start").transform().simple("${jsonpath($.id)}").to("mock:result");
             }
         };
     }
@@ -43,5 +42,4 @@ public class JsonPathSimpleTransformTwoTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

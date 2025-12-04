@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetEndPathTest extends FromRestGetTest {
 
@@ -36,7 +37,8 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
         assertNotNull(rest);
         assertEquals("/say/hello", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        ToDefinition to =
+                assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
 
         rest = context.getRestDefinitions().get(1);
@@ -68,8 +70,11 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
                 rest("/say/hello").get().to("direct:hello");
 
                 rest("/say/bye")
-                    .get().consumes("application/json").to("direct:bye")
-                    .post().to("mock:update");
+                        .get()
+                        .consumes("application/json")
+                        .to("direct:bye")
+                        .post()
+                        .to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

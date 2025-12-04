@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.client;
 
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
@@ -24,8 +25,7 @@ import org.apache.camel.component.aws2.kinesis.client.impl.*;
  */
 public final class KinesisClientFactory {
 
-    private KinesisClientFactory() {
-    }
+    private KinesisClientFactory() {}
 
     /**
      * Return the correct aws Kinesis client (based on remote vs local).

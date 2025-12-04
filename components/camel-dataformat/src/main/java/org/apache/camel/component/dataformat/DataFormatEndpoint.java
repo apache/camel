@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataformat;
 
 import org.apache.camel.AsyncCallback;
@@ -37,9 +38,15 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Use a Camel Data Format as a regular Camel Component.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation",
-             remote = false, producerOnly = true,
-             category = { Category.CORE, Category.TRANSFORMATION }, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "dataformat",
+        title = "Data Format",
+        syntax = "dataformat:name:operation",
+        remote = false,
+        producerOnly = true,
+        category = {Category.CORE, Category.TRANSFORMATION},
+        lenientProperties = true)
 public class DataFormatEndpoint extends DefaultEndpoint {
 
     private AsyncProcessor processor;
@@ -48,12 +55,12 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of data format")
     @Metadata(required = true)
     private String name;
+
     @UriPath(enums = "marshal,unmarshal")
     @Metadata(required = true)
     private String operation;
 
-    public DataFormatEndpoint() {
-    }
+    public DataFormatEndpoint() {}
 
     public DataFormatEndpoint(String endpointUri, Component component, DataFormat dataFormat) {
         super(endpointUri, component);

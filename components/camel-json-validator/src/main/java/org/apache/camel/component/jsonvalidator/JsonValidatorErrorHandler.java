@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
 
 import java.util.Set;
@@ -44,5 +45,4 @@ public interface JsonValidatorErrorHandler {
      * @throws ValidationException is thrown in case of validation errors
      */
     void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException;
-
 }

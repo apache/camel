@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
@@ -51,8 +52,8 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
         context.start();
 
-        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:foo", "Hello World"),
-                "Should throw exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:foo", "Hello World"), "Should throw exception");
 
         assertEquals("Forced", e.getCause().getMessage());
 
@@ -73,7 +74,11 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
-                weaveById("myException").replace().onException(Exception.class).handled(true).to("mock:dead2");
+                weaveById("myException")
+                        .replace()
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:dead2");
             }
         });
 
@@ -89,15 +94,20 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).id("myException").handled(true).transform(constant("Bye World")).to("mock:dead");
+                onException(Exception.class)
+                        .id("myException")
+                        .handled(true)
+                        .transform(constant("Bye World"))
+                        .to("mock:dead");
 
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced"))
+                from("direct:foo")
+                        .routeId("foo")
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced"))
                         .to("mock:b");
-
             }
         };
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,9 +53,6 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.MDC;
-
-import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 
 /**
  * Represents the runtime objects for a given route so that it can be stopped independently of other routes
@@ -390,8 +391,8 @@ public class RouteService extends ChildServiceSupport {
         for (Service service : services) {
             StartupStep step = null;
             // skip internal services / route pipeline (starting point for route)
-            boolean shouldRecord
-                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
+            boolean shouldRecord = !(service instanceof InternalProcessor
+                    || "RoutePipeline".equals(service.getClass().getSimpleName()));
             if (shouldRecord) {
                 step = beginStep(service, "Init");
             }
@@ -408,8 +409,8 @@ public class RouteService extends ChildServiceSupport {
         for (Service service : services) {
             StartupStep step = null;
             // skip internal services / route pipeline (starting point for route)
-            boolean shouldRecord
-                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
+            boolean shouldRecord = !(service instanceof InternalProcessor
+                    || "RoutePipeline".equals(service.getClass().getSimpleName()));
             if (shouldRecord) {
                 step = beginStep(service, "Start");
             }
@@ -511,7 +512,5 @@ public class RouteService extends ChildServiceSupport {
                 }
             }
         }
-
     }
-
 }

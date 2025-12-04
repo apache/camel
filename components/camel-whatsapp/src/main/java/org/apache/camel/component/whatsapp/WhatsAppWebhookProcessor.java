@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 import java.io.IOException;
@@ -50,7 +51,9 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
     public boolean process(Exchange exchange, AsyncCallback callback) {
         String content;
 
-        if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD).toString())) {
+        if ("GET"
+                .equalsIgnoreCase(
+                        exchange.getIn().getHeader(Exchange.HTTP_METHOD).toString())) {
             // Parse params from the webhook verification request
             Map<String, String> queryParams = parseQueryParam(exchange);
 
@@ -96,7 +99,8 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
         Map<String, String> queryParams = new HashMap<>();
 
         if (exchange.getIn().getHeader(Exchange.HTTP_QUERY) != null) {
-            String[] pairs = exchange.getIn().getHeader(Exchange.HTTP_QUERY).toString().split("&");
+            String[] pairs =
+                    exchange.getIn().getHeader(Exchange.HTTP_QUERY).toString().split("&");
             for (String pair : pairs) {
                 String[] keyValuePair = pair.split("=");
 
@@ -106,5 +110,4 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements A
 
         return queryParams;
     }
-
 }

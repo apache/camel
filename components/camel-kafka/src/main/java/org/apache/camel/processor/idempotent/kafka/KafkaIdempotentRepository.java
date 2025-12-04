@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.kafka;
 
 import java.time.Duration;
@@ -70,11 +71,13 @@ import org.slf4j.LoggerFactory;
  * instance consumes the full content of the topic, rebuilding the cache to the latest state. To use, this repository
  * must be placed in the Camel registry.
  */
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses Kafka to store message ids. Uses a local cache of previously seen Message IDs."
+@Metadata(
+        label = "bean",
+        description =
+                "Idempotent repository that uses Kafka to store message ids. Uses a local cache of previously seen Message IDs."
                         + " The topic used must be unique per logical repository (i.e. two routes de-duplicate using different repositories, and different topics)"
                         + " On startup, the instance consumes the full content of the topic, rebuilding the cache to the latest state.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Kafka IdempotentRepository")
 public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository, CamelContextAware {
@@ -97,18 +100,29 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private Properties consumerConfig;
 
     // configurable
-    @Metadata(description = "Sets the name of the Kafka topic used by this idempotent repository."
-                            + " Each functionally-separate repository should use a different topic.",
-              required = true)
+    @Metadata(
+            description = "Sets the name of the Kafka topic used by this idempotent repository."
+                    + " Each functionally-separate repository should use a different topic.",
+            required = true)
     private String topic;
+
     @Metadata(description = "The URL for the kafka brokers to use", required = true)
     private String bootstrapServers;
-    @Metadata(description = "A string that uniquely identifies the group of consumer processes to which this consumer belongs. By setting the"
+
+    @Metadata(
+            description =
+                    "A string that uniquely identifies the group of consumer processes to which this consumer belongs. By setting the"
                             + " same group id, multiple processes can indicate that they are all part of the same consumer group.")
     private String groupId;
-    @Metadata(description = "Sets the maximum size of the local key cache.", defaultValue = "" + DEFAULT_MAXIMUM_CACHE_SIZE)
+
+    @Metadata(
+            description = "Sets the maximum size of the local key cache.",
+            defaultValue = "" + DEFAULT_MAXIMUM_CACHE_SIZE)
     private int maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
-    @Metadata(description = "Sets the poll duration of the Kafka consumer. The local caches are updated immediately; this value will affect"
+
+    @Metadata(
+            description =
+                    "Sets the poll duration of the Kafka consumer. The local caches are updated immediately; this value will affect"
                             + " how far behind other peers in the cluster are, which are updating their caches from the topic, relative to the"
                             + " idempotent consumer instance issued the cache action message. The default value of this is 100"
                             + " If setting this value explicitly, be aware that there is a tradeoff between"
@@ -117,8 +131,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                             + " the stream has been consumed up to the current point. If the poll duration is excessively long for the rate at"
                             + " which messages are sent on the topic, there exists a possibility that the cache cannot be warmed up and will"
                             + " operate in an inconsistent state relative to its peers until it catches up.",
-              defaultValue = "" + DEFAULT_POLL_DURATION_MS)
+            defaultValue = "" + DEFAULT_POLL_DURATION_MS)
     private int pollDurationMs = DEFAULT_POLL_DURATION_MS;
+
     @Metadata(description = "Whether to sync on startup only, or to continue syncing while Camel is running.")
     private boolean startupOnly;
 
@@ -128,8 +143,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         clear
     }
 
-    public KafkaIdempotentRepository() {
-    }
+    public KafkaIdempotentRepository() {}
 
     public KafkaIdempotentRepository(String topic, String bootstrapServers) {
         this(topic, bootstrapServers, DEFAULT_MAXIMUM_CACHE_SIZE, DEFAULT_POLL_DURATION_MS);
@@ -151,12 +165,13 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Deprecated
-    public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, String groupId) {
+    public KafkaIdempotentRepository(
+            String topic, Properties consumerConfig, Properties producerConfig, String groupId) {
         this(topic, consumerConfig, producerConfig, DEFAULT_MAXIMUM_CACHE_SIZE, DEFAULT_POLL_DURATION_MS, groupId);
     }
 
-    public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, int maxCacheSize,
-                                     int pollDurationMs) {
+    public KafkaIdempotentRepository(
+            String topic, Properties consumerConfig, Properties producerConfig, int maxCacheSize, int pollDurationMs) {
         this.topic = topic;
         this.consumerConfig = consumerConfig;
         this.producerConfig = producerConfig;
@@ -164,8 +179,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this.pollDurationMs = pollDurationMs;
     }
 
-    public KafkaIdempotentRepository(String topic, String bootstrapServers, int maxCacheSize, int pollDurationMs,
-                                     String groupId) {
+    public KafkaIdempotentRepository(
+            String topic, String bootstrapServers, int maxCacheSize, int pollDurationMs, String groupId) {
         this.topic = topic;
         this.bootstrapServers = bootstrapServers;
         this.maxCacheSize = maxCacheSize;
@@ -173,8 +188,13 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this.groupId = groupId;
     }
 
-    public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, int maxCacheSize,
-                                     int pollDurationMs, String groupId) {
+    public KafkaIdempotentRepository(
+            String topic,
+            Properties consumerConfig,
+            Properties producerConfig,
+            int maxCacheSize,
+            int pollDurationMs,
+            String groupId) {
         this.topic = topic;
         this.consumerConfig = consumerConfig;
         this.producerConfig = producerConfig;
@@ -364,13 +384,16 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         StopWatch watch = new StopWatch();
         LOG.info("Syncing KafkaIdempotentRepository from topic: {} starting", topic);
         poller.run();
-        LOG.info("Syncing KafkaIdempotentRepository from topic: {} complete: {}", topic,
+        LOG.info(
+                "Syncing KafkaIdempotentRepository from topic: {} complete: {}",
+                topic,
                 TimeUtils.printDuration(watch.taken(), true));
 
         if (!startupOnly) {
             // continue sync job in background
-            executorService
-                    = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "KafkaIdempotentRepositorySync");
+            executorService = camelContext
+                    .getExecutorServiceManager()
+                    .newSingleThreadExecutor(this, "KafkaIdempotentRepositorySync");
             LOG.info("Syncing KafkaIdempotentRepository from topic: {} continuously using background thread", topic);
             executorService.submit(poller);
         }
@@ -460,8 +483,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         } catch (IllegalArgumentException iax) {
             LOG.warn(
                     "Unexpected action value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Ignoring.",
-                    consumerRecord.key(), consumerRecord.topic(),
-                    consumerRecord.partition(), consumerRecord.offset());
+                    consumerRecord.key(),
+                    consumerRecord.topic(),
+                    consumerRecord.partition(),
+                    consumerRecord.offset());
         }
     }
 

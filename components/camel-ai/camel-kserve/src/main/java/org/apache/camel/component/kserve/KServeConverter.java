@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kserve;
 
 import inference.GrpcPredictV2;
@@ -26,14 +27,12 @@ import org.apache.camel.Converter;
 public class KServeConverter {
 
     @Converter
-    public static GrpcPredictV2.ModelInferRequest toModelInferRequest(
-            GrpcPredictV2.ModelInferRequest.Builder builder) {
+    public static GrpcPredictV2.ModelInferRequest toModelInferRequest(GrpcPredictV2.ModelInferRequest.Builder builder) {
         return builder.build();
     }
 
     @Converter
-    public static GrpcPredictV2.ModelReadyRequest toModelReadyRequest(
-            GrpcPredictV2.ModelReadyRequest.Builder builder) {
+    public static GrpcPredictV2.ModelReadyRequest toModelReadyRequest(GrpcPredictV2.ModelReadyRequest.Builder builder) {
         return builder.build();
     }
 
@@ -50,8 +49,7 @@ public class KServeConverter {
     }
 
     @Converter
-    public static GrpcPredictV2.ServerLiveRequest toServerLiveRequest(
-            GrpcPredictV2.ServerLiveRequest.Builder builder) {
+    public static GrpcPredictV2.ServerLiveRequest toServerLiveRequest(GrpcPredictV2.ServerLiveRequest.Builder builder) {
         return builder.build();
     }
 

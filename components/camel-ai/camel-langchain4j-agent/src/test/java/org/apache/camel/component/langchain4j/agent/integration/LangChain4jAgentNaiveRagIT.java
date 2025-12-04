@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,15 +31,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
-    private static final String SYSTEM_MESSAGE_CUSTOMER_SERVICE
-            = "You are a friendly customer service representative for Miles of Camels Car Rental. Always be helpful and polite.";
+    private static final String SYSTEM_MESSAGE_CUSTOMER_SERVICE =
+            "You are a friendly customer service representative for Miles of Camels Car Rental. Always be helpful and polite.";
 
     @Test
     void testAgentWithRagBasicQuery() throws InterruptedException {
@@ -50,9 +51,12 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains("cancel") || response.toLowerCase().contains("refund"),
+        assertTrue(
+                response.toLowerCase().contains("cancel")
+                        || response.toLowerCase().contains("refund"),
                 "Response should contain cancellation information: " + response);
-        assertTrue(response.contains("24 hours") || response.contains("12 hours"),
+        assertTrue(
+                response.contains("24 hours") || response.contains("12 hours"),
                 "Response should mention timeframes: " + response);
     }
 
@@ -70,9 +74,11 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains("insurance"),
+        assertTrue(
+                response.toLowerCase().contains("insurance"),
                 "Response should contain insurance information: " + response);
-        assertTrue(response.contains("$15") || response.contains("premium") || response.contains("basic"),
+        assertTrue(
+                response.contains("$15") || response.contains("premium") || response.contains("basic"),
                 "Response should mention insurance options: " + response);
     }
 
@@ -90,7 +96,8 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains("21") || response.contains("age"),
+        assertTrue(
+                response.contains("21") || response.contains("age"),
                 "Response should mention age requirements: " + response);
     }
 
@@ -108,7 +115,9 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains("damage") || response.toLowerCase().contains("$200"),
+        assertTrue(
+                response.toLowerCase().contains("damage")
+                        || response.toLowerCase().contains("$200"),
                 "Response should contain damage policy information: " + response);
     }
 
@@ -127,7 +136,8 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertTrue(
-                response.toLowerCase().contains("fuel") || response.toLowerCase().contains("return")
+                response.toLowerCase().contains("fuel")
+                        || response.toLowerCase().contains("return")
                         || response.contains("$25"),
                 "Response should contain return policy information: " + response);
     }
@@ -146,7 +156,9 @@ public class LangChain4jAgentNaiveRagIT extends AbstractRAGIT {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains("cancel") || response.toLowerCase().contains("refund"),
+        assertTrue(
+                response.toLowerCase().contains("cancel")
+                        || response.toLowerCase().contains("refund"),
                 "Response should contain cancellation information: " + response);
     }
 

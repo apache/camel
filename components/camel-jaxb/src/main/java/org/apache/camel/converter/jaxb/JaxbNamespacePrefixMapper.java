@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import java.util.Map;
@@ -41,5 +42,4 @@ public interface JaxbNamespacePrefixMapper {
      * Used by JAXB to obtain the preferred prefix.
      */
     String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix);
-
 }

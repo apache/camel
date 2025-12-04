@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -27,10 +32,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.http.common.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -38,10 +39,13 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -63,7 +67,8 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").streamCache("false")
+                from("direct:start")
+                        .streamCache("false")
                         .to("http://localhost:" + localServer.getLocalPort() + "/test/?disableStreamCache=true")
                         .process(e -> {
                             InputStream is = (InputStream) e.getMessage().getBody();
@@ -75,8 +80,8 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
                             e.setVariable("newBody", bos.toString());
                         })
-                        .setBody().variable("newBody");
-
+                        .setBody()
+                        .variable("newBody");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,12 +34,9 @@ import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class StringSourceTest {
-    protected TypeConverter converter = new DefaultTypeConverter(
-            new DefaultPackageScanClassResolver(), new ReflectionInjector(), false, false);
+    protected TypeConverter converter =
+            new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(), false, false);
     protected String expectedBody = "<hello>world!</hello>";
 
     @BeforeEach
@@ -67,5 +68,4 @@ public class StringSourceTest {
         String value = converter.convertTo(String.class, actual);
         assertEquals(expectedBody, value, "text value of StringSource");
     }
-
 }

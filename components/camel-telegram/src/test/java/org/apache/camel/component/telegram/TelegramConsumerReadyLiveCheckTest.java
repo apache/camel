@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import java.util.Collection;
@@ -44,8 +45,8 @@ public class TelegramConsumerReadyLiveCheckTest extends TelegramTestSupport {
 
         // enabling consumers health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
-        HealthCheckRepository repo
-                = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
+        HealthCheckRepository repo =
+                hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
         repo.setEnabled(true);
         hcr.register(repo);
 
@@ -55,36 +56,33 @@ public class TelegramConsumerReadyLiveCheckTest extends TelegramTestSupport {
     @Test
     public void testLiveAndReady() {
         // should become in state where liveness is UP and readiness is DOWN
-        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
-                () -> {
-                    Collection<HealthCheck.Result> live = HealthCheckHelper.invokeLiveness(context);
-                    Collection<HealthCheck.Result> ready = HealthCheckHelper.invokeReadiness(context);
-                    boolean liveDown = live.stream().anyMatch(c -> c.getState().equals(HealthCheck.State.DOWN));
-                    boolean readyDown = ready.stream().anyMatch(c -> c.getState().equals(HealthCheck.State.DOWN));
-                    return readyDown && !liveDown;
-                });
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> {
+            Collection<HealthCheck.Result> live = HealthCheckHelper.invokeLiveness(context);
+            Collection<HealthCheck.Result> ready = HealthCheckHelper.invokeReadiness(context);
+            boolean liveDown = live.stream().anyMatch(c -> c.getState().equals(HealthCheck.State.DOWN));
+            boolean readyDown = ready.stream().anyMatch(c -> c.getState().equals(HealthCheck.State.DOWN));
+            return readyDown && !liveDown;
+        });
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token").routeId("telegram")
-                                .convertBodyTo(String.class)
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .routeId("telegram")
+                            .convertBodyTo(String.class)
+                            .to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port)
-                .addErrorEndpoint(
-                        "getUpdates",
-                        "GET",
-                        401);
+        return new TelegramMockRoutes(port).addErrorEndpoint("getUpdates", "GET", 401);
     }
 }

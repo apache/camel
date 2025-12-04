@@ -67,12 +67,11 @@ public class ReplyHolder {
 
     @Override
     public String toString() {
-        return "ReplyHolder{" +
-               "exchange=" + exchange +
-               ", callback=" + callback +
-               ", messageKey='" + messageKey + '\'' +
-               ", messageExt=" + messageExt +
-               ", timeout=" + timeout +
-               '}';
+        return "ReplyHolder{" + "exchange="
+                + exchange + ", callback="
+                + callback + ", messageKey='"
+                + messageKey + '\'' + ", messageExt="
+                + messageExt + ", timeout="
+                + timeout + '}';
     }
 }

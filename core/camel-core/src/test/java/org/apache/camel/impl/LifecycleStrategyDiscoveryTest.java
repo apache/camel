@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitialized;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitializing;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarted;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarting;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopped;
+import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopping;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,14 +35,6 @@ import org.apache.camel.spi.OnCamelContextInitializing;
 import org.apache.camel.spi.OnCamelContextStarting;
 import org.apache.camel.spi.OnCamelContextStopping;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitialized;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextInitializing;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarted;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStarting;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopped;
-import static org.apache.camel.support.LifecycleStrategySupport.onCamelContextStopping;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LifecycleStrategyDiscoveryTest extends TestSupport {
     @Test
@@ -50,7 +51,8 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
         final AtomicInteger onStopRoute = new AtomicInteger();
 
         CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myOnInitializing", onCamelContextInitializing(c -> onInitializing.incrementAndGet()));
+        context.getRegistry()
+                .bind("myOnInitializing", onCamelContextInitializing(c -> onInitializing.incrementAndGet()));
         context.getRegistry().bind("myOnInitialized", onCamelContextInitialized(c -> onInitialized.incrementAndGet()));
         context.getRegistry().bind("myOnStarting", onCamelContextStarting(c -> onStarting.incrementAndGet()));
         context.getRegistry().bind("myOnStarted", onCamelContextStarted(c -> onStarted.incrementAndGet()));
@@ -58,14 +60,14 @@ public class LifecycleStrategyDiscoveryTest extends TestSupport {
         context.getRegistry().bind("myOnStopped", onCamelContextStopped(c -> onStopped.incrementAndGet()));
 
         try {
-            class MyBuilder
-                    extends RouteBuilder
-                    implements OnCamelContextInitializing, OnCamelContextInitialized, OnCamelContextStarting,
-                    OnCamelContextStopping {
+            class MyBuilder extends RouteBuilder
+                    implements OnCamelContextInitializing,
+                            OnCamelContextInitialized,
+                            OnCamelContextStarting,
+                            OnCamelContextStopping {
 
                 @Override
-                public void configure() {
-                }
+                public void configure() {}
 
                 @Override
                 public void onContextInitializing(CamelContext context) {

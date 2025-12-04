@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 class KubernetesPodLogsTest extends KubernetesBaseTest {
 
     @Test
@@ -69,5 +68,4 @@ class KubernetesPodLogsTest extends KubernetesBaseTest {
         command.withClient(kubernetesClient);
         return command;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,8 +42,8 @@ public class TimerAndErrorHandlerIssueTest extends ContextTestSupport {
 
                 errorHandler(defaultErrorHandler());
 
-                String executionTriggerUri
-                        = "timer:executionTimer" + "?fixedRate=true" + "&daemon=true" + "&delay=0" + "&period=10";
+                String executionTriggerUri =
+                        "timer:executionTimer" + "?fixedRate=true" + "&daemon=true" + "&delay=0" + "&period=10";
 
                 from(executionTriggerUri).to("mock:result");
             }

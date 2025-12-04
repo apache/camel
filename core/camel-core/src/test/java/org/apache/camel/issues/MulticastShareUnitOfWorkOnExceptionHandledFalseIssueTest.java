@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
@@ -31,11 +32,11 @@ public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Co
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBody("direct:start", "Hello World"),
-                "Should throw exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "Hello World"), "Should throw exception");
 
-        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        IllegalArgumentException cause =
+                assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals("Forced", cause.getMessage());
 
         assertMockEndpointsSatisfied();
@@ -48,7 +49,13 @@ public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Co
             public void configure() {
                 onException(Exception.class).handled(false).to("mock:a");
 
-                from("direct:start").multicast().shareUnitOfWork().stopOnException().to("direct:b").end().to("mock:result");
+                from("direct:start")
+                        .multicast()
+                        .shareUnitOfWork()
+                        .stopOnException()
+                        .to("direct:b")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));
             }

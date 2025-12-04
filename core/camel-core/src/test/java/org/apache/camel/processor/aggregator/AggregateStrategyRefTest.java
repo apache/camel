@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,7 +49,10 @@ public class AggregateStrategyRefTest extends ContextTestSupport {
                 context.getRegistry().bind("myStrategy", new BodyInAggregatingStrategy());
 
                 // START SNIPPET: e1
-                from("direct:start").aggregate(body()).aggregationStrategy("myStrategy").completionFromBatchConsumer()
+                from("direct:start")
+                        .aggregate(body())
+                        .aggregationStrategy("myStrategy")
+                        .completionFromBatchConsumer()
                         .to("mock:result");
                 // END SNIPPET: e1
             }

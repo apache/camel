@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.processor.aggregate;
 
 import org.apache.camel.AggregationStrategy;
@@ -50,7 +51,8 @@ public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepo
         RouteBuilder rbOne = new RouteBuilder() {
             @Override
             public void configure() {
-                from(DIRECT_ONE).routeId("AggregatingRouteOne")
+                from(DIRECT_ONE)
+                        .routeId("AggregatingRouteOne")
                         .aggregate(header(correlator))
                         .aggregationRepository(repoOne)
                         .aggregationStrategy(new MyAggregationStrategy())
@@ -62,7 +64,8 @@ public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepo
         RouteBuilder rbTwo = new RouteBuilder() {
             @Override
             public void configure() {
-                from(DIRECT_TWO).routeId("AggregatingRouteTwo")
+                from(DIRECT_TWO)
+                        .routeId("AggregatingRouteTwo")
                         .aggregate(header(correlator))
                         .aggregationRepository(repoTwo)
                         .aggregationStrategy(new MyAggregationStrategy())

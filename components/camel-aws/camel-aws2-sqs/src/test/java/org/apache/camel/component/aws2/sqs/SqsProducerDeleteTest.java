@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsProducerDeleteTest extends CamelTestSupport {
 
@@ -61,9 +62,10 @@ public class SqsProducerDeleteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=deleteMessage").to("mock:result");
+                from("direct:start")
+                        .to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=deleteMessage")
+                        .to("mock:result");
             }
         };
     }
-
 }

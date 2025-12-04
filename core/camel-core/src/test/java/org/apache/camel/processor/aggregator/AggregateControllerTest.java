@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -25,10 +28,9 @@ import org.apache.camel.processor.aggregate.DefaultAggregateController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class AggregateControllerTest extends ContextTestSupport {
 
     private AggregateController controller;
@@ -148,9 +150,11 @@ public class AggregateControllerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy())
-                        .aggregateController(getAggregateController()).completionSize(10).to("log:aggregated",
-                                "mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregateController(getAggregateController())
+                        .completionSize(10)
+                        .to("log:aggregated", "mock:aggregated");
             }
         };
     }

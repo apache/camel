@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -25,9 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for try .. handle with onWhen.
@@ -109,18 +110,23 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
                         // the route below if it fails
                         // we can catch it below, just like regular try .. catch ..
                         // finally in Java
-                        .doTry().process(new ProcessorFail()).to("mock:result")
+                        .doTry()
+                        .process(new ProcessorFail())
+                        .to("mock:result")
                         // here we catch the following 2 exceptions but only if
                         // the onWhen predicate matches, eg if the exception
                         // messsage
                         // conatins the string word Damn
-                        .doCatch(IOException.class, IllegalStateException.class).onWhen(exceptionMessage().contains("Damn"))
+                        .doCatch(IOException.class, IllegalStateException.class)
+                        .onWhen(exceptionMessage().contains("Damn"))
                         .to("mock:catch")
                         // another catch for CamelExchangeException that does not
                         // have any onWhen predicate
-                        .doCatch(CamelExchangeException.class).to("mock:catchCamel")
+                        .doCatch(CamelExchangeException.class)
+                        .to("mock:catchCamel")
                         // and the finally that is always processed
-                        .doFinally().to("mock:finally")
+                        .doFinally()
+                        .to("mock:finally")
                         // here the try block ends
                         .end();
                 // END SNIPPET: e1
@@ -143,5 +149,4 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
             }
         }
     }
-
 }

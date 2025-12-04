@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.List;
@@ -63,7 +64,8 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
             List<String> suggestion = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
             if (suggestion != null && !suggestion.isEmpty()) {
                 String s = String.join(", ", suggestion);
-                throw new IllegalArgumentException("Cannot find dataformat with name: " + name + ". Did you mean: " + s);
+                throw new IllegalArgumentException(
+                        "Cannot find dataformat with name: " + name + ". Did you mean: " + s);
             }
         }
         return answer;
@@ -88,5 +90,4 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
         }
         return !stubbed;
     }
-
 }

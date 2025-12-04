@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.server.internal;
 
 import java.util.HashMap;
@@ -75,8 +76,7 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
         final QualifiedName name2 = newQualifiedName("items");
         final LocalizedText displayName2 = LocalizedText.english("Items");
 
-        this.itemsObject = UaObjectNode.build(getNodeContext(), builder -> builder
-                .setNodeId(nodeId2)
+        this.itemsObject = UaObjectNode.build(getNodeContext(), builder -> builder.setNodeId(nodeId2)
                 .setBrowseName(name2)
                 .setDisplayName(displayName2)
                 .setTypeDefinition(Identifiers.FolderType)
@@ -86,17 +86,11 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
 
         // register reference to structure
 
-        folder.addReference(new Reference(
-                folder.getNodeId(),
-                Identifiers.Organizes,
-                Identifiers.ObjectsFolder.expanded(),
-                false));
+        folder.addReference(
+                new Reference(folder.getNodeId(), Identifiers.Organizes, Identifiers.ObjectsFolder.expanded(), false));
 
         itemsObject.addReference(new Reference(
-                nodeId,
-                Identifiers.HasComponent,
-                Identifiers.ObjectNode.expanded(),
-                Reference.Direction.INVERSE));
+                nodeId, Identifiers.HasComponent, Identifiers.ObjectNode.expanded(), Reference.Direction.INVERSE));
     }
 
     @Override
@@ -125,8 +119,8 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
 
     public CamelServerItem getOrAddItem(final String itemId) {
         synchronized (this) {
-            return this.itemMap.computeIfAbsent(itemId,
-                    k -> new CamelServerItem(itemId, getNodeContext(), getNamespaceIndex(), this.itemsObject));
+            return this.itemMap.computeIfAbsent(
+                    itemId, k -> new CamelServerItem(itemId, getNodeContext(), getNamespaceIndex(), this.itemsObject));
         }
     }
 }

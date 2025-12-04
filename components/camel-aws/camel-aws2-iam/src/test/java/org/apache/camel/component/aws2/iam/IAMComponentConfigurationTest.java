@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IAMComponentConfigurationTest extends CamelTestSupport {
 
@@ -43,8 +44,8 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        IAM2Endpoint endpoint
-                = (IAM2Endpoint) component.createEndpoint("aws2-iam://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        IAM2Endpoint endpoint = (IAM2Endpoint)
+                component.createEndpoint("aws2-iam://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -57,8 +58,8 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        IAM2Endpoint endpoint = (IAM2Endpoint) component
-                .createEndpoint(
+        IAM2Endpoint endpoint = (IAM2Endpoint)
+                component.createEndpoint(
                         "aws2-iam://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -72,8 +73,8 @@ public class IAMComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithOverrideEndpoint() throws Exception {
         IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint
-                = (IAM2Endpoint) component.createEndpoint(
+        IAM2Endpoint endpoint = (IAM2Endpoint)
+                component.createEndpoint(
                         "aws2-iam://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());

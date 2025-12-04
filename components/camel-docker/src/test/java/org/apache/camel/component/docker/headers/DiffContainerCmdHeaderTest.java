@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Container Diff Request headers are parsed properly
@@ -49,7 +50,6 @@ public class DiffContainerCmdHeaderTest extends BaseDockerHeaderTest<ContainerDi
 
         Mockito.verify(dockerClient, Mockito.times(1)).containerDiffCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withContainerId(containerIdDiff);
-
     }
 
     @Override
@@ -61,5 +61,4 @@ public class DiffContainerCmdHeaderTest extends BaseDockerHeaderTest<ContainerDi
     protected DockerOperation getOperation() {
         return DockerOperation.DIFF_CONTAINER;
     }
-
 }

@@ -340,7 +340,8 @@ public class AgentConfiguration {
      * @param  mcpToolProviderFilter the filter predicate that determines which MCP tools to include
      * @return                       this configuration instance for method chaining
      */
-    public AgentConfiguration withMcpToolProviderFilter(BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter) {
+    public AgentConfiguration withMcpToolProviderFilter(
+            BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter) {
         this.mcpToolProviderFilter = mcpToolProviderFilter;
         return this;
     }

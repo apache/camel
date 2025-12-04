@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class UriConfigurationTest {
     protected CamelContext context = new DefaultCamelContext();
 
     @Test
     public void testPrivateChatConfiguration() {
-        Endpoint endpoint = context
-                .getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
+        Endpoint endpoint = context.getEndpoint(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -44,8 +45,8 @@ public class UriConfigurationTest {
 
     @Test
     public void testGroupChatConfiguration() {
-        Endpoint endpoint
-                = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
+        Endpoint endpoint = context.getEndpoint(
+                "xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
         assertTrue(endpoint instanceof XmppEndpoint, "Endpoint not an XmppEndpoint: " + endpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -82,5 +83,4 @@ public class UriConfigurationTest {
         assertEquals(true, xmppEndpoint.isPubsub());
         assertEquals(true, xmppEndpoint.isDoc());
     }
-
 }

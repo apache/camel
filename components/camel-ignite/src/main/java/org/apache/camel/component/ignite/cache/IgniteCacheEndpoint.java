@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.cache;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_CACHE;
 
 import java.util.Map;
 
@@ -37,13 +40,16 @@ import org.apache.ignite.cache.CachePeekMode;
 import org.apache.ignite.cache.query.ContinuousQuery;
 import org.apache.ignite.cache.query.Query;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_CACHE;
-
 /**
  * Perform cache operations on an Ignite cache or consume changes from a continuous query.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_CACHE, title = "Ignite Cache", syntax = "ignite-cache:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = IgniteConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_CACHE,
+        title = "Ignite Cache",
+        syntax = "ignite-cache:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = IgniteConstants.class)
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -80,8 +86,11 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "consumer", defaultValue = "0", defaultValueNote = "ContinuousQuery.DFLT_TIME_INTERVAL")
     private long timeInterval = ContinuousQuery.DFLT_TIME_INTERVAL;
 
-    public IgniteCacheEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
-                               IgniteCacheComponent igniteComponent) {
+    public IgniteCacheEndpoint(
+            String endpointUri,
+            String remaining,
+            Map<String, Object> parameters,
+            IgniteCacheComponent igniteComponent) {
         super(endpointUri, igniteComponent);
         cacheName = remaining;
     }
@@ -315,5 +324,4 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
     public void setTimeInterval(long timeInterval) {
         this.timeInterval = timeInterval;
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
 
@@ -34,11 +40,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for reference properties
@@ -95,12 +96,12 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                throws Exception {
             MyEndpoint result = new MyEndpoint(uri, this);
             setProperties(result, parameters);
             return result;
         }
-
     }
 
     @Override
@@ -122,7 +123,6 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
 
                 return null;
             }
-
         };
         component.createEndpoint("foo://?name=Christian");
     }
@@ -192,7 +192,8 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     public void testTypoInParameter() {
         MyComponent component = new MyComponent(context);
 
-        assertThrows(ResolveEndpointFailedException.class,
+        assertThrows(
+                ResolveEndpointFailedException.class,
                 () -> component.createEndpoint("foo://?xxxexpression=#hello"),
                 "Should have throw a ResolveEndpointFailedException");
     }
@@ -201,9 +202,9 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
     public void testTypoInParameterValue() {
         MyComponent component = new MyComponent(context);
 
-        assertThrows(Exception.class,
+        assertThrows(
+                Exception.class,
                 () -> component.createEndpoint("foo://?special=#dummy"),
                 "Should have throw a Exception");
     }
-
 }

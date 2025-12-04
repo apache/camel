@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 /**
@@ -28,5 +29,4 @@ public interface PatternFormat<T> extends Format<T> {
      * @return String the pattern
      */
     String getPattern();
-
 }

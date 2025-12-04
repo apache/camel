@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -41,8 +42,7 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     public void setUp() throws Exception {
         path = testDirectory("dosnovol").toAbsolutePath().toString();
         if (FileUtil.isWindows()) {
-            path = StringHelper.after(path, ":\\", path)
-                    .replace('\\', '/');
+            path = StringHelper.after(path, ":\\", path).replace('\\', '/');
         }
 
         super.setUp();
@@ -54,7 +54,8 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedFileExists(path + "/route/out/" + TEST_FILE_NAME);
 
-        template.sendBodyAndHeader("file://" + path + "/route/poller", "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                "file://" + path + "/route/poller", "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
@@ -64,7 +65,8 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://" + path + "/from/poller", "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                "file://" + path + "/from/poller", "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
@@ -84,12 +86,11 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file://" + path + "/route/poller?initialDelay=0&delay=10").to("file://" + path + "/route/out",
-                        "mock:result");
+                from("file://" + path + "/route/poller?initialDelay=0&delay=10")
+                        .to("file://" + path + "/route/out", "mock:result");
                 from("file://" + path + "/from/poller?initialDelay=0&delay=10").to("mock:result");
                 from("direct:report").to("file://" + path + "/to/out", "mock:result");
             }
         };
     }
-
 }

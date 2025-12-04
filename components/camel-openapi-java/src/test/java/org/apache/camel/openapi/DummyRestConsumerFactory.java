@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.util.Map;
@@ -30,8 +31,15 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
 
     @Override
     public Consumer createConsumer(
-            CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            Processor processor,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
         // just use a seda endpoint for testing purpose
         String id;
@@ -47,5 +55,4 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
         SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
         return seda.createConsumer(processor);
     }
-
 }

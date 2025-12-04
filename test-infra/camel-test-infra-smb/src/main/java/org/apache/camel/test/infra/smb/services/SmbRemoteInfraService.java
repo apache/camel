@@ -41,16 +41,13 @@ public class SmbRemoteInfraService implements SmbInfraService {
     }
 
     @Override
-    public void registerProperties() {
-    }
+    public void registerProperties() {}
 
     @Override
-    public void initialize() {
-    }
+    public void initialize() {}
 
     @Override
-    public void shutdown() {
-    }
+    public void shutdown() {}
 
     public String smbFile(String file) {
         return null;

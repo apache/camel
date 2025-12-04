@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,10 +34,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class VertxHttpFileUploadMultipartTest extends VertxHttpTestSupport {
 
@@ -56,16 +57,16 @@ public class VertxHttpFileUploadMultipartTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri() + "/upload")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                // undertow store the multipart-form as map in the camel message
-                                DataHandler dh = (DataHandler) exchange.getMessage().getBody(Map.class).get("mydata");
-                                String out = dh.getDataSource().getName();
-                                exchange.getMessage().setBody(out);
-                            }
-                        });
+                from(getTestServerUri() + "/upload").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                        // undertow store the multipart-form as map in the camel message
+                        DataHandler dh = (DataHandler)
+                                exchange.getMessage().getBody(Map.class).get("mydata");
+                        String out = dh.getDataSource().getName();
+                        exchange.getMessage().setBody(out);
+                    }
+                });
             }
         };
     }

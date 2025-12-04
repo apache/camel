@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
 
 import java.io.File;
@@ -38,8 +39,7 @@ import org.apache.camel.parser.model.CoverageData;
  */
 public final class RouteCoverageHelper {
 
-    private RouteCoverageHelper() {
-    }
+    private RouteCoverageHelper() {}
 
     /**
      * Parses the dumped route coverage data and creates a line by line coverage data
@@ -48,7 +48,8 @@ public final class RouteCoverageHelper {
      * @param  routeId   the route id to gather, must not be null.
      * @return           line by line coverage data
      */
-    public static List<CoverageData> parseDumpRouteCoverageByRouteId(String directory, String routeId) throws Exception {
+    public static List<CoverageData> parseDumpRouteCoverageByRouteId(String directory, String routeId)
+            throws Exception {
         List<CoverageData> answer = new ArrayList<>();
 
         if (routeId == null) {
@@ -169,7 +170,8 @@ public final class RouteCoverageHelper {
         return answer;
     }
 
-    private static void parseRouteData(CamelCatalog catalog, Node node, List<CoverageData> data, AtomicInteger counter) {
+    private static void parseRouteData(
+            CamelCatalog catalog, Node node, List<CoverageData> data, AtomicInteger counter) {
         // must be a known EIP model
         String key = node.getNodeName();
         boolean valid = catalog.findModelNames().contains(key); // skip route as we use from instead
@@ -178,8 +180,11 @@ public final class RouteCoverageHelper {
         }
 
         // inlined error handler, on completion etc should be skipped (and currently not supported in route coverage)
-        boolean skip = "onException".equals(key) || "onCompletion".equals(key)
-                || "intercept".equals(key) || "interceptFrom".equals(key) || "interceptSendToEndpoint".equals(key);
+        boolean skip = "onException".equals(key)
+                || "onCompletion".equals(key)
+                || "intercept".equals(key)
+                || "interceptFrom".equals(key)
+                || "interceptSendToEndpoint".equals(key);
 
         if (skip) {
             return;
@@ -218,5 +223,4 @@ public final class RouteCoverageHelper {
             }
         }
     }
-
 }

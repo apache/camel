@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSupport {
@@ -83,18 +84,27 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .setHeader("foo", constant("bar")).id("setFoo")
-                        .setProperty("beer", constant("yes")).id("setBeer")
-                        .setVariable("cheese", constant("gauda")).id("setCheese")
-                        .removeHeader("foo").id("unsetFoo")
-                        .removeHeaders("foo").id("unsetFoos")
-                        .removeProperty("beer").id("unsetBeer")
-                        .removeProperties("beer").id("unsetBeers")
-                        .to("log:foo").id("logFoo")
-                        .to("mock:result").id("mockResult");
+                from("direct:start")
+                        .routeId("foo")
+                        .setHeader("foo", constant("bar"))
+                        .id("setFoo")
+                        .setProperty("beer", constant("yes"))
+                        .id("setBeer")
+                        .setVariable("cheese", constant("gauda"))
+                        .id("setCheese")
+                        .removeHeader("foo")
+                        .id("unsetFoo")
+                        .removeHeaders("foo")
+                        .id("unsetFoos")
+                        .removeProperty("beer")
+                        .id("unsetBeer")
+                        .removeProperties("beer")
+                        .id("unsetBeers")
+                        .to("log:foo")
+                        .id("logFoo")
+                        .to("mock:result")
+                        .id("mockResult");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.produce.generics;
 
 import org.slf4j.Logger;
@@ -26,5 +27,4 @@ public abstract class MyServiceSupport<N extends Number> implements MyService<N>
     protected void log(N number) {
         logger.info("MyService is called with the value {}", number);
     }
-
 }

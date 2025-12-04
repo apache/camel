@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
+
+import static java.lang.Boolean.TRUE;
+import static org.apache.camel.component.milo.MiloConstants.HEADER_NODE_IDS;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -27,9 +31,6 @@ import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
-import static java.lang.Boolean.TRUE;
-import static org.apache.camel.component.milo.MiloConstants.HEADER_NODE_IDS;
-
 public class MiloClientProducer extends DefaultAsyncProducer {
 
     private MiloClientConnection connection;
@@ -39,8 +40,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
     private final boolean defaultAwaitWrites;
 
-    public MiloClientProducer(final MiloClientEndpoint endpoint,
-                              final boolean defaultAwaitWrites) {
+    public MiloClientProducer(final MiloClientEndpoint endpoint, final boolean defaultAwaitWrites) {
         super(endpoint);
 
         this.defaultAwaitWrites = defaultAwaitWrites;
@@ -76,8 +76,10 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
         if (msg.getHeaders().containsKey(HEADER_NODE_IDS)) {
             final List<String> nodeIds = msg.getHeader(HEADER_NODE_IDS, List.class);
-            final List<ExpandedNodeId> expandedNodeIds
-                    = nodeIds.stream().map(String.class::cast).map(ExpandedNodeId::parse).collect(Collectors.toList());
+            final List<ExpandedNodeId> expandedNodeIds = nodeIds.stream()
+                    .map(String.class::cast)
+                    .map(ExpandedNodeId::parse)
+                    .collect(Collectors.toList());
             future = this.connection.readValues(expandedNodeIds).thenApply(nodes -> {
                 exchange.getIn().setBody(nodes);
                 return nodes;
@@ -105,5 +107,4 @@ public class MiloClientProducer extends DefaultAsyncProducer {
             return true;
         }
     }
-
 }

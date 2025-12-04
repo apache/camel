@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.PredicateBuilder.in;
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 import java.util.Arrays;
 
@@ -27,10 +32,6 @@ import org.apache.camel.support.Animal;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.Builder.constant;
-import static org.apache.camel.builder.PredicateBuilder.in;
-import static org.apache.camel.builder.PredicateBuilder.not;
 
 public class PredicateBuilderTest extends TestSupport {
 
@@ -200,5 +201,4 @@ public class PredicateBuilderTest extends TestSupport {
     protected void assertDoesNotMatch(Predicate predicate) {
         assertPredicateDoesNotMatch(predicate, exchange);
     }
-
 }

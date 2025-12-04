@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyMDCLoggingTest extends BaseNettyTest {
 
@@ -45,19 +46,22 @@ public class NettyMDCLoggingTest extends BaseNettyTest {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:start").routeId("client")
+                from("direct:start")
+                        .routeId("client")
                         .to("log:client-input")
                         .to("netty-http:http://localhost:{{port}}/foo")
                         .to("log:client-output")
                         .to("mock:result");
 
-                from("netty-http:http://0.0.0.0:{{port}}/foo").routeId("server").streamCaching()
+                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                        .routeId("server")
+                        .streamCaching()
                         .to("log:server-input")
                         .to("mock:input")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .to("log:server-output");
             }
         };
     }
-
 }

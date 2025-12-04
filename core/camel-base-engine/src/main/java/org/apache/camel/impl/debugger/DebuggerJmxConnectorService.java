@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.debugger;
 
 import java.io.IOException;
@@ -94,8 +95,10 @@ public class DebuggerJmxConnectorService extends ServiceSupport implements Camel
                 cs.stop();
                 LOG.debug("Stopped Debugger JMX Connector");
             } catch (IOException e) {
-                LOG.debug("Error occurred during stopping CamelDebugger JMX Connector: {}. This exception will be ignored.",
-                        cs, e);
+                LOG.debug(
+                        "Error occurred during stopping CamelDebugger JMX Connector: {}. This exception will be ignored.",
+                        cs,
+                        e);
             }
             cs = null;
         }
@@ -128,9 +131,8 @@ public class DebuggerJmxConnectorService extends ServiceSupport implements Camel
         final JMXServiceURL url;
         if (connectorPort > 0) {
             // we do not allow remote RMI access so this code is disabled
-            url = new JMXServiceURL(
-                    "service:jmx:rmi://" + host + ":" + connectorPort + "/jndi/rmi://" + host
-                                    + ":" + registryPort + path);
+            url = new JMXServiceURL("service:jmx:rmi://" + host + ":" + connectorPort + "/jndi/rmi://" + host + ":"
+                    + registryPort + path);
         } else {
             url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + registryPort + path);
         }
@@ -138,7 +140,8 @@ public class DebuggerJmxConnectorService extends ServiceSupport implements Camel
         cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, server);
 
         // use async thread for starting the JMX Connector
-        // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been started)
+        // (no need to use a thread pool or enlist in JMX as this thread is terminated when the JMX connector has been
+        // started)
         Thread thread = getCamelContext().getExecutorServiceManager().newThread("DebuggerJMXConnector", () -> {
             try {
                 LOG.debug("Staring Debugger JMX Connector thread to listen at: {}", url);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.directory.server.core.integ5;
 
 import java.lang.annotation.Annotation;
@@ -27,7 +28,8 @@ public class Description {
 
     public Description(Method method) {
         annotated = method;
-        displayName = String.format("%s(%s)", method.getName(), method.getDeclaringClass().getName());
+        displayName = String.format(
+                "%s(%s)", method.getName(), method.getDeclaringClass().getName());
     }
 
     public Description(Class<?> clazz) {

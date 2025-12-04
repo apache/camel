@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,11 +46,18 @@ public class ClaimCheckEipPushPopRemoveHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("bar", constant("Moes")).to("mock:a").claimCheck(ClaimCheckOperation.Push)
-                        .transform().constant("Bye World")
-                        .setHeader("foo", constant(456)).setHeader("bar", constant("Jacks")).to("mock:b")
+                from("direct:start")
+                        .setHeader("bar", constant("Moes"))
+                        .to("mock:a")
+                        .claimCheck(ClaimCheckOperation.Push)
+                        .transform()
+                        .constant("Bye World")
+                        .setHeader("foo", constant(456))
+                        .setHeader("bar", constant("Jacks"))
+                        .to("mock:b")
                         // skip the body and remove the bar header
-                        .claimCheck(ClaimCheckOperation.Pop, null, "-body,--header:bar").to("mock:c");
+                        .claimCheck(ClaimCheckOperation.Pop, null, "-body,--header:bar")
+                        .to("mock:c");
             }
         };
     }

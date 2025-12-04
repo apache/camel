@@ -22,5 +22,4 @@ import org.apache.camel.CamelContextAware;
 /**
  * Interface specifying Knative service options applied to the exposed Http service.
  */
-public interface KnativeHttpServiceOptions extends CamelContextAware {
-}
+public interface KnativeHttpServiceOptions extends CamelContextAware {}

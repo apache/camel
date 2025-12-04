@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -69,11 +70,9 @@ public class ThrottleReifier extends ExpressionReifier<ThrottleDefinition> {
             answer.setCallerRunsWhenRejected(parseBoolean(definition.getCallerRunsWhenRejected(), true));
             return answer;
         }
-
     }
 
     private Expression createMaxRequestsPerPeriodExpression() {
         return definition.getExpression() != null ? createExpression(definition.getExpression()) : null;
     }
-
 }

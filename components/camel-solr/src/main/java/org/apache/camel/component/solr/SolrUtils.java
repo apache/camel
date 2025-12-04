@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import java.util.AbstractMap;
@@ -71,8 +72,7 @@ public class SolrUtils {
     }
 
     public static void addHeadersForCommit(ModifiableSolrParams solrParams) {
-        getHeadersForCommit("commit", null)
-                .forEach((k, v) -> solrParams.add(k, String.valueOf(v)));
+        getHeadersForCommit("commit", null).forEach((k, v) -> solrParams.add(k, String.valueOf(v)));
     }
 
     public static void addHeadersForCommit(Exchange exchange) {
@@ -101,9 +101,6 @@ public class SolrUtils {
     }
 
     public static <T> List<T> convertToList(Collection<T> collection) {
-        return collection instanceof List
-                ? (List<T>) collection
-                : new ArrayList<>(collection);
+        return collection instanceof List ? (List<T>) collection : new ArrayList<>(collection);
     }
-
 }

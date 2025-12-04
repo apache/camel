@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,9 +46,12 @@ public class CSimpleTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when(csimple("${body} > 10")).to("mock:high")
-                        .when(csimple("${body} > 5")).to("mock:med")
-                        .otherwise().to("mock:low");
+                        .when(csimple("${body} > 10"))
+                        .to("mock:high")
+                        .when(csimple("${body} > 5"))
+                        .to("mock:med")
+                        .otherwise()
+                        .to("mock:low");
             }
         };
     }

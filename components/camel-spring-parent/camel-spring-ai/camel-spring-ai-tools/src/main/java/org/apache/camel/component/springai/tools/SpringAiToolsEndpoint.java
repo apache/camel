@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.tools;
+
+import static org.apache.camel.component.springai.tools.SpringAiTools.SCHEME;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,12 +42,12 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
-import static org.apache.camel.component.springai.tools.SpringAiTools.SCHEME;
-
-@UriEndpoint(firstVersion = "4.17.0", scheme = SCHEME,
-             title = "Spring AI Tools",
-             syntax = "spring-ai-tools:toolId",
-             category = { Category.AI })
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = SCHEME,
+        title = "Spring AI Tools",
+        syntax = "spring-ai-tools:toolId",
+        category = {Category.AI})
 public class SpringAiToolsEndpoint extends DefaultEndpoint {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -69,12 +72,14 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
     private String name;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "List of Tool parameters with optional metadata. "
-                            + "Format: parameter.<name>=<type>, parameter.<name>.description=<text>, "
-                            + "parameter.<name>.required=<true|false>, parameter.<name>.enum=<value1,value2>. "
-                            + "Example: parameter.location=string, parameter.location.description=The city and state, "
-                            + "parameter.location.required=true, parameter.unit.enum=C,F",
-              prefix = "parameter.", multiValue = true)
+    @UriParam(
+            description = "List of Tool parameters with optional metadata. "
+                    + "Format: parameter.<name>=<type>, parameter.<name>.description=<text>, "
+                    + "parameter.<name>.required=<true|false>, parameter.<name>.enum=<value1,value2>. "
+                    + "Example: parameter.location=string, parameter.location.description=The city and state, "
+                    + "parameter.location.required=true, parameter.unit.enum=C,F",
+            prefix = "parameter.",
+            multiValue = true)
     private Map<String, String> parameters;
 
     @Metadata(label = "consumer")
@@ -82,13 +87,18 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
     private Class<?> inputType;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "Whether the tool result should be returned directly or passed back to the model. "
-                            + "Default is false, meaning the result is passed back to the model for further processing.",
-              defaultValue = "false")
+    @UriParam(
+            description = "Whether the tool result should be returned directly or passed back to the model. "
+                    + "Default is false, meaning the result is passed back to the model for further processing.",
+            defaultValue = "false")
     private boolean returnDirect;
 
-    public SpringAiToolsEndpoint(String uri, SpringAiToolsComponent component, String toolId, String tags,
-                                 SpringAiToolsConfiguration configuration) {
+    public SpringAiToolsEndpoint(
+            String uri,
+            SpringAiToolsComponent component,
+            String toolId,
+            String tags,
+            SpringAiToolsConfiguration configuration) {
         super(uri, component);
         this.toolId = toolId;
         this.tags = tags;
@@ -97,10 +107,9 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException(
-                "The spring-ai-tools component does not support producer mode. "
-                                                + "Use the spring-ai-chat component with tags parameter to invoke tools. "
-                                                + "Example: spring-ai-chat:chat?tags=weather&chatClient=#chatClient");
+        throw new UnsupportedOperationException("The spring-ai-tools component does not support producer mode. "
+                + "Use the spring-ai-chat component with tags parameter to invoke tools. "
+                + "Example: spring-ai-chat:chat?tags=weather&chatClient=#chatClient");
     }
 
     @Override
@@ -140,8 +149,8 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
         };
 
         // Build the tool callback using FunctionToolCallback
-        FunctionToolCallback.Builder builder = FunctionToolCallback.builder(toolName, function)
-                .description(description);
+        FunctionToolCallback.Builder builder =
+                FunctionToolCallback.builder(toolName, function).description(description);
 
         if (inputType != null) {
             builder.inputType(inputType);
@@ -161,8 +170,7 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
 
         ToolCallback toolCallback = builder.build();
 
-        CamelToolSpecification camelToolSpecification
-                = new CamelToolSpecification(toolCallback, springAiToolsConsumer);
+        CamelToolSpecification camelToolSpecification = new CamelToolSpecification(toolCallback, springAiToolsConsumer);
         final CamelToolExecutorCache executorCache = CamelToolExecutorCache.getInstance();
 
         String[] splitTags = TagsHelper.splitTags(tags);

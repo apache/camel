@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -54,5 +55,4 @@ public interface ManagementStrategyFactory {
      * @param lifecycle    the associated lifecycle strategy (optional)
      */
     void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle);
-
 }

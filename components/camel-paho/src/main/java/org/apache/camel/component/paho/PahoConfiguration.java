@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import java.util.Properties;
@@ -31,59 +32,84 @@ public class PahoConfiguration implements Cloneable {
 
     @UriParam
     private String clientId;
+
     @UriParam(defaultValue = PahoConstants.DEFAULT_BROKER_URL)
     private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
+
     @UriParam(defaultValue = "2")
     private int qos = PahoConstants.DEFAULT_QOS;
+
     @UriParam
     private boolean retained;
+
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = PahoPersistence.MEMORY;
+
     @UriParam
     private String filePersistenceDirectory;
 
     @UriParam(defaultValue = "60")
     private int keepAliveInterval = 60;
+
     @UriParam(defaultValue = "10")
     private int maxInflight = 10;
+
     @UriParam
     private String willTopic;
+
     @UriParam
     private String willPayload;
+
     @UriParam
     private int willQos;
+
     @UriParam
     private boolean willRetained;
+
     @UriParam(label = "security")
     @Metadata(secret = true)
     private String userName;
+
     @UriParam(label = "security")
     @Metadata(secret = true)
     private String password;
+
     @UriParam(label = "security")
     private SocketFactory socketFactory;
+
     @UriParam(label = "security")
     private Properties sslClientProps;
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean httpsHostnameVerificationEnabled = true;
+
     @UriParam(label = "security")
     private HostnameVerifier sslHostnameVerifier;
+
     @UriParam(defaultValue = "true")
     private boolean cleanSession = true;
+
     @UriParam(defaultValue = "30")
     private int connectionTimeout = 30;
+
     @UriParam
     private String serverURIs;
+
     @UriParam
     private int mqttVersion;
+
     @UriParam(defaultValue = "true")
     private boolean automaticReconnect = true;
+
     @UriParam(defaultValue = "128000")
     private int maxReconnectDelay = 128000;
+
     @UriParam(label = "advanced")
     private Properties customWebSocketHeaders;
+
     @UriParam(label = "advanced", defaultValue = "1")
     private int executorServiceTimeout = 1;
+
     @UriParam(label = "consumer")
     private boolean manualAcksEnabled;
 
@@ -545,5 +571,4 @@ public class PahoConfiguration implements Cloneable {
     public void setManualAcksEnabled(boolean manualAcksEnabled) {
         this.manualAcksEnabled = manualAcksEnabled;
     }
-
 }

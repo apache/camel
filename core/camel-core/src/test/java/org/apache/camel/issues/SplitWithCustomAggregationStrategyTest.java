@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.AggregationStrategy;
@@ -45,11 +46,15 @@ public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody()
+                from("direct:start")
+                        .setBody()
                         .simple("<search><key>foo-${id}</key><key>bar-${id}</key><key>baz-${id}</key></search>")
-                        .to("direct:splitInOut").to("mock:result");
+                        .to("direct:splitInOut")
+                        .to("mock:result");
 
-                from("direct:splitInOut").setHeader("com.example.id").simple("${id}")
+                from("direct:splitInOut")
+                        .setHeader("com.example.id")
+                        .simple("${id}")
                         .split(xpath("/search/key"), new AggregationStrategy() {
                             public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                                 if (oldExchange == null) {
@@ -62,10 +67,17 @@ public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
 
                                 return oldExchange;
                             }
-                        }).parallelProcessing().streaming().to("direct:processLine").end().transform()
+                        })
+                        .parallelProcessing()
+                        .streaming()
+                        .to("direct:processLine")
+                        .end()
+                        .transform()
                         .simple("<results>${in.body}</results>");
 
-                from("direct:processLine").to("log:line").transform()
+                from("direct:processLine")
+                        .to("log:line")
+                        .transform()
                         .simple("<index>${in.header.CamelSplitIndex}</index>${in.body}");
             }
         };

@@ -14,7 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.userAssignee;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,20 +67,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.userAssignee;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class UpdateIssueProducerTest extends CamelTestSupport {
 
@@ -95,7 +96,8 @@ public class UpdateIssueProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
         when(jiraClient.getMetadataClient()).thenReturn(metadataRestClient);
 
@@ -124,8 +126,8 @@ public class UpdateIssueProducerTest extends CamelTestSupport {
             Collection<BasicComponent> components = new ArrayList<>(2);
             components.add(Utils.createBasicComponent(1L, "ux"));
             components.add(Utils.createBasicComponent(2L, "plugins"));
-            backendIssue
-                    = createIssue(11L, summary, issueKey, issueType, description, priority, userAssignee, components, null);
+            backendIssue = createIssue(
+                    11L, summary, issueKey, issueType, description, priority, userAssignee, components, null);
             BasicIssue basicIssue = new BasicIssue(backendIssue.getSelf(), backendIssue.getKey(), backendIssue.getId());
             return Promises.promise(basicIssue);
         });
@@ -133,7 +135,8 @@ public class UpdateIssueProducerTest extends CamelTestSupport {
     }
 
     private String getValue(IssueInput issueInput, String field, String key) {
-        ComplexIssueInputFieldValue complexField = (ComplexIssueInputFieldValue) issueInput.getField(field).getValue();
+        ComplexIssueInputFieldValue complexField =
+                (ComplexIssueInputFieldValue) issueInput.getField(field).getValue();
         return (String) complexField.getValuesMap().get(key);
     }
 

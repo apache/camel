@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -144,5 +145,4 @@ public class OgnlHelperTest {
         out = OgnlHelper.methodAsDoubleQuotes("${bodyAs(String).compareTo(\"It's a great World\")}");
         assertEquals("${bodyAs(String).compareTo(\"It's a great World\")}", out);
     }
-
 }

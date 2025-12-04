@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -22,8 +25,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
@@ -33,8 +34,8 @@ public class SpringFailoverRoundRobinTest extends CamelSpringTestSupport {
     private static int port4 = AvailablePortFinder.getNextAvailable();
 
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("JettySpringFailoverRoundRobinTest.port1", Integer.toString(port1));
         System.setProperty("JettySpringFailoverRoundRobinTest.port2", Integer.toString(port2));
         System.setProperty("JettySpringFailoverRoundRobinTest.port3", Integer.toString(port3));
@@ -43,7 +44,8 @@ public class SpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/component/jetty/JettySpringFailoverRoundRobinTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/jetty/JettySpringFailoverRoundRobinTest.xml");
     }
 
     @Test
@@ -70,5 +72,4 @@ public class SpringFailoverRoundRobinTest extends CamelSpringTestSupport {
         reply = template.requestBody("direct:JettySpringFailoverRoundRobinTestStart", null, String.class);
         assertEquals("Also good", reply);
     }
-
 }

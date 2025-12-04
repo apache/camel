@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,19 +38,21 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     @XmlTransient
     private RouteDefinition parent;
+
     @XmlTransient
     private Endpoint endpoint;
+
     @XmlTransient
     private EndpointConsumerBuilder endpointConsumerBuilder;
 
     @XmlAttribute
     @Metadata(required = true)
     private String uri;
+
     @XmlAttribute
     private String variableReceive;
 
-    public FromDefinition() {
-    }
+    public FromDefinition() {}
 
     public FromDefinition(String uri) {
         this();
@@ -183,5 +186,4 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         this.endpoint = null;
         this.uri = null;
     }
-
 }

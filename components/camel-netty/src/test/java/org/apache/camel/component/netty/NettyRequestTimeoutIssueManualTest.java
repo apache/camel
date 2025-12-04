@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -22,8 +25,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("This test can be run manually")
 public class NettyRequestTimeoutIssueManualTest extends CamelTestSupport {
@@ -35,11 +36,9 @@ public class NettyRequestTimeoutIssueManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:out")
-                        .to("netty:tcp://localhost:8080?requestTimeout=5000");
+                from("direct:out").to("netty:tcp://localhost:8080?requestTimeout=5000");
 
-                from("netty:tcp://localhost:8080")
-                        .to("log:nettyCase?showAll=true&multiline=true");
+                from("netty:tcp://localhost:8080").to("log:nettyCase?showAll=true&multiline=true");
             }
         };
     }

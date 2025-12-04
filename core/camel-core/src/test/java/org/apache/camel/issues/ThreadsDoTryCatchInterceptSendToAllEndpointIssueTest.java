@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -46,9 +47,22 @@ public class ThreadsDoTryCatchInterceptSendToAllEndpointIssueTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").threads().doTry().to("log:try").throwException(new IllegalArgumentException("Forced"))
-                        .doCatch(Exception.class).to("log:catch").choice()
-                        .when(body().contains("World")).to("log:world").stop().otherwise().to("log:other").stop().end().end();
+                from("direct:start")
+                        .threads()
+                        .doTry()
+                        .to("log:try")
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .doCatch(Exception.class)
+                        .to("log:catch")
+                        .choice()
+                        .when(body().contains("World"))
+                        .to("log:world")
+                        .stop()
+                        .otherwise()
+                        .to("log:other")
+                        .stop()
+                        .end()
+                        .end();
             }
         };
     }

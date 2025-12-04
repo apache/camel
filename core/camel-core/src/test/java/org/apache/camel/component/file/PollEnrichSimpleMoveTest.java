@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,10 +41,12 @@ public class PollEnrichSimpleMoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .pollEnrich().simple(fileUri() + "?move=backup/my-${file:onlyname}").timeout(5000).end()
-                    .to("mock:result");
+                        .pollEnrich()
+                        .simple(fileUri() + "?move=backup/my-${file:onlyname}")
+                        .timeout(5000)
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

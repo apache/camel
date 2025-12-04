@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz.cron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -24,8 +27,6 @@ import org.apache.camel.component.quartz.BaseQuartzTest;
 import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class QuartzCronMappingTest extends BaseQuartzTest {
 
     @Test
@@ -33,9 +34,7 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("cron://myName?schedule=* * * * ?")
-                        .id("cron")
-                        .to("mock:result");
+                from("cron://myName?schedule=* * * * ?").id("cron").to("mock:result");
             }
         });
         context.start();
@@ -47,13 +46,12 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("cron://myName?schedule=0/2 * * * * ?")
-                        .id("cron")
-                        .to("mock:result");
+                from("cron://myName?schedule=0/2 * * * * ?").id("cron").to("mock:result");
             }
         });
         context.start();
-        assertEquals("0/2 * * * * ?", getQuartzEndpoint(context.getRoute("cron")).getCron());
+        assertEquals(
+                "0/2 * * * * ?", getQuartzEndpoint(context.getRoute("cron")).getCron());
     }
 
     private QuartzEndpoint getQuartzEndpoint(Route route) {
@@ -68,5 +66,4 @@ public class QuartzCronMappingTest extends BaseQuartzTest {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

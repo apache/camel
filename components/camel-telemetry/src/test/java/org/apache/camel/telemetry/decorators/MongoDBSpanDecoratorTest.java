@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -26,12 +30,10 @@ import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MongoDBSpanDecoratorTest {
 
-    private static final String MONGODB_STATEMENT = "mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery";
+    private static final String MONGODB_STATEMENT =
+            "mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery";
 
     @Test
     public void testGetOperationName() {
@@ -70,5 +72,4 @@ public class MongoDBSpanDecoratorTest {
         assertEquals("flights", span.tags().get(TagConstants.DB_NAME));
         assertTrue(span.tags().containsKey(TagConstants.DB_STATEMENT));
     }
-
 }

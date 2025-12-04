@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.releases.fuji;
 
 import jakarta.ws.rs.HttpMethod;
@@ -34,8 +35,13 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
 
     @Override
     protected void doProcess(
-            Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion,
-            String tableName, String sysId)
+            Exchange exchange,
+            Class<?> requestModel,
+            Class<?> responseModel,
+            String action,
+            String apiVersion,
+            String tableName,
+            String sysId)
             throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
@@ -53,8 +59,7 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * GET
      * https://instance.service-now.com/api/now/import/{tableName}/{sys_id}
      */
-    private Response retrieveRecord(
-            Class<?> responseModel, String apiVersion, String tableName, String sysId)
+    private Response retrieveRecord(Class<?> responseModel, String apiVersion, String tableName, String sysId)
             throws Exception {
         return client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
@@ -74,7 +79,8 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
     private Response createRecord(
             Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName)
             throws Exception {
-        if (in.getHeader(ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class)) {
+        if (in.getHeader(
+                ServiceNowConstants.RETRIEVE_TARGET_RECORD, config::getRetrieveTargetRecordOnImport, Boolean.class)) {
             throw new UnsupportedOperationException("RetrieveTargetRecordOnImport is supported from Helsinky");
         }
 

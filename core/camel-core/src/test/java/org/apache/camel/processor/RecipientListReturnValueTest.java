@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests to ensure a consistent return value when using the different ways of configuring the RecipientList pattern
@@ -76,11 +77,11 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
 
         @org.apache.camel.RecipientList
         public String[] route() {
-            return new String[] { "direct:a", "direct:b" };
+            return new String[] {"direct:a", "direct:b"};
         }
 
         public String[] recipientList() {
-            return new String[] { "direct:a", "direct:b" };
+            return new String[] {"direct:a", "direct:b"};
         }
     }
 }

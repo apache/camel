@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,15 +60,6 @@ import org.apache.cxf.transport.MessageObserver;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.isA;
-import static org.mockito.Mockito.mock;
 
 public class CamelDestinationTest extends CamelTransportTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelDestinationTest.class);
@@ -180,7 +181,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                     exchange.setInMessage(m);
                     m.setExchange(exchange);
                     verifyReceivedMessage(m, "HelloWorld");
-                    //verifyHeaders(m, outMessage);
+                    // verifyHeaders(m, outMessage);
                     // setup the message for
                     Conduit backConduit;
                     backConduit = getBackChannel(destination, m);
@@ -194,7 +195,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         };
         MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(0);
-        //this call will active the camelDestination
+        // this call will active the camelDestination
         destination.setMessageObserver(observer);
         // set is one way false for get response from destination
         // need to use another thread to send the request message
@@ -229,7 +230,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                     exchange.setInMessage(m);
                     m.setExchange(exchange);
                     verifyReceivedMessage(m, "HelloWorld");
-                    //verifyHeaders(m, outMessage);
+                    // verifyHeaders(m, outMessage);
                     // setup the message for
                     Conduit backConduit;
                     backConduit = getBackChannel(destination, m);
@@ -246,7 +247,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);
 
-        //this call will active the camelDestination
+        // this call will active the camelDestination
         destination.setMessageObserver(observer);
         // set is one way false for get response from destination
         // need to use another thread to send the request message
@@ -285,8 +286,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
     public void testCAMEL4073() {
         Person person = new Person() {
             public void getPerson(Holder<String> personId, Holder<String> ssn, Holder<String> name)
-                    throws UnknownPersonFault {
-            }
+                    throws UnknownPersonFault {}
         };
 
         Exception ex = assertThrows(WebServiceException.class, () -> Endpoint.publish("camel://foo", person));
@@ -295,5 +295,4 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         assertNotNull(c);
         assertTrue(c instanceof NoSuchEndpointException);
     }
-
 }

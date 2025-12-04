@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 public class FromFilePercentSignInPasswordUserInfoIT extends FromFilePercentSignInPasswordIT {
@@ -25,5 +26,4 @@ public class FromFilePercentSignInPasswordUserInfoIT extends FromFilePercentSign
         // the user name and password out of the box as is
         return "ftp://us@r:t%st@localhost:{{ftp.server.port}}/tmp3/camel?initialDelay=3000";
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringEndpointPropertyTest extends SpringTestSupport {
 
@@ -50,5 +51,4 @@ public class SpringEndpointPropertyTest extends SpringTestSupport {
         assertEquals(200, bar.getSize());
         assertEquals("seda://bar?size=200", bar.getEndpointUri());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.util.Objects;
@@ -108,14 +109,14 @@ public class MllpConfiguration implements Cloneable {
 
     @UriParam(label = "advanced", defaultValue = "2048")
     int minBufferSize = 2048;
+
     @UriParam(label = "advanced", defaultValue = "" + 0x40000000)
     int maxBufferSize = 0x40000000;
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
-    public MllpConfiguration() {
-    }
+    public MllpConfiguration() {}
 
     public static void copy(MllpConfiguration source, MllpConfiguration target) {
         if (source == null) {
@@ -588,7 +589,8 @@ public class MllpConfiguration implements Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(bridgeErrorHandler,
+        return Objects.hash(
+                bridgeErrorHandler,
                 exchangePattern,
                 backlog,
                 bindTimeout,
@@ -659,32 +661,32 @@ public class MllpConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "MllpConfiguration{"
-               + "bridgeErrorHandler=" + bridgeErrorHandler
-               + ", exchangePattern=" + exchangePattern
-               + ", backlog=" + backlog
-               + ", bindTimeout=" + bindTimeout
-               + ", bindRetryInterval=" + bindRetryInterval
-               + ", acceptTimeout=" + acceptTimeout
-               + ", connectTimeout=" + connectTimeout
-               + ", receiveTimeout=" + receiveTimeout
-               + ", maxConcurrentConsumers=" + maxConcurrentConsumers
-               + ", idleTimeout=" + idleTimeout
-               + ", idleTimeoutStrategy=" + idleTimeoutStrategy
-               + ", readTimeout=" + readTimeout
-               + ", keepAlive=" + keepAlive
-               + ", tcpNoDelay=" + tcpNoDelay
-               + ", reuseAddress=" + reuseAddress
-               + ", receiveBufferSize=" + receiveBufferSize
-               + ", sendBufferSize=" + sendBufferSize
-               + ", autoAck=" + autoAck
-               + ", hl7Headers=" + hl7Headers
-               + ", requireEndOfData=" + requireEndOfData
-               + ", stringPayload=" + stringPayload
-               + ", validatePayload=" + validatePayload
-               + ", minBufferSize=" + minBufferSize
-               + ", maxBufferSize=" + maxBufferSize
-               + ", charsetName='" + charsetName + '\''
-               + ", sslContextParameters=" + sslContextParameters
-               + '}';
+                + "bridgeErrorHandler=" + bridgeErrorHandler
+                + ", exchangePattern=" + exchangePattern
+                + ", backlog=" + backlog
+                + ", bindTimeout=" + bindTimeout
+                + ", bindRetryInterval=" + bindRetryInterval
+                + ", acceptTimeout=" + acceptTimeout
+                + ", connectTimeout=" + connectTimeout
+                + ", receiveTimeout=" + receiveTimeout
+                + ", maxConcurrentConsumers=" + maxConcurrentConsumers
+                + ", idleTimeout=" + idleTimeout
+                + ", idleTimeoutStrategy=" + idleTimeoutStrategy
+                + ", readTimeout=" + readTimeout
+                + ", keepAlive=" + keepAlive
+                + ", tcpNoDelay=" + tcpNoDelay
+                + ", reuseAddress=" + reuseAddress
+                + ", receiveBufferSize=" + receiveBufferSize
+                + ", sendBufferSize=" + sendBufferSize
+                + ", autoAck=" + autoAck
+                + ", hl7Headers=" + hl7Headers
+                + ", requireEndOfData=" + requireEndOfData
+                + ", stringPayload=" + stringPayload
+                + ", validatePayload=" + validatePayload
+                + ", minBufferSize=" + minBufferSize
+                + ", maxBufferSize=" + maxBufferSize
+                + ", charsetName='" + charsetName + '\''
+                + ", sslContextParameters=" + sslContextParameters
+                + '}';
     }
 }

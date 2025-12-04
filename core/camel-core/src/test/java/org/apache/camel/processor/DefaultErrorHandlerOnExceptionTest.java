@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -53,17 +54,22 @@ public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).to("log:boom").to("mock:boom");
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("log:boom")
+                        .to("mock:boom");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Boom");
-                        }
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Boom");
+                                }
+                                exchange.getIn().setBody("Bye World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

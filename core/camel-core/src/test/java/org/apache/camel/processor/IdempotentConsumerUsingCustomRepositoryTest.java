@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +34,6 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
@@ -43,7 +44,9 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").idempotentConsumer(header("messageId"), customRepo).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), customRepo)
+                        .to("mock:result");
             }
         };
     }
@@ -148,5 +151,4 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
             // noop
         }
     }
-
 }

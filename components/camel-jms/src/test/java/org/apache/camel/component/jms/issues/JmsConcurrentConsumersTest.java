@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
@@ -35,9 +39,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Concurrent consumer with JMSReply test.
  */
@@ -47,6 +48,7 @@ public class JmsConcurrentConsumersTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -94,7 +96,8 @@ public class JmsConcurrentConsumersTest extends AbstractJMSTest {
 
                 from("activemq:b?concurrentConsumers=3")
                         .delay(Duration.ofSeconds(3).toMillis())
-                        .transform(body().prepend("Bye ")).to("log:reply");
+                        .transform(body().prepend("Bye "))
+                        .to("log:reply");
             }
         };
     }

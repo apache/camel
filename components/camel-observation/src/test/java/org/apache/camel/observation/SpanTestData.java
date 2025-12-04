@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
 
 import java.util.ArrayList;
@@ -103,5 +104,4 @@ public class SpanTestData {
         Collections.addAll(this.childs, childs);
         return this;
     }
-
 }

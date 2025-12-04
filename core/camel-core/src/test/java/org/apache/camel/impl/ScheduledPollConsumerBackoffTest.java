@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated
 public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
@@ -94,7 +95,8 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         consumer.stop();
     }
 
-    private static MockScheduledPollConsumer createMockScheduledPollConsumer(Endpoint endpoint, Exception expectedException) {
+    private static MockScheduledPollConsumer createMockScheduledPollConsumer(
+            Endpoint endpoint, Exception expectedException) {
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setBackoffMultiplier(4);
         consumer.setBackoffErrorThreshold(3);

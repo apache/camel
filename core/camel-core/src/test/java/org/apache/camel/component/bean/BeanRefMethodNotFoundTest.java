@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanRefMethodNotFoundTest extends ContextTestSupport {
 
@@ -45,9 +46,7 @@ public class BeanRefMethodNotFoundTest extends ContextTestSupport {
             }
         });
 
-        Exception e = assertThrows(Exception.class,
-                () -> context.start(),
-                "Should have thrown exception");
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
 
         FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
         assertEquals("b", failed.getRouteId());

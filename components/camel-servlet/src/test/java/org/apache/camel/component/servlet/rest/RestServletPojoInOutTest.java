@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,17 +27,13 @@ import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testServletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/users/lives",
-                new ByteArrayInputStream(body.getBytes()), "application/json");
+                contextUrl + "/services/users/lives", new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
@@ -69,11 +69,14 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
                 // use the rest DSL to define the rest services
                 rest("/users/")
                         // just return the default country here
-                        .get("lives").to("direct:start")
-                        .post("lives").type(UserPojo.class).outType(CountryPojo.class).to("direct:lives");
+                        .get("lives")
+                        .to("direct:start")
+                        .post("lives")
+                        .type(UserPojo.class)
+                        .outType(CountryPojo.class)
+                        .to("direct:lives");
 
-                from("direct:lives")
-                        .bean(new UserService(), "livesWhere");
+                from("direct:lives").bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");
@@ -82,5 +85,4 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
             }
         };
     }
-
 }

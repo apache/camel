@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -59,7 +60,10 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt"))
-                        .onCompletion().onFailureOnly().to("mock:failed").end()
+                        .onCompletion()
+                        .onFailureOnly()
+                        .to("mock:failed")
+                        .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -67,7 +71,9 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }
-                        }).convertBodyTo(String.class).to("mock:result");
+                        })
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.EndpointInject;
@@ -71,5 +72,4 @@ public class BindySimpleCsvMarshallTrimClipTest {
             from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
     }
-
 }

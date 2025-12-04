@@ -24,7 +24,5 @@ public final class XmppProperties {
     public static final String XMPP_PORT = "xmpp.port";
     public static final Integer PORT_DEFAULT = 5222;
 
-    private XmppProperties() {
-
-    }
+    private XmppProperties() {}
 }

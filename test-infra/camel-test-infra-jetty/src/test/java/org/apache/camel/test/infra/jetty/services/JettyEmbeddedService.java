@@ -79,7 +79,8 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
 
             server.addConnector(connector);
 
-            Handler contextHandler = jettyConfiguration.getContextHandlerConfiguration().resolve();
+            Handler contextHandler =
+                    jettyConfiguration.getContextHandlerConfiguration().resolve();
 
             server.setHandler(contextHandler);
 

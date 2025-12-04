@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.patterns;
 
 import java.util.concurrent.TimeUnit;
@@ -46,12 +47,12 @@ public class MockEndpointsInterceptSendToEndpointTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("*").log("intercepted ${exchangeProperty.CamelInterceptedEndpoint}")
+                interceptSendToEndpoint("*")
+                        .log("intercepted ${exchangeProperty.CamelInterceptedEndpoint}")
                         .to("mock:intercepted");
 
                 from("direct:start").to("log:foo").to("mock:result");
             }
         };
     }
-
 }

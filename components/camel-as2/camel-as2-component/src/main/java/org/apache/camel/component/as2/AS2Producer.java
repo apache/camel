@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import org.apache.camel.Exchange;
@@ -44,7 +45,8 @@ public class AS2Producer extends AbstractApiProducer<AS2ApiName, AS2Configuratio
         HttpResponse response = context.getResponse();
         if (response instanceof ClassicHttpResponse classicResponse) {
             HttpEntity entity = classicResponse.getEntity();
-            if (entity instanceof DispositionNotificationMultipartReportEntity || entity instanceof MultipartSignedEntity) {
+            if (entity instanceof DispositionNotificationMultipartReportEntity
+                    || entity instanceof MultipartSignedEntity) {
                 resultExchange.getMessage().setBody(entity);
             } else {
                 resultExchange.getMessage().setBody(null);

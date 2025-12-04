@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import java.util.List;
@@ -23,8 +24,7 @@ public class Action {
     private List<Button> buttons;
     private List<Section> sections;
 
-    public Action() {
-    }
+    public Action() {}
 
     public String getButton() {
         return button;

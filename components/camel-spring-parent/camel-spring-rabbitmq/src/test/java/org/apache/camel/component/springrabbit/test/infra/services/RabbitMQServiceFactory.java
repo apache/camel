@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.test.infra.services;
 
 import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
 
 public final class RabbitMQServiceFactory {
 
-    private RabbitMQServiceFactory() {
-    }
+    private RabbitMQServiceFactory() {}
 
     public static RabbitMQService createService() {
         return org.apache.camel.test.infra.rabbitmq.services.RabbitMQServiceFactory.createService();

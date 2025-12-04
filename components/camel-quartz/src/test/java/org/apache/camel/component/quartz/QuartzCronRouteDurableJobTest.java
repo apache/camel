@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class QuartzCronRouteDurableJobTest extends QuartzCronRouteTest {
             public void configure() {
                 // triggers every 1th second at precise 00,01,02,03..59
                 // notice we must use + as space when configured using URI parameter
-                from("quartz://myGroup/myTimerName?durableJob=true&recoverableJob=true&cron=0/1+*+*+*+*+?").to("mock:result");
+                from("quartz://myGroup/myTimerName?durableJob=true&recoverableJob=true&cron=0/1+*+*+*+*+?")
+                        .to("mock:result");
             }
         };
     }

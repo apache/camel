@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -22,8 +25,6 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
-
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 
 public class FetchIssueProducer extends DefaultProducer {
     public FetchIssueProducer(JiraEndpoint endpoint) {

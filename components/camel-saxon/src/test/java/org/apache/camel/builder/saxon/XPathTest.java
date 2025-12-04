@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.xml.xpath.XPathFactory;
 
@@ -24,8 +27,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ResourceLock(Resources.SYSTEM_PROPERTIES)
 public class XPathTest extends CamelTestSupport {
@@ -85,5 +86,4 @@ public class XPathTest extends CamelTestSupport {
         assertEquals("def", result);
         // END SNIPPET: e3
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup;
 
 import java.util.Map;
@@ -46,12 +47,12 @@ public class ClickUpComponent extends DefaultComponent {
         }
 
         if (!Events.areAllEventsSupported(endpoint.getConfiguration().getEvents())) {
-            Set<String> unsupportedEvents = Events.computeUnsupportedEvents(endpoint.getConfiguration().getEvents());
+            Set<String> unsupportedEvents =
+                    Events.computeUnsupportedEvents(endpoint.getConfiguration().getEvents());
 
             throw new IllegalArgumentException("The following events are not yet supported: " + unsupportedEvents);
         }
 
         return endpoint;
     }
-
 }

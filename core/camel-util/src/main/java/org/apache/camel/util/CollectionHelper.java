@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.lang.reflect.Array;
@@ -41,8 +42,7 @@ public final class CollectionHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private CollectionHelper() {
-    }
+    private CollectionHelper() {}
 
     /**
      * Returns the size of the collection if it can be determined to be a collection
@@ -152,9 +152,7 @@ public final class CollectionHelper {
      * @return     an unmodifiable map.
      */
     public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> map) {
-        return map == null
-                ? Collections.emptyMap()
-                : Collections.unmodifiableMap(new HashMap<>(map));
+        return map == null ? Collections.emptyMap() : Collections.unmodifiableMap(new HashMap<>(map));
     }
 
     /**
@@ -166,9 +164,7 @@ public final class CollectionHelper {
         map.put(key, value);
 
         for (int i = 0; i < keyVals.length; i += 2) {
-            map.put(
-                    (K) keyVals[i],
-                    (V) keyVals[i + 1]);
+            map.put((K) keyVals[i], (V) keyVals[i + 1]);
         }
 
         return map;
@@ -178,8 +174,7 @@ public final class CollectionHelper {
      * Build an immutable map from varargs.
      */
     public static <K, V> Map<K, V> immutableMapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
-        return Collections.unmodifiableMap(
-                mapOf(creator, key, value, keyVals));
+        return Collections.unmodifiableMap(mapOf(creator, key, value, keyVals));
     }
 
     /**
@@ -193,8 +188,7 @@ public final class CollectionHelper {
      * Build an immutable map from varargs.
      */
     public static <K, V> Map<K, V> immutableMapOf(K key, V value, Object... keyVals) {
-        return Collections.unmodifiableMap(
-                mapOf(HashMap::new, key, value, keyVals));
+        return Collections.unmodifiableMap(mapOf(HashMap::new, key, value, keyVals));
     }
 
     /**
@@ -205,9 +199,7 @@ public final class CollectionHelper {
         properties.setProperty(key, value);
 
         for (int i = 0; i < keyVals.length; i += 2) {
-            properties.setProperty(
-                    keyVals[i],
-                    keyVals[i + 1]);
+            properties.setProperty(keyVals[i], keyVals[i + 1]);
         }
 
         return properties;

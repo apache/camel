@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
 public class RabbitMQBasicIT extends RabbitMQITSupport {
@@ -37,11 +38,19 @@ public class RabbitMQBasicIT extends RabbitMQITSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         ConnectionProperties connectionProperties = service.connectionProperties();
-        foo = String.format("spring-rabbitmq:%s:%d/foo?username=%s&password=%s", connectionProperties.hostname(),
-                connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
+        foo = String.format(
+                "spring-rabbitmq:%s:%d/foo?username=%s&password=%s",
+                connectionProperties.hostname(),
+                connectionProperties.port(),
+                connectionProperties.username(),
+                connectionProperties.password());
 
-        bar = String.format("spring-rabbitmq:%s:%d/bar?username=%s&password=%s", connectionProperties.hostname(),
-                connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
+        bar = String.format(
+                "spring-rabbitmq:%s:%d/bar?username=%s&password=%s",
+                connectionProperties.hostname(),
+                connectionProperties.port(),
+                connectionProperties.username(),
+                connectionProperties.password());
 
         return new RouteBuilder() {
             @Override
@@ -89,5 +98,4 @@ public class RabbitMQBasicIT extends RabbitMQITSupport {
 
         mock.assertIsSatisfied();
     }
-
 }

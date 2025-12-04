@@ -23,7 +23,5 @@ public final class MilvusProperties {
     public static final String MILVUS_ENDPOINT_PORT = "milvus.endpoint.port";
     public static final String MILVUS_CONTAINER = "milvus.container";
 
-    private MilvusProperties() {
-
-    }
+    private MilvusProperties() {}
 }

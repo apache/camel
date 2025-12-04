@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.util.Comparator;
@@ -24,8 +25,7 @@ import org.apache.camel.tooling.util.Strings;
 
 public final class EndpointHelper {
 
-    private EndpointHelper() {
-    }
+    private EndpointHelper() {}
 
     /**
      * Returns the group name from the given label.
@@ -200,5 +200,4 @@ public final class EndpointHelper {
             return 0;
         }
     }
-
 }

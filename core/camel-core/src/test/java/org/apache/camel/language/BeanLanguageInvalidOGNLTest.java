@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,9 +29,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
@@ -40,14 +41,13 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
             }
         });
 
-        Exception e = assertThrows(Exception.class, () -> context.start(),
-                "Should have thrown exception");
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
 
         RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e);
         MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
         assertEquals("getOther[xx", mnfe.getMethodName());
-        ExpressionIllegalSyntaxException cause
-                = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
+        ExpressionIllegalSyntaxException cause =
+                assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
         assertEquals("Illegal syntax: getOther[xx", cause.getMessage());
         assertEquals("getOther[xx", cause.getExpression());
     }
@@ -64,7 +64,5 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
         public Map<?, ?> getOther() {
             return map;
         }
-
     }
-
 }

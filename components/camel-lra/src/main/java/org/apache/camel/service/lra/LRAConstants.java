@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
 
 public final class LRAConstants {
@@ -34,7 +35,5 @@ public final class LRAConstants {
     static final String URL_COMPENSATION_KEY = "Camel-Saga-Compensate";
     static final String URL_COMPLETION_KEY = "Camel-Saga-Complete";
 
-    private LRAConstants() {
-    }
-
+    private LRAConstants() {}
 }

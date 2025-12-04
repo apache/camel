@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -23,8 +26,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for the MllpEndpoint class.
@@ -38,7 +39,8 @@ public class MllpEndpointTest extends CamelTestSupport {
      */
     @Test
     public void testCreateEndpointWithDefaultConfigurations() throws IOException {
-        try (MllpEndpoint mllpEndpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), new MllpConfiguration())) {
+        try (MllpEndpoint mllpEndpoint =
+                new MllpEndpoint("mllp://dummy", new MllpComponent(), new MllpConfiguration())) {
             assertEquals(5, mllpEndpoint.getConfiguration().getMaxConcurrentConsumers());
         }
     }
@@ -70,25 +72,29 @@ public class MllpEndpointTest extends CamelTestSupport {
 
         MllpComponent mllpComponent = context.getComponent("mllp", MllpComponent.class);
 
-        MllpEndpoint defaultStrategyEndpoint
-                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000");
+        MllpEndpoint defaultStrategyEndpoint =
+                (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000");
         assertEquals(resetStrategy, defaultStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
 
-        MllpEndpoint lowerCaseCloseStrategyEndpoint
-                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=CLOSE");
-        assertEquals(closeStrategy, lowerCaseCloseStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
+        MllpEndpoint lowerCaseCloseStrategyEndpoint = (MllpEndpoint)
+                mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=CLOSE");
+        assertEquals(
+                closeStrategy, lowerCaseCloseStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
 
-        MllpEndpoint upperCaseCloseStrategyEndpoint
-                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=CLOSE");
-        assertEquals(closeStrategy, upperCaseCloseStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
+        MllpEndpoint upperCaseCloseStrategyEndpoint = (MllpEndpoint)
+                mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=CLOSE");
+        assertEquals(
+                closeStrategy, upperCaseCloseStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
 
-        MllpEndpoint lowerCaseResetStrategyEndpoint
-                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=reset");
-        assertEquals(resetStrategy, lowerCaseResetStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
+        MllpEndpoint lowerCaseResetStrategyEndpoint = (MllpEndpoint)
+                mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=reset");
+        assertEquals(
+                resetStrategy, lowerCaseResetStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
 
-        MllpEndpoint upperCaseResetStrategyEndpoint
-                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=RESET");
-        assertEquals(resetStrategy, upperCaseResetStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
+        MllpEndpoint upperCaseResetStrategyEndpoint = (MllpEndpoint)
+                mllpComponent.createEndpoint("mllp://dummy:1234?idleTimeout=30000&idleTimeoutStrategy=RESET");
+        assertEquals(
+                resetStrategy, upperCaseResetStrategyEndpoint.getConfiguration().getIdleTimeoutStrategy());
     }
 
     /**
@@ -111,8 +117,8 @@ public class MllpEndpointTest extends CamelTestSupport {
 
         // Create the endpoint using SSLContextParameters
         MllpComponent mllpComponent = context.getComponent("mllp", MllpComponent.class);
-        MllpEndpoint sslEndpoint
-                = (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?sslContextParameters=#mySslContext");
+        MllpEndpoint sslEndpoint =
+                (MllpEndpoint) mllpComponent.createEndpoint("mllp://dummy:1234?sslContextParameters=#mySslContext");
 
         // Verify that the SSLContextParameters were set correctly
         assertEquals(sslContextParameters, sslEndpoint.getConfiguration().getSslContextParameters());

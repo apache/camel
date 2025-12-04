@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.spel;
 
 import org.apache.camel.CamelContext;
@@ -28,7 +29,8 @@ public class SpelSpringTest extends LanguageTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/language/spel/SpelSpringTest-context.xml");
+        return SpringTestHelper.createSpringCamelContext(
+                this, "org/apache/camel/language/spel/SpelSpringTest-context.xml");
     }
 
     @Test

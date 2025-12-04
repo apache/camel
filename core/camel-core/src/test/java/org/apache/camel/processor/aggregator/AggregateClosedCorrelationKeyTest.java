@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 
@@ -37,8 +38,11 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
-                        .closeCorrelationKeyOnCompletion(1000).to("mock:result");
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(2)
+                        .closeCorrelationKeyOnCompletion(1000)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -66,8 +70,11 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
-                        .closeCorrelationKeyOnCompletion(2).to("mock:result");
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(2)
+                        .closeCorrelationKeyOnCompletion(2)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -119,5 +126,4 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 
         assertEquals(2, closed, "There should be 2 closed");
     }
-
 }

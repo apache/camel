@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -45,5 +46,4 @@ public class FilterReifier extends ExpressionReifier<FilterDefinition> {
         answer.setStatusPropertyName(status);
         return answer;
     }
-
 }

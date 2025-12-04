@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -27,10 +28,13 @@ public class Order {
 
     @XmlAttribute
     private int id;
+
     @XmlAttribute
     private String partName;
+
     @XmlAttribute
     private int amount;
+
     @XmlAttribute(name = "customer_name")
     private String customerName;
 

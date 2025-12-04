@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -42,15 +43,21 @@ public class SendDynamicAwareResolver {
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found SendDynamicAware: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), scheme);
+                LOG.debug(
+                        "Found SendDynamicAware: {} via: {}{}",
+                        type.getName(),
+                        factoryFinder.getResourcePath(),
+                        scheme);
             }
             if (SendDynamicAware.class.isAssignableFrom(type)) {
-                SendDynamicAware answer = (SendDynamicAware) context.getInjector().newInstance(type, false);
+                SendDynamicAware answer =
+                        (SendDynamicAware) context.getInjector().newInstance(type, false);
                 answer.setScheme(scheme);
                 answer.setCamelContext(context);
                 return answer;
             } else {
-                throw new IllegalArgumentException("Type is not a SendDynamicAware implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Type is not a SendDynamicAware implementation. Found: " + type.getName());
             }
         }
 
@@ -63,5 +70,4 @@ public class SendDynamicAwareResolver {
         }
         return factoryFinder.findClass(name).orElse(null);
     }
-
 }

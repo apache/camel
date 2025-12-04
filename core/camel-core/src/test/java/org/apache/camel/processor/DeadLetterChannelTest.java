@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DeadLetterChannelTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -128,12 +129,14 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(2).redeliveryDelay(50)
-                        .loggingLevel(LoggingLevel.DEBUG)
-
-                ).process(processor).to("mock:success");
+                from("direct:start")
+                        .errorHandler(deadLetterChannel("mock:failed")
+                                .maximumRedeliveries(2)
+                                .redeliveryDelay(50)
+                                .loggingLevel(LoggingLevel.DEBUG))
+                        .process(processor)
+                        .to("mock:success");
             }
         };
     }
-
 }

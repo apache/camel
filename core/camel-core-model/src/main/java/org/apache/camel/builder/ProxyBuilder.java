@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
@@ -68,7 +69,7 @@ public final class ProxyBuilder {
         // this method is introduced to avoid compiler warnings about the
         // generic Class arrays in the case we've got only one single Class
         // to build a Proxy for
-        return build((Class<T>[]) new Class[] { interfaceClass });
+        return build((Class<T>[]) new Class[] {interfaceClass});
     }
 
     /**
@@ -84,5 +85,4 @@ public final class ProxyBuilder {
         BeanProxyFactory factory = PluginHelper.getBeanProxyFactory(camelContext);
         return factory.createProxy(endpoint, true, interfaceClasses);
     }
-
 }

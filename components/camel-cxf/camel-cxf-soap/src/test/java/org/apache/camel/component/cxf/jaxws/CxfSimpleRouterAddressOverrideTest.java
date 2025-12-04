@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.Exchange;
@@ -22,14 +23,16 @@ import org.apache.camel.builder.RouteBuilder;
 public class CxfSimpleRouterAddressOverrideTest extends CxfSimpleRouterTest {
 
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    private String serviceEndpointURI = "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=POJO";
+    private String serviceEndpointURI =
+            "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=POJO";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG")
+                from(routerEndpointURI)
+                        .to("log:org.apache.camel?level=DEBUG")
                         .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()))
                         .to(serviceEndpointURI);
             }

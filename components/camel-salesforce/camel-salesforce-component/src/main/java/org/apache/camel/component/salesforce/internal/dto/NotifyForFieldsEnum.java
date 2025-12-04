@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -53,5 +54,4 @@ public enum NotifyForFieldsEnum {
         }
         throw new IllegalArgumentException(value);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import org.apache.camel.Category;
@@ -31,37 +32,56 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 /**
  * Send DataSet jobs to an Apache Flink cluster.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true,
-             category = { Category.TRANSFORMATION, Category.BIGDATA }, headersClass = FlinkConstants.class)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "flink",
+        title = "Flink",
+        syntax = "flink:endpointType",
+        producerOnly = true,
+        category = {Category.TRANSFORMATION, Category.BIGDATA},
+        headersClass = FlinkConstants.class)
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private EndpointType endpointType;
+
     @UriParam
     private DataSet dataSet;
+
     @UriParam
     private DataSetCallback dataSetCallback;
+
     @UriParam
     private DataStream dataStream;
+
     @UriParam
     private DataStreamCallback dataStreamCallback;
+
     @UriParam(defaultValue = "true")
     private boolean collect = true;
+
     @UriParam(label = "producer,advanced", enums = "STREAMING,BATCH,AUTOMATIC")
     private String executionMode;
+
     @UriParam(label = "producer,advanced")
     private Long checkpointInterval;
+
     @UriParam(label = "producer,advanced", enums = "EXACTLY_ONCE,AT_LEAST_ONCE")
     private String checkpointingMode;
+
     @UriParam(label = "producer,advanced")
     private Integer parallelism;
+
     @UriParam(label = "producer,advanced")
     private Integer maxParallelism;
+
     @UriParam(label = "producer,advanced")
     private String jobName;
+
     @UriParam(label = "producer,advanced")
     private Long checkpointTimeout;
+
     @UriParam(label = "producer,advanced")
     private Long minPauseBetweenCheckpoints;
 

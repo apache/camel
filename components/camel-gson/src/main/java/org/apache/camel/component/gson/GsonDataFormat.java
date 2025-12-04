@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson;
 
 import java.io.BufferedWriter;
@@ -142,7 +143,7 @@ public class GsonDataFormat extends ServiceSupport
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         try (final OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange));
-             final BufferedWriter writer = IOHelper.buffered(osw)) {
+                final BufferedWriter writer = IOHelper.buffered(osw)) {
             gson.toJson(graph, writer);
         }
 
@@ -184,7 +185,8 @@ public class GsonDataFormat extends ServiceSupport
             }
         } else {
             // fallback to input stream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             Reader r = new InputStreamReader(is);
             if (unmarshalGenericType == null) {
                 return gson.fromJson(r, clazz);
@@ -365,5 +367,4 @@ public class GsonDataFormat extends ServiceSupport
     public Gson getGson() {
         return this.gson;
     }
-
 }

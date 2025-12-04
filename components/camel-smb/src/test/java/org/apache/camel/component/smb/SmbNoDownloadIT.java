@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SmbNoDownloadIT extends SmbServerTestSupport {
 
@@ -56,12 +57,13 @@ public class SmbNoDownloadIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNull(exchange.getIn().getBody(), "Should not download the file");
-                        assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME));
-                    }
-                })
+                from(getSmbUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNull(exchange.getIn().getBody(), "Should not download the file");
+                                assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME));
+                            }
+                        })
                         .to("mock:received_send");
             }
         };

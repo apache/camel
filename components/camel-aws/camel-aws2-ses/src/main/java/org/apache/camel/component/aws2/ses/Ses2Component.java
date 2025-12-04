@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
 
 import java.util.Map;
@@ -47,7 +48,8 @@ public class Ses2Component extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("From must be specified.");
         }
-        Ses2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Ses2Configuration();
+        Ses2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Ses2Configuration();
         configuration.setFrom(remaining);
         Ses2Endpoint endpoint = new Ses2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

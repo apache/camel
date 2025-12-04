@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security.config;
 
 import org.w3c.dom.Element;
@@ -31,7 +32,8 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
 
     @Override
     protected boolean isEligibleAttribute(String attributeName) {
-        if ("access".equals(attributeName) || "authorizationManager".equals(attributeName)
+        if ("access".equals(attributeName)
+                || "authorizationManager".equals(attributeName)
                 || "authenticationManager".equals(attributeName)) {
             return false;
         } else {
@@ -55,5 +57,4 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         }
         builder.addPropertyReference(attribute, valueRef);
     }
-
 }

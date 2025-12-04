@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.produce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 public class ProduceTest extends SpringRunWithTestSupport {

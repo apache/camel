@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,9 +24,11 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Too resource intensive for most systems to run reliably")
-@Tags({ @Tag("couchbase-7") })
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too resource intensive for most systems to run reliably")
+@Tags({@Tag("couchbase-7")})
 public class ProduceMessagesWithAutoIDIT extends CouchbaseIntegrationTestBase {
 
     @Test
@@ -44,8 +47,8 @@ public class ProduceMessagesWithAutoIDIT extends CouchbaseIntegrationTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(
-                        getConnectionUri() + "&autoStartIdForInserts=true&startingIdForInsertsFrom=1000")
+                from("direct:start")
+                        .to(getConnectionUri() + "&autoStartIdForInserts=true&startingIdForInsertsFrom=1000")
                         .to("mock:result");
             }
         };

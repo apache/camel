@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
@@ -26,10 +31,6 @@ import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestServletBindingModeJsonWithContractTest extends ServletCamelRouterTestSupport {
 
     @Test
@@ -40,8 +41,7 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/users/new",
-                new ByteArrayInputStream(body.getBytes()), "application/json");
+                contextUrl + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
         assertEquals(200, response.getResponseCode());
         String answer = response.getText();
@@ -68,7 +68,9 @@ public class RestServletBindingModeJsonWithContractTest extends ServletCamelRout
 
                 rest("/users/")
                         // REST binding converts from JSON to UserPojo
-                        .post("new").type(UserPojo.class).to("direct:new");
+                        .post("new")
+                        .type(UserPojo.class)
+                        .to("direct:new");
 
                 from("direct:new")
                         // then contract advice converts from UserPojo to UserPojoEx

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,8 +45,14 @@ public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
             public void configure() {
                 onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start").onException(ExpressionEvaluationException.class).handled(true).to("mock://error2").end()
-                        .split(new MyExpression()).to("mock://split").end()
+                from("direct://start")
+                        .onException(ExpressionEvaluationException.class)
+                        .handled(true)
+                        .to("mock://error2")
+                        .end()
+                        .split(new MyExpression())
+                        .to("mock://split")
+                        .end()
                         .to("log:result");
             }
         };

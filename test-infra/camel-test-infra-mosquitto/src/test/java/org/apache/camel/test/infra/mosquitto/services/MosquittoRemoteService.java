@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.mosquitto.services;
 
 public class MosquittoRemoteService extends MosquittoRemoteInfraService implements MosquittoService {
-    public MosquittoRemoteService() {
-    }
+    public MosquittoRemoteService() {}
 
     public MosquittoRemoteService(int port) {
         super(port);

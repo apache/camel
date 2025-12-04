@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.net.URI;
@@ -59,10 +60,7 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
     private WebClient client;
 
     public KnativeHttpProducer(
-                               Endpoint endpoint,
-                               KnativeResource serviceDefinition,
-                               Vertx vertx,
-                               WebClientOptions clientOptions) {
+            Endpoint endpoint, KnativeResource serviceDefinition, Vertx vertx, WebClientOptions clientOptions) {
         super(endpoint);
 
         this.serviceDefinition = serviceDefinition;
@@ -102,64 +100,61 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
         }
 
-        for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
+        for (Map.Entry<String, Object> entry :
+                exchange.getMessage().getHeaders().entrySet()) {
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 headers.add(entry.getKey(), entry.getValue().toString());
             }
         }
 
-        client.postAbs(this.uri)
-                .putHeaders(headers)
-                .sendBuffer(Buffer.buffer(payload), response -> {
-                    if (response.succeeded()) {
-                        HttpResponse<Buffer> result = response.result();
-                        Message answer = exchange.getMessage();
+        client.postAbs(this.uri).putHeaders(headers).sendBuffer(Buffer.buffer(payload), response -> {
+            if (response.succeeded()) {
+                HttpResponse<Buffer> result = response.result();
+                Message answer = exchange.getMessage();
 
-                        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, result.statusCode());
+                answer.setHeader(Exchange.HTTP_RESPONSE_CODE, result.statusCode());
 
-                        for (Map.Entry<String, String> entry : result.headers().entries()) {
-                            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(),
-                                    exchange)) {
-                                answer.setHeader(entry.getKey(), entry.getValue());
-                            }
-                        }
-
-                        if (result.body() != null) {
-                            answer.setBody(result.body().getBytes());
-                        } else {
-                            answer.setBody(null);
-                        }
-
-                        if (result.statusCode() < 200 || result.statusCode() >= 300) {
-                            String exceptionMessage = String.format(
-                                    "HTTP operation failed invoking %s with statusCode: %d, statusMessage: %s",
-                                    URISupport.sanitizeUri(this.uri),
-                                    result.statusCode(),
-                                    result.statusMessage());
-
-                            exchange.setException(new CamelException(exceptionMessage));
-                        }
-
-                        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, result.statusCode());
-                    } else if (response.failed()) {
-                        String exceptionMessage = "HTTP operation failed invoking " + URISupport.sanitizeUri(this.uri);
-                        if (response.result() != null) {
-                            exceptionMessage += " with statusCode: " + response.result().statusCode();
-                        }
-
-                        if (response.cause() != null) {
-                            exceptionMessage += " caused by: " + response.cause().getMessage();
-
-                            if (response.cause().getCause() != null) {
-                                exceptionMessage += ", " + response.cause().getCause().getMessage();
-                            }
-                        }
-
-                        exchange.setException(new CamelException(exceptionMessage));
+                for (Map.Entry<String, String> entry : result.headers().entries()) {
+                    if (!headerFilterStrategy.applyFilterToExternalHeaders(
+                            entry.getKey(), entry.getValue(), exchange)) {
+                        answer.setHeader(entry.getKey(), entry.getValue());
                     }
+                }
 
-                    callback.done(false);
-                });
+                if (result.body() != null) {
+                    answer.setBody(result.body().getBytes());
+                } else {
+                    answer.setBody(null);
+                }
+
+                if (result.statusCode() < 200 || result.statusCode() >= 300) {
+                    String exceptionMessage = String.format(
+                            "HTTP operation failed invoking %s with statusCode: %d, statusMessage: %s",
+                            URISupport.sanitizeUri(this.uri), result.statusCode(), result.statusMessage());
+
+                    exchange.setException(new CamelException(exceptionMessage));
+                }
+
+                answer.setHeader(Exchange.HTTP_RESPONSE_CODE, result.statusCode());
+            } else if (response.failed()) {
+                String exceptionMessage = "HTTP operation failed invoking " + URISupport.sanitizeUri(this.uri);
+                if (response.result() != null) {
+                    exceptionMessage += " with statusCode: " + response.result().statusCode();
+                }
+
+                if (response.cause() != null) {
+                    exceptionMessage += " caused by: " + response.cause().getMessage();
+
+                    if (response.cause().getCause() != null) {
+                        exceptionMessage += ", " + response.cause().getCause().getMessage();
+                    }
+                }
+
+                exchange.setException(new CamelException(exceptionMessage));
+            }
+
+            callback.done(false);
+        });
 
         return false;
     }
@@ -212,5 +207,4 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
     private String getHost(KnativeResource definition) {
         return URI.create(getUrl(definition)).getHost();
     }
-
 }

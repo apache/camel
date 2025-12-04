@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.AggregationStrategy;
@@ -45,7 +46,12 @@ public class MulticastAggregationStrategyThrowExceptionTest extends ContextTestS
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").multicast(new MyAggregateBean()).shareUnitOfWork().to("direct:a").to("direct:b").end();
+                from("direct:start")
+                        .multicast(new MyAggregateBean())
+                        .shareUnitOfWork()
+                        .to("direct:a")
+                        .to("direct:b")
+                        .end();
 
                 from("direct:a").to("mock:a");
                 from("direct:b").to("mock:b");
@@ -63,5 +69,4 @@ public class MulticastAggregationStrategyThrowExceptionTest extends ContextTestS
             return newExchange;
         }
     }
-
 }

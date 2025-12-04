@@ -59,8 +59,7 @@ import picocli.CommandLine;
  * @EnableKubernetesMockClient works. In another work we can plan to tackle this test inheritance mechanism.
  *
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 @EnableKubernetesMockClient
 class KubernetesRunCustomTest {
 
@@ -80,8 +79,11 @@ class KubernetesRunCustomTest {
     public void disableAutomaticClusterDetection() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsOpenshift();
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml",
                 "--disable-auto");
         int exit = command.doCall();
 
@@ -98,13 +100,17 @@ class KubernetesRunCustomTest {
     public void detectOpenshiftCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsOpenshift();
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml", "--verbose");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml",
+                "--verbose");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit, printer.getOutput());
-        Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(),
-                printer.getOutput());
+        Assertions.assertEquals(
+                ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(), printer.getOutput());
 
         var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
@@ -116,10 +122,19 @@ class KubernetesRunCustomTest {
     public void runWithProperties() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsConfigmap();
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--runtime=quarkus", "--output=yaml", "--verbose", "--name=my-route-props", "--disable-auto=true",
-                "--property=a=val-A", "--property=b=val-B", "--property=file:src/test/resources/my-route-props1.properties",
-                "--config=configmap:multiple-config", "--config=configmap:test-config", "--config=secret:test-secret");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--runtime=quarkus",
+                "--output=yaml",
+                "--verbose",
+                "--name=my-route-props",
+                "--disable-auto=true",
+                "--property=a=val-A",
+                "--property=b=val-B",
+                "--property=file:src/test/resources/my-route-props1.properties",
+                "--config=configmap:multiple-config",
+                "--config=configmap:test-config",
+                "--config=secret:test-secret");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit, printer.getOutput());
@@ -133,13 +148,16 @@ class KubernetesRunCustomTest {
 
         Assertions.assertTrue(materializedProps.size() > 0, "materialized properties file is empty");
         String camelPropLocation = materializedProps.getProperty("camel.component.properties.location");
-        Assertions.assertNotNull(camelPropLocation,
-                "camel.component.properties.location property not found in application.properties");
-        Assertions.assertTrue(camelPropLocation.contains("file:/etc/camel/conf.d/_configmaps/multiple-config/game.properties"),
+        Assertions.assertNotNull(
+                camelPropLocation, "camel.component.properties.location property not found in application.properties");
+        Assertions.assertTrue(
+                camelPropLocation.contains("file:/etc/camel/conf.d/_configmaps/multiple-config/game.properties"),
                 "camel.component.properties.location property doesn't contain expected value file:/etc/camel/conf.d/_configmaps/multiple-config/game.properties");
-        Assertions.assertTrue(camelPropLocation.contains("file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties"),
+        Assertions.assertTrue(
+                camelPropLocation.contains("file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties"),
                 "camel.component.properties.location property doesn't contain expected value file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties");
-        Assertions.assertTrue(camelPropLocation.contains("file:/etc/camel/conf.d/_secrets/test-secret/secret.properties"),
+        Assertions.assertTrue(
+                camelPropLocation.contains("file:/etc/camel/conf.d/_secrets/test-secret/secret.properties"),
                 "camel.component.properties.location property doesn't contain expected value file:/etc/camel/conf.d/_configmaps/multiple-config/ui.properties");
         Assertions.assertEquals("true", materializedProps.get("camel.component.properties.ignore-missing-location"));
         // from my-route-props1.properties
@@ -155,8 +173,11 @@ class KubernetesRunCustomTest {
     public void detectMinikubeCluster() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -177,9 +198,13 @@ class KubernetesRunCustomTest {
     public void shouldGenerateKnativeService() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(List.of("classpath:route-service.yaml"),
-                "--trait", "knative-service.enabled=true",
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route-service.yaml"),
+                "--trait",
+                "knative-service.enabled=true",
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -200,7 +225,9 @@ class KubernetesRunCustomTest {
                 .orElseThrow(() -> new RuntimeCamelException("Missing KnativeService in Kubernetes manifest"));
 
         var containers = ksvc.getSpec().getTemplate().getSpec().getContainers();
-        Assertions.assertEquals(ContainerTrait.KNATIVE_CONTAINER_PORT_NAME, containers.get(0).getPorts().get(0).getName());
+        Assertions.assertEquals(
+                ContainerTrait.KNATIVE_CONTAINER_PORT_NAME,
+                containers.get(0).getPorts().get(0).getName());
     }
 
     @Test
@@ -209,8 +236,11 @@ class KubernetesRunCustomTest {
     public void shouldGenerateRegularService() throws Exception {
         KubernetesHelper.setKubernetesClient(client);
         setupServerExpectsMinikube();
-        KubernetesRun command = createCommand(List.of("classpath:route-service.yaml"),
-                "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route-service.yaml"),
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -234,8 +264,12 @@ class KubernetesRunCustomTest {
                 .orElseThrow(() -> new RuntimeCamelException("Missing deployment in Kubernetes manifest"));
 
         var containers = deployment.getSpec().getTemplate().getSpec().getContainers();
-        Assertions.assertEquals(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME, containers.get(0).getPorts().get(0).getName());
-        Assertions.assertEquals(ContainerTrait.DEFAULT_CONTAINER_PORT_NAME, svc.getSpec().getPorts().get(0).getName());
+        Assertions.assertEquals(
+                ContainerTrait.DEFAULT_CONTAINER_PORT_NAME,
+                containers.get(0).getPorts().get(0).getName());
+        Assertions.assertEquals(
+                ContainerTrait.DEFAULT_CONTAINER_PORT_NAME,
+                svc.getSpec().getPorts().get(0).getName());
     }
 
     private void setupServerExpectsMinikube() {
@@ -245,9 +279,10 @@ class KubernetesRunCustomTest {
                 .withLabels(Collections.singletonMap("minikube.k8s.io/name", "minikube"))
                 .endMetadata()
                 .build();
-        NodeList nodeList = new NodeListBuilder().addToItems(nodeCR)
-                .build();
-        server.expect().get().withPath("/api/v1/nodes?labelSelector=minikube.k8s.io%2Fname")
+        NodeList nodeList = new NodeListBuilder().addToItems(nodeCR).build();
+        server.expect()
+                .get()
+                .withPath("/api/v1/nodes?labelSelector=minikube.k8s.io%2Fname")
                 .andReturn(HttpURLConnection.HTTP_OK, nodeList)
                 .once();
     }
@@ -258,31 +293,45 @@ class KubernetesRunCustomTest {
                 .withName("route.openshift.io")
                 .build();
 
-        server.expect().get().withPath("/apis/route.openshift.io")
+        server.expect()
+                .get()
+                .withPath("/apis/route.openshift.io")
                 .andReturn(HttpURLConnection.HTTP_OK, apiGroup)
                 .always();
     }
 
     private void setupServerExpectsConfigmap() {
-        ConfigMap cm = client.configMaps().load(getClass().getResourceAsStream("/test-configmap.yaml")).item();
+        ConfigMap cm = client.configMaps()
+                .load(getClass().getResourceAsStream("/test-configmap.yaml"))
+                .item();
         Assertions.assertNotNull(cm);
         Assertions.assertEquals("test-config", cm.getMetadata().getName());
-        server.expect().get().withPath("/api/v1/namespaces/test/configmaps/test-config")
+        server.expect()
+                .get()
+                .withPath("/api/v1/namespaces/test/configmaps/test-config")
                 .andReturn(HttpURLConnection.HTTP_OK, cm)
                 .always();
 
-        ConfigMap cm2 = client.configMaps().load(getClass().getResourceAsStream("/test-multiple-config.yaml")).item();
+        ConfigMap cm2 = client.configMaps()
+                .load(getClass().getResourceAsStream("/test-multiple-config.yaml"))
+                .item();
         Assertions.assertNotNull(cm2);
         Assertions.assertEquals("multiple-config", cm2.getMetadata().getName());
         Assertions.assertNotNull(cm2.getData().get("ui.properties"));
-        server.expect().get().withPath("/api/v1/namespaces/test/configmaps/multiple-config")
+        server.expect()
+                .get()
+                .withPath("/api/v1/namespaces/test/configmaps/multiple-config")
                 .andReturn(HttpURLConnection.HTTP_OK, cm2)
                 .always();
 
-        Secret secret = client.secrets().load(getClass().getResourceAsStream("/test-secret.yaml")).item();
+        Secret secret = client.secrets()
+                .load(getClass().getResourceAsStream("/test-secret.yaml"))
+                .item();
         Assertions.assertNotNull(secret);
         Assertions.assertEquals("test-secret", secret.getMetadata().getName());
-        server.expect().get().withPath("/api/v1/namespaces/test/secrets/test-secret")
+        server.expect()
+                .get()
+                .withPath("/api/v1/namespaces/test/secrets/test-secret")
                 .andReturn(HttpURLConnection.HTTP_OK, secret)
                 .always();
     }
@@ -297,5 +346,4 @@ class KubernetesRunCustomTest {
         command.imagePush = false;
         return command;
     }
-
 }

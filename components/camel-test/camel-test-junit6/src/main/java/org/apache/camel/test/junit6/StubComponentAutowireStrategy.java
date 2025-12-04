@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
 
 import org.apache.camel.CamelContext;
@@ -24,7 +25,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.LifecycleStrategySupport;
 
-public class StubComponentAutowireStrategy extends LifecycleStrategySupport implements AutowiredLifecycleStrategy, Ordered {
+public class StubComponentAutowireStrategy extends LifecycleStrategySupport
+        implements AutowiredLifecycleStrategy, Ordered {
     private final CamelContext camelContext;
     private final String pattern;
 
@@ -85,5 +87,4 @@ public class StubComponentAutowireStrategy extends LifecycleStrategySupport impl
             doAutoWire(name, kind, target, camelContext);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.List;
@@ -39,7 +40,8 @@ import org.eclipse.tahu.model.MqttServerDefinition;
 
 public abstract class TahuEdgeProducer extends DefaultProducer {
 
-    protected static final ConcurrentMap<EdgeNodeDescriptor, TahuEdgeClient> descriptorClients = new ConcurrentHashMap<>();
+    protected static final ConcurrentMap<EdgeNodeDescriptor, TahuEdgeClient> descriptorClients =
+            new ConcurrentHashMap<>();
     protected static final ConcurrentMap<EdgeNodeDescriptor, Future<?>> descriptorFutures = new ConcurrentHashMap<>();
 
     private final CamelContext camelContext;
@@ -75,8 +77,7 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
 
         message.setHeader(TahuConstants.EDGE_NODE_DESCRIPTOR, edgeNodeDescriptor);
 
-        Optional.ofNullable(payload.getUuid())
-                .ifPresent(uuid -> message.setHeader(TahuConstants.MESSAGE_UUID, uuid));
+        Optional.ofNullable(payload.getUuid()).ifPresent(uuid -> message.setHeader(TahuConstants.MESSAGE_UUID, uuid));
         Optional.ofNullable(payload.getTimestamp())
                 .ifPresent(timestamp -> message.setHeader(TahuConstants.MESSAGE_TIMESTAMP, timestamp));
         Optional.ofNullable(payload.getSeq())
@@ -104,7 +105,6 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
         }
 
         TahuEdgeClient tahuEdgeClient = descriptorClients.computeIfAbsent(clientCreationDescriptor, end -> {
-
             TahuConfiguration configuration = endpoint.getConfiguration();
 
             List<MqttServerDefinition> serverDefinitions = configuration.getServerDefinitionList();
@@ -114,8 +114,8 @@ public abstract class TahuEdgeProducer extends DefaultProducer {
             List<String> deviceIds = endpoint.getDeviceIdList();
             boolean useAliases = endpoint.isUseAliases();
 
-            clientExecutorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this,
-                    end.getDescriptorString());
+            clientExecutorService =
+                    camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, end.getDescriptorString());
 
             BdSeqManager bdSeqManager = Optional.ofNullable(endpoint.getBdSeqManager())
                     .orElseGet(() -> new CamelBdSeqManager(end, endpoint.getBdSeqNumPath()));

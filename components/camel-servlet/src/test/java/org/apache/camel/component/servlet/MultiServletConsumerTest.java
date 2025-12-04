@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
 
@@ -81,5 +82,4 @@ public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
                 .addServlet(Servlets.servlet("CamelServlet2", CamelHttpTransportServlet.class)
                         .addMapping("/services2/*"));
     }
-
 }

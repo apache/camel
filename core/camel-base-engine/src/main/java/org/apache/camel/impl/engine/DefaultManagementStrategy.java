@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.List;
@@ -57,8 +58,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     private ManagementAgent managementAgent;
     private CamelContext camelContext;
 
-    public DefaultManagementStrategy() {
-    }
+    public DefaultManagementStrategy() {}
 
     public DefaultManagementStrategy(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -221,14 +221,16 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(eventNotifiers, managementAgent, managementObjectStrategy, managementObjectNameStrategy);
+        ServiceHelper.startService(
+                eventNotifiers, managementAgent, managementObjectStrategy, managementObjectNameStrategy);
         startedEventNotifiers.addAll(eventNotifiers);
     }
 
     @Override
     protected void doStop() throws Exception {
         startedEventNotifiers.clear();
-        ServiceHelper.stopService(managementObjectNameStrategy, managementObjectStrategy, managementAgent, eventNotifiers);
+        ServiceHelper.stopService(
+                managementObjectNameStrategy, managementObjectStrategy, managementAgent, eventNotifiers);
     }
 
     protected ManagementObjectNameStrategy createManagementObjectNameStrategy(String domain) {
@@ -243,5 +245,4 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         String domain = managementAgent != null ? managementAgent.getMBeanObjectDomainName() : null;
         return createManagementObjectNameStrategy(domain);
     }
-
 }

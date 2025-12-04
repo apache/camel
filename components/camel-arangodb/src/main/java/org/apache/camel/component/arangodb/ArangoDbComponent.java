@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb;
 
 import java.util.Map;
@@ -32,8 +33,10 @@ public class ArangoDbComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private ArangoDB arangoDB;
+
     @Metadata(label = "advanced", autowired = true)
     private Vertx vertx;
+
     @Metadata
     private ArangoDbConfiguration configuration = new ArangoDbConfiguration();
 
@@ -50,8 +53,8 @@ public class ArangoDbComponent extends DefaultComponent {
             throw new IllegalArgumentException("Database name must be specified.");
         }
 
-        final ArangoDbConfiguration configurationClone
-                = this.configuration != null ? this.configuration.copy() : new ArangoDbConfiguration();
+        final ArangoDbConfiguration configurationClone =
+                this.configuration != null ? this.configuration.copy() : new ArangoDbConfiguration();
         configurationClone.setDatabase(remaining);
         ArangoDbEndpoint endpoint = new ArangoDbEndpoint(uri, this, configurationClone);
         endpoint.setArangoDB(arangoDB);

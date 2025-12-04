@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import java.util.List;
@@ -55,7 +56,8 @@ public class KameletVariableReceiveTest extends CamelTestSupport {
                         .to("mock:line")
                         .removeVariable("myVar");
 
-                from("direct:start").routeId("test")
+                from("direct:start")
+                        .routeId("test")
                         .setBody(constant(body))
                         .to("kamelet:demo")
                         .log("${body}")

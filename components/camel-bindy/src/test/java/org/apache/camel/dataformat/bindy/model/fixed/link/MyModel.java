@@ -33,5 +33,4 @@ public class MyModel {
     public void setMyModel2(MyModel2 myModel2) {
         this.myModel2 = myModel2;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common.exception;
 
 import java.util.Optional;
@@ -25,9 +26,11 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 public class InvalidNodeTypeException extends MarkedYamlEngineException {
 
     public InvalidNodeTypeException(Node node, NodeType expected) {
-        super(null, Optional.empty(), "Node type " + nodeTypeName(node.getNodeType())
-                                      + " is invalid, expected " + nodeTypeName(expected),
-              node.getStartMark());
+        super(
+                null,
+                Optional.empty(),
+                "Node type " + nodeTypeName(node.getNodeType()) + " is invalid, expected " + nodeTypeName(expected),
+                node.getStartMark());
     }
 
     private static String nodeTypeName(NodeType nodeType) {
@@ -44,5 +47,4 @@ public class InvalidNodeTypeException extends MarkedYamlEngineException {
                 return nodeType.name();
         }
     }
-
 }

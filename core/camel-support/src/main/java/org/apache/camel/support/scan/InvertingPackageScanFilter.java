@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import org.apache.camel.spi.PackageScanFilter;
@@ -39,5 +40,4 @@ public class InvertingPackageScanFilter implements PackageScanFilter {
     public String toString() {
         return "![" + filter.toString() + "]";
     }
-
 }

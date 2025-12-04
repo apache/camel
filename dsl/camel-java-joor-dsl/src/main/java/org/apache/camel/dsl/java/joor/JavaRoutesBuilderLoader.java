@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
+
+import static org.apache.camel.dsl.java.joor.Helper.determineName;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -54,8 +57,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.dsl.java.joor.Helper.determineName;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
@@ -145,8 +146,10 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             Class<?> clazz = result.getClass(className);
             if (clazz != null) {
                 BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
-                boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())
-                        || Modifier.isPrivate(clazz.getModifiers()) || (bir != null && bir.lazy());
+                boolean skip = clazz.isInterface()
+                        || Modifier.isAbstract(clazz.getModifiers())
+                        || Modifier.isPrivate(clazz.getModifiers())
+                        || (bir != null && bir.lazy());
                 // must have a default no-arg constructor to be able to create an instance
                 boolean ctr = ObjectHelper.hasDefaultNoArgConstructor(clazz);
                 if (ctr && !skip) {
@@ -179,8 +182,10 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             } else if (obj != null && beanPostProcessor != null) {
                 // we may have discovered pojo classes which we need to perform bean post-processing
                 // as they may have @BindToRegistry
-                beanPostProcessor.postProcessBeforeInitialization(obj, obj.getClass().getName());
-                beanPostProcessor.postProcessAfterInitialization(obj, obj.getClass().getName());
+                beanPostProcessor.postProcessBeforeInitialization(
+                        obj, obj.getClass().getName());
+                beanPostProcessor.postProcessAfterInitialization(
+                        obj, obj.getClass().getName());
             }
         }
 

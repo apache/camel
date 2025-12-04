@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -59,5 +60,4 @@ public enum AS2EncryptionAlgorithm {
     public static AS2EncryptionAlgorithm getAS2Algorithm(String algorithmName) {
         return AS2EncryptionAlgorithm.valueOf(algorithmName);
     }
-
 }

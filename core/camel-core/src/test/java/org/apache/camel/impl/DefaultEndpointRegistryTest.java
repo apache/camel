@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -32,9 +36,6 @@ import org.apache.camel.spi.EndpointRegistry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultEndpointRegistryTest {
 
@@ -72,8 +73,7 @@ public class DefaultEndpointRegistryTest {
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .toD().cacheSize(10).uri("mock:${header.foo}");
+                from("direct:start").toD().cacheSize(10).uri("mock:${header.foo}");
             }
         });
         final AtomicInteger cnt = new AtomicInteger();
@@ -90,7 +90,10 @@ public class DefaultEndpointRegistryTest {
 
         FluentProducerTemplate template = ctx.createFluentProducerTemplate();
         for (int i = 0; i < 100; i++) {
-            template.withBody("Hello").withHeader("foo", Integer.toString(i)).to("direct:start").send();
+            template.withBody("Hello")
+                    .withHeader("foo", Integer.toString(i))
+                    .to("direct:start")
+                    .send();
         }
 
         Awaitility.await().untilAsserted(() -> {
@@ -126,9 +129,8 @@ public class DefaultEndpointRegistryTest {
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("direct:error")
-                        .maximumRedeliveries(2)
-                        .redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:error")
                         .routeId("error")
@@ -145,7 +147,7 @@ public class DefaultEndpointRegistryTest {
         assertTrue(reg.isStatic("file:error"));
     }
 
-    //Testing the issue https://issues.apache.org/jira/browse/CAMEL-19295
+    // Testing the issue https://issues.apache.org/jira/browse/CAMEL-19295
     @Test
     public void testConcurrency() throws InterruptedException {
 
@@ -164,31 +166,36 @@ public class DefaultEndpointRegistryTest {
             for (int i = 0; i < nThreads; i++) {
 
                 executorService.submit(() -> {
-
-                    producerTemplate.requestBody("controlbus:route?routeId=route1&action=ACTION_STATUS&loggingLevel=off", null,
+                    producerTemplate.requestBody(
+                            "controlbus:route?routeId=route1&action=ACTION_STATUS&loggingLevel=off",
+                            null,
                             ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route2&action=ACTION_STATUS&loggingLevel=off", null,
+                    producerTemplate.requestBody(
+                            "controlbus:route?routeId=route2&action=ACTION_STATUS&loggingLevel=off",
+                            null,
                             ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route3&action=ACTION_STATUS&loggingLevel=off", null,
+                    producerTemplate.requestBody(
+                            "controlbus:route?routeId=route3&action=ACTION_STATUS&loggingLevel=off",
+                            null,
                             ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route4&action=ACTION_STATUS&loggingLevel=off", null,
+                    producerTemplate.requestBody(
+                            "controlbus:route?routeId=route4&action=ACTION_STATUS&loggingLevel=off",
+                            null,
                             ServiceStatus.class);
-                    producerTemplate.requestBody("controlbus:route?routeId=route5&action=ACTION_STATUS&loggingLevel=off", null,
+                    producerTemplate.requestBody(
+                            "controlbus:route?routeId=route5&action=ACTION_STATUS&loggingLevel=off",
+                            null,
                             ServiceStatus.class);
 
                     allThreadCompletionSemaphore.countDown();
-
                 });
             }
 
             allThreadCompletionSemaphore.await();
 
             assertNotNull(endpointRegistry.values().toArray());
-
         }
 
         executorService.shutdown();
-
     }
-
 }

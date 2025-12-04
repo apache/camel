@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron.processor;
 
 import java.io.InputStream;
@@ -41,9 +42,8 @@ public class ClassPathURIResolver implements URIResolver {
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
-        InputStream stream
-                = org.apache.camel.util.ObjectHelper.loadResourceAsStream(rulesDir.concat("/").concat(href),
-                        getClass().getClassLoader());
+        InputStream stream = org.apache.camel.util.ObjectHelper.loadResourceAsStream(
+                rulesDir.concat("/").concat(href), getClass().getClassLoader());
         if (stream != null) {
             return new StreamSource(stream);
         } else {

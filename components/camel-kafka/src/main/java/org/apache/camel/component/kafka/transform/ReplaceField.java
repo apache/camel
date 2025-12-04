@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.util.*;
@@ -30,16 +31,17 @@ import org.apache.camel.util.ObjectHelper;
 public class ReplaceField {
 
     public JsonNode process(
-            @ExchangeProperty("enabled") String enabled, @ExchangeProperty("disabled") String disabled,
-            @ExchangeProperty("renames") String renames, Exchange ex)
+            @ExchangeProperty("enabled") String enabled,
+            @ExchangeProperty("disabled") String disabled,
+            @ExchangeProperty("renames") String renames,
+            Exchange ex)
             throws InvalidPayloadException {
         ObjectMapper mapper = new ObjectMapper();
         List<String> enabledFields = new ArrayList<>();
         List<String> disabledFields = new ArrayList<>();
         List<String> renameFields = new ArrayList<>();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
-        });
+        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {});
         if (ObjectHelper.isNotEmpty(enabled) && !enabled.equalsIgnoreCase("all")) {
             enabledFields = Arrays.stream(enabled.split(",")).collect(Collectors.toList());
         }
@@ -86,5 +88,4 @@ public class ReplaceField {
         final String mapping = renames.get(fieldName);
         return mapping == null ? fieldName : mapping;
     }
-
 }

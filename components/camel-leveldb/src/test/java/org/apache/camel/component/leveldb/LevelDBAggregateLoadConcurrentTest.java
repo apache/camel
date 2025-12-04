@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -29,13 +32,11 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadConcurrentTest.class);
-    private static final char[] KEYS = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+    private static final char[] KEYS = new char[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     private static final int SIZE = 500;
 
     @BeforeEach
@@ -80,7 +81,8 @@ public class LevelDBAggregateLoadConcurrentTest extends LevelDBTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
+                LevelDBAggregationRepository repo =
+                        new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 from("direct:start")
                         .to("log:input?groupSize=500")

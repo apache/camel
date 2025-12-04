@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth.jakarta;
+
+import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,8 +47,6 @@ import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 
-import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
-
 public class ServletOAuth extends OAuth {
 
     @Override
@@ -55,14 +56,13 @@ public class ServletOAuth extends OAuth {
             var clientId = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_ID);
             var clientSecret = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_SECRET);
 
-            var config = new OAuthConfig()
-                    .setBaseUrl(baseUri)
-                    .setClientId(clientId)
-                    .setClientSecret(clientSecret);
+            var config =
+                    new OAuthConfig().setBaseUrl(baseUri).setClientId(clientId).setClientSecret(clientSecret);
 
             var wellKnownUri = baseUri + "/.well-known/openid-configuration";
             try {
-                var content = Request.get(wellKnownUri).execute().returnContent().asString();
+                var content =
+                        Request.get(wellKnownUri).execute().returnContent().asString();
                 var json = JsonParser.parseString(content).getAsJsonObject();
 
                 config.setAuthorizationPath(json.get("authorization_endpoint").getAsString())
@@ -102,7 +102,8 @@ public class ServletOAuth extends OAuth {
             var uriBuilder = new URIBuilder(config.getAuthorizationPath());
             uriBuilder.addParameter("flow", OAuthFlowType.AUTH_CODE.getGrantType());
             uriBuilder.addParameter("scope", String.join(" ", params.getScopes()));
-            uriBuilder.addParameter("response_type", params.getResponseType().toString().toLowerCase());
+            uriBuilder.addParameter(
+                    "response_type", params.getResponseType().toString().toLowerCase());
             uriBuilder.addParameter("client_id", params.getClientId());
             uriBuilder.addParameter("redirect_uri", params.getRedirectUri());
             var requestUrl = uriBuilder.build().toString();
@@ -134,7 +135,8 @@ public class ServletOAuth extends OAuth {
                 userProfile = authenticateClientCredentials(params);
 
             } else {
-                throw new OAuthException("Unsupported creds: " + creds.getClass().getName());
+                throw new OAuthException(
+                        "Unsupported creds: " + creds.getClass().getName());
             }
         } catch (Exception ex) {
             throw new OAuthException("Authentication failed", ex);
@@ -181,7 +183,9 @@ public class ServletOAuth extends OAuth {
                         new BasicNameValuePair("grant_type", grantType),
                         new BasicNameValuePair("code", creds.getCode()),
                         new BasicNameValuePair("redirect_uri", creds.getRedirectUri()))
-                .execute().returnContent().asString();
+                .execute()
+                .returnContent()
+                .asString();
 
         var json = JsonParser.parseString(content).getAsJsonObject();
         return UserProfile.fromJson(config, json);
@@ -201,9 +205,12 @@ public class ServletOAuth extends OAuth {
             var content = Request.post(config.getIntrospectionPath())
                     .addHeader("Content-Type", "application/x-www-form-urlencoded")
                     .addHeader("Authorization", "Basic " + encodedAuth)
-                    .bodyForm(new BasicNameValuePair("grant_type", "refresh_token"),
+                    .bodyForm(
+                            new BasicNameValuePair("grant_type", "refresh_token"),
                             new BasicNameValuePair("token", refreshToken))
-                    .execute().returnContent().asString();
+                    .execute()
+                    .returnContent()
+                    .asString();
 
             var json = JsonParser.parseString(content).getAsJsonObject();
             userProfile = UserProfile.fromJson(config, json);
@@ -236,7 +243,9 @@ public class ServletOAuth extends OAuth {
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("Authorization", "Basic " + encodedAuth)
                 .bodyForm(new BasicNameValuePair("grant_type", grantType))
-                .execute().returnContent().asString();
+                .execute()
+                .returnContent()
+                .asString();
 
         var json = JsonParser.parseString(content).getAsJsonObject();
         return UserProfile.fromJson(config, json);
@@ -258,7 +267,9 @@ public class ServletOAuth extends OAuth {
                     .addHeader("Content-Type", "application/x-www-form-urlencoded")
                     .addHeader("Authorization", "Basic " + encodedAuth)
                     .bodyForm(new BasicNameValuePair("token", creds.getToken()))
-                    .execute().returnContent().asString();
+                    .execute()
+                    .returnContent()
+                    .asString();
 
             var json = JsonParser.parseString(content).getAsJsonObject();
             userProfile = UserProfile.fromJson(config, json);

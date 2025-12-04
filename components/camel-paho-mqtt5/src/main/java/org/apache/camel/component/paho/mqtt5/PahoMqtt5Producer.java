@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
 
 import org.apache.camel.Exchange;
@@ -40,14 +41,23 @@ public class PahoMqtt5Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String topic = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC,
-                getEndpoint().getTopic(), String.class);
-        int qos = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_QOS,
-                getEndpoint().getConfiguration().getQos(), Integer.class);
-        boolean retained = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_RETAINED,
-                getEndpoint().getConfiguration().isRetained(), Boolean.class);
-        MqttProperties properties
-                = exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
+        String topic = exchange.getIn()
+                .getHeader(
+                        PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC,
+                        getEndpoint().getTopic(),
+                        String.class);
+        int qos = exchange.getIn()
+                .getHeader(
+                        PahoMqtt5Constants.CAMEL_PAHO_MSG_QOS,
+                        getEndpoint().getConfiguration().getQos(),
+                        Integer.class);
+        boolean retained = exchange.getIn()
+                .getHeader(
+                        PahoMqtt5Constants.CAMEL_PAHO_MSG_RETAINED,
+                        getEndpoint().getConfiguration().isRetained(),
+                        Boolean.class);
+        MqttProperties properties =
+                exchange.getIn().getHeader(PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
@@ -88,7 +98,10 @@ public class PahoMqtt5Producer extends DefaultProducer {
                     getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Connecting client: {} to broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             client.connect(connectionOptions);
         }
     }
@@ -98,10 +111,12 @@ public class PahoMqtt5Producer extends DefaultProducer {
         super.doStop();
 
         if (stopClient && client != null && client.isConnected()) {
-            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Disconnecting client: {} from broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
         }
         client = null;
     }
-
 }

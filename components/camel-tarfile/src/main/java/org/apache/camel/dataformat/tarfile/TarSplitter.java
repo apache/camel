@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
 
 import java.io.InputStream;
@@ -28,8 +29,7 @@ import org.apache.camel.Message;
  */
 public class TarSplitter implements Expression {
 
-    public TarSplitter() {
-    }
+    public TarSplitter() {}
 
     public Object evaluate(Exchange exchange) {
         Message inputMessage = exchange.getIn();

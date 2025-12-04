@@ -43,14 +43,21 @@ public class DefaultTransformerResolver implements TransformerResolver<Transform
     public Transformer resolve(TransformerKey key, CamelContext context) {
         String normalizedKey = normalize(key);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Resolving data type transformer for key {} via: {}{}", key, DATA_TYPE_TRANSFORMER_RESOURCE_PATH,
+            LOG.debug(
+                    "Resolving data type transformer for key {} via: {}{}",
+                    key,
+                    DATA_TYPE_TRANSFORMER_RESOURCE_PATH,
                     normalizedKey);
         }
 
         Optional<Transformer> transformer = findTransformer(normalizedKey, context);
         if (LOG.isDebugEnabled() && transformer.isPresent()) {
-            LOG.debug("Found data type transformer for key {} via type: {} via: {}{}", key,
-                    ObjectHelper.name(transformer.getClass()), DATA_TYPE_TRANSFORMER_RESOURCE_PATH, normalizedKey);
+            LOG.debug(
+                    "Found data type transformer for key {} via type: {} via: {}{}",
+                    key,
+                    ObjectHelper.name(transformer.getClass()),
+                    DATA_TYPE_TRANSFORMER_RESOURCE_PATH,
+                    normalizedKey);
         }
 
         transformer.ifPresent(t -> CamelContextAware.trySetCamelContext(t, context));

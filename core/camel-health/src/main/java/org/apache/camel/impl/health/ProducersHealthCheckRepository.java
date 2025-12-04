@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.List;
@@ -75,9 +76,7 @@ public class ProducersHealthCheckRepository extends ServiceSupport
 
     @Override
     public Stream<HealthCheck> stream() {
-        return this.context != null && enabled
-                ? checks.stream()
-                : Stream.empty();
+        return this.context != null && enabled ? checks.stream() : Stream.empty();
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import java.util.List;
@@ -53,7 +54,8 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
         }
 
         protected QueryOptions queryOptions() {
-            return QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build();
+            return QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get())
+                    .build();
         }
 
         @Override
@@ -83,12 +85,14 @@ public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValu
                 message.setHeader(ConsulConstants.CONSUL_MODIFY_INDEX, value.getModifyIndex());
 
                 if (value.getSession().isPresent()) {
-                    message.setHeader(ConsulConstants.CONSUL_SESSION, value.getSession().get());
+                    message.setHeader(
+                            ConsulConstants.CONSUL_SESSION, value.getSession().get());
                 }
 
                 message.setBody(
                         configuration.isValueAsString()
-                                ? value.getValueAsString().orElse(null) : value.getValue().orElse(null));
+                                ? value.getValueAsString().orElse(null)
+                                : value.getValue().orElse(null));
 
                 getProcessor().process(exchange);
             } catch (Exception e) {

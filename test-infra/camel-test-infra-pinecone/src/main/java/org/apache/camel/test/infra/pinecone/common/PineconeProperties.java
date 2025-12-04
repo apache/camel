@@ -23,7 +23,5 @@ public final class PineconeProperties {
     public static final String PINECONE_ENDPOINT_PORT = "pinecone.endpoint.port";
     public static final String PINECONE_CONTAINER = "pinecone.container";
 
-    private PineconeProperties() {
-
-    }
+    private PineconeProperties() {}
 }

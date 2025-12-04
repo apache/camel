@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteUsingSpringAndJmsNameIT extends JmsRouteUsingSpringIT {
 

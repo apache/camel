@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXIT_VALUES;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
+import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -34,21 +45,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXIT_VALUES;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
-import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test the functionality of {@link ExecProducer}
  */
 @CamelSpringTest
-@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
+@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
 public class ExecProducerTest {
 
     @Produce("direct:input")
@@ -62,7 +63,9 @@ public class ExecProducerTest {
     public void testWithContextConfiguration() {
         producerTemplate.sendBody("direct:input", "test");
         // the expected string is defined in the route configuration
-        assertEquals("mockedByCommandExecutorMock.exe", execCommandExecutorMock.lastCommandResult.getCommand().getExecutable());
+        assertEquals(
+                "mockedByCommandExecutorMock.exe",
+                execCommandExecutorMock.lastCommandResult.getCommand().getExecutable());
     }
 
     @Test
@@ -78,7 +81,8 @@ public class ExecProducerTest {
             }
         });
 
-        assertEquals(command, execCommandExecutorMock.lastCommandResult.getCommand().getExecutable());
+        assertEquals(
+                command, execCommandExecutorMock.lastCommandResult.getCommand().getExecutable());
     }
 
     /**
@@ -87,7 +91,7 @@ public class ExecProducerTest {
     @Test
     @DirtiesContext
     public void testOverrideArgs() {
-        final String[] args = { "-version", "classpath:c:/program files/test/" };
+        final String[] args = {"-version", "classpath:c:/program files/test/"};
         producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) {
@@ -95,7 +99,8 @@ public class ExecProducerTest {
                 exchange.getIn().setHeader(EXEC_COMMAND_ARGS, Arrays.asList(args));
             }
         });
-        List<String> commandArgs = execCommandExecutorMock.lastCommandResult.getCommand().getArgs();
+        List<String> commandArgs =
+                execCommandExecutorMock.lastCommandResult.getCommand().getArgs();
 
         assertEquals(args[0], commandArgs.get(0));
         assertEquals(args[1], commandArgs.get(1));
@@ -111,7 +116,8 @@ public class ExecProducerTest {
                 exchange.getIn().setHeader(EXEC_COMMAND_TIMEOUT, "1000");
             }
         });
-        assertEquals(1000, execCommandExecutorMock.lastCommandResult.getCommand().getTimeout());
+        assertEquals(
+                1000, execCommandExecutorMock.lastCommandResult.getCommand().getTimeout());
     }
 
     @Test
@@ -124,7 +130,11 @@ public class ExecProducerTest {
                 exchange.getIn().setHeader(EXEC_COMMAND_EXIT_VALUES, "0,1");
             }
         });
-        assertTrue(execCommandExecutorMock.lastCommandResult.getCommand().getExitValues().contains(1));
+        assertTrue(execCommandExecutorMock
+                .lastCommandResult
+                .getCommand()
+                .getExitValues()
+                .contains(1));
     }
 
     @Test
@@ -137,7 +147,13 @@ public class ExecProducerTest {
                 exchange.getIn().setHeader(EXEC_COMMAND_EXIT_VALUES, "");
             }
         });
-        assertEquals(0, execCommandExecutorMock.lastCommandResult.getCommand().getExitValues().size());
+        assertEquals(
+                0,
+                execCommandExecutorMock
+                        .lastCommandResult
+                        .getCommand()
+                        .getExitValues()
+                        .size());
     }
 
     @Test
@@ -151,8 +167,10 @@ public class ExecProducerTest {
                 exchange.getIn().setBody(input);
             }
         });
-        assertEquals(input,
-                IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput(), Charset.defaultCharset()));
+        assertEquals(
+                input,
+                IOUtils.toString(
+                        execCommandExecutorMock.lastCommandResult.getCommand().getInput(), Charset.defaultCharset()));
     }
 
     @Test
@@ -197,7 +215,9 @@ public class ExecProducerTest {
                 exchange.getIn().setHeader(EXEC_COMMAND_WORKING_DIR, workingDir);
             }
         });
-        assertEquals(workingDir, execCommandExecutorMock.lastCommandResult.getCommand().getWorkingDir());
+        assertEquals(
+                workingDir,
+                execCommandExecutorMock.lastCommandResult.getCommand().getWorkingDir());
     }
 
     @Test

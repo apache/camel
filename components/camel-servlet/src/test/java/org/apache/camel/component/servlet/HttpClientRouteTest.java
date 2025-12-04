@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -28,12 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
     private static final String POST_DATA = "<request> hello world </request>";
@@ -43,8 +44,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     @Test
     public void testHttpClient() throws Exception {
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/hello",
-                new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
+                contextUrl + "/services/hello", new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
         WebResponse response = query(req);
 
         assertEquals("text/xml", response.getContentType(), "Get wrong content type");
@@ -53,8 +53,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
 
         req = new PostMethodWebRequest(
-                contextUrl + "/services/helloworld",
-                new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
+                contextUrl + "/services/helloworld", new ByteArrayInputStream(POST_DATA.getBytes()), CONTENT_TYPE);
         response = query(req);
 
         assertEquals("text/xml", response.getContentType(), "Get wrong content type");
@@ -67,7 +66,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     public void testHttpRestricMethod() throws Exception {
         WebRequest req = new PostMethodWebRequest(
                 contextUrl + "/services/testHttpMethodRestrict",
-                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+                new ByteArrayInputStream(POST_DATA.getBytes()),
+                "text/xml; charset=UTF-8");
         WebResponse response = query(req);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals(POST_DATA, response.getText(), "The response body is wrong");
@@ -87,7 +87,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     public void testHttpConverter() throws Exception {
         WebRequest req = new PostMethodWebRequest(
                 contextUrl + "/services/testConverter",
-                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+                new ByteArrayInputStream(POST_DATA.getBytes()),
+                "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals("Bye World", response.getText(), "The response body is wrong");
@@ -97,7 +98,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     public void testHttpUnicodeResponseWithStringResponse() throws Exception {
         WebRequest req = new PostMethodWebRequest(
                 contextUrl + "/services/testUnicodeWithStringResponse",
-                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+                new ByteArrayInputStream(POST_DATA.getBytes()),
+                "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals(UNICODE_TEXT, response.getText(StandardCharsets.UTF_8), "The response body is wrong");
@@ -107,7 +109,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     public void testHttpUnicodeResponseWithObjectResponse() throws Exception {
         WebRequest req = new PostMethodWebRequest(
                 contextUrl + "/services/testUnicodeWithObjectResponse",
-                new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+                new ByteArrayInputStream(POST_DATA.getBytes()),
+                "text/xml; charset=UTF-8");
         WebResponse response = query(req, false);
         assertEquals("OK", response.getResponseMessage(), "The response message is wrong");
         assertEquals(UNICODE_TEXT, response.getText(StandardCharsets.UTF_8), "The response body is wrong");
@@ -126,7 +129,8 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             fail("Excepts exception here");
         } catch (Exception ex) {
             assertTrue(ex instanceof FailedToStartRouteException, "Get a wrong exception.");
-            assertTrue(ex.getCause().getCause() instanceof UnsupportedOperationException,
+            assertTrue(
+                    ex.getCause().getCause() instanceof UnsupportedOperationException,
                     "Get a wrong cause of exception.");
         }
     }
@@ -147,7 +151,9 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
                 assertEquals("UTF-8", charsetEncoding, "Get a wrong charset name from the message header");
                 // assert exchange charset
-                assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME),
+                assertEquals(
+                        "UTF-8",
+                        exchange.getProperty(Exchange.CHARSET_NAME),
                         "Get a wrong charset naem from the exchange property");
                 exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");
                 exchange.getMessage().setHeader("PATH", path);
@@ -162,13 +168,16 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
 
             from("servlet:testConverter?matchOnUriPrefix=true")
                     .process(exchange -> {
-                        HttpServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
+                        HttpServletRequest request =
+                                exchange.getIn(HttpMessage.class).getRequest();
                         assertNotNull(request, "We should get request object here");
-                        HttpServletResponse response = exchange.getIn(HttpMessage.class).getResponse();
+                        HttpServletResponse response =
+                                exchange.getIn(HttpMessage.class).getResponse();
                         assertNotNull(response, "We should get response object here");
                         String s = exchange.getIn().getBody(String.class);
                         assertEquals("<request> hello world </request>", s);
-                    }).transform(constant("Bye World"));
+                    })
+                    .transform(constant("Bye World"));
 
             from("servlet:testUnicodeWithStringResponse?matchOnUriPrefix=true")
                     .process(exchange -> {
@@ -195,5 +204,4 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new MyServletRoute();
     }
-
 }

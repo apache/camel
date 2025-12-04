@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import java.util.ArrayList;
@@ -56,8 +57,10 @@ public class HashicorpVaultProducer extends DefaultProducer {
 
     private void createSecret(Exchange exchange) {
         String secretPath = getSecretPath(exchange);
-        VaultKeyValueOperations keyValue
-                = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
+        VaultKeyValueOperations keyValue = getEndpoint()
+                .getVaultTemplate()
+                .opsForKeyValue(
+                        getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.put(secretPath, exchange.getMessage().getBody());
     }
@@ -74,7 +77,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         } else {
             if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getNamespace())) {
                 completePath = getEndpoint().getConfiguration().getNamespace() + "/"
-                               + getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
+                        + getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
             }
         }
         if (ObjectHelper.isNotEmpty(secretVersion)) {
@@ -90,8 +93,10 @@ public class HashicorpVaultProducer extends DefaultProducer {
 
     private void deleteSecret(Exchange exchange) {
         String secretPath = getSecretPath(exchange);
-        VaultKeyValueOperations keyValue
-                = getEndpoint().getVaultTemplate().opsForKeyValue(getEndpoint().getConfiguration().getSecretsEngine(),
+        VaultKeyValueOperations keyValue = getEndpoint()
+                .getVaultTemplate()
+                .opsForKeyValue(
+                        getEndpoint().getConfiguration().getSecretsEngine(),
                         VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
         keyValue.delete(secretPath);
     }
@@ -99,13 +104,15 @@ public class HashicorpVaultProducer extends DefaultProducer {
     private void listSecrets(Exchange exchange) {
         List<String> secretsList = new ArrayList<>();
         if (!getEndpoint().getConfiguration().isCloud()) {
-            secretsList = getEndpoint().getVaultTemplate()
+            secretsList = getEndpoint()
+                    .getVaultTemplate()
                     .list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
         } else {
             if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getNamespace())) {
-                secretsList = getEndpoint().getVaultTemplate()
+                secretsList = getEndpoint()
+                        .getVaultTemplate()
                         .list(getEndpoint().getConfiguration().getNamespace() + "/"
-                              + getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+                                + getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
             }
         }
         exchange.getMessage().setBody(secretsList);
@@ -125,8 +132,8 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     private HashicorpVaultOperation determineOperation(Exchange exchange) {
-        HashicorpVaultOperation operation
-                = exchange.getIn().getHeader(HashicorpVaultConstants.OPERATION, HashicorpVaultOperation.class);
+        HashicorpVaultOperation operation =
+                exchange.getIn().getHeader(HashicorpVaultConstants.OPERATION, HashicorpVaultOperation.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -134,8 +141,11 @@ public class HashicorpVaultProducer extends DefaultProducer {
     }
 
     private String getSecretPath(Exchange exchange) {
-        String secretPath = exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_PATH,
-                getEndpoint().getConfiguration().getSecretPath(), String.class);
+        String secretPath = exchange.getMessage()
+                .getHeader(
+                        HashicorpVaultConstants.SECRET_PATH,
+                        getEndpoint().getConfiguration().getSecretPath(),
+                        String.class);
         if (ObjectHelper.isEmpty(secretPath)) {
             throw new IllegalArgumentException("Secret Path must be specified");
         }

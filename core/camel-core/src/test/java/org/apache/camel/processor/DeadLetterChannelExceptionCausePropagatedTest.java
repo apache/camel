@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSupport {
     protected static final RuntimeException RUNTIME_EXCEPTION = new RuntimeException("Expected exception.");
@@ -53,11 +54,12 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
 
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
-                from("direct:start").process(e -> {
-                    throw RUNTIME_EXCEPTION;
-                }).to("mock:success");
+                from("direct:start")
+                        .process(e -> {
+                            throw RUNTIME_EXCEPTION;
+                        })
+                        .to("mock:success");
             }
         };
     }
-
 }

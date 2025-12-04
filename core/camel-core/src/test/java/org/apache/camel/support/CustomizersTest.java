@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,9 +39,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.apache.camel.util.CollectionHelper.propertiesOf;
-import static org.junit.jupiter.api.Assertions.*;
-
 public class CustomizersTest {
 
     // *****************************
@@ -55,8 +56,7 @@ public class CustomizersTest {
                 Arguments.of(propertiesOf(
                         "camel.customizer.enabled", "true",
                         "camel.customizer.language.enabled", "false")),
-                Arguments.of(propertiesOf(
-                        "camel.customizer.enabled", "false")));
+                Arguments.of(propertiesOf("camel.customizer.enabled", "false")));
     }
 
     public static Stream<Arguments> enableLanguageCustomizationProperties() {
@@ -68,8 +68,7 @@ public class CustomizersTest {
                 Arguments.of(propertiesOf(
                         "camel.customizer.enabled", "false",
                         "camel.customizer.language.enabled", "true")),
-                Arguments.of(propertiesOf(
-                        "camel.customizer.enabled", "true")));
+                Arguments.of(propertiesOf("camel.customizer.enabled", "true")));
     }
 
     public static Stream<Arguments> disableDataFormatCustomizationProperties() {
@@ -81,8 +80,7 @@ public class CustomizersTest {
                 Arguments.of(propertiesOf(
                         "camel.customizer.enabled", "true",
                         "camel.customizer.dataformat.enabled", "false")),
-                Arguments.of(propertiesOf(
-                        "camel.customizer.enabled", "false")));
+                Arguments.of(propertiesOf("camel.customizer.enabled", "false")));
     }
 
     public static Stream<Arguments> enableDataFormatCustomizationProperties() {
@@ -94,8 +92,7 @@ public class CustomizersTest {
                 Arguments.of(propertiesOf(
                         "camel.customizer.enabled", "false",
                         "camel.customizer.dataformat.enabled", "true")),
-                Arguments.of(propertiesOf(
-                        "camel.customizer.enabled", "true")));
+                Arguments.of(propertiesOf("camel.customizer.enabled", "true")));
     }
 
     public static Stream<Arguments> disableComponentCustomizationProperties() {
@@ -107,8 +104,7 @@ public class CustomizersTest {
                 Arguments.of(propertiesOf(
                         "camel.customizer.enabled", "true",
                         "camel.customizer.component.enabled", "false")),
-                Arguments.of(propertiesOf(
-                        "camel.customizer.enabled", "false")));
+                Arguments.of(propertiesOf("camel.customizer.enabled", "false")));
     }
 
     public static Stream<Arguments> enableComponentCustomizationProperties() {
@@ -120,8 +116,7 @@ public class CustomizersTest {
                 Arguments.of(propertiesOf(
                         "camel.customizer.enabled", "false",
                         "camel.customizer.component.enabled", "true")),
-                Arguments.of(propertiesOf(
-                        "camel.customizer.enabled", "true")));
+                Arguments.of(propertiesOf("camel.customizer.enabled", "true")));
     }
 
     // *****************************
@@ -133,40 +128,46 @@ public class CustomizersTest {
     @Test
     public void testComponentCustomization() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getCamelContextExtension().getRegistry().bind(
-                "log-customizer",
-                ComponentCustomizer.forType(
-                        LogComponent.class,
-                        target -> target.setExchangeFormatter(new MyExchangeFormatter())));
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "log-customizer",
+                        ComponentCustomizer.forType(
+                                LogComponent.class, target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertInstanceOf(MyExchangeFormatter.class, context.getComponent("log", LogComponent.class).getExchangeFormatter());
+        assertInstanceOf(
+                MyExchangeFormatter.class,
+                context.getComponent("log", LogComponent.class).getExchangeFormatter());
     }
 
     @Test
     public void testComponentCustomizationWithFilter() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getCamelContextExtension().getRegistry().bind(
-                "customizer-filter",
-                ComponentCustomizer.Policy.none());
-        context.getCamelContextExtension().getRegistry().bind(
-                "log-customizer",
-                ComponentCustomizer.forType(
-                        LogComponent.class,
-                        target -> target.setExchangeFormatter(new MyExchangeFormatter())));
+        context.getCamelContextExtension().getRegistry().bind("customizer-filter", ComponentCustomizer.Policy.none());
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "log-customizer",
+                        ComponentCustomizer.forType(
+                                LogComponent.class, target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertFalse(context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
+        assertFalse(
+                context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
     }
 
     @Test
     public void testComponentCustomizationWithFluentBuilder() {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getCamelContextExtension().getRegistry().bind(
-                "log-customizer",
-                ComponentCustomizer.forType(
-                        LogComponent.class,
-                        target -> target.setExchangeFormatter(new MyExchangeFormatter())));
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "log-customizer",
+                        ComponentCustomizer.forType(
+                                LogComponent.class, target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertInstanceOf(MyExchangeFormatter.class, context.getComponent("log", LogComponent.class).getExchangeFormatter());
+        assertInstanceOf(
+                MyExchangeFormatter.class,
+                context.getComponent("log", LogComponent.class).getExchangeFormatter());
     }
 
     @ParameterizedTest
@@ -175,16 +176,18 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getCamelContextExtension().getRegistry().bind(
-                "customizer-filter",
-                new CustomizersSupport.ComponentCustomizationEnabledPolicy());
-        context.getCamelContextExtension().getRegistry().bind(
-                "log-customizer",
-                ComponentCustomizer.forType(
-                        LogComponent.class,
-                        target -> target.setExchangeFormatter(new MyExchangeFormatter())));
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind("customizer-filter", new CustomizersSupport.ComponentCustomizationEnabledPolicy());
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "log-customizer",
+                        ComponentCustomizer.forType(
+                                LogComponent.class, target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertFalse(context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
+        assertFalse(
+                context.getComponent("log", LogComponent.class).getExchangeFormatter() instanceof MyExchangeFormatter);
     }
 
     @ParameterizedTest
@@ -193,16 +196,19 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getCamelContextExtension().getRegistry().bind(
-                "customizer-filter",
-                new CustomizersSupport.ComponentCustomizationEnabledPolicy());
-        context.getCamelContextExtension().getRegistry().bind(
-                "log-customizer",
-                ComponentCustomizer.forType(
-                        LogComponent.class,
-                        target -> target.setExchangeFormatter(new MyExchangeFormatter())));
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind("customizer-filter", new CustomizersSupport.ComponentCustomizationEnabledPolicy());
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "log-customizer",
+                        ComponentCustomizer.forType(
+                                LogComponent.class, target -> target.setExchangeFormatter(new MyExchangeFormatter())));
 
-        assertInstanceOf(MyExchangeFormatter.class, context.getComponent("log", LogComponent.class).getExchangeFormatter());
+        assertInstanceOf(
+                MyExchangeFormatter.class,
+                context.getComponent("log", LogComponent.class).getExchangeFormatter());
     }
 
     // *****************************
@@ -216,12 +222,13 @@ public class CustomizersTest {
         AtomicInteger counter = new AtomicInteger();
 
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df",
-                (DataFormatFactory) MyDataFormat::new);
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df-customizer",
-                DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
+        context.getCamelContextExtension().getRegistry().bind("my-df", (DataFormatFactory) MyDataFormat::new);
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "my-df-customizer",
+                        DataFormatCustomizer.forType(
+                                MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
 
         DataFormat df1 = context.createDataFormat("my-df");
         DataFormat df2 = context.createDataFormat("my-df");
@@ -239,15 +246,14 @@ public class CustomizersTest {
         AtomicInteger counter = new AtomicInteger();
 
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getCamelContextExtension().getRegistry().bind(
-                "customizer-filter",
-                DataFormatCustomizer.Policy.none());
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df",
-                (DataFormatFactory) MyDataFormat::new);
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df-customizer",
-                DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
+        context.getCamelContextExtension().getRegistry().bind("customizer-filter", DataFormatCustomizer.Policy.none());
+        context.getCamelContextExtension().getRegistry().bind("my-df", (DataFormatFactory) MyDataFormat::new);
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "my-df-customizer",
+                        DataFormatCustomizer.forType(
+                                MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
 
         DataFormat df1 = context.createDataFormat("my-df");
         DataFormat df2 = context.createDataFormat("my-df");
@@ -268,15 +274,16 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getCamelContextExtension().getRegistry().bind(
-                "customizer-filter",
-                new CustomizersSupport.DataFormatCustomizationEnabledPolicy());
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df",
-                (DataFormatFactory) MyDataFormat::new);
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df-customizer",
-                DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind("customizer-filter", new CustomizersSupport.DataFormatCustomizationEnabledPolicy());
+        context.getCamelContextExtension().getRegistry().bind("my-df", (DataFormatFactory) MyDataFormat::new);
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind(
+                        "my-df-customizer",
+                        DataFormatCustomizer.forType(
+                                MyDataFormat.class, target -> target.setId(counter.incrementAndGet())));
 
         DataFormat df1 = context.resolveDataFormat("my-df");
         assertEquals(0, ((MyDataFormat) df1).getId());
@@ -288,15 +295,13 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getPropertiesComponent().setInitialProperties(properties);
 
-        context.getCamelContextExtension().getRegistry().bind(
-                "customizer-filter",
-                new CustomizersSupport.DataFormatCustomizationEnabledPolicy());
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df",
-                (DataFormatFactory) MyDataFormat::new);
-        context.getCamelContextExtension().getRegistry().bind(
-                "my-df-customizer",
-                DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(1)));
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind("customizer-filter", new CustomizersSupport.DataFormatCustomizationEnabledPolicy());
+        context.getCamelContextExtension().getRegistry().bind("my-df", (DataFormatFactory) MyDataFormat::new);
+        context.getCamelContextExtension()
+                .getRegistry()
+                .bind("my-df-customizer", DataFormatCustomizer.forType(MyDataFormat.class, target -> target.setId(1)));
 
         DataFormat df1 = context.resolveDataFormat("my-df");
         assertEquals(1, ((MyDataFormat) df1).getId());
@@ -312,8 +317,7 @@ public class CustomizersTest {
         private int id;
 
         @Override
-        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
-        }
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {}
 
         @Override
         public Object unmarshal(Exchange exchange, InputStream stream) {
@@ -321,12 +325,10 @@ public class CustomizersTest {
         }
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
 
         public int getId() {
             return id;
@@ -337,6 +339,5 @@ public class CustomizersTest {
         }
     }
 
-    public static class MyExchangeFormatter extends DefaultExchangeFormatter {
-    }
+    public static class MyExchangeFormatter extends DefaultExchangeFormatter {}
 }

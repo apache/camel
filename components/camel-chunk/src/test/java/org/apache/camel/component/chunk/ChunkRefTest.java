@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChunkRefTest extends CamelTestSupport {
 
@@ -38,7 +39,9 @@ public class ChunkRefTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Hello Sparrow, Jack" + System.lineSeparator(), exchange.getMessage().getBody());
+        assertEquals(
+                "Hello Sparrow, Jack" + System.lineSeparator(),
+                exchange.getMessage().getBody());
     }
 
     @Override
@@ -47,8 +50,7 @@ public class ChunkRefTest extends CamelTestSupport {
             public void configure() {
                 context.getRegistry().bind("mytemp", TEMP);
 
-                from("direct:a").to(
-                        "chunk:ref:mytemp?allowContextMapAll=true");
+                from("direct:a").to("chunk:ref:mytemp?allowContextMapAll=true");
             }
         };
     }

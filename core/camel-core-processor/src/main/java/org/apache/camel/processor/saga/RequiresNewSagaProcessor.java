@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 import org.apache.camel.AsyncCallback;
@@ -28,30 +29,45 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class RequiresNewSagaProcessor extends SagaProcessor {
 
-    public RequiresNewSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
-                                    SagaCompletionMode completionMode, CamelSagaStep step) {
+    public RequiresNewSagaProcessor(
+            CamelContext camelContext,
+            Processor childProcessor,
+            CamelSagaService sagaService,
+            SagaCompletionMode completionMode,
+            CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        getCurrentSagaCoordinator(exchange).whenComplete((existingCoordinator, ex) -> ifNotException(ex, exchange, callback,
-                () -> sagaService.newSaga(exchange).whenComplete((newCoordinator, ex2) -> ifNotException(ex2, exchange, true,
-                        newCoordinator, existingCoordinator, callback, () -> {
-                            setCurrentSagaCoordinator(exchange, newCoordinator);
+        getCurrentSagaCoordinator(exchange)
+                .whenComplete((existingCoordinator, ex) -> ifNotException(ex, exchange, callback, () -> sagaService
+                        .newSaga(exchange)
+                        .whenComplete((newCoordinator, ex2) -> ifNotException(
+                                ex2, exchange, true, newCoordinator, existingCoordinator, callback, () -> {
+                                    setCurrentSagaCoordinator(exchange, newCoordinator);
 
-                            newCoordinator.beginStep(exchange, step)
-                                    .whenComplete((done, ex3) -> ifNotException(ex3, exchange, true, newCoordinator,
-                                            existingCoordinator, callback, () -> {
-                                                // Always finalizes the saga
-                                                super.process(exchange,
-                                                        doneSync -> handleSagaCompletion(exchange, newCoordinator,
-                                                                existingCoordinator, callback));
-                                            }));
-
-                        }))));
+                                    newCoordinator
+                                            .beginStep(exchange, step)
+                                            .whenComplete((done, ex3) -> ifNotException(
+                                                    ex3,
+                                                    exchange,
+                                                    true,
+                                                    newCoordinator,
+                                                    existingCoordinator,
+                                                    callback,
+                                                    () -> {
+                                                        // Always finalizes the saga
+                                                        super.process(
+                                                                exchange,
+                                                                doneSync -> handleSagaCompletion(
+                                                                        exchange,
+                                                                        newCoordinator,
+                                                                        existingCoordinator,
+                                                                        callback));
+                                                    }));
+                                }))));
 
         return false;
     }
-
 }

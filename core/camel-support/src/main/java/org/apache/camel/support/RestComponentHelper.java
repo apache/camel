@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.net.UnknownHostException;
@@ -30,8 +31,7 @@ import org.apache.camel.util.URISupport;
  */
 public final class RestComponentHelper {
 
-    private RestComponentHelper() {
-    }
+    private RestComponentHelper() {}
 
     /**
      *
@@ -40,7 +40,8 @@ public final class RestComponentHelper {
      * @param  addOptions should OPTIONS verb be added.
      * @return            the map of Endpoint Properties with HTTP Restrict Options set
      */
-    public static Map<String, Object> addHttpRestrictParam(Map<String, Object> queryMap, String verb, boolean addOptions) {
+    public static Map<String, Object> addHttpRestrictParam(
+            Map<String, Object> queryMap, String verb, boolean addOptions) {
         String restrict = verb.toUpperCase(Locale.US);
         if (addOptions) {
             restrict += ",OPTIONS";
@@ -62,7 +63,8 @@ public final class RestComponentHelper {
         // build query string, and append any endpoint configuration properties
         if (config.getComponent() == null || config.getComponent().equals(componentName)) {
             // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            if (config.getEndpointProperties() != null
+                    && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
@@ -99,7 +101,8 @@ public final class RestComponentHelper {
      * @param  queryMap      the endpoint query options
      * @return               a string of the component route url
      */
-    public static String createRestConsumerUrl(String componentName, String verb, String path, Map<String, Object> queryMap) {
+    public static String createRestConsumerUrl(
+            String componentName, String verb, String path, Map<String, Object> queryMap) {
         String query = URISupport.createQueryString(queryMap);
         return applyFormatAndQuery("%s:%s:%s", query, componentName, verb, path);
     }
@@ -147,5 +150,4 @@ public final class RestComponentHelper {
         }
         return urlBuilder.toString();
     }
-
 }

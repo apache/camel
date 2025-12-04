@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -31,12 +32,16 @@ public class DefaultInterceptEndpointFactory implements InterceptEndpointFactory
 
     @Override
     public InterceptSendToEndpoint createInterceptSendToEndpoint(
-            CamelContext camelContext, Endpoint endpoint, boolean skip, Predicate onWhen, Processor before, Processor after) {
+            CamelContext camelContext,
+            Endpoint endpoint,
+            boolean skip,
+            Predicate onWhen,
+            Processor before,
+            Processor after) {
         DefaultInterceptSendToEndpoint answer = new DefaultInterceptSendToEndpoint(endpoint, skip);
         answer.setOnWhen(onWhen);
         answer.setBefore(before);
         answer.setAfter(after);
         return answer;
     }
-
 }

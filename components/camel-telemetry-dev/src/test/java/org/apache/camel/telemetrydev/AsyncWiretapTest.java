@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,10 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /*
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange, for example,
@@ -67,7 +68,6 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(DevTrace trace, String expectedBody) {
@@ -76,8 +76,8 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
         DevSpanAdapter testProducer = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
         DevSpanAdapter direct = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
         DevSpanAdapter wiretapDirectTo = TelemetryDevTracerTestSupport.getSpan(spans, "direct://tap", Op.EVENT_SENT);
-        DevSpanAdapter wiretapDirectFrom
-                = TelemetryDevTracerTestSupport.getSpan(spans, "direct://tap", Op.EVENT_RECEIVED);
+        DevSpanAdapter wiretapDirectFrom =
+                TelemetryDevTracerTestSupport.getSpan(spans, "direct://tap", Op.EVENT_RECEIVED);
         DevSpanAdapter log = TelemetryDevTracerTestSupport.getSpan(spans, "log://info", Op.EVENT_SENT);
         DevSpanAdapter wiretapLog = TelemetryDevTracerTestSupport.getSpan(spans, "log://tapped", Op.EVENT_SENT);
         DevSpanAdapter wiretapMock = TelemetryDevTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
@@ -117,8 +117,11 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
         assertEquals(wiretapDirectFrom.getTag("spanid"), wiretapMock.getTag("parentSpan"));
 
         // Validate message logging
-        assertEquals("A direct message", direct.getLogEntries().get(0).getFields().get("message"));
-        assertEquals("A tapped message", wiretapDirectFrom.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "A direct message", direct.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "A tapped message",
+                wiretapDirectFrom.getLogEntries().get(0).getFields().get("message"));
         if (expectedBody == null) {
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
 
@@ -45,12 +46,14 @@ public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
 
                 from("undertow:http://localhost:{{port}}/client")
                         .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
-                        .to("http://localhost:{{port}}/server?bridgeEndpoint=true").to("log:lgName?showBody=true")
+                        .to("http://localhost:{{port}}/server?bridgeEndpoint=true")
+                        .to("log:lgName?showBody=true")
                         .end();
-                from("undertow:http://localhost:{{port}}/server?httpMethodRestrict=POST").setBody(simple(data))
-                        .to("log:lgName?showBody=true").end();
+                from("undertow:http://localhost:{{port}}/server?httpMethodRestrict=POST")
+                        .setBody(simple(data))
+                        .to("log:lgName?showBody=true")
+                        .end();
             }
         };
     }
-
 }

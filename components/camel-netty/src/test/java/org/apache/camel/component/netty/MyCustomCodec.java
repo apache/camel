@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.List;
@@ -28,14 +29,14 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 public final class MyCustomCodec {
 
-    private static ByteBuf nullDelimiter = Unpooled.wrappedBuffer(new byte[] { 0 });
+    private static ByteBuf nullDelimiter = Unpooled.wrappedBuffer(new byte[] {0});
 
     private MyCustomCodec() {
         // Helper class
     }
 
     public static ChannelHandlerFactory createMyCustomDecoder() {
-        ByteBuf[] delimiters = new ByteBuf[] { nullDelimiter, nullDelimiter };
+        ByteBuf[] delimiters = new ByteBuf[] {nullDelimiter, nullDelimiter};
         return ChannelHandlerFactories.newDelimiterBasedFrameDecoder(4096, delimiters, "tcp");
     }
 
@@ -61,7 +62,6 @@ public final class MyCustomCodec {
                 out.add(bytes);
             }
         }
-
     }
 
     @ChannelHandler.Sharable

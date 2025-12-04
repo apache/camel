@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -43,7 +44,8 @@ public class VetoCamelContextStartException extends Exception {
         this(message, cause, context, true);
     }
 
-    public VetoCamelContextStartException(String message, Throwable cause, CamelContext context, boolean rethrowException) {
+    public VetoCamelContextStartException(
+            String message, Throwable cause, CamelContext context, boolean rethrowException) {
         super(message, cause);
         this.context = context;
         this.rethrowException = rethrowException;
@@ -62,5 +64,4 @@ public class VetoCamelContextStartException extends Exception {
     public boolean isRethrowException() {
         return rethrowException;
     }
-
 }

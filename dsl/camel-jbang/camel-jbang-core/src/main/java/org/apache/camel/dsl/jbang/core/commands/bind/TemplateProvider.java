@@ -32,16 +32,20 @@ public interface TemplateProvider {
     }
 
     default InputStream getStepTemplate(String stepType) {
-        return TemplateProvider.class.getClassLoader().getResourceAsStream("templates/step-%s.yaml.tmpl".formatted(stepType));
+        return TemplateProvider.class
+                .getClassLoader()
+                .getResourceAsStream("templates/step-%s.yaml.tmpl".formatted(stepType));
     }
 
     default InputStream getEndpointTemplate(String endpointType) {
-        return TemplateProvider.class.getClassLoader()
+        return TemplateProvider.class
+                .getClassLoader()
                 .getResourceAsStream("templates/endpoint-%s.yaml.tmpl".formatted(endpointType));
     }
 
     default InputStream getErrorHandlerTemplate(String type) {
-        return TemplateProvider.class.getClassLoader()
+        return TemplateProvider.class
+                .getClassLoader()
                 .getResourceAsStream("templates/error-handler-%s.yaml.tmpl".formatted(type));
     }
 
@@ -67,8 +71,11 @@ public interface TemplateProvider {
                 propValue = "\"%s\"".formatted(propValue);
             }
 
-            sb.append("      ").append(propertyEntry.getKey()).append(": ")
-                    .append(propValue).append("\n");
+            sb.append("      ")
+                    .append(propertyEntry.getKey())
+                    .append(": ")
+                    .append(propValue)
+                    .append("\n");
         }
         return sb.toString().trim();
     }
@@ -86,7 +93,11 @@ public interface TemplateProvider {
         StringBuilder sb = new StringBuilder();
         sb.append("parameters:\n");
         for (Map.Entry<String, Object> propertyEntry : props.entrySet()) {
-            sb.append("        ").append(propertyEntry.getKey()).append(": ").append(propertyEntry.getValue()).append("\n");
+            sb.append("        ")
+                    .append(propertyEntry.getKey())
+                    .append(": ")
+                    .append(propertyEntry.getValue())
+                    .append("\n");
         }
         return sb.toString().trim();
     }

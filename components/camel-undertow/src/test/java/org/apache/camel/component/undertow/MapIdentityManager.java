@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,8 +33,6 @@ import io.undertow.security.idm.DigestCredential;
 import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.idm.PasswordCredential;
 import io.undertow.util.HexConverter;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 class MapIdentityManager implements IdentityManager {
 
@@ -113,10 +114,8 @@ class MapIdentityManager implements IdentityManager {
                 public Set<String> getRoles() {
                     return Collections.emptySet();
                 }
-
             };
         }
         return null;
     }
-
 }

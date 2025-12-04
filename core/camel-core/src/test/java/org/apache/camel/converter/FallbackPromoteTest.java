@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class FallbackPromoteTest extends ContextTestSupport {
 
@@ -42,5 +43,4 @@ public class FallbackPromoteTest extends ContextTestSupport {
         tc = context.getTypeConverterRegistry().lookup(String.class, MyCoolBean.class);
         assertNotNull(tc, "Should have been promoted");
     }
-
 }

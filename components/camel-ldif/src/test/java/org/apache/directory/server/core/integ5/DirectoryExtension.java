@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.directory.server.core.integ5;
 
 import java.lang.reflect.InvocationTargetException;
@@ -55,7 +56,8 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
      */
     private static final Logger LOG = LoggerFactory.getLogger(DirectoryExtension.class);
 
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DirectoryExtension.class);
+    private static final ExtensionContext.Namespace NAMESPACE =
+            ExtensionContext.Namespace.create(DirectoryExtension.class);
 
     /**
      * The 'service' field in the run tests
@@ -156,7 +158,8 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             if (methodDirectoryService != null) {
                 LOG.debug("Shuting down DS for {}", methodDirectoryService.getInstanceId());
                 methodDirectoryService.shutdown();
-                FileUtils.deleteDirectory(methodDirectoryService.getInstanceLayout().getInstanceDirectory());
+                FileUtils.deleteDirectory(
+                        methodDirectoryService.getInstanceLayout().getInstanceDirectory());
             } else {
                 // We use a class or suite DS, just revert the current test's modifications
                 revert(classDirectoryService, revision);
@@ -170,7 +173,8 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             if (classDirectoryService != null) {
                 LOG.debug("Shuting down DS for {}", classDirectoryService.getInstanceId());
                 classDirectoryService.shutdown();
-                FileUtils.deleteDirectory(classDirectoryService.getInstanceLayout().getInstanceDirectory());
+                FileUtils.deleteDirectory(
+                        classDirectoryService.getInstanceLayout().getInstanceDirectory());
             }
         }
 
@@ -209,17 +213,18 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
             // with less than 1024 bits as insecure and such are disabled by default, see
             // http://www.oracle.com/technetwork/java/javase/8-compatibility-guide-2156366.html
             Entry adminEntry = ds.getAdminSession().lookup(new Dn(ServerDNConstants.ADMIN_SYSTEM_DN));
-            TlsKeyGenerator.addKeyPair(adminEntry, TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN,
-                    TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN, "RSA", 1024);
+            TlsKeyGenerator.addKeyPair(
+                    adminEntry,
+                    TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN,
+                    TlsKeyGenerator.CERTIFICATE_PRINCIPAL_DN,
+                    "RSA",
+                    1024);
             Modification mod1 = new DefaultModification(
-                    ModificationOperation.REPLACE_ATTRIBUTE,
-                    adminEntry.get(TlsKeyGenerator.PRIVATE_KEY_AT));
+                    ModificationOperation.REPLACE_ATTRIBUTE, adminEntry.get(TlsKeyGenerator.PRIVATE_KEY_AT));
             Modification mod2 = new DefaultModification(
-                    ModificationOperation.REPLACE_ATTRIBUTE,
-                    adminEntry.get(TlsKeyGenerator.PUBLIC_KEY_AT));
+                    ModificationOperation.REPLACE_ATTRIBUTE, adminEntry.get(TlsKeyGenerator.PUBLIC_KEY_AT));
             Modification mod3 = new DefaultModification(
-                    ModificationOperation.REPLACE_ATTRIBUTE,
-                    adminEntry.get(TlsKeyGenerator.USER_CERTIFICATE_AT));
+                    ModificationOperation.REPLACE_ATTRIBUTE, adminEntry.get(TlsKeyGenerator.USER_CERTIFICATE_AT));
             ds.getAdminSession().modify(adminEntry.getDn(), mod1, mod2, mod3);
         }
     }
@@ -243,5 +248,4 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
     public void afterAll(ExtensionContext context) throws Exception {
         context.getStore(NAMESPACE).getOrComputeIfAbsent(State.class).afterAll(context);
     }
-
 }

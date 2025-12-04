@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.aws2.services;
 
 import org.apache.camel.test.infra.aws.common.services.AWSService;
@@ -21,55 +22,48 @@ import org.apache.camel.test.infra.aws.common.services.AWSService;
 public class AWSTestServices {
 
     public static class AWSCloudWatchLocalContainerTestService extends AWSCloudWatchLocalContainerInfraService
-            implements AWSService {
-    }
+            implements AWSService {}
 
-    public static class AWSConfigLocalContainerTestService extends AWSConfigLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSConfigLocalContainerTestService extends AWSConfigLocalContainerInfraService
+            implements AWSService {}
 
     public static class AWSDynamodbLocalContainerTestService extends AWSDynamodbLocalContainerInfraService
-            implements AWSService {
-    }
+            implements AWSService {}
 
-    public static class AWSEC2LocalContainerTestService extends AWSEC2LocalContainerInfraService implements AWSService {
-    }
+    public static class AWSEC2LocalContainerTestService extends AWSEC2LocalContainerInfraService
+            implements AWSService {}
 
     public static class AWSEventBridgeLocalContainerTestService extends AWSEventBridgeLocalContainerInfraService
-            implements AWSService {
-    }
+            implements AWSService {}
 
-    public static class AWSIAMLocalContainerTestService extends AWSIAMLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSIAMLocalContainerTestService extends AWSIAMLocalContainerInfraService
+            implements AWSService {}
 
-    public static class AWSKinesisLocalContainerTestService extends AWSKinesisLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSKinesisLocalContainerTestService extends AWSKinesisLocalContainerInfraService
+            implements AWSService {}
 
-    public static class AWSKMSLocalContainerTestService extends AWSKMSLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSKMSLocalContainerTestService extends AWSKMSLocalContainerInfraService
+            implements AWSService {}
 
-    public static class AWSLambdaLocalContainerTestService extends AWSLambdaLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSLambdaLocalContainerTestService extends AWSLambdaLocalContainerInfraService
+            implements AWSService {}
 
-    public static class AWSS3LocalContainerTestService extends AWSS3LocalContainerInfraService implements AWSService {
-    }
+    public static class AWSS3LocalContainerTestService extends AWSS3LocalContainerInfraService implements AWSService {}
 
     public static class AWSSecretsManagerLocalContainerTestService extends AWSSecretsManagerLocalContainerInfraService
-            implements AWSService {
-    }
+            implements AWSService {}
 
-    public static class AWSSNSLocalContainerTestService extends AWSSNSLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSSNSLocalContainerTestService extends AWSSNSLocalContainerInfraService
+            implements AWSService {}
 
-    public static class AWSSQSLocalContainerTestService extends AWSSQSLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSSQSLocalContainerTestService extends AWSSQSLocalContainerInfraService
+            implements AWSService {}
 
-    public static class AWSSTSLocalContainerTestService extends AWSSTSLocalContainerInfraService implements AWSService {
-    }
+    public static class AWSSTSLocalContainerTestService extends AWSSTSLocalContainerInfraService
+            implements AWSService {}
 
     public static class AWSTranscribeLocalContainerTestService extends AWSTranscribeLocalContainerInfraService
-            implements AWSService {
-    }
+            implements AWSService {}
 
-    public static class AWSRemoteTestService extends AWSRemoteInfraService implements AWSService {
-    }
+    public static class AWSRemoteTestService extends AWSRemoteInfraService implements AWSService {}
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -49,9 +50,9 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5"
-                     + "&sendEmptyMessageWhenIdle=true").to("mock:result");
+                                + "&sendEmptyMessageWhenIdle=true")
+                        .to("mock:result");
             }
         };
     }
-
 }

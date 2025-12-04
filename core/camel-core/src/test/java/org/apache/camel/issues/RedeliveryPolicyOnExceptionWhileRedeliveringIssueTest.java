@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -72,9 +73,18 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:source").onException(FirstException.class).redeliveryDelay(0).maximumRedeliveries(-1).handled(true)
-                        .end().onException(SecondException.class)
-                        .handled(true).to("mock:error").end().process(new ExceptionThrowingProcessor()).to("mock:destination");
+                from("direct:source")
+                        .onException(FirstException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(-1)
+                        .handled(true)
+                        .end()
+                        .onException(SecondException.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .end()
+                        .process(new ExceptionThrowingProcessor())
+                        .to("mock:destination");
             }
         };
     }

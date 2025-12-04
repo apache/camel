@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -57,18 +58,23 @@ public class InOnlyConsumerAsyncFalseTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(SJMS_QUEUE_NAME).to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        beforeThreadName = Thread.currentThread().getName();
-                        if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {
-                            Thread.sleep(2000);
-                        }
-                    }
-                }).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to(MOCK_RESULT);
+                from(SJMS_QUEUE_NAME)
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                                if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {
+                                    Thread.sleep(2000);
+                                }
+                            }
+                        })
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:after")
+                        .to(MOCK_RESULT);
             }
         };
     }

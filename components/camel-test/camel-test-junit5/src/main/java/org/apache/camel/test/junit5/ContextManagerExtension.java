@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -49,8 +50,8 @@ public final class ContextManagerExtension
         this.contextManagerFactory = contextManagerFactory;
     }
 
-    public ContextManagerExtension(TestExecutionConfiguration testConfigurationBuilder,
-                                   CamelContextConfiguration camelContextConfiguration) {
+    public ContextManagerExtension(
+            TestExecutionConfiguration testConfigurationBuilder, CamelContextConfiguration camelContextConfiguration) {
         this.testConfigurationBuilder = testConfigurationBuilder;
         this.camelContextConfiguration = camelContextConfiguration;
 
@@ -59,10 +60,12 @@ public final class ContextManagerExtension
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        final boolean perClassPresent
-                = context.getTestInstanceLifecycle().filter(lc -> lc.equals(TestInstance.Lifecycle.PER_CLASS)).isPresent();
+        final boolean perClassPresent = context.getTestInstanceLifecycle()
+                .filter(lc -> lc.equals(TestInstance.Lifecycle.PER_CLASS))
+                .isPresent();
         if (perClassPresent) {
-            LOG.warn("Creating a legacy context manager for {}. This function is deprecated and will be removed in the future",
+            LOG.warn(
+                    "Creating a legacy context manager for {}. This function is deprecated and will be removed in the future",
                     context.getDisplayName());
             contextManager = contextManagerFactory.createContextManager(
                     ContextManagerFactory.Type.BEFORE_ALL, testConfigurationBuilder, camelContextConfiguration);
@@ -81,8 +84,8 @@ public final class ContextManagerExtension
     public void beforeEach(ExtensionContext context) throws Exception {
         if (contextManager == null) {
             LOG.trace("Creating a transient context manager for {}", context.getDisplayName());
-            contextManager = contextManagerFactory.createContextManager(ContextManagerFactory.Type.BEFORE_EACH,
-                    testConfigurationBuilder, camelContextConfiguration);
+            contextManager = contextManagerFactory.createContextManager(
+                    ContextManagerFactory.Type.BEFORE_EACH, testConfigurationBuilder, camelContextConfiguration);
         }
 
         currentTestName = context.getDisplayName();

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_INCREMENT;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Collection;
 
@@ -29,13 +37,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_INCREMENT;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class CounterRouteTest extends CamelTestSupport {
 
@@ -63,11 +64,13 @@ public class CounterRouteTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:in4")
-                        .to("opentelemetry-metrics:counter:D?increment=${header.inc}&attributes.a=${body.length}&attributes.b=2")
+                        .to(
+                                "opentelemetry-metrics:counter:D?increment=${header.inc}&attributes.a=${body.length}&attributes.b=2")
                         .to("mock:result");
 
                 from("direct:in5")
-                        .setHeader(HEADER_METRIC_ATTRIBUTES,
+                        .setHeader(
+                                HEADER_METRIC_ATTRIBUTES,
                                 constant(Attributes.of(AttributeKey.stringKey("dynamic-key"), "dynamic-value")))
                         .to("opentelemetry-metrics:counter:E?increment=5")
                         .to("mock:result");
@@ -231,7 +234,8 @@ public class CounterRouteTest extends CamelTestSupport {
                 .filter(d -> d.getName().equals(metricName))
                 .map(metricData -> metricData.getData().getPoints())
                 .flatMap(Collection::stream)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
 
         assertInstanceOf(LongPointData.class, pd, "Expected LongPointData");
         return (LongPointData) pd;

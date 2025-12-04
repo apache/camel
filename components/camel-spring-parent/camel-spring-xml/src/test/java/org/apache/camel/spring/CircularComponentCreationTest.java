@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -24,13 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class CircularComponentCreationTest {
     @Test
     public void testSimple() {
-        assertThrows(FailedToCreateRouteException.class,
+        assertThrows(
+                FailedToCreateRouteException.class,
                 () -> doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml"));
     }
 

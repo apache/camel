@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.parseParameters;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setSteps;
 
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -40,16 +47,9 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.parseParameters;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setSteps;
-
 public final class YamlSupport {
 
-    private YamlSupport() {
-    }
+    private YamlSupport() {}
 
     public static CamelContextCustomizer customizer(Collection<CamelContextCustomizer> customizers) {
         return new CamelContextCustomizer() {
@@ -62,7 +62,8 @@ public final class YamlSupport {
         };
     }
 
-    public static String createEndpointUri(CamelContext context, Node node, String uri, Map<String, Object> parameters) {
+    public static String createEndpointUri(
+            CamelContext context, Node node, String uri, Map<String, Object> parameters) {
         if (uri == null) {
             throw new InvalidEndpointException(node, "Uri is mandatory");
         }
@@ -225,8 +226,7 @@ public final class YamlSupport {
     }
 
     public static <T> T creteEndpoint(String scheme, Node node, Function<String, T> constructor) {
-        return constructor.apply(
-                creteEndpointUri(scheme, node));
+        return constructor.apply(creteEndpointUri(scheme, node));
     }
 
     public static ConstructNode creteEndpointConstructor(String scheme, Function<String, Object> constructor) {

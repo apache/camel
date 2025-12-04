@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.EnumMap;
@@ -33,8 +34,10 @@ public final class DefaultExchange extends AbstractExchange {
 
     private final Clock timeInfo;
 
-    DefaultExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
-                    Map<String, Object> properties) {
+    DefaultExchange(
+            CamelContext context,
+            EnumMap<ExchangePropertyKey, Object> internalProperties,
+            Map<String, Object> properties) {
         super(context, internalProperties, properties);
         this.timeInfo = new MonotonicClock();
     }

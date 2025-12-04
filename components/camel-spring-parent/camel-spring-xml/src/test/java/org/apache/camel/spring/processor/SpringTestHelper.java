@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
 
 import java.util.Collections;
@@ -31,24 +32,25 @@ public final class SpringTestHelper {
 
     public static final String PROPERTY_TEST_DIR = "testDirectory";
 
-    private SpringTestHelper() {
-    }
+    private SpringTestHelper() {}
 
     public static CamelContext createSpringCamelContext(ContextTestSupport test, String classpathUri) throws Exception {
         return createSpringCamelContext(test, classpathUri, Collections.emptyMap());
     }
 
-    public static CamelContext createSpringCamelContext(ContextTestSupport test, String classpathUri, Map<String, Object> beans)
-            throws Exception {
+    public static CamelContext createSpringCamelContext(
+            ContextTestSupport test, String classpathUri, Map<String, Object> beans) throws Exception {
         test.setUseRouteBuilder(false);
 
         boolean isNoStart = DefaultCamelContext.isNoStart();
         final AbstractXmlApplicationContext applicationContext;
         try {
             DefaultCamelContext.setNoStart(true);
-            applicationContext = new ClassPathXmlApplicationContext(new String[] { classpathUri }, false);
-            applicationContext.getEnvironment().getSystemProperties().put(
-                    PROPERTY_TEST_DIR, test.testDirectory().toString());
+            applicationContext = new ClassPathXmlApplicationContext(new String[] {classpathUri}, false);
+            applicationContext
+                    .getEnvironment()
+                    .getSystemProperties()
+                    .put(PROPERTY_TEST_DIR, test.testDirectory().toString());
             applicationContext.refresh();
         } finally {
             DefaultCamelContext.setNoStart(isNoStart);
@@ -62,14 +64,16 @@ public final class SpringTestHelper {
                 applicationContext.stop();
             }
         });
-        // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+        // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this
+        // component.
         @SuppressWarnings("deprecation")
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, false);
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
             context.getCamelContextExtension().getRegistry().bind(entry.getKey(), entry.getValue());
         }
         context.getCamelContextExtension().getRegistry().bind(PROPERTY_TEST_DIR, test.testDirectory());
-        context.getPropertiesComponent().addInitialProperty(PROPERTY_TEST_DIR, test.testDirectory().toString());
+        context.getPropertiesComponent()
+                .addInitialProperty(PROPERTY_TEST_DIR, test.testDirectory().toString());
         if (!isNoStart) {
             context.start();
         }

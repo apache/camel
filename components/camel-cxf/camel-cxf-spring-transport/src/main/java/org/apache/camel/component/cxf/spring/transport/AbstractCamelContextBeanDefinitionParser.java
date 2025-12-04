@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.transport;
 
 import org.w3c.dom.Element;
@@ -32,7 +33,7 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
 
     private String getContextId(String contextId) {
         if (ObjectHelper.isEmpty(contextId)) {
-            //Set the contextId default value here
+            // Set the contextId default value here
             return DEFAULT_CAMEL_CONTEXT_NAME;
         } else {
             return contextId;
@@ -63,7 +64,8 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
                     // Parser the camel context
                     BeanDefinition bd = ctx.getDelegate().parseCustomElement((Element) n);
                     // Get the inner camel context id
-                    String contextId = (String) bd.getPropertyValues().getPropertyValue("id").getValue();
+                    String contextId = (String)
+                            bd.getPropertyValues().getPropertyValue("id").getValue();
                     wireCamelContext(bean, getContextId(contextId));
                 } else if ("camelContextRef".equals(name)) {
                     String contextId = n.getTextContent();
@@ -72,5 +74,4 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.language;
 
 import java.lang.annotation.Annotation;
@@ -33,7 +34,9 @@ public class DefaultAnnotationExpressionFactory implements AnnotationExpressionF
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
         String languageName = languageAnnotation.language();
         Language language = camelContext.resolveLanguage(languageName);
@@ -70,7 +73,7 @@ public class DefaultAnnotationExpressionFactory implements AnnotationExpressionF
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                     "Cannot determine the Object value of the annotation: " + annotation
-                                               + " as it does not have the method: " + methodName + "() method",
+                            + " as it does not have the method: " + methodName + "() method",
                     e);
         }
     }

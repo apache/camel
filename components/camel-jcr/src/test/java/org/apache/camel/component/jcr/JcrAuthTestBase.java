@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 
@@ -31,8 +34,6 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.jupiter.api.BeforeAll;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Base class for tests that use authentication/authorization in the repository. Ensures that the transient repo is set
@@ -54,8 +55,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         // set up a user to authenticate
-        SessionImpl session = (SessionImpl) repository
-                .login(new SimpleCredentials("admin", "admin".toCharArray()));
+        SessionImpl session = (SessionImpl) repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
         UserManager userManager = session.getUserManager();
         User user = (User) userManager.getAuthorizable("test");
         if (user == null) {
@@ -63,10 +63,8 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
         }
         // set up permissions
         String path = session.getRootNode().getPath();
-        AccessControlManager accessControlManager = session
-                .getAccessControlManager();
-        AccessControlPolicyIterator acls = accessControlManager
-                .getApplicablePolicies(path);
+        AccessControlManager accessControlManager = session.getAccessControlManager();
+        AccessControlPolicyIterator acls = accessControlManager.getApplicablePolicies(path);
         AccessControlList acl = null;
         if (acls.hasNext()) {
             acl = (AccessControlList) acls.nextAccessControlPolicy();
@@ -85,5 +83,4 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
     protected Repository getRepository() {
         return repository;
     }
-
 }

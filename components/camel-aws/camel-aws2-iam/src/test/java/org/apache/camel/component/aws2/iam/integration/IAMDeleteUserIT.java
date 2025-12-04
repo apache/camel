@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.iam.model.DeleteUserResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IAMDeleteUserIT extends Aws2IAMBase {
 
@@ -56,7 +57,6 @@ public class IAMDeleteUserIT extends Aws2IAMBase {
 
         DeleteUserResponse resultGet = (DeleteUserResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
-
     }
 
     @Override
@@ -65,9 +65,9 @@ public class IAMDeleteUserIT extends Aws2IAMBase {
             @Override
             public void configure() {
                 from("direct:createUser").to("aws2-iam://test?operation=createUser");
-                from("direct:deleteUser").to("aws2-iam://test?operation=deleteUser")
+                from("direct:deleteUser")
+                        .to("aws2-iam://test?operation=deleteUser")
                         .to("mock:result");
-
             }
         };
     }

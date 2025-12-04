@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.client;
 
 import org.apache.camel.component.aws2.ddb.Ddb2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientStandardImpl;
  */
 public final class Ddb2ClientFactory {
 
-    private Ddb2ClientFactory() {
-    }
+    private Ddb2ClientFactory() {}
 
     /**
      * Return the correct AWS DynamoDB client (based on remote vs local).

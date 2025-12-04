@@ -14,13 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays available external services", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "list",
+        description = "Displays available external services",
+        sortOptions = false,
+        showDefaultValues = true)
 public class InfraList extends InfraBaseCommand {
 
     public InfraList(CamelJBangMain main) {
@@ -29,8 +33,6 @@ public class InfraList extends InfraBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        return listServices(rows -> {
-        });
+        return listServices(rows -> {});
     }
-
 }

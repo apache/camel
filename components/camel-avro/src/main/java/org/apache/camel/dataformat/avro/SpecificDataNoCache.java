@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.avro;
 
 import org.apache.avro.Schema;
@@ -53,5 +54,4 @@ public class SpecificDataNoCache extends SpecificData {
         Class<?> c = this.getClass(schema);
         return c == null ? super.newRecord(old, schema) : (c.isInstance(old) ? old : newInstance(c, schema));
     }
-
 }

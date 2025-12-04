@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray.component;
 
 public final class CommonEndpoints {
@@ -23,7 +24,5 @@ public final class CommonEndpoints {
     public static final String PERSISTENCE_QUEUE = "xray-test:persistence-queue";
     public static final String READY = "xray-test:ready";
 
-    private CommonEndpoints() {
-
-    }
+    private CommonEndpoints() {}
 }

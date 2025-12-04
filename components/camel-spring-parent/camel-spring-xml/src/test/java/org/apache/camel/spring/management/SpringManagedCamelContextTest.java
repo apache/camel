@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -28,11 +34,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedCamelContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Does not run well on CI due test uses JMX mbeans")
 public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
@@ -94,5 +95,4 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
         assertNotNull(data);
         assertTrue(data.size() > 150);
     }
-
 }

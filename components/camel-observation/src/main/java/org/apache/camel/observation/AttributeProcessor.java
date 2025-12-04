@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
 
 import io.micrometer.observation.Observation;
@@ -48,7 +49,8 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            MicrometerObservationSpanAdapter camelSpan = (MicrometerObservationSpanAdapter) ActiveSpanManager.getSpan(exchange);
+            MicrometerObservationSpanAdapter camelSpan =
+                    (MicrometerObservationSpanAdapter) ActiveSpanManager.getSpan(exchange);
             Observation observation = camelSpan.getMicrometerObservation();
             if (observation != null) {
                 String tag = expression.evaluate(exchange, String.class);

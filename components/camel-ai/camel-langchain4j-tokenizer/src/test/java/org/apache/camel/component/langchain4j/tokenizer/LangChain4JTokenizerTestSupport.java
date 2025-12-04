@@ -26,7 +26,8 @@ public class LangChain4JTokenizerTestSupport extends CamelTestSupport {
     protected static final String TEXT;
 
     static {
-        try (InputStream resource = LangChain4JParagraphTokenizerTest.class.getResourceAsStream("/road-not-taken.txt")) {
+        try (InputStream resource =
+                LangChain4JParagraphTokenizerTest.class.getResourceAsStream("/road-not-taken.txt")) {
             assert resource != null;
             TEXT = new String(resource.readAllBytes());
         } catch (IOException e) {

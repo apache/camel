@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.Destination;
@@ -29,7 +30,8 @@ import jakarta.jms.TemporaryTopic;
 public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;
 
-    public JmsTemporaryTopicEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
+    public JmsTemporaryTopicEndpoint(
+            String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         super(uri, component, destination, true, configuration);
     }
 
@@ -65,5 +67,4 @@ public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements Destinatio
     protected Destination createJmsDestination(Session session) throws JMSException {
         return session.createTemporaryTopic();
     }
-
 }

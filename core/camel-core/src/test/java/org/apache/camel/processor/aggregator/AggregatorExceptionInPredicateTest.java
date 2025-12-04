@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -61,7 +62,9 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
             public void configure() {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
-                from("direct:start").aggregate(header("id")).completionTimeout(500)
+                from("direct:start")
+                        .aggregate(header("id"))
+                        .completionTimeout(500)
                         .aggregationStrategy(new AggregationStrategy() {
 
                             public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -71,17 +74,24 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
                                 }
                                 return newExchange;
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
 
-                from("direct:predicate").aggregate(new Expression() {
+                from("direct:predicate")
+                        .aggregate(
+                                new Expression() {
 
-                    public <T> T evaluate(Exchange exchange, Class<T> type) {
-                        if (exchange.getIn().getBody().equals("Damn")) {
-                            throw new IllegalArgumentException();
-                        }
-                        return ExpressionBuilder.headerExpression("id").evaluate(exchange, type);
-                    }
-                }, new UseLatestAggregationStrategy()).completionTimeout(500).to("mock:result");
+                                    public <T> T evaluate(Exchange exchange, Class<T> type) {
+                                        if (exchange.getIn().getBody().equals("Damn")) {
+                                            throw new IllegalArgumentException();
+                                        }
+                                        return ExpressionBuilder.headerExpression("id")
+                                                .evaluate(exchange, type);
+                                    }
+                                },
+                                new UseLatestAggregationStrategy())
+                        .completionTimeout(500)
+                        .to("mock:result");
             }
         };
     }

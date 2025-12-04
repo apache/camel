@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -26,9 +30,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Simple unit test to consume a new file
@@ -52,8 +53,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
         Files.createDirectories(testDirectory());
         Files.write(testFile(TEST_FILE_NAME), "Hello World".getBytes());
 
-        Endpoint endpoint = comp.createEndpoint(fileUri(), testDirectory().toString(),
-                new HashMap<>());
+        Endpoint endpoint = comp.createEndpoint(fileUri(), testDirectory().toString(), new HashMap<>());
         Consumer consumer = endpoint.createConsumer(exchange -> {
             assertNotNull(exchange);
             String body = exchange.getIn().getBody(String.class);
@@ -69,5 +69,4 @@ public class NewFileConsumeTest extends ContextTestSupport {
         consumer.stop();
         comp.close();
     }
-
 }

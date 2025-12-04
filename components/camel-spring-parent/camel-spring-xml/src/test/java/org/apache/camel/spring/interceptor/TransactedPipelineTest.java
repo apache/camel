@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedPipelineTest extends TransactionClientDataSourceSupport {
 
@@ -37,16 +38,11 @@ public class TransactedPipelineTest extends TransactionClientDataSourceSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .transacted()
-                        .pipeline("log:start", "direct:a", "log:end");
+                from("direct:start").transacted().pipeline("log:start", "direct:a", "log:end");
 
-                from("direct:a")
-                        .recipientList(constant("direct:b"));
+                from("direct:a").recipientList(constant("direct:b"));
 
-                from("direct:b")
-                        .delay(1)
-                        .transform(constant("Hi !!!"));
+                from("direct:b").delay(1).transform(constant("Hi !!!"));
             }
         };
     }

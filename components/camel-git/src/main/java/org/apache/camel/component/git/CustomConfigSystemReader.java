@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git;
 
 import java.io.File;
@@ -72,8 +73,7 @@ public class CustomConfigSystemReader extends SystemReader {
     public FileBasedConfig openSystemConfig(Config parent, FS fs) {
         return new FileBasedConfig(parent, null, fs) {
             @Override
-            public void load() {
-            }
+            public void load() {}
 
             @Override
             public boolean isOutdated() {
@@ -81,5 +81,4 @@ public class CustomConfigSystemReader extends SystemReader {
             }
         };
     }
-
 }

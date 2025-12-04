@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.ArrayList;
@@ -40,8 +41,8 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     @Test
     public void testAggregator() throws Exception {
 
-        String allNames
-                = "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";
+        String allNames =
+                "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";
 
         final Map<String, List<String>> allBrothers = getAllBrothers();
 
@@ -108,12 +109,14 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
                     if (oldExchange != null) {
                         Map<String, List<?>> brothers = oldExchange.getIn().getBody(Map.class);
-                        brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class),
+                        brothers.put(
+                                newExchange.getIn().getHeader(SURNAME_HEADER, String.class),
                                 newExchange.getIn().getBody(List.class));
                         answer = oldExchange;
                     } else {
                         Map<String, List<?>> brothers = new HashMap<>();
-                        brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class),
+                        brothers.put(
+                                newExchange.getIn().getHeader(SURNAME_HEADER, String.class),
                                 newExchange.getIn().getBody(List.class));
                         newExchange.getIn().setBody(brothers);
                     }
@@ -126,8 +129,12 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
             private void debugIn(String stringId, Exchange oldExchange, Exchange newExchange) {
                 if (oldExchange != null) {
-                    log.debug("{} old headers in: {}", stringId, oldExchange.getIn().getHeaders());
-                    log.debug("{} old body in: {}", stringId, oldExchange.getIn().getBody());
+                    log.debug(
+                            "{} old headers in: {}",
+                            stringId,
+                            oldExchange.getIn().getHeaders());
+                    log.debug(
+                            "{} old body in: {}", stringId, oldExchange.getIn().getBody());
                 }
                 log.debug("{} new headers in: {}", stringId, newExchange.getIn().getHeaders());
                 log.debug("{} new body in: {}", stringId, newExchange.getIn().getBody());
@@ -143,7 +150,8 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
                 from("direct:start")
                         // Separate people
-                        .split(bodyAs(String.class).tokenize(",")).process(
+                        .split(bodyAs(String.class).tokenize(","))
+                        .process(
 
                                 // Split
                                 // the
@@ -158,20 +166,25 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                                 new Processor() {
                                     public void process(Exchange exchange) {
 
-                                        String[] parts = exchange.getIn().getBody(String.class).split(" ");
+                                        String[] parts = exchange.getIn()
+                                                .getBody(String.class)
+                                                .split(" ");
                                         exchange.getIn().setBody(parts[0]);
                                         exchange.getIn().setHeader(SURNAME_HEADER, parts[1]);
                                     } // process
                                 }) // Processor
-
                         .to("direct:joinSurnames");
 
-                from("direct:joinSurnames").aggregate(header(SURNAME_HEADER), surnameAggregator).completionTimeout(100)
+                from("direct:joinSurnames")
+                        .aggregate(header(SURNAME_HEADER), surnameAggregator)
+                        .completionTimeout(100)
                         .completionTimeoutCheckerInterval(10)
-                        .setHeader(TYPE_HEADER, constant(BROTHERS_TYPE)).to("direct:joinBrothers");
+                        .setHeader(TYPE_HEADER, constant(BROTHERS_TYPE))
+                        .to("direct:joinBrothers");
 
                 // Join all brothers lists and remove surname and type headers
-                AggregateDefinition agg = from("direct:joinBrothers").aggregate(header(TYPE_HEADER), brothersAggregator);
+                AggregateDefinition agg =
+                        from("direct:joinBrothers").aggregate(header(TYPE_HEADER), brothersAggregator);
 
                 agg.completionTimeout(100L);
                 agg.completionTimeoutCheckerInterval(10L);

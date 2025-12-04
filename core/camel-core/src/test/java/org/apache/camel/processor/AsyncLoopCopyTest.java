@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncLoopCopyTest extends ContextTestSupport {
 
@@ -38,7 +39,8 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
         getMockEndpoint("mock:loopIterationEnd").expectedBodiesReceived("Bye Camel", "Bye Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        String reply = template.requestBodyAndHeader("direct:start", "Hello Camel", "NumberIterations", 2, String.class);
+        String reply =
+                template.requestBodyAndHeader("direct:start", "Hello Camel", "NumberIterations", 2, String.class);
         assertEquals("Bye Camel", reply);
 
         assertMockEndpointsSatisfied();
@@ -53,13 +55,18 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before") // Should receive Hello
+                from("direct:start")
+                        .to("mock:before") // Should receive Hello
                         // Camel
-                        .to("log:before").process(new Processor() {
+                        .to("log:before")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
-                        }).loop(header("NumberIterations")).copy().to("mock:loopIterationStart") // Should
+                        })
+                        .loop(header("NumberIterations"))
+                        .copy()
+                        .to("mock:loopIterationStart") // Should
                         // receive
                         // 2x
                         // Hello
@@ -67,13 +74,16 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
                         .to("async:bye:camel") // Will transform the body to Bye
                         // Camel
                         .to("mock:loopIterationEnd") // Should receive 2x Bye Camel
-                        .end().process(new Processor() {
+                        .end()
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:result"); // Should receive 1x
-                                                             // Hello Camel
-                                                             // (original message)
+                        })
+                        .to("log:after")
+                        .to("mock:result"); // Should receive 1x
+                // Hello Camel
+                // (original message)
             }
         };
     }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.support.http.HttpUtil.filterCheck;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
-
-import static org.apache.camel.support.http.HttpUtil.filterCheck;
 
 /**
  * Default Netty {@link HeaderFilterStrategy} used when binding with {@link NettyHttpBinding}.
@@ -40,5 +41,4 @@ public class NettyHttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy 
         boolean answer = super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
         return filterCheck(templateUri, queryParameters, headerName, answer);
     }
-
 }

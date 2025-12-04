@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -121,7 +122,9 @@ public class PrepareExampleMojo extends AbstractMojo {
             models.sort(new ExampleComparator());
 
             // how many deprecated
-            long deprecated = models.stream().filter(m -> "true".equals(m.getDeprecated())).count();
+            long deprecated = models.stream()
+                    .filter(m -> "true".equals(m.getDeprecated()))
+                    .count();
 
             // update the big readme file in the examples dir
             File file = new File(".", "README.adoc");
@@ -146,7 +149,8 @@ public class PrepareExampleMojo extends AbstractMojo {
         }
     }
 
-    private void processExamples(List<ExampleModel> models, File file, File pom, String middleFolder) throws IOException {
+    private void processExamples(List<ExampleModel> models, File file, File pom, String middleFolder)
+            throws IOException {
         String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
 
         ExampleModel model = new ExampleModel();
@@ -190,7 +194,8 @@ public class PrepareExampleMojo extends AbstractMojo {
     }
 
     private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {
-        try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel")) {
+        try (InputStream templateStream =
+                UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel")) {
             String template = PackageHelper.loadText(templateStream);
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
@@ -258,5 +263,4 @@ public class PrepareExampleMojo extends AbstractMojo {
         answer = Strings.camelDashToTitle(answer);
         return answer;
     }
-
 }

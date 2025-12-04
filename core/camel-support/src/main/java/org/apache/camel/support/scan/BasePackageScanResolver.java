@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import java.io.IOException;
@@ -57,8 +58,9 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
             }
         } catch (Exception e) {
             // Ignore this exception
-            logger().warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
-                    e.getMessage());
+            logger().warn(
+                            "Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.",
+                            e.getMessage());
         }
 
         classLoaders.add(BasePackageScanResolver.class.getClassLoader());
@@ -208,5 +210,4 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     private static Logger logger() {
         return Holder.LOG;
     }
-
 }

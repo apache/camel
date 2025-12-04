@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.integration;
+
+import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -46,9 +50,6 @@ import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
-
-import static org.apache.camel.test.infra.aws2.clients.KinesisUtils.createStream;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KinesisProducerIT extends CamelTestSupport {
@@ -108,11 +109,11 @@ public class KinesisProducerIT extends CamelTestSupport {
 
         template.send("direct:start", ExchangePattern.InOut, exchange -> {
             exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "partition-1");
-            exchange.getIn().setBody(Arrays.asList("Kinesis Event 3.", "Kinesis Event 4.".getBytes(StandardCharsets.UTF_8)));
+            exchange.getIn()
+                    .setBody(Arrays.asList("Kinesis Event 3.", "Kinesis Event 4.".getBytes(StandardCharsets.UTF_8)));
         });
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(4, consumeMessages()));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(4, consumeMessages()));
 
         assertEquals("Kinesis Event 1.", recordList.get(0).data().asString(StandardCharsets.UTF_8));
         assertEquals("partition-1", recordList.get(0).partitionKey());

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.util.List;
@@ -26,19 +29,17 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class RoasterChoiceRouteBuilderConfigureTest {
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster
-                .parse(new File("src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource)
+                Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
-        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper().parseCamelRouteTree(clazz,
-                "src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java", method);
+        List<CamelNodeDetails> list = new CamelJavaTreeParserHelper()
+                .parseCamelRouteTree(
+                        clazz, "src/test/java/org/apache/camel/parser/java/MyChoiceRouteBuilder.java", method);
         assertNotNull(list);
     }
-
 }

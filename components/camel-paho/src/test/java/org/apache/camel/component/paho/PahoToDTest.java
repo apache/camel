@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import org.apache.camel.ProducerTemplate;
@@ -31,6 +32,7 @@ public class PahoToDTest extends PahoTestSupport {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected ProducerTemplate template;
 
     @Test

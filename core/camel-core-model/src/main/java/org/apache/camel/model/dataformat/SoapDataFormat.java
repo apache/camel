@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,19 +40,25 @@ public class SoapDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = true)
     private String contextPath;
+
     @XmlAttribute
     private String encoding;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.dataformat.soap.name.ElementNameStrategy")
     private String elementNameStrategy;
+
     @XmlAttribute
     @Metadata(defaultValue = "1.1", enums = "1.1,1.2")
     private String version;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.Map")
     private String namespacePrefix;
+
     @XmlAttribute
     private String schema;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreUnmarshalledHeaders;

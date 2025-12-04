@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.state;
+
+import static org.apache.camel.support.processor.state.FileStateRepository.fileStateRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
 import org.apache.camel.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.support.processor.state.FileStateRepository.fileStateRepository;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileStateRepositoryTest extends TestSupport {
 
@@ -44,7 +45,6 @@ public class FileStateRepositoryTest extends TestSupport {
         // When trying to use the key delimiter in a key
         // Then an exception is thrown
         assertThrows(IllegalArgumentException.class, () -> repository.setState("=", "value"));
-
     }
 
     @Test

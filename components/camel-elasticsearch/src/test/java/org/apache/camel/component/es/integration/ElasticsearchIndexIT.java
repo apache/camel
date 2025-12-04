@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.es.ElasticsearchConstants;
 import org.apache.camel.component.es.ElasticsearchOperation;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElasticsearchIndexIT extends ElasticsearchTestSupport {
 
@@ -115,14 +116,10 @@ class ElasticsearchIndexIT extends ElasticsearchTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("elasticsearch://elasticsearch");
-                from("direct:index")
-                        .to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
-                from("direct:exists")
-                        .to("elasticsearch://elasticsearch?operation=Exists&indexName=twitter");
-                from("direct:deleteIndex")
-                        .to("elasticsearch://elasticsearch?operation=DeleteIndex&indexName=twitter");
+                from("direct:start").to("elasticsearch://elasticsearch");
+                from("direct:index").to("elasticsearch://elasticsearch?operation=Index&indexName=twitter");
+                from("direct:exists").to("elasticsearch://elasticsearch?operation=Exists&indexName=twitter");
+                from("direct:deleteIndex").to("elasticsearch://elasticsearch?operation=DeleteIndex&indexName=twitter");
             }
         };
     }

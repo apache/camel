@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import java.util.HashMap;
@@ -44,7 +45,6 @@ public class SpanDecoratorManagerImpl implements SpanDecoratorManager {
         public String getComponentClassName() {
             return "default";
         }
-
     };
 
     static {
@@ -67,7 +67,9 @@ public class SpanDecoratorManagerImpl implements SpanDecoratorManager {
             Component comp = de.getComponent();
             String fqn = comp.getClass().getName();
             // lookup via FQN
-            sd = DECORATORS.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst()
+            sd = DECORATORS.values().stream()
+                    .filter(d -> fqn.equals(d.getComponentClassName()))
+                    .findFirst()
                     .orElse(null);
         }
         if (sd == null) {
@@ -93,5 +95,4 @@ public class SpanDecoratorManagerImpl implements SpanDecoratorManager {
     public SpanDecorator get(String processorName) {
         return new ProcessorSpanDecorator(processorName);
     }
-
 }

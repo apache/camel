@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -29,7 +30,8 @@ public interface ManagedRestRegistryMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Lists all the Rest services in the registry (url, path, verb, consumes, produces)")
     TabularData listRestServices();
 
-    @ManagedOperation(description = "Outputs the Rest services API documentation in JSON (requires camel-openapi-java on classpath)")
+    @ManagedOperation(
+            description =
+                    "Outputs the Rest services API documentation in JSON (requires camel-openapi-java on classpath)")
     String apiDocAsJson();
-
 }

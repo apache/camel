@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.util.function.Function;
@@ -28,7 +29,8 @@ public class RouteCoverageEventNotifier extends EventNotifierSupport {
     private final String testClassName;
     private final Function<RouteCoverageEventNotifier, String> testMethodName;
 
-    public RouteCoverageEventNotifier(String testClassName, Function<RouteCoverageEventNotifier, String> testMethodName) {
+    public RouteCoverageEventNotifier(
+            String testClassName, Function<RouteCoverageEventNotifier, String> testMethodName) {
         this.testClassName = testClassName;
         this.testMethodName = testMethodName;
         setIgnoreCamelContextEvents(false);
@@ -46,5 +48,4 @@ public class RouteCoverageEventNotifier extends EventNotifierSupport {
         String testName = testMethodName.apply(this);
         RouteCoverageDumper.dumpRouteCoverage(context, testClassName, testName);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,15 +25,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ShutdownCompleteAllTasksTest;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 public class SpringShutdownCompleteAllTasksTest extends ShutdownCompleteAllTasksTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         Map<String, Object> beans = new HashMap<>();
         beans.put("myProcessor", new ShutdownCompleteAllTasksTest.MyProcessor());
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/ShutdownCompleteAllTasksTest.xml", beans);
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/ShutdownCompleteAllTasksTest.xml", beans);
     }
 }

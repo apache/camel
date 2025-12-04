@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -84,7 +85,8 @@ public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImp
 
     private Source convertJsonToXmlSource(String jsonString) {
         try {
-            net.sf.saxon.s9api.XPathSelector selector = getSaxonJsonToXmlExecutable().load();
+            net.sf.saxon.s9api.XPathSelector selector =
+                    getSaxonJsonToXmlExecutable().load();
             selector.setContextItem(new net.sf.saxon.s9api.XdmAtomicValue(jsonString));
             net.sf.saxon.s9api.XdmValue result = selector.evaluate();
 

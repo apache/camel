@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
  * A configuration builder appropriate for building configurations for the {@link SingleNodeKafkaResumeStrategy}
  */
 public class KafkaResumeStrategyConfigurationBuilder
-        extends
-        BasicResumeStrategyConfigurationBuilder<KafkaResumeStrategyConfigurationBuilder, KafkaResumeStrategyConfiguration> {
+        extends BasicResumeStrategyConfigurationBuilder<
+                KafkaResumeStrategyConfigurationBuilder, KafkaResumeStrategyConfiguration> {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaResumeStrategyConfigurationBuilder.class);
 
     private Properties producerProperties;
@@ -46,8 +46,7 @@ public class KafkaResumeStrategyConfigurationBuilder
     private Duration maxInitializationDuration = Duration.ofSeconds(10);
     private int maxInitializationRetries = 5;
 
-    private KafkaResumeStrategyConfigurationBuilder() {
-    }
+    private KafkaResumeStrategyConfigurationBuilder() {}
 
     public KafkaResumeStrategyConfigurationBuilder(Properties producerProperties, Properties consumerProperties) {
         this.producerProperties = ObjectHelper.notNull(producerProperties, "producerProperties");
@@ -60,7 +59,6 @@ public class KafkaResumeStrategyConfigurationBuilder
             consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         } else {
             consumerProperties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
         }
 
         return super.withCacheFillPolicy(cacheFillPolicy);
@@ -168,9 +166,8 @@ public class KafkaResumeStrategyConfigurationBuilder
         final Properties producerProperties = KafkaResumeStrategyConfigurationBuilder.createProducerProperties();
         final Properties consumerProperties = KafkaResumeStrategyConfigurationBuilder.createConsumerProperties();
 
-        KafkaResumeStrategyConfigurationBuilder builder = new KafkaResumeStrategyConfigurationBuilder(
-                producerProperties,
-                consumerProperties);
+        KafkaResumeStrategyConfigurationBuilder builder =
+                new KafkaResumeStrategyConfigurationBuilder(producerProperties, consumerProperties);
 
         String groupId = UUID.randomUUID().toString();
         LOG.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -190,9 +187,8 @@ public class KafkaResumeStrategyConfigurationBuilder
         final Properties producerProperties = new Properties();
         final Properties consumerProperties = new Properties();
 
-        KafkaResumeStrategyConfigurationBuilder builder = new KafkaResumeStrategyConfigurationBuilder(
-                producerProperties,
-                consumerProperties);
+        KafkaResumeStrategyConfigurationBuilder builder =
+                new KafkaResumeStrategyConfigurationBuilder(producerProperties, consumerProperties);
 
         String groupId = UUID.randomUUID().toString();
         LOG.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);

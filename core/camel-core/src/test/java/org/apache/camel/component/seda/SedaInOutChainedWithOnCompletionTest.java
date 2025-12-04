@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
 
@@ -46,17 +47,21 @@ public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // should come in last
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                            @Override
-                            public void onDone(Exchange exchange) {
-                                template.sendBody("mock:c", "onCustomCompletion");
+                from("seda:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // should come in last
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange) {
+                                        template.sendBody("mock:c", "onCustomCompletion");
+                                    }
+                                });
                             }
-                        });
-                    }
-                }).to("mock:a").transform(simple("${body}-a")).to("seda:b");
+                        })
+                        .to("mock:a")
+                        .transform(simple("${body}-a"))
+                        .to("seda:b");
 
                 from("seda:b").to("mock:b").transform(simple("${body}-b")).to("seda:c");
 

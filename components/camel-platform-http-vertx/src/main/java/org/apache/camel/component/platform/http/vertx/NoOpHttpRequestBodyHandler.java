@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
 
 import io.vertx.core.Future;
@@ -28,8 +29,7 @@ class NoOpHttpRequestBodyHandler extends HttpRequestBodyHandler {
     }
 
     @Override
-    void configureRoute(Route route) {
-    }
+    void configureRoute(Route route) {}
 
     @Override
     Future<Void> handle(RoutingContext routingContext, Message message) {

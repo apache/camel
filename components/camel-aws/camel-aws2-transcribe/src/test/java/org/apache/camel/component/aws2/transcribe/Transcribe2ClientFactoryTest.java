@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Transcribe2ClientFactoryTest {
 

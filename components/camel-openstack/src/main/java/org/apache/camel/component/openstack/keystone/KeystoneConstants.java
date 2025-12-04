@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.keystone;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
@@ -29,18 +30,22 @@ public final class KeystoneConstants extends OpenstackConstants {
 
     @Metadata(description = "The description.", javaType = "String")
     public static final String DESCRIPTION = "description";
+
     @Metadata(label = "group project user", description = "ID of the domain.", javaType = "String")
     public static final String DOMAIN_ID = "domainId";
+
     @Metadata(label = "project", description = "The parent project ID.", javaType = "String")
     public static final String PARENT_ID = "parentId";
 
     @Metadata(label = "user", description = "User's password.", javaType = "String")
     public static final String PASSWORD = "password";
+
     @Metadata(label = "user", description = "User's email.", javaType = "String")
     public static final String EMAIL = "email";
 
     @Metadata(label = "group", description = "ID of the user.", javaType = "String")
     public static final String USER_ID = "userId";
+
     @Metadata(label = "group", description = "ID of the group.", javaType = "String")
     public static final String GROUP_ID = "groupId";
 
@@ -48,7 +53,5 @@ public final class KeystoneConstants extends OpenstackConstants {
     public static final String CHECK_GROUP_USER = "checkUserGroup";
     public static final String REMOVE_USER_FROM_GROUP = "removeUserFromGroup";
 
-    private KeystoneConstants() {
-    }
-
+    private KeystoneConstants() {}
 }

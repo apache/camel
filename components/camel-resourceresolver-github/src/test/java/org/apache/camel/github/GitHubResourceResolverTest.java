@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.github;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitHubResourceResolverTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class GitHubResourceResolverTest extends CamelTestSupport {
 
     @Test
     public void testGitHubDoesNotExist() {
-        Resource res = PluginHelper.getResourceLoader(context).resolveResource("github:apache:camel:main:core/unknown.xml");
+        Resource res =
+                PluginHelper.getResourceLoader(context).resolveResource("github:apache:camel:main:core/unknown.xml");
         assertNotNull(res);
         assertFalse(res.exists());
     }

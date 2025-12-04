@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncEndpointSplitFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -51,15 +52,21 @@ public class AsyncEndpointSplitFineGrainedErrorHandlingTest extends ContextTestS
 
                 onException(Exception.class).maximumRedeliveries(2).redeliveryDelay(0);
 
-                from("direct:start").split(body()).to("mock:before").to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        if (counter++ == 1) {
-                            throw new IllegalArgumentException("Cannot do this");
-                        }
-                    }
-                }).to("mock:after").end().to("mock:result");
+                from("direct:start")
+                        .split(body())
+                        .to("mock:before")
+                        .to("async:bye:camel")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                if (counter++ == 1) {
+                                    throw new IllegalArgumentException("Cannot do this");
+                                }
+                            }
+                        })
+                        .to("mock:after")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

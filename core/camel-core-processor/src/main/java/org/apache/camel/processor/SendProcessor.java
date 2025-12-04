@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Map;
@@ -163,7 +164,10 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
     }
 
     private boolean sendUsingPattern(
-            Exchange exchange, AsyncCallback callback, ExchangePattern existingPattern, Object originalBody,
+            Exchange exchange,
+            AsyncCallback callback,
+            ExchangePattern existingPattern,
+            Object originalBody,
             Map<String, Object> originalHeaders) {
         if (destinationExchangePattern != null || pattern != null) {
             exchange.setPattern(destinationExchangePattern != null ? destinationExchangePattern : pattern);
@@ -180,14 +184,17 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
         LOG.debug(">>>> {} {}", destination, exchange);
 
         // send the exchange to the destination using the producer cache for the non optimized producers
-        return producerCache.doInAsyncProducer(destination, exchange, callback,
+        return producerCache.doInAsyncProducer(
+                destination,
+                exchange,
+                callback,
                 (producer, ex, cb) -> producer.process(ex, doneSync -> {
                     // restore previous MEP
                     exchange.setPattern(existingPattern);
                     // result should be stored in variable instead of message body/headers
                     if (ExchangeHelper.shouldSetVariableResult(exchange, variableReceive)) {
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(exchange, variableReceive,
-                                exchange.getMessage());
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(
+                                exchange, variableReceive, exchange.getMessage());
                         exchange.getMessage().setBody(originalBody);
                         exchange.getMessage().setHeaders(originalHeaders);
                     }
@@ -197,7 +204,10 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
     }
 
     private boolean sendUsingProducer(
-            Exchange exchange, AsyncCallback callback, ExchangePattern existingPattern, Object originalBody,
+            Exchange exchange,
+            AsyncCallback callback,
+            ExchangePattern existingPattern,
+            Object originalBody,
             Map<String, Object> originalHeaders) {
         final Exchange target = exchange;
         // we can send with a different MEP pattern
@@ -225,8 +235,8 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
                 try {
                     // result should be stored in variable instead of message body/headers
                     if (ExchangeHelper.shouldSetVariableResult(target, variableReceive)) {
-                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(target, variableReceive,
-                                target.getMessage());
+                        ExchangeHelper.setVariableFromMessageBodyAndHeaders(
+                                target, variableReceive, target.getMessage());
                         target.getMessage().setBody(originalBody);
                         target.getMessage().setHeaders(originalHeaders);
                     }
@@ -298,9 +308,13 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
     @Override
     protected void doInit() throws Exception {
         // only if JMX is enabled
-        if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics
-                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+        if (camelContext.getManagementStrategy() != null
+                && camelContext.getManagementStrategy().getManagementAgent() != null) {
+            this.extendedStatistics = camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
+                    .getStatisticsLevel()
+                    .isExtended();
         } else {
             this.extendedStatistics = false;
         }

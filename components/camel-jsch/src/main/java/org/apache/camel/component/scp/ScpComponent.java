@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scp;
 
 import java.net.URI;
@@ -36,16 +37,15 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
     @Metadata
     private boolean verboseLogging;
 
-    public ScpComponent() {
-    }
+    public ScpComponent() {}
 
     public ScpComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected GenericFileEndpoint<ScpFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+    protected GenericFileEndpoint<ScpFile> buildFileEndpoint(
+            String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String tmp = StringHelper.before(uri, "?", uri);
         return new ScpEndpoint(uri, this, new ScpConfiguration(new URI(tmp)));
     }
@@ -78,9 +78,13 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
         JSch.setLogger(new com.jcraft.jsch.Logger() {
             @Override
             public boolean isEnabled(int level) {
-                return level == FATAL || level == ERROR ? ScpComponent.this.log.isErrorEnabled()
-                        : level == WARN ? ScpComponent.this.log.isWarnEnabled()
-                        : level == INFO ? ScpComponent.this.log.isInfoEnabled() : ScpComponent.this.log.isDebugEnabled();
+                return level == FATAL || level == ERROR
+                        ? ScpComponent.this.log.isErrorEnabled()
+                        : level == WARN
+                                ? ScpComponent.this.log.isWarnEnabled()
+                                : level == INFO
+                                        ? ScpComponent.this.log.isInfoEnabled()
+                                        : ScpComponent.this.log.isDebugEnabled();
             }
 
             @Override
@@ -102,5 +106,4 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
             }
         });
     }
-
 }

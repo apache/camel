@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -47,54 +48,68 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @XmlTransient
     private Predicate handledPolicy;
+
     @XmlTransient
     private Predicate continuedPolicy;
+
     @XmlTransient
     private Predicate retryWhilePolicy;
+
     @XmlTransient
     private Processor onRedelivery;
+
     @XmlTransient
     private Processor onExceptionOccurred;
+
     @XmlTransient
     private boolean routeScoped = true;
 
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<>();
+
     @Metadata(description = "To use an expression to only trigger this in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;
+
     @XmlElement(name = "retryWhile")
     @AsPredicate
     @Metadata(label = "advanced")
     private ExpressionSubElementDefinition retryWhile;
+
     @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicyType;
+
     @XmlAttribute(name = "redeliveryPolicyRef")
     @Metadata(label = "advanced")
     private String redeliveryPolicyRef;
+
     @XmlElement(name = "handled")
     @AsPredicate
     private ExpressionSubElementDefinition handled;
+
     @XmlElement(name = "continued")
     @AsPredicate
     @Metadata(label = "advanced")
     private ExpressionSubElementDefinition continued;
+
     @XmlAttribute(name = "onRedeliveryRef")
     @Metadata(label = "advanced")
     private String onRedeliveryRef;
+
     @XmlAttribute(name = "onExceptionOccurredRef")
     @Metadata(label = "advanced")
     private String onExceptionOccurredRef;
+
     @XmlAttribute(name = "useOriginalMessage")
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalMessage;
+
     @XmlAttribute(name = "useOriginalBody")
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String useOriginalBody;
 
-    public OnExceptionDefinition() {
-    }
+    public OnExceptionDefinition() {}
 
     protected OnExceptionDefinition(OnExceptionDefinition source) {
         super(source);
@@ -107,7 +122,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         this.exceptions = new ArrayList<>(source.exceptions);
         this.onWhen = source.onWhen != null ? source.onWhen.copyDefinition() : null;
         this.retryWhile = source.retryWhile != null ? source.retryWhile.copyDefinition() : null;
-        this.redeliveryPolicyType = source.redeliveryPolicyType != null ? source.redeliveryPolicyType.copyDefinition() : null;
+        this.redeliveryPolicyType =
+                source.redeliveryPolicyType != null ? source.redeliveryPolicyType.copyDefinition() : null;
         this.redeliveryPolicyRef = source.redeliveryPolicyRef;
         this.handled = source.handled != null ? source.handled.copyDefinition() : null;
         this.continued = source.continued != null ? source.continued.copyDefinition() : null;
@@ -182,7 +198,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         // only one of handled or continued is allowed
         if ((getHandledPolicy() != null || getHandled() != null)
                 && (getContinuedPolicy() != null || getContinued() != null)) {
-            throw new IllegalArgumentException("Only one of handled or continued is allowed to be configured on: " + this);
+            throw new IllegalArgumentException(
+                    "Only one of handled or continued is allowed to be configured on: " + this);
         }
 
         // you cannot turn on both of them
@@ -195,9 +212,19 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         // onException(Exception.class);
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
-            ObjectHelper.firstNotNull(handledPolicy, handled, continuedPolicy, continued, retryWhilePolicy, retryWhile,
-                    redeliveryPolicyType, useOriginalMessage, useOriginalBody, onRedeliveryRef,
-                    onRedelivery, onExceptionOccurred)
+            ObjectHelper.firstNotNull(
+                            handledPolicy,
+                            handled,
+                            continuedPolicy,
+                            continued,
+                            retryWhilePolicy,
+                            retryWhile,
+                            redeliveryPolicyType,
+                            useOriginalMessage,
+                            useOriginalBody,
+                            onRedeliveryRef,
+                            onRedelivery,
+                            onExceptionOccurred)
                     .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }
     }
@@ -968,5 +995,4 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
         }
         return redeliveryPolicyType;
     }
-
 }

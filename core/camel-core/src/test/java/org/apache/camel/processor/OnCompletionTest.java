@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionTest extends ContextTestSupport {
 
@@ -46,7 +47,9 @@ public class OnCompletionTest extends ContextTestSupport {
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(1);
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
-        getMockEndpoint("mock:sync").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+        getMockEndpoint("mock:sync")
+                .message(0)
+                .exchangeProperty(Exchange.EXCEPTION_CAUGHT)
                 .isInstanceOf(IllegalArgumentException.class);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -68,15 +71,18 @@ public class OnCompletionTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").onCompletion()
+                from("direct:start")
+                        .onCompletion()
                         // this route is only invoked when the original route is
                         // complete as a kind
                         // of completion callback
-                        .to("log:sync").to("mock:sync")
+                        .to("log:sync")
+                        .to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here the original route contiues
-                        .process(new MyProcessor()).to("mock:result");
+                        .process(new MyProcessor())
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -84,8 +90,7 @@ public class OnCompletionTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
-        public MyProcessor() {
-        }
+        public MyProcessor() {}
 
         @Override
         public void process(Exchange exchange) {

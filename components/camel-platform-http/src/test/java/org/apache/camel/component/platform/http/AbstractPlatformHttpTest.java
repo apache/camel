@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import io.restassured.RestAssured;
@@ -35,7 +36,8 @@ abstract class AbstractPlatformHttpTest {
         synchronized (LOCK) {
             if (ctx == null) {
                 ctx = new DefaultCamelContext();
-                ctx.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, new JettyCustomPlatformHttpEngine());
+                ctx.getRegistry()
+                        .bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, new JettyCustomPlatformHttpEngine());
 
                 port = AvailablePortFinder.getNextAvailable();
                 server = new JettyServerTest(port);
@@ -53,8 +55,7 @@ abstract class AbstractPlatformHttpTest {
     protected RouteBuilder routes() {
         return new RouteBuilder() {
             @Override
-            public void configure() {
-            }
+            public void configure() {}
         };
     }
 
@@ -70,5 +71,4 @@ abstract class AbstractPlatformHttpTest {
             ctx = null;
         }
     }
-
 }

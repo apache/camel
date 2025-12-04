@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty12.JettyHttpComponent12;
 import org.apache.camel.support.ExceptionHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
@@ -35,21 +36,20 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
     @Test
     public void testContextShutdownRemovesHttpConnector() {
         context.stop();
-        assertEquals(0, JettyHttpComponent.CONNECTORS.size(),
-                () -> {
-                    StringBuilder sb = new StringBuilder("Connector should have been removed\n");
-                    for (String key : JettyHttpComponent.CONNECTORS.keySet()) {
-                        Throwable t = JettyHttpComponent12.connectorCreation.get(key);
-                        if (t == null) {
-                            t = new Throwable("Unable to find connector creation");
-                        }
+        assertEquals(0, JettyHttpComponent.CONNECTORS.size(), () -> {
+            StringBuilder sb = new StringBuilder("Connector should have been removed\n");
+            for (String key : JettyHttpComponent.CONNECTORS.keySet()) {
+                Throwable t = JettyHttpComponent12.connectorCreation.get(key);
+                if (t == null) {
+                    t = new Throwable("Unable to find connector creation");
+                }
 
-                        final String stackTrace = ExceptionHelper.stackTraceToString(t);
+                final String stackTrace = ExceptionHelper.stackTraceToString(t);
 
-                        sb.append(key).append(": ").append(stackTrace);
-                    }
-                    return sb.toString();
-                });
+                sb.append(key).append(": ").append(stackTrace);
+            }
+            return sb.toString();
+        });
     }
 
     @Override

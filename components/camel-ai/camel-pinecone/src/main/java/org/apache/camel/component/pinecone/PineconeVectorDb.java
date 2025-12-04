@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone;
 
 import org.apache.camel.spi.Metadata;
@@ -22,8 +23,7 @@ public class PineconeVectorDb {
     public static final String SCHEME = "pinecone";
     public static final int DEFAULT_COLLECTION_DIMENSION = 1536;
 
-    private PineconeVectorDb() {
-    }
+    private PineconeVectorDb() {}
 
     /**
      * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use
@@ -31,8 +31,10 @@ public class PineconeVectorDb {
      */
     @Deprecated
     public static class Headers {
-        @Metadata(description = "The action to be performed.", javaType = "String",
-                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
+        @Metadata(
+                description = "The action to be performed.",
+                javaType = "String",
+                enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
         public static final String ACTION = "CamelPineconeAction";
 
         @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
@@ -53,7 +55,10 @@ public class PineconeVectorDb {
         @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
         public static final String COLLECTION_NAME = "CamelPineconeCollectionName";
 
-        @Metadata(description = "Collection Similarity Metric", javaType = "String", enums = "cosine,euclidean,dotproduct")
+        @Metadata(
+                description = "Collection Similarity Metric",
+                javaType = "String",
+                enums = "cosine,euclidean,dotproduct")
         public static final String COLLECTION_SIMILARITY_METRIC = "CamelPineconeCollectionSimilarityMetric";
 
         @Metadata(description = "Collection Dimension", javaType = "int")
@@ -82,6 +87,5 @@ public class PineconeVectorDb {
 
         @Metadata(description = "Query Include Metadata", javaType = "com.google.protobuf.Struct")
         public static final String QUERY_INCLUDE_METADATA = "CamelPineconeQueryIncludeMetadata";
-
     }
 }

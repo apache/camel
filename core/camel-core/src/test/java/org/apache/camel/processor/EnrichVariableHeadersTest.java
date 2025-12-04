@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -70,11 +71,15 @@ public class EnrichVariableHeadersTest extends ContextTestSupport {
                 from("direct:send")
                         .setVariable("hello", simple("Camel"))
                         .to("mock:before")
-                        .enrich().constant("direct:foo").variableSend("hello")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableSend("hello")
                         .to("mock:result");
 
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:after")
                         .setBody(simple("${variable:bye}"))
                         .to("mock:result");
@@ -82,12 +87,16 @@ public class EnrichVariableHeadersTest extends ContextTestSupport {
                 from("direct:sendAndReceive")
                         .setVariable("hello", simple("Camel"))
                         .to("mock:before")
-                        .enrich().constant("direct:foo").variableSend("hello").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableSend("hello")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
                         .setHeader("echo", simple("${body}${body}"))
-                        .transform().simple("Bye ${body}");
+                        .transform()
+                        .simple("Bye ${body}");
             }
         };
     }

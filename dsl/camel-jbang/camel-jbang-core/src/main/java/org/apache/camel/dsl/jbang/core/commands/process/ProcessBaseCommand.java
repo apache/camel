@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.nio.file.Files;
@@ -54,32 +55,30 @@ abstract class ProcessBaseCommand extends CamelCommand {
 
         final long cur = ProcessHandle.current().pid();
         final String pattern = name;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        // ignore file extension, so it is easier to match by name
-                        pName = FileUtil.onlyName(pName);
+        ProcessHandle.allProcesses().filter(ph -> ph.pid() != cur).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                String pName = ProcessHelper.extractName(root, ph);
+                // ignore file extension, so it is easier to match by name
+                pName = FileUtil.onlyName(pName);
+                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                    pids.add(ph.pid());
+                } else {
+                    // try camel context name
+                    JsonObject context = (JsonObject) root.get("context");
+                    if (context != null) {
+                        pName = context.getString("name");
+                        if ("CamelJBang".equals(pName)) {
+                            pName = null;
+                        }
                         if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
                             pids.add(ph.pid());
-                        } else {
-                            // try camel context name
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
                         }
                     }
-                });
+                }
+            }
+        });
 
         return pids;
     }
@@ -120,5 +119,4 @@ abstract class ProcessBaseCommand extends CamelCommand {
         location = FileUtil.stripPath(location);
         return location;
     }
-
 }

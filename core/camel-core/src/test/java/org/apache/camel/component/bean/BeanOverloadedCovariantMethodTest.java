@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +51,6 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MySuperBean.class).to("mock:result");
-
             }
         });
         context.start();
@@ -68,7 +68,6 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MySuperBean.class, "hello").to("mock:result");
-
             }
         });
         context.start();
@@ -85,8 +84,9 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MySuperBean.class, "hello(String.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MySuperBean.class, "hello(String.class)")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -103,7 +103,6 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         public Object hello(String name) {
             return "Hello " + name + " from base class";
         }
-
     }
 
     public static class MySuperBean extends MyBean {
@@ -112,7 +111,5 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         public String hello(String name) {
             return "Hello " + name + " from super class";
         }
-
     }
-
 }

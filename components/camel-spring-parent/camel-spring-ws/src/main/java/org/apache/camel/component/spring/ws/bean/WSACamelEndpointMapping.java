@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.bean;
+
+import static org.springframework.ws.soap.addressing.server.AbstractActionEndpointMapping.DEFAULT_OUTPUT_ACTION_SUFFIX;
 
 import java.net.URI;
 import java.util.Map;
@@ -32,8 +35,6 @@ import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMapping;
 import org.springframework.ws.transport.WebServiceMessageSender;
-
-import static org.springframework.ws.soap.addressing.server.AbstractActionEndpointMapping.DEFAULT_OUTPUT_ACTION_SUFFIX;
 
 /**
  * Provides support for full WS-Addressing. Supported are faultAction and response action. For more details look at @see
@@ -57,13 +58,14 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         // search the endpoint with compositeKeyFirst
         for (Map.Entry<EndpointMappingKey, MessageEndpoint> endpointEntry : endpoints.entrySet()) {
             EndpointMappingKey key = endpointEntry.getKey();
-            String compositeOrSimpleKey = switch (key.getType()) {
-                case ACTION -> getActionCompositeLookupKey(map);
-                case TO -> getToCompositeLookupKey(map);
-                default -> throw new RuntimeCamelException(
-                        "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                                           + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
-            };
+            String compositeOrSimpleKey =
+                    switch (key.getType()) {
+                        case ACTION -> getActionCompositeLookupKey(map);
+                        case TO -> getToCompositeLookupKey(map);
+                        default -> throw new RuntimeCamelException(
+                                "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
+                                        + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                    };
             // lookup for specific endpoint
             if (key.getLookupKey().equals(compositeOrSimpleKey)) {
                 LOG.debug("Found mapping for key {}", key);
@@ -89,7 +91,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
                 default:
                     throw new RuntimeCamelException(
                             "Invalid mapping type specified. Supported types are: spring-ws:action:<WS-Addressing Action>(optional:<WS-Addressing To>?<params...>\n)"
-                                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
+                                    + "spring-ws:to:<WS-Addressing To>(optional:<WS-Addressing Action>?<params...>)");
             }
             // look up for less specific endpoint
             if (key.getLookupKey().equals(simpleKey)) {
@@ -171,7 +173,9 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         SpringWebserviceEndpoint camelEndpoint = getSpringWebserviceEndpoint(endpoint);
 
         if (camelEndpoint.getConfiguration().getMessageSender() != null) {
-            return new WebServiceMessageSender[] { camelEndpoint.getConfiguration().getMessageSender() };
+            return new WebServiceMessageSender[] {
+                camelEndpoint.getConfiguration().getMessageSender()
+            };
         }
 
         return super.getMessageSenders(endpoint);
@@ -203,11 +207,12 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             actionUri = getDefaultFaultAction(camelEndpoint, requestMap);
         }
         return actionUri;
-
     }
 
     private SpringWebserviceEndpoint getSpringWebserviceEndpoint(Object endpoint) {
-        Assert.isInstanceOf(SpringWebserviceConsumer.class, endpoint,
+        Assert.isInstanceOf(
+                SpringWebserviceConsumer.class,
+                endpoint,
                 "Endpoint needs to be an instance of SpringWebserviceConsumer");
 
         SpringWebserviceConsumer springWebserviceConsumer = (SpringWebserviceConsumer) endpoint;
@@ -275,5 +280,4 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
         Assert.hasText(faultActionSuffix, "'faultActionSuffix' must not be empty");
         this.faultActionSuffix = faultActionSuffix;
     }
-
 }

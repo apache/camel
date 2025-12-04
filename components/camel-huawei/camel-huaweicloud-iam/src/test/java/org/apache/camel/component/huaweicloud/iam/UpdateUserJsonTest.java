@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateUserJsonTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateUserJsonTest.class.getName());
@@ -40,13 +41,12 @@ public class UpdateUserJsonTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:update_user")
-                        .to("hwcloud-iam:updateUser?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&userId=" + testConfiguration.getProperty("userId") +
-                            "&ignoreSslVerification=true" +
-                            "&iamClient=#iamClient")
+                        .to("hwcloud-iam:updateUser?" + "accessKey="
+                                + testConfiguration.getProperty("accessKey") + "&secretKey="
+                                + testConfiguration.getProperty("secretKey") + "&region="
+                                + testConfiguration.getProperty("region") + "&userId="
+                                + testConfiguration.getProperty("userId") + "&ignoreSslVerification=true"
+                                + "&iamClient=#iamClient")
                         .log("update user successful")
                         .to("mock:update_user_result");
             }
@@ -62,7 +62,8 @@ public class UpdateUserJsonTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"description\":\"First\",\"name\":\"User 19\"}",
+        assertEquals(
+                "{\"description\":\"First\",\"name\":\"User 19\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

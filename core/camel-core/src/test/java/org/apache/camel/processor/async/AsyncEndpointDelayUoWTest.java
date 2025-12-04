@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,10 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
 
@@ -59,16 +60,27 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                        exchange.getExchangeExtension().addOnCompletion(sync);
-                    }
-                }).to("mock:before").to("log:before").delay(500).asyncDelayed().process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).transform().constant("Bye Camel").to("log:after").to("mock:after").to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                                exchange.getExchangeExtension().addOnCompletion(sync);
+                            }
+                        })
+                        .to("mock:before")
+                        .to("log:before")
+                        .delay(500)
+                        .asyncDelayed()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .transform()
+                        .constant("Bye Camel")
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }
@@ -95,7 +107,5 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
         public int isOnFailure() {
             return onFailure.get();
         }
-
     }
-
 }

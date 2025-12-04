@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.OnCompletionAndInterceptGlobalTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringOnCompletionAndInterceptGlobalTest extends OnCompletionAndInterceptGlobalTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringOnCompletionAndInterceptGlobalTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/SpringOnCompletionAndInterceptGlobalTest.xml");
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyPojoInOutTest extends BaseJettyTest {
 
@@ -50,14 +51,22 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
             public void configure() {
                 // configure to use jetty on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
                         // just return the default country here
-                        .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).to("direct:lives");
-                from("direct:lives")
-                        .bean(new UserService(), "livesWhere");
+                        .get("lives")
+                        .to("direct:start")
+                        .post("lives")
+                        .type(UserPojo.class)
+                        .outType(CountryPojo.class)
+                        .to("direct:lives");
+                from("direct:lives").bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");
@@ -66,5 +75,4 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
             }
         };
     }
-
 }

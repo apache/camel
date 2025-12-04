@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Map;
@@ -49,5 +50,4 @@ public interface PropertiesFunctionResolver {
      * @return      the function or <tt>null</tt> if not found
      */
     PropertiesFunction resolvePropertiesFunction(String name);
-
 }

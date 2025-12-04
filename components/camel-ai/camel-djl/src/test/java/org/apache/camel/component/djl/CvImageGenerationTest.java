@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +42,7 @@ public class CvImageGenerationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("timer:testDJL?repeatCount=1")
-                        .setBody(constant(new int[] { 100, 207, 971, 970, 933 }))
+                        .setBody(constant(new int[] {100, 207, 971, 970, 933}))
                         .to("djl:cv/image_generation?artifactId=ai.djl.pytorch:biggan-deep:0.0.1")
                         .split(body())
                         .log("image = ${body}")
@@ -52,5 +53,4 @@ public class CvImageGenerationTest extends CamelTestSupport {
             }
         };
     }
-
 }

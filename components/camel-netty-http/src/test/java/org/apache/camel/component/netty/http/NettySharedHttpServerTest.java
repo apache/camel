@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettySharedHttpServerTest extends BaseNettyTest {
 
@@ -75,15 +76,16 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
                 from("netty-http:http://localhost/foo?nettySharedHttpServer=#myNettyServer")
                         .log("Foo route using thread ${threadName}")
                         .to("mock:foo")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/bar?nettySharedHttpServer=#myNettyServer")
                         .log("Bar route using thread ${threadName}")
                         .to("mock:bar")
-                        .transform().constant("Bye Camel");
+                        .transform()
+                        .constant("Bye Camel");
             }
         };
     }
-
 }

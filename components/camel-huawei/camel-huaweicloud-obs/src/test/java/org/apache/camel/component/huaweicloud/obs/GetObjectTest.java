@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +40,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class GetObjectTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetObjectTest.class.getName());
@@ -52,9 +53,8 @@ public class GetObjectTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -63,12 +63,11 @@ public class GetObjectTest extends CamelTestSupport {
                 from("direct:get_object")
                         .setProperty(OBSProperties.BUCKET_NAME, constant(bucketName))
                         .setProperty(OBSProperties.OBJECT_NAME, constant(objectName))
-                        .to("hwcloud-obs:getObject?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:getObject?" + "accessKey="
+                                + testConfiguration.getProperty("accessKey") + "&secretKey="
+                                + testConfiguration.getProperty("secretKey") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("Get object successful")
                         .to("mock:get_object_result");
             }
@@ -107,13 +106,13 @@ public class GetObjectTest extends CamelTestSupport {
 
         assertEquals(9L, responseExchange.getIn().getHeader(Exchange.CONTENT_LENGTH));
         assertEquals("text/plain", responseExchange.getIn().getHeader(Exchange.CONTENT_TYPE));
-        assertEquals("eb733a00c0c9d336e65691a37ab54293", responseExchange.getIn().getHeader(OBSHeaders.ETAG));
+        assertEquals(
+                "eb733a00c0c9d336e65691a37ab54293", responseExchange.getIn().getHeader(OBSHeaders.ETAG));
         assertEquals("63M6AMDJ0zbmVpGjerVCkw==", responseExchange.getIn().getHeader(OBSHeaders.CONTENT_MD5));
         assertEquals(testDate, responseExchange.getIn().getHeader(OBSHeaders.LAST_MODIFIED));
 
         assertEquals(bucketName, responseExchange.getIn().getHeader(OBSHeaders.BUCKET_NAME));
         assertEquals(objectName, responseExchange.getIn().getHeader(OBSHeaders.OBJECT_KEY));
         assertEquals(objectName, responseExchange.getIn().getHeader(Exchange.FILE_NAME));
-
     }
 }

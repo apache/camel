@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,14 +25,14 @@ public class MyChoiceRouteBuilder extends RouteBuilder {
     public void configure() {
         from("timer:foo")
                 .choice()
-                    .when(header("foo"))
-                        .to("log:foo")
-                    .when(header("bar"))
-                        .to("log:bar")
-                        .to("mock:bar")
-                    .otherwise()
-                        .to("log:other")
-                        .to("mock:other")
+                .when(header("foo"))
+                .to("log:foo")
+                .when(header("bar"))
+                .to("log:bar")
+                .to("mock:bar")
+                .otherwise()
+                .to("log:other")
+                .to("mock:other")
                 .end()
                 .to("log:end");
     }

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
  * A marker for defining the policy to be used for applying transaction to routes.
  */
-public interface TransactedPolicy extends Policy {
-}
+public interface TransactedPolicy extends Policy {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,11 @@ public class MinaSslContextParametersTcpTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBodyAndHeader(
-                "mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
-                body, "cheese", 123);
+                "mina:tcp://localhost:" + getPort()
+                        + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                body,
+                "cheese",
+                123);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -45,10 +49,12 @@ public class MinaSslContextParametersTcpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
-                        getPort())
+                fromF(
+                                "mina:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                                getPort())
                         .to("log:before?showAll=true")
-                        .to("mock:result").to("log:after?showAll=true");
+                        .to("mock:result")
+                        .to("log:after?showAll=true");
             }
         };
     }

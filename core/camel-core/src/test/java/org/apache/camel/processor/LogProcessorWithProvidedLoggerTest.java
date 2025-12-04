@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.io.StringWriter;
 
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-
 public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
 
     // to capture the logs
@@ -42,8 +43,11 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         super.setUp();
         sw = new StringWriter();
 
-        ConsumingAppender.newAppender("org.apache.camel.customlogger", "customlogger", Level.TRACE,
-                event -> sw.append(event.getLoggerName()).append(" ").append(event.getLevel().toString()).append(" ")
+        ConsumingAppender.newAppender(
+                "org.apache.camel.customlogger", "customlogger", Level.TRACE, event -> sw.append(event.getLoggerName())
+                        .append(" ")
+                        .append(event.getLevel().toString())
+                        .append(" ")
                         .append(event.getMessage().getFormattedMessage()));
     }
 
@@ -81,12 +85,18 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").log(LoggingLevel.INFO, "Got ${body}").to("mock:foo");
-                from("direct:bar").routeId("bar")
-                        .log(LoggingLevel.INFO, LoggerFactory.getLogger("org.apache.camel.customlogger"), "Also got ${body}")
+                from("direct:foo")
+                        .routeId("foo")
+                        .log(LoggingLevel.INFO, "Got ${body}")
+                        .to("mock:foo");
+                from("direct:bar")
+                        .routeId("bar")
+                        .log(
+                                LoggingLevel.INFO,
+                                LoggerFactory.getLogger("org.apache.camel.customlogger"),
+                                "Also got ${body}")
                         .to("mock:bar");
             }
         };
     }
-
 }

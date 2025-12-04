@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.DefaultComponent;
 
 public abstract class InfinispanComponent extends DefaultComponent {
-    protected InfinispanComponent() {
-    }
+    protected InfinispanComponent() {}
 
     protected InfinispanComponent(CamelContext camelContext) {
         super(camelContext);

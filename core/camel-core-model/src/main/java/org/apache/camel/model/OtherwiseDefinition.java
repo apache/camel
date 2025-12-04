@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -39,15 +40,15 @@ public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseD
 
     @XmlTransient
     private ProcessorDefinition<?> parent;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean",
-              description = "Disables this EIP from the route.")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", description = "Disables this EIP from the route.")
     private String disabled;
+
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public OtherwiseDefinition() {
-    }
+    public OtherwiseDefinition() {}
 
     protected OtherwiseDefinition(OtherwiseDefinition source) {
         super(source);

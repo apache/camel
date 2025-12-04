@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
@@ -26,11 +32,6 @@ import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GroovyLanguageTest extends LanguageTestSupport {
 
@@ -66,7 +67,8 @@ public class GroovyLanguageTest extends LanguageTestSupport {
             assertTrue(g.validatePredicate("2 * 3 > 4"));
 
             try {
-                g.validateExpression("""
+                g.validateExpression(
+                        """
                         var a = 123;
                         println a */ 2;
                         """);
@@ -80,8 +82,8 @@ public class GroovyLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testGroovyAttachments() throws Exception {
-        DefaultAttachment da
-                = new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
+        DefaultAttachment da =
+                new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
         da.addHeader("orderId", "123");
         exchange.getIn(AttachmentMessage.class).addAttachmentObject("message1.xml", da);
 

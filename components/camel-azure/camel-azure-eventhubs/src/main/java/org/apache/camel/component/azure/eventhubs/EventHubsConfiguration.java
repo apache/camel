@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.HashMap;
@@ -39,50 +40,73 @@ public class EventHubsConfiguration implements Cloneable {
 
     @UriPath
     private String namespace;
+
     @UriPath
     private String eventHubName;
+
     @UriParam(label = "security")
     private String sharedAccessName;
+
     @UriParam(label = "security", secret = true)
     private String sharedAccessKey;
+
     @UriParam(label = "security", secret = true)
     private String connectionString;
+
     @UriParam(label = "security", secret = true)
     @Metadata(autowired = true)
     private TokenCredential tokenCredential;
+
     @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
+
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
+
     @UriParam(label = "consumer", defaultValue = "$Default")
     private String consumerGroupName = "$Default";
+
     @UriParam(label = "consumer", defaultValue = "500")
     private int prefetchCount = 500;
+
     @UriParam(label = "consumer", defaultValue = "BlobCheckpointStore")
     private CheckpointStore checkpointStore;
+
     @UriParam(label = "consumer")
     private String blobAccountName;
+
     @UriParam(label = "consumer", secret = true)
     private String blobAccessKey;
+
     @UriParam(label = "consumer")
     private String blobContainerName;
+
     @UriParam(label = "consumer", secret = true)
     private StorageSharedKeyCredential blobStorageSharedKeyCredential;
+
     @UriParam(label = "consumer")
     private Map<String, EventPosition> eventPosition = new HashMap<>();
+
     @UriParam(label = "consumer", defaultValue = "500")
     private int checkpointBatchSize = 500;
+
     @UriParam(label = "consumer", defaultValue = "5000")
     private int checkpointBatchTimeout = 5000;
+
     @UriParam(label = "producer")
     @Metadata(autowired = true)
     private EventHubProducerAsyncClient producerAsyncClient;
+
     @UriParam(label = "producer")
     private String partitionKey;
+
     @UriParam(label = "producer")
     private String partitionId;
-    @UriParam(label = "security", enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
-              defaultValue = "CONNECTION_STRING")
+
+    @UriParam(
+            label = "security",
+            enums = "AZURE_IDENTITY,CONNECTION_STRING,TOKEN_CREDENTIAL",
+            defaultValue = "CONNECTION_STRING")
     private CredentialType credentialType;
 
     /**

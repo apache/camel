@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.List;
@@ -42,8 +43,8 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService
     @Override
     public String[] getExceptionTypes() {
         if (policy.getThrottledExceptions() != null) {
-            List<String> types = policy.getThrottledExceptions().stream().map(Class::getName)
-                    .toList();
+            List<String> types =
+                    policy.getThrottledExceptions().stream().map(Class::getName).toList();
             return types.toArray(new String[0]);
         } else {
             return null;
@@ -137,5 +138,4 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService
             return System.currentTimeMillis() - getPolicy().getOpenedAt();
         }
     }
-
 }

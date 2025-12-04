@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import java.net.URI;
@@ -33,39 +34,56 @@ public class SolrConfiguration {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath(defaultValue = "" + SolrConstants.DEFAULT_PORT)
     private int port = -1;
+
     @UriPath(defaultValue = SolrConstants.DEFAULT_BASE_PATH)
     private String basePath;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam
     private SolrOperation operation;
+
     @UriParam
     private boolean autoCommit;
+
     @UriParam
     private Integer size;
+
     @UriParam
     private Integer from;
+
     @UriParam
     private String collection;
+
     @UriParam
     private String requestHandler;
+
     @UriParam(defaultValue = "true")
     private boolean deleteByQuery = false;
+
     @UriParam(label = "security")
     private boolean enableSSL;
+
     @UriParam(label = "security")
     @Metadata(supportFileReference = true)
     private String certificatePath;
+
     @UriParam
     private Long requestTimeout;
+
     @UriParam
     private Long connectionTimeout;
+
     @UriParam(defaultValue = "true")
     private boolean async = true;
+
     @UriParam
     @Metadata(label = "advanced")
     private SolrClient solrClient;
@@ -85,7 +103,8 @@ public class SolrConfiguration {
                 setHost(value);
             }
         } else {
-            throw new ResolveEndpointFailedException(uriString, "Solr instance host must be configured on the endpoint");
+            throw new ResolveEndpointFailedException(
+                    uriString, "Solr instance host must be configured on the endpoint");
         }
         int uriPort = uri.getPort();
         if (uriPort > 0) {
@@ -106,12 +125,13 @@ public class SolrConfiguration {
         }
         // parse remaining path when set and not equal to "/solr"
         String remainingPath = uri.getPath();
-        if (ObjectHelper.isNotEmpty(remainingPath)
-                && !remainingPath.equals(SolrConstants.DEFAULT_BASE_PATH)) {
+        if (ObjectHelper.isNotEmpty(remainingPath) && !remainingPath.equals(SolrConstants.DEFAULT_BASE_PATH)) {
             if (remainingPath.startsWith(SolrConstants.DEFAULT_BASE_PATH.concat("/"))) {
                 // the default solr base path //host:port/solr/<collection>/<requestHandler>
                 // --> use collection and request handler
-                String[] parts = remainingPath.substring(SolrConstants.DEFAULT_BASE_PATH.concat("/").length()).split("/");
+                String[] parts = remainingPath
+                        .substring(SolrConstants.DEFAULT_BASE_PATH.concat("/").length())
+                        .split("/");
                 if (parts.length > 0) {
                     setCollection(parts[0]);
                 }
@@ -343,5 +363,4 @@ public class SolrConfiguration {
     public void setRequestTimeout(Long requestTimeout) {
         this.requestTimeout = requestTimeout;
     }
-
 }

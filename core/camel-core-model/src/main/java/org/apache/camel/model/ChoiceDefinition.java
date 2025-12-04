@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")
-@XmlType(propOrder = { "whenClauses", "otherwise" })
+@XmlType(propOrder = {"whenClauses", "otherwise"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
@@ -47,15 +48,16 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     @AsPredicate
     @Metadata(description = "Sets the when nodes")
     private List<WhenDefinition> whenClauses = new ArrayList<>();
+
     @XmlElement
     @Metadata(description = "Sets the otherwise node")
     private OtherwiseDefinition otherwise;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String precondition;
 
-    public ChoiceDefinition() {
-    }
+    public ChoiceDefinition() {}
 
     protected ChoiceDefinition(ChoiceDefinition source) {
         super(source);
@@ -189,7 +191,7 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         if (this.otherwise != null) {
             throw new IllegalArgumentException(
                     "Cannot add a 2nd otherwise to this choice: " + this
-                                               + ". If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
+                            + ". If you have nested choice then you may need to end().endChoice() to go back to parent choice.");
         }
         OtherwiseDefinition answer = new OtherwiseDefinition();
         addClause(answer);
@@ -323,5 +325,4 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
             }
         }
     }
-
 }

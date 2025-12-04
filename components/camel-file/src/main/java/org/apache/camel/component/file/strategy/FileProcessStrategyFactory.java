@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
@@ -33,7 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class FileProcessStrategyFactory implements GenericFileProcessStrategyFactory<File> {
 
-    public GenericFileProcessStrategy<File> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public GenericFileProcessStrategy<File> createGenericFileProcessStrategy(
+            CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String
         // and 'true' for boolean
@@ -47,8 +49,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         if (isDelete) {
             return newGenericFileDeleteProcessStrategy(params, preMoveExpression, moveFailedExpression);
         } else if (isMove || isNoop) {
-            return newGenericFileRenameProcessStrategy(context, params, isNoop, moveExpression, preMoveExpression,
-                    moveFailedExpression);
+            return newGenericFileRenameProcessStrategy(
+                    context, params, isNoop, moveExpression, preMoveExpression, moveFailedExpression);
         } else {
             // default strategy will move files in a .camel/ subfolder where the
             // file was consumed
@@ -65,8 +67,12 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
     }
 
     private static GenericFileRenameProcessStrategy<File> newGenericFileRenameProcessStrategy(
-            CamelContext context, Map<String, Object> params, boolean isNoop, Expression moveExpression,
-            Expression preMoveExpression, Expression moveFailedExpression) {
+            CamelContext context,
+            Map<String, Object> params,
+            boolean isNoop,
+            Expression moveExpression,
+            Expression preMoveExpression,
+            Expression moveFailedExpression) {
         GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<>();
         strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
         if (!isNoop) {
@@ -114,15 +120,15 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
     private static GenericFileExpressionRenamer<File> getDefaultCommitRenamer(CamelContext context) {
         // use context to lookup language to let it be loose coupled
         Language language = context.resolveLanguage("file");
-        Expression expression
-                = language.createExpression("${file:parent}/" + FileConstants.DEFAULT_SUB_FOLDER + "/${file:onlyname}");
+        Expression expression =
+                language.createExpression("${file:parent}/" + FileConstants.DEFAULT_SUB_FOLDER + "/${file:onlyname}");
         return new GenericFileExpressionRenamer<>(expression);
     }
 
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<File> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<File> strategy
-                = (GenericFileExclusiveReadLockStrategy<File>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<File> strategy =
+                (GenericFileExclusiveReadLockStrategy<File>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -131,8 +137,7 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         return fallbackToReadLock(params);
     }
 
-    private static GenericFileExclusiveReadLockStrategy<File> fallbackToReadLock(
-            Map<String, Object> params) {
+    private static GenericFileExclusiveReadLockStrategy<File> fallbackToReadLock(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<File> strategy = null;
         String readLock = (String) params.get("readLock");
         if (ObjectHelper.isNotEmpty(readLock)) {
@@ -185,8 +190,7 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         }
     }
 
-    private static GenericFileExclusiveReadLockStrategy<File> newStrategyForChanged(
-            Map<String, Object> params) {
+    private static GenericFileExclusiveReadLockStrategy<File> newStrategyForChanged(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<File> strategy;
         FileChangedExclusiveReadLockStrategy readLockStrategy = new FileChangedExclusiveReadLockStrategy();
         Long minLength = (Long) params.get("readLockMinLength");
@@ -204,8 +208,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
     private static GenericFileExclusiveReadLockStrategy<File> newStrategyForIdempotentRename(
             Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<File> strategy;
-        FileIdempotentRenameRepositoryReadLockStrategy readLockStrategy
-                = new FileIdempotentRenameRepositoryReadLockStrategy();
+        FileIdempotentRenameRepositoryReadLockStrategy readLockStrategy =
+                new FileIdempotentRenameRepositoryReadLockStrategy();
         Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
         if (readLockRemoveOnRollback != null) {
             readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
@@ -225,8 +229,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
     private static GenericFileExclusiveReadLockStrategy<File> newStrategyForIdempotentChanged(
             Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<File> strategy;
-        FileIdempotentChangedRepositoryReadLockStrategy readLockStrategy
-                = new FileIdempotentChangedRepositoryReadLockStrategy();
+        FileIdempotentChangedRepositoryReadLockStrategy readLockStrategy =
+                new FileIdempotentChangedRepositoryReadLockStrategy();
         Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
         if (readLockRemoveOnRollback != null) {
             readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
@@ -259,8 +263,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         if (readLockIdempotentReleaseAsyncPoolSize != null) {
             readLockStrategy.setReadLockIdempotentReleaseAsyncPoolSize(readLockIdempotentReleaseAsyncPoolSize);
         }
-        ScheduledExecutorService readLockIdempotentReleaseExecutorService
-                = (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
+        ScheduledExecutorService readLockIdempotentReleaseExecutorService =
+                (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
         if (readLockIdempotentReleaseExecutorService != null) {
             readLockStrategy.setReadLockIdempotentReleaseExecutorService(readLockIdempotentReleaseExecutorService);
         }
@@ -268,8 +272,7 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         return strategy;
     }
 
-    private static GenericFileExclusiveReadLockStrategy<File> newStrategyForIdempotent(
-            Map<String, Object> params) {
+    private static GenericFileExclusiveReadLockStrategy<File> newStrategyForIdempotent(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<File> strategy;
         FileIdempotentRepositoryReadLockStrategy readLockStrategy = new FileIdempotentRepositoryReadLockStrategy();
         Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
@@ -296,8 +299,8 @@ public final class FileProcessStrategyFactory implements GenericFileProcessStrat
         if (readLockIdempotentReleaseAsyncPoolSize != null) {
             readLockStrategy.setReadLockIdempotentReleaseAsyncPoolSize(readLockIdempotentReleaseAsyncPoolSize);
         }
-        ScheduledExecutorService readLockIdempotentReleaseExecutorService
-                = (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
+        ScheduledExecutorService readLockIdempotentReleaseExecutorService =
+                (ScheduledExecutorService) params.get("readLockIdempotentReleaseExecutorService");
         if (readLockIdempotentReleaseExecutorService != null) {
             readLockStrategy.setReadLockIdempotentReleaseExecutorService(readLockIdempotentReleaseExecutorService);
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -52,7 +53,8 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat endpoint) throws MalformedObjectNameException;
+    ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat endpoint)
+            throws MalformedObjectNameException;
 
     ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition)
             throws MalformedObjectNameException;
@@ -75,7 +77,8 @@ public interface ManagementObjectNameStrategy {
     ObjectName getObjectNameForClusterService(CamelContext context, CamelClusterService service)
             throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
+    ObjectName getObjectNameForThreadPool(
+            CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
             throws MalformedObjectNameException;
 
     ObjectName getObjectNameForEventNotifier(CamelContext context, EventNotifier eventNotifier)

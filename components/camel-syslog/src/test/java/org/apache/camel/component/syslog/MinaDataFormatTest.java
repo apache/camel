@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.syslog;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -31,16 +34,14 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MinaDataFormatTest extends CamelTestSupport {
 
     private static int serverPort;
     private final int messageCount = 1;
-    private final String message
-            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
-              + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String message =
+            "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+                    + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+                    + "         Conveyer1=OK, Conveyer2=OK # %%";
 
     @BeforeAll
     public static void initPort() {
@@ -79,15 +80,20 @@ public class MinaDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                //context.setTracing(true);
+                // context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
-                    public void process(Exchange ex) {
-                        assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
-                    }
-                }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
+                from("mina:udp://127.0.0.1:" + serverPort)
+                        .unmarshal(syslogDataFormat)
+                        .process(new Processor() {
+                            public void process(Exchange ex) {
+                                assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
+                            }
+                        })
+                        .to("mock:syslogReceiver")
+                        .marshal(syslogDataFormat)
+                        .to("mock:syslogReceiver2");
             }
         };
     }

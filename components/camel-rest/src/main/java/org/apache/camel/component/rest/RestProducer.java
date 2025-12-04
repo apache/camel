@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -43,9 +47,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Rest producer for calling remote REST services.
@@ -143,8 +144,9 @@ public class RestProducer extends DefaultAsyncProducer {
 
         // uri template with path parameters resolved
         // uri template may be optional and the user have entered the uri template in the path instead
-        String resolvedUriTemplate
-                = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
+        String resolvedUriTemplate = getEndpoint().getUriTemplate() != null
+                ? getEndpoint().getUriTemplate()
+                : getEndpoint().getPath();
 
         if (prepareUriTemplate) {
             if (resolvedUriTemplate.contains("{")) {
@@ -180,10 +182,12 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (hasPath) {
             String host = getEndpoint().getHost();
-            String basePath = getEndpoint().getUriTemplate() != null ? getEndpoint().getPath() : null;
+            String basePath =
+                    getEndpoint().getUriTemplate() != null ? getEndpoint().getPath() : null;
             basePath = FileUtil.stripLeadingSeparator(basePath);
             resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
-            // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
+            // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the
+            // actual url to use
             String overrideUri = host;
             if (!ObjectHelper.isEmpty(basePath)) {
                 overrideUri += "/" + basePath;
@@ -366,18 +370,22 @@ public class RestProducer extends DefaultAsyncProducer {
                     .setupJaxb(camelContext, configuration, type, null, outType, null, jaxb, outJaxb);
         }
 
-        return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
+        return new RestProducerBindingProcessor(
+                producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
-        if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
+    private void setAdditionalConfiguration(
+            RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
+        if (config.getDataFormatProperties() != null
+                && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during introspection setProperties
             Map<String, Object> copy = new HashMap<>();
 
             // filter keys on prefix
             // - either its a known prefix and must match the prefix parameter
             // - or its a common configuration that we should always use
-            for (Map.Entry<String, Object> entry : config.getDataFormatProperties().entrySet()) {
+            for (Map.Entry<String, Object> entry :
+                    config.getDataFormatProperties().entrySet()) {
                 String key = entry.getKey();
                 String copyKey;
                 boolean known = isKeyKnownPrefix(key);
@@ -398,12 +406,13 @@ public class RestProducer extends DefaultAsyncProducer {
     }
 
     private boolean isKeyKnownPrefix(String key) {
-        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
+        return key.startsWith("json.in.")
+                || key.startsWith("json.out.")
+                || key.startsWith("xml.in.")
                 || key.startsWith("xml.out.");
     }
 
-    static String createQueryParameters(String query, Exchange exchange)
-            throws URISyntaxException {
+    static String createQueryParameters(String query, Exchange exchange) throws URISyntaxException {
         if (query != null) {
             final Map<String, Object> givenParams = URISupport.parseQuery(query);
             final Map<String, Object> params = new LinkedHashMap<>(givenParams.size());

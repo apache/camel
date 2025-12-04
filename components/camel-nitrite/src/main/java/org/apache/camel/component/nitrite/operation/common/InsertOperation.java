@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.common;
 
 import java.lang.reflect.Array;
@@ -32,16 +33,16 @@ public class InsertOperation extends AbstractPayloadAwareOperation implements Co
         super(payload);
     }
 
-    public InsertOperation() {
-    }
+    public InsertOperation() {}
 
     @Override
     protected void execute(Exchange exchange, NitriteEndpoint endpoint) throws Exception {
         Object payload = getPayload(exchange, endpoint);
         Object[] payloadArray = (Object[]) Array.newInstance(payload.getClass(), 1);
         payloadArray[0] = payload;
-        exchange.getMessage().setHeader(
-                NitriteConstants.WRITE_RESULT,
-                endpoint.getNitriteCollection().insert(payloadArray));
+        exchange.getMessage()
+                .setHeader(
+                        NitriteConstants.WRITE_RESULT,
+                        endpoint.getNitriteCollection().insert(payloadArray));
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqlSpanDecoratorTest {
 
@@ -39,7 +40,8 @@ public class SqlSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("test");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(SqlSpanDecorator.CAMEL_SQL_QUERY, String.class)).thenReturn(SQL_STATEMENT);
+        Mockito.when(message.getHeader(SqlSpanDecorator.CAMEL_SQL_QUERY, String.class))
+                .thenReturn(SQL_STATEMENT);
 
         SpanDecorator decorator = new SqlSpanDecorator();
 
@@ -50,5 +52,4 @@ public class SqlSpanDecoratorTest {
         assertEquals("sql", span.tags().get(TagConstants.DB_SYSTEM));
         assertEquals(SQL_STATEMENT, span.tags().get(TagConstants.DB_STATEMENT));
     }
-
 }

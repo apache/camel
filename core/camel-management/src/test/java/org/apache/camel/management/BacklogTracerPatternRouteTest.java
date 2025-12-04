@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
 
@@ -38,8 +39,8 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
     @Test
     public void testBacklogTracerPattern() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -63,21 +64,21 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "foo" }, new String[] { "java.lang.String" });
+        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"foo"}, new String[] {"java.lang.String"});
 
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // there should also be messages on bar
-        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "bar" }, new String[] { "java.lang.String" });
+        events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"bar"}, new String[] {"java.lang.String"});
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // but not on beer
-        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[] { "beer" }, new String[] { "java.lang.String" });
+        events = (List<BacklogTracerEventMessage>)
+                mbeanServer.invoke(on, "dumpTracedMessages", new Object[] {"beer"}, new String[] {"java.lang.String"});
         assertNotNull(events);
         assertEquals(0, events.size());
     }
@@ -90,16 +91,16 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
                 context.setUseBreadcrumb(false);
                 context.setBacklogTracingStandby(true);
 
-                from("direct:start").routeId("coolRoute")
+                from("direct:start")
+                        .routeId("coolRoute")
                         .to("direct:beer")
-                        .to("mock:foo").id("foo")
-                        .to("mock:bar").id("bar");
+                        .to("mock:foo")
+                        .id("foo")
+                        .to("mock:bar")
+                        .id("bar");
 
-                from("direct:beer").routeId("beerRoute")
-                        .to("mock:beer").id("beer");
-
+                from("direct:beer").routeId("beerRoute").to("mock:beer").id("beer");
             }
         };
     }
-
 }

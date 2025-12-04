@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.printer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -47,16 +58,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @DisabledOnOs(OS.AIX)
 public class PrinterPrintTest extends CamelTestSupport {
@@ -154,8 +155,9 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").to(
-                        "lpr://localhost/default?copies=1&flavor=DocFlavor.BYTE_ARRAY&mimeType=AUTOSENSE&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                from("direct:start")
+                        .to(
+                                "lpr://localhost/default?copies=1&flavor=DocFlavor.BYTE_ARRAY&mimeType=AUTOSENSE&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -170,8 +172,9 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").to(
-                        "lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM&mimeType=GIF&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                from("direct:start")
+                        .to(
+                                "lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM&mimeType=GIF&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -186,8 +189,9 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM"
-                                        + "&mimeType=JPEG&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
+                from("direct:start")
+                        .to("lpr://localhost/default?copies=2&flavor=DocFlavor.INPUT_STREAM"
+                                + "&mimeType=JPEG&mediaSize=na-letter&sides=one-sided&sendToPrinter=false");
             }
         });
         context.start();
@@ -202,8 +206,9 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM"
-                                        + "&mimeType=JPEG&sendToPrinter=false&orientation=landscape");
+                from("direct:start")
+                        .to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM"
+                                + "&mimeType=JPEG&sendToPrinter=false&orientation=landscape");
             }
         });
         context.start();
@@ -423,15 +428,11 @@ public class PrinterPrintTest extends CamelTestSupport {
         when(psDefault.getName()).thenReturn("DefaultPrinter");
         when(psDefault.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
         PrintServiceLookup psLookup = mock(PrintServiceLookup.class);
-        when(psLookup.getPrintServices()).thenReturn(new PrintService[] { psDefault });
+        when(psLookup.getPrintServices()).thenReturn(new PrintService[] {psDefault});
         when(psLookup.getDefaultPrintService()).thenReturn(psDefault);
         DocPrintJob docPrintJob = mock(DocPrintJob.class);
         when(psDefault.createPrintJob()).thenReturn(docPrintJob);
-        MediaTray[] trays = new MediaTray[] {
-                MediaTray.TOP,
-                MediaTray.MIDDLE,
-                MediaTray.BOTTOM
-        };
+        MediaTray[] trays = new MediaTray[] {MediaTray.TOP, MediaTray.MIDDLE, MediaTray.BOTTOM};
         when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);
     }
@@ -441,8 +442,8 @@ public class PrinterPrintTest extends CamelTestSupport {
         if (printServiceLookup != null) {
             Class<?> clazz = context.getClassResolver().resolveClass("sun.awt.AppContext");
             Object ac = clazz.getMethod("getAppContext").invoke(null);
-            clazz.getMethod("put", Object.class, Object.class).invoke(ac, printServiceLookupServicesClass, printServiceLookup);
+            clazz.getMethod("put", Object.class, Object.class)
+                    .invoke(ac, printServiceLookupServicesClass, printServiceLookup);
         }
     }
-
 }

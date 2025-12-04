@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.Consume;
@@ -27,6 +28,6 @@ public class RouterBean {
     @Consume("direct:start")
     @RecipientList
     public String[] route(String body) {
-        return new String[] { "mock:a", "mock:b" };
+        return new String[] {"mock:a", "mock:b"};
     }
 }

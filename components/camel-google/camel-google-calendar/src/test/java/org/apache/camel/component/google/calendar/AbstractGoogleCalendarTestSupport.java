@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
 
 import java.security.SecureRandom;
@@ -48,7 +49,8 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
     private static Properties loadProperties() {
         // read GoogleCalendar component configuration from
         // TEST_OPTIONS_PROPERTIES
-        return TestSupport.loadExternalPropertiesQuietly(AbstractGoogleCalendarTestSupport.class, TEST_OPTIONS_PROPERTIES);
+        return TestSupport.loadExternalPropertiesQuietly(
+                AbstractGoogleCalendarTestSupport.class, TEST_OPTIONS_PROPERTIES);
     }
 
     // Used by JUnit to determine whether or not to run the integration tests
@@ -57,8 +59,8 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
         loadProperties();
 
         return !properties.getProperty("clientId", "").isEmpty()
-                && !properties.getProperty("clientSecret", "").isEmpty()
-                && !properties.getProperty("accessToken", "").isEmpty()
+                        && !properties.getProperty("clientSecret", "").isEmpty()
+                        && !properties.getProperty("accessToken", "").isEmpty()
                 || !properties.getProperty("serviceAccountKey", "").isEmpty();
     }
 
@@ -77,7 +79,9 @@ public class AbstractGoogleCalendarTestSupport extends CamelTestSupport {
     public void deleteTestCalendar() {
         try {
             if (calendar != null) {
-                requestBody("google-calendar://calendars/delete?inBody=calendarId", getCalendar().getId());
+                requestBody(
+                        "google-calendar://calendars/delete?inBody=calendarId",
+                        getCalendar().getId());
                 setCalendar(null);
             }
         } catch (Exception e) {

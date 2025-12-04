@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MockExpectedHeaderNoMessageSentTest extends ContextTestSupport {
 
@@ -33,8 +34,7 @@ public class MockExpectedHeaderNoMessageSentTest extends ContextTestSupport {
 
         mock.expectedHeaderReceived("foo", "bar");
 
-        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied,
-                "Should fail");
+        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied, "Should fail");
 
         assertEquals("mock://result Received message count 0, expected at least 1", e.getMessage());
     }
@@ -44,9 +44,7 @@ public class MockExpectedHeaderNoMessageSentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo")
-                        .routeId("myRoute")
-                        .to("mock:result");
+                from("direct:foo").routeId("myRoute").to("mock:result");
             }
         };
     }

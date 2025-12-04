@@ -29,5 +29,4 @@ public interface TransformerLoader {
      * @param registry the registry the transformers get added to.
      */
     void load(TransformerRegistry registry);
-
 }

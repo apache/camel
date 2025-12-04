@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -67,7 +68,11 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
             if (pattern == null) {
                 // fallback and use the default pattern which is the same name as the CamelContext has been given
                 pattern = defaultPattern != null
-                        ? defaultPattern : camelContext.getManagementStrategy().getManagementAgent().getManagementNamePattern();
+                        ? defaultPattern
+                        : camelContext
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getManagementNamePattern();
             }
             name = resolveManagementName(pattern, camelContext.getName(), true);
         }
@@ -160,5 +165,4 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
     public static void setCounter(int value) {
         NAME_COUNTER.set(value);
     }
-
 }

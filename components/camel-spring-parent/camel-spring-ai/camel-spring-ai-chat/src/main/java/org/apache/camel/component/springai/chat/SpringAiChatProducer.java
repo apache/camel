@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
 
 import java.io.File;
@@ -48,7 +49,6 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.content.Media;
@@ -95,8 +95,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             // Create ChatClient from ChatModel
             ChatModel chatModel = getEndpoint().getConfiguration().getChatModel();
             if (chatModel == null) {
-                throw new IllegalArgumentException(
-                        "Either ChatClient or ChatModel must be configured");
+                throw new IllegalArgumentException("Either ChatClient or ChatModel must be configured");
             }
 
             ChatClient.Builder builder = ChatClient.builder(chatModel);
@@ -148,9 +147,10 @@ public class SpringAiChatProducer extends DefaultProducer {
 
         // Warn if both automatic RAG (QuestionAnswerAdvisor) and manual RAG (AUGMENTED_DATA header) are configured
         if (augmentedData != null && !augmentedData.isEmpty() && isQuestionAnswerAdvisorConfigured()) {
-            LOG.warn("Both AUGMENTED_DATA header and QuestionAnswerAdvisor (VectorStore) are configured. " +
-                     "This may result in redundant or conflicting context being added to the prompt. " +
-                     "Consider using only one RAG method: either automatic (QuestionAnswerAdvisor) or manual (AUGMENTED_DATA header).");
+            LOG.warn(
+                    "Both AUGMENTED_DATA header and QuestionAnswerAdvisor (VectorStore) are configured. "
+                            + "This may result in redundant or conflicting context being added to the prompt. "
+                            + "Consider using only one RAG method: either automatic (QuestionAnswerAdvisor) or manual (AUGMENTED_DATA header).");
         }
 
         // Handle different body types
@@ -185,9 +185,10 @@ public class SpringAiChatProducer extends DefaultProducer {
                 UserMessage multimodalMessage = createMultimodalMessageWithMedia(exchange, mediaList);
                 applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
             } else {
-                throw new IllegalArgumentException(
-                        "List body must contain WrappedFile objects. Got: "
-                                                   + (list.isEmpty() ? "empty list" : list.get(0).getClass().getName()));
+                throw new IllegalArgumentException("List body must contain WrappedFile objects. Got: "
+                        + (list.isEmpty()
+                                ? "empty list"
+                                : list.get(0).getClass().getName()));
             }
         } else if (messageBody instanceof byte[]) {
             // Handle multimodal content (image or audio)
@@ -196,14 +197,12 @@ public class SpringAiChatProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException(
                     "Unsupported message type: " + messageBody.getClass().getName()
-                                               + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+                            + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
         }
 
         // Apply augmented data to user message if provided
         if (userMessageText != null && augmentedData != null && !augmentedData.isEmpty()) {
-            String context = augmentedData.stream()
-                    .map(Document::getText)
-                    .collect(Collectors.joining("\n\n"));
+            String context = augmentedData.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
             userMessageText = formatRagPrompt(context, userMessageText);
         }
 
@@ -226,10 +225,11 @@ public class SpringAiChatProducer extends DefaultProducer {
      * UserMessage. This allows templates to define both system roles and user messages.
      * </p>
      */
-    private void processSingleMessageWithPrompt(Exchange exchange) throws NoSuchHeaderException, InvalidPayloadException {
+    private void processSingleMessageWithPrompt(Exchange exchange)
+            throws NoSuchHeaderException, InvalidPayloadException {
         // Get the prompt template from header
-        final String promptTemplateText
-                = exchange.getIn().getHeader(SpringAiChatConstants.PROMPT_TEMPLATE, String.class);
+        final String promptTemplateText =
+                exchange.getIn().getHeader(SpringAiChatConstants.PROMPT_TEMPLATE, String.class);
         if (promptTemplateText == null) {
             throw new NoSuchHeaderException(
                     "The promptTemplate is a required header for CHAT_SINGLE_MESSAGE_WITH_PROMPT operation",
@@ -245,8 +245,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         Prompt prompt = template.create(variables);
 
         // Pass ALL messages from the prompt template (including SystemMessage, UserMessage, etc.)
-        ChatClient.ChatClientRequestSpec request = chatClient.prompt()
-                .messages(prompt.getInstructions());
+        ChatClient.ChatClientRequestSpec request = chatClient.prompt().messages(prompt.getInstructions());
 
         // Apply configuration and headers
         applyRequestOptions(request, exchange);
@@ -279,15 +278,9 @@ public class SpringAiChatProducer extends DefaultProducer {
         }
 
         MimeType mimeType = MimeType.valueOf(mediaTypeStr);
-        Media media = Media.builder()
-                .mimeType(mimeType)
-                .data(mediaData)
-                .build();
+        Media media = Media.builder().mimeType(mimeType).data(mediaData).build();
 
-        return UserMessage.builder()
-                .text(userMessageText)
-                .media(media)
-                .build();
+        return UserMessage.builder().text(userMessageText).media(media).build();
     }
 
     /**
@@ -296,10 +289,7 @@ public class SpringAiChatProducer extends DefaultProducer {
     private UserMessage createMultimodalMessageWithMedia(Exchange exchange, List<Media> mediaList) {
         String userMessageText = getUserMessageText(exchange);
 
-        return UserMessage.builder()
-                .text(userMessageText)
-                .media(mediaList)
-                .build();
+        return UserMessage.builder().text(userMessageText).media(mediaList).build();
     }
 
     /**
@@ -329,8 +319,8 @@ public class SpringAiChatProducer extends DefaultProducer {
                 throw new IllegalArgumentException("WrappedFile contains null file");
             }
             if (!(fileObj instanceof File)) {
-                throw new IllegalArgumentException(
-                        "WrappedFile must contain a java.io.File instance, got: " + fileObj.getClass().getName());
+                throw new IllegalArgumentException("WrappedFile must contain a java.io.File instance, got: "
+                        + fileObj.getClass().getName());
             }
 
             File file = (File) fileObj;
@@ -343,10 +333,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             byte[] fileData = fileToByteArray(file, exchange);
 
             // Create Media object
-            Media media = Media.builder()
-                    .mimeType(mimeType)
-                    .data(fileData)
-                    .build();
+            Media media = Media.builder().mimeType(mimeType).data(fileData).build();
 
             mediaList.add(media);
         }
@@ -462,9 +449,9 @@ public class SpringAiChatProducer extends DefaultProducer {
 
         // Validate file size if max size is set (0 means no limit)
         if (maxSize > 0 && fileSize > maxSize) {
-            throw new IllegalArgumentException(
-                    String.format("File size (%d bytes) exceeds maximum allowed size (%d bytes): %s",
-                            fileSize, maxSize, file.getAbsolutePath()));
+            throw new IllegalArgumentException(String.format(
+                    "File size (%d bytes) exceeds maximum allowed size (%d bytes): %s",
+                    fileSize, maxSize, file.getAbsolutePath()));
         }
 
         try {
@@ -504,7 +491,8 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Note: Augmented data is handled in the calling method for better control
 
         // Get tool callbacks first if tags are configured
-        List<ToolCallback> toolCallbacks = getToolCallbacksForTags(getEndpoint().getConfiguration().getTags());
+        List<ToolCallback> toolCallbacks =
+                getToolCallbacksForTags(getEndpoint().getConfiguration().getTags());
 
         // Apply chat options from configuration and headers using ToolCallingChatOptions
         // This ensures tool callbacks are properly included in the options
@@ -571,8 +559,10 @@ public class SpringAiChatProducer extends DefaultProducer {
      * Apply SafeGuard advisor configuration overrides from headers
      */
     private void applySafeguardHeaderOverrides(ChatClient.ChatClientRequestSpec request, Exchange exchange) {
-        String sensitiveWords = exchange.getIn().getHeader(SpringAiChatConstants.SAFEGUARD_SENSITIVE_WORDS, String.class);
-        String failureResponse = exchange.getIn().getHeader(SpringAiChatConstants.SAFEGUARD_FAILURE_RESPONSE, String.class);
+        String sensitiveWords =
+                exchange.getIn().getHeader(SpringAiChatConstants.SAFEGUARD_SENSITIVE_WORDS, String.class);
+        String failureResponse =
+                exchange.getIn().getHeader(SpringAiChatConstants.SAFEGUARD_FAILURE_RESPONSE, String.class);
         Integer order = exchange.getIn().getHeader(SpringAiChatConstants.SAFEGUARD_ORDER, Integer.class);
 
         // If any SafeGuard header is provided, we need to configure/override the SafeGuard advisor for this request
@@ -584,13 +574,12 @@ public class SpringAiChatProducer extends DefaultProducer {
             String finalFailureResponse = failureResponse != null
                     ? failureResponse
                     : getEndpoint().getConfiguration().getSafeguardFailureResponse();
-            Integer finalOrder = order != null
-                    ? order
-                    : getEndpoint().getConfiguration().getSafeguardOrder();
+            Integer finalOrder =
+                    order != null ? order : getEndpoint().getConfiguration().getSafeguardOrder();
 
             // Build and add SafeGuard advisor if we have sensitive words
-            SafeGuardAdvisor safeguardAdvisor
-                    = buildSafeguardAdvisor(finalSensitiveWords, finalFailureResponse, finalOrder, true);
+            SafeGuardAdvisor safeguardAdvisor =
+                    buildSafeguardAdvisor(finalSensitiveWords, finalFailureResponse, finalOrder, true);
             if (safeguardAdvisor != null) {
                 request.advisors(safeguardAdvisor);
             }
@@ -626,12 +615,9 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Add token usage information if available
         if (response.getMetadata() != null && response.getMetadata().getUsage() != null) {
             var usage = response.getMetadata().getUsage();
-            exchange.getMessage().setHeader(SpringAiChatConstants.INPUT_TOKEN_COUNT,
-                    usage.getPromptTokens());
-            exchange.getMessage().setHeader(SpringAiChatConstants.OUTPUT_TOKEN_COUNT,
-                    usage.getCompletionTokens());
-            exchange.getMessage().setHeader(SpringAiChatConstants.TOTAL_TOKEN_COUNT,
-                    usage.getTotalTokens());
+            exchange.getMessage().setHeader(SpringAiChatConstants.INPUT_TOKEN_COUNT, usage.getPromptTokens());
+            exchange.getMessage().setHeader(SpringAiChatConstants.OUTPUT_TOKEN_COUNT, usage.getCompletionTokens());
+            exchange.getMessage().setHeader(SpringAiChatConstants.TOTAL_TOKEN_COUNT, usage.getTotalTokens());
         }
     }
 
@@ -642,14 +628,12 @@ public class SpringAiChatProducer extends DefaultProducer {
 
             // Model name
             if (responseMetadata.getModel() != null) {
-                exchange.getMessage().setHeader(SpringAiChatConstants.MODEL_NAME,
-                        responseMetadata.getModel());
+                exchange.getMessage().setHeader(SpringAiChatConstants.MODEL_NAME, responseMetadata.getModel());
             }
 
             // Response ID
             if (responseMetadata.getId() != null) {
-                exchange.getMessage().setHeader(SpringAiChatConstants.RESPONSE_ID,
-                        responseMetadata.getId());
+                exchange.getMessage().setHeader(SpringAiChatConstants.RESPONSE_ID, responseMetadata.getId());
             }
 
             // Finish reason is on the Generation metadata, not the Response metadata
@@ -758,8 +742,8 @@ public class SpringAiChatProducer extends DefaultProducer {
 
     private StructuredOutputConverter<?> getStructuredOutputConverter(Exchange exchange) {
         // Check if converter is provided via header (takes highest priority)
-        StructuredOutputConverter<?> converter
-                = exchange.getIn().getHeader(SpringAiChatConstants.OUTPUT_FORMAT, StructuredOutputConverter.class);
+        StructuredOutputConverter<?> converter =
+                exchange.getIn().getHeader(SpringAiChatConstants.OUTPUT_FORMAT, StructuredOutputConverter.class);
 
         if (converter != null) {
             return converter;
@@ -837,8 +821,7 @@ public class SpringAiChatProducer extends DefaultProducer {
      */
     @SuppressWarnings("unchecked")
     private <T> void processStructuredOutputRequest(
-            ChatClient.ChatClientRequestSpec request, Exchange exchange,
-            StructuredOutputConverter<T> converter) {
+            ChatClient.ChatClientRequestSpec request, Exchange exchange, StructuredOutputConverter<T> converter) {
         // Get format instructions from the converter
         String format = converter.getFormat();
 
@@ -889,7 +872,9 @@ public class SpringAiChatProducer extends DefaultProducer {
 
             // Detailed logging for each tool
             for (ToolCallback callback : toolCallbacks) {
-                LOG.debug("Tool found: {} - {} - Schema: {}", callback.getToolDefinition().name(),
+                LOG.debug(
+                        "Tool found: {} - {} - Schema: {}",
+                        callback.getToolDefinition().name(),
                         callback.getToolDefinition().description(),
                         callback.getToolDefinition().inputSchema());
             }
@@ -928,9 +913,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             // Fallback to default template if not configured
             template = "Context:\n{context}\n\nQuestion: {question}";
         }
-        return template
-                .replace("{context}", context)
-                .replace("{question}", question);
+        return template.replace("{context}", context).replace("{question}", question);
     }
 
     /**
@@ -1111,8 +1094,9 @@ public class SpringAiChatProducer extends DefaultProducer {
         VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
 
         if (chatMemory != null && chatMemoryVectorStore != null) {
-            LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). " +
-                     "Configure only one memory type.");
+            LOG.warn(
+                    "Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). "
+                            + "Configure only one memory type.");
         }
 
         if (chatMemory != null) {
@@ -1125,7 +1109,8 @@ public class SpringAiChatProducer extends DefaultProducer {
                     .conversationId(ChatMemory.CONVERSATION_ID)
                     .defaultTopK(getEndpoint().getConfiguration().getTopK())
                     .build());
-            LOG.debug("VectorStoreChatMemoryAdvisor enabled with conversation isolation and topK={}",
+            LOG.debug(
+                    "VectorStoreChatMemoryAdvisor enabled with conversation isolation and topK={}",
                     getEndpoint().getConfiguration().getTopK());
         }
 
@@ -1135,10 +1120,12 @@ public class SpringAiChatProducer extends DefaultProducer {
             advisors.add(QuestionAnswerAdvisor.builder(vectorStore)
                     .searchRequest(SearchRequest.builder()
                             .topK(getEndpoint().getConfiguration().getTopK())
-                            .similarityThreshold(getEndpoint().getConfiguration().getSimilarityThreshold())
+                            .similarityThreshold(
+                                    getEndpoint().getConfiguration().getSimilarityThreshold())
                             .build())
                     .build());
-            LOG.debug("QuestionAnswerAdvisor enabled with topK={}, similarityThreshold={}",
+            LOG.debug(
+                    "QuestionAnswerAdvisor enabled with topK={}, similarityThreshold={}",
                     getEndpoint().getConfiguration().getTopK(),
                     getEndpoint().getConfiguration().getSimilarityThreshold());
         }

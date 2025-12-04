@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -63,7 +64,7 @@ public class OAIPMHComponentProducerGetRecordTest extends CamelTestSupport {
                                 new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
                                         .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
                                         .add("dc", "http://purl.org/dc/elements/1.1/")))
-                        //Log the titles of the records
+                        // Log the titles of the records
                         .to("log:titles")
                         .to("mock:result");
             }

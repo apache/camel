@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirRead} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
@@ -39,7 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FhirReadIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirReadIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirReadApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirReadApiMethod.class)
+            .getName();
 
     @Test
     public void testResourceById() {
@@ -144,7 +147,8 @@ public class FhirReadIT extends AbstractFhirTestSupport {
         // parameter type is String
         headers.put("CamelFhir.version", patient.getIdElement().getVersionIdPart());
 
-        Patient result = requestBodyAndHeaders("direct://RESOURCE_BY_STRING_ID_AND_VERSION_AND_STRING_RESOURCE", null, headers);
+        Patient result =
+                requestBodyAndHeaders("direct://RESOURCE_BY_STRING_ID_AND_VERSION_AND_STRING_RESOURCE", null, headers);
 
         assertValidResponse(result);
     }
@@ -226,53 +230,43 @@ public class FhirReadIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for resourceById
-                from("direct://RESOURCE_BY_ID")
-                        .to("fhir://" + PATH_PREFIX + "/resourceById");
+                from("direct://RESOURCE_BY_ID").to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
-                from("direct://RESOURCE_BY_LONG_ID")
-                        .to("fhir://" + PATH_PREFIX + "/resourceById");
+                from("direct://RESOURCE_BY_LONG_ID").to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
-                from("direct://RESOURCE_BY_STRING_ID")
-                        .to("fhir://" + PATH_PREFIX + "/resourceById");
+                from("direct://RESOURCE_BY_STRING_ID").to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
-                from("direct://RESOURCE_BY_ID_AND_STRING_RESOURCE")
-                        .to("fhir://" + PATH_PREFIX + "/resourceById");
+                from("direct://RESOURCE_BY_ID_AND_STRING_RESOURCE").to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
-                from("direct://RESOURCE_BY_LONG_ID_AND_STRING_RESOURCE")
-                        .to("fhir://" + PATH_PREFIX + "/resourceById");
+                from("direct://RESOURCE_BY_LONG_ID_AND_STRING_RESOURCE").to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_STRING_RESOURCE")
                         .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
-                from("direct://RESOURCE_BY_STRING_ID_AND_VERSION")
-                        .to("fhir://" + PATH_PREFIX + "/resourceById");
+                from("direct://RESOURCE_BY_STRING_ID_AND_VERSION").to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_VERSION_AND_STRING_RESOURCE")
                         .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceByUrl
-                from("direct://RESOURCE_BY_IURL")
-                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
+                from("direct://RESOURCE_BY_IURL").to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
                 // test route for resourceByUrl
-                from("direct://RESOURCE_BY_URL")
-                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
+                from("direct://RESOURCE_BY_URL").to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
                 // test route for resourceByUrl
                 from("direct://RESOURCE_BY_STRING_URL_AND_STRING_RESOURCE")
                         .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
 
                 // test route for resourceByUrl
-                from("direct://RESOURCE_BY_URL_AND_STRING_RESOURCE")
-                        .to("fhir://" + PATH_PREFIX + "/resourceByUrl");
-
+                from("direct://RESOURCE_BY_URL_AND_STRING_RESOURCE").to("fhir://" + PATH_PREFIX + "/resourceByUrl");
             }
         };
     }

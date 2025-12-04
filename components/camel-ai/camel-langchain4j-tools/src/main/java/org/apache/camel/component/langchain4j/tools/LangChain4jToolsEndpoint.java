@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
+
+import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHEME;
 
 import java.util.List;
 import java.util.Map;
@@ -41,12 +44,12 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHEME;
-
-@UriEndpoint(firstVersion = "4.8.0", scheme = SCHEME,
-             title = "LangChain4j Tools",
-             syntax = "langchain4j-tools:toolId",
-             category = { Category.AI })
+@UriEndpoint(
+        firstVersion = "4.8.0",
+        scheme = SCHEME,
+        title = "LangChain4j Tools",
+        syntax = "langchain4j-tools:toolId",
+        category = {Category.AI})
 public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -69,16 +72,22 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     private String name;
 
     @Metadata(label = "consumer")
-    @UriParam(description = "List of Tool parameters in the form of parameter.<name>=<type>", prefix = "parameter.",
-              multiValue = true)
+    @UriParam(
+            description = "List of Tool parameters in the form of parameter.<name>=<type>",
+            prefix = "parameter.",
+            multiValue = true)
     private Map<String, String> parameters;
 
     @Metadata(label = "consumer,advanced")
     @UriParam(description = "Tool's Camel Parameters, programmatically define Tool description and parameters")
     private CamelSimpleToolParameter camelToolParameter;
 
-    public LangChain4jToolsEndpoint(String uri, LangChain4jToolsComponent component, String toolId, String tags,
-                                    LangChain4jToolsConfiguration configuration) {
+    public LangChain4jToolsEndpoint(
+            String uri,
+            LangChain4jToolsComponent component,
+            String toolId,
+            String tags,
+            LangChain4jToolsConfiguration configuration) {
         super(uri, component);
         this.toolId = toolId;
         this.tags = tags;
@@ -102,9 +111,7 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
             List<NamedJsonSchemaProperty> properties = camelToolParameter.getProperties();
 
             for (NamedJsonSchemaProperty namedProperty : properties) {
-                parametersBuilder.addProperty(
-                        namedProperty.getName(),
-                        namedProperty.getProperties());
+                parametersBuilder.addProperty(namedProperty.getName(), namedProperty.getProperties());
             }
 
             toolSpecificationBuilder.parameters(parametersBuilder.build());
@@ -136,15 +143,14 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
             toolName = null;
         }
 
-        ToolSpecification toolSpecification = toolSpecificationBuilder
-                .name(toolName)
-                .build();
+        ToolSpecification toolSpecification =
+                toolSpecificationBuilder.name(toolName).build();
 
         final LangChain4jToolsConsumer langChain4jToolsConsumer = new LangChain4jToolsConsumer(this, processor);
         configureConsumer(langChain4jToolsConsumer);
 
-        CamelToolSpecification camelToolSpecification
-                = new CamelToolSpecification(toolSpecification, langChain4jToolsConsumer);
+        CamelToolSpecification camelToolSpecification =
+                new CamelToolSpecification(toolSpecification, langChain4jToolsConsumer);
         final CamelToolExecutorCache executorCache = CamelToolExecutorCache.getInstance();
 
         String[] splitTags = TagsHelper.splitTags(tags);
@@ -255,5 +261,4 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
             default -> JsonStringSchema.builder().build(); // fallback for unkown types
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.IOException;
@@ -32,17 +33,22 @@ import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "copy",
-                     description = "Copies all Camel dependencies required to run to a specific directory", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "copy",
+        description = "Copies all Camel dependencies required to run to a specific directory",
+        sortOptions = false,
+        showDefaultValues = true)
 public class DependencyCopy extends DependencyList {
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private MavenDownloader downloader;
 
-    @CommandLine.Option(names = { "--output-directory" }, description = "Directory where dependencies should be copied",
-                        defaultValue = "lib", required = true)
+    @CommandLine.Option(
+            names = {"--output-directory"},
+            description = "Directory where dependencies should be copied",
+            defaultValue = "lib",
+            required = true)
     protected String outputDirectory;
 
     public DependencyCopy(CamelJBangMain main) {
@@ -55,8 +61,7 @@ public class DependencyCopy extends DependencyList {
             if (Files.isDirectory(outputDirectoryPath)) {
                 FileUtil.removeDir(outputDirectoryPath.toFile());
             } else {
-                printer().printErr("Error creating the output directory: " + outputDirectory
-                                   + " is not a directory");
+                printer().printErr("Error creating the output directory: " + outputDirectory + " is not a directory");
                 return;
             }
         }
@@ -70,11 +75,16 @@ public class DependencyCopy extends DependencyList {
     @Override
     protected void outputGav(MavenGav gav, int index, int total) {
         try {
-            List<MavenArtifact> artifacts = getDownloader().resolveArtifacts(
-                    List.of(gav.toString()), Set.of(), true, gav.getVersion().contains("SNAPSHOT"));
+            List<MavenArtifact> artifacts = getDownloader()
+                    .resolveArtifacts(
+                            List.of(gav.toString()),
+                            Set.of(),
+                            true,
+                            gav.getVersion().contains("SNAPSHOT"));
             for (MavenArtifact artifact : artifacts) {
                 Path target = Paths.get(outputDirectory, artifact.getFile().getName());
-                if (Files.exists(target) || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
+                if (Files.exists(target)
+                        || EXCLUDED_GROUP_IDS.contains(artifact.getGav().getGroupId())) {
                     continue;
                 }
                 Files.copy(artifact.getFile().toPath(), target);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 /**
@@ -50,5 +51,4 @@ public enum SagaPropagation {
      * The current block must never be invoked within a saga.
      */
     NEVER
-
 }

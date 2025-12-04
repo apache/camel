@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.StartupCondition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MainStartupConditionTest {
 
@@ -31,12 +32,17 @@ public class MainStartupConditionTest {
         Main main = new Main();
         try {
             main.configure().withRoutesBuilderClasses("org.apache.camel.main.MainStartupConditionTest$MyRoute");
-            main.configure().startupCondition().withEnabled(true).withTimeout(250).withInterval(100)
+            main.configure()
+                    .startupCondition()
+                    .withEnabled(true)
+                    .withTimeout(250)
+                    .withInterval(100)
                     .withCustomClassNames("org.apache.camel.main.MainStartupConditionTest$MyCondition");
             main.start();
             fail("Should throw exception");
         } catch (Exception e) {
-            Assertions.assertEquals("Startup condition timeout error", e.getCause().getMessage());
+            Assertions.assertEquals(
+                    "Startup condition timeout error", e.getCause().getMessage());
         } finally {
             main.stop();
         }
@@ -54,9 +60,7 @@ public class MainStartupConditionTest {
 
         @Override
         public void configure() throws Exception {
-            from("direct:start")
-                    .to("mock:result");
+            from("direct:start").to("mock:result");
         }
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,13 +32,17 @@ import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class LambdaComponentManualIT extends CamelTestSupport {
 
@@ -43,12 +51,15 @@ public class LambdaComponentManualIT extends CamelTestSupport {
         Exchange exchange = template.send("direct:listFunctions", ExchangePattern.InOut, new Processor() {
 
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
         assertNotNull(exchange.getMessage().getBody(ListFunctionsResponse.class));
-        assertEquals(2, exchange.getMessage().getBody(ListFunctionsResponse.class).functions().size());
+        assertEquals(
+                2,
+                exchange.getMessage()
+                        .getBody(ListFunctionsResponse.class)
+                        .functions()
+                        .size());
     }
 
     @Test
@@ -56,15 +67,12 @@ public class LambdaComponentManualIT extends CamelTestSupport {
         Exchange exchange = template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
 
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
         GetFunctionResponse result = exchange.getMessage().getBody(GetFunctionResponse.class);
         assertNotNull(result);
         assertEquals("twitterTrends", result.configuration().functionName());
         assertEquals(Runtime.JAVA8, result.configuration().runtime());
-
     }
 
     @Override
@@ -74,11 +82,12 @@ public class LambdaComponentManualIT extends CamelTestSupport {
             public void configure() {
 
                 from("direct:listFunctions")
-                        .to("aws2-lambda://myFunction?operation=listFunctions&accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&region=eu-west-1");
+                        .to(
+                                "aws2-lambda://myFunction?operation=listFunctions&accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&region=eu-west-1");
 
                 from("direct:getFunction")
-                        .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&region=eu-west-1");
-
+                        .to(
+                                "aws2-lambda://twitterTrends?operation=getFunction&accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&region=eu-west-1");
             }
         };
     }

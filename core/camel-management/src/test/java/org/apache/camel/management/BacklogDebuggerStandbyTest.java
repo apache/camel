@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -29,11 +35,6 @@ import org.apache.camel.spi.BacklogDebugger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class BacklogDebuggerStandbyTest extends ManagementTestSupport {
@@ -60,7 +61,7 @@ public class BacklogDebuggerStandbyTest extends ManagementTestSupport {
         assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] {"bar"}, new String[] {"java.lang.String"});
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -79,8 +80,9 @@ public class BacklogDebuggerStandbyTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar", false },
-                new String[] { "java.lang.String", "boolean" });
+        String xml = (String) mbeanServer.invoke(
+                on, "dumpTracedMessagesAsXml", new Object[] {"bar", false}, new String[] {"java.lang.String", "boolean"
+                });
         assertNotNull(xml);
         log.info(xml);
 
@@ -91,7 +93,7 @@ public class BacklogDebuggerStandbyTest extends ManagementTestSupport {
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] {"bar"}, new String[] {"java.lang.String"});
 
         assertMockEndpointsSatisfied();
 
@@ -113,14 +115,20 @@ public class BacklogDebuggerStandbyTest extends ManagementTestSupport {
                 context.setDebugging(true);
 
                 from("seda:start?concurrentConsumers=2")
-                        .setProperty("myProperty", constant("myValue")).id("setProp")
-                        .to("log:foo").id("foo")
-                        .to("log:bar").id("bar")
-                        .transform().constant("Bye World").id("transform")
-                        .to("log:cheese?showExchangeId=true").id("cheese")
-                        .to("mock:result").id("result");
+                        .setProperty("myProperty", constant("myValue"))
+                        .id("setProp")
+                        .to("log:foo")
+                        .id("foo")
+                        .to("log:bar")
+                        .id("bar")
+                        .transform()
+                        .constant("Bye World")
+                        .id("transform")
+                        .to("log:cheese?showExchangeId=true")
+                        .id("cheese")
+                        .to("mock:result")
+                        .id("result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,14 +44,15 @@ public class StopRouteShouldNotStopRouteScopedErrorHandlerIssueTest extends Cont
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start")
+                from("direct:start")
+                        .routeId("start")
                         // use context scoped
-                        .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)).to("log:start")
+                        .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0))
+                        .to("log:start")
                         .throwException(new IllegalArgumentException("Forced"));
 
                 from("direct:foo").routeId("foo").to("log:foo").to("mock:foo");
             }
         };
     }
-
 }

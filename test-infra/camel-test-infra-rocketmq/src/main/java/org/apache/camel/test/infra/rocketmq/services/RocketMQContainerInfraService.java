@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.rocketmq.services;
 
 import java.io.IOException;
@@ -30,17 +31,18 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.Network;
 
-@InfraService(service = RocketMQInfraService.class,
-              description = "Apache RocketMQ is a distributed messaging and streaming platform",
-              serviceAlias = { "rocketmq" })
-public class RocketMQContainerInfraService implements RocketMQInfraService, ContainerService<RocketMQNameserverContainer> {
+@InfraService(
+        service = RocketMQInfraService.class,
+        description = "Apache RocketMQ is a distributed messaging and streaming platform",
+        serviceAlias = {"rocketmq"})
+public class RocketMQContainerInfraService
+        implements RocketMQInfraService, ContainerService<RocketMQNameserverContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RocketMQContainerInfraService.class);
     public static final String ROCKETMQ_VERSION = LocalPropertyResolver.getProperty(
-            RocketMQContainerInfraService.class,
-            RocketMQProperties.ROCKETMQ_VERSION_PROPERTY);
+            RocketMQContainerInfraService.class, RocketMQProperties.ROCKETMQ_VERSION_PROPERTY);
     public static final String ROCKETMQ_IMAGE = LocalPropertyResolver.getProperty(
-            RocketMQContainerInfraService.class,
-            RocketMQProperties.ROCKETMQ_IMAGE_PROPERTY) + ":" + ROCKETMQ_VERSION;
+                    RocketMQContainerInfraService.class, RocketMQProperties.ROCKETMQ_IMAGE_PROPERTY)
+            + ":" + ROCKETMQ_VERSION;
 
     private final RocketMQNameserverContainer nameserverContainer;
     private final RocketMQBrokerContainer brokerContainer1;
@@ -50,8 +52,8 @@ public class RocketMQContainerInfraService implements RocketMQInfraService, Cont
 
         nameserverContainer = new RocketMQNameserverContainer(network);
 
-        brokerContainer1
-                = new RocketMQBrokerContainer(network, "broker1", ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        brokerContainer1 =
+                new RocketMQBrokerContainer(network, "broker1", ContainerEnvironmentUtil.isFixedPort(this.getClass()));
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             brokerContainer1.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
@@ -64,9 +66,7 @@ public class RocketMQContainerInfraService implements RocketMQInfraService, Cont
     }
 
     @Override
-    public void registerProperties() {
-
-    }
+    public void registerProperties() {}
 
     @Override
     public void initialize() {
@@ -87,27 +87,37 @@ public class RocketMQContainerInfraService implements RocketMQInfraService, Cont
     public void createTopic(String topic) {
         Awaitility.await()
                 .atMost(20, TimeUnit.SECONDS)
-                .pollDelay(100, TimeUnit.MILLISECONDS).until(() -> {
+                .pollDelay(100, TimeUnit.MILLISECONDS)
+                .until(() -> {
                     Container.ExecResult execResult = brokerContainer1.execInContainer(
-                            "sh", "mqadmin", "updateTopic", "-n", "nameserver:9876", "-t",
-                            topic, "-c", "DefaultCluster");
+                            "sh",
+                            "mqadmin",
+                            "updateTopic",
+                            "-n",
+                            "nameserver:9876",
+                            "-t",
+                            topic,
+                            "-c",
+                            "DefaultCluster");
 
-                    LOG.info("Exit code: {}. Stderr: {} Stdout: {} ", execResult.getExitCode(), execResult.getStderr(),
+                    LOG.info(
+                            "Exit code: {}. Stderr: {} Stdout: {} ",
+                            execResult.getExitCode(),
+                            execResult.getStderr(),
                             execResult.getStdout());
 
-                    return execResult.getStdout() != null && execResult.getStdout().contains("success");
+                    return execResult.getStdout() != null
+                            && execResult.getStdout().contains("success");
                 });
     }
 
     public void deleteTopic(String topic) throws IOException, InterruptedException {
-        brokerContainer1.execInContainer(
-                "sh", "mqadmin", "deleteTopic", "-n", "nameserver:9876", "-t",
-                topic);
+        brokerContainer1.execInContainer("sh", "mqadmin", "deleteTopic", "-n", "nameserver:9876", "-t", topic);
     }
 
     @Override
     public String nameserverAddress() {
         return nameserverContainer.getHost() + ":"
-               + nameserverContainer.getMappedPort(RocketMQProperties.ROCKETMQ_NAMESRV_PORT);
+                + nameserverContainer.getMappedPort(RocketMQProperties.ROCKETMQ_NAMESRV_PORT);
     }
 }

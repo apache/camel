@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,35 +45,35 @@ public class SplitMultipleValidateTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start1")
-                .split(constant("123").tokenize(""))
-                    .filter(body().isNotNull())
+                        .split(constant("123").tokenize(""))
+                        .filter(body().isNotNull())
                         .log("Item ${body}")
                         .to("mock:line1")
-                    .end() // filter end
-                .end() // split end
-                .to("mock:split1");
+                        .end() // filter end
+                        .end() // split end
+                        .to("mock:split1");
 
                 from("direct:start2")
-                    .split(constant("123").tokenize(""))
+                        .split(constant("123").tokenize(""))
                         .filter(body().isNotNull())
-                            .validate(body().isNotNull())
-                            .log("Item ${body}")
-                            .to("mock:line2")
+                        .validate(body().isNotNull())
+                        .log("Item ${body}")
+                        .to("mock:line2")
                         .end() // filter end
-                    .end() // split end
-                    .to("mock:split2");
+                        .end() // split end
+                        .to("mock:split2");
 
                 from("direct:start3")
-                    .split(constant("123").tokenize(""))
+                        .split(constant("123").tokenize(""))
                         .filter(body().isNotNull())
-                            .validate(body().isNotNull())
-                            .validate(body().isInstanceOf(String.class))
-                            .validate(body().isGreaterThan("0"))
-                            .log("Item ${body}")
-                            .to("mock:line3")
+                        .validate(body().isNotNull())
+                        .validate(body().isInstanceOf(String.class))
+                        .validate(body().isGreaterThan("0"))
+                        .log("Item ${body}")
+                        .to("mock:line3")
                         .end() // filter end
-                    .end() // split end
-                    .to("mock:split3");
+                        .end() // split end
+                        .to("mock:split3");
             }
         };
     }

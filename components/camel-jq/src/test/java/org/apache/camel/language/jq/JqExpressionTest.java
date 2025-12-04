@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
@@ -28,9 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class JqExpressionTest {
     public static final ObjectMapper MAPPER = new ObjectMapper();
@@ -47,9 +48,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .isString()
-                    .isEqualTo("Andrea");
+            assertThatJson(result).isString().isEqualTo("Andrea");
         }
     }
 
@@ -65,9 +64,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .isString()
-                    .isEqualTo("Andrea");
+            assertThatJson(result).isString().isEqualTo("Andrea");
         }
     }
 
@@ -83,9 +80,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .isString()
-                    .isEqualTo("DefVal");
+            assertThatJson(result).isString().isEqualTo("DefVal");
         }
     }
 
@@ -104,9 +99,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .isString()
-                    .isEqualTo("bak");
+            assertThatJson(result).isString().isEqualTo("bak");
         }
     }
 
@@ -123,8 +116,10 @@ public class JqExpressionTest {
 
             assertThat(jq(context, "has(\"baz\")").matches(exchange)).isTrue();
             assertThat(jq(context, "has(\"bar\")").matches(exchange)).isFalse();
-            assertThat(jq(context, "header(\"CommitterName\") == \"Andrea\"").matches(exchange)).isTrue();
-            assertThat(jq(context, "header(\"CommitterName\") != \"Andrea\"").matches(exchange)).isFalse();
+            assertThat(jq(context, "header(\"CommitterName\") == \"Andrea\"").matches(exchange))
+                    .isTrue();
+            assertThat(jq(context, "header(\"CommitterName\") != \"Andrea\"").matches(exchange))
+                    .isFalse();
         }
     }
 
@@ -135,7 +130,8 @@ public class JqExpressionTest {
 
             var n1 = MAPPER.createObjectNode().with("commit");
             n1.with("commit").put("name", "Stephen Dolan");
-            n1.with("commit").put("message", "Merge pull request #163 from stedolan/utf8-fixes\n\nUtf8 fixes. Closes #161");
+            n1.with("commit")
+                    .put("message", "Merge pull request #163 from stedolan/utf8-fixes\n\nUtf8 fixes. Closes #161");
 
             var n2 = MAPPER.createObjectNode();
             n2.with("commit").put("name", "Nicolas Williams");
@@ -172,10 +168,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .inPath("$.commit.name")
-                    .isString()
-                    .isEqualTo("Andrea");
+            assertThatJson(result).inPath("$.commit.name").isString().isEqualTo("Andrea");
         }
     }
 
@@ -195,10 +188,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .inPath("$.commit.name")
-                    .isString()
-                    .isEqualTo("Andrea");
+            assertThatJson(result).inPath("$.commit.name").isString().isEqualTo("Andrea");
         }
     }
 
@@ -218,10 +208,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .inPath("$.commit.name")
-                    .isString()
-                    .isEqualTo("Andrea");
+            assertThatJson(result).inPath("$.commit.name").isString().isEqualTo("Andrea");
         }
     }
 
@@ -240,10 +227,7 @@ public class JqExpressionTest {
 
             JsonNode result = expression.evaluate(exchange, JsonNode.class);
 
-            assertThatJson(result)
-                    .inPath("$.commit")
-                    .isObject()
-                    .containsOnlyKeys("message");
+            assertThatJson(result).inPath("$.commit").isObject().containsOnlyKeys("message");
         }
     }
 
@@ -267,5 +251,4 @@ public class JqExpressionTest {
         answer.init(context);
         return answer;
     }
-
 }

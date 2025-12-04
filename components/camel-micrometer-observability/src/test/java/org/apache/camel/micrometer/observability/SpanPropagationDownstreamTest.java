@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.
@@ -36,7 +37,8 @@ public class SpanPropagationDownstreamTest extends MicrometerObservabilityTracer
         mock.assertIsSatisfied();
         mock.getExchanges().forEach(exchange -> {
             assertTrue(
-                    exchange.getIn().getHeader("traceparent", String.class)
+                    exchange.getIn()
+                            .getHeader("traceparent", String.class)
                             .matches("^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$"),
                     "The traceparent header does not match with the expected format <version>-<traceid>-<spanid>-<flags>");
         });
@@ -47,12 +49,8 @@ public class SpanPropagationDownstreamTest extends MicrometerObservabilityTracer
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("mock:result");
+                from("direct:start").routeId("start").log("A message").to("mock:result");
             }
         };
     }
-
 }

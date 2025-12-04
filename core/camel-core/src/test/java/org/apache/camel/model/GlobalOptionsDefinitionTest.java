@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,6 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class GlobalOptionsDefinitionTest {
 
@@ -91,5 +92,4 @@ public class GlobalOptionsDefinitionTest {
         assertEquals(1, map.size());
         assertEquals(LOG_DEBUG_BODY_MAX_CHARS_VALUE, map.get(null));
     }
-
 }

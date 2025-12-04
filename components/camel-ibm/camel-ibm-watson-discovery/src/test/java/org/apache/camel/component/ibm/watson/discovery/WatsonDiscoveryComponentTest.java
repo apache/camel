@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ibm.watson.discovery;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.ibm.watson.discovery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class WatsonDiscoveryComponentTest extends CamelTestSupport {
 
@@ -32,7 +33,8 @@ public class WatsonDiscoveryComponentTest extends CamelTestSupport {
 
     @Test
     public void testEndpointCreation() throws Exception {
-        WatsonDiscoveryComponent component = context.getComponent("ibm-watson-discovery", WatsonDiscoveryComponent.class);
+        WatsonDiscoveryComponent component =
+                context.getComponent("ibm-watson-discovery", WatsonDiscoveryComponent.class);
         assertNotNull(component);
 
         WatsonDiscoveryConfiguration config = new WatsonDiscoveryConfiguration();
@@ -40,8 +42,8 @@ public class WatsonDiscoveryComponentTest extends CamelTestSupport {
         config.setProjectId("test-project-id");
         component.setConfiguration(config);
 
-        WatsonDiscoveryEndpoint endpoint
-                = (WatsonDiscoveryEndpoint) component.createEndpoint("ibm-watson-discovery://default");
+        WatsonDiscoveryEndpoint endpoint =
+                (WatsonDiscoveryEndpoint) component.createEndpoint("ibm-watson-discovery://default");
         assertNotNull(endpoint);
         assertEquals("test-api-key", endpoint.getConfiguration().getApiKey());
         assertEquals("test-project-id", endpoint.getConfiguration().getProjectId());

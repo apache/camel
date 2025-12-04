@@ -14,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j;
+
+import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES;
+import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY;
+import static org.apache.camel.component.neo4j.Neo4Operation.VECTOR_SIMILARITY_SEARCH;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.MATCH_PROPERTIES;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_CONTAINS_UPDATES;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_NODES_CREATED;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_NODES_DELETED;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_RELATIONSHIPS_CREATED;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_RELATIONSHIPS_DELETED;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RETRIEVE_LIST_NEO4J_NODES;
+import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RETRIEVE_SIZE;
 
 import java.util.List;
 import java.util.Map;
@@ -37,24 +51,10 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Values;
 import org.neo4j.driver.summary.ResultSummary;
 
-import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES;
-import static org.apache.camel.component.neo4j.Neo4Operation.RETRIEVE_NODES_AND_UPDATE_WITH_CYPHER_QUERY;
-import static org.apache.camel.component.neo4j.Neo4Operation.VECTOR_SIMILARITY_SEARCH;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.MATCH_PROPERTIES;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_CONTAINS_UPDATES;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_NODES_CREATED;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_NODES_DELETED;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_RELATIONSHIPS_CREATED;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RESULT_RELATIONSHIPS_DELETED;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RETRIEVE_LIST_NEO4J_NODES;
-import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RETRIEVE_SIZE;
-
 public class Neo4jProducer extends DefaultProducer {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
-    };
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {};
 
     private Driver driver;
 
@@ -96,7 +96,6 @@ public class Neo4jProducer extends DefaultProducer {
             case VECTOR_SIMILARITY_SEARCH -> similaritySearch(exchange);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + operation.name());
         }
-
     }
 
     private void createNode(Exchange exchange) throws InvalidPayloadException {
@@ -120,10 +119,9 @@ public class Neo4jProducer extends DefaultProducer {
                 Map<String, Object> bodyMap = OBJECT_MAPPER.readValue((String) body, MAP_TYPE_REF);
                 properties = Map.of("props", bodyMap);
             } catch (Exception e) {
-                exchange.setException(
-                        new Neo4jOperationException(
-                                Neo4Operation.CREATE_NODE,
-                                new IllegalArgumentException("Failed to parse body as JSON: " + body, e)));
+                exchange.setException(new Neo4jOperationException(
+                        Neo4Operation.CREATE_NODE,
+                        new IllegalArgumentException("Failed to parse body as JSON: " + body, e)));
                 return;
             }
         } else {
@@ -166,25 +164,27 @@ public class Neo4jProducer extends DefaultProducer {
                             whereClause.append(" AND ");
                         }
                         String paramName = "param" + paramIndex;
-                        whereClause.append(alias).append(".").append(entry.getKey())
-                                .append(" = $").append(paramName);
+                        whereClause
+                                .append(alias)
+                                .append(".")
+                                .append(entry.getKey())
+                                .append(" = $")
+                                .append(paramName);
                         queryParams.put(paramName, entry.getValue());
                         paramIndex++;
                     }
 
-                    query = String.format("MATCH (%s:%s) WHERE %s RETURN %s",
-                            alias, label, whereClause.toString(), alias);
+                    query = String.format(
+                            "MATCH (%s:%s) WHERE %s RETURN %s", alias, label, whereClause.toString(), alias);
                 } else {
                     // Empty map, match all nodes
                     query = String.format("MATCH (%s:%s) RETURN %s", alias, label, alias);
                 }
             } catch (Exception e) {
-                exchange.setException(
-                        new Neo4jOperationException(
-                                RETRIEVE_NODES,
-                                new IllegalArgumentException(
-                                        "Failed to parse MATCH_PROPERTIES as JSON: " + matchProperties,
-                                        e)));
+                exchange.setException(new Neo4jOperationException(
+                        RETRIEVE_NODES,
+                        new IllegalArgumentException(
+                                "Failed to parse MATCH_PROPERTIES as JSON: " + matchProperties, e)));
                 return;
             }
         }
@@ -199,18 +199,24 @@ public class Neo4jProducer extends DefaultProducer {
     }
 
     private void queryRetriveNodes(
-            Exchange exchange, String databaseName, Map<String, Object> queryParams, String query, Neo4Operation operation) {
+            Exchange exchange,
+            String databaseName,
+            Map<String, Object> queryParams,
+            String query,
+            Neo4Operation operation) {
         try {
 
             EagerResult result;
             if (queryParams != null) {
                 result = driver.executableQuery(query)
-                        .withConfig(QueryConfig.builder().withDatabase(databaseName).build())
+                        .withConfig(
+                                QueryConfig.builder().withDatabase(databaseName).build())
                         .withParameters(queryParams)
                         .execute();
             } else {
                 result = driver.executableQuery(query)
-                        .withConfig(QueryConfig.builder().withDatabase(databaseName).build())
+                        .withConfig(
+                                QueryConfig.builder().withDatabase(databaseName).build())
                         .execute();
             }
 
@@ -264,25 +270,28 @@ public class Neo4jProducer extends DefaultProducer {
                             whereClause.append(" AND ");
                         }
                         String paramName = "param" + paramIndex;
-                        whereClause.append(alias).append(".").append(entry.getKey())
-                                .append(" = $").append(paramName);
+                        whereClause
+                                .append(alias)
+                                .append(".")
+                                .append(entry.getKey())
+                                .append(" = $")
+                                .append(paramName);
                         queryParams.put(paramName, entry.getValue());
                         paramIndex++;
                     }
 
-                    query = String.format("MATCH (%s:%s) WHERE %s %s DELETE %s",
+                    query = String.format(
+                            "MATCH (%s:%s) WHERE %s %s DELETE %s",
                             alias, label, whereClause.toString(), detached, alias);
                 } else {
                     // Empty map, delete all nodes of this label
                     query = String.format("MATCH (%s:%s) %s DELETE %s", alias, label, detached, alias);
                 }
             } catch (Exception e) {
-                exchange.setException(
-                        new Neo4jOperationException(
-                                Neo4Operation.DELETE_NODE,
-                                new IllegalArgumentException(
-                                        "Failed to parse MATCH_PROPERTIES as JSON: " + matchProperties,
-                                        e)));
+                exchange.setException(new Neo4jOperationException(
+                        Neo4Operation.DELETE_NODE,
+                        new IllegalArgumentException(
+                                "Failed to parse MATCH_PROPERTIES as JSON: " + matchProperties, e)));
                 return;
             }
         }
@@ -304,22 +313,22 @@ public class Neo4jProducer extends DefaultProducer {
         final int dimension = getEndpoint().getConfiguration().getDimension();
         ObjectHelper.notNull(dimension, "dimension");
 
-        final Neo4jSimilarityFunction similarityFunction = getEndpoint().getConfiguration().getSimilarityFunction();
+        final Neo4jSimilarityFunction similarityFunction =
+                getEndpoint().getConfiguration().getSimilarityFunction();
         ObjectHelper.notNull(similarityFunction, "similarityFunction");
 
         final String databaseName = getEndpoint().getName();
 
-        String query = String.format("CREATE VECTOR INDEX %s IF NOT EXISTS\n" +
-                                     "FOR (%s:%s)\n" +
-                                     "ON %s.embedding\n" +
-                                     "OPTIONS { indexConfig: {\n" +
-                                     " `vector.dimensions`: %s,\n" +
-                                     " `vector.similarity_function`: '%s'\n" +
-                                     "}}",
+        String query = String.format(
+                "CREATE VECTOR INDEX %s IF NOT EXISTS\n" + "FOR (%s:%s)\n"
+                        + "ON %s.embedding\n"
+                        + "OPTIONS { indexConfig: {\n"
+                        + " `vector.dimensions`: %s,\n"
+                        + " `vector.similarity_function`: '%s'\n"
+                        + "}}",
                 vectorIndexName, alias, label, alias, dimension, similarityFunction.name());
 
         executeWriteQuery(exchange, query, null, databaseName, Neo4Operation.CREATE_VECTOR_INDEX);
-
     }
 
     private void dropVectorIndex(Exchange exchange) {
@@ -333,12 +342,13 @@ public class Neo4jProducer extends DefaultProducer {
     }
 
     private void createVector(Exchange exchange) {
-        final String alias
-                = getEndpoint().getConfiguration().getAlias() != null ? getEndpoint().getConfiguration().getAlias() : "e";
+        final String alias = getEndpoint().getConfiguration().getAlias() != null
+                ? getEndpoint().getConfiguration().getAlias()
+                : "e";
 
-        final String label
-                = getEndpoint().getConfiguration().getLabel() != null
-                        ? getEndpoint().getConfiguration().getLabel() : "Embedding";
+        final String label = getEndpoint().getConfiguration().getLabel() != null
+                ? getEndpoint().getConfiguration().getLabel()
+                : "Embedding";
 
         String id;
         String text;
@@ -354,19 +364,21 @@ public class Neo4jProducer extends DefaultProducer {
             vectors = ((Neo4jEmbedding) body).getVectors();
         } else {
             id = exchange.getMessage().getHeader(Neo4jHeaders.VECTOR_ID, () -> UUID.randomUUID(), String.class);
-            vectors = exchange.getMessage().getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
-                    float[].class);
+            vectors = exchange.getMessage()
+                    .getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, float[].class);
             text = exchange.getMessage().getBody(String.class);
         }
 
         ObjectHelper.notNull(text, "text");
         ObjectHelper.notNull(vectors, "vectors");
 
-        String query = String.format("""
+        String query = String.format(
+                """
                 MERGE (%s:%s {id: $id, text: $text})
                 WITH %s
                 CALL db.create.setNodeVectorProperty(%s, 'embedding', $embedding);
-                """, alias, label, alias, alias);
+                """,
+                alias, label, alias, alias);
 
         Map<String, Object> params = Map.of(
                 "embedding", Values.value(vectors),
@@ -395,20 +407,25 @@ public class Neo4jProducer extends DefaultProducer {
 
         final String databaseName = getEndpoint().getName();
 
-        String query = """
+        String query =
+                """
                 CALL db.index.vector.queryNodes($indexName, $maxResults, $embeddingValue)
                 YIELD node, score
                 WHERE score >= $minScore
                 RETURN *
                 """;
 
-        Map<String, Object> params = Map.of("indexName", vectorIndexName,
-                "embeddingValue", vectors,
-                "minScore", minScore,
-                "maxResults", maxResults);
+        Map<String, Object> params = Map.of(
+                "indexName",
+                vectorIndexName,
+                "embeddingValue",
+                vectors,
+                "minScore",
+                minScore,
+                "maxResults",
+                maxResults);
 
         queryRetriveNodes(exchange, databaseName, params, query, VECTOR_SIMILARITY_SEARCH);
-
     }
 
     private void writeWithCypherQuery(Exchange exchange) {
@@ -419,36 +436,45 @@ public class Neo4jProducer extends DefaultProducer {
     }
 
     private void executeWriteQuery(
-            Exchange exchange, String query, Map<String, Object> properties, String databaseName, Neo4Operation operation) {
+            Exchange exchange,
+            String query,
+            Map<String, Object> properties,
+            String databaseName,
+            Neo4Operation operation) {
         try {
             EagerResult result;
             if (properties != null) {
                 result = driver.executableQuery(query)
-                        .withConfig(QueryConfig.builder().withDatabase(databaseName).build())
+                        .withConfig(
+                                QueryConfig.builder().withDatabase(databaseName).build())
                         .withParameters(properties)
                         .execute();
             } else {
                 result = driver.executableQuery(query)
-                        .withConfig(QueryConfig.builder().withDatabase(databaseName).build())
+                        .withConfig(
+                                QueryConfig.builder().withDatabase(databaseName).build())
                         .execute();
             }
 
             final ResultSummary summary = result.summary();
 
             exchange.getMessage().setHeader(QUERY_RESULT, summary.query().text());
-            exchange.getMessage().setHeader(QUERY_RESULT_NODES_CREATED,
-                    summary.counters().nodesCreated());
-            exchange.getMessage().setHeader(QUERY_RESULT_NODES_DELETED,
-                    summary.counters().nodesDeleted());
-            exchange.getMessage().setHeader(QUERY_RESULT_CONTAINS_UPDATES,
-                    summary.counters().containsUpdates());
-            exchange.getMessage().setHeader(QUERY_RESULT_RELATIONSHIPS_CREATED,
-                    summary.counters().relationshipsCreated());
-            exchange.getMessage().setHeader(QUERY_RESULT_RELATIONSHIPS_DELETED,
-                    summary.counters().relationshipsDeleted());
+            exchange.getMessage()
+                    .setHeader(QUERY_RESULT_NODES_CREATED, summary.counters().nodesCreated());
+            exchange.getMessage()
+                    .setHeader(QUERY_RESULT_NODES_DELETED, summary.counters().nodesDeleted());
+            exchange.getMessage()
+                    .setHeader(QUERY_RESULT_CONTAINS_UPDATES, summary.counters().containsUpdates());
+            exchange.getMessage()
+                    .setHeader(
+                            QUERY_RESULT_RELATIONSHIPS_CREATED,
+                            summary.counters().relationshipsCreated());
+            exchange.getMessage()
+                    .setHeader(
+                            QUERY_RESULT_RELATIONSHIPS_DELETED,
+                            summary.counters().relationshipsDeleted());
         } catch (Exception error) {
             exchange.setException(new Neo4jOperationException(operation, error));
         }
     }
-
 }

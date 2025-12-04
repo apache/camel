@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.handlers;
 
 import java.util.HashMap;
@@ -103,5 +104,4 @@ public class CamelPathHandler extends PathHandler {
         }
         return handlerString;
     }
-
 }

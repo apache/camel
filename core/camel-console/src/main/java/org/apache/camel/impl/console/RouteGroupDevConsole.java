@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -111,8 +112,10 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrg.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrg.getMinProcessingTime(), true)));
             if (mrg.getExchangesTotal() > 0) {
-                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mrg.getLastProcessingTime(), true)));
-                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrg.getDeltaProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n    Last Time: %s", TimeUtils.printDuration(mrg.getLastProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n    Delta Time: %s", TimeUtils.printDuration(mrg.getDeltaProcessingTime(), true)));
             }
             Date last = mrg.getLastExchangeCreatedTimestamp();
             if (last != null) {
@@ -210,7 +213,8 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             List<Route> routes = getCamelContext().getRoutes();
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
@@ -266,7 +270,8 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
     }
 
     private String calculateRouteCoverage(ManagedRouteGroupMBean mrg, boolean percent) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids = new ArrayList<>();
         for (String id : mrg.getGroupIds()) {
@@ -310,8 +315,7 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
         }
         String[] patterns = filter.split(",");
         // find matching IDs
-        List<String> ids = camelContext.getRoutes()
-                .stream()
+        List<String> ids = camelContext.getRoutes().stream()
                 .map(Route::getGroup)
                 .filter(group -> {
                     for (String p : patterns) {
@@ -343,5 +347,4 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
             }
         }
     }
-
 }

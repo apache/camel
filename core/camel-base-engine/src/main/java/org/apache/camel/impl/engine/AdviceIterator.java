@@ -23,11 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 
 final class AdviceIterator {
-    private AdviceIterator() {
+    private AdviceIterator() {}
 
-    }
-
-    static void runAfterTasks(List<? extends CamelInternalProcessorAdvice> advices, Object[] states, Exchange exchange) {
+    static void runAfterTasks(
+            List<? extends CamelInternalProcessorAdvice> advices, Object[] states, Exchange exchange) {
         int stateIndex = states.length - 1;
 
         for (int i = advices.size() - 1; i >= 0; i--) {

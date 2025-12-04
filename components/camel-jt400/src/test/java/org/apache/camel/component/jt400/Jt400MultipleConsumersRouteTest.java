@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -53,8 +54,8 @@ public class Jt400MultipleConsumersRouteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 if (SYSTEM != null) {
-                    String uri = String.format("jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.DTAQ", USER, PASSWORD,
-                            SYSTEM, LIBRARY, QUEUE);
+                    String uri = String.format(
+                            "jt400://%s:%s@%s/QSYS.LIB/%s.LIB/%s.DTAQ", USER, PASSWORD, SYSTEM, LIBRARY, QUEUE);
                     from("direct:a").to(uri);
                     from(uri).from(uri).to("mock:a");
                 }

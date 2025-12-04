@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -42,15 +43,21 @@ public class PollDynamicAwareResolver {
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found PollDynamicAware: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), scheme);
+                LOG.debug(
+                        "Found PollDynamicAware: {} via: {}{}",
+                        type.getName(),
+                        factoryFinder.getResourcePath(),
+                        scheme);
             }
             if (PollDynamicAware.class.isAssignableFrom(type)) {
-                PollDynamicAware answer = (PollDynamicAware) context.getInjector().newInstance(type, false);
+                PollDynamicAware answer =
+                        (PollDynamicAware) context.getInjector().newInstance(type, false);
                 answer.setScheme(scheme);
                 answer.setCamelContext(context);
                 return answer;
             } else {
-                throw new IllegalArgumentException("Type is not a PollDynamicAware implementation. Found: " + type.getName());
+                throw new IllegalArgumentException(
+                        "Type is not a PollDynamicAware implementation. Found: " + type.getName());
             }
         }
 
@@ -63,5 +70,4 @@ public class PollDynamicAwareResolver {
         }
         return factoryFinder.findClass(name).orElse(null);
     }
-
 }

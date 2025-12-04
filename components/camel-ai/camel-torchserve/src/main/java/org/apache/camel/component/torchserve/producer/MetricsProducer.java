@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.producer;
 
 import java.util.Optional;
@@ -49,8 +50,7 @@ public class MetricsProducer extends TorchServeProducer {
     private void metrics(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String metricsName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.METRICS_NAME, String.class))
+        String metricsName = Optional.ofNullable(message.getHeader(TorchServeConstants.METRICS_NAME, String.class))
                 .orElse(configuration.getMetricsName());
         String response = metricsName == null ? this.metrics.metrics() : this.metrics.metrics(metricsName);
         message.setBody(response);

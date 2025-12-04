@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx;
 
 import java.util.List;
@@ -45,7 +46,10 @@ public class VertxRoutePubSubTest extends VertxBaseTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: {} headers: {}", exchange, exchange.getIn().getHeaders());
+            log.info(
+                    "Received exchange: {} headers: {}",
+                    exchange,
+                    exchange.getIn().getHeaders());
         }
     }
 

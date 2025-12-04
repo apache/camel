@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class KnativeComponent extends HealthCheckComponent {
 
     @Metadata
     private KnativeProducerFactory producerFactory;
+
     @Metadata
     private KnativeConsumerFactory consumerFactory;
 
@@ -209,7 +211,7 @@ public class KnativeComponent extends HealthCheckComponent {
         ServiceHelper.stopService(consumerFactory, producerFactory);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
@@ -220,12 +222,9 @@ public class KnativeComponent extends HealthCheckComponent {
         final String name = StringHelper.after(remaining, "/");
         final KnativeConfiguration conf = getKnativeConfiguration();
 
-        conf.getFilters().putAll(
-                (Map) PropertiesHelper.extractProperties(parameters, "filter.", true));
-        conf.getCeOverride().putAll(
-                (Map) PropertiesHelper.extractProperties(parameters, "ce.override.", true));
-        conf.getTransportOptions().putAll(
-                PropertiesHelper.extractProperties(parameters, "transport.", true));
+        conf.getFilters().putAll((Map) PropertiesHelper.extractProperties(parameters, "filter.", true));
+        conf.getCeOverride().putAll((Map) PropertiesHelper.extractProperties(parameters, "ce.override.", true));
+        conf.getTransportOptions().putAll(PropertiesHelper.extractProperties(parameters, "transport.", true));
 
         KnativeEndpoint endpoint = new KnativeEndpoint(uri, this, Knative.Type.valueOf(type), name, conf);
         setProperties(endpoint, parameters);
@@ -288,14 +287,16 @@ public class KnativeComponent extends HealthCheckComponent {
 
     private KnativeProducerFactory setUpProducerFactory() throws Exception {
         if (producerFactory == null) {
-            this.producerFactory = CamelContextHelper.lookup(getCamelContext(), protocol.name(), KnativeProducerFactory.class);
+            this.producerFactory =
+                    CamelContextHelper.lookup(getCamelContext(), protocol.name(), KnativeProducerFactory.class);
             if (this.producerFactory == null) {
                 this.producerFactory = getCamelContext()
                         .getCamelContextExtension()
                         .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
                         .newInstance(protocol.name() + "-producer", KnativeProducerFactory.class)
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Cannot create KnativeProducerFactory. Make sure camel-knative-http JAR is on classpath."));
+                        .orElseThrow(
+                                () -> new IllegalArgumentException(
+                                        "Cannot create KnativeProducerFactory. Make sure camel-knative-http JAR is on classpath."));
                 if (configuration.getTransportOptions() != null) {
                     setProperties(producerFactory, new HashMap<>(configuration.getTransportOptions()));
                 }
@@ -309,14 +310,16 @@ public class KnativeComponent extends HealthCheckComponent {
 
     private KnativeConsumerFactory setUpConsumerFactory() throws Exception {
         if (consumerFactory == null) {
-            this.consumerFactory = CamelContextHelper.lookup(getCamelContext(), protocol.name(), KnativeConsumerFactory.class);
+            this.consumerFactory =
+                    CamelContextHelper.lookup(getCamelContext(), protocol.name(), KnativeConsumerFactory.class);
             if (this.consumerFactory == null) {
                 this.consumerFactory = getCamelContext()
                         .getCamelContextExtension()
                         .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
                         .newInstance(protocol.name() + "-consumer", KnativeConsumerFactory.class)
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Cannot create KnativeConsumerFactory. Make sure camel-knative-http JAR is on classpath."));
+                        .orElseThrow(
+                                () -> new IllegalArgumentException(
+                                        "Cannot create KnativeConsumerFactory. Make sure camel-knative-http JAR is on classpath."));
                 if (configuration.getTransportOptions() != null) {
                     setProperties(consumerFactory, new HashMap<>(configuration.getTransportOptions()));
                 }

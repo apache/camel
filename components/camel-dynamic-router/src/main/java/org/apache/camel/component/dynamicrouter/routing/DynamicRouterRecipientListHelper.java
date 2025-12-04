@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_EXPRESSION;
+import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -35,9 +39,6 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_EXPRESSION;
-import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
-
 /**
  * Utility class that creates a {@link RecipientList} {@link Processor} based on a {@link DynamicRouterConfiguration}.
  */
@@ -45,15 +46,17 @@ public final class DynamicRouterRecipientListHelper {
 
     private static final String ESM_NAME = "ExecutorServiceManager";
 
-    private DynamicRouterRecipientListHelper() {
-    }
+    private DynamicRouterRecipientListHelper() {}
 
     /**
      * Creates an {@link AggregationStrategyBiFunctionAdapter} from a {@link BiFunction} and a
      * {@link DynamicRouterConfiguration}.
      */
-    static BiFunction<BiFunction<Exchange, Exchange, Object>, DynamicRouterConfiguration, AggregationStrategyBiFunctionAdapter> createBiFunctionAdapter
-            = (bf, cfg) -> {
+    static BiFunction<
+                    BiFunction<Exchange, Exchange, Object>,
+                    DynamicRouterConfiguration,
+                    AggregationStrategyBiFunctionAdapter>
+            createBiFunctionAdapter = (bf, cfg) -> {
                 AggregationStrategyBiFunctionAdapter adapter = new AggregationStrategyBiFunctionAdapter(bf);
                 adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
                 adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
@@ -63,28 +66,29 @@ public final class DynamicRouterRecipientListHelper {
     /**
      * Creates an {@link AggregationStrategyBeanAdapter} from an object and a {@link DynamicRouterConfiguration}.
      */
-    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategyBeanAdapter> createBeanAdapter = (obj, cfg) -> {
-        AggregationStrategyBeanAdapter adapter
-                = new AggregationStrategyBeanAdapter(obj, cfg.getAggregationStrategyMethodName());
-        adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
-        adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
-        return adapter;
-    };
+    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategyBeanAdapter> createBeanAdapter =
+            (obj, cfg) -> {
+                AggregationStrategyBeanAdapter adapter =
+                        new AggregationStrategyBeanAdapter(obj, cfg.getAggregationStrategyMethodName());
+                adapter.setAllowNullNewExchange(cfg.isAggregationStrategyMethodAllowNull());
+                adapter.setAllowNullOldExchange(cfg.isAggregationStrategyMethodAllowNull());
+                return adapter;
+            };
 
     /**
      * Given an object, convert it to an {@link AggregationStrategy} based on its class.
      */
-    @SuppressWarnings({ "unchecked" })
-    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategy> convertAggregationStrategy
-            = (aggStr, cfg) -> Optional.ofNullable(aggStr)
+    @SuppressWarnings({"unchecked"})
+    static BiFunction<Object, DynamicRouterConfiguration, AggregationStrategy> convertAggregationStrategy =
+            (aggStr, cfg) -> Optional.ofNullable(aggStr)
                     .filter(AggregationStrategy.class::isInstance)
                     .map(s -> (AggregationStrategy) s)
                     .or(() -> Optional.ofNullable(aggStr)
                             .filter(BiFunction.class::isInstance)
                             .map(s -> createBiFunctionAdapter.apply((BiFunction<Exchange, Exchange, Object>) s, cfg)))
-                    .or(() -> Optional.ofNullable(aggStr)
-                            .map(s -> createBeanAdapter.apply(s, cfg)))
-                    .orElseThrow(() -> new IllegalArgumentException("Cannot convert AggregationStrategy from: " + aggStr));
+                    .or(() -> Optional.ofNullable(aggStr).map(s -> createBeanAdapter.apply(s, cfg)))
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("Cannot convert AggregationStrategy from: " + aggStr));
 
     /**
      * Create and configure the {@link RecipientList} {@link Processor}. The returned recipient list will be started.
@@ -94,12 +98,13 @@ public final class DynamicRouterRecipientListHelper {
      * @return              the configured {@link RecipientList} {@link Processor}
      */
     public static Processor createProcessor(
-            CamelContext camelContext, DynamicRouterConfiguration cfg,
+            CamelContext camelContext,
+            DynamicRouterConfiguration cfg,
             BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
         RecipientList recipientList = recipientListSupplier.apply(camelContext, RECIPIENT_LIST_EXPRESSION);
         setPropertiesForRecipientList(recipientList, camelContext, cfg);
-        ExecutorService threadPool
-                = getConfiguredExecutorService(camelContext, "RecipientList", cfg, cfg.isParallelProcessing());
+        ExecutorService threadPool =
+                getConfiguredExecutorService(camelContext, "RecipientList", cfg, cfg.isParallelProcessing());
         recipientList.setExecutorService(threadPool);
         recipientList.setShutdownExecutorService(
                 willCreateNewThreadPool(camelContext, cfg, cfg.isParallelProcessing()));
@@ -150,8 +155,8 @@ public final class DynamicRouterRecipientListHelper {
                         .map(ref -> lookupByNameAndType(camelContext, ref, Object.class)
                                 .map(aggStr -> convertAggregationStrategy.apply(aggStr, cfg))
                                 .orElseThrow(() -> new IllegalArgumentException(
-                                        "Cannot find AggregationStrategy in Registry with name: " +
-                                                                                cfg.getAggregationStrategy()))))
+                                        "Cannot find AggregationStrategy in Registry with name: "
+                                                + cfg.getAggregationStrategy()))))
                 .orElse(new NoopAggregationStrategy());
         CamelContextAware.trySetCamelContext(strategy, camelContext);
         return cfg.isShareUnitOfWork() ? new ShareUnitOfWorkAggregationStrategy(strategy) : strategy;
@@ -175,12 +180,14 @@ public final class DynamicRouterRecipientListHelper {
      * @return            <tt>true</tt> if a new thread pool will be created, <tt>false</tt> if not
      * @see               #getConfiguredExecutorService(CamelContext, String, DynamicRouterConfiguration, boolean)
      */
-    static boolean willCreateNewThreadPool(CamelContext camelContext, DynamicRouterConfiguration cfg, boolean useDefault) {
+    static boolean willCreateNewThreadPool(
+            CamelContext camelContext, DynamicRouterConfiguration cfg, boolean useDefault) {
         ObjectHelper.notNull(camelContext.getExecutorServiceManager(), ESM_NAME, camelContext);
         return Optional.ofNullable(cfg.getExecutorServiceBean())
                 .map(esb -> false)
                 .or(() -> Optional.ofNullable(cfg.getExecutorService())
-                        .map(es -> lookupByNameAndType(camelContext, es, ExecutorService.class).isEmpty()))
+                        .map(es -> lookupByNameAndType(camelContext, es, ExecutorService.class)
+                                .isEmpty()))
                 .orElse(useDefault);
     }
 
@@ -238,8 +245,8 @@ public final class DynamicRouterRecipientListHelper {
         ObjectHelper.notNull(manager, ESM_NAME, camelContext);
         String exSvcRef = cfg.getExecutorService();
         ExecutorService exSvcBean = cfg.getExecutorServiceBean();
-        String errorMessage = "ExecutorServiceRef '" + exSvcRef + "' not found in registry as an ExecutorService " +
-                              "instance or as a thread pool profile";
+        String errorMessage = "ExecutorServiceRef '" + exSvcRef + "' not found in registry as an ExecutorService "
+                + "instance or as a thread pool profile";
         // The first (preferred) option is to use an explicitly-configured executor if the configuration has it
         return Optional.ofNullable(exSvcBean)
                 // The second preference is to check for an executor service reference

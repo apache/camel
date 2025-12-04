@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.verifier;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public class DefaultResult implements ComponentVerifierExtension.Result {
     private final Status status;
     private final List<ComponentVerifierExtension.VerificationError> verificationErrors;
 
-    public DefaultResult(ComponentVerifierExtension.Scope scope, Status status,
-                         List<ComponentVerifierExtension.VerificationError> verificationErrors) {
+    public DefaultResult(
+            ComponentVerifierExtension.Scope scope,
+            Status status,
+            List<ComponentVerifierExtension.VerificationError> verificationErrors) {
         this.scope = scope;
         this.status = status;
         this.verificationErrors = verificationErrors;
@@ -49,10 +52,6 @@ public class DefaultResult implements ComponentVerifierExtension.Result {
 
     @Override
     public String toString() {
-        return "DefaultResult{"
-               + "scope=" + scope
-               + ", status=" + status
-               + ", errors=" + verificationErrors
-               + '}';
+        return "DefaultResult{" + "scope=" + scope + ", status=" + status + ", errors=" + verificationErrors + '}';
     }
 }

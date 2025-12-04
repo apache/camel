@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
 
 import java.io.File;
@@ -51,7 +52,8 @@ public class WireTapTest extends CamelTestSupport {
         // original has 1 attachment
         Assertions.assertTrue(am1.hasAttachments());
         Assertions.assertEquals(1, am1.getAttachmentNames().size());
-        Assertions.assertEquals("message1.xml", am1.getAttachmentNames().iterator().next());
+        Assertions.assertEquals(
+                "message1.xml", am1.getAttachmentNames().iterator().next());
 
         // tap has 2 because of 1 original and 1 added afterwards
         Assertions.assertTrue(am2.hasAttachments());
@@ -71,7 +73,8 @@ public class WireTapTest extends CamelTestSupport {
                             @Override
                             public void process(Exchange exchange) {
                                 AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
-                                am.addAttachment("message1.xml",
+                                am.addAttachment(
+                                        "message1.xml",
                                         new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
                             }
                         })
@@ -83,10 +86,13 @@ public class WireTapTest extends CamelTestSupport {
                             @Override
                             public void process(Exchange exchange) {
                                 AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
-                                am.addAttachmentObject("message2.xml",
-                                        new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
+                                am.addAttachmentObject(
+                                        "message2.xml",
+                                        new DefaultAttachment(
+                                                new FileDataSource(new File("src/test/data/message2.xml"))));
                             }
-                        }).to("mock:tap");
+                        })
+                        .to("mock:tap");
             }
         };
     }

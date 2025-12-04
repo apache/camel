@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,9 +44,19 @@ public class SplitterThrowExceptionInExpressionTwoTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("mock:error").disableRedelivery()).multicast()
-                        .stopOnException().streaming().to("mock:cast1")
-                        .split(new MyExpression()).stopOnException().streaming().to("mock:cast2").end().to("mock:cast3").end()
+                from("direct:start")
+                        .errorHandler(deadLetterChannel("mock:error").disableRedelivery())
+                        .multicast()
+                        .stopOnException()
+                        .streaming()
+                        .to("mock:cast1")
+                        .split(new MyExpression())
+                        .stopOnException()
+                        .streaming()
+                        .to("mock:cast2")
+                        .end()
+                        .to("mock:cast3")
+                        .end()
                         .to("mock:result");
             }
         };

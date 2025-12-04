@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -27,8 +30,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -57,15 +58,18 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        BindyDoNotRemoveQuotesCsvUnmarshallTest.Product product
-                = result.getReceivedExchanges().get(0).getIn().getBody(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
+        BindyDoNotRemoveQuotesCsvUnmarshallTest.Product product = result.getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
         assertEquals("apple", product.getName());
         assertEquals("\"bright red\" apple", product.getDescription1());
         assertEquals("a fruit", product.getDescription2());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
+        BindyCsvDataFormat camelDataFormat =
+                new BindyCsvDataFormat(BindyDoNotRemoveQuotesCsvUnmarshallTest.Product.class);
 
         @Override
         public void configure() {
@@ -112,8 +116,7 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest {
         @Override
         public String toString() {
             return "Product{" + "name='" + name + '\'' + ", description1='" + description1 + '\'' + ", description2='"
-                   + description2 + '\'' + '}';
+                    + description2 + '\'' + '}';
         }
     }
-
 }

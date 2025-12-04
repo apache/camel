@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -27,5 +28,4 @@ public class SpringPropertiesAfterTransactedDSL2Test extends SpringPropertiesAft
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/properties/SpringPropertiesAfterTransactedDSL2Test.xml");
     }
-
 }

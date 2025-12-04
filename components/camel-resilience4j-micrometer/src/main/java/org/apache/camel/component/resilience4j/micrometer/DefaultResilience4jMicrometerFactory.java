@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j.micrometer;
 
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
@@ -72,12 +73,15 @@ public class DefaultResilience4jMicrometerFactory extends ServiceSupport
 
         if (meterRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            meterRegistry = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
+            meterRegistry =
+                    MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, MicrometerConstants.METRICS_REGISTRY_NAME);
         }
         circuitBreakerRegistry = CamelContextHelper.findSingleByType(camelContext, CircuitBreakerRegistry.class);
         if (circuitBreakerRegistry == null) {
             circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
-            camelContext.getCamelContextExtension().addContextPlugin(CircuitBreakerRegistry.class, circuitBreakerRegistry);
+            camelContext
+                    .getCamelContextExtension()
+                    .addContextPlugin(CircuitBreakerRegistry.class, circuitBreakerRegistry);
         }
         timeLimiterRegistry = CamelContextHelper.findSingleByType(camelContext, TimeLimiterRegistry.class);
         if (timeLimiterRegistry == null) {
@@ -96,17 +100,11 @@ public class DefaultResilience4jMicrometerFactory extends ServiceSupport
         super.doStart();
 
         // bind circuit breakers to micrometer metrics
-        TaggedCircuitBreakerMetrics
-                .ofCircuitBreakerRegistry(circuitBreakerRegistry)
+        TaggedCircuitBreakerMetrics.ofCircuitBreakerRegistry(circuitBreakerRegistry)
                 .bindTo(meterRegistry);
-        TaggedTimeLimiterMetrics
-                .ofTimeLimiterRegistry(timeLimiterRegistry)
-                .bindTo(meterRegistry);
-        TaggedBulkheadMetrics
-                .ofBulkheadRegistry(bulkheadRegistry)
-                .bindTo(meterRegistry);
+        TaggedTimeLimiterMetrics.ofTimeLimiterRegistry(timeLimiterRegistry).bindTo(meterRegistry);
+        TaggedBulkheadMetrics.ofBulkheadRegistry(bulkheadRegistry).bindTo(meterRegistry);
 
         LOG.info("Enabled Micrometer statistics with Resilience4j Circuit Breakers");
     }
-
 }

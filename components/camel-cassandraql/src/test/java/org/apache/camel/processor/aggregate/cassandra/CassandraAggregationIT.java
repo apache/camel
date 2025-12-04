@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.cassandra;
 
 import org.apache.camel.AggregationStrategy;
@@ -61,15 +62,20 @@ public class CassandraAggregationIT extends BaseCassandra {
                         return oldExchange;
                     }
                 };
-                from("direct:input").aggregate(header("aggregationId"), aggregationStrategy).completionSize(3)
-                        .completionTimeout(3000L).aggregationRepository(aggregationRepository)
+                from("direct:input")
+                        .aggregate(header("aggregationId"), aggregationStrategy)
+                        .completionSize(3)
+                        .completionTimeout(3000L)
+                        .aggregationRepository(aggregationRepository)
                         .to("mock:output");
             }
         };
     }
 
     private void send(String aggregationId, String body) {
-        camelContextExtension.getProducerTemplate().sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
+        camelContextExtension
+                .getProducerTemplate()
+                .sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
     }
 
     @Test

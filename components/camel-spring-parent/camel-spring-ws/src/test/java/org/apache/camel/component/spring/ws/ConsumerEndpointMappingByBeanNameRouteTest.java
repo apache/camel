@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,12 +32,10 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestSupport {
 
-    private final String xmlRequestForGoogleStockQuote
-            = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote =
+            "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
 
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
@@ -42,8 +43,8 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     @Override
     public void doPostSetup() {
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
-        expectedResponse = context.getTypeConverter().convertTo(String.class,
-                getClass().getResourceAsStream("/stockquote-response.txt"));
+        expectedResponse = context.getTypeConverter()
+                .convertTo(String.class, getClass().getResourceAsStream("/stockquote-response.txt"));
     }
 
     @Test
@@ -61,5 +62,4 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
     }
-
 }

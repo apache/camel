@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,19 +42,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxCollaborationsManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxCollaborationsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxCollaborationsManagerApiMethod.class).getName();
+            .getApiName(BoxCollaborationsManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_FOLDER = "CamelTestFolder";
     private static final String CAMEL_TEST_COLLABORATOR_EMAIL = "cameltest@example.com";
     private static final String CAMEL_TEST_COLLABORATOR_NAME = "cameltest";
@@ -70,14 +73,14 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         // parameter type is com.box.sdk.BoxCollaboration.Role
         headers.put("CamelBox.role", BoxCollaboration.Role.EDITOR);
 
-        final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATIONBYEMAIL",
-                testFolder.getID(), headers);
+        final com.box.sdk.BoxCollaboration result =
+                requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATIONBYEMAIL", testFolder.getID(), headers);
 
         assertNotNull(result, "addFolderCollaboration result");
         LOG.debug("addFolderCollaboration: {}", result);
     }
 
-    @Disabled //creation of app users could be used only with JWT authentication, which is not possible in this time
+    @Disabled // creation of app users could be used only with JWT authentication, which is not possible in this time
     @Test
     public void testAddFolderCollaboration() {
         // delete collaborator created by setupTest
@@ -87,7 +90,8 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             // create test collaborator
             CreateUserParams params = new CreateUserParams();
             params.setSpaceAmount(1073741824); // 1 GB
-            user = BoxUser.createAppUser(getConnection(), CAMEL_TEST_COLLABORATOR_NAME, params).getResource();
+            user = BoxUser.createAppUser(getConnection(), CAMEL_TEST_COLLABORATOR_NAME, params)
+                    .getResource();
 
             final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
@@ -97,8 +101,8 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             // parameter type is com.box.sdk.BoxCollaboration.Role
             headers.put("CamelBox.role", BoxCollaboration.Role.EDITOR);
 
-            final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATION",
-                    testFolder.getID(), headers);
+            final com.box.sdk.BoxCollaboration result =
+                    requestBodyAndHeaders("direct://ADDFOLDERCOLLABORATION", testFolder.getID(), headers);
             assertNotNull(result, "addFolderCollaboration result");
             LOG.debug("addFolderCollaboration: {}", result);
         } catch (BoxAPIException e) {
@@ -114,8 +118,8 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
     @Test
     public void testGetCollaborationInfo() {
         // using String message body for single parameter "collaborationId"
-        final com.box.sdk.BoxCollaboration.Info result = requestBody("direct://GETCOLLABORATIONINFO",
-                testCollaboration.getID());
+        final com.box.sdk.BoxCollaboration.Info result =
+                requestBody("direct://GETCOLLABORATIONINFO", testCollaboration.getID());
 
         assertNotNull(result, "getCollaborationInfo result");
         LOG.debug("getCollaborationInfo: {}", result);
@@ -151,8 +155,8 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
         info.setRole(BoxCollaboration.Role.PREVIEWER);
         headers.put("CamelBox.info", info);
 
-        final com.box.sdk.BoxCollaboration result = requestBodyAndHeaders("direct://UPDATECOLLABORATIONINFO", null,
-                headers);
+        final com.box.sdk.BoxCollaboration result =
+                requestBodyAndHeaders("direct://UPDATECOLLABORATIONINFO", null, headers);
 
         assertNotNull(result, "updateCollaborationInfo result");
         assertNotNull(result.getInfo(), "updateCollaborationInfo info");
@@ -189,7 +193,6 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
 
                 // test route for updateCollaborationInfo
                 from("direct://UPDATECOLLABORATIONINFO").to("box://" + PATH_PREFIX + "/updateCollaborationInfo");
-
             }
         };
     }
@@ -207,8 +210,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
     }
 
     public BoxAPIConnection getConnection() {
-        BoxEndpoint endpoint = (BoxEndpoint) context()
-                .getEndpoint("box://" + PATH_PREFIX + "/addFolderCollaboration");
+        BoxEndpoint endpoint = (BoxEndpoint) context().getEndpoint("box://" + PATH_PREFIX + "/addFolderCollaboration");
         return endpoint.getBoxConnection();
     }
 
@@ -218,7 +220,8 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
     }
 
     private void createTestCollaborator() {
-        testCollaboration = testFolder.collaborate(CAMEL_TEST_COLLABORATOR_EMAIL, BoxCollaboration.Role.EDITOR)
+        testCollaboration = testFolder
+                .collaborate(CAMEL_TEST_COLLABORATOR_EMAIL, BoxCollaboration.Role.EDITOR)
                 .getResource();
     }
 
@@ -228,5 +231,4 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             testCollaboration = null;
         }
     }
-
 }

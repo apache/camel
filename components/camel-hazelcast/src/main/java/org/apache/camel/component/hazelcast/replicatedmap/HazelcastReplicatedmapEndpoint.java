@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.replicatedmap;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_REPLICATED_MAP;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,26 +30,28 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_REPLICATED_MAP;
-
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> replicated map.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = SCHEME_REPLICATED_MAP, title = "Hazelcast Replicated Map",
-             syntax = "hazelcast-replicatedmap:cacheName", category = { Category.CACHE, Category.CLUSTERING },
-             headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = SCHEME_REPLICATED_MAP,
+        title = "Hazelcast Replicated Map",
+        syntax = "hazelcast-replicatedmap:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastReplicatedmapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastReplicatedmapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName,
-                                          HazelcastDefaultComponent component) {
+    public HazelcastReplicatedmapEndpoint(
+            HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastDefaultComponent component) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.replicatedmap);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastReplicatedmapConsumer answer
-                = new HazelcastReplicatedmapConsumer(hazelcastInstance, this, processor, cacheName);
+        HazelcastReplicatedmapConsumer answer =
+                new HazelcastReplicatedmapConsumer(hazelcastInstance, this, processor, cacheName);
         configureConsumer(answer);
         return answer;
     }
@@ -55,5 +60,4 @@ public class HazelcastReplicatedmapEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new HazelcastReplicatedmapProducer(hazelcastInstance, this, cacheName);
     }
-
 }

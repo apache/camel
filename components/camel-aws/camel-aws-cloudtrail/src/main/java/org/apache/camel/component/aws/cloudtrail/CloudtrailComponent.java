@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail;
 
 import java.util.Map;
@@ -40,12 +41,13 @@ public class CloudtrailComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        CloudtrailConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new CloudtrailConfiguration();
+        CloudtrailConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new CloudtrailConfiguration();
         configuration.setLabel(remaining);
         CloudtrailEndpoint endpoint = new CloudtrailEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
+        if (!configuration.isUseDefaultCredentialsProvider()
+                && !configuration.isUseProfileCredentialsProvider()
                 && !configuration.isUseSessionCredentials()
                 && configuration.getCloudTrailClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * This class tests standard marshalling
@@ -39,38 +40,38 @@ public class CsvMarshalTest extends CamelTestSupport {
     void shouldMarshalLists() throws Exception {
         output.expectedMessageCount(1);
 
-        template.sendBody("direct:default", Arrays.<List> asList(
-                Arrays.asList("1", "2", "3"),
-                Arrays.asList("one", "two", "three")));
+        template.sendBody(
+                "direct:default",
+                Arrays.<List>asList(Arrays.asList("1", "2", "3"), Arrays.asList("one", "two", "three")));
         output.assertIsSatisfied();
 
         String[] actuals = readOutputLines(0);
-        assertArrayEquals(new String[] { "1,2,3", "one,two,three" }, actuals);
+        assertArrayEquals(new String[] {"1,2,3", "one,two,three"}, actuals);
     }
 
     @Test
     void shouldMarshalListsOneRow() throws Exception {
         output.expectedMessageCount(1);
 
-        template.sendBody("direct:default", Arrays.<List> asList(
-                List.of("1"),
-                List.of("one")));
+        template.sendBody("direct:default", Arrays.<List>asList(List.of("1"), List.of("one")));
         output.assertIsSatisfied();
 
         String[] actuals = readOutputLines(0);
-        assertArrayEquals(new String[] { "1", "one" }, actuals);
+        assertArrayEquals(new String[] {"1", "one"}, actuals);
     }
 
     @Test
     void shouldMarshalMaps() throws Exception {
         output.expectedMessageCount(1);
 
-        template.sendBody("direct:default", Arrays.<Map> asList(
-                TestUtils.asMap("A", "1", "B", "2", "C", "3"),
-                TestUtils.asMap("A", "one", "B", "two", "C", "three")));
+        template.sendBody(
+                "direct:default",
+                Arrays.<Map>asList(
+                        TestUtils.asMap("A", "1", "B", "2", "C", "3"),
+                        TestUtils.asMap("A", "one", "B", "two", "C", "three")));
         output.assertIsSatisfied();
 
-        assertArrayEquals(new String[] { "1,2,3", "one,two,three" }, readOutputLines(0));
+        assertArrayEquals(new String[] {"1,2,3", "one,two,three"}, readOutputLines(0));
     }
 
     @Test
@@ -80,19 +81,21 @@ public class CsvMarshalTest extends CamelTestSupport {
         template.sendBody("direct:default", TestUtils.asMap("A", "1", "B", "2", "C", "3"));
         output.assertIsSatisfied();
 
-        assertArrayEquals(new String[] { "1,2,3" }, readOutputLines(0));
+        assertArrayEquals(new String[] {"1,2,3"}, readOutputLines(0));
     }
 
     @Test
     void shouldHandleColumns() throws Exception {
         output.expectedMessageCount(1);
 
-        template.sendBody("direct:headers", Arrays.<Map> asList(
-                TestUtils.asMap("A", "1", "B", "2", "C", "3"),
-                TestUtils.asMap("A", "one", "B", "two", "C", "three")));
+        template.sendBody(
+                "direct:headers",
+                Arrays.<Map>asList(
+                        TestUtils.asMap("A", "1", "B", "2", "C", "3"),
+                        TestUtils.asMap("A", "one", "B", "two", "C", "three")));
         output.assertIsSatisfied();
 
-        assertArrayEquals(new String[] { "A,C", "1,3", "one,three" }, readOutputLines(0));
+        assertArrayEquals(new String[] {"A,C", "1,3", "one,three"}, readOutputLines(0));
     }
 
     @Test
@@ -103,8 +106,8 @@ public class CsvMarshalTest extends CamelTestSupport {
         template.sendBody("direct:default", TestUtils.asMap("X", "1", "Y", "2", "Z", "3"));
 
         output.assertIsSatisfied();
-        assertArrayEquals(new String[] { "1,2" }, readOutputLines(0));
-        assertArrayEquals(new String[] { "1,2,3" }, readOutputLines(1));
+        assertArrayEquals(new String[] {"1,2"}, readOutputLines(0));
+        assertArrayEquals(new String[] {"1,2,3"}, readOutputLines(1));
     }
 
     @Override
@@ -113,13 +116,11 @@ public class CsvMarshalTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // Default format
-                from("direct:default")
-                        .marshal(new CsvDataFormat())
-                        .to("mock:output");
+                from("direct:default").marshal(new CsvDataFormat()).to("mock:output");
 
                 // Format with special headers
                 from("direct:headers")
-                        .marshal(new CsvDataFormat().setHeader(new String[] { "A", "C" }))
+                        .marshal(new CsvDataFormat().setHeader(new String[] {"A", "C"}))
                         .to("mock:output");
             }
         };

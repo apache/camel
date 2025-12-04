@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
+import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -36,22 +44,15 @@ import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
-import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSupport {
 
     @BindToRegistry("noResultQueryBuilder")
-    private InfinispanQueryBuilder noResultQueryBuilder
-            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%abc%'");
+    private InfinispanQueryBuilder noResultQueryBuilder =
+            qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%abc%'");
 
     @BindToRegistry("withResultQueryBuilder")
-    private InfinispanQueryBuilder withResultQueryBuilder
-            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%A'");
+    private InfinispanQueryBuilder withResultQueryBuilder =
+            qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE '%A'");
 
     // *****************************
     //
@@ -59,8 +60,8 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
 
     @Test
     public void producerQueryOperationWithoutQueryBuilder() {
-        Exchange request = template.request("direct:start",
-                exchange -> exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY));
+        Exchange request = template.request(
+                "direct:start", exchange -> exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY));
         assertNull(request.getException());
 
         List<User> queryResult = request.getIn().getBody(List.class);
@@ -105,7 +106,8 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        cacheContainer.administration()
+        cacheContainer
+                .administration()
                 .schemas()
                 .create(FileDescriptorSource.fromResources("sample_bank_account/bank.proto"));
 
@@ -139,10 +141,8 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .toF("infinispan:%s", getCacheName());
-                from("direct:noQueryResults")
-                        .toF("infinispan:%s?queryBuilder=#noResultQueryBuilder", getCacheName());
+                from("direct:start").toF("infinispan:%s", getCacheName());
+                from("direct:noQueryResults").toF("infinispan:%s?queryBuilder=#noResultQueryBuilder", getCacheName());
                 from("direct:queryWithResults")
                         .toF("infinispan:%s?queryBuilder=#withResultQueryBuilder", getCacheName());
             }

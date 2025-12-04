@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 import java.io.File;
 import java.io.IOError;
@@ -45,14 +48,15 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
-import static org.apache.camel.tooling.util.PackageHelper.loadText;
-
 /**
  * Abstract class for endpoint uri factory generator.
  */
-@Mojo(name = "generate-endpoint-uri-factory", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-      requiresDependencyCollection = ResolutionScope.COMPILE,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "generate-endpoint-uri-factory",
+        threadSafe = true,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        requiresDependencyCollection = ResolutionScope.COMPILE,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
 
     /**
@@ -63,6 +67,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
@@ -117,8 +122,8 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
             }
 
             // Group the models by implementing classes
-            Map<String, List<ComponentModel>> grModels
-                    = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
+            Map<String, List<ComponentModel>> grModels =
+                    allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (List<ComponentModel> compModels : grModels.values()) {
                 for (ComponentModel model : compModels) {
                     // if more than one, we have a component class with multiple components aliases
@@ -148,7 +153,8 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         fqn = pn + "." + cn;
 
         String pval = model.getScheme() + "-endpoint";
-        updateResource(resourcesOutputDir.toPath(),
+        updateResource(
+                resourcesOutputDir.toPath(),
                 "META-INF/services/org/apache/camel/urifactory/" + pval,
                 "# " + GENERATED_MSG + NL + "class=" + fqn + NL);
 
@@ -157,7 +163,8 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
             String[] schemes = model.getAlternativeSchemes().split(",");
             for (String alt : schemes) {
                 pval = alt + "-endpoint";
-                updateResource(resourcesOutputDir.toPath(),
+                updateResource(
+                        resourcesOutputDir.toPath(),
                         "META-INF/services/org/apache/camel/urifactory/" + pval,
                         "# " + GENERATED_MSG + NL + "class=" + fqn + NL);
             }
@@ -235,5 +242,4 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
             }
         }
     }
-
 }

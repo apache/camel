@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
+
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 import java.util.List;
 
@@ -29,14 +32,12 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-
 class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private List<BsonDocument> bsonFilter;
     private BsonDocument resumeToken;
 
-    MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer,
-                               List<BsonDocument> bsonFilter) {
+    MongoDbChangeStreamsThread(
+            MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer, List<BsonDocument> bsonFilter) {
         super(endpoint, consumer);
         this.bsonFilter = bsonFilter;
     }
@@ -48,9 +49,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
 
     @Override
     protected MongoCursor initializeCursor() {
-        ChangeStreamIterable<Document> iterable = bsonFilter != null
-                ? dbCol.watch(bsonFilter)
-                : dbCol.watch();
+        ChangeStreamIterable<Document> iterable = bsonFilter != null ? dbCol.watch(bsonFilter) : dbCol.watch();
 
         iterable.fullDocument(endpoint.getFullDocument());
 
@@ -75,7 +74,8 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 ChangeStreamDocument<Document> dbObj = (ChangeStreamDocument<Document>) cursor.next();
                 Exchange exchange = createMongoDbExchange(dbObj.getFullDocument());
 
-                ObjectId documentId = dbObj.getDocumentKey().getObjectId(MONGO_ID).getValue();
+                ObjectId documentId =
+                        dbObj.getDocumentKey().getObjectId(MONGO_ID).getValue();
                 OperationType operationType = dbObj.getOperationType();
                 exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
                 exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
@@ -85,7 +85,10 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
 
                 try {
                     if (log.isTraceEnabled()) {
-                        log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.getFullDocument().get(MONGO_ID));
+                        log.trace(
+                                "Sending exchange: {}, ObjectId: {}",
+                                exchange,
+                                dbObj.getFullDocument().get(MONGO_ID));
                     }
                     consumer.getProcessor().process(exchange);
                 } catch (Exception ignored) {
@@ -114,5 +117,4 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
         message.setBody(dbObj);
         return exchange;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
@@ -29,20 +30,23 @@ import org.apache.hc.core5.http.protocol.HttpCoreContext;
 
 public class RequestMDN implements HttpRequestInterceptor {
 
-    private static final String SIGNED_RECEIPT_PREFIX
-            = "signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional";
+    private static final String SIGNED_RECEIPT_PREFIX =
+            "signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional";
 
     @Override
-    public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+    public void process(HttpRequest request, EntityDetails entity, HttpContext context)
+            throws HttpException, IOException {
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
         /* Disposition-Notification-To */
-        String dispositionNotificationTo = coreContext.getAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, String.class);
+        String dispositionNotificationTo =
+                coreContext.getAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, String.class);
         if (dispositionNotificationTo != null) {
             request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
 
-            String micAlgorithms = coreContext.getAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, String.class);
+            String micAlgorithms =
+                    coreContext.getAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, String.class);
             if (micAlgorithms == null) {
                 // requesting unsigned receipt: indicate by not setting Disposition-Notification-Options header
             } else {
@@ -53,7 +57,5 @@ public class RequestMDN implements HttpRequestInterceptor {
                 request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, sb.toString());
             }
         }
-
     }
-
 }

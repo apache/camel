@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,12 +31,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
 
@@ -48,8 +49,8 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
         // let it run a poll
         consumer.receive(50);
 
-        boolean found
-                = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains(testDirectory().toString()));
+        boolean found = Thread.getAllStackTraces().keySet().stream()
+                .anyMatch(t -> t.getName().contains(testDirectory().toString()));
         assertFalse(found, "Should not find file consumer thread");
 
         cache.releasePollingConsumer(endpoint, consumer);
@@ -61,11 +62,12 @@ public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
 
         // takes a little to stop
         await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Stopped", ((ServiceSupport) consumer).getStatus().name()));
+                .untilAsserted(() -> assertEquals(
+                        "Stopped", ((ServiceSupport) consumer).getStatus().name()));
 
         // should not be a file consumer thread
-        found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains(testDirectory().toString()));
+        found = Thread.getAllStackTraces().keySet().stream()
+                .anyMatch(t -> t.getName().contains(testDirectory().toString()));
         assertFalse(found, "Should not find file consumer thread");
     }
-
 }

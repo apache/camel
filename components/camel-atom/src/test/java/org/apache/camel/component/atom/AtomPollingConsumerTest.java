@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -27,10 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for AtomPollingConsumer
@@ -67,7 +68,8 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
 
     @Test
     void testNoCamelParametersInFeedUri() {
-        AtomEndpoint endpoint = context.getEndpoint("atom:file:src/test/data/feed.atom?splitEntries=false", AtomEndpoint.class);
+        AtomEndpoint endpoint =
+                context.getEndpoint("atom:file:src/test/data/feed.atom?splitEntries=false", AtomEndpoint.class);
         assertEquals("file:src/test/data/feed.atom", endpoint.getFeedUri());
     }
 
@@ -78,9 +80,9 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
                 from("atom:file:src/test/data/feed.atom?splitEntries=false").to("mock:result");
 
                 // this is a bit weird syntax that normally is not using the feedUri parameter
-                from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false").to("mock:result2");
+                from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false")
+                        .to("mock:result2");
             }
         };
     }
-
 }

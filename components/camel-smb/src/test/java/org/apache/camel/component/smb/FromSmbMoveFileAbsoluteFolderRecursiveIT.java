@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,15 +27,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FromSmbMoveFileAbsoluteFolderRecursiveIT extends SmbServerTestSupport {
 
     protected String getSmbUrl() {
         return String.format(
-                "smb:%s/%s/moverecurse?username=%s&password=%s&recursive=true" +
-                             "&move=/.done/${file:name}.old&initialDelay=2500&delay=5000",
+                "smb:%s/%s/moverecurse?username=%s&password=%s&recursive=true"
+                        + "&move=/.done/${file:name}.old&initialDelay=2500&delay=5000",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
@@ -48,16 +49,16 @@ public class FromSmbMoveFileAbsoluteFolderRecursiveIT extends SmbServerTestSuppo
 
         // verify files reside in the SMB dir within the docker container
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello",
-                        new String(copyFileContentFromContainer("/data/rw/.done/hello.txt.old"))));
+                .untilAsserted(() -> assertEquals(
+                        "Hello", new String(copyFileContentFromContainer("/data/rw/.done/hello.txt.old"))));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Bye",
-                        new String(copyFileContentFromContainer("/data/rw/.done/bye/bye.txt.old"))));
+                .untilAsserted(() -> assertEquals(
+                        "Bye", new String(copyFileContentFromContainer("/data/rw/.done/bye/bye.txt.old"))));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Goodday",
-                        new String(copyFileContentFromContainer("/data/rw/.done/goodday/goodday.txt.old"))));
+                .untilAsserted(() -> assertEquals(
+                        "Goodday", new String(copyFileContentFromContainer("/data/rw/.done/goodday/goodday.txt.old"))));
     }
 
     private void prepareSmbServer() {

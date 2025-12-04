@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Method;
 
@@ -24,9 +28,6 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
 
@@ -73,7 +74,8 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);
 
-        AmbiguousMethodCallException e = assertThrows(AmbiguousMethodCallException.class,
+        AmbiguousMethodCallException e = assertThrows(
+                AmbiguousMethodCallException.class,
                 () -> beanInfo.createInvocation(new Bean(), exchange),
                 "Should have thrown an exception");
         assertEquals(2, e.getMethods().size());
@@ -81,11 +83,9 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
 
     @SuppressWarnings("Unused")
     static class Bean {
-        public void doSomething(RequestA request) {
-        }
+        public void doSomething(RequestA request) {}
 
-        public void doSomething(RequestB request) {
-        }
+        public void doSomething(RequestB request) {}
     }
 
     static class BaseRequest {
@@ -99,5 +99,4 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
     static class RequestB extends BaseRequest {
         public String s;
     }
-
 }

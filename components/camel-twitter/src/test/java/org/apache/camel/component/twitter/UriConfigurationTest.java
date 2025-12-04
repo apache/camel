@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -24,8 +27,6 @@ import org.apache.camel.component.twitter.search.TwitterSearchEndpoint;
 import org.apache.camel.component.twitter.timeline.TwitterTimelineEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class UriConfigurationTest {
 
@@ -46,7 +47,8 @@ public class UriConfigurationTest {
 
     @Test
     public void testPageSetting() {
-        Endpoint endpoint = context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2&" + support.getUriTokens());
+        Endpoint endpoint =
+                context.getEndpoint("twitter-search:foo?count=50&numberOfPages=2&" + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
@@ -58,7 +60,7 @@ public class UriConfigurationTest {
     public void testHttpProxySetting() {
         Endpoint endpoint = context.getEndpoint(
                 "twitter-search:foo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd&"
-                                                + support.getUriTokens());
+                        + support.getUriTokens());
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
@@ -71,7 +73,8 @@ public class UriConfigurationTest {
     @Test
     public void testDirectMessageEndpoint() {
         Endpoint endpoint = context.getEndpoint("twitter-directmessage:foo?" + support.getUriTokens());
-        assertTrue(endpoint instanceof TwitterDirectMessageEndpoint,
+        assertTrue(
+                endpoint instanceof TwitterDirectMessageEndpoint,
                 "Endpoint not a TwitterDirectMessageEndpoint: " + endpoint);
     }
 

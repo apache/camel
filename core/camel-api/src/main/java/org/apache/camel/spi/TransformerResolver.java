@@ -54,5 +54,4 @@ public interface TransformerResolver<K> {
         keyString = StringHelper.after(keyString, DataType.DEFAULT_SCHEME + ":", keyString);
         return StringHelper.sanitize(keyString).toLowerCase(Locale.US);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.constants;
 
 public final class FunctionGraphConstants {
@@ -22,6 +23,5 @@ public final class FunctionGraphConstants {
     public static final String REQUEST_VERSION = "v1";
     public static final String RESPONSE_BODY = "body";
 
-    private FunctionGraphConstants() {
-    }
+    private FunctionGraphConstants() {}
 }

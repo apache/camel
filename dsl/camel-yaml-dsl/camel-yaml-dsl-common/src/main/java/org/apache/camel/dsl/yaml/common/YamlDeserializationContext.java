@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common;
 
 import java.util.Arrays;
@@ -149,9 +150,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         return CamelContextAware.trySetCamelContext(
                 (Node n) -> {
                     Node newNode = YamlSupport.setProperty(
-                            n,
-                            YamlDeserializationContext.class.getName(),
-                            YamlDeserializationContext.this);
+                            n, YamlDeserializationContext.class.getName(), YamlDeserializationContext.this);
 
                     final ConstructNode answer = resolve(n, type.getName());
                     return answer.construct(newNode);
@@ -191,12 +190,9 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         return CamelContextAware.trySetCamelContext(
                 (Node n) -> {
                     YamlSupport.setProperty(
-                            n,
-                            YamlDeserializationContext.class.getName(),
-                            YamlDeserializationContext.this);
+                            n, YamlDeserializationContext.class.getName(), YamlDeserializationContext.this);
 
-                    return answer.construct(
-                            ((MappingNode) n).getValue().get(0).getValueNode());
+                    return answer.construct(((MappingNode) n).getValue().get(0).getValueNode());
                 },
                 camelContext);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
 
 import org.apache.camel.AsyncCallback;
@@ -45,11 +46,13 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
         Exchange exchange = createExchange();
         switch (role) {
             case Leader:
-                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.LEADER);
+                exchange.getIn()
+                        .setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.LEADER);
                 processExchange(role, exchange);
                 break;
             case Follower:
-                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.FOLLOWER);
+                exchange.getIn()
+                        .setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.FOLLOWER);
                 processExchange(role, exchange);
                 break;
             default:
@@ -76,5 +79,4 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
         endpoint.populateJGroupsRaftHeaders(exchange);
         return exchange;
     }
-
 }

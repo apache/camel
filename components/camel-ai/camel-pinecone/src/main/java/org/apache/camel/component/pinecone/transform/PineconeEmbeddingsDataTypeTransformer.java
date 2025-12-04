@@ -31,13 +31,15 @@ import org.apache.camel.spi.Transformer;
  * Maps a LangChain4j Embeddings to a Pinecone InsertParam/Upsert Param to write an embeddings vector on a Pinecone
  * Database.
  */
-@DataTypeTransformer(name = "pinecone:embeddings",
-                     description = "Prepares the message to become an object writable by Pinecone component")
+@DataTypeTransformer(
+        name = "pinecone:embeddings",
+        description = "Prepares the message to become an object writable by Pinecone component")
 public class PineconeEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        Embedding embedding =
+                message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         String indexId = message.getHeader(PineconeVectorDbHeaders.INDEX_ID, UUID.randomUUID(), String.class);
         String indexName = message.getHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings", String.class);
 

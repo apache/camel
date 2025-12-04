@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
@@ -26,10 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for the idempotent=true option.
@@ -44,8 +45,10 @@ public class FileConsumerIdempotentConfirmTest extends ContextTestSupport {
             public void configure() {
                 context.getRegistry().bind("myRepo", myRepo);
 
-                from(fileUri("?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10&idempotentRepository=#myRepo"))
-                        .convertBodyTo(String.class).to("mock:result");
+                from(fileUri(
+                                "?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10&idempotentRepository=#myRepo"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -98,5 +101,4 @@ public class FileConsumerIdempotentConfirmTest extends ContextTestSupport {
             return key;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -38,13 +39,20 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
             public void configure() {
                 context.setStreamCaching(true);
                 context.getStreamCachingStrategy().setEnabled(true);
-                context.getStreamCachingStrategy().setSpoolDirectory(testDirectory().toFile());
+                context.getStreamCachingStrategy()
+                        .setSpoolDirectory(testDirectory().toFile());
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
 
-                from("direct:start").multicast(new InternalAggregationStrategy()).to("direct:a", "direct:b").end()
+                from("direct:start")
+                        .multicast(new InternalAggregationStrategy())
+                        .to("direct:a", "direct:b")
+                        .end()
                         .to("mock:result");
 
-                from("direct:startNestedMultiCast").multicast(new InternalAggregationStrategy()).to("direct:start").end()
+                from("direct:startNestedMultiCast")
+                        .multicast(new InternalAggregationStrategy())
+                        .to("direct:start")
+                        .end()
                         .to("mock:resultNested");
 
                 from("direct:a") //
@@ -93,7 +101,6 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
             cos.close();
             InputStream is = (InputStream) cos.newStreamCache();
             exchange.getMessage().setBody(is);
-
         }
     }
 
@@ -120,5 +127,4 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
             }
         }
     }
-
 }

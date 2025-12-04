@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.braintreegateway.CreditCardVerification;
 import com.braintreegateway.ResourceCollection;
@@ -27,14 +30,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CreditCardVerificationGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(CreditCardVerificationGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(CreditCardVerificationGatewayApiMethod.class)
+            .getName();
 
     // TODO provide parameter values for find
     @Disabled
@@ -52,8 +54,8 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
     @Test
     public void testSearch() {
         // using com.braintreegateway.CreditCardVerificationSearchRequest message body for single parameter "query"
-        final ResourceCollection<CreditCardVerification> result
-                = requestBody("direct://SEARCH", null, ResourceCollection.class);
+        final ResourceCollection<CreditCardVerification> result =
+                requestBody("direct://SEARCH", null, ResourceCollection.class);
 
         assertNotNull(result, "search result");
         LOG.debug("search: {}", result);
@@ -64,11 +66,9 @@ public class CreditCardVerificationGatewayIT extends AbstractBraintreeTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 // test route for find
-                from("direct://FIND")
-                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                from("direct://FIND").to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for search
-                from("direct://SEARCH")
-                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                from("direct://SEARCH").to("braintree://" + PATH_PREFIX + "/search?inBody=query");
             }
         };
     }

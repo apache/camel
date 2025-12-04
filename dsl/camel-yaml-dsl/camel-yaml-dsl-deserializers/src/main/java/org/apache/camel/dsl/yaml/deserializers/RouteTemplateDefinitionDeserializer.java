@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.List;
@@ -31,24 +32,18 @@ import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlIn
 @YamlType(
-          nodes = { "routeTemplate" },
-          types = org.apache.camel.model.RouteTemplateDefinition.class,
-          order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-          properties = {
-                  @YamlProperty(name = "id",
-                                type = "string",
-                                required = true),
-                  @YamlProperty(name = "description", type = "string"),
-                  @YamlProperty(name = "note", type = "string"),
-                  @YamlProperty(name = "route",
-                                type = "object:org.apache.camel.model.RouteDefinition"),
-                  @YamlProperty(name = "from",
-                                type = "object:org.apache.camel.model.FromDefinition"),
-                  @YamlProperty(name = "parameters",
-                                type = "array:org.apache.camel.model.RouteTemplateParameterDefinition"),
-                  @YamlProperty(name = "beans",
-                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
-          })
+        nodes = {"routeTemplate"},
+        types = org.apache.camel.model.RouteTemplateDefinition.class,
+        order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+        properties = {
+            @YamlProperty(name = "id", type = "string", required = true),
+            @YamlProperty(name = "description", type = "string"),
+            @YamlProperty(name = "note", type = "string"),
+            @YamlProperty(name = "route", type = "object:org.apache.camel.model.RouteDefinition"),
+            @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition"),
+            @YamlProperty(name = "parameters", type = "array:org.apache.camel.model.RouteTemplateParameterDefinition"),
+            @YamlProperty(name = "beans", type = "array:org.apache.camel.model.BeanFactoryDefinition")
+        })
 public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<RouteTemplateDefinition> {
 
     public RouteTemplateDefinitionDeserializer() {
@@ -62,8 +57,7 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
 
     @Override
     @SuppressWarnings("unchecked")
-    protected boolean setProperty(
-            RouteTemplateDefinition target, String propertyKey, String propertyName, Node node) {
+    protected boolean setProperty(RouteTemplateDefinition target, String propertyKey, String propertyName, Node node) {
 
         propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
         switch (propertyKey) {
@@ -98,8 +92,8 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
                 break;
             }
             case "beans": {
-                List<BeanFactoryDefinition<RouteTemplateDefinition>> items
-                        = (List) asFlatList(node, BeanFactoryDefinition.class);
+                List<BeanFactoryDefinition<RouteTemplateDefinition>> items =
+                        (List) asFlatList(node, BeanFactoryDefinition.class);
                 target.setTemplateBeans(items);
                 break;
             }

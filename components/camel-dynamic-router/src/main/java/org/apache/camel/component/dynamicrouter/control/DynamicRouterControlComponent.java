@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ENDPOINT_FACTORY_SUPPLIER;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlEndpoint.DynamicRouterControlEndpointFactory;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -23,10 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ENDPOINT_FACTORY_SUPPLIER;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlEndpoint.DynamicRouterControlEndpointFactory;
 
 /**
  * The component for the Dynamic router control operations that allow routing participants to subscribe or unsubscribe
@@ -64,8 +65,8 @@ public class DynamicRouterControlComponent extends DefaultComponent {
      * @param context                        the {@link CamelContext}
      * @param controlEndpointFactorySupplier the {@link Supplier<DynamicRouterControlEndpointFactory>}
      */
-    public DynamicRouterControlComponent(CamelContext context,
-                                         Supplier<DynamicRouterControlEndpointFactory> controlEndpointFactorySupplier) {
+    public DynamicRouterControlComponent(
+            CamelContext context, Supplier<DynamicRouterControlEndpointFactory> controlEndpointFactorySupplier) {
         super(context);
         this.controlEndpointFactorySupplier = controlEndpointFactorySupplier;
     }
@@ -81,8 +82,8 @@ public class DynamicRouterControlComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DynamicRouterControlConfiguration configuration = new DynamicRouterControlConfiguration();
-        DynamicRouterControlEndpoint endpoint = controlEndpointFactorySupplier.get()
-                .getInstance(uri, this, remaining, configuration);
+        DynamicRouterControlEndpoint endpoint =
+                controlEndpointFactorySupplier.get().getInstance(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitConsumerCommitTest extends GitTestSupport {
 
@@ -79,5 +80,4 @@ public class GitConsumerCommitTest extends GitTestSupport {
             }
         };
     }
-
 }

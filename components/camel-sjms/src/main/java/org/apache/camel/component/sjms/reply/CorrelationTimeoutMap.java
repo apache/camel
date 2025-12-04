@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
+
+import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.support.DefaultTimeoutMap;
-
-import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 /**
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which has been timed out, and thus should
@@ -33,7 +34,8 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
     private final BiConsumer<ReplyHandler, String> evictionTask;
 
-    CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
+    CorrelationTimeoutMap(
+            ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
         super(executor, requestMapPollTimeMillis);
         // Support synchronous or asynchronous handling of evictions
         evictionTask = executorService == null
@@ -66,5 +68,4 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
     public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
         return super.putIfAbsent(key, value, encode(timeoutMillis));
     }
-
 }

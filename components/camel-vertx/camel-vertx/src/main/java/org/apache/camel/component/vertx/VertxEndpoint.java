@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx;
 
 import io.vertx.core.Vertx;
@@ -34,13 +35,19 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages to/from Vert.x Event Bus.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "vertx", title = "Vert.x", syntax = "vertx:address",
-             category = { Category.MESSAGING })
-public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport, EndpointServiceLocation {
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "vertx",
+        title = "Vert.x",
+        syntax = "vertx:address",
+        category = {Category.MESSAGING})
+public class VertxEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, MultipleConsumersSupport, EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private String address;
+
     @UriParam
     private Boolean pubSub;
 
@@ -121,5 +128,4 @@ public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mul
     public void setPubSub(Boolean pubSub) {
         this.pubSub = pubSub;
     }
-
 }

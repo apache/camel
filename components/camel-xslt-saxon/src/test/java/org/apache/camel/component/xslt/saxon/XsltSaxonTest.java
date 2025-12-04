@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltSaxonTest extends CamelTestSupport {
 
@@ -56,7 +57,8 @@ public class XsltSaxonTest extends CamelTestSupport {
 
     @Test
     public void testSendBytesMessageSourceHeader() throws Exception {
-        sendMessageAndHaveItTransformedFromHeader("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
+        sendMessageAndHaveItTransformedFromHeader(
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
     }
 
     @Test
@@ -73,7 +75,8 @@ public class XsltSaxonTest extends CamelTestSupport {
 
     @Test
     public void testSendBytesMessageSourceVariable() throws Exception {
-        sendMessageAndHaveItTransformedFromVariable("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
+        sendMessageAndHaveItTransformedFromVariable(
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
     }
 
     @Test
@@ -90,7 +93,8 @@ public class XsltSaxonTest extends CamelTestSupport {
 
     @Test
     public void testSendBytesMessageSourceProperty() throws Exception {
-        sendMessageAndHaveItTransformedFromProperty("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
+        sendMessageAndHaveItTransformedFromProperty(
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
     }
 
     @Test
@@ -189,9 +193,7 @@ public class XsltSaxonTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("xslt-saxon:xslt/transform.xsl")
-                        .to("mock:result");
+                from("direct:start").to("xslt-saxon:xslt/transform.xsl").to("mock:result");
 
                 from("direct:sourceHeader")
                         .to("xslt-saxon:xslt/transform.xsl?source=header:xmlSource")
@@ -204,9 +206,7 @@ public class XsltSaxonTest extends CamelTestSupport {
                 from("direct:sourceProperty")
                         .to("xslt-saxon:classpath:xslt/transform.xsl?source=property:xmlSource")
                         .to("mock:sourceProperty");
-
             }
         };
     }
-
 }

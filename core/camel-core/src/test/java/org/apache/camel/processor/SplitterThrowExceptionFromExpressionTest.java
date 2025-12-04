@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.List;
@@ -46,8 +47,11 @@ public class SplitterThrowExceptionFromExpressionTest extends ContextTestSupport
             public void configure() {
                 onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start").split().method(SplitterThrowExceptionFromExpressionTest.class, "splitMe")
-                        .to("mock://result").end();
+                from("direct://start")
+                        .split()
+                        .method(SplitterThrowExceptionFromExpressionTest.class, "splitMe")
+                        .to("mock://result")
+                        .end();
             }
         };
     }
@@ -55,5 +59,4 @@ public class SplitterThrowExceptionFromExpressionTest extends ContextTestSupport
     public List<String> splitMe(Exchange exchange) throws ExpressionEvaluationException {
         throw new ExpressionEvaluationException(null, exchange, null);
     }
-
 }

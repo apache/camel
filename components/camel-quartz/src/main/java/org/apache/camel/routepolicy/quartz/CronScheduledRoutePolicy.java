@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 import java.util.TimeZone;
@@ -29,21 +30,27 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 
-@Metadata(label = "bean",
-          description = "A cron based RoutePolicy that can be used to start/stop routes at specific times.",
-          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
+@Metadata(
+        label = "bean",
+        description = "A cron based RoutePolicy that can be used to start/stop routes at specific times.",
+        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicy"})
 @Configurer(metadataOnly = true)
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
     @Metadata(description = "Cron expression for when the route should be started")
     private String routeStartTime;
+
     @Metadata(description = "Cron expression for when the route should be stopped")
     private String routeStopTime;
+
     @Metadata(label = "advanced", description = "Cron expression for when the route should be suspended")
     private String routeSuspendTime;
+
     @Metadata(label = "advanced", description = "Cron expression for when the route should be resumed")
     private String routeResumeTime;
+
     @Metadata(description = "To use a specific timezone (ID such as CET)")
     private String timeZoneString;
+
     private TimeZone timeZone;
 
     @Override
@@ -72,11 +79,12 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
             }
 
             // validate time options has been configured
-            if (getRouteStartTime() == null && getRouteStopTime() == null && getRouteSuspendTime() == null
+            if (getRouteStartTime() == null
+                    && getRouteStopTime() == null
+                    && getRouteSuspendTime() == null
                     && getRouteResumeTime() == null) {
-                throw new IllegalArgumentException(
-                        "Scheduled Route Policy for route " + route.getId()
-                                                   + " has no start/stop/suspend/resume times specified");
+                throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId()
+                        + " has no start/stop/suspend/resume times specified");
             }
 
             registerRouteToScheduledRouteDetails(route);
@@ -171,5 +179,4 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
         this.timeZoneString = timeZone;
         this.timeZone = TimeZone.getTimeZone(timeZone);
     }
-
 }

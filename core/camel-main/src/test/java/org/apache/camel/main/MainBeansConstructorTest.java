@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.main;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.CamelContext;
+import org.junit.jupiter.api.Test;
 
 public class MainBeansConstructorTest {
 
@@ -45,5 +46,4 @@ public class MainBeansConstructorTest {
 
         main.stop();
     }
-
 }

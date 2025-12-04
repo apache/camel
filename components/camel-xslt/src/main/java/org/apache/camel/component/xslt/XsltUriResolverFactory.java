@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import javax.xml.transform.URIResolver;
@@ -44,5 +45,4 @@ public interface XsltUriResolverFactory {
      * @return              URI resolver
      */
     URIResolver createUriResolver(CamelContext camelContext, String resourceUri);
-
 }

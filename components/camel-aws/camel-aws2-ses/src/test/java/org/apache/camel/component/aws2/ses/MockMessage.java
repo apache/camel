@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
 
 import java.io.InputStream;
@@ -56,8 +57,7 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setDisposition(String disposition) {
-    }
+    public void setDisposition(String disposition) {}
 
     @Override
     public String getDescription() {
@@ -65,8 +65,7 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setDescription(String description) {
-    }
+    public void setDescription(String description) {}
 
     @Override
     public String getFileName() {
@@ -74,8 +73,7 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setFileName(String filename) {
-    }
+    public void setFileName(String filename) {}
 
     @Override
     public InputStream getInputStream() {
@@ -93,24 +91,19 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setDataHandler(DataHandler dh) {
-    }
+    public void setDataHandler(DataHandler dh) {}
 
     @Override
-    public void setContent(Object obj, String type) {
-    }
+    public void setContent(Object obj, String type) {}
 
     @Override
-    public void setText(String text) {
-    }
+    public void setText(String text) {}
 
     @Override
-    public void setContent(Multipart mp) {
-    }
+    public void setContent(Multipart mp) {}
 
     @Override
-    public void writeTo(OutputStream os) {
-    }
+    public void writeTo(OutputStream os) {}
 
     @Override
     public String[] getHeader(String headername) {
@@ -118,16 +111,13 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setHeader(String headername, String headervalue) {
-    }
+    public void setHeader(String headername, String headervalue) {}
 
     @Override
-    public void addHeader(String headername, String headervalue) {
-    }
+    public void addHeader(String headername, String headervalue) {}
 
     @Override
-    public void removeHeader(String headername) {
-    }
+    public void removeHeader(String headername) {}
 
     @Override
     public Enumeration<Header> getAllHeaders() {
@@ -150,16 +140,13 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setFrom() {
-    }
+    public void setFrom() {}
 
     @Override
-    public void setFrom(Address address) {
-    }
+    public void setFrom(Address address) {}
 
     @Override
-    public void addFrom(Address[] addresses) {
-    }
+    public void addFrom(Address[] addresses) {}
 
     @Override
     public Address[] getRecipients(RecipientType type) {
@@ -167,12 +154,10 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setRecipients(RecipientType type, Address[] addresses) {
-    }
+    public void setRecipients(RecipientType type, Address[] addresses) {}
 
     @Override
-    public void addRecipients(RecipientType type, Address[] addresses) {
-    }
+    public void addRecipients(RecipientType type, Address[] addresses) {}
 
     @Override
     public String getSubject() {
@@ -180,8 +165,7 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setSubject(String subject) {
-    }
+    public void setSubject(String subject) {}
 
     @Override
     public Date getSentDate() {
@@ -189,8 +173,7 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setSentDate(Date date) {
-    }
+    public void setSentDate(Date date) {}
 
     @Override
     public Date getReceivedDate() {
@@ -203,8 +186,7 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void setFlags(Flags flag, boolean set) {
-    }
+    public void setFlags(Flags flag, boolean set) {}
 
     @Override
     public Message reply(boolean replyToAll) {
@@ -212,6 +194,5 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public void saveChanges() {
-    }
+    public void saveChanges() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,7 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
                         .transform(constant("b"))
                         .to("mock:b")
                         .onCompletion()
-                            .to("mock:end")
+                        .to("mock:end")
                         .end();
             }
         });
@@ -72,14 +73,14 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
                         .transform(constant("c"))
                         .to("mock:c")
                         .onCompletion()
-                            .to("mock:end")
+                        .to("mock:end")
                         .end();
 
                 from("direct:sub")
                         .transform(constant("b"))
                         .to("mock:b")
                         .onCompletion()
-                            .to("mock:end")
+                        .to("mock:end")
                         .end();
             }
         });
@@ -114,7 +115,7 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
                         .transform(constant("b"))
                         .to("mock:b")
                         .onCompletion()
-                            .to("mock:end")
+                        .to("mock:end")
                         .end();
             }
         });
@@ -129,5 +130,4 @@ public class OnCompletionAfterConsumerModeIssueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.time.Duration;
@@ -70,9 +71,13 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
 
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
-    public ConcurrentRequestsThrottler(final CamelContext camelContext, final Expression maxRequestsExpression,
-                                       final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
-                                       final boolean rejectExecution, Expression correlation) {
+    public ConcurrentRequestsThrottler(
+            final CamelContext camelContext,
+            final Expression maxRequestsExpression,
+            final ScheduledExecutorService asyncExecutor,
+            final boolean shutdownAsyncExecutor,
+            final boolean rejectExecution,
+            Expression correlation) {
         super(asyncExecutor, shutdownAsyncExecutor, camelContext, rejectExecution, correlation, maxRequestsExpression);
     }
 
@@ -101,7 +106,8 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         }
     }
 
-    private boolean doProcess(Exchange exchange, AsyncCallback callback, State state, long queuedStart, boolean doneSync)
+    private boolean doProcess(
+            Exchange exchange, AsyncCallback callback, State state, long queuedStart, boolean doneSync)
             throws Exception {
         String key = DEFAULT_KEY;
         if (correlationExpression != null) {
@@ -131,9 +137,12 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             // permit acquired
             if (state == State.ASYNC) {
                 if (LOG.isTraceEnabled()) {
-                    long queuedTime = Duration.ofNanos(System.nanoTime() - queuedStart).toMillis();
-                    LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
-                            queuedTime, exchange.getExchangeId());
+                    long queuedTime =
+                            Duration.ofNanos(System.nanoTime() - queuedStart).toMillis();
+                    LOG.trace(
+                            "Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
+                            queuedTime,
+                            exchange.getExchangeId());
                 }
             } else {
                 if (LOG.isTraceEnabled()) {
@@ -162,7 +171,10 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             if (LOG.isTraceEnabled()) {
                 long queuedTime = start - queuedStart;
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed,
+                    LOG.trace(
+                            "Queued for {}ms, Throttled for {}ms, exchangeId: {}",
+                            queuedTime,
+                            elapsed,
                             exchange.getExchangeId());
                 }
             }
@@ -190,7 +202,8 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         } catch (final RejectedExecutionException e) {
             if (isCallerRunsWhenRejected()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
+                    LOG.debug(
+                            "AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
                             exchange.getExchangeId());
                 }
                 exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC_REJECTED);
@@ -297,7 +310,8 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
 
                 if (newThrottle == null && throttleRate == 0) {
                     throw new RuntimeExchangeException(
-                            "The maxConcurrentRequestsExpression was evaluated as null: " + getMaximumRequestsExpression(),
+                            "The maxConcurrentRequestsExpression was evaluated as null: "
+                                    + getMaximumRequestsExpression(),
                             exchange);
                 }
 
@@ -310,8 +324,11 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
                             // discard any permits that are needed to decrease throttling
                             semaphore.reducePermits(delta);
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate,
-                                        newThrottle, exchange.getExchangeId());
+                                LOG.debug(
+                                        "Throttle rate decreased from {} to {}, triggered by ExchangeId: {}",
+                                        throttleRate,
+                                        newThrottle,
+                                        exchange.getExchangeId());
                             }
 
                             // increase
@@ -320,13 +337,18 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
                             semaphore.increasePermits(delta);
                             if (throttleRate == 0) {
                                 if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle,
+                                    LOG.debug(
+                                            "Initial throttle rate set to {}, triggered by ExchangeId: {}",
+                                            newThrottle,
                                             exchange.getExchangeId());
                                 }
                             } else {
                                 if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate,
-                                            newThrottle, exchange.getExchangeId());
+                                    LOG.debug(
+                                            "Throttle rate increase from {} to {}, triggered by ExchangeId: {}",
+                                            throttleRate,
+                                            newThrottle,
+                                            exchange.getExchangeId());
                                 }
                             }
                         }
@@ -377,7 +399,10 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
      */
     @Override
     public int getCurrentMaximumRequests() {
-        return states.values().stream().mapToInt(ThrottlingState::getThrottleRate).max().orElse(0);
+        return states.values().stream()
+                .mapToInt(ThrottlingState::getThrottleRate)
+                .max()
+                .orElse(0);
     }
 
     @Override

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -35,20 +41,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -70,16 +70,17 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody(
-                "direct:agent-with-input-guardrails",
-                "What is Apache Camel?",
-                String.class);
+        String response =
+                template.requestBody("direct:agent-with-input-guardrails", "What is Apache Camel?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(TestSuccessInputGuardrail.wasValidated(),
+        assertTrue(
+                TestSuccessInputGuardrail.wasValidated(),
                 "Input guardrail should have been called to validate the user message");
-        assertTrue(response.toLowerCase().contains("camel") || response.toLowerCase().contains("integration"),
+        assertTrue(
+                response.toLowerCase().contains("camel")
+                        || response.toLowerCase().contains("integration"),
                 "Response should contain information about Apache Camel");
     }
 
@@ -90,19 +91,17 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         String response = template.requestBody(
-                "direct:agent-with-multiple-input-guardrails",
-                "What is integration?",
-                String.class);
+                "direct:agent-with-multiple-input-guardrails", "What is integration?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(TestSuccessInputGuardrail.wasValidated(),
-                "First input guardrail should have been called");
-        assertTrue(TestFailingInputGuardrail.wasValidated(),
-                "Second input guardrail should have been called");
-        assertEquals(1, TestFailingInputGuardrail.getCallCount(),
-                "Second guardrail should have been called exactly once");
-        assertTrue(response.toLowerCase().contains("integration") || response.toLowerCase().contains("connect"),
+        assertTrue(TestSuccessInputGuardrail.wasValidated(), "First input guardrail should have been called");
+        assertTrue(TestFailingInputGuardrail.wasValidated(), "Second input guardrail should have been called");
+        assertEquals(
+                1, TestFailingInputGuardrail.getCallCount(), "Second guardrail should have been called exactly once");
+        assertTrue(
+                response.toLowerCase().contains("integration")
+                        || response.toLowerCase().contains("connect"),
                 "Response should contain information about integration");
     }
 
@@ -113,7 +112,8 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         // Request a specific JSON format for person information
-        String jsonRequest = """
+        String jsonRequest =
+                """
                 Please return information about a software engineer named John Doe in the following JSON format:
                 {
                   "name": "string",
@@ -123,16 +123,14 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
                 }
                 """;
 
-        String response = template.requestBody(
-                "direct:agent-with-json-output-guardrail",
-                jsonRequest,
-                String.class);
+        String response = template.requestBody("direct:agent-with-json-output-guardrail", jsonRequest, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
 
         // Verify the output guardrail was called
-        assertTrue(TestJsonOutputGuardrail.wasValidated(),
+        assertTrue(
+                TestJsonOutputGuardrail.wasValidated(),
                 "Output guardrail should have been called to validate the AI response");
 
         assertTrue(response.trim().startsWith("{"), "Response should start with JSON object");
@@ -151,17 +149,17 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
 
         // Expect an exception due to guardrail failure
         Exception exception = assertThrows(Exception.class, () -> {
-            template.requestBody(
-                    "direct:agent-with-json-output-guardrail",
-                    nonJsonRequest,
-                    Object.class);
+            template.requestBody("direct:agent-with-json-output-guardrail", nonJsonRequest, Object.class);
         });
 
-        assertTrue(exception.getMessage().contains("Output validation failed") ||
-                exception.getCause() != null && exception.getCause().getMessage().contains("Output validation failed"),
+        assertTrue(
+                exception.getMessage().contains("Output validation failed")
+                        || exception.getCause() != null
+                                && exception.getCause().getMessage().contains("Output validation failed"),
                 "Exception should be related to output guardrail validation failure");
 
-        assertTrue(TestJsonOutputGuardrail.wasValidated(),
+        assertTrue(
+                TestJsonOutputGuardrail.wasValidated(),
                 "Output guardrail should have been called to validate the AI response");
 
         mockEndpoint.assertIsSatisfied();
@@ -173,7 +171,8 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String jsonRequest = """
+        String jsonRequest =
+                """
                 Create a JSON profile for a data scientist named Alice Smith with 5 years of experience.
                 Use this exact format:
                 {
@@ -184,25 +183,26 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
                 }
                 """;
 
-        String response = template.requestBody(
-                "direct:agent-with-mixed-guardrails",
-                jsonRequest,
-                String.class);
+        String response = template.requestBody("direct:agent-with-mixed-guardrails", jsonRequest, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
 
-        assertTrue(TestSuccessInputGuardrail.wasValidated(),
+        assertTrue(
+                TestSuccessInputGuardrail.wasValidated(),
                 "Input guardrail should have been called to validate the user message");
-        assertTrue(TestJsonOutputGuardrail.wasValidated(),
+        assertTrue(
+                TestJsonOutputGuardrail.wasValidated(),
                 "Output guardrail should have been called to validate the AI response");
         assertTrue(response.trim().startsWith("{"), "Response should start with JSON object");
         assertTrue(response.trim().endsWith("}"), "Response should end with JSON object");
         assertTrue(response.contains("\"name\""), "Response should contain name field");
         assertTrue(response.contains("Alice Smith"), "Response should contain the requested name");
-        assertTrue(response.contains("\"title\"") || response.contains("\"department\""),
+        assertTrue(
+                response.contains("\"title\"") || response.contains("\"department\""),
                 "Response should contain professional information (title or department)");
-        assertTrue(response.contains("\"yearsExperience\"") || response.contains("experience"),
+        assertTrue(
+                response.contains("\"yearsExperience\"") || response.contains("experience"),
                 "Response should contain experience");
     }
 
@@ -211,7 +211,8 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
         // Create agent with input guardrails
         AgentConfiguration inputGuardrailsConfig = new AgentConfiguration()
                 .withChatModel(chatModel)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
                 .withOutputGuardrailClasses(List.of());
         Agent agentWithInputGuardrails = new AgentWithoutMemory(inputGuardrailsConfig);
 
@@ -227,14 +228,17 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
         AgentConfiguration outputGuardrailsConfig = new AgentConfiguration()
                 .withChatModel(chatModel)
                 .withInputGuardrailClasses(List.of())
-                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+                .withOutputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
         Agent agentWithOutputGuardrails = new AgentWithoutMemory(outputGuardrailsConfig);
 
         // Create agent with mixed guardrails
         AgentConfiguration mixedGuardrailsConfig = new AgentConfiguration()
                 .withChatModel(chatModel)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
-                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
         Agent agentWithMixedGuardrails = new AgentWithoutMemory(mixedGuardrailsConfig);
 
         // Register agents in the context

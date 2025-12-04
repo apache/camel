@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -31,10 +36,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -43,8 +44,10 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         // Wasn't clear if there's a way to put this test into camel-core just to test the model
         // perhaps without starting the Camel Context?
 
-        List<RestDefinition> restDefinitions
-                = context().getCamelContextExtension().getContextPlugin(Model.class).getRestDefinitions();
+        List<RestDefinition> restDefinitions = context()
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
+                .getRestDefinitions();
         assertNotNull(restDefinitions);
         assertTrue(!restDefinitions.isEmpty());
 
@@ -56,13 +59,17 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         verbs.forEach(verb -> mapVerb.put(verb.getId(), verb));
 
-        assertEquals(UserPojo[].class.getCanonicalName(), mapVerb.get("getUsers").getOutType());
-        assertEquals(UserPojo[].class.getCanonicalName(), mapVerb.get("getUsersList").getOutType());
+        assertEquals(
+                UserPojo[].class.getCanonicalName(), mapVerb.get("getUsers").getOutType());
+        assertEquals(
+                UserPojo[].class.getCanonicalName(), mapVerb.get("getUsersList").getOutType());
         assertEquals(UserPojo.class.getCanonicalName(), mapVerb.get("getUser").getOutType());
 
         assertEquals(UserPojo.class.getCanonicalName(), mapVerb.get("putUser").getType());
-        assertEquals(UserPojo[].class.getCanonicalName(), mapVerb.get("putUsers").getType());
-        assertEquals(UserPojo[].class.getCanonicalName(), mapVerb.get("putUsersList").getType());
+        assertEquals(
+                UserPojo[].class.getCanonicalName(), mapVerb.get("putUsers").getType());
+        assertEquals(
+                UserPojo[].class.getCanonicalName(), mapVerb.get("putUsersList").getType());
     }
 
     @Test
@@ -134,7 +141,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         user2.setId(2);
         user2.setName("Claus");
 
-        final UserPojo[] users = new UserPojo[] { user1, user2 };
+        final UserPojo[] users = new UserPojo[] {user1, user2};
 
         MockEndpoint mock = getMockEndpoint("mock:putUsers");
         mock.expectedMessageCount(1);
@@ -193,7 +200,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         user2.setId(2);
         user2.setName("Claus");
 
-        final UserPojo[] users = new UserPojo[] { user1, user2 };
+        final UserPojo[] users = new UserPojo[] {user1, user2};
 
         MockEndpoint mock = getMockEndpoint("mock:putUsersList");
         mock.expectedMessageCount(1);
@@ -251,57 +258,73 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                         .handled(true)
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
                         .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
-                        .setBody().simple("${exchange.message}");
+                        .setBody()
+                        .simple("${exchange.message}");
 
                 // configure to use undertow on localhost with the given port
-                restConfiguration().component("undertow").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort())
                         .bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services
-                rest()
-                        .get("/users").id("getUsers").outType(UserPojo[].class).to("direct:users")
-                        .get("/users/list").id("getUsersList").outType(UserPojo[].class).to("direct:list")
-                        .get("/users/{id}").id("getUser").outType(UserPojo.class).to("direct:id")
-                        .put("/users/{id}").id("putUser").type(UserPojo.class).to("mock:putUser")
-                        .put("/users").id("putUsers").type(UserPojo[].class).to("mock:putUsers")
-                        .put("/users/list").id("putUsersList").type(UserPojo[].class).to("mock:putUsersList");
+                rest().get("/users")
+                        .id("getUsers")
+                        .outType(UserPojo[].class)
+                        .to("direct:users")
+                        .get("/users/list")
+                        .id("getUsersList")
+                        .outType(UserPojo[].class)
+                        .to("direct:list")
+                        .get("/users/{id}")
+                        .id("getUser")
+                        .outType(UserPojo.class)
+                        .to("direct:id")
+                        .put("/users/{id}")
+                        .id("putUser")
+                        .type(UserPojo.class)
+                        .to("mock:putUser")
+                        .put("/users")
+                        .id("putUsers")
+                        .type(UserPojo[].class)
+                        .to("mock:putUsers")
+                        .put("/users/list")
+                        .id("putUsersList")
+                        .type(UserPojo[].class)
+                        .to("mock:putUsersList");
 
-                from("direct:users")
-                        .process(exchange -> {
-                            UserPojo user1 = new UserPojo();
-                            user1.setId(1);
-                            user1.setName("Scott");
+                from("direct:users").process(exchange -> {
+                    UserPojo user1 = new UserPojo();
+                    user1.setId(1);
+                    user1.setName("Scott");
 
-                            UserPojo user2 = new UserPojo();
-                            user2.setId(2);
-                            user2.setName("Claus");
+                    UserPojo user2 = new UserPojo();
+                    user2.setId(2);
+                    user2.setName("Claus");
 
-                            exchange.getMessage().setBody(new UserPojo[] { user1, user2 });
-                        });
+                    exchange.getMessage().setBody(new UserPojo[] {user1, user2});
+                });
 
-                from("direct:list")
-                        .process(exchange -> {
-                            UserPojo user1 = new UserPojo();
-                            user1.setId(1);
-                            user1.setName("Scott");
+                from("direct:list").process(exchange -> {
+                    UserPojo user1 = new UserPojo();
+                    user1.setId(1);
+                    user1.setName("Scott");
 
-                            UserPojo user2 = new UserPojo();
-                            user2.setId(2);
-                            user2.setName("Claus");
+                    UserPojo user2 = new UserPojo();
+                    user2.setId(2);
+                    user2.setName("Claus");
 
-                            exchange.getMessage().setBody(new UserPojo[] { user1, user2 });
-                        });
+                    exchange.getMessage().setBody(new UserPojo[] {user1, user2});
+                });
 
-                from("direct:id")
-                        .process(exchange -> {
-                            UserPojo user1 = new UserPojo();
-                            user1.setId(exchange.getIn().getHeader("id", int.class));
-                            user1.setName("Scott");
-                            exchange.getMessage().setBody(user1);
-                        });
-
+                from("direct:id").process(exchange -> {
+                    UserPojo user1 = new UserPojo();
+                    user1.setId(exchange.getIn().getHeader("id", int.class));
+                    user1.setName("Scott");
+                    exchange.getMessage().setBody(user1);
+                });
             }
         };
     }
-
 }

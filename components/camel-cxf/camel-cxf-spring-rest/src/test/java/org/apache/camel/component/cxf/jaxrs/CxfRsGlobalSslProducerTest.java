@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -31,10 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getSslPort();
 
@@ -44,13 +45,15 @@ public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringGlobalSslProducer.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/jaxrs/CxfRsSpringGlobalSslProducer.xml");
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        SSLContextParameters parameters = context.getRegistry().lookupByNameAndType("mySslContext", SSLContextParameters.class);
+        SSLContextParameters parameters =
+                context.getRegistry().lookupByNameAndType("mySslContext", SSLContextParameters.class);
         context.setSSLContextParameters(parameters);
         ((SSLContextParametersAware) context.getComponent("cxfrs")).setUseGlobalSslContextParameters(true);
         return context;
@@ -79,7 +82,8 @@ public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://noTrust", new CxfRsGlobalSslProducerTest.MyProcessor());
         assertTrue(exchange.isFailed());
         Exception e = exchange.getException();
-        assertEquals("javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
+        assertEquals(
+                "javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
     }
 
     @Test
@@ -87,7 +91,8 @@ public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://wrongTrust", new CxfRsGlobalSslProducerTest.MyProcessor());
         assertTrue(exchange.isFailed());
         Exception e = exchange.getException();
-        assertEquals("javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
+        assertEquals(
+                "javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
     }
 
     private class MyProcessor implements Processor {

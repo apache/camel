@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -53,10 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode. That is, testing
@@ -90,20 +91,21 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<>();
-                elements.add(new DOMSource(
-                        StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<>(
-                        new ArrayList<SoapHeader>(),
-                        elements, null);
+                elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE))
+                        .getDocumentElement()));
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(), elements, null);
                 exchange.getIn().setBody(body);
-                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
-                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                MtomTestHelper.REQ_PHOTO_CID,
+                                new DataHandler(new ByteArrayDataSource(
+                                        MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
-                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
-
+                exchange.getIn(AttachmentMessage.class)
+                        .addAttachment(
+                                MtomTestHelper.REQ_IMAGE_CID,
+                                new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
             }
-
         });
 
         // process response - verify response attachments
@@ -121,7 +123,6 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         BufferedImage image = ImageIO.read(dr.getInputStream());
         assertEquals(560, image.getWidth());
         assertEquals(300, image.getHeight());
-
     }
 
     public static class MyHelloImpl extends HelloImpl implements Hello {
@@ -133,8 +134,8 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         public void detail(Holder<byte[]> photo, Holder<Image> image) {
 
             // verify request attachments
-            Map<String, DataHandler> map
-                    = CastUtils.cast((Map<?, ?>) ctx.getMessageContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS));
+            Map<String, DataHandler> map =
+                    CastUtils.cast((Map<?, ?>) ctx.getMessageContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS));
             assertEquals(2, map.size());
 
             DataHandler dh = map.get(MtomTestHelper.REQ_PHOTO_CID);
@@ -165,7 +166,8 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             map = CastUtils.cast((Map<?, ?>) ctx.getMessageContext().get(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS));
 
             try {
-                DataSource ds = new AttachmentDataSource("image/jpeg", getClass().getResourceAsStream("/Splash.jpg"));
+                DataSource ds =
+                        new AttachmentDataSource("image/jpeg", getClass().getResourceAsStream("/Splash.jpg"));
                 map.put(MtomTestHelper.RESP_IMAGE_CID, new DataHandler(ds));
 
             } catch (Exception e) {
@@ -174,14 +176,12 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
 
             try {
                 DataSource ds = new AttachmentDataSource(
-                        "application/octet-stream",
-                        new ByteArrayInputStream(MtomTestHelper.RESP_PHOTO_DATA));
+                        "application/octet-stream", new ByteArrayInputStream(MtomTestHelper.RESP_PHOTO_DATA));
                 map.put(MtomTestHelper.RESP_PHOTO_CID, new DataHandler(ds));
 
             } catch (Exception e) {
                 LOG.warn("I/O error: {}", e.getMessage(), e);
             }
-
         }
     }
 }

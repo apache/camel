@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
 
 import org.apache.camel.spi.Metadata;
@@ -21,22 +22,29 @@ import org.apache.camel.spi.Metadata;
 public final class MetricsConstants {
 
     public static final String HEADER_PREFIX = "CamelMetrics";
-    @Metadata(description = "Override timer action in URI", javaType = "org.apache.camel.component.metrics.MetricsTimerAction")
+
+    @Metadata(
+            description = "Override timer action in URI",
+            javaType = "org.apache.camel.component.metrics.MetricsTimerAction")
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
+
     @Metadata(description = "Override mark value in URI", javaType = "long")
     public static final String HEADER_METER_MARK = HEADER_PREFIX + "MeterMark";
+
     @Metadata(description = "Override histogram value in URI", javaType = "long")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
+
     @Metadata(description = "Override decrement value in URI", javaType = "long")
     public static final String HEADER_COUNTER_DECREMENT = HEADER_PREFIX + "CounterDecrement";
+
     @Metadata(description = "Override increment value in URI", javaType = "long")
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
+
     @Metadata(description = "Override subject value in URI", javaType = "Object")
     public static final String HEADER_GAUGE_SUBJECT = HEADER_PREFIX + "GaugeSubject";
+
     @Metadata(description = "Override name value in URI", javaType = "String")
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
 
-    private MetricsConstants() {
-    }
-
+    private MetricsConstants() {}
 }

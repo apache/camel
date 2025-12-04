@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
@@ -23,15 +28,11 @@ import org.openstack4j.model.network.Ipv6AddressMode;
 import org.openstack4j.model.network.Ipv6RaMode;
 import org.openstack4j.model.network.Subnet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenstackNeutronSubnetTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-neutron://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + NeutronConstants.NEUTRON_SUBNETS_SYSTEM;
+    private static final String URI_FORMAT =
+            "openstack-neutron://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + NeutronConstants.NEUTRON_SUBNETS_SYSTEM;
 
     private static final String SUBNET_NAME = "sub1";
     private static final String SUBNET_ID = "3b80198d-4f7b-4f77-9ef5-774d54e17126";

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +33,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
 
@@ -60,8 +61,7 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
             template.sendBody("seda:dude", "Hello World");
         }
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(30, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(30, TimeUnit.SECONDS), is(equalTo(true)));
 
         List<TestTrace> testData = Arrays.asList(
                 TestDataBuilder.createTrace()

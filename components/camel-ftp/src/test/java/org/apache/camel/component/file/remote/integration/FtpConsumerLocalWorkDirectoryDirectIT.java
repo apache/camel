@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 
@@ -27,18 +32,14 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FtpConsumerLocalWorkDirectoryDirectIT extends FtpServerTestSupport {
     @TempDir
     Path testDirectory;
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/lwd/?password=admin&delay=5000"
-               + "&localWorkDirectory=" + testDirectory.resolve("lwd")
-               + "&noop=true";
+                + "&localWorkDirectory=" + testDirectory.resolve("lwd")
+                + "&noop=true";
     }
 
     @Override
@@ -80,5 +81,4 @@ public class FtpConsumerLocalWorkDirectoryDirectIT extends FtpServerTestSupport 
             }
         };
     }
-
 }

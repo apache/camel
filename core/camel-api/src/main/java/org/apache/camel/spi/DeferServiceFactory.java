@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
@@ -43,5 +44,4 @@ public interface DeferServiceFactory {
      * @throws Exception can be thrown if there is an error starting the producer
      */
     Producer createProducer(Endpoint endpoint) throws Exception;
-
 }

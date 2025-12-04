@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.generics;
 
 import java.nio.file.Path;
@@ -26,8 +27,7 @@ import org.jboss.jandex.Index;
 
 public final class PackagePluginUtils {
 
-    private PackagePluginUtils() {
-    }
+    private PackagePluginUtils() {}
 
     public static Index readJandexIndex(MavenProject project) throws MojoExecutionException {
         Path output = Paths.get(project.getBuild().getOutputDirectory());
@@ -73,5 +73,4 @@ public final class PackagePluginUtils {
         sb.append(source);
         return sb.toString();
     }
-
 }

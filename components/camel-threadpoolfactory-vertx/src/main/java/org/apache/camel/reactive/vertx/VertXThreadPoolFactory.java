@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reactive.vertx;
 
 import java.util.Collection;
@@ -135,9 +136,10 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
             final CompletableFuture<?> answer = new CompletableFuture<>();
             // used by vertx
             vertx.executeBlocking(() -> {
-                task.run();
-                return null;
-            }).onComplete(res -> answer.complete(null));
+                        task.run();
+                        return null;
+                    })
+                    .onComplete(res -> answer.complete(null));
             return answer;
         }
 
@@ -153,7 +155,8 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
         }
 
         @Override
-        public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+        public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
+                throws InterruptedException, ExecutionException {
             return null;
         }
 
@@ -170,5 +173,4 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
             vertx.executeBlocking(Executors.callable(command));
         }
     }
-
 }

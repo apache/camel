@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.concurrent.CompletableFuture;
@@ -43,5 +44,4 @@ public interface AsyncProcessor extends Processor {
     boolean process(Exchange exchange, AsyncCallback callback);
 
     CompletableFuture<Exchange> processAsync(Exchange exchange);
-
 }

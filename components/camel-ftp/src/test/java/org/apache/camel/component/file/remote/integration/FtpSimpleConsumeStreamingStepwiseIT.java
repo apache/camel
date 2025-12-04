@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,8 +32,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 // README (informative only, to be removed in final version):
 // The filesize at which this test fails is arbitrary, I suppose it depends on the FTP we are using and Java
 // caching policy (my assumptions, not proved yet). To trigger the error the file must not be cached, this way the
@@ -42,8 +43,8 @@ public class FtpSimpleConsumeStreamingStepwiseIT extends FtpServerTestSupport {
     Path testDirectory;
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/tmp4/camel?password=admin&binary=true&delay=5000" +
-               "&stepwise=false&streamDownload=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tmp4/camel?password=admin&binary=true&delay=5000"
+                + "&stepwise=false&streamDownload=true";
     }
 
     @Override
@@ -77,7 +78,8 @@ public class FtpSimpleConsumeStreamingStepwiseIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
+                from(getFtpUrl())
+                        .setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
                         .to(TestSupport.fileUri(testDirectory), "mock:result");
             }
         };

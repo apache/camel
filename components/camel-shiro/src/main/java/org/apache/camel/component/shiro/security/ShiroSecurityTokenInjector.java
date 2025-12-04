@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.shiro.security;
 
 import org.apache.camel.Exchange;
@@ -39,7 +40,8 @@ public class ShiroSecurityTokenInjector implements Processor {
         this.setPassPhrase(passPhrase);
     }
 
-    public ShiroSecurityTokenInjector(ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) {
+    public ShiroSecurityTokenInjector(
+            ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) {
         this(securityToken, passPhrase);
         this.cipherService = cipherService;
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelExchangeException;
@@ -23,9 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
 
@@ -46,7 +47,9 @@ public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyNullAggregationStrategy()).completionSize(3)
+                from("direct:start")
+                        .aggregate(header("id"), new MyNullAggregationStrategy())
+                        .completionSize(3)
                         .to("mock:result");
             }
         };
@@ -59,5 +62,4 @@ public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
             return null;
         }
     }
-
 }

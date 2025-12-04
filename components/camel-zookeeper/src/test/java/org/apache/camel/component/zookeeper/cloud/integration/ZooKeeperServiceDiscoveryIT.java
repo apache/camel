@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +41,6 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class ZooKeeperServiceDiscoveryIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
@@ -55,24 +56,20 @@ class ZooKeeperServiceDiscoveryIT {
             configuration.setBasePath("/camel");
             configuration.setCuratorFramework(curatorFramework);
 
-            try (ServiceDiscovery<MetaData> zkDiscovery
-                    = ZooKeeperCuratorHelper.createServiceDiscovery(
-                            configuration,
-                            curatorFramework,
-                            MetaData.class)) {
+            try (ServiceDiscovery<MetaData> zkDiscovery =
+                    ZooKeeperCuratorHelper.createServiceDiscovery(configuration, curatorFramework, MetaData.class)) {
 
                 curatorFramework.start();
                 zkDiscovery.start();
 
                 List<ServiceInstance<MetaData>> instances = new ArrayList<>();
                 for (int i = 0; i < 3; i++) {
-                    ServiceInstance<MetaData> instance
-                            = ServiceInstance.<MetaData> builder()
-                                    .address("127.0.0.1")
-                                    .port(AvailablePortFinder.getNextRandomAvailable())
-                                    .name("my-service")
-                                    .id("service-" + i)
-                                    .build();
+                    ServiceInstance<MetaData> instance = ServiceInstance.<MetaData>builder()
+                            .address("127.0.0.1")
+                            .port(AvailablePortFinder.getNextRandomAvailable())
+                            .name("my-service")
+                            .id("service-" + i)
+                            .build();
 
                     zkDiscovery.registerService(instance);
                     instances.add(instance);
@@ -81,8 +78,9 @@ class ZooKeeperServiceDiscoveryIT {
                 try (ZooKeeperServiceDiscovery discovery = new ZooKeeperServiceDiscovery(configuration)) {
                     discovery.start();
 
-                    await().atMost(1, TimeUnit.MINUTES).untilAsserted(
-                            () -> assertEquals(3, discovery.getServices("my-service").size()));
+                    await().atMost(1, TimeUnit.MINUTES)
+                            .untilAsserted(() -> assertEquals(
+                                    3, discovery.getServices("my-service").size()));
                     List<ServiceDefinition> services = discovery.getServices("my-service");
                     assertNotNull(services);
                     assertEquals(3, services.size());
@@ -91,12 +89,12 @@ class ZooKeeperServiceDiscoveryIT {
                         assertEquals(
                                 1,
                                 instances.stream()
-                                        .filter(
-                                                i -> i.getPort() == service.getPort()
-                                                        && i.getAddress().equals(service.getHost())
-                                                        && i.getId().equals(
-                                                                service.getMetadata().get(ServiceDefinition.SERVICE_META_ID))
-                                                        && i.getName().equals(service.getName()))
+                                        .filter(i -> i.getPort() == service.getPort()
+                                                && i.getAddress().equals(service.getHost())
+                                                && i.getId()
+                                                        .equals(service.getMetadata()
+                                                                .get(ServiceDefinition.SERVICE_META_ID))
+                                                && i.getName().equals(service.getName()))
                                         .count());
                     }
                 }

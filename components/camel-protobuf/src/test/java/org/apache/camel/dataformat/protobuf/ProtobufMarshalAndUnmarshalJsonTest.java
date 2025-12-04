@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProtobufMarshalAndUnmarshalJsonTest extends CamelTestSupport {
 
@@ -61,13 +62,14 @@ public class ProtobufMarshalAndUnmarshalJsonTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                ProtobufDataFormat format
-                        = new ProtobufDataFormat(Person.getDefaultInstance(), ProtobufDataFormat.CONTENT_TYPE_FORMAT_JSON);
+                ProtobufDataFormat format = new ProtobufDataFormat(
+                        Person.getDefaultInstance(), ProtobufDataFormat.CONTENT_TYPE_FORMAT_JSON);
 
                 from("direct:in").unmarshal(format).to("mock:reverse");
                 from("direct:back").marshal(format);
 
-                from("direct:marshal").unmarshal()
+                from("direct:marshal")
+                        .unmarshal()
                         .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person", "json")
                         .to("mock:reverse");
                 from("direct:unmarshalA").marshal().protobuf();

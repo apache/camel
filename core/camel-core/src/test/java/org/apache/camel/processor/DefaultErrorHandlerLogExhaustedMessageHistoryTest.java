@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultErrorHandlerLogExhaustedMessageHistoryTest extends ContextTestSupport {
 
@@ -40,7 +41,10 @@ public class DefaultErrorHandlerLogExhaustedMessageHistoryTest extends ContextTe
             @Override
             public void configure() {
                 // no delay to speedup test
-                errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(3).logExhaustedMessageHistory(true));
+                errorHandler(defaultErrorHandler()
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
+                        .logExhaustedMessageHistory(true));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }

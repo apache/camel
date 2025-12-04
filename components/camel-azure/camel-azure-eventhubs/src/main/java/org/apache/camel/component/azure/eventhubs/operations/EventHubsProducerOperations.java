@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs.operations;
 
 import java.util.Collections;
@@ -42,8 +43,8 @@ public class EventHubsProducerOperations {
     private final EventHubProducerAsyncClient producerAsyncClient;
     private final EventHubsConfigurationOptionsProxy configurationOptionsProxy;
 
-    public EventHubsProducerOperations(final EventHubProducerAsyncClient producerAsyncClient,
-                                       final EventHubsConfiguration configuration) {
+    public EventHubsProducerOperations(
+            final EventHubProducerAsyncClient producerAsyncClient, final EventHubsConfiguration configuration) {
         ObjectHelper.notNull(producerAsyncClient, "client cannot be null");
 
         this.producerAsyncClient = producerAsyncClient;
@@ -54,7 +55,8 @@ public class EventHubsProducerOperations {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
-        final SendOptions sendOptions = createSendOptions(configurationOptionsProxy.getPartitionKey(exchange),
+        final SendOptions sendOptions = createSendOptions(
+                configurationOptionsProxy.getPartitionKey(exchange),
                 configurationOptionsProxy.getPartitionId(exchange));
         final Iterable<EventData> eventData = createEventData(exchange);
 
@@ -62,24 +64,30 @@ public class EventHubsProducerOperations {
     }
 
     private boolean sendAsyncEvents(
-            final Iterable<EventData> eventData, final SendOptions sendOptions, final Exchange exchange,
+            final Iterable<EventData> eventData,
+            final SendOptions sendOptions,
+            final Exchange exchange,
             final AsyncCallback asyncCallback) {
         sendAsyncEventsWithSuitableMethod(eventData, sendOptions)
-                .subscribe(unused -> LOG.debug("Processed one event..."), error -> {
-                    // error but we continue
-                    LOG.debug("Error processing async exchange with error: {}", error.getMessage());
-                    exchange.setException(error);
-                    asyncCallback.done(false);
-                }, () -> {
-                    // we are done from everything, so mark it as sync done
-                    LOG.debug("All events with exchange have been sent successfully.");
-                    asyncCallback.done(false);
-                });
+                .subscribe(
+                        unused -> LOG.debug("Processed one event..."),
+                        error -> {
+                            // error but we continue
+                            LOG.debug("Error processing async exchange with error: {}", error.getMessage());
+                            exchange.setException(error);
+                            asyncCallback.done(false);
+                        },
+                        () -> {
+                            // we are done from everything, so mark it as sync done
+                            LOG.debug("All events with exchange have been sent successfully.");
+                            asyncCallback.done(false);
+                        });
 
         return false;
     }
 
-    private Mono<Void> sendAsyncEventsWithSuitableMethod(final Iterable<EventData> eventData, final SendOptions sendOptions) {
+    private Mono<Void> sendAsyncEventsWithSuitableMethod(
+            final Iterable<EventData> eventData, final SendOptions sendOptions) {
         if (ObjectHelper.isEmpty(sendOptions)) {
             return producerAsyncClient.send(eventData);
         }
@@ -90,24 +98,25 @@ public class EventHubsProducerOperations {
     private SendOptions createSendOptions(final String partitionKey, final String partitionId) {
         // if both are set, we don't want that
         if (ObjectHelper.isNotEmpty(partitionKey) && ObjectHelper.isNotEmpty(partitionId)) {
-            throw new IllegalArgumentException("Both partitionKey and partitionId are set. Only one or the other can be set.");
+            throw new IllegalArgumentException(
+                    "Both partitionKey and partitionId are set. Only one or the other can be set.");
         }
         // if both are not set, we return null and let EventHubs handle the partition assigning
         if (ObjectHelper.isEmpty(partitionKey) && ObjectHelper.isEmpty(partitionId)) {
             return null;
         }
 
-        return new SendOptions()
-                .setPartitionId(partitionId)
-                .setPartitionKey(partitionKey);
+        return new SendOptions().setPartitionId(partitionId).setPartitionKey(partitionKey);
     }
 
     @SuppressWarnings("unchecked")
     private Iterable<EventData> createEventData(final Exchange exchange) {
         // check if our exchange is list or contain some values
         if (exchange.getIn().getBody() instanceof Iterable) {
-            return createEventDataFromIterable((Iterable<Object>) exchange.getIn().getBody(),
-                    exchange.getContext().getTypeConverter(), exchange.getIn().getHeaders());
+            return createEventDataFromIterable(
+                    (Iterable<Object>) exchange.getIn().getBody(),
+                    exchange.getContext().getTypeConverter(),
+                    exchange.getIn().getHeaders());
         }
 
         // we have only a single event here
@@ -136,8 +145,8 @@ public class EventHubsProducerOperations {
     }
 
     private EventData createEventDataFromMessage(final Message message) {
-        return createEventDataFromObject(message.getBody(), message.getExchange().getContext().getTypeConverter(),
-                message.getHeaders());
+        return createEventDataFromObject(
+                message.getBody(), message.getExchange().getContext().getTypeConverter(), message.getHeaders());
     }
 
     private EventData createEventDataFromObject(
@@ -145,10 +154,10 @@ public class EventHubsProducerOperations {
         final byte[] data = converter.convertTo(byte[].class, inputData);
 
         if (ObjectHelper.isEmpty(data)) {
-            throw new IllegalArgumentException(
-                    String.format("Cannot convert message body %s to byte[]. You will need "
-                                  + "to make sure the data encoded in byte[] or add a Camel TypeConverter to convert the data to byte[]",
-                            inputData));
+            throw new IllegalArgumentException(String.format(
+                    "Cannot convert message body %s to byte[]. You will need "
+                            + "to make sure the data encoded in byte[] or add a Camel TypeConverter to convert the data to byte[]",
+                    inputData));
         }
 
         EventData eventData = new EventData(data);

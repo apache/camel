@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringRabbitMQSendDynamicAwareTest extends CamelTestSupport {
 
@@ -39,7 +40,8 @@ public class SpringRabbitMQSendDynamicAwareTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody("The Body");
         SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry(
                 "spring-rabbitmq:destination", "spring-rabbitmq:${header.test}", null, null);
-        Processor processor = this.springRabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
+        Processor processor =
+                this.springRabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
     }
@@ -50,7 +52,8 @@ public class SpringRabbitMQSendDynamicAwareTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody("The Body");
         SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry(
                 "spring-rabbitmq://destination", "spring-rabbitmq://${header.test}", null, null);
-        Processor processor = this.springRabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
+        Processor processor =
+                this.springRabbitMQSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb.serializer.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -26,8 +27,7 @@ import org.apache.camel.support.DefaultExchangeHolder;
 
 public final class ObjectMapperHelper {
 
-    private ObjectMapperHelper() {
-    }
+    private ObjectMapperHelper() {}
 
     public static ObjectMapper create(Module customModule) {
         ObjectMapper objectMapper = new ObjectMapper();

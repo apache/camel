@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Mail using camel headers to set recipeient subject.
@@ -43,7 +44,7 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         // START SNIPPET: e1
         Map<String, Object> map = new HashMap<>();
 
-        map.put("To", new String[] { claus.getEmail(), jon.getEmail() });
+        map.put("To", new String[] {claus.getEmail(), jon.getEmail()});
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
 

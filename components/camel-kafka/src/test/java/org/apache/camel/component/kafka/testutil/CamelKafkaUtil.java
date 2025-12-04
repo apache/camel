@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.testutil;
 
 import java.util.Objects;
@@ -23,8 +24,7 @@ import org.apache.camel.component.kafka.KafkaConstants;
 
 public final class CamelKafkaUtil {
 
-    private CamelKafkaUtil() {
-    }
+    private CamelKafkaUtil() {}
 
     public static String buildKafkaLogMessage(String msg, Exchange exchange, boolean includeBody) {
         String eol = "\n";
@@ -53,5 +53,4 @@ public final class CamelKafkaUtil {
 
         return sb.toString();
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,8 +35,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
@@ -82,7 +83,8 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvokeCxfRsConsumer() throws Exception {
-        String address = "http://localhost:" + port1 + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
+        String address =
+                "http://localhost:" + port1 + "/CxfRsSpringConsumerInvokeService/customerservice/customers/123";
         WebClient wc = WebClient.create(address);
         Customer c = wc.accept("application/json").get(Customer.class);
         assertEquals(246L, c.getId());
@@ -93,11 +95,12 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
         get.addHeader("Accept", "application/json");
 
         try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(get)) {
+                CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(500, response.getCode(), "Get a wrong status code");
-            assertEquals("exception: Here is the exception", response.getHeaders("exception")[0].toString(),
+            assertEquals(
+                    "exception: Here is the exception",
+                    response.getHeaders("exception")[0].toString(),
                     "Get a wrong message header");
         }
     }
-
 }

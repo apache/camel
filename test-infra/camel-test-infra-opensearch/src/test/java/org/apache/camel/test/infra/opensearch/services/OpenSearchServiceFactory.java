@@ -52,9 +52,7 @@ public final class OpenSearchServiceFactory {
         }
     }
 
-    private OpenSearchServiceFactory() {
-
-    }
+    private OpenSearchServiceFactory() {}
 
     public static SimpleTestServiceBuilder<OpenSearchService> builder() {
         return new SimpleTestServiceBuilder<>("opensearch");
@@ -73,19 +71,18 @@ public final class OpenSearchServiceFactory {
 
     private static class SingletonServiceHolder {
         static final OpenSearchService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<OpenSearchService> instance = builder();
             instance.addLocalMapping(
-                    () -> new SingletonOpenSearchService(new OpenSearchLocalContainerService(), "opensearch"))
+                            () -> new SingletonOpenSearchService(new OpenSearchLocalContainerService(), "opensearch"))
                     .addRemoteMapping(RemoteOpenSearchService::new);
             INSTANCE = instance.build();
         }
     }
 
     public static class OpenSearchLocalContainerService extends OpenSearchLocalContainerInfraService
-            implements OpenSearchService {
-    }
+            implements OpenSearchService {}
 
-    public static class RemoteOpenSearchService extends RemoteOpenSearchInfraService implements OpenSearchService {
-    }
+    public static class RemoteOpenSearchService extends RemoteOpenSearchInfraService implements OpenSearchService {}
 }

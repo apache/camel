@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCSplitTest extends ContextTestSupport {
 
@@ -52,21 +53,23 @@ public class MDCSplitTest extends ContextTestSupport {
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
 
-                from("direct:a").routeId("route-async").process(e -> {
-                    // custom is propagated
-                    MDC.put("custom.hello", "World");
-                    // foo is propagated due we use the same thread
-                    MDC.put("foo", "Bar");
-                    // myKey is propagated
-                    MDC.put("myKey", "Baz");
-                }).process(checker)
+                from("direct:a")
+                        .routeId("route-async")
+                        .process(e -> {
+                            // custom is propagated
+                            MDC.put("custom.hello", "World");
+                            // foo is propagated due we use the same thread
+                            MDC.put("foo", "Bar");
+                            // myKey is propagated
+                            MDC.put("myKey", "Baz");
+                        })
+                        .process(checker)
                         .to("log:foo")
                         .split(body().tokenize(","))
                         .to("log:line")
                         .process(checker)
                         .end()
                         .to("mock:end");
-
             }
         };
     }
@@ -137,5 +140,4 @@ public class MDCSplitTest extends ContextTestSupport {
             }
         }
     }
-
 }

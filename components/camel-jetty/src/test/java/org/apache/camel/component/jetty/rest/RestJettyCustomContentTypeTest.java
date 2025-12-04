@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,16 +26,13 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RestJettyCustomContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testBlob() {
         Exchange out = template.request("http://localhost:" + getPort() + "/users/blob", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
 
         assertEquals("application/foobar", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
@@ -43,12 +43,12 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
     public void testJSon() {
         Exchange out = template.request("http://localhost:" + getPort() + "/users/lives", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
 
         assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out.getMessage().getBody(String.class));
+        assertEquals(
+                "{\"iso\":\"EN\",\"country\":\"England\"}", out.getMessage().getBody(String.class));
     }
 
     @Override
@@ -57,14 +57,24 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // enable json binding
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.json);
 
-                rest("/users/").consumes("application/json").produces("application/json").get("blob").to("direct:blob")
-                        .get("lives").to("direct:lives");
+                rest("/users/")
+                        .consumes("application/json")
+                        .produces("application/json")
+                        .get("blob")
+                        .to("direct:blob")
+                        .get("lives")
+                        .to("direct:lives");
 
                 from("direct:blob")
                         // but send back non json data
-                        .setHeader(Exchange.CONTENT_TYPE, constant("application/foobar")).transform()
+                        .setHeader(Exchange.CONTENT_TYPE, constant("application/foobar"))
+                        .transform()
                         .constant("Some foobar stuff goes here");
 
                 CountryPojo country = new CountryPojo();
@@ -74,5 +84,4 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
             }
         };
     }
-
 }

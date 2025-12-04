@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import org.apache.camel.BindToRegistry;
@@ -41,17 +42,18 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
     public void testMissingDataStreamThrowsException() {
         // Should throw exception when no DataStream is defined
         Assertions.assertThatThrownBy(() -> {
-            template.sendBodyAndHeader(
-                    "direct:noDataStream",
-                    null,
-                    FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
-                    new VoidDataStreamCallback() {
-                        @Override
-                        public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
-                            ds.print();
-                        }
-                    });
-        }).isInstanceOf(CamelExecutionException.class)
+                    template.sendBodyAndHeader(
+                            "direct:noDataStream",
+                            null,
+                            FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+                            new VoidDataStreamCallback() {
+                                @Override
+                                public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
+                                    ds.print();
+                                }
+                            });
+                })
+                .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .hasMessageContaining("No DataStream defined");
     }
@@ -60,8 +62,9 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
     public void testMissingCallbackThrowsException() {
         // Should throw exception when no callback is defined
         Assertions.assertThatThrownBy(() -> {
-            template.sendBody("direct:noCallback", null);
-        }).isInstanceOf(CamelExecutionException.class)
+                    template.sendBody("direct:noCallback", null);
+                })
+                .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .hasMessageContaining("Cannot resolve DataStream callback");
     }
@@ -71,9 +74,10 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
         // Flink will reject parallelism of 0 or negative values during configuration
         // This test verifies that the error is clear
         Assertions.assertThatThrownBy(() -> {
-            StreamExecutionEnvironment invalidEnv = Flinks.createStreamExecutionEnvironment();
-            invalidEnv.setParallelism(0);
-        }).isInstanceOf(IllegalArgumentException.class)
+                    StreamExecutionEnvironment invalidEnv = Flinks.createStreamExecutionEnvironment();
+                    invalidEnv.setParallelism(0);
+                })
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Parallelism must be at least one");
     }
 
@@ -166,7 +170,8 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
                     public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
                         StreamExecutionEnvironment env = ds.getExecutionEnvironment();
                         // Very short interval (100ms) should be configured, though not recommended
-                        Assertions.assertThat(env.getCheckpointConfig().getCheckpointInterval()).isEqualTo(100L);
+                        Assertions.assertThat(env.getCheckpointConfig().getCheckpointInterval())
+                                .isEqualTo(100L);
                     }
                 });
     }
@@ -174,17 +179,18 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
     @Test
     public void testCallbackExceptionPropagation() {
         Assertions.assertThatThrownBy(() -> {
-            template.sendBodyAndHeader(
-                    "direct:withDataStream",
-                    null,
-                    FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
-                    new VoidDataStreamCallback() {
-                        @Override
-                        public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
-                            throw new RuntimeException("Test exception from callback");
-                        }
-                    });
-        }).isInstanceOf(CamelExecutionException.class)
+                    template.sendBodyAndHeader(
+                            "direct:withDataStream",
+                            null,
+                            FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+                            new VoidDataStreamCallback() {
+                                @Override
+                                public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
+                                    throw new RuntimeException("Test exception from callback");
+                                }
+                            });
+                })
+                .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .hasMessageContaining("Test exception from callback");
     }
@@ -192,7 +198,7 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
     @Test
     public void testHeaderOverridesEndpointCallback() {
         // When both endpoint callback and header callback are present, header should win
-        boolean[] headerCallbackCalled = { false };
+        boolean[] headerCallbackCalled = {false};
 
         template.sendBodyAndHeader(
                 "direct:withEndpointCallback",
@@ -239,38 +245,30 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:noDataStream")
-                        .to("flink:datastream");
+                from("direct:noDataStream").to("flink:datastream");
 
-                from("direct:noCallback")
-                        .to("flink:datastream?dataStream=#testDataStream");
+                from("direct:noCallback").to("flink:datastream?dataStream=#testDataStream");
 
                 from("direct:checkpointNoInterval")
-                        .to("flink:datastream?dataStream=#testDataStream"
-                            + "&checkpointingMode=EXACTLY_ONCE");
+                        .to("flink:datastream?dataStream=#testDataStream" + "&checkpointingMode=EXACTLY_ONCE");
 
-                from("direct:withDataStream")
-                        .to("flink:datastream?dataStream=#testDataStream");
+                from("direct:withDataStream").to("flink:datastream?dataStream=#testDataStream");
 
                 from("direct:veryHighParallelism")
                         .to("flink:datastream?dataStream=#testDataStream"
-                            + "&parallelism=1000"
-                            + "&maxParallelism=2000");
+                                + "&parallelism=1000"
+                                + "&maxParallelism=2000");
 
                 from("direct:automaticMode")
-                        .to("flink:datastream?dataStream=#testDataStream"
-                            + "&executionMode=AUTOMATIC");
+                        .to("flink:datastream?dataStream=#testDataStream" + "&executionMode=AUTOMATIC");
 
                 from("direct:shortCheckpoint")
-                        .to("flink:datastream?dataStream=#testDataStream"
-                            + "&checkpointInterval=100");
+                        .to("flink:datastream?dataStream=#testDataStream" + "&checkpointInterval=100");
 
                 from("direct:withEndpointCallback")
-                        .to("flink:datastream?dataStream=#testDataStream"
-                            + "&dataStreamCallback=#endpointCallback");
+                        .to("flink:datastream?dataStream=#testDataStream" + "&dataStreamCallback=#endpointCallback");
 
-                from("direct:minimalConfig")
-                        .to("flink:datastream?dataStream=#testDataStream");
+                from("direct:minimalConfig").to("flink:datastream?dataStream=#testDataStream");
             }
         };
     }

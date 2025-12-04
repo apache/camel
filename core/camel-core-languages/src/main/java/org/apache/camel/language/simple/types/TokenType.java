@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.types;
 
 /**
  * Classifications of known token types.
  */
 public enum TokenType {
-
     whiteSpace,
     character,
     booleanValue,
@@ -36,5 +36,4 @@ public enum TokenType {
     unaryOperator,
     logicalOperator,
     eol
-
 }

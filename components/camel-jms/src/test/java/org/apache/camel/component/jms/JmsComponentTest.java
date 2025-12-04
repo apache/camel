@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JmsComponentTest extends CamelTestSupport {
 
@@ -44,8 +45,8 @@ public class JmsComponentTest extends CamelTestSupport {
 
     @Test
     public void testComponentInOut() {
-        String reply
-                = template.requestBody("activemq123:queue:JmsComponentTest?requestTimeout=5000", "Hello World", String.class);
+        String reply = template.requestBody(
+                "activemq123:queue:JmsComponentTest?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
     }
 
@@ -80,7 +81,8 @@ public class JmsComponentTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // Note: this one seems to mess with the component configuration, so we use a disposable broker
-        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), 0);
+        ConnectionFactory connectionFactory =
+                ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), 0);
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);

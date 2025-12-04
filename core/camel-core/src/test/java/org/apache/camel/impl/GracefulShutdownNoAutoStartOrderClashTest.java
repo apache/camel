@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSupport {
 
@@ -36,7 +37,11 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo").startupOrder(5).to("mock:foo");
-                from("direct:bar").routeId("bar").startupOrder(5).autoStartup(false).to("mock:bar");
+                from("direct:bar")
+                        .routeId("bar")
+                        .startupOrder(5)
+                        .autoStartup(false)
+                        .to("mock:bar");
             }
         });
 
@@ -44,8 +49,7 @@ public class GracefulShutdownNoAutoStartOrderClashTest extends ContextTestSuppor
 
         assertEquals(
                 "Failed to start route: bar because: Route startup order clash. Route foo already has startupOrder 5 configured"
-                     + " which this route have as well. Please correct startupOrder to be unique among all your routes.",
+                        + " which this route have as well. Please correct startupOrder to be unique among all your routes.",
                 e.getMessage());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime.client.impl;
 
 import java.net.URI;
@@ -64,18 +65,21 @@ public class BedrockRuntimeClientStandardImpl implements BedrockRuntimeInternalC
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
             URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
+                    + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            AwsBasicCredentials cred =
+                    AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                clientBuilder = clientBuilder
+                        .httpClientBuilder(httpClientBuilder)
                         .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
@@ -95,11 +99,8 @@ public class BedrockRuntimeClientStandardImpl implements BedrockRuntimeInternalC
             if (httpClientBuilder == null) {
                 httpClientBuilder = ApacheHttpClient.builder();
             }
-            SdkHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
+            SdkHttpClient ahc = httpClientBuilder.buildWithDefaults(AttributeMap.builder()
+                    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
                     .build());
             // set created http client to use instead of builder
             clientBuilder.httpClient(ahc);
@@ -120,7 +121,8 @@ public class BedrockRuntimeClientStandardImpl implements BedrockRuntimeInternalC
         BedrockRuntimeAsyncClientBuilder clientBuilder = BedrockRuntimeAsyncClient.builder();
 
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            AwsBasicCredentials cred =
+                    AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {

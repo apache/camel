@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import java.util.ArrayDeque;
@@ -43,7 +44,9 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
-            LOG.debug("Using PullRequestService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using PullRequestService found in registry {}",
+                    service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {
             pullRequestService = new PullRequestService();
@@ -85,11 +88,13 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
             // Required by the producers.  Set it here for convenience.
             e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST, newPullRequest.getNumber());
             if (newPullRequest.getHead() != null) {
-                e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, newPullRequest.getHead().getSha());
+                e.getIn()
+                        .setHeader(
+                                GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA,
+                                newPullRequest.getHead().getSha());
             }
             exchanges.add(e);
         }
         return processBatch(exchanges);
     }
-
 }

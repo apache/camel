@@ -14,7 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_HEADER;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_LIST;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_STATS;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_UPDATE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_DESTINATION_URI;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_EXPRESSION_LANGUAGE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PREDICATE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PREDICATE_BEAN;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PRIORITY;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIBE_CHANNEL;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
@@ -35,22 +52,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_HEADER;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_LIST;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_STATS;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_UPDATE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_DESTINATION_URI;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_EXPRESSION_LANGUAGE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PREDICATE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PREDICATE_BEAN;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PRIORITY;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIBE_CHANNEL;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterControlProducerTest {
@@ -101,8 +102,9 @@ class DynamicRouterControlProducerTest {
         when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
-        Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateExpression(
-                subscribeChannel, "testId", "mock://test", 10, "true", "simple", false);
+        Mockito.verify(controlService, Mockito.times(1))
+                .subscribeWithPredicateExpression(
+                        subscribeChannel, "testId", "mock://test", 10, "true", "simple", false);
     }
 
     @Test
@@ -119,8 +121,8 @@ class DynamicRouterControlProducerTest {
         when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
-        Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateInstance(
-                subscribeChannel, "testId", "mock://test", 10, null, false);
+        Mockito.verify(controlService, Mockito.times(1))
+                .subscribeWithPredicateInstance(subscribeChannel, "testId", "mock://test", 10, null, false);
     }
 
     @Test
@@ -135,8 +137,7 @@ class DynamicRouterControlProducerTest {
         when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(unsubscribeMsg);
         Mockito.doNothing().when(callback).done(false);
         producer.performUnsubscribe(message, callback);
-        Mockito.verify(controlService, Mockito.times(1))
-                .removeSubscription(subscribeChannel, subscriptionId);
+        Mockito.verify(controlService, Mockito.times(1)).removeSubscription(subscribeChannel, subscriptionId);
     }
 
     @Test
@@ -149,8 +150,7 @@ class DynamicRouterControlProducerTest {
                 .thenReturn(subscribeChannel);
         Mockito.doNothing().when(callback).done(false);
         producer.performUnsubscribe(message, callback);
-        Mockito.verify(controlService, Mockito.times(1))
-                .removeSubscription(subscribeChannel, subscriptionId);
+        Mockito.verify(controlService, Mockito.times(1)).removeSubscription(subscribeChannel, subscriptionId);
     }
 
     @Test
@@ -193,11 +193,16 @@ class DynamicRouterControlProducerTest {
     void performSubscribeActionWithPredicateInBody() {
         String subscribeChannel = "testChannel";
         Map<String, Object> headers = Map.of(
-                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
-                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
-                CONTROL_SUBSCRIPTION_ID, "testId",
-                CONTROL_DESTINATION_URI, "mock://test",
-                CONTROL_PRIORITY, 10);
+                CONTROL_ACTION_HEADER,
+                CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL,
+                subscribeChannel,
+                CONTROL_SUBSCRIPTION_ID,
+                "testId",
+                CONTROL_DESTINATION_URI,
+                "mock://test",
+                CONTROL_PRIORITY,
+                10);
         Language language = context.resolveLanguage("simple");
         Predicate predicate = language.createPredicate("true");
         when(message.getBody()).thenReturn(predicate);
@@ -205,26 +210,30 @@ class DynamicRouterControlProducerTest {
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
-                .subscribeWithPredicateInstance(
-                        subscribeChannel, "testId", "mock://test", 10, predicate, false);
+                .subscribeWithPredicateInstance(subscribeChannel, "testId", "mock://test", 10, predicate, false);
     }
 
     @Test
     void performSubscribeActionWithPredicateBean() {
         String subscribeChannel = "testChannel";
         Map<String, Object> headers = Map.of(
-                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
-                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
-                CONTROL_SUBSCRIPTION_ID, "testId",
-                CONTROL_DESTINATION_URI, "mock://test",
-                CONTROL_PRIORITY, 10,
-                CONTROL_PREDICATE_BEAN, "testPredicate");
+                CONTROL_ACTION_HEADER,
+                CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL,
+                subscribeChannel,
+                CONTROL_SUBSCRIPTION_ID,
+                "testId",
+                CONTROL_DESTINATION_URI,
+                "mock://test",
+                CONTROL_PRIORITY,
+                10,
+                CONTROL_PREDICATE_BEAN,
+                "testPredicate");
         when(message.getHeaders()).thenReturn(headers);
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
-                .subscribeWithPredicateBean(
-                        subscribeChannel, "testId", "mock://test", 10, "testPredicate", false);
+                .subscribeWithPredicateBean(subscribeChannel, "testId", "mock://test", 10, "testPredicate", false);
     }
 
     @Test
@@ -296,8 +305,7 @@ class DynamicRouterControlProducerTest {
         Mockito.doNothing().when(callback).done(false);
         producer.performSubscribe(message, callback);
         Mockito.verify(controlService, Mockito.times(1))
-                .subscribeWithPredicateBean(
-                        subscribeChannel, "testId", "mock://test", 10, "testPredicate", false);
+                .subscribeWithPredicateBean(subscribeChannel, "testId", "mock://test", 10, "testPredicate", false);
     }
 
     @Test
@@ -382,8 +390,8 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void testGetInstance() {
-        DynamicRouterControlProducer instance = new DynamicRouterControlProducerFactory()
-                .getInstance(endpoint, controlService, configuration);
+        DynamicRouterControlProducer instance =
+                new DynamicRouterControlProducerFactory().getInstance(endpoint, controlService, configuration);
         Assertions.assertNotNull(instance);
     }
 }

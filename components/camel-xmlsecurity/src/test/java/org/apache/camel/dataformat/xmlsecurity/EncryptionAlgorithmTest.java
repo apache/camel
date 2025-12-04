@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.xmlsecurity;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.lang.reflect.Constructor;
 import java.security.Provider;
@@ -30,8 +33,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Test all available encryption algorithms
@@ -78,9 +79,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -102,9 +105,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -112,8 +117,10 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES192() throws Exception {
-        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
-                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
+        assumeTrue(
+                TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED="
+                        + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -129,9 +136,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -139,8 +148,10 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES192GCM() throws Exception {
-        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
-                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
+        assumeTrue(
+                TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED="
+                        + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -156,9 +167,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -166,8 +179,10 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES256() throws Exception {
-        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
-                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
+        assumeTrue(
+                TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED="
+                        + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -183,9 +198,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -193,8 +210,10 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testAES256GCM() throws Exception {
-        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
-                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
+        assumeTrue(
+                TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED="
+                        + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -210,9 +229,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -234,9 +255,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -258,9 +281,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -282,9 +307,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -292,8 +319,10 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testCAMELLIA192() throws Exception {
-        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
-                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
+        assumeTrue(
+                TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED="
+                        + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
@@ -309,9 +338,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -319,8 +350,10 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
 
     @Test
     public void testCAMELLIA256() throws Exception {
-        assumeTrue(TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
-                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED=" + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
+        assumeTrue(
+                TestHelper.UNRESTRICTED_POLICIES_INSTALLED,
+                "Test preconditions failed: UNRESTRICTED_POLICIES_INSTALLED="
+                        + TestHelper.UNRESTRICTED_POLICIES_INSTALLED);
 
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
@@ -336,9 +369,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .marshal(xmlEncDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .unmarshal(xmlEncDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -371,9 +406,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(sendingDataFormat).to("mock:encrypted")
+                        .marshal(sendingDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(receivingDataFormat).to("mock:decrypted");
+                        .unmarshal(receivingDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -406,9 +443,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(sendingDataFormat).to("mock:encrypted")
+                        .marshal(sendingDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(receivingDataFormat).to("mock:decrypted");
+                        .unmarshal(receivingDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -441,9 +480,11 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .marshal(sendingDataFormat).to("mock:encrypted")
+                        .marshal(sendingDataFormat)
+                        .to("mock:encrypted")
                         .log("Body: + ${body}")
-                        .unmarshal(receivingDataFormat).to("mock:decrypted");
+                        .unmarshal(receivingDataFormat)
+                        .to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);

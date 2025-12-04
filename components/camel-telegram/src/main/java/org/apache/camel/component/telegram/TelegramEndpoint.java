@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import java.net.InetSocketAddress;
@@ -42,15 +43,22 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive messages using the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type",
-             category = { Category.CLOUD, Category.API, Category.CHAT }, headersClass = TelegramConstants.class)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "telegram",
+        title = "Telegram",
+        syntax = "telegram:type",
+        category = {Category.CLOUD, Category.API, Category.CHAT},
+        headersClass = TelegramConstants.class)
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint, EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
 
     @UriParam
     private TelegramConfiguration configuration;
+
     @UriParam(label = "advanced")
     private HttpClient client;
+
     @UriParam(label = "advanced", defaultValue = "" + (1024 * 1024))
     private int bufferSize = 1024 * 1024;
 
@@ -59,10 +67,7 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     private TelegramService telegramService;
 
     public TelegramEndpoint(
-                            String endpointUri,
-                            Component component,
-                            TelegramConfiguration configuration,
-                            HttpClient client) {
+            String endpointUri, Component component, TelegramConfiguration configuration, HttpClient client) {
         super(endpointUri, component);
         this.configuration = configuration;
         this.client = client;
@@ -87,24 +92,24 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
         if (client == null) {
             HttpClient.Builder builder = HttpClient.newBuilder();
 
-            if (configuration != null && ObjectHelper.isNotEmpty(configuration.getProxyHost())
+            if (configuration != null
+                    && ObjectHelper.isNotEmpty(configuration.getProxyHost())
                     && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-                LOG.debug("Setup {} proxy host:{} port:{} for TelegramService",
+                LOG.debug(
+                        "Setup {} proxy host:{} port:{} for TelegramService",
                         configuration.getProxyType(),
                         configuration.getProxyHost(),
                         configuration.getProxyPort());
 
-                builder.proxy(
-                        ProxySelector.of(new InetSocketAddress(configuration.getProxyHost(), configuration.getProxyPort())));
+                builder.proxy(ProxySelector.of(
+                        new InetSocketAddress(configuration.getProxyHost(), configuration.getProxyPort())));
             }
 
             client = builder.build();
         }
         if (telegramService == null) {
             telegramService = new TelegramServiceRestBotAPIAdapter(
-                    client,
-                    configuration.getBaseUri(),
-                    configuration.getAuthorizationToken(), bufferSize);
+                    client, configuration.getBaseUri(), configuration.getAuthorizationToken(), bufferSize);
         }
     }
 

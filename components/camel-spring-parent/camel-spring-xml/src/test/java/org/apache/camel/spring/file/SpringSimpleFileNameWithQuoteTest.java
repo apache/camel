@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.file;
 
 import java.nio.file.Path;
@@ -34,10 +35,13 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(initializers = TestDirectoryContextInitializer.class)
 public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Hello World!";
+
     @Autowired
     protected ProducerTemplate template;
+
     @EndpointInject("mock:result")
     protected MockEndpoint result;
+
     @TempDir
     private static Path tempDir;
 
@@ -57,12 +61,10 @@ public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport 
     }
 
     static class TestDirectoryContextInitializer
-            implements
-            ApplicationContextInitializer<ConfigurableApplicationContext> {
+            implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext context) {
             context.getEnvironment().getSystemProperties().put("testDirectory", tempDir.toString());
         }
     }
-
 }

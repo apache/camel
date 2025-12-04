@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -26,8 +29,6 @@ import org.apache.camel.component.stax.model.RecordsUtil;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StAXComponentRefTest extends CamelTestSupport {
 
@@ -47,12 +48,20 @@ public class StAXComponentRefTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:target/in").routeId("stax-parser").to("stax:#myHandler").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        assertEquals(11, exchange.getIn().getBody(CountingHandler.class).getNumber());
-                    }
-                }).to("mock:records");
+                from("file:target/in")
+                        .routeId("stax-parser")
+                        .to("stax:#myHandler")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                assertEquals(
+                                        11,
+                                        exchange.getIn()
+                                                .getBody(CountingHandler.class)
+                                                .getNumber());
+                            }
+                        })
+                        .to("mock:records");
             }
         };
     }

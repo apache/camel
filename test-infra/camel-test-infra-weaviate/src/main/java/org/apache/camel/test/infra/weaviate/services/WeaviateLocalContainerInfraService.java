@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.weaviate.services;
 
 import java.net.MalformedURLException;
@@ -31,9 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.weaviate.WeaviateContainer;
 
-@InfraService(service = WeaviateInfraService.class,
-              description = "Weaviate Vector Database",
-              serviceAlias = { "weaviate" })
+@InfraService(
+        service = WeaviateInfraService.class,
+        description = "Weaviate Vector Database",
+        serviceAlias = {"weaviate"})
 public class WeaviateLocalContainerInfraService implements WeaviateInfraService, ContainerService<WeaviateContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(WeaviateLocalContainerInfraService.class);
@@ -41,8 +43,8 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
     private final WeaviateContainer container;
 
     public WeaviateLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(WeaviateLocalContainerInfraService.class,
-                WeaviateProperties.WEAVIATE_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                WeaviateLocalContainerInfraService.class, WeaviateProperties.WEAVIATE_CONTAINER));
     }
 
     public WeaviateLocalContainerInfraService(String imageName) {
@@ -56,8 +58,7 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
     protected WeaviateContainer initContainer(String imageName) {
         class TestInfraWeaviateContainer extends WeaviateContainer {
             public TestInfraWeaviateContainer(boolean fixedPort) {
-                super(DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("semitechnologies/weaviate"));
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("semitechnologies/weaviate"));
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 

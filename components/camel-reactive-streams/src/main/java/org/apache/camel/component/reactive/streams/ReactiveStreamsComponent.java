@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import java.util.Map;
@@ -34,21 +35,25 @@ import org.apache.camel.support.service.ServiceHelper;
 public class ReactiveStreamsComponent extends DefaultComponent {
     @Metadata(label = "common", defaultValue = "CamelReactiveStreamsWorker")
     private String threadPoolName = "CamelReactiveStreamsWorker";
+
     @Metadata(label = "common")
     private int threadPoolMinSize;
+
     @Metadata(label = "common", defaultValue = "10")
     private int threadPoolMaxSize = 10;
+
     @Metadata(label = "producer", defaultValue = "BUFFER")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy = ReactiveStreamsBackpressureStrategy.BUFFER;
+
     @Metadata(label = "advanced")
     private String serviceType;
+
     @Metadata(label = "advanced")
     private ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration;
 
     private CamelReactiveStreamsService service;
 
-    public ReactiveStreamsComponent() {
-    }
+    public ReactiveStreamsComponent() {}
 
     // ****************************************
     // Lifecycle/Implementation
@@ -94,7 +99,8 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     /**
      * To use an existing reactive stream engine configuration.
      */
-    public void setReactiveStreamsEngineConfiguration(ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration) {
+    public void setReactiveStreamsEngineConfiguration(
+            ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration) {
         this.reactiveStreamsEngineConfiguration = reactiveStreamsEngineConfiguration;
     }
 
@@ -173,9 +179,7 @@ public class ReactiveStreamsComponent extends DefaultComponent {
 
             if (service == null) {
                 this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
-                        getCamelContext(),
-                        this.serviceType,
-                        this.reactiveStreamsEngineConfiguration);
+                        getCamelContext(), this.serviceType, this.reactiveStreamsEngineConfiguration);
 
                 try {
                     // Start the service and add it to the Camel context to expose managed attributes

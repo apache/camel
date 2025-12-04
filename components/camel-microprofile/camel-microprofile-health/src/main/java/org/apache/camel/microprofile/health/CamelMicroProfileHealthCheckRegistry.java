@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
 
 import java.util.Set;
@@ -102,7 +103,8 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
                     }
                 } catch (IllegalStateException e) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Failed to remove repository readiness health {} check due to: {}",
+                        LOG.debug(
+                                "Failed to remove repository readiness health {} check due to: {}",
                                 repository.getId(),
                                 e.getMessage());
                     }
@@ -140,9 +142,7 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
                 // Register each check individually for HealthCheckRegistryRepository or where
                 // the repository contains
                 // a mix or readiness and liveness checks
-                repository.stream()
-                        .filter(HealthCheck::isEnabled)
-                        .forEach(this::registerMicroProfileHealthCheck);
+                repository.stream().filter(HealthCheck::isEnabled).forEach(this::registerMicroProfileHealthCheck);
             } else {
                 // Since the number of potential checks for consumers / routes etc is
                 // non-deterministic
@@ -155,8 +155,8 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
                     healthCheckName = "camel-" + healthCheckName;
                 }
 
-                CamelMicroProfileRepositoryHealthCheck repositoryHealthCheck = new CamelMicroProfileRepositoryHealthCheck(
-                        getCamelContext(), repository, healthCheckName);
+                CamelMicroProfileRepositoryHealthCheck repositoryHealthCheck =
+                        new CamelMicroProfileRepositoryHealthCheck(getCamelContext(), repository, healthCheckName);
 
                 if (registerEagerly(repository)) {
                     // Eagerly register routes, components & consumers HealthCheckRepository since
@@ -179,8 +179,8 @@ public class CamelMicroProfileHealthCheckRegistry extends DefaultHealthCheckRegi
     }
 
     protected void registerMicroProfileHealthCheck(HealthCheck camelHealthCheck) {
-        org.eclipse.microprofile.health.HealthCheck microProfileHealthCheck = new CamelMicroProfileHealthCheck(
-                getCamelContext(), camelHealthCheck);
+        org.eclipse.microprofile.health.HealthCheck microProfileHealthCheck =
+                new CamelMicroProfileHealthCheck(getCamelContext(), camelHealthCheck);
 
         if (camelHealthCheck.isReadiness()) {
             getReadinessRegistry().register(camelHealthCheck.getId(), microProfileHealthCheck);

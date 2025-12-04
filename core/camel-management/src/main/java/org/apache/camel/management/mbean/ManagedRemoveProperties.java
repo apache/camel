@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Arrays;
@@ -29,8 +30,8 @@ public class ManagedRemoveProperties extends ManagedProcessor implements Managed
 
     private final String exclude;
 
-    public ManagedRemoveProperties(CamelContext context, RemovePropertiesProcessor processor,
-                                   ProcessorDefinition<?> definition) {
+    public ManagedRemoveProperties(
+            CamelContext context, RemovePropertiesProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         if (processor.getExcludePattern() != null) {
             exclude = Arrays.toString(processor.getExcludePattern());

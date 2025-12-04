@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +51,10 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:" + base + "?initialDelay=0&delay=10").routeId("foo").autoStartup(false).convertBodyTo(String.class)
+                from("file:" + base + "?initialDelay=0&delay=10")
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:report");
             }
         };

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test JavaSourceParser.
@@ -38,8 +39,11 @@ public class JavaSourceParserTest {
                 "public com.braintreegateway.Result<com.braintreegateway.Address> create(String customerId, com.braintreegateway.AddressRequest request)",
                 parser.getMethodSignatures().get(0));
         assertEquals(2, parser.getParameterDocs().get("create").size());
-        assertEquals("The id of the Customer", parser.getParameterDocs().get("create").get("customerId"));
-        assertEquals("The request object", parser.getParameterDocs().get("create").get("request"));
+        assertEquals(
+                "The id of the Customer",
+                parser.getParameterDocs().get("create").get("customerId"));
+        assertEquals(
+                "The request object", parser.getParameterDocs().get("create").get("request"));
     }
 
     @Test
@@ -67,9 +71,11 @@ public class JavaSourceParserTest {
                 "public com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, String documentId)",
                 parser.getMethodSignatures().get(1));
         assertEquals(3, parser.getParameterDocs().get("addFileEvidence").size());
-        assertEquals("The dispute id to add text evidence to",
+        assertEquals(
+                "The dispute id to add text evidence to",
                 parser.getParameterDocs().get("addFileEvidence").get("disputeId"));
-        assertEquals("The document id of a previously uploaded document",
+        assertEquals(
+                "The document id of a previously uploaded document",
                 parser.getParameterDocs().get("addFileEvidence").get("documentId"));
     }
 
@@ -97,7 +103,8 @@ public class JavaSourceParserTest {
                 "public String getOrderById(int id)",
                 parser.getMethodSignatures().get(0));
         assertEquals(1, parser.getParameterDocs().get("getOrderById").size());
-        assertEquals("The order id", parser.getParameterDocs().get("getOrderById").get("id"));
+        assertEquals(
+                "The order id", parser.getParameterDocs().get("getOrderById").get("id"));
     }
 
     @Test
@@ -123,7 +130,7 @@ public class JavaSourceParserTest {
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"), null);
 
         String desc = parser.getMethodDocs().get("addFileEvidence");
-        assertEquals("Add File Evidence to a Dispute, given an ID and a FileEvidenceRequest File evidence request", desc);
+        assertEquals(
+                "Add File Evidence to a Dispute, given an ID and a FileEvidenceRequest File evidence request", desc);
     }
-
 }

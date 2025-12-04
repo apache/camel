@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
@@ -32,7 +33,8 @@ class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
         // first case: when exchange is set
         final Exchange exchange = new DefaultExchange(context);
-        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy =
+                new BlobConfigurationOptionsProxy(configuration);
 
         exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "testBlobExchange");
         configuration.setBlobName("testBlobConfig");
@@ -55,7 +57,8 @@ class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
         final BlobConfiguration configuration = new BlobConfiguration();
 
         final Exchange exchange = new DefaultExchange(context);
-        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy =
+                new BlobConfigurationOptionsProxy(configuration);
 
         configuration.setPrefix("test");
         configuration.setRegex(".*\\.exe");
@@ -70,7 +73,8 @@ class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
         // first case: when exchange is set
         final Exchange exchange = new DefaultExchange(context);
-        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy =
+                new BlobConfigurationOptionsProxy(configuration);
 
         configuration.setPrefix("test");
         configuration.setRegex(".*\\.exe");
@@ -86,12 +90,13 @@ class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
         // first case: when exchange is set
         final Exchange exchange = new DefaultExchange(context);
-        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy =
+                new BlobConfigurationOptionsProxy(configuration);
 
         configuration.setPrefix("test");
         assertEquals("test", configurationOptionsProxy.getPrefix(exchange));
 
-        //test header override
+        // test header override
         exchange.getIn().setHeader(BlobConstants.PREFIX, "test2");
         assertEquals("test2", configurationOptionsProxy.getPrefix(exchange));
     }
@@ -102,12 +107,13 @@ class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
         // first case: when exchange is set
         final Exchange exchange = new DefaultExchange(context);
-        final BlobConfigurationOptionsProxy configurationOptionsProxy = new BlobConfigurationOptionsProxy(configuration);
+        final BlobConfigurationOptionsProxy configurationOptionsProxy =
+                new BlobConfigurationOptionsProxy(configuration);
 
         configuration.setRegex(".*\\.exe");
         assertEquals(".*\\.exe", configurationOptionsProxy.getRegex(exchange));
 
-        //test header override
+        // test header override
         exchange.getIn().setHeader(BlobConstants.REGEX, ".*\\.pdf");
         assertEquals(".*\\.pdf", configurationOptionsProxy.getRegex(exchange));
     }

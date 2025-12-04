@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.apache.camel.component.kafka.integration.common.TestProducerUtil.sendMessagesInRoute;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,9 +27,6 @@ import org.apache.camel.model.SagaCompletionMode;
 import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.kafka.integration.common.TestProducerUtil.sendMessagesInRoute;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaSagaIT extends BaseKafkaTestSupport {
 
@@ -68,8 +69,7 @@ final class SagaBean {
     public static String id;
     public static Boolean isSame = false;
 
-    private SagaBean() {
-    }
+    private SagaBean() {}
 
     public static void checkId(Exchange exchange) {
         String sagaId = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);

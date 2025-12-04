@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
 
 import java.net.URI;
@@ -40,12 +41,14 @@ public abstract class AwsSecretsManagerBaseTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        SecretsManagerComponent smComponent = context.getComponent("aws-secrets-manager", SecretsManagerComponent.class);
+        SecretsManagerComponent smComponent =
+                context.getComponent("aws-secrets-manager", SecretsManagerComponent.class);
         smComponent.getConfiguration().setSecretsManagerClient(AWSSDKClientUtils.newSecretsManagerClient());
         return context;
     }
 
-    // {aws.secret.key=secretkey, aws.region=us-east-1, aws.access.key=accesskey, aws.host=localhost:32775, aws.protocol=http}
+    // {aws.secret.key=secretkey, aws.region=us-east-1, aws.access.key=accesskey, aws.host=localhost:32775,
+    // aws.protocol=http}
     public static SecretsManagerClient getSecretManagerClient() {
         String accessKey = service.getConnectionProperties().getProperty("aws.access.key");
         String region = service.getConnectionProperties().getProperty("aws.region");
@@ -84,5 +87,4 @@ public abstract class AwsSecretsManagerBaseTest extends CamelTestSupport {
     public String getUrlOverride() {
         return getProtocol() + "://" + getHost();
     }
-
 }

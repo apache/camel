@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpensearchPingIT extends OpensearchTestSupport {
 
@@ -34,8 +35,7 @@ class OpensearchPingIT extends OpensearchTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ping")
-                        .to("opensearch://opensearch?operation=Ping");
+                from("direct:ping").to("opensearch://opensearch?operation=Ping");
             }
         };
     }

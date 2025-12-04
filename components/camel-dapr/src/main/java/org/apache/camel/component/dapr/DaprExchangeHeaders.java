@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
 
 import java.time.Duration;
@@ -190,7 +191,8 @@ public class DaprExchangeHeaders {
         return getObjectFromHeaders(exchange, DaprConstants.EVENT_NAME, String.class);
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }
 }

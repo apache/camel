@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import java.time.Duration;
@@ -39,17 +40,22 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive files to Azure storage file share
  */
-@UriEndpoint(firstVersion = "3.22.0", scheme = FilesComponent.SCHEME, extendsScheme = "file", title = "Azure Files",
-             syntax = FilesComponent.SCHEME + ":account/share", category = {
-                     Category.CLOUD, Category.FILE },
-             headersClass = FilesConstants.class)
-@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
-                              + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
-                              + "bufferSize,moveExisting,username,host")
+@UriEndpoint(
+        firstVersion = "3.22.0",
+        scheme = FilesComponent.SCHEME,
+        extendsScheme = "file",
+        title = "Azure Files",
+        syntax = FilesComponent.SCHEME + ":account/share",
+        category = {Category.CLOUD, Category.FILE},
+        headersClass = FilesConstants.class)
+@Metadata(
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"
+                + "siteCommand,fastExistsCheck,soTimeout,separator,sendNoop,ignoreFileNotFoundOrPermissionError,"
+                + "bufferSize,moveExisting,username,host")
 @ManagedResource(description = "Camel Azure Files endpoint")
 public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements EndpointServiceLocation {
 
@@ -57,16 +63,16 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements 
     // camel-package-maven-plugin: Missing @UriPath on endpoint
     @UriParam
     protected FilesConfiguration configuration;
+
     @UriParam
     protected FilesToken token = new FilesToken();
+
     @UriParam(label = "consumer")
     protected boolean resumeDownload;
 
-    public FilesEndpoint() {
-    }
+    public FilesEndpoint() {}
 
-    public FilesEndpoint(String uri, FilesComponent component,
-                         FilesConfiguration configuration) {
+    public FilesEndpoint(String uri, FilesComponent component, FilesConfiguration configuration) {
         super(uri, component, configuration);
         setConfiguration(configuration);
     }
@@ -89,7 +95,9 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements 
     protected FilesConsumer buildConsumer(Processor processor) {
         try {
             return new FilesConsumer(
-                    this, processor, createRemoteFileOperations(),
+                    this,
+                    processor,
+                    createRemoteFileOperations(),
                     processStrategy != null ? processStrategy : createGenericFileStrategy());
         } catch (Exception e) {
             throw new FailedToCreateConsumerException(this, e);
@@ -107,8 +115,7 @@ public class FilesEndpoint extends RemoteFileEndpoint<ShareFileItem> implements 
 
     @Override
     protected GenericFileProcessStrategy<ShareFileItem> createGenericFileStrategy() {
-        return new FilesProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(),
-                getParamsAsMap());
+        return new FilesProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
     }
 
     @Override

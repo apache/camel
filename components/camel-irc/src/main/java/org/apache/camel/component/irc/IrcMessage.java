@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import java.util.Map;
@@ -53,8 +54,13 @@ public class IrcMessage extends DefaultMessage {
         setBody(message);
     }
 
-    public IrcMessage(CamelContext camelContext, String messageType, String target, IRCUser user, String whoWasKickedNick,
-                      String message) {
+    public IrcMessage(
+            CamelContext camelContext,
+            String messageType,
+            String target,
+            IRCUser user,
+            String whoWasKickedNick,
+            String message) {
         super(camelContext);
         this.messageType = messageType;
         this.target = target;

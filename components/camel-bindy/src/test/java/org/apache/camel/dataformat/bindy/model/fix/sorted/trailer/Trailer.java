@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.fix.sorted.trailer;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
@@ -40,5 +41,4 @@ public class Trailer {
     public String toString() {
         return Trailer.class.getName() + " --> 10: " + this.checkSum;
     }
-
 }

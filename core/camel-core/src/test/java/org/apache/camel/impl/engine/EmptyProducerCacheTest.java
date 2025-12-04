@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EmptyProducerCacheTest extends ContextTestSupport {
 
@@ -64,5 +65,4 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
         assertEquals(0, cache.size(), "Size should be 1000");
         cache.stop();
     }
-
 }

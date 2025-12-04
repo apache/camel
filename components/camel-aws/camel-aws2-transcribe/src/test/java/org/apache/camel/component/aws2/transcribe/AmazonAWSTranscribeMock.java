@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
 
 import java.time.Instant;
@@ -35,9 +36,7 @@ public class AmazonAWSTranscribeMock implements TranscribeClient {
                 .creationTime(Instant.now())
                 .build();
 
-        return StartTranscriptionJobResponse.builder()
-                .transcriptionJob(job)
-                .build();
+        return StartTranscriptionJobResponse.builder().transcriptionJob(job).build();
     }
 
     @Override
@@ -51,9 +50,7 @@ public class AmazonAWSTranscribeMock implements TranscribeClient {
                 .completionTime(Instant.now())
                 .build();
 
-        return GetTranscriptionJobResponse.builder()
-                .transcriptionJob(job)
-                .build();
+        return GetTranscriptionJobResponse.builder().transcriptionJob(job).build();
     }
 
     @Override
@@ -104,9 +101,7 @@ public class AmazonAWSTranscribeMock implements TranscribeClient {
                 .lastModifiedTime(Instant.now())
                 .build();
 
-        return ListVocabulariesResponse.builder()
-                .vocabularies(vocab)
-                .build();
+        return ListVocabulariesResponse.builder().vocabularies(vocab).build();
     }
 
     @Override

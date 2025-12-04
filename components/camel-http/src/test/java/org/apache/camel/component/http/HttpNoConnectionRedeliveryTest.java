@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ConnectException;
 
@@ -27,11 +33,6 @@ import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.http.common.HttpMethods.GET;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -39,10 +40,13 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -92,8 +96,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
                         .maximumRedeliveryDelay(5000)
                         .useExponentialBackOff()
                         .end()
-                        .to("http://localhost:" + localServer.getLocalPort()
-                            + "/search");
+                        .to("http://localhost:" + localServer.getLocalPort() + "/search");
             }
         };
     }

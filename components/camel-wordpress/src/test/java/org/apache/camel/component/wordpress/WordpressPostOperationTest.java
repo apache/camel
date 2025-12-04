@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,9 +27,6 @@ import org.apache.camel.component.wordpress.api.model.Content;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.model.PublishableStatus;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WordpressPostOperationTest extends WordpressComponentTestSupport {
 
@@ -112,12 +113,16 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
 
                 from("wordpress:post?id=114913").to("mock:resultSingle");
 
-                from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123")
+                from("direct:deletePost")
+                        .to("wordpress:post:delete?id=9&user=ben&password=password123")
                         .to("mock:resultDelete");
-                from("direct:insertPost").to("wordpress:post?user=ben&password=password123").to("mock:resultInsert");
-                from("direct:updatePost").to("wordpress:post?id=9&user=ben&password=password123").to("mock:resultUpdate");
+                from("direct:insertPost")
+                        .to("wordpress:post?user=ben&password=password123")
+                        .to("mock:resultInsert");
+                from("direct:updatePost")
+                        .to("wordpress:post?id=9&user=ben&password=password123")
+                        .to("mock:resultUpdate");
             }
         };
     }
-
 }

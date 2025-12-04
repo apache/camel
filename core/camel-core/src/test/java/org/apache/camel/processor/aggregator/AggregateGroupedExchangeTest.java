@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -75,9 +76,11 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
                         // aggregate all using same expression and group the
                         // exchanges so we get one single exchange containing all
                         // the others
-                        .aggregate(new GroupedExchangeAggregationStrategy()).constant(true)
+                        .aggregate(new GroupedExchangeAggregationStrategy())
+                        .constant(true)
                         // wait for 0.5 seconds to aggregate
-                        .completionTimeout(500L).to("mock:result");
+                        .completionTimeout(500L)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

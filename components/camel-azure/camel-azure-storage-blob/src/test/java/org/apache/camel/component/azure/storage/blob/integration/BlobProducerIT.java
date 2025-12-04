@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -37,8 +40,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class BlobProducerIT extends Base {
 
     @EndpointInject
@@ -46,6 +47,7 @@ class BlobProducerIT extends Base {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
     private String resultName = "mock:result";
     private BlobContainerClient containerClient;
 
@@ -172,8 +174,8 @@ class BlobProducerIT extends Base {
     void testUploadBlockBlobWithConfigUri() throws InterruptedException {
         result.expectedMessageCount(1);
 
-        template.send("direct:uploadBlockBlobWithConfigUri",
-                exchange -> exchange.getIn().setBody("Block Blob"));
+        template.send("direct:uploadBlockBlobWithConfigUri", exchange -> exchange.getIn()
+                .setBody("Block Blob"));
 
         result.assertIsSatisfied();
     }
@@ -182,11 +184,10 @@ class BlobProducerIT extends Base {
     void testHeaderPreservation() throws InterruptedException {
         result.expectedMessageCount(1);
 
-        template.send("direct:uploadBlockBlobWithConfigUri",
-                exchange -> {
-                    exchange.getIn().setBody("Block Blob");
-                    exchange.getIn().setHeader("DoNotDelete", "keep me");
-                });
+        template.send("direct:uploadBlockBlobWithConfigUri", exchange -> {
+            exchange.getIn().setBody("Block Blob");
+            exchange.getIn().setHeader("DoNotDelete", "keep me");
+        });
         assertEquals("keep me", result.getExchanges().get(0).getMessage().getHeader("DoNotDelete"));
 
         result.assertIsSatisfied();
@@ -218,9 +219,7 @@ class BlobProducerIT extends Base {
                         .to(componentUri("commitAppendBlob"))
                         .to(resultName);
 
-                from("direct:uploadPageBlob")
-                        .to(componentUri("uploadPageBlob"))
-                        .to(resultName);
+                from("direct:uploadPageBlob").to(componentUri("uploadPageBlob")).to(resultName);
 
                 from("direct:uploadBlockBlobWithConfigUri")
                         .to(componentUri("uploadBlockBlob") + "&blobName=uploadBlockName")
@@ -230,7 +229,6 @@ class BlobProducerIT extends Base {
     }
 
     private String componentUri(final String operation) {
-        return String.format("azure-storage-blob://cameldev/%s?operation=%s", containerName,
-                operation);
+        return String.format("azure-storage-blob://cameldev/%s?operation=%s", containerName, operation);
     }
 }

@@ -317,5 +317,4 @@ public interface ExchangeExtension {
      * @return         <tt>true</tt> if redelivered, <tt>false</tt> if not or not able to determine
      */
     boolean isExternalRedelivered(Message message);
-
 }

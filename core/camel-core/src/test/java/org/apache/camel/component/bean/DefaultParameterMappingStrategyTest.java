@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -25,9 +29,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
 
@@ -90,9 +91,13 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").logStackTrace(false).disableRedelivery());
+                errorHandler(
+                        deadLetterChannel("mock:error").logStackTrace(false).disableRedelivery());
 
-                onException(Exception.class).handled(true).bean("foo", "withException").to("mock:result");
+                onException(Exception.class)
+                        .handled(true)
+                        .bean("foo", "withException")
+                        .to("mock:result");
 
                 from("direct:a").bean("foo", "withExchange").to("mock:result");
 
@@ -153,6 +158,5 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
             assertEquals("Hello", body);
             return "CamelContext";
         }
-
     }
 }

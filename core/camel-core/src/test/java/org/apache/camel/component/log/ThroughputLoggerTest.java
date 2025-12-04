@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,7 +53,9 @@ public class ThroughputLoggerTest extends ContextTestSupport {
     public void testSendMessageToLogUsingGroupInterval() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("seda:in").to("log:hello?groupInterval=200&groupDelay=400&groupActiveOnly=false").delay(50)
+                from("seda:in")
+                        .to("log:hello?groupInterval=200&groupDelay=400&groupActiveOnly=false")
+                        .delay(50)
                         .to("mock:result");
             }
         });

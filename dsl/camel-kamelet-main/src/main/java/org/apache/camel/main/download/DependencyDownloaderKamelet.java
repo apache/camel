@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,8 +44,6 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
-
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
 /**
  * To automatic downloaded dependencies that Kamelets requires.
@@ -183,11 +184,12 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 String gav = dep;
                 if (dep.startsWith("camel:")) {
                     // it's a known camel component
-                    gav = "org.apache.camel:camel-" + dep.substring("camel:".length()) + ":" + camelContext.getVersion();
+                    gav = "org.apache.camel:camel-" + dep.substring("camel:".length()) + ":"
+                            + camelContext.getVersion();
                 } else if (dep.startsWith("camel-kamelets:")) {
                     // it's a known camel kamelets dependency
                     gav = "org.apache.camel.kamelets:camel-kamelets-" + dep.substring("camel-kamelets:".length()) + ":"
-                          + kameletsVersion;
+                            + kameletsVersion;
                 }
                 if (isValidGav(gav)) {
                     gavs.add(gav);

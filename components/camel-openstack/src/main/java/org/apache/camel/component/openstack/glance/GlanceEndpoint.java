@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.glance;
+
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_GLANCE;
 
 import org.apache.camel.Category;
 import org.apache.camel.Producer;
@@ -25,13 +28,17 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_GLANCE;
-
 /**
  * Manage VM images and metadata definitions in OpenStack Glance.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_GLANCE, title = "OpenStack Glance", syntax = "openstack-glance:host",
-             category = { Category.CONTAINER }, producerOnly = true, headersClass = GlanceConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_GLANCE,
+        title = "OpenStack Glance",
+        syntax = "openstack-glance:host",
+        category = {Category.CONTAINER},
+        producerOnly = true,
+        headersClass = GlanceConstants.class)
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

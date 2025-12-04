@@ -57,5 +57,4 @@ public final class StubDataFormatResolver extends DefaultDataFormatResolver {
     public Set<String> getNames() {
         return Set.copyOf(this.names);
     }
-
 }

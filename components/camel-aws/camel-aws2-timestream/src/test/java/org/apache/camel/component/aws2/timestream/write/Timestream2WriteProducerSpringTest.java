@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.write;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.timestreamwrite.model.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
@@ -48,9 +49,12 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
+        DescribeEndpointsResponse resultGet =
+                (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
-        assertEquals("ingest.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+        assertEquals(
+                "ingest.timestream.region.amazonaws.com",
+                resultGet.endpoints().get(0).address());
     }
 
     @Test
@@ -67,9 +71,12 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeEndpointsResponse resultGet = (DescribeEndpointsResponse) exchange.getIn().getBody();
+        DescribeEndpointsResponse resultGet =
+                (DescribeEndpointsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.endpoints().size());
-        assertEquals("ingest.timestream.region.amazonaws.com", resultGet.endpoints().get(0).address());
+        assertEquals(
+                "ingest.timestream.region.amazonaws.com",
+                resultGet.endpoints().get(0).address());
     }
 
     @Test
@@ -85,7 +92,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateBatchLoadTaskResponse resultGet = (CreateBatchLoadTaskResponse) exchange.getIn().getBody();
+        CreateBatchLoadTaskResponse resultGet =
+                (CreateBatchLoadTaskResponse) exchange.getIn().getBody();
         assertEquals("task-1", resultGet.taskId());
     }
 
@@ -102,7 +110,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeBatchLoadTaskResponse resultGet = (DescribeBatchLoadTaskResponse) exchange.getIn().getBody();
+        DescribeBatchLoadTaskResponse resultGet =
+                (DescribeBatchLoadTaskResponse) exchange.getIn().getBody();
         assertEquals("task-1", resultGet.batchLoadTaskDescription().taskId());
     }
 
@@ -119,7 +128,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ResumeBatchLoadTaskResponse resultGet = (ResumeBatchLoadTaskResponse) exchange.getIn().getBody();
+        ResumeBatchLoadTaskResponse resultGet =
+                (ResumeBatchLoadTaskResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -136,7 +146,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListBatchLoadTasksResponse resultGet = (ListBatchLoadTasksResponse) exchange.getIn().getBody();
+        ListBatchLoadTasksResponse resultGet =
+                (ListBatchLoadTasksResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.batchLoadTasks().size());
         assertEquals("task-1", resultGet.batchLoadTasks().get(0).taskId());
     }
@@ -154,7 +165,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateDatabaseResponse resultGet = (CreateDatabaseResponse) exchange.getIn().getBody();
+        CreateDatabaseResponse resultGet =
+                (CreateDatabaseResponse) exchange.getIn().getBody();
         assertEquals("testDb", resultGet.database().databaseName());
     }
 
@@ -171,7 +183,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteDatabaseResponse resultGet = (DeleteDatabaseResponse) exchange.getIn().getBody();
+        DeleteDatabaseResponse resultGet =
+                (DeleteDatabaseResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -188,7 +201,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeDatabaseResponse resultGet = (DescribeDatabaseResponse) exchange.getIn().getBody();
+        DescribeDatabaseResponse resultGet =
+                (DescribeDatabaseResponse) exchange.getIn().getBody();
         assertEquals("testDb", resultGet.database().databaseName());
     }
 
@@ -205,7 +219,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        UpdateDatabaseResponse resultGet = (UpdateDatabaseResponse) exchange.getIn().getBody();
+        UpdateDatabaseResponse resultGet =
+                (UpdateDatabaseResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -222,7 +237,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListDatabasesResponse resultGet = (ListDatabasesResponse) exchange.getIn().getBody();
+        ListDatabasesResponse resultGet =
+                (ListDatabasesResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.databases().size());
         assertEquals("testDb", resultGet.databases().get(0).databaseName());
     }
@@ -274,7 +290,8 @@ public class Timestream2WriteProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeTableResponse resultGet = (DescribeTableResponse) exchange.getIn().getBody();
+        DescribeTableResponse resultGet =
+                (DescribeTableResponse) exchange.getIn().getBody();
         assertEquals("testTable", resultGet.table().tableName());
     }
 

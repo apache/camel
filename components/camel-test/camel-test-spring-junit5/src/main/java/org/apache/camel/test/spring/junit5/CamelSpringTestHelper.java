@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.lang.reflect.Method;
@@ -41,8 +42,7 @@ public final class CamelSpringTestHelper {
     private static final ThreadLocal<String> originalExcludeRoutesValue = new ThreadLocal<>();
     private static final ThreadLocal<TestContext> testContext = new ThreadLocal<>();
 
-    private CamelSpringTestHelper() {
-    }
+    private CamelSpringTestHelper() {}
 
     public static String getOriginalJmxDisabled() {
         return originalJmxDisabledValue.get();

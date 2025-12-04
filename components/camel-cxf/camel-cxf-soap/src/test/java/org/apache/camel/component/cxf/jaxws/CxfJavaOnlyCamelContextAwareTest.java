@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.xml.namespace.QName;
 
@@ -31,9 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A unit test for java only CXF in payload mode
@@ -56,7 +57,8 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
         CxfPayload<?> payload = (CxfPayload<?>) output;
 
         // convert the payload body to string
-        String reply = context.getTypeConverter().convertTo(String.class, payload.getBody().get(0));
+        String reply = context.getTypeConverter()
+                .convertTo(String.class, payload.getBody().get(0));
         assertNotNull(reply);
 
         assertTrue(reply.contains("<personId>123</personId"));
@@ -64,7 +66,8 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
         assertTrue(reply.contains("<name>Donald Duck</name"));
 
         assertTrue(context.getEndpoint("personService") instanceof CamelContextAware);
-        assertNotNull(context.getEndpoint("personService").getCamelContext(), "CamelContext should be set on CxfEndpoint");
+        assertNotNull(
+                context.getEndpoint("personService").getCamelContext(), "CamelContext should be set on CxfEndpoint");
     }
 
     @Override
@@ -84,8 +87,8 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         String s = "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
-                                   + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
-                                   + "</GetPersonResponse>";
+                                + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
+                                + "</GetPersonResponse>";
 
                         Document xml = context.getTypeConverter().convertTo(Document.class, s);
                         exchange.getMessage().setBody(xml);

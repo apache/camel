@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +25,6 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
 
@@ -57,9 +58,12 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
 
         assertEquals(3, context.getRouteDefinitions().size());
         assertEquals(3, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("common").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("common").name());
 
         template.sendBody("direct:one", "Camel");
         template.sendBody("direct:two", "World");
@@ -72,14 +76,15 @@ public class RouteTemplateAndExistingRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("greeting")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("greeting")
                         .description("Route saying {{greeting}}")
                         .from("direct:{{foo}}")
                         .transform(simple("Hello {{greeting}}"))
                         .to("direct:common");
 
-                from("direct:common").routeId("common")
-                        .to("mock:common");
+                from("direct:common").routeId("common").to("mock:common");
             }
         };
     }

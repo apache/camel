@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.util.Optional;
@@ -54,8 +55,7 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
     private KeyCertOptions keyCertOptions;
     private TrustOptions trustOptions;
 
-    public KnativeSslClientOptions() {
-    }
+    public KnativeSslClientOptions() {}
 
     public KnativeSslClientOptions(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -80,12 +80,15 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
         setSslEnabled(sslEnabled);
 
         if (sslEnabled) {
-            boolean verifyHostname = Boolean.parseBoolean(
-                    propertiesComponent.resolveProperty(PROPERTY_PREFIX + "verify.hostname").orElse("true"));
+            boolean verifyHostname = Boolean.parseBoolean(propertiesComponent
+                    .resolveProperty(PROPERTY_PREFIX + "verify.hostname")
+                    .orElse("true"));
             setVerifyHostName(verifyHostname);
 
             Optional<String> keystorePath = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "keystore.path");
-            String keystorePassword = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "keystore.password").orElse("");
+            String keystorePassword = propertiesComponent
+                    .resolveProperty(PROPERTY_PREFIX + "keystore.password")
+                    .orElse("");
             if (keystorePath.isPresent()) {
                 setKeystorePath(keystorePath.get());
                 setKeystorePassword(keystorePassword);
@@ -108,7 +111,9 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
             }
 
             Optional<String> truststorePath = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "truststore.path");
-            String truststorePassword = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "truststore.password").orElse("");
+            String truststorePassword = propertiesComponent
+                    .resolveProperty(PROPERTY_PREFIX + "truststore.password")
+                    .orElse("");
             Optional<String> trustCertPath = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "trust.cert.path");
             if (truststorePath.isPresent()) {
                 setTruststorePath(truststorePath.get());
@@ -196,7 +201,7 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
     }
 
     public void setKeyPath(String keyPath) {
-        this.keyPath = new String[] { keyPath };
+        this.keyPath = new String[] {keyPath};
         initializeKeyCertOptions(keyPath);
         if (keyCertOptions instanceof PemKeyCertOptions pemKeyCertOptions) {
             pemKeyCertOptions.setKeyPath(keyPath);
@@ -218,7 +223,7 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
     }
 
     public void setKeyCertPath(String keyCertPath) {
-        this.keyCertPath = new String[] { keyCertPath };
+        this.keyCertPath = new String[] {keyCertPath};
         initializeKeyCertOptions(keyCertPath);
         if (keyCertOptions instanceof PemKeyCertOptions pemKeyCertOptions) {
             pemKeyCertOptions.addCertPath(keyCertPath);
@@ -264,7 +269,7 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
     }
 
     public void setTrustCertPath(String trustCertPath) {
-        this.trustCertPath = new String[] { trustCertPath };
+        this.trustCertPath = new String[] {trustCertPath};
         initializeTrustOptions(trustCertPath);
         if (trustOptions instanceof PemTrustOptions pemTrustOptions) {
             pemTrustOptions.addCertPath(trustCertPath);

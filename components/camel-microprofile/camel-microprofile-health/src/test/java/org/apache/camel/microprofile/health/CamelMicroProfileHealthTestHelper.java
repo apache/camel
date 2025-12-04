@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -45,9 +49,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public final class CamelMicroProfileHealthTestHelper {
 
     private CamelMicroProfileHealthTestHelper() {
@@ -55,16 +56,12 @@ public final class CamelMicroProfileHealthTestHelper {
     }
 
     public static void assertHealthCheckOutput(
-            String expectedName,
-            HealthCheckResponse.Status expectedState,
-            JsonObject healthObject) {
+            String expectedName, HealthCheckResponse.Status expectedState, JsonObject healthObject) {
         assertHealthCheckOutput(expectedName, expectedState, healthObject, null);
     }
 
     public static void assertHealthCheckOutput(
-            String expectedName,
-            HealthCheckResponse.Status expectedState,
-            JsonArray healthObjects) {
+            String expectedName, HealthCheckResponse.Status expectedState, JsonArray healthObjects) {
         assertHealthCheckOutput(expectedName, expectedState, healthObjects, null);
     }
 
@@ -128,7 +125,8 @@ public final class CamelMicroProfileHealthTestHelper {
         private final MyHealthCheck check = new MyHealthCheck("my-hc");
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                throws Exception {
             return new MyEndpoint(uri, this, check);
         }
 
@@ -164,15 +162,13 @@ public final class CamelMicroProfileHealthTestHelper {
         public Producer createProducer() throws Exception {
             return new DefaultProducer(this) {
                 @Override
-                public void process(Exchange exchange) throws Exception {
-                }
+                public void process(Exchange exchange) throws Exception {}
             };
         }
 
         @Override
         public org.apache.camel.Consumer createConsumer(Processor processor) throws Exception {
-            return new DefaultConsumer(this, processor) {
-            };
+            return new DefaultConsumer(this, processor) {};
         }
     }
 
@@ -198,6 +194,5 @@ public final class CamelMicroProfileHealthTestHelper {
         public void setState(HealthCheck.State state) {
             this.state = state;
         }
-
     }
 }

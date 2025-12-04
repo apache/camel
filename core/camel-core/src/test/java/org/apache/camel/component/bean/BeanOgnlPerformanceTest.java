@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,7 +58,7 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").toF("bean:foo?scope=%s&method=hello('Camel')", scope)
+                from("direct:start")
                         .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
                         .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
                         .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
@@ -66,7 +67,9 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
                         .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
                         .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
                         .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
-                        .toF("bean:foo?scope=%s&method=hello('Camel')", scope).to("mock:result");
+                        .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
+                        .toF("bean:foo?scope=%s&method=hello('Camel')", scope)
+                        .to("mock:result");
             }
         };
     }

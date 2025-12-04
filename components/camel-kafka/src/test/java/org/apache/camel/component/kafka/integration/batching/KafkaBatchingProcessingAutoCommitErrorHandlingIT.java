@@ -43,7 +43,7 @@ public class KafkaBatchingProcessingAutoCommitErrorHandlingIT extends BatchingPr
     protected RouteBuilder createRouteBuilder() {
         // allowManualCommit=true&autoOffsetReset=earliest
         String from = "kafka:" + TOPIC
-                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest";
+                + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest";
 
         return new RouteBuilder() {
 
@@ -51,38 +51,50 @@ public class KafkaBatchingProcessingAutoCommitErrorHandlingIT extends BatchingPr
             public void configure() {
 
                 /*
-                 We want to use continued here, so that Camel auto-commits the batch even though part of it has failed. In a
-                 production scenario, applications should probably send these records to a separate topic or fix the condition
-                 that lead to the failure
-                 */
-                onException(IllegalArgumentException.class).process(exchange -> {
-                    LOG.warn("Failed to process batch: {}", exchange.getMessage().getBody());
-                    LOG.warn("Failed to process due to: {}",
-                            exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class).getMessage());
-                }).continued(true);
+                We want to use continued here, so that Camel auto-commits the batch even though part of it has failed. In a
+                production scenario, applications should probably send these records to a separate topic or fix the condition
+                that lead to the failure
+                */
+                onException(IllegalArgumentException.class)
+                        .process(exchange -> {
+                            LOG.warn(
+                                    "Failed to process batch: {}",
+                                    exchange.getMessage().getBody());
+                            LOG.warn(
+                                    "Failed to process due to: {}",
+                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class)
+                                            .getMessage());
+                        })
+                        .continued(true);
 
-                from(from).routeId("batching").process(e -> {
-                    // The received records are stored as exchanges in a list. This gets the list of those exchanges
-                    final List<?> exchanges = e.getMessage().getBody(List.class);
+                from(from)
+                        .routeId("batching")
+                        .process(e -> {
+                            // The received records are stored as exchanges in a list. This gets the list of those
+                            // exchanges
+                            final List<?> exchanges = e.getMessage().getBody(List.class);
 
-                    // Ensure we are actually receiving what we are asking for
-                    if (exchanges == null || exchanges.isEmpty()) {
-                        return;
-                    }
-
-                    // The records from the batch are stored in a list of exchanges in the original exchange.
-                    int i = 0;
-                    for (Object o : exchanges) {
-                        if (o instanceof Exchange exchange) {
-                            i++;
-                            LOG.info("Processing exchange with body {}", exchange.getMessage().getBody(String.class));
-
-                            if (i == 4) {
-                                throw new IllegalArgumentException("Failed to process record");
+                            // Ensure we are actually receiving what we are asking for
+                            if (exchanges == null || exchanges.isEmpty()) {
+                                return;
                             }
-                        }
-                    }
-                }).to(KafkaTestUtil.MOCK_RESULT);
+
+                            // The records from the batch are stored in a list of exchanges in the original exchange.
+                            int i = 0;
+                            for (Object o : exchanges) {
+                                if (o instanceof Exchange exchange) {
+                                    i++;
+                                    LOG.info(
+                                            "Processing exchange with body {}",
+                                            exchange.getMessage().getBody(String.class));
+
+                                    if (i == 4) {
+                                        throw new IllegalArgumentException("Failed to process record");
+                                    }
+                                }
+                            }
+                        })
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }

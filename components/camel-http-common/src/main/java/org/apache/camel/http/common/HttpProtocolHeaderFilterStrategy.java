@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
-public class HttpProtocolHeaderFilterStrategy extends org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy {
-}
+public class HttpProtocolHeaderFilterStrategy extends org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cluster;
 
 import java.time.Duration;
@@ -48,8 +49,11 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private final CuratorLocalMember localMember;
     private volatile LeaderSelector leaderSelector;
 
-    public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration,
-                                CuratorFramework client, String namespace) {
+    public ZooKeeperClusterView(
+            CamelClusterService cluster,
+            ZooKeeperCuratorConfiguration configuration,
+            CuratorFramework client,
+            String namespace) {
         super(cluster, namespace);
 
         this.localMember = new CuratorLocalMember();
@@ -75,7 +79,8 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                     ? Optional.of(localMember)
                     : Optional.of(new CuratorClusterMember(participant));
         } catch (KeeperException.NoNodeException e) {
-            LOGGER.debug("Failed to get get master because node '{}' does not yet exist (error: '{}')",
+            LOGGER.debug(
+                    "Failed to get get master because node '{}' does not yet exist (error: '{}')",
                     getFullPath(),
                     e.getMessage());
             return Optional.empty();
@@ -91,12 +96,12 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         }
 
         try {
-            return leaderSelector.getParticipants()
-                    .stream()
+            return leaderSelector.getParticipants().stream()
                     .map(CuratorClusterMember::new)
                     .collect(Collectors.toList());
         } catch (KeeperException.NoNodeException e) {
-            LOGGER.debug("Failed to get members because node '{}' does not yet exist (error: '{}')",
+            LOGGER.debug(
+                    "Failed to get members because node '{}' does not yet exist (error: '{}')",
                     getFullPath(),
                     e.getMessage());
             return Collections.emptyList();
@@ -144,10 +149,11 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         public void takeLeadership(CuratorFramework curatorFramework) throws Exception {
             fireLeadershipChangedEvent(localMember);
 
-            BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
-                    .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
-                    .withInterval(Duration.ofSeconds(5))
-                    .build())
+            BlockingTask task = Tasks.foregroundTask()
+                    .withBudget(Budgets.iterationBudget()
+                            .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                            .withInterval(Duration.ofSeconds(5))
+                            .build())
                     .build();
 
             task.run(getCamelContext(), () -> !isRunAllowed());

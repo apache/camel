@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.producer;
 
 import java.io.File;
@@ -82,7 +83,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
             switch (operation) {
 
-                /** Images **/
+                    /** Images **/
                 case BUILD_IMAGE:
                     runAsyncImageBuild(exchange, message, client);
 
@@ -95,7 +96,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     runAsyncPush(exchange, message, client);
 
                     break;
-                /** Containers **/
+                    /** Containers **/
                 case ATTACH_CONTAINER:
                     runAsyncAttachContainer(exchange, message, client);
 
@@ -147,26 +148,28 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
     }
 
-    private void runAsyncWithFrameResponse(Exchange exchange, AsyncDockerCmd<?, Frame> cmd) throws InterruptedException {
+    private void runAsyncWithFrameResponse(Exchange exchange, AsyncDockerCmd<?, Frame> cmd)
+            throws InterruptedException {
         Adapter<Frame> item = cmd.exec(new Adapter<Frame>() {
             @Override
             public void onNext(Frame item) {
                 LOG.trace("running framed callback {}", item);
                 super.onNext(item);
             }
-
         });
 
         setResponse(exchange, item);
     }
 
-    private void runAsyncExecStart(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+    private void runAsyncExecStart(Exchange exchange, Message message, DockerClient client)
+            throws InterruptedException {
         try (ExecStartCmd cmd = executeExecStartRequest(client, message)) {
             runAsyncWithFrameResponse(exchange, cmd);
         }
     }
 
-    private void runAsyncWaitContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+    private void runAsyncWaitContainer(Exchange exchange, Message message, DockerClient client)
+            throws InterruptedException {
         try (WaitContainerCmd cmd = executeWaitContainerRequest(client, message)) {
             WaitContainerResultCallback item = cmd.exec(new WaitContainerResultCallback() {
                 @Override
@@ -175,7 +178,6 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
                     LOG.trace("wait container callback {}", item);
                 }
-
             });
 
             setResponse(exchange, item);
@@ -189,13 +191,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
     }
 
-    private void runAsyncLogContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+    private void runAsyncLogContainer(Exchange exchange, Message message, DockerClient client)
+            throws InterruptedException {
         try (LogContainerCmd cmd = executeLogContainerRequest(client, message)) {
             runAsyncWithFrameResponse(exchange, cmd);
         }
     }
 
-    private void runAsyncAttachContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+    private void runAsyncAttachContainer(Exchange exchange, Message message, DockerClient client)
+            throws InterruptedException {
         try (AttachContainerCmd cmd = executeAttachContainerRequest(client, message)) {
             runAsyncWithFrameResponse(exchange, cmd);
         }
@@ -225,7 +229,6 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
                     super.onNext(item);
 
                     LOG.trace("pull image callback {}", item);
-
                 }
             });
 
@@ -252,7 +255,8 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             throw new DockerException("Unable to location source Image");
         }
 
-        Boolean noCache = DockerHelper.getProperty(DockerConstants.DOCKER_NO_CACHE, configuration, message, Boolean.class);
+        Boolean noCache =
+                DockerHelper.getProperty(DockerConstants.DOCKER_NO_CACHE, configuration, message, Boolean.class);
 
         if (noCache != null) {
             buildImageCmd.withNoCache(noCache);
@@ -277,7 +281,6 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
 
         return buildImageCmd;
-
     }
 
     /**
@@ -287,13 +290,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Pull Image Request");
 
-        String repository = DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
+        String repository =
+                DockerHelper.getProperty(DockerConstants.DOCKER_REPOSITORY, configuration, message, String.class);
 
         ObjectHelper.notNull(repository, "Repository must be specified");
 
         PullImageCmd pullImageCmd = client.pullImageCmd(repository);
 
-        String registry = DockerHelper.getProperty(DockerConstants.DOCKER_REGISTRY, configuration, message, String.class);
+        String registry =
+                DockerHelper.getProperty(DockerConstants.DOCKER_REGISTRY, configuration, message, String.class);
         if (registry != null) {
             pullImageCmd.withRegistry(registry);
         }
@@ -310,7 +315,6 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
 
         return pullImageCmd;
-
     }
 
     /**
@@ -339,7 +343,6 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
 
         return pushImageCmd;
-
     }
 
     /**
@@ -349,15 +352,15 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Attach Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
         AttachContainerCmd attachContainerCmd = client.attachContainerCmd(containerId);
 
-        Boolean followStream
-                = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
+        Boolean followStream =
+                DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
             attachContainerCmd.withFollowStream(followStream);
@@ -369,26 +372,28 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             attachContainerCmd.withLogs(logs);
         }
 
-        Boolean stdErr = DockerHelper.getProperty(DockerConstants.DOCKER_STD_ERR, configuration, message, Boolean.class);
+        Boolean stdErr =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_ERR, configuration, message, Boolean.class);
 
         if (stdErr != null) {
             attachContainerCmd.withStdErr(stdErr);
         }
 
-        Boolean stdOut = DockerHelper.getProperty(DockerConstants.DOCKER_STD_OUT, configuration, message, Boolean.class);
+        Boolean stdOut =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_OUT, configuration, message, Boolean.class);
 
         if (stdOut != null) {
             attachContainerCmd.withStdOut(stdOut);
         }
 
-        Boolean timestamps = DockerHelper.getProperty(DockerConstants.DOCKER_TIMESTAMPS, configuration, message, Boolean.class);
+        Boolean timestamps =
+                DockerHelper.getProperty(DockerConstants.DOCKER_TIMESTAMPS, configuration, message, Boolean.class);
 
         if (timestamps != null) {
             attachContainerCmd.withTimestamps(timestamps);
         }
 
         return attachContainerCmd;
-
     }
 
     /**
@@ -398,27 +403,29 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Log Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
         LogContainerCmd logContainerCmd = client.logContainerCmd(containerId);
 
-        Boolean followStream
-                = DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
+        Boolean followStream =
+                DockerHelper.getProperty(DockerConstants.DOCKER_FOLLOW_STREAM, configuration, message, Boolean.class);
 
         if (followStream != null) {
             logContainerCmd.withFollowStream(followStream);
         }
 
-        Boolean stdErr = DockerHelper.getProperty(DockerConstants.DOCKER_STD_ERR, configuration, message, Boolean.class);
+        Boolean stdErr =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_ERR, configuration, message, Boolean.class);
 
         if (stdErr != null) {
             logContainerCmd.withStdErr(stdErr);
         }
 
-        Boolean stdOut = DockerHelper.getProperty(DockerConstants.DOCKER_STD_OUT, configuration, message, Boolean.class);
+        Boolean stdOut =
+                DockerHelper.getProperty(DockerConstants.DOCKER_STD_OUT, configuration, message, Boolean.class);
 
         if (stdOut != null) {
             logContainerCmd.withStdOut(stdOut);
@@ -430,20 +437,21 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             logContainerCmd.withTail(tail);
         }
 
-        Boolean tailAll = DockerHelper.getProperty(DockerConstants.DOCKER_TAIL_ALL, configuration, message, Boolean.class);
+        Boolean tailAll =
+                DockerHelper.getProperty(DockerConstants.DOCKER_TAIL_ALL, configuration, message, Boolean.class);
 
         if (tailAll != null && tailAll) {
             logContainerCmd.withTailAll();
         }
 
-        Boolean timestamps = DockerHelper.getProperty(DockerConstants.DOCKER_TIMESTAMPS, configuration, message, Boolean.class);
+        Boolean timestamps =
+                DockerHelper.getProperty(DockerConstants.DOCKER_TIMESTAMPS, configuration, message, Boolean.class);
 
         if (timestamps != null) {
             logContainerCmd.withTimestamps(timestamps);
         }
 
         return logContainerCmd;
-
     }
 
     /**
@@ -453,8 +461,8 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         LOG.debug("Executing Docker Wait Container Request");
 
-        String containerId
-                = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
+        String containerId =
+                DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 
         ObjectHelper.notNull(containerId, MISSING_CONTAINER_ID);
 
@@ -487,6 +495,5 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         }
 
         return execStartCmd;
-
     }
 }

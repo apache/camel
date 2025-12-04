@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
+
+import static org.apache.camel.Exchange.FILE_LENGTH;
+import static org.apache.camel.Exchange.FILE_NAME;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -36,9 +40,6 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-
-import static org.apache.camel.Exchange.FILE_LENGTH;
-import static org.apache.camel.Exchange.FILE_NAME;
 
 /**
  * Zip file data format.
@@ -77,7 +78,8 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             // generate the file name as the camel file component would do
             filename = filepath = StringHelper.sanitize(exchange.getIn().getMessageId());
         }
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+        InputStream is =
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
         if (fileLength == null) {
             fileLength = (long) is.available();
         }
@@ -108,8 +110,8 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             return zipIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(inputStream);
-            ZipArchiveInputStream zis = new ArchiveStreamFactory()
-                    .createArchiveInputStream(ArchiveStreamFactory.ZIP, bis);
+            ZipArchiveInputStream zis =
+                    new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP, bis);
             OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             try {
@@ -189,5 +191,4 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
     public void setMaxDecompressedSize(long maxDecompressedSize) {
         this.maxDecompressedSize = maxDecompressedSize;
     }
-
 }

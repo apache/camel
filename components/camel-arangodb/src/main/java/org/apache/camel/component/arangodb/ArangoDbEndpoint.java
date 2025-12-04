@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb;
 
 import java.util.Map;
@@ -36,22 +37,30 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Perform operations on ArangoDb when used as a Document Database, or as a Graph Database
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "arangodb", title = "ArangoDb", syntax = "arangodb:database",
-             category = { Category.DATABASE }, producerOnly = true, headersClass = ArangoDbConstants.class)
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "arangodb",
+        title = "ArangoDb",
+        syntax = "arangodb:database",
+        category = {Category.DATABASE},
+        producerOnly = true,
+        headersClass = ArangoDbConstants.class)
 public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "database name")
     @Metadata(required = true)
     private String database;
+
     @UriParam
     private ArangoDbConfiguration configuration;
+
     @UriParam(label = "advanced")
     private ArangoDB arangoDB;
+
     @UriParam(label = "advanced")
     private Vertx vertx;
 
-    public ArangoDbEndpoint() {
-    }
+    public ArangoDbEndpoint() {}
 
     public ArangoDbEndpoint(String uri, ArangoDbComponent component, ArangoDbConfiguration configuration) {
         super(uri, component);
@@ -126,7 +135,8 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
                 builder.host(configuration.getHost(), configuration.getPort());
             }
 
-            if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
+            if (ObjectHelper.isNotEmpty(configuration.getUser())
+                    && ObjectHelper.isNotEmpty(configuration.getPassword())) {
                 builder.user(configuration.getUser()).password(configuration.getPassword());
             }
 
@@ -136,7 +146,6 @@ public class ArangoDbEndpoint extends DefaultEndpoint implements EndpointService
 
             arangoDB = builder.build();
         }
-
     }
 
     @Override

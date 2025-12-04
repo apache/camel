@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,19 +33,20 @@ import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.storage.block.VolumeAttachment;
 import org.openstack4j.model.storage.block.VolumeType;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class OpenstackCinderVolumeTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-cinder://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + CinderConstants.VOLUMES;
+    private static final String URI_FORMAT =
+            "openstack-cinder://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + CinderConstants.VOLUMES;
 
     @Test
     void createShouldSucceed() {
-        Volume in = Builders.volume().size(10).name("test_openstack4j").description("test").multiattach(true).build();
+        Volume in = Builders.volume()
+                .size(10)
+                .name("test_openstack4j")
+                .description("test")
+                .multiattach(true)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Volume out = template.requestBody(uri, in, Volume.class);
@@ -125,7 +131,7 @@ public class OpenstackCinderVolumeTest extends OpenstackWiremockTestSupport {
     @Test
     void deleteShouldSucceed() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
-        assertDoesNotThrow(() -> template.requestBodyAndHeader(uri, null, CinderConstants.VOLUME_ID,
-                "fffab33e-38e8-4626-9fee-fe90f240ff0f"));
+        assertDoesNotThrow(() -> template.requestBodyAndHeader(
+                uri, null, CinderConstants.VOLUME_ID, "fffab33e-38e8-4626-9fee-fe90f240ff0f"));
     }
 }

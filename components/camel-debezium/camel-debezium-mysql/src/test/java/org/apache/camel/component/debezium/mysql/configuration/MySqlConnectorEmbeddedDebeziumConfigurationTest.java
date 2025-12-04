@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.mysql.configuration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
@@ -25,15 +30,12 @@ import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testIfCreatesConfig() {
-        final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
+        final MySqlConnectorEmbeddedDebeziumConfiguration configuration =
+                new MySqlConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
         configuration.setIncludeQuery(true);
@@ -45,19 +47,20 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_user", dbzMysqlConfigurations.getString(MySqlConnectorConfig.USER));
         assertTrue(dbzMysqlConfigurations.getBoolean(MySqlConnectorConfig.INCLUDE_SQL_QUERY));
         assertEquals(1212, dbzMysqlConfigurations.getInteger(CommonConnectorConfig.MAX_QUEUE_SIZE));
-        assertEquals(30000,
-                dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
-        assertEquals(MySqlConnector.class.getName(), dbzMysqlConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
+        assertEquals(30000, dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
+        assertEquals(
+                MySqlConnector.class.getName(), dbzMysqlConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
         assertTrue(dbzMysqlConfigurations.getBoolean(MySqlConnectorConfig.INCLUDE_SQL_QUERY));
-        assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
+        assertEquals(
+                DebeziumConstants.DEFAULT_OFFSET_STORAGE,
                 dbzMysqlConfigurations.getString(AsyncEmbeddedEngine.OFFSET_STORAGE));
-        assertEquals(30000,
-                dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
+        assertEquals(30000, dbzMysqlConfigurations.getLong(MySqlConnectorConfig.CONNECTION_TIMEOUT_MS));
     }
 
     @Test
     void testIfValidatesConfigurationCorrectly() {
-        final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
+        final MySqlConnectorEmbeddedDebeziumConfiguration configuration =
+                new MySqlConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -76,7 +79,8 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testValidateConfigurationsForAllRequiredFields() {
-        final MySqlConnectorEmbeddedDebeziumConfiguration configuration = new MySqlConnectorEmbeddedDebeziumConfiguration();
+        final MySqlConnectorEmbeddedDebeziumConfiguration configuration =
+                new MySqlConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");
@@ -98,5 +102,4 @@ public class MySqlConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("/offset/file", configuration.getOffsetStorageFileName());
         assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
-
 }

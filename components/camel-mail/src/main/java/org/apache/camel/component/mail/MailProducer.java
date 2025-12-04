@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
@@ -88,7 +89,8 @@ public class MailProducer extends DefaultAsyncProducer {
 
     protected JavaMailSender getSender(Exchange exchange) {
         // do we have special headers
-        Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), "mail.smtp.");
+        Map<String, Object> additional =
+                URISupport.extractProperties(exchange.getMessage().getHeaders(), "mail.smtp.");
         if (additional.isEmpty()) {
             // no then use default sender
             LOG.trace("Using default JavaMailSender");
@@ -96,8 +98,9 @@ public class MailProducer extends DefaultAsyncProducer {
         } else {
             // create new mail sender specially for this
             LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
-            JavaMailSender customSender
-                    = getEndpoint().getConfiguration().createJavaMailSender(getEndpoint().getCamelContext());
+            JavaMailSender customSender = getEndpoint()
+                    .getConfiguration()
+                    .createJavaMailSender(getEndpoint().getCamelContext());
             additional.forEach((k, v) -> {
                 if (v != null) {
                     // add with prefix so we dont loose that

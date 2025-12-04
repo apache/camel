@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config.scan;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SpringComponentScanTest extends ContextTestSupport {
 
     private AbstractApplicationContext applicationContext;
@@ -41,7 +42,8 @@ public class SpringComponentScanTest extends ContextTestSupport {
         if (context != null) {
             context.stop();
         }
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
+        applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
         context = applicationContext.getBean("camelScan", ModelCamelContext.class);
         template = context.createProducerTemplate();
     }

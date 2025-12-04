@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 // Combination of both classes flattened out
-@Schema(anyOf = { XOfFormA.class, XOfFormB.class })
+@Schema(anyOf = {XOfFormA.class, XOfFormB.class})
 public class AnyOfForm {
     @JsonUnwrapped
     XOfFormA formA;
@@ -43,5 +44,4 @@ public class AnyOfForm {
     public void setFormB(XOfFormB formB) {
         this.formB = formB;
     }
-
 }

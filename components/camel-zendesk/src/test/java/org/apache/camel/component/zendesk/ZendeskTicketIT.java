@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zendesk;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,16 +35,12 @@ import org.slf4j.LoggerFactory;
 import org.zendesk.client.v2.model.Comment;
 import org.zendesk.client.v2.model.Ticket;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * The integration tests for ticket related Zendesk API.
  */
-@EnabledIf(value = "org.apache.camel.component.zendesk.AbstractZendeskTestSupport#hasCredentials",
-           disabledReason = "Zendesk credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.zendesk.AbstractZendeskTestSupport#hasCredentials",
+        disabledReason = "Zendesk credentials were not provided")
 public class ZendeskTicketIT extends AbstractZendeskTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ZendeskTicketIT.class);
 
@@ -102,7 +104,8 @@ public class ZendeskTicketIT extends AbstractZendeskTestSupport {
         assertNull(comment.getId());
         assertNull(comment.getCreatedAt());
         assertEquals("comment", ZendeskApiMethod.CREATE_COMMENT.getArgNames().get(1));
-        assertEquals(Comment.class, ZendeskApiMethod.CREATE_COMMENT.getArgTypes().get(1));
+        assertEquals(
+                Comment.class, ZendeskApiMethod.CREATE_COMMENT.getArgTypes().get(1));
         headers.put("CamelZendesk.comment", comment);
         requestBodyAndHeaders("direct://CREATECOMMENT", null, headers);
         Iterable iterable = requestBody("direct://GETTICKETCOMMENTS", answer.getId());
@@ -131,33 +134,27 @@ public class ZendeskTicketIT extends AbstractZendeskTestSupport {
         assertEquals("id", ZendeskApiMethod.GET_TICKET.getArgNames().get(0));
         assertEquals(long.class, ZendeskApiMethod.GET_TICKET.getArgTypes().get(0));
         assertEquals("id", ZendeskApiMethod.GET_TICKET_COMMENTS.getArgNames().get(0));
-        assertEquals(long.class, ZendeskApiMethod.GET_TICKET_COMMENTS.getArgTypes().get(0));
+        assertEquals(
+                long.class, ZendeskApiMethod.GET_TICKET_COMMENTS.getArgTypes().get(0));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://GETTICKETS")
-                        .to("zendesk:default/getTickets");
+                from("direct://GETTICKETS").to("zendesk:default/getTickets");
 
-                from("direct://CREATETICKET")
-                        .to("zendesk:default/createTicket?inBody=ticket");
+                from("direct://CREATETICKET").to("zendesk:default/createTicket?inBody=ticket");
 
-                from("direct://UPDATETICKET")
-                        .to("zendesk:default/updateTicket?inBody=ticket");
+                from("direct://UPDATETICKET").to("zendesk:default/updateTicket?inBody=ticket");
 
-                from("direct://GETTICKET")
-                        .to("zendesk:default/getTicket?inBody=id");
+                from("direct://GETTICKET").to("zendesk:default/getTicket?inBody=id");
 
-                from("direct://CREATECOMMENT")
-                        .to("zendesk:default/createComment");
+                from("direct://CREATECOMMENT").to("zendesk:default/createComment");
 
-                from("direct://GETTICKETCOMMENTS")
-                        .to("zendesk:default/getTicketComments?inBody=id");
+                from("direct://GETTICKETCOMMENTS").to("zendesk:default/getTicketComments?inBody=id");
 
-                from("direct://DELETETICKET")
-                        .to("zendesk:default/deleteTicket?inBody=id");
+                from("direct://DELETETICKET").to("zendesk:default/deleteTicket?inBody=id");
             }
         };
     }

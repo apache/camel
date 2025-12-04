@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,10 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
                 profile.setPoolSize(5);
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false)
+                errorHandler(deadLetterChannel("mock:dead")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false)
                         .executorServiceRef("myAsyncPool"));
 
                 from("direct:in").threads(2).to("mock:foo").process(new Processor() {
@@ -61,5 +65,4 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
 
         assertMockEndpointsSatisfied();
     }
-
 }

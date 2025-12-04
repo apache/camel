@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,8 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonPathCustomMapperTest extends CamelTestSupport {
 
@@ -80,7 +81,8 @@ public class JsonPathCustomMapperTest extends CamelTestSupport {
             public void configure() {
 
                 from("direct:jsonAsString")
-                        .split().jsonpathWriteAsString("$")
+                        .split()
+                        .jsonpathWriteAsString("$")
                         .log("${body}")
                         .to("mock:resultString");
             }
@@ -97,7 +99,5 @@ public class JsonPathCustomMapperTest extends CamelTestSupport {
         assertTrue(resultFromMock instanceof String);
         assertTrue(resultFromMock.toString().contains("121002700.0"));
         assertTrue(resultFromMock.toString().contains("-91000000.0"));
-
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
  * Having custom endpoint options should not override or change any component configured options.
@@ -68,17 +69,14 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
         assertIsInstanceOf(MyBinding.class, end3.getHttpBinding());
 
         // test the headerFilterStrategy
-        HttpEndpoint end4 = context.getEndpoint("http://www.google.com?headerFilterStrategy=#myStrategy", HttpEndpoint.class);
+        HttpEndpoint end4 =
+                context.getEndpoint("http://www.google.com?headerFilterStrategy=#myStrategy", HttpEndpoint.class);
         assertIsInstanceOf(MyHeaderFilterStrategy.class, end4.getHeaderFilterStrategy());
     }
 
-    private static class MyBinding extends DefaultHttpBinding {
-    }
+    private static class MyBinding extends DefaultHttpBinding {}
 
-    private static class MyOtherBinding extends DefaultHttpBinding {
-    }
+    private static class MyOtherBinding extends DefaultHttpBinding {}
 
-    private static class MyHeaderFilterStrategy extends HttpHeaderFilterStrategy {
-    }
-
+    private static class MyHeaderFilterStrategy extends HttpHeaderFilterStrategy {}
 }

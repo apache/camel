@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.ArrayList;
@@ -35,8 +36,7 @@ public final class UnitOfWorkHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnitOfWorkHelper.class);
 
-    private UnitOfWorkHelper() {
-    }
+    private UnitOfWorkHelper() {}
 
     /**
      * Done and stop the {@link UnitOfWork}.
@@ -52,8 +52,10 @@ public final class UnitOfWorkHelper {
         try {
             uow.done(exchange);
         } catch (Exception e) {
-            LOG.warn("Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
-                    exchange.getExchangeId(), e);
+            LOG.warn(
+                    "Exception occurred during done UnitOfWork for Exchange: {}. This exception will be ignored.",
+                    exchange.getExchangeId(),
+                    e);
         }
     }
 
@@ -114,7 +116,8 @@ public final class UnitOfWorkHelper {
         return copy;
     }
 
-    private static void invokeSynchronizationCallbacks(Route route, Exchange exchange, Logger log, List<Synchronization> copy) {
+    private static void invokeSynchronizationCallbacks(
+            Route route, Exchange exchange, Logger log, List<Synchronization> copy) {
         for (Synchronization synchronization : copy) {
             final SynchronizationRouteAware routeSynchronization = synchronization.getRouteSynchronization();
             if (routeSynchronization != null) {
@@ -148,5 +151,4 @@ public final class UnitOfWorkHelper {
             }
         }
     }
-
 }

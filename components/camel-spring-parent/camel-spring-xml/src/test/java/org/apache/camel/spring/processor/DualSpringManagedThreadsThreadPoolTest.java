@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,10 +28,6 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
@@ -43,10 +44,11 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Test
     public void testDualManagedThreadPool() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=threadpools,name=\"myPool\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=threadpools,name=\"myPool\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(2, corePoolSize.intValue());
@@ -88,5 +90,4 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertNull(routeId);
     }
-
 }

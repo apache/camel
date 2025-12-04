@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to demonstrate annotations combined with Exchange parameter.
@@ -54,7 +55,10 @@ public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader("user", constant("admin")).to("bean:myBean").to("mock:result");
+                from("direct:in")
+                        .setHeader("user", constant("admin"))
+                        .to("bean:myBean")
+                        .to("mock:result");
             }
         };
     }
@@ -69,5 +73,4 @@ public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
         }
         // END SNIPPET: e1
     }
-
 }

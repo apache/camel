@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,9 +63,14 @@ public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
                 context.setStreamCachingStrategy(streamCachingStrategy);
                 context.setStreamCaching(true);
 
-                from("direct:start").split(bodyAs(String.class).tokenize()).to("direct:split").to("mock:startEnd").end();
+                from("direct:start")
+                        .split(bodyAs(String.class).tokenize())
+                        .to("direct:split")
+                        .to("mock:startEnd")
+                        .end();
 
-                from("direct:split").wireTap("direct:wireTap")
+                from("direct:split")
+                        .wireTap("direct:wireTap")
                         // wait for the streamcache to be created in the wireTap
                         // route
                         .delay(1000)
@@ -73,7 +79,8 @@ public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
 
                 from("direct:wireTap")
                         // create streamcache
-                        .setBody(constant(this.getClass().getResourceAsStream("/log4j2.properties"))).delay(3000)
+                        .setBody(constant(this.getClass().getResourceAsStream("/log4j2.properties")))
+                        .delay(3000)
                         // spool file is deleted by the split route
                         .to("mock:wireTapEnd");
             }

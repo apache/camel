@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.pubsub;
 
 import com.salesforce.eventbus.protobuf.Error;
@@ -50,10 +51,9 @@ public class PublishResult {
 
     @Override
     public String toString() {
-        return "PublishResult{" +
-               "hasError=" + hasError() +
-               ",error=" + getError() +
-               ",correlationKey=" + getCorrelationKey() +
-               "}";
+        return "PublishResult{" + "hasError="
+                + hasError() + ",error="
+                + getError() + ",correlationKey="
+                + getCorrelationKey() + "}";
     }
 }

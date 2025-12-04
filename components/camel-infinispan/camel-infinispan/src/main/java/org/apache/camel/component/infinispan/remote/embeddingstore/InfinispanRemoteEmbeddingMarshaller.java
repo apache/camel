@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.embeddingstore;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.infinispan.protostream.MessageMarshaller;
 
 import static org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil.FIELD_EMBEDDING;
 import static org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil.FIELD_ID;
 import static org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil.FIELD_METADATA_KEYS;
 import static org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil.FIELD_METADATA_VALUES;
 import static org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil.FIELD_TEXT;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.infinispan.protostream.MessageMarshaller;
 
 public class InfinispanRemoteEmbeddingMarshaller implements MessageMarshaller<InfinispanRemoteEmbedding> {
     private final String typeName;

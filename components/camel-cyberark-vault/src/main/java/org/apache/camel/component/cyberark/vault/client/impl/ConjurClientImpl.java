@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault.client.impl;
 
 import java.io.IOException;
@@ -46,17 +47,15 @@ public class ConjurClientImpl implements ConjurClient {
     private final HttpClient httpClient;
 
     public ConjurClientImpl(
-                            String url, String account, String username,
-                            String password, String apiKey, String authToken) {
+            String url, String account, String username, String password, String apiKey, String authToken) {
         this.url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         this.account = account;
         this.username = username;
         this.password = password;
         this.apiKey = apiKey;
         this.authToken = authToken;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+        this.httpClient =
+                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
     }
 
     @Override
@@ -76,8 +75,7 @@ public class ConjurClientImpl implements ConjurClient {
             String encodedSecretId = URLEncoder.encode(secretId, StandardCharsets.UTF_8);
 
             // Build the secrets endpoint URL
-            String secretsUrl = String.format("%s/secrets/%s/variable/%s",
-                    url, account, encodedSecretId);
+            String secretsUrl = String.format("%s/secrets/%s/variable/%s", url, account, encodedSecretId);
 
             if (version != null && !version.isEmpty()) {
                 secretsUrl += "?version=" + version;
@@ -85,8 +83,11 @@ public class ConjurClientImpl implements ConjurClient {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(secretsUrl))
-                    .header("Authorization", "Token token=\"" + Base64.getEncoder()
-                            .encodeToString(authToken.getBytes(StandardCharsets.UTF_8)) + "\"")
+                    .header(
+                            "Authorization",
+                            "Token token=\""
+                                    + Base64.getEncoder().encodeToString(authToken.getBytes(StandardCharsets.UTF_8))
+                                    + "\"")
                     .GET()
                     .build();
 
@@ -132,8 +133,7 @@ public class ConjurClientImpl implements ConjurClient {
             // URL encode the login
             String encodedLogin = URLEncoder.encode(login, StandardCharsets.UTF_8);
 
-            String authUrl = String.format("%s/authn/%s/%s/authenticate",
-                    url, account, encodedLogin);
+            String authUrl = String.format("%s/authn/%s/%s/authenticate", url, account, encodedLogin);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(authUrl))
@@ -167,13 +167,15 @@ public class ConjurClientImpl implements ConjurClient {
             String encodedSecretId = URLEncoder.encode(secretId, StandardCharsets.UTF_8);
 
             // Build the secrets endpoint URL for creating/updating
-            String secretsUrl = String.format("%s/secrets/%s/variable/%s",
-                    url, account, encodedSecretId);
+            String secretsUrl = String.format("%s/secrets/%s/variable/%s", url, account, encodedSecretId);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(secretsUrl))
-                    .header("Authorization", "Token token=\"" + Base64.getEncoder()
-                            .encodeToString(authToken.getBytes(StandardCharsets.UTF_8)) + "\"")
+                    .header(
+                            "Authorization",
+                            "Token token=\""
+                                    + Base64.getEncoder().encodeToString(authToken.getBytes(StandardCharsets.UTF_8))
+                                    + "\"")
                     .header("Content-Type", "text/plain")
                     .POST(HttpRequest.BodyPublishers.ofString(secretValue))
                     .build();

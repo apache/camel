@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
 
 import java.util.HashSet;
@@ -35,8 +36,13 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * Solve planning problems with OptaPlanner.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:problemName",
-             category = { Category.WORKFLOW }, headersClass = OptaPlannerConstants.class)
+@UriEndpoint(
+        firstVersion = "2.13.0",
+        scheme = "optaplanner",
+        title = "OptaPlanner",
+        syntax = "optaplanner:problemName",
+        category = {Category.WORKFLOW},
+        headersClass = OptaPlannerConstants.class)
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new ConcurrentHashMap<>();
     private static final Map<Long, Set<OptaplannerSolutionEventListener>> SOLUTION_LISTENER = new ConcurrentHashMap<>();
@@ -59,7 +65,8 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
 
     protected Solver<Object> createSolver() {
         ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
-        SolverFactory<Object> solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
+        SolverFactory<Object> solverFactory =
+                SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
         return solverFactory.buildSolver();
     }
 

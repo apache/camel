@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
+
+import static org.apache.camel.support.ExchangeHelper.getCharsetName;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,8 +37,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.service.ServiceSupport;
 
-import static org.apache.camel.support.ExchangeHelper.getCharsetName;
-
 /**
  * This abstract class contains all the common parts for all the uniVocity parsers.
  * <p/>
@@ -48,11 +49,13 @@ import static org.apache.camel.support.ExchangeHelper.getCharsetName;
  * @param <DF>  the data format class (for providing a fluent API)
  */
 public abstract class AbstractUniVocityDataFormat<
-        F extends Format, CWS extends CommonWriterSettings<F>,
-        W extends AbstractWriter<CWS>, CPS extends CommonParserSettings<F>, P extends AbstractParser<CPS>,
-        DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>>
-        extends ServiceSupport
-        implements DataFormat, DataFormatName {
+                F extends Format,
+                CWS extends CommonWriterSettings<F>,
+                W extends AbstractWriter<CWS>,
+                CPS extends CommonParserSettings<F>,
+                P extends AbstractParser<CPS>,
+                DF extends AbstractUniVocityDataFormat<F, CWS, W, CPS, P, DF>>
+        extends ServiceSupport implements DataFormat, DataFormatName {
     protected String nullValue;
     protected Boolean skipEmptyLines;
     protected Boolean ignoreTrailingWhitespaces;

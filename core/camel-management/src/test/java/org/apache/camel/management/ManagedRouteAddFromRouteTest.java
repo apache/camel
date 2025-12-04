@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,9 +31,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests mbeans is registered when adding a 2nd route from within an existing route.
@@ -49,7 +50,8 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
                 SedaEndpoint seda = context.getEndpoint("seda:start", SedaEndpoint.class);
                 seda.getQueue().put(new DefaultExchange(context));
 
-                from("seda:start").routeId("foo")
+                from("seda:start")
+                        .routeId("foo")
                         .process(exchange -> {
                             RouteBuilder child = new RouteBuilder() {
                                 @Override
@@ -87,5 +89,4 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
         state = (String) mbeanServer.getAttribute(route2, "State");
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
     }
-
 }

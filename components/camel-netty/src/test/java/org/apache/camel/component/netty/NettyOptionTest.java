@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
@@ -30,12 +31,12 @@ public class NettyOptionTest extends NettyTCPSyncTest {
                 from("netty:tcp://localhost:{{port}}?sync=true&option.child.keepAlive=false")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(
-                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                                exchange.getMessage()
+                                        .setBody(
+                                                "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });
             }
         };
     }
-
 }

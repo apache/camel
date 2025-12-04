@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -31,5 +32,4 @@ public interface ManagedLoopMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Whether to break looping if Camel is being shutdown")
     Boolean isBreakOnShutdown();
-
 }

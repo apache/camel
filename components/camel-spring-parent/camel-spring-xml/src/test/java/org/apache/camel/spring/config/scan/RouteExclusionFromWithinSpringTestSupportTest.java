@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config.scan;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,14 +28,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                new String[] { "org/apache/camel/spring/config/scan/componentScan.xml" },
+                new String[] {"org/apache/camel/spring/config/scan/componentScan.xml"},
                 getRouteExcludingApplicationContext());
     }
 
@@ -60,5 +61,4 @@ public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSup
 
         return MyExcludedRouteBuilder.class;
     }
-
 }

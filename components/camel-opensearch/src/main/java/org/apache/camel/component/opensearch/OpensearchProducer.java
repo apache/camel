@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch;
+
+import static org.apache.camel.component.opensearch.OpensearchConstants.PARAM_SCROLL;
+import static org.apache.camel.component.opensearch.OpensearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,9 +83,6 @@ import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.opensearch.OpensearchConstants.PARAM_SCROLL;
-import static org.apache.camel.component.opensearch.OpensearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
-
 /**
  * Represents an Opensearch producer.
  */
@@ -134,8 +135,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
             return OpensearchOperation.DeleteIndex;
         }
 
-        OpensearchOperation operationConfig
-                = exchange.getIn().getHeader(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.class);
+        OpensearchOperation operationConfig =
+                exchange.getIn().getHeader(OpensearchConstants.PARAM_OPERATION, OpensearchOperation.class);
 
         LOG.debug("Operation obtained from header {}: {}", OpensearchConstants.PARAM_OPERATION, operationConfig);
 
@@ -146,8 +147,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
         LOG.debug("Operation obtained from config: {}", operationConfig);
 
         if (operationConfig == null) {
-            throw new IllegalArgumentException(
-                    OpensearchConstants.PARAM_OPERATION + " value is mandatory");
+            throw new IllegalArgumentException(OpensearchConstants.PARAM_OPERATION + " value is mandatory");
         }
         return operationConfig;
     }
@@ -194,9 +194,11 @@ class OpensearchProducer extends DefaultAsyncProducer {
             }
 
             boolean configWaitForActiveShards = false;
-            Integer waitForActiveShards = message.getHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
+            Integer waitForActiveShards =
+                    message.getHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
             if (waitForActiveShards == null) {
-                message.setHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, configuration.getWaitForActiveShards());
+                message.setHeader(
+                        OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, configuration.getWaitForActiveShards());
                 configWaitForActiveShards = true;
             }
 
@@ -205,7 +207,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 documentClass = configuration.getDocumentClass();
             }
 
-            ActionContext ctx = new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
+            ActionContext ctx =
+                    new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
 
             switch (operation) {
                 case Index -> processIndexAsync(ctx);
@@ -224,21 +227,26 @@ class OpensearchProducer extends DefaultAsyncProducer {
                     // is it a scroll request ?
                     boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
                     if (useScroll) {
-                        // As a scroll request is expected, for the sake of simplicity, the synchronous mode is preserved
-                        int scrollKeepAliveMs
-                                = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(),
-                                        Integer.class);
+                        // As a scroll request is expected, for the sake of simplicity, the synchronous mode is
+                        // preserved
+                        int scrollKeepAliveMs = message.getHeader(
+                                PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
                         // NOTE: the stream must be closed by the client.
-                        OpensearchScrollRequestIterator<?> scrollRequestIterator = new OpensearchScrollRequestIterator<>( // NOSONAR
-                                searchRequestBuilder, new OpenSearchClient(transport), scrollKeepAliveMs, exchange,
-                                documentClass);
+                        OpensearchScrollRequestIterator<?> scrollRequestIterator =
+                                new OpensearchScrollRequestIterator<>( // NOSONAR
+                                        searchRequestBuilder,
+                                        new OpenSearchClient(transport),
+                                        scrollKeepAliveMs,
+                                        exchange,
+                                        documentClass);
                         exchange.getIn().setBody(scrollRequestIterator);
                         cleanup(ctx);
                         callback.done(true);
                         return true;
                     } else {
                         onComplete(
-                                ctx.getClient().search(searchRequestBuilder.build(), documentClass)
+                                ctx.getClient()
+                                        .search(searchRequestBuilder.build(), documentClass)
                                         .thenApply(SearchResponse::hits),
                                 ctx);
                     }
@@ -261,10 +269,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
      * Executes asynchronously a ping to the OpenSearch cluster.
      */
     private void processPingAsync(ActionContext ctx) throws IOException {
-        onComplete(
-                ctx.getClient().ping()
-                        .thenApply(BooleanResponse::value),
-                ctx);
+        onComplete(ctx.getClient().ping().thenApply(BooleanResponse::value), ctx);
     }
 
     /**
@@ -276,9 +281,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("Wrong body type. Only MgetRequest.Builder is allowed as a type");
         }
         onComplete(
-                ctx.getClient().mget(mgetRequestBuilder.build(), documentClass)
-                        .thenApply(MgetResponse::docs),
-                ctx);
+                ctx.getClient().mget(mgetRequestBuilder.build(), documentClass).thenApply(MgetResponse::docs), ctx);
     }
 
     /**
@@ -290,7 +293,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("Wrong body type. Only MsearchRequest.Builder is allowed as a type");
         }
         onComplete(
-                ctx.getClient().msearch(msearchRequestBuilder.build(), documentClass)
+                ctx.getClient()
+                        .msearch(msearchRequestBuilder.build(), documentClass)
                         .thenApply(MsearchResponse::responses),
                 ctx);
     }
@@ -301,23 +305,23 @@ class OpensearchProducer extends DefaultAsyncProducer {
     private void processExistsAsync(ActionContext ctx) throws IOException {
         ExistsRequest.Builder builder = new ExistsRequest.Builder();
         builder.index(ctx.getMessage().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
-        onComplete(
-                ctx.getClient().indices().exists(builder.build())
-                        .thenApply(BooleanResponse::value),
-                ctx);
+        onComplete(ctx.getClient().indices().exists(builder.build()).thenApply(BooleanResponse::value), ctx);
     }
 
     /**
      * Deletes asynchronously an index.
      */
     private void processDeleteIndexAsync(ActionContext ctx) throws IOException {
-        DeleteIndexRequest.Builder deleteIndexRequestBuilder = ctx.getMessage().getBody(DeleteIndexRequest.Builder.class);
+        DeleteIndexRequest.Builder deleteIndexRequestBuilder =
+                ctx.getMessage().getBody(DeleteIndexRequest.Builder.class);
         if (deleteIndexRequestBuilder == null) {
             throw new IllegalArgumentException(
                     "Wrong body type. Only String or DeleteIndexRequest.Builder is allowed as a type");
         }
         onComplete(
-                ctx.getClient().indices().delete(deleteIndexRequestBuilder.build())
+                ctx.getClient()
+                        .indices()
+                        .delete(deleteIndexRequestBuilder.build())
                         .thenApply(DeleteIndexResponse::acknowledged),
                 ctx);
     }
@@ -331,10 +335,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Wrong body type. Only String or DeleteRequest.Builder is allowed as a type");
         }
-        onComplete(
-                ctx.getClient().delete(deleteRequestBuilder.build())
-                        .thenApply(DeleteResponse::result),
-                ctx);
+        onComplete(ctx.getClient().delete(deleteRequestBuilder.build()).thenApply(DeleteResponse::result), ctx);
     }
 
     /**
@@ -346,10 +347,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Wrong body type. Only Iterable or BulkRequest.Builder is allowed as a type");
         }
-        onComplete(
-                ctx.getClient().bulk(bulkRequestBuilder.build())
-                        .thenApply(BulkResponse::items),
-                ctx);
+        onComplete(ctx.getClient().bulk(bulkRequestBuilder.build()).thenApply(BulkResponse::items), ctx);
     }
 
     /**
@@ -361,9 +359,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Wrong body type. Only String or GetRequest.Builder is allowed as a type");
         }
-        onComplete(
-                ctx.getClient().get(getRequestBuilder.build(), documentClass),
-                ctx);
+        onComplete(ctx.getClient().get(getRequestBuilder.build(), documentClass), ctx);
     }
 
     /**
@@ -372,7 +368,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
     private void processUpdateAsync(ActionContext ctx, Class<?> documentClass) throws IOException {
         var updateRequestBuilder = ctx.getMessage().getBody(UpdateRequest.Builder.class);
         onComplete(
-                ctx.getClient().update(updateRequestBuilder.build(), documentClass)
+                ctx.getClient()
+                        .update(updateRequestBuilder.build(), documentClass)
                         .thenApply(r -> ((UpdateResponse<?>) r).id()),
                 ctx);
     }
@@ -382,10 +379,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
      */
     private void processIndexAsync(ActionContext ctx) throws IOException {
         IndexRequest.Builder<?> indexRequestBuilder = ctx.getMessage().getBody(IndexRequest.Builder.class);
-        onComplete(
-                ctx.getClient().index(indexRequestBuilder.build())
-                        .thenApply(WriteResponseBase::id),
-                ctx);
+        onComplete(ctx.getClient().index(indexRequestBuilder.build()).thenApply(WriteResponseBase::id), ctx);
     }
 
     /**
@@ -399,17 +393,16 @@ class OpensearchProducer extends DefaultAsyncProducer {
         final Exchange exchange = ctx.exchange();
         future.thenAccept(r -> exchange.getIn().setBody(r))
                 .thenAccept(r -> cleanup(ctx))
-                .whenComplete(
-                        (r, e) -> {
-                            try {
-                                if (e != null) {
-                                    exchange.setException(new CamelExchangeException(
-                                            "An error occurred while executing the action", exchange, e));
-                                }
-                            } finally {
-                                ctx.callback().done(false);
-                            }
-                        });
+                .whenComplete((r, e) -> {
+                    try {
+                        if (e != null) {
+                            exchange.setException(new CamelExchangeException(
+                                    "An error occurred while executing the action", exchange, e));
+                        }
+                    } finally {
+                        ctx.callback().done(false);
+                    }
+                });
     }
 
     /**
@@ -477,15 +470,20 @@ class OpensearchProducer extends DefaultAsyncProducer {
     }
 
     private RestClient createClient() {
-        final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        final RestClientBuilder builder =
+                RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
-        builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
-                .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout()))));
+        builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder.setConnectTimeout(
+                Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout()))));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
+            if (ObjectHelper.isNotEmpty(configuration.getUser())
+                    && ObjectHelper.isNotEmpty(configuration.getPassword())) {
                 final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(new AuthScope(configuration.getHostAddressesList().get(0)),
-                        new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()));
+                credentialsProvider.setCredentials(
+                        new AuthScope(configuration.getHostAddressesList().get(0)),
+                        new UsernamePasswordCredentials(
+                                configuration.getUser(),
+                                configuration.getPassword().toCharArray()));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
 
@@ -507,8 +505,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 // Build TLS strategy
                 ClientTlsStrategyBuilder tlsStrategyBuilder = ClientTlsStrategyBuilder.create()
                         .setHostnameVerifier(configuration.getHostnameVerifier())
-                        .setTlsDetailsFactory(
-                                sslEngine -> new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol()));
+                        .setTlsDetailsFactory(sslEngine ->
+                                new TlsDetails(sslEngine.getSession(), sslEngine.getApplicationProtocol()));
 
                 // Set SSL context if available
                 if (sslContext != null) {
@@ -517,13 +515,14 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
                 TlsStrategy tlsStrategy = tlsStrategyBuilder.build();
 
-                final PoolingAsyncClientConnectionManager connectionManager
-                        = PoolingAsyncClientConnectionManagerBuilder.create()
+                final PoolingAsyncClientConnectionManager connectionManager =
+                        PoolingAsyncClientConnectionManagerBuilder.create()
                                 .setTlsStrategy(tlsStrategy)
                                 .setDefaultConnectionConfig(ConnectionConfig.custom()
                                         .setConnectTimeout(
                                                 Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout())))
-                                        .setSocketTimeout(Timeout.of(Duration.ofMillis(configuration.getSocketTimeout())))
+                                        .setSocketTimeout(
+                                                Timeout.of(Duration.ofMillis(configuration.getSocketTimeout())))
                                         .build())
                                 .build();
                 httpClientBuilder.setConnectionManager(connectionManager);
@@ -566,17 +565,16 @@ class OpensearchProducer extends DefaultAsyncProducer {
     private SSLContext createSslContextFromCa() {
         try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(),
-                            configuration.getCertificatePath());
+            InputStream resolveMandatoryResourceAsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                    getEndpoint().getCamelContext(), configuration.getCertificatePath());
             Certificate trustedCa = factory.generateCertificate(resolveMandatoryResourceAsInputStream);
             KeyStore trustStore = KeyStore.getInstance("pkcs12");
             trustStore.load(null, null);
             trustStore.setCertificateEntry("ca", trustedCa);
 
             final SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-            TrustManagerFactory trustManagerFactory
-                    = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustManagerFactory =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
             sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
             return sslContext;
@@ -588,8 +586,12 @@ class OpensearchProducer extends DefaultAsyncProducer {
     /**
      * An inner class providing all the information that an asynchronous action could need.
      */
-    private record ActionContext(Exchange exchange, AsyncCallback callback, OpenSearchTransport transport,
-            boolean configIndexName, boolean configWaitForActiveShards) {
+    private record ActionContext(
+            Exchange exchange,
+            AsyncCallback callback,
+            OpenSearchTransport transport,
+            boolean configIndexName,
+            boolean configWaitForActiveShards) {
 
         OpenSearchAsyncClient getClient() {
             return new OpenSearchAsyncClient(transport);

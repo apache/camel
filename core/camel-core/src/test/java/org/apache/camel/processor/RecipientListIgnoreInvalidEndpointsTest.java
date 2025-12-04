@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
@@ -63,14 +64,14 @@ public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:startA").recipientList(simple("mock:result,fail:endpoint,direct:a")).ignoreInvalidEndpoints();
+                from("direct:startA")
+                        .recipientList(simple("mock:result,fail:endpoint,direct:a"))
+                        .ignoreInvalidEndpoints();
 
                 from("direct:startB").recipientList(simple("mock:result,fail:endpoint,direct:a"));
 
                 from("direct:a").transform(constant("Hello a")).to("mock:endpointA");
-
             }
         };
     }
-
 }

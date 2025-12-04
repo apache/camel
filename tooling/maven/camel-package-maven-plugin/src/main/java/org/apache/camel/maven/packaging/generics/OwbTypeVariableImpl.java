@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.generics;
 
 import java.lang.reflect.GenericDeclaration;
@@ -25,7 +26,7 @@ import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 
 public class OwbTypeVariableImpl {
-    private static final Class<?>[] TYPE_VARIABLE_TYPES = new Class<?>[] { TypeVariable.class };
+    private static final Class<?>[] TYPE_VARIABLE_TYPES = new Class<?>[] {TypeVariable.class};
 
     /**
      * Java TypeVariable is different in various JDK versions. Thus it is not possible to e.g. write a custom
@@ -39,7 +40,9 @@ public class OwbTypeVariableImpl {
      */
     public static TypeVariable createTypeVariable(TypeVariable typeVariable, Type... bounds) {
 
-        return (TypeVariable) Proxy.newProxyInstance(OwbTypeVariableImpl.class.getClassLoader(), TYPE_VARIABLE_TYPES,
+        return (TypeVariable) Proxy.newProxyInstance(
+                OwbTypeVariableImpl.class.getClassLoader(),
+                TYPE_VARIABLE_TYPES,
                 new OwbTypeVariableInvocationHandler(typeVariable, bounds));
     }
 
@@ -110,12 +113,12 @@ public class OwbTypeVariableImpl {
                 return true;
             } else if (object instanceof TypeVariable) {
                 TypeVariable<?> that = (TypeVariable<?>) object;
-                return name.equals(that.getName()) && genericDeclaration.equals(that.getGenericDeclaration())
+                return name.equals(that.getName())
+                        && genericDeclaration.equals(that.getGenericDeclaration())
                         && Arrays.equals(bounds, that.getBounds());
             } else {
                 return false;
             }
-
         }
 
         /** method from TypeVariable */
@@ -136,6 +139,5 @@ public class OwbTypeVariableImpl {
             }
             return buffer.toString();
         }
-
     }
 }

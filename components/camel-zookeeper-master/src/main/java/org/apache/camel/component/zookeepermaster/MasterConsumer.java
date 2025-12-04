@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -96,8 +97,11 @@ public class MasterConsumer extends DefaultConsumer {
         this.groupListener.setMaximumConnectionTimeout(endpoint.getComponent().getMaximumConnectionTimeout());
         ServiceHelper.startService(groupListener);
 
-        LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", endpoint,
-                endpoint.getCamelContext(), endpoint.getGroupName());
+        LOG.info(
+                "Attempting to become master for endpoint: {} in {} with singletonID: {}",
+                endpoint,
+                endpoint.getCamelContext(),
+                endpoint.getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }
@@ -181,5 +185,4 @@ public class MasterConsumer extends DefaultConsumer {
             }
         };
     }
-
 }

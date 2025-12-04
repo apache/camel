@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -38,7 +39,6 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-
             case list:
                 getActions(exchange);
                 break;
@@ -48,7 +48,6 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
-
     }
 
     private void getAction(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -63,9 +62,13 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
     }
 
     private void getActions(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableActions(configuration.getPage(),
-                configuration.getPerPage());
-        LOG.trace("All Actions : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+        Actions actions = getEndpoint()
+                .getDigitalOceanClient()
+                .getAvailableActions(configuration.getPage(), configuration.getPerPage());
+        LOG.trace(
+                "All Actions : page {} / {} per page [{}] ",
+                configuration.getPage(),
+                configuration.getPerPage(),
                 actions.getActions());
         exchange.getMessage().setBody(actions.getActions());
     }

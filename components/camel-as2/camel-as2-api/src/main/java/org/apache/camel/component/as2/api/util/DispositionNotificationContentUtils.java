@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.util.ArrayList;
@@ -71,7 +72,6 @@ public final class DispositionNotificationContentUtils {
             public String toString() {
                 return value + ((parameters.length > 0) ? ", " + String.join(",", parameters) : "");
             }
-
         }
 
         private String name;
@@ -84,7 +84,7 @@ public final class DispositionNotificationContentUtils {
 
         public Field(String name, String value) {
             this.name = ObjectHelper.notNull(name, "name");
-            this.elements = new Element[] { new Element(value, null) };
+            this.elements = new Element[] {new Element(value, null)};
         }
 
         public String getName() {
@@ -124,7 +124,6 @@ public final class DispositionNotificationContentUtils {
             }
             return sb.toString();
         }
-
     }
 
     private static final TokenParser TOKEN_PARSER = TokenParser.INSTANCE;
@@ -135,12 +134,10 @@ public final class DispositionNotificationContentUtils {
 
     private static final BitSet TOKEN_DELIMS = TokenParser.INIT_BITSET(PARAM_DELIMITER, ELEM_DELIMITER);
 
-    private DispositionNotificationContentUtils() {
-    }
+    private DispositionNotificationContentUtils() {}
 
     public static AS2MessageDispositionNotificationEntity parseDispositionNotification(
-            List<CharArrayBuffer> dispositionNotificationFields)
-            throws ParseException {
+            List<CharArrayBuffer> dispositionNotificationFields) throws ParseException {
         String reportingUA = null;
         String mtaName = null;
         String finalRecipient = null;
@@ -199,9 +196,8 @@ public final class DispositionNotificationContentUtils {
                     }
                     dispositionMode = DispositionMode.parseDispositionMode(elements[0].getValue());
                     if (dispositionMode == null) {
-                        throw new ParseException(
-                                "Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '"
-                                                 + elements[0].getValue() + "'");
+                        throw new ParseException("Invalid '" + MDNField.DISPOSITION
+                                + "' field: invalid disposition mode '" + elements[0].getValue() + "'");
                     }
 
                     String dispositionTypeString = elements[1].getValue();
@@ -209,9 +205,10 @@ public final class DispositionNotificationContentUtils {
                     if (slash == -1) {
                         dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString);
                     } else {
-                        dispositionType = AS2DispositionType.parseDispositionType(dispositionTypeString.substring(0, slash));
-                        dispositionModifier
-                                = AS2DispositionModifier.parseDispositionType(dispositionTypeString.substring(slash + 1));
+                        dispositionType =
+                                AS2DispositionType.parseDispositionType(dispositionTypeString.substring(0, slash));
+                        dispositionModifier =
+                                AS2DispositionModifier.parseDispositionType(dispositionTypeString.substring(slash + 1));
                     }
                     break;
                 }
@@ -227,13 +224,14 @@ public final class DispositionNotificationContentUtils {
                 case RECEIVED_CONTENT_MIC: {
                     Element[] elements = field.getElements();
                     if (elements.length < 1) {
-                        throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: MIC is missing");
+                        throw new ParseException(
+                                "Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: MIC is missing");
                     }
                     Element element = elements[0];
                     String[] parameters = element.getParameters();
                     if (parameters.length < 1) {
-                        throw new ParseException(
-                                "Invalid '" + MDNField.RECEIVED_CONTENT_MIC + "' field: digest algorithm ID is missing");
+                        throw new ParseException("Invalid '" + MDNField.RECEIVED_CONTENT_MIC
+                                + "' field: digest algorithm ID is missing");
                     }
                     String digestAlgorithmId = parameters[0];
                     String encodedMessageDigest = element.getValue();

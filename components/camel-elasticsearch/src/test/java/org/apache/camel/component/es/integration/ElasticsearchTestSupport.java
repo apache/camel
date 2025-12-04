@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.integration;
 
 import java.util.HashMap;
@@ -60,20 +61,18 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
         String scheme = service.getSslContext().isPresent() ? "https" : "http";
-        HttpHost host
-                = new HttpHost(service.getElasticSearchHost(), service.getPort(), scheme);
+        HttpHost host = new HttpHost(service.getElasticSearchHost(), service.getPort(), scheme);
         final RestClientBuilder builder = RestClient.builder(host);
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(service.getUsername(), service.getPassword()));
-        builder.setHttpClientConfigCallback(
-                httpClientBuilder -> {
-                    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    service.getSslContext().ifPresent(sslContext -> {
-                        httpClientBuilder.setSSLContext(sslContext);
-                    });
-                    return httpClientBuilder;
-                });
+        credentialsProvider.setCredentials(
+                AuthScope.ANY, new UsernamePasswordCredentials(service.getUsername(), service.getPassword()));
+        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            service.getSslContext().ifPresent(sslContext -> {
+                httpClientBuilder.setSSLContext(sslContext);
+            });
+            return httpClientBuilder;
+        });
         restClient = builder.build();
         client = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
     }

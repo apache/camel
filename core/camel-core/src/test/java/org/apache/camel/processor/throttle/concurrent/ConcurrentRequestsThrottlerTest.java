@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.concurrent;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
@@ -31,14 +35,12 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 // time-bound that does not run well in shared environments
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
-             architectures = { "amd64", "aarch64", "ppc64le" },
-             disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD},
+        architectures = {"amd64", "aarch64", "ppc64le"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 9;
@@ -98,20 +100,20 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
             MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 2, MESSAGE_COUNT);
             Thread.sleep(INTERVAL); // sleep here to ensure the
-                                   // first throttle rate does not
-                                   // influence the next one.
+            // first throttle rate does not
+            // influence the next one.
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);
             Thread.sleep(INTERVAL); // sleep here to ensure the
-                                   // first throttle rate does not
-                                   // influence the next one.
+            // first throttle rate does not
+            // influence the next one.
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 2, MESSAGE_COUNT);
             Thread.sleep(INTERVAL); // sleep here to ensure the
-                                   // first throttle rate does not
-                                   // influence the next one.
+            // first throttle rate does not
+            // influence the next one.
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);
@@ -136,7 +138,10 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
     }
 
     private void sendMessagesAndAwaitDelivery(
-            final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
+            final int messageCount,
+            final String endpointUri,
+            final int threadPoolSize,
+            final MockEndpoint receivingEndpoint)
             throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
         try {
@@ -162,7 +167,10 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
     }
 
     private void sendMessagesWithHeaderExpression(
-            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int messageCount)
+            final ExecutorService executor,
+            final MockEndpoint resultEndpoint,
+            final int throttle,
+            final int messageCount)
             throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
         semaphore = new Semaphore(throttle);
@@ -170,8 +178,8 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
         for (int i = 0; i < messageCount; i++) {
             executor.execute(new Runnable() {
                 public void run() {
-                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue",
-                            throttle);
+                    template.sendBodyAndHeader(
+                            "direct:expressionHeader", "<message>payload</message>", "throttleValue", throttle);
                 }
             });
         }
@@ -181,14 +189,15 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
     }
 
     private void sendBody(String endpoint) {
-        Arrays.stream(new String[] { "A", "B", "C", "D", "E", "F", "G", "H" })
+        Arrays.stream(new String[] {"A", "B", "C", "D", "E", "F", "G", "H"})
                 .forEach(b -> template.sendBody(endpoint, b));
     }
 
     private void shutdownAndAwait(final ExecutorService executorService) {
         executorService.shutdown();
         try {
-            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
+            assertTrue(
+                    executorService.awaitTermination(10, TimeUnit.SECONDS),
                     "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
         } catch (InterruptedException e) {
             fail("Test ExecutorService shutdown is not expected to be interrupted.");
@@ -200,9 +209,13 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                onException(ThrottlerRejectedExecutionException.class).handled(true).to("mock:error");
+                onException(ThrottlerRejectedExecutionException.class)
+                        .handled(true)
+                        .to("mock:error");
 
-                from("direct:a").throttle(CONCURRENT_REQUESTS).concurrentRequestsMode()
+                from("direct:a")
+                        .throttle(CONCURRENT_REQUESTS)
+                        .concurrentRequestsMode()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:a' too many requests");
                         })
@@ -212,7 +225,9 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:expressionConstant").throttle(constant(CONCURRENT_REQUESTS)).concurrentRequestsMode()
+                from("direct:expressionConstant")
+                        .throttle(constant(CONCURRENT_REQUESTS))
+                        .concurrentRequestsMode()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:expressionConstant' too many requests");
                         })
@@ -222,7 +237,9 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:expressionHeader").throttle(header("throttleValue")).concurrentRequestsMode()
+                from("direct:expressionHeader")
+                        .throttle(header("throttleValue"))
+                        .concurrentRequestsMode()
                         .process(exchange -> {
                             assertTrue(semaphore.tryAcquire(), "'direct:expressionHeader' too many requests");
                         })
@@ -232,15 +249,27 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
                         })
                         .to("log:result", "mock:result");
 
-                from("direct:start").throttle(2).concurrentRequestsMode().rejectExecution(true).delay(1000).to("log:result",
-                        "mock:result");
+                from("direct:start")
+                        .throttle(2)
+                        .concurrentRequestsMode()
+                        .rejectExecution(true)
+                        .delay(1000)
+                        .to("log:result", "mock:result");
 
-                from("direct:fifo").throttle(1).concurrentRequestsMode().delay(100).to("mock:result");
+                from("direct:fifo")
+                        .throttle(1)
+                        .concurrentRequestsMode()
+                        .delay(100)
+                        .to("mock:result");
 
-                from("direct:release").errorHandler(deadLetterChannel("mock:error")).throttle(1).delay(100)
+                from("direct:release")
+                        .errorHandler(deadLetterChannel("mock:error"))
+                        .throttle(1)
+                        .delay(100)
                         .process(exchange -> {
                             throw new RuntimeException();
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

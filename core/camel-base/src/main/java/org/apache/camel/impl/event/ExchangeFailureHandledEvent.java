@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import java.io.Serial;
@@ -23,7 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.util.URISupport;
 
-public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeFailureHandledEvent {
+public class ExchangeFailureHandledEvent extends AbstractExchangeEvent
+        implements CamelEvent.ExchangeFailureHandledEvent {
     private static final @Serial long serialVersionUID = -7554809462006009548L;
 
     private final transient Processor failureHandler;
@@ -31,8 +33,8 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implement
     private final String deadLetterUri;
     private final boolean handled;
 
-    public ExchangeFailureHandledEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel,
-                                       String deadLetterUri) {
+    public ExchangeFailureHandledEvent(
+            Exchange source, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         super(source);
         this.failureHandler = failureHandler;
         this.deadLetterChannel = deadLetterChannel;
@@ -68,11 +70,9 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implement
     public final String toString() {
         if (isDeadLetterChannel()) {
             String uri = URISupport.sanitizeUri(deadLetterUri);
-            return getExchange().getExchangeId() + " exchange failed"
-                   + " and sent to dead letter channel: " + uri;
+            return getExchange().getExchangeId() + " exchange failed" + " and sent to dead letter channel: " + uri;
         } else {
-            return getExchange().getExchangeId() + " exchange failed"
-                   + " and sent to processor: " + failureHandler;
+            return getExchange().getExchangeId() + " exchange failed" + " and sent to processor: " + failureHandler;
         }
     }
 }

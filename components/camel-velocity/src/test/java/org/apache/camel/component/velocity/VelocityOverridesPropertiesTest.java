@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityOverridesPropertiesTest extends CamelTestSupport {
 
@@ -37,7 +38,9 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals(
+                "Dear Christian. You ordered item 7 on Monday.",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -46,7 +49,8 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                        .to("velocity:org/apache/camel/component/velocity/example.vm?propertiesFile=org/apache/camel/component/velocity/velocity-logging.properties&allowContextMapAll=true");
+                        .to(
+                                "velocity:org/apache/camel/component/velocity/example.vm?propertiesFile=org/apache/camel/component/velocity/velocity-logging.properties&allowContextMapAll=true");
             }
         };
     }

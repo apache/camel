@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.List;
@@ -60,9 +61,11 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
 
         SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            //TODO  must close on SSL exception
-            //sslHandler.setCloseOnSSLException(true);
-            LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
+            // TODO  must close on SSL exception
+            // sslHandler.setCloseOnSSLException(true);
+            LOG.debug(
+                    "Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}",
+                    sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
 
@@ -88,12 +91,12 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
 
         if (consumer.getConfiguration().isUsingExecutorService()) {
             // Just use EventExecutorGroup from the Netty Component
-            EventExecutorGroup applicationExecutor = consumer.getEndpoint().getComponent().getExecutorService();
+            EventExecutorGroup applicationExecutor =
+                    consumer.getEndpoint().getComponent().getExecutorService();
             addToPipeline("handler", channelPipeline, applicationExecutor, new ServerChannelHandler(consumer));
         } else {
             // still use the worker event loop group here
             addToPipeline("handler", channelPipeline, new ServerChannelHandler(consumer));
-
         }
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
     }
@@ -102,7 +105,8 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         pipeline.addLast(name, handler);
     }
 
-    private void addToPipeline(String name, ChannelPipeline pipeline, EventExecutorGroup executor, ChannelHandler handler) {
+    private void addToPipeline(
+            String name, ChannelPipeline pipeline, EventExecutorGroup executor, ChannelHandler handler) {
         pipeline.addLast(executor, name, handler);
     }
 
@@ -119,7 +123,8 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
-            answer = sslEngineFactory.createSSLContext(camelContext,
+            answer = sslEngineFactory.createSSLContext(
+                    camelContext,
                     configuration.getKeyStoreFormat(),
                     configuration.getSecurityProvider(),
                     configuration.getKeyStoreResource(),
@@ -148,7 +153,8 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             }
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
-                engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));
+                engine.setEnabledProtocols(
+                        consumer.getConfiguration().getEnabledProtocols().split(","));
             }
             return new SslHandler(engine);
         }

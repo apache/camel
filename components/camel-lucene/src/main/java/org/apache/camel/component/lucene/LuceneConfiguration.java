@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lucene;
 
 import java.io.File;
@@ -36,20 +37,24 @@ public class LuceneConfiguration {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     @Metadata(required = true)
     private LuceneOperation operation;
+
     @UriParam
     private File srcDir;
+
     @UriParam
     private File indexDir;
+
     @UriParam
     private Analyzer analyzer;
+
     @UriParam
     private int maxHits;
 
-    public LuceneConfiguration() {
-    }
+    public LuceneConfiguration() {}
 
     public LuceneConfiguration(URI uri) {
         this.uri = uri;
@@ -67,7 +72,7 @@ public class LuceneConfiguration {
             throw new URISyntaxException(
                     uri.toASCIIString(),
                     "Incorrect URI syntax and/or Operation specified for the Lucene endpoint."
-                                         + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
+                            + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
         }
         setHost(retrieveTokenFromAuthority("hostname"));
 
@@ -77,8 +82,7 @@ public class LuceneConfiguration {
         }
         setOperation(LuceneOperation.valueOf(op));
 
-        srcDir = component.resolveAndRemoveReferenceParameter(
-                parameters, "srcDir", File.class, null);
+        srcDir = component.resolveAndRemoveReferenceParameter(parameters, "srcDir", File.class, null);
         indexDir = component.resolveAndRemoveReferenceParameter(
                 parameters, "indexDir", File.class, new File("file:///./indexDirectory"));
         analyzer = component.resolveAndRemoveReferenceParameter(
@@ -92,7 +96,6 @@ public class LuceneConfiguration {
             return false;
         }
         return true;
-
     }
 
     private boolean insertOrQueryCheck() {
@@ -178,5 +181,4 @@ public class LuceneConfiguration {
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
     }
-
 }

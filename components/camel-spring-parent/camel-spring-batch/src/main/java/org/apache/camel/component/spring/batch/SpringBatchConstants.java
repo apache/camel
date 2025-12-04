@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch;
 
 import org.apache.camel.spi.Metadata;
@@ -28,7 +29,5 @@ public final class SpringBatchConstants {
     @Metadata(description = "The name of the Batch Job to use", javaType = "String")
     public static final String JOB_NAME = "CamelSpringBatchJobName";
 
-    private SpringBatchConstants() {
-    }
-
+    private SpringBatchConstants() {}
 }

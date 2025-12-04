@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group.internal;
 
 import java.util.concurrent.ThreadFactory;
@@ -50,5 +51,4 @@ public class ZooKeeperGroupFactory implements GroupFactory {
     public <T extends NodeState> Group<T> createMultiGroup(String path, Class<T> clazz, ThreadFactory threadFactory) {
         return new ZooKeeperMultiGroup<>(curator, path, clazz, threadFactory);
     }
-
 }

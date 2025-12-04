@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.BufferedReader;
@@ -66,10 +67,10 @@ public class TypeConverterLoaderDownloadListener implements ArtifactDownloadList
 
         // load names for custom type converters from the downloaded JAR
         Collection<String> loaders = new ArrayList<>();
-        findTypeConverterLoaderClasses(loaders,
-                cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_TYPE_CONVERTER_LOADER));
-        findTypeConverterLoaderClasses(loaders,
-                cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_FALLBACK_TYPE_CONVERTER));
+        findTypeConverterLoaderClasses(
+                loaders, cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_TYPE_CONVERTER_LOADER));
+        findTypeConverterLoaderClasses(
+                loaders, cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_FALLBACK_TYPE_CONVERTER));
         loadTypeConverters(loaders);
     }
 
@@ -101,5 +102,4 @@ public class TypeConverterLoaderDownloadListener implements ArtifactDownloadList
             }
         }
     }
-
 }

@@ -52,11 +52,12 @@ final class InternalServiceManager {
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final List<Service> services = new CopyOnWriteArrayList<>();
 
-    InternalServiceManager(InternalRouteStartupManager internalRouteStartupManager, List<StartupListener> startupListeners) {
+    InternalServiceManager(
+            InternalRouteStartupManager internalRouteStartupManager, List<StartupListener> startupListeners) {
         /*
-         Note: this is an internal API and not meant to be public, so it uses assertion for lightweight nullability
-         checking for extremely unlikely scenarios that should be found during development time.
-         */
+        Note: this is an internal API and not meant to be public, so it uses assertion for lightweight nullability
+        checking for extremely unlikely scenarios that should be found during development time.
+        */
         assert internalRouteStartupManager != null : "the internalRouteStartupManager cannot be null";
         assert startupListeners != null : "the startupListeners cannot be null";
 
@@ -74,7 +75,11 @@ final class InternalServiceManager {
     }
 
     public <T> T addService(
-            CamelContext camelContext, T object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies) {
+            CamelContext camelContext,
+            T object,
+            boolean stopOnShutdown,
+            boolean forceStart,
+            boolean useLifecycleStrategies) {
         try {
             doAddService(camelContext, object, stopOnShutdown, forceStart, useLifecycleStrategies);
         } catch (Exception e) {
@@ -84,7 +89,10 @@ final class InternalServiceManager {
     }
 
     public void doAddService(
-            CamelContext camelContext, Object object, boolean stopOnShutdown, boolean forceStart,
+            CamelContext camelContext,
+            Object object,
+            boolean stopOnShutdown,
+            boolean forceStart,
             boolean useLifecycleStrategies)
             throws Exception {
 
@@ -102,7 +110,8 @@ final class InternalServiceManager {
                     if (service instanceof RouteAware routeAware) {
                         route = routeAware.getRoute();
                     } else {
-                        // if the service is added while creating a new route then grab the route from the startup manager
+                        // if the service is added while creating a new route then grab the route from the startup
+                        // manager
                         route = internalRouteStartupManager.getSetupRoute();
                     }
                     if (service instanceof Endpoint endpoint) {
@@ -151,7 +160,8 @@ final class InternalServiceManager {
         }
     }
 
-    public void deferStartService(CamelContext camelContext, Object object, boolean stopOnShutdown, boolean startEarly) {
+    public void deferStartService(
+            CamelContext camelContext, Object object, boolean stopOnShutdown, boolean startEarly) {
         if (object instanceof Service service) {
             // only add to services to close if its a singleton
             // otherwise we could for example end up with a lot of prototype

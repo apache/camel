@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -46,29 +47,37 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
 
                 from("direct:dead").to("log:dead", "mock:dead");
 
-                from("direct:order").to("mock:one").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        log.info("First Processor Invoked");
-                        throw new OrderFailedException("First Processor Failure");
-                    }
-                }).to("mock:two").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        log.info("Second Processor Invoked");
-                    }
-                }).to("mock:three").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        log.info("Third Processor Invoked");
-                        throw new RuntimeException("Some Runtime Exception");
-                    }
-                }).to("mock:four").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        log.info("Fourth Processor Invoked");
-                    }
-                });
+                from("direct:order")
+                        .to("mock:one")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                log.info("First Processor Invoked");
+                                throw new OrderFailedException("First Processor Failure");
+                            }
+                        })
+                        .to("mock:two")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                log.info("Second Processor Invoked");
+                            }
+                        })
+                        .to("mock:three")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                log.info("Third Processor Invoked");
+                                throw new RuntimeException("Some Runtime Exception");
+                            }
+                        })
+                        .to("mock:four")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                log.info("Fourth Processor Invoked");
+                            }
+                        });
             }
         });
         context.start();
@@ -92,5 +101,4 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
             super(s);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -42,10 +43,14 @@ public class JsonPathSourceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").transform().jsonpath("$.store.book[0].title", String.class)
+                from("direct:start")
+                        .transform()
+                        .jsonpath("$.store.book[0].title", String.class)
                         .to("mock:title");
 
-                from("direct:second").transform().jsonpath("$.store.book[1].title", String.class)
+                from("direct:second")
+                        .transform()
+                        .jsonpath("$.store.book[1].title", String.class)
                         .to("mock:title");
             }
         };
@@ -58,12 +63,20 @@ public class JsonPathSourceTest extends CamelTestSupport {
         getMockEndpoint("mock:title").message(0).body().isEqualTo(MESSAGE1);
         getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
-        template.sendBody("direct:start", FileConsumer
-                .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
-        template.sendBody("direct:second", FileConsumer
-                .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
+        template.sendBody(
+                "direct:start",
+                FileConsumer.asGenericFile(
+                        "src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"),
+                        "UTF-8",
+                        false));
+        template.sendBody(
+                "direct:second",
+                FileConsumer.asGenericFile(
+                        "src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"),
+                        "UTF-8",
+                        false));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -75,12 +88,20 @@ public class JsonPathSourceTest extends CamelTestSupport {
         getMockEndpoint("mock:title").message(0).body().isEqualTo(MESSAGE1);
         getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
-        template.sendBody("direct:start", FileConsumer
-                .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
-        template.sendBody("direct:second", FileConsumer
-                .asGenericFile("src/test/resources/germanbooks-utf8.json",
-                        new File("src/test/resources/germanbooks-utf8.json"), "UTF-8", false));
+        template.sendBody(
+                "direct:start",
+                FileConsumer.asGenericFile(
+                        "src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"),
+                        "UTF-8",
+                        false));
+        template.sendBody(
+                "direct:second",
+                FileConsumer.asGenericFile(
+                        "src/test/resources/germanbooks-utf8.json",
+                        new File("src/test/resources/germanbooks-utf8.json"),
+                        "UTF-8",
+                        false));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -92,12 +113,20 @@ public class JsonPathSourceTest extends CamelTestSupport {
         getMockEndpoint("mock:title").message(0).body().isEqualTo(MESSAGE1);
         getMockEndpoint("mock:title").message(1).body().isEqualTo(MESSAGE2);
 
-        template.sendBody("direct:start", FileConsumer
-                .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
-                        new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
-        template.sendBody("direct:second", FileConsumer
-                .asGenericFile("src/test/resources/germanbooks-iso-8859-1.json",
-                        new File("src/test/resources/germanbooks-iso-8859-1.json"), "ISO-8859-1", false));
+        template.sendBody(
+                "direct:start",
+                FileConsumer.asGenericFile(
+                        "src/test/resources/germanbooks-iso-8859-1.json",
+                        new File("src/test/resources/germanbooks-iso-8859-1.json"),
+                        "ISO-8859-1",
+                        false));
+        template.sendBody(
+                "direct:second",
+                FileConsumer.asGenericFile(
+                        "src/test/resources/germanbooks-iso-8859-1.json",
+                        new File("src/test/resources/germanbooks-iso-8859-1.json"),
+                        "ISO-8859-1",
+                        false));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -111,5 +140,4 @@ public class JsonPathSourceTest extends CamelTestSupport {
             // Do nothing here
         }
     }
-
 }

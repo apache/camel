@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.util;
 
 import java.util.Map;
@@ -48,8 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public final class CamelContextTestHelper {
 
-    private CamelContextTestHelper() {
-    }
+    private CamelContextTestHelper() {}
 
     /**
      * JVM system property which can be set to true to turn on dumping route coverage statistics.
@@ -127,7 +127,8 @@ public final class CamelContextTestHelper {
      */
     public static MockEndpoint lookupEndpoint(CamelContext context, String uri, boolean create, String target) {
         MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
-                .filter(MockEndpoint.class::isInstance).filter(e -> {
+                .filter(MockEndpoint.class::isInstance)
+                .filter(e -> {
                     String t = e.getEndpointUri();
                     // strip query
                     int idx2 = t.indexOf('?');
@@ -135,7 +136,9 @@ public final class CamelContextTestHelper {
                         t = t.substring(0, idx2);
                     }
                     return t.equals(target);
-                }).findFirst().orElse(null);
+                })
+                .findFirst()
+                .orElse(null);
 
         if (found != null) {
             return found;
@@ -151,15 +154,15 @@ public final class CamelContextTestHelper {
     /**
      * Enables auto mocking
      */
-    public static void enableAutoMocking(CamelContext context, String pattern, String mockAndSkipPattern) throws Exception {
+    public static void enableAutoMocking(CamelContext context, String pattern, String mockAndSkipPattern)
+            throws Exception {
         if (pattern != null) {
             context.getCamelContextExtension()
                     .registerAutoMockInterceptStrategy(new DefaultAutoMockInterceptStrategy(pattern, false));
         }
         if (mockAndSkipPattern != null) {
             context.getCamelContextExtension()
-                    .registerAutoMockInterceptStrategy(
-                            new DefaultAutoMockInterceptStrategy(mockAndSkipPattern, true));
+                    .registerAutoMockInterceptStrategy(new DefaultAutoMockInterceptStrategy(mockAndSkipPattern, true));
         }
     }
 
@@ -175,8 +178,8 @@ public final class CamelContextTestHelper {
             // should not autowire
             stub.setAutowiredEnabled(false);
             // and use a specialized component resolver
-            context.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
-                    new StubComponentResolver(pattern));
+            context.getCamelContextExtension()
+                    .addContextPlugin(ComponentResolver.class, new StubComponentResolver(pattern));
             // need to replace autowire strategy with stub capable
             context.getLifecycleStrategies()
                     .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
@@ -256,7 +259,8 @@ public final class CamelContextTestHelper {
      * @param  fromEndpoints the map with the new endpoint Uris
      * @throws Exception
      */
-    public static void replaceFromEndpoints(ModelCamelContext context, Map<String, String> fromEndpoints) throws Exception {
+    public static void replaceFromEndpoints(ModelCamelContext context, Map<String, String> fromEndpoints)
+            throws Exception {
         for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
             AdviceWith.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
                 @Override
@@ -268,7 +272,8 @@ public final class CamelContextTestHelper {
     }
 
     public static boolean isSkipAutoStartContext(TestExecutionConfiguration configuration) {
-        return Boolean.parseBoolean(System.getProperty("skipStartingCamelContext")) || !configuration.autoStartContext();
+        return Boolean.parseBoolean(System.getProperty("skipStartingCamelContext"))
+                || !configuration.autoStartContext();
     }
 
     public static boolean isRouteCoverageEnabled(boolean legacyDumpCoverage) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client;
 
 import java.util.Collections;
@@ -80,7 +81,8 @@ public class StitchClientImpl implements StitchClient {
         return ByteBufMono.fromString(Mono.just(JsonUtils.convertMapToJson(bodyAsMap)));
     }
 
-    private Mono<StitchResponse> generateStitchResponse(final HttpClientResponse clientResponse, final ByteBufMono bufMono) {
+    private Mono<StitchResponse> generateStitchResponse(
+            final HttpClientResponse clientResponse, final ByteBufMono bufMono) {
         final int code = getStatusCode(clientResponse);
         final Map<String, Object> headers = getHeaders(clientResponse);
 
@@ -107,9 +109,7 @@ public class StitchClientImpl implements StitchClient {
     }
 
     private Map<String, Object> getHeaders(final HttpClientResponse clientResponse) {
-        return clientResponse.responseHeaders()
-                .entries()
-                .stream()
+        return clientResponse.responseHeaders().entries().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

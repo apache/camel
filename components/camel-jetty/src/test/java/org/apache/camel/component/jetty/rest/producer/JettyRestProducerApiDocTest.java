@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JettyRestProducerApiDocTest extends BaseJettyTest {
 
     @Test
     public void testJettyProducerGet() {
-        String out = fluentTemplate.withHeader("name", "Donald Duck").to("direct:start").request(String.class);
+        String out = fluentTemplate
+                .withHeader("name", "Donald Duck")
+                .to("direct:start")
+                .request(String.class);
         assertEquals("Hello Donald Duck", out);
     }
 
@@ -36,7 +40,11 @@ public class JettyRestProducerApiDocTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .producerComponent("http")
+                        .host("localhost")
+                        .port(getPort())
                         .producerApiDoc("hello-api.json");
 
                 from("direct:start").to("rest:get:api:hello/hi/{name}");
@@ -47,5 +55,4 @@ public class JettyRestProducerApiDocTest extends BaseJettyTest {
             }
         };
     }
-
 }

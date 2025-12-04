@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -25,8 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test to test exception configuration
@@ -70,7 +71,8 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         mock.expectedHeaderReceived(MESSAGE_INFO, "Handled exchange with IOException");
 
         // expected, failure is not handled because predicate doesn't match
-        Exception ex = assertThrows(RuntimeCamelException.class,
+        Exception ex = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.sendBodyAndHeader("direct:a", "Hello IOE", "foo", "something that does not match"),
                 "Should have thrown a IOException");
         boolean b = ex.getCause() instanceof IOException;
@@ -86,27 +88,33 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class).maximumRedeliveries(0).handled(true)
+                onException(NullPointerException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
                         .setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
                         .to(ERROR_QUEUE);
 
-                onException(IOException.class).maximumRedeliveries(0).handled(header("foo").isEqualTo("bar"))
+                onException(IOException.class)
+                        .maximumRedeliveries(0)
+                        .handled(header("foo").isEqualTo("bar"))
                         .setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
                         .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
-                from("direct:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String s = exchange.getIn().getBody(String.class);
-                        if ("Hello NPE".equals(s)) {
-                            throw new NullPointerException();
-                        } else if ("Hello IOE".equals(s)) {
-                            // specialized IOException
-                            throw new ConnectException("Forced for testing - cannot connect to remote server");
-                        }
-                        exchange.getMessage().setBody("Hello World");
-                    }
-                }).to("mock:result");
+                from("direct:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String s = exchange.getIn().getBody(String.class);
+                                if ("Hello NPE".equals(s)) {
+                                    throw new NullPointerException();
+                                } else if ("Hello IOE".equals(s)) {
+                                    // specialized IOException
+                                    throw new ConnectException("Forced for testing - cannot connect to remote server");
+                                }
+                                exchange.getMessage().setBody("Hello World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

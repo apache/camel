@@ -31,8 +31,9 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Azure Eventhubs consumer response to CloudEvent v1_0 data format. The data type sets
  * Camel specific CloudEvent headers with values extracted from Azure Eventhubs consumer response.
  */
-@DataTypeTransformer(name = "azure-eventhubs:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Azure Eventhubs consumer response details")
+@DataTypeTransformer(
+        name = "azure-eventhubs:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with Azure Eventhubs consumer response details")
 public class EventHubsCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,16 +41,20 @@ public class EventHubsCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.eventhubs.consume");
 
         if (message.getHeaders().containsKey(EventHubsConstants.PARTITION_ID)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "azure.eventhubs." + message.getHeader(EventHubsConstants.PARTITION_ID, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(EventHubsConstants.SEQUENCE_NUMBER, Long.class));
+        headers.put(
+                CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT,
+                message.getHeader(EventHubsConstants.SEQUENCE_NUMBER, Long.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }

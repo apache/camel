@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.cloud;
 
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
@@ -21,8 +22,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @Deprecated
 public final class NettyHttpServiceExpression extends DefaultServiceCallExpression {
-    public NettyHttpServiceExpression() {
-    }
+    public NettyHttpServiceExpression() {}
 
     public NettyHttpServiceExpression(String hostHeader, String portHeader) {
         super(hostHeader, portHeader);

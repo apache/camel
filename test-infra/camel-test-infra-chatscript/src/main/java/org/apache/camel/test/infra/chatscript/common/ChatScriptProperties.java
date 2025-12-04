@@ -21,7 +21,5 @@ public final class ChatScriptProperties {
     public static final String CHATSCRIPT_ADDRESS = "chatscript.address";
     public static final String CHATSCRIPT_CONTAINER = "chatscript.container";
 
-    private ChatScriptProperties() {
-
-    }
+    private ChatScriptProperties() {}
 }

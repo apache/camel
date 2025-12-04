@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -24,9 +27,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -66,15 +67,20 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:RouteIdTransactedTest?transacted=true").id("myCoolRoute")
-                        .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
+                from("activemq:queue:RouteIdTransactedTest?transacted=true")
+                        .id("myCoolRoute")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("log:bar")
+                        .to("mock:error")
+                        .end()
                         .transacted()
                         .choice()
-                        .when(body().contains("Kaboom")).throwException(new IllegalArgumentException("Damn"))
+                        .when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Damn"))
                         .otherwise()
                         .to("mock:result")
                         .end();
-
             }
         };
     }

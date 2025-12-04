@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import org.apache.camel.ContextTestSupport;
@@ -86,9 +87,19 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
             public void configure() {
                 restConfiguration().host("localhost").enableCORS(true);
 
-                rest("/say/bye").consumes("application/json").get()
-                        .param().type(RestParamType.query).name("kind").defaultValue("customer").endParam()
-                        .param().type(RestParamType.header).name("indicator").defaultValue("disabled").endParam()
+                rest("/say/bye")
+                        .consumes("application/json")
+                        .get()
+                        .param()
+                        .type(RestParamType.query)
+                        .name("kind")
+                        .defaultValue("customer")
+                        .endParam()
+                        .param()
+                        .type(RestParamType.header)
+                        .name("indicator")
+                        .defaultValue("disabled")
+                        .endParam()
                         .to("mock:bye");
             }
         };

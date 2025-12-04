@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.util.List;
@@ -67,7 +68,10 @@ class TahuEdgeClientCallback implements ClientCallback {
 
     @Override
     public void messageArrived(
-            MqttServerName mqttServerName, MqttServerUrl mqttServerUrl, MqttClientId mqttClientId, String rawTopic,
+            MqttServerName mqttServerName,
+            MqttServerUrl mqttServerUrl,
+            MqttClientId mqttClientId,
+            String rawTopic,
             MqttMessage mqttMessage) {
 
         final Topic topic;
@@ -81,14 +85,14 @@ class TahuEdgeClientCallback implements ClientCallback {
             LOG.warn(loggingMarker, "Received message on non-Sparkplug topic: {}", topic);
         } else if (topic.isType(MessageType.STATE)) {
             handleSTATEMessage(topic, mqttMessage);
-        } else if (topic.isType(MessageType.NDEATH) && topic.getEdgeNodeDescriptor().equals(edgeNodeDescriptor)) {
+        } else if (topic.isType(MessageType.NDEATH)
+                && topic.getEdgeNodeDescriptor().equals(edgeNodeDescriptor)) {
             handleNDEATHMessage(topic, mqttMessage);
         } else if (topic.isType(MessageType.NCMD) || topic.isType(MessageType.DCMD)) {
             handleCMDMessage(topic, mqttMessage);
         } else {
             LOG.debug(loggingMarker, "Received unexpected Sparkplug message of type {} - ignoring", topic.getType());
         }
-
     }
 
     void handleSTATEMessage(Topic topic, MqttMessage mqttMessage) {
@@ -100,8 +104,8 @@ class TahuEdgeClientCallback implements ClientCallback {
             client.handleStateMessage(topic.getHostApplicationId(), statePayload);
         } catch (Exception e) {
             throw new RuntimeCamelException(
-                    "Exception caught handling STATE message with topic " + topic
-                                            + " and payload " + new String(mqttMessage.getPayload()),
+                    "Exception caught handling STATE message with topic " + topic + " and payload "
+                            + new String(mqttMessage.getPayload()),
                     e);
         }
     }
@@ -114,8 +118,8 @@ class TahuEdgeClientCallback implements ClientCallback {
                 // Find payload's bdSeq to determine how to proceed
                 long messageBdSeq;
                 try {
-                    final SparkplugBPayload payload = new SparkplugBPayloadDecoder()
-                            .buildFromByteArray(mqttMessage.getPayload(), null);
+                    final SparkplugBPayload payload =
+                            new SparkplugBPayloadDecoder().buildFromByteArray(mqttMessage.getPayload(), null);
                     messageBdSeq = SparkplugUtil.getBdSequenceNumber(payload);
                 } catch (Exception e) {
                     throw new RuntimeCamelException(
@@ -129,29 +133,35 @@ class TahuEdgeClientCallback implements ClientCallback {
                     // This is our latest LWT - treat as a rebirth
                     handleRebirthRequest();
                 } else {
-                    LOG.warn(loggingMarker,
+                    LOG.warn(
+                            loggingMarker,
                             "Received unexpected LWT for {} with different bdSeq - expected {} received {} - ignoring",
-                            edgeNodeDescriptor, currentBirthBdSeq, messageBdSeq);
+                            edgeNodeDescriptor,
+                            currentBirthBdSeq,
+                            messageBdSeq);
                 }
             } else {
-                LOG.debug(loggingMarker, "Received unexpected LWT for {} but not connected to primary host - ignoring",
+                LOG.debug(
+                        loggingMarker,
+                        "Received unexpected LWT for {} but not connected to primary host - ignoring",
                         edgeNodeDescriptor);
             }
         } else {
-            LOG.debug(loggingMarker, "Received expected LWT for {} - no action required",
-                    topic.getEdgeNodeDescriptor());
+            LOG.debug(
+                    loggingMarker, "Received expected LWT for {} - no action required", topic.getEdgeNodeDescriptor());
         }
     }
 
     void handleRebirthRequest() {
-        LOG.warn(loggingMarker, "Received unexpected LWT for {} - publishing BIRTH sequence",
-                edgeNodeDescriptor);
+        LOG.warn(loggingMarker, "Received unexpected LWT for {} - publishing BIRTH sequence", edgeNodeDescriptor);
         try {
             client.handleRebirthRequest(true);
         } catch (Exception e) {
-            LOG.warn(loggingMarker,
+            LOG.warn(
+                    loggingMarker,
                     "Received unexpected LWT but failed to publish new BIRTH sequence for {} - continuing",
-                    edgeNodeDescriptor, e);
+                    edgeNodeDescriptor,
+                    e);
         }
     }
 
@@ -167,8 +177,8 @@ class TahuEdgeClientCallback implements ClientCallback {
             }
         } catch (Exception e) {
             throw new RuntimeCamelException(
-                    "Exception caught decoding Sparkplug message with topic " + topic
-                                            + " and payload " + new String(mqttMessage.getPayload()),
+                    "Exception caught decoding Sparkplug message with topic " + topic + " and payload "
+                            + new String(mqttMessage.getPayload()),
                     e);
         }
     }
@@ -185,7 +195,9 @@ class TahuEdgeClientCallback implements ClientCallback {
 
             client.publishNodeData(ndataPayload);
         } else {
-            LOG.warn(loggingMarker, "Received NCMD with no valid metrics to write for {} - ignoring",
+            LOG.warn(
+                    loggingMarker,
+                    "Received NCMD with no valid metrics to write for {} - ignoring",
                     edgeNodeDescriptor);
         }
     }
@@ -209,18 +221,16 @@ class TahuEdgeClientCallback implements ClientCallback {
     }
 
     @Override
-    public void shutdown() {
-    }
+    public void shutdown() {}
 
     @Override
     public void connectionLost(
-            MqttServerName mqttServerName, MqttServerUrl mqttServerUrl, MqttClientId mqttClientId,
-            Throwable throwable) {
-    }
+            MqttServerName mqttServerName,
+            MqttServerUrl mqttServerUrl,
+            MqttClientId mqttClientId,
+            Throwable throwable) {}
 
     @Override
     public void connectComplete(
-            boolean reconnect, MqttServerName mqttServerName, MqttServerUrl mqttServerUrl, MqttClientId mqttClientId) {
-    }
-
+            boolean reconnect, MqttServerName mqttServerName, MqttServerUrl mqttServerUrl, MqttClientId mqttClientId) {}
 }

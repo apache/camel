@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.ognl;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +42,8 @@ public class OgnlResourceTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().ognl("resource:classpath:myognl.txt")
+                        .transform()
+                        .ognl("resource:classpath:myognl.txt")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.io.InputStream;
@@ -24,6 +25,7 @@ public interface SshConstants {
 
     @Metadata(description = "The user name", javaType = "String")
     String USERNAME_HEADER = "CamelSshUsername";
+
     @Metadata(description = "The password", javaType = "String")
     String PASSWORD_HEADER = "CamelSshPassword";
 

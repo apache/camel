@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
@@ -30,11 +36,6 @@ import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
@@ -64,8 +65,9 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
             String routeId = "mllp-receiver-with-lenient-bind";
 
             public void configure() {
-                fromF("mllp://%s:%d?bindTimeout=15000&bindRetryInterval=500&receiveTimeout=%d&readTimeout=%d&reuseAddress=false&lenientBind=true",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT)
+                fromF(
+                                "mllp://%s:%d?bindTimeout=15000&bindRetryInterval=500&receiveTimeout=%d&readTimeout=%d&reuseAddress=false&lenientBind=true",
+                                mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
                         .to(result);
@@ -88,13 +90,14 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
         mllpClient.reset();
         portBlocker.close();
 
-        Awaitility.await().atMost(2000, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(2000, TimeUnit.MILLISECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(ServiceStatus.Started, context.getStatus()));
 
         mllpClient.connect();
-        String acknowledgement
-                = mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
+        String acknowledgement =
+                mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage(10002));
         assertStringContains(acknowledgement, "10002");
     }
-
 }

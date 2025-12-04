@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static com.pubnub.api.enums.PNHeartbeatNotificationOptions.NONE;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -26,9 +30,6 @@ import com.pubnub.internal.java.PubNubForJavaImpl;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static com.pubnub.api.enums.PNHeartbeatNotificationOptions.NONE;
 
 public class PubNubTestBase extends CamelTestSupport {
 
@@ -84,7 +85,6 @@ public class PubNubTestBase extends CamelTestSupport {
             public String getVersion() {
                 return "suchJava";
             }
-
         }
 
         return new MockedTimePubNub(config);

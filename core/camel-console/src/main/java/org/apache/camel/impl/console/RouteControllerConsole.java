@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -60,15 +61,18 @@ public class RouteControllerConsole extends AbstractDevConsole {
             routes.addAll(rc.getControlledRoutes());
             routes.addAll(src.getExhaustedRoutes());
             routes.addAll(src.getRestartingRoutes());
-            long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
+            long started = routes.stream()
+                    .filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
             sb.append(String.format("\nInitial Starting Routes: %b", src.isStartingRoutes()));
             sb.append(String.format("\nUnhealthy Routes: %b", src.hasUnhealthyRoutes()));
             sb.append(String.format("Total Routes: %d", routes.size()));
             sb.append(String.format("\nStarted Routes: %d", started));
-            sb.append(String.format("\nRestarting Routes: %d", src.getRestartingRoutes().size()));
-            sb.append(String.format("\nExhausted Routes: %d", src.getExhaustedRoutes().size()));
+            sb.append(String.format(
+                    "\nRestarting Routes: %d", src.getRestartingRoutes().size()));
+            sb.append(String.format(
+                    "\nExhausted Routes: %d", src.getExhaustedRoutes().size()));
             sb.append(String.format("\nInitial Delay: %d", src.getInitialDelay()));
             sb.append(String.format("\nBackoff Delay: %d", src.getBackOffDelay()));
             sb.append(String.format("\nBackoff Max Delay: %d", src.getBackOffMaxDelay()));
@@ -93,15 +97,20 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 String next = "";
                 // we can only track elapsed/time for active supervised routes
                 long time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                        ? state.getFirstAttemptTime() : 0;
+                        ? state.getFirstAttemptTime()
+                        : 0;
                 if (time > 0) {
                     elapsed = TimeUtils.printDuration(time);
                 }
-                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
+                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                        ? state.getLastAttemptTime()
+                        : 0;
                 if (time > 0) {
                     last = TimeUtils.printSince(time);
                 }
-                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getNextAttemptTime() : 0;
+                time = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                        ? state.getNextAttemptTime()
+                        : 0;
                 if (time > 0) {
                     next = TimeUtils.printSince(time);
                 }
@@ -168,7 +177,8 @@ public class RouteControllerConsole extends AbstractDevConsole {
             routes.addAll(rc.getControlledRoutes());
             routes.addAll(src.getExhaustedRoutes());
             routes.addAll(src.getRestartingRoutes());
-            long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
+            long started = routes.stream()
+                    .filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
             root.put("controller", "SupervisingRouteController");
@@ -202,9 +212,14 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 long next;
                 // we can only track elapsed/time for active supervised routes
                 elapsed = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                        ? state.getCurrentElapsedTime() : 0;
-                last = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
-                next = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getNextAttemptTime() : 0;
+                        ? state.getCurrentElapsedTime()
+                        : 0;
+                last = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                        ? state.getLastAttemptTime()
+                        : 0;
+                next = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
+                        ? state.getNextAttemptTime()
+                        : 0;
                 JsonObject jo = new JsonObject();
                 list.add(jo);
                 jo.put("routeId", routeId);
@@ -257,5 +272,4 @@ public class RouteControllerConsole extends AbstractDevConsole {
 
         return root;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
 
 import java.io.Serial;
@@ -49,5 +50,4 @@ public abstract class AbstractExchangeEvent extends EventObject implements Excha
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
-
 }

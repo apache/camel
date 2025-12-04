@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
@@ -26,11 +27,12 @@ import org.apache.camel.spi.Metadata;
  * you want Camel to keep all headers when sending and receiving using components that uses
  * {@link HeaderFilterStrategy}.
  */
-@Metadata(label = "bean",
-          description = "This strategy is used for accepting all headers.The intention is for use with development and troubleshooting where you want Camel to keep all headers\n"
-                        +
-                        " * when sending and receiving using components that uses HeaderFilterStrategy",
-          annotations = { "interfaceName=org.apache.camel.spi.HeaderFilterStrategy" })
+@Metadata(
+        label = "bean",
+        description =
+                "This strategy is used for accepting all headers.The intention is for use with development and troubleshooting where you want Camel to keep all headers\n"
+                        + " * when sending and receiving using components that uses HeaderFilterStrategy",
+        annotations = {"interfaceName=org.apache.camel.spi.HeaderFilterStrategy"})
 @Configurer(metadataOnly = true)
 public class AcceptAllHeaderFilterStrategy implements HeaderFilterStrategy {
 

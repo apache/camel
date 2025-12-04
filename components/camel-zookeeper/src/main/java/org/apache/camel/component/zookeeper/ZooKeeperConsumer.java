@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.util.concurrent.ExecutorService;
@@ -67,8 +68,10 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         }
 
         initializeConsumer();
-        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                "Camel-Zookeeper OperationsExecutor", 1);
+        executor = getEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(this, "Camel-Zookeeper OperationsExecutor", 1);
 
         OperationsExecutor opsService = new OperationsExecutor();
         executor.submit(opsService);
@@ -114,7 +117,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
     private Exchange createExchange(String path, OperationResult result, WatchedEvent watchedEvent) {
         Exchange exchange = createExchange(true);
-        ZooKeeperMessage in = new ZooKeeperMessage(getEndpoint().getCamelContext(), path, result.getStatistics(), watchedEvent);
+        ZooKeeperMessage in =
+                new ZooKeeperMessage(getEndpoint().getCamelContext(), path, result.getStatistics(), watchedEvent);
         exchange.setIn(in);
         if (result.isOk()) {
             in.setBody(result.getResult());
@@ -136,7 +140,8 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                 try {
                     current = operations.take();
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace(String.format("Processing '%s' operation", current.getClass().getSimpleName()));
+                        LOG.trace(String.format(
+                                "Processing '%s' operation", current.getClass().getSimpleName()));
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();

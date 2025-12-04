@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rxjava.engine;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,8 +74,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     // ******************************************
 
     @Override
-    public void doStart() throws Exception {
-    }
+    public void doStart() throws Exception {}
 
     @Override
     public void doStop() throws Exception {
@@ -125,9 +125,7 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
 
     @Override
     public Publisher<Exchange> toStream(String name, Object data) {
-        return doRequest(
-                name,
-                ReactiveStreamsHelper.convertToExchange(context, data));
+        return doRequest(name, ReactiveStreamsHelper.convertToExchange(context, data));
     }
 
     @Override
@@ -177,7 +175,8 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     public Subscriber<Exchange> subscriber(String uri) {
         try {
             String uuid = context.getUuidGenerator().generateUuid();
-            RouteBuilder.addRoutes(context, rb -> rb.from("reactive-streams:" + uuid).to(uri));
+            RouteBuilder.addRoutes(
+                    context, rb -> rb.from("reactive-streams:" + uuid).to(uri));
 
             return streamSubscriber(uuid);
         } catch (Exception e) {
@@ -195,11 +194,13 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
         String streamName = requestedUriToStream.computeIfAbsent(uri, camelUri -> {
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
-                RouteBuilder.addRoutes(context, rb -> rb.from("reactive-streams:" + uuid).to(camelUri));
+                RouteBuilder.addRoutes(
+                        context, rb -> rb.from("reactive-streams:" + uuid).to(camelUri));
 
                 return uuid;
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to create requested reactive stream from direct URI: " + uri, e);
+                throw new IllegalStateException(
+                        "Unable to create requested reactive stream from direct URI: " + uri, e);
             }
         });
 
@@ -247,8 +248,8 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
     public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
         process(
                 uri,
-                publisher -> processor.apply(
-                        Flowable.fromPublisher(publisher).map(BodyConverter.forType(type)::apply)));
+                publisher ->
+                        processor.apply(Flowable.fromPublisher(publisher).map(BodyConverter.forType(type)::apply)));
     }
 
     // ******************************************
@@ -302,24 +303,24 @@ final class RxJavaStreamsService extends ServiceSupport implements CamelReactive
             throw new IllegalStateException("No consumers attached to the stream " + name);
         }
 
-        Single<Exchange> source = Single.<Exchange> create(
-                emitter -> data.getExchangeExtension().addOnCompletion(new Synchronization() {
-                    @Override
-                    public void onComplete(Exchange exchange) {
-                        emitter.onSuccess(exchange);
-                    }
+        Single<Exchange> source = Single.<Exchange>create(
+                        emitter -> data.getExchangeExtension().addOnCompletion(new Synchronization() {
+                            @Override
+                            public void onComplete(Exchange exchange) {
+                                emitter.onSuccess(exchange);
+                            }
 
-                    @Override
-                    public void onFailure(Exchange exchange) {
-                        Throwable throwable = exchange.getException();
-                        if (throwable == null) {
-                            throwable = new IllegalStateException("Unknown Exception");
-                        }
+                            @Override
+                            public void onFailure(Exchange exchange) {
+                                Throwable throwable = exchange.getException();
+                                if (throwable == null) {
+                                    throwable = new IllegalStateException("Unknown Exception");
+                                }
 
-                        emitter.onError(throwable);
-                    }
-                })).doOnSubscribe(
-                        subs -> consumer.process(data, RxJavaStreamsConstants.EMPTY_ASYNC_CALLBACK));
+                                emitter.onError(throwable);
+                            }
+                        }))
+                .doOnSubscribe(subs -> consumer.process(data, RxJavaStreamsConstants.EMPTY_ASYNC_CALLBACK));
 
         return source.toFlowable();
     }

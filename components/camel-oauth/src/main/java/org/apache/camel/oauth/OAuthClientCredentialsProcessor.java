@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.oauth;
 
-import org.apache.camel.Exchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.apache.camel.oauth;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_ID;
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_CLIENT_SECRET;
 import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
+
+import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OAuthClientCredentialsProcessor extends AbstractOAuthProcessor {
 
@@ -64,9 +65,8 @@ public class OAuthClientCredentialsProcessor extends AbstractOAuthProcessor {
         var clientId = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_ID);
         var clientSecret = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_CLIENT_SECRET);
 
-        var userProfile = oauth.authenticate(new ClientCredentials()
-                .setClientSecret(clientSecret)
-                .setClientId(clientId));
+        var userProfile = oauth.authenticate(
+                new ClientCredentials().setClientSecret(clientSecret).setClientId(clientId));
 
         session.putUserProfile(userProfile);
         log.info("Authenticated {}", userProfile.subject());

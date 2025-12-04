@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reactive.vertx;
 
 import java.util.Set;
@@ -36,7 +37,8 @@ import org.slf4j.LoggerFactory;
  */
 @Experimental
 @JdkService(ReactiveExecutor.FACTORY)
-public class VertXReactiveExecutor extends ServiceSupport implements CamelContextAware, ReactiveExecutor, StaticService {
+public class VertXReactiveExecutor extends ServiceSupport
+        implements CamelContextAware, ReactiveExecutor, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertXReactiveExecutor.class);
 

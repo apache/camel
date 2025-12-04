@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mvel;
 
 import org.apache.camel.spi.Metadata;
@@ -23,10 +24,11 @@ import org.apache.camel.spi.Metadata;
  */
 public final class MvelConstants {
 
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint\n" +
-                            "configured.",
-              javaType = "String")
+    @Metadata(
+            description = "A URI for the template resource to use instead of the endpoint\n" + "configured.",
+            javaType = "String")
     public static final String MVEL_RESOURCE_URI = "CamelMvelResourceUri";
+
     @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String MVEL_TEMPLATE = "CamelMvelTemplate";
 

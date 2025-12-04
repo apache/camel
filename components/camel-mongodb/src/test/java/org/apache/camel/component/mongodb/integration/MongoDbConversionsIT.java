@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -32,12 +39,6 @@ import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -76,7 +77,8 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
     @Test
     public void testInsertJsonString() {
         // Object result =
-        template.requestBody("direct:insertJsonString",
+        template.requestBody(
+                "direct:insertJsonString",
                 "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
         // assertTrue(result instanceof WriteResult);
         Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
@@ -86,7 +88,8 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
     @Test
     public void testInsertJsonInputStream() throws Exception {
         // Object result =
-        template.requestBody("direct:insertJsonString",
+        template.requestBody(
+                "direct:insertJsonString",
                 IOConverter.toInputStream(
                         "{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n",
                         null));
@@ -96,9 +99,13 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
 
     @Test
     public void testInsertJsonInputStreamWithSpaces() throws Exception {
-        template.requestBody("direct:insertJsonString",
-                IOConverter.toInputStream("    {\"test\": [\"test\"], \"_id\": \"testInsertJsonStringWithSpaces\"}\n", null));
-        Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonStringWithSpaces")).first();
+        template.requestBody(
+                "direct:insertJsonString",
+                IOConverter.toInputStream(
+                        "    {\"test\": [\"test\"], \"_id\": \"testInsertJsonStringWithSpaces\"}\n", null));
+        Document b = testCollection
+                .find(eq(MONGO_ID, "testInsertJsonStringWithSpaces"))
+                .first();
         assertNotNull(b, "No record with 'testInsertJsonStringWithSpaces' _id");
     }
 
@@ -107,7 +114,9 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
         Document document = new Document(MONGO_ID, "testInsertBsonString");
 
         // Object result =
-        template.requestBody("direct:insertJsonString", new ByteArrayInputStream(document.toJson().getBytes()));
+        template.requestBody(
+                "direct:insertJsonString",
+                new ByteArrayInputStream(document.toJson().getBytes()));
         Document b = testCollection.find(eq(MONGO_ID, "testInsertBsonString")).first();
         assertNotNull(b, "No record with 'testInsertBsonString' _id");
     }
@@ -117,15 +126,18 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
             public void configure() {
 
                 from("direct:insertMap")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:insertPojo")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:insertJsonString")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:insertJsonStringWriteResultInString")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
                         .convertBodyTo(String.class);
-
             }
         };
     }
@@ -140,7 +152,7 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
     private class MyPojoTest {
         public int number = 123;
         public String text = "hello";
-        public String[] array = { "daVinci", "copernico", "einstein" };
+        public String[] array = {"daVinci", "copernico", "einstein"};
         public String _id = "testInsertPojo";
     }
 
@@ -163,5 +175,4 @@ public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements Co
         List<Bson> bsonList = MongoDbBasicConverters.fromStringToList(jsonSingleValue);
         assertNull(bsonList);
     }
-
 }

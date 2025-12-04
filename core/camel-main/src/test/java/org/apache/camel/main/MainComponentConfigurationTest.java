@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 
 import org.apache.camel.main.support.MyDummyComponent;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MainComponentConfigurationTest {
     @Test
@@ -32,8 +33,8 @@ public class MainComponentConfigurationTest {
         properties.setProperty("camel.component.dummy.configuration.log", "true");
         properties.setProperty("camel.component.dummy.component-value", "component-value");
         properties.setProperty("camel.component.dummy.configuration.nested.value", "nested-value");
-        properties.setProperty("camel.component.dummy.configuration",
-                "#class:org.apache.camel.main.support.MyDummyConfiguration");
+        properties.setProperty(
+                "camel.component.dummy.configuration", "#class:org.apache.camel.main.support.MyDummyConfiguration");
 
         Main main = new Main();
         try {

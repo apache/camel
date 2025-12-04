@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public final class JmsToJmsTransactedMarkRollbackIT extends CamelSpringTestSupport {
 
     @Order(0)
@@ -61,7 +62,9 @@ public final class JmsToJmsTransactedMarkRollbackIT extends CamelSpringTestSuppo
                         .to("activemq:queue:JmsToJmsTransactedMarkRollbackIT.reply")
                         .markRollbackOnly();
 
-                from("activemq:queue:JmsToJmsTransactedMarkRollbackIT.reply").to("log:bar").to("mock:bar");
+                from("activemq:queue:JmsToJmsTransactedMarkRollbackIT.reply")
+                        .to("log:bar")
+                        .to("mock:bar");
             }
         });
         context.start();

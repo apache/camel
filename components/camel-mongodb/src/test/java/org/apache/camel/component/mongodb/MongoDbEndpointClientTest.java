@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.mongodb.client.MongoClients;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MongoDbEndpointClientTest extends CamelTestSupport {
 
@@ -33,9 +34,8 @@ class MongoDbEndpointClientTest extends CamelTestSupport {
 
     @Test
     void testMongoDbEndpoint() {
-        MongoDbEndpoint mongoDb
-                = context.getEndpoint("mongodb:mongoClient?database=test&collection=test&operation=findAll",
-                        MongoDbEndpoint.class);
+        MongoDbEndpoint mongoDb = context.getEndpoint(
+                "mongodb:mongoClient?database=test&collection=test&operation=findAll", MongoDbEndpoint.class);
         assertNotNull(mongoDb);
         assertNotNull(mongoDb.getMongoConnection());
         assertNotNull(mongoDb.getMongoConnection().getDatabase("test"));
@@ -52,5 +52,4 @@ class MongoDbEndpointClientTest extends CamelTestSupport {
             }
         };
     }
-
 }

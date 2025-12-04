@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import org.apache.camel.Category;
@@ -33,8 +34,15 @@ import org.apache.camel.util.StringHelper;
 /**
  * Execute commands on the underlying operating system.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true,
-             remote = false, category = { Category.CORE }, headersClass = ExecBinding.class)
+@UriEndpoint(
+        firstVersion = "2.3.0",
+        scheme = "exec",
+        title = "Exec",
+        syntax = "exec:executable",
+        producerOnly = true,
+        remote = false,
+        category = {Category.CORE},
+        headersClass = ExecBinding.class)
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**
@@ -45,22 +53,31 @@ public class ExecEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String executable;
+
     @UriParam
     private String args;
+
     @UriParam
     private String workingDir;
+
     @UriParam(javaType = "java.time.Duration")
     private long timeout;
+
     @UriParam
     private String exitValues;
+
     @UriParam
     private String outFile;
+
     @UriParam
     private ExecCommandExecutor commandExecutor;
+
     @UriParam
     private ExecBinding binding;
+
     @UriParam
     private boolean useStderrOnEmptyStdout;
+
     @UriParam(defaultValue = "DEBUG")
     private LoggingLevel commandLogLevel = LoggingLevel.DEBUG;
 

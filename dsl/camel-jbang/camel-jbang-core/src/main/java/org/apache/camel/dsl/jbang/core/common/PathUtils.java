@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.IOException;
@@ -99,14 +100,13 @@ public final class PathUtils {
         }
 
         try (Stream<Path> paths = Files.walk(directory)) {
-            paths.sorted(java.util.Comparator.reverseOrder())
-                    .forEach(path -> {
-                        try {
-                            Files.deleteIfExists(path);
-                        } catch (IOException e) {
-                            // Ignore
-                        }
-                    });
+            paths.sorted(java.util.Comparator.reverseOrder()).forEach(path -> {
+                try {
+                    Files.deleteIfExists(path);
+                } catch (IOException e) {
+                    // Ignore
+                }
+            });
             return true;
         } catch (IOException e) {
             return false;
@@ -148,5 +148,4 @@ public final class PathUtils {
             });
         }
     }
-
 }

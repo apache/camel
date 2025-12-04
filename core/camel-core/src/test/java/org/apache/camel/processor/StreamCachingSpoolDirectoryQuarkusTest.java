@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
@@ -30,9 +34,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
 
@@ -97,8 +98,15 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
 
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
-                        .to("mock:dutch", "mock:german").otherwise().to("mock:french").end()
+                from("direct:a")
+                        .choice()
+                        .when(xpath("//hello"))
+                        .to("mock:english")
+                        .when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german")
+                        .otherwise()
+                        .to("mock:french")
+                        .end()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -110,7 +118,6 @@ public class StreamCachingSpoolDirectoryQuarkusTest extends ContextTestSupport {
                                 }
                             }
                         });
-
             }
         };
     }

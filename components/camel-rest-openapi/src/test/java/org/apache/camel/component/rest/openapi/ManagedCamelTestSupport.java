@@ -49,6 +49,5 @@ abstract class ManagedCamelTestSupport {
         if (context != null) {
             context.stop();
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
@@ -65,8 +66,7 @@ public class Jt400PgmProducer extends DefaultProducer {
                 pgmCall = new ServiceProgramCall(iSeries);
                 ((ServiceProgramCall) pgmCall)
                         .setProcedureName(getISeriesEndpoint().getProcedureName());
-                ((ServiceProgramCall) pgmCall)
-                        .setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
+                ((ServiceProgramCall) pgmCall).setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
             }
             pgmCall.setProgram(commandStr);
             pgmCall.setParameterList(parameterList);
@@ -74,14 +74,15 @@ public class Jt400PgmProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.trace(
                         "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
-                        commandStr, iSeries.getSystemName(), iSeries.getUserId());
+                        commandStr,
+                        iSeries.getSystemName(),
+                        iSeries.getUserId());
             }
 
             boolean result = pgmCall.run();
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", commandStr,
-                        iSeries.getSystemName(), result);
+                LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", commandStr, iSeries.getSystemName(), result);
             }
 
             if (result) {
@@ -175,8 +176,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return parameterList;
     }
 
-    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, AS400 iSeries)
-            throws InvalidPayloadException {
+    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, AS400 iSeries) throws InvalidPayloadException {
 
         Object body = exchange.getIn().getMandatoryBody();
         Object[] params = (Object[]) body;
@@ -241,5 +241,4 @@ public class Jt400PgmProducer extends DefaultProducer {
             getISeriesEndpoint().releaseSystem(iSeries);
         }
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cassandra.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.CassandraEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CassandraComponentBeanRefIT extends BaseCassandra {
 

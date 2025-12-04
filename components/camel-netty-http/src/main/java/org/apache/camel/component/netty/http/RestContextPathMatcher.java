@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.Locale;
@@ -126,5 +127,4 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
     public int hashCode() {
         return 31 * comparePath.hashCode() + (matchOnUriPrefix ? 1 : 0);
     }
-
 }

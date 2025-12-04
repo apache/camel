@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.helper;
+
+import static org.apache.camel.parser.helper.ParserCommon.findLineNumber;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,8 +51,6 @@ import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import static org.apache.camel.parser.helper.ParserCommon.findLineNumber;
-
 /**
  * A Camel Java Rest DSL parser that only depends on the Roaster API.
  * <p/>
@@ -58,8 +59,7 @@ import static org.apache.camel.parser.helper.ParserCommon.findLineNumber;
 public final class CamelJavaRestDslParserHelper {
 
     public List<RestConfigurationDetails> parseRestConfiguration(
-            JavaClassSource clazz, String fullyQualifiedFileName,
-            MethodSource<JavaClassSource> configureMethod) {
+            JavaClassSource clazz, String fullyQualifiedFileName, MethodSource<JavaClassSource> configureMethod) {
 
         List<RestConfigurationDetails> answer = new ArrayList<>();
 
@@ -102,8 +102,7 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     public List<RestServiceDetails> parseRestService(
-            JavaClassSource clazz, String fullyQualifiedFileName,
-            MethodSource<JavaClassSource> configureMethod) {
+            JavaClassSource clazz, String fullyQualifiedFileName, MethodSource<JavaClassSource> configureMethod) {
 
         if (configureMethod == null) {
             return Collections.emptyList();
@@ -120,7 +119,8 @@ public final class CamelJavaRestDslParserHelper {
                     Expression exp = es.getExpression();
                     boolean valid = isRest(exp);
                     if (valid) {
-                        final RestServiceDetails node = doParse(clazz, fullyQualifiedFileName, configureMethod, exp, block);
+                        final RestServiceDetails node =
+                                doParse(clazz, fullyQualifiedFileName, configureMethod, exp, block);
 
                         answer.add(node);
                     }
@@ -132,8 +132,11 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private RestServiceDetails doParse(
-            JavaClassSource clazz, String fullyQualifiedFileName, MethodSource<JavaClassSource> configureMethod,
-            Expression exp, Block block) {
+            JavaClassSource clazz,
+            String fullyQualifiedFileName,
+            MethodSource<JavaClassSource> configureMethod,
+            Expression exp,
+            Block block) {
         RestServiceDetails node = new RestServiceDetails();
 
         // include source code details
@@ -198,8 +201,10 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private void parseExpression(
-            RestConfigurationDetails node, String fullyQualifiedFileName,
-            JavaClassSource clazz, Block block,
+            RestConfigurationDetails node,
+            String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            Block block,
             Expression exp) {
         if (exp == null) {
             return;
@@ -213,8 +218,11 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private void parseExpression(
-            RestServiceDetails node, RestVerbDetails verb, String fullyQualifiedFileName,
-            JavaClassSource clazz, Block block,
+            RestServiceDetails node,
+            RestVerbDetails verb,
+            String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            Block block,
             Expression exp) {
         if (exp == null) {
             // this rest service is not complete, if there is any details on verb then they are actually general
@@ -239,8 +247,10 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private void doParseRestConfiguration(
-            RestConfigurationDetails node, String fullyQualifiedFileName,
-            JavaClassSource clazz, Block block,
+            RestConfigurationDetails node,
+            String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            Block block,
             MethodInvocation mi) {
 
         // end line number is the first node in the method chain we parse
@@ -319,8 +329,11 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private RestVerbDetails doParseRestService(
-            RestServiceDetails node, RestVerbDetails verb, String fullyQualifiedFileName,
-            JavaClassSource clazz, Block block,
+            RestServiceDetails node,
+            RestVerbDetails verb,
+            String fullyQualifiedFileName,
+            JavaClassSource clazz,
+            Block block,
             MethodInvocation mi) {
 
         // end line number is the first node in the method chain we parse
@@ -342,9 +355,7 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private RestVerbDetails doParseRestVerb(
-            RestServiceDetails node, RestVerbDetails verb,
-            JavaClassSource clazz, Block block,
-            MethodInvocation mi) {
+            RestServiceDetails node, RestVerbDetails verb, JavaClassSource clazz, Block block, MethodInvocation mi) {
         if (verb == null) {
             verb = new RestVerbDetails();
         }
@@ -521,7 +532,8 @@ public final class CamelJavaRestDslParserHelper {
             return textBlock.getLiteralValue();
         }
 
-        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
+        // if it's a method invocation then add a dummy value assuming the method invocation will return a valid
+        // response
         if (expression instanceof MethodInvocation methodInvocation) {
             String name = methodInvocation.getName().getIdentifier();
             return "{{" + name + "}}";
@@ -567,14 +579,16 @@ public final class CamelJavaRestDslParserHelper {
                     VariableDeclarationFragment vdf = (VariableDeclarationFragment) field.getInternal();
                     expression = vdf.getInitializer();
                     if (expression == null) {
-                        // it's a field which has no initializer, then add a dummy value assuming the field will be initialized at runtime
+                        // it's a field which has no initializer, then add a dummy value assuming the field will be
+                        // initialized at runtime
                         return "{{" + field.getName() + "}}";
                     } else {
                         return getLiteralValue(clazz, block, expression);
                     }
                 }
             } else {
-                // we could not find the field in this class/method, so its maybe from some other super class, so insert a dummy value
+                // we could not find the field in this class/method, so its maybe from some other super class, so insert
+                // a dummy value
                 final String fieldName = ((SimpleName) expression).getIdentifier();
                 return "{{" + fieldName + "}}";
             }
@@ -633,8 +647,10 @@ public final class CamelJavaRestDslParserHelper {
         } else if (expression instanceof SimpleName) {
             FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
             if (field != null) {
-                return field.getType().isType("int") || field.getType().isType("long")
-                        || field.getType().isType("Integer") || field.getType().isType("Long");
+                return field.getType().isType("int")
+                        || field.getType().isType("long")
+                        || field.getType().isType("Integer")
+                        || field.getType().isType("Long");
             }
         }
         return false;

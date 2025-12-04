@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import java.util.StringJoiner;
@@ -38,41 +39,53 @@ public class YAMLDataFormat extends DataFormatDefinition {
 
     @XmlTransient
     private ClassLoader classLoader;
+
     @XmlTransient
     private Class<?> unmarshalType;
 
     @XmlAttribute
     @Metadata(defaultValue = "SnakeYAML")
     private YAMLLibrary library;
+
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String constructor;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String representer;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String dumperOptions;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String resolver;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useApplicationContextClassLoader;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyFlow;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowAnyType;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String typeFilter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "50")
     private String maxAliasesForCollections;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowRecursiveKeys;

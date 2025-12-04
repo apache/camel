@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.http;
 
 import java.util.ArrayList;
@@ -37,8 +38,7 @@ public final class HttpUtil {
     private static final int OK = 200;
     private static final int NO_CONTENT = 204;
 
-    private HttpUtil() {
-    }
+    private HttpUtil() {}
 
     /**
      * Given an exchange handling HTTP, determines the status response code to return for the caller
@@ -207,8 +207,12 @@ public final class HttpUtil {
      *                             values or a single value.
      */
     public static void applyHeader(
-            HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Iterator<?> it,
-            TypeConverter tc, String key, BiConsumer<List<String>, String> consumer) {
+            HeaderFilterStrategy headerFilterStrategy,
+            Exchange exchange,
+            Iterator<?> it,
+            TypeConverter tc,
+            String key,
+            BiConsumer<List<String>, String> consumer) {
         String firstValue = null;
         List<String> values = null;
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.tokenizer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,8 +38,10 @@ import org.apache.camel.util.StringHelper;
 public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefinition {
 
     @XmlAttribute(required = true)
-    @Metadata(javaType = "org.apache.camel.model.tokenizer.TokenizerType", required = true,
-              enums = "OPEN_AI,AZURE,QWEN")
+    @Metadata(
+            javaType = "org.apache.camel.model.tokenizer.TokenizerType",
+            required = true,
+            enums = "OPEN_AI,AZURE,QWEN")
     private String tokenizerType;
 
     @XmlAttribute(required = true)
@@ -53,8 +56,7 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
     @Metadata(javaType = "java.lang.String", required = false)
     private String modelName;
 
-    public LangChain4jTokenizerDefinition() {
-    }
+    public LangChain4jTokenizerDefinition() {}
 
     public LangChain4jTokenizerDefinition(LangChain4jTokenizerDefinition source) {
         super(source);
@@ -141,7 +143,7 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
     }
 
     @XmlTransient
-    public static abstract class Builder implements TokenizerBuilder<LangChain4jTokenizerDefinition> {
+    public abstract static class Builder implements TokenizerBuilder<LangChain4jTokenizerDefinition> {
         private int maxTokens;
         private int maxOverlap;
         private String modelName;
@@ -223,5 +225,4 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
 
         protected abstract String name();
     }
-
 }

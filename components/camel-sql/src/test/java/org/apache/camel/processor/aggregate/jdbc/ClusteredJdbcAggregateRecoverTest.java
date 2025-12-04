@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,6 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
         repobis.setRecoveryInterval(50, TimeUnit.MILLISECONDS);
         repobis.setRecoveryByInstance(true);
         repobis.setInstanceId("INSTANCE2");
-
     }
 
     @Test
@@ -55,7 +55,10 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
         // should be marked as redelivered
         getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         // on the 2nd redelivery attempt we success
-        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        getMockEndpoint("mock:result")
+                .message(0)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(2);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -73,9 +76,13 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
             public void configure() {
                 configureJdbcAggregationRepository();
 
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(5)
+                from("direct:start")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .completionSize(5)
                         .aggregationRepository(repo)
-                        .log("aggregated exchange id ${exchangeId} with ${body}").to("mock:aggregated").delay(1000)
+                        .log("aggregated exchange id ${exchangeId} with ${body}")
+                        .to("mock:aggregated")
+                        .delay(1000)
                         // simulate errors the first two times
                         .process(new Processor() {
                             public void process(Exchange exchange) {
@@ -84,9 +91,16 @@ public class ClusteredJdbcAggregateRecoverTest extends AbstractClusteredJdbcAggr
                                     throw new IllegalArgumentException("Damn");
                                 }
                             }
-                        }).to("mock:result").end();
-                from("direct:tutu").aggregate(header("id"), new MyAggregationStrategy()).completionSize(5).aggregationRepository(repobis)
-                        .log("aggregated exchange id ${exchangeId} with ${body}").log("recover bis!!!!!!!!!!!!!!!!!").end();
+                        })
+                        .to("mock:result")
+                        .end();
+                from("direct:tutu")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .completionSize(5)
+                        .aggregationRepository(repobis)
+                        .log("aggregated exchange id ${exchangeId} with ${body}")
+                        .log("recover bis!!!!!!!!!!!!!!!!!")
+                        .end();
             }
         };
     }

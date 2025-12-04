@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.jpa;
 
 import java.io.Serializable;
@@ -29,8 +30,8 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(
-       name = "CAMEL_MESSAGEPROCESSED",
-       uniqueConstraints = @UniqueConstraint(columnNames = { "processorName", "messageId" }))
+        name = "CAMEL_MESSAGEPROCESSED",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"processorName", "messageId"}))
 public class MessageProcessed implements Serializable {
     private static final long serialVersionUID = 5594244386689371118L;
 
@@ -41,8 +42,8 @@ public class MessageProcessed implements Serializable {
 
     @Override
     public String toString() {
-        return "MessageProcessed[processorName: " + getProcessorName() + " messageId: " + getMessageId() + " createdAt: "
-               + getCreatedAt() + "]";
+        return "MessageProcessed[processorName: " + getProcessorName() + " messageId: " + getMessageId()
+                + " createdAt: " + getCreatedAt() + "]";
     }
 
     @Id

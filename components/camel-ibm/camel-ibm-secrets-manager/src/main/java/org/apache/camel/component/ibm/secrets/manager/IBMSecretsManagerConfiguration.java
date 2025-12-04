@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.secrets.manager;
 
 import org.apache.camel.RuntimeCamelException;
@@ -28,10 +29,13 @@ public class IBMSecretsManagerConfiguration implements Cloneable {
     @UriPath(description = "Logical name")
     @Metadata(required = true)
     private String label;
+
     @UriParam
     private String serviceUrl;
+
     @UriParam(label = "security", secret = true)
     private String token;
+
     @UriParam(label = "producer")
     private IBMSecretsManagerOperation operation = IBMSecretsManagerOperation.createArbitrarySecret;
 

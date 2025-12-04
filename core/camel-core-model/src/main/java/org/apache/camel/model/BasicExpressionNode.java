@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,12 +34,13 @@ import org.apache.camel.spi.Metadata;
 public abstract class BasicExpressionNode<T extends BasicExpressionNode<T>> extends OptionalIdentifiedDefinition<T>
         implements HasExpressionType, CopyableDefinition<T> {
 
-    @Metadata(description = "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.")
+    @Metadata(
+            description =
+                    "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.")
     @XmlElementRef
     private ExpressionDefinition expression;
 
-    public BasicExpressionNode() {
-    }
+    public BasicExpressionNode() {}
 
     public BasicExpressionNode(ExpressionDefinition expression) {
         setExpression(expression);
@@ -126,9 +128,9 @@ public abstract class BasicExpressionNode<T extends BasicExpressionNode<T>> exte
             if (getExpression().getPredicate() != null) {
                 getExpression().setExpression(getExpression().getPredicate().toString());
             } else if (getExpression().getExpressionValue() != null) {
-                getExpression().setExpression(getExpression().getExpressionValue().toString());
+                getExpression()
+                        .setExpression(getExpression().getExpressionValue().toString());
             }
         }
     }
-
 }

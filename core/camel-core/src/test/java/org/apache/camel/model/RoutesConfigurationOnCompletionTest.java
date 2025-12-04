@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,11 +40,9 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result");
+                from("direct:start").to("mock:result");
 
-                from("direct:start2")
-                        .to("mock:result2");
+                from("direct:start2").to("mock:result2");
             }
         });
         context.start();
@@ -64,17 +63,14 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
             @Override
             public void configuration() {
                 routeConfiguration("mylocal").onCompletion().to("mock:local");
-
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result");
+                from("direct:start").to("mock:result");
 
-                from("direct:start2").routeConfigurationId("mylocal")
-                        .to("mock:result2");
+                from("direct:start2").routeConfigurationId("mylocal").to("mock:result2");
             }
         });
         context.start();
@@ -102,11 +98,9 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result");
+                from("direct:start").to("mock:result");
 
-                from("direct:start2").routeConfigurationId("mylocal")
-                        .to("mock:result2");
+                from("direct:start2").routeConfigurationId("mylocal").to("mock:result2");
             }
         });
         context.start();
@@ -121,5 +115,4 @@ public class RoutesConfigurationOnCompletionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

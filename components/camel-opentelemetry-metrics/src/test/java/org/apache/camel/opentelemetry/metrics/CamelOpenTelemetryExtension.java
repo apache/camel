@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public final class CamelOpenTelemetryExtension implements BeforeEachCallback, Af
      */
     public static CamelOpenTelemetryExtension create() {
         InMemoryMetricReader metricReader = InMemoryMetricReader.create();
-        SdkMeterProvider meterProvider = SdkMeterProvider.builder().registerMetricReader(metricReader).build();
+        SdkMeterProvider meterProvider =
+                SdkMeterProvider.builder().registerMetricReader(metricReader).build();
         OpenTelemetrySdk openTelemetry = OpenTelemetrySdk.builder()
                 .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
                 .setMeterProvider(meterProvider)

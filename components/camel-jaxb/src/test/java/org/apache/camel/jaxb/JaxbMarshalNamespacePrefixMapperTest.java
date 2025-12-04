@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -85,10 +86,7 @@ public class JaxbMarshalNamespacePrefixMapperTest extends CamelTestSupport {
                 df.setContextPath("org.apache.camel.example");
                 df.setNamespacePrefix("myPrefix");
 
-                from("direct:start")
-                        .marshal(df)
-                        .to("mock:result");
-
+                from("direct:start").marshal(df).to("mock:result");
             }
         };
     }

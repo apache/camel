@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 
@@ -22,9 +26,6 @@ import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -58,5 +59,4 @@ public class ValidatingProcessorFromSourceTest extends ValidatingProcessorTest {
         assertNull(validating.getSchemaUrl());
         assertNotNull(validating.getSchemaSource());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cron;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.LoggingLevel;
@@ -28,21 +31,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class CronPatternsTest extends CamelTestSupport {
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "cron:tab?schedule=0/1 * * * * ? 1 2", "cron:tab?schedule=wrong pattern",
-            "cron://name?schedule=0+0/5+12-18+?+*+MON-FRI+2019+1" })
+    @ValueSource(
+            strings = {
+                "cron:tab?schedule=0/1 * * * * ? 1 2",
+                "cron:tab?schedule=wrong pattern",
+                "cron://name?schedule=0+0/5+12-18+?+*+MON-FRI+2019+1"
+            })
     @DisplayName("Test parsing with too many, too little and invalid characters in the pattern")
     void testParts(String endpointUri) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(endpointUri)
-                        .to("mock:result");
+                from(endpointUri).to("mock:result");
             }
         });
         assertThrows(FailedToCreateRouteException.class, () -> {
@@ -59,8 +62,7 @@ public class CronPatternsTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI")
-                        .to("mock:result");
+                from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI").to("mock:result");
             }
         });
         context.start();
@@ -76,5 +78,4 @@ public class CronPatternsTest extends CamelTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

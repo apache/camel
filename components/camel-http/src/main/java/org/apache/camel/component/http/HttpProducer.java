@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.ByteArrayOutputStream;
@@ -199,8 +200,11 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                     Object headerValue = entry.getValue();
 
                     if (headerValue != null) {
-                        if (headerValue instanceof String || headerValue instanceof Integer || headerValue instanceof Long
-                                || headerValue instanceof Boolean || headerValue instanceof Date) {
+                        if (headerValue instanceof String
+                                || headerValue instanceof Integer
+                                || headerValue instanceof Long
+                                || headerValue instanceof Boolean
+                                || headerValue instanceof Date) {
                             // optimise for common types
                             String value = headerValue.toString();
                             if (!strategy.applyFilterToCamelHeaders(key, value, exchange)) {
@@ -209,10 +213,16 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             continue;
                         }
 
-                        // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
+                        // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty
+                        // values)
                         final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
-                        HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                        HttpUtil.applyHeader(
+                                strategy,
+                                exchange,
+                                it,
+                                tc,
+                                key,
                                 (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
                     }
                 }
@@ -220,8 +230,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         }
 
         if (getEndpoint().getCookieHandler() != null) {
-            Map<String, List<String>> cookieHeaders
-                    = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getUri());
+            Map<String, List<String>> cookieHeaders =
+                    getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getUri());
             for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                 String key = entry.getKey();
                 if (!entry.getValue().isEmpty()) {
@@ -234,12 +244,14 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         if (getEndpoint().getCustomHostHeader() != null) {
             httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, getEndpoint().getCustomHostHeader());
         }
-        //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
-        //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
+        // In reverse proxy applications it can be desirable for the downstream service to see the original Host header
+        // if this option is set, and the exchange Host header is not null, we will set it's current value on the
+        // httpRequest
         if (getEndpoint().isPreserveHostHeader()) {
             String hostHeader = exchange.getIn().getHeader(HttpConstants.HTTP_HEADER_HOST, String.class);
             if (hostHeader != null) {
-                //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
+                // HttpClient 4 will check to see if the Host header is present, and use it if it is, see
+                // org.apache.http.protocol.RequestTargetHost in httpcore
                 httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, hostHeader);
             }
         }
@@ -250,66 +262,50 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
         // lets store the result in the output message.
         try {
-            executeMethod(exchange,
-                    httpHost, httpRequest,
-                    httpResponse -> {
-                        try {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getUri());
-                            }
-                            int responseCode = httpResponse.getCode();
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Http responseCode: {}", responseCode);
-                            }
-                            if (!throwException) {
-                                // if we do not use failed exception then populate response for all response codes
-                                HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
-                            } else {
-                                boolean ok;
-                                if (minOkRange > 0) {
-                                    ok = responseCode >= minOkRange && responseCode <= maxOkRange;
-                                } else {
-                                    ok = HttpHelper.isStatusCodeOk(responseCode,
-                                            HttpProducer.this.getEndpoint().getOkStatusCodeRange());
-                                }
-                                if (ok) {
-                                    // only populate response for OK response
-                                    HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy,
-                                            responseCode);
-                                } else {
-                                    // also store response code when throwing exception
-                                    populateResponseCode(exchange.getMessage(), httpResponse, responseCode);
+            executeMethod(exchange, httpHost, httpRequest, httpResponse -> {
+                try {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getUri());
+                    }
+                    int responseCode = httpResponse.getCode();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Http responseCode: {}", responseCode);
+                    }
+                    if (!throwException) {
+                        // if we do not use failed exception then populate response for all response codes
+                        HttpProducer.this.populateResponse(exchange, httpRequest, httpResponse, strategy, responseCode);
+                    } else {
+                        boolean ok;
+                        if (minOkRange > 0) {
+                            ok = responseCode >= minOkRange && responseCode <= maxOkRange;
+                        } else {
+                            ok = HttpHelper.isStatusCodeOk(
+                                    responseCode,
+                                    HttpProducer.this.getEndpoint().getOkStatusCodeRange());
+                        }
+                        if (ok) {
+                            // only populate response for OK response
+                            HttpProducer.this.populateResponse(
+                                    exchange, httpRequest, httpResponse, strategy, responseCode);
+                        } else {
+                            // also store response code when throwing exception
+                            populateResponseCode(exchange.getMessage(), httpResponse, responseCode);
 
-                                    // operation failed so populate exception to throw
-                                    throw HttpProducer.this.populateHttpOperationFailedException(exchange, httpRequest,
-                                            httpResponse, responseCode);
-                                }
-                            }
-                        } catch (IOException | HttpException | RuntimeCamelException e) {
-                            throw e;
-                        } catch (Exception e) {
-                            throw new RuntimeCamelException(e);
-                        } finally {
-                            if (httpResponse != null && HttpProducer.this.getEndpoint().isDisableStreamCache()) {
-                                // close the stream at the end of the exchange to ensure it gets eventually closed later
-                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                                    @Override
-                                    public void onDone(Exchange exchange1) {
-                                        try {
-                                            EntityUtils.consume(httpResponse.getEntity());
-                                        } catch (Exception e) {
-                                            // ignore
-                                        } finally {
-                                            try {
-                                                EntityUtils.consume(httpRequest.getEntity());
-                                            } catch (Exception e) {
-                                                // ignore
-                                            }
-                                        }
-                                    }
-                                });
-                            } else if (httpResponse != null) {
-                                // close the stream now
+                            // operation failed so populate exception to throw
+                            throw HttpProducer.this.populateHttpOperationFailedException(
+                                    exchange, httpRequest, httpResponse, responseCode);
+                        }
+                    }
+                } catch (IOException | HttpException | RuntimeCamelException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                } finally {
+                    if (httpResponse != null && HttpProducer.this.getEndpoint().isDisableStreamCache()) {
+                        // close the stream at the end of the exchange to ensure it gets eventually closed later
+                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                            @Override
+                            public void onDone(Exchange exchange1) {
                                 try {
                                     EntityUtils.consume(httpResponse.getEntity());
                                 } catch (Exception e) {
@@ -322,9 +318,24 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                                     }
                                 }
                             }
+                        });
+                    } else if (httpResponse != null) {
+                        // close the stream now
+                        try {
+                            EntityUtils.consume(httpResponse.getEntity());
+                        } catch (Exception e) {
+                            // ignore
+                        } finally {
+                            try {
+                                EntityUtils.consume(httpRequest.getEntity());
+                            } catch (Exception e) {
+                                // ignore
+                            }
                         }
-                        return null;
-                    });
+                    }
+                }
+                return null;
+            });
         } catch (RuntimeCamelException e) {
             if (e.getCause() instanceof Exception ex) {
                 // Rethrow the embedded exception to simulate the same behavior as with version 4
@@ -352,15 +363,19 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     protected void populateResponse(
-            Exchange exchange, HttpUriRequest httpRequest, ClassicHttpResponse httpResponse,
-            HeaderFilterStrategy strategy, int responseCode)
+            Exchange exchange,
+            HttpUriRequest httpRequest,
+            ClassicHttpResponse httpResponse,
+            HeaderFilterStrategy strategy,
+            int responseCode)
             throws IOException, ClassNotFoundException {
 
         Message answer = exchange.getOut();
         populateResponseCode(answer, httpResponse, responseCode);
 
         // We just make the out message is not create when extractResponseBody throws exception
-        Object response = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
+        Object response =
+                extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         answer.setBody(response);
 
         if (!getEndpoint().isSkipResponseHeaders()) {
@@ -384,7 +399,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                 }
                 if (!found && name.equalsIgnoreCase("content-type")) {
                     name = Exchange.CONTENT_TYPE;
-                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                    exchange.setProperty(
+                            ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
                     found = true;
                 }
                 // use http helper to extract parameter value as it may contain multiple values
@@ -444,7 +460,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             }
         }
 
-        Object responseBody = extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
+        Object responseBody =
+                extractResponseBody(httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
         if (transferException && responseBody instanceof Exception ex) {
             // if the response was a serialized exception then use that
             return ex;
@@ -495,7 +512,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             localContext.setAttribute("org.apache.camel.Exchange", exchange);
             localContext.setAttribute("org.apache.hc.core5.http.HttpHost", httpHost);
         }
-        // execute open that does not automatic close response input-stream (this is done in exchange on-completion by Camel)
+        // execute open that does not automatic close response input-stream (this is done in exchange on-completion by
+        // Camel)
         ClassicHttpResponse res = httpClient.executeOpen(httpHost, httpRequest, localContext);
         return handler.handleResponse(res);
     }
@@ -559,7 +577,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
             // only deserialize java if allowed
-            if (getEndpoint().getComponent().isAllowJavaSerializedObject() || getEndpoint().isTransferException()) {
+            if (getEndpoint().getComponent().isAllowJavaSerializedObject()
+                    || getEndpoint().isTransferException()) {
                 return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
             } else {
                 // empty response
@@ -673,9 +692,9 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
         // there must be a host on the method
         if (uri.getScheme() == null || uri.getHost() == null) {
-            throw new IllegalArgumentException(
-                    "Invalid url: " + url + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
-                                               + getEndpoint());
+            throw new IllegalArgumentException("Invalid url: " + url
+                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: "
+                    + getEndpoint());
         }
 
         return method;
@@ -686,7 +705,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         Message in = exchange.getIn();
         if (in.getHeader(HttpConstants.REST_HTTP_URI) != null) {
             create = true;
-        } else if (in.getHeader(HttpConstants.HTTP_URI) != null && !getEndpoint().isBridgeEndpoint()) {
+        } else if (in.getHeader(HttpConstants.HTTP_URI) != null
+                && !getEndpoint().isBridgeEndpoint()) {
             create = true;
         } else if (in.getHeader(HttpConstants.HTTP_PATH) != null) {
             create = true;
@@ -738,9 +758,10 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                     String contentTypeString = ExchangeHelper.getContentType(exchange);
                     ContentType contentType = null;
 
-                    //Check the contentType is valid or not, If not it throws an exception.
-                    //When ContentType.parse parse method parse "multipart/form-data;boundary=---------------------------j2radvtrk",
-                    //it removes "boundary" from Content-Type; I have to use contentType.create method.
+                    // Check the contentType is valid or not, If not it throws an exception.
+                    // When ContentType.parse parse method parse
+                    // "multipart/form-data;boundary=---------------------------j2radvtrk",
+                    // it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
                         // using ContentType.parser for charset
                         if (contentTypeString.contains("charset") || contentTypeString.contains(";")) {
@@ -755,7 +776,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                         if (!getEndpoint().getComponent().isAllowJavaSerializedObject()) {
                             throw new CamelExchangeException(
                                     "Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT
-                                                             + " is not allowed",
+                                            + " is not allowed",
                                     exchange);
                         }
                         // serialized java object
@@ -780,7 +801,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             }
                             if (multipart) {
                                 answer = MultipartEntityBuilder.create()
-                                        .addBinaryBody(multipartName, file, contentType, file.getName()).build();
+                                        .addBinaryBody(multipartName, file, contentType, file.getName())
+                                        .build();
                             } else {
                                 answer = new FileEntity(file, contentType);
                             }
@@ -807,10 +829,13 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
 
                         if (multipart) {
                             if (contentType != null) {
-                                answer = MultipartEntityBuilder.create().addTextBody(multipartName, content, contentType)
+                                answer = MultipartEntityBuilder.create()
+                                        .addTextBody(multipartName, content, contentType)
                                         .build();
                             } else {
-                                answer = MultipartEntityBuilder.create().addTextBody(multipartName, content).build();
+                                answer = MultipartEntityBuilder.create()
+                                        .addTextBody(multipartName, content)
+                                        .build();
                             }
                         } else {
                             answer = new StringEntity(content, contentType, false);
@@ -822,7 +847,9 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
                         if (multipart) {
-                            answer = MultipartEntityBuilder.create().addBinaryBody(multipartName, is).build();
+                            answer = MultipartEntityBuilder.create()
+                                    .addBinaryBody(multipartName, is)
+                                    .build();
                         } else {
                             answer = new InputStreamEntity(is, -1, contentType);
                         }

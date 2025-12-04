@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import java.util.concurrent.TimeUnit;
@@ -38,9 +39,18 @@ public class MockEndpointsInterceptSendToEndpointTest extends ContextTestSupport
         getMockEndpoint("mock:direct:start").expectedMessageCount(1);
         getMockEndpoint("mock:log:foo").expectedMessageCount(1);
         getMockEndpoint("mock:intercepted").expectedMessageCount(3);
-        getMockEndpoint("mock:intercepted").message(0).exchangeProperty("CamelInterceptedEndpoint").isEqualTo("direct://start");
-        getMockEndpoint("mock:intercepted").message(1).exchangeProperty("CamelInterceptedEndpoint").isEqualTo("log://foo");
-        getMockEndpoint("mock:intercepted").message(2).exchangeProperty("CamelInterceptedEndpoint").isEqualTo("mock://result");
+        getMockEndpoint("mock:intercepted")
+                .message(0)
+                .exchangeProperty("CamelInterceptedEndpoint")
+                .isEqualTo("direct://start");
+        getMockEndpoint("mock:intercepted")
+                .message(1)
+                .exchangeProperty("CamelInterceptedEndpoint")
+                .isEqualTo("log://foo");
+        getMockEndpoint("mock:intercepted")
+                .message(2)
+                .exchangeProperty("CamelInterceptedEndpoint")
+                .isEqualTo("mock://result");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -52,7 +62,8 @@ public class MockEndpointsInterceptSendToEndpointTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("*").log("intercepted ${exchangeProperty.CamelInterceptedEndpoint}")
+                interceptSendToEndpoint("*")
+                        .log("intercepted ${exchangeProperty.CamelInterceptedEndpoint}")
                         .to("mock:intercepted");
 
                 from("direct:start").to("log:foo").to("mock:result");

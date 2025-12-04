@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApiMethodPropertiesHelperTest {
 
@@ -44,11 +45,9 @@ public class ApiMethodPropertiesHelperTest {
     private static final String VALUE_4 = "true";
     private static final String VALUE_5 = "CamelCaseValue";
 
-    private static final ApiMethodPropertiesHelper<TestComponentConfiguration> propertiesHelper
-            = new ApiMethodPropertiesHelper<TestComponentConfiguration>(
-                    new DefaultCamelContext(), TestComponentConfiguration.class,
-                    TEST_PREFIX) {
-            };
+    private static final ApiMethodPropertiesHelper<TestComponentConfiguration> propertiesHelper =
+            new ApiMethodPropertiesHelper<TestComponentConfiguration>(
+                    new DefaultCamelContext(), TestComponentConfiguration.class, TEST_PREFIX) {};
 
     @Test
     public void testGetExchangeProperties() {
@@ -83,13 +82,20 @@ public class ApiMethodPropertiesHelperTest {
         final TestEndpointConfiguration endpointConfiguration = new TestEndpointConfiguration();
         endpointConfiguration.setProperty1(VALUE_1);
         endpointConfiguration.setProperty4(Boolean.valueOf(VALUE_4));
-        assertEquals(1, propertiesHelper.getEndpointPropertyNames(new DefaultCamelContext(), endpointConfiguration).size());
+        assertEquals(
+                1,
+                propertiesHelper
+                        .getEndpointPropertyNames(new DefaultCamelContext(), endpointConfiguration)
+                        .size());
     }
 
     @Test
     public void testGetValidEndpointProperties() {
-        assertEquals(2,
-                propertiesHelper.getValidEndpointProperties(new DefaultCamelContext(), new TestEndpointConfiguration()).size());
+        assertEquals(
+                2,
+                propertiesHelper
+                        .getValidEndpointProperties(new DefaultCamelContext(), new TestEndpointConfiguration())
+                        .size());
     }
 
     @SuppressWarnings("unused")
@@ -135,5 +141,4 @@ public class ApiMethodPropertiesHelperTest {
             this.property4 = property4;
         }
     }
-
 }

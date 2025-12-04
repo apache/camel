@@ -14,27 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ibmmq.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public class IbmMQServiceFactory {
 
-    private IbmMQServiceFactory() {
-
-    }
+    private IbmMQServiceFactory() {}
 
     public static SimpleTestServiceBuilder<IbmMQService> builder() {
         return new SimpleTestServiceBuilder<>("ibm-mq");
     }
 
     public static IbmMQService createService() {
-        return builder()
-                .addLocalMapping(IbmMQLocalContainerService::new)
-                .build();
+        return builder().addLocalMapping(IbmMQLocalContainerService::new).build();
     }
 
-    public static class IbmMQLocalContainerService extends IbmMQLocalContainerInfraService
-            implements IbmMQService {
-    }
+    public static class IbmMQLocalContainerService extends IbmMQLocalContainerInfraService implements IbmMQService {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,7 +53,10 @@ public class ContextScopedOnExceptionErrorHandlerRefIssueTest extends ContextTes
             public void configure() {
                 errorHandler("myDLC");
 
-                onException(IllegalArgumentException.class).handled(true).to("mock:handled").end();
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .end();
 
                 from("direct:start").to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.common;
 
 import java.io.File;
@@ -43,7 +44,7 @@ public abstract class AbstractOpenstackProducer extends DefaultProducer {
     }
 
     protected Payload createPayload(Message msg) {
-        //if payload object is send directly
+        // if payload object is send directly
         Payload payload = msg.getBody(Payload.class);
         if (ObjectHelper.isNotEmpty(payload)) {
             return payload;
@@ -68,8 +69,8 @@ public abstract class AbstractOpenstackProducer extends DefaultProducer {
     }
 
     protected String getOperation(Exchange exchange) {
-        final String operation
-                = exchange.getIn().getHeader(OpenstackConstants.OPERATION, endpoint.getOperation(), String.class);
+        final String operation =
+                exchange.getIn().getHeader(OpenstackConstants.OPERATION, endpoint.getOperation(), String.class);
         StringHelper.notEmpty(operation, "Operation");
         return operation;
     }

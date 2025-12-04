@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -33,8 +36,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
 
@@ -57,11 +58,12 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         HttpPost method = new HttpPost("http://localhost:" + port2 + "/test/hello");
         HttpEntity entity = MultipartEntityBuilder.create()
                 .addTextBody("body", body)
-                .addBinaryBody(jpg.getName(), jpg).build();
+                .addBinaryBody(jpg.getName(), jpg)
+                .build();
         method.setEntity(entity);
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(method)) {
+                CloseableHttpResponse response = client.execute(method)) {
 
             String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             assertEquals(body, responseString);
@@ -81,20 +83,24 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
                     public void process(Exchange exchange) {
                         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
                         // put the number of attachments in a response header
-                        exchange.getMessage().setHeader("numAttachments", in.getAttachments().size());
+                        exchange.getMessage()
+                                .setHeader("numAttachments", in.getAttachments().size());
                         exchange.getMessage().setBody(in.getHeader("body"));
                     }
                 };
 
-                HttpEndpoint epOut = getContext().getEndpoint(
-                        "http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false", HttpEndpoint.class);
+                HttpEndpoint epOut = getContext()
+                        .getEndpoint(
+                                "http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false",
+                                HttpEndpoint.class);
                 epOut.setHeaderFilterStrategy(new MultipartHeaderFilterStrategy());
 
-                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false").to(epOut);
+                from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false")
+                        .to(epOut);
 
-                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
+                from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true")
+                        .process(serviceProc);
             }
         };
     }
-
 }

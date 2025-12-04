@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2.consumer;
 
 import java.util.concurrent.CountDownLatch;
@@ -37,6 +38,7 @@ public class InOnlyTopicDurableConsumerTest extends Jms2TestSupport {
 
     private static final String CONNECTION_ID = "test-connection-1";
     private CountDownLatch latch = new CountDownLatch(2);
+
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 

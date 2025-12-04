@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,9 +40,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring XML version of {@link MailSplitAttachmentsTest}
@@ -67,7 +68,8 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
         in.setBody("Hello World");
         in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
-        in.addAttachment("log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
+        in.addAttachment(
+                "log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
     }
 
     @Test
@@ -93,10 +95,11 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
 
         byte[] expected1 = IOUtils.toByteArray(new FileDataSource("src/test/data/logo.jpeg").getInputStream());
         byte[] expected2 = Files.readString(Paths.get("src/test/resources/log4j2.properties"), StandardCharsets.UTF_8)
-                .replace("\n", "\r\n").trim().getBytes(StandardCharsets.UTF_8);
+                .replace("\n", "\r\n")
+                .trim()
+                .getBytes(StandardCharsets.UTF_8);
 
         assertArrayEquals(expected1, first.getBody(byte[].class));
         assertArrayEquals(expected2, second.getBody(byte[].class));
     }
-
 }

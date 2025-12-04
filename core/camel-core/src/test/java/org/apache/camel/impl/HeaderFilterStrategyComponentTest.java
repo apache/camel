@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Map;
 
@@ -29,15 +33,11 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class HeaderFilterStrategyComponentTest {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {
 
-        MyComponent(Class<? extends Endpoint> endpointClass) {
-        }
+        MyComponent(Class<? extends Endpoint> endpointClass) {}
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
@@ -100,5 +100,4 @@ public class HeaderFilterStrategyComponentTest {
         assertSame(strategy, my.getHeaderFilterStrategy());
         assertSame(strategy, comp.getHeaderFilterStrategy());
     }
-
 }

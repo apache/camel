@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 public interface AS2ReportType {
@@ -22,5 +23,4 @@ public interface AS2ReportType {
      * Disposition Notification Report Type
      */
     String DISPOSITION_NOTIFICATION = "disposition-notification";
-
 }

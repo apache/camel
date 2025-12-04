@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5.util;
 
 import java.io.ByteArrayInputStream;
@@ -54,15 +55,19 @@ public class CamelRouteCoverageDumper {
     private static final Logger LOG = LoggerFactory.getLogger(CamelRouteCoverageDumper.class);
 
     public void dump(
-            ManagedCamelContextMBean managedCamelContext, ModelCamelContext context, String dumpDir, String dumpFilename,
-            String testClass, String testName,
+            ManagedCamelContextMBean managedCamelContext,
+            ModelCamelContext context,
+            String dumpDir,
+            String dumpFilename,
+            String testClass,
+            String testName,
             long testTimeTaken)
             throws Exception {
         logCoverageSummary(managedCamelContext, context);
 
         String routeCoverageAsXml = managedCamelContext.dumpRoutesCoverageAsXml();
         String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml(testClass, testName, testTimeTaken)
-                          + routeCoverageAsXml + "\n</camelRouteCoverage>";
+                + routeCoverageAsXml + "\n</camelRouteCoverage>";
 
         File dumpFile = new File(dumpDir);
         // ensure dir exists
@@ -79,15 +84,16 @@ public class CamelRouteCoverageDumper {
     /**
      * Groups all processors from Camel context by route id.
      */
-    private Map<String, List<ManagedProcessorMBean>> findProcessorsForEachRoute(MBeanServer server, ModelCamelContext context)
+    private Map<String, List<ManagedProcessorMBean>> findProcessorsForEachRoute(
+            MBeanServer server, ModelCamelContext context)
             throws MalformedObjectNameException, MBeanException, AttributeNotFoundException, InstanceNotFoundException,
-            ReflectionException {
+                    ReflectionException {
         String domain = context.getManagementStrategy().getManagementAgent().getMBeanServerDefaultDomain();
 
         Map<String, List<ManagedProcessorMBean>> processorsForRoute = new HashMap<>();
 
-        ObjectName processorsObjectName
-                = new ObjectName(domain + ":context=" + context.getManagementName() + ",type=processors,name=*");
+        ObjectName processorsObjectName =
+                new ObjectName(domain + ":context=" + context.getManagementName() + ",type=processors,name=*");
         Set<ObjectName> objectNames = server.queryNames(processorsObjectName, null);
 
         for (ObjectName objectName : objectNames) {
@@ -95,8 +101,9 @@ public class CamelRouteCoverageDumper {
             String name = objectName.getKeyProperty("name");
             name = ObjectName.unquote(name);
 
-            ManagedProcessorMBean managedProcessor
-                    = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedProcessor(name);
+            ManagedProcessorMBean managedProcessor = context.getCamelContextExtension()
+                    .getContextPlugin(ManagedCamelContext.class)
+                    .getManagedProcessor(name);
 
             if (managedProcessor != null) {
                 if (processorsForRoute.get(routeId) == null) {
@@ -135,7 +142,8 @@ public class CamelRouteCoverageDumper {
      * Logs route coverage summary, including which routes are uncovered and what is the coverage of each processor in
      * each route.
      */
-    private void logCoverageSummary(ManagedCamelContextMBean managedCamelContext, ModelCamelContext context) throws Exception {
+    private void logCoverageSummary(ManagedCamelContextMBean managedCamelContext, ModelCamelContext context)
+            throws Exception {
         StringBuilder builder = new StringBuilder(1024);
 
         builder.append("\nCoverage summary\n");
@@ -148,21 +156,29 @@ public class CamelRouteCoverageDumper {
         StringBuilder routesSummary = new StringBuilder(1024);
         routesSummary.append("\tProcessor coverage\n");
 
-        MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer server =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         Map<String, List<ManagedProcessorMBean>> processorsForRoute = findProcessorsForEachRoute(server, context);
 
         // log processor coverage for each route
         for (Route route : context.getRoutes()) {
-            ManagedRouteMBean managedRoute = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+            ManagedRouteMBean managedRoute = context.getCamelContextExtension()
+                    .getContextPlugin(ManagedCamelContext.class)
                     .getManagedRoute(route.getId());
             if (managedRoute.getExchangesTotal() == 0) {
                 uncoveredRoutes.add(route.getId());
             }
 
-            long routeCoveragePercentage = Math.round((double) managedRoute.getExchangesTotal() / contextExchangesTotal * 100);
-            routesSummary.append("\t\tRoute ").append(route.getId()).append(" total: ").append(managedRoute.getExchangesTotal())
-                    .append(" (").append(routeCoveragePercentage)
+            long routeCoveragePercentage =
+                    Math.round((double) managedRoute.getExchangesTotal() / contextExchangesTotal * 100);
+            routesSummary
+                    .append("\t\tRoute ")
+                    .append(route.getId())
+                    .append(" total: ")
+                    .append(managedRoute.getExchangesTotal())
+                    .append(" (")
+                    .append(routeCoveragePercentage)
                     .append("%)\n");
 
             if (server != null) {
@@ -171,11 +187,16 @@ public class CamelRouteCoverageDumper {
                     for (ManagedProcessorMBean managedProcessor : processors) {
                         String processorId = managedProcessor.getProcessorId();
                         long processorExchangesTotal = managedProcessor.getExchangesTotal();
-                        long processorCoveragePercentage
-                                = Math.round((double) processorExchangesTotal / contextExchangesTotal * 100);
-                        routesSummary.append("\t\t\tProcessor ").append(processorId).append(" total: ")
-                                .append(processorExchangesTotal).append(" (")
-                                .append(processorCoveragePercentage).append("%)\n");
+                        long processorCoveragePercentage =
+                                Math.round((double) processorExchangesTotal / contextExchangesTotal * 100);
+                        routesSummary
+                                .append("\t\t\tProcessor ")
+                                .append(processorId)
+                                .append(" total: ")
+                                .append(processorExchangesTotal)
+                                .append(" (")
+                                .append(processorCoveragePercentage)
+                                .append("%)\n");
                     }
                 }
             }
@@ -184,18 +205,26 @@ public class CamelRouteCoverageDumper {
         int used = routes - uncoveredRoutes.size();
 
         long contextPercentage = Math.round((double) used / routes * 100);
-        builder.append("\tRoute coverage: ").append(used).append(" out of ").append(routes).append(" routes used (")
-                .append(contextPercentage).append("%)\n");
-        builder.append("\t\tCamelContext (").append(managedCamelContext.getCamelId()).append(") total: ")
-                .append(contextExchangesTotal).append("\n");
+        builder.append("\tRoute coverage: ")
+                .append(used)
+                .append(" out of ")
+                .append(routes)
+                .append(" routes used (")
+                .append(contextPercentage)
+                .append("%)\n");
+        builder.append("\t\tCamelContext (")
+                .append(managedCamelContext.getCamelId())
+                .append(") total: ")
+                .append(contextExchangesTotal)
+                .append("\n");
 
         if (!uncoveredRoutes.isEmpty()) {
-            builder.append("\t\tUncovered routes: ").append(String.join(", ", uncoveredRoutes))
+            builder.append("\t\tUncovered routes: ")
+                    .append(String.join(", ", uncoveredRoutes))
                     .append("\n");
         }
 
         builder.append(routesSummary);
         LOG.info(builder.toString());
     }
-
 }

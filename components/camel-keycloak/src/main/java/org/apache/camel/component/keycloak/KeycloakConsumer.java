@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
 
 import java.util.HashSet;
@@ -65,7 +66,8 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        LOG.info("Started Keycloak consumer for realm: {}, event type: {}",
+        LOG.info(
+                "Started Keycloak consumer for realm: {}, event type: {}",
                 getEndpoint().getConfiguration().getRealm(),
                 getEndpoint().getConfiguration().getEventType());
     }
@@ -118,16 +120,18 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         // Don't use dateFrom filter to avoid issues with inclusive/exclusive semantics
         // Instead rely on client-side fingerprint-based deduplication
         List<String> eventTypes = parseCommaSeparatedList(config.getTypes());
-        List<EventRepresentation> events = keycloakClient.realm(realm).getEvents(
-                eventTypes, // types
-                config.getClient(), // client
-                config.getUser(), // user
-                config.getDateFrom(), // dateFrom
-                config.getDateTo(), // dateTo
-                config.getIpAddress(), // ipAddress
-                config.getFirst(), // first
-                config.getMaxResults() // max
-        );
+        List<EventRepresentation> events = keycloakClient
+                .realm(realm)
+                .getEvents(
+                        eventTypes, // types
+                        config.getClient(), // client
+                        config.getUser(), // user
+                        config.getDateFrom(), // dateFrom
+                        config.getDateTo(), // dateTo
+                        config.getIpAddress(), // ipAddress
+                        config.getFirst(), // first
+                        config.getMaxResults() // max
+                        );
 
         Queue<Exchange> queue = new LinkedList<>();
         long highestEventTime = lastEventTime != null ? lastEventTime : 0;
@@ -185,10 +189,10 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
     private String getEventFingerprint(EventRepresentation event) {
         // Create a composite key from event properties to uniquely identify it
         return event.getTime() + "|"
-               + event.getType() + "|"
-               + (event.getUserId() != null ? event.getUserId() : "") + "|"
-               + (event.getSessionId() != null ? event.getSessionId() : "") + "|"
-               + (event.getIpAddress() != null ? event.getIpAddress() : "");
+                + event.getType() + "|"
+                + (event.getUserId() != null ? event.getUserId() : "") + "|"
+                + (event.getSessionId() != null ? event.getSessionId() : "") + "|"
+                + (event.getIpAddress() != null ? event.getIpAddress() : "");
     }
 
     private Queue<Exchange> pollAdminEvents() throws Exception {
@@ -204,18 +208,20 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         // Don't use dateFrom filter to avoid issues with inclusive/exclusive semantics
         // Instead rely on client-side fingerprint-based deduplication
         List<String> adminOperationTypes = parseCommaSeparatedList(config.getOperationTypes());
-        List<AdminEventRepresentation> adminEvents = keycloakClient.realm(realm).getAdminEvents(
-                adminOperationTypes, // operationTypes
-                config.getAuthRealmFilter(), // authRealm
-                config.getAuthClient(), // authClient
-                config.getAuthUser(), // authUser
-                config.getAuthIpAddress(), // authIpAddress
-                config.getResourcePath(), // resourcePath
-                config.getDateFrom(), // dateFrom
-                config.getDateTo(), // dateTo
-                config.getFirst(), // first
-                config.getMaxResults() // max
-        );
+        List<AdminEventRepresentation> adminEvents = keycloakClient
+                .realm(realm)
+                .getAdminEvents(
+                        adminOperationTypes, // operationTypes
+                        config.getAuthRealmFilter(), // authRealm
+                        config.getAuthClient(), // authClient
+                        config.getAuthUser(), // authUser
+                        config.getAuthIpAddress(), // authIpAddress
+                        config.getResourcePath(), // resourcePath
+                        config.getDateFrom(), // dateFrom
+                        config.getDateTo(), // dateTo
+                        config.getFirst(), // first
+                        config.getMaxResults() // max
+                        );
 
         Queue<Exchange> queue = new LinkedList<>();
         long highestEventTime = lastEventTime != null ? lastEventTime : 0;
@@ -275,12 +281,12 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
     private String getAdminEventFingerprint(AdminEventRepresentation event) {
         // Create a composite key from event properties to uniquely identify it
         return event.getTime() + "|"
-               + (event.getOperationType() != null ? event.getOperationType() : "") + "|"
-               + (event.getResourceType() != null ? event.getResourceType() : "") + "|"
-               + (event.getResourcePath() != null ? event.getResourcePath() : "") + "|"
-               + (event.getAuthDetails() != null && event.getAuthDetails().getUserId() != null
-                       ? event.getAuthDetails().getUserId()
-                       : "");
+                + (event.getOperationType() != null ? event.getOperationType() : "") + "|"
+                + (event.getResourceType() != null ? event.getResourceType() : "") + "|"
+                + (event.getResourcePath() != null ? event.getResourcePath() : "") + "|"
+                + (event.getAuthDetails() != null && event.getAuthDetails().getUserId() != null
+                        ? event.getAuthDetails().getUserId()
+                        : "");
     }
 
     private List<String> parseCommaSeparatedList(String value) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.util.Map;
@@ -31,12 +32,16 @@ public class MllpComponent extends DefaultComponent implements SSLContextParamet
 
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean logPhi = true;
+
     @Metadata(label = "advanced", defaultValue = "5120")
     private int logPhiMaxBytes = 5120;
+
     @Metadata(label = "advanced", defaultValue = "ISO-8859-1")
     private String defaultCharset = "ISO_8859_1";
+
     @Metadata
     private MllpConfiguration configuration;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -52,9 +57,10 @@ public class MllpComponent extends DefaultComponent implements SSLContextParamet
     }
 
     @Override
-    protected Endpoint createEndpoint(String uriString, String remaining, Map<String, Object> parameters) throws Exception {
-        MllpEndpoint endpoint
-                = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
+    protected Endpoint createEndpoint(String uriString, String remaining, Map<String, Object> parameters)
+            throws Exception {
+        MllpEndpoint endpoint =
+                new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
 
         if (endpoint.getConfiguration().getSslContextParameters() == null) {
             endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());

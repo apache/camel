@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.util;
+
+import static jakarta.ws.rs.client.Entity.entity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -40,8 +43,6 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.AttachmentBuilder;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 
-import static jakarta.ws.rs.client.Entity.entity;
-
 public class BonitaAPIUtil {
 
     private static BonitaAPIUtil instance;
@@ -60,10 +61,7 @@ public class BonitaAPIUtil {
         return instance;
     }
 
-    public UploadFileResponse uploadFile(
-            ProcessDefinitionResponse processDefinition,
-            FileInput file)
-            throws Exception {
+    public UploadFileResponse uploadFile(ProcessDefinitionResponse processDefinition, FileInput file) throws Exception {
         WebTarget resource = webTarget
                 .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
                 .resolveTemplate("processName", processDefinition.getName())
@@ -81,14 +79,13 @@ public class BonitaAPIUtil {
                 .contentDisposition(new ContentDisposition(dispositionValue))
                 .build();
 
-        return resource.request().accept(MediaType.APPLICATION_JSON).post(
-                entity(attachment, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
+        return resource.request()
+                .accept(MediaType.APPLICATION_JSON)
+                .post(entity(attachment, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
     }
 
     public Map<String, Serializable> prepareInputs(
-            ProcessDefinitionResponse processDefinition,
-            Map<String, Serializable> inputs)
-            throws Exception {
+            ProcessDefinitionResponse processDefinition, Map<String, Serializable> inputs) throws Exception {
         for (Entry<String, Serializable> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof FileInput) {
                 FileInput file = (FileInput) entry.getValue();
@@ -109,5 +106,4 @@ public class BonitaAPIUtil {
     public void setWebTarget(WebTarget webTarget) {
         this.webTarget = webTarget;
     }
-
 }

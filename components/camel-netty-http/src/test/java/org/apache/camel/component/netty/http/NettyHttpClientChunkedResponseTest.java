@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpClientChunkedResponseTest extends BaseNettyTest {
 
@@ -42,9 +43,9 @@ public class NettyHttpClientChunkedResponseTest extends BaseNettyTest {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
                         .setHeader("Transfer-Encoding", constant("chunked"))
-                        .transform().simple("Bye World");
+                        .transform()
+                        .simple("Bye World");
             }
         };
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.optaplanner.core.api.solver.SolverStatus.NOT_SOLVING;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -33,11 +39,6 @@ import org.optaplanner.examples.cloudbalancing.domain.CloudComputer;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerator;
 import org.optaplanner.examples.cloudbalancing.swingui.realtime.DeleteComputerProblemChange;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.optaplanner.core.api.solver.SolverStatus.NOT_SOLVING;
-
 /**
  * OptaPlanner unit test with Camel
  */
@@ -53,26 +54,29 @@ public class OptaPlannerProblemChangeTest extends CamelTestSupport {
         assertNull(planningProblem.getProcessList().get(0).getComputer());
 
         ClassLoader classLoader = this.context().getApplicationContextClassLoader();
-        SolverConfig solverConfig
-                = SolverConfig.createFromXmlResource("org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
+        SolverConfig solverConfig = SolverConfig.createFromXmlResource(
+                "org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
         SolverFactory solverFactory = SolverFactory.create(solverConfig);
         SolverManager solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
 
-        CompletableFuture<CloudBalance> solution = template.asyncRequestBodyAndHeader("direct:in", planningProblem,
-                OptaPlannerConstants.SOLVER_MANAGER, solverManager,
-                CloudBalance.class);
+        CompletableFuture<CloudBalance> solution = template.asyncRequestBodyAndHeader(
+                "direct:in", planningProblem, OptaPlannerConstants.SOLVER_MANAGER, solverManager, CloudBalance.class);
 
         CloudComputer firstComputer = planningProblem.getComputerList().get(0);
         assertNotNull(firstComputer);
 
         // wait for Solver to be at least scheduled or started
         Awaitility.with()
-                .pollInterval(10, TimeUnit.MILLISECONDS).atMost(1000, TimeUnit.MILLISECONDS)
+                .pollInterval(10, TimeUnit.MILLISECONDS)
+                .atMost(1000, TimeUnit.MILLISECONDS)
                 .until(() -> !NOT_SOLVING.equals(solverManager.getSolverStatus(1L)));
 
         // update the Problem
-        template.requestBodyAndHeader("direct:in", new DeleteComputerProblemChange(firstComputer),
-                OptaPlannerConstants.SOLVER_MANAGER, solverManager);
+        template.requestBodyAndHeader(
+                "direct:in",
+                new DeleteComputerProblemChange(firstComputer),
+                OptaPlannerConstants.SOLVER_MANAGER,
+                solverManager);
         mockEndpoint.assertIsSatisfied();
 
         // wait for the solution
@@ -89,10 +93,8 @@ public class OptaPlannerProblemChangeTest extends CamelTestSupport {
             public void configure() {
                 from("direct:in").to("optaplanner:cloudBalance?async=true");
 
-                from("optaplanner:cloudBalance")
-                        .to("mock:result");
+                from("optaplanner:cloudBalance").to("mock:result");
             }
         };
     }
-
 }

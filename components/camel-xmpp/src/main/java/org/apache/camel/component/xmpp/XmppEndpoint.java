@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.io.IOException;
@@ -58,9 +59,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive messages to/from an XMPP chat server.
  */
-@UriEndpoint(firstVersion = "1.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant",
-             alternativeSyntax = "xmpp:user:password@host:port/participant",
-             category = { Category.CHAT, Category.MESSAGING }, headersClass = XmppConstants.class)
+@UriEndpoint(
+        firstVersion = "1.0",
+        scheme = "xmpp",
+        title = "XMPP",
+        syntax = "xmpp:host:port/participant",
+        alternativeSyntax = "xmpp:user:password@host:port/participant",
+        category = {Category.CHAT, Category.MESSAGING},
+        headersClass = XmppConstants.class)
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
@@ -71,44 +77,60 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     @Metadata(required = true)
     private int port;
+
     @UriPath(label = "common")
     private String participant;
+
     @UriParam(label = "security", secret = true)
     private String user;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "common,advanced", defaultValue = "Camel")
     private String resource = "Camel";
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean login = true;
+
     @UriParam(label = "common,advanced")
     private boolean createAccount;
+
     @UriParam(label = "common")
     private String room;
+
     @UriParam(label = "security", secret = true)
     private String roomPassword;
+
     @UriParam(label = "common")
     private String nickname;
+
     @UriParam(label = "common")
     private String serviceName;
+
     @UriParam(label = "common")
     private boolean pubsub;
+
     @UriParam(label = "consumer")
     private boolean doc;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
+
     @UriParam(label = "consumer", defaultValue = "10")
     private int connectionPollDelay = 10;
+
     @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+
     @UriParam(label = "advanced")
     private ConnectionConfiguration connectionConfig;
 
-    public XmppEndpoint() {
-    }
+    public XmppEndpoint() {}
 
     public XmppEndpoint(String uri, XmppComponent component) {
         super(uri, component);
@@ -201,11 +223,15 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             if (!newConnection.isAuthenticated()) {
                 if (user != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging in to XMPP as user: {} on connection: {}", user,
+                        LOG.debug(
+                                "Logging in to XMPP as user: {} on connection: {}",
+                                user,
                                 getConnectionMessage(newConnection));
                     }
                     if (password == null) {
-                        LOG.warn("No password configured for user: {} on connection: {}", user,
+                        LOG.warn(
+                                "No password configured for user: {} on connection: {}",
+                                user,
                                 getConnectionMessage(newConnection));
                     }
 
@@ -222,7 +248,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     }
                 } else {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
+                        LOG.debug(
+                                "Logging in anonymously to XMPP on connection: {}",
+                                getConnectionMessage(newConnection));
                     }
                     newConnection.login();
                 }
@@ -286,9 +314,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (xmppServiceDomains.isEmpty()) {
             throw new XMPPErrorException(
                     null,
-                    StanzaError.from(Condition.item_not_found,
-                            "Cannot find any XMPPServiceDomain by MultiUserChatManager on connection: "
-                                                               + getConnectionMessage(connection))
+                    StanzaError.from(
+                                    Condition.item_not_found,
+                                    "Cannot find any XMPPServiceDomain by MultiUserChatManager on connection: "
+                                            + getConnectionMessage(connection))
                             .build());
         }
 
@@ -549,5 +578,4 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         connection = null;
         binding = null;
     }
-
 }

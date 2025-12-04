@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.patterns;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
@@ -22,8 +25,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AsyncSendMockTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncSendMockTest.class);

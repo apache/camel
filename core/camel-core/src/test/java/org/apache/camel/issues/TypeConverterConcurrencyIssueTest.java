@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
@@ -27,9 +31,6 @@ import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Testing for CAMEL-5002
  */
@@ -40,8 +41,8 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
         // add as type converter
         Method method = TypeConverterConcurrencyIssueTest.class.getMethod("toMyCamelBean", String.class);
         assertNotNull(method);
-        context.getTypeConverterRegistry().addTypeConverter(MyCamelBean.class, String.class,
-                new StaticMethodTypeConverter(method, false));
+        context.getTypeConverterRegistry()
+                .addTypeConverter(MyCamelBean.class, String.class, new StaticMethodTypeConverter(method, false));
 
         ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "test", 50, 50);
         int size = 100 * 1000;
@@ -75,5 +76,4 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
         bean.setName(data[1]);
         return bean;
     }
-
 }

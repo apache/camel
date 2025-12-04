@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.common;
 
 import java.net.URI;
@@ -65,15 +66,10 @@ public final class OllamaConnectionChecker {
             String normalizedUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
             URI uri = URI.create(normalizedUrl + OLLAMA_API_TAGS_PATH);
 
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(timeout)
-                    .build();
+            HttpClient client = HttpClient.newBuilder().connectTimeout(timeout).build();
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(uri)
-                    .timeout(timeout)
-                    .GET()
-                    .build();
+            HttpRequest request =
+                    HttpRequest.newBuilder().uri(uri).timeout(timeout).GET().build();
 
             HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
 

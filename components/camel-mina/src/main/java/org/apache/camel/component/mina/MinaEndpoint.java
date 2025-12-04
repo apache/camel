@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.Category;
@@ -31,15 +32,19 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Socket level networking using TCP or UDP with Apache Mina 2.x.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port",
-             category = { Category.NETWORKING }, headersClass = MinaConstants.class)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = "mina",
+        title = "Mina",
+        syntax = "mina:protocol:host:port",
+        category = {Category.NETWORKING},
+        headersClass = MinaConstants.class)
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     @UriParam
     private MinaConfiguration configuration;
 
-    public MinaEndpoint() {
-    }
+    public MinaEndpoint() {}
 
     public MinaEndpoint(String endpointUri, Component component, MinaConfiguration configuration) {
         super(endpointUri, component);

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRefEndpointTest extends SpringTestSupport {
@@ -82,9 +83,12 @@ public class ManagedRefEndpointTest extends SpringTestSupport {
             assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri.equals("direct://start") || uri.equals("mock://foo")
-                    || uri.equals("mock://result") || uri.equals("ref://foo"), uri);
+            assertTrue(
+                    uri.equals("direct://start")
+                            || uri.equals("mock://foo")
+                            || uri.equals("mock://result")
+                            || uri.equals("ref://foo"),
+                    uri);
         }
     }
-
 }

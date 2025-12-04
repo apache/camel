@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
+
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -32,8 +35,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 public class LogReifier extends ProcessorReifier<LogDefinition> {
 
@@ -116,18 +117,25 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
 
         // should be INFO by default
         LoggingLevel level = definition.getLoggingLevel() != null
-                ? parse(LoggingLevel.class, definition.getLoggingLevel()) : LoggingLevel.INFO;
+                ? parse(LoggingLevel.class, definition.getLoggingLevel())
+                : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, definition.getMarker());
 
         LogProcessor answer;
         if (exp != null) {
             // dynamic log message via simple expression
             answer = new LogProcessor(
-                    exp, camelLogger, getMaskingFormatter(), camelContext.getCamelContextExtension().getLogListeners());
+                    exp,
+                    camelLogger,
+                    getMaskingFormatter(),
+                    camelContext.getCamelContextExtension().getLogListeners());
         } else {
             // static log message via string message
             answer = new LogProcessor(
-                    msg, camelLogger, getMaskingFormatter(), camelContext.getCamelContextExtension().getLogListeners());
+                    msg,
+                    camelLogger,
+                    getMaskingFormatter(),
+                    camelContext.getCamelContextExtension().getLogListeners());
         }
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
@@ -135,7 +143,8 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
 
     private MaskingFormatter getMaskingFormatter() {
         if (route.isLogMask()) {
-            MaskingFormatter formatter = lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter =
+                    lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter(getCamelContext());
             }
@@ -143,5 +152,4 @@ public class LogReifier extends ProcessorReifier<LogDefinition> {
         }
         return null;
     }
-
 }

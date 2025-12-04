@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.springframework.jdbc.core.RowMapper;
@@ -34,5 +35,4 @@ public interface RowMapperFactory {
      * @param mappedClass the mapped class
      */
     RowMapper<?> newBeanRowMapper(Class<?> mappedClass);
-
 }

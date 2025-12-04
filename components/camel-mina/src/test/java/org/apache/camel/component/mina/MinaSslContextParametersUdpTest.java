@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.net.DatagramPacket;
@@ -28,8 +29,7 @@ public class MinaSslContextParametersUdpTest extends BaseMinaTest {
 
     protected int messageCount = 3;
 
-    public MinaSslContextParametersUdpTest() {
-    }
+    public MinaSslContextParametersUdpTest() {}
 
     @Test
     public void testMinaRoute() throws Exception {
@@ -64,8 +64,10 @@ public class MinaSslContextParametersUdpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:udp://127.0.0.1:%d?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
-                        getPort()).to("mock:result");
+                fromF(
+                                "mina:udp://127.0.0.1:%d?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                                getPort())
+                        .to("mock:result");
             }
         };
     }

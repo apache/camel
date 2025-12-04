@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.Endpoint;
@@ -33,5 +34,4 @@ public final class DefaultDeferServiceFactory implements DeferServiceFactory {
         endpoint.getCamelContext().deferStartService(producer, true);
         return producer;
     }
-
 }

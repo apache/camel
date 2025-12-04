@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail.microsoft.authenticator;
 
 import java.net.MalformedURLException;
@@ -90,36 +91,47 @@ public class MicrosoftExchangeOnlineOAuth2MailAuthenticator extends MailAuthenti
      */
     private IConfidentialClientApplication confidentialClientApplication;
 
-    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(String tenantId, String clientId, String clientSecret, String user) {
+    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(
+            String tenantId, String clientId, String clientSecret, String user) {
         this(tenantId, clientId, clientSecret, user, false, null, null);
     }
 
-    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(String tenantId, String clientId, String clientSecret, String user,
-                                                          Boolean skipCache) {
+    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(
+            String tenantId, String clientId, String clientSecret, String user, Boolean skipCache) {
         this(tenantId, clientId, clientSecret, user, skipCache, null, null);
     }
 
-    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(String tenantId, String clientId, String clientSecret, String user,
-                                                          Boolean skipCache, Set<String> scopes) {
+    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(
+            String tenantId, String clientId, String clientSecret, String user, Boolean skipCache, Set<String> scopes) {
         this(tenantId, clientId, clientSecret, user, skipCache, scopes, null);
     }
 
-    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(String tenantId, String clientId, String clientSecret, String user,
-                                                          ClientCredentialParameters clientCredentialParameters) {
+    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(
+            String tenantId,
+            String clientId,
+            String clientSecret,
+            String user,
+            ClientCredentialParameters clientCredentialParameters) {
         this(tenantId, clientId, clientSecret, user, null, null, clientCredentialParameters);
     }
 
-    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(String user,
-                                                          IConfidentialClientApplication confidentialClientApplication,
-                                                          ClientCredentialParameters clientCredentialParameters) {
+    public MicrosoftExchangeOnlineOAuth2MailAuthenticator(
+            String user,
+            IConfidentialClientApplication confidentialClientApplication,
+            ClientCredentialParameters clientCredentialParameters) {
         this.user = user;
         this.confidentialClientApplication = confidentialClientApplication;
         this.clientCredentialParameters = clientCredentialParameters;
     }
 
-    private MicrosoftExchangeOnlineOAuth2MailAuthenticator(String tenantId, String clientId, String clientSecret, String user,
-                                                           Boolean skipCache, Set<String> scopes,
-                                                           ClientCredentialParameters parametes) {
+    private MicrosoftExchangeOnlineOAuth2MailAuthenticator(
+            String tenantId,
+            String clientId,
+            String clientSecret,
+            String user,
+            Boolean skipCache,
+            Set<String> scopes,
+            ClientCredentialParameters parametes) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.authority = AUTHORITY_BASE_URL + tenantId;
@@ -136,7 +148,9 @@ public class MicrosoftExchangeOnlineOAuth2MailAuthenticator extends MailAuthenti
 
     @Override
     public PasswordAuthentication getPasswordAuthentication() {
-        IAuthenticationResult result = getClientCredential().acquireToken(getClientCredentialParameters()).join();
+        IAuthenticationResult result = getClientCredential()
+                .acquireToken(getClientCredentialParameters())
+                .join();
         return new PasswordAuthentication(user, result.accessToken());
     }
 
@@ -150,8 +164,7 @@ public class MicrosoftExchangeOnlineOAuth2MailAuthenticator extends MailAuthenti
             // This is the secret that is created in the Azure portal when registering the application
             IClientCredential credential = ClientCredentialFactory.createFromSecret(clientSecret);
 
-            confidentialClientApplication = ConfidentialClientApplication
-                    .builder(clientId, credential)
+            confidentialClientApplication = ConfidentialClientApplication.builder(clientId, credential)
                     .authority(authority)
                     .build();
         } catch (MalformedURLException e) {
@@ -171,9 +184,6 @@ public class MicrosoftExchangeOnlineOAuth2MailAuthenticator extends MailAuthenti
         // token is not valid, it will fall back to acquiring a token from the AAD service. Although
         // not recommended unless there is a reason for doing so, you can skip the cache lookup
         // by setting skipCache to true.
-        return ClientCredentialParameters
-                .builder(scopes)
-                .skipCache(skipCache)
-                .build();
+        return ClientCredentialParameters.builder(scopes).skipCache(skipCache).build();
     }
 }

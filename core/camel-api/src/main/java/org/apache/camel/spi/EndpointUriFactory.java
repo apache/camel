@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.net.URISyntaxException;
@@ -77,5 +78,4 @@ public interface EndpointUriFactory extends CamelContextAware {
      * @see Endpoint#isLenientProperties()
      */
     boolean isLenientProperties();
-
 }

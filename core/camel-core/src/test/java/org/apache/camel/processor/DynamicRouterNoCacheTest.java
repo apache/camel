@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DynamicRouterNoCacheTest extends ContextTestSupport {
 
@@ -91,10 +92,11 @@ public class DynamicRouterNoCacheTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").dynamicRouter(method(DynamicRouterNoCacheTest.class, "slip")).cacheSize(-1).id("foo");
+                from("direct:a")
+                        .dynamicRouter(method(DynamicRouterNoCacheTest.class, "slip"))
+                        .cacheSize(-1)
+                        .id("foo");
             }
         };
-
     }
-
 }

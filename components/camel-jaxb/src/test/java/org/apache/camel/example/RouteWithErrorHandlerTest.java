@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -77,7 +78,9 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
 
-                onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)
+                onException(InvalidOrderException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
                         .to("mock:invalid");
 
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
@@ -85,8 +88,11 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
                 from("direct:start")
                         .unmarshal(jaxb)
                         .choice()
-                            .when().method(RouteWithErrorHandlerTest.class, "isWine").to("mock:wine")
-                            .otherwise().throwException(new InvalidOrderException("We only like wine"))
+                        .when()
+                        .method(RouteWithErrorHandlerTest.class, "isWine")
+                        .to("mock:wine")
+                        .otherwise()
+                        .throwException(new InvalidOrderException("We only like wine"))
                         .end();
             }
         };

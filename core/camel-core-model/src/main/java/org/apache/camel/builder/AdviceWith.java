@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.List;
@@ -41,8 +42,7 @@ public final class AdviceWith {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdviceWith.class);
 
-    private AdviceWith() {
-    }
+    private AdviceWith() {}
 
     /**
      * Advices this route with the route builder using a lambda expression. It can be used as following:
@@ -111,7 +111,9 @@ public final class AdviceWith {
      * @throws Exception    can be thrown from the route builder
      */
     public static RouteDefinition adviceWith(
-            CamelContext camelContext, Object routeId, boolean logXml,
+            CamelContext camelContext,
+            Object routeId,
+            boolean logXml,
             ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder)
             throws Exception {
         RouteDefinition rd = findRouteDefinition(camelContext, routeId);
@@ -182,8 +184,8 @@ public final class AdviceWith {
      * @throws Exception    can be thrown from the route builder
      * @see                 AdviceWithRouteBuilder
      */
-    public static RouteDefinition adviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder)
-            throws Exception {
+    public static RouteDefinition adviceWith(
+            RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(definition, "RouteDefinition");
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
@@ -194,8 +196,8 @@ public final class AdviceWith {
         return doAdviceWith(definition, camelContext, builder);
     }
 
-    private static RouteDefinition doAdviceWith(RouteDefinition definition, CamelContext camelContext, RouteBuilder builder)
-            throws Exception {
+    private static RouteDefinition doAdviceWith(
+            RouteDefinition definition, CamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(builder, "RouteBuilder");
 
         LOG.debug("AdviceWith route before: {}", definition);
@@ -314,7 +316,8 @@ public final class AdviceWith {
                     }
                 }
                 if (rd == null) {
-                    throw new IllegalArgumentException("Cannot advice route as route with id: " + routeId + " does not exist");
+                    throw new IllegalArgumentException(
+                            "Cannot advice route as route with id: " + routeId + " does not exist");
                 }
             } else {
                 // grab first route
@@ -323,5 +326,4 @@ public final class AdviceWith {
         }
         return rd;
     }
-
 }

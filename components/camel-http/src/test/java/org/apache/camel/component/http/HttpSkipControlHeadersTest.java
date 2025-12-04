@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,11 +30,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class HttpSkipControlHeadersTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -36,8 +37,10 @@ public class HttpSkipControlHeadersTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/hello", (request, response, context) -> {
                     Header header = request.getFirstHeader("cheese");
@@ -47,7 +50,8 @@ public class HttpSkipControlHeadersTest extends BaseHttpTest {
                     response.setCode(HttpStatus.SC_OK);
                     response.setHeader("MyApp", "dude");
                     response.setHeader(Exchange.TO_ENDPOINT, "foo");
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 
@@ -71,12 +75,10 @@ public class HttpSkipControlHeadersTest extends BaseHttpTest {
         });
         context.start();
 
-        Exchange out = template.request(
-                "direct:start",
-                exchange -> {
-                    exchange.getIn().setHeader("cheese", "Gauda");
-                    exchange.getIn().setBody("This is content");
-                });
+        Exchange out = template.request("direct:start", exchange -> {
+            exchange.getIn().setHeader("cheese", "Gauda");
+            exchange.getIn().setBody("This is content");
+        });
 
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");

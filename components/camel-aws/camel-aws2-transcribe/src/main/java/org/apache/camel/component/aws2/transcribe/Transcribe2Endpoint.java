@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
 
 import org.apache.camel.Category;
@@ -30,9 +31,14 @@ import software.amazon.awssdk.services.transcribe.TranscribeClient;
 /**
  * Automatically convert speech to text using AWS Transcribe service
  */
-@UriEndpoint(firstVersion = "4.15.0", scheme = "aws2-transcribe", title = "AWS Transcribe",
-             syntax = "aws2-transcribe:label", category = { Category.CLOUD, Category.MESSAGING },
-             producerOnly = true, headersClass = Transcribe2Constants.class)
+@UriEndpoint(
+        firstVersion = "4.15.0",
+        scheme = "aws2-transcribe",
+        title = "AWS Transcribe",
+        syntax = "aws2-transcribe:label",
+        category = {Category.CLOUD, Category.MESSAGING},
+        producerOnly = true,
+        headersClass = Transcribe2Constants.class)
 public class Transcribe2Endpoint extends DefaultEndpoint {
 
     private TranscribeClient transcribeClient;
@@ -59,7 +65,8 @@ public class Transcribe2Endpoint extends DefaultEndpoint {
     public void doStart() throws Exception {
         super.doStart();
         transcribeClient = configuration.getTranscribeClient() != null
-                ? configuration.getTranscribeClient() : Transcribe2ClientFactory.getTranscribeClient(configuration);
+                ? configuration.getTranscribeClient()
+                : Transcribe2ClientFactory.getTranscribeClient(configuration);
     }
 
     @Override

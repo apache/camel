@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -54,10 +55,15 @@ public class JettyContentBasedRouteTest extends BaseJettyTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("jetty:" + serverUri).choice().when().simple("${header.one}").to("mock:one").otherwise().to("mock:other");
+                from("jetty:" + serverUri)
+                        .choice()
+                        .when()
+                        .simple("${header.one}")
+                        .to("mock:one")
+                        .otherwise()
+                        .to("mock:other");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

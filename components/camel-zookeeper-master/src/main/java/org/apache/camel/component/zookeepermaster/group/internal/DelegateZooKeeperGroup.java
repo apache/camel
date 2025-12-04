@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group.internal;
+
+import static org.apache.curator.utils.CloseableUtils.closeQuietly;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,8 +30,6 @@ import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.curator.framework.CuratorFramework;
-
-import static org.apache.curator.utils.CloseableUtils.closeQuietly;
 
 public class DelegateZooKeeperGroup<T extends NodeState> implements Group<T> {
 
@@ -176,5 +177,4 @@ public class DelegateZooKeeperGroup<T extends NodeState> implements Group<T> {
     public T getLastState() {
         return group != null ? group.getLastState() : null;
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.nio.charset.StandardCharsets;
 
@@ -24,11 +30,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpProducerContentTypeTest extends BaseHttpTest {
 
@@ -41,17 +42,21 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/content", (request, response, context) -> {
-                    String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
+                    String contentType =
+                            request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
                     assertEquals(CONTENT_TYPE, contentType);
 
                     response.setEntity(new StringEntity(contentType, StandardCharsets.US_ASCII));
                     response.setCode(HttpStatus.SC_OK);
-                }).create();
+                })
+                .create();
         localServer.start();
 
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
@@ -75,7 +80,6 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");
         assertEquals(CONTENT_TYPE, out.getMessage().getBody(String.class));
-
     }
 
     @Test
@@ -88,6 +92,5 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");
         assertNull(out.getMessage().getBody());
-
     }
 }

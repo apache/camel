@@ -23,8 +23,8 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class AzuriteContainer extends GenericContainer<AzuriteContainer> {
     public static final String DEFAULT_ACCOUNT_NAME = "devstoreaccount1";
-    public static final String DEFAULT_ACCOUNT_KEY
-            = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
+    public static final String DEFAULT_ACCOUNT_KEY =
+            "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
 
     public AzuriteContainer(String containerName, boolean fixedPort) {
         super(containerName);

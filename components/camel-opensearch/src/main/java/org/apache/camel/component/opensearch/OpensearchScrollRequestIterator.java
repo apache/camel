@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch;
 
 import java.io.Closeable;
@@ -43,8 +44,12 @@ public class OpensearchScrollRequestIterator<TDocument> implements Iterator<Hit<
     private boolean closed;
     private int requestCount;
 
-    public OpensearchScrollRequestIterator(SearchRequest.Builder searchRequestBuilder, OpenSearchClient esClient,
-                                           int scrollKeepAliveMs, Exchange exchange, Class<TDocument> documentClass) {
+    public OpensearchScrollRequestIterator(
+            SearchRequest.Builder searchRequestBuilder,
+            OpenSearchClient esClient,
+            int scrollKeepAliveMs,
+            Exchange exchange,
+            Class<TDocument> documentClass) {
         // add scroll option on the first query
         this.searchRequest = searchRequestBuilder
                 .scroll(Time.of(b -> b.time(String.format("%sms", scrollKeepAliveMs))))

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,11 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // tag::example[]
 @CamelSpringTest
@@ -74,7 +75,9 @@ public class CamelSpringPlainTest {
 
     @Test
     public void testJmx() {
-        assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+        assertEquals(
+                DefaultManagementStrategy.class,
+                camelContext.getManagementStrategy().getClass());
     }
 
     @Test
@@ -105,6 +108,5 @@ public class CamelSpringPlainTest {
     public void testRouteCoverage() {
         // noop
     }
-
 }
 // end::example[]

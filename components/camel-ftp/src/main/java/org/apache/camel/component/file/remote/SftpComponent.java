@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
@@ -35,8 +36,7 @@ import org.apache.camel.util.StringHelper;
 @ManagedResource(description = "Managed SFTP Component")
 public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
-    public SftpComponent() {
-    }
+    public SftpComponent() {}
 
     public SftpComponent(CamelContext context) {
         super(context);
@@ -44,8 +44,7 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
     @Override
     protected GenericFileEndpoint<SftpRemoteFile> buildFileEndpoint(
-            String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+            String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // get the base uri part before the options as they can be non URI valid
         // such as the expression using $ chars
         // and the URI constructor will regard $ as an illegal character and we
@@ -80,5 +79,4 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
         return sb.toString();
     }
-
 }

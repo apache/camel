@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.workday.auth;
 
 import java.io.ByteArrayOutputStream;
@@ -60,30 +61,26 @@ public class AuthClientForIntegration implements AuthenticationClient {
     public void configure(CloseableHttpClient httpClient, HttpUriRequest method) throws IOException {
         String bearerToken = getBearerToken(httpClient);
         method.addHeader(AUTHORIZATION_HEADER, "Bearer " + bearerToken);
-
     }
 
     protected String getBearerToken(CloseableHttpClient httpClient) throws IOException {
 
-        String tokenUrl = String.format(BASE_TOKEN_ENDPOINT, workdayConfiguration.getHost(), workdayConfiguration.getTenant());
+        String tokenUrl =
+                String.format(BASE_TOKEN_ENDPOINT, workdayConfiguration.getHost(), workdayConfiguration.getTenant());
 
         HttpPost httpPost = createPostMethod(tokenUrl);
 
-        return httpClient.execute(
-                httpPost,
-                httpResponse -> {
-                    if (httpResponse.getCode() != HttpStatus.SC_OK) {
-                        throw new IllegalStateException(
-                                "Got the invalid http status value '" + new StatusLine(httpResponse)
-                                                        + "' as the result of the Token Request '" + tokenUrl + "'");
-                    }
+        return httpClient.execute(httpPost, httpResponse -> {
+            if (httpResponse.getCode() != HttpStatus.SC_OK) {
+                throw new IllegalStateException("Got the invalid http status value '" + new StatusLine(httpResponse)
+                        + "' as the result of the Token Request '" + tokenUrl + "'");
+            }
 
-                    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                        httpResponse.getEntity().writeTo(baos);
-                        return parseResponse(baos.toString());
-                    }
-                });
-
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                httpResponse.getEntity().writeTo(baos);
+                return parseResponse(baos.toString());
+            }
+        });
     }
 
     private HttpPost createPostMethod(String tokenUrl) {
@@ -94,10 +91,13 @@ public class AuthClientForIntegration implements AuthenticationClient {
 
         HttpPost postMethod = new HttpPost(tokenUrl);
         postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
-        postMethod.addHeader(AUTHORIZATION_HEADER,
-                "Basic " + Arrays.toString(Base64.getEncoder()
-                        .encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret())
-                                .getBytes())));
+        postMethod.addHeader(
+                AUTHORIZATION_HEADER,
+                "Basic "
+                        + Arrays.toString(Base64.getEncoder()
+                                .encode((workdayConfiguration.getClientId() + ":"
+                                                + workdayConfiguration.getClientSecret())
+                                        .getBytes())));
         postMethod.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
 
         return postMethod;
@@ -115,5 +115,4 @@ public class AuthClientForIntegration implements AuthenticationClient {
 
         return response;
     }
-
 }

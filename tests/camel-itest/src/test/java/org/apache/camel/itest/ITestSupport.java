@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest;
 
 import org.apache.camel.test.AvailablePortFinder;
@@ -30,16 +31,15 @@ public final class ITestSupport {
     static final int PORT4 = AvailablePortFinder.getNextAvailable();
 
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("ITestSupport.port1", Integer.toString(PORT1));
         System.setProperty("ITestSupport.port2", Integer.toString(PORT2));
         System.setProperty("ITestSupport.port3", Integer.toString(PORT3));
         System.setProperty("ITestSupport.port4", Integer.toString(PORT4));
     }
 
-    private ITestSupport() {
-    }
+    private ITestSupport() {}
 
     public static int getPort(String name) {
         int port = AvailablePortFinder.getNextAvailable();

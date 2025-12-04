@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import java.io.IOException;
@@ -39,16 +40,28 @@ public class CamelSSLIRCConnection extends SSLIRCConnection {
     private SSLContextParameters sslContextParameters;
     private CamelContext camelContext;
 
-    public CamelSSLIRCConnection(String host, int portMin, int portMax, String pass,
-                                 String nick, String username, String realname,
-                                 SSLContextParameters sslContextParameters) {
+    public CamelSSLIRCConnection(
+            String host,
+            int portMin,
+            int portMax,
+            String pass,
+            String nick,
+            String username,
+            String realname,
+            SSLContextParameters sslContextParameters) {
         super(host, portMin, portMax, pass, nick, username, realname);
         this.sslContextParameters = sslContextParameters;
     }
 
-    public CamelSSLIRCConnection(String host, int[] ports, String pass,
-                                 String nick, String username, String realname,
-                                 SSLContextParameters sslContextParameters, CamelContext camelContext) {
+    public CamelSSLIRCConnection(
+            String host,
+            int[] ports,
+            String pass,
+            String nick,
+            String username,
+            String realname,
+            SSLContextParameters sslContextParameters,
+            CamelContext camelContext) {
         super(host, ports, pass, nick, username, realname);
         this.sslContextParameters = sslContextParameters;
         this.camelContext = camelContext;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +35,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DeleteBucketTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DeleteBucketTest.class.getName());
 
@@ -43,9 +44,8 @@ public class DeleteBucketTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -53,11 +53,10 @@ public class DeleteBucketTest extends CamelTestSupport {
             public void configure() {
                 from("direct:delete_bucket")
                         .setProperty("CamelHwCloudObsBucketName", constant(testConfiguration.getProperty("bucketName")))
-                        .to("hwcloud-obs:deleteBucket?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:deleteBucket?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("Delete bucket successful")
                         .to("mock:delete_bucket_result");
             }
@@ -81,7 +80,8 @@ public class DeleteBucketTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"date\":\"Day-of-week Month Day Time Year\",\"connection\":\"Keep-Alive\",\"id\":\"123ABC\"}",
+        assertEquals(
+                "{\"date\":\"Day-of-week Month Day Time Year\",\"connection\":\"Keep-Alive\",\"id\":\"123ABC\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

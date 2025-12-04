@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventgrid;
 
 import org.apache.camel.spi.Metadata;
@@ -36,6 +37,5 @@ public final class EventGridConstants {
     @Metadata(description = "The schema version of the data object.", javaType = "String")
     public static final String DATA_VERSION = HEADER_PREFIX + "DataVersion";
 
-    private EventGridConstants() {
-    }
+    private EventGridConstants() {}
 }

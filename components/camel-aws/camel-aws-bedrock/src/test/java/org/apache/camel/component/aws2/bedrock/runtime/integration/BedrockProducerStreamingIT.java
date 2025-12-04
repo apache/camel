@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,12 +45,17 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BedrockProducerStreamingIT extends CamelTestSupport {
@@ -100,14 +108,15 @@ class BedrockProducerStreamingIT extends CamelTestSupport {
         LOG.info("Received response with length: {}", response.length());
 
         // Verify streaming metadata headers
-        Integer chunkCount = resultExchange.getMessage().getHeader(BedrockConstants.STREAMING_CHUNK_COUNT, Integer.class);
+        Integer chunkCount =
+                resultExchange.getMessage().getHeader(BedrockConstants.STREAMING_CHUNK_COUNT, Integer.class);
         assertNotNull(chunkCount, "Chunk count header should be present");
         assertTrue(chunkCount > 0, "Chunk count should be greater than 0, but was: " + chunkCount);
         LOG.info("Received {} chunks in complete mode", chunkCount);
 
         // Optional: Verify completion reason if available
-        String completionReason
-                = resultExchange.getMessage().getHeader(BedrockConstants.STREAMING_COMPLETION_REASON, String.class);
+        String completionReason =
+                resultExchange.getMessage().getHeader(BedrockConstants.STREAMING_COMPLETION_REASON, String.class);
         if (completionReason != null) {
             LOG.info("Completion reason: {}", completionReason);
         }
@@ -153,14 +162,16 @@ class BedrockProducerStreamingIT extends CamelTestSupport {
         }
 
         // Verify streaming metadata headers
-        Integer chunkCount = resultExchange.getMessage().getHeader(BedrockConstants.STREAMING_CHUNK_COUNT, Integer.class);
+        Integer chunkCount =
+                resultExchange.getMessage().getHeader(BedrockConstants.STREAMING_CHUNK_COUNT, Integer.class);
         assertNotNull(chunkCount, "Chunk count header should be present");
         assertTrue(chunkCount > 0, "Chunk count should be greater than 0, but was: " + chunkCount);
         LOG.info("Chunk count from header: {}", chunkCount);
 
         // Verify chunks list size matches or is close to header count
         // Note: chunks list contains only non-empty text chunks, while header counts all chunks
-        assertTrue(chunks.size() <= chunkCount,
+        assertTrue(
+                chunks.size() <= chunkCount,
                 "Text chunks (" + chunks.size() + ") should be <= total chunks (" + chunkCount + ")");
     }
 
@@ -171,18 +182,18 @@ class BedrockProducerStreamingIT extends CamelTestSupport {
             public void configure() {
                 from("direct:send_titan_express_streaming_complete")
                         .to("aws-bedrock:test?accessKey=RAW(" + System.getProperty("aws.manual.access.key")
-                            + ")&secretKey=RAW(" + System.getProperty("aws.manual.secret.key")
-                            + ")&operation=invokeTextModelStreaming&modelId="
-                            + BedrockModels.TITAN_TEXT_EXPRESS_V1.model
-                            + "&region=us-east-1&streamOutputMode=complete")
+                                + ")&secretKey=RAW(" + System.getProperty("aws.manual.secret.key")
+                                + ")&operation=invokeTextModelStreaming&modelId="
+                                + BedrockModels.TITAN_TEXT_EXPRESS_V1.model
+                                + "&region=us-east-1&streamOutputMode=complete")
                         .to(result);
 
                 from("direct:send_titan_express_streaming_chunks")
                         .to("aws-bedrock:test?accessKey=RAW(" + System.getProperty("aws.manual.access.key")
-                            + ")&secretKey=RAW(" + System.getProperty("aws.manual.secret.key")
-                            + ")&operation=invokeTextModelStreaming&modelId="
-                            + BedrockModels.TITAN_TEXT_EXPRESS_V1.model
-                            + "&region=us-east-1&streamOutputMode=chunks")
+                                + ")&secretKey=RAW(" + System.getProperty("aws.manual.secret.key")
+                                + ")&operation=invokeTextModelStreaming&modelId="
+                                + BedrockModels.TITAN_TEXT_EXPRESS_V1.model
+                                + "&region=us-east-1&streamOutputMode=chunks")
                         .to(result);
             }
         };

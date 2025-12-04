@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.xml.transform.TransformerException;
 
@@ -22,9 +26,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltFeatureRouteTest extends ContextTestSupport {
 
@@ -36,8 +37,8 @@ public class XsltFeatureRouteTest extends ContextTestSupport {
     }
 
     public void sendXmlMessage(String uri, String message) {
-        Exception ex = assertThrows(Exception.class, () -> template.sendBody("direct:start1", message),
-                "Expected an exception here");
+        Exception ex = assertThrows(
+                Exception.class, () -> template.sendBody("direct:start1", message), "Expected an exception here");
 
         // expect an exception here
         boolean b1 = ex instanceof CamelExecutionException;
@@ -51,11 +52,14 @@ public class XsltFeatureRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start1").to("xslt:org/apache/camel/component/xslt/transform_text_imported.xsl").to("mock:result");
+                from("direct:start1")
+                        .to("xslt:org/apache/camel/component/xslt/transform_text_imported.xsl")
+                        .to("mock:result");
 
-                from("direct:start2").to("xslt:org/apache/camel/component/xslt/transform_text.xsl").to("mock:result");
+                from("direct:start2")
+                        .to("xslt:org/apache/camel/component/xslt/transform_text.xsl")
+                        .to("mock:result");
             }
         };
     }
-
 }

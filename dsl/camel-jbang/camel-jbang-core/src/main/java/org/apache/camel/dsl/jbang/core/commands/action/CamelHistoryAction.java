@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.LineNumberReader;
@@ -45,27 +46,37 @@ import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "history",
-                     description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "history",
+        description = "History of latest completed exchange",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelHistoryAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @CommandLine.Option(
+            names = {"--source"},
+            description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @CommandLine.Option(
+            names = {"--mask"},
+            description =
+                    "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
-                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    @CommandLine.Option(
+            names = {"--depth"},
+            defaultValue = "9",
+            description =
+                    "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
     int depth;
 
-    @CommandLine.Option(names = { "--limit-split" },
-                        description = "Limit Split to a maximum number of entries to be displayed")
+    @CommandLine.Option(
+            names = {"--limit-split"},
+            description = "Limit Split to a maximum number of entries to be displayed")
     int limitSplit;
 
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
@@ -91,29 +102,50 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 String ago = TimeUtils.printSince(first.timestamp);
                 Row last = rows.get(rows.size() - 1);
                 String status = last.failed ? "failed" : "success";
-                String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
+                String s = String.format(
+                        "Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
                         first.exchangeId, status, ago, first.pid, first.name);
                 printer().println(s);
 
-                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("").dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(6).maxWidth(6)
-                                .with(this::getDirection),
-                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(10).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(this::getId),
-                        new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(40).maxWidth(55, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(this::getProcessor),
-                        new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
-                                .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(r -> "" + r.elapsed),
-                        new Column().header("EXCHANGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                                .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(this::getExchangeId),
-                        new Column().header("").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(60, OverflowBehaviour.NEWLINE)
-                                .with(this::getMessage))));
+                printer()
+                        .println(AsciiTable.getTable(
+                                AsciiTable.NO_BORDERS,
+                                rows,
+                                Arrays.asList(
+                                        new Column()
+                                                .header("")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .minWidth(6)
+                                                .maxWidth(6)
+                                                .with(this::getDirection),
+                                        new Column()
+                                                .header("ID")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .minWidth(10)
+                                                .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                                .with(this::getId),
+                                        new Column()
+                                                .header("PROCESSOR")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .minWidth(40)
+                                                .maxWidth(55, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                                .with(this::getProcessor),
+                                        new Column()
+                                                .header("ELAPSED")
+                                                .dataAlign(HorizontalAlign.RIGHT)
+                                                .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                                .with(r -> "" + r.elapsed),
+                                        new Column()
+                                                .header("EXCHANGE")
+                                                .headerAlign(HorizontalAlign.RIGHT)
+                                                .dataAlign(HorizontalAlign.RIGHT)
+                                                .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                                .with(this::getExchangeId),
+                                        new Column()
+                                                .header("")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                                .with(this::getMessage))));
 
                 JsonObject cause = last.exception;
                 if (cause != null) {
@@ -337,7 +369,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
             Row next = i > 0 && i < rows.size() + 2 ? rows.get(i + 1) : null;
 
             String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
-            Row t = uri != null && r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
+            Row t = uri != null && r.first
+                    ? r
+                    : next; // if sending to endpoint then we should find details in the next step as they are response
             if (uri != null && t != null) {
                 StringJoiner sj = new StringJoiner(" ");
                 var map = extractComponentModel(uri, t);
@@ -476,5 +510,4 @@ public class CamelHistoryAction extends ActionWatchCommand {
         JsonObject exception;
         String summary;
     }
-
 }

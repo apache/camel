@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -29,8 +32,6 @@ import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UnitOfWorkHelperTest extends ContextTestSupport {
 
@@ -87,5 +88,4 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
             }
         }
     }
-
 }

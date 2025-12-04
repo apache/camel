@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -76,7 +77,10 @@ public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).setBody(simple("Handling ${exception.message}")).to("mock:handled");
+                onException(Exception.class)
+                        .handled(true)
+                        .setBody(simple("Handling ${exception.message}"))
+                        .to("mock:handled");
 
                 from("direct:a").routeId("a").to("mock:a");
 

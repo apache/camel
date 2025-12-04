@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.producer;
 
 import java.util.Optional;
@@ -63,11 +64,9 @@ public class InferenceProducer extends TorchServeProducer {
     private void predictions(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String modelName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+        String modelName = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
                 .orElse(configuration.getModelName());
-        String modelVersion = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
+        String modelVersion = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
                 .orElse(configuration.getModelVersion());
         Object body = message.getBody(byte[].class);
         Object response;
@@ -82,8 +81,7 @@ public class InferenceProducer extends TorchServeProducer {
     private void explanations(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String modelName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+        String modelName = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
                 .orElse(configuration.getModelName());
         Object response = this.inference.explanations(modelName);
         message.setBody(response);

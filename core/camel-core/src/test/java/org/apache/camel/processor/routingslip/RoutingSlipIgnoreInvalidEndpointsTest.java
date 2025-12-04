@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.routingslip;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
@@ -59,14 +60,15 @@ public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").routingSlip(header("myHeader")).ignoreInvalidEndpoints().to("mock:end");
+                from("direct:a")
+                        .routingSlip(header("myHeader"))
+                        .ignoreInvalidEndpoints()
+                        .to("mock:end");
 
                 from("direct:b").routingSlip(header("myHeader")).to("mock:end");
 
                 from("direct:start").transform(constant("Hello World"));
             }
-
         };
     }
-
 }

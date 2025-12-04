@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.rss;
 
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -55,12 +56,18 @@ public class RssDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000").marshal().rss().to("mock:marshal");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000")
+                        .marshal()
+                        .rss()
+                        .to("mock:marshal");
                 // END SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500").marshal().rss().unmarshal().rss()
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500")
+                        .marshal()
+                        .rss()
+                        .unmarshal()
+                        .rss()
                         .to("mock:unmarshal");
             }
         };
     }
-
 }

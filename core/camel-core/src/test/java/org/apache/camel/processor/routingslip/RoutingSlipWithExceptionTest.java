@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.routingslip;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
@@ -98,11 +99,13 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     }
 
     protected void sendRoutingSlipWithExceptionThrowingComponentFirstInList() {
-        template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER, "bean:myBean?method=throwException,mock:a");
+        template.sendBodyAndHeader(
+                "direct:start", ANSWER, ROUTING_SLIP_HEADER, "bean:myBean?method=throwException,mock:a");
     }
 
     protected void sendRoutingSlipWithExceptionThrowingComponentSecondInList() {
-        template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER, "mock:a,bean:myBean?method=throwException");
+        template.sendBodyAndHeader(
+                "direct:start", ANSWER, ROUTING_SLIP_HEADER, "mock:a,bean:myBean?method=throwException");
     }
 
     protected void sendRoutingSlipWithNoExceptionThrowingComponent() {
@@ -148,15 +151,19 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().routingSlip(header(ROUTING_SLIP_HEADER)).end().to("mock:noexception")
-                        .doCatch(Exception.class).to("mock:exception");
+                from("direct:start")
+                        .doTry()
+                        .routingSlip(header(ROUTING_SLIP_HEADER))
+                        .end()
+                        .to("mock:noexception")
+                        .doCatch(Exception.class)
+                        .to("mock:exception");
             }
         };
     }
 
     public static class MyBean {
-        public MyBean() {
-        }
+        public MyBean() {}
 
         public void throwException() throws Exception {
             throw new Exception("Throw me!");

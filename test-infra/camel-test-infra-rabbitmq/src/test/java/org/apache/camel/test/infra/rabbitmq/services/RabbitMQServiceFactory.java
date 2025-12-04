@@ -20,9 +20,7 @@ package org.apache.camel.test.infra.rabbitmq.services;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class RabbitMQServiceFactory {
-    private RabbitMQServiceFactory() {
-
-    }
+    private RabbitMQServiceFactory() {}
 
     public static SimpleTestServiceBuilder<RabbitMQService> builder() {
         return new SimpleTestServiceBuilder<>("rabbitmq");
@@ -35,9 +33,8 @@ public final class RabbitMQServiceFactory {
                 .build();
     }
 
-    public static class RabbitMQLocalContainerService extends RabbitMQLocalContainerInfraService implements RabbitMQService {
-    }
+    public static class RabbitMQLocalContainerService extends RabbitMQLocalContainerInfraService
+            implements RabbitMQService {}
 
-    public static class RabbitMQRemoteService extends RabbitMQRemoteInfraService implements RabbitMQService {
-    }
+    public static class RabbitMQRemoteService extends RabbitMQRemoteInfraService implements RabbitMQService {}
 }

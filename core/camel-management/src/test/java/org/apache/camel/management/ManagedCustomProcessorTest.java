@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -29,9 +33,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCustomProcessorTest extends ManagementTestSupport {
@@ -68,8 +69,10 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .process(new MyCustomProcessor()).id("custom")
+                from("direct:start")
+                        .routeId("foo")
+                        .process(new MyCustomProcessor())
+                        .id("custom")
                         .to("mock:result");
             }
         };

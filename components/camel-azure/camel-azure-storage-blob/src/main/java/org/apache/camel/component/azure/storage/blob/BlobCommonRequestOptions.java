@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
@@ -32,8 +33,13 @@ public class BlobCommonRequestOptions {
     private final byte[] contentMD5;
     private final Duration timeout;
 
-    public BlobCommonRequestOptions(BlobHttpHeaders blobHttpHeaders, Map<String, String> metadata, AccessTier accessTier,
-                                    BlobRequestConditions blobRequestConditions, byte[] contentMD5, Duration timeout) {
+    public BlobCommonRequestOptions(
+            BlobHttpHeaders blobHttpHeaders,
+            Map<String, String> metadata,
+            AccessTier accessTier,
+            BlobRequestConditions blobRequestConditions,
+            byte[] contentMD5,
+            Duration timeout) {
         this.blobHttpHeaders = blobHttpHeaders;
         this.metadata = metadata;
         this.accessTier = accessTier;

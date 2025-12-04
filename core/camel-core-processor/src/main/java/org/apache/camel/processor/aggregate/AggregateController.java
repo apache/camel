@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 /**
@@ -65,5 +66,4 @@ public interface AggregateController {
      * @return number of groups that was forced discarded
      */
     int forceDiscardingOfAllGroups();
-
 }

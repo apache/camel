@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -37,12 +38,12 @@ public class FromVariableTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
                 fromV(direct("start").advanced().synchronous(false), "myKey")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .to("mock:foo")
                         .setBody(simple("${variable:myKey}"))
                         .to("mock:result");
             }
         };
     }
-
 }

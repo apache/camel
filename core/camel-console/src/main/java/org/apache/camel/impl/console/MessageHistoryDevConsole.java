@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collection;
@@ -27,7 +28,10 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "message-history", displayName = "Message History", description = "History of latest completed exchange")
+@DevConsole(
+        name = "message-history",
+        displayName = "Message History",
+        description = "History of latest completed exchange")
 @Configurer(extended = true)
 public class MessageHistoryDevConsole extends AbstractDevConsole {
 
@@ -68,5 +72,4 @@ public class MessageHistoryDevConsole extends AbstractDevConsole {
 
         return root;
     }
-
 }

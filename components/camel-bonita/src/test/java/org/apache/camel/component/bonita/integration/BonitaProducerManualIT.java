@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.integration;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -24,8 +27,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Bonita producer integration tests. Requires a running Bonita instance.
@@ -53,7 +54,8 @@ public class BonitaProducerManualIT extends BonitaIntegrationTestSupport {
             @Override
             public void configure() {
                 from("direct:startCase")
-                        .to("bonita:startCase?hostname={{host}}&port={{port}}&processName={{process}}&username={{username}}&password={{password}}");
+                        .to(
+                                "bonita:startCase?hostname={{host}}&port={{port}}&processName={{process}}&username={{username}}&password={{password}}");
             }
         };
     }

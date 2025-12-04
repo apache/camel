@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,9 +37,11 @@ public class BeanAbstractMethodIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").filter().simple("${body.doSomething} == 123").to("mock:123");
+                from("direct:start")
+                        .filter()
+                        .simple("${body.doSomething} == 123")
+                        .to("mock:123");
             }
         };
     }
-
 }

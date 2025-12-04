@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
@@ -40,10 +41,7 @@ public interface CxfRsBinding {
      * @param paramArray    the parameter list for the method invocation
      */
     void populateExchangeFromCxfRsRequest(
-            Exchange cxfExchange,
-            org.apache.camel.Exchange camelExchange,
-            Method method,
-            Object[] paramArray);
+            Exchange cxfExchange, org.apache.camel.Exchange camelExchange, Method method, Object[] paramArray);
 
     /**
      * Populate the CxfRsResponse object from the camel exchange
@@ -53,9 +51,7 @@ public interface CxfRsBinding {
      * @return               the response object
      * @throws Exception     can be thrown if error in the binding process
      */
-    Object populateCxfRsResponseFromExchange(
-            org.apache.camel.Exchange camelExchange,
-            Exchange cxfExchange)
+    Object populateCxfRsResponseFromExchange(org.apache.camel.Exchange camelExchange, Exchange cxfExchange)
             throws Exception;
 
     /**
@@ -68,9 +64,7 @@ public interface CxfRsBinding {
      * @throws Exception     can be thrown if error in the binding process
      */
     Object bindCamelMessageBodyToRequestBody(
-            org.apache.camel.Message camelMessage,
-            org.apache.camel.Exchange camelExchange)
-            throws Exception;
+            org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange) throws Exception;
 
     /**
      * Bind the camel headers to request headers that gets passed to CXF RS
@@ -82,9 +76,7 @@ public interface CxfRsBinding {
      * @return               the headers
      */
     MultivaluedMap<String, String> bindCamelHeadersToRequestHeaders(
-            Map<String, Object> camelHeaders,
-            org.apache.camel.Exchange camelExchange)
-            throws Exception;
+            Map<String, Object> camelHeaders, org.apache.camel.Exchange camelExchange) throws Exception;
 
     /**
      * Bind the HTTP response body to camel out body
@@ -94,8 +86,7 @@ public interface CxfRsBinding {
      * @return               the object to be set in the Camel out message body
      * @throws Exception     can be thrown if error in the binding process
      */
-    Object bindResponseToCamelBody(Object response, org.apache.camel.Exchange camelExchange)
-            throws Exception;
+    Object bindResponseToCamelBody(Object response, org.apache.camel.Exchange camelExchange) throws Exception;
 
     /**
      * Bind the response headers to camel out headers.
@@ -105,9 +96,7 @@ public interface CxfRsBinding {
      * @return               headers to be set in the Camel out message
      * @throws Exception     can be thrown if error in the binding process
      */
-    Map<String, Object> bindResponseHeadersToCamelHeaders(
-            Object response,
-            org.apache.camel.Exchange camelExchange)
+    Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, org.apache.camel.Exchange camelExchange)
             throws Exception;
 
     /**
@@ -136,7 +125,9 @@ public interface CxfRsBinding {
      * @return               the {@link Entity} to use
      */
     Entity<Object> bindCamelMessageToRequestEntity(
-            Object body, org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange,
+            Object body,
+            org.apache.camel.Message camelMessage,
+            org.apache.camel.Exchange camelExchange,
             org.apache.cxf.jaxrs.client.WebClient webClient)
             throws Exception;
 }

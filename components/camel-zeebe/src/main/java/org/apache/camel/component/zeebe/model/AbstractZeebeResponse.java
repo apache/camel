@@ -23,8 +23,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class AbstractZeebeResponse implements ZeebeMessage {
     private boolean success; // false
+
     @JsonProperty("error_message")
     private String errorMessage;
+
     @JsonProperty("error_code")
     private String errorCode;
 
@@ -61,7 +63,8 @@ public abstract class AbstractZeebeResponse implements ZeebeMessage {
             return false;
         }
         AbstractZeebeResponse that = (AbstractZeebeResponse) o;
-        return success == that.success && Objects.equals(errorMessage, that.errorMessage)
+        return success == that.success
+                && Objects.equals(errorMessage, that.errorMessage)
                 && Objects.equals(errorCode, that.errorCode);
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import java.util.ArrayList;
@@ -34,7 +35,8 @@ import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
 
-public class RestOpenApiProcessor extends AsyncProcessorSupport implements CamelContextAware, AfterPropertiesConfigured {
+public class RestOpenApiProcessor extends AsyncProcessorSupport
+        implements CamelContextAware, AfterPropertiesConfigured {
 
     // just use the most common verbs
     private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH");
@@ -50,12 +52,17 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private Consumer consumer;
     private OpenApiUtils openApiUtils;
 
-    public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
-                                RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
+    public RestOpenApiProcessor(
+            RestOpenApiEndpoint endpoint,
+            OpenAPI openAPI,
+            String basePath,
+            String apiContextPath,
+            RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         this.endpoint = endpoint;
         this.basePath = basePath;
         // ensure starts with leading slash
-        this.apiContextPath = apiContextPath != null && !apiContextPath.startsWith("/") ? "/" + apiContextPath : apiContextPath;
+        this.apiContextPath =
+                apiContextPath != null && !apiContextPath.startsWith("/") ? "/" + apiContextPath : apiContextPath;
         this.openAPI = openAPI;
         this.restOpenapiProcessorStrategy = restOpenapiProcessorStrategy;
     }
@@ -95,14 +102,14 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         }
         String verb = exchange.getMessage().getHeader(Exchange.HTTP_METHOD, String.class);
 
-        RestConsumerContextPathMatcher.ConsumerPath<Operation> m
-                = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<Operation> m =
+                RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
         if (m instanceof RestOpenApiConsumerPath rcp) {
             Operation o = rcp.getConsumer();
 
             String consumerPath = rcp.getConsumerPath();
 
-            //if uri is not starting with slash then remove the slash in the consumerPath from the openApi spec
+            // if uri is not starting with slash then remove the slash in the consumerPath from the openApi spec
             if (consumerPath.startsWith("/") && path != null && !path.startsWith("/")) {
                 consumerPath = consumerPath.substring(1);
             }
@@ -116,14 +123,17 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
 
         // is it the api-context path
         if (path != null && path.equals(apiContextPath)) {
-            return restOpenapiProcessorStrategy.processApiSpecification(endpoint.getSpecificationUri(), exchange, callback);
+            return restOpenapiProcessorStrategy.processApiSpecification(
+                    endpoint.getSpecificationUri(), exchange, callback);
         }
 
         // okay we cannot process this requires so return either 404 or 405.
-        // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+        // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same"
+        // request
         final String contextPath = path;
         List<String> allow = METHODS.stream()
-                .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
+                .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null)
+                .toList();
         if (allow.isEmpty()) {
             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
         } else {
@@ -159,7 +169,11 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
 
                 String url = basePath + path;
                 if (platformHttpConsumer != null) {
-                    url = platformHttpConsumer.getPlatformHttpConsumer().getEndpoint().getServiceUrl() + url;
+                    url = platformHttpConsumer
+                                    .getPlatformHttpConsumer()
+                                    .getEndpoint()
+                                    .getServiceUrl()
+                            + url;
                 }
 
                 String desc = o.getValue().getSummary();
@@ -170,8 +184,22 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 if (consumer instanceof RouteAware ra) {
                     routeId = ra.getRoute().getRouteId();
                 }
-                camelContext.getRestRegistry().addRestService(consumer, true, url, path, basePath, null, v, bc.getConsumes(),
-                        bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
+                camelContext
+                        .getRestRegistry()
+                        .addRestService(
+                                consumer,
+                                true,
+                                url,
+                                path,
+                                basePath,
+                                null,
+                                v,
+                                bc.getConsumes(),
+                                bc.getProduces(),
+                                bc.getType(),
+                                bc.getOutType(),
+                                routeId,
+                                desc);
 
                 try {
                     RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);

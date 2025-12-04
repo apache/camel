@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2.producer;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Message;
@@ -30,12 +34,10 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InOnlyQueueProducerTest extends Jms2TestSupport {
 
     private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test";
+
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
 
@@ -98,8 +100,7 @@ public class InOnlyQueueProducerTest extends Jms2TestSupport {
                         //                        .setHeader("JMSDeliveryMode", constant(1))
                         .to("sjms2:queue:" + TEST_DESTINATION_NAME + "?deliveryMode=1");
 
-                from("direct:finish")
-                        .to("log:test.log.1?showBody=true", "mock:result");
+                from("direct:finish").to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

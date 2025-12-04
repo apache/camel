@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc.it;
 
 import java.util.List;
@@ -28,8 +29,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
-                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+@EnabledIfSystemProperty(
+        named = "enable.irc.itests",
+        matches = ".*",
+        disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
 public class IrcMultiChannelRouteIT extends IrcIntegrationITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IrcMultiChannelRouteIT.class);
@@ -45,20 +48,21 @@ public class IrcMultiChannelRouteIT extends IrcIntegrationITSupport {
     public void testIrcMessages() throws Exception {
         resetMock(joined);
         joined.expectedMessageCount(2);
-        joined.expectedHeaderValuesReceivedInAnyOrder(IrcConstants.IRC_TARGET, properties.get("channel1"),
-                properties.get("channel2"));
+        joined.expectedHeaderValuesReceivedInAnyOrder(
+                IrcConstants.IRC_TARGET, properties.get("channel1"), properties.get("channel2"));
         joined.assertIsSatisfied();
 
         sendMessages();
 
-        //consumer is going to receive two copies of body3
+        // consumer is going to receive two copies of body3
         resultEndpoint.expectedBodiesReceivedInAnyOrder(body1, body2, body3, body3);
 
         resultEndpoint.assertIsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: "
+                    + exchange.getIn().getHeaders());
         }
     }
 
@@ -66,10 +70,16 @@ public class IrcMultiChannelRouteIT extends IrcIntegrationITSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock")
-                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to(joined);
+                from(fromUri())
+                        .choice()
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG"))
+                        .to("direct:mock")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN"))
+                        .to(joined);
 
-                from("direct:mock").filter(e -> !e.getIn().getBody(String.class).contains("VERSION")).to(resultEndpoint);
+                from("direct:mock")
+                        .filter(e -> !e.getIn().getBody(String.class).contains("VERSION"))
+                        .to(resultEndpoint);
             }
         };
     }

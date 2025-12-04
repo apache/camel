@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.io.BufferedOutputStream;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
-    private static final byte[] LENGTH_HEADER = { 0x00, 0x00, 0x40, 0x00 }; // 4096 bytes
+    private static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 4096 bytes
 
     private static final Logger LOG = LoggerFactory.getLogger(UnsharableCodecsConflictsTest.class);
 
@@ -48,10 +49,12 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     private Processor processor = new P();
 
     @BindToRegistry("length-decoder")
-    private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+    private ChannelHandlerFactory decoder =
+            ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @BindToRegistry("length-decoder2")
-    private ChannelHandlerFactory decoder2 = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+    private ChannelHandlerFactory decoder2 =
+            ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @Test
     public void canSupplyMultipleCodecsToEndpointPipeline() throws Exception {
@@ -86,9 +89,11 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:" + port.getPort() + "?decoders=#length-decoder&sync=false").process(processor);
+                from("netty:tcp://localhost:" + port.getPort() + "?decoders=#length-decoder&sync=false")
+                        .process(processor);
 
-                from("netty:tcp://localhost:" + port2.getPort() + "?decoders=#length-decoder2&sync=false").process(processor)
+                from("netty:tcp://localhost:" + port2.getPort() + "?decoders=#length-decoder2&sync=false")
+                        .process(processor)
                         .to("mock:result");
             }
         };
@@ -119,5 +124,4 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
             exchange.getMessage().setBody(exchange.getIn().getBody(String.class));
         }
     }
-
 }

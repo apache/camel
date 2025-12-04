@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +39,6 @@ public class AwsS3PollEnrichTest extends BaseEndpointDslTest {
                 from("direct:start")
                         .pollEnrich(aws2S3("test-bucket").fileName("${body}"))
                         .to("mock:result");
-
             }
         });
         context.start();

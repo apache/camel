@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,11 +38,17 @@ public class ThreadsIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                        .setBody().simple("Hello Camel from ${routeId}").id("Setting body")
-                        .threads(5).id("Parallel processing")
-                        .log("${body}").id("After threads")
-                        .to("mock:end").id("End of route");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .setBody()
+                        .simple("Hello Camel from ${routeId}")
+                        .id("Setting body")
+                        .threads(5)
+                        .id("Parallel processing")
+                        .log("${body}")
+                        .id("After threads")
+                        .to("mock:end")
+                        .id("End of route");
             }
         };
     }

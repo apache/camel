@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,47 +43,48 @@ public class OnCompletionShouldBeLastTest extends ContextTestSupport {
             public void configure() {
                 onCompletion().to("mock:sync");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                            @Override
-                            public void onDone(Exchange exchange) {
-                                template.sendBody("mock:sync", "A");
-                            }
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange) {
+                                        template.sendBody("mock:sync", "A");
+                                    }
 
-                            @Override
-                            public String toString() {
-                                return "A";
-                            }
-                        });
+                                    @Override
+                                    public String toString() {
+                                        return "A";
+                                    }
+                                });
 
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                            @Override
-                            public void onDone(Exchange exchange) {
-                                template.sendBody("mock:sync", "B");
-                            }
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange) {
+                                        template.sendBody("mock:sync", "B");
+                                    }
 
-                            @Override
-                            public String toString() {
-                                return "B";
-                            }
-                        });
+                                    @Override
+                                    public String toString() {
+                                        return "B";
+                                    }
+                                });
 
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                            @Override
-                            public void onDone(Exchange exchange) {
-                                template.sendBody("mock:sync", "C");
-                            }
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(Exchange exchange) {
+                                        template.sendBody("mock:sync", "C");
+                                    }
 
-                            @Override
-                            public String toString() {
-                                return "C";
+                                    @Override
+                                    public String toString() {
+                                        return "C";
+                                    }
+                                });
                             }
-                        });
-                    }
-                }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

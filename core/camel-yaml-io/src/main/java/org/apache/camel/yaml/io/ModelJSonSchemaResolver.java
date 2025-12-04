@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.io;
 
 import java.io.IOException;
@@ -126,8 +127,17 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
     public String getModelJSonSchema(String name) {
         try {
             String[] subPackages = new String[] {
-                    "", "cloud/", "config/", "dataformat/", "errorhandler/", "language/", "loadbalancer/", "rest/",
-                    "transformer/", "validator/" };
+                "",
+                "cloud/",
+                "config/",
+                "dataformat/",
+                "errorhandler/",
+                "language/",
+                "loadbalancer/",
+                "rest/",
+                "transformer/",
+                "validator/"
+            };
             for (String sub : subPackages) {
                 String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + name + ".json";
                 String data = doLoadResource(path);
@@ -186,5 +196,4 @@ class ModelJSonSchemaResolver implements JSonSchemaResolver {
         }
         return null;
     }
-
 }

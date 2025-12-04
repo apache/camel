@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import java.util.function.Function;
@@ -29,23 +30,35 @@ import org.junit.jupiter.api.Test;
 class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
 
     private static final SpanTestData[] testdata = {
-            new SpanTestData().setLabel("camel-process").setOperation("third-party-span")
-                    .setParentId(1),
-            new SpanTestData().setLabel("camel-process").setOperation("third-party-processor")
-                    .setParentId(6),
-            new SpanTestData().setLabel("camel-process").setOperation("direct-processor")
-                    .setParentId(3),
-            new SpanTestData().setLabel("direct:serviceB").setOperation("serviceB")
-                    .setParentId(4),
-            new SpanTestData().setLabel("direct:serviceB").setOperation("serviceB")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(5),
-            new SpanTestData().setLabel("to:serviceB").setOperation("to-serviceB")
-                    .setParentId(6),
-            new SpanTestData().setLabel("direct:serviceA").setUri("direct://start").setOperation("serviceA")
-                    .setParentId(7),
-            new SpanTestData().setLabel("direct:serviceA").setUri("direct://start").setOperation("serviceA")
-                    .setKind(SpanKind.CLIENT)
+        new SpanTestData()
+                .setLabel("camel-process")
+                .setOperation("third-party-span")
+                .setParentId(1),
+        new SpanTestData()
+                .setLabel("camel-process")
+                .setOperation("third-party-processor")
+                .setParentId(6),
+        new SpanTestData()
+                .setLabel("camel-process")
+                .setOperation("direct-processor")
+                .setParentId(3),
+        new SpanTestData().setLabel("direct:serviceB").setOperation("serviceB").setParentId(4),
+        new SpanTestData()
+                .setLabel("direct:serviceB")
+                .setOperation("serviceB")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(5),
+        new SpanTestData().setLabel("to:serviceB").setOperation("to-serviceB").setParentId(6),
+        new SpanTestData()
+                .setLabel("direct:serviceA")
+                .setUri("direct://start")
+                .setOperation("serviceA")
+                .setParentId(7),
+        new SpanTestData()
+                .setLabel("direct:serviceA")
+                .setUri("direct://start")
+                .setOperation("serviceA")
+                .setKind(SpanKind.CLIENT)
     };
 
     OpenTelemetryTracingStrategyTest() {
@@ -64,16 +77,21 @@ class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:serviceA").routeId("serviceA")
+                from("direct:serviceA")
+                        .routeId("serviceA")
                         .process(exchange -> {
                             callThirdPartyInstrumentation();
-                        }).id("third-party-processor")
-                        .to("direct:serviceB").id("to-serviceB");
+                        })
+                        .id("third-party-processor")
+                        .to("direct:serviceB")
+                        .id("to-serviceB");
 
-                from("direct:serviceB").routeId("serviceB")
+                from("direct:serviceB")
+                        .routeId("serviceB")
                         .process(exchange -> {
                             // noop
-                        }).id("direct-processor");
+                        })
+                        .id("direct-processor");
             }
 
             private void callThirdPartyInstrumentation() {

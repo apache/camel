@@ -14,17 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 /**
  * Record for details when an artifact was downloaded from a remote Maven repository.
  */
 public record DownloadRecord(
-        String groupId,
-        String artifactId,
-        String version,
-        String repoId,
-        String repoUrl,
-        long elapsed) {
-
-}
+        String groupId, String artifactId, String version, String repoId, String repoUrl, long elapsed) {}

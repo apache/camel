@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,9 +28,6 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RoutePolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RoutePolicyTest extends ContextTestSupport {
     private final MyRoutPolicy routePolicy = new MyRoutPolicy();
@@ -135,16 +136,13 @@ public class RoutePolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void onInit(Route route) {
-        }
+        public void onInit(Route route) {}
 
         @Override
-        public void onExchangeBegin(Route route, Exchange exchange) {
-        }
+        public void onExchangeBegin(Route route, Exchange exchange) {}
 
         @Override
-        public void onExchangeDone(Route route, Exchange exchange) {
-        }
+        public void onExchangeDone(Route route, Exchange exchange) {}
 
         private int getRemoveCount() {
             return removeCounter.get();

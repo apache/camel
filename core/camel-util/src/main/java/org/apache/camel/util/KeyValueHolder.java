@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.Objects;
@@ -48,8 +49,7 @@ public class KeyValueHolder<K, V> {
             return false;
         }
         KeyValueHolder<?, ?> that = (KeyValueHolder<?, ?>) o;
-        return Objects.equals(key, that.key)
-                && Objects.equals(value, that.value);
+        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
     }
 
     @Override

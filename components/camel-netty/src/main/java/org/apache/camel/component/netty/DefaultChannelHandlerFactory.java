@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -22,16 +23,16 @@ public abstract class DefaultChannelHandlerFactory implements ChannelHandlerFact
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        //Do nothing here
+        // Do nothing here
     }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        //Do nothing here
+        // Do nothing here
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        //Do nothing here
+        // Do nothing here
     }
 }

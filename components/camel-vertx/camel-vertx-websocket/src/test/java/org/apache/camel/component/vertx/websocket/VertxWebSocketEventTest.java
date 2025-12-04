@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -28,9 +32,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
 
@@ -47,8 +48,8 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
     @Test
     void webSocketEvents() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedBodiesReceivedInAnyOrder("WebSocket Open", "WebSocket Message", "WebSocket Error",
-                "WebSocket Close");
+        mockEndpoint.expectedBodiesReceivedInAnyOrder(
+                "WebSocket Open", "WebSocket Message", "WebSocket Error", "WebSocket Close");
 
         template.sendBody("vertx-websocket:localhost:" + port + "/test", MESSAGE_BODY);
 
@@ -75,29 +76,32 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
                         .handled(true)
                         .choice()
                         .when(simple("${header.CamelVertxWebsocket.event} == 'ERROR'"))
-                        .setBody().constant("WebSocket Error")
+                        .setBody()
+                        .constant("WebSocket Error")
                         .to("mock:result")
                         .endChoice();
 
-                fromF("vertx-websocket:localhost:%d/test?fireWebSocketConnectionEvents=true&serverOptions=#serverOptions&bridgeErrorHandler=true",
-                        port)
+                fromF(
+                                "vertx-websocket:localhost:%d/test?fireWebSocketConnectionEvents=true&serverOptions=#serverOptions&bridgeErrorHandler=true",
+                                port)
                         .choice()
                         .when(simple("${header.CamelVertxWebsocket.event} == 'OPEN'"))
                         .process(exchange -> {
                             Message message = exchange.getMessage();
                             webSocketFuture.complete(message.getBody(ServerWebSocket.class));
                         })
-                        .setBody().constant("WebSocket Open")
+                        .setBody()
+                        .constant("WebSocket Open")
                         .to("mock:result")
                         .endChoice()
-
                         .when(simple("${header.CamelVertxWebsocket.event} == 'MESSAGE'"))
-                        .setBody().constant("WebSocket Message")
+                        .setBody()
+                        .constant("WebSocket Message")
                         .to("mock:result")
                         .endChoice()
-
                         .when(simple("${header.CamelVertxWebsocket.event} == 'CLOSE'"))
-                        .setBody().constant("WebSocket Close")
+                        .setBody()
+                        .constant("WebSocket Close")
                         .to("mock:result")
                         .endChoice();
             }

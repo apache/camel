@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.issues;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test for request-reply with jms where processing the input could cause: OK or Exception. CAMEL-585
  */
@@ -39,6 +40,7 @@ public class BeanExceptionIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -67,7 +69,8 @@ public class BeanExceptionIT extends AbstractJMSTest {
             public void configure() {
                 from("activemq:queue:BruceHandlingBeanExceptionTest.ok").transform(constant("Bye World"));
 
-                from("activemq:queue:BruceHandlingBeanExceptionTest.error?transferException=true").bean(MyExceptionBean.class);
+                from("activemq:queue:BruceHandlingBeanExceptionTest.error?transferException=true")
+                        .bean(MyExceptionBean.class);
             }
         };
     }

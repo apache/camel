@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,9 +30,7 @@ public class Page extends TextPublishable {
     @JsonProperty("menu_order")
     private Integer menuOrder;
 
-    public Page() {
-
-    }
+    public Page() {}
 
     public Integer getParent() {
         return parent;
@@ -48,5 +47,4 @@ public class Page extends TextPublishable {
     public void setMenuOrder(Integer menuOrder) {
         this.menuOrder = menuOrder;
     }
-
 }

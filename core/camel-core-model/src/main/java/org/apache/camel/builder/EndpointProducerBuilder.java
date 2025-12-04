@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.Map;
@@ -53,5 +54,4 @@ public interface EndpointProducerBuilder extends EndpointProducerResolver {
      * Builds a dynamic expression of this endpoint url. This API is only intended for Camel internally.
      */
     Expression expr(CamelContext camelContext);
-
 }

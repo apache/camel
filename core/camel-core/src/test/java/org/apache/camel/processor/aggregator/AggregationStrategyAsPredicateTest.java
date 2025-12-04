@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -48,7 +49,9 @@ public class AggregationStrategyAsPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).to("mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), new MyCompletionStrategy())
+                        .to("mock:aggregated");
             }
         };
     }
@@ -61,7 +64,8 @@ public class AggregationStrategyAsPredicateTest extends ContextTestSupport {
                 return newExchange;
             }
 
-            String body = oldExchange.getIn().getBody(String.class) + "+" + newExchange.getIn().getBody(String.class);
+            String body = oldExchange.getIn().getBody(String.class) + "+"
+                    + newExchange.getIn().getBody(String.class);
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }

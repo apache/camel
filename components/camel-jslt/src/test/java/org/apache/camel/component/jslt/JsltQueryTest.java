@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.util.Collections;
@@ -35,7 +36,8 @@ public class JsltQueryTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("\"2017-05-04T09:13:29+02:00\"");
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")),
                 Collections.singletonMap(JsltConstants.HEADER_JSLT_STRING, ".published"));
@@ -53,5 +55,4 @@ public class JsltQueryTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.util.Properties;
@@ -22,8 +23,7 @@ import org.apache.camel.test.junit5.TestSupport;
 
 public final class BlobTestUtils {
 
-    private BlobTestUtils() {
-    }
+    private BlobTestUtils() {}
 
     public static Properties getAzuriteProperties() {
         return TestSupport.loadExternalPropertiesQuietly(BlobTestUtils.class, "azurite.properties");

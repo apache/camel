@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,12 +34,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.component.leveldb.LevelDBAggregationRepository.keyBuilder;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateNotLostTest extends LevelDBTestSupport {
 
     @Override
@@ -54,7 +55,8 @@ public class LevelDBAggregateNotLostTest extends LevelDBTestSupport {
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        final List<Exchange> receivedExchanges = Awaitility.await().atMost(1, TimeUnit.SECONDS)
+        final List<Exchange> receivedExchanges = Awaitility.await()
+                .atMost(1, TimeUnit.SECONDS)
                 .until(() -> getMockEndpoint("mock:aggregated").getReceivedExchanges(), Matchers.notNullValue());
 
         String exchangeId = receivedExchanges.get(0).getExchangeId();
@@ -85,12 +87,13 @@ public class LevelDBAggregateNotLostTest extends LevelDBTestSupport {
             public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
-                            .completionSize(5).aggregationRepository(getRepo())
-                            .log("aggregated exchange id ${exchangeId} with ${body}")
-                            .to("mock:aggregated")
-                            // throw an exception to fail, which we then will loose this message
-                            .throwException(new IllegalArgumentException("Damn"))
-                            .to("mock:result")
+                        .completionSize(5)
+                        .aggregationRepository(getRepo())
+                        .log("aggregated exchange id ${exchangeId} with ${body}")
+                        .to("mock:aggregated")
+                        // throw an exception to fail, which we then will loose this message
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .to("mock:result")
                         .end();
             }
         };

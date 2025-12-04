@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos;
 
 import java.util.Map;
@@ -48,8 +49,8 @@ public class IBMCOSComponent extends HealthCheckComponent {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
 
-        final IBMCOSConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new IBMCOSConfiguration();
+        final IBMCOSConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new IBMCOSConfiguration();
         configuration.setBucketName(remaining);
         IBMCOSEndpoint endpoint = new IBMCOSEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

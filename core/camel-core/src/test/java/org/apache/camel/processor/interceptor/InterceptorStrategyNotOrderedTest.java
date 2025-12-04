@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.CamelContext;
@@ -68,7 +69,6 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
             };
             return answer;
         }
-
     }
 
     private static class BarInterceptStrategy implements InterceptStrategy {
@@ -87,6 +87,5 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
             };
             return answer;
         }
-
     }
 }

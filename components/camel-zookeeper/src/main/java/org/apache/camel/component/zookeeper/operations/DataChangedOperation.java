@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
 import org.apache.zookeeper.Watcher.Event.EventType;
@@ -27,7 +28,7 @@ import org.apache.zookeeper.data.Stat;
 @SuppressWarnings("rawtypes")
 public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
 
-    protected static final Class[] CONSTRUCTOR_ARGS = { ZooKeeper.class, String.class, boolean.class, boolean.class };
+    protected static final Class[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class, boolean.class, boolean.class};
 
     private boolean getChangedData;
     private boolean sendEmptyMessageOnDelete;
@@ -36,7 +37,8 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
         this(connection, znode, getChangedData, false);
     }
 
-    public DataChangedOperation(ZooKeeper connection, String znode, boolean getChangedData, boolean sendEmptyMessageOnDelete) {
+    public DataChangedOperation(
+            ZooKeeper connection, String znode, boolean getChangedData, boolean sendEmptyMessageOnDelete) {
         super(connection, znode, EventType.NodeDataChanged, EventType.NodeDeleted);
         this.getChangedData = getChangedData;
         this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
@@ -44,8 +46,7 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
 
     @Override
     protected void installWatch() {
-        connection.getData(getNode(), this, (int rc, String path, Object ctx, byte[] data, Stat stat) -> {
-        }, null);
+        connection.getData(getNode(), this, (int rc, String path, Object ctx, byte[] data, Stat stat) -> {}, null);
     }
 
     @Override
@@ -63,7 +64,8 @@ public class DataChangedOperation extends FutureEventDrivenOperation<byte[]> {
 
     @Override
     public ZooKeeperOperation<?> createCopy() throws Exception {
-        return getClass().getConstructor(CONSTRUCTOR_ARGS)
+        return getClass()
+                .getConstructor(CONSTRUCTOR_ARGS)
                 .newInstance(connection, node, getChangedData, sendEmptyMessageOnDelete);
     }
 }

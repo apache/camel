@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JpaProducerPreserveHeadersTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -42,7 +43,11 @@ public class JpaProducerPreserveHeadersTest extends AbstractJpaTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        SendEmail se = (SendEmail) mock.getReceivedExchanges().get(0).getMessage().getBody(List.class).get(0);
+        SendEmail se = (SendEmail) mock.getReceivedExchanges()
+                .get(0)
+                .getMessage()
+                .getBody(List.class)
+                .get(0);
         assertEquals("foo@beer.org", se.getAddress());
     }
 
@@ -66,5 +71,4 @@ public class JpaProducerPreserveHeadersTest extends AbstractJpaTest {
     protected String selectAllString() {
         return SELECT_ALL_STRING;
     }
-
 }

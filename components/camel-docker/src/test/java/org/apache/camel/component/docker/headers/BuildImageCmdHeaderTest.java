@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
 
 import java.io.File;
 import java.io.InputStream;
@@ -28,8 +31,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Validates Build Image Request headers are parsed properly
@@ -66,7 +67,6 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         Mockito.verify(mockObject, Mockito.times(1)).withNoCache(noCache);
         Mockito.verify(mockObject, Mockito.times(1)).withRemove(remove);
         Mockito.verify(mockObject, Mockito.times(1)).withTags(Collections.singleton(tag));
-
     }
 
     @Test
@@ -81,12 +81,10 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         Mockito.verify(mockObject, Mockito.times(1)).withNoCache(noCache);
         Mockito.verify(mockObject, Mockito.times(1)).withRemove(remove);
         Mockito.verify(mockObject, Mockito.times(1)).withTags(Collections.singleton(tag));
-
     }
 
     @Override
-    protected void setupMocks() {
-    }
+    protected void setupMocks() {}
 
     @Override
     protected DockerOperation getOperation() {
@@ -103,5 +101,4 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
 
         return headers;
     }
-
 }

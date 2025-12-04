@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.nio.charset.Charset;
@@ -49,9 +50,11 @@ class HL7MLLPNettyDecoder extends DelimiterBasedFrameDecoder {
      * @throws java.lang.NullPointerException is config is null
      */
     HL7MLLPNettyDecoder(HL7MLLPConfig config) {
-        super(MAX_FRAME_LENGTH, true, Unpooled.copiedBuffer(
-                new char[] { config.getEndByte1(), config.getEndByte2() },
-                Charset.defaultCharset()));
+        super(
+                MAX_FRAME_LENGTH,
+                true,
+                Unpooled.copiedBuffer(
+                        new char[] {config.getEndByte1(), config.getEndByte2()}, Charset.defaultCharset()));
         this.config = config;
     }
 

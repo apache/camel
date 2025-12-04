@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.proxy;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
@@ -24,12 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpClientProxyTest extends BaseJettyTest {
 
@@ -81,7 +82,8 @@ public class HttpClientProxyTest extends BaseJettyTest {
             public void configure() {
                 from("direct:cool").to("http://localhost:{{port}}/myapp/myservice");
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false").bean(MyCoolServiceBean.class);
+                from("jetty:http://localhost:{{port}}/myapp/myservice?muteException=false")
+                        .bean(MyCoolServiceBean.class);
             }
         };
     }

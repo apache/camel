@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.io.BufferedOutputStream;
@@ -127,7 +128,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     private static final List<String> SIGNATURE_VERIFICATION_OPTIONS = Arrays.asList(
             SIGNATURE_VERIFICATION_OPTION_OPTIONAL,
-            SIGNATURE_VERIFICATION_OPTION_REQUIRED, SIGNATURE_VERIFICATION_OPTION_IGNORE,
+            SIGNATURE_VERIFICATION_OPTION_REQUIRED,
+            SIGNATURE_VERIFICATION_OPTION_IGNORE,
             SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
     private static final String BC = "BC";
@@ -142,13 +144,14 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     // encryption / decryption key info (required)
     private String keyUserid; // only for encryption
-    //in addition you can specify further User IDs, in this case the symmetric key is encrypted by several public keys corresponding to the User Ids
-    private List<String> keyUserids; //only for encryption;
+    // in addition you can specify further User IDs, in this case the symmetric key is encrypted by several public keys
+    // corresponding to the User Ids
+    private List<String> keyUserids; // only for encryption;
 
     // signature / verification key info (optional)
     private String signatureKeyUserid; // for signing and verification (optional for verification)
-    //For verification you can specify further User IDs in addition
-    private List<String> signatureKeyUserids; //only for signing with several keys and verifying;
+    // For verification you can specify further User IDs in addition
+    private List<String> signatureKeyUserids; // only for signing with several keys and verifying;
 
     private boolean armored; // for encryption
     private boolean integrity = true; // for encryption
@@ -170,8 +173,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
      */
     private String fileName = PGPLiteralData.CONSOLE;
 
-    public PGPKeyAccessDataFormat() {
-    }
+    public PGPKeyAccessDataFormat() {}
 
     @Override
     public String getDataFormatName() {
@@ -213,13 +215,13 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception { //NOPMD
+    public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception { // NOPMD
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
         if (keys.isEmpty()) {
             throw new IllegalArgumentException(
                     "Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
-                                               + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
+                            + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
         }
         exchange.getOut().setHeader(NUMBER_OF_ENCRYPTION_KEYS, Integer.valueOf(keys.size()));
 
@@ -229,9 +231,11 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
-                new JcePGPDataEncryptorBuilder(findAlgorithm(exchange))
-                        .setWithIntegrityPacket(integrity).setSecureRandom(new SecureRandom()).setProvider(getProvider()));
+        PGPEncryptedDataGenerator encGen =
+                new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(findAlgorithm(exchange))
+                        .setWithIntegrityPacket(integrity)
+                        .setSecureRandom(new SecureRandom())
+                        .setProvider(getProvider()));
         // several keys can be added
         for (PGPPublicKey key : keys) {
             encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
@@ -322,30 +326,35 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return result;
     }
 
-    protected List<PGPSignatureGenerator> createSignatureGenerator(Exchange exchange, OutputStream out) throws Exception { //NOPMD
+    protected List<PGPSignatureGenerator> createSignatureGenerator(Exchange exchange, OutputStream out)
+            throws Exception { // NOPMD
 
         if (secretKeyAccessor == null) {
             return null;
         }
 
         List<String> sigKeyUserids = determineSignaturenUserIds(exchange);
-        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId
-                = secretKeyAccessor.getSignerKeys(exchange,
-                        sigKeyUserids);
+        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId =
+                secretKeyAccessor.getSignerKeys(exchange, sigKeyUserids);
         if (sigSecretKeysWithPrivateKeyAndUserId.isEmpty()) {
             return null;
         }
 
-        exchange.getOut().setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
+        exchange.getOut()
+                .setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
 
         List<PGPSignatureGenerator> sigGens = new ArrayList<>();
-        for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId : sigSecretKeysWithPrivateKeyAndUserId) {
+        for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId :
+                sigSecretKeysWithPrivateKeyAndUserId) {
             PGPPrivateKey sigPrivateKey = sigSecretKeyWithPrivateKeyAndUserId.getPrivateKey();
 
             PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
             spGen.setSignerUserID(false, sigSecretKeyWithPrivateKeyAndUserId.getUserId());
 
-            int algorithm = sigSecretKeyWithPrivateKeyAndUserId.getSecretKey().getPublicKey().getAlgorithm();
+            int algorithm = sigSecretKeyWithPrivateKeyAndUserId
+                    .getSecretKey()
+                    .getPublicKey()
+                    .getAlgorithm();
             PGPSignatureGenerator sigGen = new PGPSignatureGenerator(
                     new JcaPGPContentSignerBuilder(algorithm, findHashAlgorithm(exchange)).setProvider(getProvider()));
             sigGen.init(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
@@ -357,7 +366,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { //NOPMD
+    public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { // NOPMD
         if (encryptedStream == null) {
             return null;
         }
@@ -452,15 +461,18 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             }
         }
         if (key == null) {
-            throw new PGPException("PGP message is encrypted with a key which could not be found in the Secret Keyring.");
+            throw new PGPException(
+                    "PGP message is encrypted with a key which could not be found in the Secret Keyring.");
         }
 
-        InputStream encData
-                = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
+        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder()
+                .setProvider(getProvider())
+                .build(key));
         return new DecryptedDataAndPPublicKeyEncryptedData(encData, pbe);
     }
 
-    private PGPEncryptedDataList getEcryptedDataList(PGPObjectFactory pgpFactory, Object firstObject) throws IOException {
+    private PGPEncryptedDataList getEcryptedDataList(PGPObjectFactory pgpFactory, Object firstObject)
+            throws IOException {
         PGPEncryptedDataList enc;
         if (firstObject instanceof PGPEncryptedDataList) {
             enc = (PGPEncryptedDataList) firstObject;
@@ -480,9 +492,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         if (signature != null) {
             PGPSignatureList sigList = (PGPSignatureList) pgpFactory.nextObject();
             if (!signature.verify(getSignatureWithKeyId(signature.getKeyID(), sigList))) {
-                throw new SignatureException(
-                        "Verification of the PGP signature with the key ID " + signature.getKeyID()
-                                             + " failed. The PGP message may have been tampered.");
+                throw new SignatureException("Verification of the PGP signature with the key ID " + signature.getKeyID()
+                        + " failed. The PGP message may have been tampered.");
             }
         }
     }
@@ -490,9 +501,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private IllegalArgumentException getFormatException() {
         return new IllegalArgumentException(
                 "The input message body has an invalid format. The PGP decryption/verification processor expects a sequence of PGP packets of the form "
-                                            + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
-                                            + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, (Compressed Data,) (One Pass Signature ...,) "
-                                            + "Literal Data, (Signature ...,)");
+                        + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
+                        + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, (Compressed Data,) (One Pass Signature ...,) "
+                        + "Literal Data, (Signature ...,)");
     }
 
     protected PGPSignature getSignatureWithKeyId(long keyID, PGPSignatureList sigList) {
@@ -505,7 +516,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         throw new IllegalStateException("PGP signature is inconsistent");
     }
 
-    protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList) throws Exception {
+    protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList)
+            throws Exception {
         if (SIGNATURE_VERIFICATION_OPTION_IGNORE.equals(getSignatureVerificationOption())) {
             return null;
         }
@@ -530,9 +542,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         } else {
             throw new IllegalArgumentException(
                     "Cannot verify the PGP signature: No public key found for the key ID(s) contained in the PGP signature(s). "
-                                               + "Either the received PGP message contains a signature from an unexpected sender or the Public Keyring does not contain the public key of the sender.");
+                            + "Either the received PGP message contains a signature from an unexpected sender or the Public Keyring does not contain the public key of the sender.");
         }
-
     }
 
     /**
@@ -719,7 +730,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         if (SIGNATURE_VERIFICATION_OPTIONS.contains(signatureVerificationOption)) {
             this.signatureVerificationOption = signatureVerificationOption;
         } else {
-            throw new IllegalArgumentException(signatureVerificationOption + " is not a valid signature verification option");
+            throw new IllegalArgumentException(
+                    signatureVerificationOption + " is not a valid signature verification option");
         }
     }
 
@@ -750,7 +762,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @Override
-    protected void doStart() throws Exception { //NOPMD
+    protected void doStart() throws Exception { // NOPMD
         if (Security.getProvider(BC) == null && BC.equals(getProvider())) {
             LOG.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
@@ -760,7 +772,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     @Override
-    protected void doStop() throws Exception { //NOPMD
+    protected void doStop() throws Exception { // NOPMD
         // noop
     }
 
@@ -782,6 +794,5 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         public PGPPublicKeyEncryptedData getPbe() {
             return pbe;
         }
-
     }
 }

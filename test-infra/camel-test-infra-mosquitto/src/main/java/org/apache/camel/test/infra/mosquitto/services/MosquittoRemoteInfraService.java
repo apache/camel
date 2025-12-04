@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.mosquitto.services;
 
 import org.apache.camel.test.infra.mosquitto.common.MosquittoProperties;
 
 public class MosquittoRemoteInfraService implements MosquittoInfraService {
 
-    public MosquittoRemoteInfraService() {
-    }
+    public MosquittoRemoteInfraService() {}
 
     public MosquittoRemoteInfraService(int port) {
         System.setProperty(MosquittoProperties.PORT, String.valueOf(port));

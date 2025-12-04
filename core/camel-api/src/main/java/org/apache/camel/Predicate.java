@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -39,8 +40,7 @@ public interface Predicate {
      *
      * @param context the camel context
      */
-    default void init(CamelContext context) {
-    }
+    default void init(CamelContext context) {}
 
     /**
      * Initialize as a predicate with the given camel context
@@ -50,5 +50,4 @@ public interface Predicate {
     default void initPredicate(CamelContext context) {
         init(context);
     }
-
 }

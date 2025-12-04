@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Use this class to run tests against a local basic Kudu server. This local kudu server is spinned up by
  * https://kudu.apache.org/docs/developing.html#_using_the_kudu_binary_test_jar
@@ -39,8 +40,7 @@ public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEa
     private final Internal internal = new Internal();
     private boolean hasKuduHarness;
 
-    public IntegrationKuduConfiguration() {
-    }
+    public IntegrationKuduConfiguration() {}
 
     public KuduClient getClient() {
         return internal.getClient();
@@ -100,8 +100,8 @@ public class IntegrationKuduConfiguration implements BeforeEachCallback, AfterEa
             try {
                 super.after();
             } catch (java.lang.IllegalStateException e) {
-                //Camel already closed the client so an exception will be thrown
-                //no need to worry
+                // Camel already closed the client so an exception will be thrown
+                // no need to worry
             }
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.customresources;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
@@ -24,7 +25,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesCustomResourcesComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesCustomResourcesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+    protected KubernetesCustomResourcesEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config) {
         return new KubernetesCustomResourcesEndpoint(uri, this, config);
     }
 }

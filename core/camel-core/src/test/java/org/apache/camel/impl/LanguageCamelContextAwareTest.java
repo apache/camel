@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -24,8 +27,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -73,6 +74,5 @@ public class LanguageCamelContextAwareTest extends ContextTestSupport {
         public Expression createExpression(String expression) {
             return null;
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar.stream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -21,8 +22,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
-           disabledReason = "Google Calendar credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+        disabledReason = "Google Calendar credentials were not provided")
 public class GoogleCalendarStreamConsumerIT extends AbstractGoogleCalendarStreamTestSupport {
 
     @Test
@@ -41,7 +43,6 @@ public class GoogleCalendarStreamConsumerIT extends AbstractGoogleCalendarStream
             public void configure() {
 
                 from("google-calendar-stream://test?delay=5000&maxResults=5").to("mock:result");
-
             }
         };
     }

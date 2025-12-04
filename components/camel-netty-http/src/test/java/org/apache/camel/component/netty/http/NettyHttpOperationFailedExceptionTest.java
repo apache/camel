@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import io.netty.handler.codec.http.DefaultLastHttpContent;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
+import io.netty.handler.codec.http.DefaultLastHttpContent;
+import org.junit.jupiter.api.Test;
+
 public class NettyHttpOperationFailedExceptionTest {
 
     @Test
     public void testUriIsSanitized() {
-        NettyHttpOperationFailedException nettyHttpOperationFailedException
-                = new NettyHttpOperationFailedException("http://user:password@host", 500, "", "", new DefaultLastHttpContent());
+        NettyHttpOperationFailedException nettyHttpOperationFailedException = new NettyHttpOperationFailedException(
+                "http://user:password@host", 500, "", "", new DefaultLastHttpContent());
 
         assertThat(nettyHttpOperationFailedException.getMessage(), not(containsString("password")));
         assertThat(nettyHttpOperationFailedException.getUri(), not(containsString("password")));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
@@ -21,7 +22,6 @@ import org.apache.camel.Message;
 import org.jsmpp.session.SMPPSession;
 
 public enum SmppCommandType {
-
     SUBMIT_SM("SubmitSm") {
         @Override
         public SmppSubmitSmCommand createCommand(SMPPSession session, SmppConfiguration config) {

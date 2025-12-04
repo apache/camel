@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 import java.net.URISyntaxException;
@@ -49,7 +50,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private final Map<String, Expression> cacheExpression;
     private final boolean skipFileFunctions;
 
-    public SimpleFunctionExpression(SimpleToken token, Map<String, Expression> cacheExpression, boolean skipFileFunctions) {
+    public SimpleFunctionExpression(
+            SimpleToken token, Map<String, Expression> cacheExpression, boolean skipFileFunctions) {
         super(token);
         this.cacheExpression = cacheExpression;
         this.skipFileFunctions = skipFileFunctions;
@@ -111,7 +113,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
             }
             return SimpleExpressionBuilder.camelContextOgnlExpression(remainder);
         }
@@ -141,7 +144,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // validate syntax
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${exchangeProperty.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangeProperty.OGNL} was: " + function, token.getIndex());
             }
 
             if (OgnlHelper.isValidOgnlExpression(remainder)) {
@@ -226,7 +230,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String[] parts = remainder.split(":", 3);
             if (parts.length < 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
+                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function,
+                        token.getIndex());
             }
             return SimpleExpressionBuilder.dateExpression(parts[0], parts[1], parts[2]);
         }
@@ -251,11 +256,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
-                //first check case :: because of my.own.Bean::method
+                // first check case :: because of my.own.Bean::method
                 int doubleColonIndex = remainder.indexOf("::");
-                //need to check that not inside params
+                // need to check that not inside params
                 int beginOfParameterDeclaration = remainder.indexOf('(');
-                if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                if (doubleColonIndex > 0
+                        && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                     ref = remainder.substring(0, doubleColonIndex);
                     method = remainder.substring(doubleColonIndex + 2);
                 } else {
@@ -291,7 +297,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${propertiesExist:key} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${propertiesExist:key} was: " + function, token.getIndex());
             }
             String key = parts[0];
             boolean negate = key != null && key.startsWith("!");
@@ -306,7 +313,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
             }
             String defaultValue = null;
             if (parts.length >= 2) {
@@ -380,7 +388,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (ObjectHelper.isNotEmpty(remainder)) {
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
-                    throw new SimpleParserException("Valid syntax: ${messageAs(type).OGNL} was: " + function, token.getIndex());
+                    throw new SimpleParserException(
+                            "Valid syntax: ${messageAs(type).OGNL} was: " + function, token.getIndex());
                 }
                 return SimpleExpressionBuilder.messageOgnlExpression(type, remainder);
             } else {
@@ -404,7 +413,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (ObjectHelper.isNotEmpty(remainder)) {
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
-                    throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
+                    throw new SimpleParserException(
+                            "Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
                 return SimpleExpressionBuilder.bodyOgnlExpression(type, remainder);
             } else {
@@ -416,7 +426,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String type = StringHelper.before(remainder, ")");
             if (type == null) {
-                throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
             }
             type = StringHelper.removeQuotes(type);
             remainder = StringHelper.after(remainder, ")");
@@ -452,14 +463,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String keyAndType = StringHelper.before(remainder, ")");
             if (keyAndType == null) {
-                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             }
 
             String key = StringHelper.before(keyAndType, ",");
             String type = StringHelper.after(keyAndType, ",");
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {
-                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             }
             key = StringHelper.removeQuotes(key);
             type = StringHelper.removeQuotes(type);
@@ -469,8 +482,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // headers function
         if ("in.headers".equals(function) || "headers".equals(function)) {
             return ExpressionBuilder.headersExpression();
-        } else if ("headers.size".equals(function) || "headers.size()".equals(function)
-                || "headers.length".equals(function) || "headers.length()".equals(function)) {
+        } else if ("headers.size".equals(function)
+                || "headers.size()".equals(function)
+                || "headers.length".equals(function)
+                || "headers.length()".equals(function)) {
             return ExpressionBuilder.headersSizeExpression();
         }
 
@@ -512,14 +527,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String keyAndType = StringHelper.before(remainder, ")");
             if (keyAndType == null) {
-                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
             }
 
             String key = StringHelper.before(keyAndType, ",");
             String type = StringHelper.after(keyAndType, ",");
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {
-                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
             }
             key = StringHelper.removeQuotes(key);
             type = StringHelper.removeQuotes(type);
@@ -529,8 +546,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // variables function
         if ("variables".equals(function)) {
             return ExpressionBuilder.variablesExpression();
-        } else if ("variables.size".equals(function) || "variables.size()".equals(function)
-                || "variables.length".equals(function) || "variables.length()".equals(function)) {
+        } else if ("variables.size".equals(function)
+                || "variables.size()".equals(function)
+                || "variables.length".equals(function)
+                || "variables.length()".equals(function)) {
             return ExpressionBuilder.variablesSizeExpression();
         }
 
@@ -551,7 +570,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // validate syntax
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${variable.name[key]} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${variable.name[key]} was: " + function, token.getIndex());
             }
 
             if (OgnlHelper.isValidOgnlExpression(key)) {
@@ -575,7 +595,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${jq(exp)} was: " + function, token.getIndex());
             }
             exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+            if (exp.startsWith("header:")
+                    || exp.startsWith("property:")
+                    || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
@@ -597,7 +619,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${jsonpath(exp)} was: " + function, token.getIndex());
             }
             exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+            if (exp.startsWith("header:")
+                    || exp.startsWith("property:")
+                    || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
@@ -618,7 +642,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${xpath(exp)} was: " + function, token.getIndex());
             }
             exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+            if (exp.startsWith("header:")
+                    || exp.startsWith("property:")
+                    || exp.startsWith("exchangeProperty:")
                     || exp.startsWith("variable:")) {
                 String input = StringHelper.before(exp, ",");
                 exp = StringHelper.after(exp, ",");
@@ -757,7 +783,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substring(num)}, ${substring(num,num)}, or ${substring(num,num,expression)} was: "
-                                                + function,
+                                + function,
                         token.getIndex());
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
@@ -884,7 +910,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 String[] tokens = values.split(",", 2);
                 if (tokens.length > 2) {
                     throw new SimpleParserException(
-                            "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
+                            "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function,
+                            token.getIndex());
                 }
                 return SimpleExpressionBuilder.hashExpression(tokens[0].trim(), tokens[1].trim());
             } else {
@@ -908,12 +935,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function,
+                        token.getIndex());
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
             if (tokens.length > 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function,
+                        token.getIndex());
             }
             return SimpleExpressionBuilder.iifExpression(tokens[0].trim(), tokens[1].trim(), tokens[2].trim());
         }
@@ -995,7 +1024,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
             }
             return "context" + ognlCodeMethods(remainder, null);
         }
@@ -1010,7 +1040,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             type = type.trim();
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (type.isEmpty() || invalid) {
-                throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
             return "exceptionAs(exchange, " + type + ")" + ognlCodeMethods(remainder, type);
         }
@@ -1020,7 +1051,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
             return "exception(exchange)" + ognlCodeMethods(remainder, null);
         }
@@ -1077,7 +1109,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String[] parts = remainder.split(":", 3);
             if (parts.length < 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
+                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function,
+                        token.getIndex());
             }
             return "date(exchange, \"" + parts[0] + "\", \"" + parts[1] + "\", \"" + parts[2] + "\")";
         }
@@ -1101,11 +1134,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
-                //first check case :: because of my.own.Bean::method
+                // first check case :: because of my.own.Bean::method
                 int doubleColonIndex = remainder.indexOf("::");
-                //need to check that not inside params
+                // need to check that not inside params
                 int beginOfParameterDeclaration = remainder.indexOf('(');
-                if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                if (doubleColonIndex > 0
+                        && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                     ref = remainder.substring(0, doubleColonIndex);
                     method = remainder.substring(doubleColonIndex + 2);
                 } else {
@@ -1131,7 +1165,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length > 2) {
-                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
             }
             String defaultValue = null;
             if (parts.length >= 2) {
@@ -1278,7 +1313,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (ObjectHelper.isNotEmpty(remainder)) {
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
-                    throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
+                    throw new SimpleParserException(
+                            "Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
                 if (remainder.startsWith("[")) {
                     // is there any index, then we should use bodyAsIndex function instead
@@ -1324,9 +1360,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
                     throw new SimpleParserException(
-                            "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+                            "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function,
+                            token.getIndex());
                 }
-                return "mandatoryBodyAsIndex(message, " + type + ", \"" + index + "\")" + ognlCodeMethods(remainder, type);
+                return "mandatoryBodyAsIndex(message, " + type + ", \"" + index + "\")"
+                        + ognlCodeMethods(remainder, type);
             } else {
                 return "mandatoryBodyAsIndex(message, " + type + ", \"" + index + "\")";
             }
@@ -1337,7 +1375,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String type = StringHelper.before(remainder, ")");
             if (type == null) {
-                throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
             }
             type = appendClass(type);
             type = type.replace('$', '.');
@@ -1435,7 +1474,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                             "Valid syntax: ${headerAsIndex(key, type, index).OGNL} was: " + function, token.getIndex());
                 }
                 return "headerAsIndex(message, " + type + ", \"" + key + "\", \"" + index + "\")"
-                       + ognlCodeMethods(remainder, type);
+                        + ognlCodeMethods(remainder, type);
             } else {
                 return "headerAsIndex(message, " + type + ", \"" + key + "\", \"" + index + "\")";
             }
@@ -1446,14 +1485,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String keyAndType = StringHelper.before(remainder, ")");
             if (keyAndType == null) {
-                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             }
 
             String key = StringHelper.before(keyAndType, ",");
             String type = StringHelper.after(keyAndType, ",");
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
-                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
@@ -1466,8 +1507,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // headers function
         if ("in.headers".equals(function) || "headers".equals(function)) {
             return "message.getHeaders()";
-        } else if ("headers.size".equals(function) || "headers.size()".equals(function)
-                || "headers.length".equals(function) || "headers.length()".equals(function)) {
+        } else if ("headers.size".equals(function)
+                || "headers.size()".equals(function)
+                || "headers.length".equals(function)
+                || "headers.length()".equals(function)) {
             return "message.getHeaders().size()";
         }
 
@@ -1521,7 +1564,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return createCodeHeader(func);
             } else if (OgnlHelper.isValidOgnlExpression(key)) {
                 // ognl based header must be typed
-                throw new SimpleParserException("Valid syntax: ${headerAs(key, type).OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAs(key, type).OGNL} was: " + function, token.getIndex());
             } else {
                 // regular header
                 return "header(message, \"" + key + "\")";
@@ -1561,7 +1605,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String keyAndType = StringHelper.before(remainder, ")");
             if (keyAndType == null) {
-                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${variableAs(key, type)} was: " + function, token.getIndex());
             }
             String key = StringHelper.before(keyAndType, ",");
             String type = StringHelper.after(keyAndType, ",");
@@ -1581,8 +1626,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // variables function
         if ("variables".equals(function)) {
             return "variables(exchange)";
-        } else if ("variables.size".equals(function) || "variables.size()".equals(function)
-                || "variables.length".equals(function) || "variables.length()".equals(function)) {
+        } else if ("variables.size".equals(function)
+                || "variables.size()".equals(function)
+                || "variables.length".equals(function)
+                || "variables.length()".equals(function)) {
             return "variablesSize(exchange)";
         }
 
@@ -1639,19 +1686,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String keyTypeAndIndex = StringHelper.before(remainder, ")");
             if (keyTypeAndIndex == null) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function, token.getIndex());
+                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function,
+                        token.getIndex());
             }
             String[] parts = keyTypeAndIndex.split(",");
             if (parts.length != 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function, token.getIndex());
+                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function,
+                        token.getIndex());
             }
             String key = parts[0];
             String type = parts[1];
             String index = parts[2];
             if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(index)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function, token.getIndex());
+                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function,
+                        token.getIndex());
             }
             key = StringHelper.removeQuotes(key);
             key = key.trim();
@@ -1669,7 +1719,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                             token.getIndex());
                 }
                 return "exchangePropertyAsIndex(exchange, " + type + ", \"" + key + "\", \"" + index + "\")"
-                       + ognlCodeMethods(remainder, type);
+                        + ognlCodeMethods(remainder, type);
             } else {
                 return "exchangePropertyAsIndex(exchange, " + type + ", \"" + key + "\", \"" + index + "\")";
             }
@@ -1809,9 +1859,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${substring(num)}, ${substring(num,num)} was: "
-                                                + function,
-                        token.getIndex());
+                        "Valid syntax: ${substring(num)}, ${substring(num,num)} was: " + function, token.getIndex());
             }
             String[] tokens = codeSplitSafe(values, ',', true, true);
             if (tokens.length > 2) {
@@ -1855,14 +1903,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${replace(from,to)} was: " + function,
-                        token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${replace(from,to)} was: " + function, token.getIndex());
             }
             String[] tokens = codeSplitSafe(values, ',', true, false);
             if (tokens.length > 2) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${replace(from,to)} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${replace(from,to)} was: " + function, token.getIndex());
             }
             String from = StringHelper.xmlDecode(tokens[0]);
             String to = StringHelper.xmlDecode(tokens[1]);
@@ -2071,7 +2116,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 sb.append("return uuid.generateUuid();");
             } else {
                 generator = StringQuoteHelper.doubleQuote(generator);
-                sb.append("if (uuid == null) uuid = customUuidGenerator(exchange, ").append(generator)
+                sb.append("if (uuid == null) uuid = customUuidGenerator(exchange, ")
+                        .append(generator)
                         .append("); return uuid.generateUuid();");
             }
             return sb.toString();
@@ -2083,12 +2129,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function,
+                        token.getIndex());
             }
             String[] tokens = codeSplitSafe(values, ',', true, true);
             if (tokens.length != 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function, token.getIndex());
+                        "Valid syntax: ${iif(predicate,trueExpression,falseExpression)} was: " + function,
+                        token.getIndex());
             }
             // single quotes should be double quotes
             for (int i = 0; i < 3; i++) {
@@ -2101,8 +2149,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
 
             return "Object o = " + tokens[0]
-                   + ";\n        boolean b = convertTo(exchange, boolean.class, o);\n        return b ? "
-                   + tokens[1] + " : " + tokens[2];
+                    + ";\n        boolean b = convertTo(exchange, boolean.class, o);\n        return b ? "
+                    + tokens[1] + " : " + tokens[2];
         }
 
         return null;
@@ -2232,7 +2280,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 }
             }
             // no separator in data, so return single string with input as is
-            return new String[] { input };
+            return new String[] {input};
         }
 
         List<String> answer = new ArrayList<>();
@@ -2357,5 +2405,4 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
         return answer.toArray(new String[0]);
     }
-
 }

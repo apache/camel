@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.AsyncCallback;
@@ -71,5 +72,4 @@ public class ReactiveStreamsProducer extends DefaultAsyncProducer {
     public ReactiveStreamsEndpoint getEndpoint() {
         return endpoint;
     }
-
 }

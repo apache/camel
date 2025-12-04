@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dummy;
 
 import java.util.Map;
@@ -25,8 +26,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("dummy")
 public class DummyComponent extends DefaultComponent {
 
-    public DummyComponent() {
-    }
+    public DummyComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

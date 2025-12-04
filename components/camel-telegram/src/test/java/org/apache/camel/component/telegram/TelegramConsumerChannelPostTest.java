@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.Instant;
 
@@ -29,9 +33,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -53,7 +54,7 @@ public class TelegramConsumerChannelPostTest extends TelegramTestSupport {
 
         assertEquals("-1001245756934", mediaExchange.getIn().getHeader(TelegramConstants.TELEGRAM_CHAT_ID));
 
-        //checking body
+        // checking body
         assertNotNull(msg);
         assertEquals("test", msg.getText());
         assertEquals(Long.valueOf(67L), msg.getMessageId());
@@ -65,20 +66,19 @@ public class TelegramConsumerChannelPostTest extends TelegramTestSupport {
         assertEquals("-1001245756934", chat.getId());
         assertEquals("cameltemp", chat.getTitle());
         assertEquals("channel", chat.getType());
-
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override

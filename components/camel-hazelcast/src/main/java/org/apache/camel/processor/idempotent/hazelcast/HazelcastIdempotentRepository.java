@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.hazelcast;
 
 import com.hazelcast.config.Config;
@@ -27,9 +28,10 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses Hazelcast cache to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses Hazelcast cache to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
@@ -37,7 +39,9 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
 
     @Metadata(description = "Name of cache to use", defaultValue = "HazelcastIdempotentRepository")
     private String repositoryName;
+
     private IMap<String, Boolean> repo;
+
     @Metadata(description = "To use an existing Hazelcast instance instead of local")
     private HazelcastInstance hazelcastInstance;
 

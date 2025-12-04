@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.io.IOException;
@@ -196,20 +197,15 @@ public final class ServiceNowClient {
                         model.getError().get("message"),
                         model.getError().get("detail"));
             default:
-                throw new ServiceNowException(
-                        code,
-                        response.readEntity(Map.class));
+                throw new ServiceNowException(code, response.readEntity(Map.class));
         }
 
         return response;
     }
 
-    private static void configureRequestContext(
-            WebClient client) {
+    private static void configureRequestContext(WebClient client) {
 
-        WebClient.getConfig(client)
-                .getRequestContext()
-                .put("org.apache.cxf.http.header.split", true);
+        WebClient.getConfig(client).getRequestContext().put("org.apache.cxf.http.header.split", true);
     }
 
     private static void configureTls(
@@ -234,8 +230,7 @@ public final class ServiceNowClient {
         }
     }
 
-    private static void configureHttpClientPolicy(
-            ServiceNowConfiguration configuration, WebClient client) {
+    private static void configureHttpClientPolicy(ServiceNowConfiguration configuration, WebClient client) {
 
         HTTPClientPolicy httpPolicy = configuration.getHttpClientPolicy();
         if (httpPolicy == null) {
@@ -254,8 +249,7 @@ public final class ServiceNowClient {
         }
     }
 
-    private static void configureProxyAuthorizationPolicy(
-            ServiceNowConfiguration configuration, WebClient client) {
+    private static void configureProxyAuthorizationPolicy(ServiceNowConfiguration configuration, WebClient client) {
 
         ProxyAuthorizationPolicy proxyPolicy = configuration.getProxyAuthorizationPolicy();
         if (proxyPolicy == null) {

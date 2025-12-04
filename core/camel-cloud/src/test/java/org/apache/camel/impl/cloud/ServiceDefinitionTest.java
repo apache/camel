@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +28,14 @@ import java.util.List;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
 public class ServiceDefinitionTest {
     @Test
     public void testParse() {
         List<? extends ServiceDefinition> definitions = DefaultServiceDefinition.parse(
-                "svc1@host:2001,myId/svc1@host:2001").toList();
+                        "svc1@host:2001,myId/svc1@host:2001")
+                .toList();
 
         assertEquals(2, definitions.size());
 
@@ -51,51 +53,86 @@ public class ServiceDefinitionTest {
     @Test
     public void testMatch() {
         List<ServiceDefinition> definitions = new ArrayList<>();
-        definitions.add(
-                DefaultServiceDefinition.builder().withName("service-1").withHost("host-1.domain1.com").withPort(2001).build());
-        definitions.add(
-                DefaultServiceDefinition.builder().withName("service-2").withHost("host-2.domain1.com").withPort(2001).build());
-        definitions.add(
-                DefaultServiceDefinition.builder().withName("service-3").withHost("host-3.domain1.com").withPort(2001).build());
-        definitions.add(
-                DefaultServiceDefinition.builder().withName("service-4").withHost("host-3.domain2.com").withPort(2001).build());
+        definitions.add(DefaultServiceDefinition.builder()
+                .withName("service-1")
+                .withHost("host-1.domain1.com")
+                .withPort(2001)
+                .build());
+        definitions.add(DefaultServiceDefinition.builder()
+                .withName("service-2")
+                .withHost("host-2.domain1.com")
+                .withPort(2001)
+                .build());
+        definitions.add(DefaultServiceDefinition.builder()
+                .withName("service-3")
+                .withHost("host-3.domain1.com")
+                .withPort(2001)
+                .build());
+        definitions.add(DefaultServiceDefinition.builder()
+                .withName("service-4")
+                .withHost("host-3.domain2.com")
+                .withPort(2001)
+                .build());
 
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("*").withHost(".*\\.domain1\\.com").withPort(2001).build().matches(
-                        definitions.get(0)));
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("service-1").withHost("host-1.domain1.com").withPort(2001).build()
-                        .matches(
-                                definitions.get(0)));
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("service-.*").withHost("host-1.domain1.com").withPort(2001).build()
-                        .matches(
-                                definitions.get(0)));
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("service-.*").withHost("host-.*\\.domain.*\\.com").withPort(2001)
-                        .build().matches(
-                                definitions.get(0)));
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("service-.*").withHost("host-.*\\.domain.*\\.com").withPort(2001)
-                        .build().matches(
-                                definitions.get(1)));
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("service-.*").withHost("host-.*\\.domain.*\\.com").withPort(2001)
-                        .build().matches(
-                                definitions.get(2)));
-        assertTrue(
-                DefaultServiceDefinition.builder().withName("service-.*").withHost("host-.*\\.domain.*\\.com").withPort(2001)
-                        .build().matches(
-                                definitions.get(3)));
-        assertFalse(
-                DefaultServiceDefinition.builder().withName("service-.*").withHost("host-1.domain1.com").withPort(2001).build()
-                        .matches(
-                                definitions.get(3)));
-        assertFalse(
-                DefaultServiceDefinition.builder().withName("*").withHost(".*\\.domain1\\.com").withPort(2001).build().matches(
-                        definitions.get(3)));
-        assertFalse(
-                DefaultServiceDefinition.builder().withName("*").withHost(".*\\.domain1\\.com").withPort(2002).build().matches(
-                        definitions.get(3)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("*")
+                .withHost(".*\\.domain1\\.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(0)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("service-1")
+                .withHost("host-1.domain1.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(0)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("service-.*")
+                .withHost("host-1.domain1.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(0)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("service-.*")
+                .withHost("host-.*\\.domain.*\\.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(0)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("service-.*")
+                .withHost("host-.*\\.domain.*\\.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(1)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("service-.*")
+                .withHost("host-.*\\.domain.*\\.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(2)));
+        assertTrue(DefaultServiceDefinition.builder()
+                .withName("service-.*")
+                .withHost("host-.*\\.domain.*\\.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(3)));
+        assertFalse(DefaultServiceDefinition.builder()
+                .withName("service-.*")
+                .withHost("host-1.domain1.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(3)));
+        assertFalse(DefaultServiceDefinition.builder()
+                .withName("*")
+                .withHost(".*\\.domain1\\.com")
+                .withPort(2001)
+                .build()
+                .matches(definitions.get(3)));
+        assertFalse(DefaultServiceDefinition.builder()
+                .withName("*")
+                .withHost(".*\\.domain1\\.com")
+                .withPort(2002)
+                .build()
+                .matches(definitions.get(3)));
     }
 }

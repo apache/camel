@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 import java.util.Map;
@@ -70,7 +71,8 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private Expression doCreateLiteralExpression(CamelContext camelContext, String expression) {
-        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression, skipFileFunctions);
+        SimpleFunctionExpression function =
+                new SimpleFunctionExpression(this.getToken(), cacheExpression, skipFileFunctions);
         LiteralNode literal = (LiteralNode) block.getChildren().get(0);
         function.addText(literal.getText());
         return function.createExpression(camelContext, expression);
@@ -121,7 +123,8 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                 // we have now concat the block as a String which contains the function expression
                 // which we then need to evaluate as a function
                 String exp = sb.toString();
-                SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression, skipFileFunctions);
+                SimpleFunctionExpression function =
+                        new SimpleFunctionExpression(token, cacheExpression, skipFileFunctions);
                 function.addText(exp);
                 try {
                     return function.createExpression(camelContext, exp).evaluate(exchange, type);
@@ -141,8 +144,10 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     @Override
     public boolean acceptAndAddNode(SimpleNode node) {
         // only accept literals, quotes or embedded functions
-        if (node instanceof LiteralNode || node instanceof SimpleFunctionStart
-                || node instanceof SingleQuoteStart || node instanceof DoubleQuoteStart) {
+        if (node instanceof LiteralNode
+                || node instanceof SimpleFunctionStart
+                || node instanceof SingleQuoteStart
+                || node instanceof DoubleQuoteStart) {
             block.addChild(node);
             return true;
         } else {
@@ -163,7 +168,8 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private String doCreateLiteralCode(CamelContext camelContext, String expression) {
-        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression, skipFileFunctions);
+        SimpleFunctionExpression function =
+                new SimpleFunctionExpression(this.getToken(), cacheExpression, skipFileFunctions);
         LiteralNode literal = (LiteralNode) block.getChildren().get(0);
         function.addText(literal.getText());
         return function.createCode(camelContext, expression);
@@ -214,5 +220,4 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
         }
     }
-
 }

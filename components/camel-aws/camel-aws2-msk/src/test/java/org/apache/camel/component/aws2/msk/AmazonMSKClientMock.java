@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.msk;
 
 import java.util.ArrayList;
@@ -34,8 +35,7 @@ import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 
 public class AmazonMSKClientMock implements KafkaClient {
 
-    public AmazonMSKClientMock() {
-    }
+    public AmazonMSKClientMock() {}
 
     @Override
     public ListClustersResponse listClusters(ListClustersRequest request) {
@@ -85,6 +85,5 @@ public class AmazonMSKClientMock implements KafkaClient {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.text.NumberFormat;
@@ -69,8 +70,12 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         setGroupSize(groupSize);
     }
 
-    public ThroughputLogger(CamelLogger logger, CamelContext camelContext, Long groupInterval, Long groupDelay,
-                            Boolean groupActiveOnly) {
+    public ThroughputLogger(
+            CamelLogger logger,
+            CamelContext camelContext,
+            Long groupInterval,
+            Long groupDelay,
+            Boolean groupActiveOnly) {
         this(logger);
         this.camelContext = camelContext;
         setGroupInterval(groupInterval);
@@ -104,7 +109,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
     public void process(Exchange exchange) throws Exception {
         long receivedCount = receivedCounter.incrementAndGet();
 
-        //only process if groupSize is set...otherwise we're in groupInterval mode
+        // only process if groupSize is set...otherwise we're in groupInterval mode
         if (groupSize != null) {
             if (receivedCount % groupSize == 0) {
                 lastLogMessage = createLogMessage(exchange, receivedCount);
@@ -208,8 +213,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         if (groupInterval != null) {
             ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-            logSchedulerService
-                    = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
+            logSchedulerService =
+                    camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
             Runnable scheduledLogTask = new ScheduledLogTask();
             LOG.info("Scheduling throughput logger to run every {} millis.", groupInterval);
             // must use fixed rate to have it trigger at every X interval
@@ -233,8 +238,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         average = messagesPerSecond(receivedCount, testDuration);
 
         return getAction() + ": " + receivedCount + " messages so far. Last group took: " + groupDuration
-               + " millis which is: " + numberFormat.format(rate)
-               + " messages per second. average: " + numberFormat.format(average);
+                + " millis which is: " + numberFormat.format(rate)
+                + " messages per second. average: " + numberFormat.format(average);
     }
 
     /**
@@ -246,7 +251,8 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                LOG.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet",
+                LOG.trace(
+                        "ThroughputLogger cannot start because CamelContext({}) has not been started yet",
                         camelContext.getName());
                 return;
             }
@@ -272,9 +278,9 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         groupReceivedCount = receivedCount;
 
         lastLogMessage = getAction() + ": " + currentCount + " new messages, with total " + receivedCount
-                         + " so far. Last group took: " + groupDuration
-                         + " millis which is: " + numberFormat.format(rate)
-                         + " messages per second. average: " + numberFormat.format(average);
+                + " so far. Last group took: " + groupDuration
+                + " millis which is: " + numberFormat.format(rate)
+                + " messages per second. average: " + numberFormat.format(average);
         logger.log(lastLogMessage);
     }
 
@@ -283,5 +289,4 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         // messagePerSend = 1000 / timeOneMessage
         return (messageCount * 1000.0) / duration;
     }
-
 }

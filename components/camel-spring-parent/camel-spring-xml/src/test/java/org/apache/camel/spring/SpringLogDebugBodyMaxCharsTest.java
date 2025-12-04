@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.LogDebugBodyMaxCharsTest;
 import org.junit.jupiter.api.Disabled;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 @Disabled
 public class SpringLogDebugBodyMaxCharsTest extends LogDebugBodyMaxCharsTest {
@@ -29,5 +30,4 @@ public class SpringLogDebugBodyMaxCharsTest extends LogDebugBodyMaxCharsTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/SpringLogDebugBodyMaxCharsTest.xml");
     }
-
 }

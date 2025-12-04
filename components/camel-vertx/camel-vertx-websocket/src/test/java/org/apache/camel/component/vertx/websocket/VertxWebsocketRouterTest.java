@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
 
@@ -60,7 +61,8 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
             mockEndpoint.assertIsSatisfied();
 
             // Verify the WebSocket route manually added to the vertx router
-            String result = template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
+            String result =
+                    template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
             assertTrue(latch.await(10, TimeUnit.SECONDS));
             assertEquals("Hello world", result);
         } finally {
@@ -81,8 +83,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test", port)
-                        .to("mock:result");
+                fromF("vertx-websocket:localhost:%d/test", port).to("mock:result");
             }
         });
 
@@ -97,7 +98,8 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
             mockEndpoint.assertIsSatisfied();
 
             // Verify the WebSocket route manually added to the vertx router
-            String result = template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
+            String result =
+                    template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
             assertTrue(latch.await(10, TimeUnit.SECONDS));
             assertEquals("Hello world", result);
         } finally {
@@ -139,14 +141,17 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
             mockEndpoint.assertIsSatisfied();
 
             // Verify the WebSocket route manually added to the vertx router was the one configured on the endpoint
-            String result
-                    = template.requestBody("vertx-websocket:localhost:" + port + "/endpoint", "Hello world", String.class);
+            String result = template.requestBody(
+                    "vertx-websocket:localhost:" + port + "/endpoint", "Hello world", String.class);
             assertTrue(latchForEndpoint.await(10, TimeUnit.SECONDS));
             assertEquals("Hello world", result);
 
-            // Verify the WebSocket route manually added to the component fails since the endpoint configured one takes precedence
-            assertThrows(CamelExecutionException.class, () -> template
-                    .requestBody("vertx-websocket:localhost:" + port + "/component", "Hello world", String.class));
+            // Verify the WebSocket route manually added to the component fails since the endpoint configured one takes
+            // precedence
+            assertThrows(
+                    CamelExecutionException.class,
+                    () -> template.requestBody(
+                            "vertx-websocket:localhost:" + port + "/component", "Hello world", String.class));
         } finally {
             context.stop();
         }
@@ -158,8 +163,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test", port)
-                        .to("mock:result");
+                fromF("vertx-websocket:localhost:%d/test", port).to("mock:result");
             }
         });
 
@@ -178,7 +182,8 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
             mockEndpoint.assertIsSatisfied();
 
             // Verify the WebSocket route manually added to the vertx router
-            String result = template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
+            String result =
+                    template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
             assertTrue(latch.await(10, TimeUnit.SECONDS));
             assertEquals("Hello world", result);
         } finally {
@@ -187,6 +192,5 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected void startCamelContext() {
-    }
+    protected void startCamelContext() {}
 }

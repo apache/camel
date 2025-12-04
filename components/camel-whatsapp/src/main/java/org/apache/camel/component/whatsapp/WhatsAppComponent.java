@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 import java.net.http.HttpClient;
@@ -33,22 +34,31 @@ public class WhatsAppComponent extends DefaultComponent {
 
     @Metadata(required = true, description = "Phone Number ID taken from WhatsApp Meta for Developers Dashboard")
     private String phoneNumberId;
-    @Metadata(label = "security", secret = true, required = true,
-              description = "Authorization Token taken from WhatsApp Meta for Developers Dashboard")
+
+    @Metadata(
+            label = "security",
+            secret = true,
+            required = true,
+            description = "Authorization Token taken from WhatsApp Meta for Developers Dashboard")
     private String authorizationToken;
 
     @Metadata(label = "advanced", description = "Java 11 HttpClient implementation")
     private HttpClient client;
-    @Metadata(label = "advanced", defaultValue = API_DEFAULT_URL,
-              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock WhatsApp API")
+
+    @Metadata(
+            label = "advanced",
+            defaultValue = API_DEFAULT_URL,
+            description =
+                    "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock WhatsApp API")
     private String baseUri = API_DEFAULT_URL;
+
     @Metadata(label = "advanced", defaultValue = API_DEFAULT_VERSION, description = "WhatsApp Cloud API version")
     private String apiVersion = API_DEFAULT_VERSION;
+
     @Metadata(description = "Webhook verify token", label = "advanced", secret = true)
     private String webhookVerifyToken;
 
-    public WhatsAppComponent() {
-    }
+    public WhatsAppComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

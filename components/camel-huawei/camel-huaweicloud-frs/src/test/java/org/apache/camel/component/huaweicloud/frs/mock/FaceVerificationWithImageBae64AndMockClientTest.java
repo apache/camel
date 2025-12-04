@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.huaweicloud.sdk.frs.v2.model.CompareFaceByBase64Response;
 import org.apache.camel.BindToRegistry;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -39,31 +40,34 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route_01")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
+                        .setProperty(
+                                FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
-                        .setProperty(FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
+                        .setProperty(
+                                FaceRecognitionProperties.ANOTHER_FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("anotherImageBase64")))
                         .to("hwcloud-frs:faceVerification?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&ignoreSslVerification=true"
-                            + "&frsClient=#frsClient")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&ignoreSslVerification=true"
+                                + "&frsClient=#frsClient")
                         .log("perform faceVerification successfully")
                         .to("mock:perform_face_verification_result_01");
 
                 from("direct:trigger_route_02")
-                        .setProperty(FaceRecognitionProperties.FACE_IMAGE_BASE64,
+                        .setProperty(
+                                FaceRecognitionProperties.FACE_IMAGE_BASE64,
                                 constant(testConfiguration.getProperty("imageBase64")))
                         .to("hwcloud-frs:faceVerification?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&anotherImageBase64=" + constant(testConfiguration.getProperty("anotherImageBase64"))
-                            + "&ignoreSslVerification=true"
-                            + "&frsClient=#frsClient")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&anotherImageBase64=" + constant(testConfiguration.getProperty("anotherImageBase64"))
+                                + "&ignoreSslVerification=true"
+                                + "&frsClient=#frsClient")
                         .log("perform faceVerification successfully")
                         .to("mock:perform_face_verification_result_02");
             }
@@ -84,7 +88,8 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         mock.assertIsSatisfied();
 
         assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
-        CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
+        CompareFaceByBase64Response response =
+                (CompareFaceByBase64Response) responseExchange.getIn().getBody();
         assertEquals(response.getImage1Face(), MockResult.getCompareFaceResult());
         assertEquals(response.getImage2Face(), MockResult.getCompareFaceResult());
         assertEquals(1.0, response.getSimilarity());
@@ -104,10 +109,10 @@ public class FaceVerificationWithImageBae64AndMockClientTest extends CamelTestSu
         mock.assertIsSatisfied();
 
         assertTrue(responseExchange.getIn().getBody() instanceof CompareFaceByBase64Response);
-        CompareFaceByBase64Response response = (CompareFaceByBase64Response) responseExchange.getIn().getBody();
+        CompareFaceByBase64Response response =
+                (CompareFaceByBase64Response) responseExchange.getIn().getBody();
         assertEquals(MockResult.getCompareFaceResult(), response.getImage1Face());
         assertEquals(MockResult.getCompareFaceResult(), response.getImage2Face());
         assertEquals(1.0, response.getSimilarity());
     }
-
 }

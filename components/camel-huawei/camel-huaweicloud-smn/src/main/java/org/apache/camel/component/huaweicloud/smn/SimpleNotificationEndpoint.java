@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
 
 import com.huaweicloud.sdk.smn.v2.SmnClient;
@@ -31,9 +32,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * To broadcast messages and connect cloud services through notifications on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "hwcloud-smn", title = "Huawei Simple Message Notification (SMN)",
-             syntax = "hwcloud-smn:smnService",
-             category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "3.8.0",
+        scheme = "hwcloud-smn",
+        title = "Huawei Simple Message Notification (SMN)",
+        syntax = "hwcloud-smn:smnService",
+        category = {Category.CLOUD, Category.MESSAGING},
+        producerOnly = true)
 public class SimpleNotificationEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Name of SMN service to invoke", displayName = "Service name", label = "producer")
@@ -44,8 +49,10 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+    @UriParam(
+            description = "Configuration object for cloud service authentication",
+            displayName = "Service Configuration",
+            secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
@@ -77,29 +84,40 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "SMN service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region", secret = false)
+    @UriParam(
+            description = "SMN service region. This is lower precedence than endpoint based configuration",
+            displayName = "Service region",
+            secret = false)
     @Metadata(required = true)
     private String region;
 
-    @UriParam(description = "Fully qualified smn service url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+    @UriParam(
+            description =
+                    "Fully qualified smn service url. Carries higher precedence than region parameter based client initialization",
+            displayName = "Service endpoint",
+            secret = false)
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "TTL for published message", displayName = "Message TTL", secret = false, defaultValue = "3600")
+    @UriParam(
+            description = "TTL for published message",
+            displayName = "Message TTL",
+            secret = false,
+            defaultValue = "3600")
     @Metadata(required = false)
     private int messageTtl = 3600;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false")
+    @UriParam(
+            description = "Ignore SSL verification",
+            displayName = "SSL Verification Ignored",
+            secret = false,
+            defaultValue = "false")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     private SmnClient smnClient;
 
-    public SimpleNotificationEndpoint() {
-    }
+    public SimpleNotificationEndpoint() {}
 
     public SimpleNotificationEndpoint(String uri, String smnService, SimpleNotificationComponent component) {
         super(uri, component);
@@ -243,5 +261,4 @@ public class SimpleNotificationEndpoint extends DefaultEndpoint {
     public void setSmnClient(SmnClient smnClient) {
         this.smnClient = smnClient;
     }
-
 }

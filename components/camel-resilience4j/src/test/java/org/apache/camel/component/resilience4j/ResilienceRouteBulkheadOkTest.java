@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +37,8 @@ public class ResilienceRouteBulkheadOkTest extends CamelTestSupport {
 
     private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody(endPointUri, "Hello World");
@@ -49,18 +51,38 @@ public class ResilienceRouteBulkheadOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker().resilience4jConfiguration().bulkheadEnabled(true).end().to("direct:foo")
-                        .to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
-
-                from("direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration().bulkheadEnabled(true).timeoutEnabled(true).timeoutDuration(2000).end()
+                from("direct:start")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .bulkheadEnabled(true)
+                        .end()
                         .to("direct:foo")
-                        .to("log:foo").onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
+
+                from("direct:start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .bulkheadEnabled(true)
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
+                        .to("direct:foo")
+                        .to("log:foo")
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
         };
     }
-
 }

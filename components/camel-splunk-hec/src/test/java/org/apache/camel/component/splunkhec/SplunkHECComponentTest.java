@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunkhec;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,11 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplunkHECComponentTest {
     SplunkHECComponent component;
@@ -46,35 +47,39 @@ public class SplunkHECComponentTest {
 
     @Test
     public void testInvalidUriSyntax() {
-        Exception e = assertThrows(IllegalArgumentException.class, () -> component.createEndpoint(
-                "splunk-hec:bad/path"));
+        Exception e =
+                assertThrows(IllegalArgumentException.class, () -> component.createEndpoint("splunk-hec:bad/path"));
         assertEquals("Invalid URI: splunk-hec:bad/path", e.getMessage());
     }
 
     @Test
     public void testInvalidHostname() throws Exception {
-        Endpoint endpoint = component.createEndpoint(
-                "splunk-hec:yo,lo:1234?token=11111111-1111-1111-1111-111111111111");
+        Endpoint endpoint =
+                component.createEndpoint("splunk-hec:yo,lo:1234?token=11111111-1111-1111-1111-111111111111");
         Exception e = assertThrows(IllegalArgumentException.class, endpoint::init);
         assertEquals("Invalid hostname: yo,lo", e.getMessage());
     }
 
     @Test
     public void testIpAddressValid() throws Exception {
-        SplunkHECEndpoint endpoint = (SplunkHECEndpoint) component.createEndpoint(
-                "splunk-hec:192.168.0.1:18808?token=11111111-1111-1111-1111-111111111111");
+        SplunkHECEndpoint endpoint = (SplunkHECEndpoint)
+                component.createEndpoint("splunk-hec:192.168.0.1:18808?token=11111111-1111-1111-1111-111111111111");
         endpoint.init();
         assertEquals("192.168.0.1:18808", endpoint.getSplunkURL());
-        assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getConfiguration().getToken());
+        assertEquals(
+                "11111111-1111-1111-1111-111111111111",
+                endpoint.getConfiguration().getToken());
     }
 
     @Test
     public void testLocalHostValid() throws Exception {
-        SplunkHECEndpoint endpoint = (SplunkHECEndpoint) component.createEndpoint(
-                "splunk-hec:localhost:18808?token=11111111-1111-1111-1111-111111111111");
+        SplunkHECEndpoint endpoint = (SplunkHECEndpoint)
+                component.createEndpoint("splunk-hec:localhost:18808?token=11111111-1111-1111-1111-111111111111");
         endpoint.init();
         assertEquals("localhost:18808", endpoint.getSplunkURL());
-        assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getConfiguration().getToken());
+        assertEquals(
+                "11111111-1111-1111-1111-111111111111",
+                endpoint.getConfiguration().getToken());
     }
 
     @Test
@@ -83,7 +88,9 @@ public class SplunkHECComponentTest {
                 "splunk-hec:http-input.splunkcloud.com:18808?token=11111111-1111-1111-1111-111111111111");
         endpoint.init();
         assertEquals("http-input.splunkcloud.com:18808", endpoint.getSplunkURL());
-        assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getConfiguration().getToken());
+        assertEquals(
+                "11111111-1111-1111-1111-111111111111",
+                endpoint.getConfiguration().getToken());
     }
 
     @Test
@@ -92,14 +99,16 @@ public class SplunkHECComponentTest {
                 "splunk-hec:localhost:18808?token=11111111-1111-1111-1111-111111111111&index=foo");
         endpoint.init();
         assertEquals("localhost:18808", endpoint.getSplunkURL());
-        assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getConfiguration().getToken());
+        assertEquals(
+                "11111111-1111-1111-1111-111111111111",
+                endpoint.getConfiguration().getToken());
         assertEquals("foo", endpoint.getConfiguration().getIndex());
     }
 
     @Test
     public void testInvalidPort() throws Exception {
-        Endpoint endpoint = component.createEndpoint(
-                "splunk-hec:yolo:188508?token=11111111-1111-1111-1111-111111111111");
+        Endpoint endpoint =
+                component.createEndpoint("splunk-hec:yolo:188508?token=11111111-1111-1111-1111-111111111111");
         Exception e = assertThrows(IllegalArgumentException.class, endpoint::init);
         assertEquals("Invalid port: 188508", e.getMessage());
     }
@@ -121,27 +130,29 @@ public class SplunkHECComponentTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "bad-token" })
+    @ValueSource(strings = {"", "bad-token"})
     public void testInvalidToken(String token) throws Exception {
-        Endpoint endpoint = component.createEndpoint(
-                "splunk-hec:localhost:18808?token=" + token);
+        Endpoint endpoint = component.createEndpoint("splunk-hec:localhost:18808?token=" + token);
         Exception e = assertThrows(IllegalArgumentException.class, endpoint::init);
         assertEquals("Invalid Splunk HEC token provided", e.getMessage());
     }
 
     @Test
     public void testTokenValid() throws Exception {
-        SplunkHECEndpoint endpoint = (SplunkHECEndpoint) component.createEndpoint(
-                "splunk-hec:localhost:18808?token=11111111-1111-1111-1111-111111111111");
+        SplunkHECEndpoint endpoint = (SplunkHECEndpoint)
+                component.createEndpoint("splunk-hec:localhost:18808?token=11111111-1111-1111-1111-111111111111");
         endpoint.init();
-        assertEquals("11111111-1111-1111-1111-111111111111", endpoint.getConfiguration().getToken());
+        assertEquals(
+                "11111111-1111-1111-1111-111111111111",
+                endpoint.getConfiguration().getToken());
     }
 
     @Test
     public void testSanitizedException() {
         String tokenValue = "token-value";
-        Exception e = assertThrows(IllegalArgumentException.class, () -> component.createEndpoint(
-                "splunk-hec:bad/path?token=" + tokenValue));
+        Exception e = assertThrows(
+                IllegalArgumentException.class,
+                () -> component.createEndpoint("splunk-hec:bad/path?token=" + tokenValue));
         assertTrue(e.getMessage().contains("token=xxxxxx"));
         assertFalse(e.getMessage().contains(tokenValue));
     }

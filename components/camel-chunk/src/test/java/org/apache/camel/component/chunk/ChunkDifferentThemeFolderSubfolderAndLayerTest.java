@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
 
 import org.apache.camel.EndpointInject;
@@ -58,7 +59,8 @@ public class ChunkDifferentThemeFolderSubfolderAndLayerTest extends CamelTestSup
             @Override
             public void configure() {
                 from("direct:startSimple")
-                        .to("chunk:diff_template?themeFolder=folderexample&themeSubfolder=subfolderexample&themeLayer=example_1")
+                        .to(
+                                "chunk:diff_template?themeFolder=folderexample&themeSubfolder=subfolderexample&themeLayer=example_1")
                         .to("mock:endSimple");
             }
         };

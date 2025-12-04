@@ -332,7 +332,8 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     public void copySafeCopyPropertiesTo(ExchangeExtension target) {
         if (exchange.safeCopyProperties != null && !exchange.safeCopyProperties.isEmpty()) {
             exchange.safeCopyProperties.entrySet().stream()
-                    .forEach(entry -> target.setSafeCopyProperty(entry.getKey(), entry.getValue().safeCopy()));
+                    .forEach(entry -> target.setSafeCopyProperty(
+                            entry.getKey(), entry.getValue().safeCopy()));
         }
     }
 

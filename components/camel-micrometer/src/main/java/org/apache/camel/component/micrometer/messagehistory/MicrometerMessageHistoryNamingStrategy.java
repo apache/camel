@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.messagehistory;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_HISTORY;
+import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 
 import java.util.function.Predicate;
 
@@ -24,20 +32,12 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_HISTORY;
-import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
-
 /**
  * Provides a strategy to derive a meter name from the route and node
  */
 public interface MicrometerMessageHistoryNamingStrategy {
 
-    Predicate<Meter.Id> MESSAGE_HISTORIES
-            = id -> KIND_HISTORY.equals(id.getTag(KIND));
+    Predicate<Meter.Id> MESSAGE_HISTORIES = id -> KIND_HISTORY.equals(id.getTag(KIND));
 
     /**
      * Default naming strategy that uses micrometer naming convention.
@@ -67,5 +67,4 @@ public interface MicrometerMessageHistoryNamingStrategy {
                 ROUTE_ID_TAG, route.getId(),
                 NODE_ID_TAG, node.getId());
     }
-
 }

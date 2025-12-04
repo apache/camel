@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,29 +32,26 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class CxfConsumerMessageTest extends CamelTestSupport {
     private static final String TEST_MESSAGE = "Hello World!";
 
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\"";
 
-    private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                                + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                                + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
-                                                + "</ns1:echoResponse></soap:Body></soap:Envelope>";
-    private static final String ECHO_BOOLEAN_RESPONSE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-              + "<soap:Body><ns1:echoBooleanResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-              + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</return>"
-              + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
+    private static final String ECHO_RESPONSE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
+                    + "</ns1:echoResponse></soap:Body></soap:Envelope>";
+    private static final String ECHO_BOOLEAN_RESPONSE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><ns1:echoBooleanResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                    + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">true</return>"
+                    + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
 
-    protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
-    protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-                                               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+    protected final String simpleEndpointAddress =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+    protected final String simpleEndpointURI =
+            "cxf://" + simpleEndpointAddress + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -69,7 +71,6 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
                         } else { // echoBoolean call
                             exchange.getMessage().setBody(ECHO_BOOLEAN_RESPONSE);
                         }
-
                     }
                 });
             }
@@ -92,7 +93,5 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
         Boolean bool = client.echoBoolean(Boolean.TRUE);
         assertNotNull(bool, "The result should not be null");
         assertEquals("true", bool.toString(), "We should get the echo boolean result from router");
-
     }
-
 }

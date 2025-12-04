@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Properties;
@@ -68,13 +69,25 @@ public class XPathPropertyPlaceholderTest extends ContextTestSupport {
                 PropertiesComponent pc = context.getPropertiesComponent();
                 pc.setInitialProperties(prop);
 
-                from("direct:filter").filter().xpath("{{foo}}").log("Passed filter!").to("mock:output-filter");
+                from("direct:filter")
+                        .filter()
+                        .xpath("{{foo}}")
+                        .log("Passed filter!")
+                        .to("mock:output-filter");
 
-                from("direct:choice").choice().when(xpath("{{bar}}")).log("Passed choice!").to("mock:output-choice");
+                from("direct:choice")
+                        .choice()
+                        .when(xpath("{{bar}}"))
+                        .log("Passed choice!")
+                        .to("mock:output-choice");
 
-                from("direct:choice2").choice().when().xpath("{{bar}}").log("Passed choice2!").to("mock:output-choice2");
+                from("direct:choice2")
+                        .choice()
+                        .when()
+                        .xpath("{{bar}}")
+                        .log("Passed choice2!")
+                        .to("mock:output-choice2");
             }
         };
     }
-
 }

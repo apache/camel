@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
@@ -24,8 +27,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on user forum trouble
@@ -38,8 +39,8 @@ public class TransformXpathTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(NodeList.class);
 
-        String xml = context.getTypeConverter().convertTo(String.class,
-                new File("src/test/resources/org/apache/camel/processor/students.xml"));
+        String xml = context.getTypeConverter()
+                .convertTo(String.class, new File("src/test/resources/org/apache/camel/processor/students.xml"));
 
         template.sendBody("direct:start", xml);
 
@@ -48,8 +49,14 @@ public class TransformXpathTest extends ContextTestSupport {
         NodeList list = mock.getReceivedExchanges().get(0).getIn().getBody(NodeList.class);
         assertEquals(2, list.getLength());
 
-        assertEquals("Claus", context.getTypeConverter().convertTo(String.class, list.item(0).getTextContent().trim()));
-        assertEquals("Hadrian", context.getTypeConverter().convertTo(String.class, list.item(1).getTextContent().trim()));
+        assertEquals(
+                "Claus",
+                context.getTypeConverter()
+                        .convertTo(String.class, list.item(0).getTextContent().trim()));
+        assertEquals(
+                "Hadrian",
+                context.getTypeConverter()
+                        .convertTo(String.class, list.item(1).getTextContent().trim()));
     }
 
     @Override

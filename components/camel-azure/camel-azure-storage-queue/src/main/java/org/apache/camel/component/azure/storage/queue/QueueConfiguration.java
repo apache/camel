@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
 
 import java.time.Duration;
@@ -31,35 +32,49 @@ public class QueueConfiguration implements Cloneable {
 
     @UriPath
     private String accountName;
+
     @UriPath
     private String queueName;
+
     @UriParam(label = "security")
     @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "common")
     @Metadata(autowired = true)
     private QueueServiceClient serviceClient;
+
     @UriParam(label = "producer")
     private QueueOperationDefinition operation = QueueOperationDefinition.sendMessage;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean createQueue;
     // queue properties
     @UriParam(label = "queue")
     private Duration timeToLive;
+
     @UriParam(label = "queue")
     private Duration visibilityTimeout;
+
     @UriParam(label = "queue", defaultValue = "1")
     private Integer maxMessages = 1;
+
     @UriParam(label = "queue")
     private Duration timeout;
+
     @UriParam(label = "queue")
     private String messageId;
+
     @UriParam(label = "queue")
     private String popReceipt;
-    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY",
-              defaultValue = "SHARED_ACCOUNT_KEY")
+
+    @UriParam(
+            label = "common",
+            enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY",
+            defaultValue = "SHARED_ACCOUNT_KEY")
     private CredentialType credentialType;
 
     /**

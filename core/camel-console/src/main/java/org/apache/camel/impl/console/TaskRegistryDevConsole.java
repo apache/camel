@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Map;
@@ -26,7 +27,10 @@ import org.apache.camel.support.task.TaskManagerRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "internal-tasks", displayName = "Internal Tasks", description = "Display information about internal tasks")
+@DevConsole(
+        name = "internal-tasks",
+        displayName = "Internal Tasks",
+        description = "Display information about internal tasks")
 public class TaskRegistryDevConsole extends AbstractDevConsole {
 
     public TaskRegistryDevConsole() {
@@ -37,16 +41,24 @@ public class TaskRegistryDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        TaskManagerRegistry reg = PluginHelper.getTaskManagerRegistry(getCamelContext().getCamelContextExtension());
+        TaskManagerRegistry reg =
+                PluginHelper.getTaskManagerRegistry(getCamelContext().getCamelContextExtension());
         sb.append(String.format("\nTasks: %s", reg.getSize()));
         int id = 0;
         for (Task task : reg.getTasks()) {
             String failure = task.getException() != null ? task.getException().getMessage() : "";
             sb.append(String.format(
                     "\n    #%d (name=%s status=%s attempts=%d delay=%d elapsed=%d first=%d last=%d next=%d failure=%s",
-                    id, task.getName(), task.getStatus().name(), task.iteration(), task.getCurrentDelay(),
-                    task.getCurrentElapsedTime(), task.getFirstAttemptTime(), task.getLastAttemptTime(),
-                    task.getNextAttemptTime(), failure));
+                    id,
+                    task.getName(),
+                    task.getStatus().name(),
+                    task.iteration(),
+                    task.getCurrentDelay(),
+                    task.getCurrentElapsedTime(),
+                    task.getFirstAttemptTime(),
+                    task.getLastAttemptTime(),
+                    task.getNextAttemptTime(),
+                    failure));
             id++;
         }
         return sb.toString();
@@ -58,7 +70,8 @@ public class TaskRegistryDevConsole extends AbstractDevConsole {
         JsonArray arr = new JsonArray();
         root.put("tasks", arr);
 
-        TaskManagerRegistry reg = PluginHelper.getTaskManagerRegistry(getCamelContext().getCamelContextExtension());
+        TaskManagerRegistry reg =
+                PluginHelper.getTaskManagerRegistry(getCamelContext().getCamelContextExtension());
         for (Task task : reg.getTasks()) {
             JsonObject jo = new JsonObject();
             jo.put("name", task.getName());
@@ -77,5 +90,4 @@ public class TaskRegistryDevConsole extends AbstractDevConsole {
         }
         return root;
     }
-
 }

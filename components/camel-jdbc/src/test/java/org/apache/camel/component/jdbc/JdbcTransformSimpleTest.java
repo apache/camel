@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import org.apache.camel.EndpointInject;
@@ -43,7 +44,8 @@ public class JdbcTransformSimpleTest extends AbstractJdbcTestSupport {
                 from("direct:hello")
                         .to("jdbc:testdb")
                         // grab the first row, and the name column
-                        .transform().simple("${body[0]['NAME']}")
+                        .transform()
+                        .simple("${body[0]['NAME']}")
                         .to("mock:result");
             }
         };

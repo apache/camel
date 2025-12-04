@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
+
+import static io.netty.buffer.Unpooled.buffer;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_ACKNOWLEDGE;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,33 +35,31 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static io.netty.buffer.Unpooled.buffer;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_ACKNOWLEDGE;
-import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class LumberjackChannelInitializerTest {
     @Test
     public void shouldDecodeTwoWindowsWithCompressedMessages() throws Exception {
         // Given a properly configured netty channel
         List<Object> messages = new ArrayList<>();
-        EmbeddedChannel channel = new EmbeddedChannel(new LumberjackChannelInitializer(null, null, (payload, callback) -> {
-            messages.add(payload);
-            callback.onComplete(true);
-        }));
+        EmbeddedChannel channel =
+                new EmbeddedChannel(new LumberjackChannelInitializer(null, null, (payload, callback) -> {
+                    messages.add(payload);
+                    callback.onComplete(true);
+                }));
 
         // When writing the stream byte per byte in order to ensure that we support splits everywhere
         // It contains 2 windows with compressed messages
         writeResourceBytePerByte(channel, "window10.bin");
         writeResourceBytePerByte(channel, "window15.bin");
 
-        // EmbeddedChannel is no "real" Channel implementation and mainly use-able for testing and embedded ChannelHandlers
+        // EmbeddedChannel is no "real" Channel implementation and mainly use-able for testing and embedded
+        // ChannelHandlers
         // since now we are executing scheduled writeAndFlush for parallel messages within a single session
         // we need to use runPendingTasks for this type of Channel
-        // this is use case for internal camel code test only : other unit tests use production like channels and don't need
+        // this is use case for internal camel code test only : other unit tests use production like channels and don't
+        // need
         // adding runPendingTasks()
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+        Awaitility.await()
+                .atMost(2, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertDoesNotThrow(channel::runPendingTasks));
 
         // Then we must have 25 messages with only maps
@@ -63,7 +68,8 @@ public class LumberjackChannelInitializerTest {
         // And the first map should contains valid data (we're assuming it's also valid for the other ones)
         Map first = (Map) messages.get(0);
         assertEquals("log", first.get("type"));
-        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
+        assertEquals(
+                "/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
                 first.get("source"));
 
         // And we should have replied twice (one per window)

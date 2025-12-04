@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.api;
 
 /**
@@ -30,5 +31,4 @@ public interface DispatchCallback<T> {
      * @param error the error occurred, if any
      */
     void processed(T data, Throwable error);
-
 }

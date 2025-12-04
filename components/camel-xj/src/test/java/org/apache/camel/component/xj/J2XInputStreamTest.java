@@ -33,7 +33,8 @@ public class J2XInputStreamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         mock.message(0).body().isInstanceOf(String.class);
 
-        template.sendBody("direct:start", new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8)));
+        template.sendBody(
+                "direct:start", new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8)));
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -44,7 +45,8 @@ public class J2XInputStreamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         mock.message(0).body().isInstanceOf(String.class);
 
-        ByteArrayInputStream body = new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream body =
+                new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8));
 
         template.send("direct:sourceHeader", exchange -> {
             exchange.getIn().setHeader("xmlSource", body);
@@ -59,7 +61,8 @@ public class J2XInputStreamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         mock.message(0).body().isInstanceOf(String.class);
 
-        ByteArrayInputStream body = new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream body =
+                new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8));
 
         template.send("direct:sourceVariable", exchange -> {
             exchange.setVariable("xmlSource", body);
@@ -74,7 +77,8 @@ public class J2XInputStreamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         mock.message(0).body().isInstanceOf(String.class);
 
-        ByteArrayInputStream body = new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream body =
+                new ByteArrayInputStream("{\"hello\": \"world!\"}".getBytes(StandardCharsets.UTF_8));
 
         template.send("direct:sourceProperty", exchange -> {
             exchange.setProperty("xmlSource", body);

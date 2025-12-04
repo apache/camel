@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.verifier;
 
 import java.util.ArrayList;
@@ -36,8 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class ResultErrorHelper {
 
-    private ResultErrorHelper() {
-    }
+    private ResultErrorHelper() {}
 
     // **********************************
     // Helpers
@@ -122,7 +122,9 @@ public final class ResultErrorHelper {
             final ResultErrorBuilder builder = new ResultErrorBuilder()
                     .code(VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION)
                     .detail(VerificationError.GroupAttribute.GROUP_NAME, group.getName())
-                    .detail(VerificationError.GroupAttribute.GROUP_OPTIONS, String.join(",", parameters(group.getOptions())));
+                    .detail(
+                            VerificationError.GroupAttribute.GROUP_OPTIONS,
+                            String.join(",", parameters(group.getOptions())));
 
             if (keys.containsAll(required)) {
                 // All the options of this group are found so we are good
@@ -162,12 +164,14 @@ public final class ResultErrorHelper {
     }
 
     static Set<String> excluded(final Set<String> options) {
-        return options.stream().filter(o -> o.startsWith("!")).map(o -> o.substring(1)).collect(Collectors.toSet());
+        return options.stream()
+                .filter(o -> o.startsWith("!"))
+                .map(o -> o.substring(1))
+                .collect(Collectors.toSet());
     }
 
     static Set<String> parameters(final Set<String> options) {
 
-        return options.stream().map(o -> o.replaceFirst("!", ""))
-                .collect(Collectors.toCollection(TreeSet::new));
+        return options.stream().map(o -> o.replaceFirst("!", "")).collect(Collectors.toCollection(TreeSet::new));
     }
 }

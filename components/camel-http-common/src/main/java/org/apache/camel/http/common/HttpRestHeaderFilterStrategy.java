@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import org.apache.camel.Exchange;
@@ -58,5 +59,4 @@ public class HttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
         }
         return answer;
     }
-
 }

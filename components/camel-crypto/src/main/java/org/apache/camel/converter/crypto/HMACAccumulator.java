@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
+
+import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,8 +25,6 @@ import java.security.Key;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
 
 /**
  * <code>HMACAccumulator</code> is used to build Hash Message Authentication Codes. It has two modes, one where all the
@@ -46,8 +47,7 @@ public class HMACAccumulator {
     private int maclength;
     private byte[] appended;
 
-    HMACAccumulator() {
-    }
+    HMACAccumulator() {}
 
     public HMACAccumulator(Key key, String macAlgorithm, String cryptoProvider, int buffersize) throws Exception {
         hmac = cryptoProvider == null ? Mac.getInstance(macAlgorithm) : Mac.getInstance(macAlgorithm, cryptoProvider);
@@ -100,10 +100,9 @@ public class HMACAccumulator {
         byte[] expected = getAppendedMac();
         for (int x = 0; x < actual.length; x++) {
             if (expected[x] != actual[x]) {
-                throw new IllegalStateException(
-                        "Expected mac did not match actual mac\nexpected:"
-                                                + byteArrayToHexString(expected) + "\n     actual:"
-                                                + byteArrayToHexString(actual));
+                throw new IllegalStateException("Expected mac did not match actual mac\nexpected:"
+                        + byteArrayToHexString(expected) + "\n     actual:"
+                        + byteArrayToHexString(actual));
             }
         }
     }
@@ -170,12 +169,12 @@ public class HMACAccumulator {
 
         public String show() {
             StringBuilder b = new StringBuilder(HexUtils.byteArrayToHexString(buffer)).append("\n");
-            for (int x = read; --x >= 0;) {
+            for (int x = read; --x >= 0; ) {
                 b.append("--");
             }
             b.append("r");
             b.append("\n");
-            for (int x = write; --x >= 0;) {
+            for (int x = write; --x >= 0; ) {
                 b.append("--");
             }
             b.append("w");
@@ -183,5 +182,4 @@ public class HMACAccumulator {
             return b.toString();
         }
     }
-
 }

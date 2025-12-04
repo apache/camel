@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -37,8 +38,8 @@ public class StreamCachingProcessor extends BaseProcessorSupport implements Trac
             Object body = exchange.getIn().getBody();
 
             if (!(body instanceof StreamCache)) {
-                StreamCache streamCache = exchange.getContext().getTypeConverter()
-                        .convertTo(StreamCache.class, exchange, body);
+                StreamCache streamCache =
+                        exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, body);
                 if (streamCache != null) {
                     exchange.getIn().setBody(streamCache);
                 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.config;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.config.ConfigClient;
 /**
  * Manage AWS Config service.
  */
-@UriEndpoint(firstVersion = "4.3.0", scheme = "aws-config", title = "AWS Config Service",
-             syntax = "aws-config:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = AWSConfigConstants.class)
+@UriEndpoint(
+        firstVersion = "4.3.0",
+        scheme = "aws-config",
+        title = "AWS Config Service",
+        syntax = "aws-config:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = AWSConfigConstants.class)
 public class AWSConfigEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private ConfigClient configClient;
@@ -67,7 +73,8 @@ public class AWSConfigEndpoint extends DefaultEndpoint implements EndpointServic
         super.doStart();
 
         configClient = configuration.getConfigClient() != null
-                ? configuration.getConfigClient() : AWSConfigClientFactory.getConfigClient(configuration).getConfigClient();
+                ? configuration.getConfigClient()
+                : AWSConfigClientFactory.getConfigClient(configuration).getConfigClient();
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.io.IOException;
@@ -51,8 +52,8 @@ public final class CamelUpdate implements Update {
      */
     public List<String> activeRecipes() throws CamelUpdateException {
         List<Recipe> recipes;
-        MavenArtifact mavenArtifact
-                = downloader.downloadArtifact("org.apache.camel.upgrade", getArtifactCoordinates(), updateMixin.version);
+        MavenArtifact mavenArtifact =
+                downloader.downloadArtifact("org.apache.camel.upgrade", getArtifactCoordinates(), updateMixin.version);
 
         try {
             recipes = getRecipesInJar(mavenArtifact.getFile().toPath());
@@ -82,16 +83,13 @@ public final class CamelUpdate implements Update {
             Path recipePath = fileSystem.getPath("META-INF", "rewrite");
             if (Files.exists(recipePath)) {
                 try (Stream<Path> walk = Files.walk(recipePath)) {
-                    walk.filter(p -> p.toString().endsWith(".yaml"))
-                            .forEach(p -> {
-                                try {
-                                    recipes.add(new Recipe(
-                                            p.getFileName().toString(),
-                                            Files.readString(p)));
-                                } catch (IOException e) {
-                                    throw new UncheckedIOException(e);
-                                }
-                            });
+                    walk.filter(p -> p.toString().endsWith(".yaml")).forEach(p -> {
+                        try {
+                            recipes.add(new Recipe(p.getFileName().toString(), Files.readString(p)));
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
                 }
             }
         }
@@ -122,32 +120,32 @@ public final class CamelUpdate implements Update {
     public List<String> command() throws CamelUpdateException {
         commands.add(mvnProgramCall());
         commands.add(debug());
-        commands.add("org.openrewrite.maven:rewrite-maven-plugin:" + updateMixin.openRewriteVersion + ":"
-                     + runMode());
+        commands.add("org.openrewrite.maven:rewrite-maven-plugin:" + updateMixin.openRewriteVersion + ":" + runMode());
 
         List<String> coordinates = new ArrayList<>();
         coordinates.add(String.format("org.apache.camel.upgrade:%s:%s", getArtifactCoordinates(), updateMixin.version));
-        if (updateMixin.extraRecipeArtifactCoordinates != null && !updateMixin.extraRecipeArtifactCoordinates.isEmpty()) {
+        if (updateMixin.extraRecipeArtifactCoordinates != null
+                && !updateMixin.extraRecipeArtifactCoordinates.isEmpty()) {
             coordinates.addAll(updateMixin.extraRecipeArtifactCoordinates);
         }
 
-        commands.add("-Drewrite.recipeArtifactCoordinates=" +
-                     coordinates.stream().collect(Collectors.joining(",")));
+        commands.add(
+                "-Drewrite.recipeArtifactCoordinates=" + coordinates.stream().collect(Collectors.joining(",")));
 
         List<String> recipes = new ArrayList<>();
         recipes.addAll(activeRecipes());
         if (updateMixin.extraActiveRecipes != null && !updateMixin.extraActiveRecipes.isEmpty()) {
             recipes.addAll(updateMixin.extraActiveRecipes);
         }
-        commands.add("-Drewrite.activeRecipes=" + recipes
-                .stream().collect(Collectors.joining(",")));
+        commands.add("-Drewrite.activeRecipes=" + recipes.stream().collect(Collectors.joining(",")));
 
         return commands;
     }
 
     public String getArtifactCoordinates() {
         return updateMixin.runtime == RuntimeType.springBoot
-                ? updateMixin.camelSpringBootArtifactCoordinates : updateMixin.camelArtifactCoordinates;
+                ? updateMixin.camelSpringBootArtifactCoordinates
+                : updateMixin.camelArtifactCoordinates;
     }
 
     record Recipe(String name, String content) {

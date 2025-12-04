@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +36,6 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithHeadersAndBodyInject2Test.class);
@@ -60,7 +61,8 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
 
         assertTrue(out.isFailed(), "Should fail");
         assertIsInstanceOf(RuntimeCamelException.class, out.getException());
-        assertIsInstanceOf(NoTypeConversionAvailableException.class, out.getException().getCause());
+        assertIsInstanceOf(
+                NoTypeConversionAvailableException.class, out.getException().getCause());
     }
 
     @Test
@@ -130,6 +132,5 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
             this.name = name;
             this.age = age;
         }
-
     }
 }

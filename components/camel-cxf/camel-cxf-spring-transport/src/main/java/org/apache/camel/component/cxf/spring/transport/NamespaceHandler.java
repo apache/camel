@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.transport;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -25,5 +26,4 @@ public class NamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("conduit", new CamelConduitDefinitionParser());
         registerBeanDefinitionParser("destination", new CamelDestinationDefinitionParser());
     }
-
 }

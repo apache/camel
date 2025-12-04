@@ -14,15 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.jaxb;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
+package org.apache.camel.converter.jaxb;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -38,9 +31,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
+
 @ExtendWith(MockitoExtension.class)
 public class NonXmlCharFiltererTest {
     private NonXmlCharFilterer nonXmlCharFilterer;
+
     @Mock
     private NonXmlCharFilterer nonXmlCharFiltererMock;
 
@@ -80,12 +82,13 @@ public class NonXmlCharFiltererTest {
     @Test
     public void testFilter1ArgNonFiltered() {
         when(nonXmlCharFiltererMock.filter(anyString())).thenCallRealMethod();
-        when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt())).thenReturn(false);
+        when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt()))
+                .thenReturn(false);
 
         String string = "abc";
         String result = nonXmlCharFiltererMock.filter(string);
 
-        verify(nonXmlCharFiltererMock).filter(new char[] { 'a', 'b', 'c' }, 0, 3);
+        verify(nonXmlCharFiltererMock).filter(new char[] {'a', 'b', 'c'}, 0, 3);
 
         assertSame(string, result, "Should have returned the same string if nothing was filtered");
     }
@@ -93,7 +96,7 @@ public class NonXmlCharFiltererTest {
     @Test
     public void testFilter1ArgFiltered() {
         when(nonXmlCharFiltererMock.filter(anyString())).thenCallRealMethod();
-        when(nonXmlCharFiltererMock.filter(eq(new char[] { 'a', 'b', 'c' }), anyInt(), anyInt()))
+        when(nonXmlCharFiltererMock.filter(eq(new char[] {'a', 'b', 'c'}), anyInt(), anyInt()))
                 .thenAnswer(new Answer<Boolean>() {
 
                     public Boolean answer(InvocationOnMock invocation) {
@@ -117,17 +120,18 @@ public class NonXmlCharFiltererTest {
 
     @Test
     public void testFilter3Args() {
-        when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt())).thenCallRealMethod();
+        when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt()))
+                .thenCallRealMethod();
         when(nonXmlCharFiltererMock.isFiltered(anyChar())).thenReturn(true, false, true);
 
-        char[] buffer = new char[] { '1', '2', '3', '4', '5', '6' };
+        char[] buffer = new char[] {'1', '2', '3', '4', '5', '6'};
         nonXmlCharFiltererMock.filter(buffer, 2, 3);
 
         verify(nonXmlCharFiltererMock).isFiltered('3');
         verify(nonXmlCharFiltererMock).isFiltered('4');
         verify(nonXmlCharFiltererMock).isFiltered('5');
 
-        assertArrayEquals(new char[] { '1', '2', ' ', '4', ' ', '6' }, buffer, "Unexpected buffer contents");
+        assertArrayEquals(new char[] {'1', '2', ' ', '4', ' ', '6'}, buffer, "Unexpected buffer contents");
     }
 
     @Test
@@ -143,10 +147,9 @@ public class NonXmlCharFiltererTest {
         for (int charCode = startCharCodeInclusive; charCode <= endCharCodeInclusive; charCode++) {
             if (nonXmlCharFilterer.isFiltered((char) charCode)) {
                 fail("Character " + asHex(charCode) + " from range ["
-                     + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
-                     + "] should be valid, but it is not");
+                        + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
+                        + "] should be valid, but it is not");
             }
-
         }
     }
 
@@ -154,8 +157,8 @@ public class NonXmlCharFiltererTest {
         for (int charCode = startCharCodeInclusive; charCode <= endCharCodeInclusive; charCode++) {
             if (!nonXmlCharFilterer.isFiltered((char) charCode)) {
                 fail("Character " + asHex(charCode) + " from range ["
-                     + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
-                     + "] should not be valid, but it is");
+                        + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
+                        + "] should not be valid, but it is");
             }
         }
     }

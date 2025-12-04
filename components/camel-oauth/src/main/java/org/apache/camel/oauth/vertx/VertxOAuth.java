@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oauth.vertx;
+
+import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
 
 import java.net.URI;
 
@@ -38,8 +41,6 @@ import org.apache.camel.oauth.OAuthLogoutParams;
 import org.apache.camel.oauth.UserCredentials;
 import org.apache.camel.oauth.UserProfile;
 
-import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
-
 public class VertxOAuth extends OAuth {
 
     private final Vertx vertx;
@@ -56,10 +57,8 @@ public class VertxOAuth extends OAuth {
             var clientId = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_ID);
             var clientSecret = getRequiredProperty(ctx, CAMEL_OAUTH_CLIENT_SECRET);
 
-            var config = new OAuthConfig()
-                    .setBaseUrl(baseUri)
-                    .setClientId(clientId)
-                    .setClientSecret(clientSecret);
+            var config =
+                    new OAuthConfig().setBaseUrl(baseUri).setClientId(clientId).setClientSecret(clientSecret);
 
             OAuth2Options opts = new OAuth2Options()
                     .setSite(baseUri)
@@ -122,8 +121,7 @@ public class VertxOAuth extends OAuth {
 
         } else if (creds instanceof org.apache.camel.oauth.TokenCredentials params) {
 
-            vtxCreds = new TokenCredentials()
-                    .setToken(params.getToken());
+            vtxCreds = new TokenCredentials().setToken(params.getToken());
 
         } else if (creds instanceof org.apache.camel.oauth.ClientCredentials params) {
 

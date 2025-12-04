@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.util.HashMap;
@@ -53,9 +54,11 @@ public class GroovySetHeaderTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("drink").groovy("header.beer")
+                        .setHeader("drink")
+                        .groovy("header.beer")
                         // shows how to access the camelContext value
-                        .setHeader("camelId").groovy("camelContext.name")
+                        .setHeader("camelId")
+                        .groovy("camelContext.name")
                         .to("mock:result");
             }
         };

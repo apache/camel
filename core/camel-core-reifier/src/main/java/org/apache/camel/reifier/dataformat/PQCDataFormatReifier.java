@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -38,5 +39,4 @@ public class PQCDataFormatReifier extends DataFormatReifier<PQCDataFormat> {
         properties.put("provider", definition.getProvider());
         properties.put("keyGenerator", asRef(definition.getKeyGenerator()));
     }
-
 }

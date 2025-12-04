@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.context.ContextLoaderListener;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupport {
     @Test
@@ -52,12 +53,12 @@ public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupp
                 .setClassLoader(getClass().getClassLoader())
                 .setContextPath(CONTEXT)
                 .setDeploymentName(getClass().getName())
-                .addInitParameter("contextConfigLocation",
+                .addInitParameter(
+                        "contextConfigLocation",
                         "classpath:org/apache/camel/component/servlet/example-camelContext.xml")
                 .addListener(Servlets.listener(ContextLoaderListener.class))
                 .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
                         .addInitParam("matchOnUriPrefix", "true")
                         .addMapping("/services/*"));
     }
-
 }

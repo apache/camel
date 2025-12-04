@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -22,13 +25,11 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
-import static org.apache.camel.TypeConverter.MISS_VALUE;
-
 @Converter(generateLoader = true)
 public final class JettyConverter {
 
     private JettyConverter() {
-        //Helper class
+        // Helper class
     }
 
     @Converter(fallback = true)
@@ -47,5 +48,4 @@ public final class JettyConverter {
 
         return null;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.camel.CamelExecutionException;
@@ -26,16 +31,13 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTest {
 
     @Test
     public void testFailWithoutException() {
-        String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
-                String.class);
+        String out = template()
+                .requestBody(
+                        "undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null, String.class);
         assertEquals("Fail", out);
     }
 
@@ -44,8 +46,7 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
         ProducerTemplate template = template();
         String uri = "undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true";
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody(uri, null, String.class));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.requestBody(uri, null, String.class));
 
         HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(404, cause.getStatusCode());
@@ -60,7 +61,8 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
 
         Exception ex = assertThrows(CamelExecutionException.class, () -> template.request(String.class));
 
-        HttpOperationFailedException httpException = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        HttpOperationFailedException httpException =
+                assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(400, httpException.getStatusCode());
         assertEquals("text/plain", httpException.getResponseHeaders().get(Exchange.CONTENT_TYPE));
         assertEquals("Invalid json data", httpException.getResponseBody());
@@ -71,21 +73,20 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration()
-                        .component("undertow").port(getPort2())
-                        .bindingMode(RestBindingMode.json);
+                restConfiguration().component("undertow").port(getPort2()).bindingMode(RestBindingMode.json);
 
                 onException(JsonParseException.class)
                         .handled(true)
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
                         .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
-                        .setBody().constant("Invalid json data");
+                        .setBody()
+                        .constant("Invalid json data");
 
-                rest("/test")
-                        .put("/fail").to("mock:test");
+                rest("/test").put("/fail").to("mock:test");
 
                 from("undertow:http://localhost:{{port}}/fail")
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE).constant(404)
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE)
+                        .constant(404)
                         .transform(constant("Fail"));
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import java.util.Properties;
@@ -30,16 +31,22 @@ public class StompConfiguration implements Cloneable {
     @UriParam(defaultValue = "tcp://localhost:61613")
     @Metadata(required = true)
     private String brokerURL = "tcp://localhost:61613";
+
     @UriParam(label = "security", secret = true)
     private String login;
+
     @UriParam(label = "security", secret = true)
     private String passcode;
+
     @UriParam
     private String host;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam
     private String version;
+
     @UriParam
     private Properties customHeaders;
 

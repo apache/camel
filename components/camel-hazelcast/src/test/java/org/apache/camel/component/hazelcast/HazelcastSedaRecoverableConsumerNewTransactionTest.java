@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hazelcast;
 
-import com.hazelcast.core.HazelcastException;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.transaction.TransactionContext;
-import org.mockito.Mockito;
+package org.apache.camel.component.hazelcast;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.hazelcast.core.HazelcastException;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.transaction.TransactionContext;
+import org.mockito.Mockito;
 
 public class HazelcastSedaRecoverableConsumerNewTransactionTest extends HazelcastSedaRecoverableConsumerTest {
 
@@ -43,5 +44,4 @@ public class HazelcastSedaRecoverableConsumerNewTransactionTest extends Hazelcas
         verify(hazelcastInstance, times(2)).getQueue("foo");
         verify(hazelcastInstance, atLeastOnce()).newTransactionContext();
     }
-
 }

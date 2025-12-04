@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,6 +25,7 @@ public class UserJacksonXmlPojo {
 
     @JsonProperty("id")
     private int identifier;
+
     @JsonProperty("name")
     private String userName;
 

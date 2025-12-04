@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Set;
@@ -25,12 +32,6 @@ import org.apache.camel.support.DefaultExchangeHolder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanRemoteAggregationRepositoryOperationsIT extends InfinispanRemoteTestSupport {
     private InfinispanRemoteAggregationRepository aggregationRepository;
@@ -132,7 +133,7 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
     @Test
     public void testGetKeys() {
         // Given
-        String[] keys = { "GetKeys1", "GetKeys2" };
+        String[] keys = {"GetKeys1", "GetKeys2"};
         addExchanges(keys);
         // When
         Set<String> keySet = aggregationRepository.getKeys();
@@ -192,7 +193,7 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
     @Test
     public void testScan() {
         // Given
-        String[] keys = { "Scan1", "Scan2" };
+        String[] keys = {"Scan1", "Scan2"};
         addExchanges(keys);
         // When
         Set<String> exchangeIdSet = aggregationRepository.scan(context());
@@ -205,7 +206,7 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
     @Test
     public void testRecover() {
         // Given
-        String[] keys = { "Recover1", "Recover2" };
+        String[] keys = {"Recover1", "Recover2"};
         addExchanges(keys);
         // When
         Exchange exchange2 = aggregationRepository.recover(context(), "Recover2");
@@ -214,5 +215,4 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
         assertNotNull(exchange2);
         assertNull(exchange3);
     }
-
 }

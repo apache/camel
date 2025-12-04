@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpCustomOptionsTest extends BaseNettyTest {
 
@@ -28,8 +29,8 @@ public class NettyHttpCustomOptionsTest extends BaseNettyTest {
 
     @Test
     public void shouldReturnCustomResponseForOptions() {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
-                String.class);
+        String response = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS", String.class);
         assertEquals(expectedResponse, response);
     }
 
@@ -38,9 +39,10 @@ public class NettyHttpCustomOptionsTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?httpMethodRestrict=OPTIONS").setBody().constant(expectedResponse);
+                from("netty-http:http://0.0.0.0:{{port}}/foo?httpMethodRestrict=OPTIONS")
+                        .setBody()
+                        .constant(expectedResponse);
             }
         };
     }
-
 }

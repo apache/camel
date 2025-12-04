@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,10 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedChoiceTest extends ManagementTestSupport {
@@ -79,13 +80,14 @@ public class ManagedChoiceTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .choice().id("mysend")
+                        .choice()
+                        .id("mysend")
                         .when(header("foo"))
                         .to("mock:foo")
                         .otherwise()
-                        .to("mock:bar").id("bar");
+                        .to("mock:bar")
+                        .id("bar");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,12 +37,12 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.awaitility.Awaitility.await;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends ContextTestSupport {
-    private static final Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest.class);
 
     private final String url = "seda:foo?concurrentConsumers=2";
     private MockEndpoint result;
@@ -110,11 +113,16 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
                 int threshold = 2;
                 long failureWindow = 30;
                 long halfOpenAfter = 250;
-                ThrottlingExceptionRoutePolicy policy
-                        = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
+                ThrottlingExceptionRoutePolicy policy =
+                        new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new AlwaysCloseHandler());
 
-                from(url).routeId("foo").routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
+                from(url)
+                        .routeId("foo")
+                        .routePolicy(policy)
+                        .log("${body}")
+                        .to("log:foo?groupSize=10")
+                        .to("mock:result");
             }
         };
     }
@@ -125,7 +133,6 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         public boolean isReadyToBeClosed() {
             return true;
         }
-
     }
 
     protected void sendMessage(String bodyText) {

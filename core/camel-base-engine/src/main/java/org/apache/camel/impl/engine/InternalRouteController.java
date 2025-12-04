@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collection;
@@ -147,7 +148,8 @@ class InternalRouteController implements RouteController {
     }
 
     @Override
-    public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+    public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+            throws Exception {
         return abstractCamelContext.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout, LoggingLevel.INFO);
     }
 

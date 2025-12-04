@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.Exchange;
@@ -25,24 +26,25 @@ public class CxfConsumerFaultWithRouteTest extends CxfConsumerPayloadFaultTest {
     @Override
     protected RouteBuilder createRouteBuilder() {
         final String serviceURI = "cxf://" + serviceAddress + "?"
-                                  + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
-                                  + "&serviceClass=org.apache.camel.wsdl_first.Person";
+                + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
+                + "&serviceClass=org.apache.camel.wsdl_first.Person";
 
         return new RouteBuilder() {
             public void configure() {
-                from(serviceURI).process(new Processor() {
-                    public void process(final Exchange exchange) throws Exception {
-                        // set the fault message here
-                        org.apache.camel.wsdl_first.types.UnknownPersonFault faultDetail
-                                = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
-                        faultDetail.setPersonId("");
-                        UnknownPersonFault fault = new UnknownPersonFault("Get the null value of person name", faultDetail);
-                        throw fault;
-                    }
-                }).to("log:myfaultlog");
-
+                from(serviceURI)
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) throws Exception {
+                                // set the fault message here
+                                org.apache.camel.wsdl_first.types.UnknownPersonFault faultDetail =
+                                        new org.apache.camel.wsdl_first.types.UnknownPersonFault();
+                                faultDetail.setPersonId("");
+                                UnknownPersonFault fault =
+                                        new UnknownPersonFault("Get the null value of person name", faultDetail);
+                                throw fault;
+                            }
+                        })
+                        .to("log:myfaultlog");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
 
 import com.arangodb.ArangoCollection;
@@ -43,6 +44,7 @@ public abstract class BaseArangoDb implements ConfigurableRoute, CamelTestSuppor
     @Order(1)
     @RegisterExtension
     public static ArangoDBService service = ArangoDBServiceFactory.createService();
+
     @Order(2)
     @RegisterExtension
     public static final CamelContextExtension camelContextExtension = new TransientCamelContextExtension();

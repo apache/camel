@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
@@ -65,15 +66,19 @@ public class DefaultTransactionStrategy implements TransactionStrategy {
     private void initTransactionManager(CamelContext camelContext) {
         // lookup transaction manager and use it if only one provided
         if (transactionManager == null && camelContext != null) {
-            Map<String, PlatformTransactionManager> map
-                    = camelContext.getRegistry().findByTypeWithName(PlatformTransactionManager.class);
+            Map<String, PlatformTransactionManager> map =
+                    camelContext.getRegistry().findByTypeWithName(PlatformTransactionManager.class);
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next();
-                    LOG.info("Using TransactionManager found in registry with id [{}] {}",
-                            map.keySet().iterator().next(), transactionManager);
+                    LOG.info(
+                            "Using TransactionManager found in registry with id [{}] {}",
+                            map.keySet().iterator().next(),
+                            transactionManager);
                 } else {
-                    LOG.debug("Could not find a single TransactionManager in registry as there was {} instances.", map.size());
+                    LOG.debug(
+                            "Could not find a single TransactionManager in registry as there was {} instances.",
+                            map.size());
                 }
             }
         } else {
@@ -82,15 +87,19 @@ public class DefaultTransactionStrategy implements TransactionStrategy {
 
         // transaction manager could also be hidden in a template
         if (transactionManager == null && camelContext != null) {
-            Map<String, TransactionTemplate> map
-                    = camelContext.getRegistry().findByTypeWithName(TransactionTemplate.class);
+            Map<String, TransactionTemplate> map =
+                    camelContext.getRegistry().findByTypeWithName(TransactionTemplate.class);
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next().getTransactionManager();
-                    LOG.info("Using TransactionManager found in registry with id [{}] {}",
-                            map.keySet().iterator().next(), transactionManager);
+                    LOG.info(
+                            "Using TransactionManager found in registry with id [{}] {}",
+                            map.keySet().iterator().next(),
+                            transactionManager);
                 } else {
-                    LOG.debug("Could not find a single TransactionTemplate in registry as there was {} instances.", map.size());
+                    LOG.debug(
+                            "Could not find a single TransactionTemplate in registry as there was {} instances.",
+                            map.size());
                 }
             }
         }

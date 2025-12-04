@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +29,8 @@ public class JqExpressionVariableFnTest extends JqTestSupport {
             public void configure() {
                 from("direct:start")
                         .setVariable("MyVar", constant("MyValue"))
-                        .transform().jq(".foo = variable(\"MyVar\")")
+                        .transform()
+                        .jq(".foo = variable(\"MyVar\")")
                         .to("mock:result");
             }
         };
@@ -36,8 +38,7 @@ public class JqExpressionVariableFnTest extends JqTestSupport {
 
     @Test
     public void testExpression() throws Exception {
-        getMockEndpoint("mock:result")
-                .expectedBodiesReceived(node("foo", "MyValue"));
+        getMockEndpoint("mock:result").expectedBodiesReceived(node("foo", "MyValue"));
 
         template.sendBody("direct:start", node("foo", "bar"));
 

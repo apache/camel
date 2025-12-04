@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,7 +39,8 @@ public class PQCDefaultSPHINCSPLUSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
                     PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -47,8 +49,8 @@ public class PQCDefaultSPHINCSPLUSMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
-                PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(), PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
         kpGen.initialize(SPHINCSPlusParameterSpec.haraka_256s, new SecureRandom());
         return kpGen;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.processor;
 
 import javax.xml.crypto.KeySelector;
@@ -32,23 +33,29 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
 
     @UriParam
     private KeySelector keySelector;
+
     @UriParam
     private XmlSignatureChecker xmlSignatureChecker;
+
     @UriParam
     private XmlSignature2Message xmlSignature2Message = new DefaultXmlSignature2Message();
+
     @UriParam
     private ValidationFailedHandler validationFailedHandler = new DefaultValidationFailedHandler();
+
     @UriParam
     private Object outputNodeSearch;
+
     @UriParam(defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
+
     @UriParam(defaultValue = "false")
     private Boolean removeSignatureElements = Boolean.FALSE;
+
     @UriParam(defaultValue = "true")
     private Boolean secureValidation = Boolean.TRUE;
 
-    public XmlVerifierConfiguration() {
-    }
+    public XmlVerifierConfiguration() {}
 
     public XmlVerifierConfiguration copy() {
         try {
@@ -172,5 +179,4 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
     public void setSecureValidation(Boolean secureValidation) {
         this.secureValidation = secureValidation;
     }
-
 }

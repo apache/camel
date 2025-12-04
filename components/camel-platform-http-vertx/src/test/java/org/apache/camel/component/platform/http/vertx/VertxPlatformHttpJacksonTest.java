@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 public class VertxPlatformHttpJacksonTest {
 
@@ -38,22 +39,18 @@ public class VertxPlatformHttpJacksonTest {
                 @Override
                 public void configure() {
                     from("platform-http:/hello")
-                            .setBody().constant("{\"hello\": \"world\"}")
-                            .unmarshal().json();
+                            .setBody()
+                            .constant("{\"hello\": \"world\"}")
+                            .unmarshal()
+                            .json();
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/hello")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("{\"hello\":\"world\"}"));
+            given().when().get("/hello").then().statusCode(200).body(equalTo("{\"hello\":\"world\"}"));
         } finally {
             context.stop();
         }
     }
-
 }

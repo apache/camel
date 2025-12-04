@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat.rag;
+
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,6 @@ import dev.langchain4j.rag.content.DefaultContent;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
-
 public class LangChain4jRagAggregatorStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -37,15 +38,15 @@ public class LangChain4jRagAggregatorStrategy implements AggregationStrategy {
         }
 
         // check that we got new Augmented Data
-        Optional<List<String>> newAugmentedData = Optional.ofNullable(newExchange.getIn().getBody(List.class));
+        Optional<List<String>> newAugmentedData =
+                Optional.ofNullable(newExchange.getIn().getBody(List.class));
         if (newAugmentedData.isEmpty()) {
             return oldExchange;
         }
 
         // create a list of contents from the retrieved Strings
-        List<Content> newContents = newAugmentedData.get().stream()
-                .map(DefaultContent::new)
-                .collect(Collectors.toList());
+        List<Content> newContents =
+                newAugmentedData.get().stream().map(DefaultContent::new).collect(Collectors.toList());
 
         // Get or create the augmented data list from the old exchange
         List<Content> augmentedData = Optional.ofNullable(oldExchange.getIn().getHeader(AUGMENTED_DATA, List.class))

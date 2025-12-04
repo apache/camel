@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -24,11 +30,6 @@ import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultRegistry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
@@ -53,7 +54,8 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         reg.bind("bar", bar);
         context.getCamelContextExtension().setRegistry(reg);
 
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
 
         return context;
     }
@@ -74,12 +76,14 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         assertSame(foo, context.getRegistry().lookupByName("{{bean.foo}}"));
         assertSame(bar, context.getRegistry().lookupByName("{{bean.bar}}"));
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> context.getRegistry().lookupByName("{{bean.unknown}}"),
                 "Should have thrown exception");
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+        assertEquals(
+                "Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
                 cause.getMessage());
     }
 
@@ -90,12 +94,14 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         assertSame(foo, context.getRegistry().lookupByNameAndType("{{bean.foo}}", MyFooBean.class));
         assertSame(bar, context.getRegistry().lookupByNameAndType("{{bean.bar}}", MyDummyBean.class));
 
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> context.getRegistry().lookupByNameAndType("{{bean.unknown}}", MyDummyBean.class),
                 "Should have thrown exception");
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+        assertEquals(
+                "Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
                 cause.getMessage());
     }
 }

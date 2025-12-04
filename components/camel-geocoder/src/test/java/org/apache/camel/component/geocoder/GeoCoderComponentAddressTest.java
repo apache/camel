@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.geocoder;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -40,8 +41,11 @@ public class GeoCoderComponentAddressTest extends GeoCoderApiKeyTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("geocoder:address: empty?apiKey=" + getApiKey()).to("log:result")
-                        .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
+                from("direct:start")
+                        .to("geocoder:address: empty?apiKey=" + getApiKey())
+                        .to("log:result")
+                        .log(
+                                "Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
                         .to("mock:result");
             }
         };

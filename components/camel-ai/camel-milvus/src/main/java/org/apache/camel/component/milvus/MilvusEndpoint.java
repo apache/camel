@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milvus;
 
 import java.util.concurrent.TimeUnit;
@@ -37,16 +38,13 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform operations on the Milvus Vector Database.
  */
 @UriEndpoint(
-             firstVersion = "4.5.0",
-             scheme = Milvus.SCHEME,
-             title = "Milvus",
-             syntax = "milvus:collection",
-             producerOnly = true,
-             category = {
-                     Category.DATABASE,
-                     Category.AI
-             },
-             headersClass = MilvusHeaders.class)
+        firstVersion = "4.5.0",
+        scheme = Milvus.SCHEME,
+        title = "Milvus",
+        syntax = "milvus:collection",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.AI},
+        headersClass = MilvusHeaders.class)
 public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)
@@ -60,10 +58,7 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
     private volatile MilvusClient client;
 
     public MilvusEndpoint(
-                          String endpointUri,
-                          Component component,
-                          String collection,
-                          MilvusConfiguration configuration) {
+            String endpointUri, Component component, String collection, MilvusConfiguration configuration) {
 
         super(endpointUri, component);
 
@@ -138,8 +133,10 @@ public class MilvusEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
     private MilvusClient createClient() {
 
-        ConnectParam.Builder parameters = ConnectParam.newBuilder().withHost(configuration.getHost())
-                .withPort(configuration.getPort()).withConnectTimeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
+        ConnectParam.Builder parameters = ConnectParam.newBuilder()
+                .withHost(configuration.getHost())
+                .withPort(configuration.getPort())
+                .withConnectTimeout(configuration.getTimeout(), TimeUnit.MILLISECONDS);
 
         if (configuration.getToken() != null) {
             parameters.withToken(configuration.getToken());

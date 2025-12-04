@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.OffsetTime;
@@ -27,7 +28,9 @@ final class OffsetTimeSerializer extends com.fasterxml.jackson.datatype.jsr310.s
     private static final long serialVersionUID = 1L;
 
     private OffsetTimeSerializer() {
-        super(com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer.INSTANCE, null, DateTimeHandling.ISO_OFFSET_TIME);
+        super(
+                com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer.INSTANCE,
+                null,
+                DateTimeHandling.ISO_OFFSET_TIME);
     }
-
 }

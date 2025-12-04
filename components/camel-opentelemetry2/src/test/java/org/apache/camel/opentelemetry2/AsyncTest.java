@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,11 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * AsyncTest tests the execution of a new spin off async components.
@@ -71,7 +72,6 @@ public class AsyncTest extends OpenTelemetryTracerTestSupport {
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
@@ -97,62 +97,93 @@ public class AsyncTest extends OpenTelemetryTracerTestSupport {
         assertTrue(asyncMock.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), asyncDirectTo.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), asyncDirectFrom.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), async.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), asyncLog.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), asyncMock.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                direct.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                asyncDirectTo.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                asyncDirectFrom.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                async.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                asyncLog.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                asyncMock.getSpanContext().getTraceId());
 
         // Validate different Exchange ID
-        assertNotEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertNotEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 asyncDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 async.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 asyncLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
-        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+        assertEquals(
+                asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
                 asyncMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), asyncDirectTo.getParentSpanContext().getSpanId());
-        assertEquals(asyncDirectTo.getSpanContext().getSpanId(), asyncDirectFrom.getParentSpanContext().getSpanId());
-        assertEquals(asyncDirectFrom.getSpanContext().getSpanId(), async.getParentSpanContext().getSpanId());
-        assertEquals(asyncDirectFrom.getSpanContext().getSpanId(), asyncLog.getParentSpanContext().getSpanId());
-        assertEquals(asyncDirectFrom.getSpanContext().getSpanId(), asyncMock.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(),
+                asyncDirectTo.getParentSpanContext().getSpanId());
+        assertEquals(
+                asyncDirectTo.getSpanContext().getSpanId(),
+                asyncDirectFrom.getParentSpanContext().getSpanId());
+        assertEquals(
+                asyncDirectFrom.getSpanContext().getSpanId(),
+                async.getParentSpanContext().getSpanId());
+        assertEquals(
+                asyncDirectFrom.getSpanContext().getSpanId(),
+                asyncLog.getParentSpanContext().getSpanId());
+        assertEquals(
+                asyncDirectFrom.getSpanContext().getSpanId(),
+                asyncMock.getParentSpanContext().getSpanId());
 
         // Validate message logging
-        assertEquals("A direct message", direct.getEvents().get(0).getAttributes().get(
-                AttributeKey.stringKey("message")));
-        assertEquals("An async message", asyncDirectFrom.getEvents().get(0).getAttributes().get(
-                AttributeKey.stringKey("message")));
+        assertEquals(
+                "A direct message", direct.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
+        assertEquals(
+                "An async message",
+                asyncDirectFrom.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         String expectedBodyAsync = "Bye Camel";
         if (expectedBody == null) {
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         } else {
             assertEquals(
                     "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getEvents().get(0).getAttributes().get(
-                            AttributeKey.stringKey("message")));
+                    log.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
         }
 
         assertEquals(
                 "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBodyAsync + "]",
-                asyncLog.getEvents().get(0).getAttributes().get(
-                        AttributeKey.stringKey("message")));
+                asyncLog.getEvents().get(0).getAttributes().get(AttributeKey.stringKey("message")));
     }
 
     @Override

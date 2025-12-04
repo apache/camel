@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 
@@ -27,11 +33,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 @Disabled("We cannot run this test as default port 80 is not allows on most boxes")
 public class HttpDefaultPortNumberTest extends BaseHttpTest {
 
@@ -40,10 +41,13 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -60,11 +64,8 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("http://localhost/search");
-                from("direct:dummy")
-                        .to("http://localhost:" + localServer.getLocalPort()
-                            + "/search");
+                from("direct:start").to("http://localhost/search");
+                from("direct:dummy").to("http://localhost:" + localServer.getLocalPort() + "/search");
             }
         });
 
@@ -80,18 +81,15 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("http://localhost:80/search");
-                from("direct:dummy")
-                        .to("http://localhost:" + localServer.getLocalPort()
-                            + "/search");
+                from("direct:start").to("http://localhost:80/search");
+                from("direct:dummy").to("http://localhost:" + localServer.getLocalPort() + "/search");
             }
         });
 
         context.start();
         Exchange exchange = template.request("direct:start", null);
 
-        //specifying the defaultportnumber helps
+        // specifying the defaultportnumber helps
         assertRefused(exchange, ":80");
     }
 
@@ -100,11 +98,8 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("http://localhost/search");
-                from("direct:dummy")
-                        .to("http://localhost:" + localServer.getLocalPort()
-                            + "/search");
+                from("direct:start").to("http://localhost/search");
+                from("direct:dummy").to("http://localhost:" + localServer.getLocalPort() + "/search");
             }
         });
 
@@ -121,14 +116,13 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("http://localhost/search");
+                from("direct:start").to("http://localhost/search");
             }
         });
 
         context.start();
 
-        //server is runnning, but connecting to other port
+        // server is runnning, but connecting to other port
         Exchange exchange = template.request("direct:start", null);
 
         assertRefused(exchange, ":80");
@@ -136,11 +130,13 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
 
     private void assertRefused(Exchange exchange, String portExt) {
         Map<String, Object> headers = exchange.getMessage().getHeaders();
-        //no http response:
+        // no http response:
         assertNull(headers.get(Exchange.HTTP_RESPONSE_CODE));
-        //and got an exception:
+        // and got an exception:
         assertIsInstanceOf(HttpHostConnectException.class, exchange.getException());
-        //with message:
-        assertEquals("Connection to http://localhost" + portExt + " refused", exchange.getException().getMessage());
+        // with message:
+        assertEquals(
+                "Connection to http://localhost" + portExt + " refused",
+                exchange.getException().getMessage());
     }
 }

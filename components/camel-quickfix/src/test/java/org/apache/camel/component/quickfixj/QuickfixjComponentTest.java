@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,12 +70,6 @@ import quickfix.field.TargetCompID;
 import quickfix.fix44.Email;
 import quickfix.mina.ProtocolFactory;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class QuickfixjComponentTest {
     private File settingsFile;
     private File settingsFile2;
@@ -103,13 +104,15 @@ public class QuickfixjComponentTest {
         settingsFile2 = File.createTempFile("quickfixj_test2_", ".cfg");
         tempdir = settingsFile.getParentFile();
         tempdir2 = settingsFile.getParentFile();
-        URL[] urls = new URL[] { tempdir.toURI().toURL(), tempdir2.toURI().toURL() };
+        URL[] urls = new URL[] {tempdir.toURI().toURL(), tempdir2.toURI().toURL()};
 
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
         settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         setSessionID(settings, sessionID);
 
@@ -140,9 +143,10 @@ public class QuickfixjComponentTest {
 
         assertThat(component.getEngines().size(), is(0));
 
-        Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] { String.class });
-        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,
-                new StaticMethodTypeConverter(converterMethod, false));
+        Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] {String.class});
+        camelContext
+                .getTypeConverterRegistry()
+                .addTypeConverter(SessionID.class, String.class, new StaticMethodTypeConverter(converterMethod, false));
     }
 
     @AfterEach
@@ -242,7 +246,8 @@ public class QuickfixjComponentTest {
         // start the component
         camelContext.start();
 
-        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
+        QuickfixjEndpoint e1 =
+                (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         assertThat(component.getEngines().size(), is(1));
         assertThat(component.getProvisionalEngines().size(), is(0));
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
@@ -268,8 +273,8 @@ public class QuickfixjComponentTest {
         // will start the component
         camelContext.start();
 
-        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component
-                .createEndpoint(getEndpointUri(settingsFile.getName(), null) + "?lazyCreateEngine=true");
+        QuickfixjEndpoint e1 = (QuickfixjEndpoint)
+                component.createEndpoint(getEndpointUri(settingsFile.getName(), null) + "?lazyCreateEngine=true");
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(false));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().get(settingsFile.getName()).isLazy(), is(true));
@@ -301,7 +306,8 @@ public class QuickfixjComponentTest {
         camelContext.start();
 
         // will use connector's lazyCreateEngines setting
-        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
+        QuickfixjEndpoint e1 =
+                (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(false));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().get(settingsFile.getName()).isLazy(), is(true));
@@ -335,8 +341,8 @@ public class QuickfixjComponentTest {
         Consumer consumer = endpoint.createConsumer(new Processor() {
             @Override
             public void process(Exchange exchange) {
-                QuickfixjEventCategory eventCategory
-                        = (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
+                QuickfixjEventCategory eventCategory =
+                        (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
                 if (eventCategory == QuickfixjEventCategory.SessionCreated) {
                     latch.countDown();
                 }
@@ -366,18 +372,21 @@ public class QuickfixjComponentTest {
         // Create settings file with both acceptor and initiator
 
         SessionSettings settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
 
         SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "ACCEPTOR", "INITIATOR");
-        settings.setString(acceptorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
+        settings.setString(
+                acceptorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(acceptorSessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
         setSessionID(settings, acceptorSessionID);
 
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "INITIATOR", "ACCEPTOR");
-        settings.setString(initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE,
-                SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setString(
+                initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
         settings.setLong(initiatorSessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
         settings.setLong(initiatorSessionID, Initiator.SETTING_RECONNECT_INTERVAL, 1);
         setSessionID(settings, initiatorSessionID);
@@ -394,8 +403,8 @@ public class QuickfixjComponentTest {
         Consumer consumer = endpoint.createConsumer(new Processor() {
             @Override
             public void process(Exchange exchange) {
-                QuickfixjEventCategory eventCategory
-                        = (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
+                QuickfixjEventCategory eventCategory =
+                        (QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY);
                 if (eventCategory == QuickfixjEventCategory.SessionLogon) {
                     logonLatch.countDown();
                 } else if (eventCategory == QuickfixjEventCategory.AppMessageReceived) {

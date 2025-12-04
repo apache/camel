@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.http.HttpTimeoutException;
 import java.util.ArrayList;
@@ -39,17 +45,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfTimeoutTest extends CamelSpringTestSupport {
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfTimeoutTest/SoapContext/SoapPort";
+    protected static final String JAXWS_SERVER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfTimeoutTest/SoapContext/SoapPort";
 
     @BeforeAll
     public static void startService() {
@@ -59,7 +60,8 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvokingJaxWsServerWithBusUriParams() throws Exception {
-        sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter&bus=#cxf");
+        sendTimeOutMessage(
+                "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter&bus=#cxf");
     }
 
     @Test
@@ -129,7 +131,6 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
             HTTPClientPolicy policy = new HTTPClientPolicy();
             policy.setReceiveTimeout(60000);
             conduit.setClient(policy);
-
         }
 
         @Override
@@ -137,7 +138,5 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
             // Do nothing here
 
         }
-
     }
-
 }

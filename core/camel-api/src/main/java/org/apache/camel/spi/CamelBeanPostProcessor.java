@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.BindToRegistry;
@@ -103,5 +104,4 @@ public interface CamelBeanPostProcessor {
      * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
      */
     java.util.function.Predicate<BindToRegistry> getLazyBeanStrategy();
-
 }

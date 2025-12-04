@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml.pretty;
 
 import org.junit.jupiter.api.Assertions;
@@ -25,13 +26,13 @@ public class XmlPrettyPrinterTest {
     public void testPrettyPrint() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><tag><nested>hello</nested></tag></root>";
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                          + "<root>\n"
-                          + "  <tag>\n"
-                          + "    <nested>\n"
-                          + "      hello\n"
-                          + "    </nested>\n"
-                          + "  </tag>\n"
-                          + "</root>";
+                + "<root>\n"
+                + "  <tag>\n"
+                + "    <nested>\n"
+                + "      hello\n"
+                + "    </nested>\n"
+                + "  </tag>\n"
+                + "</root>";
         String pretty = XmlPrettyPrinter.pettyPrint(xml, 2, true);
         Assertions.assertEquals(expected, pretty);
     }
@@ -40,12 +41,12 @@ public class XmlPrettyPrinterTest {
     public void testPrettyPrintNoDecl() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><tag><nested>hello</nested></tag></root>";
         String expected = "<root>\n"
-                          + "  <tag>\n"
-                          + "    <nested>\n"
-                          + "      hello\n"
-                          + "    </nested>\n"
-                          + "  </tag>\n"
-                          + "</root>";
+                + "  <tag>\n"
+                + "    <nested>\n"
+                + "      hello\n"
+                + "    </nested>\n"
+                + "  </tag>\n"
+                + "</root>";
         String pretty = XmlPrettyPrinter.pettyPrint(xml, 2, false);
         Assertions.assertEquals(expected, pretty);
     }
@@ -54,13 +55,13 @@ public class XmlPrettyPrinterTest {
     public void testPrettyPrintColor() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><tag><nested>hello</nested></tag></root>";
         String expected = "*<?xml version=\"1.0\" encoding=\"UTF-8\"?>*\n"
-                          + "*<root>*\n"
-                          + "  *<tag>*\n"
-                          + "    *<nested>*\n"
-                          + "      *hello*\n"
-                          + "    *</nested>*\n"
-                          + "  *</tag>*\n"
-                          + "*</root>*";
+                + "*<root>*\n"
+                + "  *<tag>*\n"
+                + "    *<nested>*\n"
+                + "      *hello*\n"
+                + "    *</nested>*\n"
+                + "  *</tag>*\n"
+                + "*</root>*";
         String pretty = XmlPrettyPrinter.colorPrint(xml, 2, true, new XmlPrettyPrinter.ColorPrintElement() {
             @Override
             public String color(int type, String value) {
@@ -73,7 +74,8 @@ public class XmlPrettyPrinterTest {
     @Test
     public void testPrettyPrintBeer() throws Exception {
         String xml = "<beer alc=\"4.4%\"> <kind>Fosters</kind> <name>Bell Expedition</name> </beer>";
-        String expected = """
+        String expected =
+                """
                 <beer alc="4.4%">
                   <kind>
                     Fosters
@@ -85,5 +87,4 @@ public class XmlPrettyPrinterTest {
         String pretty = XmlPrettyPrinter.pettyPrint(xml, 2, false);
         Assertions.assertEquals(expected, pretty);
     }
-
 }

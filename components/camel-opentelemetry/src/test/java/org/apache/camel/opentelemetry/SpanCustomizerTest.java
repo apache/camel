@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -32,17 +35,16 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SpanCustomizerTest extends CamelOpenTelemetryTestSupport {
     private static final SpanTestData[] TEST_DATA = {
-            new SpanTestData().setOperation("external-parent"),
-            new SpanTestData().setUri("seda://next").setOperation("next")
-                    .setParentId(2),
-            new SpanTestData().setUri("seda://next").setOperation("next")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(3),
-            new SpanTestData().setUri("direct://start").setOperation("start"),
+        new SpanTestData().setOperation("external-parent"),
+        new SpanTestData().setUri("seda://next").setOperation("next").setParentId(2),
+        new SpanTestData()
+                .setUri("seda://next")
+                .setOperation("next")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(3),
+        new SpanTestData().setUri("direct://start").setOperation("start"),
     };
     private static final String CUSTOM_SPAN_ID = IdGenerator.random().generateSpanId();
     private String traceId;
@@ -65,7 +67,9 @@ public class SpanCustomizerTest extends CamelOpenTelemetryTestSupport {
 
         // Simulate a trace being generated from outside of Camel
         // We'll use a SpanCustomizer to use it as the parent for our route spans
-        Span span = tracer.spanBuilder("external-parent").setAttribute("component", "foo").startSpan();
+        Span span = tracer.spanBuilder("external-parent")
+                .setAttribute("component", "foo")
+                .startSpan();
         traceId = span.getSpanContext().getTraceId();
         span.end();
 
@@ -77,11 +81,9 @@ public class SpanCustomizerTest extends CamelOpenTelemetryTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("start")
-                        .to("seda:next");
+                from("direct:start").routeId("start").to("seda:next");
 
-                from("seda:next")
-                        .log("${body}");
+                from("seda:next").log("${body}");
             }
         };
     }
@@ -93,10 +95,8 @@ public class SpanCustomizerTest extends CamelOpenTelemetryTestSupport {
                 if (operationName.equals("start") && exchange.getFromRouteId().equals("start")) {
                     // Use a custom trace id for propagation to all spans generated from direct:start routing
                     String traceId = exchange.getMessage().getBody(String.class);
-                    SpanContext spanContext = SpanContext.create(traceId,
-                            CUSTOM_SPAN_ID,
-                            TraceFlags.getSampled(),
-                            TraceState.getDefault());
+                    SpanContext spanContext = SpanContext.create(
+                            traceId, CUSTOM_SPAN_ID, TraceFlags.getSampled(), TraceState.getDefault());
 
                     spanBuilder.setParent(Context.current().with(Span.wrap(spanContext)));
                 }

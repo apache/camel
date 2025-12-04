@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.dto;
 
 public class DropboxDelResult {
@@ -27,5 +28,4 @@ public class DropboxDelResult {
     public String getEntry() {
         return entry;
     }
-
 }

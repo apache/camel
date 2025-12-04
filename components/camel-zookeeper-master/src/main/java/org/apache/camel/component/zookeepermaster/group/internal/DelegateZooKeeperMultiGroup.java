@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group.internal;
 
 import org.apache.camel.component.zookeepermaster.group.Group;
@@ -21,7 +22,8 @@ import org.apache.camel.component.zookeepermaster.group.MultiGroup;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.curator.framework.CuratorFramework;
 
-public class DelegateZooKeeperMultiGroup<T extends NodeState> extends DelegateZooKeeperGroup<T> implements MultiGroup<T> {
+public class DelegateZooKeeperMultiGroup<T extends NodeState> extends DelegateZooKeeperGroup<T>
+        implements MultiGroup<T> {
 
     public DelegateZooKeeperMultiGroup(String path, Class<T> clazz) {
         super(path, clazz);
@@ -41,5 +43,4 @@ public class DelegateZooKeeperMultiGroup<T extends NodeState> extends DelegateZo
             return false;
         }
     }
-
 }

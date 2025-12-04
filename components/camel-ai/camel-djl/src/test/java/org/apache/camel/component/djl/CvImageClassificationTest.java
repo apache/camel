@@ -48,5 +48,4 @@ public class CvImageClassificationTest extends CamelTestSupport {
             }
         };
     }
-
 }

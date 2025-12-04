@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.operations;
 
 import java.time.Duration;
@@ -34,7 +35,8 @@ public class DataLakeDirectoryOperations {
     private final DataLakeDirectoryClientWrapper client;
     private final DataLakeConfigurationOptionsProxy configurationProxy;
 
-    public DataLakeDirectoryOperations(final DataLakeConfiguration configuration, final DataLakeDirectoryClientWrapper client) {
+    public DataLakeDirectoryOperations(
+            final DataLakeConfiguration configuration, final DataLakeDirectoryClientWrapper client) {
         ObjectHelper.notNull(client, "client cannot be null");
         this.client = client;
         configurationProxy = new DataLakeConfigurationOptionsProxy(configuration);
@@ -49,11 +51,12 @@ public class DataLakeDirectoryOperations {
         final DataLakeRequestConditions requestConditions = configurationProxy.getDataLakeRequestConditions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
-        final Response<DataLakeFileClient> response = client.createFileWithResponse(fileName, permission, umask,
-                httpHeaders, metadata, requestConditions, timeout);
+        final Response<DataLakeFileClient> response = client.createFileWithResponse(
+                fileName, permission, umask, httpHeaders, metadata, requestConditions, timeout);
         final DataLakeFileClient fileClient = response.getValue();
-        final DataLakeExchangeHeaders exchangeHeaders
-                = DataLakeExchangeHeaders.create().httpHeaders(response.getHeaders()).fileClient(fileClient);
+        final DataLakeExchangeHeaders exchangeHeaders = DataLakeExchangeHeaders.create()
+                .httpHeaders(response.getHeaders())
+                .fileClient(fileClient);
         return new DataLakeOperationResponse(fileClient, exchangeHeaders.toMap());
     }
 
@@ -64,7 +67,8 @@ public class DataLakeDirectoryOperations {
 
         final Response<Void> response = client.deleteWithResponse(recursive, requestConditions, timeout);
 
-        DataLakeExchangeHeaders exchangeHeaders = DataLakeExchangeHeaders.create().httpHeaders(response.getHeaders());
+        DataLakeExchangeHeaders exchangeHeaders =
+                DataLakeExchangeHeaders.create().httpHeaders(response.getHeaders());
 
         return new DataLakeOperationResponse(true, exchangeHeaders.toMap());
     }

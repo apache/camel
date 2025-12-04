@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.StringReader;
@@ -63,7 +64,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
         // the used file should contain more than one character in order to be
         // streamed into the file system
-        template.sendBody("direct:a",
+        template.sendBody(
+                "direct:a",
                 this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
 
         assertMockEndpointsSatisfied();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.wasm;
 
 public final class Wasm {
@@ -21,11 +22,7 @@ public final class Wasm {
     public static final String FN_ALLOC = "alloc";
     public static final String FN_DEALLOC = "dealloc";
 
-    private Wasm() {
-    }
+    private Wasm() {}
 
-    public static class Headers {
-
-    }
-
+    public static class Headers {}
 }

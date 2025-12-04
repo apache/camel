@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.processor.aggregate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JCacheAggregationRepositoryTest extends JCacheAggregationRepositoryTestSupport {
 
@@ -36,8 +37,7 @@ public class JCacheAggregationRepositoryTest extends JCacheAggregationRepository
             final CamelContext context = context();
             Exchange oldOne = new DefaultExchange(context);
             Exchange newOne = new DefaultExchange(context);
-            assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context, "myKey", oldOne, newOne));
+            assertThrows(UnsupportedOperationException.class, () -> repo.add(context, "myKey", oldOne, newOne));
         } finally {
             repo.stop();
         }
@@ -51,8 +51,7 @@ public class JCacheAggregationRepositoryTest extends JCacheAggregationRepository
         try {
             final CamelContext context = context();
             Exchange ex = new DefaultExchange(context);
-            assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context, "myKey", ex));
+            assertThrows(UnsupportedOperationException.class, () -> repo.add(context, "myKey", ex));
         } finally {
             repo.stop();
         }

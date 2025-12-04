@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.deploymentconfigs;
 
 import java.util.concurrent.ExecutorService;
@@ -87,37 +88,50 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            FilterWatchListDeletable<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> w;
+            FilterWatchListDeletable<
+                            DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>>
+                    w;
 
             /*
-                Valid options are (according to how the client can be constructed):
-                - inAnyNamespace
-                - inAnyNamespace + withLabel
-                - inNamespace
-                - inNamespace + withLabel
-                - inNamespace + withName
-             */
+               Valid options are (according to how the client can be constructed):
+               - inAnyNamespace
+               - inAnyNamespace + withLabel
+               - inNamespace
+               - inNamespace + withLabel
+               - inNamespace + withName
+            */
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
             String resourceName = getEndpoint().getKubernetesConfiguration().getResourceName();
 
             if (ObjectHelper.isEmpty(namespace)) {
-                w = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs().inAnyNamespace();
+                w = getEndpoint()
+                        .getKubernetesClient()
+                        .adapt(OpenShiftClient.class)
+                        .deploymentConfigs()
+                        .inAnyNamespace();
 
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = w.withLabel(labelKey, labelValue);
                 }
             } else {
-                final NonNamespaceOperation<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>> client
-                        = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).deploymentConfigs()
+                final NonNamespaceOperation<
+                                DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>>
+                        client = getEndpoint()
+                                .getKubernetesClient()
+                                .adapt(OpenShiftClient.class)
+                                .deploymentConfigs()
                                 .inNamespace(namespace);
                 w = client;
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = client.withLabel(labelKey, labelValue);
                 } else if (ObjectHelper.isNotEmpty(resourceName)) {
-                    w = (FilterWatchListDeletable<DeploymentConfig, DeploymentConfigList, DeployableScalableResource<DeploymentConfig>>) client
-                            .withName(resourceName);
+                    w = (FilterWatchListDeletable<
+                                    DeploymentConfig,
+                                    DeploymentConfigList,
+                                    DeployableScalableResource<DeploymentConfig>>)
+                            client.withName(resourceName);
                 }
             }
 
@@ -129,7 +143,8 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(de.getDeploymentConfig());
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, de.getAction());
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {
@@ -144,7 +159,6 @@ public class OpenshiftDeploymentConfigsConsumer extends DefaultConsumer {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }
-
                 }
             });
         }

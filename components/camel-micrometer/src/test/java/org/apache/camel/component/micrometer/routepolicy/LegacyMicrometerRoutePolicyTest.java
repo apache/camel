@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
 
 import org.apache.camel.component.micrometer.MicrometerConstants;
@@ -39,9 +40,11 @@ public class LegacyMicrometerRoutePolicyTest extends MicrometerRoutePolicyTest {
 
     @Test
     public void testLegacyName() {
-        Assertions.assertEquals("CamelRoutePolicy",
+        Assertions.assertEquals(
+                "CamelRoutePolicy",
                 MicrometerUtils.legacyName(MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME));
-        Assertions.assertEquals("CamelMessageHistory",
+        Assertions.assertEquals(
+                "CamelMessageHistory",
                 MicrometerUtils.legacyName(MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME));
     }
 }

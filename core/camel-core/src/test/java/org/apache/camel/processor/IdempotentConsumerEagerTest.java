@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -27,9 +31,6 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IdempotentConsumerEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -46,8 +47,10 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .eager(false).to("mock:result");
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .eager(false)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -69,18 +72,24 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .eager(false).process(new Processor() {
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .eager(false)
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -105,15 +114,18 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .eager(false).process(new Processor() {
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .eager(false)
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damm I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -137,13 +149,17 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
             public void configure() {
                 final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
-                from("direct:start").idempotentConsumer(header("messageId"), repo).eager(false).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        // should not contain
-                        assertFalse(repo.contains(id), "Should not eager add to repo");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), repo)
+                        .eager(false)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                // should not contain
+                                assertFalse(repo.contains(id), "Should not eager add to repo");
+                            }
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -164,13 +180,17 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
             public void configure() {
                 final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
-                from("direct:start").idempotentConsumer(header("messageId"), repo).eager(true).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        // should contain
-                        assertTrue(repo.contains(id), "Should eager add to repo");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), repo)
+                        .eager(true)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                // should contain
+                                assertTrue(repo.contains(id), "Should eager add to repo");
+                            }
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -203,5 +223,4 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         startEndpoint = resolveMandatoryEndpoint("direct:start");
         resultEndpoint = getMockEndpoint("mock:result");
     }
-
 }

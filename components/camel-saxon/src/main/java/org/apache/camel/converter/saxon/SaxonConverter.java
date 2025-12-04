@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.saxon;
 
 import java.util.LinkedList;
@@ -42,8 +43,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 @Converter(generateLoader = true)
 public final class SaxonConverter {
 
-    private SaxonConverter() {
-    }
+    private SaxonConverter() {}
 
     @Converter
     public static Document toDOMDocument(TinyElementImpl node) throws XPathException {

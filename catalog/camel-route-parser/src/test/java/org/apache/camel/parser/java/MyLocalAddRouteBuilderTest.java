@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,8 +40,7 @@ public class MyLocalAddRouteBuilderTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:foo");
+                from("direct:start").to("mock:foo");
             }
         });
         context.start();
@@ -51,5 +51,4 @@ public class MyLocalAddRouteBuilderTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

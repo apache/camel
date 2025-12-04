@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.producer;
 
 import java.util.List;
@@ -73,11 +74,10 @@ public class ManagementProducer extends TorchServeProducer {
     private void register(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String url = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.URL, String.class))
+        String url = Optional.ofNullable(message.getHeader(TorchServeConstants.URL, String.class))
                 .orElse(configuration.getUrl());
-        RegisterOptions options = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.REGISTER_OPTIONS, RegisterOptions.class))
+        RegisterOptions options = Optional.ofNullable(
+                        message.getHeader(TorchServeConstants.REGISTER_OPTIONS, RegisterOptions.class))
                 .or(() -> Optional.ofNullable(configuration.getRegisterOptions()))
                 .orElse(RegisterOptions.empty());
         Response response = this.management.registerModel(url, options);
@@ -87,11 +87,10 @@ public class ManagementProducer extends TorchServeProducer {
     private void scaleWorker(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String modelName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+        String modelName = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
                 .orElse(configuration.getModelName());
-        ScaleWorkerOptions options = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.SCALE_WORKER_OPTIONS, ScaleWorkerOptions.class))
+        ScaleWorkerOptions options = Optional.ofNullable(
+                        message.getHeader(TorchServeConstants.SCALE_WORKER_OPTIONS, ScaleWorkerOptions.class))
                 .or(() -> Optional.ofNullable(configuration.getScaleWorkerOptions()))
                 .orElse(ScaleWorkerOptions.empty());
         Response response = this.management.setAutoScale(modelName, options);
@@ -101,11 +100,9 @@ public class ManagementProducer extends TorchServeProducer {
     private void describe(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String modelName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+        String modelName = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
                 .orElse(configuration.getModelName());
-        String modelVersion = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
+        String modelVersion = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
                 .orElse(configuration.getModelVersion());
         List<ModelDetail> response;
         if (modelVersion == null) {
@@ -119,14 +116,12 @@ public class ManagementProducer extends TorchServeProducer {
     private void unregister(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String modelName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+        String modelName = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
                 .orElse(configuration.getModelName());
-        String modelVersion = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
+        String modelVersion = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
                 .orElse(configuration.getModelVersion());
-        UnregisterOptions options = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.UNREGISTER_OPTIONS, UnregisterOptions.class))
+        UnregisterOptions options = Optional.ofNullable(
+                        message.getHeader(TorchServeConstants.UNREGISTER_OPTIONS, UnregisterOptions.class))
                 .or(() -> Optional.ofNullable(configuration.getUnregisterOptions()))
                 .orElse(UnregisterOptions.empty());
         Response response;
@@ -141,11 +136,10 @@ public class ManagementProducer extends TorchServeProducer {
     private void list(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        int limit = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.LIST_LIMIT, Integer.class))
+        int limit = Optional.ofNullable(message.getHeader(TorchServeConstants.LIST_LIMIT, Integer.class))
                 .orElse(configuration.getListLimit());
-        String nextPageToken = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.LIST_NEXT_PAGE_TOKEN, String.class))
+        String nextPageToken = Optional.ofNullable(
+                        message.getHeader(TorchServeConstants.LIST_NEXT_PAGE_TOKEN, String.class))
                 .orElse(configuration.getListNextPageToken());
         ModelList response = this.management.listModels(limit, nextPageToken);
         message.setBody(response);
@@ -154,11 +148,9 @@ public class ManagementProducer extends TorchServeProducer {
     private void setDefault(Exchange exchange) throws ApiException {
         Message message = exchange.getMessage();
         TorchServeConfiguration configuration = getEndpoint().getConfiguration();
-        String modelName = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
+        String modelName = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_NAME, String.class))
                 .orElse(configuration.getModelName());
-        String modelVersion = Optional
-                .ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
+        String modelVersion = Optional.ofNullable(message.getHeader(TorchServeConstants.MODEL_VERSION, String.class))
                 .orElse(configuration.getModelVersion());
         Response response = this.management.setDefault(modelName, modelVersion);
         message.setBody(response.getStatus());

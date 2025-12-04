@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,10 +38,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedPooledExchangeTest extends ManagementTestSupport {
@@ -74,8 +75,7 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on
-                = getCamelObjectName(TYPE_SERVICE, "DefaultExchangeFactoryManager");
+        ObjectName on = getCamelObjectName(TYPE_SERVICE, "DefaultExchangeFactoryManager");
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
@@ -102,7 +102,6 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
             Integer num2 = (Integer) mbeanServer.getAttribute(on, "TotalPooled");
             assertEquals(1, num2.intValue());
         });
-
     }
 
     @Override
@@ -110,7 +109,8 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:foo?period=1&delay=1&repeatCount=3").autoStartup(false)
+                from("timer:foo?period=1&delay=1&repeatCount=3")
+                        .autoStartup(false)
                         .setProperty("myprop", counter::incrementAndGet)
                         .setHeader("myheader", counter::incrementAndGet)
                         .process(new Processor() {

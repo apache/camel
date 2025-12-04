@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -26,9 +30,6 @@ import org.apache.camel.component.jpa.JpaEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class JpaProducerPassingEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -52,7 +53,8 @@ public class JpaProducerPassingEntityManagerTest extends AbstractJpaTest {
 
         // The same EntityManager returns same entity instance from its 1st level cache
         entityManager = emf.createEntityManager();
-        template.sendBodyAndHeader("direct:start", new SendEmail("bar@beer.org"), JpaConstants.ENTITY_MANAGER, entityManager);
+        template.sendBodyAndHeader(
+                "direct:start", new SendEmail("bar@beer.org"), JpaConstants.ENTITY_MANAGER, entityManager);
         exchange = mock.getReceivedExchanges().get(0);
         persistedEntity = exchange.getIn().getBody(SendEmail.class);
         emfindEntity = entityManager.find(SendEmail.class, persistedEntity.getId());
@@ -81,5 +83,4 @@ public class JpaProducerPassingEntityManagerTest extends AbstractJpaTest {
     protected String selectAllString() {
         return SELECT_ALL_STRING;
     }
-
 }

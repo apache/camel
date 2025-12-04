@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.camel.component.jgroups.JGroupsExpressions.delayIfContextNotStarted;
+import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,11 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.camel.component.jgroups.JGroupsExpressions.delayIfContextNotStarted;
-import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
 
 public class JGroupsClusterRouteTest {
 
@@ -44,11 +45,16 @@ public class JGroupsClusterRouteTest {
 
         @Override
         public void configure() {
-            from("jgroups:" + clusterName + "?enableViewMessages=true").filter(dropNonCoordinatorViews()).threads()
+            from("jgroups:" + clusterName + "?enableViewMessages=true")
+                    .filter(dropNonCoordinatorViews())
+                    .threads()
                     .delay(delayIfContextNotStarted(SECONDS.toMillis(15)))
                     .to("controlbus:route?routeId=masterRoute&action=start&async=true");
 
-            from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri);
+            from("timer://master?repeatCount=1")
+                    .routeId("masterRoute")
+                    .autoStartup(false)
+                    .to(masterMockUri);
         }
     }
 
@@ -131,5 +137,4 @@ public class JGroupsClusterRouteTest {
     private void assertMasterIsNot(CamelContext camelContext) throws InterruptedException {
         camelContext.getEndpoint(masterMockUri, MockEndpoint.class).assertIsSatisfied();
     }
-
 }

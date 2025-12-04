@@ -20,9 +20,7 @@ package org.apache.camel.test.infra.ftp.services.embedded;
 public final class EmbeddedConfigurationBuilder {
     private final EmbeddedConfiguration embeddedConfiguration = new EmbeddedConfiguration();
 
-    private EmbeddedConfigurationBuilder() {
-
-    }
+    private EmbeddedConfigurationBuilder() {}
 
     public EmbeddedConfigurationBuilder withTestDirectory(String testDirectory) {
         embeddedConfiguration.setTestDirectory(testDirectory);
@@ -104,9 +102,10 @@ public final class EmbeddedConfigurationBuilder {
         return this;
     }
 
-    public EmbeddedConfigurationBuilder withSecurityConfiguration(boolean useImplicit, String authValue, boolean clientAuth) {
-        return withSecurityConfiguration(new EmbeddedConfiguration.SecurityConfiguration(useImplicit, authValue, clientAuth));
-
+    public EmbeddedConfigurationBuilder withSecurityConfiguration(
+            boolean useImplicit, String authValue, boolean clientAuth) {
+        return withSecurityConfiguration(
+                new EmbeddedConfiguration.SecurityConfiguration(useImplicit, authValue, clientAuth));
     }
 
     public EmbeddedConfigurationBuilder withSecurityConfiguration(
@@ -122,7 +121,8 @@ public final class EmbeddedConfigurationBuilder {
 
     public static EmbeddedConfigurationBuilder defaultConfigurationTemplate() {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
-        final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
+        final EmbeddedConfiguration.User.UserInfo nonWritableUser =
+                new EmbeddedConfiguration.User.UserInfo(null, false);
 
         EmbeddedConfigurationBuilder builder = new EmbeddedConfigurationBuilder()
                 .withTestDirectory("res/home")
@@ -145,7 +145,8 @@ public final class EmbeddedConfigurationBuilder {
 
     public static EmbeddedConfigurationBuilder defaultFtpsConfigurationTemplate() {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
-        final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
+        final EmbeddedConfiguration.User.UserInfo nonWritableUser =
+                new EmbeddedConfiguration.User.UserInfo(null, false);
 
         EmbeddedConfigurationBuilder builder = new EmbeddedConfigurationBuilder()
                 .withTestDirectory("res/home")
@@ -172,7 +173,8 @@ public final class EmbeddedConfigurationBuilder {
 
     public static EmbeddedConfiguration defaultSftpConfiguration() {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
-        final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
+        final EmbeddedConfiguration.User.UserInfo nonWritableUser =
+                new EmbeddedConfiguration.User.UserInfo(null, false);
 
         EmbeddedConfigurationBuilder builder = new EmbeddedConfigurationBuilder()
                 .withTestDirectory("res/home")

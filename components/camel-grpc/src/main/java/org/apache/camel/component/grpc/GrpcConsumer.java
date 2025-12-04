@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.apache.camel.component.grpc.GrpcConstants.GRPC_BINDABLE_SERVICE_FACTORY_NAME;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -42,8 +45,6 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.grpc.GrpcConstants.GRPC_BINDABLE_SERVICE_FACTORY_NAME;
 
 /**
  * Represents gRPC server consumer implementation
@@ -96,8 +97,8 @@ public class GrpcConsumer extends DefaultConsumer {
 
         if (ObjectHelper.isNotEmpty(configuration.getHost()) && configuration.getPort() > 0) {
             LOG.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
-            serverBuilder
-                    = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            serverBuilder = NettyServerBuilder.forAddress(
+                    new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
         }
@@ -112,23 +113,21 @@ public class GrpcConsumer extends DefaultConsumer {
             ObjectHelper.notNull(configuration.getKeyCertChainResource(), "keyCertChainResource");
             ObjectHelper.notNull(configuration.getKeyResource(), "keyResource");
 
-            SslContextBuilder sslContextBuilder
-                    = SslContextBuilder
-                            .forServer(
-                                    ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                            configuration.getKeyCertChainResource()),
-                                    ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                            configuration.getKeyResource()),
-                                    configuration.getKeyPassword())
-                            .clientAuth(ClientAuth.REQUIRE);
+            SslContextBuilder sslContextBuilder = SslContextBuilder.forServer(
+                            ResourceHelper.resolveResourceAsInputStream(
+                                    endpoint.getCamelContext(), configuration.getKeyCertChainResource()),
+                            ResourceHelper.resolveResourceAsInputStream(
+                                    endpoint.getCamelContext(), configuration.getKeyResource()),
+                            configuration.getKeyPassword())
+                    .clientAuth(ClientAuth.REQUIRE);
 
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder
-                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                configuration.getTrustCertCollectionResource()));
+                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(
+                        endpoint.getCamelContext(), configuration.getTrustCertCollectionResource()));
             }
 
-            serverBuilder = serverBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
+            serverBuilder = serverBuilder.sslContext(
+                    GrpcSslContexts.configure(sslContextBuilder).build());
         }
 
         if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
@@ -139,21 +138,23 @@ public class GrpcConsumer extends DefaultConsumer {
                     configuration.getJwtIssuer(), configuration.getJwtSubject()));
         }
 
-        // To configure RST_STREAM settings we need valid configuration for both maxRstFramesPerWindow & maxRstPeriodSeconds
+        // To configure RST_STREAM settings we need valid configuration for both maxRstFramesPerWindow &
+        // maxRstPeriodSeconds
         if (configuration.getMaxRstFramesPerWindow() > 0 && configuration.getMaxRstPeriodSeconds() <= 0) {
             throw new IllegalArgumentException("maxRstPeriodSeconds must be a positive value");
         } else if (configuration.getMaxRstFramesPerWindow() <= 0 && configuration.getMaxRstPeriodSeconds() > 0) {
             throw new IllegalArgumentException("maxRstFramesPerWindow must be a positive value");
         } else if (configuration.getMaxRstFramesPerWindow() > 0 && configuration.getMaxRstPeriodSeconds() > 0) {
-            serverBuilder.maxRstFramesPerWindow(configuration.getMaxRstFramesPerWindow(),
-                    configuration.getMaxRstPeriodSeconds());
+            serverBuilder.maxRstFramesPerWindow(
+                    configuration.getMaxRstFramesPerWindow(), configuration.getMaxRstPeriodSeconds());
         }
 
         for (ServerInterceptor si : configuration.getServerInterceptors()) {
             serverBuilder.intercept(si);
         }
 
-        server = serverBuilder.addService(ServerInterceptors.intercept(bindableService, headerInterceptor))
+        server = serverBuilder
+                .addService(ServerInterceptors.intercept(bindableService, headerInterceptor))
                 .maxInboundMessageSize(configuration.getMaxMessageSize())
                 .flowControlWindow(configuration.getFlowControlWindow())
                 .maxConcurrentCallsPerConnection(configuration.getMaxConcurrentCallsPerConnection())
@@ -176,9 +177,9 @@ public class GrpcConsumer extends DefaultConsumer {
 
     public void onCompleted(Exchange exchange) {
         if (configuration.isForwardOnCompleted()) {
-            exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
-            doSend(exchange, done -> {
-            });
+            exchange.getIn()
+                    .setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
+            doSend(exchange, done -> {});
         }
     }
 
@@ -187,8 +188,7 @@ public class GrpcConsumer extends DefaultConsumer {
             exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
             exchange.getIn().setBody(error);
 
-            doSend(exchange, done -> {
-            });
+            doSend(exchange, done -> {});
         }
     }
 
@@ -196,7 +196,8 @@ public class GrpcConsumer extends DefaultConsumer {
         if (this.isRunAllowed()) {
             this.getAsyncProcessor().process(exchange, doneSync -> {
                 if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                    getExceptionHandler()
+                            .handleException("Error processing exchange", exchange, exchange.getException());
                 }
                 callback.done(doneSync);
             });
@@ -212,8 +213,8 @@ public class GrpcConsumer extends DefaultConsumer {
         CamelContext context = endpoint.getCamelContext();
         if (this.factory == null) {
             // Try to resolve from the registry
-            BindableServiceFactory bindableServiceFactory
-                    = CamelContextHelper.lookup(context, GRPC_BINDABLE_SERVICE_FACTORY_NAME, BindableServiceFactory.class);
+            BindableServiceFactory bindableServiceFactory = CamelContextHelper.lookup(
+                    context, GRPC_BINDABLE_SERVICE_FACTORY_NAME, BindableServiceFactory.class);
             if (bindableServiceFactory != null) {
                 this.factory = bindableServiceFactory;
             } else {

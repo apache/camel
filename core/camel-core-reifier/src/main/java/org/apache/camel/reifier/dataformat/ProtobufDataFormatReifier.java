@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -34,7 +35,8 @@ public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFor
         if (definition.getLibrary() == ProtobufLibrary.GoogleProtobuf) {
             if (definition.getInstanceClass() == null) {
                 if (definition.getUnmarshalType() != null) {
-                    properties.put("instanceClass", definition.getUnmarshalType().getName());
+                    properties.put(
+                            "instanceClass", definition.getUnmarshalType().getName());
                 } else if (definition.getUnmarshalTypeName() != null) {
                     properties.put("instanceClass", definition.getUnmarshalTypeName());
                 }
@@ -53,8 +55,11 @@ public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFor
             }
             properties.put("autoDiscoverObjectMapper", definition.getAutoDiscoverObjectMapper());
             properties.put("jsonView", or(definition.getJsonView(), definition.getJsonViewTypeName()));
-            properties.put("unmarshalType", or(
-                    or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()), definition.getInstanceClass()));
+            properties.put(
+                    "unmarshalType",
+                    or(
+                            or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()),
+                            definition.getInstanceClass()));
             properties.put("include", definition.getInclude());
             properties.put("allowJmsType", definition.getAllowJmsType());
             properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
@@ -68,5 +73,4 @@ public class ProtobufDataFormatReifier extends DataFormatReifier<ProtobufDataFor
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
         }
     }
-
 }

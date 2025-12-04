@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import io.netty.channel.ChannelHandler;
@@ -59,5 +60,4 @@ public interface HttpServerConsumerChannelFactory {
      * Gets the {@link ChannelHandler}
      */
     ChannelHandler getChannelHandler();
-
 }

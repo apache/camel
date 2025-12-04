@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -57,8 +58,7 @@ public class SmbConsumerDefaultIdempotentIT extends SmbServerTestSupport {
         return new RouteBuilder() {
 
             public void configure() {
-                from(getSmbUrl())
-                        .to("mock:result");
+                from(getSmbUrl()).to("mock:result");
             }
         };
     }

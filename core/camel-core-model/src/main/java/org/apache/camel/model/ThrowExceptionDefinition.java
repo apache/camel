@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,19 +35,21 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
 
     @XmlTransient
     private Exception exception;
+
     @XmlTransient
     private Class<? extends Exception> exceptionClass;
 
     @XmlAttribute
     private String message;
+
     @XmlAttribute
     private String exceptionType;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String ref;
 
-    public ThrowExceptionDefinition() {
-    }
+    public ThrowExceptionDefinition() {}
 
     protected ThrowExceptionDefinition(ThrowExceptionDefinition source) {
         super(source);

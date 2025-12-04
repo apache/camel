@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,9 +49,13 @@ public class AggregateThreadPoolProfileTest extends ContextTestSupport {
                 profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
                         // use our custom thread pool profile
-                        .completionSize(3).executorService("myProfile").to("log:foo").to("mock:aggregated");
+                        .completionSize(3)
+                        .executorService("myProfile")
+                        .to("log:foo")
+                        .to("mock:aggregated");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 public class FtpProducerFileFastExistFailIT extends FtpProducerFileExistFailIT {
@@ -21,7 +22,6 @@ public class FtpProducerFileFastExistFailIT extends FtpProducerFileExistFailIT {
     @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/exist?fastExistsCheck=true&password=admin&delay=2000&noop=true&fileExist=Fail";
+                + "/exist?fastExistsCheck=true&password=admin&delay=2000&noop=true&fileExist=Fail";
     }
-
 }

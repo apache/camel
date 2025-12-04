@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.jaxws;
 
 import java.lang.annotation.Annotation;
@@ -60,8 +61,10 @@ public final class CxfSpringEndpointUtils {
     public static QName getPortName(final CxfEndpoint endpoint) {
         QName answer = endpoint.getPortNameAsQName();
         if (answer == null) {
-            String portLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.PORT_LOCALNAME);
-            String portNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.PORT_NAMESPACE);
+            String portLocalName =
+                    getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.PORT_LOCALNAME);
+            String portNamespace =
+                    getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.PORT_NAMESPACE);
             if (portLocalName != null) {
                 answer = new QName(portNamespace, portLocalName);
             }
@@ -73,8 +76,10 @@ public final class CxfSpringEndpointUtils {
     public static QName getServiceName(final CxfEndpoint endpoint) {
         QName answer = endpoint.getServiceNameAsQName();
         if (answer == null) {
-            String serviceLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.SERVICE_LOCALNAME);
-            String serviceNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.SERVICE_NAMESPACE);
+            String serviceLocalName =
+                    getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.SERVICE_LOCALNAME);
+            String serviceNamespace =
+                    getCxfEndpointPropertyValue((CxfSpringEndpoint) endpoint, CxfConstants.SERVICE_NAMESPACE);
             if (serviceLocalName != null) {
                 answer = new QName(serviceNamespace, serviceLocalName);
             }
@@ -128,8 +133,10 @@ public final class CxfSpringEndpointUtils {
         if (retval == null) {
             retval = defaultAddress;
         } else {
-            LOG.trace("Client address is overridden by header '{}' to value '{}'",
-                    CxfConstants.DESTINATION_OVERRIDE_URL, retval);
+            LOG.trace(
+                    "Client address is overridden by header '{}' to value '{}'",
+                    CxfConstants.DESTINATION_OVERRIDE_URL,
+                    retval);
         }
         return retval;
     }

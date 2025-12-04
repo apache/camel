@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.date;
 
 import java.time.LocalDate;
@@ -57,7 +58,8 @@ public class BindyDatePatternCsvUnmarshallTest {
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-        expected = "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,03-23-2017 11:17:43Z,broken";
+        expected =
+                "10,Christian,Mueller,12-24-2013,12-26-2015,01-06-2016 12:14:49,13:15:01,03-23-2017 11:17:43Z,broken";
 
         result.expectedBodiesReceived(expected + "\r\n");
 
@@ -77,11 +79,10 @@ public class BindyDatePatternCsvUnmarshallTest {
                     .convertBodyTo(String.class) // because the marshaler will return an OutputStream
                     .to(URI_MOCK_RESULT);
         }
-
     }
 
     @CsvRecord(separator = ",")
-    @FormatFactories({ OrderNumberFormatFactory.class })
+    @FormatFactories({OrderNumberFormatFactory.class})
     public static class Order {
 
         @DataField(pos = 1)
@@ -145,8 +146,8 @@ public class BindyDatePatternCsvUnmarshallTest {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName
-                   + ", " + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", "
+                    + this.lastName + ", " + String.valueOf(this.orderDate);
         }
 
         public LocalDate getDeliveryDate() {

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Properties;
 
@@ -33,19 +39,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends CamelTestSupport {
 
     @EndpointInject("mock:done")
     protected MockEndpoint doneEndpoint;
 
-    private final MockProducer<String, String> mockProducer
-            = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
+    private final MockProducer<String, String> mockProducer =
+            new MockProducer<>(true, new StringSerializer(), new StringSerializer());
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -108,7 +109,9 @@ public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends Cam
         assertNotNull(exceptionCaught);
         assertInstanceOf(CamelExchangeException.class, exceptionCaught.getCause());
         assertInstanceOf(RuntimeException.class, exceptionCaught.getCause().getCause());
-        assertEquals("Failing with Index: " + throwExeptionOnIndex, exceptionCaught.getCause().getCause().getMessage());
+        assertEquals(
+                "Failing with Index: " + throwExeptionOnIndex,
+                exceptionCaught.getCause().getCause().getMessage());
 
         assertEquals(0, mockProducer.history().size());
         assertEquals(0, mockProducer.commitCount());
@@ -122,25 +125,34 @@ public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends Cam
             public void configure() throws Exception {
                 from("direct:split")
                         .id("split")
-                        .setVariable("ThrowExceptionOnIndex",
+                        .setVariable(
+                                "ThrowExceptionOnIndex",
                                 header("ThrowExceptionOnIndex").convertTo(Integer.class))
-                        .split(body().tokenize("\n")).shareUnitOfWork(true).stopOnException()
-                        .choice().when(exchange -> {
-                            Integer throwExceptionOnIndex = exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
+                        .split(body().tokenize("\n"))
+                        .shareUnitOfWork(true)
+                        .stopOnException()
+                        .choice()
+                        .when(exchange -> {
+                            Integer throwExceptionOnIndex =
+                                    exchange.getVariable("ThrowExceptionOnIndex", Integer.class);
                             Integer camelSplitIndex = exchange.getProperty("CamelSplitIndex", Integer.class);
 
                             if (null != throwExceptionOnIndex && throwExceptionOnIndex.equals(camelSplitIndex)) {
                                 return true;
                             } else {
-                                log.info("***** Sending message to Kafka from Split exchange with id '{}' and UnitOfWork: {}",
-                                        exchange.getExchangeId(), exchange.getUnitOfWork().hashCode());
+                                log.info(
+                                        "***** Sending message to Kafka from Split exchange with id '{}' and UnitOfWork: {}",
+                                        exchange.getExchangeId(),
+                                        exchange.getUnitOfWork().hashCode());
 
                                 return false;
                             }
                         })
-                        .throwException(RuntimeException.class, "Failing with Index: ${exchangeProperty.CamelSplitIndex}")
+                        .throwException(
+                                RuntimeException.class, "Failing with Index: ${exchangeProperty.CamelSplitIndex}")
                         .otherwise()
-                        .to("kafka:split?additional-properties[transactional.id]=45678&additional-properties[enable.idempotence]=true&additional-properties[retries]=5")
+                        .to(
+                                "kafka:split?additional-properties[transactional.id]=45678&additional-properties[enable.idempotence]=true&additional-properties[retries]=5")
                         .end() // .choice
                         .end() // .split
                         .to("mock:done");

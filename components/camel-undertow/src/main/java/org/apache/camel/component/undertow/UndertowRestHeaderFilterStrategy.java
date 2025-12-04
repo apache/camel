@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
-import org.apache.camel.Exchange;
-
 import static org.apache.camel.support.http.HttpUtil.filterCheck;
+
+import org.apache.camel.Exchange;
 
 public class UndertowRestHeaderFilterStrategy extends UndertowHeaderFilterStrategy {
 
@@ -35,5 +36,4 @@ public class UndertowRestHeaderFilterStrategy extends UndertowHeaderFilterStrate
         boolean answer = super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
         return filterCheck(templateUri, queryParameters, headerName, answer);
     }
-
 }

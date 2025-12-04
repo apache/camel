@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import java.net.InetSocketAddress;
@@ -31,7 +32,8 @@ public class AvroNettyProducerTest extends AvroProducerTestSupport {
     protected void initializeServer() throws InterruptedException {
         if (server == null && getRouteType() == ProducerRouteType.specific) {
             server = new NettyServer(
-                    new SpecificResponder(KeyValueProtocol.PROTOCOL, keyValue), new InetSocketAddress("localhost", avroPort));
+                    new SpecificResponder(KeyValueProtocol.PROTOCOL, keyValue),
+                    new InetSocketAddress("localhost", avroPort));
             server.start();
         }
 
@@ -50,40 +52,40 @@ public class AvroNettyProducerTest extends AvroProducerTestSupport {
             public void configure() {
                 switch (getRouteType()) {
                     case specific:
-                        //In Only
+                        // In Only
                         from("direct:in")
                                 .to("avro:netty:localhost:" + avroPort
-                                    + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
+                                        + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
 
-                        //In Only with message in route
+                        // In Only with message in route
                         from("direct:in-message-name")
                                 .errorHandler(deadLetterChannel("mock:in-message-name-error"))
                                 .to("avro:netty:localhost:" + avroPort
-                                    + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                        + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
                                 .to("mock:result-in-message-name");
 
-                        //InOut
+                        // InOut
                         from("direct:inout")
                                 .to("avro:netty:localhost:" + avroPort
-                                    + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                        + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
                                 .to("mock:result-inout");
 
-                        //InOut
+                        // InOut
                         from("direct:inout-message-name")
                                 .to("avro:netty:localhost:" + avroPort
-                                    + "/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                                        + "/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
                                 .to("mock:result-inout-message-name");
                         break;
                     case reflect:
-                        //In Only with existing interface
+                        // In Only with existing interface
                         from("direct:in-reflection")
                                 .to("avro:netty:localhost:" + avroPortReflection
-                                    + "/setName?protocolClassName=org.apache.camel.avro.test.TestReflection");
+                                        + "/setName?protocolClassName=org.apache.camel.avro.test.TestReflection");
 
-                        //InOut with existing interface
+                        // InOut with existing interface
                         from("direct:inout-reflection")
                                 .to("avro:netty:localhost:" + avroPortReflection
-                                    + "/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection")
+                                        + "/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection")
                                 .to("mock:result-inout-reflection");
                         break;
                     default:

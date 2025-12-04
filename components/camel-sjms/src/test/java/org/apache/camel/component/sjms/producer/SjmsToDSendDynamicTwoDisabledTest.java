@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SjmsToDSendDynamicTwoDisabledTest extends JmsTestSupport {
 
@@ -31,10 +32,13 @@ public class SjmsToDSendDynamicTwoDisabledTest extends JmsTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello gin", "where", "gin.SjmsToDSendDynamicTwoDisabledTest");
 
         template.sendBodyAndHeader("direct:start2", "Hello beer", "where2", "beer.SjmsToDSendDynamicTwoDisabledTest");
-        template.sendBodyAndHeader("direct:start2", "Hello whiskey", "where2", "whiskey.SjmsToDSendDynamicTwoDisabledTest");
+        template.sendBodyAndHeader(
+                "direct:start2", "Hello whiskey", "where2", "whiskey.SjmsToDSendDynamicTwoDisabledTest");
 
         // there should be 4 sjms endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("sjms:")).count();
+        long count = context.getEndpoints().stream()
+                .filter(e -> e.getEndpointUri().startsWith("sjms:"))
+                .count();
         assertEquals(4, count, "There should be 4 sjms endpoint");
     }
 
@@ -49,5 +53,4 @@ public class SjmsToDSendDynamicTwoDisabledTest extends JmsTestSupport {
             }
         };
     }
-
 }

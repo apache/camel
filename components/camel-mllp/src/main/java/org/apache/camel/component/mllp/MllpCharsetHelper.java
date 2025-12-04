@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.nio.charset.Charset;
@@ -24,8 +25,7 @@ import org.apache.camel.support.ExchangeHelper;
 
 public final class MllpCharsetHelper {
 
-    private MllpCharsetHelper() {
-    }
+    private MllpCharsetHelper() {}
 
     public static Charset getCharset(Exchange exchange, Charset defaultCharset) {
         String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
@@ -70,5 +70,4 @@ public final class MllpCharsetHelper {
         }
         return defaultCharset;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util.srcgen;
 
 import org.apache.camel.tooling.util.Strings;
@@ -30,10 +31,14 @@ public class Property {
         this.type = type;
         this.name = name;
         field = new Field().setPrivate().setType(type).setName(name);
-        accessor = new Method().setPublic().setName("get" + Strings.capitalize(name))
+        accessor = new Method()
+                .setPublic()
+                .setName("get" + Strings.capitalize(name))
                 .setReturnType(type)
                 .setBody("return " + name + ";\n");
-        mutator = new Method().setPublic().setName("set" + Strings.capitalize(name))
+        mutator = new Method()
+                .setPublic()
+                .setName("set" + Strings.capitalize(name))
                 .addParameter(type, name)
                 .setReturnType(void.class)
                 .setBody("this." + name + " = " + name + ";\n");
@@ -104,5 +109,4 @@ public class Property {
             return null;
         }
     }
-
 }

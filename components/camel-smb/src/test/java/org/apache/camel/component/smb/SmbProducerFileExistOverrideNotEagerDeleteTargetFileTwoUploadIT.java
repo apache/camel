@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadIT extends SmbServerTestSupport {
 
@@ -37,13 +38,15 @@ public class SmbProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadIT ext
         template.sendBodyAndHeader(getSmbUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
+                .untilAsserted(() -> assertEquals(
+                        "Hello World",
                         new String(copyFileContentFromContainer("/data/rw/existOverrideTwoNotEagerDel/hello.txt"))));
 
         template.sendBodyAndHeader(getSmbUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Bye World",
+                .untilAsserted(() -> assertEquals(
+                        "Bye World",
                         new String(copyFileContentFromContainer("/data/rw/existOverrideTwoNotEagerDel/hello.txt"))));
     }
 }

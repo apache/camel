@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -24,16 +28,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
-    private static final String INPUT_FILE
-            = "input." + FileProducerCharsetUTFtoISOConfiguredTest.class.getSimpleName() + ".txt";
-    private static final String OUTPUT_FILE
-            = "output." + FileProducerCharsetUTFtoISOConfiguredTest.class.getSimpleName() + ".txt";
+    private static final String INPUT_FILE =
+            "input." + FileProducerCharsetUTFtoISOConfiguredTest.class.getSimpleName() + ".txt";
+    private static final String OUTPUT_FILE =
+            "output." + FileProducerCharsetUTFtoISOConfiguredTest.class.getSimpleName() + ".txt";
 
     @Test
     void testFileProducerCharsetUTFtoISO() throws Exception {

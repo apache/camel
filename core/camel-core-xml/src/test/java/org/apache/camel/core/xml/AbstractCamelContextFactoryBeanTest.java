@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
+
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,16 +51,6 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class AbstractCamelContextFactoryBeanTest {
 
@@ -85,18 +86,30 @@ public class AbstractCamelContextFactoryBeanTest {
                 public boolean supportsAutoWiring() {
                     return false;
                 }
-            }, false, false);
+            },
+            false,
+            false);
 
     // properties that should return value that can be converted to boolean
-    final Set<String> valuesThatReturnBoolean = new HashSet<>(
-            asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
-                    "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}",
-                    "{{getCaseInsensitiveHeaders}}",
-                    "{{getAutoStartup}}", "{{getDumpRoutes}}", "{{getUseMDCLogging}}", "{{getUseDataType}}",
-                    "{{getUseBreadcrumb}}",
-                    "{{getBeanPostProcessorEnabled}}", "{{getAllowUseOriginalMessage}}",
-                    "{{getLoadTypeConverters}}", "{{getTypeConverterStatisticsEnabled}}",
-                    "{{getInflightRepositoryBrowseEnabled}}"));
+    final Set<String> valuesThatReturnBoolean = new HashSet<>(asList(
+            "{{getStreamCache}}",
+            "{{getDebug}}",
+            "{{getTrace}}",
+            "{{getBacklogTrace}}",
+            "{{getMessageHistory}}",
+            "{{getLogMask}}",
+            "{{getLogExhaustedMessageBody}}",
+            "{{getCaseInsensitiveHeaders}}",
+            "{{getAutoStartup}}",
+            "{{getDumpRoutes}}",
+            "{{getUseMDCLogging}}",
+            "{{getUseDataType}}",
+            "{{getUseBreadcrumb}}",
+            "{{getBeanPostProcessorEnabled}}",
+            "{{getAllowUseOriginalMessage}}",
+            "{{getLoadTypeConverters}}",
+            "{{getTypeConverterStatisticsEnabled}}",
+            "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
     final Set<String> valuesThatReturnLong = new HashSet<>(List.of("{{getDelayer}}"));
@@ -159,8 +172,8 @@ public class AbstractCamelContextFactoryBeanTest {
 
         assertThat(capturedPlaceholders.getAllValues())
                 .as("The expectation is that all abstract getter methods that return Strings should support property "
-                    + "placeholders, and that for those will delegate to CamelContext::resolvePropertyPlaceholders, "
-                    + "we captured all placeholders that tried to resolve and found differences")
+                        + "placeholders, and that for those will delegate to CamelContext::resolvePropertyPlaceholders, "
+                        + "we captured all placeholders that tried to resolve and found differences")
                 .containsAll(expectedPropertiesToBeResolved);
     }
 
@@ -174,7 +187,8 @@ public class AbstractCamelContextFactoryBeanTest {
         // mock, so the returned collection will be empty until initContext
         // invokes the mocked method
         stream(AbstractCamelContextFactoryBean.class.getDeclaredMethods())
-                .filter(m -> Modifier.isAbstract(m.getModifiers()) && m.getParameterCount() == 0).forEach(m -> {
+                .filter(m -> Modifier.isAbstract(m.getModifiers()) && m.getParameterCount() == 0)
+                .forEach(m -> {
                     try {
                         when(m.invoke(factory)).thenAnswer(invocation -> {
                             final Method method = invocation.getMethod();

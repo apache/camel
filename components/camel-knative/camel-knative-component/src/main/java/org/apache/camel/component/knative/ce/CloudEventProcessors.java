@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.ce;
+
+import static org.apache.camel.util.ObjectHelper.ifNotEmpty;
 
 import java.util.Locale;
 import java.util.Map;
@@ -28,10 +31,7 @@ import org.apache.camel.cloudevents.CloudEvents;
 import org.apache.camel.component.knative.KnativeEndpoint;
 import org.apache.camel.component.knative.spi.KnativeResource;
 
-import static org.apache.camel.util.ObjectHelper.ifNotEmpty;
-
 public enum CloudEventProcessors implements CloudEventProcessor {
-
     v1_0(new AbstractCloudEventProcessor(CloudEvents.v1_0) {
         @Override
         protected void decodeStructuredContent(Exchange exchange, Map<String, Object> content) {
@@ -41,9 +41,12 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             // body
             ifNotEmpty(content.remove("data"), message::setBody);
 
-            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()), val -> {
-                message.setHeader(Exchange.CONTENT_TYPE, val);
-            });
+            ifNotEmpty(
+                    content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE)
+                            .json()),
+                    val -> {
+                        message.setHeader(Exchange.CONTENT_TYPE, val);
+                    });
 
             for (CloudEvent.Attribute attribute : ce.attributes()) {
                 ifNotEmpty(content.remove(attribute.json()), val -> {
@@ -68,9 +71,12 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             // body
             ifNotEmpty(content.remove("data"), message::setBody);
 
-            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()), val -> {
-                message.setHeader(Exchange.CONTENT_TYPE, val);
-            });
+            ifNotEmpty(
+                    content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE)
+                            .json()),
+                    val -> {
+                        message.setHeader(Exchange.CONTENT_TYPE, val);
+                    });
 
             for (CloudEvent.Attribute attribute : ce.attributes()) {
                 ifNotEmpty(content.remove(attribute.json()), val -> {
@@ -95,9 +101,12 @@ public enum CloudEventProcessors implements CloudEventProcessor {
             // body
             ifNotEmpty(content.remove("data"), message::setBody);
 
-            ifNotEmpty(content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE).json()), val -> {
-                message.setHeader(Exchange.CONTENT_TYPE, val);
-            });
+            ifNotEmpty(
+                    content.remove(ce.mandatoryAttribute(CloudEvent.CAMEL_CLOUD_EVENT_DATA_CONTENT_TYPE)
+                            .json()),
+                    val -> {
+                        message.setHeader(Exchange.CONTENT_TYPE, val);
+                    });
 
             for (CloudEvent.Attribute attribute : ce.attributes()) {
                 ifNotEmpty(content.remove(attribute.json()), val -> {

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
 
@@ -43,8 +44,8 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
 
     @Test
     public void testQueryParametersWithHeader() {
-        Exchange exchange
-                = template.request(url, exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks"));
+        Exchange exchange = template.request(
+                url, exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks"));
         assertNotNull(exchange);
 
         String body = exchange.getMessage().getBody(String.class);
@@ -73,7 +74,8 @@ public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
     @Test
     public void testQueryParametersInUriWithDynamicPath() {
         // remove "/cheese" from the endpoint URL and place it in the Exchange.HTTP_PATH header
-        Exchange exchange = template.request((url + "&quote=Camel%20rocks").replace("/cheese", ""),
+        Exchange exchange = template.request(
+                (url + "&quote=Camel%20rocks").replace("/cheese", ""),
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_PATH, "/cheese"));
         assertNotNull(exchange);
 

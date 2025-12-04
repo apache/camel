@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import java.time.Duration;
@@ -35,8 +36,7 @@ final class SpanTreePrinter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpanTreePrinter.class);
     private static final AttributeKey<String> CAMEL_URI_ATTRIBUTE = AttributeKey.stringKey("camel.uri");
 
-    private SpanTreePrinter() {
-    }
+    private SpanTreePrinter() {}
 
     // Method to print the spans in a tree view
     public static void printSpanTree(List<SpanData> spans) {
@@ -54,7 +54,7 @@ final class SpanTreePrinter {
             String parentSpanId = context.getSpanId();
 
             if (parentSpanId.isEmpty() || parentSpanId.equals(SpanId.getInvalid())) {
-                rootSpan = span;  // Identify the root span (no parent span or invalid parent)
+                rootSpan = span; // Identify the root span (no parent span or invalid parent)
             } else {
                 spanMap.computeIfAbsent(parentSpanId, k -> new ArrayList<>()).add(span);
             }
@@ -73,12 +73,13 @@ final class SpanTreePrinter {
     private static void printSpan(SpanData span, Map<String, List<SpanData>> spanMap, String indent, boolean last) {
         SpanContext context = span.getSpanContext();
         Attributes attributes = span.getAttributes();
-        String routeDescription = " span: %s (%s) - %s (%s) %s".formatted(
-                context.getSpanId(),
-                span.getKind(),
-                span.getName(),
-                attributes.get(CAMEL_URI_ATTRIBUTE),
-                humanReadableFormat(Duration.ofNanos(span.getEndEpochNanos() - span.getStartEpochNanos())));
+        String routeDescription = " span: %s (%s) - %s (%s) %s"
+                .formatted(
+                        context.getSpanId(),
+                        span.getKind(),
+                        span.getName(),
+                        attributes.get(CAMEL_URI_ATTRIBUTE),
+                        humanReadableFormat(Duration.ofNanos(span.getEndEpochNanos() - span.getStartEpochNanos())));
 
         LOGGER.info("{}{}{}", indent, last ? "└─ " : "├─ ", routeDescription);
 

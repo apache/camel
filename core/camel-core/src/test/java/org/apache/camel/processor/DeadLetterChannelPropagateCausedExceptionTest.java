@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -52,8 +53,10 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -83,8 +86,10 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -112,8 +117,10 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -143,8 +150,10 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
@@ -157,15 +166,20 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").to("mock:a").split(body().tokenize(",")).stopOnException().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                    }
-                }).to("mock:line");
+                from("direct:start")
+                        .to("mock:a")
+                        .split(body().tokenize(","))
+                        .stopOnException()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                            }
+                        })
+                        .to("mock:line");
             }
         });
         context.start();
@@ -179,11 +193,12 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
 
         // the caused exception should be propagated
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Damn", cause.getMessage());
     }
-
 }

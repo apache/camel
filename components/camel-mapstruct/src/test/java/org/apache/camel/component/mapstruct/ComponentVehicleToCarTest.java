@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
 
 import org.apache.camel.CamelContext;
@@ -89,9 +90,7 @@ public class ComponentVehicleToCarTest extends CamelTestSupport {
                         .to("mapstruct:" + CarDto.class.getName())
                         .to("mock:result");
 
-                from("direct:convert")
-                        .convertBodyTo(CarDto.class)
-                        .to("mock:result");
+                from("direct:convert").convertBodyTo(CarDto.class).to("mock:result");
             }
         };
     }

@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.splunk;
 
-import com.splunk.SSLSecurityProtocol;
-import com.splunk.Service;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.splunk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.splunk.SSLSecurityProtocol;
+import com.splunk.Service;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SplunkComponentConfigurationTest extends CamelTestSupport {
 
@@ -49,15 +50,14 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createProducerWithoutUserAndPassword() {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
-        assertThrows(IllegalArgumentException.class,
-                () -> component.createEndpoint("splunk://test"));
+        assertThrows(IllegalArgumentException.class, () -> component.createEndpoint("splunk://test"));
     }
 
     @Test
     public void createProducerWithPasswordAndToken() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
-        SplunkEndpoint endpoint
-                = (SplunkEndpoint) component.createEndpoint("splunk://test?username=test&password=pw&token=myToken");
+        SplunkEndpoint endpoint =
+                (SplunkEndpoint) component.createEndpoint("splunk://test?username=test&password=pw&token=myToken");
         assertNull(endpoint.getConfiguration().getPassword());
         assertEquals("myToken", endpoint.getConfiguration().getToken());
     }
@@ -69,7 +69,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
 
         SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint("splunk://test");
         SplunkConnectionFactory scf = endpoint.getConfiguration().getConnectionFactory();
-        //following call with fail with "Missing username or password, without fix of CAMEL-16313,
+        // following call with fail with "Missing username or password, without fix of CAMEL-16313,
         scf.createService(context);
     }
 
@@ -77,8 +77,9 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     public void createProducerEndpointWithMaximalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
-        SplunkEndpoint endpoint = (SplunkEndpoint) component
-                .createEndpoint("splunk://tcp?username=test&password=pw&host=myhost&port=3333&"
+        SplunkEndpoint endpoint = (SplunkEndpoint)
+                component.createEndpoint(
+                        "splunk://tcp?username=test&password=pw&host=myhost&port=3333&"
                                 + "tcpReceiverPort=4444&index=myindex&sourceType=testSource&"
                                 + "source=test&eventHost=original-host.com&owner=me&app=fantasticapp&useSunHttpsHandler=true&raw=true&sslProtocol=SSLv3&validateCertificates=false");
         assertEquals("myhost", endpoint.getConfiguration().getHost());
@@ -102,25 +103,26 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
     public void createConsumerEndpointWithMinimalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
-        SplunkEndpoint endpoint = (SplunkEndpoint) component
-                .createEndpoint("splunk://realtime?username=test&" + "password=pw&search=Splunk search query goes here");
+        SplunkEndpoint endpoint = (SplunkEndpoint) component.createEndpoint(
+                "splunk://realtime?username=test&" + "password=pw&search=Splunk search query goes here");
         assertEquals(Service.DEFAULT_HOST, endpoint.getConfiguration().getHost());
         assertEquals(Service.DEFAULT_PORT, endpoint.getConfiguration().getPort());
         assertEquals("test", endpoint.getConfiguration().getUsername());
         assertEquals("pw", endpoint.getConfiguration().getPassword());
         assertEquals(Service.DEFAULT_SCHEME, endpoint.getConfiguration().getScheme());
         assertEquals(5000, endpoint.getConfiguration().getConnectionTimeout());
-        assertEquals("Splunk search query goes here", endpoint.getConfiguration().getSearch());
+        assertEquals(
+                "Splunk search query goes here", endpoint.getConfiguration().getSearch());
     }
 
     @Test
     public void createConsumerEndpointWithMaximalConfiguration() throws Exception {
         SplunkComponent component = context.getComponent("splunk", SplunkComponent.class);
 
-        SplunkEndpoint endpoint = (SplunkEndpoint) component
-                .createEndpoint("splunk://normal?username=test&password=pw&host=myhost&port=3333&delay=10000&"
-                                + "search=Splunk search query goes here&initEarliestTime=-1d"
-                                + "&latestTime=now&count=10&" + "owner=me&app=fantasticapp");
+        SplunkEndpoint endpoint = (SplunkEndpoint)
+                component.createEndpoint("splunk://normal?username=test&password=pw&host=myhost&port=3333&delay=10000&"
+                        + "search=Splunk search query goes here&initEarliestTime=-1d"
+                        + "&latestTime=now&count=10&" + "owner=me&app=fantasticapp");
         assertEquals("myhost", endpoint.getConfiguration().getHost());
         assertEquals(3333, endpoint.getConfiguration().getPort());
         assertEquals("test", endpoint.getConfiguration().getUsername());
@@ -131,7 +133,7 @@ public class SplunkComponentConfigurationTest extends CamelTestSupport {
         assertEquals("me", endpoint.getConfiguration().getOwner());
         assertEquals("fantasticapp", endpoint.getConfiguration().getApp());
         assertEquals(Service.DEFAULT_SCHEME, endpoint.getConfiguration().getScheme());
-        assertEquals("Splunk search query goes here", endpoint.getConfiguration().getSearch());
+        assertEquals(
+                "Splunk search query goes here", endpoint.getConfiguration().getSearch());
     }
-
 }

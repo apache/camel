@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,16 +31,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class KafkaProducerUseIteratorIT extends BaseKafkaTestSupport {
 
     private static final String TOPIC = "use-iterator";
 
     private static final String FROM_URI = "kafka:" + TOPIC
-                                           + "?groupId=KafkaProducerUseIteratorIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-                                           + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                                           + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
+            + "?groupId=KafkaProducerUseIteratorIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+            + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
 
     @BeforeEach
     public void init() {
@@ -63,8 +64,11 @@ public class KafkaProducerUseIteratorIT extends BaseKafkaTestSupport {
 
         mock.assertIsSatisfied(5000);
 
-        assertEquals(2, MockConsumerInterceptor.recordsCaptured.stream()
-                .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false)).count());
+        assertEquals(
+                2,
+                MockConsumerInterceptor.recordsCaptured.stream()
+                        .flatMap(i -> StreamSupport.stream(i.records(TOPIC).spliterator(), false))
+                        .count());
     }
 
     @Override
@@ -74,10 +78,8 @@ public class KafkaProducerUseIteratorIT extends BaseKafkaTestSupport {
             public void configure() {
                 from("direct:start").to("kafka:" + TOPIC + "?groupId=KafkaProducerUseIteratorIT");
 
-                from(FROM_URI)
-                        .to("mock:result");
+                from(FROM_URI).to("mock:result");
             }
         };
     }
-
 }

@@ -69,7 +69,7 @@ public class KnativeOidcInterceptor implements Handler<HttpContext<?>> {
                     context.createRequest(context.requestOptions());
                 }
             }
-        } else {// already seen, clear and continue without recovery
+        } else { // already seen, clear and continue without recovery
             dejaVu.remove(context);
             context.next();
         }
@@ -81,7 +81,8 @@ public class KnativeOidcInterceptor implements Handler<HttpContext<?>> {
             return;
         }
 
-        context.requestOptions().putHeader(HttpHeaders.AUTHORIZATION, "Bearer " + oidcClientOptions.retrieveOidcToken());
+        context.requestOptions()
+                .putHeader(HttpHeaders.AUTHORIZATION, "Bearer " + oidcClientOptions.retrieveOidcToken());
         context.next();
     }
 }

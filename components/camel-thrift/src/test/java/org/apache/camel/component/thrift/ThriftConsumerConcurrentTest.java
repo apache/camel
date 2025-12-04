@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -43,9 +47,6 @@ import org.apache.thrift.transport.layered.TFramedTransport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerConcurrentTest.class);
@@ -93,7 +94,10 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             }
         };
 
-        new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
+        new MultithreadingTester()
+                .add(ra)
+                .numThreads(CONCURRENT_THREAD_COUNT)
+                .numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
                 .run();
     }
 
@@ -106,9 +110,9 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
                 final CountDownLatch latch = new CountDownLatch(1);
 
                 TNonblockingTransport transport = new TNonblockingSocket("localhost", THRIFT_ASYNC_REQUEST_TEST_PORT);
-                Calculator.AsyncClient client
-                        = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
-                                .getAsyncClient(transport);
+                Calculator.AsyncClient client = (new Calculator.AsyncClient.Factory(
+                                new TAsyncClientManager(), new TBinaryProtocol.Factory()))
+                        .getAsyncClient(transport);
 
                 int instanceId = createId();
                 CalculateAsyncMethodCallback calculateCallback = new CalculateAsyncMethodCallback(latch);
@@ -127,7 +131,10 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             }
         };
 
-        new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
+        new MultithreadingTester()
+                .add(ra)
+                .numThreads(CONCURRENT_THREAD_COUNT)
+                .numRoundsPerThread(ROUNDS_PER_THREAD_COUNT)
                 .run();
     }
 
@@ -163,12 +170,14 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             public void configure() {
 
                 from("thrift://localhost:" + THRIFT_SYNC_REQUEST_TEST_PORT
-                     + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
-                        .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
+                                + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
+                        .setBody(simple("${body[1]}"))
+                        .bean(new CalculatorMessageBuilder(), "multiply");
 
                 from("thrift://localhost:" + THRIFT_ASYNC_REQUEST_TEST_PORT
-                     + "/org.apache.camel.component.thrift.generated.Calculator")
-                        .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
+                                + "/org.apache.camel.component.thrift.generated.Calculator")
+                        .setBody(simple("${body[1]}"))
+                        .bean(new CalculatorMessageBuilder(), "multiply");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainRouteTemplateTest {
 
@@ -45,8 +46,14 @@ public class MainRouteTemplateTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        assertEquals(1, ((ModelCamelContext) context).getRouteTemplateDefinitions().size());
-        assertEquals("mytemplate", ((ModelCamelContext) context).getRouteTemplateDefinitions().get(0).getId());
+        assertEquals(
+                1, ((ModelCamelContext) context).getRouteTemplateDefinitions().size());
+        assertEquals(
+                "mytemplate",
+                ((ModelCamelContext) context)
+                        .getRouteTemplateDefinitions()
+                        .get(0)
+                        .getId());
 
         MockEndpoint mock = context.getEndpoint("mock:cheese", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello Camel", "Hello World");
@@ -59,5 +66,4 @@ public class MainRouteTemplateTest {
 
         main.stop();
     }
-
 }

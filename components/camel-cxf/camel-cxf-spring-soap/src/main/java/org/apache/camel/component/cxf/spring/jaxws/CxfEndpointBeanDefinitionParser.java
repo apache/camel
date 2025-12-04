@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.jaxws;
 
 import java.util.List;
@@ -37,8 +38,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
     }
 
     private boolean isSpringPlaceHolder(String value) {
-        if (value != null && (value.startsWith("${") && value.endsWith("}")
-                || value.startsWith("{{") && value.endsWith("}}"))) {
+        if (value != null
+                && (value.startsWith("${") && value.endsWith("}") || value.startsWith("{{") && value.endsWith("}}"))) {
             return true;
         }
         return false;
@@ -81,9 +82,12 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             bean.addPropertyValue("properties", map);
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
-        } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
-                || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)
-                || "features".equals(name) || "schemaLocations".equals(name)
+        } else if ("inInterceptors".equals(name)
+                || "inFaultInterceptors".equals(name)
+                || "outInterceptors".equals(name)
+                || "outFaultInterceptors".equals(name)
+                || "features".equals(name)
+                || "schemaLocations".equals(name)
                 || "handlers".equals(name)) {
             List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
@@ -91,5 +95,4 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             setFirstChildAsProperty(el, ctx, bean, name);
         }
     }
-
 }

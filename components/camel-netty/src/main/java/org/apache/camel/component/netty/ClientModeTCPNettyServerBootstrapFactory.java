@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
@@ -51,12 +52,12 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     private Channel channel;
     private EventLoopGroup workerGroup;
 
-    public ClientModeTCPNettyServerBootstrapFactory() {
-    }
+    public ClientModeTCPNettyServerBootstrapFactory() {}
 
     @Override
     public void init(
-            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            CamelContext camelContext,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
@@ -65,7 +66,8 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
     @Override
     public void init(
-            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ThreadFactory threadFactory,
+            NettyServerBootstrapConfiguration configuration,
             ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
@@ -134,11 +136,14 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
         LOG.debug("Created ClientBootstrap {}", clientBootstrap);
         clientBootstrap.handler(pipelineFactory);
-        ChannelFuture channelFuture
-                = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        ChannelFuture channelFuture =
+                clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
 
-        LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
-                configuration.getHost(), configuration.getPort(), clientBootstrap);
+        LOG.debug(
+                "Created new TCP client bootstrap connecting to {}:{} with options: {}",
+                configuration.getHost(),
+                configuration.getPort(),
+                clientBootstrap);
 
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = openChannel(channelFuture);
@@ -156,9 +161,10 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
     protected void doReconnectIfNeeded() throws Exception {
         if (channel == null || !channel.isActive()) {
-            LOG.debug("ClientModeServerBootstrap re-connect to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture connectFuture
-                    = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            LOG.debug(
+                    "ClientModeServerBootstrap re-connect to {}:{}", configuration.getHost(), configuration.getPort());
+            ChannelFuture connectFuture =
+                    clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             channel = openChannel(connectFuture);
         }
     }
@@ -166,14 +172,17 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     protected Channel openChannel(final ChannelFuture channelFuture) throws Exception {
         // blocking for channel to be done
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
+            LOG.trace(
+                    "Waiting for operation to complete {} for {} millis",
+                    channelFuture,
+                    configuration.getConnectTimeout());
         }
 
         // wait for the channel to be open (see io.netty.channel.ChannelFuture javadoc for example/recommendation)
         channelFuture.awaitUninterruptibly();
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
-            //check if reconnect is enabled and schedule a reconnect, if from handler then don't schedule a reconnect
+            // check if reconnect is enabled and schedule a reconnect, if from handler then don't schedule a reconnect
             if (configuration.isReconnect()) {
                 scheduleReconnect(channelFuture);
                 return null;
@@ -206,16 +215,20 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
     private void scheduleReconnect(final ChannelFuture channelFuture) {
         final EventLoop loop = channelFuture.channel().eventLoop();
-        loop.schedule(() -> {
-            try {
-                LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
-                doReconnectIfNeeded();
-            } catch (Exception e) {
-                LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
-                        configuration.getAddress(), configuration.getReconnectInterval(),
-                        e);
-            }
-        }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
+        loop.schedule(
+                () -> {
+                    try {
+                        LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
+                        doReconnectIfNeeded();
+                    } catch (Exception e) {
+                        LOG.warn(
+                                "Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
+                                configuration.getAddress(),
+                                configuration.getReconnectInterval(),
+                                e);
+                    }
+                },
+                configuration.getReconnectInterval(),
+                TimeUnit.MILLISECONDS);
     }
-
 }

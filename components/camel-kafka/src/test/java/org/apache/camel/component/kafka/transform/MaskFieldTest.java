@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.util.ArrayList;
@@ -38,9 +39,7 @@ class MaskFieldTest {
 
     private MaskField processor;
 
-    private final String baseJson = "{" + "\n" +
-                                    "  \"name\" : \"Rajesh Koothrappali\"" + "\n" +
-                                    "}";
+    private final String baseJson = "{" + "\n" + "  \"name\" : \"Rajesh Koothrappali\"" + "\n" + "}";
 
     @BeforeEach
     void setup() {

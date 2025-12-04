@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.util.List;
@@ -28,9 +29,7 @@ public class UserSearchCriteria extends SearchCriteria {
     private List<String> roles;
     private List<String> slug;
 
-    public UserSearchCriteria() {
-
-    }
+    public UserSearchCriteria() {}
 
     public Context getContext() {
         return context;
@@ -71,5 +70,4 @@ public class UserSearchCriteria extends SearchCriteria {
     public void setSlug(List<String> slug) {
         this.slug = slug;
     }
-
 }

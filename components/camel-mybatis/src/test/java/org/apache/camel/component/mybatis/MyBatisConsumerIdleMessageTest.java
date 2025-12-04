@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -41,9 +42,7 @@ public class MyBatisConsumerIdleMessageTest extends MyBatisTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        await()
-                .atLeast(110, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        await().atLeast(110, TimeUnit.MILLISECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
         assertNull(mock.getExchanges().get(0).getIn().getBody());
         assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
@@ -53,11 +52,9 @@ public class MyBatisConsumerIdleMessageTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("mybatis:selectAllAccounts?statementType=SelectList"
-                     + "&sendEmptyMessageWhenIdle=true")
+                from("mybatis:selectAllAccounts?statementType=SelectList" + "&sendEmptyMessageWhenIdle=true")
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.util;
 
 import javax.xml.crypto.Data;
@@ -52,9 +53,8 @@ public final class SameDocumentUriDereferencer implements URIDereferencer {
         }
 
         if (!(uriReference instanceof DOMURIReference && context instanceof DOMCryptoContext)) {
-            throw new IllegalArgumentException(
-                    String.format("This %s implementation supports the DOM XML mechanism only.",
-                            URIDereferencer.class.getName()));
+            throw new IllegalArgumentException(String.format(
+                    "This %s implementation supports the DOM XML mechanism only.", URIDereferencer.class.getName()));
         }
 
         String uriString = uriReference.getURI();

@@ -23,8 +23,8 @@ package org.apache.camel.component.wal;
 class PersistedLogEntry extends LogEntry {
     private final EntryInfo entryInfo;
 
-    public PersistedLogEntry(EntryInfo entryInfo, EntryState entryState, int keyMetadata, byte[] key, int valueMetadata,
-                             byte[] value) {
+    public PersistedLogEntry(
+            EntryInfo entryInfo, EntryState entryState, int keyMetadata, byte[] key, int valueMetadata, byte[] value) {
         super(entryState, keyMetadata, key, valueMetadata, value);
 
         this.entryInfo = entryInfo;

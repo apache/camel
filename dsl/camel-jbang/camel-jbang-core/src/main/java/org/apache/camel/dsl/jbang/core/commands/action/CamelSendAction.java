@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
@@ -40,79 +41,108 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "send",
-                     description = "Send messages to endpoints", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "send",
+        description = "Send messages to endpoints",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelSendAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "To use an existing running Camel integration for sending the message (name or pid)",
-                            arity = "0..1")
+    @CommandLine.Parameters(
+            description = "To use an existing running Camel integration for sending the message (name or pid)",
+            arity = "0..1")
     String name;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
-                                      +
-                                      " (ex. /path/to/file.properties,/path/to/other.properties")
+    @CommandLine.Option(
+            names = {"--properties"},
+            description =
+                    "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
+                            + " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
-                        arity = "0")
+    @CommandLine.Option(
+            names = {"--prop", "--property"},
+            description =
+                    "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
+            arity = "0")
     String[] property;
 
-    @CommandLine.Option(names = { "--endpoint", "--uri" },
-                        description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")
+    @CommandLine.Option(
+            names = {"--endpoint", "--uri"},
+            description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
-    @CommandLine.Option(names = { "--poll" },
-                        description = "Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue.")
+    @CommandLine.Option(
+            names = {"--poll"},
+            description =
+                    "Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue.")
     boolean poll;
 
-    @CommandLine.Option(names = { "--reply" },
-                        description = "Whether to expect a reply message (InOut vs InOut messaging style)")
+    @CommandLine.Option(
+            names = {"--reply"},
+            description = "Whether to expect a reply message (InOut vs InOut messaging style)")
     boolean reply;
 
-    @CommandLine.Option(names = { "--reply-file" },
-                        description = "Saves reply message to the file with the given name (override if exists)")
+    @CommandLine.Option(
+            names = {"--reply-file"},
+            description = "Saves reply message to the file with the given name (override if exists)")
     String replyFile;
 
-    @CommandLine.Option(names = { "--body" },
-                        description = "Message body to send (prefix with file: to refer to loading message body from file)")
+    @CommandLine.Option(
+            names = {"--body"},
+            description = "Message body to send (prefix with file: to refer to loading message body from file)")
     String body;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Message header (key=value)")
+    @CommandLine.Option(
+            names = {"--header"},
+            description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be sent (and reply message if InOut messaging)")
+    @CommandLine.Option(
+            names = {"--timeout"},
+            defaultValue = "20000",
+            description = "Timeout in millis waiting for message to be sent (and reply message if InOut messaging)")
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties from response message (InOut)")
+    @CommandLine.Option(
+            names = {"--show-exchange-properties"},
+            defaultValue = "false",
+            description = "Show exchange properties from response message (InOut)")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
-                        description = "Show exchange variables from response message (InOut)")
+    @CommandLine.Option(
+            names = {"--show-exchange-variables"},
+            defaultValue = "false",
+            description = "Show exchange variables from response message (InOut)")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers from response message (InOut)")
+    @CommandLine.Option(
+            names = {"--show-headers"},
+            defaultValue = "true",
+            description = "Show message headers from response message (InOut)")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body from response message (InOut)")
+    @CommandLine.Option(
+            names = {"--show-body"},
+            defaultValue = "true",
+            description = "Show message body from response message (InOut)")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @CommandLine.Option(
+            names = {"--show-exception"},
+            defaultValue = "true",
+            description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print response message body (InOut) when using JSon or XML format")
+    @CommandLine.Option(
+            names = {"--pretty"},
+            description = "Pretty print response message body (InOut) when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(
+            names = {"--logging-color"},
+            defaultValue = "true",
+            description = "Use colored logging")
     boolean loggingColor = true;
 
     private volatile long pid;
@@ -192,8 +222,9 @@ public class CamelSendAction extends ActionBaseCommand {
     public Integer doCall(String name) throws Exception {
         List<Long> pids = findPids(name);
         if (pids.size() != 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -310,7 +341,12 @@ public class CamelSendAction extends ActionBaseCommand {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String ts = sdf.format(new Date(jo.getLong("timestamp")));
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(ts)
+                            .reset());
         } else {
             printer().print(ts);
         }
@@ -319,7 +355,12 @@ public class CamelSendAction extends ActionBaseCommand {
         String p = String.format("%5.5s", this.pid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(" --- ")
+                            .reset());
         } else {
             printer().print(p);
             printer().print(" --- ");
@@ -343,7 +384,8 @@ public class CamelSendAction extends ActionBaseCommand {
         // elapsed
         String e = TimeUtils.printDuration(jo.getLong("elapsed"), true);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
         } else {
             printer().print("(" + e + ")");
         }
@@ -385,5 +427,4 @@ public class CamelSendAction extends ActionBaseCommand {
             return status;
         }
     }
-
 }

@@ -35,9 +35,13 @@ import org.apache.camel.support.resume.Offsets;
 
 @JdkService("file-adapter-factory")
 public class FileResumeAdapterDelegate
-        implements FileResumeAdapter, Cacheable, Deserializable, FileOffsetResumeAdapter, DirectoryEntriesResumeAdapter {
-    private final DefaultDirectoryEntriesResumeAdapter directoryEntriesResumeAdapter
-            = new DefaultDirectoryEntriesResumeAdapter();
+        implements FileResumeAdapter,
+                Cacheable,
+                Deserializable,
+                FileOffsetResumeAdapter,
+                DirectoryEntriesResumeAdapter {
+    private final DefaultDirectoryEntriesResumeAdapter directoryEntriesResumeAdapter =
+            new DefaultDirectoryEntriesResumeAdapter();
     private final DefaultFileOffsetResumeAdapter fileOffsetResumeAdapter = new DefaultFileOffsetResumeAdapter();
 
     @Override

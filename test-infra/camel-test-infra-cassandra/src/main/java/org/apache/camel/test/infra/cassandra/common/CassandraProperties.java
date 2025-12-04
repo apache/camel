@@ -22,7 +22,5 @@ public final class CassandraProperties {
     public static final String CASSANDRA_HOST = "cassandra.host";
     public static final String CASSANDRA_CONTAINER = "cassandra.container";
 
-    private CassandraProperties() {
-
-    }
+    private CassandraProperties() {}
 }

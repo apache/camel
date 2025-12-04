@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.util.List;
@@ -58,9 +59,7 @@ public abstract class TextPublishable extends Publishable {
     @JsonProperty("featured_media")
     private Integer featuredMedia;
 
-    public TextPublishable() {
-
-    }
+    public TextPublishable() {}
 
     public Content getTitle() {
         return title;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,18 +35,20 @@ public class ApiKeyDefinition extends RestSecurityDefinition {
     @XmlAttribute(name = "name", required = true)
     @Metadata(required = true)
     private String name;
+
     @XmlAttribute(name = "inHeader")
     @Metadata(javaType = "java.lang.Boolean")
     private String inHeader;
+
     @XmlAttribute(name = "inQuery")
     @Metadata(javaType = "java.lang.Boolean")
     private String inQuery;
+
     @XmlAttribute(name = "inCookie")
     @Metadata(javaType = "java.lang.Boolean")
     private String inCookie;
 
-    public ApiKeyDefinition() {
-    }
+    public ApiKeyDefinition() {}
 
     public ApiKeyDefinition(RestDefinition rest) {
         super(rest);

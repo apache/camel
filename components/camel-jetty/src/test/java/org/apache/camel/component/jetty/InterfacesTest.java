@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.net.Inet6Address;
@@ -29,8 +32,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Slow test")
 public class InterfacesTest extends BaseJettyTest {
@@ -120,19 +121,27 @@ public class InterfacesTest extends BaseJettyTest {
 
             @Override
             public void configure() {
-                from("jetty:http://localhost:" + port1 + "/testRoute").setBody().constant("local").to("mock:endpoint");
+                from("jetty:http://localhost:" + port1 + "/testRoute")
+                        .setBody()
+                        .constant("local")
+                        .to("mock:endpoint");
 
-                from("jetty:http://localhost:" + port2 + "/testRoute").setBody().constant("local-differentPort")
+                from("jetty:http://localhost:" + port2 + "/testRoute")
+                        .setBody()
+                        .constant("local-differentPort")
                         .to("mock:endpoint");
 
                 if (remoteInterfaceAddress != null) {
-                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute").setBody().constant("remote")
+                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute")
+                            .setBody()
+                            .constant("remote")
                             .to("mock:endpoint");
                 }
 
-                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces").setBody().constant("allInterfaces")
+                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces")
+                        .setBody()
+                        .constant("allInterfaces")
                         .to("mock:endpoint");
-
             }
         };
     }

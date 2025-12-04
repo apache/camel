@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.compute;
+
+import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
 
 import java.util.Map;
 
@@ -32,16 +35,20 @@ import org.apache.camel.spi.UriPath;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
 
-import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
-
 /**
  * Run <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a> on an Ignite cluster.
  *
  * You can pass an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their
  * parameters if necessary. This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_COMPUTE, title = "Ignite Compute", syntax = "ignite-compute:endpointId",
-             category = { Category.CACHE, Category.CLUSTERING }, producerOnly = true, headersClass = IgniteConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_COMPUTE,
+        title = "Ignite Compute",
+        syntax = "ignite-compute:endpointId",
+        category = {Category.CACHE, Category.CLUSTERING},
+        producerOnly = true,
+        headersClass = IgniteConstants.class)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
@@ -64,8 +71,8 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private Long timeoutMillis;
 
-    public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters,
-                                 IgniteComputeComponent igniteComponent) {
+    public IgniteComputeEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, IgniteComputeComponent igniteComponent) {
         super(uri, igniteComponent);
     }
 
@@ -82,7 +89,8 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     public IgniteCompute createIgniteCompute() {
         Ignite ignite = ignite();
         IgniteCompute compute = clusterGroupExpression == null
-                ? ignite.compute() : ignite.compute(clusterGroupExpression.getClusterGroup(ignite));
+                ? ignite.compute()
+                : ignite.compute(clusterGroupExpression.getClusterGroup(ignite));
 
         if (computeName != null) {
             compute = compute.withName(computeName);
@@ -181,5 +189,4 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
     public void setTimeoutMillis(Long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.spi.VariableRepositoryFactory.GLOBAL_VARIABLE_REPOSITORY_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -27,10 +32,6 @@ import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.spi.VariableRepositoryFactory.GLOBAL_VARIABLE_REPOSITORY_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CustomGlobalVariableTest extends ContextTestSupport {
     private MockEndpoint end;
@@ -78,7 +79,10 @@ public class CustomGlobalVariableTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // stored as global variable
-                from("direct:start").setVariable("global:" + variableName).constant(expectedVariableValue).to("mock:end");
+                from("direct:start")
+                        .setVariable("global:" + variableName)
+                        .constant(expectedVariableValue)
+                        .to("mock:end");
             }
         };
     }

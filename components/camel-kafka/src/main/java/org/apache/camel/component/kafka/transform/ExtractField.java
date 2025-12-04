@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.util.Map;
@@ -38,8 +39,7 @@ public class ExtractField implements Processor {
     /**
      * Default constructor
      */
-    public ExtractField() {
-    }
+    public ExtractField() {}
 
     /**
      * Constructor using field member.
@@ -57,11 +57,9 @@ public class ExtractField implements Processor {
 
         if (jsonNodeBody == null) {
             throw new InvalidPayloadException(ex, JsonNode.class);
-
         }
 
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
-        });
+        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {});
         if (!headerOutput || (strictHeaderCheck && checkHeaderExistence(ex))) {
             ex.getMessage().setBody(body.get(field));
         } else {

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URISyntaxException;
 import java.security.KeyPair;
@@ -68,17 +74,13 @@ import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     protected static final String PROCESSOR_EXCEPTION_MSG = "Processor Exception";
     protected static final String EXPECTED_EXCEPTION_MSG = "Failed to process AS2 message: " + PROCESSOR_EXCEPTION_MSG;
-    protected static final String PATH_PREFIX
-            = AS2ApiCollection.getCollection().getApiName(AS2ServerManagerApiMethod.class).getName();
+    protected static final String PATH_PREFIX = AS2ApiCollection.getCollection()
+            .getApiName(AS2ServerManagerApiMethod.class)
+            .getName();
 
     protected static final String METHOD = "POST";
     protected static final String TARGET_HOST = "localhost";
@@ -97,31 +99,31 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
     protected static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
     protected static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     protected static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                                + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                                + "BGM+380+342459+9'\n"
-                                                + "DTM+3:20060515:102'\n"
-                                                + "RFF+ON:521052'\n"
-                                                + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                                + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                                + "CUX+1:USD'\n"
-                                                + "LIN+1++157870:IN'\n"
-                                                + "IMD+F++:::WIDGET'\n"
-                                                + "QTY+47:1020:EA'\n"
-                                                + "ALI+US'\n"
-                                                + "MOA+203:1202.58'\n"
-                                                + "PRI+INV:1.179'\n"
-                                                + "LIN+2++157871:IN'\n"
-                                                + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                                + "QTY+47:20:EA'\n"
-                                                + "ALI+JP'\n"
-                                                + "MOA+203:410'\n"
-                                                + "PRI+INV:20.5'\n"
-                                                + "UNS+S'\n"
-                                                + "MOA+39:2137.58'\n"
-                                                + "ALC+C+ABG'\n"
-                                                + "MOA+8:525'\n"
-                                                + "UNT+23+00000000000117'\n"
-                                                + "UNZ+1+00000000000778'";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'";
 
     protected static AS2SignedDataGenerator gen;
     protected static KeyPair issueKP;
@@ -143,8 +145,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for listen
-                from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/")
-                        .to("mock:as2RcvMsgs");
+                from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/").to("mock:as2RcvMsgs");
 
                 // test route processing exception
                 Processor failingProcessor = new Processor() {
@@ -158,7 +159,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
                 // test route for listen with custom MDN parameters
                 from("as2://" + PATH_PREFIX
-                     + "/listen?requestUriPattern=/mdnTest&from=MdnTestFrom&subject=MdnTestSubjectPrefix")
+                                + "/listen?requestUriPattern=/mdnTest&from=MdnTestFrom&subject=MdnTestSubjectPrefix")
                         .to("mock:as2RcvMsgs");
             }
         };
@@ -180,12 +181,12 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
         // Create signing attributes
         ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(
-                new IssuerAndSerialNumber(new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
+        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(
+                new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
-        gen = SigningUtils.createSigningGenerator(AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new X509Certificate[0]),
-                signingKP.getPrivate());
+        gen = SigningUtils.createSigningGenerator(
+                AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
         gen.addCertificates(certs);
     }
 
@@ -265,7 +266,9 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         Message message = exchange.getIn();
         assertNotNull(message, "exchange message");
         String rcvdMessage = message.getBody(String.class);
-        assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessage.replaceAll("[\n\r]", ""),
+        assertEquals(
+                EDI_MESSAGE.replaceAll("[\n\r]", ""),
+                rcvdMessage.replaceAll("[\n\r]", ""),
                 "Unexpected content for enveloped mime part");
     }
 
@@ -276,14 +279,19 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         assertEquals(HttpVersion.HTTP_1_1, request.getVersion(), "Unexpected HTTP version value");
         assertEquals(SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue(), "Unexpected subject value");
         assertEquals(FROM, request.getFirstHeader(AS2Header.FROM).getValue(), "Unexpected from value");
-        assertEquals(AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
+        assertEquals(
+                AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue(), "Unexpected AS2 version value");
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue(), "Unexpected AS2 from value");
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
-        assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
+        assertTrue(
+                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(
+                TARGET_HOST + ":" + TARGET_PORT,
+                request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
-        assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
+        assertEquals(
+                USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
         assertNotNull(request.getFirstHeader(AS2Header.CONTENT_LENGTH), "Content length value missing");
     }
@@ -292,11 +300,13 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         assertEquals(2, multipartSignedEntity.getPartCount(), "Request contains invalid number of mime parts");
 
         // Verify first mime part.
-        assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationPkcs7MimeCompressedDataEntity,
+        assertTrue(
+                multipartSignedEntity.getPart(0) instanceof ApplicationPkcs7MimeCompressedDataEntity,
                 "First mime part incorrect type ");
-        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
-                = (ApplicationPkcs7MimeCompressedDataEntity) multipartSignedEntity.getPart(0);
-        assertTrue(compressedDataEntity.getContentType().startsWith(AS2MediaType.APPLICATION_PKCS7_MIME_COMPRESSED),
+        ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity =
+                (ApplicationPkcs7MimeCompressedDataEntity) multipartSignedEntity.getPart(0);
+        assertTrue(
+                compressedDataEntity.getContentType().startsWith(AS2MediaType.APPLICATION_PKCS7_MIME_COMPRESSED),
                 "Unexpected content type for first mime part");
         assertFalse(compressedDataEntity.isMainBody(), "First mime type set as main body of request");
 
@@ -304,21 +314,27 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         verifyEdiFactEntity(compressedDataEntity.getCompressedEntity(new ZlibExpanderProvider()));
 
         // Verify second mime part.
-        assertTrue(multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity,
+        assertTrue(
+                multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity,
                 "Second mime part incorrect type ");
-        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) multipartSignedEntity.getPart(1);
-        assertTrue(signatureEntity.getContentType().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE),
+        ApplicationPkcs7SignatureEntity signatureEntity =
+                (ApplicationPkcs7SignatureEntity) multipartSignedEntity.getPart(1);
+        assertTrue(
+                signatureEntity.getContentType().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE),
                 "Unexpected content type for second mime part");
         assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
 
         // Verify Signature
-        assertTrue(SigningUtils.isValid(multipartSignedEntity, new Certificate[] { signingCert }), "Signature must be invalid");
+        assertTrue(
+                SigningUtils.isValid(multipartSignedEntity, new Certificate[] {signingCert}),
+                "Signature must be invalid");
     }
 
     public void verifyEdiFactEntity(MimeEntity entity) {
         assertTrue(entity instanceof ApplicationEDIFACTEntity, "Enveloped mime part incorrect type ");
         ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) entity;
-        assertTrue(ediEntity.getContentType().startsWith(AS2MediaType.APPLICATION_EDIFACT),
+        assertTrue(
+                ediEntity.getContentType().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for compressed entity");
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -35,19 +36,26 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "rest",
-         description = "Get REST services of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "rest",
+        description = "Get REST services of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListRest extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--verbose" },
-                        description = "Show more details")
+    @CommandLine.Option(
+            names = {"--verbose"},
+            description = "Show more details")
     boolean verbose;
 
     public ListRest(CamelJBangMain main) {
@@ -59,59 +67,84 @@ public class ListRest extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("rests");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("rests");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.url = jo.getString("url");
-                                    row.method = jo.getString("method").toUpperCase(Locale.ROOT);
-                                    row.consumes = jo.getString("consumes");
-                                    row.produces = jo.getString("produces");
-                                    row.description = jo.getString("description");
-                                    row.contractFirst = jo.getBooleanOrDefault("contractFirst", false);
-                                    rows.add(row);
-                                }
-                            }
+                JsonObject jo = (JsonObject) root.get("rests");
+                if (jo != null) {
+                    JsonArray arr = (JsonArray) jo.get("rests");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = row.copy();
+                            jo = (JsonObject) arr.get(i);
+                            row.url = jo.getString("url");
+                            row.method = jo.getString("method").toUpperCase(Locale.ROOT);
+                            row.consumes = jo.getString("consumes");
+                            row.produces = jo.getString("produces");
+                            row.description = jo.getString("description");
+                            row.contractFirst = jo.getBooleanOrDefault("contractFirst", false);
+                            rows.add(row);
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
-                    new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.method),
-                    new Column().header("FIRST").visible(verbose).dataAlign(HorizontalAlign.LEFT).with(this::getKind),
-                    new Column().header("DESCRIPTION").visible(verbose).maxWidth(40, OverflowBehaviour.NEWLINE)
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
-                    new Column().header("CONTENT-TYPE").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("URL")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.url),
+                                    new Column()
+                                            .header("METHOD")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.method),
+                                    new Column()
+                                            .header("FIRST")
+                                            .visible(verbose)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getKind),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .visible(verbose)
+                                            .maxWidth(40, OverflowBehaviour.NEWLINE)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.description),
+                                    new Column()
+                                            .header("CONTENT-TYPE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getContent))));
         }
 
         return 0;
@@ -176,5 +209,4 @@ public class ListRest extends ProcessWatchCommand {
             }
         }
     }
-
 }

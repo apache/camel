@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import java.util.Date;
@@ -41,37 +42,54 @@ import org.apache.camel.support.DefaultEndpoint;
  * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true,
-             remote = false, category = { Category.CORE, Category.SCHEDULING }, headersClass = TimerConstants.class)
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "timer",
+        title = "Timer",
+        syntax = "timer:timerName",
+        consumerOnly = true,
+        remote = false,
+        category = {Category.CORE, Category.SCHEDULING},
+        headersClass = TimerConstants.class)
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath
     @Metadata(required = true)
     private String timerName;
+
     @UriParam(defaultValue = "1000", javaType = "java.time.Duration")
     private long period = 1000;
+
     @UriParam(defaultValue = "1000", javaType = "java.time.Duration")
     private long delay = 1000;
+
     @UriParam
     private long repeatCount;
+
     @UriParam
     private boolean fixedRate;
+
     @UriParam
     private boolean includeMetadata;
+
     @UriParam(defaultValue = "TRACE", label = "consumer,scheduler")
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean daemon = true;
+
     @UriParam(label = "advanced")
     private Date time;
+
     @UriParam(label = "advanced")
     private String pattern;
+
     @UriParam(label = "advanced")
     private Timer timer;
+
     @UriParam(label = "advanced")
     private boolean synchronous;
 
-    public TimerEndpoint() {
-    }
+    public TimerEndpoint() {}
 
     public TimerEndpoint(String uri, Component component, String timerName) {
         super(uri, component);
@@ -182,7 +200,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.fixedRate = fixedRate;
     }
 
-    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    @ManagedAttribute(
+            description =
+                    "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     public LoggingLevel getRunLoggingLevel() {
         return runLoggingLevel;
     }
@@ -191,7 +211,9 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
      * The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level
      * for that.
      */
-    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    @ManagedAttribute(
+            description =
+                    "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
         this.runLoggingLevel = runLoggingLevel;
     }
@@ -298,5 +320,4 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
             getComponent().removeTimer(consumer);
         }
     }
-
 }

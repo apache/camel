@@ -14,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TRANSITION_ID;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.JiraTestConstants.KEY;
+import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.transitionIssueDone;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 
@@ -39,19 +53,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_TRANSITION_ID;
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.JiraTestConstants.KEY;
-import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.transitionIssueDone;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TransitionIssueProducerTest extends CamelTestSupport {
@@ -79,19 +80,21 @@ public class TransitionIssueProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
 
         issue = createIssue(1);
         when(issueRestClient.getIssue(any())).then(inv -> Promises.promise(issue));
-        when(issueRestClient.transition(any(Issue.class), any(TransitionInput.class))).then(inv -> {
-            URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
-            URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/31");
-            Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, null);
-            Resolution resolution = new Resolution(doneResolutionUri, 31L, "Resolution", "Resolution");
-            issue = transitionIssueDone(issue, status, resolution);
-            return null;
-        });
+        when(issueRestClient.transition(any(Issue.class), any(TransitionInput.class)))
+                .then(inv -> {
+                    URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
+                    URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/31");
+                    Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, null);
+                    Resolution resolution = new Resolution(doneResolutionUri, 31L, "Resolution", "Resolution");
+                    issue = transitionIssueDone(issue, status, resolution);
+                    return null;
+                });
     }
 
     @Override

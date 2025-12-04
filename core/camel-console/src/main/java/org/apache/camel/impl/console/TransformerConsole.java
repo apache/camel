@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Map;
@@ -25,7 +26,10 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "transformers", displayName = "Data Type Transformers", description = "Data-type transformer information")
+@DevConsole(
+        name = "transformers",
+        displayName = "Data Type Transformers",
+        description = "Data-type transformer information")
 public class TransformerConsole extends AbstractDevConsole {
 
     public TransformerConsole() {

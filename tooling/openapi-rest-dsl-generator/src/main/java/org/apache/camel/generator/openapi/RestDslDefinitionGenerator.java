@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -29,8 +30,8 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
     public RestsDefinition generate() {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
-        final PathVisitor<RestsDefinition> restDslStatement
-                = new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
+        final PathVisitor<RestsDefinition> restDslStatement =
+                new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
 
         for (String name : document.getPaths().keySet()) {
             PathItem item = document.getPaths().get(name);

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeleteItemCommandTest {
 
@@ -53,8 +54,12 @@ public class DeleteItemCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.KEY, key);
 
         Map<String, ExpectedAttributeValue> updateCondition = new HashMap<>();
-        updateCondition.put("name", ExpectedAttributeValue.builder()
-                .attributeValueList(AttributeValue.builder().s("expected value").build()).build());
+        updateCondition.put(
+                "name",
+                ExpectedAttributeValue.builder()
+                        .attributeValueList(
+                                AttributeValue.builder().s("expected value").build())
+                        .build());
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_CONDITION, updateCondition);
         exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
 
@@ -64,7 +69,8 @@ public class DeleteItemCommandTest {
         assertEquals(key, ddbClient.deleteItemRequest.key());
         assertEquals(updateCondition, ddbClient.deleteItemRequest.expected());
         assertEquals(ReturnValue.ALL_OLD, ddbClient.deleteItemRequest.returnValues());
-        assertEquals(AttributeValue.builder().s("attrValue").build(),
+        assertEquals(
+                AttributeValue.builder().s("attrValue").build(),
                 exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

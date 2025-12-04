@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +36,6 @@ import org.apache.camel.support.BreakpointSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 
     private final List<String> logs = new ArrayList<>();
@@ -49,8 +50,8 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         breakpoint = new BreakpointSupport() {
             public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 Exception e = event.getExchange().getException();
-                logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage()
-                         + "]");
+                logs.add("Breakpoint at " + definition + " caused by: "
+                        + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
             }
         };
 
@@ -92,10 +93,14 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
                 context.setDebugging(true);
                 context.setDebugger(new DefaultDebugger());
 
-                from("direct:start").to("log:foo").choice().when(body().contains("Camel"))
-                        .throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
+                from("direct:start")
+                        .to("log:foo")
+                        .choice()
+                        .when(body().contains("Camel"))
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

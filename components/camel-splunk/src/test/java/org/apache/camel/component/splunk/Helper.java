@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import java.net.Socket;
@@ -24,8 +25,7 @@ import org.apache.camel.CamelContext;
 
 public final class Helper {
 
-    private Helper() {
-    }
+    private Helper() {}
 
     public static DefaultSplunkConfigurationFactory mockComponent(final Service service, final Socket socket) {
         return new DefaultSplunkConfigurationFactory() {
@@ -35,7 +35,6 @@ public final class Helper {
             }
         };
     }
-
 }
 
 final class MockConnectionSettings extends SplunkConfiguration {

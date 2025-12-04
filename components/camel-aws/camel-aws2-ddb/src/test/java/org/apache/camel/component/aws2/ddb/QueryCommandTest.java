@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,8 +33,6 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryCommandTest {
 
@@ -63,7 +64,8 @@ public class QueryCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.SCAN_INDEX_FORWARD, true);
 
         Map<String, Condition> keyConditions = new HashMap<>();
-        Condition.Builder condition = Condition.builder().comparisonOperator(ComparisonOperator.GT.toString())
+        Condition.Builder condition = Condition.builder()
+                .comparisonOperator(ComparisonOperator.GT.toString())
                 .attributeValueList(AttributeValue.builder().n("1985").build());
 
         keyConditions.put("1", condition.build());
@@ -80,7 +82,8 @@ public class QueryCommandTest {
         assertEquals(mapAssert, exchange.getIn().getHeader(Ddb2Constants.LAST_EVALUATED_KEY, Map.class));
         assertEquals(keyConditions, exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class));
 
-        Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
+        Map<?, ?> items = (Map<?, ?>)
+                exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
         assertEquals(AttributeValue.builder().s("attrValue").build(), items.get("attrName"));
     }
 }

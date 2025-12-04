@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -29,8 +32,6 @@ import org.apache.camel.util.Scanner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -47,7 +48,6 @@ public class GroupTokenIteratorTest extends TestSupport {
         context = new DefaultCamelContext();
         context.start();
         exchange = new DefaultExchange(context);
-
     }
 
     @Override
@@ -113,5 +113,4 @@ public class GroupTokenIteratorTest extends TestSupport {
 
         IOHelper.close(gi);
     }
-
 }

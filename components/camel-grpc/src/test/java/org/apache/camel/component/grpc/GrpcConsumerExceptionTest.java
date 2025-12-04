@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,11 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerExceptionTest.class);
@@ -52,7 +53,9 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
     @BeforeEach
     public void startGrpcChannels() {
-        syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT).usePlaintext().build();
+        syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT)
+                .usePlaintext()
+                .build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
     }
@@ -67,8 +70,10 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     @Test
     public void testExceptionExpected() {
         LOG.info("gRPC expected exception test start");
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         assertThrows(StatusRuntimeException.class, () -> blockingStub.pingSyncSync(pingRequest));
     }
 
@@ -80,8 +85,10 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
 
     private void runExchangeExceptionHandlingTest() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
@@ -94,9 +101,8 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
+                                + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
                         .throwException(CamelException.class, "GRPC Camel exception message");
-
             }
         };
     }

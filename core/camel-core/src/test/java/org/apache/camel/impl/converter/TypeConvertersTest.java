@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.converter;
 
-import org.apache.camel.ContextTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.impl.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.ContextTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class TypeConvertersTest extends ContextTestSupport {
 
@@ -55,6 +56,7 @@ public class TypeConvertersTest extends ContextTestSupport {
         assertEquals(Double.parseDouble("1.1"), context.getTypeConverter().mandatoryConvertTo(double.class, "1.1"));
 
         assertEquals('a', context.getTypeConverter().mandatoryConvertTo(char.class, "a"));
-        assertEquals(Boolean.parseBoolean("true"), context.getTypeConverter().mandatoryConvertTo(boolean.class, "true"));
+        assertEquals(
+                Boolean.parseBoolean("true"), context.getTypeConverter().mandatoryConvertTo(boolean.class, "true"));
     }
 }

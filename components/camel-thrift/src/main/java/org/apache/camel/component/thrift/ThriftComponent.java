@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
 
 import java.net.URI;
@@ -56,8 +57,7 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
      *
      * @return the parsed and valid configuration to use
      */
-    protected ThriftConfiguration parseConfiguration(
-            ThriftConfiguration configuration, String remaining)
+    protected ThriftConfiguration parseConfiguration(ThriftConfiguration configuration, String remaining)
             throws Exception {
         configuration.parseURI(new URI(remaining));
         return configuration;

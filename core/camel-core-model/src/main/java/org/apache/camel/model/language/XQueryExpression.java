@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,12 +35,12 @@ public class XQueryExpression extends NamespaceAwareExpression {
 
     @XmlTransient
     private Object configuration;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String configurationRef;
 
-    public XQueryExpression() {
-    }
+    public XQueryExpression() {}
 
     protected XQueryExpression(XQueryExpression source) {
         super(source);

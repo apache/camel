@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.LinkedHashMap;
@@ -50,7 +51,8 @@ public class SplitterMapTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .split(body())
-                        .setHeader("myKey").simple("${body.key}")
+                        .setHeader("myKey")
+                        .simple("${body.key}")
                         .setBody(simple("${body.value}"))
                         .to("mock:line");
             }

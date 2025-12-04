@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.Iterator;
@@ -33,14 +34,14 @@ class XMLTokenizeLanguageTest
 
     @Override
     protected Object defaultContentToSend() {
-        return "<?xml version=\"1.0\"?>\n" + "<orders xmlns=\"http:acme.com\">\n" +
-               "  <order>Camel in Action</order>\n" +
-               "</orders>";
+        return "<?xml version=\"1.0\"?>\n" + "<orders xmlns=\"http:acme.com\">\n" + "  <order>Camel in Action</order>\n"
+                + "</orders>";
     }
 
     @Override
     protected TestContext testWithTypeContext() {
-        return new TestContext(defaultContentToSend(), "<order xmlns=\"http:acme.com\">Camel in Action</order>", String.class);
+        return new TestContext(
+                defaultContentToSend(), "<order xmlns=\"http:acme.com\">Camel in Action</order>", String.class);
     }
 
     @Override

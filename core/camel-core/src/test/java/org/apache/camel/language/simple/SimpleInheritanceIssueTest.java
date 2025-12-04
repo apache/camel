@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -23,8 +26,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleInheritanceIssueTest extends LanguageTestSupport {
 
@@ -74,7 +75,6 @@ public class SimpleInheritanceIssueTest extends LanguageTestSupport {
         public String parse(byte[] input) {
             return new String(input);
         }
-
     }
 
     public static class MyParser {
@@ -87,5 +87,4 @@ public class SimpleInheritanceIssueTest extends LanguageTestSupport {
             return IOConverter.toString(input, null);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.io.ByteArrayInputStream;
@@ -52,7 +53,7 @@ public final class MailConverters {
     private static final Pattern NOW_PATTERN = Pattern.compile("now\\s?(\\+|\\-)\\s?(.*)");
 
     private MailConverters() {
-        //Utility Class
+        // Utility Class
     }
 
     /**
@@ -122,7 +123,8 @@ public final class MailConverters {
      * based (ie start with text). Can return null.
      */
     @Converter
-    public static InputStream toInputStream(Multipart multipart, Exchange exchange) throws IOException, MessagingException {
+    public static InputStream toInputStream(Multipart multipart, Exchange exchange)
+            throws IOException, MessagingException {
         String s = toString(multipart);
         if (s == null) {
             return null;
@@ -283,5 +285,4 @@ public final class MailConverters {
 
         return 0;
     }
-
 }

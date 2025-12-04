@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for consuming the same filename only.
@@ -57,7 +58,8 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&fileName=" + TEST_FILE_NAME_1 + "&delete=true"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

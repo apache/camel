@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import java.net.URI;
@@ -35,11 +36,19 @@ import org.apache.camel.spi.UriPath;
 /**
  * Serve HTTP requests by a Servlet.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
-             syntax = "servlet:contextPath", consumerOnly = true, category = { Category.HTTP })
-@Metadata(excludeProperties = "httpUri", annotations = {
-        "protocol=http",
-})
+@UriEndpoint(
+        firstVersion = "2.0.0",
+        scheme = "servlet",
+        extendsScheme = "http",
+        title = "Servlet",
+        syntax = "servlet:contextPath",
+        consumerOnly = true,
+        category = {Category.HTTP})
+@Metadata(
+        excludeProperties = "httpUri",
+        annotations = {
+            "protocol=http",
+        })
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;
@@ -47,15 +56,17 @@ public class ServletEndpoint extends HttpCommonEndpoint {
     @UriPath(label = "consumer")
     @Metadata(required = true)
     private String contextPath;
+
     @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
+
     @UriParam(label = "consumer,advanced")
     private boolean attachmentMultipartBinding;
+
     @UriParam(label = "consumer,advanced")
     private String fileNameExtWhitelist;
 
-    public ServletEndpoint() {
-    }
+    public ServletEndpoint() {}
 
     public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri);
@@ -169,5 +180,4 @@ public class ServletEndpoint extends HttpCommonEndpoint {
         // in contrast to the HttpEndpoint, the ServletEndpoint knows about all it's options on the passed URI
         return false;
     }
-
 }

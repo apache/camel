@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
@@ -23,8 +24,7 @@ import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
  */
 public class RefErrorHandlerBuilder extends RefErrorHandlerDefinition {
 
-    public RefErrorHandlerBuilder() {
-    }
+    public RefErrorHandlerBuilder() {}
 
     public RefErrorHandlerBuilder(String ref) {
         super(ref);

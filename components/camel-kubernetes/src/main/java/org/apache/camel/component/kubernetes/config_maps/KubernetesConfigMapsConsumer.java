@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.config_maps;
 
 import java.util.concurrent.ExecutorService;
@@ -89,13 +90,13 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
             FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>> w;
 
             /*
-                Valid options are (according to how the client can be constructed):
-                - inAnyNamespace
-                - inAnyNamespace + withLabel
-                - inNamespace
-                - inNamespace + withLabel
-                - inNamespace + withName
-             */
+               Valid options are (according to how the client can be constructed):
+               - inAnyNamespace
+               - inAnyNamespace + withLabel
+               - inNamespace
+               - inNamespace + withLabel
+               - inNamespace + withName
+            */
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
@@ -108,13 +109,14 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                     w = w.withLabel(labelKey, labelValue);
                 }
             } else {
-                final NonNamespaceOperation<ConfigMap, ConfigMapList, Resource<ConfigMap>> client
-                        = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespace);
+                final NonNamespaceOperation<ConfigMap, ConfigMapList, Resource<ConfigMap>> client =
+                        getEndpoint().getKubernetesClient().configMaps().inNamespace(namespace);
                 w = client;
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = client.withLabel(labelKey, labelValue);
                 } else if (ObjectHelper.isNotEmpty(resourceName)) {
-                    w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>>) client.withName(resourceName);
+                    w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Resource<ConfigMap>>)
+                            client.withName(resourceName);
                 }
             }
 
@@ -125,7 +127,8 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {

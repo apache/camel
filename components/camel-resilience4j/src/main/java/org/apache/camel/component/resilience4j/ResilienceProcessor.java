@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import java.time.Duration;
@@ -101,10 +102,15 @@ public class ResilienceProcessor extends BaseProcessorSupport
     private PooledExchangeTaskFactory taskFactory;
     private PooledExchangeTaskFactory fallbackTaskFactory;
 
-    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
-                               TimeLimiterConfig timeLimiterConfig, Processor processor,
-                               Processor fallback, boolean throwExceptionWhenHalfOpenOrOpenState,
-                               Predicate<Throwable> recordPredicate, Predicate<Throwable> ignorePredicate) {
+    public ResilienceProcessor(
+            CircuitBreakerConfig circuitBreakerConfig,
+            BulkheadConfig bulkheadConfig,
+            TimeLimiterConfig timeLimiterConfig,
+            Processor processor,
+            Processor fallback,
+            boolean throwExceptionWhenHalfOpenOrOpenState,
+            Predicate<Throwable> recordPredicate,
+            Predicate<Throwable> ignorePredicate) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
         this.timeLimiterConfig = timeLimiterConfig;
@@ -119,9 +125,11 @@ public class ResilienceProcessor extends BaseProcessorSupport
     protected void doBuild() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
+        boolean pooled =
+                camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
-            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
+            int capacity =
+                    camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory = new PooledTaskFactory(getId()) {
                 @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
@@ -152,8 +160,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
 
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
-                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory = getCamelContext()
+                .getCamelContextExtension()
+                .getProcessorExchangeFactory()
+                .newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());
 
@@ -292,7 +302,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
-    @ManagedAttribute(description = "Returns the current percentage of calls which were slower than a certain threshold.")
+    @ManagedAttribute(
+            description = "Returns the current percentage of calls which were slower than a certain threshold.")
     public float getSlowCallRate() {
         if (circuitBreaker != null) {
             return circuitBreaker.getMetrics().getSlowCallRate();
@@ -301,7 +312,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
-    @ManagedAttribute(description = "Returns the current total number of calls which were slower than a certain threshold.")
+    @ManagedAttribute(
+            description = "Returns the current total number of calls which were slower than a certain threshold.")
     public int getNumberOfSlowCalls() {
         if (circuitBreaker != null) {
             return circuitBreaker.getMetrics().getNumberOfSlowCalls();
@@ -310,7 +322,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
-    @ManagedAttribute(description = "Returns the current number of successful calls which were slower than a certain threshold.")
+    @ManagedAttribute(
+            description = "Returns the current number of successful calls which were slower than a certain threshold.")
     public int getNumberOfSlowSuccessfulCalls() {
         if (circuitBreaker != null) {
             return circuitBreaker.getMetrics().getNumberOfSlowCalls();
@@ -319,7 +332,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
-    @ManagedAttribute(description = "Returns the current number of failed calls which were slower than a certain threshold.")
+    @ManagedAttribute(
+            description = "Returns the current number of failed calls which were slower than a certain threshold.")
     public int getNumberOfSlowFailedCalls() {
         if (circuitBreaker != null) {
             return circuitBreaker.getMetrics().getNumberOfSlowFailedCalls();
@@ -394,7 +408,9 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
-    @ManagedOperation(description = "Transitions the state machine to a FORCED_OPEN state, stopping state transition, metrics and event publishing.")
+    @ManagedOperation(
+            description =
+                    "Transitions the state machine to a FORCED_OPEN state, stopping state transition, metrics and event publishing.")
     public void transitionToForcedOpenState() {
         if (circuitBreaker != null) {
             circuitBreaker.transitionToForcedOpenState();
@@ -433,7 +449,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     @ManagedAttribute
     public long getCircuitBreakerWaitDurationInOpenState() {
-        return Duration.ofMillis(circuitBreakerConfig.getWaitIntervalFunctionInOpenState().apply(1)).getSeconds();
+        return Duration.ofMillis(circuitBreakerConfig
+                        .getWaitIntervalFunctionInOpenState()
+                        .apply(1))
+                .getSeconds();
     }
 
     @ManagedAttribute
@@ -551,7 +570,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
         if (LOG.isTraceEnabled()) {
             boolean failed = exchange.isFailed();
-            LOG.trace("Processing exchange: {} using circuit breaker: {} complete (failed: {})", exchange.getExchangeId(), id,
+            LOG.trace(
+                    "Processing exchange: {} using circuit breaker: {} complete (failed: {})",
+                    exchange.getExchangeId(),
+                    id,
                     failed);
         }
 
@@ -562,7 +584,9 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
     private void successState(Exchange exchange) {
         exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
-        exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE, circuitBreaker.getState().name());
+        exchange.setProperty(
+                ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_STATE,
+                circuitBreaker.getState().name());
     }
 
     private Exchange processTask(Exchange exchange) {
@@ -573,8 +597,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
         Throwable cause;
         try {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange: {} using circuit breaker ({}):{} with processor: {}",
-                        exchange.getExchangeId(), state, id, processor);
+                LOG.trace(
+                        "Processing exchange: {} using circuit breaker ({}):{} with processor: {}",
+                        exchange.getExchangeId(),
+                        state,
+                        id,
+                        processor);
             }
             // prepare a copy of exchange so downstream processors don't
             // cause side-effects if they mutate the exchange
@@ -687,8 +715,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
             // check again if we should ignore or not record the throw exception as a failure
             if (ignorePredicate != null && ignorePredicate.test(throwable)) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchange: {} recover task using circuit breaker ({}):{} ignored exception: {}",
-                            exchange.getExchangeId(), state, id, throwable);
+                    LOG.trace(
+                            "Processing exchange: {} recover task using circuit breaker ({}):{} ignored exception: {}",
+                            exchange.getExchangeId(),
+                            state,
+                            id,
+                            throwable);
                 }
                 // exception should be ignored
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
@@ -700,8 +732,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
             }
             if (recordPredicate != null && !recordPredicate.test(throwable)) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchange: {} recover task using circuit breaker ({}):{} success exception: {}",
-                            exchange.getExchangeId(), state, id, throwable);
+                    LOG.trace(
+                            "Processing exchange: {} recover task using circuit breaker ({}):{} success exception: {}",
+                            exchange.getExchangeId(),
+                            state,
+                            id,
+                            throwable);
                 }
                 // exception is a success
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, true);
@@ -712,8 +748,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange: {} recover task using circuit breaker ({}):{} failed exception: {}",
-                        exchange.getExchangeId(), state, id, throwable);
+                LOG.trace(
+                        "Processing exchange: {} recover task using circuit breaker ({}):{} failed exception: {}",
+                        exchange.getExchangeId(),
+                        state,
+                        id,
+                        throwable);
             }
 
             if (fallback == null) {
@@ -762,8 +802,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
-                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+                exchange.setProperty(
+                        ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             }
             // give the rest of the pipeline another chance
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
@@ -776,8 +816,12 @@ public class ResilienceProcessor extends BaseProcessorSupport
             // run the fallback processor
             try {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchange: {} using circuit breaker ({}):{} with fallback: {}",
-                            exchange.getExchangeId(), state, id, fallback);
+                    LOG.trace(
+                            "Processing exchange: {} using circuit breaker ({}):{} with fallback: {}",
+                            exchange.getExchangeId(),
+                            state,
+                            id,
+                            fallback);
                 }
                 // process the fallback until its fully done
                 fallback.process(exchange);

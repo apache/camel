@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.spring;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+import org.apache.camel.CamelContext;
+import org.junit.jupiter.api.Test;
 
 public class MultipleCamelContextTest {
 

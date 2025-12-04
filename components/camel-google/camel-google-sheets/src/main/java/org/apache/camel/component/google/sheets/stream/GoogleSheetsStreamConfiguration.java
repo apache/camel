@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets.stream;
 
 import java.util.Collection;
@@ -34,33 +35,46 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String spreadsheetId;
+
     @UriParam
     private String scopes;
+
     @UriParam
     private String clientId;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String refreshToken;
+
     @UriParam
     private String applicationName;
+
     @UriParam
     private int maxResults;
+
     @UriParam
     private String range;
+
     @UriParam
     private boolean includeGridData;
+
     @UriParam
     private boolean splitResults;
+
     @UriParam(enums = "ROWS,COLUMNS,DIMENSION_UNSPECIFIED", defaultValue = "ROWS")
     private String majorDimension = "ROWS";
+
     @UriParam(enums = "FORMATTED_VALUE,UNFORMATTED_VALUE,FORMULA", defaultValue = "FORMATTED_VALUE")
     private String valueRenderOption = "FORMATTED_VALUE";
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
+
     @UriParam
     private String delegate;
 
@@ -258,5 +272,4 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

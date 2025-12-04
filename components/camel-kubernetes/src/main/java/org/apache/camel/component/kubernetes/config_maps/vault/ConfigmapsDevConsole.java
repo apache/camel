@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.config_maps.vault;
 
 import java.time.Instant;
@@ -34,8 +35,10 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.vault.KubernetesConfigMapVaultConfiguration;
 import org.apache.camel.vault.KubernetesVaultConfiguration;
 
-@DevConsole(name = "kubernetes-configmaps", displayName = "Kubernetes Config Maps",
-            description = "Kubernetes Cluster Config Maps")
+@DevConsole(
+        name = "kubernetes-configmaps",
+        displayName = "Kubernetes Config Maps",
+        description = "Kubernetes Cluster Config Maps")
 public class ConfigmapsDevConsole extends AbstractDevConsole {
 
     private ConfigMapPropertiesFunction propertiesFunction;
@@ -55,8 +58,8 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
                 propertiesFunction = (ConfigMapPropertiesFunction) pf;
             }
         }
-        KubernetesConfigMapVaultConfiguration kubernetes
-                = getCamelContext().getVaultConfiguration().getKubernetesConfigMapVaultConfiguration();
+        KubernetesConfigMapVaultConfiguration kubernetes =
+                getCamelContext().getVaultConfiguration().getKubernetesConfigMapVaultConfiguration();
         if (kubernetes != null && kubernetes.isRefreshEnabled()) {
             PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
             cmRefreshTask = scheduler.getTaskByType(ConfigmapsReloadTriggerTask.class);
@@ -69,10 +72,11 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
 
         if (propertiesFunction != null) {
             sb.append("Kubernetes Config maps Cluster:");
-            sb.append(String.format("\n    Master Url: %s", propertiesFunction.getClient().getMasterUrl()));
+            sb.append(String.format(
+                    "\n    Master Url: %s", propertiesFunction.getClient().getMasterUrl()));
             sb.append("\n    Login: OAuth Token");
-            KubernetesVaultConfiguration kubernetes
-                    = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+            KubernetesVaultConfiguration kubernetes =
+                    getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
             if (kubernetes != null) {
                 sb.append(String.format("\n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
             }
@@ -104,7 +108,8 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
             root.put("masterUrl", propertiesFunction.getClient().getMasterUrl().toString());
             root.put("login", "OAuth Token");
         }
-        KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+        KubernetesVaultConfiguration kubernetes =
+                getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
         if (kubernetes != null) {
             root.put("refreshEnabled", kubernetes.isRefreshEnabled());
         }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api;
 
 import java.util.HashMap;
@@ -34,9 +35,7 @@ public final class WordpressServiceProvider {
     private HashMap<Class<? extends WordpressService>, WordpressService> services;
     private WordpressAPIConfiguration configuration;
 
-    private WordpressServiceProvider() {
-
-    }
+    private WordpressServiceProvider() {}
 
     private static class ServiceProviderHolder {
         private static final WordpressServiceProvider INSTANCE = new WordpressServiceProvider();
@@ -55,15 +54,17 @@ public final class WordpressServiceProvider {
     }
 
     public void init(WordpressAPIConfiguration config) {
-        ObjectHelper.notNullOrEmpty(config.getApiUrl(),
-                "Please inform the Wordpress API url , eg.: http://myblog.com/wp-json/wp");
+        ObjectHelper.notNullOrEmpty(
+                config.getApiUrl(), "Please inform the Wordpress API url , eg.: http://myblog.com/wp-json/wp");
 
         if (config.getApiVersion() == null || config.getApiVersion().isEmpty()) {
             config.setApiVersion(WordpressConstants.API_VERSION);
         }
 
-        final WordpressServicePosts servicePosts = new WordpressServicePostsAdapter(config.getApiUrl(), config.getApiVersion());
-        final WordpressServiceUsers serviceUsers = new WordpressServiceUsersAdapter(config.getApiUrl(), config.getApiVersion());
+        final WordpressServicePosts servicePosts =
+                new WordpressServicePostsAdapter(config.getApiUrl(), config.getApiVersion());
+        final WordpressServiceUsers serviceUsers =
+                new WordpressServiceUsersAdapter(config.getApiUrl(), config.getApiVersion());
 
         servicePosts.setWordpressAuthentication(config.getAuthentication());
         serviceUsers.setWordpressAuthentication(config.getAuthentication());
@@ -73,7 +74,9 @@ public final class WordpressServiceProvider {
         this.services.put(WordpressServiceUsers.class, serviceUsers);
         this.configuration = config;
 
-        LOGGER.info("Wordpress Service Provider initialized using base URL: {}, API Version {}", config.getApiUrl(),
+        LOGGER.info(
+                "Wordpress Service Provider initialized using base URL: {}, API Version {}",
+                config.getApiUrl(),
                 config.getApiVersion());
     }
 
@@ -81,7 +84,8 @@ public final class WordpressServiceProvider {
     public <T extends WordpressService> T getService(Class<T> wordpressServiceClazz) {
         T service = (T) this.services.get(wordpressServiceClazz);
         if (service == null) {
-            throw new IllegalArgumentException(String.format("Couldn't find a Wordpress Service '%s'", wordpressServiceClazz));
+            throw new IllegalArgumentException(
+                    String.format("Couldn't find a Wordpress Service '%s'", wordpressServiceClazz));
         }
         return service;
     }
@@ -92,5 +96,4 @@ public final class WordpressServiceProvider {
         }
         return false;
     }
-
 }

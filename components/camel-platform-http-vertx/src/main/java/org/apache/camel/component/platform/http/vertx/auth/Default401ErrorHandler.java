@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx.auth;
 
 import io.vertx.ext.web.RoutingContext;
@@ -29,7 +30,11 @@ public class Default401ErrorHandler implements ErrorHandler {
     public void handle(RoutingContext routingContext) {
         if (LOG.isDebugEnabled()) {
             var req = routingContext.request();
-            LOG.debug("401 Unauthorized: {} {} {} --> {}", req.method().name(), req.path(), req.remoteAddress(),
+            LOG.debug(
+                    "401 Unauthorized: {} {} {} --> {}",
+                    req.method().name(),
+                    req.path(),
+                    req.remoteAddress(),
                     req.localAddress());
         }
     }

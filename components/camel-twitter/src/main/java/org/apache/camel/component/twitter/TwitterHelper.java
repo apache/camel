@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.Consumer;
@@ -25,8 +26,7 @@ import org.apache.camel.component.twitter.consumer.DefaultTwitterConsumer;
 import twitter4j.v1.User;
 
 public final class TwitterHelper {
-    private TwitterHelper() {
-    }
+    private TwitterHelper() {}
 
     public static void setUserHeader(Exchange exchange, User user) {
         setUserHeader(exchange.getIn(), user);

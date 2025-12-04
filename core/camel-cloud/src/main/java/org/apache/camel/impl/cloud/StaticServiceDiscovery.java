@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.ArrayList;
@@ -59,12 +60,11 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
             String port = StringHelper.after(server, ":");
 
             if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                addServer(
-                        DefaultServiceDefinition.builder()
-                                .withName(serviceName)
-                                .withHost(host)
-                                .withPort(Integer.parseInt(port))
-                                .build());
+                addServer(DefaultServiceDefinition.builder()
+                        .withName(serviceName)
+                        .withHost(host)
+                        .withPort(Integer.parseInt(port))
+                        .build());
             }
         }
     }

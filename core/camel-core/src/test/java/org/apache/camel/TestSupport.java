@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,11 +54,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A bunch of useful testing methods
@@ -90,8 +91,7 @@ public abstract class TestSupport {
     }
 
     @Deprecated(since = "4.3.0")
-    public void deleteTestDirectory() {
-    }
+    public void deleteTestDirectory() {}
 
     @AfterEach
     public void tearDown() throws Exception {
@@ -153,9 +153,9 @@ public abstract class TestSupport {
     public static boolean isCamelDebugPresent() {
         // Needs to be detected before initializing and starting the camel context
         return Thread.currentThread()
-                .getContextClassLoader()
-                .getResource(String.format("%s%s", FactoryFinder.DEFAULT_PATH, Debugger.FACTORY))
-               != null;
+                        .getContextClassLoader()
+                        .getResource(String.format("%s%s", FactoryFinder.DEFAULT_PATH, Debugger.FACTORY))
+                != null;
     }
 
     protected String fileUri() {
@@ -224,8 +224,10 @@ public abstract class TestSupport {
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
-        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() + " but was: " + value
-                                                   + " with type: " + value.getClass().getName());
+        assertTrue(
+                expectedType.isInstance(value),
+                "object should be a " + expectedType.getName() + " but was: " + value + " with type: "
+                        + value.getClass().getName());
         return expectedType.cast(value);
     }
 
@@ -345,7 +347,8 @@ public abstract class TestSupport {
     /**
      * Resolves an endpoint and asserts that it is found
      */
-    public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
+    public static <T extends Endpoint> T resolveMandatoryEndpoint(
+            CamelContext context, String uri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(uri, endpointType);
 
         assertNotNull(endpoint, "No endpoint found for URI: " + uri);
@@ -661,5 +664,4 @@ public abstract class TestSupport {
     public static <T> void assumeThat(String s, T t, Matcher<T> m) {
         Assumptions.assumeTrue(m.matches(t), s);
     }
-
 }

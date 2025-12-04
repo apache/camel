@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -23,7 +24,7 @@ public class SpringErrorHandlerConfigFallbackTest extends SpringErrorHandlerConf
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringErrorHandlerConfigFallbackTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/SpringErrorHandlerConfigFallbackTest.xml");
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,6 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -66,7 +67,11 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
                 // add our custom interceptor
                 context.getCamelContextExtension().addInterceptStrategy(myInterceptor);
 
-                from("direct:start").split(body().tokenize(",")).log("Spltted ${body}").to("mock:child").end()
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .log("Spltted ${body}")
+                        .to("mock:child")
+                        .end()
                         .to("mock:result");
             }
         };

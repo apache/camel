@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
 
 import java.util.HashMap;
@@ -53,11 +54,10 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
 
     @Override
     public synchronized MiloClientConnection createConnection(
-            MiloClientConfiguration configuration,
-            MonitorFilterConfiguration monitorFilterConfiguration) {
+            MiloClientConfiguration configuration, MonitorFilterConfiguration monitorFilterConfiguration) {
         final String identifier = configuration.toCacheId();
-        final ManagedConnection managedConnection
-                = cache.computeIfAbsent(identifier, k -> managedConnection(configuration, monitorFilterConfiguration));
+        final ManagedConnection managedConnection =
+                cache.computeIfAbsent(identifier, k -> managedConnection(configuration, monitorFilterConfiguration));
         managedConnection.increment();
         return managedConnection.connection;
     }
@@ -65,7 +65,8 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
     @Override
     public synchronized void releaseConnection(MiloClientConnection connection) {
         final Optional<Entry<String, ManagedConnection>> existingConnection = this.cache.entrySet().stream()
-                .filter(entry -> entry.getValue().connection.equals(connection)).findFirst();
+                .filter(entry -> entry.getValue().connection.equals(connection))
+                .findFirst();
         existingConnection.ifPresent(entry -> {
             entry.getValue().decrement();
             if (entry.getValue().consumers <= 0) {
@@ -82,14 +83,12 @@ public class MiloClientCachingConnectionManager implements MiloClientConnectionM
     }
 
     private ManagedConnection managedConnection(
-            MiloClientConfiguration configuration,
-            MonitorFilterConfiguration monitorFilterConfiguration) {
+            MiloClientConfiguration configuration, MonitorFilterConfiguration monitorFilterConfiguration) {
         return new ManagedConnection(miloClientConnection(configuration, monitorFilterConfiguration));
     }
 
     private MiloClientConnection miloClientConnection(
-            MiloClientConfiguration configuration,
-            MonitorFilterConfiguration monitorFilterConfiguration) {
+            MiloClientConfiguration configuration, MonitorFilterConfiguration monitorFilterConfiguration) {
         return new MiloClientConnection(configuration, monitorFilterConfiguration);
     }
 }

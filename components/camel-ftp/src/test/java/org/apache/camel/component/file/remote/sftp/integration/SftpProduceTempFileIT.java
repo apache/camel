@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -23,18 +27,19 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpProduceTempFileIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpTempFile() {
-        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "?username=admin&password=admin&tempFileName=temp-${file:name}",
+        template.sendBodyAndHeader(
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
+                        + "?username=admin&password=admin&tempFileName=temp-${file:name}",
                 "Hello World",
-                Exchange.FILE_NAME, "hello.txt");
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         File file = ftpFile("hello.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);
@@ -45,8 +50,9 @@ public class SftpProduceTempFileIT extends SftpServerTestSupport {
     public void testSftpTempFileNoStartingPath() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/?username=admin&password=admin&tempFileName=temp-${file:name}"
-                                   + "&knownHostsFile=" + service.getKnownHostsFile(),
-                "Hello World", Exchange.FILE_NAME,
+                        + "&knownHostsFile=" + service.getKnownHostsFile(),
+                "Hello World",
+                Exchange.FILE_NAME,
                 "hello.txt");
 
         File file = new File("hello.txt");
@@ -56,5 +62,4 @@ public class SftpProduceTempFileIT extends SftpServerTestSupport {
         // delete file when we are done testing
         FileUtil.deleteFile(file);
     }
-
 }

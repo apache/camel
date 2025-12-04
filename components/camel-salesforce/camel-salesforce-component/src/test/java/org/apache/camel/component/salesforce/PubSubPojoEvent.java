@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.util.Objects;
@@ -25,11 +26,10 @@ public class PubSubPojoEvent {
 
     @Override
     public String toString() {
-        return "PubSubPojoEvent{" +
-               "Message__c='" + Message__c + '\'' +
-               ", CreatedDate=" + CreatedDate +
-               ", CreatedById='" + CreatedById + '\'' +
-               '}';
+        return "PubSubPojoEvent{" + "Message__c='"
+                + Message__c + '\'' + ", CreatedDate="
+                + CreatedDate + ", CreatedById='"
+                + CreatedById + '\'' + '}';
     }
 
     public String getMessage__c() {
@@ -58,12 +58,11 @@ public class PubSubPojoEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof PubSubPojoEvent))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof PubSubPojoEvent)) return false;
         PubSubPojoEvent that = (PubSubPojoEvent) o;
-        return CreatedDate == that.CreatedDate && Objects.equals(Message__c, that.Message__c)
+        return CreatedDate == that.CreatedDate
+                && Objects.equals(Message__c, that.Message__c)
                 && CreatedById.equals(that.CreatedById);
     }
 

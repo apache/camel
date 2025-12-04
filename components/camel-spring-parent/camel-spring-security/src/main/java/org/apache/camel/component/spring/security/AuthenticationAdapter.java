@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
 
 import javax.security.auth.Subject;
@@ -23,5 +24,4 @@ import org.springframework.security.core.Authentication;
 public interface AuthenticationAdapter {
 
     Authentication toAuthentication(Subject subject);
-
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.azure.cosmos.CosmosAsyncDatabase;
 import com.azure.cosmos.models.CosmosDatabaseResponse;
@@ -22,12 +29,6 @@ import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CosmosDbClientOperationsTest {
 
@@ -62,17 +63,25 @@ class CosmosDbClientOperationsTest {
 
         final CosmosDbClientOperations operations = CosmosDbClientOperations.withClient(client);
 
-        CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> operations.createDatabaseIfNotExistAndGetDatabaseOperations(null, null));
-        CosmosDbTestUtils
-                .assertIllegalArgumentException(() -> operations.createDatabaseIfNotExistAndGetDatabaseOperations("", null));
+        CosmosDbTestUtils.assertIllegalArgumentException(
+                () -> operations.createDatabaseIfNotExistAndGetDatabaseOperations(null, null));
+        CosmosDbTestUtils.assertIllegalArgumentException(
+                () -> operations.createDatabaseIfNotExistAndGetDatabaseOperations("", null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.getDatabaseOperations(null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.getDatabaseOperations(""));
 
-        assertEquals("test-new-database",
-                operations.createDatabaseIfNotExistAndGetDatabaseOperations("test-new-database", null).getDatabaseId().block());
-        assertEquals("test-existing-database",
-                operations.getDatabaseOperations("test-existing-database").getDatabaseId().block());
+        assertEquals(
+                "test-new-database",
+                operations
+                        .createDatabaseIfNotExistAndGetDatabaseOperations("test-new-database", null)
+                        .getDatabaseId()
+                        .block());
+        assertEquals(
+                "test-existing-database",
+                operations
+                        .getDatabaseOperations("test-existing-database")
+                        .getDatabaseId()
+                        .block());
     }
 
     @Test
@@ -87,5 +96,4 @@ class CosmosDbClientOperationsTest {
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryDatabases(null, null));
         CosmosDbTestUtils.assertIllegalArgumentException(() -> operations.queryDatabases("", null));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx.beans;
 
 import java.util.ArrayList;
@@ -112,16 +113,15 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     @Override
     public void triggerConnectionNotification() {
         JMXConnectionNotification n = new JMXConnectionNotification(
-                "connection", this,
-                "conn-123", mSequence++, "connection notification", null);
+                "connection", this, "conn-123", mSequence++, "connection notification", null);
         n.setTimeStamp(mTimestamp);
         sendNotification(n);
     }
 
     @Override
     public void triggerMBeanServerNotification() throws Exception {
-        MBeanServerNotification n
-                = new MBeanServerNotification("mbeanserver", this, mSequence++, new ObjectName("TestDomain", "name", "foo"));
+        MBeanServerNotification n = new MBeanServerNotification(
+                "mbeanserver", this, mSequence++, new ObjectName("TestDomain", "name", "foo"));
         n.setTimeStamp(mTimestamp);
         sendNotification(n);
     }
@@ -134,7 +134,9 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
         }
         RelationNotification n = new RelationNotification(
                 RelationNotification.RELATION_BASIC_CREATION,
-                new ObjectName("TestDomain", "name", "source"), mSequence++, mTimestamp,
+                new ObjectName("TestDomain", "name", "source"),
+                mSequence++,
+                mTimestamp,
                 "relation message",
                 "relation-id",
                 "relation.type",
@@ -145,8 +147,8 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
 
     @Override
     public void triggerTimerNotification() {
-        TimerNotification n
-                = new TimerNotification("timer.notification", this, mSequence++, mTimestamp, "timer-notification", 100);
+        TimerNotification n =
+                new TimerNotification("timer.notification", this, mSequence++, mTimestamp, "timer-notification", 100);
         sendNotification(n);
     }
 }

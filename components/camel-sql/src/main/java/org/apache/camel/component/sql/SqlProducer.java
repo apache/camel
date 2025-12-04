@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.springframework.jdbc.support.JdbcUtils.closeConnection;
+import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
+import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
@@ -37,10 +42,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 
-import static org.springframework.jdbc.support.JdbcUtils.closeConnection;
-import static org.springframework.jdbc.support.JdbcUtils.closeResultSet;
-import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
-
 public class SqlProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlProducer.class);
@@ -57,9 +58,14 @@ public class SqlProducer extends DefaultProducer {
     private final boolean manualCommit;
     private int parametersCount;
 
-    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate,
-                       SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
-                       boolean batch, boolean alwaysPopulateStatement, boolean useMessageBodyForSql) {
+    public SqlProducer(
+            SqlEndpoint endpoint,
+            String query,
+            JdbcTemplate jdbcTemplate,
+            SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
+            boolean batch,
+            boolean alwaysPopulateStatement,
+            boolean useMessageBodyForSql) {
         super(endpoint);
         this.manualCommit = endpoint.isBatchAutoCommitDisabled();
         this.jdbcTemplate = jdbcTemplate;
@@ -80,7 +86,8 @@ public class SqlProducer extends DefaultProducer {
         super.doInit();
 
         if (ResourceHelper.isClasspathUri(query)) {
-            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            String placeholder =
+                    getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
             resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
         }
     }
@@ -90,7 +97,8 @@ public class SqlProducer extends DefaultProducer {
         super.doStart();
 
         if (!ResourceHelper.isClasspathUri(query)) {
-            String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+            String placeholder =
+                    getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
             resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
         }
     }
@@ -103,17 +111,18 @@ public class SqlProducer extends DefaultProducer {
         } else {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
             if (queryHeader != null) {
-                String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
+                String placeholder =
+                        getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
                 sql = SqlHelper.resolvePlaceholders(queryHeader, placeholder);
             } else {
                 sql = resolvedQuery;
             }
         }
-        final String preparedQuery
-                = sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
+        final String preparedQuery =
+                sqlPrepareStatementStrategy.prepareQuery(sql, getEndpoint().isAllowNamedParameters(), exchange);
 
-        final Boolean shouldRetrieveGeneratedKeys
-                = exchange.getIn().getHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+        final Boolean shouldRetrieveGeneratedKeys =
+                exchange.getIn().getHeader(SqlConstants.SQL_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
         PreparedStatementCreator statementCreator = con -> {
             if (!shouldRetrieveGeneratedKeys) {
@@ -129,7 +138,7 @@ public class SqlProducer extends DefaultProducer {
                 } else {
                     throw new IllegalArgumentException(
                             "Header specifying expected returning columns isn't an instance of String[] or int[] but "
-                                                       + expectedGeneratedColumns.getClass());
+                                    + expectedGeneratedColumns.getClass());
                 }
             }
         };
@@ -148,8 +157,11 @@ public class SqlProducer extends DefaultProducer {
     }
 
     private Object processInternal(
-            Exchange exchange, PreparedStatementCreator statementCreator,
-            String sql, String preparedQuery, Boolean shouldRetrieveGeneratedKeys) {
+            Exchange exchange,
+            PreparedStatementCreator statementCreator,
+            String sql,
+            String preparedQuery,
+            Boolean shouldRetrieveGeneratedKeys) {
         LOG.trace("jdbcTemplate.execute: {}", preparedQuery);
         return fetchJdbcTemplate(exchange).execute(statementCreator, new PreparedStatementCallback<Object>() {
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException {
@@ -303,8 +315,8 @@ public class SqlProducer extends DefaultProducer {
                 }
                 while (iterator != null && iterator.hasNext()) {
                     Object value = iterator.next();
-                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected,
-                            exchange, value);
+                    Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(
+                            sql, preparedQuery, expected, exchange, value);
                     sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                     ps.addBatch();
                 }
@@ -315,8 +327,8 @@ public class SqlProducer extends DefaultProducer {
                 } else {
                     value = exchange.getIn().getBody();
                 }
-                Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sql, preparedQuery, expected,
-                        exchange, value);
+                Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(
+                        sql, preparedQuery, expected, exchange, value);
                 sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
             }
         }

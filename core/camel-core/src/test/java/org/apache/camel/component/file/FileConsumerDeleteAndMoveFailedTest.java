@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
@@ -30,14 +31,16 @@ public class FileConsumerDeleteAndMoveFailedTest extends FileConsumerDeleteAndFa
             @Override
             public void configure() {
                 from(fileUri("?delete=true&moveFailed=error&initialDelay=0&delay=10"))
-                        .setBody(simple("${body} IS processed!")).process(new Processor() {
+                        .setBody(simple("${body} IS processed!"))
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 if (body != null && body.startsWith("Kaboom")) {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

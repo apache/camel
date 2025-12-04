@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.common;
 
 import org.apache.camel.spi.Metadata;
@@ -34,12 +35,19 @@ public class OpenstackConstants {
 
     @Metadata(description = "The operation to perform.", javaType = "String")
     public static final String OPERATION = "operation";
+
     @Metadata(description = "The ID.", javaType = "String")
     public static final String ID = "ID";
+
     @Metadata(description = "The name.", javaType = "String")
     public static final String NAME = "name";
-    @Metadata(description = "The description.", javaType = "String", applicableFor = { SCHEME_CINDER })
+
+    @Metadata(
+            description = "The description.",
+            javaType = "String",
+            applicableFor = {SCHEME_CINDER})
     public static final String DESCRIPTION = "description";
+
     @Metadata(description = "The image properties.", javaType = "Map<String, String>", applicableFor = SCHEME_GLANCE)
     public static final String PROPERTIES = "properties";
 
@@ -49,6 +57,5 @@ public class OpenstackConstants {
     public static final String GET = "get";
     public static final String DELETE = "delete";
 
-    protected OpenstackConstants() {
-    }
+    protected OpenstackConstants() {}
 }

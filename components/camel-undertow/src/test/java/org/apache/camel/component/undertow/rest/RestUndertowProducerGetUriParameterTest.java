@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestUndertowProducerGetUriParameterTest extends BaseUndertowTest {
 
@@ -38,22 +39,16 @@ public class RestUndertowProducerGetUriParameterTest extends BaseUndertowTest {
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
-                from("direct:start")
-                        .to("rest:get:users/basic?id={id}");
+                from("direct:start").to("rest:get:users/basic?id={id}");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("basic/?id={id}")
-                        .to("direct:basic");
+                rest("/users/").get("basic/?id={id}").to("direct:basic");
 
-                from("direct:basic")
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:basic").to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
             }
         };
     }
-
 }

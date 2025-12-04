@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.primary;
 
 import java.util.Set;
@@ -83,8 +84,7 @@ public class FindSingleByTypeTest extends ContextTestSupport {
         Assertions.assertEquals("Donald", c.name());
 
         // should not find anything
-        Assertions.assertThrows(NoSuchBeanTypeException.class,
-                () -> context.getRegistry().mandatoryFindSingleByType(UuidGenerator.class));
+        Assertions.assertThrows(NoSuchBeanTypeException.class, () -> context.getRegistry()
+                .mandatoryFindSingleByType(UuidGenerator.class));
     }
-
 }

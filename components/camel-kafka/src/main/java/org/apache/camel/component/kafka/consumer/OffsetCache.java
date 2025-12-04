@@ -45,7 +45,8 @@ final class OffsetCache {
         LOG.debug(
                 "Offset {} from topic {} from partition {} has been successfully committed and is being removed from tracking",
                 offsetAndMetadata.offset(),
-                topicPartition.topic(), topicPartition.partition());
+                topicPartition.topic(),
+                topicPartition.partition());
 
         lastProcessedOffset.remove(topicPartition);
     }

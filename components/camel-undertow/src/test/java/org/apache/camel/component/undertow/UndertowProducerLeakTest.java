@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.util.concurrent.TimeUnit;
@@ -36,9 +37,12 @@ public class UndertowProducerLeakTest extends BaseUndertowTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("undertow:http://localhost:{{port}}/test").to("log:undertow?showAll=true").to("mock:result");
+                from("undertow:http://localhost:{{port}}/test")
+                        .to("log:undertow?showAll=true")
+                        .to("mock:result");
 
-                from("timer:foo?period=100").transform(constant("hello world"))
+                from("timer:foo?period=100")
+                        .transform(constant("hello world"))
                         .to("undertow:http://localhost:{{port}}/test");
             }
         };

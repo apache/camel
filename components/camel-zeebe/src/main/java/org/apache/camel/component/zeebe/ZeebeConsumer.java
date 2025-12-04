@@ -57,8 +57,12 @@ public class ZeebeConsumer extends DefaultConsumer {
             case REGISTER_JOB_WORKER:
                 ObjectHelper.notNull(getEndpoint().getJobKey(), "jobKey");
 
-                jobWorker = getEndpoint().getZeebeService().registerJobHandler(new ConsumerJobHandler(),
-                        getEndpoint().getJobKey(), getEndpoint().getTimeout());
+                jobWorker = getEndpoint()
+                        .getZeebeService()
+                        .registerJobHandler(
+                                new ConsumerJobHandler(),
+                                getEndpoint().getJobKey(),
+                                getEndpoint().getTimeout());
                 break;
             default:
                 throw new CamelException(String.format("Invalid Operation for Consumer %s", operationName.value()));

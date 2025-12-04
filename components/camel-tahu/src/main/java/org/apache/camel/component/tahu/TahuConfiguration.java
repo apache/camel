@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.List;
@@ -35,39 +36,43 @@ import org.eclipse.tahu.mqtt.MqttServerUrl;
 @UriParams
 public class TahuConfiguration implements Cloneable {
 
-    private static final Pattern SERVER_DEF_PATTERN = Pattern
-            .compile("([^:]+):(?:(?!tcp|ssl)([^:]+):)?((?:tcp|ssl):(?://)?[\\p{Alnum}.-]+(?::\\d+)?),?");
+    private static final Pattern SERVER_DEF_PATTERN =
+            Pattern.compile("([^:]+):(?:(?!tcp|ssl)([^:]+):)?((?:tcp|ssl):(?://)?[\\p{Alnum}.-]+(?::\\d+)?),?");
 
     @UriParam(label = "common")
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME }, required = true)
+    @Metadata(
+            applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME},
+            required = true)
     private String servers;
 
     @UriParam(label = "common")
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME }, required = true)
+    @Metadata(
+            applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME},
+            required = true)
     private String clientId;
 
     @UriParam(label = "common", defaultValue = "false")
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
+    @Metadata(applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME})
     private boolean checkClientIdLength = false;
 
     @UriParam(label = "security", secret = true)
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
+    @Metadata(applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME})
     private String username;
 
     @UriParam(label = "security", secret = true)
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
+    @Metadata(applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME})
     private String password;
 
     @UriParam(label = "common", defaultValue = "5000")
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
+    @Metadata(applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME})
     private long rebirthDebounceDelay = 5000L;
 
     @UriParam(label = "common", defaultValue = "30")
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
+    @Metadata(applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME})
     private int keepAliveTimeout = 30;
 
     @UriParam(label = "security")
-    @Metadata(applicableFor = { TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME })
+    @Metadata(applicableFor = {TahuConstants.EDGE_NODE_SCHEME, TahuConstants.HOST_APP_SCHEME})
     private SSLContextParameters sslContextParameters;
 
     public String getServers() {
@@ -92,31 +97,40 @@ public class TahuConfiguration implements Cloneable {
             throw new RuntimeCamelException("Server definition list has invalid syntax: " + servers);
         } else {
             Matcher serverDefMatcher = SERVER_DEF_PATTERN.matcher(servers);
-            serverDefinitionList = serverDefMatcher.results().map(matchResult -> {
+            serverDefinitionList = serverDefMatcher
+                    .results()
+                    .map(matchResult -> {
 
-                // MatchResult does not support named groups
-                String serverName = matchResult.group(1);
-                String clientId = matchResult.group(2);
-                String serverUrl = matchResult.group(3);
+                        // MatchResult does not support named groups
+                        String serverName = matchResult.group(1);
+                        String clientId = matchResult.group(2);
+                        String serverUrl = matchResult.group(3);
 
-                return parseFromUrlString(serverName, clientId, serverUrl);
-            }).toList();
+                        return parseFromUrlString(serverName, clientId, serverUrl);
+                    })
+                    .toList();
         }
         return serverDefinitionList;
     }
 
-    private MqttServerDefinition parseFromUrlString(
-            String serverName, String clientId, String serverUrl) {
+    private MqttServerDefinition parseFromUrlString(String serverName, String clientId, String serverUrl) {
         try {
             MqttServerName mqttServerName = new MqttServerName(ObjectHelper.notNullOrEmpty(serverName, "serverName"));
 
-            clientId = Stream.of(clientId, this.clientId).filter(ObjectHelper::isNotEmpty).findFirst()
+            clientId = Stream.of(clientId, this.clientId)
+                    .filter(ObjectHelper::isNotEmpty)
+                    .findFirst()
                     .orElse(MqttClientId.generate("Camel"));
             MqttClientId mqttClientId = new MqttClientId(clientId, checkClientIdLength);
 
             return new MqttServerDefinition(
-                    mqttServerName, mqttClientId, new MqttServerUrl(ObjectHelper.notNullOrEmpty(serverUrl, "serverUrl")),
-                    username, password, keepAliveTimeout, null);
+                    mqttServerName,
+                    mqttClientId,
+                    new MqttServerUrl(ObjectHelper.notNullOrEmpty(serverUrl, "serverUrl")),
+                    username,
+                    password,
+                    keepAliveTimeout,
+                    null);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -222,5 +236,4 @@ public class TahuConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.filter;
 
 import java.util.Comparator;
@@ -32,8 +33,9 @@ import org.apache.camel.processor.FilterProcessor;
  * @param endpoint   the destination endpoint for matching exchanges
  * @param statistics the object that holds routing statistics for this filter
  */
-public record PrioritizedFilter(String id, int priority, Predicate predicate, String endpoint,
-        PrioritizedFilterStatistics statistics) implements Comparable<PrioritizedFilter> {
+public record PrioritizedFilter(
+        String id, int priority, Predicate predicate, String endpoint, PrioritizedFilterStatistics statistics)
+        implements Comparable<PrioritizedFilter> {
 
     /**
      * Compare the priority of this instance to the priority of the parameter.
@@ -53,7 +55,8 @@ public record PrioritizedFilter(String id, int priority, Predicate predicate, St
      */
     @Override
     public String toString() {
-        return String.format("PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",
+        return String.format(
+                "PrioritizedFilterProcessor [id: %s, priority: %s, predicate: %s, endpoint: %s]",
                 this.id(), this.priority(), this.predicate(), this.endpoint());
     }
 

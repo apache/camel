@@ -43,8 +43,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class MountTrait extends BaseTrait {
 
-    private static final Pattern RESOURCE_VALUE_EXPRESSION
-            = Pattern.compile("^([\\w.\\-_:]+)(/([\\w.\\-_:]+))?(@([\\w.\\-_:/]+))?$");
+    private static final Pattern RESOURCE_VALUE_EXPRESSION =
+            Pattern.compile("^([\\w.\\-_:]+)(/([\\w.\\-_:]+))?(@([\\w.\\-_:/]+))?$");
 
     public static final int MOUNT_TRAIT_ORDER = ContainerTrait.CONTAINER_TRAIT_ORDER + 10;
     public static final String CONF_DIR = "/etc/camel/conf.d";
@@ -138,7 +138,8 @@ public class MountTrait extends BaseTrait {
 
         Volume vol = getVolume(volumeName, mountResource, dstFile);
         boolean readOnly = mountResource.storageType != MountResource.StorageType.PVC;
-        VolumeMount mnt = getMount(volumeName, getMountPath(mountResource, dstDir), dstFile, readOnly, overrideFilePath);
+        VolumeMount mnt =
+                getMount(volumeName, getMountPath(mountResource, dstDir), dstFile, readOnly, overrideFilePath);
 
         volumes.add(vol);
         volumeMounts.add(mnt);
@@ -163,13 +164,12 @@ public class MountTrait extends BaseTrait {
     }
 
     private Volume getVolume(String volumeName, MountResource mountResource, String mountPath) {
-        VolumeBuilder volume = new VolumeBuilder()
-                .withName(volumeName);
+        VolumeBuilder volume = new VolumeBuilder().withName(volumeName);
 
         switch (mountResource.storageType) {
             case CONFIGMAP:
-                ConfigMapVolumeSourceBuilder cmVolumeSource = new ConfigMapVolumeSourceBuilder()
-                        .withName(mountResource.name);
+                ConfigMapVolumeSourceBuilder cmVolumeSource =
+                        new ConfigMapVolumeSourceBuilder().withName(mountResource.name);
 
                 if (ObjectHelper.isNotEmpty(mountResource.key)) {
                     cmVolumeSource.addToItems(new KeyToPathBuilder()
@@ -181,8 +181,8 @@ public class MountTrait extends BaseTrait {
                 volume.withConfigMap(cmVolumeSource.build()).build();
                 break;
             case SECRET:
-                SecretVolumeSourceBuilder volumeSource = new SecretVolumeSourceBuilder()
-                        .withSecretName(mountResource.name);
+                SecretVolumeSourceBuilder volumeSource =
+                        new SecretVolumeSourceBuilder().withSecretName(mountResource.name);
 
                 if (ObjectHelper.isNotEmpty(mountResource.key)) {
                     volumeSource.addToItems(new KeyToPathBuilder()
@@ -226,9 +226,11 @@ public class MountTrait extends BaseTrait {
 
     private MountResource parseConfig(String expression, MountResource.ContentType contentType) {
         if (expression.startsWith("configmap:")) {
-            return createConfig(expression.substring("configmap:".length()), MountResource.StorageType.CONFIGMAP, contentType);
+            return createConfig(
+                    expression.substring("configmap:".length()), MountResource.StorageType.CONFIGMAP, contentType);
         } else if (expression.startsWith("secret:")) {
-            return createConfig(expression.substring("secret:".length()), MountResource.StorageType.SECRET, contentType);
+            return createConfig(
+                    expression.substring("secret:".length()), MountResource.StorageType.SECRET, contentType);
         } else { // volumes
             String[] configParts = expression.split(":", 2);
 
@@ -259,8 +261,8 @@ public class MountTrait extends BaseTrait {
         return new MountResource(storageType, contentType, name, key, destPath);
     }
 
-    private record MountResource(StorageType storageType, ContentType contentType, String name, String key,
-            String destinationPath) {
+    private record MountResource(
+            StorageType storageType, ContentType contentType, String name, String key, String destinationPath) {
         private enum ContentType {
             DATA,
             TEXT
@@ -272,5 +274,4 @@ public class MountTrait extends BaseTrait {
             PVC
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jasypt;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,7 +36,7 @@ public class SpringJasyptBridgePropertiesTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jasypt/SpringJasyptBridgePropertiesTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jasypt/SpringJasyptBridgePropertiesTest.xml");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.addressing;
 
 import java.net.URISyntaxException;
@@ -41,7 +42,7 @@ public class ConsumerWSANewChannelParamsActionTests extends AbstractConsumerTest
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                new String[] { "org/apache/camel/component/spring/ws/addresing/ConsumerWSAParamsActionTests-context.xml" });
+                new String[] {"org/apache/camel/component/spring/ws/addresing/ConsumerWSAParamsActionTests-context.xml"
+                });
     }
-
 }

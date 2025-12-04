@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.instance;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("hazelcast-instance")
 public class HazelcastInstanceComponent extends HazelcastDefaultComponent {
 
-    public HazelcastInstanceComponent() {
-    }
+    public HazelcastInstanceComponent() {}
 
     public HazelcastInstanceComponent(final CamelContext context) {
         super(context);
@@ -40,5 +40,4 @@ public class HazelcastInstanceComponent extends HazelcastDefaultComponent {
             throws Exception {
         return new HazelcastInstanceEndpoint(hzInstance, uri, this);
     }
-
 }

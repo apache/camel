@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
@@ -74,10 +75,14 @@ public class ManagedRoundRobinLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .loadBalance().roundRobin().id("mysend")
-                        .to("mock:foo").id("foo").to("mock:bar").id("bar");
+                        .loadBalance()
+                        .roundRobin()
+                        .id("mysend")
+                        .to("mock:foo")
+                        .id("foo")
+                        .to("mock:bar")
+                        .id("bar");
             }
         };
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -28,13 +36,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * FaultTolerance using timeout and custom thread pool with Java DSL
@@ -54,8 +55,8 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
         Object out = template.requestBody("direct:start", "fast");
         assertEquals("Fast response", out);
 
-        SizedScheduledExecutorService pte
-                = context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
+        SizedScheduledExecutorService pte =
+                context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
         assertNotNull(pte);
         assertEquals(2, pte.getCorePoolSize());
 
@@ -66,13 +67,12 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
     public void testSlow() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
-        Exception exception = assertThrows(Exception.class,
-                () -> template.requestBody("direct:start", "slow"),
-                "Should fail due to timeout");
+        Exception exception = assertThrows(
+                Exception.class, () -> template.requestBody("direct:start", "slow"), "Should fail due to timeout");
         assertIsInstanceOf(TimeoutException.class, exception.getCause());
 
-        SizedScheduledExecutorService pte
-                = context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
+        SizedScheduledExecutorService pte =
+                context().getRegistry().lookupByNameAndType("myThreadPool", SizedScheduledExecutorService.class);
         assertNotNull(pte);
         assertEquals(2, pte.getCorePoolSize());
 
@@ -89,9 +89,8 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
         // triggers an exception
         for (int i = 0; i < 10; i++) {
             log.info(">>> test run {} <<<", i);
-            Exception exception = assertThrows(Exception.class,
-                    () -> template.requestBody("direct:start", "slow"),
-                    "Should fail due to timeout");
+            Exception exception = assertThrows(
+                    Exception.class, () -> template.requestBody("direct:start", "slow"), "Should fail due to timeout");
             assertIsInstanceOf(TimeoutException.class, exception.getCause());
         }
     }
@@ -101,24 +100,36 @@ public class FaultToleranceTimeoutThreadPoolTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").circuitBreaker()
+                from("direct:start")
+                        .circuitBreaker()
                         // enable and use 2 second timeout
-                        .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(2000)
-                        .threadOffloadExecutorService("myThreadPool").end()
-                        .log("FaultTolerance processing start: ${threadName}").toD("direct:${body}")
-                        .log("FaultTolerance processing end: ${threadName}").end().log("After Fault Tolerance ${body}");
+                        .faultToleranceConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .threadOffloadExecutorService("myThreadPool")
+                        .end()
+                        .log("FaultTolerance processing start: ${threadName}")
+                        .toD("direct:${body}")
+                        .log("FaultTolerance processing end: ${threadName}")
+                        .end()
+                        .log("After Fault Tolerance ${body}");
 
                 from("direct:fast")
                         // this is a fast route and takes 1 second to respond
-                        .log("Fast processing start: ${threadName}").delay(1000).transform().constant("Fast response")
+                        .log("Fast processing start: ${threadName}")
+                        .delay(1000)
+                        .transform()
+                        .constant("Fast response")
                         .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
                         // this is a slow route and takes 3 second to respond
-                        .log("Slow processing start: ${threadName}").delay(3000).transform().constant("Slow response")
+                        .log("Slow processing start: ${threadName}")
+                        .delay(3000)
+                        .transform()
+                        .constant("Slow response")
                         .log("Slow processing end: ${threadName}");
             }
         };
     }
-
 }

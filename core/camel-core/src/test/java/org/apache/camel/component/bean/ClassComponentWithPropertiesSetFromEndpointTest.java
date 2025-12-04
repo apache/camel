@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,9 +37,10 @@ public class ClassComponentWithPropertiesSetFromEndpointTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye").to("mock:result");
+                from("direct:start")
+                        .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
+                        .to("mock:result");
             }
         };
     }
-
 }

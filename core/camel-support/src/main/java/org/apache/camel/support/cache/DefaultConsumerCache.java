@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -56,8 +57,11 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         this.consumers = createServicePool(camelContext, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.extendedStatistics
-                    = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            this.extendedStatistics = camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
+                    .getStatisticsLevel()
+                    .isExtended();
         } else {
             this.extendedStatistics = false;
         }

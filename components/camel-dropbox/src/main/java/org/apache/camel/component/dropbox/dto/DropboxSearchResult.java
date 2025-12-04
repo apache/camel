@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.dto;
 
 import java.util.ArrayList;
@@ -33,5 +34,4 @@ public class DropboxSearchResult {
     public List<SearchMatchV2> getFound() {
         return Collections.unmodifiableList(found);
     }
-
 }

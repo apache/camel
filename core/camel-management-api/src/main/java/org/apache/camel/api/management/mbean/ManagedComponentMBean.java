@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
@@ -38,10 +39,12 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Whether this component provides component specific health checks")
     boolean isHealthCheckSupported();
 
-    @ManagedAttribute(description = "Whether consumer based health checks from this component is enabled (default enabled)")
+    @ManagedAttribute(
+            description = "Whether consumer based health checks from this component is enabled (default enabled)")
     boolean isHealthCheckConsumerEnabled();
 
-    @ManagedAttribute(description = "Whether producer based health checks from this component is enabled (default disabled)")
+    @ManagedAttribute(
+            description = "Whether producer based health checks from this component is enabled (default disabled)")
     boolean isHealthCheckProducerEnabled();
 
     @ManagedAttribute(description = "Whether this component support verification (parameters or connectivity)")

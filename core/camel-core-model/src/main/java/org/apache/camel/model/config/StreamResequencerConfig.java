@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.config;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,18 +40,23 @@ public class StreamResequencerConfig extends ResequencerConfig {
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.lang.Integer")
     private String capacity;
+
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timeout;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private String deliveryAttemptInterval;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidExchanges;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String rejectOld;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.processor.resequencer.ExpressionResultComparator")
     private String comparator;
@@ -108,7 +114,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * @param rejectOld  if true, throws an exception when messages older than the last delivered message are processed
      * @param comparator comparator for sequence comparison
      */
-    public StreamResequencerConfig(int capacity, long timeout, Boolean rejectOld, ExpressionResultComparator comparator) {
+    public StreamResequencerConfig(
+            int capacity, long timeout, Boolean rejectOld, ExpressionResultComparator comparator) {
         this.capacity = Integer.toString(capacity);
         this.timeout = Long.toString(timeout);
         this.rejectOld = rejectOld != null ? Boolean.toString(rejectOld) : null;
@@ -218,5 +225,4 @@ public class StreamResequencerConfig extends ResequencerConfig {
     public String getRejectOld() {
         return rejectOld;
     }
-
 }

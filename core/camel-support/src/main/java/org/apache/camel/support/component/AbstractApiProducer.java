@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.HashMap;
@@ -33,8 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for API based Producers
  */
-public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
-        extends DefaultAsyncProducer
+public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extends DefaultAsyncProducer
         implements PropertiesInterceptor, ResultInterceptor {
 
     // API Endpoint
@@ -118,8 +118,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
      * @return                       API method invocation result.
      * @throws RuntimeCamelException on error. Exceptions thrown by API method are wrapped.
      */
-    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties)
-            throws RuntimeCamelException {
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
         return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, properties), method, properties);
     }
 
@@ -142,19 +141,15 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
-            final List<ApiMethod> filteredMethods = methodHelper.filterMethods(
-                    candidates,
-                    ApiMethodHelper.MatchType.SUPER_SET,
-                    argNames);
+            final List<ApiMethod> filteredMethods =
+                    methodHelper.filterMethods(candidates, ApiMethodHelper.MatchType.SUPER_SET, argNames);
 
             // get the method to call
             if (filteredMethods.isEmpty()) {
                 Set<String> missing = methodHelper.getMissingProperties(endpoint.getMethodName(), argNames);
-                throw new RuntimeCamelException(
-                        String.format("Missing properties for %s, need one or more from (%s args) %s",
-                                endpoint.getMethodName(),
-                                missing.size(),
-                                missing));
+                throw new RuntimeCamelException(String.format(
+                        "Missing properties for %s, need one or more from (%s args) %s",
+                        endpoint.getMethodName(), missing.size(), missing));
             } else if (filteredMethods.size() == 1) {
                 // found an exact match
                 method = filteredMethods.get(0);
@@ -179,18 +174,27 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
                     if (configurer instanceof PropertyConfigurerGetter getter) {
                         Class<?> type = getter.getOptionType(inBodyProperty, true);
                         if (type != null) {
-                            value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
+                            value = endpoint.getCamelContext()
+                                    .getTypeConverter()
+                                    .mandatoryConvertTo(type, exchange, value);
                         }
                     } else {
                         // fallback to be reflection based
-                        value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
-                                endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
-                                exchange, value);
+                        value = endpoint.getCamelContext()
+                                .getTypeConverter()
+                                .mandatoryConvertTo(
+                                        endpoint.getConfiguration()
+                                                .getClass()
+                                                .getDeclaredField(inBodyProperty)
+                                                .getType(),
+                                        exchange,
+                                        value);
                     }
                 } catch (Exception e) {
                     exchange.setException(new RuntimeCamelException(
                             String.format(
-                                    "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()),
+                                    "Error converting value %s to property %s: %s",
+                                    value, inBodyProperty, e.getMessage()),
                             e));
 
                     return false;

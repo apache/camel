@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static java.io.File.separator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +35,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
-import static java.io.File.separator;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
@@ -46,8 +47,10 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     @Test
     public void testExistingFileDoesNotExists() {
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"), "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
+                "Hello World",
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME));
         assertFileNotExists(testFile(RENAMED_TEST_FILE_NAME));
@@ -56,11 +59,15 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     @Test
     public void testExistingFileExists() throws Exception {
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"), "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
+                "Hello World",
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"), "Bye World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
+                "Bye World",
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Bye World");
         assertFileExists(testFile(RENAMED_TEST_FILE_NAME), "Hello World");
@@ -69,13 +76,17 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     @Test
     public void testExistingFileExistsTempFileName() throws Exception {
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
+                fileUri(
+                        "?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
                 "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
+                fileUri(
+                        "?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}"),
                 "Bye World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Bye World");
         assertFileExists(testFile(RENAMED_TEST_FILE_NAME), "Hello World");
@@ -86,11 +97,13 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=renamed"),
                 "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=renamed"),
                 "Bye World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Bye World");
         assertFileExists(testFile("renamed/" + TEST_FILE_NAME), "Hello World");
@@ -100,17 +113,25 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     public void testFailOnMoveExistingFileExistsEagerDeleteFalseTempFileName() throws Exception {
         final String filename = TEST_FILE_NAME;
 
-        template.sendBodyAndHeader(fileUri("?tempFileName=${file:onlyname}.temp"), "First File",
+        template.sendBodyAndHeader(
+                fileUri("?tempFileName=${file:onlyname}.temp"),
+                "First File",
                 Exchange.FILE_NAME,
                 RENAMED_TEST_FILE_NAME);
 
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
-                "Second File", Exchange.FILE_NAME, filename);
+                fileUri(
+                        "?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
+                "Second File",
+                Exchange.FILE_NAME,
+                filename);
         // we should be okay as we will just delete any existing file
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
-                "Third File", Exchange.FILE_NAME, filename);
+                fileUri(
+                        "?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
+                "Third File",
+                Exchange.FILE_NAME,
+                filename);
 
         // we could  write the new file so the old context should be moved
         assertFileExists(testFile(filename), "Third File");
@@ -153,10 +174,16 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
     private void testDynamicSubdir(String subdirPrefix, String dynamicPath, String tempFilename) throws IOException {
         final String filename = TEST_FILE_NAME_2;
         final String fileContent = "Hello World";
-        template.sendBodyAndHeader(fileUri("?" + tempFilename + "fileExist=Move&moveExisting=" + dynamicPath),
-                fileContent, Exchange.FILE_NAME, filename);
-        template.sendBodyAndHeader(fileUri("?" + tempFilename + "fileExist=Move&moveExisting=" + dynamicPath),
-                fileContent, Exchange.FILE_NAME, filename);
+        template.sendBodyAndHeader(
+                fileUri("?" + tempFilename + "fileExist=Move&moveExisting=" + dynamicPath),
+                fileContent,
+                Exchange.FILE_NAME,
+                filename);
+        template.sendBodyAndHeader(
+                fileUri("?" + tempFilename + "fileExist=Move&moveExisting=" + dynamicPath),
+                fileContent,
+                Exchange.FILE_NAME,
+                filename);
         assertFileExists(testFile(filename), fileContent);
 
         String[] directories = testDirectory().toFile().list((current, name) -> {
@@ -179,10 +206,14 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=archive"),
-                fileContent, Exchange.FILE_NAME, filename);
+                fileContent,
+                Exchange.FILE_NAME,
+                filename);
         template.sendBodyAndHeader(
                 fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=archive"),
-                fileContent, Exchange.FILE_NAME, filename);
+                fileContent,
+                Exchange.FILE_NAME,
+                filename);
 
         assertFileExists(testFile(filename), fileContent);
 
@@ -197,11 +228,17 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         final String fileContent2 = "Hello World2";
 
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:onlyname}.${date:now:yyyyMMddHHmmssSSS}"),
-                fileContent1, Exchange.FILE_NAME, filename);
+                fileUri(
+                        "?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:onlyname}.${date:now:yyyyMMddHHmmssSSS}"),
+                fileContent1,
+                Exchange.FILE_NAME,
+                filename);
         template.sendBodyAndHeader(
-                fileUri("?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:onlyname}.${date:now:yyyyMMddHHmmssSSS}"),
-                fileContent2, Exchange.FILE_NAME, filename);
+                fileUri(
+                        "?tempFileName=${file:onlyname}.temp&fileExist=Move&moveExisting=${file:onlyname}.${date:now:yyyyMMddHHmmssSSS}"),
+                fileContent2,
+                Exchange.FILE_NAME,
+                filename);
 
         String[] files = testDirectory().toFile().list((current, name) -> {
             String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -216,10 +253,10 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
 
     @Test
     public void testExistingFileExistsMoveSubDir() throws Exception {
-        template.sendBodyAndHeader(fileUri("?fileExist=Move&moveExisting=backup"), "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
-        template.sendBodyAndHeader(fileUri("?fileExist=Move&moveExisting=backup"), "Bye World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("?fileExist=Move&moveExisting=backup"), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("?fileExist=Move&moveExisting=backup"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Bye World");
 
@@ -232,14 +269,18 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "Old file", Exchange.FILE_NAME, RENAMED_TEST_FILE_NAME);
 
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true"),
+                fileUri(
+                        "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true"),
                 "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
         // we should be okay as we will just delete any existing file
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true"),
+                fileUri(
+                        "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true"),
                 "Bye World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
         // we could write the new file so the old context should be there
         assertFileExists(testFile(TEST_FILE_NAME), "Bye World");
@@ -253,19 +294,26 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "Old file", Exchange.FILE_NAME, RENAMED_TEST_FILE_NAME);
 
         template.sendBodyAndHeader(
-                fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
+                fileUri(
+                        "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
                 "Hello World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(
-                    fileUri("?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
-                    "Bye World",
-                    Exchange.FILE_NAME, TEST_FILE_NAME);
-        }, "Should have thrown an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> {
+                    template.sendBodyAndHeader(
+                            fileUri(
+                                    "?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false"),
+                            "Bye World",
+                            Exchange.FILE_NAME,
+                            TEST_FILE_NAME);
+                },
+                "Should have thrown an exception");
 
-        GenericFileOperationFailedException cause
-                = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
         assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
 
         // we could not write the new file so the previous context should be
@@ -287,5 +335,4 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
         }
         return buffer.toString();
     }
-
 }

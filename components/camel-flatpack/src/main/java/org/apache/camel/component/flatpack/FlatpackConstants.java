@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
 
 import org.apache.camel.spi.Metadata;
 
 public final class FlatpackConstants {
 
-    @Metadata(label = "producer", description = "The current row index. For `splitRows=false` the counter is the total\n" +
-                                                "number of rows.",
-              javaType = "int")
+    @Metadata(
+            label = "producer",
+            description = "The current row index. For `splitRows=false` the counter is the total\n" + "number of rows.",
+            javaType = "int")
     public static final String FLATPACK_COUNTER = "CamelFlatpackCounter";
 
     private FlatpackConstants() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import java.util.Map;
@@ -51,13 +52,17 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
     @BeforeEach
     public void cleanFhirServerState() {
         createPatient();
-        Assumptions.assumeTrue(patientExists(), "The test cannot proceed: a patient was just created and it should exist");
+        Assumptions.assumeTrue(
+                patientExists(), "The test cannot proceed: a patient was just created and it should exist");
     }
 
     boolean patientExists() {
         try {
-            Bundle bundle
-                    = fhirClient.search().byUrl("Patient?given=Vincent&family=Freeman").returnBundle(Bundle.class).execute();
+            Bundle bundle = fhirClient
+                    .search()
+                    .byUrl("Patient?given=Vincent&family=Freeman")
+                    .returnBundle(Bundle.class)
+                    .execute();
             return !bundle.getEntry().isEmpty();
         } catch (ResourceGoneException e) {
             return false;
@@ -65,11 +70,16 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
     }
 
     private void deletePatient() {
-        fhirClient.delete().resourceConditionalByUrl("Patient?given=Vincent&family=Freeman").execute();
+        fhirClient
+                .delete()
+                .resourceConditionalByUrl("Patient?given=Vincent&family=Freeman")
+                .execute();
     }
 
     private void createPatient() {
-        this.patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman")).setActive(false);
+        this.patient = new Patient()
+                .addName(new HumanName().addGiven("Vincent").setFamily("Freeman"))
+                .setActive(false);
         this.patient.setId(fhirClient.create().resource(patient).execute().getId());
     }
 

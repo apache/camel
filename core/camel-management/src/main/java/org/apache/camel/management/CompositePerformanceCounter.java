@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import org.apache.camel.Exchange;
@@ -31,7 +32,8 @@ public class CompositePerformanceCounter implements PerformanceCounter {
     private final PerformanceCounter counter2;
     private final PerformanceCounter counter3; // counter 3 is optional
 
-    public CompositePerformanceCounter(PerformanceCounter counter1, PerformanceCounter counter2, PerformanceCounter counter3) {
+    public CompositePerformanceCounter(
+            PerformanceCounter counter1, PerformanceCounter counter2, PerformanceCounter counter3) {
         this.counter1 = counter1;
         this.counter2 = counter2;
         this.counter3 = counter3;

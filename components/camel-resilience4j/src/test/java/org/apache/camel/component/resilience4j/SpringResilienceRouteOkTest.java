@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,7 +30,8 @@ public class SpringResilienceRouteOkTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/resilience4j/SpringResilienceRouteOkTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/resilience4j/SpringResilienceRouteOkTest.xml");
     }
 
     @Test
@@ -44,12 +46,12 @@ public class SpringResilienceRouteOkTest extends CamelSpringTestSupport {
 
     private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
         template.sendBody(endPointUri, "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.ses.model.MessageTag;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SesComponentTest extends CamelTestSupport {
 
@@ -82,8 +83,10 @@ public class SesComponentTest extends CamelTestSupport {
                 exchange.getIn().setHeader(Ses2Constants.FROM, "anotherFrom@example.com");
                 exchange.getIn().setHeader(Ses2Constants.TO, "anotherTo1@example.com, anotherTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.RETURN_PATH, "anotherBounce@example.com");
-                exchange.getIn().setHeader(Ses2Constants.REPLY_TO_ADDRESSES,
-                        "anotherReplyTo1@example.com, anotherReplyTo2@example.com");
+                exchange.getIn()
+                        .setHeader(
+                                Ses2Constants.REPLY_TO_ADDRESSES,
+                                "anotherReplyTo1@example.com, anotherReplyTo2@example.com");
                 exchange.getIn().setHeader(Ses2Constants.SUBJECT, "anotherSubject");
                 exchange.getIn().setHeader(Ses2Constants.TAGS, Map.of("tagName", "tagValue"));
             }
@@ -103,7 +106,8 @@ public class SesComponentTest extends CamelTestSupport {
         assertEquals("anotherSubject", getSubject(sendEmailRequest));
         assertEquals("This is my message text.", getBody(sendEmailRequest));
         assertTrue(sendEmailRequest.hasTags());
-        assertEquals(List.of(MessageTag.builder().name("tagName").value("tagValue").build()), sendEmailRequest.tags());
+        assertEquals(
+                List.of(MessageTag.builder().name("tagName").value("tagValue").build()), sendEmailRequest.tags());
     }
 
     @Test
@@ -129,8 +133,9 @@ public class SesComponentTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("aws2-ses://from@example.com" + "?to=to1@example.com,to2@example.com" + "&subject=Subject"
-                            + "&returnPath=bounce@example.com" + "&replyToAddresses=replyTo1@example.com,replyTo2@example.com"
-                            + "&amazonSESClient=#amazonSESClient");
+                                + "&returnPath=bounce@example.com"
+                                + "&replyToAddresses=replyTo1@example.com,replyTo2@example.com"
+                                + "&amazonSESClient=#amazonSESClient");
             }
         };
     }

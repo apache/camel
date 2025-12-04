@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail;
 
 import java.nio.charset.StandardCharsets;
@@ -41,13 +42,15 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected int poll() throws Exception {
-        LookupEventsRequest.Builder eventsRequestBuilder
-                = LookupEventsRequest.builder().maxResults(getEndpoint().getConfiguration().getMaxResults());
+        LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
+                .maxResults(getEndpoint().getConfiguration().getMaxResults());
 
         List<LookupAttribute> attributes = new ArrayList<>();
         if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getEventSource())) {
-            LookupAttribute eventSource = LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
-                    .attributeValue(getEndpoint().getConfiguration().getEventSource()).build();
+            LookupAttribute eventSource = LookupAttribute.builder()
+                    .attributeKey(LookupAttributeKey.EVENT_SOURCE)
+                    .attributeValue(getEndpoint().getConfiguration().getEventSource())
+                    .build();
             attributes.add(eventSource);
         }
         if (!attributes.isEmpty()) {

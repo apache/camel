@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.mqseries;
 
 import org.apache.camel.CamelContext;
@@ -40,6 +41,7 @@ public class MQHeadersRetainIssueIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(MQHeadersRetainIssueIT.class);
     protected CamelContext context;
     protected ProducerTemplate template;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
 import org.apache.zookeeper.ZooKeeper;
@@ -61,5 +62,4 @@ public class ExistsOperation extends ZooKeeperOperation<String> {
         }
         return ok;
     }
-
 }

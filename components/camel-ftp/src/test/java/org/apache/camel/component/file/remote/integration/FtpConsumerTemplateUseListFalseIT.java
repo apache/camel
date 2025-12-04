@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to poll a fixed file from the FTP server without using the list command.
@@ -31,7 +32,7 @@ public class FtpConsumerTemplateUseListFalseIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin"
-               + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&delete=true";
+                + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&delete=true";
     }
 
     @Override
@@ -57,8 +58,8 @@ public class FtpConsumerTemplateUseListFalseIT extends FtpServerTestSupport {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint
-                = context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin&binary=false");
+        Endpoint endpoint =
+                context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");
@@ -67,5 +68,4 @@ public class FtpConsumerTemplateUseListFalseIT extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
-
 }

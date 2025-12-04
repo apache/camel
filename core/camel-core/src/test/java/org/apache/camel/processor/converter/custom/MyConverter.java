@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.converter.custom;
 
 import org.apache.camel.Converter;
@@ -30,5 +31,4 @@ public class MyConverter {
         String[] values = StringHelper.splitOnCharacter(text, ":", 2);
         return new MyBean(values[0], values[1]);
     }
-
 }

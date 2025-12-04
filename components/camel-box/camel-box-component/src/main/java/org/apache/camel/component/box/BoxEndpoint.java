@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
 
 import java.util.Map;
@@ -48,11 +49,19 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "box", title = "Box", syntax = "box:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             consumerPrefix = "consumer", category = { Category.CLOUD, Category.FILE, Category.API }, lenientProperties = true)
-@Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
-                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "box",
+        title = "Box",
+        syntax = "box:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        consumerPrefix = "consumer",
+        category = {Category.CLOUD, Category.FILE, Category.API},
+        lenientProperties = true)
+@Metadata(
+        excludeProperties =
+                "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
+                        + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
     @UriParam
@@ -63,10 +72,19 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     private Object apiProxy;
     private boolean boxConnectionShared;
 
-    public BoxEndpoint(String uri, BoxComponent component, BoxApiName apiName, String methodName,
-                       BoxConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, BoxApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public BoxEndpoint(
+            String uri,
+            BoxComponent component,
+            BoxApiName apiName,
+            String methodName,
+            BoxConfiguration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                BoxApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -109,8 +127,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     }
 
     @Override
-    protected void afterConfigureProperties() {
-    }
+    protected void afterConfigureProperties() {}
 
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {

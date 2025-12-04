@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -23,18 +27,16 @@ import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSetCipherIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSetCipherName() {
         String cipher = "aes256-ctr";
-        String uri
-                = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&ciphers="
-                  + cipher + "&knownHostsFile=" + service.getKnownHostsFile();
+        String uri = "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&ciphers="
+                + cipher + "&knownHostsFile=" + service.getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload
@@ -46,5 +48,4 @@ public class SftpSetCipherIT extends SftpServerTestSupport {
         SftpEndpoint endpoint = context.getEndpoint(uri, SftpEndpoint.class);
         assertEquals(cipher, endpoint.getConfiguration().getCiphers());
     }
-
 }

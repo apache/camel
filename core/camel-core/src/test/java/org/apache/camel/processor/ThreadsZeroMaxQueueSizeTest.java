@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,11 +49,18 @@ public class ThreadsZeroMaxQueueSizeTest extends ContextTestSupport {
                 from("direct:start")
                         // will use a custom thread pool with 5 in core and 10 as max
                         // and no task queue
-                        .threads(5, 10).maxQueueSize(0).to("mock:result");
+                        .threads(5, 10)
+                        .maxQueueSize(0)
+                        .to("mock:result");
 
                 from("direct:foo")
                         // using the builder style
-                        .threads().poolSize(5).maxPoolSize(10).maxQueueSize(0).threadName("myPool").to("mock:result");
+                        .threads()
+                        .poolSize(5)
+                        .maxPoolSize(10)
+                        .maxQueueSize(0)
+                        .threadName("myPool")
+                        .to("mock:result");
             }
         };
     }

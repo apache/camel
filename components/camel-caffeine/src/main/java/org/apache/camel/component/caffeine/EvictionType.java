@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine;
 
 public enum EvictionType {
@@ -34,16 +35,17 @@ public enum EvictionType {
             return null;
         }
         for (EvictionType evictionType : VALUES) {
-            if (evictionType.toString().equalsIgnoreCase(name) || evictionType.name().equalsIgnoreCase(name)) {
+            if (evictionType.toString().equalsIgnoreCase(name)
+                    || evictionType.name().equalsIgnoreCase(name)) {
                 return evictionType;
             }
         }
-        throw new IllegalArgumentException(String.format("Eviction type '%s' is not supported by this component.", name));
+        throw new IllegalArgumentException(
+                String.format("Eviction type '%s' is not supported by this component.", name));
     }
 
     @Override
     public String toString() {
         return type;
     }
-
 }

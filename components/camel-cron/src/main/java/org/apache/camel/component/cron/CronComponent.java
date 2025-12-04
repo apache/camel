@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cron;
 
 import java.util.Map;
@@ -39,8 +40,7 @@ public class CronComponent extends DefaultComponent {
 
     private CamelCronService service;
 
-    public CronComponent() {
-    }
+    public CronComponent() {}
 
     @Override
     public Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -85,9 +85,7 @@ public class CronComponent extends DefaultComponent {
      */
     public void initCamelCronService() {
         if (this.service == null) {
-            this.service = CronHelper.resolveCamelCronService(
-                    getCamelContext(),
-                    this.cronService);
+            this.service = CronHelper.resolveCamelCronService(getCamelContext(), this.cronService);
 
             if (this.service == null) {
                 throw new RuntimeCamelException(
@@ -128,5 +126,4 @@ public class CronComponent extends DefaultComponent {
                     "Invalid number of parts in cron expression. Expected 5 to 7, got: " + parts.length);
         }
     }
-
 }

@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.extensions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SaxonExtensionFunctionsTest extends CamelTestSupport {
     private static final String XSLT_PATH = "org/apache/camel/component/xslt/extensions/extensions.xslt";
-    private static final String XSLT_RESULT
-            = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Test1>3</Test1><Test2>abccde</Test2><Test3>xyz</Test3>";
+    private static final String XSLT_RESULT =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Test1>3</Test1><Test2>abccde</Test2><Test3>xyz</Test3>";
 
     @Test
     public void testExtensions() {

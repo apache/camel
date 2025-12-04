@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,9 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
-        camelContextConfiguration()
-                .withBreakpoint(createBreakpoint());
+        super.doPreSetup();
+
+        camelContextConfiguration().withBreakpoint(createBreakpoint());
     }
 
     protected DebugBreakpoint createBreakpoint() {
@@ -78,7 +80,10 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // this is the route we want to debug
-                from("direct:start").to("mock:a").transform(body().prepend("Hello ")).to("mock:b");
+                from("direct:start")
+                        .to("mock:a")
+                        .transform(body().prepend("Hello "))
+                        .to("mock:b");
             }
         };
     }

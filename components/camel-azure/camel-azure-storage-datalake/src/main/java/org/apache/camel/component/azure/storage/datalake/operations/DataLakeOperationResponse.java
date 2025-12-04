@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.operations;
 
 import java.util.HashMap;
@@ -23,8 +24,7 @@ public class DataLakeOperationResponse {
     private Object body;
     private Map<String, Object> headers = new HashMap<>();
 
-    public DataLakeOperationResponse() {
-    }
+    public DataLakeOperationResponse() {}
 
     public DataLakeOperationResponse(final Object body, final Map<String, Object> headers) {
         this.body = body;

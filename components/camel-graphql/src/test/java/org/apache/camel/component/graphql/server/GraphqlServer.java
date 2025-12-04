@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql.server;
 
 import java.io.IOException;
@@ -101,9 +102,7 @@ public class GraphqlServer {
         }
 
         private Map<String, Object> jsonToMap(String json) throws IOException {
-            return objectMapper.readValue(json, new TypeReference<>() {
-            });
+            return objectMapper.readValue(json, new TypeReference<>() {});
         }
-
     }
 }

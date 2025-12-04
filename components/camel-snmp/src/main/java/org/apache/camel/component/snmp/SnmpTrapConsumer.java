@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import org.apache.camel.Exchange;
@@ -76,11 +77,17 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
 
         // listen to the transport
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting trap consumer on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
+            LOG.debug(
+                    "Starting trap consumer on {} using {} protocol",
+                    endpoint.getServerAddress(),
+                    endpoint.getProtocol());
         }
         this.transport.listen();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Started trap consumer on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
+            LOG.info(
+                    "Started trap consumer on {} using {} protocol",
+                    endpoint.getServerAddress(),
+                    endpoint.getProtocol());
         }
     }
 
@@ -106,7 +113,9 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         if (pdu != null) {
             // check for INFORM
             // code take from the book "Essential SNMP"
-            if (pdu.getType() != PDU.TRAP && pdu.getType() != PDU.V1TRAP && pdu.getType() != PDU.REPORT
+            if (pdu.getType() != PDU.TRAP
+                    && pdu.getType() != PDU.V1TRAP
+                    && pdu.getType() != PDU.REPORT
                     && pdu.getType() != PDU.RESPONSE) {
                 // first response the inform-message and then process the
                 // message
@@ -116,12 +125,16 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
                 StatusInformation statusInformation = new StatusInformation();
                 StateReference<?> ref = event.getStateReference();
                 try {
-                    event.getMessageDispatcher().returnResponsePdu(event.getMessageProcessingModel(),
-                            event.getSecurityModel(),
-                            event.getSecurityName(),
-                            event.getSecurityLevel(), pdu,
-                            event.getMaxSizeResponsePDU(), ref,
-                            statusInformation);
+                    event.getMessageDispatcher()
+                            .returnResponsePdu(
+                                    event.getMessageProcessingModel(),
+                                    event.getSecurityModel(),
+                                    event.getSecurityName(),
+                                    event.getSecurityLevel(),
+                                    pdu,
+                                    event.getMaxSizeResponsePDU(),
+                                    ref,
+                                    statusInformation);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("response to INFORM sent");
                     }
@@ -163,5 +176,4 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         exchange.setIn(new SnmpMessage(getEndpoint().getCamelContext(), pdu, event));
         return exchange;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.BindToRegistry;
@@ -22,7 +23,8 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
-public class FileToFtpsExplicitTLSWithClientAuthAndSSLContextParametersIT extends FileToFtpsExplicitTLSWithClientAuthIT {
+public class FileToFtpsExplicitTLSWithClientAuthAndSSLContextParametersIT
+        extends FileToFtpsExplicitTLSWithClientAuthIT {
 
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters createSslContextParams() {
@@ -48,7 +50,7 @@ public class FileToFtpsExplicitTLSWithClientAuthAndSSLContextParametersIT extend
     @Override
     protected String getFtpUrl() {
         return "ftps://admin@localhost:{{ftp.server.port}}"
-               + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
-               + "&implicit=false&sslContextParameters=#sslContextParameters&delete=true";
+                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
+                + "&implicit=false&sslContextParameters=#sslContextParameters&delete=true";
     }
 }

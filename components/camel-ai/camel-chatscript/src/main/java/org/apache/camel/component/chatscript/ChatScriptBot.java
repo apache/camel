@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chatscript;
 
 import java.io.BufferedReader;
@@ -76,7 +77,6 @@ public class ChatScriptBot {
         }
 
         return resp;
-
     }
 
     public String init(ChatScriptMessage input) throws Exception {
@@ -91,8 +91,7 @@ public class ChatScriptBot {
         return "ChatSCript";
     }
 
-    public void reset() {
-    }
+    public void reset() {}
 
     public String getHost() {
         return host;
@@ -141,5 +140,4 @@ public class ChatScriptBot {
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
-
 }

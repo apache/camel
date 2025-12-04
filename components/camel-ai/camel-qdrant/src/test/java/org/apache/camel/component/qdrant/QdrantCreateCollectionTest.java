@@ -17,24 +17,25 @@
 
 package org.apache.camel.component.qdrant;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.qdrant.client.grpc.Collections;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class QdrantCreateCollectionTest extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to create a collection without passing the action name triggers a failure")
     @Test
     public void createCollectionWithoutRequiredParameters() {
-        Exchange result = fluentTemplate.to("qdrant:createCollection")
-                .withBody(
-                        Collections.VectorParams.newBuilder()
-                                .setSize(2)
-                                .setDistance(Collections.Distance.Cosine).build())
+        Exchange result = fluentTemplate
+                .to("qdrant:createCollection")
+                .withBody(Collections.VectorParams.newBuilder()
+                        .setSize(2)
+                        .setDistance(Collections.Distance.Cosine)
+                        .build())
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

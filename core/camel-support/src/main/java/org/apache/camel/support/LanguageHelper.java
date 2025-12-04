@@ -36,9 +36,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
 
 public final class LanguageHelper {
-    private LanguageHelper() {
-
-    }
+    private LanguageHelper() {}
 
     /**
      * Extracts the exception from an Exchange
@@ -149,8 +147,8 @@ public final class LanguageHelper {
                 def.setShowHeaders(true);
                 def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
                 try {
-                    Integer maxChars = CamelContextHelper.parseInteger(camelContext,
-                            camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                    Integer maxChars = CamelContextHelper.parseInteger(
+                            camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                     if (maxChars != null) {
                         def.setMaxChars(maxChars);
                     }
@@ -225,13 +223,15 @@ public final class LanguageHelper {
         return toDate(exchange, orElseFunction, obj);
     }
 
-    public static Date dateFromHeader(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
+    public static Date dateFromHeader(
+            Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
         final String key = command.substring(command.lastIndexOf('.') + 1);
         final Object obj = exchange.getMessage().getHeader(key);
         return toDate(exchange, orElseFunction, obj);
     }
 
-    public static Date dateFromVariable(Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
+    public static Date dateFromVariable(
+            Exchange exchange, String command, BiFunction<Exchange, Object, Date> orElseFunction) {
         final String key = command.substring(command.lastIndexOf('.') + 1);
         final Object obj = exchange.getVariable(key);
         return toDate(exchange, orElseFunction, obj);

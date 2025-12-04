@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud;
 
 import java.util.Collections;
@@ -61,7 +62,8 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
             ObjectHelper.notNull(getCamelContext(), "Camel Context");
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
-            LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
+            LOGGER.debug(
+                    "Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
                     configuration.getNamespace(),
                     String.join(",", configuration.getNodes()));
 
@@ -73,8 +75,7 @@ public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
             // Validation
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
-            LOGGER.debug("Starting ZooKeeper ServiceDiscoveryBuilder with base path '{}'",
-                    configuration.getBasePath());
+            LOGGER.debug("Starting ZooKeeper ServiceDiscoveryBuilder with base path '{}'", configuration.getBasePath());
 
             serviceDiscovery = ZooKeeperCuratorHelper.createServiceDiscovery(configuration, curator, MetaData.class);
             serviceDiscovery.start();

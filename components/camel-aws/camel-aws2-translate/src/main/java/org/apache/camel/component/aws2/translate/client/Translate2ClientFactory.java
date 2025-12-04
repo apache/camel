@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate.client;
 
 import org.apache.camel.component.aws2.translate.Translate2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientSta
  */
 public final class Translate2ClientFactory {
 
-    private Translate2ClientFactory() {
-    }
+    private Translate2ClientFactory() {}
 
     /**
      * Return the correct aws Translate client (based on remote vs local).

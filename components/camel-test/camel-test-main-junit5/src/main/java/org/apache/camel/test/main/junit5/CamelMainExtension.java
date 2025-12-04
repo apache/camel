@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5;
+
+import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.extension.Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.isCamelDebugPresent;
-import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
 /**
  * {@code CamelMainExtension} is a JUnit 5 extension meant to manage the lifecycle of a Camel context simulating a Camel
@@ -68,7 +69,9 @@ final class CamelMainExtension
      * The name of the key used to store the watch instance.
      */
     private static final String WATCH = "watch";
-    public static final String SEPARATOR = "********************************************************************************";
+
+    public static final String SEPARATOR =
+            "********************************************************************************";
     /**
      * The utility class allowing to dump the route coverage of a given test.
      */
@@ -93,7 +96,8 @@ final class CamelMainExtension
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        final long time = context.getStore(NAMESPACE).remove(WATCH, StopWatch.class).taken();
+        final long time =
+                context.getStore(NAMESPACE).remove(WATCH, StopWatch.class).taken();
         final String currentTestName = context.getDisplayName();
         if (LOG.isInfoEnabled()) {
             final Class<?> requiredTestClass = context.getRequiredTestClass();
@@ -138,24 +142,35 @@ final class CamelMainExtension
     /**
      * Dump the route coverage for the given test if it is enabled.
      */
-    private void dumpRouteCoverageIfNeeded(ExtensionContext context, long time, String currentTestName) throws Exception {
+    private void dumpRouteCoverageIfNeeded(ExtensionContext context, long time, String currentTestName)
+            throws Exception {
         // if we should dump route stats, then write that to a file
         if (isRouteCoverageEnabled(context)) {
             final Class<?> requiredTestClass = context.getRequiredTestClass();
             // In case of a {@code @Nested} test class, its name will be prefixed by the name of its outer classes
-            String className = requiredTestClass.getName().substring(requiredTestClass.getPackageName().length() + 1);
+            String className = requiredTestClass
+                    .getName()
+                    .substring(requiredTestClass.getPackageName().length() + 1);
             String dir = "target/camel-route-coverage";
             String name = String.format("%s-%s.xml", className, StringHelper.before(currentTestName, "("));
 
-            final ModelCamelContext camelContext = getContextStore(context).get(CONTEXT, CamelMainContext.class).context();
+            final ModelCamelContext camelContext = getContextStore(context)
+                    .get(CONTEXT, CamelMainContext.class)
+                    .context();
             ManagedCamelContext mc = camelContext == null
-                    ? null : camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+                    ? null
+                    : camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
             ManagedCamelContextMBean managedCamelContext = mc == null ? null : mc.getManagedCamelContext();
             if (managedCamelContext == null) {
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "
-                         + "Add camel-management JAR as dependency to enable JMX in the unit test classes.");
+                        + "Add camel-management JAR as dependency to enable JMX in the unit test classes.");
             } else {
-                routeCoverageDumper.dump(managedCamelContext, camelContext, dir, name, requiredTestClass.getName(),
+                routeCoverageDumper.dump(
+                        managedCamelContext,
+                        camelContext,
+                        dir,
+                        name,
+                        requiredTestClass.getName(),
                         currentTestName,
                         time);
             }
@@ -170,12 +185,16 @@ final class CamelMainExtension
         if (dump != null && !dump.isBlank()) {
             final Class<?> requiredTestClass = context.getRequiredTestClass();
             // In case of a {@code @Nested} test class, its name will be prefixed by the name of its outer classes
-            String className = requiredTestClass.getName().substring(requiredTestClass.getPackageName().length() + 1);
+            String className = requiredTestClass
+                    .getName()
+                    .substring(requiredTestClass.getPackageName().length() + 1);
             String dir = "target/camel-route-dump";
             String ext = dump.toLowerCase();
             String name = String.format("%s-%s.%s", className, StringHelper.before(currentTestName, "("), ext);
 
-            final ModelCamelContext camelContext = getContextStore(context).get(CONTEXT, CamelMainContext.class).context();
+            final ModelCamelContext camelContext = getContextStore(context)
+                    .get(CONTEXT, CamelMainContext.class)
+                    .context();
             DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
 
             drs.setOutput(dir + "/" + name);
@@ -196,8 +215,12 @@ final class CamelMainExtension
      */
     private boolean isRouteCoverageEnabled(ExtensionContext context) {
         return CamelContextTestHelper.isRouteCoverageEnabled(false)
-                || context.getRequiredTestInstances().getAllInstances().get(0).getClass()
-                        .getAnnotation(CamelMainTest.class).dumpRouteCoverage();
+                || context.getRequiredTestInstances()
+                        .getAllInstances()
+                        .get(0)
+                        .getClass()
+                        .getAnnotation(CamelMainTest.class)
+                        .dumpRouteCoverage();
     }
 
     /**
@@ -211,8 +234,12 @@ final class CamelMainExtension
     private String getRouteDump(ExtensionContext context) {
         String dump = CamelContextTestHelper.getRouteDump(null);
         if (dump == null) {
-            dump = context.getRequiredTestInstances().getAllInstances().get(0).getClass()
-                    .getAnnotation(CamelMainTest.class).dumpRoute();
+            dump = context.getRequiredTestInstances()
+                    .getAllInstances()
+                    .get(0)
+                    .getClass()
+                    .getAnnotation(CamelMainTest.class)
+                    .dumpRoute();
         }
         return dump;
     }
@@ -225,7 +252,11 @@ final class CamelMainExtension
      * @return {@code true} if JMX should be used, {@code false} otherwise.
      */
     private boolean useJmx(ExtensionContext context) {
-        return context.getRequiredTestInstances().getAllInstances().get(0).getClass()
-                .getAnnotation(CamelMainTest.class).useJmx();
+        return context.getRequiredTestInstances()
+                .getAllInstances()
+                .get(0)
+                .getClass()
+                .getAnnotation(CamelMainTest.class)
+                .useJmx();
     }
 }

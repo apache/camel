@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultCompositeApiClientTest {
 
@@ -39,7 +40,8 @@ public class DefaultCompositeApiClientTest {
     public void shouldNotAllowNewerPayloadsWhenConfiguredWithOlderVersion() throws SalesforceException {
         final SObjectBatch batch = new SObjectBatch(V35_0);
 
-        assertThrows(SalesforceException.class,
+        assertThrows(
+                SalesforceException.class,
                 () -> DefaultCompositeApiClient.checkCompositeBatchVersion(V34_0, batch.getVersion()));
     }
 

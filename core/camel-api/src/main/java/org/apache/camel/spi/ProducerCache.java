@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.concurrent.CompletableFuture;
@@ -83,8 +84,12 @@ public interface ProducerCache extends Service {
      *                         parameter or new one if parameter was null
      */
     CompletableFuture<Exchange> asyncSendExchange(
-            Endpoint endpoint, ExchangePattern pattern,
-            Processor processor, Processor resultProcessor, Exchange exchange, CompletableFuture<Exchange> future);
+            Endpoint endpoint,
+            ExchangePattern pattern,
+            Processor processor,
+            Processor resultProcessor,
+            Exchange exchange,
+            CompletableFuture<Exchange> future);
 
     /**
      * Gets the source which uses this cache
@@ -166,5 +171,4 @@ public interface ProducerCache extends Service {
          */
         boolean doInAsyncProducer(AsyncProducer asyncProducer, Exchange exchange, AsyncCallback callback);
     }
-
 }

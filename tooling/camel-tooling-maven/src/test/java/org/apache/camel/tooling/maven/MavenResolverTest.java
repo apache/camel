@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -48,9 +52,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MavenResolverTest {
 
     public static final Logger LOG = LoggerFactory.getLogger(MavenResolverTest.class);
@@ -68,7 +69,8 @@ public class MavenResolverTest {
                         res.setStatusCode(401);
                         return;
                     }
-                    String creds = new String(Base64.getDecoder().decode(authz.getValue().split(" ")[1]));
+                    String creds = new String(
+                            Base64.getDecoder().decode(authz.getValue().split(" ")[1]));
                     if (!"camel:passw0rd".equals(creds)) {
                         res.setStatusCode(403);
                         return;
@@ -170,7 +172,7 @@ public class MavenResolverTest {
         //       org.eclipse.aether.spi.connector.checksum.ChecksumPolicyProvider
 
         try (DIRegistry registry = new DIRegistry();
-             MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+                MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             // here we don't call downloader.build() and will do the same stuff manually for demonstration purpose
 
             // see org.eclipse.aether.impl.DefaultServiceLocator.DefaultServiceLocator() - it registers
@@ -195,22 +197,23 @@ public class MavenResolverTest {
             downloader.setFresh(true);
             downloader.setRepos(null);
             // don't build, as we'll do the maven-resolver initialization ourselves
-            //downloader.build();
+            // downloader.build();
 
             Properties systemProperties = new Properties();
 
             // now, org.eclipse.aether.RepositorySystem can be obtained
-            RepositorySystem repositorySystem
-                    = downloader.configureRepositorySystem(registry, systemProperties, localSettingsSecurity, false);
+            RepositorySystem repositorySystem =
+                    downloader.configureRepositorySystem(registry, systemProperties, localSettingsSecurity, false);
 
-            Settings settings = downloader.mavenConfiguration(registry, repositorySystem,
-                    systemProperties, localSettings);
+            Settings settings =
+                    downloader.mavenConfiguration(registry, repositorySystem, systemProperties, localSettings);
 
             // when using Maven without a project that may contain <repositories> in pom.xml, repositories
             // are taken from the active profiles defined in settings. If a repository is protected, the id
             // must match an id of one of the <server>s defined in the settings
             for (String ap : settings.getActiveProfiles()) {
-                List<Repository> repositories = settings.getProfilesAsMap().get(ap).getRepositories();
+                List<Repository> repositories =
+                        settings.getProfilesAsMap().get(ap).getRepositories();
                 repositories.forEach(r -> {
                     if ("test-server".equals(r.getId())) {
                         r.setUrl("http://localhost:" + localServer.getLocalPort() + "/maven/repository");
@@ -230,8 +233,8 @@ public class MavenResolverTest {
             FileUtil.removeDir(m2Repo);
 
             // we can finally create a session to resolve artifacts
-            RepositorySystemSession session
-                    = downloader.configureRepositorySystemSession(registry, systemProperties, settings, m2Repo);
+            RepositorySystemSession session =
+                    downloader.configureRepositorySystemSession(registry, systemProperties, settings, m2Repo);
 
             List<RemoteRepository> remoteRepositories = downloader.configureDefaultRepositories(settings);
 
@@ -246,9 +249,9 @@ public class MavenResolverTest {
 
             ArtifactResult result = repositorySystem.resolveArtifact(session, request);
             assertTrue(result.getArtifact().getFile().isFile());
-            assertEquals("/mirror/org/apache/camel/camel-anything/3.42.0/camel-anything-3.42.0.jar",
+            assertEquals(
+                    "/mirror/org/apache/camel/camel-anything/3.42.0/camel-anything-3.42.0.jar",
                     Files.readString(result.getArtifact().getFile().toPath()));
         }
     }
-
 }

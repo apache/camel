@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.s3.transform;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -30,8 +32,6 @@ import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AWS2S3CloudEventDataTypeTransformerTest {
 
@@ -52,7 +52,8 @@ class AWS2S3CloudEventDataTypeTransformerTest {
 
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertTrue(exchange.getMessage().getHeaders().containsKey(AWS2S3Constants.KEY));
-        assertEquals("org.apache.camel.event.aws.s3.getObject",
+        assertEquals(
+                "org.apache.camel.event.aws.s3.getObject",
                 exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_TYPE));
         assertEquals("test1.txt", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT));
         assertEquals("aws.s3.bucket.myBucket", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
@@ -60,10 +61,10 @@ class AWS2S3CloudEventDataTypeTransformerTest {
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("aws2-s3:application-cloudevents"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AWS2S3CloudEventDataTypeTransformer.class, transformer.getClass());
-
     }
 }

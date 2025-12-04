@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test based on user forum request about this component
@@ -45,8 +46,9 @@ public class JdbcFix9491Test extends AbstractJdbcTestSupport {
         direct.sendBody("select * from customer");
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(2, mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
-
+        assertEquals(
+                2,
+                mock.getReceivedExchanges().get(1).getIn().getBody(List.class).size());
     }
 
     @Override

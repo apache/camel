@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,8 +26,8 @@ import org.junit.jupiter.api.Test;
 
 public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
 
-    private final String body
-            = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    private final String body =
+            "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 
     @Test
     public void testReduceStacksNeeded() throws Exception {
@@ -47,12 +48,18 @@ public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
                 // to test that the message history exchange gets clipped
                 context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "100");
 
-                from("seda:start").to("log:foo").to("direct:bar").delay(300).to("log:baz").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        throw new IllegalArgumentException("Forced to dump message history");
-                    }
-                }).to("mock:result");
+                from("seda:start")
+                        .to("log:foo")
+                        .to("direct:bar")
+                        .delay(300)
+                        .to("log:baz")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                throw new IllegalArgumentException("Forced to dump message history");
+                            }
+                        })
+                        .to("mock:result");
 
                 from("direct:bar").to("log:bar").delay(100).to("mock:bar");
             }

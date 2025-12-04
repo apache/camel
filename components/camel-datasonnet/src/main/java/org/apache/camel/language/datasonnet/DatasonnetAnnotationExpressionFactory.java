@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.lang.annotation.Annotation;
@@ -32,7 +33,9 @@ public class DatasonnetAnnotationExpressionFactory extends DefaultAnnotationExpr
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
 
         String ds = getExpressionFromAnnotation(annotation);

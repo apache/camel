@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions;
 
 import org.apache.camel.Endpoint;
@@ -73,8 +74,8 @@ public class StepFunctions2Producer extends DefaultProducer {
     }
 
     private StepFunctions2Operations determineOperation(Exchange exchange) {
-        StepFunctions2Operations operation
-                = exchange.getIn().getHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.class);
+        StepFunctions2Operations operation =
+                exchange.getIn().getHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -88,7 +89,8 @@ public class StepFunctions2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (sfnProducerToString == null) {
-            sfnProducerToString = "StepFunctionsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sfnProducerToString = "StepFunctionsProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sfnProducerToString;
     }
@@ -106,7 +108,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.createStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create State Machine command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -115,35 +119,39 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             CreateStateMachineRequest.Builder builder = CreateStateMachineRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_NAME))) {
-                String stateMachineName = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_NAME, String.class);
+                String stateMachineName =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_NAME, String.class);
                 builder.name(stateMachineName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_DEFINITION))) {
-                String stateMachineDefinition
-                        = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_DEFINITION, String.class);
+                String stateMachineDefinition =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_DEFINITION, String.class);
                 builder.definition(stateMachineDefinition);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE))) {
-                if (exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE) instanceof StateMachineType) {
-                    StateMachineType stateMachineType
-                            = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE, StateMachineType.class);
+                if (exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE)
+                        instanceof StateMachineType) {
+                    StateMachineType stateMachineType = exchange.getIn()
+                            .getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE, StateMachineType.class);
                     builder.type(stateMachineType);
                 } else {
-                    String stateMachineType
-                            = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE, String.class);
+                    String stateMachineType =
+                            exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_TYPE, String.class);
                     builder.type(stateMachineType);
                 }
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ROLE_ARN))) {
-                String stateMachineRoleArn
-                        = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ROLE_ARN, String.class);
+                String stateMachineRoleArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ROLE_ARN, String.class);
                 builder.roleArn(stateMachineRoleArn);
             }
             CreateStateMachineResponse result;
             try {
                 result = sfnClient.createStateMachine(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create State Machine command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -159,7 +167,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.deleteStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete State Machine command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -168,7 +178,8 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             DeleteStateMachineRequest.Builder builder = DeleteStateMachineRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
                 builder.stateMachineArn(stateMachineArn);
             }
 
@@ -177,7 +188,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 DeleteStateMachineRequest request = builder.build();
                 result = sfnClient.deleteStateMachine(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete State Machine command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -193,7 +206,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.updateStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Update State Machine command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -202,25 +217,28 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             UpdateStateMachineRequest.Builder builder = UpdateStateMachineRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
                 builder.stateMachineArn(stateMachineArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_DEFINITION))) {
-                String stateMachineDefinition
-                        = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_DEFINITION, String.class);
+                String stateMachineDefinition =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_DEFINITION, String.class);
                 builder.definition(stateMachineDefinition);
             }
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ROLE_ARN))) {
-                String stateMachineRoleArn
-                        = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ROLE_ARN, String.class);
+                String stateMachineRoleArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ROLE_ARN, String.class);
                 builder.roleArn(stateMachineRoleArn);
             }
             UpdateStateMachineResponse result;
             try {
                 result = sfnClient.updateStateMachine(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Update State Machine command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -236,7 +254,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.describeStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe State Machine command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -245,7 +265,8 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             DescribeStateMachineRequest.Builder builder = DescribeStateMachineRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
                 builder.stateMachineArn(stateMachineArn);
             }
 
@@ -253,7 +274,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.describeStateMachine(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe State Machine command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -269,7 +292,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.listStateMachines(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List State Machines command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List State Machines command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -277,8 +302,10 @@ public class StepFunctions2Producer extends DefaultProducer {
             }
         } else {
             ListStateMachinesRequest.Builder builder = ListStateMachinesRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINES_MAX_RESULTS))) {
-                int maxRes = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINES_MAX_RESULTS, Integer.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINES_MAX_RESULTS))) {
+                int maxRes =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINES_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxRes);
             }
 
@@ -286,7 +313,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.listStateMachines(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List State Machines command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List State Machines command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -302,7 +331,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.createActivity(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Activity command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -319,7 +350,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.createActivity(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Activity command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -335,7 +368,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.deleteActivity(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Activity command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -352,7 +387,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.deleteActivity(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Activity command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -368,7 +405,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.describeActivity(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Activity command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -385,7 +424,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.describeActivity(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Activity command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -401,7 +442,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.getActivityTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Activity Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Activity Task command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -418,7 +461,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.getActivityTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Activity Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Activity Task command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -434,7 +479,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.listActivities(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Activities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Activities command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -451,7 +498,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.listActivities(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Activities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Activities command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -467,7 +516,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.startExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Start Execution command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -476,7 +527,8 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             StartExecutionRequest.Builder builder = StartExecutionRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
                 builder.stateMachineArn(stateMachineArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_NAME))) {
@@ -484,12 +536,13 @@ public class StepFunctions2Producer extends DefaultProducer {
                 builder.name(executionName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT))) {
-                String executionInput = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
+                String executionInput =
+                        exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
                 builder.input(executionInput);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER))) {
-                String executionTraceHeader
-                        = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER, String.class);
+                String executionTraceHeader =
+                        exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER, String.class);
                 builder.traceHeader(executionTraceHeader);
             }
 
@@ -497,7 +550,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.startExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Start Execution command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -513,7 +568,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.startSyncExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Sync Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Start Sync Execution command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -522,7 +579,8 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             StartSyncExecutionRequest.Builder builder = StartSyncExecutionRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.STATE_MACHINE_ARN, String.class);
                 builder.stateMachineArn(stateMachineArn);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_NAME))) {
@@ -530,12 +588,13 @@ public class StepFunctions2Producer extends DefaultProducer {
                 builder.name(executionName);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT))) {
-                String executionInput = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
+                String executionInput =
+                        exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_INPUT, String.class);
                 builder.input(executionInput);
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER))) {
-                String executionTraceHeader
-                        = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER, String.class);
+                String executionTraceHeader =
+                        exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_TRACE_HEADER, String.class);
                 builder.traceHeader(executionTraceHeader);
             }
 
@@ -543,7 +602,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.startSyncExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Sync Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Start Sync Execution command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -559,7 +620,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.stopExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Stop Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Stop Execution command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -568,7 +631,8 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             StopExecutionRequest.Builder builder = StopExecutionRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN, String.class);
                 builder.executionArn(stateMachineArn);
             }
 
@@ -576,7 +640,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.stopExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Stop Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Stop Execution command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -592,7 +658,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.describeExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Execution command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -601,7 +669,8 @@ public class StepFunctions2Producer extends DefaultProducer {
         } else {
             DescribeExecutionRequest.Builder builder = DescribeExecutionRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN))) {
-                String stateMachineArn = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN, String.class);
+                String stateMachineArn =
+                        exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN, String.class);
                 builder.executionArn(stateMachineArn);
             }
 
@@ -609,7 +678,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.describeExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Execution command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -625,7 +696,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.listExecutions(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Executions command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Executions command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -642,7 +715,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.listExecutions(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Executions command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Executions command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -658,7 +733,9 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.getExecutionHistory(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Execution History command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Execution History command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -670,19 +747,22 @@ public class StepFunctions2Producer extends DefaultProducer {
                 String executionArn = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_ARN, String.class);
                 builder.executionArn(executionArn);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_MAX_RESULTS))) {
-                int maxRes = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_MAX_RESULTS, Integer.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_MAX_RESULTS))) {
+                int maxRes = exchange.getIn()
+                        .getHeader(StepFunctions2Constants.EXECUTION_HISTORY_MAX_RESULTS, Integer.class);
                 builder.maxResults(maxRes);
             }
-            if (ObjectHelper
-                    .isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA))) {
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA))) {
                 boolean includeExecutionData = exchange.getIn()
                         .getHeader(StepFunctions2Constants.EXECUTION_HISTORY_INCLUDE_EXECUTION_DATA, Boolean.class);
                 builder.includeExecutionData(includeExecutionData);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_REVERSE_ORDER))) {
-                Boolean executionReverseOrder
-                        = exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_REVERSE_ORDER, Boolean.class);
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(StepFunctions2Constants.EXECUTION_HISTORY_REVERSE_ORDER))) {
+                Boolean executionReverseOrder = exchange.getIn()
+                        .getHeader(StepFunctions2Constants.EXECUTION_HISTORY_REVERSE_ORDER, Boolean.class);
                 builder.reverseOrder(executionReverseOrder);
             }
 
@@ -690,7 +770,9 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.getExecutionHistory(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Execution History command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Execution History command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -706,9 +788,7 @@ public class StepFunctions2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -725,5 +805,4 @@ public class StepFunctions2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

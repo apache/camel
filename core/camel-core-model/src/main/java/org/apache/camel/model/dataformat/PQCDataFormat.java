@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -29,7 +30,10 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).
  */
-@Metadata(firstVersion = "4.16.0", label = "dataformat,transformation,security", title = "PQC (Post-Quantum Cryptography)")
+@Metadata(
+        firstVersion = "4.16.0",
+        label = "dataformat,transformation,security",
+        title = "PQC (Post-Quantum Cryptography)")
 @XmlRootElement(name = "pqc")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PQCDataFormat extends DataFormatDefinition {
@@ -37,22 +41,30 @@ public class PQCDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
     private String keyEncapsulationAlgorithm;
+
     @XmlAttribute
-    @Metadata(defaultValue = "AES",
-              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
+    @Metadata(
+            defaultValue = "AES",
+            enums =
+                    "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
     private String symmetricKeyAlgorithm;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "128")
     private String symmetricKeyLength;
+
     @XmlAttribute
     @Metadata(javaType = "java.security.KeyPair")
     private String keyPair;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer", defaultValue = "4096")
     private String bufferSize;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String provider;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "javax.crypto.KeyGenerator")
     private String keyGenerator;

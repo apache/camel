@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,35 +37,48 @@ public class PGPDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     private String keyUserid;
+
     @XmlAttribute
     private String signatureKeyUserid;
+
     @XmlAttribute
     private String password;
+
     @XmlAttribute
     private String signaturePassword;
+
     @XmlAttribute
     private String keyFileName;
+
     @XmlAttribute
     private String signatureKeyFileName;
+
     @XmlAttribute
     private String signatureKeyRing;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String armored;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String integrity;
+
     @XmlAttribute
     private String provider;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String algorithm;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String compressionAlgorithm;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String hashAlgorithm;
+
     @XmlAttribute
     private String signatureVerificationOption;
 

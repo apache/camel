@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.console;
 
 import java.util.Optional;
@@ -41,5 +42,4 @@ public interface DevConsoleResolver extends CamelContextAware, StaticService {
      * @return    the existing {@link DevConsole}, or <tt>null</tt> if not yet resolved or not found
      */
     Optional<DevConsole> lookupDevConsole(String id);
-
 }

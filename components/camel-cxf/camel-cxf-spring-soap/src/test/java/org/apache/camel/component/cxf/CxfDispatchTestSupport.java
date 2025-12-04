@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import jakarta.xml.ws.Endpoint;
@@ -38,18 +39,18 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     protected static final String INVOKE_NAME = "Invoke";
     protected static final String INVOKE_ONEWAY_NAME = "InvokeOneWay";
 
-    protected static final String PAYLOAD_TEMPLATE
-            = "<ns1:greetMe xmlns:ns1=\"http://apache.org/hello_world_soap_http/types\"><ns1:requestType>%s</ns1:requestType></ns1:greetMe>";
-    protected static final String PAYLOAD_ONEWAY_TEMPLATE
-            = "<ns1:greetMeOneWay xmlns:ns1=\"http://apache.org/hello_world_soap_http/types\"><ns1:requestType>%s</ns1:requestType></ns1:greetMeOneWay>";
-    protected static final String MESSAGE_TEMPLATE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
-              + PAYLOAD_TEMPLATE
-              + "</soap:Body></soap:Envelope>";
-    protected static final String MESSAGE_ONEWAY_TEMPLATE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
-              + PAYLOAD_ONEWAY_TEMPLATE
-              + "</soap:Body></soap:Envelope>";
+    protected static final String PAYLOAD_TEMPLATE =
+            "<ns1:greetMe xmlns:ns1=\"http://apache.org/hello_world_soap_http/types\"><ns1:requestType>%s</ns1:requestType></ns1:greetMe>";
+    protected static final String PAYLOAD_ONEWAY_TEMPLATE =
+            "<ns1:greetMeOneWay xmlns:ns1=\"http://apache.org/hello_world_soap_http/types\"><ns1:requestType>%s</ns1:requestType></ns1:greetMeOneWay>";
+    protected static final String MESSAGE_TEMPLATE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
+                    + PAYLOAD_TEMPLATE
+                    + "</soap:Body></soap:Envelope>";
+    protected static final String MESSAGE_ONEWAY_TEMPLATE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
+                    + PAYLOAD_ONEWAY_TEMPLATE
+                    + "</soap:Body></soap:Envelope>";
     private static DocumentBuilderFactory documentBuilderFactory;
 
     protected Endpoint endpoint;
@@ -58,8 +59,7 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     @BeforeEach
     public void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + port + "/"
-                         + getClass().getSimpleName() + "/SoapContext/GreeterPort";
+        String address = "http://localhost:" + port + "/" + getClass().getSimpleName() + "/SoapContext/GreeterPort";
         endpoint = Endpoint.publish(address, implementor);
     }
 
@@ -90,5 +90,4 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
         }
         return documentBuilderFactory;
     }
-
 }

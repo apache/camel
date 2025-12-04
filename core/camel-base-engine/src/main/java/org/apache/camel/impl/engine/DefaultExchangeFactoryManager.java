@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collection;
@@ -162,7 +163,6 @@ public class DefaultExchangeFactoryManager extends ServiceSupport implements Exc
             }
             return answer;
         }
-
     }
 
     @Override

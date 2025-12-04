@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 /**
@@ -35,7 +36,10 @@ public interface PropertiesParser {
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
     String parseUri(
-            String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional,
+            String text,
+            PropertiesLookup properties,
+            boolean fallback,
+            boolean keepUnresolvedOptional,
             boolean nestedPlaceholder)
             throws IllegalArgumentException;
 
@@ -60,5 +64,4 @@ public interface PropertiesParser {
     default String customLookup(String key) {
         return null;
     }
-
 }

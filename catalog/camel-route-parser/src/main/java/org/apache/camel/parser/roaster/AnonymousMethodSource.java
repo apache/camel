@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.roaster;
 
 import java.lang.annotation.Annotation;
@@ -181,8 +182,7 @@ public class AnonymousMethodSource implements MethodSource<JavaClassSource> {
     }
 
     @Override
-    public void removeAllAnnotations() {
-    }
+    public void removeAllAnnotations() {}
 
     @Override
     public MethodSource<JavaClassSource> removeParameter(ParameterSource<JavaClassSource> parameterSource) {

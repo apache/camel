@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.debugger;
 
 import java.util.ArrayDeque;
@@ -77,7 +78,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     private final Debugger debugger;
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages =
+            new ConcurrentHashMap<>();
 
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
     private final Deque<String> singleStepExchangeId = new ArrayDeque<>();
@@ -305,7 +307,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
      * Resume the processing of the incoming messages.
      */
     private void resumeMessageProcessing() {
-        for (;;) {
+        for (; ; ) {
             final CountDownLatch countDownLatch = suspend.get();
             if (countDownLatch == null) {
                 break;
@@ -409,7 +411,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 removeMessageBodyOnBreakpoint(nodeId);
             } else {
                 Class<?> oldType = se.getExchange().getMessage().getBody() == null
-                        ? null : se.getExchange().getMessage().getBody().getClass();
+                        ? null
+                        : se.getExchange().getMessage().getBody().getClass();
                 setMessageBodyOnBreakpoint(nodeId, body, oldType);
             }
         }
@@ -423,7 +426,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             if (remove) {
                 removeMessageBodyOnBreakpoint(nodeId);
             } else {
-                logger.log(String.format("Breakpoint at node %s is updating message body on exchangeId: %s with new body: %s",
+                logger.log(String.format(
+                        "Breakpoint at node %s is updating message body on exchangeId: %s with new body: %s",
                         nodeId, se.getExchange().getExchangeId(), body));
                 // preserve type
                 if (type == null) {
@@ -440,8 +444,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
     public void removeMessageBodyOnBreakpoint(String nodeId) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            logger.log(String.format("Breakpoint at node %s is removing message body on exchangeId: %s", nodeId,
-                    se.getExchange().getExchangeId()));
+            logger.log(String.format(
+                    "Breakpoint at node %s is removing message body on exchangeId: %s",
+                    nodeId, se.getExchange().getExchangeId()));
             se.getExchange().getMessage().setBody(null);
             refreshBacklogTracerEventMessage(nodeId, se);
         }
@@ -453,7 +458,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             Class<?> oldType = se.getExchange().getMessage().getHeader(headerName) == null
-                    ? null : se.getExchange().getMessage().getHeader(headerName).getClass();
+                    ? null
+                    : se.getExchange().getMessage().getHeader(headerName).getClass();
             setMessageHeaderOnBreakpoint(nodeId, headerName, value, oldType);
         }
     }
@@ -464,12 +470,14 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with key: " + headerName + " and value: " + value);
+                    + se.getExchange().getExchangeId() + " with key: " + headerName + " and value: " + value);
             if (type == null) {
                 se.getExchange().getMessage().setHeader(headerName, value);
             } else {
-                Object convertedValue
-                        = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                Object convertedValue = se.getExchange()
+                        .getContext()
+                        .getTypeConverter()
+                        .mandatoryConvertTo(type, se.getExchange(), value);
                 se.getExchange().getMessage().setHeader(headerName, convertedValue);
             }
             refreshBacklogTracerEventMessage(nodeId, se);
@@ -482,7 +490,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             Class<?> oldType = se.getExchange().getMessage().getHeader(exchangePropertyName) == null
-                    ? null : se.getExchange().getMessage().getHeader(exchangePropertyName).getClass();
+                    ? null
+                    : se.getExchange()
+                            .getMessage()
+                            .getHeader(exchangePropertyName)
+                            .getClass();
             setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value, oldType);
         }
     }
@@ -493,12 +505,14 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is updating exchange property on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with key: " + exchangePropertyName + " and value: " + value);
+                    + se.getExchange().getExchangeId() + " with key: " + exchangePropertyName + " and value: " + value);
             if (type == null) {
                 se.getExchange().setProperty(exchangePropertyName, value);
             } else {
-                Object convertedValue
-                        = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                Object convertedValue = se.getExchange()
+                        .getContext()
+                        .getTypeConverter()
+                        .mandatoryConvertTo(type, se.getExchange(), value);
                 se.getExchange().setProperty(exchangePropertyName, convertedValue);
             }
             refreshBacklogTracerEventMessage(nodeId, se);
@@ -510,7 +524,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is removing exchange property on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with key: " + exchangePropertyName);
+                    + se.getExchange().getExchangeId() + " with key: " + exchangePropertyName);
             se.getExchange().removeProperty(exchangePropertyName);
             refreshBacklogTracerEventMessage(nodeId, se);
         }
@@ -522,7 +536,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             Class<?> oldType = se.getExchange().getMessage().getHeader(variableName) == null
-                    ? null : se.getExchange().getMessage().getHeader(variableName).getClass();
+                    ? null
+                    : se.getExchange().getMessage().getHeader(variableName).getClass();
             setExchangeVariableOnBreakpoint(nodeId, variableName, value, oldType);
         }
     }
@@ -533,12 +548,14 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is updating exchange variable on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with key: " + variableName + " and value: " + value);
+                    + se.getExchange().getExchangeId() + " with key: " + variableName + " and value: " + value);
             if (type == null) {
                 se.getExchange().setVariable(variableName, value);
             } else {
-                Object convertedValue
-                        = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                Object convertedValue = se.getExchange()
+                        .getContext()
+                        .getTypeConverter()
+                        .mandatoryConvertTo(type, se.getExchange(), value);
                 se.getExchange().setVariable(variableName, convertedValue);
             }
             refreshBacklogTracerEventMessage(nodeId, se);
@@ -550,7 +567,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is removing variable on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with key: " + variableName);
+                    + se.getExchange().getExchangeId() + " with key: " + variableName);
             se.getExchange().removeVariable(variableName);
             refreshBacklogTracerEventMessage(nodeId, se);
         }
@@ -571,7 +588,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is removing message header on exchangeId: "
-                       + se.getExchange().getExchangeId() + " with header: " + headerName);
+                    + se.getExchange().getExchangeId() + " with header: " + headerName);
             se.getExchange().getMessage().removeHeader(headerName);
             refreshBacklogTracerEventMessage(nodeId, se);
         }
@@ -605,7 +622,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             return;
         }
 
-        BacklogTracerEventMessage msg = suspendedBreakpointMessages.values().iterator().next();
+        BacklogTracerEventMessage msg =
+                suspendedBreakpointMessages.values().iterator().next();
         if (msg != null) {
             String nodeId = msg.getToNode();
             NodeBreakpoint breakpoint = breakpoints.get(nodeId);
@@ -880,18 +898,36 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 nodeId,
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
-                        message.getToNode(), message.getToNodeParentId(), message.getToNodeParentWhenId(),
+                        false,
+                        false,
+                        message.getUid(),
+                        message.getTimestamp(),
+                        message.getLocation(),
+                        message.getRouteId(),
+                        message.getToNode(),
+                        message.getToNodeParentId(),
+                        message.getToNodeParentWhenId(),
                         message.getToNodeParentWhenLabel(),
-                        message.getToNodeShortName(), message.getToNodeLabel(),
-                        message.getToNodeLevel(), message.getExchangeId(), message.getCorrelationExchangeId(),
-                        false, false,
+                        message.getToNodeShortName(),
+                        message.getToNodeLabel(),
+                        message.getToNodeLevel(),
+                        message.getExchangeId(),
+                        message.getCorrelationExchangeId(),
+                        false,
+                        false,
                         dumpAsJSonObject(suspendedExchange.getExchange())));
     }
 
     private JsonObject dumpAsJSonObject(Exchange exchange) {
-        return MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties, includeExchangeVariables, true, true,
-                isBodyIncludeStreams(), isBodyIncludeFiles(), getBodyMaxChars());
+        return MessageHelper.dumpAsJSonObject(
+                exchange.getIn(),
+                includeExchangeProperties,
+                includeExchangeVariables,
+                true,
+                true,
+                isBodyIncludeStreams(),
+                isBodyIncludeFiles(),
+                getBodyMaxChars());
     }
 
     /**
@@ -932,20 +968,34 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String source = LoggerHelper.getLineNumberLoggerName(definition);
             boolean first = "from".equals(definition.getShortName());
             JsonObject data = dumpAsJSonObject(exchange);
-            BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(
-                            camelContext,
-                            first, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
-                            toNodeShortName, toNodeLabel, level, exchangeId, correlationExchangeId,
-                            false, false, data);
+            BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(
+                    camelContext,
+                    first,
+                    false,
+                    uid,
+                    timestamp,
+                    source,
+                    routeId,
+                    toNode,
+                    toNodeParentId,
+                    null,
+                    null,
+                    toNodeShortName,
+                    toNodeLabel,
+                    level,
+                    exchangeId,
+                    correlationExchangeId,
+                    false,
+                    false,
+                    data);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
             final SuspendedExchange se = suspendedBreakpoints.get(nodeId);
             if (se != null) {
                 // now wait until we should continue
-                logger.log(String.format("NodeBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
-                        exchangeId));
+                logger.log(String.format(
+                        "NodeBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode, exchangeId));
                 try {
                     boolean hit = se.awaitExchange(fallbackTimeout);
                     if (!hit) {
@@ -953,11 +1003,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                         suspendedBreakpointMessages.remove(nodeId);
                         suspendedBreakpoints.remove(nodeId);
                         logger.log(
-                                String.format("NodeBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
-                                        exchangeId),
+                                String.format(
+                                        "NodeBreakpoint at node %s timed out and is continued exchangeId: %s",
+                                        toNode, exchangeId),
                                 LoggingLevel.WARN);
                     } else {
-                        logger.log(String.format("NodeBreakpoint at node %s is continued exchangeId: %s", toNode, exchangeId));
+                        logger.log(String.format(
+                                "NodeBreakpoint at node %s is continued exchangeId: %s", toNode, exchangeId));
                     }
                 } catch (InterruptedException e) {
                     // ignore
@@ -983,7 +1035,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 return false;
             }
 
-            // we only want to break one exchange at a time, so if there is already a suspended breakpoint then do not match
+            // we only want to break one exchange at a time, so if there is already a suspended breakpoint then do not
+            // match
             SuspendedExchange se = new SuspendedExchange(exchange);
             boolean existing = suspendedBreakpoints.putIfAbsent(nodeId, se) != null;
             return !existing;
@@ -1021,13 +1074,26 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
             JsonObject data = dumpAsJSonObject(exchange);
-            BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(
-                            camelContext,
-                            false, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
-                            toNodeShortName, toNodeLabel, level,
-                            exchangeId, correlationExchangeId,
-                            false, false, data);
+            BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(
+                    camelContext,
+                    false,
+                    false,
+                    uid,
+                    timestamp,
+                    source,
+                    routeId,
+                    toNode,
+                    toNodeParentId,
+                    null,
+                    null,
+                    toNodeShortName,
+                    toNodeLabel,
+                    level,
+                    exchangeId,
+                    correlationExchangeId,
+                    false,
+                    false,
+                    data);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
@@ -1035,9 +1101,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             suspendedBreakpoints.put(toNode, se);
 
             // now wait until we should continue
-            logger.log(
-                    String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
+            logger.log(String.format(
+                    "StepBreakpoint at node %s is waiting to continue for exchangeId: %s",
+                    toNode, exchange.getExchangeId()));
             try {
                 boolean hit = se.awaitExchange(fallbackTimeout);
                 if (!hit) {
@@ -1045,12 +1111,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                     suspendedBreakpointMessages.remove(toNode);
                     suspendedBreakpoints.remove(toNode);
                     logger.log(
-                            String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
-                                    exchange.getExchangeId()),
+                            String.format(
+                                    "StepBreakpoint at node %s timed out and is continued exchangeId: %s",
+                                    toNode, exchange.getExchangeId()),
                             LoggingLevel.WARN);
                 } else {
-                    logger.log(String.format("StepBreakpoint at node %s is continued exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
+                    logger.log(String.format(
+                            "StepBreakpoint at node %s is continued exchangeId: %s", toNode, exchange.getExchangeId()));
                 }
             } catch (InterruptedException e) {
                 // ignore
@@ -1130,12 +1197,26 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(route != null ? route : definition);
             JsonObject data = dumpAsJSonObject(exchange);
-            BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(
-                            camelContext,
-                            false, true, uid, timestamp, source, routeId, toNode, toNodeParentId,
-                            null, null, null, null, level, exchangeId, correlationExchangeId,
-                            false, false, data);
+            BacklogTracerEventMessage msg = new DefaultBacklogTracerEventMessage(
+                    camelContext,
+                    false,
+                    true,
+                    uid,
+                    timestamp,
+                    source,
+                    routeId,
+                    toNode,
+                    toNodeParentId,
+                    null,
+                    null,
+                    null,
+                    null,
+                    level,
+                    exchangeId,
+                    correlationExchangeId,
+                    false,
+                    false,
+                    data);
             // we want to capture if there was an exception
             if (cause != null) {
                 msg.setException(cause);
@@ -1148,9 +1229,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             suspendedBreakpoints.put(toNode, se);
 
             // now wait until we should continue
-            logger.log(
-                    String.format("StepBreakpoint at node %s is waiting to continue for exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
+            logger.log(String.format(
+                    "StepBreakpoint at node %s is waiting to continue for exchangeId: %s",
+                    toNode, exchange.getExchangeId()));
             try {
                 boolean hit = se.awaitExchange(fallbackTimeout);
                 if (!hit) {
@@ -1158,12 +1239,13 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                     suspendedBreakpointMessages.remove(toNode);
                     suspendedBreakpoints.remove(toNode);
                     logger.log(
-                            String.format("StepBreakpoint at node %s timed out and is continued exchangeId: %s", toNode,
-                                    exchange.getExchangeId()),
+                            String.format(
+                                    "StepBreakpoint at node %s timed out and is continued exchangeId: %s",
+                                    toNode, exchange.getExchangeId()),
                             LoggingLevel.WARN);
                 } else {
-                    logger.log(String.format("StepBreakpoint at node %s is continued exchangeId: %s", toNode,
-                            exchange.getExchangeId()));
+                    logger.log(String.format(
+                            "StepBreakpoint at node %s is continued exchangeId: %s", toNode, exchange.getExchangeId()));
                 }
             } catch (InterruptedException e) {
                 // ignore
@@ -1171,5 +1253,4 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.util.function.BiConsumer;
@@ -30,8 +31,9 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     private final BiConsumer<EdgeNodeDescriptor, Message> onMessageConsumer;
     private final BiConsumer<EdgeNodeDescriptor, Metric> onMetricConsumer;
 
-    TahuHostApplicationEventHandler(BiConsumer<EdgeNodeDescriptor, Message> onMessageConsumer,
-                                    BiConsumer<EdgeNodeDescriptor, Metric> onMetricConsumer) {
+    TahuHostApplicationEventHandler(
+            BiConsumer<EdgeNodeDescriptor, Message> onMessageConsumer,
+            BiConsumer<EdgeNodeDescriptor, Metric> onMetricConsumer) {
         this.onMessageConsumer = onMessageConsumer;
         this.onMetricConsumer = onMetricConsumer;
     }
@@ -42,8 +44,7 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onNodeBirthComplete(EdgeNodeDescriptor edgeNodeDescriptor) {
-    }
+    public void onNodeBirthComplete(EdgeNodeDescriptor edgeNodeDescriptor) {}
 
     @Override
     public void onNodeDataArrived(EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
@@ -51,8 +52,7 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onNodeDataComplete(EdgeNodeDescriptor edgeNodeDescriptor) {
-    }
+    public void onNodeDataComplete(EdgeNodeDescriptor edgeNodeDescriptor) {}
 
     @Override
     public void onNodeDeath(EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
@@ -60,8 +60,7 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onNodeDeathComplete(EdgeNodeDescriptor edgeNodeDescriptor) {
-    }
+    public void onNodeDeathComplete(EdgeNodeDescriptor edgeNodeDescriptor) {}
 
     @Override
     public void onDeviceBirthArrived(DeviceDescriptor deviceDescriptor, Message message) {
@@ -69,8 +68,7 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onDeviceBirthComplete(DeviceDescriptor deviceDescriptor) {
-    }
+    public void onDeviceBirthComplete(DeviceDescriptor deviceDescriptor) {}
 
     @Override
     public void onDeviceDataArrived(DeviceDescriptor deviceDescriptor, Message message) {
@@ -78,8 +76,7 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onDeviceDataComplete(DeviceDescriptor deviceDescriptor) {
-    }
+    public void onDeviceDataComplete(DeviceDescriptor deviceDescriptor) {}
 
     @Override
     public void onDeviceDeath(DeviceDescriptor deviceDescriptor, Message message) {
@@ -87,8 +84,7 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onDeviceDeathComplete(DeviceDescriptor deviceDescriptor) {
-    }
+    public void onDeviceDeathComplete(DeviceDescriptor deviceDescriptor) {}
 
     @Override
     public void onBirthMetric(SparkplugDescriptor sparkplugDescriptor, Metric metric) {
@@ -123,11 +119,8 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onConnect() {
-    }
+    public void onConnect() {}
 
     @Override
-    public void onDisconnect() {
-    }
-
+    public void onDisconnect() {}
 }

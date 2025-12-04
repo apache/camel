@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.Exchange;
@@ -97,13 +98,17 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                RestConfigurationDefinition restConfig
-                        = restConfiguration().scheme("https").host("localhost").port(port.getPort());
+                RestConfigurationDefinition restConfig =
+                        restConfiguration().scheme("https").host("localhost").port(port.getPort());
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
 
-                rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
+                rest("/TestResource")
+                        .get("/{id}")
+                        .to("direct:get1")
+                        .post("/{id}")
+                        .to("direct:post1");
 
                 from("direct:get1").process(new Processor() {
                     public void process(Exchange exchange) {
@@ -116,7 +121,8 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                     public void process(Exchange exchange) {
                         String id = exchange.getIn().getHeader("id", String.class);
                         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                        exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
+                        exchange.getMessage()
+                                .setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
                         exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, ct);
                     }
                 });
@@ -125,5 +131,4 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
@@ -26,8 +27,8 @@ public class MllpCommitErrorAcknowledgementException extends MllpNegativeAcknowl
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, logPhi);
     }
 
-    public MllpCommitErrorAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause,
-                                                   boolean logPhi) {
+    public MllpCommitErrorAcknowledgementException(
+            byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause, boolean logPhi) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause, logPhi);
     }
 

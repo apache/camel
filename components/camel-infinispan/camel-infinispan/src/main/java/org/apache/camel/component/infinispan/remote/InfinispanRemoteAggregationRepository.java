@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.function.Supplier;
@@ -30,9 +31,10 @@ import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.configuration.Combine;
 
-@Metadata(label = "bean",
-          description = "Aggregation repository that uses remote Infinispan to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Metadata(
+        label = "bean",
+        description = "Aggregation repository that uses remote Infinispan to store exchanges.",
+        annotations = {"interfaceName=org.apache.camel.spi.AggregationRepository"})
 @Configurer(metadataOnly = true)
 public class InfinispanRemoteAggregationRepository extends InfinispanAggregationRepository {
 
@@ -41,25 +43,34 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
 
     @Metadata(description = "Name of cache", required = true)
     private String cacheName;
+
     @Metadata(description = "Configuration for remote Infinispan")
     private InfinispanRemoteConfiguration configuration;
     // needed for metadata generation
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+
+    @Metadata(
+            description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
+
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
-    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+
+    @Metadata(
+            description =
+                    "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
-              defaultValue = "3")
+            defaultValue = "3")
     private int maximumRedeliveries = 3;
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
-    public InfinispanRemoteAggregationRepository() {
-    }
+    public InfinispanRemoteAggregationRepository() {}
 
     /**
      * Creates new {@link InfinispanRemoteAggregationRepository} that defaults to non-optimistic locking with
@@ -75,19 +86,18 @@ public class InfinispanRemoteAggregationRepository extends InfinispanAggregation
     protected void doStart() throws Exception {
         super.doStart();
 
-        InfinispanRemoteConfiguration conf = configuration != null ? configuration : new InfinispanRemoteConfiguration();
+        InfinispanRemoteConfiguration conf =
+                configuration != null ? configuration : new InfinispanRemoteConfiguration();
 
         if (conf.getCacheContainerConfiguration() == null) {
-            conf.setCacheContainerConfiguration(
-                    new ConfigurationBuilder()
-                            .addContextInitializer(new DefaultExchangeHolderContextInitializer())
-                            .build());
+            conf.setCacheContainerConfiguration(new ConfigurationBuilder()
+                    .addContextInitializer(new DefaultExchangeHolderContextInitializer())
+                    .build());
         } else {
-            conf.setCacheContainerConfiguration(
-                    new ConfigurationBuilder()
-                            .read(conf.getCacheContainerConfiguration(), Combine.DEFAULT)
-                            .addContextInitializer(new DefaultExchangeHolderContextInitializer())
-                            .build());
+            conf.setCacheContainerConfiguration(new ConfigurationBuilder()
+                    .read(conf.getCacheContainerConfiguration(), Combine.DEFAULT)
+                    .addContextInitializer(new DefaultExchangeHolderContextInitializer())
+                    .build());
         }
 
         manager = new InfinispanRemoteManager(getCamelContext(), conf);

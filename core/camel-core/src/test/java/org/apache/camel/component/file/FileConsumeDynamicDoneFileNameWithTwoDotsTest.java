@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -24,9 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests an issue where an input file is not picked up due to a dynamic doneFileName containing two dots.
@@ -39,8 +40,10 @@ public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSu
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("input-body");
 
-        template.sendBodyAndHeader(fileUri(), "input-body", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "test.twodot.txt");
-        template.sendBodyAndHeader(fileUri(), "done-body", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "test.twodot.done");
+        template.sendBodyAndHeader(
+                fileUri(), "input-body", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "test.twodot.txt");
+        template.sendBodyAndHeader(
+                fileUri(), "done-body", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "test.twodot.done");
 
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesWaitTime());
@@ -54,7 +57,8 @@ public class FileConsumeDynamicDoneFileNameWithTwoDotsTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?doneFileName=${file:name.noext}.done&initialDelay=0")).to("mock:result");
+                from(fileUri("?doneFileName=${file:name.noext}.done&initialDelay=0"))
+                        .to("mock:result");
             }
         };
     }

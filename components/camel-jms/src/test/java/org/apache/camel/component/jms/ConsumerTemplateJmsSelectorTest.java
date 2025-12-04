@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsumerTemplateJmsSelectorTest extends AbstractPersistentJMSTest {
 
@@ -35,7 +36,8 @@ public class ConsumerTemplateJmsSelectorTest extends AbstractPersistentJMSTest {
         template.sendBodyAndHeader("activemq:ConsumerTemplateJmsSelectorTest", "Hello World", "foo", "123");
         template.sendBodyAndHeader("activemq:ConsumerTemplateJmsSelectorTest", "Bye World", "foo", "456");
 
-        String body = consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest?selector=foo='456'", 5000, String.class);
+        String body =
+                consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest?selector=foo='456'", 5000, String.class);
         assertEquals("Bye World", body);
 
         body = consumer.receiveBody("activemq:ConsumerTemplateJmsSelectorTest", 5000, String.class);

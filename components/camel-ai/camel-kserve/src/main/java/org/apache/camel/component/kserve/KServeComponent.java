@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kserve;
 
 import java.util.Map;
@@ -39,8 +40,8 @@ public class KServeComponent extends HealthCheckComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KServeConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new KServeConfiguration();
+        KServeConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new KServeConfiguration();
         Endpoint endpoint = new KServeEndpoint(uri, this, remaining, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -74,7 +75,9 @@ public class BeanParameterBestTypeMatchIssueTest extends ContextTestSupport {
             public void configure() {
                 from("direct:noParam").bean(ClassA.class, "foo()").to("mock:end");
                 from("direct:1Param").bean(ClassA.class, "foo(${body})").to("mock:end");
-                from("direct:2Param").bean(ClassA.class, "foo(${body}, ${header.key})").to("mock:end");
+                from("direct:2Param")
+                        .bean(ClassA.class, "foo(${body}, ${header.key})")
+                        .to("mock:end");
             }
         };
     }

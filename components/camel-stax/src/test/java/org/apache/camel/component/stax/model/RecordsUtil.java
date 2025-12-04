@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax.model;
 
 import java.io.File;
@@ -50,7 +51,8 @@ public final class RecordsUtil {
 
         Marshaller marshaller;
         try {
-            JAXBContext jaxbCtx = JAXBContext.newInstance(Records.class.getPackage().getName());
+            JAXBContext jaxbCtx =
+                    JAXBContext.newInstance(Records.class.getPackage().getName());
             marshaller = jaxbCtx.createMarshaller();
         } catch (JAXBException e) {
             throw new RuntimeException(e);

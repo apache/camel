@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.exceptions;
 
 public class CMDirectException extends RuntimeException {
 
-    public CMDirectException() {
-    }
+    public CMDirectException() {}
 
     public CMDirectException(final String message) {
         super(message);
@@ -33,8 +33,11 @@ public class CMDirectException extends RuntimeException {
         super(message, cause);
     }
 
-    public CMDirectException(final String message, final Throwable cause,
-                             final boolean enableSuppression, final boolean writableStackTrace) {
+    public CMDirectException(
+            final String message,
+            final Throwable cause,
+            final boolean enableSuppression,
+            final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

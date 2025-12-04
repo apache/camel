@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
@@ -22,6 +23,4 @@ import org.apache.camel.Service;
 /**
  * A Camel MDC service is a factory for Mapped Diagnostic Context service.
  */
-public interface CamelMDCService extends Service, CamelContextAware {
-
-}
+public interface CamelMDCService extends Service, CamelContextAware {}

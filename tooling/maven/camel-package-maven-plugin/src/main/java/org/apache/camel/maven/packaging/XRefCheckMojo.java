@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.IOError;
@@ -88,13 +89,16 @@ public class XRefCheckMojo extends AbstractMojo {
             }
             String name = (String) antora.get("name");
             componentPaths.computeIfAbsent(name, n -> new ArrayList<>()).add(root);
-            componentNavs.computeIfAbsent(name, n -> new ArrayList<>()).addAll(
-                    Optional.ofNullable((List<String>) antora.get("nav")).orElse(Collections.emptyList()));
+            componentNavs
+                    .computeIfAbsent(name, n -> new ArrayList<>())
+                    .addAll(Optional.ofNullable((List<String>) antora.get("nav"))
+                            .orElse(Collections.emptyList()));
         }
         for (Map.Entry<String, List<Path>> entry : componentPaths.entrySet()) {
             String component = entry.getKey();
             for (String nav : componentNavs.get(component)) {
-                Optional<Path> n = entry.getValue().stream().map(p -> p.resolve(nav))
+                Optional<Path> n = entry.getValue().stream()
+                        .map(p -> p.resolve(nav))
                         .filter(Files::isRegularFile)
                         .findFirst();
                 if (n.isPresent()) {
@@ -103,7 +107,10 @@ public class XRefCheckMojo extends AbstractMojo {
                     while (!m.getParent().getFileName().toString().equals("modules")) {
                         m = m.getParent();
                     }
-                    pages.put(component + ":" + m.getFileName().toString() + ":" + f.getFileName().toString(), n.get());
+                    pages.put(
+                            component + ":" + m.getFileName().toString() + ":"
+                                    + f.getFileName().toString(),
+                            n.get());
                 }
             }
             for (Path root : entry.getValue()) {
@@ -113,13 +120,11 @@ public class XRefCheckMojo extends AbstractMojo {
                             .forEach(module -> {
                                 String m = module.getFileName().toString();
                                 Path pagesDir = module.resolve("pages");
-                                try (Stream<Path> pageStream = walk(pagesDir)
-                                        .filter(Files::isRegularFile)) {
-                                    pageStream
-                                            .forEach(page -> {
-                                                Path rel = pagesDir.relativize(page);
-                                                pages.put(component + ":" + m + ":" + rel, page);
-                                            });
+                                try (Stream<Path> pageStream = walk(pagesDir).filter(Files::isRegularFile)) {
+                                    pageStream.forEach(page -> {
+                                        Path rel = pagesDir.relativize(page);
+                                        pages.put(component + ":" + m + ":" + rel, page);
+                                    });
                                 }
                             });
                 }
@@ -162,7 +167,8 @@ public class XRefCheckMojo extends AbstractMojo {
                 }
                 link = cl + ":" + ml + ":" + rem;
                 if (!pages.containsKey(link)) {
-                    long line = str.chars().limit(m.start()).filter(c -> c == '\n').count() + 1;
+                    long line =
+                            str.chars().limit(m.start()).filter(c -> c == '\n').count() + 1;
                     String prnt = Stream.of(all.split("\n")).map(String::trim).collect(Collectors.joining(" "));
                     unresolved.add(page.getKey() + " (" + page.getValue() + ") at line " + line + ": " + prnt);
                 }
@@ -179,5 +185,4 @@ public class XRefCheckMojo extends AbstractMojo {
             throw new IOError(e);
         }
     }
-
 }

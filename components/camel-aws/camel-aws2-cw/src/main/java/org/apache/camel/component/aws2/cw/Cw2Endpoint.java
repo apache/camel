@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw;
 
 import java.util.Map;
@@ -34,12 +35,19 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 /**
  * Sending metrics to AWS CloudWatch.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-cw", title = "AWS CloudWatch", syntax = "aws2-cw:namespace",
-             producerOnly = true, category = { Category.CLOUD, Category.MONITORING }, headersClass = Cw2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-cw",
+        title = "AWS CloudWatch",
+        syntax = "aws2-cw:namespace",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MONITORING},
+        headersClass = Cw2Constants.class)
 public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private Cw2Configuration configuration;
+
     private CloudWatchClient cloudWatchClient;
 
     public Cw2Endpoint(String uri, Component component, Cw2Configuration configuration) {
@@ -67,7 +75,8 @@ public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocat
         super.doInit();
 
         cloudWatchClient = configuration.getAmazonCwClient() != null
-                ? configuration.getAmazonCwClient() : Cw2ClientFactory.getCloudWatchClient(configuration).getCloudWatchClient();
+                ? configuration.getAmazonCwClient()
+                : Cw2ClientFactory.getCloudWatchClient(configuration).getCloudWatchClient();
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -58,19 +59,12 @@ public class SplitWithDelimiterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start-0")
-                        .split(body(), "false")
-                        .to("mock:result-0");
+                from("direct:start-0").split(body(), "false").to("mock:result-0");
 
-                from("direct:start-1")
-                        .split(body())
-                        .to("mock:result-1");
+                from("direct:start-1").split(body()).to("mock:result-1");
 
-                from("direct:start-2")
-                        .split(body(), "#")
-                        .to("mock:result-2");
+                from("direct:start-2").split(body(), "#").to("mock:result-2");
             }
         };
     }
-
 }

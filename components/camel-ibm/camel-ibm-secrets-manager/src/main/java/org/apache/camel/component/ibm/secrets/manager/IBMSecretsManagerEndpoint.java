@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.secrets.manager;
 
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
@@ -30,11 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Manage secrets in IBM Secrets Manager Service
  */
-@UriEndpoint(firstVersion = "4.11.0", scheme = "ibm-secrets-manager", title = "IBM Secrets Manager",
-             syntax = "ibm-secrets-manager:label", category = {
-                     Category.CLOUD, Category.CLOUD },
-             producerOnly = true,
-             headersClass = IBMSecretsManagerConstants.class)
+@UriEndpoint(
+        firstVersion = "4.11.0",
+        scheme = "ibm-secrets-manager",
+        title = "IBM Secrets Manager",
+        syntax = "ibm-secrets-manager:label",
+        category = {Category.CLOUD, Category.CLOUD},
+        producerOnly = true,
+        headersClass = IBMSecretsManagerConstants.class)
 public class IBMSecretsManagerEndpoint extends DefaultEndpoint {
 
     private SecretsManager secretManager;
@@ -42,8 +46,8 @@ public class IBMSecretsManagerEndpoint extends DefaultEndpoint {
     @UriParam
     private IBMSecretsManagerConfiguration configuration;
 
-    public IBMSecretsManagerEndpoint(final String uri, final Component component,
-                                     final IBMSecretsManagerConfiguration configuration) {
+    public IBMSecretsManagerEndpoint(
+            final String uri, final Component component, final IBMSecretsManagerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

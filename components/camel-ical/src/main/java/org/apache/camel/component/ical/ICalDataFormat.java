@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ical;
 
 import java.io.InputStream;
@@ -73,5 +74,4 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
     public boolean isValidating() {
         return validating;
     }
-
 }

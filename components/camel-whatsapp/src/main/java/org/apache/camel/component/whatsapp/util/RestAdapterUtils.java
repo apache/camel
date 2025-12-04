@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.util;
 
 import java.nio.ByteBuffer;
@@ -29,8 +30,7 @@ public final class RestAdapterUtils {
     public static final byte[] FILE_NAME_HEADER_BYTES = "\"; filename=\"".getBytes();
     public static final byte[] CONTENT_TYPE_HEADER_BYTES = "\"\r\nContent-Type: ".getBytes();
 
-    private RestAdapterUtils() {
-    }
+    private RestAdapterUtils() {}
 
     public static ByteBuffer generateByteBuffer(byte[]... bytes) {
         int size = Arrays.stream(bytes).map(b -> b.length).reduce(0, Integer::sum);

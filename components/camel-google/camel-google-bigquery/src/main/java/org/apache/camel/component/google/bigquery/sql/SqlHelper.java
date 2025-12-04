@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.sql;
 
 import java.io.IOException;
@@ -35,8 +36,7 @@ public final class SqlHelper {
     private static Pattern pattern = Pattern.compile("\\$\\{(\\w+)}");
     private static Pattern parameterPattern = Pattern.compile("@(\\w+)");
 
-    private SqlHelper() {
-    }
+    private SqlHelper() {}
 
     /**
      * Resolve the query by loading the query from the classpath or file resource if needed.

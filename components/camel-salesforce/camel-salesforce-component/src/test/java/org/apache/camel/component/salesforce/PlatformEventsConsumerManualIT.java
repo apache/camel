@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.assertj.core.api.Assertions.entry;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -29,8 +32,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.entry;
-
 @Tag("standalone")
 public class PlatformEventsConsumerManualIT extends AbstractSalesforceTestBase {
 
@@ -38,9 +39,8 @@ public class PlatformEventsConsumerManualIT extends AbstractSalesforceTestBase {
     public void shouldConsumePlatformEvents() throws InterruptedException, ExecutionException {
         final ExecutorService parallel = Executors.newSingleThreadExecutor();
 
-        final Future<PlatformEvent> futurePlatformEvent
-                = parallel.submit(
-                        () -> consumer.receiveBody("salesforce:subscribe:event/TestEvent__e?replayId=-1", PlatformEvent.class));
+        final Future<PlatformEvent> futurePlatformEvent = parallel.submit(
+                () -> consumer.receiveBody("salesforce:subscribe:event/TestEvent__e?replayId=-1", PlatformEvent.class));
 
         // it takes some time for the subscriber to subscribe, so we'll try to
         // send repeated platform events and wait until the first one is

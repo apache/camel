@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static org.hamcrest.Matchers.is;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -30,8 +33,6 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformMultipleContentTypeTest {
     public static SSLContextParameters serverSSLParameters;
@@ -81,8 +82,7 @@ public class VertxPlatformMultipleContentTypeTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    restConfiguration().component("platform-http")
-                            .contextPath("/rest");
+                    restConfiguration().component("platform-http").contextPath("/rest");
 
                     rest().get("/test")
                             .consumes("application/json,application/xml")
@@ -90,8 +90,7 @@ public class VertxPlatformMultipleContentTypeTest {
                             .bindingMode(RestBindingMode.auto)
                             .to("direct:rest");
 
-                    from("direct:rest")
-                            .setBody(simple("Hello"));
+                    from("direct:rest").setBody(simple("Hello"));
                 }
             });
 
@@ -116,8 +115,7 @@ public class VertxPlatformMultipleContentTypeTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    restConfiguration().component("platform-http")
-                            .contextPath("/rest");
+                    restConfiguration().component("platform-http").contextPath("/rest");
 
                     rest().get("/test")
                             .consumes("application/json,application/xml")
@@ -125,8 +123,7 @@ public class VertxPlatformMultipleContentTypeTest {
                             .bindingMode(RestBindingMode.auto)
                             .to("direct:rest");
 
-                    from("direct:rest")
-                            .setBody(simple("Hello"));
+                    from("direct:rest").setBody(simple("Hello"));
                 }
             });
 
@@ -151,8 +148,7 @@ public class VertxPlatformMultipleContentTypeTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    restConfiguration().component("platform-http")
-                            .contextPath("/rest");
+                    restConfiguration().component("platform-http").contextPath("/rest");
 
                     rest().get("/test")
                             .consumes("application/xml,application/json")
@@ -160,8 +156,7 @@ public class VertxPlatformMultipleContentTypeTest {
                             .bindingMode(RestBindingMode.auto)
                             .to("direct:rest");
 
-                    from("direct:rest")
-                            .setBody(simple("Hello"));
+                    from("direct:rest").setBody(simple("Hello"));
                 }
             });
 

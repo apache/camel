@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb.person;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -48,16 +49,21 @@ import org.apache.camel.converter.jaxb.address.Address;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "firstName", "lastName", "age", "address" })
+@XmlType(
+        name = "",
+        propOrder = {"firstName", "lastName", "age", "address"})
 @XmlRootElement(name = "person")
 public class Person {
 
     @XmlElement(required = true)
     protected String firstName;
+
     @XmlElement(required = true)
     protected String lastName;
+
     @XmlElement(required = true, type = Integer.class, nillable = true)
     protected Integer age;
+
     @XmlElement(required = true)
     protected Address address;
 
@@ -160,5 +166,4 @@ public class Person {
         setAddress(value);
         return this;
     }
-
 }

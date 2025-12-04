@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     @Metadata(enums = "dev,test,prod")
     private String profile;
+
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
     private boolean autoConfigurationSystemPropertiesEnabled = true;
@@ -935,8 +937,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Adds main listener object to the known list of listener objects.
      */
     @SuppressWarnings("unchecked")
-    public MainConfigurationProperties withMainListeners(
-            Class<? extends MainListener>... listeners) {
+    public MainConfigurationProperties withMainListeners(Class<? extends MainListener>... listeners) {
         addMainListenerClass(listeners);
         return this;
     }
@@ -972,8 +973,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Adds a configuration class to the known list of configurations classes.
      */
     @SuppressWarnings("unchecked")
-    public MainConfigurationProperties withConfigurations(
-            Class<? extends CamelConfiguration>... configuration) {
+    public MainConfigurationProperties withConfigurations(Class<? extends CamelConfiguration>... configuration) {
         addConfigurationClass(configuration);
         return this;
     }

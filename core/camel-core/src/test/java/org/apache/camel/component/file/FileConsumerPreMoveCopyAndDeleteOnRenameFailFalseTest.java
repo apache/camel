@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,11 +28,9 @@ public class FileConsumerPreMoveCopyAndDeleteOnRenameFailFalseTest extends FileC
             @Override
             public void configure() {
                 from(fileUri("?preMove=work/work-${file:name}&initialDelay=0&delay=10&copyAndDeleteOnRenameFail=false"))
-                        .process(new MyPreMoveCheckerProcessor() {
-                        })
+                        .process(new MyPreMoveCheckerProcessor() {})
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.io.Closeable;
@@ -96,5 +97,4 @@ public class GroovyScriptClassLoader extends ClassLoader implements Closeable {
         }
         classes.clear();
     }
-
 }

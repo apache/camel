@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.apache.camel.BindToRegistry;
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
 
@@ -46,7 +47,8 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
 
     private void test(String endPointUri) throws InterruptedException {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
         template.sendBody(endPointUri, "Hello World");
@@ -65,17 +67,36 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("log:start").circuitBreaker().resilience4jConfiguration()
-                        .circuitBreaker("myCircuitBreaker").end()
-                        .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start")
+                        .to("log:start")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .circuitBreaker("myCircuitBreaker")
+                        .end()
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").to("log:direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration()
-                        .circuitBreaker("myCircuitBreaker").timeoutEnabled(true).timeoutDuration(2000).end()
-                        .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
-                        .constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start.with.timeout.enabled")
+                        .to("log:direct:start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .circuitBreaker("myCircuitBreaker")
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

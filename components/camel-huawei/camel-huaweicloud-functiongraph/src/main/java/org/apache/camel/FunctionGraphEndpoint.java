@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
@@ -32,17 +33,23 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To call serverless functions on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "Huawei FunctionGraph",
-             syntax = "hwcloud-functiongraph:operation",
-             category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "3.11.0",
+        scheme = "hwcloud-functiongraph",
+        title = "Huawei FunctionGraph",
+        syntax = "hwcloud-functiongraph:operation",
+        category = {Category.CLOUD, Category.SERVERLESS},
+        producerOnly = true)
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer", secret = false)
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
-              displayName = "Service region", secret = false)
+    @UriParam(
+            description = "FunctionGraph service region. This is lower precedence than endpoint based configuration",
+            displayName = "Service region",
+            secret = false)
     @Metadata(required = true)
     private String region;
 
@@ -50,17 +57,23 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(description = "Functions that can be logically grouped together",
-              displayName = "Function package", secret = false, defaultValue = FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE)
+    @UriParam(
+            description = "Functions that can be logically grouped together",
+            displayName = "Function package",
+            secret = false,
+            defaultValue = FunctionGraphConstants.DEFAULT_FUNCTION_PACKAGE)
     @Metadata(required = false)
     private String functionPackage;
 
-    @UriParam(description = "Name of the function to invoke",
-              displayName = "Function name", secret = false)
+    @UriParam(description = "Name of the function to invoke", displayName = "Function name", secret = false)
     @Metadata(required = false)
     private String functionName;
 
-    @UriParam(description = "Proxy server ip/hostname", displayName = "Proxy server host", secret = false, label = "proxy")
+    @UriParam(
+            description = "Proxy server ip/hostname",
+            displayName = "Proxy server host",
+            secret = false,
+            label = "proxy")
     @Metadata(required = false)
     private String proxyHost;
 
@@ -72,39 +85,57 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true, label = "proxy")
+    @UriParam(
+            description = "Proxy authentication password",
+            displayName = "Proxy password",
+            secret = true,
+            label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false", label = "security")
+    @UriParam(
+            description = "Ignore SSL verification",
+            displayName = "SSL Verification Ignored",
+            secret = false,
+            defaultValue = "false",
+            label = "security")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
-    @UriParam(description = "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
-              displayName = "Service endpoint", secret = false)
+    @UriParam(
+            description =
+                    "FunctionGraph url. Carries higher precedence than region parameter based client initialization",
+            displayName = "Service endpoint",
+            secret = false)
     @Metadata(required = false)
     private String endpoint;
 
-    @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+    @UriParam(
+            description = "Configuration object for cloud service authentication",
+            displayName = "Service Configuration",
+            secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true,
-              label = "security")
+    @UriParam(
+            description = "Access key for the cloud user",
+            displayName = "API access key (AK)",
+            secret = true,
+            label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
-              label = "security")
+    @UriParam(
+            description = "Secret key for the cloud user",
+            displayName = "API secret key (SK)",
+            secret = true,
+            label = "security")
     @Metadata(required = true)
     private String secretKey;
 
     private FunctionGraphClient functionGraphClient;
 
-    public FunctionGraphEndpoint() {
-    }
+    public FunctionGraphEndpoint() {}
 
     public FunctionGraphEndpoint(String uri, String operation, FunctionGraphComponent component) {
         super(uri, component);
@@ -249,23 +280,18 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
             return functionGraphClient;
         }
 
-        // setup AK/SK credential information. User can input AK/SK through the ServiceKeys class, which, if provided, overrides the AK/SK passed through the endpoint
+        // setup AK/SK credential information. User can input AK/SK through the ServiceKeys class, which, if provided,
+        // overrides the AK/SK passed through the endpoint
         BasicCredentials auth = new BasicCredentials()
-                .withAk(getServiceKeys() != null
-                        ? getServiceKeys().getAccessKey()
-                        : getAccessKey())
-                .withSk(getServiceKeys() != null
-                        ? getServiceKeys().getSecretKey()
-                        : getSecretKey())
+                .withAk(getServiceKeys() != null ? getServiceKeys().getAccessKey() : getAccessKey())
+                .withSk(getServiceKeys() != null ? getServiceKeys().getSecretKey() : getSecretKey())
                 .withProjectId(getProjectId());
 
         // setup http information (including proxy information if provided)
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
-        if (ObjectHelper.isNotEmpty(getProxyHost())
-                && ObjectHelper.isNotEmpty(getProxyPort())) {
-            httpConfig.withProxyHost(getProxyHost())
-                    .withProxyPort(getProxyPort());
+        if (ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort())) {
+            httpConfig.withProxyHost(getProxyHost()).withProxyPort(getProxyPort());
 
             if (ObjectHelper.isNotEmpty(getProxyUser())) {
                 httpConfig.withProxyUsername(getProxyUser());
@@ -275,7 +301,8 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
             }
         }
 
-        // if an endpoint url is provided, the FunctionGraphClient will be built with an endpoint. Otherwise, it will be built with the provided region
+        // if an endpoint url is provided, the FunctionGraphClient will be built with an endpoint. Otherwise, it will be
+        // built with the provided region
         if (ObjectHelper.isNotEmpty(getEndpoint())) {
             return FunctionGraphClient.newBuilder()
                     .withCredential(auth)
@@ -290,5 +317,4 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
                     .build();
         }
     }
-
 }

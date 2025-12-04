@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.InputStream;
 import java.io.Serializable;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Value object, that represents the result of an {@link ExecCommand} execution.

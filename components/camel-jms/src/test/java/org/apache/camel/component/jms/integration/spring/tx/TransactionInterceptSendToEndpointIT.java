@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -26,8 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * End user on forum issue
  */
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class TransactionInterceptSendToEndpointIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -46,5 +46,4 @@ public class TransactionInterceptSendToEndpointIT extends AbstractSpringJMSITSup
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

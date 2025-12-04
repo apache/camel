@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -22,9 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AggregationStrategyGroupedBodyTest extends ContextTestSupport {
 
@@ -38,7 +39,11 @@ public class AggregationStrategyGroupedBodyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<?> list = (List<?>) getMockEndpoint("mock:result").getExchanges().get(0).getMessage().getBody();
+        List<?> list = (List<?>) getMockEndpoint("mock:result")
+                .getExchanges()
+                .get(0)
+                .getMessage()
+                .getBody();
         assertNotNull(list);
         assertEquals(3, list.size());
         assertEquals("A", list.get(0));
@@ -52,10 +57,10 @@ public class AggregationStrategyGroupedBodyTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .aggregate(constant(true), AggregationStrategies.groupedBody()).completionSize(3)
+                        .aggregate(constant(true), AggregationStrategies.groupedBody())
+                        .completionSize(3)
                         .to("mock:result");
             }
         };
     }
-
 }

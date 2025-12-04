@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,8 +24,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class ResequencerFileNameTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
@@ -40,7 +42,9 @@ public class ResequencerFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(new MyFileNameExpression()).stream().timeout(100).to("mock:result");
+                from("direct:start").resequence(new MyFileNameExpression()).stream()
+                        .timeout(100)
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

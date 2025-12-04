@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -87,7 +88,11 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(body().convertToString().contains("13")).to("mock:13").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when(body().convertToString().contains("13"))
+                        .to("mock:13")
+                        .otherwise()
                         .to("mock:other");
             }
         };

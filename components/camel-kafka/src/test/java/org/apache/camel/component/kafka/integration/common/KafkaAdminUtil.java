@@ -35,9 +35,7 @@ import org.junit.jupiter.api.Assertions;
 
 public final class KafkaAdminUtil {
 
-    private KafkaAdminUtil() {
-
-    }
+    private KafkaAdminUtil() {}
 
     public static AdminClient createAdminClient(KafkaService service) {
         final Properties properties = new Properties();
@@ -46,14 +44,18 @@ public final class KafkaAdminUtil {
         return KafkaAdminClient.create(properties);
     }
 
-    public static Map<String, ConsumerGroupDescription> getConsumerGroupInfo(String groupId, AdminClient kafkaAdminClient)
+    public static Map<String, ConsumerGroupDescription> getConsumerGroupInfo(
+            String groupId, AdminClient kafkaAdminClient)
             throws InterruptedException, ExecutionException, TimeoutException {
-        return kafkaAdminClient.describeConsumerGroups(Collections.singletonList(groupId)).all().get(30, TimeUnit.SECONDS);
+        return kafkaAdminClient
+                .describeConsumerGroups(Collections.singletonList(groupId))
+                .all()
+                .get(30, TimeUnit.SECONDS);
     }
 
     public static void assertGroupIsConnected(String groupId, AdminClient kafkaAdminClient) {
-        final Map<String, ConsumerGroupDescription> allGroups
-                = Assertions.assertDoesNotThrow(() -> getConsumerGroupInfo(groupId, kafkaAdminClient));
+        final Map<String, ConsumerGroupDescription> allGroups =
+                Assertions.assertDoesNotThrow(() -> getConsumerGroupInfo(groupId, kafkaAdminClient));
 
         Assertions.assertTrue(allGroups.size() >= 1, "There should be at least one group named" + groupId);
 
@@ -66,7 +68,8 @@ public final class KafkaAdminUtil {
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
         properties.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         properties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-        properties.put(SaslConfigs.SASL_JAAS_CONFIG,
+        properties.put(
+                SaslConfigs.SASL_JAAS_CONFIG,
                 ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("admin", "admin-secret"));
 
         return AdminClient.create(properties);

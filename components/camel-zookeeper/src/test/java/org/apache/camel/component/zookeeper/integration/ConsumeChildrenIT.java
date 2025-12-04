@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.util.List;
 
@@ -31,20 +35,19 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-
 public class ConsumeChildrenIT extends ZooKeeperITSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() {
-                from("zookeeper://{{zookeeper.connection.string}}/grimm?repeat=true&listChildren=true")
-                        .sort(body(), new NaturalSortComparator(Order.Descending))
-                        .to("mock:zookeeper-data");
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                public void configure() {
+                    from("zookeeper://{{zookeeper.connection.string}}/grimm?repeat=true&listChildren=true")
+                            .sort(body(), new NaturalSortComparator(Order.Descending))
+                            .to("mock:zookeeper-data");
+                }
             }
-        } };
+        };
     }
 
     @Test
@@ -60,8 +63,12 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"),
-                createChildListing("hansel", "gretel"), createChildListing("gretel"),
+        validateExchangesContainListings(
+                mock,
+                createChildListing(),
+                createChildListing("hansel"),
+                createChildListing("hansel", "gretel"),
+                createChildListing("gretel"),
                 createChildListing());
     }
 
@@ -77,8 +84,10 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
             }
             List<?> actual = received.getIn().getMandatoryBody(List.class);
             assertEquals(expected[index++], actual);
-            assertEquals(expectedEvent, ExchangeHelper.getMandatoryHeader(received, ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE,
-                    Watcher.Event.EventType.class));
+            assertEquals(
+                    expectedEvent,
+                    ExchangeHelper.getMandatoryHeader(
+                            received, ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE, Watcher.Event.EventType.class));
             validateChildrenCountChangesEachTime(mock);
         }
     }

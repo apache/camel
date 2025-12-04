@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
 
 public class CounterProducer extends AbstractMetricsProducer {
 

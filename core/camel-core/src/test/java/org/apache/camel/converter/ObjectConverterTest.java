@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -23,13 +31,6 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ObjectConverterTest {
 
@@ -98,7 +99,7 @@ public class ObjectConverterTest {
         assertNull(ObjectConverter.toInteger(Double.NaN));
         assertNull(ObjectConverter.toInteger(Float.NaN));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
-        assertEquals(Integer.valueOf("1234"), ObjectConverter.toInteger(new byte[] { 49, 50, 51, 52 }, null));
+        assertEquals(Integer.valueOf("1234"), ObjectConverter.toInteger(new byte[] {49, 50, 51, 52}, null));
     }
 
     @Test
@@ -110,7 +111,7 @@ public class ObjectConverterTest {
         assertNull(ObjectConverter.toLong(Double.NaN));
         assertNull(ObjectConverter.toLong(Float.NaN));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
-        assertEquals(Long.valueOf("1234"), ObjectConverter.toLong(new byte[] { 49, 50, 51, 52 }, null));
+        assertEquals(Long.valueOf("1234"), ObjectConverter.toLong(new byte[] {49, 50, 51, 52}, null));
     }
 
     @Test
@@ -194,5 +195,4 @@ public class ObjectConverterTest {
         assertThrows(IllegalArgumentException.class, () -> ObjectConverter.toBool(""), "Should throw exception");
         assertThrows(IllegalArgumentException.class, () -> ObjectConverter.toBool("yes"), "Should throw exception");
     }
-
 }

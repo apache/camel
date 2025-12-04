@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -33,14 +39,11 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @Isolated("Seems to have problem running along with other tests")
-@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
-                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
+@DisabledIfSystemProperty(
+        named = "activemq.instance.type",
+        matches = "remote",
+        disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectInOutProducerTest extends JmsExclusiveTestSupport {
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.ReconnectInOutProducerTest";
 
@@ -75,7 +78,6 @@ public class ReconnectInOutProducerTest extends JmsExclusiveTestSupport {
         assertTrue(responseObject instanceof String);
         assertEquals(responseText, responseObject);
         mc.close();
-
     }
 
     @Override
@@ -84,8 +86,10 @@ public class ReconnectInOutProducerTest extends JmsExclusiveTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
-                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
-                                                   + TEST_DESTINATION_NAME + ".response")
+                        .to(
+                                ExchangePattern.InOut,
+                                "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo=" + TEST_DESTINATION_NAME
+                                        + ".response")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }
         };

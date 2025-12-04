@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
 
 import com.box.sdk.BoxAPIConnection;
@@ -30,8 +31,9 @@ import org.mockito.Mockito;
 
 class BoxSharedConnectionTest {
 
-    private static final String PATH_PREFIX
-            = BoxApiCollection.getCollection().getApiName(BoxFilesManagerApiMethod.class).getName();
+    private static final String PATH_PREFIX = BoxApiCollection.getCollection()
+            .getApiName(BoxFilesManagerApiMethod.class)
+            .getName();
 
     @Test
     void testEndpointUsesSharedConnection() throws Exception {
@@ -47,7 +49,8 @@ class BoxSharedConnectionTest {
             BoxAPIConnection connection = Mockito.mock(BoxAPIConnection.class);
 
             try (MockedStatic<BoxConnectionHelper> helper = Mockito.mockStatic(BoxConnectionHelper.class)) {
-                helper.when(() -> BoxConnectionHelper.createConnection(configuration)).thenReturn(connection);
+                helper.when(() -> BoxConnectionHelper.createConnection(configuration))
+                        .thenReturn(connection);
 
                 camelContext.start();
                 BoxEndpoint endpoint = camelContext.getEndpoint(boxUri, BoxEndpoint.class);

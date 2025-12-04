@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.util.HashMap;
@@ -30,8 +31,7 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
  */
 public final class JpaHelper {
 
-    private JpaHelper() {
-    }
+    private JpaHelper() {}
 
     /**
      * Gets or creates an {@link jakarta.persistence.EntityManager} to use.
@@ -45,8 +45,11 @@ public final class JpaHelper {
      * @return                          the entity manager (is never null): the resource must be closed by the client
      */
     public static EntityManager getTargetEntityManager(
-            Exchange exchange, EntityManagerFactory entityManagerFactory,
-            boolean usePassedInEntityManager, boolean useSharedEntityManager, boolean allowRecreate) {
+            Exchange exchange,
+            EntityManagerFactory entityManagerFactory,
+            boolean usePassedInEntityManager,
+            boolean useSharedEntityManager,
+            boolean allowRecreate) {
         EntityManager em = null;
 
         // favor using entity manager provided as a header from the end user

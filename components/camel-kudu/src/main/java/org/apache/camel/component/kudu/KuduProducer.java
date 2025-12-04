@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
 
 import java.util.List;
@@ -96,8 +97,8 @@ public class KuduProducer extends DefaultProducer {
         for (Map.Entry<?, ?> entry : rows.entrySet()) {
             final String colName = entry.getKey().toString();
             final Object value = entry.getValue();
-            //Add only if column exist
-            //If not, this will throw an IllegalArgumentException
+            // Add only if column exist
+            // If not, this will throw an IllegalArgumentException
             if (table.getSchema().getColumn(colName) != null) {
                 row.addObject(colName, value);
             }
@@ -172,15 +173,17 @@ public class KuduProducer extends DefaultProducer {
         KuduClient connection = endpoint.getKuduClient();
 
         Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCHEMA);
-        CreateTableOptions builder = (CreateTableOptions) exchange.getIn()
-                .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
+        CreateTableOptions builder =
+                (CreateTableOptions) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
         connection.createTable(tableName, schema, builder);
     }
 
     private void doScan(Exchange exchange, String tableName) throws KuduException {
-        List<String> columnNames = (List<String>) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCAN_COLUMN_NAMES);
+        List<String> columnNames =
+                (List<String>) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCAN_COLUMN_NAMES);
         KuduPredicate predicate = (KuduPredicate) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCAN_PREDICATE);
-        long limit = Optional.ofNullable((Long) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCAN_LIMIT)).orElse(-1L);
+        long limit = Optional.ofNullable((Long) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCAN_LIMIT))
+                .orElse(-1L);
         exchange.getIn().setBody(KuduUtils.doScan(tableName, endpoint.getKuduClient(), columnNames, predicate, limit));
     }
 }

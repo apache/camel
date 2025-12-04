@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Method;
 
@@ -24,8 +27,6 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanInfoOverloadedTest extends ContextTestSupport {
 
@@ -48,11 +49,9 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
 
     @SuppressWarnings("Unused")
     static class Bean {
-        public void doSomething(RequestA request) {
-        }
+        public void doSomething(RequestA request) {}
 
-        public void doSomething(RequestB request) {
-        }
+        public void doSomething(RequestB request) {}
     }
 
     static class RequestA {
@@ -62,5 +61,4 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
     static class RequestB {
         public String s;
     }
-
 }

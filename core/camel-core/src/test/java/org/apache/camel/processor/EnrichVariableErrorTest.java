@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,11 +36,14 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -60,15 +64,18 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .doTry()
-                            .throwException(new IllegalArgumentException("Forced"))
+                        .throwException(new IllegalArgumentException("Forced"))
                         .doCatch(Exception.class)
-                            .setBody(simple("Catch: ${body}"))
+                        .setBody(simple("Catch: ${body}"))
                         .end();
             }
         });
@@ -88,16 +95,17 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(true)
-                        .setBody(simple("Error: ${body}"));
+                onException(Exception.class).handled(true).setBody(simple("Error: ${body}"));
 
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -116,16 +124,17 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .handled(false)
-                        .setBody(simple("Error: ${body}"));
+                onException(Exception.class).handled(false).setBody(simple("Error: ${body}"));
 
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -147,11 +156,14 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -174,11 +186,14 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
                 errorHandler(defaultErrorHandler());
 
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
                 from("direct:foo")
-                        .transform().simple("Bye ${body}")
+                        .transform()
+                        .simple("Bye ${body}")
                         .throwException(new IllegalArgumentException("Forced"));
             }
         });
@@ -198,12 +213,12 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .stop();
+                from("direct:foo").transform().simple("Bye ${body}").stop();
             }
         });
         context.start();
@@ -222,12 +237,12 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .rollback();
+                from("direct:foo").transform().simple("Bye ${body}").rollback();
             }
         });
         context.start();
@@ -246,12 +261,12 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .markRollbackOnly();
+                from("direct:foo").transform().simple("Bye ${body}").markRollbackOnly();
             }
         });
         context.start();
@@ -270,12 +285,12 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:receive")
-                        .enrich().constant("direct:foo").variableReceive("bye")
+                        .enrich()
+                        .constant("direct:foo")
+                        .variableReceive("bye")
                         .to("mock:result");
 
-                from("direct:foo")
-                        .transform().simple("Bye ${body}")
-                        .markRollbackOnlyLast();
+                from("direct:foo").transform().simple("Bye ${body}").markRollbackOnlyLast();
             }
         });
         context.start();
@@ -287,5 +302,4 @@ public class EnrichVariableErrorTest extends ContextTestSupport {
         Assertions.assertEquals("Bye World", out.getMessage().getBody());
         assertMockEndpointsSatisfied();
     }
-
 }

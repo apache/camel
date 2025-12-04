@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
 
 import java.io.ByteArrayInputStream;
@@ -113,8 +114,9 @@ public class OBSProducer extends DefaultProducer {
         Object body = exchange.getMessage().getBody();
 
         // if body doesn't contain File, then user must pass object name. Bucket name is mandatory in all case
-        if ((ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||
-                ObjectHelper.isEmpty(clientConfigurations.getObjectName())) && !(body instanceof File)) {
+        if ((ObjectHelper.isEmpty(clientConfigurations.getBucketName())
+                        || ObjectHelper.isEmpty(clientConfigurations.getObjectName()))
+                && !(body instanceof File)) {
             throw new IllegalArgumentException("Bucket and object names are mandatory to put objects into bucket");
         }
 
@@ -124,8 +126,7 @@ public class OBSProducer extends DefaultProducer {
             LOG.warn("No bucket found with name {}. Attempting to create", clientConfigurations.getBucketName());
             OBSRegion.checkValidRegion(clientConfigurations.getBucketLocation());
             CreateBucketRequest request = new CreateBucketRequest(
-                    clientConfigurations.getBucketName(),
-                    clientConfigurations.getBucketLocation());
+                    clientConfigurations.getBucketName(), clientConfigurations.getBucketLocation());
 
             obsClient.createBucket(request);
             LOG.warn("Bucket with name {} created. Continuing to upload object into it", request.getBucketName());
@@ -142,22 +143,21 @@ public class OBSProducer extends DefaultProducer {
                     ? ((File) body).getName()
                     : clientConfigurations.getObjectName();
 
-            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
-                    objectName, (File) body);
+            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(), objectName, (File) body);
 
         } else if (body instanceof String) {
             // the string content will be stored in the remote object
             LOG.trace("Writing text body into an object");
             InputStream stream = new ByteArrayInputStream(((String) body).getBytes());
-            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName(), stream);
+            putObjectResult = obsClient.putObject(
+                    clientConfigurations.getBucketName(), clientConfigurations.getObjectName(), stream);
             stream.close();
 
         } else if (body instanceof InputStream) {
             // this covers miscellaneous file types
             LOG.trace("Exchange payload is of type InputStream");
-            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName(), (InputStream) body);
+            putObjectResult = obsClient.putObject(
+                    clientConfigurations.getBucketName(), clientConfigurations.getObjectName(), (InputStream) body);
 
         } else {
             throw new IllegalArgumentException("Body should be of type file, string or an input stream");
@@ -172,16 +172,18 @@ public class OBSProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void getObject(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||
-                ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())
+                || ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
             throw new IllegalArgumentException("Bucket and object names are mandatory to get objects");
         }
 
-        LOG.debug("Downloading remote obs object {} from bucket {}", clientConfigurations.getObjectName(),
+        LOG.debug(
+                "Downloading remote obs object {} from bucket {}",
+                clientConfigurations.getObjectName(),
                 clientConfigurations.getBucketLocation());
 
-        ObsObject obsObject = obsClient
-                .getObject(clientConfigurations.getBucketName(), clientConfigurations.getObjectName());
+        ObsObject obsObject =
+                obsClient.getObject(clientConfigurations.getBucketName(), clientConfigurations.getObjectName());
 
         LOG.debug("Successfully downloaded obs object {}", clientConfigurations.getObjectName());
 
@@ -211,7 +213,8 @@ public class OBSProducer extends DefaultProducer {
     private void createBucket(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         CreateBucketRequest request = null;
 
-        // checking if user inputted exchange body containing bucket information. Body must be a CreateBucketRequest or a valid JSON string (Advanced users)
+        // checking if user inputted exchange body containing bucket information. Body must be a CreateBucketRequest or
+        // a valid JSON string (Advanced users)
         Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof CreateBucketRequest) {
             request = (CreateBucketRequest) exchangeBody;
@@ -225,7 +228,8 @@ public class OBSProducer extends DefaultProducer {
             }
         }
 
-        // if no CreateBucketRequest was found in the exchange body, then create one from endpoint parameters (Basic users)
+        // if no CreateBucketRequest was found in the exchange body, then create one from endpoint parameters (Basic
+        // users)
         if (request == null) {
             // check for bucket name, which is mandatory to create a new bucket
             if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
@@ -241,7 +245,8 @@ public class OBSProducer extends DefaultProducer {
             // verify valid bucket location
             OBSRegion.checkValidRegion(clientConfigurations.getBucketLocation());
 
-            request = new CreateBucketRequest(clientConfigurations.getBucketName(), clientConfigurations.getBucketLocation());
+            request = new CreateBucketRequest(
+                    clientConfigurations.getBucketName(), clientConfigurations.getBucketLocation());
         }
 
         // invoke create bucket method and map response object to exchange body
@@ -317,7 +322,8 @@ public class OBSProducer extends DefaultProducer {
     private void listObjects(Exchange exchange, ClientConfigurations clientConfigurations) throws ObsException {
         ListObjectsRequest request = null;
 
-        // checking if user inputted exchange body containing list objects information. Body must be a ListObjectsRequest or a valid JSON string (Advanced users)
+        // checking if user inputted exchange body containing list objects information. Body must be a
+        // ListObjectsRequest or a valid JSON string (Advanced users)
         Object exchangeBody = exchange.getMessage().getBody();
         if (exchangeBody instanceof ListObjectsRequest) {
             request = (ListObjectsRequest) exchangeBody;
@@ -341,7 +347,8 @@ public class OBSProducer extends DefaultProducer {
             request = new ListObjectsRequest(clientConfigurations.getBucketName());
         }
 
-        // invoke list objects method. Each result only holds a maximum of 1000 objects, so keep listing each object until all objects have been listed
+        // invoke list objects method. Each result only holds a maximum of 1000 objects, so keep listing each object
+        // until all objects have been listed
         ObjectListing result;
         List<ObsObject> objects = new ArrayList<>();
         do {

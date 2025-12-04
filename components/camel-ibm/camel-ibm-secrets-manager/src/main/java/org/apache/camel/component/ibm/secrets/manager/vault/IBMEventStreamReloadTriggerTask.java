@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.secrets.manager.vault;
 
 import java.time.Duration;
@@ -57,15 +58,15 @@ import org.slf4j.LoggerFactory;
 @PeriodicTask("ibm-secret-refresh")
 public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
-    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_BOOTSTRAP_SERVERS_ENV
-            = "CAMEL_VAULT_IBM_EVENTSTREAM_BOOTSTRAP_SERVERS";
+    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_BOOTSTRAP_SERVERS_ENV =
+            "CAMEL_VAULT_IBM_EVENTSTREAM_BOOTSTRAP_SERVERS";
     private static final String CAMEL_VAULT_IBM_EVENTSTREAM_TOPIC_ENV = "CAMEL_VAULT_IBM_EVENTSTREAM_TOPIC";
     private static final String CAMEL_VAULT_IBM_EVENTSTREAM_USERNAME_ENV = "CAMEL_VAULT_IBM_EVENTSTREAM_USERNAME";
     private static final String CAMEL_VAULT_IBM_EVENTSTREAM_PASSWORD_ENV = "CAMEL_VAULT_IBM_EVENTSTREAM_PASSWORD";
-    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUPID_ENV
-            = "CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUP_ID";
-    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV
-            = "CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT";
+    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUPID_ENV =
+            "CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_GROUP_ID";
+    private static final String CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV =
+            "CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT";
 
     private CamelContext camelContext;
 
@@ -106,14 +107,18 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
         if (ObjectHelper.isNotEmpty(System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV))) {
             pollTimeout = Long.parseLong(System.getenv(CAMEL_VAULT_IBM_EVENTSTREAM_CONSUMER_POLL_TIMEOUT_ENV));
         } else {
-            pollTimeout = getCamelContext().getVaultConfiguration().getIBMSecretsManagerVaultConfiguration()
+            pollTimeout = getCamelContext()
+                    .getVaultConfiguration()
+                    .getIBMSecretsManagerVaultConfiguration()
                     .getEventStreamConsumerPollTimeout();
         }
 
-        if (ObjectHelper.isEmpty(bootstrapServers) && ObjectHelper.isEmpty(groupId) && ObjectHelper.isEmpty(topic)
+        if (ObjectHelper.isEmpty(bootstrapServers)
+                && ObjectHelper.isEmpty(groupId)
+                && ObjectHelper.isEmpty(topic)
                 && ObjectHelper.isEmpty(password)) {
-            IBMSecretsManagerVaultConfiguration ibmVaultConfiguration
-                    = getCamelContext().getVaultConfiguration().ibmSecretsManager();
+            IBMSecretsManagerVaultConfiguration ibmVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().ibmSecretsManager();
             if (ObjectHelper.isNotEmpty(ibmVaultConfiguration)) {
                 bootstrapServers = ibmVaultConfiguration.getEventStreamBootstrapServers();
                 groupId = ibmVaultConfiguration.getEventStreamGroupId();
@@ -142,9 +147,10 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
         configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
         configs.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-        configs.put(SaslConfigs.SASL_JAAS_CONFIG,
+        configs.put(
+                SaslConfigs.SASL_JAAS_CONFIG,
                 "org.apache.kafka.common.security.plain.PlainLoginModule required username=" + username + " password="
-                                                  + password + ";");
+                        + password + ";");
 
         // create consumer
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
@@ -196,15 +202,19 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
                                 if (secret != null) {
                                     String name = secret.get("secret_name").asText();
                                     if (matchSecret(name)) {
-                                        updates.put(name, Instant.parse(secret.get("event_time").asText()));
+                                        updates.put(
+                                                name,
+                                                Instant.parse(
+                                                        secret.get("event_time").asText()));
                                         if (isReloadEnabled()) {
-                                            LOG.info("Update for IBM secret: {} detected, triggering CamelContext reload",
+                                            LOG.info(
+                                                    "Update for IBM secret: {} detected, triggering CamelContext reload",
                                                     name);
                                             triggerReloading = true;
                                         }
                                         if (triggerReloading) {
-                                            ContextReloadStrategy reload
-                                                    = camelContext.hasService(ContextReloadStrategy.class);
+                                            ContextReloadStrategy reload =
+                                                    camelContext.hasService(ContextReloadStrategy.class);
                                             if (reload != null) {
                                                 // trigger reload
                                                 lastReloadTime = Instant.now();
@@ -221,7 +231,6 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
                 }
             }
         }
-
     }
 
     @Override

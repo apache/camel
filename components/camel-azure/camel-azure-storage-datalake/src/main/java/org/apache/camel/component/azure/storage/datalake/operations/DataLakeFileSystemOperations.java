@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.operations;
 
 import java.time.Duration;
@@ -40,8 +41,8 @@ public class DataLakeFileSystemOperations {
     private final DataLakeFileSystemClientWrapper client;
     private final DataLakeConfigurationOptionsProxy configurationProxy;
 
-    public DataLakeFileSystemOperations(final DataLakeConfiguration configuration,
-                                        final DataLakeFileSystemClientWrapper client) {
+    public DataLakeFileSystemOperations(
+            final DataLakeConfiguration configuration, final DataLakeFileSystemClientWrapper client) {
         ObjectHelper.notNull(client, "client cannot be null");
         this.client = client;
         configurationProxy = new DataLakeConfigurationOptionsProxy(configuration);
@@ -51,17 +52,18 @@ public class DataLakeFileSystemOperations {
         final Map<String, String> metadata = configurationProxy.getMetadata(exchange);
         final PublicAccessType publicAccessType = configurationProxy.getPublicAccessType(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
-        final DataLakeExchangeHeaders dataLakeExchangeHeaders
-                = new DataLakeExchangeHeaders().httpHeaders(client.createFileSystem(metadata, publicAccessType, timeout));
+        final DataLakeExchangeHeaders dataLakeExchangeHeaders =
+                new DataLakeExchangeHeaders().httpHeaders(client.createFileSystem(metadata, publicAccessType, timeout));
 
         return new DataLakeOperationResponse(true, dataLakeExchangeHeaders.toMap());
     }
 
     public DataLakeOperationResponse deleteFileSystem(final Exchange exchange) {
-        final DataLakeRequestConditions dataLakeRequestConditions = configurationProxy.getDataLakeRequestConditions(exchange);
+        final DataLakeRequestConditions dataLakeRequestConditions =
+                configurationProxy.getDataLakeRequestConditions(exchange);
         final Duration timeout = configurationProxy.getTimeout(exchange);
-        final DataLakeExchangeHeaders dataLakeExchangeHeaders
-                = new DataLakeExchangeHeaders().httpHeaders(client.deleteFileSystem(dataLakeRequestConditions, timeout));
+        final DataLakeExchangeHeaders dataLakeExchangeHeaders =
+                new DataLakeExchangeHeaders().httpHeaders(client.deleteFileSystem(dataLakeRequestConditions, timeout));
         return new DataLakeOperationResponse(true, dataLakeExchangeHeaders.toMap());
     }
 
@@ -80,5 +82,4 @@ public class DataLakeFileSystemOperations {
             return new DataLakeOperationResponse(filteredPaths);
         }
     }
-
 }

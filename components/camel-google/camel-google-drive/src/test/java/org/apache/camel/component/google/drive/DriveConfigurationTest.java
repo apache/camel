@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,18 +30,17 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class DriveConfigurationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveConfigurationTest.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveFilesApiMethod.class)
+            .getName();
     private static final String TEST_URI = "google-drive://" + PATH_PREFIX
-                                           + "/copy?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
+            + "/copy?clientId=a&clientSecret=b&applicationName=c&accessToken=d&refreshToken=e";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import java.io.Serial;
@@ -52,10 +53,6 @@ public class WebhookHealth implements Serializable {
 
     @Override
     public String toString() {
-        return "WebhookHealth{" +
-               "status='" + status + '\'' +
-               ", failCount=" + failCount +
-               '}';
+        return "WebhookHealth{" + "status='" + status + '\'' + ", failCount=" + failCount + '}';
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
+
+import static org.apache.camel.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventNotifierIgnoreCamelContextInitEventsTest {
 
@@ -107,5 +108,4 @@ public class EventNotifierIgnoreCamelContextInitEventsTest {
             }
         };
     }
-
 }

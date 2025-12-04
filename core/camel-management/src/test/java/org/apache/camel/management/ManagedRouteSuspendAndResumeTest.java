@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
 
@@ -30,9 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
@@ -82,9 +83,9 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         // this time the file is consumed
         mock.assertIsSatisfied();
 
-        ManagedSuspendableRouteMBean route
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo",
-                        ManagedSuspendableRouteMBean.class);
+        ManagedSuspendableRouteMBean route = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
         assertNotNull(route);
 
         assertEquals(2, route.getExchangesCompleted());
@@ -106,5 +107,4 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
             }
         };
     }
-
 }

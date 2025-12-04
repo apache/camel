@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.vectorstore;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +37,6 @@ import org.springframework.ai.embedding.EmbeddingResponseMetadata;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
 
     private SimpleVectorStore vectorStore;
@@ -51,7 +52,7 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
                 List<Embedding> embeddings = new ArrayList<>();
                 int index = 0;
                 for (String text : request.getInstructions()) {
-                    float[] vector = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+                    float[] vector = new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
                     embeddings.add(new Embedding(vector, index++));
                 }
                 return new EmbeddingResponse(embeddings, new EmbeddingResponseMetadata());
@@ -59,14 +60,14 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
 
             @Override
             public float[] embed(Document document) {
-                return new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+                return new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
             }
 
             @Override
             public List<float[]> embed(List<String> texts) {
                 List<float[]> results = new ArrayList<>();
                 for (int i = 0; i < texts.size(); i++) {
-                    results.add(new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f });
+                    results.add(new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f});
                 }
                 return results;
             }
@@ -80,8 +81,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         // Create SimpleVectorStore with the mock embedding model
         vectorStore = SimpleVectorStore.builder(embeddingModel).build();
 
-        SpringAiVectorStoreComponent component
-                = context.getComponent(SpringAiVectorStore.SCHEME, SpringAiVectorStoreComponent.class);
+        SpringAiVectorStoreComponent component =
+                context.getComponent(SpringAiVectorStore.SCHEME, SpringAiVectorStoreComponent.class);
         component.getConfiguration().setVectorStore(vectorStore);
 
         return context;
@@ -100,7 +101,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
     public void testAddDocument() {
         String text = "This is a test document";
 
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=ADD")
                 .withBody(text)
                 .request(Message.class);
 
@@ -114,8 +116,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         assertThat(documentIds.get(0)).isNotNull();
 
         // Verify document was added by performing a similarity search
-        List<Document> searchResults
-                = vectorStore.similaritySearch(SearchRequest.builder().query(text).topK(1).build());
+        List<Document> searchResults = vectorStore.similaritySearch(
+                SearchRequest.builder().query(text).topK(1).build());
         assertThat(searchResults).hasSize(1);
         assertThat(searchResults.get(0).getText()).isEqualTo(text);
         assertThat(searchResults.get(0).getId()).isEqualTo(documentIds.get(0));
@@ -126,7 +128,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         // Simulate output from embeddings component
         String inputText = "Hello world";
 
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=ADD")
                 .withBody(inputText)
                 .withHeader("CamelSpringAiEmbeddingInputText", inputText)
                 .request(Message.class);
@@ -135,8 +138,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         assertThat(documentsAdded).isEqualTo(1);
 
         // Verify document was added by performing a similarity search
-        List<Document> searchResults
-                = vectorStore.similaritySearch(SearchRequest.builder().query(inputText).topK(1).build());
+        List<Document> searchResults = vectorStore.similaritySearch(
+                SearchRequest.builder().query(inputText).topK(1).build());
         assertThat(searchResults).hasSize(1);
         assertThat(searchResults.get(0).getText()).isEqualTo(inputText);
     }
@@ -145,9 +148,10 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
     public void testAddFromEmbeddingWithPrecomputedEmbedding() {
         // Simulate output from embeddings component with pre-computed embedding
         String inputText = "Hello world with precomputed embedding";
-        float[] embedding = new float[] { 0.1f, 0.2f, 0.3f, 0.4f, 0.5f };
+        float[] embedding = new float[] {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
 
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=ADD")
                 .withBody(embedding)
                 .withHeader("CamelSpringAiEmbeddingInputText", inputText)
                 .request(Message.class);
@@ -156,8 +160,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         assertThat(documentsAdded).isEqualTo(1);
 
         // Verify document was added by performing a similarity search
-        List<Document> searchResults
-                = vectorStore.similaritySearch(SearchRequest.builder().query(inputText).topK(1).build());
+        List<Document> searchResults = vectorStore.similaritySearch(
+                SearchRequest.builder().query(inputText).topK(1).build());
         assertThat(searchResults).hasSize(1);
 
         Document doc = searchResults.get(0);
@@ -173,11 +177,10 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
     public void testAddFromEmbeddingWithMultiplePrecomputedEmbeddings() {
         // Simulate output from embeddings component with multiple pre-computed embeddings
         List<String> inputTexts = List.of("First batch document", "Second batch document");
-        List<float[]> embeddings = List.of(
-                new float[] { 0.1f, 0.2f, 0.3f },
-                new float[] { 0.4f, 0.5f, 0.6f });
+        List<float[]> embeddings = List.of(new float[] {0.1f, 0.2f, 0.3f}, new float[] {0.4f, 0.5f, 0.6f});
 
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=ADD")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=ADD")
                 .withBody(embeddings)
                 .withHeader("CamelSpringAiEmbeddingInputTexts", inputTexts)
                 .request(Message.class);
@@ -186,8 +189,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         assertThat(documentsAdded).isEqualTo(2);
 
         // Verify documents were added by performing a similarity search that returns all documents
-        List<Document> searchResults = vectorStore
-                .similaritySearch(SearchRequest.builder().query("batch document").topK(10).build());
+        List<Document> searchResults = vectorStore.similaritySearch(
+                SearchRequest.builder().query("batch document").topK(10).build());
         assertThat(searchResults).hasSizeGreaterThanOrEqualTo(2);
 
         // Verify that both documents are present and have the correct metadata
@@ -217,7 +220,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
                 new Document("The dog played in the park"),
                 new Document("The bird flew in the sky")));
 
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=SIMILARITY_SEARCH&topK=2")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=SIMILARITY_SEARCH&topK=2")
                 .withBody("cat")
                 .request(Message.class);
 
@@ -256,8 +260,7 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         assertThat(results).isNotEmpty();
 
         // Verify header contains similar documents
-        List<Document> similarDocuments
-                = result.getHeader(SpringAiVectorStoreHeaders.SIMILAR_DOCUMENTS, List.class);
+        List<Document> similarDocuments = result.getHeader(SpringAiVectorStoreHeaders.SIMILAR_DOCUMENTS, List.class);
         assertThat(similarDocuments).isNotNull();
         assertThat(similarDocuments).isEqualTo(results);
 
@@ -285,12 +288,13 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         vectorStore.add(List.of(doc1, doc2, doc3));
 
         // Verify documents were added
-        List<Document> searchResults
-                = vectorStore.similaritySearch(SearchRequest.builder().query("document").topK(10).build());
+        List<Document> searchResults = vectorStore.similaritySearch(
+                SearchRequest.builder().query("document").topK(10).build());
         assertThat(searchResults).hasSizeGreaterThanOrEqualTo(3);
 
         // Delete two documents using header
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=DELETE")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=DELETE")
                 .withHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, List.of("doc-1", "doc-2"))
                 .request(Message.class);
 
@@ -299,15 +303,18 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         assertThat(documentsDeleted).isEqualTo(2);
 
         // Verify documents were deleted by searching again
-        List<Document> afterDeleteResults
-                = vectorStore.similaritySearch(SearchRequest.builder().query("document").topK(10).build());
+        List<Document> afterDeleteResults = vectorStore.similaritySearch(
+                SearchRequest.builder().query("document").topK(10).build());
 
         // Should not find the deleted documents
-        assertThat(afterDeleteResults.stream().noneMatch(d -> d.getId().equals("doc-1"))).isTrue();
-        assertThat(afterDeleteResults.stream().noneMatch(d -> d.getId().equals("doc-2"))).isTrue();
+        assertThat(afterDeleteResults.stream().noneMatch(d -> d.getId().equals("doc-1")))
+                .isTrue();
+        assertThat(afterDeleteResults.stream().noneMatch(d -> d.getId().equals("doc-2")))
+                .isTrue();
 
         // Should still find doc-3
-        assertThat(afterDeleteResults.stream().anyMatch(d -> d.getId().equals("doc-3"))).isTrue();
+        assertThat(afterDeleteResults.stream().anyMatch(d -> d.getId().equals("doc-3")))
+                .isTrue();
     }
 
     @Test
@@ -319,7 +326,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         vectorStore.add(List.of(doc1, doc2));
 
         // Delete using body as list of IDs
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=DELETE")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=DELETE")
                 .withBody(List.of("doc-10", "doc-20"))
                 .request(Message.class);
 
@@ -335,7 +343,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
         vectorStore.add(List.of(doc));
 
         // Delete using body as single string ID
-        Message result = fluentTemplate.to("spring-ai-vector-store:test?operation=DELETE")
+        Message result = fluentTemplate
+                .to("spring-ai-vector-store:test?operation=DELETE")
                 .withBody("doc-single")
                 .request(Message.class);
 

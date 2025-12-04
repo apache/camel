@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,19 +34,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Comments APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveCommentsIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveCommentsApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveCommentsApiMethod.class)
+            .getName();
 
     @Test
     public void testComment() {
@@ -77,7 +80,8 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
-        final com.google.api.services.drive.model.Comment result3 = requestBodyAndHeaders("direct://GET", null, headers);
+        final com.google.api.services.drive.model.Comment result3 =
+                requestBodyAndHeaders("direct://GET", null, headers);
 
         assertNotNull(result3, "get result");
 
@@ -100,7 +104,8 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         headers.put("CamelGoogleDrive.commentId", comment2.getId());
 
         try {
-            final com.google.api.services.drive.model.Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
+            final com.google.api.services.drive.model.Comment result4 =
+                    requestBodyAndHeaders("direct://GET", null, headers);
             fail("Should have thrown an exception.");
         } catch (Exception e) {
             // Likely safe to ignore in this context
@@ -113,35 +118,30 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for delete
-                from("direct://DELETE")
-                        .to("google-drive://" + PATH_PREFIX + "/delete");
+                from("direct://DELETE").to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
-                from("direct://GET")
-                        .to("google-drive://" + PATH_PREFIX + "/get");
+                from("direct://GET").to("google-drive://" + PATH_PREFIX + "/get");
 
                 // test route for insert
-                from("direct://INSERT")
-                        .to("google-drive://" + PATH_PREFIX + "/insert");
+                from("direct://INSERT").to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
-                from("direct://LIST")
-                        .to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
+                from("direct://LIST").to("google-drive://" + PATH_PREFIX + "/list?inBody=fileId");
 
                 // test route for patch
-                from("direct://PATCH")
-                        .to("google-drive://" + PATH_PREFIX + "/patch");
+                from("direct://PATCH").to("google-drive://" + PATH_PREFIX + "/patch");
 
                 // test route for update
-                from("direct://UPDATE")
-                        .to("google-drive://" + PATH_PREFIX + "/update");
+                from("direct://UPDATE").to("google-drive://" + PATH_PREFIX + "/update");
 
                 // just used to upload file for test
                 from("direct://INSERT_1")
                         .to("google-drive://"
-                            + GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName()
-                            + "/insert");
-
+                                + GoogleDriveApiCollection.getCollection()
+                                        .getApiName(DriveFilesApiMethod.class)
+                                        .getName()
+                                + "/insert");
             }
         };
     }

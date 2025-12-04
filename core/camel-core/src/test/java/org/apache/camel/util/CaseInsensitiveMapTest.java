@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,8 +37,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CaseInsensitiveMapTest {
 
@@ -536,5 +537,4 @@ public class CaseInsensitiveMapTest {
         // have chance to capture memory snapshot in profiler
         Thread.sleep(9999999);
     }
-
 }

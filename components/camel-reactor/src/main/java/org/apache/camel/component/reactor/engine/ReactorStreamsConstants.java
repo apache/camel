@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactor.engine;
 
 import org.apache.camel.AsyncCallback;
@@ -29,10 +30,8 @@ public final class ReactorStreamsConstants {
      */
     public static final AsyncCallback EMPTY_ASYNC_CALLBACK = new AsyncCallback() {
         @Override
-        public void done(boolean doneSync) {
-        }
+        public void done(boolean doneSync) {}
     };
 
-    private ReactorStreamsConstants() {
-    }
+    private ReactorStreamsConstants() {}
 }

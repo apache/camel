@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.util.Date;
@@ -36,10 +37,10 @@ public class LeaderInfo {
 
     private Integer leaseDurationSeconds;
 
-    public LeaderInfo() {
-    }
+    public LeaderInfo() {}
 
-    public LeaderInfo(String groupName, String leader, Date timestamp, Set<String> members, Integer leaseDurationSeconds) {
+    public LeaderInfo(
+            String groupName, String leader, Date timestamp, Set<String> members, Integer leaseDurationSeconds) {
         this.groupName = groupName;
         this.leader = leader;
         this.localTimestamp = timestamp;

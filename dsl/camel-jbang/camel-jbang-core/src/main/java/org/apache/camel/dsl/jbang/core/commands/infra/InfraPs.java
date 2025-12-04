@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.IOException;
@@ -28,8 +29,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "ps", description = "Displays running services", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "ps",
+        description = "Displays running services",
+        sortOptions = false,
+        showDefaultValues = true)
 public class InfraPs extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "0..1")
@@ -50,12 +54,12 @@ public class InfraPs extends InfraBaseCommand {
         Set<String> runningAliases = new HashSet<>();
         try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
             List<Path> pidFiles = files.filter(p -> {
-                if (serviceName == null) {
-                    return p.getFileName().toString().startsWith("infra-");
-                } else {
-                    return p.getFileName().toString().startsWith("infra-" + serviceName.get(0));
-                }
-            })
+                        if (serviceName == null) {
+                            return p.getFileName().toString().startsWith("infra-");
+                        } else {
+                            return p.getFileName().toString().startsWith("infra-" + serviceName.get(0));
+                        }
+                    })
                     .toList();
 
             for (Path pidFile : pidFiles) {

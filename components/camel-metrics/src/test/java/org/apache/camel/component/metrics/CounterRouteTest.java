@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,15 +45,6 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 public class CounterRouteTest extends CamelSpringTestSupport {
@@ -91,13 +92,9 @@ public class CounterRouteTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in-1")
-                        .to("metrics:counter:A?increment=5")
-                        .to("mock:out");
+                from("direct:in-1").to("metrics:counter:A?increment=5").to("mock:out");
 
-                from("direct:in-2")
-                        .to("metrics:counter:A?decrement=9")
-                        .to("mock:out");
+                from("direct:in-2").to("metrics:counter:A?decrement=9").to("mock:out");
 
                 from("direct:in-3")
                         .setHeader(HEADER_COUNTER_INCREMENT, constant(417L))

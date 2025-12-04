@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.language.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.ibm.watson.natural_language_understanding.v1.model.AnalysisResults;
 import org.apache.camel.EndpointInject;
@@ -31,16 +34,18 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration tests for Watson Natural Language Understanding operations.
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.apiKey", matches = ".*",
-                                 disabledReason = "IBM Watson API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.serviceUrl", matches = ".*",
-                                 disabledReason = "IBM Watson NLU Service URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.apiKey",
+            matches = ".*",
+            disabledReason = "IBM Watson API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.watson.serviceUrl",
+            matches = ".*",
+            disabledReason = "IBM Watson NLU Service URL not provided")
 })
 public class WatsonNluIT extends WatsonLanguageTestSupport {
 
@@ -119,8 +124,8 @@ public class WatsonNluIT extends WatsonLanguageTestSupport {
     public void testAnalyzeTextWithEntities() throws Exception {
         mockResult.expectedMessageCount(1);
 
-        final String textWithEntities
-                = "IBM Watson is an artificial intelligence platform developed by IBM. It was created in Yorktown Heights, New York.";
+        final String textWithEntities =
+                "IBM Watson is an artificial intelligence platform developed by IBM. It was created in Yorktown Heights, New York.";
 
         template.send("direct:analyzeEntities", new Processor() {
             @Override
@@ -148,9 +153,9 @@ public class WatsonNluIT extends WatsonLanguageTestSupport {
     public void testAnalyzeTextWithKeywords() throws Exception {
         mockResult.expectedMessageCount(1);
 
-        final String textWithKeywords
-                = "Machine learning and artificial intelligence are transforming the technology industry. "
-                  + "Natural language processing is a key component of AI systems.";
+        final String textWithKeywords =
+                "Machine learning and artificial intelligence are transforming the technology industry. "
+                        + "Natural language processing is a key component of AI systems.";
 
         template.sendBody("direct:analyzeKeywords", textWithKeywords);
 
@@ -173,10 +178,9 @@ public class WatsonNluIT extends WatsonLanguageTestSupport {
     public void testAnalyzeTextComprehensive() throws Exception {
         mockResult.expectedMessageCount(1);
 
-        final String comprehensiveText
-                = "Apple Inc. announced a new iPhone with advanced AI capabilities. "
-                  + "The CEO Tim Cook praised the innovation during the launch event in Cupertino, California. "
-                  + "Customers are excited about the new features and technology.";
+        final String comprehensiveText = "Apple Inc. announced a new iPhone with advanced AI capabilities. "
+                + "The CEO Tim Cook praised the innovation during the launch event in Cupertino, California. "
+                + "Customers are excited about the new features and technology.";
 
         template.sendBody("direct:analyzeComprehensive", comprehensiveText);
 
@@ -270,22 +274,22 @@ public class WatsonNluIT extends WatsonLanguageTestSupport {
             public void configure() {
                 from("direct:analyzeSentiment")
                         .to(buildEndpointUri("analyzeText")
-                            + "&analyzeSentiment=true&analyzeEntities=false&analyzeKeywords=false")
+                                + "&analyzeSentiment=true&analyzeEntities=false&analyzeKeywords=false")
                         .to("mock:result");
 
                 from("direct:analyzeEntities")
                         .to(buildEndpointUri("analyzeText")
-                            + "&analyzeSentiment=false&analyzeEntities=true&analyzeKeywords=false")
+                                + "&analyzeSentiment=false&analyzeEntities=true&analyzeKeywords=false")
                         .to("mock:result");
 
                 from("direct:analyzeKeywords")
                         .to(buildEndpointUri("analyzeText")
-                            + "&analyzeSentiment=false&analyzeEntities=false&analyzeKeywords=true")
+                                + "&analyzeSentiment=false&analyzeEntities=false&analyzeKeywords=true")
                         .to("mock:result");
 
                 from("direct:analyzeComprehensive")
                         .to(buildEndpointUri("analyzeText")
-                            + "&analyzeSentiment=true&analyzeEntities=true&analyzeKeywords=true")
+                                + "&analyzeSentiment=true&analyzeEntities=true&analyzeKeywords=true")
                         .to("mock:result");
 
                 from("direct:analyzeUrl")

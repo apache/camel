@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -105,9 +106,12 @@ public class DynamicRouterOnExceptionTest extends ContextTestSupport {
             public void configure() {
                 onException(IllegalArgumentException.class)
                         // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0).maximumRedeliveries(5);
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(5);
 
-                from("direct:start").dynamicRouter(method(DynamicRouterOnExceptionTest.class, "whereTo")).to("mock:end");
+                from("direct:start")
+                        .dynamicRouter(method(DynamicRouterOnExceptionTest.class, "whereTo"))
+                        .to("mock:end");
             }
         };
     }

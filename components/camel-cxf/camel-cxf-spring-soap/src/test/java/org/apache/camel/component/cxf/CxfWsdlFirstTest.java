@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import jakarta.xml.ws.Endpoint;
@@ -35,5 +36,4 @@ public class CxfWsdlFirstTest extends AbstractCxfWsdlFirstTest {
         String address = "http://localhost:" + getPort1() + "/CxfWsdlFirstTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
-
 }

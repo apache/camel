@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
 
 import org.apache.camel.Exchange;
@@ -45,7 +46,9 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
         if (service != null) {
-            LOG.debug("Using CommitService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using CommitService found in registry {}",
+                    service.getClass().getCanonicalName());
             commitService = (CommitService) service;
         } else {
             commitService = new CommitService();
@@ -58,8 +61,8 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String pullRequestNumberSHA
-                = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, String.class);
+        String pullRequestNumberSHA =
+                exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, String.class);
         String text = exchange.getIn().getBody(String.class);
 
         CommitStatus status = new CommitStatus();
@@ -82,5 +85,4 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
         exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(response);
     }
-
 }

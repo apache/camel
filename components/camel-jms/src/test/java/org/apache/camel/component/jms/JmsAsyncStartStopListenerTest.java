@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -31,12 +34,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 /**
  * Testing with async start listener. This test does not work in parallel mode.
  */
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 @Timeout(30)
 public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
     @RegisterExtension
@@ -78,7 +79,8 @@ public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsAsyncStartStopListenerTest").process(exchange -> exchange.getIn().setBody("Bye World"))
+                from("activemq:queue:JmsAsyncStartStopListenerTest")
+                        .process(exchange -> exchange.getIn().setBody("Bye World"))
                         .to("mock:result");
             }
         };

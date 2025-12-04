@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -302,8 +303,7 @@ public interface EventFactory {
      * @return                   the created event
      */
     CamelEvent createExchangeFailureHandlingEvent(
-            Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri);
+            Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has failed but was handled by the Camel
@@ -319,8 +319,7 @@ public interface EventFactory {
      * @return                   the created event
      */
     CamelEvent createExchangeFailureHandledEvent(
-            Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri);
+            Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} is about to be redelivered

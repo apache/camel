@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder;
 
 import java.util.HashMap;
@@ -39,8 +40,7 @@ public class Namespaces {
     /**
      * Creates an empty namespaces object
      */
-    public Namespaces() {
-    }
+    public Namespaces() {}
 
     /**
      * Creates a namespace context with a single prefix and URI

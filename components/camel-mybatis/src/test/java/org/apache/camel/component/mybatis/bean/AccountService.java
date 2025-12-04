@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis.bean;
 
 import java.util.List;
@@ -37,5 +38,4 @@ public interface AccountService {
     @Insert("insert into ACCOUNT (ACC_ID,ACC_FIRST_NAME,ACC_LAST_NAME,ACC_EMAIL)"
             + " values (#{id}, #{firstName}, #{lastName}, #{emailAddress})")
     void insertBeanAccount(Account account);
-
 }

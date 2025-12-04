@@ -34,7 +34,8 @@ public class KafkaHeaderDeserializer implements Processor {
 
     public boolean enabled = false;
 
-    private final SimpleTypeConverter defaultTypeConverter = new SimpleTypeConverter(true, KafkaHeaderDeserializer::convert);
+    private final SimpleTypeConverter defaultTypeConverter =
+            new SimpleTypeConverter(true, KafkaHeaderDeserializer::convert);
 
     @Override
     public void process(Exchange exchange) throws Exception {

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +36,6 @@ import org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -95,8 +96,8 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest {
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyKeyValuePairDataFormat orderBindyDataFormat
-                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order.class);
+        BindyKeyValuePairDataFormat orderBindyDataFormat =
+                new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order.class);
 
         @Override
         public void configure() {
@@ -108,6 +109,5 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest {
 
             from(URI_DIRECT_START).marshal(orderBindyDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
 }

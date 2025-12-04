@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -371,6 +372,6 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
      * @return                          <tt>true</tt> if the pool is terminated, or <tt>false</tt> if we timed out
      * @throws InterruptedException     is thrown if we are interrupted during waiting
      */
-    boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException;
-
+    boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination)
+            throws InterruptedException;
 }

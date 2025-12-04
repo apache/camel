@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 
@@ -26,9 +30,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.sfn.model.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
@@ -48,7 +49,8 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateActivityResponse resultGet = (CreateActivityResponse) exchange.getIn().getBody();
+        CreateActivityResponse resultGet =
+                (CreateActivityResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-activity::test:arn", resultGet.activityArn());
     }
 
@@ -60,13 +62,16 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.createActivity);
-                exchange.getIn().setBody(CreateActivityRequest.builder().name("activity").build());
+                exchange.getIn()
+                        .setBody(
+                                CreateActivityRequest.builder().name("activity").build());
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateActivityResponse resultGet = (CreateActivityResponse) exchange.getIn().getBody();
+        CreateActivityResponse resultGet =
+                (CreateActivityResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-activity::test:arn", resultGet.activityArn());
     }
 
@@ -77,13 +82,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:createStateMachine", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.createStateMachine);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.createStateMachine);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateStateMachineResponse resultGet = (CreateStateMachineResponse) exchange.getIn().getBody();
+        CreateStateMachineResponse resultGet =
+                (CreateStateMachineResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-state-machine::test:arn", resultGet.stateMachineArn());
     }
 
@@ -94,13 +101,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:deleteStateMachine", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.deleteStateMachine);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.deleteStateMachine);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteStateMachineResponse resultGet = (DeleteStateMachineResponse) exchange.getIn().getBody();
+        DeleteStateMachineResponse resultGet =
+                (DeleteStateMachineResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -111,13 +120,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:updateStateMachine", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.updateStateMachine);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.updateStateMachine);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        UpdateStateMachineResponse resultGet = (UpdateStateMachineResponse) exchange.getIn().getBody();
+        UpdateStateMachineResponse resultGet =
+                (UpdateStateMachineResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-state-machine:version-2::test:arn", resultGet.stateMachineVersionArn());
     }
 
@@ -128,13 +139,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:describeStateMachine", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.describeStateMachine);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.describeStateMachine);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeStateMachineResponse resultGet = (DescribeStateMachineResponse) exchange.getIn().getBody();
+        DescribeStateMachineResponse resultGet =
+                (DescribeStateMachineResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-state-machine::test-arn", resultGet.stateMachineArn());
     }
 
@@ -145,15 +158,19 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:listStateMachines", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.listStateMachines);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.listStateMachines);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListStateMachinesResponse resultGet = (ListStateMachinesResponse) exchange.getIn().getBody();
+        ListStateMachinesResponse resultGet =
+                (ListStateMachinesResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.stateMachines().size());
-        assertEquals("aws:sfn-state-machine::test-arn", resultGet.stateMachines().get(0).stateMachineArn());
+        assertEquals(
+                "aws:sfn-state-machine::test-arn",
+                resultGet.stateMachines().get(0).stateMachineArn());
     }
 
     @Test
@@ -169,7 +186,8 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteActivityResponse resultGet = (DeleteActivityResponse) exchange.getIn().getBody();
+        DeleteActivityResponse resultGet =
+                (DeleteActivityResponse) exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 
@@ -180,13 +198,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:describeActivity", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.describeActivity);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.describeActivity);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeActivityResponse resultGet = (DescribeActivityResponse) exchange.getIn().getBody();
+        DescribeActivityResponse resultGet =
+                (DescribeActivityResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-activity::test:arn", resultGet.activityArn());
     }
 
@@ -203,7 +223,8 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetActivityTaskResponse resultGet = (GetActivityTaskResponse) exchange.getIn().getBody();
+        GetActivityTaskResponse resultGet =
+                (GetActivityTaskResponse) exchange.getIn().getBody();
         assertEquals("activity-input", resultGet.input());
     }
 
@@ -220,7 +241,8 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListActivitiesResponse resultGet = (ListActivitiesResponse) exchange.getIn().getBody();
+        ListActivitiesResponse resultGet =
+                (ListActivitiesResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.activities().size());
         assertEquals("aws:sfn-activity::test:arn", resultGet.activities().get(0).activityArn());
     }
@@ -238,7 +260,8 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        StartExecutionResponse resultGet = (StartExecutionResponse) exchange.getIn().getBody();
+        StartExecutionResponse resultGet =
+                (StartExecutionResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-execution::test:arn", resultGet.executionArn());
     }
 
@@ -249,13 +272,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:startSyncExecution", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.startSyncExecution);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.startSyncExecution);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        StartSyncExecutionResponse resultGet = (StartSyncExecutionResponse) exchange.getIn().getBody();
+        StartSyncExecutionResponse resultGet =
+                (StartSyncExecutionResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-execution::test:arn", resultGet.executionArn());
     }
 
@@ -272,7 +297,8 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        StopExecutionResponse resultGet = (StopExecutionResponse) exchange.getIn().getBody();
+        StopExecutionResponse resultGet =
+                (StopExecutionResponse) exchange.getIn().getBody();
         assertEquals(new Date(1691423142).toInstant(), resultGet.stopDate());
     }
 
@@ -283,13 +309,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:describeExecution", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.describeExecution);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.describeExecution);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeExecutionResponse resultGet = (DescribeExecutionResponse) exchange.getIn().getBody();
+        DescribeExecutionResponse resultGet =
+                (DescribeExecutionResponse) exchange.getIn().getBody();
         assertEquals("aws:sfn-activity::test:arn", resultGet.executionArn());
     }
 
@@ -306,9 +334,11 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListExecutionsResponse resultGet = (ListExecutionsResponse) exchange.getIn().getBody();
+        ListExecutionsResponse resultGet =
+                (ListExecutionsResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.executions().size());
-        assertEquals("aws:sfn-execution::test-arn", resultGet.executions().get(0).executionArn());
+        assertEquals(
+                "aws:sfn-execution::test-arn", resultGet.executions().get(0).executionArn());
     }
 
     @Test
@@ -318,13 +348,15 @@ public class StepFunctions2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:getExecutionHistory", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.getExecutionHistory);
+                exchange.getIn()
+                        .setHeader(StepFunctions2Constants.OPERATION, StepFunctions2Operations.getExecutionHistory);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetExecutionHistoryResponse resultGet = (GetExecutionHistoryResponse) exchange.getIn().getBody();
+        GetExecutionHistoryResponse resultGet =
+                (GetExecutionHistoryResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.events().size());
         assertEquals(1L, resultGet.events().get(0).id());
     }

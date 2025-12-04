@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import java.util.Map;
@@ -32,15 +33,17 @@ public class PulsarComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private AutoConfiguration autoConfiguration;
+
     @Metadata(label = "advanced", autowired = true)
     private PulsarClient pulsarClient;
+
     @Metadata(label = "consumer,advanced")
     private PulsarMessageReceiptFactory pulsarMessageReceiptFactory = new DefaultPulsarMessageReceiptFactory();
+
     @Metadata
     private PulsarConfiguration configuration = new PulsarConfiguration();
 
-    public PulsarComponent() {
-    }
+    public PulsarComponent() {}
 
     public PulsarComponent(CamelContext context) {
         super(context);

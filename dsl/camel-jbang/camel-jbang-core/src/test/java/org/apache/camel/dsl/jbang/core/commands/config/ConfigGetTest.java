@@ -57,5 +57,4 @@ class ConfigGetTest extends BaseConfigTest {
 
         Assertions.assertEquals("bar", printer.getOutput());
     }
-
 }

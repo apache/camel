@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.Collections;
@@ -41,33 +42,48 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public ThroughputProperties getThroughputProperties(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.THROUGHPUT_PROPERTIES, configuration::getThroughputProperties,
+        return getOption(
+                exchange,
+                CosmosDbConstants.THROUGHPUT_PROPERTIES,
+                configuration::getThroughputProperties,
                 ThroughputProperties.class);
     }
 
     public CosmosDatabaseRequestOptions getCosmosDatabaseRequestOptions(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.DATABASE_REQUEST_OPTIONS, nullFallback(),
+        return getOption(
+                exchange,
+                CosmosDbConstants.DATABASE_REQUEST_OPTIONS,
+                nullFallback(),
                 CosmosDatabaseRequestOptions.class);
     }
 
     public CosmosQueryRequestOptions getQueryRequestOptions(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.QUERY_REQUEST_OPTIONS, configuration::getQueryRequestOptions,
+        return getOption(
+                exchange,
+                CosmosDbConstants.QUERY_REQUEST_OPTIONS,
+                configuration::getQueryRequestOptions,
                 CosmosQueryRequestOptions.class);
     }
 
     public boolean isCreateDatabaseIfNotExist(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST, configuration::isCreateDatabaseIfNotExists,
+        return getOption(
+                exchange,
+                CosmosDbConstants.CREATE_DATABASE_IF_NOT_EXIST,
+                configuration::isCreateDatabaseIfNotExists,
                 boolean.class);
     }
 
     public boolean isCreateContainerIfNotExist(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST, configuration::isCreateContainerIfNotExists,
+        return getOption(
+                exchange,
+                CosmosDbConstants.CREATE_CONTAINER_IF_NOT_EXIST,
+                configuration::isCreateContainerIfNotExists,
                 boolean.class);
     }
 
     public CosmosDbOperationsDefinition getOperation(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.OPERATION, configuration::getOperation,
-                CosmosDbOperationsDefinition.class);
+        return getOption(
+                exchange, CosmosDbConstants.OPERATION, configuration::getOperation, CosmosDbOperationsDefinition.class);
     }
 
     public String getQuery(final Exchange exchange) {
@@ -79,24 +95,29 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public String getContainerPartitionKeyPath(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH, configuration::getContainerPartitionKeyPath,
+        return getOption(
+                exchange,
+                CosmosDbConstants.CONTAINER_PARTITION_KEY_PATH,
+                configuration::getContainerPartitionKeyPath,
                 String.class);
     }
 
     public IndexingPolicy getIndexingPolicy(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.INDEXING_POLICY, configuration::getIndexingPolicy,
-                IndexingPolicy.class);
+        return getOption(
+                exchange, CosmosDbConstants.INDEXING_POLICY, configuration::getIndexingPolicy, IndexingPolicy.class);
     }
 
     public CosmosContainerRequestOptions getContainerRequestOptions(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.CONTAINER_REQUEST_OPTIONS, nullFallback(),
+        return getOption(
+                exchange,
+                CosmosDbConstants.CONTAINER_REQUEST_OPTIONS,
+                nullFallback(),
                 CosmosContainerRequestOptions.class);
     }
 
     public PartitionKey getItemPartitionKey(final Exchange exchange) {
-        return new PartitionKey(
-                getOption(exchange, CosmosDbConstants.ITEM_PARTITION_KEY, configuration::getItemPartitionKey,
-                        String.class));
+        return new PartitionKey(getOption(
+                exchange, CosmosDbConstants.ITEM_PARTITION_KEY, configuration::getItemPartitionKey, String.class));
     }
 
     public Object getItem(final Exchange exchange) {
@@ -126,7 +147,8 @@ public class CosmosDbConfigurationOptionsProxy {
     }
 
     public CosmosItemRequestOptions getItemRequestOptions(final Exchange exchange) {
-        return getOption(exchange, CosmosDbConstants.ITEM_REQUEST_OPTIONS, nullFallback(), CosmosItemRequestOptions.class);
+        return getOption(
+                exchange, CosmosDbConstants.ITEM_REQUEST_OPTIONS, nullFallback(), CosmosItemRequestOptions.class);
     }
 
     public CosmosDbConfiguration getConfiguration() {
@@ -139,13 +161,15 @@ public class CosmosDbConfigurationOptionsProxy {
 
     private <R> R getOption(
             final Exchange exchange, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(getObjectFromHeaders(exchange, headerName, type))
                 ? fallbackFn.get()
                 : getObjectFromHeaders(exchange, headerName, type);
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return exchange.getIn().getHeader(headerName, classType);
     }
 }

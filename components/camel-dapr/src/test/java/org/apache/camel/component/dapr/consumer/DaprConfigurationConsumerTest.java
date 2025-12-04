@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,14 +49,6 @@ import org.mockito.ArgumentCaptor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class DaprConfigurationConsumerTest extends CamelTestSupport {
 
     private final CamelContext context = mock(CamelContext.class);
@@ -69,8 +70,7 @@ public class DaprConfigurationConsumerTest extends CamelTestSupport {
         when(context.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
-        when(ef.create(any(), anyBoolean()))
-                .thenAnswer(inv -> DefaultExchange.newFromEndpoint(inv.getArgument(0)));
+        when(ef.create(any(), anyBoolean())).thenAnswer(inv -> DefaultExchange.newFromEndpoint(inv.getArgument(0)));
         when(endpoint.getCamelContext()).thenReturn(context);
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getClient()).thenReturn(mockClient);

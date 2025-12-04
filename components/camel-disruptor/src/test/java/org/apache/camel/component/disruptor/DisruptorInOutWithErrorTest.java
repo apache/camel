@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorInOutWithErrorTest extends CamelTestSupport {
     @Test
@@ -49,7 +50,8 @@ public class DisruptorInOutWithErrorTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start").to("disruptor:foo");
 
-                from("disruptor:foo").transform(constant("Bye World"))
+                from("disruptor:foo")
+                        .transform(constant("Bye World"))
                         .throwException(new IllegalArgumentException("Damn I cannot do this"))
                         .to("mock:result");
             }

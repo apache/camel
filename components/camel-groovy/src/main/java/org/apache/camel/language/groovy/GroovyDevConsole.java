@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.util.Map;
@@ -43,8 +44,8 @@ public class GroovyDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Compile Time: %s (ms)", compiler.getCompileTime()));
             long last = compiler.getLastCompilationTimestamp();
             if (last != 0) {
-                sb.append(String.format("\n    Compile Ago: %s",
-                        TimeUtils.printSince(compiler.getLastCompilationTimestamp())));
+                sb.append(String.format(
+                        "\n    Compile Ago: %s", TimeUtils.printSince(compiler.getLastCompilationTimestamp())));
             }
             sb.append(String.format("\n    Re-compile Enabled: %b", compiler.isRecompileEnabled()));
             if (compiler.getWorkDir() != null) {

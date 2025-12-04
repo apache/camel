@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,9 +39,7 @@ public class ProcessRefBeanTypeTest extends ContextTestSupport {
             public void configure() {
                 context.getRegistry().bind("myEcho", new EchoProcessor());
 
-                from("direct:start")
-                        .process("#type:org.apache.camel.Processor")
-                        .to("mock:result");
+                from("direct:start").process("#type:org.apache.camel.Processor").to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.exceptionpolicy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,9 +42,6 @@ import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
 import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for DefaultExceptionPolicy
@@ -203,5 +204,4 @@ public class DefaultExceptionPolicyStrategyTest {
         ExceptionPolicy result = findPolicy(ioe);
         assertEquals(type2, result);
     }
-
 }

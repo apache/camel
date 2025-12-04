@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import jakarta.annotation.Resource;
 
@@ -24,8 +27,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ContextConfiguration
 public class ProducerTemplateAutoRegisterTwoCamelContextsTest extends SpringRunWithTestSupport {
@@ -50,13 +51,15 @@ public class ProducerTemplateAutoRegisterTwoCamelContextsTest extends SpringRunW
 
     @Test
     public void testHasNoConsumerTemplateCamel1() {
-        ConsumerTemplate lookup = context1.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup =
+                context1.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNull(lookup, "Should NOT lookup consumer template");
     }
 
     @Test
     public void testHasNoConsumerTemplateCamel2() {
-        ConsumerTemplate lookup = context2.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup =
+                context2.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNull(lookup, "Should NOT lookup consumer template");
     }
 }

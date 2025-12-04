@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.component.http.HttpMethods.POST;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
@@ -29,11 +35,6 @@ import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.apache.camel.component.http.HttpMethods.POST;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -44,13 +45,16 @@ public class HttpRedirectTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/someplaceelse", new BasicValidationHandler(GET.name(), null, null, "Bye World"))
                 .register("/redirectplace", new BasicValidationHandler(POST.name(), null, null, ""))
                 .register("/testPost", new RedirectPostHandler(308))
-                .register("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).create();
+                .register("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY))
+                .create();
         localServer.start();
     }
 
@@ -66,8 +70,8 @@ public class HttpRedirectTest extends BaseHttpTest {
     public void httpRedirectFalse() {
 
         String uri = "http://localhost:" + localServer.getLocalPort()
-                     + "/test?httpClient.redirectsEnabled=false&httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
-                     + "&httpConnection.validateAfterInactivity=-1";
+                + "/test?httpClient.redirectsEnabled=false&httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
+                + "&httpConnection.validateAfterInactivity=-1";
         Exchange out = template.request(uri, exchange -> {
             // no data
         });
@@ -76,17 +80,15 @@ public class HttpRedirectTest extends BaseHttpTest {
         HttpOperationFailedException cause = out.getException(HttpOperationFailedException.class);
         assertNotNull(cause);
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, cause.getStatusCode());
-        assertEquals(
-                "http://localhost:" + localServer.getLocalPort() + "/someplaceelse",
-                cause.getRedirectLocation());
+        assertEquals("http://localhost:" + localServer.getLocalPort() + "/someplaceelse", cause.getRedirectLocation());
     }
 
     @Test
     public void httpHandleRedirect() {
 
         String uri = "http://localhost:" + localServer.getLocalPort()
-                     + "/test?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
-                     + "&httpConnection.validateAfterInactivity=-1&followRedirects=true";
+                + "/test?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
+                + "&httpConnection.validateAfterInactivity=-1&followRedirects=true";
         Exchange out = template.request(uri, exchange -> {
             // no data
         });
@@ -101,8 +103,8 @@ public class HttpRedirectTest extends BaseHttpTest {
     public void httpHandleFollowRedirect() {
 
         String uri = "http://localhost:" + localServer.getLocalPort()
-                     + "/testPost?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
-                     + "&httpConnection.validateAfterInactivity=-1&followRedirects=true&httpMethod=POST";
+                + "/testPost?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
+                + "&httpConnection.validateAfterInactivity=-1&followRedirects=true&httpMethod=POST";
         Exchange out = template.request(uri, exchange -> {
             // no data
         });
@@ -120,8 +122,8 @@ public class HttpRedirectTest extends BaseHttpTest {
         component.setFollowRedirects(true);
         component.setConnectionTimeToLive(1000L);
         String uri = "http://localhost:" + localServer.getLocalPort()
-                     + "/testPost?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
-                     + "&httpConnection.validateAfterInactivity=-1&httpMethod=POST";
+                + "/testPost?httpClient.responseTimeout=60000&httpClient.connectTimeout=60000"
+                + "&httpConnection.validateAfterInactivity=-1&httpMethod=POST";
         HttpEndpoint httpEndpoint = (HttpEndpoint) component.createEndpoint(uri);
 
         Exchange out = template.request(httpEndpoint, exchange -> {
@@ -132,7 +134,6 @@ public class HttpRedirectTest extends BaseHttpTest {
         assertEquals(HttpStatus.SC_OK, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("OK", out.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
         assertEquals("", out.getMessage().getBody(String.class));
-
     }
 
     private final class RedirectHandler implements HttpRequestHandler {
@@ -146,8 +147,7 @@ public class HttpRedirectTest extends BaseHttpTest {
         @Override
         public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException {
-            response.setHeader("location", "http://localhost:"
-                                           + localServer.getLocalPort() + "/someplaceelse");
+            response.setHeader("location", "http://localhost:" + localServer.getLocalPort() + "/someplaceelse");
             response.setCode(code);
         }
     }
@@ -163,10 +163,8 @@ public class HttpRedirectTest extends BaseHttpTest {
         @Override
         public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException {
-            response.setHeader("location", "http://localhost:"
-                                           + localServer.getLocalPort() + "/redirectplace");
+            response.setHeader("location", "http://localhost:" + localServer.getLocalPort() + "/redirectplace");
             response.setCode(code);
         }
     }
-
 }

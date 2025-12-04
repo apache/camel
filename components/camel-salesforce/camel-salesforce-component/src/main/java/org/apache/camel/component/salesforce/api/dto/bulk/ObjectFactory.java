@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.JAXBElement;
@@ -35,20 +36,22 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private static final QName JOB_INFO_QNAME = new QName("http://www.force.com/2009/06/asyncapi/dataload", "jobInfo");
-    private static final QName BATCH_INFO_QNAME = new QName("http://www.force.com/2009/06/asyncapi/dataload", "batchInfo");
+    private static final QName BATCH_INFO_QNAME =
+            new QName("http://www.force.com/2009/06/asyncapi/dataload", "batchInfo");
     private static final QName ERROR_QNAME = new QName("http://www.force.com/2009/06/asyncapi/dataload", "error");
     private static final QName RESULTS_QNAME = new QName("http://www.force.com/2009/06/asyncapi/dataload", "results");
-    private static final QName RESULT_LIST_QNAME = new QName("http://www.force.com/2009/06/asyncapi/dataload", "result-list");
-    private static final QName BATCH_INFO_LIST_QNAME
-            = new QName("http://www.force.com/2009/06/asyncapi/dataload", "batchInfoList");
-    private static final QName QUERY_RESULT_QNAME = new QName("http://www.force.com/2009/06/asyncapi/dataload", "queryResult");
+    private static final QName RESULT_LIST_QNAME =
+            new QName("http://www.force.com/2009/06/asyncapi/dataload", "result-list");
+    private static final QName BATCH_INFO_LIST_QNAME =
+            new QName("http://www.force.com/2009/06/asyncapi/dataload", "batchInfoList");
+    private static final QName QUERY_RESULT_QNAME =
+            new QName("http://www.force.com/2009/06/asyncapi/dataload", "queryResult");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
      * org.apache.camel.component.salesforce.api.dto.bulk
      */
-    public ObjectFactory() {
-    }
+    public ObjectFactory() {}
 
     /**
      * Create an instance of {@link SObject }
@@ -175,5 +178,4 @@ public class ObjectFactory {
     public JAXBElement<QueryResult> createQueryResult(QueryResult value) {
         return new JAXBElement<>(QUERY_RESULT_QNAME, QueryResult.class, null, value);
     }
-
 }

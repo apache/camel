@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.ArrayList;
@@ -38,11 +39,14 @@ import org.apache.camel.spi.Metadata;
 @Deprecated(since = "3.19.0")
 public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlElements({
-            @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
-            @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class) })
+        @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(
+                name = "kubernetesServiceDiscovery",
+                type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class)
+    })
     private List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations;
 
     public CombinedServiceCallServiceDiscoveryConfiguration() {
@@ -74,7 +78,8 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     /**
      * Add a ServiceDiscovery configuration
      */
-    public void addServiceDiscoveryConfigurations(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public void addServiceDiscoveryConfigurations(
+            ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         if (serviceDiscoveryConfigurations == null) {
             serviceDiscoveryConfigurations = new ArrayList<>();
         }
@@ -130,7 +135,8 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
     }
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
-        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+        KubernetesServiceCallServiceDiscoveryConfiguration conf =
+                new KubernetesServiceCallServiceDiscoveryConfiguration();
         addServiceDiscoveryConfigurations(conf);
 
         return conf;

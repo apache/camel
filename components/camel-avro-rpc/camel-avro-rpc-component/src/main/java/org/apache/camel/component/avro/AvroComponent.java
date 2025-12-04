@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import java.net.URI;
@@ -36,8 +37,7 @@ public class AvroComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private AvroConfiguration configuration;
 
-    public AvroComponent() {
-    }
+    public AvroComponent() {}
 
     public AvroComponent(CamelContext context) {
         super(context);

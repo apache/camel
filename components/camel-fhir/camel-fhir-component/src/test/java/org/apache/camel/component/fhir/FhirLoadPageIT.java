@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,9 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirLoadPage} APIs. The class source won't be generated
  * again if the generator MOJO finds it under src/test/java.
@@ -46,15 +47,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FhirLoadPageIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirLoadPageIT.class);
-    private static final String PATH_PREFIX
-            = FhirApiCollection.getCollection().getApiName(FhirLoadPageApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirLoadPageApiMethod.class)
+            .getName();
 
     @Test
     public void testByUrl() {
         String url = "Patient?_count=2";
-        Bundle bundle = this.fhirClient.search()
-                .byUrl(url)
-                .returnBundle(Bundle.class).execute();
+        Bundle bundle =
+                this.fhirClient.search().byUrl(url).returnBundle(Bundle.class).execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_NEXT));
 
         String nextPageLink = bundle.getLink("next").getUrl();
@@ -74,9 +75,8 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
     @Test
     public void testNext() {
         String url = "Patient?_count=2";
-        Bundle bundle = this.fhirClient.search()
-                .byUrl(url)
-                .returnBundle(Bundle.class).execute();
+        Bundle bundle =
+                this.fhirClient.search().byUrl(url).returnBundle(Bundle.class).execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_NEXT));
 
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
@@ -89,13 +89,16 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
     @Test
     public void testPrevious() {
         String url = "Patient?_count=2";
-        Bundle bundle = this.fhirClient.search()
-                .byUrl(url)
-                .returnBundle(Bundle.class).execute();
+        Bundle bundle =
+                this.fhirClient.search().byUrl(url).returnBundle(Bundle.class).execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_NEXT));
 
         String nextPageLink = bundle.getLink("next").getUrl();
-        bundle = this.fhirClient.loadPage().byUrl(nextPageLink).andReturnBundle(Bundle.class).execute();
+        bundle = this.fhirClient
+                .loadPage()
+                .byUrl(nextPageLink)
+                .andReturnBundle(Bundle.class)
+                .execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_PREV));
 
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
@@ -108,13 +111,16 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
     @Test
     public void testPreviousWithEncodingEnum() {
         String url = "Patient?_count=2";
-        Bundle bundle = this.fhirClient.search()
-                .byUrl(url)
-                .returnBundle(Bundle.class).execute();
+        Bundle bundle =
+                this.fhirClient.search().byUrl(url).returnBundle(Bundle.class).execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_NEXT));
 
         String nextPageLink = bundle.getLink("next").getUrl();
-        bundle = this.fhirClient.loadPage().byUrl(nextPageLink).andReturnBundle(Bundle.class).execute();
+        bundle = this.fhirClient
+                .loadPage()
+                .byUrl(nextPageLink)
+                .andReturnBundle(Bundle.class)
+                .execute();
         assertNotNull(bundle.getLink(IBaseBundle.LINK_PREV));
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.ENCODING_ENUM.getHeaderName(), EncodingEnum.XML);
@@ -140,10 +146,8 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
 
         input.add(new Patient().addName(new HumanName().setFamily("PATIENT3")));
 
-        List<IBaseResource> response = fhirClient.transaction()
-                .withResources(input)
-                .encodedJson()
-                .execute();
+        List<IBaseResource> response =
+                fhirClient.transaction().withResources(input).encodedJson().execute();
         assertEquals(3, response.size());
     }
 
@@ -152,17 +156,13 @@ public class FhirLoadPageIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for byUrl
-                from("direct://BY_URL")
-                        .to("fhir://" + PATH_PREFIX + "/byUrl");
+                from("direct://BY_URL").to("fhir://" + PATH_PREFIX + "/byUrl");
 
                 // test route for next
-                from("direct://NEXT")
-                        .to("fhir://" + PATH_PREFIX + "/next?inBody=bundle");
+                from("direct://NEXT").to("fhir://" + PATH_PREFIX + "/next?inBody=bundle");
 
                 // test route for previous
-                from("direct://PREVIOUS")
-                        .to("fhir://" + PATH_PREFIX + "/previous?inBody=bundle");
-
+                from("direct://PREVIOUS").to("fhir://" + PATH_PREFIX + "/previous?inBody=bundle");
             }
         };
     }

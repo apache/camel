@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,8 +33,6 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class UnmarshalProcessorTest extends TestSupport {
 
@@ -58,7 +59,9 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         Exception e = exchange.getException();
         assertNotNull(e);
-        assertEquals("The returned exchange " + exchange2 + " is not the same as " + exchange + " provided to the DataFormat",
+        assertEquals(
+                "The returned exchange " + exchange2 + " is not the same as " + exchange
+                        + " provided to the DataFormat",
                 e.getMessage());
     }
 
@@ -71,7 +74,9 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         processor.process(exchange);
         assertSame(out, exchange.getMessage(), "UnmarshalProcessor did not make use of the returned OUT message");
-        assertSame(out.getBody(), exchange.getMessage().getBody(),
+        assertSame(
+                out.getBody(),
+                exchange.getMessage().getBody(),
                 "UnmarshalProcessor did change the body bound to the OUT message");
     }
 
@@ -82,7 +87,9 @@ public class UnmarshalProcessorTest extends TestSupport {
         Processor processor = new UnmarshalProcessor(new MyDataFormat(unmarshalled));
 
         processor.process(exchange);
-        assertSame(unmarshalled, exchange.getMessage().getBody(),
+        assertSame(
+                unmarshalled,
+                exchange.getMessage().getBody(),
                 "UnmarshalProcessor did not make use of the returned object being returned while unmarshalling");
     }
 
@@ -123,5 +130,4 @@ public class UnmarshalProcessorTest extends TestSupport {
             return object;
         }
     }
-
 }

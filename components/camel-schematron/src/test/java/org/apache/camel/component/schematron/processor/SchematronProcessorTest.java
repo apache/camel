@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.Charset;
 
@@ -33,8 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * SchematronEngine Unit Test.
  */
@@ -45,45 +46,55 @@ public class SchematronProcessorTest {
     @Test
     public void testValidXML() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"), Charset.defaultCharset());
         logger.info("Validating payload: {}", payload);
 
         // validate
         String result = getProcessor("sch/schematron-1.sch", null).validate(payload);
         logger.info("Schematron Report: {}", result);
-        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result)).intValue());
-        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
-
+        assertEquals(
+                0,
+                Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result))
+                        .intValue());
+        assertEquals(
+                0,
+                Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result))
+                        .intValue());
     }
 
     @Test
     public void testInvalidXMLWithClientResolver() throws Exception {
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-3.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-3.xml"), Charset.defaultCharset());
         logger.info("Validating payload: {}", payload);
 
         // validate
-        String result = getProcessor("sch/schematron-3.sch", new ClientUriResolver()).validate(payload);
+        String result =
+                getProcessor("sch/schematron-3.sch", new ClientUriResolver()).validate(payload);
         logger.info("Schematron Report: {}", result);
-        assertEquals("A title should be at least two characters", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
-        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
+        assertEquals(
+                "A title should be at least two characters", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
+        assertEquals(
+                0,
+                Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result))
+                        .intValue());
     }
 
     @Test
     public void testInValidXML() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"), Charset.defaultCharset());
         logger.info("Validating payload: {}", payload);
         // validate
         String result = getProcessor("sch/schematron-2.sch", null).validate(payload);
         logger.info("Schematron Report: {}", result);
         // should throw two assertions because of the missing chapters in the XML.
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
-        assertEquals("'chapter' element has more than one title present",
+        assertEquals(
+                "'chapter' element has more than one title present",
                 Utils.evaluate("//svrl:successful-report/svrl:text", result).trim());
-
     }
 
     /**
@@ -96,8 +107,8 @@ public class SchematronProcessorTest {
     private SchematronProcessor getProcessor(final String schematron, final URIResolver clientResolver) {
         TransformerFactory factory = new TransformerFactoryImpl();
         factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, clientResolver));
-        Templates rules
-                = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream(schematron), factory);
+        Templates rules =
+                TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream(schematron), factory);
         return SchematronProcessorFactory.newSchematronEngine(rules);
     }
 

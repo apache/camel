@@ -31,7 +31,8 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -51,7 +52,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       name: default
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -63,7 +66,8 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -84,7 +88,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       namespace: my-namespace
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -92,14 +98,14 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer-source", "knative:broker:default");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.type=my-event",
+            "source.message=Hello", "sink.type=my-event",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -119,7 +125,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       name: default
                     properties:
                       type: my-event
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -127,13 +135,14 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer-source", "knative:broker:default?type=my-event&source=camel");
 
         command.properties = new String[] {
-                "source.message=Hello",
+            "source.message=Hello",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -154,7 +163,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                     properties:
                       type: my-event
                       source: camel
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -163,7 +174,8 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -183,7 +195,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -195,7 +209,8 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -216,7 +231,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -224,14 +241,14 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         Bind command = createCommand("knative:broker:default", "log-sink");
 
         command.properties = new String[] {
-                "source.type=my-event",
-                "sink.showHeaders=true",
+            "source.type=my-event", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -251,7 +268,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -259,14 +278,14 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
         Bind command = createCommand("knative:broker:default?type=my-event&source=camel", "log-sink");
 
         command.properties = new String[] {
-                "sink.showHeaders=true",
-
+            "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -287,7 +306,9 @@ class BindKnativeBrokerTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     private Bind createCommand(String source, String sink) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventgrid;
 
 import java.time.OffsetDateTime;
@@ -111,8 +112,8 @@ public class EventGridProducer extends DefaultProducer {
     }
 
     private EventGridPublisherClient<CloudEvent> createEventGridPublisherClient(EventGridConfiguration configuration) {
-        EventGridPublisherClientBuilder builder = new EventGridPublisherClientBuilder()
-                .endpoint(configuration.getTopicEndpoint());
+        EventGridPublisherClientBuilder builder =
+                new EventGridPublisherClientBuilder().endpoint(configuration.getTopicEndpoint());
 
         // Configure authentication based on credential type
         switch (configuration.getCredentialType()) {

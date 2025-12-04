@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.producer.support;
+
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setException;
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setRecordMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setException;
-import static org.apache.camel.component.kafka.producer.support.ProducerUtil.setRecordMetadata;
-
 public final class KafkaProducerCallBack implements Callback {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerCallBack.class);
 
@@ -41,8 +42,7 @@ public final class KafkaProducerCallBack implements Callback {
     private final boolean record;
     private final List<RecordMetadata> recordMetadataList = new ArrayList<>();
 
-    public KafkaProducerCallBack(Object body, AsyncCallback callback, ExecutorService workerPool,
-                                 boolean record) {
+    public KafkaProducerCallBack(Object body, AsyncCallback callback, ExecutorService workerPool, boolean record) {
         this.body = body;
         this.callback = callback;
         // The worker pool should be created for both sync and async modes, so checking it

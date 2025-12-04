@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,8 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 @ManagedResource(description = "Managed RoundRobin LoadBalancer")
 public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements ManagedRoundRobinLoadBalancerMBean {
 
-    public ManagedRoundRobinLoadBalancer(CamelContext context, RoundRobinLoadBalancer processor,
-                                         LoadBalanceDefinition definition) {
+    public ManagedRoundRobinLoadBalancer(
+            CamelContext context, RoundRobinLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
     }
 

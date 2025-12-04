@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,15 +24,16 @@ public class Parameter {
     private String type;
     private String text;
     private Currency currency;
+
     @JsonProperty("date_time")
     private DateTime dateTime;
+
     private MediaMessage image;
     private MediaMessage document;
     private MediaMessage video;
     private String payload;
 
-    public Parameter() {
-    }
+    public Parameter() {}
 
     public String getType() {
         return type;
@@ -96,5 +98,4 @@ public class Parameter {
     public void setPayload(String payload) {
         this.payload = payload;
     }
-
 }

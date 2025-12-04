@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,11 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerator;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * OptaPlanner unit test with Camel
@@ -49,7 +50,8 @@ public class OptaPlannerAsyncConfigFileTest extends CamelTestSupport {
         getMockEndpoint("mock:result").assertIsSatisfied();
         Exchange exchange = mockEndpoint.getReceivedExchanges().get(0);
 
-        CloudBalance bestSolution = exchange.getMessage().getHeader(OptaPlannerConstants.BEST_SOLUTION, CloudBalance.class);
+        CloudBalance bestSolution =
+                exchange.getMessage().getHeader(OptaPlannerConstants.BEST_SOLUTION, CloudBalance.class);
 
         assertEquals(4, bestSolution.getComputerList().size());
         assertEquals(12, bestSolution.getProcessList().size());
@@ -63,12 +65,12 @@ public class OptaPlannerAsyncConfigFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                        .to("optaplanner:myName?configFile=org/apache/camel/component/optaplanner/solverConfig.xml&async=true");
+                        .to(
+                                "optaplanner:myName?configFile=org/apache/camel/component/optaplanner/solverConfig.xml&async=true");
 
                 from("optaplanner:myName?configFile=org/apache/camel/component/optaplanner/solverConfig.xml")
                         .to("mock:result");
             }
         };
     }
-
 }

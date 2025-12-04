@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -38,31 +41,31 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.body;
-
 public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInAsynchronousIT.class);
 
     private static final String TOPIC_URI_SYNCHRONOUS_FALSE = "persistent://public/default/synchronousFalse";
 
-    private static final String TOPIC_URI_SYNCHRONOUS_FALSE_THROWS_EXCEPTION
-            = "persistent://public/default/synchronousFalseThrowsException";
+    private static final String TOPIC_URI_SYNCHRONOUS_FALSE_THROWS_EXCEPTION =
+            "persistent://public/default/synchronousFalseThrowsException";
 
-    private static final String TOPIC_URI_SYNCHRONOUS_FALSE_MANUAL_ACK
-            = "persistent://public/default/synchronousFalseManualAck";
+    private static final String TOPIC_URI_SYNCHRONOUS_FALSE_MANUAL_ACK =
+            "persistent://public/default/synchronousFalseManualAck";
 
     private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_FALSE + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint synchronousFalse;
 
-    @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_FALSE_THROWS_EXCEPTION + "?numberOfConsumers=1&subscriptionType=Exclusive"
+    @EndpointInject(
+            "pulsar:" + TOPIC_URI_SYNCHRONOUS_FALSE_THROWS_EXCEPTION + "?numberOfConsumers=1&subscriptionType=Exclusive"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer")
     private Endpoint synchronousFalseThrowsException;
 
-    @EndpointInject("pulsar:" + TOPIC_URI_SYNCHRONOUS_FALSE_MANUAL_ACK + "?numberOfConsumers=1&subscriptionType=Exclusive"
+    @EndpointInject(
+            "pulsar:" + TOPIC_URI_SYNCHRONOUS_FALSE_MANUAL_ACK + "?numberOfConsumers=1&subscriptionType=Exclusive"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
                     + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
     private Endpoint synchronousFalseManualAck;
@@ -89,8 +92,8 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
                 @Override
                 public void process(final Exchange exchange) throws PulsarClientException {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
-                    PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn().getHeader(
-                            PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 }
             };
@@ -98,11 +101,7 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
             @Override
             public void configure() {
 
-                from(synchronousFalse)
-                        .threads(2)
-                        .process(processor)
-                        .end()
-                        .to(to);
+                from(synchronousFalse).threads(2).process(processor).end().to(to);
 
                 from(synchronousFalseThrowsException)
                         .threads(2)
@@ -130,7 +129,11 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
@@ -139,8 +142,11 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
 
         to.expectedMessageCount(2);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER)
-                .topic(TOPIC_URI_SYNCHRONOUS_FALSE).create();
+        Producer<String> producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(TOPIC_URI_SYNCHRONOUS_FALSE)
+                .create();
 
         producer.send("One");
         producer.send("Two");
@@ -155,8 +161,11 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
 
     public void throwsException(String topic) throws Exception {
         to.expectedMessageCount(0);
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER)
-                .topic(topic).create();
+        Producer<String> producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(topic)
+                .create();
 
         producer.send("One");
 
@@ -172,12 +181,14 @@ public class PulsarConsumerInAsynchronousIT extends PulsarITSupport {
         to.expectsNoDuplicates(body());
         to.expectedMessageCount(1);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER)
-                .topic(topic).create();
+        Producer<String> producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(PRODUCER)
+                .topic(topic)
+                .create();
 
         producer.send("Hello World!");
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }
-
 }

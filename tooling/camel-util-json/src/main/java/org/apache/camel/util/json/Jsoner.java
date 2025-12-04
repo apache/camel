@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.json;
 
 import java.io.IOException;
@@ -133,9 +134,12 @@ public final class Jsoner {
      *                                  instantiated, isn't closed, or that it is ready before trying again.
      */
     public static Object deserialize(final Reader readableDeserializable) throws DeserializationException, IOException {
-        return Jsoner.deserialize(readableDeserializable,
-                EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,
-                        DeserializationOptions.ALLOW_JSON_DATA))
+        return Jsoner.deserialize(
+                        readableDeserializable,
+                        EnumSet.of(
+                                DeserializationOptions.ALLOW_JSON_ARRAYS,
+                                DeserializationOptions.ALLOW_JSON_OBJECTS,
+                                DeserializationOptions.ALLOW_JSON_DATA))
                 .get(0);
     }
 
@@ -181,7 +185,7 @@ public final class Jsoner {
                      */
                     returnCount += 1;
                     /* Fall through to the case for the initial state. */
-                    //$FALL-THROUGH$
+                    // $FALL-THROUGH$
                 case INITIAL:
                     /* The parse has just started. */
                     switch (token.getType()) {
@@ -326,7 +330,7 @@ public final class Jsoner {
                     break;
                 case PARSING_ENTRY:
                     switch (token.getType()) {
-                        /* Parsed pair keys can only happen while parsing objects. */
+                            /* Parsed pair keys can only happen while parsing objects. */
                         case COLON:
                             /*
                              * The parse could detect a colon while parsing a key value
@@ -413,8 +417,8 @@ public final class Jsoner {
      */
     public static JsonArray deserialize(final String deserializable, final JsonArray defaultValue) {
         try (StringReader readable = new StringReader(deserializable)) {
-            return Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS)).<
-                    JsonArray> getCollection(0);
+            return Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS))
+                    .<JsonArray>getCollection(0);
         } catch (NullPointerException | IOException | DeserializationException caught) {
             /* Don't care, just return the default value. */
             return defaultValue;
@@ -434,8 +438,8 @@ public final class Jsoner {
      */
     public static JsonObject deserialize(final String deserializable, final JsonObject defaultValue) {
         try (StringReader readable = new StringReader(deserializable)) {
-            return Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_OBJECTS)).<
-                    JsonObject> getMap(0);
+            return Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_OBJECTS))
+                    .<JsonObject>getMap(0);
         } catch (NullPointerException | IOException | DeserializationException caught) {
             /* Don't care, just return the default value. */
             return defaultValue;
@@ -466,9 +470,13 @@ public final class Jsoner {
      *                                  properly instantiated, isn't closed, or that it is ready before trying again.
      */
     public static JsonArray deserializeMany(final Reader deserializable) throws DeserializationException, IOException {
-        return Jsoner.deserialize(deserializable,
-                EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,
-                        DeserializationOptions.ALLOW_JSON_DATA, DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES));
+        return Jsoner.deserialize(
+                deserializable,
+                EnumSet.of(
+                        DeserializationOptions.ALLOW_JSON_ARRAYS,
+                        DeserializationOptions.ALLOW_JSON_OBJECTS,
+                        DeserializationOptions.ALLOW_JSON_DATA,
+                        DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES));
     }
 
     /**
@@ -759,7 +767,11 @@ public final class Jsoner {
     }
 
     public static String colorPrint(
-            final String printable, final String indentation, final int depth, final boolean pretty, ColorPrintElement color) {
+            final String printable,
+            final String indentation,
+            final int depth,
+            final boolean pretty,
+            ColorPrintElement color) {
         final Yylex lexer = new Yylex(new StringReader(printable));
         Yytoken lexed;
         final StringBuilder returnable = new StringBuilder();
@@ -896,8 +908,12 @@ public final class Jsoner {
     public static String trySerialize(final Object jsonSerializable) {
         final StringWriter writableDestination = new StringWriter();
         try {
-            Jsoner.serialize(jsonSerializable, writableDestination,
-                    EnumSet.of(SerializationOptions.ALLOW_JSONABLES, SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS,
+            Jsoner.serialize(
+                    jsonSerializable,
+                    writableDestination,
+                    EnumSet.of(
+                            SerializationOptions.ALLOW_JSONABLES,
+                            SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS,
                             SerializationOptions.ALLOW_INVALIDS_NOOP));
         } catch (final IOException caught) {
             /* See StringWriter. */
@@ -921,8 +937,11 @@ public final class Jsoner {
      * @throws IllegalArgumentException if the jsonSerializable isn't serializable in JSON.
      */
     public static void serialize(final Object jsonSerializable, final Writer writableDestination) throws IOException {
-        Jsoner.serialize(jsonSerializable, writableDestination,
-                EnumSet.of(SerializationOptions.ALLOW_JSONABLES, SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS));
+        Jsoner.serialize(
+                jsonSerializable,
+                writableDestination,
+                EnumSet.of(
+                        SerializationOptions.ALLOW_JSONABLES, SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS));
     }
 
     /**
@@ -1181,11 +1200,11 @@ public final class Jsoner {
                  */
                 throw new IllegalArgumentException(
                         "Encountered a: " + jsonSerializable.getClass().getName() + " as: " + jsonSerializable
-                                                   + "  that isn't JSON serializable.\n  Try:\n"
-                                                   + "    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n"
-                                                   + "    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n"
-                                                   + "    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n"
-                                                   + "    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
+                                + "  that isn't JSON serializable.\n  Try:\n"
+                                + "    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n"
+                                + "    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n"
+                                + "    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n"
+                                + "    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
             }
         }
     }
@@ -1200,8 +1219,11 @@ public final class Jsoner {
      * @param  writableDestination represents where the resulting JSON text is written to.
      * @throws IOException         if the writableDestination encounters an I/O problem, like being closed while in use.
      */
-    public static void serializeCarelessly(final Object jsonSerializable, final Writer writableDestination) throws IOException {
-        Jsoner.serialize(jsonSerializable, writableDestination,
+    public static void serializeCarelessly(final Object jsonSerializable, final Writer writableDestination)
+            throws IOException {
+        Jsoner.serialize(
+                jsonSerializable,
+                writableDestination,
                 EnumSet.of(SerializationOptions.ALLOW_JSONABLES, SerializationOptions.ALLOW_INVALIDS));
     }
 
@@ -1214,7 +1236,8 @@ public final class Jsoner {
      *                                  use.
      * @throws IllegalArgumentException if the jsonSerializable isn't serializable in JSON.
      */
-    public static void serializeStrictly(final Object jsonSerializable, final Writer writableDestination) throws IOException {
+    public static void serializeStrictly(final Object jsonSerializable, final Writer writableDestination)
+            throws IOException {
         Jsoner.serialize(jsonSerializable, writableDestination, EnumSet.noneOf(SerializationOptions.class));
     }
 }

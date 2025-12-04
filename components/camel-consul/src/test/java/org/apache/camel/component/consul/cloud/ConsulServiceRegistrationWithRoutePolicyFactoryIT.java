@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
 
 import org.apache.camel.CamelContext;
@@ -35,8 +36,11 @@ public class ConsulServiceRegistrationWithRoutePolicyFactoryIT extends ConsulSer
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT).routeId(SERVICE_ID).routeGroup(SERVICE_NAME)
-                        .noAutoStartup().to("log:service-registry?level=INFO");
+                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
+                        .routeId(SERVICE_ID)
+                        .routeGroup(SERVICE_NAME)
+                        .noAutoStartup()
+                        .to("log:service-registry?level=INFO");
             }
         };
     }

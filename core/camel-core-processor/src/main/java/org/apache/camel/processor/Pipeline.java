@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +38,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * Creates a Pipeline pattern where the output of the previous step is sent as input to the next step, reusing the same
@@ -61,8 +62,7 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
         private AsyncCallback callback;
         private int index;
 
-        PipelineTask() {
-        }
+        PipelineTask() {}
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
@@ -105,7 +105,8 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
 
                 // logging nextExchange as it contains the exchange that might have altered the payload and since
                 // we are logging the completion it will be confusing if we log the original instead
-                // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+                // we could also consider logging the original and the nextExchange then we have *before* and *after*
+                // snapshots
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
@@ -120,7 +121,8 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
-        this.processors = processors.stream().map(AsyncProcessorConverterHelper::convert).toList();
+        this.processors =
+                processors.stream().map(AsyncProcessorConverterHelper::convert).toList();
         this.size = processors.size();
     }
 
@@ -171,7 +173,8 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
 
     @Override
     protected void doBuild() throws Exception {
-        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
+        boolean pooled =
+                camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
             taskFactory = new PooledTaskFactory(getId()) {
                 @Override
@@ -179,7 +182,8 @@ public class Pipeline extends BaseProcessorSupport implements Navigate<Processor
                     return new PipelineTask();
                 }
             };
-            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
+            int capacity =
+                    camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
         } else {
             taskFactory = new PrototypeTaskFactory() {

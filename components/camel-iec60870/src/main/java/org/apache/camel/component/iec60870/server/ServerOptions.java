@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870.server;
 
 import java.util.Objects;
@@ -147,5 +148,4 @@ public class ServerOptions extends BaseOptions<ServerOptions> {
     public int getBackgroundScanPeriod() {
         return this.dataModuleOptions.getBackgroundScanPeriod();
     }
-
 }

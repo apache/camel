@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.util.Arrays;
@@ -122,7 +123,10 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
      *                                                                       conversion errors.
      */
     protected final <T> T getParameter(
-            final String propName, final Exchange exchange, final boolean convertInBody, final boolean optional,
+            final String propName,
+            final Exchange exchange,
+            final boolean convertInBody,
+            final boolean optional,
             final Class<T> parameterClass)
             throws SalesforceException {
 
@@ -154,9 +158,10 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
 
         // error if property was not set
         if (propValue == null && !optional) {
-            final String msg
-                    = "Missing property " + propName
-                      + (convertInBody ? ", message body could not be converted to type " + parameterClass.getName() : "");
+            final String msg = "Missing property " + propName
+                    + (convertInBody
+                            ? ", message body could not be converted to type " + parameterClass.getName()
+                            : "");
             throw new SalesforceException(msg, null);
         }
 
@@ -180,8 +185,10 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
     }
 
     protected Class<?> getSObjectClass(Exchange exchange) throws SalesforceException {
-        final String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
-        final String className = getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final String sObjectName =
+                getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
+        final String className =
+                getParameter(SalesforceEndpointConfig.SOBJECT_CLASS, exchange, IGNORE_BODY, IS_OPTIONAL);
         return getSObjectClass(sObjectName, className);
     }
 
@@ -203,11 +210,12 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
         }
         if (className != null) {
             try {
-                sObjectClass
-                        = endpoint.getComponent().getCamelContext().getClassResolver().resolveMandatoryClass(className);
+                sObjectClass = endpoint.getComponent()
+                        .getCamelContext()
+                        .getClassResolver()
+                        .resolveMandatoryClass(className);
             } catch (ClassNotFoundException e) {
-                throw new SalesforceException(
-                        String.format("SObject class not found %s", className), e);
+                throw new SalesforceException(String.format("SObject class not found %s", className), e);
             }
         }
         return sObjectClass;

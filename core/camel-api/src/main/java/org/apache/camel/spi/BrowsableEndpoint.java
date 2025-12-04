@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -36,8 +37,7 @@ public interface BrowsableEndpoint extends Endpoint {
      * @param firstTimestamp timestamp of first message (0 if no information)
      * @param lastTimestamp  timestamp of last message (0 if no information)
      */
-    record BrowseStatus(int size, long firstTimestamp, long lastTimestamp) {
-    }
+    record BrowseStatus(int size, long firstTimestamp, long lastTimestamp) {}
 
     /**
      * Maximum number of messages to browse by default.

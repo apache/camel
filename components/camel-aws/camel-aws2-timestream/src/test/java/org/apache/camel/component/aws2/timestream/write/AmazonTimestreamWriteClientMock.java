@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.write;
 
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ import software.amazon.awssdk.services.timestreamwrite.model.*;
 
 public class AmazonTimestreamWriteClientMock implements TimestreamWriteClient {
 
-    public AmazonTimestreamWriteClientMock() {
-    }
+    public AmazonTimestreamWriteClientMock() {}
 
     @Override
     public DescribeEndpointsResponse describeEndpoints(DescribeEndpointsRequest describeEndpointsRequest) {
@@ -72,9 +72,11 @@ public class AmazonTimestreamWriteClientMock implements TimestreamWriteClient {
     }
 
     @Override
-    public DescribeBatchLoadTaskResponse describeBatchLoadTask(DescribeBatchLoadTaskRequest describeBatchLoadTaskRequest) {
+    public DescribeBatchLoadTaskResponse describeBatchLoadTask(
+            DescribeBatchLoadTaskRequest describeBatchLoadTaskRequest) {
         DescribeBatchLoadTaskResponse.Builder result = DescribeBatchLoadTaskResponse.builder();
-        result.batchLoadTaskDescription(BatchLoadTaskDescription.builder().taskId("task-1").build());
+        result.batchLoadTaskDescription(
+                BatchLoadTaskDescription.builder().taskId("task-1").build());
         return result.build();
     }
 
@@ -157,7 +159,5 @@ public class AmazonTimestreamWriteClientMock implements TimestreamWriteClient {
     }
 
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 }

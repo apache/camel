@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.marshall.simple;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,10 +38,6 @@ import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSupport {
 
     private List<Map<String, Object>> models = new ArrayList<>();
@@ -48,9 +49,7 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
             public void configure() {
                 BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat(Order.class);
 
-                from("direct:start")
-                        .marshal(bindy)
-                        .to("mock:result");
+                from("direct:start").marshal(bindy).to("mock:result");
             }
         };
     }
@@ -58,12 +57,11 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
     @Test
     public void testMarshallMessage() {
         List<Map<String, Object>> model = generateModel();
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:start", model));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", model));
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
-        assertEquals("Length for the firstName must not be larger than allowed, was: 13, allowed: 9",
-                cause.getMessage());
+        assertEquals(
+                "Length for the firstName must not be larger than allowed, was: 13, allowed: 9", cause.getMessage());
     }
 
     public List<Map<String, Object>> generateModel() {
@@ -219,11 +217,11 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

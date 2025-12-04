@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.component.netty.http.RestNettyHttpBinding;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
 
@@ -47,29 +48,29 @@ public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
             @Override
             public void configure() {
                 // configure to use netty-http on localhost with the given port
-                restConfiguration().component("netty-http").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("netty-http")
+                        .host("localhost")
+                        .port(getPort())
                         .endpointProperty("nettyHttpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                        .get("{id}/{query}").to("direct:query")
-                        .get("{id}/basic").to("direct:basic");
+                        .get("{id}/{query}")
+                        .to("direct:query")
+                        .get("{id}/basic")
+                        .to("direct:basic");
 
-                from("direct:query")
-                        .to("log:query")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Goofy");
-                        });
+                from("direct:query").to("log:query").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Goofy");
+                });
 
-                from("direct:basic")
-                        .to("log:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getMessage().setBody(id + ";Donald Duck");
-                        });
+                from("direct:basic").to("log:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody(id + ";Donald Duck");
+                });
             }
         };
     }
-
 }

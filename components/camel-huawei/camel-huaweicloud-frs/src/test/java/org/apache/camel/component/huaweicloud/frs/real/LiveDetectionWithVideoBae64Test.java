@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.real;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.huaweicloud.sdk.frs.v2.model.DetectLiveByBase64Response;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LiveDetectionWithVideoBae64Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -35,14 +36,15 @@ public class LiveDetectionWithVideoBae64Test extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_VIDEO_BASE64,
+                        .setProperty(
+                                FaceRecognitionProperties.FACE_VIDEO_BASE64,
                                 constant(testConfiguration.getProperty("videoBase64")))
                         .to("hwcloud-frs:faceLiveDetection?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&ignoreSslVerification=true")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&ignoreSslVerification=true")
                         .log("perform faceLiveDetection successful")
                         .to("mock:perform_live_detection_result");
             }
@@ -68,5 +70,4 @@ public class LiveDetectionWithVideoBae64Test extends CamelTestSupport {
 
         assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByBase64Response);
     }
-
 }

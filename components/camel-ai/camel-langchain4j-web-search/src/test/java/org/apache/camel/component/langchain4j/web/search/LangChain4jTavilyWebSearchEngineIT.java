@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.web.search;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -27,9 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // Get an API key at https://app.tavily.com/
 @EnabledIfEnvironmentVariable(named = "TAVILY_API_KEY", matches = ".*")
@@ -50,7 +51,8 @@ public class LangChain4jTavilyWebSearchEngineIT extends CamelTestSupport {
 
     @Test
     void testSimpleSearch() {
-        Exchange result = fluentTemplate.to(WEB_SEARCH_URI)
+        Exchange result = fluentTemplate
+                .to(WEB_SEARCH_URI)
                 .withBody("Who won the European Cup in 2024?")
                 .request(Exchange.class);
 
@@ -62,10 +64,12 @@ public class LangChain4jTavilyWebSearchEngineIT extends CamelTestSupport {
 
     @Test
     void testSearchWithParams() {
-        String uri = String.format("%s?maxResults=2&resultType=%s", WEB_SEARCH_URI,
-                LangChain4jWebSearchResultType.LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT);
+        String uri = String.format(
+                "%s?maxResults=2&resultType=%s",
+                WEB_SEARCH_URI, LangChain4jWebSearchResultType.LANGCHAIN4J_WEB_SEARCH_ORGANIC_RESULT);
 
-        Exchange result = fluentTemplate.to(uri)
+        Exchange result = fluentTemplate
+                .to(uri)
                 .withBody("Who won the European Cup in 2024?")
                 .request(Exchange.class);
 
@@ -74,8 +78,8 @@ public class LangChain4jTavilyWebSearchEngineIT extends CamelTestSupport {
         List<WebSearchOrganicResult> listResult = result.getIn().getBody(List.class);
         assertNotNull(listResult, "The list results from the Tavily Search Engine shouldn't be null.");
         assertNotEquals(0, listResult.get(0), "The list results from the Tavily Search Engine shouldn't be empty.");
-        assertNotNull(listResult.get(0).content(), "The first result from the Tavily Search Engine should contain content.");
-
+        assertNotNull(
+                listResult.get(0).content(), "The first result from the Tavily Search Engine should contain content.");
     }
 
     @Test
@@ -84,5 +88,4 @@ public class LangChain4jTavilyWebSearchEngineIT extends CamelTestSupport {
         assertNotNull(response, "An Exchange is expected.");
         assertNotEquals(0, response.get(0), "The list results from the Tavily Search Engine shouldn't be empty.");
     }
-
 }

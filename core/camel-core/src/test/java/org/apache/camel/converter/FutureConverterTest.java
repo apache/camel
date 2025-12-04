@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Timestamp;
 import java.util.concurrent.Future;
@@ -26,10 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Isolated
 public class FutureConverterTest extends ContextTestSupport {
@@ -64,7 +65,8 @@ public class FutureConverterTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
-        assertThrows(NoTypeConversionAvailableException.class,
+        assertThrows(
+                NoTypeConversionAvailableException.class,
                 () -> context.getTypeConverter().mandatoryConvertTo(Timestamp.class, exchange, future),
                 "Should have thrown an exception");
     }

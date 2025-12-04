@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,22 +38,25 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
 
     @XmlTransient
     private String endpointUriToString;
+
     @XmlTransient
     protected Endpoint endpoint;
+
     @XmlTransient
     protected EndpointConsumerBuilder endpointConsumerBuilder;
 
     @XmlAttribute
     private String variableReceive;
+
     @XmlAttribute
     @Metadata(required = true)
     private String uri;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "20000")
     private String timeout;
 
-    public PollDefinition() {
-    }
+    public PollDefinition() {}
 
     protected PollDefinition(PollDefinition source) {
         super(source);
@@ -204,5 +208,4 @@ public class PollDefinition extends NoOutputDefinition<PollDefinition> implement
         this.endpoint = null;
         this.uri = null;
     }
-
 }

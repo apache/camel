@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resume;
 
 import java.util.ArrayList;
@@ -53,8 +54,8 @@ public class ResumableProcessor extends BaseProcessorSupport
     private String id;
     private String routeId;
 
-    public ResumableProcessor(ResumeStrategy resumeStrategy, Processor processor, LoggingLevel loggingLevel,
-                              boolean intermittent) {
+    public ResumableProcessor(
+            ResumeStrategy resumeStrategy, Processor processor, LoggingLevel loggingLevel, boolean intermittent) {
         this.resumeStrategy = Objects.requireNonNull(resumeStrategy);
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.loggingLevel = loggingLevel;
@@ -63,7 +64,8 @@ public class ResumableProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Starting the resumable strategy: {}", resumeStrategy.getClass().getSimpleName());
+        LOG.info(
+                "Starting the resumable strategy: {}", resumeStrategy.getClass().getSimpleName());
         resumeStrategy.start();
 
         super.doStart();
@@ -71,7 +73,8 @@ public class ResumableProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping the resumable strategy: {}", resumeStrategy.getClass().getSimpleName());
+        LOG.info(
+                "Stopping the resumable strategy: {}", resumeStrategy.getClass().getSimpleName());
         resumeStrategy.stop();
         super.doStop();
     }
@@ -129,5 +132,4 @@ public class ResumableProcessor extends BaseProcessorSupport
     public boolean hasNext() {
         return processor != null;
     }
-
 }

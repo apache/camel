@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.sql.DataSource;
 
@@ -26,10 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * For testing with mixed transacted propagation (required, requires new)
@@ -60,7 +61,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         template.sendBody("direct:required", "Tiger in Action");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(Integer.valueOf(1),
+        assertEquals(
+                Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
         assertEquals(2, count, "Number of books");
     }
@@ -71,7 +73,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // we do 2x the book service so we should get 2 tiger books
-        assertEquals(Integer.valueOf(2),
+        assertEquals(
+                Integer.valueOf(2),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
         assertEquals(3, count, "Number of books");
     }
@@ -81,7 +84,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         template.sendBody("direct:new", "Elephant in Action");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(Integer.valueOf(1),
+        assertEquals(
+                Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Elephant in Action"));
         assertEquals(2, count, "Number of books");
     }
@@ -91,7 +95,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         template.sendBody("direct:requiredAndNew", "Tiger in Action");
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(Integer.valueOf(2),
+        assertEquals(
+                Integer.valueOf(2),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
         assertEquals(3, count, "Number of books");
     }
@@ -105,11 +110,14 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+            assertEquals(
+                    "We don't have Donkeys, only Camels",
+                    e.getCause().getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(Integer.valueOf(0),
+        assertEquals(
+                Integer.valueOf(0),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
         assertEquals(1, count, "Number of books");
     }
@@ -123,11 +131,14 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+            assertEquals(
+                    "We don't have Donkeys, only Camels",
+                    e.getCause().getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(Integer.valueOf(0),
+        assertEquals(
+                Integer.valueOf(0),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
         assertEquals(1, count, "Number of books");
     }
@@ -140,13 +151,17 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
             // expeced as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+            assertEquals(
+                    "We don't have Donkeys, only Camels",
+                    e.getCause().getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals(Integer.valueOf(1),
+        assertEquals(
+                Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Tiger in Action"));
-        assertEquals(Integer.valueOf(0),
+        assertEquals(
+                Integer.valueOf(0),
                 jdbc.queryForObject("select count(*) from books where title = ?", Integer.class, "Donkey in Action"));
         // the tiger in action should be committed, but our 2nd route should rollback
         assertEquals(2, count, "Number of books");
@@ -156,18 +171,14 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:required")
-                        .transacted("PROPATATION_REQUIRED")
-                        .bean("bookService");
+                from("direct:required").transacted("PROPATATION_REQUIRED").bean("bookService");
 
                 from("direct:required2")
                         .transacted("PROPATATION_REQUIRED")
                         .bean("bookService")
                         .bean("bookService");
 
-                from("direct:new")
-                        .transacted("PROPAGATION_REQUIRES_NEW")
-                        .bean("bookService");
+                from("direct:new").transacted("PROPAGATION_REQUIRES_NEW").bean("bookService");
 
                 from("direct:requiredAndNew").to("direct:required", "direct:new");
 
@@ -179,5 +190,4 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
             }
         };
     }
-
 }

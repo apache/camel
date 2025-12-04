@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,8 +25,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -38,11 +39,14 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
-        final DisruptorConsumer consumer = (DisruptorConsumer) context.getRoute("bar").getConsumer();
+        final DisruptorConsumer consumer =
+                (DisruptorConsumer) context.getRoute("bar").getConsumer();
 
         ServiceHelper.suspendService(consumer);
         assertEquals("Suspended", consumer.getStatus().name());

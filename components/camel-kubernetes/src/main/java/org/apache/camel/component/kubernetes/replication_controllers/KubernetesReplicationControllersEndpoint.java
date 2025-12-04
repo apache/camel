@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.replication_controllers;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_REPLICATION_CONTROLLERS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,18 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_REPLICATION_CONTROLLERS;
-
 /**
  * Perform operations on Kubernetes Replication Controllers and get notified on Replication Controllers changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_REPLICATION_CONTROLLERS,
-             title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_REPLICATION_CONTROLLERS,
+        title = "Kubernetes Replication Controller",
+        syntax = "kubernetes-replication-controllers:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component,
-                                                    KubernetesConfiguration config) {
+    public KubernetesReplicationControllersEndpoint(
+            String uri, KubernetesReplicationControllersComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -51,5 +56,4 @@ public class KubernetesReplicationControllersEndpoint extends AbstractKubernetes
         configureConsumer(consumer);
         return consumer;
     }
-
 }

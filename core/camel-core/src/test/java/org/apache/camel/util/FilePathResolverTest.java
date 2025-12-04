@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilePathResolverTest {
 
@@ -38,10 +39,15 @@ public class FilePathResolverTest {
         System.setProperty("beer", "Carlsberg");
         assertEquals(tmp + "foo/Carlsberg", FilePathResolver.resolvePath("${java.io.tmpdir}foo/${beer}"));
 
-        assertEquals("/myprefix/" + tmp + "bar/Carlsberg",
+        assertEquals(
+                "/myprefix/" + tmp + "bar/Carlsberg",
                 FilePathResolver.resolvePath("/myprefix/${java.io.tmpdir}bar/${beer}"));
 
-        assertEquals("/foo/myserver/bar/Carlsberg", FilePathResolver.resolvePath("/foo/${env:FOO_SERVICE_HOST}/bar/${beer}"));
-        assertEquals("/foo/myserver/bar/Carlsberg", FilePathResolver.resolvePath("/foo/${env.FOO_SERVICE_HOST}/bar/${beer}"));
+        assertEquals(
+                "/foo/myserver/bar/Carlsberg",
+                FilePathResolver.resolvePath("/foo/${env:FOO_SERVICE_HOST}/bar/${beer}"));
+        assertEquals(
+                "/foo/myserver/bar/Carlsberg",
+                FilePathResolver.resolvePath("/foo/${env.FOO_SERVICE_HOST}/bar/${beer}"));
     }
 }

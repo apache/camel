@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -25,17 +31,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class FilteringXmlStreamWriterTest {
     private FilteringXmlStreamWriter filteringXmlStreamWriter;
+
     @Mock
     private NonXmlCharFilterer nonXmlCharFiltererMock;
+
     @Mock
     private XMLStreamWriter xmlStreamWriterMock;
 
@@ -87,9 +89,8 @@ public class FilteringXmlStreamWriterTest {
 
     @Test
     public void testWriteCharacters3Args() throws XMLStreamException {
-        char[] buffer = new char[] { 'a', 'b', 'c' };
+        char[] buffer = new char[] {'a', 'b', 'c'};
         filteringXmlStreamWriter.writeCharacters(buffer, 2, 3);
         verify(xmlStreamWriterMock).writeCharacters(same(buffer), eq(2), eq(3));
     }
-
 }

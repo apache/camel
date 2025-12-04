@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-//Covers both WireTapReifier and ToDynamicReifier
+// Covers both WireTapReifier and ToDynamicReifier
 public class RawUrlWireTapDslTest extends BaseEndpointDslTest {
 
     @Test
@@ -46,19 +47,16 @@ public class RawUrlWireTapDslTest extends BaseEndpointDslTest {
                 from(direct("a"))
                         .recipientList(endpoints(mock("m1"), direct("b")))
                         .routingSlip(endpoints(mock("m2"), direct("c")))
-                        .wireTap(seda("d").size("${header.size}")).dynamicUri(true)
+                        .wireTap(seda("d").size("${header.size}"))
+                        .dynamicUri(true)
                         .enrich(direct("e"))
                         .toD(mock("${header.next}"));
 
                 from(direct("b")).to(log("endpoint.b"));
                 from(direct("c")).to(log("endpoint.c"));
                 from(seda("d?size=1")).to(log("endpoint.d"));
-                from(direct("e"))
-                        .setBody(constant("body"))
-                        .setHeader("next", constant("m3"));
-
+                from(direct("e")).setBody(constant("body")).setHeader("next", constant("m3"));
             }
         };
     }
-
 }

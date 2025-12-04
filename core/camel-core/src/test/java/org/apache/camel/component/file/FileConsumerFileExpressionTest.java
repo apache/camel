@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,8 +45,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("bean"
-                             + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true"))
+                from(fileUri("bean" + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true"))
                         .to("mock:result");
             }
         });
@@ -60,19 +60,19 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
 
     @Test
     public void testConsumeFileBasedOnDatePattern() throws Exception {
-        template.sendBodyAndHeader(fileUri("date"), "Bye World", Exchange.FILE_NAME,
-                "myfile-20081128.txt");
-        template.sendBodyAndHeader(fileUri("date"), "Hello World", Exchange.FILE_NAME,
-                "myfile-20081129.txt");
-        template.sendBodyAndHeader(fileUri("date"), "Goodday World", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(fileUri("date"), "Bye World", Exchange.FILE_NAME, "myfile-20081128.txt");
+        template.sendBodyAndHeader(fileUri("date"), "Hello World", Exchange.FILE_NAME, "myfile-20081129.txt");
+        template.sendBodyAndHeader(
+                fileUri("date"),
+                "Goodday World",
+                Exchange.FILE_NAME,
                 context.resolveLanguage("simple").createExpression("myfile-${date:now:yyyyMMdd}.txt"));
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from(fileUri("date"
-                             + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt"))
+                from(fileUri("date" + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt"))
                         .convertBodyTo(String.class)
                         .to("mock:result");
                 // END SNIPPET: e1
@@ -92,5 +92,4 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             return "123";
         }
     }
-
 }

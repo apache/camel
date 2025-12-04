@@ -14,7 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.camel.Exchange.FILE_NAME;
+import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
+import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
+import static org.apache.camel.dataformat.tarfile.TarUtils.toEntries;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -28,18 +41,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.camel.Exchange.FILE_NAME;
-import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
-import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;
-import static org.apache.camel.dataformat.tarfile.TarUtils.getTaredText;
-import static org.apache.camel.dataformat.tarfile.TarUtils.toEntries;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
     private static final File TEST_DIR = new File("target/springtar");
@@ -198,6 +199,7 @@ class SpringTarFileDataFormatTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/tarfile/SpringTarFileDataFormatTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/tarfile/SpringTarFileDataFormatTest.xml");
     }
 }

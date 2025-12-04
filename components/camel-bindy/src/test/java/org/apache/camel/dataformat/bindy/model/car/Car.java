@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.car;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -27,42 +28,61 @@ public class Car {
 
     @DataField(pos = 1)
     private String stockid;
+
     @DataField(pos = 2)
     private String make;
+
     @DataField(pos = 3)
     private String model;
+
     @DataField(pos = 4)
     private String deriv;
+
     @DataField(pos = 5)
     private String series;
+
     @DataField(pos = 6)
     private String registration;
+
     @DataField(pos = 7)
     private String chassis;
+
     @DataField(pos = 8)
     private String engine;
+
     @DataField(pos = 9)
     private int year;
+
     @DataField(pos = 10, precision = 1)
     private double klms;
+
     @DataField(pos = 11)
     private String body;
+
     @DataField(pos = 12)
     private Colour colour;
+
     @DataField(pos = 13)
     private String enginesize;
+
     @DataField(pos = 14)
     private String trans;
+
     @DataField(pos = 15)
     private String fuel;
+
     @DataField(pos = 16)
     private String options;
+
     @DataField(pos = 17)
     private String desc;
+
     @DataField(pos = 18)
     private String status;
+
     @DataField(pos = 19, precision = 1)
     private double price;
+
     @DataField(pos = 20)
     private String nvic;
 
@@ -229,5 +249,4 @@ public class Car {
     public enum Colour {
         BLACK
     }
-
 }

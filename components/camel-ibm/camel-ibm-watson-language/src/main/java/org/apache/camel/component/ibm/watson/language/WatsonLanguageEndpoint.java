@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.language;
 
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
@@ -32,9 +33,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform natural language processing using IBM Watson Natural Language Understanding
  */
-@UriEndpoint(firstVersion = "4.16.0", scheme = "ibm-watson-language", title = "IBM Watson Language",
-             syntax = "ibm-watson-language:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
-             headersClass = WatsonLanguageConstants.class)
+@UriEndpoint(
+        firstVersion = "4.16.0",
+        scheme = "ibm-watson-language",
+        title = "IBM Watson Language",
+        syntax = "ibm-watson-language:label",
+        producerOnly = true,
+        category = {Category.AI, Category.CLOUD},
+        headersClass = WatsonLanguageConstants.class)
 public class WatsonLanguageEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Logical name")
@@ -46,7 +52,8 @@ public class WatsonLanguageEndpoint extends DefaultEndpoint implements EndpointS
 
     private NaturalLanguageUnderstanding nluClient;
 
-    public WatsonLanguageEndpoint(String uri, WatsonLanguageComponent component, WatsonLanguageConfiguration configuration) {
+    public WatsonLanguageEndpoint(
+            String uri, WatsonLanguageComponent component, WatsonLanguageConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

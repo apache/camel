@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.support;
 
 import java.io.Serializable;
@@ -22,12 +23,9 @@ public class SerializableResponseDto implements Serializable {
     private static final long serialVersionUID = 1L;
     public boolean success;
 
-    public SerializableResponseDto() {
-
-    }
+    public SerializableResponseDto() {}
 
     public SerializableResponseDto(boolean success) {
         this.success = success;
     }
-
 }

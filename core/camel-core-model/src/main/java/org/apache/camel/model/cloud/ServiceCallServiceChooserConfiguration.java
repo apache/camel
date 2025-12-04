@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ServiceCallServiceChooserConfiguration extends ServiceCallConfiguration implements ServiceChooserFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
+
     @XmlTransient
     private final String factoryKey;
 
@@ -82,7 +84,8 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
         ServiceChooser answer;
 
         // First try to find the factory from the registry.
-        ServiceChooserFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceChooserFactory.class);
+        ServiceChooserFactory factory =
+                CamelContextHelper.lookup(camelContext, factoryKey, ServiceChooserFactory.class);
         if (factory != null) {
             // If a factory is found in the registry do not re-configure it as
             // it should be pre-configured.
@@ -92,8 +95,11 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getCamelContextExtension()
-                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElse(null);
+                type = camelContext
+                        .getCamelContextExtension()
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH)
+                        .findClass(factoryKey)
+                        .orElse(null);
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
@@ -102,10 +108,9 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
                 if (ServiceChooserFactory.class.isAssignableFrom(type)) {
                     factory = (ServiceChooserFactory) camelContext.getInjector().newInstance(type, false);
                 } else {
-                    throw new NoFactoryAvailableException(
-                            "Resolving ServiceChooser: " + factoryKey
-                                                          + " detected type conflict: Not a ServiceChooserFactory implementation. Found: "
-                                                          + type.getName());
+                    throw new NoFactoryAvailableException("Resolving ServiceChooser: " + factoryKey
+                            + " detected type conflict: Not a ServiceChooserFactory implementation. Found: "
+                            + type.getName());
                 }
             }
 
@@ -147,5 +152,4 @@ public class ServiceCallServiceChooserConfiguration extends ServiceCallConfigura
 
         return answer;
     }
-
 }

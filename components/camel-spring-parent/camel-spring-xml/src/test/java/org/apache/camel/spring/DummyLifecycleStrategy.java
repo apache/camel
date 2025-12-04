@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -21,6 +22,4 @@ import org.apache.camel.support.LifecycleStrategySupport;
 /**
  * Dummy LifecycleStrategy for LifecycleStrategy injection test.
  */
-public class DummyLifecycleStrategy extends LifecycleStrategySupport {
-
-}
+public class DummyLifecycleStrategy extends LifecycleStrategySupport {}

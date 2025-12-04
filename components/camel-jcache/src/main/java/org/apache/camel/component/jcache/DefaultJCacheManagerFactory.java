@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 public class DefaultJCacheManagerFactory implements JCacheManagerFactory {
@@ -22,5 +23,4 @@ public class DefaultJCacheManagerFactory implements JCacheManagerFactory {
     public <K, V> JCacheManager<K, V> createManager(JCacheConfiguration configuration) {
         return new JCacheManager<>(configuration);
     }
-
 }

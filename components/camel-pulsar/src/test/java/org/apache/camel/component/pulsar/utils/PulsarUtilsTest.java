@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.utils;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,12 +29,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class PulsarUtilsTest {
 
@@ -39,7 +40,8 @@ public class PulsarUtilsTest {
     }
 
     @Test
-    public void givenConsumerQueueIsNotEmptywhenIStopConsumersverifyEmptyQueueIsReturned() throws PulsarClientException {
+    public void givenConsumerQueueIsNotEmptywhenIStopConsumersverifyEmptyQueueIsReturned()
+            throws PulsarClientException {
         Queue<Consumer<byte[]>> consumers = new ConcurrentLinkedQueue<>();
         consumers.add(mock(Consumer.class));
 
@@ -66,10 +68,11 @@ public class PulsarUtilsTest {
             throws PulsarClientException {
         Consumer<byte[]> consumer = mock(Consumer.class);
 
-        doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
+        doThrow(new PulsarClientException("A Pulsar Client exception occurred"))
+                .when(consumer)
+                .close();
 
-        assertThrows(PulsarClientException.class,
-                () -> consumer.close());
+        assertThrows(PulsarClientException.class, () -> consumer.close());
 
         verify(consumer).close();
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
 
 import org.apache.camel.spi.Metadata;
@@ -23,11 +24,16 @@ import org.apache.camel.spi.Metadata;
  */
 public final class StringTemplateConstants {
 
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint configured.", javaType = "String")
+    @Metadata(
+            description = "A URI for the template resource to use instead of the endpoint configured.",
+            javaType = "String")
     public static final String STRINGTEMPLATE_RESOURCE_URI = "CamelStringTemplateResourceUri";
-    @Metadata(description = "Map of the variables which are made available to a script or template",
-              javaType = "Map<String, Object>")
+
+    @Metadata(
+            description = "Map of the variables which are made available to a script or template",
+            javaType = "Map<String, Object>")
     public static final String STRINGTEMPLATE_VARIABLE_MAP = "CamelStringTemplateVariableMap";
+
     @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String STRINGTEMPLATE_TEMPLATE = "CamelStringTemplateTemplate";
 

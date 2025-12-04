@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -38,5 +39,4 @@ public interface FileMoveExistingStrategy {
      */
     boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException;
-
 }

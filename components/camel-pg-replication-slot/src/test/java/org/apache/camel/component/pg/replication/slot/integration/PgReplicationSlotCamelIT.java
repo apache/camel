@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pg.replication.slot.integration;
 
 import java.sql.Connection;
@@ -32,6 +33,7 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
+
     private Connection connection;
 
     @Override
@@ -59,10 +61,10 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
             @Override
             public void configure() {
 
-                String uriFormat
-                        = "pg-replication-slot://{{postgres.service.address}}/camel/camel_test_slot:test_decoding?"
-                          + "user={{postgres.user.name}}&password={{postgres.user.password}}"
-                          + "&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false";
+                String uriFormat =
+                        "pg-replication-slot://{{postgres.service.address}}/camel/camel_test_slot:test_decoding?"
+                                + "user={{postgres.user.name}}&password={{postgres.user.password}}"
+                                + "&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false";
 
                 from(uriFormat).to(mockEndpoint);
             }
@@ -73,10 +75,16 @@ public class PgReplicationSlotCamelIT extends PgReplicationITSupport {
     public void canReceiveFromSlot() throws InterruptedException, SQLException {
         mockEndpoint.expectedMessageCount(1);
 
-        // test_decoding plugin writes each change in a separate message. Some other plugins can have different behaviour,
+        // test_decoding plugin writes each change in a separate message. Some other plugins can have different
+        // behaviour,
         // wal2json default behaviour is to write the whole transaction in one message.
-        mockEndpoint.expectedBodiesReceived("BEGIN", "table public.camel_test_table: INSERT: id[integer]:1984", "COMMIT",
-                "BEGIN", "table public.camel_test_table: INSERT: id[integer]:1998", "COMMIT");
+        mockEndpoint.expectedBodiesReceived(
+                "BEGIN",
+                "table public.camel_test_table: INSERT: id[integer]:1984",
+                "COMMIT",
+                "BEGIN",
+                "table public.camel_test_table: INSERT: id[integer]:1998",
+                "COMMIT");
 
         try (Statement statement = this.connection.createStatement()) {
             statement.execute("INSERT INTO camel_test_table(id) VALUES(1984);");

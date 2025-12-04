@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import org.apache.camel.Exchange;
@@ -45,15 +46,14 @@ public class VertxHttpMaximumRedeliveriesTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0)
+                errorHandler(defaultErrorHandler()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0)
                         .retryAttemptedLogLevel(org.apache.camel.LoggingLevel.WARN));
 
-                from("direct:start")
-                        .to(getTestServerUri());
+                from("direct:start").to(getTestServerUri());
 
-                from(getTestServerUri())
-                        .to("mock:input")
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500));
+                from(getTestServerUri()).to("mock:input").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500));
             }
         };
     }

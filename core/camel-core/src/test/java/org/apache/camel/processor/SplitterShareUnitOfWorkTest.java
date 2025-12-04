@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -65,7 +66,9 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").split(body(), new MyStrategy()).shareUnitOfWork()
+                from("direct:start")
+                        .split(body(), new MyStrategy())
+                        .shareUnitOfWork()
                         .process(e -> {
                             var u = e.getUnitOfWork();
                             uows.add(u);
@@ -78,12 +81,16 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
                                     doneUows.add(u);
 
                                     // should only be invoked after all is complete (3 line and 1 result)
-                                    Assertions.assertEquals(3, getMockEndpoint("mock:line").getReceivedCounter());
-                                    Assertions.assertEquals(1, getMockEndpoint("mock:result").getReceivedCounter());
+                                    Assertions.assertEquals(
+                                            3, getMockEndpoint("mock:line").getReceivedCounter());
+                                    Assertions.assertEquals(
+                                            1, getMockEndpoint("mock:result").getReceivedCounter());
                                 }
                             });
                         })
-                        .to("mock:line").end().to("mock:result");
+                        .to("mock:line")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
@@ -95,10 +102,10 @@ public class SplitterShareUnitOfWorkTest extends ContextTestSupport {
             if (oldExchange == null) {
                 return newExchange;
             }
-            String body = oldExchange.getIn().getBody() + "+" + newExchange.getIn().getBody();
+            String body =
+                    oldExchange.getIn().getBody() + "+" + newExchange.getIn().getBody();
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }
     }
-
 }

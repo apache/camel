@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,8 +48,10 @@ public class AggregateSimpleTimeoutTest extends ContextTestSupport {
                         // and after 0.1 second of inactivity them timeout and
                         // complete the aggregation
                         // and send it to mock:aggregated
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionTimeout(100)
-                        .completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

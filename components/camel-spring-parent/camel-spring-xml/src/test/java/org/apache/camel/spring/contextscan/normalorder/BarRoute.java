@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.contextscan.normalorder;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,12 +25,8 @@ public class BarRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        onException(IllegalArgumentException.class)
-                .handled(true)
-                .to("mock:handle-bar");
+        onException(IllegalArgumentException.class).handled(true).to("mock:handle-bar");
 
-        from("direct:bar").routeId("bar")
-                .to("mock:bar")
-                .throwException(new IllegalArgumentException("Damn"));
+        from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Damn"));
     }
 }

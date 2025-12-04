@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,7 +45,8 @@ public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .to("mock:result");
             }
         });
@@ -81,5 +83,4 @@ public class IdempotentConsumerNoMessageIdTest extends ContextTestSupport {
         startEndpoint = resolveMandatoryEndpoint("direct:start");
         resultEndpoint = getMockEndpoint("mock:result");
     }
-
 }

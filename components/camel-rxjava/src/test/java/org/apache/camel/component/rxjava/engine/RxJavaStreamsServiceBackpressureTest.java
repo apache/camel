@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rxjava.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.rxjava.engine.support.TestSubscriber;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTestSupport {
 
@@ -154,7 +155,8 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
 
         Thread.sleep(200); // add other time to ensure no other items arrive
 
-        // TODO: the chain caches two elements instead of one: change it if you find an EmitterProcessor without prefetch
+        // TODO: the chain caches two elements instead of one: change it if you find an EmitterProcessor without
+        // prefetch
         // Assert.assertEquals(2, queue.size());
         assertEquals(3, queue.size());
 

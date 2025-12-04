@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
-import org.apache.camel.Exchange;
-
 import static org.apache.camel.support.http.HttpUtil.filterCheck;
+
+import org.apache.camel.Exchange;
 
 public class VertxHttpRestHeaderFilterStrategy extends VertxHttpHeaderFilterStrategy {
 

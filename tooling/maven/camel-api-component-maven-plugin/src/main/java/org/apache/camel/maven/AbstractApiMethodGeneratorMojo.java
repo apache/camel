@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -116,10 +117,12 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
             }
             if (method != null) {
                 var docs = new HashMap<String, String>();
-                if (model.getParameterDescriptions() != null && !model.getParameterDescriptions().isEmpty()) {
+                if (model.getParameterDescriptions() != null
+                        && !model.getParameterDescriptions().isEmpty()) {
                     docs.putAll(model.getParameterDescriptions());
                 }
-                if (model.getSetterDescriptions() != null && !model.getSetterDescriptions().isEmpty()) {
+                if (model.getSetterDescriptions() != null
+                        && !model.getSetterDescriptions().isEmpty()) {
                     docs.putAll(model.getSetterDescriptions());
                 }
                 parameters.put(method, docs);
@@ -167,7 +170,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return proxyType;
     }
 
-    private VelocityContext getApiMethodContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+    private VelocityContext getApiMethodContext(List<ApiMethodParser.ApiMethodModel> models)
+            throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
         context.put("enumName", getEnumName());
         return context;
@@ -175,7 +179,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     public File getApiMethodFile() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator)))
+                .append(File.separator);
         fileName.append(getEnumName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }
@@ -183,10 +188,12 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private String getEnumName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
-        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
+                + "ApiMethod";
     }
 
-    private VelocityContext getApiTestContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+    private VelocityContext getApiTestContext(List<ApiMethodParser.ApiMethodModel> models)
+            throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
         context.put("testName", getUnitTestName());
         context.put("scheme", scheme);
@@ -198,7 +205,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getTestFilePath() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator)))
+                .append(File.separator);
         fileName.append(getUnitTestName()).append(".java");
         return fileName.toString();
     }
@@ -206,11 +214,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private String getUnitTestName() {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
-        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
-               + "IT";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "IT";
     }
 
-    private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+    private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models)
+            throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
         context.put("apiName", apiName);
         context.put("apiDescription", apiDescription);
@@ -229,8 +237,10 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                 final Class<?> type = argument.getType();
                 final String typeName = type.getCanonicalName();
                 if (!parameters.containsKey(name)
-                        && (propertyNamePattern == null || !propertyNamePattern.matcher(name).matches())
-                        && (propertyTypePattern == null || !propertyTypePattern.matcher(typeName).matches())) {
+                        && (propertyNamePattern == null
+                                || !propertyNamePattern.matcher(name).matches())
+                        && (propertyTypePattern == null
+                                || !propertyTypePattern.matcher(typeName).matches())) {
                     parameters.put(name, argument);
                 }
             }
@@ -254,8 +264,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                     }
                 } catch (ClassNotFoundException e) {
                     throw new MojoExecutionException(
-                            String.format("Error loading extra option [%s %s] : %s",
-                                    argWithTypes, name, e.getMessage()),
+                            String.format(
+                                    "Error loading extra option [%s %s] : %s", argWithTypes, name, e.getMessage()),
                             e);
                 }
                 ApiMethodArg arg = new ApiMethodArg(name, argType, typeArgs, argWithTypes, option.getDescription());
@@ -280,7 +290,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private File getConfigurationFile() {
         final StringBuilder fileName = new StringBuilder();
         // endpoint configuration goes in component package
-        fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(componentPackage.replace(".", Matcher.quoteReplacement(File.separator)))
+                .append(File.separator);
         fileName.append(getConfigName()).append(".java");
         return new File(generatedSrcDir, fileName.toString());
     }
@@ -289,14 +300,15 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
         String prefix = classPrefix != null ? classPrefix : "";
         return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
-               + "EndpointConfiguration";
+                + "EndpointConfiguration";
     }
 
     private String getProxyClassWithCanonicalName(String proxyClass) {
         return proxyClass.replace("$", "");
     }
 
-    private VelocityContext getCommonContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+    private VelocityContext getCommonContext(List<ApiMethodParser.ApiMethodModel> models)
+            throws MojoExecutionException {
         VelocityContext context = new VelocityContext();
         context.put("models", models);
         context.put("proxyType", getProxyType());
@@ -306,13 +318,16 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     public ArgumentSubstitutionParser.Substitution[] getArgumentSubstitutions() {
-        ArgumentSubstitutionParser.Substitution[] subs = new ArgumentSubstitutionParser.Substitution[substitutions.length];
+        ArgumentSubstitutionParser.Substitution[] subs =
+                new ArgumentSubstitutionParser.Substitution[substitutions.length];
         for (int i = 0; i < substitutions.length; i++) {
             final Substitution substitution = substitutions[i];
             subs[i] = new ArgumentSubstitutionParser.Substitution(
                     substitution.getMethod(),
-                    substitution.getArgName(), substitution.getArgType(),
-                    substitution.getReplacement(), substitution.isReplaceWithType());
+                    substitution.getArgName(),
+                    substitution.getArgType(),
+                    substitution.getReplacement(),
+                    substitution.isReplaceWithType());
         }
         return subs;
     }
@@ -362,12 +377,14 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         // if the given argument does not belong to any method with the same argument name,
         // then it mean it should belong to all methods; this is typically extra options that has been declared in the
         // pom.xml file
-        boolean noneMatch = models.stream()
-                .noneMatch(m -> m.getArgumentsAndProperties().stream().noneMatch(a -> a.getName().equals(key)));
+        boolean noneMatch = models.stream().noneMatch(m -> m.getArgumentsAndProperties().stream()
+                .noneMatch(a -> a.getName().equals(key)));
 
         models.forEach(p -> {
-            ApiMethodArg match
-                    = p.getArgumentsAndProperties().stream().filter(a -> a.getName().equals(key)).findFirst().orElse(null);
+            ApiMethodArg match = p.getArgumentsAndProperties().stream()
+                    .filter(a -> a.getName().equals(key))
+                    .findFirst()
+                    .orElse(null);
             if (match != null && names.add(p.getName())) {
                 // favour desc from the matched argument list
                 String desc = match.getDescription();
@@ -538,7 +555,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
      */
     @SuppressWarnings("unused")
     public String getCanonicalName(ApiMethodArg argument) {
-        // replace primitives with wrapper classes (as that makes them option and avoid boolean because false by default)
+        // replace primitives with wrapper classes (as that makes them option and avoid boolean because false by
+        // default)
         final Class<?> type = argument.getType();
         if (type.isPrimitive()) {
             return getCanonicalName(ClassUtils.primitiveToWrapper(type));

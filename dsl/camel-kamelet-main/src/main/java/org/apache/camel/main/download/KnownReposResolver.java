@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.InputStream;
@@ -25,8 +26,7 @@ public final class KnownReposResolver {
 
     private final Map<String, String> repos = new HashMap<>();
 
-    public KnownReposResolver() {
-    }
+    public KnownReposResolver() {}
 
     public void loadKnownDependencies() {
         doLoadKnownRepos("/camel-main-known-repos.properties");

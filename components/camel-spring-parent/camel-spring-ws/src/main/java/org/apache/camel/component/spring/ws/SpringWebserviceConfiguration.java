@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import java.net.URI;
@@ -44,6 +45,7 @@ public class SpringWebserviceConfiguration {
     /* Common configuration */
     @UriParam
     private MessageFilter messageFilter;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
@@ -53,39 +55,55 @@ public class SpringWebserviceConfiguration {
     /* Producer configuration */
     @UriParam(label = "producer")
     private WebServiceTemplate webServiceTemplate;
+
     @UriParam(label = "producer")
     private WebServiceMessageSender messageSender;
+
     @UriParam(label = "producer")
     private WebServiceMessageFactory messageFactory;
+
     @UriParam(label = "producer")
     private String soapAction;
+
     @UriParam(label = "producer")
     private URI wsAddressingAction;
+
     @UriParam(label = "producer")
     private URI outputAction;
+
     @UriParam(label = "producer")
     private URI faultAction;
+
     @UriParam(label = "producer")
     private URI faultTo;
+
     @UriParam(label = "producer")
     private URI replyTo;
+
     @UriParam(label = "producer")
     private int timeout = -1;
+
     @UriParam(label = "producer")
     private boolean allowResponseHeaderOverride;
+
     @UriParam(label = "producer")
     private boolean allowResponseAttachmentOverride;
 
     /* Consumer configuration */
     @UriPath(label = "consumer", name = "type")
     private EndpointMappingType endpointMappingType;
+
     @UriPath(label = "consumer", name = "lookupKey")
     private String endpointMappingLookupKey;
+
     @UriParam(label = "consumer")
     private String expression;
+
     private transient XPathExpression xPathExpression;
+
     @UriParam(label = "consumer")
     private CamelSpringWSEndpointMapping endpointMapping;
+
     @UriParam(label = "consumer")
     private CamelEndpointDispatcher endpointDispatcher;
 

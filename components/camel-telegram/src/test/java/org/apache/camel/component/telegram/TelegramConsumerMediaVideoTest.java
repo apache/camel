@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,9 +32,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests the reception of messages without text having media content.
@@ -59,20 +60,19 @@ public class TelegramConsumerMediaVideoTest extends TelegramTestSupport {
 
         IncomingPhotoSize thumb = video.getThumb();
         assertNotNull(thumb);
-
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
@@ -85,5 +85,4 @@ public class TelegramConsumerMediaVideoTest extends TelegramTestSupport {
                         TelegramTestUtil.stringResource("messages/updates-media-video.json"),
                         TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
@@ -80,11 +81,13 @@ public class CamelContinuationServlet extends CamelServlet {
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
             // okay we cannot process this requires so return either 404 or 405.
-            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same"
+            // request
             boolean hasAnyMethod = METHODS.stream()
                     .anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
             if (hasAnyMethod) {
-                log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
+                log.debug(
+                        "No consumer to service request {} as method {} is not allowed", request, request.getMethod());
                 sendError(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 return;
             } else {
@@ -114,7 +117,8 @@ public class CamelContinuationServlet extends CamelServlet {
             }
         }
         if (useContinuation) {
-            log.trace("Start request with continuation timeout of {}",
+            log.trace(
+                    "Start request with continuation timeout of {}",
                     continuationTimeout != null ? continuationTimeout : "jetty default");
         } else {
             log.trace(
@@ -144,7 +148,8 @@ public class CamelContinuationServlet extends CamelServlet {
         }
 
         if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-            Iterator<?> it = ObjectHelper.createIterable(consumer.getEndpoint().getHttpMethodRestrict()).iterator();
+            Iterator<?> it = ObjectHelper.createIterable(consumer.getEndpoint().getHttpMethodRestrict())
+                    .iterator();
             boolean match = false;
             while (it.hasNext()) {
                 String method = it.next().toString();
@@ -296,8 +301,7 @@ public class CamelContinuationServlet extends CamelServlet {
 
     private class ExpiredListener implements AsyncListener {
         @Override
-        public void onComplete(AsyncEvent event) {
-        }
+        public void onComplete(AsyncEvent event) {}
 
         @Override
         public void onTimeout(AsyncEvent event) {
@@ -310,12 +314,10 @@ public class CamelContinuationServlet extends CamelServlet {
         }
 
         @Override
-        public void onError(AsyncEvent event) {
-        }
+        public void onError(AsyncEvent event) {}
 
         @Override
-        public void onStartAsync(AsyncEvent event) {
-        }
+        public void onStartAsync(AsyncEvent event) {}
     }
 
     private void updateHttpPath(Exchange exchange, String contextPath) {
@@ -334,5 +336,4 @@ public class CamelContinuationServlet extends CamelServlet {
         expiredExchanges.clear();
         super.destroy();
     }
-
 }

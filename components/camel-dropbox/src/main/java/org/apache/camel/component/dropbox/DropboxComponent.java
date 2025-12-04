@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox;
 
 import java.util.Map;
@@ -51,7 +52,7 @@ public class DropboxComponent extends DefaultComponent {
         DropboxConfiguration configuration = new DropboxConfiguration();
 
         // set options from component
-        //set auth parameters
+        // set auth parameters
         configuration.setAccessToken((String) parameters.get("accessToken"));
         if (parameters.get("expireIn") != null) {
             configuration.setExpireIn(Long.valueOf((String) parameters.get("expireIn")));
@@ -79,10 +80,9 @@ public class DropboxComponent extends DefaultComponent {
         DropboxEndpoint endpoint = new DropboxEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        //pass validation test
+        // pass validation test
         DropboxConfigurationValidator.validateCommonProperties(configuration);
 
         return endpoint;
     }
-
 }

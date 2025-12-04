@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CronLoaderTest extends CamelTestSupport {
 
@@ -62,9 +63,7 @@ public class CronLoaderTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("cron:tab?schedule=0/1 * * * * ?")
-                        .setBody().constant("x")
-                        .to("mock:result");
+                from("cron:tab?schedule=0/1 * * * * ?").setBody().constant("x").to("mock:result");
             }
         });
     }

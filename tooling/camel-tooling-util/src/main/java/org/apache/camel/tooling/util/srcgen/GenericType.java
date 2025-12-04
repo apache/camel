@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util.srcgen;
 
 import java.lang.reflect.Array;
@@ -71,7 +72,8 @@ public class GenericType {
         this.boundType = boundType;
     }
 
-    public static GenericType parse(String type, ClassLoader loader) throws ClassNotFoundException, IllegalArgumentException {
+    public static GenericType parse(String type, ClassLoader loader)
+            throws ClassNotFoundException, IllegalArgumentException {
         type = type.trim();
         // Check if this is an array
         if (type.endsWith("[]")) {
@@ -85,7 +87,8 @@ public class GenericType {
                 throw new IllegalArgumentException("Can not load type: " + type);
             }
             GenericType base = parse(type.substring(0, genericIndex), loader);
-            String[] params = type.substring(genericIndex + 1, type.length() - 1).split(",");
+            String[] params =
+                    type.substring(genericIndex + 1, type.length() - 1).split(",");
             GenericType[] types = new GenericType[params.length];
             for (int i = 0; i < params.length; i++) {
                 types[i] = parse(params[i], loader);
@@ -254,7 +257,7 @@ public class GenericType {
             if (clazz.isArray()) {
                 GenericType t = new GenericType(clazz.getComponentType());
                 if (t.size() > 0) {
-                    return new GenericType[] { t };
+                    return new GenericType[] {t};
                 } else {
                     return EMPTY;
                 }
@@ -272,7 +275,7 @@ public class GenericType {
             return gts;
         }
         if (type instanceof GenericArrayType) {
-            return new GenericType[] { new GenericType(((GenericArrayType) type).getGenericComponentType()) };
+            return new GenericType[] {new GenericType(((GenericArrayType) type).getGenericComponentType())};
         }
         if (type instanceof WildcardType) {
             return EMPTY;
@@ -312,5 +315,4 @@ public class GenericType {
         }
         throw new RuntimeException("Huh? " + target);
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import org.apache.camel.BinaryPredicate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A useful base class for {@link Predicate} implementations
@@ -91,5 +92,4 @@ public abstract class BinaryPredicateSupport implements BinaryPredicate {
     public String getOperator() {
         return getOperationText();
     }
-
 }

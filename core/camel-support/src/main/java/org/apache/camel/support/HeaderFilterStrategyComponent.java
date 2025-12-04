@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -27,12 +28,13 @@ import org.apache.camel.spi.Metadata;
  */
 public abstract class HeaderFilterStrategyComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
-    @Metadata(label = "filter",
-              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+    @Metadata(
+            label = "filter",
+            description =
+                    "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public HeaderFilterStrategyComponent() {
-    }
+    public HeaderFilterStrategyComponent() {}
 
     public HeaderFilterStrategyComponent(CamelContext context) {
         super(context);

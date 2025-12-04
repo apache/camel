@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.groovy;
 
 import java.io.File;
@@ -50,10 +51,12 @@ public class MainGroovyCompilerRouteTest {
 
         DefaultGroovyScriptCompiler compiler = context.hasService(DefaultGroovyScriptCompiler.class);
         Assertions.assertNotNull(compiler);
-        Assertions.assertEquals("classpath:camel-groovy/*,classpath:camel-groovy-compiled/*", compiler.getScriptPattern());
+        Assertions.assertEquals(
+                "classpath:camel-groovy/*,classpath:camel-groovy-compiled/*", compiler.getScriptPattern());
         Assertions.assertEquals(2, compiler.getClassesSize());
         Assertions.assertEquals("target/workdir/groovy", compiler.getWorkDir());
-        Assertions.assertTrue(compiler.getCompileTime() > 0, "Should take time to compile, was: " + compiler.getCompileTime());
+        Assertions.assertTrue(
+                compiler.getCompileTime() > 0, "Should take time to compile, was: " + compiler.getCompileTime());
 
         Assertions.assertTrue(new File("target/workdir/groovy/Cheese.class").exists());
         Assertions.assertTrue(new File("target/workdir/groovy/Dude.class").exists());
@@ -66,7 +69,9 @@ public class MainGroovyCompilerRouteTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .setBody().groovy("""
+                        .setBody()
+                        .groovy(
+                                """
                                 Dude d = new Dude()
                                 return d.order(header.amount)
                                 """)

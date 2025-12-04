@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
 
 import org.apache.camel.Category;
@@ -29,13 +30,21 @@ import org.apache.camel.support.SynchronousDelegateProducer;
 /**
  * Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "thrift", title = "Thrift", syntax = "thrift:host:port/service",
-             category = { Category.RPC, Category.TRANSFORMATION }, headersClass = ThriftConstants.class)
+@UriEndpoint(
+        firstVersion = "2.20.0",
+        scheme = "thrift",
+        title = "Thrift",
+        syntax = "thrift:host:port/service",
+        category = {Category.RPC, Category.TRANSFORMATION},
+        headersClass = ThriftConstants.class)
 public class ThriftEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
     @UriParam
     private ThriftConfiguration configuration;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     private String serviceName;

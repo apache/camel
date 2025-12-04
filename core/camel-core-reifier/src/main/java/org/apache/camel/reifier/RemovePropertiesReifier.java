@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.stream.Stream;
@@ -40,7 +41,7 @@ public class RemovePropertiesReifier extends ProcessorReifier<RemovePropertiesDe
                     parseString(definition.getPattern()), parseStrings(definition.getExcludePatterns()));
         } else if (definition.getExcludePattern() != null) {
             answer = new RemovePropertiesProcessor(
-                    parseString(definition.getPattern()), parseStrings(new String[] { definition.getExcludePattern() }));
+                    parseString(definition.getPattern()), parseStrings(new String[] {definition.getExcludePattern()}));
         } else {
             answer = new RemovePropertiesProcessor(parseString(definition.getPattern()), null);
         }

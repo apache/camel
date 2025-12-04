@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import org.apache.camel.Exchange;
@@ -38,7 +39,9 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
         try {
             if (exchange.getException() != null || exchange.isRollbackOnly()) {
                 if (exchange.getException() instanceof KafkaException) {
-                    LOG.warn("Catch {} and will close kafka producer with transaction {} ", exchange.getException(),
+                    LOG.warn(
+                            "Catch {} and will close kafka producer with transaction {} ",
+                            exchange.getException(),
                             transactionId);
                     kafkaProducer.close();
                 } else {
@@ -53,8 +56,12 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
             exchange.setException(e);
         } catch (Exception e) {
             exchange.setException(e);
-            LOG.warn("Abort kafka transaction {} with exchange {} due to {} ", transactionId, exchange.getExchangeId(),
-                    e.getMessage(), e);
+            LOG.warn(
+                    "Abort kafka transaction {} with exchange {} due to {} ",
+                    transactionId,
+                    exchange.getExchangeId(),
+                    e.getMessage(),
+                    e);
             kafkaProducer.abortTransaction();
         } finally {
             exchange.getUnitOfWork().endTransactedBy(transactionId);

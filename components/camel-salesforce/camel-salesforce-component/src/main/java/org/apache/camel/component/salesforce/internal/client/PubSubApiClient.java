@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayInputStream;
@@ -74,9 +75,10 @@ import tech.allegro.schema.json2avro.converter.JsonAvroConverter;
 public class PubSubApiClient extends ServiceSupport {
 
     public static final String PUBSUB_ERROR_AUTH_ERROR = "sfdc.platform.eventbus.grpc.service.auth.error";
-    private static final String PUBSUB_ERROR_AUTH_REFRESH_INVALID = "sfdc.platform.eventbus.grpc.service.auth.refresh.invalid";
-    public static final String PUBSUB_ERROR_CORRUPTED_REPLAY_ID
-            = "sfdc.platform.eventbus.grpc.subscription.fetch.replayid.corrupted";
+    private static final String PUBSUB_ERROR_AUTH_REFRESH_INVALID =
+            "sfdc.platform.eventbus.grpc.service.auth.refresh.invalid";
+    public static final String PUBSUB_ERROR_CORRUPTED_REPLAY_ID =
+            "sfdc.platform.eventbus.grpc.subscription.fetch.replayid.corrupted";
 
     protected PubSubGrpc.PubSubStub asyncStub;
     protected PubSubGrpc.PubSubBlockingStub blockingStub;
@@ -96,7 +98,8 @@ public class PubSubApiClient extends ServiceSupport {
     private final Map<String, Schema> schemaCache = new ConcurrentHashMap<>();
     private final Map<String, String> schemaJsonCache = new ConcurrentHashMap<>();
     private final Map<String, TopicInfo> topicInfoCache = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<PubSubApiConsumer, StreamObserver<FetchRequest>> observerMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<PubSubApiConsumer, StreamObserver<FetchRequest>> observerMap =
+            new ConcurrentHashMap<>();
 
     private ManagedChannel channel;
     private boolean usePlainTextConnection = false;
@@ -105,8 +108,14 @@ public class PubSubApiClient extends ServiceSupport {
     private String initialReplayId;
     private boolean fallbackToLatestReplayId;
 
-    public PubSubApiClient(SalesforceSession session, SalesforceLoginConfig loginConfig, String pubSubHost,
-                           int pubSubPort, long backoffIncrement, long maxBackoff, boolean allowUseProxyServer) {
+    public PubSubApiClient(
+            SalesforceSession session,
+            SalesforceLoginConfig loginConfig,
+            String pubSubHost,
+            int pubSubPort,
+            long backoffIncrement,
+            long maxBackoff,
+            boolean allowUseProxyServer) {
         this.session = session;
         this.loginConfig = loginConfig;
         this.pubSubHost = pubSubHost;
@@ -118,8 +127,7 @@ public class PubSubApiClient extends ServiceSupport {
     }
 
     public List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult> publishMessage(
-            String topic, List<?> bodies)
-            throws IOException {
+            String topic, List<?> bodies) throws IOException {
         LOG.debug("Preparing to publish on topic {}", topic);
         TopicInfo topicInfo = getTopicInfo(topic);
         String busTopicName = topicInfo.getTopicName();
@@ -136,20 +144,25 @@ public class PubSubApiClient extends ServiceSupport {
         PublishResponse response = blockingStub.publish(publishRequest);
         LOG.debug("Published on topic {}", topic);
         final List<PublishResult> results = response.getResultsList();
-        List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult> publishResults
-                = new ArrayList<>(results.size());
+        List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult> publishResults =
+                new ArrayList<>(results.size());
         for (PublishResult rawResult : results) {
             if (rawResult.hasError()) {
-                LOG.error("{} {} ", rawResult.getError().getCode(), rawResult.getError().getMsg());
+                LOG.error(
+                        "{} {} ",
+                        rawResult.getError().getCode(),
+                        rawResult.getError().getMsg());
             }
-            publishResults.add(
-                    new org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult(rawResult));
+            publishResults.add(new org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult(rawResult));
         }
         return publishResults;
     }
 
     public void subscribe(
-            PubSubApiConsumer consumer, ReplayPreset replayPreset, String initialReplayId, boolean fallbackToLatestReplayId) {
+            PubSubApiConsumer consumer,
+            ReplayPreset replayPreset,
+            String initialReplayId,
+            boolean fallbackToLatestReplayId) {
         LOG.debug("Starting subscribe {}", consumer.getTopic());
         this.initialReplayPreset = replayPreset;
         this.initialReplayId = initialReplayId;
@@ -180,13 +193,16 @@ public class PubSubApiClient extends ServiceSupport {
     }
 
     public TopicInfo getTopicInfo(String name) {
-        return topicInfoCache.computeIfAbsent(name,
-                topic -> blockingStub.getTopic(TopicRequest.newBuilder().setTopicName(topic).build()));
+        return topicInfoCache.computeIfAbsent(
+                name,
+                topic -> blockingStub.getTopic(
+                        TopicRequest.newBuilder().setTopicName(topic).build()));
     }
 
     public String getSchemaJson(String schemaId) {
-        return schemaJsonCache.computeIfAbsent(schemaId,
-                s -> blockingStub.getSchema(SchemaRequest.newBuilder().setSchemaId(s).build()).getSchemaJson());
+        return schemaJsonCache.computeIfAbsent(schemaId, s -> blockingStub
+                .getSchema(SchemaRequest.newBuilder().setSchemaId(s).build())
+                .getSchemaJson());
     }
 
     public Schema getSchema(String schemaId) {
@@ -210,8 +226,7 @@ public class PubSubApiClient extends ServiceSupport {
     protected void doStart() throws Exception {
         super.doStart();
 
-        final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder
-                .forAddress(pubSubHost, pubSubPort);
+        final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forAddress(pubSubHost, pubSubPort);
         if (!allowUseProxyServer) {
             channelBuilder.proxyDetector(socketAddress -> null);
         }
@@ -259,8 +274,8 @@ public class PubSubApiClient extends ServiceSupport {
             } else if (body instanceof SpecificRecord) {
                 bytes = getBytes(body, new SpecificDatumWriter<>());
             } else {
-                throw new IllegalArgumentException(
-                        "Body is of unexpected type: " + indexedRecord.getClass().getName());
+                throw new IllegalArgumentException("Body is of unexpected type: "
+                        + indexedRecord.getClass().getName());
             }
         } else if (body instanceof byte[] bodyBytes) {
             bytes = bodyBytes;
@@ -308,7 +323,10 @@ public class PubSubApiClient extends ServiceSupport {
 
             String topic = consumer.getTopic();
 
-            LOG.debug("Received {} events on topic: {}", fetchResponse.getEventsList().size(), topic);
+            LOG.debug(
+                    "Received {} events on topic: {}",
+                    fetchResponse.getEventsList().size(),
+                    topic);
             LOG.debug("rpcId: {}", fetchResponse.getRpcId());
             LOG.debug("pending_num_requested: {}", fetchResponse.getPendingNumRequested());
             for (ConsumerEvent ce : fetchResponse.getEventsList()) {
@@ -323,8 +341,10 @@ public class PubSubApiClient extends ServiceSupport {
             // batchSize could be zero if this FetchResponse contained an empty batch, which is to be expected
             // for keep-alive reasons. In this case there is no need to send a FetchRequest
             if (nextRequestSize > 0) {
-                FetchRequest fetchRequest = FetchRequest.newBuilder().setTopicName(topic)
-                        .setNumRequested(nextRequestSize).build();
+                FetchRequest fetchRequest = FetchRequest.newBuilder()
+                        .setTopicName(topic)
+                        .setNumRequested(nextRequestSize)
+                        .build();
                 LOG.debug("Sending FetchRequest, num_requested: {}", nextRequestSize);
                 serverStream.onNext(fetchRequest);
             }
@@ -339,8 +359,11 @@ public class PubSubApiClient extends ServiceSupport {
                 String errorCode = "";
                 LOG.error("Trailers:");
                 if (trailers != null) {
-                    trailers.keys().forEach(trailer -> LOG.error("Trailer: {}, Value: {}", trailer,
-                            trailers.get(Metadata.Key.of(trailer, Metadata.ASCII_STRING_MARSHALLER))));
+                    trailers.keys()
+                            .forEach(trailer -> LOG.error(
+                                    "Trailer: {}, Value: {}",
+                                    trailer,
+                                    trailers.get(Metadata.Key.of(trailer, Metadata.ASCII_STRING_MARSHALLER))));
                     errorCode = trailers.get(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER));
                 }
                 if (errorCode != null) {
@@ -360,12 +383,12 @@ public class PubSubApiClient extends ServiceSupport {
                             if (fallbackToLatestReplayId) {
                                 initialReplayPreset = ReplayPreset.LATEST;
                                 LOG.warn("replay id: " + currReplayId
-                                         + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
+                                        + " is corrupt. Trying to recover by resubscribing with LATEST replay preset");
                                 replayId = null;
                             } else {
-                                consumer.getExceptionHandler().handleException(new InvalidReplayIdException(
-                                        "Corrupt replay id: " + currReplayId,
-                                        currReplayId));
+                                consumer.getExceptionHandler()
+                                        .handleException(new InvalidReplayIdException(
+                                                "Corrupt replay id: " + currReplayId, currReplayId));
                             }
                         }
                         default -> LOG.error("unexpected errorCode: {}", errorCode);
@@ -389,8 +412,7 @@ public class PubSubApiClient extends ServiceSupport {
                 subscribe(consumer, ReplayPreset.CUSTOM, replayId, fallbackToLatestReplayId);
             } else {
                 if (initialReplayPreset == ReplayPreset.CUSTOM) {
-                    subscribe(consumer, initialReplayPreset, initialReplayId,
-                            fallbackToLatestReplayId);
+                    subscribe(consumer, initialReplayPreset, initialReplayId, fallbackToLatestReplayId);
                 } else {
                     subscribe(consumer, initialReplayPreset, null, fallbackToLatestReplayId);
                 }
@@ -409,13 +431,14 @@ public class PubSubApiClient extends ServiceSupport {
 
         private void processEvent(String rpcId, ConsumerEvent ce) throws IOException {
             final Schema schema = getSchema(ce.getEvent().getSchemaId());
-            Object recordObj = switch (consumer.getDeserializeType()) {
-                case AVRO -> deserializeAvro(ce, schema);
-                case GENERIC_RECORD -> deserializeGenericRecord(ce, schema);
-                case SPECIFIC_RECORD -> deserializeSpecificRecord(ce, schema);
-                case POJO -> deserializePojo(ce, schema);
-                case JSON -> deserializeJson(ce, schema);
-            };
+            Object recordObj =
+                    switch (consumer.getDeserializeType()) {
+                        case AVRO -> deserializeAvro(ce, schema);
+                        case GENERIC_RECORD -> deserializeGenericRecord(ce, schema);
+                        case SPECIFIC_RECORD -> deserializeSpecificRecord(ce, schema);
+                        case POJO -> deserializePojo(ce, schema);
+                        case JSON -> deserializeJson(ce, schema);
+                    };
             String eventId = ce.getEvent().getId();
             String replayId = PubSubApiClient.base64EncodeByteString(ce.getReplayId());
             consumer.processEvent(recordObj, eventId, replayId, rpcId);
@@ -440,14 +463,16 @@ public class PubSubApiClient extends ServiceSupport {
         private Object deserializePojo(ConsumerEvent ce, Schema schema) throws IOException {
             ReflectDatumReader<?> reader = new ReflectDatumReader(pojoClass);
             reader.setSchema(schema);
-            ByteArrayInputStream in = new ByteArrayInputStream(ce.getEvent().getPayload().toByteArray());
+            ByteArrayInputStream in =
+                    new ByteArrayInputStream(ce.getEvent().getPayload().toByteArray());
             BinaryDecoder decoder = DecoderFactory.get().directBinaryDecoder(in, null);
             return reader.read(null, decoder);
         }
 
         private GenericRecord deserializeGenericRecord(ConsumerEvent ce, Schema schema) throws IOException {
             DatumReader<GenericRecord> reader = new GenericDatumReader<>(schema);
-            ByteArrayInputStream in = new ByteArrayInputStream(ce.getEvent().getPayload().toByteArray());
+            ByteArrayInputStream in =
+                    new ByteArrayInputStream(ce.getEvent().getPayload().toByteArray());
             BinaryDecoder decoder = DecoderFactory.get().directBinaryDecoder(in, null);
             return reader.read(null, decoder);
         }
@@ -455,7 +480,8 @@ public class PubSubApiClient extends ServiceSupport {
         private Object deserializeSpecificRecord(ConsumerEvent ce, Schema schema) throws IOException {
             final Class<?> clas = eventClassMap.get(schema.getFullName());
             DatumReader<?> reader = new SpecificDatumReader<>(clas);
-            ByteArrayInputStream in = new ByteArrayInputStream(ce.getEvent().getPayload().toByteArray());
+            ByteArrayInputStream in =
+                    new ByteArrayInputStream(ce.getEvent().getPayload().toByteArray());
             BinaryDecoder decoder = DecoderFactory.get().directBinaryDecoder(in, null);
             return reader.read(null, decoder);
         }

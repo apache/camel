@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.consumer;
 
 import java.net.URI;
@@ -47,7 +48,8 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(NewIssuesConsumer.class);
     // Date format used in the JQL below
     private static final DateTimeFormatter JIRA_DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
-    // Even the operator is ">", the JQL behaves more like ">=", so it will return all issues created at that minute and later
+    // Even the operator is ">", the JQL behaves more like ">=", so it will return all issues created at that minute and
+    // later
     private static final String NEW_ISSUES_JQL_FORMAT = "created > \"%s\" AND %s ORDER BY created DESC";
 
     // Last issue that was processed by the integration
@@ -88,7 +90,8 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
      */
     private DateTimeZone getUserTimeZone() {
         URI userURI = URI.create(getEndpoint().getConfiguration().getJiraUrl()).resolve("rest/api/latest/myself");
-        final User user = getEndpoint().getClient().getUserClient().getUser(userURI).claim();
+        final User user =
+                getEndpoint().getClient().getUserClient().getUser(userURI).claim();
         final String timezone = user.getTimezone();
 
         LOG.debug("Using user {} with timezone {}", user.getName(), timezone);
@@ -132,7 +135,8 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
         String jqlFilter;
         // If we have processed an issue before, use its timestamp to get only the newer ones
         if (latestIssue != null) {
-            jqlFilter = String.format(NEW_ISSUES_JQL_FORMAT, getServerTimestamp(), getEndpoint().getJql());
+            jqlFilter = String.format(
+                    NEW_ISSUES_JQL_FORMAT, getServerTimestamp(), getEndpoint().getJql());
         } else {
             jqlFilter = getEndpoint().getJql();
         }
@@ -141,9 +145,10 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
 
         if (!issues.isEmpty()) {
             if (latestIssue != null) {
-                // remove all issues that are older than the latestIssue (including), because those were processed by previous polls
-                issues.removeIf(i -> i.getCreationDate().isBefore(latestIssue.getCreationDate()) || i.getCreationDate().isEqual(
-                        latestIssue.getCreationDate()));
+                // remove all issues that are older than the latestIssue (including), because those were processed by
+                // previous polls
+                issues.removeIf(i -> i.getCreationDate().isBefore(latestIssue.getCreationDate())
+                        || i.getCreationDate().isEqual(latestIssue.getCreationDate()));
             }
 
             // we might filter out all issues in the previous statement, resulting in no new issues

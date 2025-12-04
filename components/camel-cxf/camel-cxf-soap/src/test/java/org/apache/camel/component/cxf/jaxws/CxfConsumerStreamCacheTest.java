@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.StandardCharsets;
 
@@ -31,29 +36,26 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-//Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
+// Modified from
+// https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
 
-    protected static final String REQUEST_MESSAGE
-            = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
-              + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
+    protected static final String REQUEST_MESSAGE =
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
+                    + "<soapenv:Header/><soapenv:Body><ser:ping/></soapenv:Body></soapenv:Envelope>";
 
-    protected static final String RESPONSE_MESSAGE_BEGINE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-              + "<soap:Body><pong xmlns=\"test/service\"";
+    protected static final String RESPONSE_MESSAGE_BEGINE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><pong xmlns=\"test/service\"";
     protected static final String RESPONSE_MESSAGE_END = "/></soap:Body></soap:Envelope>";
 
     protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
 
-    protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+    protected final String simpleEndpointAddress =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-                                               + "?synchronous=" + isSynchronous()
-                                               + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";
+            + "?synchronous=" + isSynchronous()
+            + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -79,9 +81,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
                             }
 
                             @Override
-                            public void onFailure(Exchange exchange) {
-
-                            }
+                            public void onFailure(Exchange exchange) {}
                         });
                     }
                 });

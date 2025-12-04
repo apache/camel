@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.version;
 
 import java.io.IOException;
@@ -46,7 +47,8 @@ class VersionGetTest extends CamelCommandBaseTest {
 
     @Test
     public void shouldPrintUserProperties() throws Exception {
-        UserConfigHelper.createUserConfig("""
+        UserConfigHelper.createUserConfig(
+                """
                 camel-version=latest
                 foo=bar
                 kamelets-version=greatest
@@ -71,12 +73,14 @@ class VersionGetTest extends CamelCommandBaseTest {
             jBangDir.toFile().mkdirs();
         }
 
-        Files.writeString(jBangDir.resolve("version.txt"), version,
-                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.writeString(
+                jBangDir.resolve("version.txt"),
+                version,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     private VersionGet createCommand() {
         return new VersionGet(new CamelJBangMain().withPrinter(printer));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.util;
 
 import java.util.Arrays;
@@ -25,8 +26,7 @@ public final class SuggestSimilarHelper {
 
     private static final int MAX_SUGGESTIONS = 5;
 
-    private SuggestSimilarHelper() {
-    }
+    private SuggestSimilarHelper() {}
 
     public static List<String> didYouMean(List<String> names, String unknown) {
         String[] suggestions = CatalogSuggestionStrategy.suggestEndpointOptions(names, unknown, MAX_SUGGESTIONS);
@@ -35,5 +35,4 @@ public final class SuggestSimilarHelper {
         }
         return List.of();
     }
-
 }

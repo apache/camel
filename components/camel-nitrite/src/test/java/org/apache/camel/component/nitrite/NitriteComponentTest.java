@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
 
 import java.io.File;
@@ -35,11 +36,14 @@ public class NitriteComponentTest extends AbstractNitriteTest {
         mockB.setExpectedMessageCount(1);
         mockC.setExpectedMessageCount(1);
 
-        template.sendBody(String.format("nitrite://%s?collection=collection", tempDb() + ".a.db"),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection", tempDb() + ".a.db"),
                 Document.createDocument("key1", "db_a"));
-        template.sendBody(String.format("nitrite://%s?collection=collection", tempDb() + ".b.db"),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection", tempDb() + ".b.db"),
                 Document.createDocument("key1", "db_b"));
-        template.sendBody(String.format("nitrite://%s?collection=collection2", tempDb() + ".c.db"),
+        template.sendBody(
+                String.format("nitrite://%s?collection=collection2", tempDb() + ".c.db"),
                 Document.createDocument("key1", "db_c"));
 
         mockA.assertIsSatisfied();

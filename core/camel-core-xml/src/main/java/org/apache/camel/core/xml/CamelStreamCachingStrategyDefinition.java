@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,35 +38,48 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String enabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String spoolEnabled;
+
     @XmlAttribute
     private String allowClasses;
+
     @XmlAttribute
     private String denyClasses;
+
     @XmlAttribute
     private String spoolDirectory;
+
     @XmlAttribute
     private String spoolCipher;
+
     @XmlAttribute
     @Metadata(defaultValue = "" + StreamCache.DEFAULT_SPOOL_THRESHOLD)
     private String spoolThreshold;
+
     @XmlAttribute
     private String spoolUsedHeapMemoryThreshold;
+
     @XmlAttribute
     private String spoolUsedHeapMemoryLimit;
+
     @XmlAttribute
     private String spoolRules;
+
     @XmlAttribute
     @Metadata(defaultValue = "" + IOHelper.DEFAULT_BUFFER_SIZE)
     private String bufferSize;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String removeSpoolDirectoryWhenStopping;
+
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String statisticsEnabled;
+
     @XmlAttribute
     @Metadata(defaultValue = "false")
     private String anySpoolRules;
@@ -258,5 +272,4 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     public void setAnySpoolRules(String anySpoolRules) {
         this.anySpoolRules = anySpoolRules;
     }
-
 }

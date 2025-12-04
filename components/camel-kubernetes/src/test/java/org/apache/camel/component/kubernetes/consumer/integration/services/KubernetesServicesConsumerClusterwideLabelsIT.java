@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration.services;
 
 import java.util.Map;
@@ -25,16 +26,17 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 public class KubernetesServicesConsumerClusterwideLabelsIT extends KubernetesConsumerTestSupport {
     @Test
     public void clusterWideLabelsTest() throws Exception {
-        result.expectedBodiesReceivedInAnyOrder(
-                "Service svc1 " + ns1 + " ADDED",
-                "Service svc2 " + ns2 + " ADDED");
+        result.expectedBodiesReceivedInAnyOrder("Service svc1 " + ns1 + " ADDED", "Service svc2 " + ns2 + " ADDED");
 
         createService(ns1, "svc1", LABELS);
         createService(ns2, "svc2", LABELS);
@@ -48,12 +50,12 @@ public class KubernetesServicesConsumerClusterwideLabelsIT extends KubernetesCon
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kubernetes-services://%s?oauthToken=%s&labelKey=%s&labelValue=%s",
-                        host, authToken, "testkey", "testvalue")
+                fromF(
+                                "kubernetes-services://%s?oauthToken=%s&labelKey=%s&labelValue=%s",
+                                host, authToken, "testkey", "testvalue")
                         .process(new KubernetesProcessor())
                         .to(result);
             }
         };
-
     }
 }

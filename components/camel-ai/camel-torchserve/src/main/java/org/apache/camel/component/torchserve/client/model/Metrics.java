@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import org.apache.camel.component.torchserve.client.management.model.DescribeModel200ResponseInnerMetrics;
@@ -24,8 +25,7 @@ public class Metrics {
     private Integer waitingQueueSize = null;
     private Integer requests = null;
 
-    public Metrics() {
-    }
+    public Metrics() {}
 
     public static Metrics from(DescribeModel200ResponseInnerMetrics src) {
         if (src == null) {
@@ -65,10 +65,9 @@ public class Metrics {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {" +
-               " rejectedRequests: " + rejectedRequests + "," +
-               " waitingQueueSize: " + waitingQueueSize + "," +
-               " requests: " + requests + " " +
-               "}";
+        return getClass().getSimpleName() + " {" + " rejectedRequests: "
+                + rejectedRequests + "," + " waitingQueueSize: "
+                + waitingQueueSize + "," + " requests: "
+                + requests + " " + "}";
     }
 }

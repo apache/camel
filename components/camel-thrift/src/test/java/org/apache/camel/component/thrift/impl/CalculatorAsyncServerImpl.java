@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift.impl;
 
 import java.nio.ByteBuffer;
@@ -32,7 +33,7 @@ import org.apache.thrift.async.AsyncMethodCallback;
 public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void ping(AsyncMethodCallback resultHandler) {
         resultHandler.onComplete(new Object());
     }
@@ -74,7 +75,7 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void zip(AsyncMethodCallback resultHandler) {
         resultHandler.onComplete(new Object());
     }
@@ -86,8 +87,18 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
 
     @Override
     public void alltypes(
-            boolean v1, byte v2, short v3, int v4, long v5, double v6, String v7, ByteBuffer v8, Work v9, List<Integer> v10,
-            Set<String> v11, Map<String, Long> v12,
+            boolean v1,
+            byte v2,
+            short v3,
+            int v4,
+            long v5,
+            double v6,
+            String v7,
+            ByteBuffer v8,
+            Work v9,
+            List<Integer> v10,
+            Set<String> v11,
+            Map<String, Long> v12,
             AsyncMethodCallback<Integer> resultHandler) {
         resultHandler.onComplete(Integer.valueOf(1));
     }

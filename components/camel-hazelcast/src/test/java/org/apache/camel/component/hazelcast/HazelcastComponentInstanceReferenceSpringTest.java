@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HazelcastComponentInstanceReferenceSpringTest extends HazelcastCamelSpringTestSupport {
 
@@ -29,11 +30,11 @@ public class HazelcastComponentInstanceReferenceSpringTest extends HazelcastCame
 
     @Test
     public void testComparePutAndGet() {
-        template.sendBodyAndHeader("direct:testHazelcastInstanceBeanRefPut", TEST_VALUE,
-                HazelcastConstants.OBJECT_ID, TEST_KEY);
+        template.sendBodyAndHeader(
+                "direct:testHazelcastInstanceBeanRefPut", TEST_VALUE, HazelcastConstants.OBJECT_ID, TEST_KEY);
 
-        template.sendBodyAndHeader("direct:testHazelcastInstanceBeanRefGet", null,
-                HazelcastConstants.OBJECT_ID, TEST_KEY);
+        template.sendBodyAndHeader(
+                "direct:testHazelcastInstanceBeanRefGet", null, HazelcastConstants.OBJECT_ID, TEST_KEY);
         final Object testValueReturn = consumer.receiveBody("seda:out");
 
         assertEquals(TEST_VALUE, testValueReturn);

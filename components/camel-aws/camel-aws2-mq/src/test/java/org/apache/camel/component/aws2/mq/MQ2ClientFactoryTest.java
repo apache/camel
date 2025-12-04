@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
 import org.apache.camel.component.aws2.mq.client.MQ2InternalClient;
 import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MQ2ClientFactoryTest {
 

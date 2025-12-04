@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -23,9 +27,6 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StitchRequestBodyTest {
 
@@ -60,9 +61,8 @@ class StitchRequestBodyTest {
         properties.put("has_magic", Collections.singletonMap("type", "boolean"));
         properties.put("modified_at", modifiedAtSchema);
 
-        final StitchSchema schema = StitchSchema.builder()
-                .addKeyword("properties", properties)
-                .build();
+        final StitchSchema schema =
+                StitchSchema.builder().addKeyword("properties", properties).build();
 
         final StitchRequestBody body = StitchRequestBody.builder()
                 .withTableName("customers")
@@ -72,11 +72,11 @@ class StitchRequestBodyTest {
                 .withKeyNames("id")
                 .build();
 
-        final String expectedJson
-                = "{\"table_name\":\"customers\",\"schema\":{\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\""
-                  + "has_magic\":{\"type\":\"boolean\"},\"modified_at\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"messages\":[{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
-                  + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}},{\"action\":\"upsert\",\"sequence\":1565838645,\"data\":{\"id\":3,"
-                  + "\"name\":\"Bubblegum\",\"age\":17,\"has_magic\":true,\"modified_at\":\"2020-01-14T13:34:25+0000\"}}],\"key_names\":[\"id\"]}";
+        final String expectedJson =
+                "{\"table_name\":\"customers\",\"schema\":{\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"integer\"},\""
+                        + "has_magic\":{\"type\":\"boolean\"},\"modified_at\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"messages\":[{\"action\":\"upsert\",\"sequence\":1565881320,\"data\":"
+                        + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}},{\"action\":\"upsert\",\"sequence\":1565838645,\"data\":{\"id\":3,"
+                        + "\"name\":\"Bubblegum\",\"age\":17,\"has_magic\":true,\"modified_at\":\"2020-01-14T13:34:25+0000\"}}],\"key_names\":[\"id\"]}";
 
         assertEquals(expectedJson, new ObjectMapper().writeValueAsString(body.toMap()));
     }
@@ -111,18 +111,20 @@ class StitchRequestBodyTest {
         final Map<String, Object> data = new LinkedHashMap<>();
         data.put(StitchRequestBody.TABLE_NAME, "my_table");
         data.put(StitchRequestBody.SCHEMA, Collections.singletonMap("properties", properties));
-        data.put(StitchRequestBody.MESSAGES,
+        data.put(
+                StitchRequestBody.MESSAGES,
                 Collections.singletonList(Collections.singletonMap("data", Collections.singletonMap("id", 2))));
         data.put(StitchRequestBody.KEY_NAMES, Collections.singletonList("test_key"));
 
-        final StitchRequestBody requestBody = StitchRequestBody
-                .fromMap(data)
-                .build();
+        final StitchRequestBody requestBody = StitchRequestBody.fromMap(data).build();
 
         assertEquals("my_table", requestBody.getTableName());
-        assertEquals(Collections.singletonMap("properties", properties), requestBody.getSchema().getKeywords());
-        assertEquals(Collections.singletonMap("id", 2), requestBody.getMessages().stream().findFirst().get().getData());
+        assertEquals(
+                Collections.singletonMap("properties", properties),
+                requestBody.getSchema().getKeywords());
+        assertEquals(
+                Collections.singletonMap("id", 2),
+                requestBody.getMessages().stream().findFirst().get().getData());
         assertEquals("test_key", requestBody.getKeyNames().stream().findFirst().get());
     }
-
 }

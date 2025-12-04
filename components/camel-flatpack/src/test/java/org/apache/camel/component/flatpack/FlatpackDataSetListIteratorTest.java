@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
 
 import java.util.stream.Collectors;
@@ -57,13 +58,13 @@ public class FlatpackDataSetListIteratorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(DIRECT_URI)
-                    .unmarshal(format)
-                    .log("Processing ${body}")
-                    .split().body()
+                        .unmarshal(format)
+                        .log("Processing ${body}")
+                        .split()
+                        .body()
                         .to("mock:each-item")
-                    .end();
+                        .end();
             }
         };
     }
-
 }

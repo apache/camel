@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
 
     @Test
@@ -34,8 +35,10 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
         // time timeout after 2 sec should trigger an immediate reply
         StopWatch watch = new StopWatch();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("seda:a?timeout=5000", "Hello World"), "Should have thrown an exception");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBody("seda:a?timeout=5000", "Hello World"),
+                "Should have thrown an exception");
         ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
         assertEquals(2000, cause.getTimeout());
 
@@ -51,9 +54,11 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("seda:a").to("mock:a")
+                from("seda:a")
+                        .to("mock:a")
                         // this timeout will trigger an exception to occur
-                        .to("seda:b?timeout=2000").to("mock:a2");
+                        .to("seda:b?timeout=2000")
+                        .to("mock:a2");
 
                 from("seda:b").to("mock:b").delay(3000).transform().constant("Bye World");
             }

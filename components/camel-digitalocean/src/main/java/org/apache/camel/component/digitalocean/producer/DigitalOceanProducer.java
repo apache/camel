@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import org.apache.camel.Exchange;
@@ -41,8 +42,8 @@ public abstract class DigitalOceanProducer extends DefaultProducer {
     }
 
     protected DigitalOceanOperations determineOperation(Exchange exchange) {
-        DigitalOceanOperations operation
-                = exchange.getIn().getHeader(DigitalOceanHeaders.OPERATION, DigitalOceanOperations.class);
+        DigitalOceanOperations operation =
+                exchange.getIn().getHeader(DigitalOceanHeaders.OPERATION, DigitalOceanOperations.class);
         return ObjectHelper.isNotEmpty(operation) ? operation : configuration.getOperation();
     }
 

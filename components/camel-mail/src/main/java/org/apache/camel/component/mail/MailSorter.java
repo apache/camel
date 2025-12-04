@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.ArrayList;
@@ -34,8 +35,7 @@ public final class MailSorter {
     /**
      * No instances
      */
-    private MailSorter() {
-    }
+    private MailSorter() {}
 
     /**
      * Sort the messages. This emulates sorting the messages on the server if the server doesn't have the sorting

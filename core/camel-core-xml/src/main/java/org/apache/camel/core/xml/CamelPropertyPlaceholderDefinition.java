@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import java.util.List;
@@ -37,21 +38,28 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     @XmlAttribute
     private String location;
+
     @XmlAttribute
     private String encoding;
+
     @XmlAttribute
     @Metadata(defaultValue = "false")
     private Boolean ignoreMissingLocation;
+
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean nestedPlaceholder;
+
     @XmlAttribute
     private String propertiesParserRef;
+
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean defaultFallbackEnabled;
+
     @XmlElement(name = "propertiesFunction")
     private List<CamelPropertyPlaceholderFunctionDefinition> functions;
+
     @XmlElement(name = "propertiesLocation")
     private List<CamelPropertyPlaceholderLocationDefinition> locations;
 

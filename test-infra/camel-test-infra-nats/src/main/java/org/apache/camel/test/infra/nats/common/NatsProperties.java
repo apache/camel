@@ -24,7 +24,5 @@ public final class NatsProperties {
     public static final String ACCESS_TOKEN = "nats.access.token";
     public static final String NATS_CONTAINER = "nats.container";
 
-    private NatsProperties() {
-
-    }
+    private NatsProperties() {}
 }

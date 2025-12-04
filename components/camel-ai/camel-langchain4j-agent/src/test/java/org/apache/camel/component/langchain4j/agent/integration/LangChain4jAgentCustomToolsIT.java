@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,9 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for LangChain4j Agent component with custom tools only (no Camel route tools).
  */
@@ -51,9 +52,8 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -70,7 +70,8 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains(CALCULATION_RESULT) || response.contains("eight"),
+        assertTrue(
+                response.contains(CALCULATION_RESULT) || response.contains("eight"),
                 "Response should contain the calculation result from the calculator tool");
     }
 
@@ -79,17 +80,20 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response
-                = template.requestBody("direct:chat",
-                        "Calculate 10 * 5 and tell me the result, then tell me the weather in Paris", String.class);
+        String response = template.requestBody(
+                "direct:chat",
+                "Calculate 10 * 5 and tell me the result, then tell me the weather in Paris",
+                String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains("50") || response.contains("fifty"),
+        assertTrue(
+                response.contains("50") || response.contains("fifty"),
                 "Response should contain the multiplication result but was: " + response);
         // Weather tool might not be used by the AI, so we make this assertion more flexible
         assertTrue(
-                response.toLowerCase().contains(WEATHER_INFO) || response.toLowerCase().contains("weather")
+                response.toLowerCase().contains(WEATHER_INFO)
+                        || response.toLowerCase().contains("weather")
                         || response.toLowerCase().contains("paris"),
                 "Response should contain weather information or reference to weather/Paris");
     }
@@ -99,17 +103,17 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:chat",
-                "Call the getWeather function for Paris", String.class);
+        String response = template.requestBody("direct:chat", "Call the getWeather function for Paris", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
 
-        boolean weatherToolUsed = response.contains("Weather in Paris: " + WEATHER_INFO + ", " + WEATHER_TEMP + "°C") ||
-                response.toLowerCase().contains("sunny") ||
-                response.toLowerCase().contains("22");
+        boolean weatherToolUsed = response.contains("Weather in Paris: " + WEATHER_INFO + ", " + WEATHER_TEMP + "°C")
+                || response.toLowerCase().contains("sunny")
+                || response.toLowerCase().contains("22");
 
-        assertTrue(weatherToolUsed,
+        assertTrue(
+                weatherToolUsed,
                 "Response should contain weather information from the weather tool. Response was: " + response);
     }
 
@@ -118,11 +122,13 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:chat", "Convert the 'hello world' text to uppercase", String.class);
+        String response =
+                template.requestBody("direct:chat", "Convert the 'hello world' text to uppercase", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains("HELLO WORLD"),
+        assertTrue(
+                response.contains("HELLO WORLD"),
                 "Response should contain the uppercase conversion result but was: " + response);
     }
 
@@ -136,9 +142,8 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
         List<Object> customTools = Arrays.asList(calculator, weather, stringTool);
 
         // Create agent configuration with custom tools
-        AgentConfiguration config = new AgentConfiguration()
-                .withChatModel(chatModel)
-                .withCustomTools(customTools);
+        AgentConfiguration config =
+                new AgentConfiguration().withChatModel(chatModel).withCustomTools(customTools);
 
         // Create agent
         Agent agent = new AgentWithoutMemory(config);

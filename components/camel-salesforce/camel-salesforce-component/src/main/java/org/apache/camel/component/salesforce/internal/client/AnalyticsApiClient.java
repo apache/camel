@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.util.List;
@@ -55,18 +56,29 @@ public interface AnalyticsApiClient {
 
     void getRecentReports(Map<String, List<String>> headers, RecentReportsResponseCallback callback);
 
-    void getReportDescription(String reportId, Map<String, List<String>> headers, ReportDescriptionResponseCallback callback);
+    void getReportDescription(
+            String reportId, Map<String, List<String>> headers, ReportDescriptionResponseCallback callback);
 
     void executeSyncReport(
-            String reportId, Boolean includeDetails, ReportMetadata reportFilter, Map<String, List<String>> headers,
+            String reportId,
+            Boolean includeDetails,
+            ReportMetadata reportFilter,
+            Map<String, List<String>> headers,
             ReportResultsResponseCallback callback);
 
     void executeAsyncReport(
-            String reportId, Boolean includeDetails, ReportMetadata reportFilter, Map<String, List<String>> headers,
+            String reportId,
+            Boolean includeDetails,
+            ReportMetadata reportFilter,
+            Map<String, List<String>> headers,
             ReportInstanceResponseCallback callback);
 
-    void getReportInstances(String reportId, Map<String, List<String>> headers, ReportInstanceListResponseCallback callback);
+    void getReportInstances(
+            String reportId, Map<String, List<String>> headers, ReportInstanceListResponseCallback callback);
 
     void getReportResults(
-            String reportId, String instanceId, Map<String, List<String>> headers, ReportResultsResponseCallback callback);
+            String reportId,
+            String instanceId,
+            Map<String, List<String>> headers,
+            ReportResultsResponseCallback callback);
 }

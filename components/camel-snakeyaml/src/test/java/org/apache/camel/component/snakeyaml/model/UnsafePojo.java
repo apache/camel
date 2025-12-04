@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snakeyaml.model;
 
 public class UnsafePojo {
     private String name;
 
-    public UnsafePojo() {
-    }
+    public UnsafePojo() {}
 
     public UnsafePojo(String name) {
         this.name = name;
@@ -55,8 +55,6 @@ public class UnsafePojo {
 
     @Override
     public String toString() {
-        return "UnsafePojo {"
-               + "name='" + name + '\''
-               + '}';
+        return "UnsafePojo {" + "name='" + name + '\'' + '}';
     }
 }

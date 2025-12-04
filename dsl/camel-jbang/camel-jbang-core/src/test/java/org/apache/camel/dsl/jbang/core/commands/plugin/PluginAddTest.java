@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
@@ -60,8 +61,9 @@ class PluginAddTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
-                                "\"firstVersion\":\"1.2.3\",\"description\":\"Some plugin\"}}}",
+        Assertions.assertEquals(
+                "{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\","
+                        + "\"firstVersion\":\"1.2.3\",\"description\":\"Some plugin\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
@@ -73,8 +75,9 @@ class PluginAddTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{\"foo\":{\"name\":\"foo\",\"command\":\"foo\"," +
-                                "\"description\":\"Plugin foo called with command foo\"}}}",
+        Assertions.assertEquals(
+                "{\"plugins\":{\"foo\":{\"name\":\"foo\",\"command\":\"foo\","
+                        + "\"description\":\"Plugin foo called with command foo\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
@@ -88,8 +91,9 @@ class PluginAddTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
-                                "\"description\":\"Plugin foo-plugin called with command foo\",\"dependency\":\"org.apache.camel:foo-plugin:1.0.0\"}}}",
+        Assertions.assertEquals(
+                "{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\","
+                        + "\"description\":\"Plugin foo-plugin called with command foo\",\"dependency\":\"org.apache.camel:foo-plugin:1.0.0\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
@@ -105,10 +109,10 @@ class PluginAddTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\"," +
-                                "\"firstVersion\":\"1.0.0\",\"description\":\"Plugin foo-plugin called with command foo\"" +
-                                ",\"dependency\":\"org.foo:foo-bar:1.0.0\"}}}",
+        Assertions.assertEquals(
+                "{\"plugins\":{\"foo-plugin\":{\"name\":\"foo-plugin\",\"command\":\"foo\","
+                        + "\"firstVersion\":\"1.0.0\",\"description\":\"Plugin foo-plugin called with command foo\""
+                        + ",\"dependency\":\"org.foo:foo-bar:1.0.0\"}}}",
                 PluginHelper.getOrCreatePluginConfig().toJson());
     }
-
 }

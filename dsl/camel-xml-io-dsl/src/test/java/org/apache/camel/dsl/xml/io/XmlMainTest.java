@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,17 +26,12 @@ import org.apache.camel.dsl.xml.io.support.MockRestConsumerFactory;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class XmlMainTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/xml/camel-dummy.xml,org/apache/camel/main/xml/camel-scan.xml",
-                null);
+        doTestMain("org/apache/camel/main/xml/camel-dummy.xml,org/apache/camel/main/xml/camel-scan.xml", null);
     }
 
     @Test
@@ -62,9 +61,7 @@ public class XmlMainTest {
     @Test
     public void testMainRoutesCollectorScanInJar() throws Exception {
         // will load XML from camel-core test JAR when testing
-        doTestMain(
-                "org/apache/camel/model/scan-*.xml",
-                null);
+        doTestMain("org/apache/camel/model/scan-*.xml", null);
     }
 
     @Test
@@ -128,5 +125,4 @@ public class XmlMainTest {
             main.stop();
         }
     }
-
 }

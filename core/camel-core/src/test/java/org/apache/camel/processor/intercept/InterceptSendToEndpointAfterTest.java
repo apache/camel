@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,12 +38,14 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                interceptSendToEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World")).afterUri("direct:after");
+                interceptSendToEndpoint("mock:foo")
+                        .to("mock:detour")
+                        .transform(constant("Bye World"))
+                        .afterUri("direct:after");
 
                 from("direct:first").to("mock:bar").to("mock:foo").to("mock:result");
 
                 from("direct:after").to("mock:after");
-
             }
         });
         context.start();
@@ -105,7 +108,9 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("direct:start").onWhen(simple("${body} contains 'World'")).to("mock:detour")
+                interceptSendToEndpoint("direct:start")
+                        .onWhen(simple("${body} contains 'World'"))
+                        .to("mock:detour")
                         .afterUri("mock:after");
 
                 from("direct:start").to("mock:foo").transform().constant("Bye World");
@@ -122,5 +127,4 @@ public class InterceptSendToEndpointAfterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

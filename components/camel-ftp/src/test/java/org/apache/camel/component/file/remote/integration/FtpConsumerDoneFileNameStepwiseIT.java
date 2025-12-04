@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 public class FtpConsumerDoneFileNameStepwiseIT extends FtpConsumerDoneFileNameIT {
@@ -22,5 +23,4 @@ public class FtpConsumerDoneFileNameStepwiseIT extends FtpConsumerDoneFileNameIT
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&initialDelay=0&delay=100&stepwise=true";
     }
-
 }

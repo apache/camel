@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
@@ -154,7 +155,9 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Exception occurred during disconnecting from: {} {}. This exception is ignored.", getEndpoint(),
+            LOG.warn(
+                    "Exception occurred during disconnecting from: {} {}. This exception is ignored.",
+                    getEndpoint(),
                     e.getMessage());
         }
     }
@@ -200,7 +203,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public String toString() {
         if (remoteFileProducerToString == null) {
-            remoteFileProducerToString = "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            remoteFileProducerToString =
+                    "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return remoteFileProducerToString;
     }

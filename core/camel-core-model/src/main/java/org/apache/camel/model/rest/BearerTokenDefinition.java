@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,8 +36,7 @@ public class BearerTokenDefinition extends RestSecurityDefinition {
     private String format;
 
     @SuppressWarnings("unused")
-    public BearerTokenDefinition() {
-    }
+    public BearerTokenDefinition() {}
 
     public BearerTokenDefinition(RestDefinition rest) {
         super(rest);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.CamelContext;
@@ -48,8 +49,8 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedPropertyReceived("addressLine1", addressLine1);
 
-        String csvLine = "\"PROBLEM SOLVER\",\"" + addressLine1
-                         + "\",\"SUITE 104\",\"RALEIGH\",\"NC\",\"27615\",\"US\"";
+        String csvLine =
+                "\"PROBLEM SOLVER\",\"" + addressLine1 + "\",\"SUITE 104\",\"RALEIGH\",\"NC\",\"27615\",\"US\"";
         ProducerTemplate template = ctx.createProducerTemplate();
         template.sendBody("direct:fromCsv", csvLine.trim());
 
@@ -72,13 +73,12 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedPropertyReceived("addressLine1", addressLine1);
 
-        String csvLine = "\"PROBLEM SOLVER\",\"" + addressLine1
-                         + "\",\"SUITE 104\",\"RALEIGH\",\"NC\",\"27615\",\"US\"";
+        String csvLine =
+                "\"PROBLEM SOLVER\",\"" + addressLine1 + "\",\"SUITE 104\",\"RALEIGH\",\"NC\",\"27615\",\"US\"";
         ProducerTemplate template = ctx.createProducerTemplate();
         template.sendBody("direct:fromCsv", csvLine.trim());
 
         mock.assertIsSatisfied();
-
     }
 
     @Test
@@ -95,25 +95,26 @@ public class BindyCsvFieldEndingWithSeparatorIssueTest extends CamelTestSupport 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedPropertyReceived("addressLine1", addressLine1);
 
-        String csvLine = "\"PROBLEM SOLVER\",\"" + addressLine1
-                         + "\",\"SUITE 104\",\"RALEIGH\",\"NC\",\"27615\",\"US\"";
+        String csvLine =
+                "\"PROBLEM SOLVER\",\"" + addressLine1 + "\",\"SUITE 104\",\"RALEIGH\",\"NC\",\"27615\",\"US\"";
         ProducerTemplate template = ctx.createProducerTemplate();
         template.sendBody("direct:fromCsv", csvLine.trim());
 
         mock.assertIsSatisfied();
-
     }
 
     private RouteBuilder createRoute() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:fromCsv").unmarshal().bindy(BindyType.Csv, MyCsvRecord.class)
+                from("direct:fromCsv")
+                        .unmarshal()
+                        .bindy(BindyType.Csv, MyCsvRecord.class)
                         .setProperty("addressLine1", simple("${in.body.addressLine1}"))
-                        .setProperty("addressLine2", simple("${in.body.addressLine2}")).log("${in.body}")
+                        .setProperty("addressLine2", simple("${in.body.addressLine2}"))
+                        .log("${in.body}")
                         .to("mock:result");
             }
         };
     }
-
 }

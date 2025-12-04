@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail.stream;
 
 import java.util.HashMap;
@@ -42,8 +43,8 @@ public class AbstractGoogleMailStreamTestSupport extends CamelTestSupport {
         final CamelContext context = super.createCamelContext();
 
         // read GoogleMail component configuration from TEST_OPTIONS_PROPERTIES
-        final Properties properties
-                = TestSupport.loadExternalPropertiesQuietly(AbstractGoogleMailStreamTestSupport.class, TEST_OPTIONS_PROPERTIES);
+        final Properties properties = TestSupport.loadExternalPropertiesQuietly(
+                AbstractGoogleMailStreamTestSupport.class, TEST_OPTIONS_PROPERTIES);
 
         Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -60,5 +61,4 @@ public class AbstractGoogleMailStreamTestSupport extends CamelTestSupport {
 
         return context;
     }
-
 }

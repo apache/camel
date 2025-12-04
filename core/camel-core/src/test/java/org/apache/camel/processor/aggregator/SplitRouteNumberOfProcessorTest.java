@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,9 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
 
@@ -45,24 +46,28 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(","), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
-                        // should always be in
-                        String body = newExchange.getIn().getBody(String.class);
-                        assertNotNull(body);
-                        return newExchange;
-                    }
-                }).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertFalse(failed.get(), "Should not have out");
-                        String s = exchange.getIn().getBody(String.class);
-                        exchange.getIn().setBody("Hi " + s);
-                        context.createProducerTemplate().send("mock:foo", exchange);
-                    }
-                }).end().to("mock:result");
+                from("direct:start")
+                        .split(body().tokenize(","), new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
+                                // should always be in
+                                String body = newExchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                return newExchange;
+                            }
+                        })
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertFalse(failed.get(), "Should not have out");
+                                String s = exchange.getIn().getBody(String.class);
+                                exchange.getIn().setBody("Hi " + s);
+                                context.createProducerTemplate().send("mock:foo", exchange);
+                            }
+                        })
+                        .end()
+                        .to("mock:result");
             }
         });
         context.start();
@@ -84,24 +89,31 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(","), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
-                        // should always be in
-                        String body = newExchange.getIn().getBody(String.class);
-                        assertNotNull(body);
-                        return newExchange;
-                    }
-                }).pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertFalse(failed.get(), "Should not have out");
-                        String s = exchange.getIn().getBody(String.class);
-                        exchange.getIn().setBody("Hi " + s);
-                        context.createProducerTemplate().send("mock:foo", exchange);
-                    }
-                }).to("mock:split").end().to("mock:result");
+                from("direct:start")
+                        .split(body().tokenize(","), new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
+                                // should always be in
+                                String body = newExchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                return newExchange;
+                            }
+                        })
+                        .pipeline("log:a", "log:b")
+                        .to("log:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertFalse(failed.get(), "Should not have out");
+                                String s = exchange.getIn().getBody(String.class);
+                                exchange.getIn().setBody("Hi " + s);
+                                context.createProducerTemplate().send("mock:foo", exchange);
+                            }
+                        })
+                        .to("mock:split")
+                        .end()
+                        .to("mock:result");
             }
         });
         context.start();
@@ -115,5 +127,4 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

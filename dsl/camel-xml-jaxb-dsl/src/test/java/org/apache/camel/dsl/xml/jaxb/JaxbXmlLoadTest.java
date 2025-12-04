@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,9 +27,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JaxbXmlLoadTest {
     @Test
     public void testLoadRoutesBuilderFromXml() throws Exception {
@@ -33,9 +34,7 @@ public class JaxbXmlLoadTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:foo")
-                            .routeId("foo")
-                            .to("mock:foo");
+                    from("direct:foo").routeId("foo").to("mock:foo");
                 }
             });
 
@@ -52,8 +51,8 @@ public class JaxbXmlLoadTest {
 
             // START SNIPPET: e1
             // load route from XML and add them to the existing camel context
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/jaxb/barRoute.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/jaxb/barRoute.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 

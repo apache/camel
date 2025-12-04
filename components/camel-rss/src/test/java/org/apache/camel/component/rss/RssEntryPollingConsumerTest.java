@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -34,9 +35,9 @@ public class RssEntryPollingConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=100").to("mock:result");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=100")
+                        .to("mock:result");
             }
         };
     }
-
 }

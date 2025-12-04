@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import java.io.*;
@@ -57,8 +58,8 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             zipInputStream = (ZipArchiveInputStream) inputStream;
         } else {
             try {
-                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
-                        new BufferedInputStream(inputStream));
+                ArchiveInputStream input = new ArchiveStreamFactory()
+                        .createArchiveInputStream(ArchiveStreamFactory.ZIP, new BufferedInputStream(inputStream));
                 zipInputStream = (ZipArchiveInputStream) input;
             } catch (ArchiveException e) {
                 throw new RuntimeException(e.getMessage(), e);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -64,8 +65,11 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").transform().method(TypeConverterRegistryStatsPerformanceTest.class, "transformMe")
-                        .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso").to("mock:result");
+                from("direct:start")
+                        .transform()
+                        .method(TypeConverterRegistryStatsPerformanceTest.class, "transformMe")
+                        .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso")
+                        .to("mock:result");
             }
         };
     }

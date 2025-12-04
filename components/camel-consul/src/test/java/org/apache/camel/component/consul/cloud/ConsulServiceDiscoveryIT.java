@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +35,6 @@ import org.kiwiproject.consul.AgentClient;
 import org.kiwiproject.consul.model.agent.ImmutableRegCheck;
 import org.kiwiproject.consul.model.agent.ImmutableRegistration;
 import org.kiwiproject.consul.model.agent.Registration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsulServiceDiscoveryIT extends ConsulTestSupport {
     private AgentClient client;
@@ -55,11 +56,22 @@ public class ConsulServiceDiscoveryIT extends ConsulTestSupport {
             final boolean healty = ThreadLocalRandom.current().nextBoolean();
             final int port = AvailablePortFinder.getNextAvailable();
 
-            Registration.RegCheck c = ImmutableRegCheck.builder().ttl("1m").status(healty ? "passing" : "critical").build();
+            Registration.RegCheck c = ImmutableRegCheck.builder()
+                    .ttl("1m")
+                    .status(healty ? "passing" : "critical")
+                    .build();
 
-            Registration r = ImmutableRegistration.builder().id("service-" + i).name("my-service").address("127.0.0.1")
-                    .addTags("a-tag").addTags("key1=value1")
-                    .addTags("key2=value2").addTags("healthy=" + healty).putMeta("meta-key", "meta-val").port(port).check(c)
+            Registration r = ImmutableRegistration.builder()
+                    .id("service-" + i)
+                    .name("my-service")
+                    .address("127.0.0.1")
+                    .addTags("a-tag")
+                    .addTags("key1=value1")
+                    .addTags("key2=value2")
+                    .addTags("healthy=" + healty)
+                    .putMeta("meta-key", "meta-val")
+                    .port(port)
+                    .check(c)
                     .build();
 
             client.register(r);
@@ -91,7 +103,8 @@ public class ConsulServiceDiscoveryIT extends ConsulTestSupport {
 
         for (ServiceDefinition service : services) {
             Assertions.assertThat(service.getMetadata()).isNotEmpty();
-            Assertions.assertThat(service.getMetadata()).containsEntry(ServiceDefinition.SERVICE_META_NAME, "my-service");
+            Assertions.assertThat(service.getMetadata())
+                    .containsEntry(ServiceDefinition.SERVICE_META_NAME, "my-service");
             Assertions.assertThat(service.getMetadata()).containsKey(ServiceDefinition.SERVICE_META_ID);
             Assertions.assertThat(service.getMetadata()).containsKey("a-tag");
             Assertions.assertThat(service.getMetadata()).containsEntry("key1", "value1");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone.transform;
 
 import java.util.Collections;
@@ -30,8 +31,10 @@ import org.apache.camel.spi.Transformer;
 /**
  * Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG
  */
-@DataTypeTransformer(name = "pinecone:rag",
-                     description = "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG")
+@DataTypeTransformer(
+        name = "pinecone:rag",
+        description =
+                "Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG")
 public class PineconeReverseEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) throws Exception {
@@ -45,7 +48,8 @@ public class PineconeReverseEmbeddingsDataTypeTransformer extends Transformer {
         List<String> result = embeddings.stream()
                 .map(ScoredVectorWithUnsignedIndices::getMetadata)
                 .map(metadata -> metadata.containsFields("text_segment")
-                        ? metadata.getFieldsOrDefault("text_segment", Value.getDefaultInstance()).getStringValue()
+                        ? metadata.getFieldsOrDefault("text_segment", Value.getDefaultInstance())
+                                .getStringValue()
                         : "")
                 .collect(Collectors.toList());
 

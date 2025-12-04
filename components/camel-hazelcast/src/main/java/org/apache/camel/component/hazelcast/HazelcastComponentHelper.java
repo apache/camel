@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 import java.util.Date;
@@ -24,8 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class HazelcastComponentHelper {
 
-    private HazelcastComponentHelper() {
-    }
+    private HazelcastComponentHelper() {}
 
     public static void copyHeaders(Exchange ex) {
         // get in headers
@@ -60,7 +60,8 @@ public final class HazelcastComponentHelper {
     public static HazelcastOperation lookupOperation(Exchange exchange, HazelcastOperation defaultOperation) {
 
         String operationName = exchange.getIn().getHeader(HazelcastConstants.OPERATION, String.class);
-        return ObjectHelper.isEmpty(operationName) ? defaultOperation : HazelcastOperation.getHazelcastOperation(operationName);
+        return ObjectHelper.isEmpty(operationName)
+                ? defaultOperation
+                : HazelcastOperation.getHazelcastOperation(operationName);
     }
-
 }

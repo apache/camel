@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class QueueConfigurationOptionsProxyTest extends CamelTestSupport {
 
@@ -32,7 +33,8 @@ class QueueConfigurationOptionsProxyTest extends CamelTestSupport {
 
         // first case: when exchange is set
         final Exchange exchange = new DefaultExchange(context);
-        final QueueConfigurationOptionsProxy configurationOptionsProxy = new QueueConfigurationOptionsProxy(configuration);
+        final QueueConfigurationOptionsProxy configurationOptionsProxy =
+                new QueueConfigurationOptionsProxy(configuration);
 
         exchange.getIn().setHeader(QueueConstants.QUEUE_NAME, "testQueueExchange");
         configuration.setQueueName("testQueueConfig");

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,9 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSystemProperty(named = "performance-tests", matches = ".*")
 public class VertxPlatformHttpLargeMessageStreamingTest {
@@ -55,8 +56,7 @@ public class VertxPlatformHttpLargeMessageStreamingTest {
 
             context.start();
 
-            InputStream response = given()
-                    .body(new FileInputStream(input.toFile()))
+            InputStream response = given().body(new FileInputStream(input.toFile()))
                     .post("/streaming")
                     .then()
                     .extract()

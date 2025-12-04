@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.stt;
 
 import java.util.Map;
@@ -29,13 +30,12 @@ public class WatsonSpeechToTextComponent extends HealthCheckComponent {
     @Metadata
     private WatsonSpeechToTextConfiguration configuration = new WatsonSpeechToTextConfiguration();
 
-    public WatsonSpeechToTextComponent() {
-    }
+    public WatsonSpeechToTextComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        WatsonSpeechToTextConfiguration config
-                = configuration != null ? configuration.copy() : new WatsonSpeechToTextConfiguration();
+        WatsonSpeechToTextConfiguration config =
+                configuration != null ? configuration.copy() : new WatsonSpeechToTextConfiguration();
 
         WatsonSpeechToTextEndpoint endpoint = new WatsonSpeechToTextEndpoint(uri, this, config);
         setProperties(endpoint, parameters);

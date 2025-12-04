@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import java.lang.reflect.Method;
@@ -45,12 +46,12 @@ public class ActiveMQComponent extends JmsComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQComponent.class);
 
-    private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<SingleConnectionFactory> singleConnectionFactoryList =
+            new CopyOnWriteArrayList<>();
     private final CopyOnWriteArrayList<Object> pooledConnectionFactoryServiceList = new CopyOnWriteArrayList<>();
     private boolean embedded;
 
-    public ActiveMQComponent() {
-    }
+    public ActiveMQComponent() {}
 
     public ActiveMQComponent(CamelContext context) {
         super(context);
@@ -98,7 +99,8 @@ public class ActiveMQComponent extends JmsComponent {
         this.embedded = embedded;
         if (embedded) {
             setBrokerURL("vm://localhost?broker.persistent=false");
-            LOG.info("Using embedded in-memory ActiveMQ broker (you must have activemq-broker JAR added as dependency)");
+            LOG.info(
+                    "Using embedded in-memory ActiveMQ broker (you must have activemq-broker JAR added as dependency)");
         }
     }
 
@@ -293,14 +295,20 @@ public class ActiveMQComponent extends JmsComponent {
 
     @Override
     protected JmsEndpoint createTemporaryQueueEndpoint(
-            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            String uri,
+            JmsComponent component,
+            String subject,
+            JmsConfiguration configuration,
             QueueBrowseStrategy queueBrowseStrategy) {
         return new ActiveMQTemporaryQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }
 
     @Override
     protected JmsEndpoint createQueueEndpoint(
-            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            String uri,
+            JmsComponent component,
+            String subject,
+            JmsConfiguration configuration,
             QueueBrowseStrategy queueBrowseStrategy) {
         return new ActiveMQQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }

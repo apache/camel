@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +40,6 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CxfConsumerResponseTest extends CamelTestSupport {
 
     private static final String ECHO_OPERATION = "echo";
@@ -47,13 +48,13 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
     private static final String TEST_MESSAGE = "Hello World!";
     private static int pingCounter;
 
-    protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+    protected final String simpleEndpointAddress =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
 
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
-                                               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
-                                               + "&publishedEndpointUrl=http://www.simple.com/services/test"
-                                               + "&exchangePattern=InOnly";
+            + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+            + "&publishedEndpointUrl=http://www.simple.com/services/test"
+            + "&exchangePattern=InOnly";
 
     // START SNIPPET: example
     @Override
@@ -61,14 +62,17 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(simpleEndpointURI)
-                        .choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
+                        .choice()
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION))
+                        .process(new Processor() {
                             public void process(final Exchange exchange) {
-                                assertEquals(DataFormat.POJO,
+                                assertEquals(
+                                        DataFormat.POJO,
                                         exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
                                 Message in = exchange.getIn();
                                 // check the remote IP from the cxfMessage
-                                org.apache.cxf.message.Message cxfMessage
-                                        = in.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+                                org.apache.cxf.message.Message cxfMessage = in.getHeader(
+                                        CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
                                 assertNotNull(cxfMessage, "Should get the cxfMessage instance from message header");
                                 ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
                                 assertNotNull(request, "Should get the ServletRequest");
@@ -86,7 +90,8 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
                                 exchange.getIn().setHeader(Client.RESPONSE_CONTEXT, map);
                             }
                         })
-                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION)).process(new Processor() {
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION))
+                        .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 Message in = exchange.getIn();
                                 // Get the parameter list
@@ -95,13 +100,12 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
                                 exchange.getMessage().setBody(parameter.get(0));
                             }
                         })
-                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(PING_OPERATION)).process(new Processor() {
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(PING_OPERATION))
+                        .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 pingCounter++;
                             }
-
                         });
-
             }
         };
     }
@@ -130,5 +134,4 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         int afterCallingPing = pingCounter;
         assertEquals(1, afterCallingPing - beforeCallingPing, "The ping operation doesn't be called");
     }
-
 }

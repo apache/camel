@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.ringbuffer;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_RING_BUFFER;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,18 +30,21 @@ import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_RING_BUFFER;
-
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed ringbuffer.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = SCHEME_RING_BUFFER, title = "Hazelcast Ringbuffer",
-             syntax = "hazelcast-ringbuffer:cacheName", producerOnly = true, category = { Category.CACHE, Category.CLUSTERING },
-             headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = SCHEME_RING_BUFFER,
+        title = "Hazelcast Ringbuffer",
+        syntax = "hazelcast-ringbuffer:cacheName",
+        producerOnly = true,
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastRingbufferEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component,
-                                       final String cacheName) {
+    public HazelcastRingbufferEndpoint(
+            HazelcastInstance hazelcastInstance, String uri, Component component, final String cacheName) {
         super(hazelcastInstance, uri, component, cacheName);
         setCommand(HazelcastCommand.ringbuffer);
     }
@@ -52,5 +58,4 @@ public class HazelcastRingbufferEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new HazelcastRingbufferProducer(hazelcastInstance, this, cacheName);
     }
-
 }

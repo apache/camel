@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
@@ -44,17 +45,13 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
         expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/token", new OAuth2TokenRequestHandler(FAKE_TOKEN, clientId, clientSecret))
-                .register("/post",
-                        new HeaderValidationHandler(
-                                "POST",
-                                null,
-                                null,
-                                null,
-                                expectedHeaders))
+                .register("/post", new HeaderValidationHandler("POST", null, null, null, expectedHeaders))
                 .create();
 
         localServer.start();
@@ -65,14 +62,12 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
 
         String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
 
-        Exchange exchange
-                = template.request("http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
-                                   + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint,
-                        exchange1 -> {
-                        });
+        Exchange exchange = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId=" + clientId
+                        + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint,
+                exchange1 -> {});
 
         assertExchange(exchange);
-
     }
 
     @Test
@@ -86,32 +81,27 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
                         .setVariable("cid", constant(clientId))
                         .setVariable("cs", constant(clientSecret))
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
-                             + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint);
+                                + "/post?httpMethod=POST&oauth2ClientId=${variable.cid}"
+                                + "&oauth2ClientSecret=${variable:cs}&oauth2TokenEndpoint=" + tokenEndpoint);
             }
         });
 
-        Exchange exchange = template.send("direct:start", e -> {
-        });
+        Exchange exchange = template.send("direct:start", e -> {});
 
         assertExchange(exchange);
-
     }
 
     @Test
     public void bodyAuthenticationIsPresent() {
         String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
 
-        Exchange exchange
-                = template.request("http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
-                                   + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
-                                   +
-                                   "&oauth2BodyAuthentication=true",
-                        exchange1 -> {
-                        });
+        Exchange exchange = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                        + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                        + "&oauth2BodyAuthentication=true",
+                exchange1 -> {});
 
         assertExchange(exchange);
-
     }
 
     protected void assertHeaders(Map<String, Object> headers) {
@@ -121,5 +111,4 @@ public class HttpOAuth2AuthenticationTest extends BaseHttpTest {
     protected String getExpectedContent() {
         return "";
     }
-
 }

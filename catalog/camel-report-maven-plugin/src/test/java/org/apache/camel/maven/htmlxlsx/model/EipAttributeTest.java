@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
-
-import java.util.Collections;
-
-import org.apache.camel.maven.htmlxlsx.TestUtil;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Collections;
+
+import org.apache.camel.maven.htmlxlsx.TestUtil;
+import org.junit.jupiter.api.Test;
 
 public class EipAttributeTest extends GetterAndSetterTest<EipAttribute> {
 

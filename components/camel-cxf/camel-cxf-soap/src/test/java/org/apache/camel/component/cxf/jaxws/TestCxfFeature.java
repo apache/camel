@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.cxf.Bus;
@@ -37,7 +38,6 @@ public class TestCxfFeature extends AbstractFeature {
         }
 
         provider.getOutInterceptors().add(new EndpointCheckInterceptor());
-
     }
 
     class EndpointCheckInterceptor extends AbstractPhaseInterceptor<Message> {
@@ -52,11 +52,11 @@ public class TestCxfFeature extends AbstractFeature {
 
             // This test verifies that the "to" endpoint is not the from endpoint.
             Endpoint endpoint = ex.get(Endpoint.class);
-            if ("http://localhost:9003/CamelContext/RouterPort".equals(endpoint.getEndpointInfo().getAddress())) {
-                throw new Fault(new Exception("bad endpoint " + endpoint.getEndpointInfo().getAddress()));
+            if ("http://localhost:9003/CamelContext/RouterPort"
+                    .equals(endpoint.getEndpointInfo().getAddress())) {
+                throw new Fault(new Exception(
+                        "bad endpoint " + endpoint.getEndpointInfo().getAddress()));
             }
-
         }
     }
-
 }

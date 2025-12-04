@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
 
 import java.util.HashMap;
@@ -58,7 +59,8 @@ public class MicrometerObservabilityTracerTestSupport extends ExchangeTestSuppor
 
     protected static SimpleSpan getSpan(List<SimpleSpan> trace, String uri, Op op) {
         for (SimpleSpan span : trace) {
-            if (span.getTags().get("camel.uri") != null && span.getTags().get("camel.uri").equals(uri)) {
+            if (span.getTags().get("camel.uri") != null
+                    && span.getTags().get("camel.uri").equals(uri)) {
                 if (span.getTags().get(TagConstants.OP).equals(op.toString())) {
                     return span;
                 }
@@ -66,5 +68,4 @@ public class MicrometerObservabilityTracerTestSupport extends ExchangeTestSuppor
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
     }
-
 }

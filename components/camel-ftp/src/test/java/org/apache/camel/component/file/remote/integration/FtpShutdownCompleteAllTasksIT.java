@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify shutdown.
@@ -71,9 +72,12 @@ public class FtpShutdownCompleteAllTasksIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).routeId("route1")
+                from(getFtpUrl())
+                        .routeId("route1")
                         // let it complete all tasks during shutdown
-                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).delay(1000).to("seda:foo");
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .delay(1000)
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

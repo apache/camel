@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
 
 import java.io.ByteArrayInputStream;
@@ -110,9 +111,15 @@ public class LogInputStreamTest extends ContextTestSupport {
 
                 from("direct:d").streamCaching().to("log:d?showStreams=true").to("mock:d");
 
-                from("direct:e").streamCaching().to("log:e?showCachedStreams=true").to("mock:e");
+                from("direct:e")
+                        .streamCaching()
+                        .to("log:e?showCachedStreams=true")
+                        .to("mock:e");
 
-                from("direct:f").streamCaching().to("log:f?showCachedStreams=false").to("mock:f");
+                from("direct:f")
+                        .streamCaching()
+                        .to("log:f?showCachedStreams=false")
+                        .to("mock:f");
             }
         };
     }

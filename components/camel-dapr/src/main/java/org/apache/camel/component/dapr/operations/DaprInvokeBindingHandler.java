@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.util.Map;
@@ -48,7 +49,8 @@ public class DaprInvokeBindingHandler implements DaprOperationHandler {
         bindingRequest.setMetadata(metadata);
 
         DaprClient client = endpoint.getClient();
-        final byte[] response = client.invokeBinding(bindingRequest, TypeRef.get(byte[].class)).block();
+        final byte[] response =
+                client.invokeBinding(bindingRequest, TypeRef.get(byte[].class)).block();
 
         return DaprOperationResponse.create(response);
     }

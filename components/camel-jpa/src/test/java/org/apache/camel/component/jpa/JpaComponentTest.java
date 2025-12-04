@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.LockModeType;
@@ -25,11 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class JpaComponentTest extends CamelTestSupport {
 
     @Test
@@ -39,9 +40,8 @@ public class JpaComponentTest extends CamelTestSupport {
             assertNull(comp.getEntityManagerFactory());
             assertNull(comp.getTransactionStrategy());
 
-            JpaEndpoint jpa
-                    = (JpaEndpoint) comp
-                            .createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
+            JpaEndpoint jpa = (JpaEndpoint)
+                    comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
             JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
 
             assertEquals(LockModeType.PESSIMISTIC_WRITE, consumer.getLockModeType());
@@ -109,7 +109,8 @@ public class JpaComponentTest extends CamelTestSupport {
             assertNull(comp.getEntityManagerFactory());
             assertNull(comp.getTransactionStrategy());
 
-            JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa:?persistenceUnit=journalPersistenceUnit&usePersist=true");
+            JpaEndpoint jpa =
+                    (JpaEndpoint) comp.createEndpoint("jpa:?persistenceUnit=journalPersistenceUnit&usePersist=true");
             assertNotNull(jpa);
             assertNull(jpa.getEntityType());
         }

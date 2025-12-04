@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Jolokia;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Jolokia;
+import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.junit.jupiter.api.Test;
 
 public class JolokiaTraitTest {
 
@@ -43,7 +44,6 @@ public class JolokiaTraitTest {
         verify(context, times(1)).doWithDeployments(any());
         verify(context, times(1)).doWithKnativeServices(any());
         verify(context, times(0)).doWithServices(any());
-
     }
 
     @Test
@@ -61,7 +61,5 @@ public class JolokiaTraitTest {
         verify(context, times(1)).doWithDeployments(any());
         verify(context, times(1)).doWithKnativeServices(any());
         verify(context, times(1)).doWithServices(any());
-
     }
-
 }

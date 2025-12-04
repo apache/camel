@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.firehose;
 
 import java.util.Map;
@@ -40,13 +41,15 @@ public class KinesisFirehose2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisFirehose2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new KinesisFirehose2Configuration();
+        KinesisFirehose2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new KinesisFirehose2Configuration();
         configuration.setStreamName(remaining);
         KinesisFirehose2Endpoint endpoint = new KinesisFirehose2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseSessionCredentials()
-                && !configuration.isUseProfileCredentialsProvider() && configuration.getAmazonKinesisFirehoseClient() == null
+        if (!configuration.isUseDefaultCredentialsProvider()
+                && !configuration.isUseSessionCredentials()
+                && !configuration.isUseProfileCredentialsProvider()
+                && configuration.getAmazonKinesisFirehoseClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");

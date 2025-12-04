@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.ibm.secrets.manager.integration.operations;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,15 +34,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Dsecrets-manager and -Dcamel.ibm.sm.serviceurl
+// Must be manually tested. Provide your own accessKey and secretKey using -Dsecrets-manager and
+// -Dcamel.ibm.sm.serviceurl
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.sm.token", matches = ".*",
-                                 disabledReason = "Secrets Manager Token not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.sm.serviceurl", matches = ".*",
-                                 disabledReason = "Secrets Manager Service URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.sm.token",
+            matches = ".*",
+            disabledReason = "Secrets Manager Token not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.sm.serviceurl",
+            matches = ".*",
+            disabledReason = "Secrets Manager Service URL not provided")
 })
 public class IBMSecretsManagerCreateKVSecretIT extends CamelTestSupport {
 
@@ -72,14 +77,20 @@ public class IBMSecretsManagerCreateKVSecretIT extends CamelTestSupport {
         Exchange readSec = template.request("direct:readSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(IBMSecretsManagerConstants.SECRET_ID, createdSec.getMessage().getBody());
+                exchange.getMessage()
+                        .setHeader(
+                                IBMSecretsManagerConstants.SECRET_ID,
+                                createdSec.getMessage().getBody());
             }
         });
 
         template.request("direct:deleteSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(IBMSecretsManagerConstants.SECRET_ID, createdSec.getMessage().getBody());
+                exchange.getMessage()
+                        .setHeader(
+                                IBMSecretsManagerConstants.SECRET_ID,
+                                createdSec.getMessage().getBody());
             }
         });
 
@@ -97,15 +108,18 @@ public class IBMSecretsManagerCreateKVSecretIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("ibm-secrets-manager://secret?operation=createKVSecret&token=RAW(%s)&serviceUrl=%s",
+                        .toF(
+                                "ibm-secrets-manager://secret?operation=createKVSecret&token=RAW(%s)&serviceUrl=%s",
                                 System.getProperty("camel.ibm.sm.token"), System.getProperty("camel.ibm.sm.serviceurl"))
                         .to("mock:result-write");
                 from("direct:readSecret")
-                        .toF("ibm-secrets-manager://secret?operation=getSecret&token=RAW(%s)&serviceUrl=%s",
+                        .toF(
+                                "ibm-secrets-manager://secret?operation=getSecret&token=RAW(%s)&serviceUrl=%s",
                                 System.getProperty("camel.ibm.sm.token"), System.getProperty("camel.ibm.sm.serviceurl"))
                         .to("mock:result-read");
                 from("direct:deleteSecret")
-                        .toF("ibm-secrets-manager://secret?operation=deleteSecret&token=RAW(%s)&serviceUrl=%s",
+                        .toF(
+                                "ibm-secrets-manager://secret?operation=deleteSecret&token=RAW(%s)&serviceUrl=%s",
                                 System.getProperty("camel.ibm.sm.token"), System.getProperty("camel.ibm.sm.serviceurl"))
                         .to("mock:result-delete");
             }

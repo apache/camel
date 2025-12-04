@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,7 +55,9 @@ public class MulticastParallelSynchronousTest extends ContextTestSupport {
                         .process(e -> {
                             before = Thread.currentThread().getName();
                         })
-                        .multicast().parallelProcessing().synchronous()
+                        .multicast()
+                        .parallelProcessing()
+                        .synchronous()
                         .process(e -> {
                             middle = Thread.currentThread().getName();
                         })
@@ -66,9 +69,7 @@ public class MulticastParallelSynchronousTest extends ContextTestSupport {
                             after = Thread.currentThread().getName();
                         })
                         .to("mock:end");
-
             }
         };
     }
-
 }

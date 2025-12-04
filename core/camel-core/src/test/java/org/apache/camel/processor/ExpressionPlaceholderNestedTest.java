@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Properties;
 
@@ -24,8 +27,6 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
 
@@ -59,7 +60,8 @@ public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
                 @Override
                 public void configure() {
                     from("direct:on")
-                            .setBody().constant("{{query?nested=true}}")
+                            .setBody()
+                            .constant("{{query?nested=true}}")
                             .to("mock:result");
                 }
             });
@@ -84,13 +86,9 @@ public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:off")
-                        .setBody().constant("{{query?nested=false}}")
-                        .to("mock:result");
+                from("direct:off").setBody().constant("{{query?nested=false}}").to("mock:result");
 
-                from("direct:escaped")
-                        .setBody().constant("{{queryEscaped}}")
-                        .to("mock:result");
+                from("direct:escaped").setBody().constant("{{queryEscaped}}").to("mock:result");
             }
         };
     }

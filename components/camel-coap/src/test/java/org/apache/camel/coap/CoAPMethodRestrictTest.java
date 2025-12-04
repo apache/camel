@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.elements.config.Configuration;
 import org.eclipse.californium.elements.util.Bytes;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
@@ -53,8 +54,8 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     private void assertCoAPMethodRestrictResponse(String path, String methodRestrict, String expectedResponse) {
         for (String method : CoAPConstants.METHOD_RESTRICT_ALL.split(",")) {
-            String result = template.requestBodyAndHeader("coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD,
-                    method, String.class);
+            String result = template.requestBodyAndHeader(
+                    "coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD, method, String.class);
             if (methodRestrict.contains(method)) {
                 assertEquals(expectedResponse, result);
             } else {
@@ -72,7 +73,8 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
                 fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/a/b"));
+                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT)
+                        .setBody(constant("DELETE: /test/a/b"));
 
                 fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT)
                         .setBody(constant("DELETE & GET: /test/a/b/c"));

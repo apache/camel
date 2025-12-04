@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.time.Duration;
@@ -120,8 +121,8 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
 
         client.suspendWorkflow(instanceId, reason);
 
-        return DaprOperationResponse.create(null,
-                Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId, DaprConstants.REASON, reason));
+        return DaprOperationResponse.create(
+                null, Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId, DaprConstants.REASON, reason));
     }
 
     private DaprOperationResponse resumeWorkflow(Exchange exchange, DaprWorkflowClient client) {
@@ -130,8 +131,8 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
 
         client.resumeWorkflow(instanceId, reason);
 
-        return DaprOperationResponse.create(null,
-                Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId, DaprConstants.REASON, reason));
+        return DaprOperationResponse.create(
+                null, Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId, DaprConstants.REASON, reason));
     }
 
     private DaprOperationResponse getWorkflowState(Exchange exchange, DaprWorkflowClient client) {
@@ -178,8 +179,8 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
 
         client.raiseEvent(instanceId, eventName, payload);
 
-        return DaprOperationResponse.create(payload,
-                Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId, DaprConstants.EVENT_NAME, eventName));
+        return DaprOperationResponse.create(
+                payload, Map.of(DaprConstants.WORKFLOW_INSTANCE_ID, instanceId, DaprConstants.EVENT_NAME, eventName));
     }
 
     @Override
@@ -219,9 +220,8 @@ public class DaprWorkflowHandler implements DaprOperationHandler {
             case waitForInstanceCompletion:
                 Duration timeout = configurationOptionsProxy.getTimeout(exchange);
                 if (ObjectHelper.isEmpty(instanceId) || ObjectHelper.isEmpty(timeout)) {
-                    throw new IllegalArgumentException(
-                            "Instance Id and Timeout must not be empty for "
-                                                       + "'waitForInstanceStart' and `waitForInstanceCompletion` operation");
+                    throw new IllegalArgumentException("Instance Id and Timeout must not be empty for "
+                            + "'waitForInstanceStart' and `waitForInstanceCompletion` operation");
                 }
                 break;
             case raiseEvent:

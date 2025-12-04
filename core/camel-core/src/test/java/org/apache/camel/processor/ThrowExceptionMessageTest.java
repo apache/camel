@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThrowExceptionMessageTest extends ContextTestSupport {
 
@@ -47,7 +48,9 @@ public class ThrowExceptionMessageTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:start").throwException(IllegalArgumentException.class, "Darn ${body} is invalid")
+                from("direct:start")
+                        .to("mock:start")
+                        .throwException(IllegalArgumentException.class, "Darn ${body} is invalid")
                         .to("mock:result");
             }
         };

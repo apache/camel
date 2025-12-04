@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -39,10 +40,10 @@ public class OpenApiITCase extends JBangTestSupport {
 
     @Test
     public void runOpenApiOnExistingImplementation() {
-        final String openApiImpl
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api/Greetings.java";
-        final String openApiUrl
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api/greetings-api.json";
+        final String openApiImpl =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api/Greetings.java";
+        final String openApiUrl =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api/greetings-api.json";
 
         downloadFile(openApiImpl);
         downloadFile(openApiUrl);
@@ -55,12 +56,12 @@ public class OpenApiITCase extends JBangTestSupport {
 
     @Test
     public void runOpenApiUsingContractFirstApproach() throws IOException {
-        final String openApiUrl
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
-        final String openApiConfig
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore.camel.yaml";
-        final String appConfig
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/refs/heads/main/jbang/open-api-contract-first/application.properties";
+        final String openApiUrl =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
+        final String openApiConfig =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore.camel.yaml";
+        final String appConfig =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/refs/heads/main/jbang/open-api-contract-first/application.properties";
 
         downloadFile(openApiUrl);
         downloadFile(openApiConfig);
@@ -72,23 +73,21 @@ public class OpenApiITCase extends JBangTestSupport {
         executeBackground("run petstore-v3.json petstore.camel.yaml application.properties");
         checkLogContains("HTTP endpoints summary");
 
-        //verify mock
+        // verify mock
         HttpResponse<String> response = executeHttpRequest("/myapi/pet/123", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         Assertions.assertThat(response.body()).contains("Donald the duck");
 
-        //verify sample response
+        // verify sample response
         response = executeHttpRequest("/myapi/pet/" + new Random().nextInt(124, 500), true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         Assertions.assertThat(response.body()).contains("Jack the cat");
 
-        //verify api-doc
+        // verify api-doc
         response = executeHttpRequest("/myapi/api-doc", true);
         Assertions.assertThat(response.statusCode()).isEqualTo(200);
         final ObjectMapper objectMapper = new ObjectMapper();
-        Map expectedDoc = objectMapper.readValue(URI.create(
-                openApiUrl).toURL(),
-                Map.class);
+        Map expectedDoc = objectMapper.readValue(URI.create(openApiUrl).toURL(), Map.class);
         Map actualDoc = objectMapper.readValue(response.body(), Map.class);
         Assertions.assertThat(((Map) actualDoc.get("paths")).size())
                 .as("check api doc exposed paths size")
@@ -97,13 +96,19 @@ public class OpenApiITCase extends JBangTestSupport {
 
     @Test
     public void exportOpenApiUsingContractFirstApproach() {
-        final String openApiUrl
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
+        final String openApiUrl =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
 
         downloadFile(openApiUrl);
         final String generatedPath = mountPoint() + "/petstore";
-        generateProperties(Map.of("camel.jbang.runtime", "spring-boot", "camel.jbang.gav", "example:petstore:1.0-SNAPSHOT",
-                "camel.jbang.exportDir", generatedPath, "camel.jbang.open-api",
+        generateProperties(Map.of(
+                "camel.jbang.runtime",
+                "spring-boot",
+                "camel.jbang.gav",
+                "example:petstore:1.0-SNAPSHOT",
+                "camel.jbang.exportDir",
+                generatedPath,
+                "camel.jbang.open-api",
                 DEFAULT_ROUTE_FOLDER + "/petstore-v3.json"));
         execute("export");
         assertFileInDataFolderExists("petstore");
@@ -114,32 +119,30 @@ public class OpenApiITCase extends JBangTestSupport {
     @Test
     @InVersion(from = "4.7.00")
     public void generateOpenApiWithDtoUsingContractFirstApproach() {
-        final String openApiUrl
-                = "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
+        final String openApiUrl =
+                "https://raw.githubusercontent.com/apache/camel-kamelets-examples/main/jbang/open-api-contract-first/petstore-v3.json";
 
         downloadFile(openApiUrl);
 
         execute("plugin add generate");
         execute("plugin get");
         execute("generate rest --dto --input=petstore-v3.json --output=rest-dsl.yaml --runtime=spring-boot --routes");
-        List<String> generatedDTO = containerService.listDirectory(DEFAULT_ROUTE_FOLDER + "/model").toList();
+        List<String> generatedDTO =
+                containerService.listDirectory(DEFAULT_ROUTE_FOLDER + "/model").toList();
         Assertions.assertThat(generatedDTO).as("check generated DTO number").hasSize(8);
         assertFileInContainerExists(DEFAULT_ROUTE_FOLDER + "/rest-dsl.yaml");
     }
 
     private HttpResponse<String> executeHttpRequest(final String ctxUrl, boolean acceptJson) {
         try {
-            final HttpRequest.Builder builder = HttpRequest
-                    .newBuilder(
-                            new URI(String.format("http://localhost:%s%s", containerService.getDevConsolePort(), ctxUrl)))
+            final HttpRequest.Builder builder = HttpRequest.newBuilder(new URI(
+                            String.format("http://localhost:%s%s", containerService.getDevConsolePort(), ctxUrl)))
                     .timeout(Duration.ofSeconds(5))
                     .GET();
             if (acceptJson) {
                 builder.headers("Accept", "application/json");
             }
-            return httpClient.send(builder
-                    .build(),
-                    HttpResponse.BodyHandlers.ofString());
+            return httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException | URISyntaxException e) {
             Assertions.fail("unable to execute the request");
             throw new RuntimeException(e);

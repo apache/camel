@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -32,10 +37,6 @@ import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import reactor.core.publisher.Mono;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @EnabledIfSystemProperty(named = "token", matches = ".*", disabledReason = "Stitch token was not provided")
 class StitchClientImplIT {
@@ -61,9 +62,8 @@ class StitchClientImplIT {
         properties.put("age", Collections.singletonMap("type", "integer"));
         properties.put("has_magic", Collections.singletonMap("type", "boolean"));
 
-        final StitchSchema schema = StitchSchema.builder()
-                .addKeyword("properties", properties)
-                .build();
+        final StitchSchema schema =
+                StitchSchema.builder().addKeyword("properties", properties).build();
 
         final StitchRequestBody body = StitchRequestBody.builder()
                 .withTableName("test")
@@ -99,9 +99,8 @@ class StitchClientImplIT {
         properties.put("age", Collections.singletonMap("type", "integer"));
         properties.put("has_magic", Collections.singletonMap("type", "integerr"));
 
-        final StitchSchema schema = StitchSchema.builder()
-                .addKeyword("properties", properties)
-                .build();
+        final StitchSchema schema =
+                StitchSchema.builder().addKeyword("properties", properties).build();
 
         final StitchRequestBody body = StitchRequestBody.builder()
                 .withTableName("test")

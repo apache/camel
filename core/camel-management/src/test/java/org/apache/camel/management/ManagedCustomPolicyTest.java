@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,10 +35,6 @@ import org.apache.camel.spi.Policy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCustomPolicyTest extends ManagementTestSupport {
@@ -69,13 +70,15 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 // custom policy but processors should be registered
-                from("direct:start").policy(new MyPolicy())
-                        .to("log:foo").id("foo")
-                        .to("mock:result").id("result");
+                from("direct:start")
+                        .policy(new MyPolicy())
+                        .to("log:foo")
+                        .id("foo")
+                        .to("mock:result")
+                        .id("result");
 
                 // no policy but processors should be registered
-                from("direct:bar")
-                        .to("log:bar").id("bar");
+                from("direct:bar").to("log:bar").id("bar");
             }
         };
     }
@@ -95,5 +98,4 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
             };
         }
     }
-
 }

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyBasicAuthTest extends CamelSpringTestSupport {
 
@@ -35,12 +36,16 @@ public class RestJettyBasicAuthTest extends CamelSpringTestSupport {
 
     @Test
     public void testJestDslBasicAuth() {
-        String out = template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=donald&authPassword=duck",
-                null, String.class);
+        String out = template.requestBody(
+                "http://localhost:9444/ping?authMethod=Basic&authUsername=donald&authPassword=duck",
+                null,
+                String.class);
         assertEquals("\"pong\"", out);
 
         try {
-            template.requestBody("http://localhost:9444/ping?authMethod=Basic&authUsername=mickey&authPassword=duck", null,
+            template.requestBody(
+                    "http://localhost:9444/ping?authMethod=Basic&authUsername=mickey&authPassword=duck",
+                    null,
                     String.class);
             fail("Should not login");
         } catch (Exception e) {
@@ -48,5 +53,4 @@ public class RestJettyBasicAuthTest extends CamelSpringTestSupport {
             assertEquals(401, hofe.getStatusCode());
         }
     }
-
 }

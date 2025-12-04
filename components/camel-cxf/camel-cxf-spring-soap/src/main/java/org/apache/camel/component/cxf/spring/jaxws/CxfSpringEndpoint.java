@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.jaxws;
 
 import jakarta.xml.ws.Provider;
@@ -65,8 +66,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         super(address, component);
     }
 
-    public CxfSpringEndpoint() {
-    }
+    public CxfSpringEndpoint() {}
 
     // Package private methods
     // -------------------------------------------------------------------------
@@ -308,11 +308,9 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
     @SuppressWarnings("rawtypes")
     private void enableSpringBusShutdownGracefully(Bus bus) {
-        if (bus instanceof SpringBus
-                && applicationContext instanceof AbstractApplicationContext) {
+        if (bus instanceof SpringBus && applicationContext instanceof AbstractApplicationContext) {
             SpringBus springBus = (SpringBus) bus;
-            AbstractApplicationContext abstractApplicationContext
-                    = (AbstractApplicationContext) applicationContext;
+            AbstractApplicationContext abstractApplicationContext = (AbstractApplicationContext) applicationContext;
             ApplicationListener cxfSpringBusListener = null;
             for (ApplicationListener listener : abstractApplicationContext.getApplicationListeners()) {
 
@@ -320,9 +318,9 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
                     cxfSpringBusListener = listener;
                 }
             }
-            ApplicationEventMulticaster aem = applicationContext
-                    .getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
-                            ApplicationEventMulticaster.class);
+            ApplicationEventMulticaster aem = applicationContext.getBean(
+                    AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
+                    ApplicationEventMulticaster.class);
             aem.removeApplicationListener(cxfSpringBusListener);
 
             abstractApplicationContext.addApplicationListener((final ApplicationEvent event) -> {
@@ -333,10 +331,12 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
                             try {
                                 boolean done = false;
-                                ShutdownStrategy shutdownStrategy = ((DefaultCamelContext) getCamelContext())
-                                        .getShutdownStrategy();
+                                ShutdownStrategy shutdownStrategy =
+                                        ((DefaultCamelContext) getCamelContext()).getShutdownStrategy();
                                 while (!done && !shutdownStrategy.hasTimeoutOccurred()) {
-                                    int inflight = getCamelContext().getInflightRepository().size();
+                                    int inflight = getCamelContext()
+                                            .getInflightRepository()
+                                            .size();
                                     if (inflight != 0) {
                                         Thread.sleep(1000);
                                     } else {
@@ -357,7 +357,5 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
                 }.start();
             });
         }
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import java.util.ArrayList;
@@ -27,7 +28,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * Represents a set of regular expression based filter patterns for including and excluding content of some type.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "filterParameters", propOrder = { "include", "exclude" })
+@XmlType(
+        name = "filterParameters",
+        propOrder = {"include", "exclude"})
 public class FilterParametersDefinition {
 
     protected List<String> include;

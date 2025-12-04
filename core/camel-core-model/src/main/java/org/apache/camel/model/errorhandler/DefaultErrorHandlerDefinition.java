@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,57 +49,75 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
 
     @XmlTransient
     private CamelLogger loggerBean;
+
     @XmlTransient
     private Processor onRedeliveryProcessor;
+
     @XmlTransient
     private Processor onPrepareFailureProcessor;
+
     @XmlTransient
     private Processor onExceptionOccurredProcessor;
+
     @XmlTransient
     private ScheduledExecutorService executorServiceBean;
+
     @XmlTransient
     private Predicate retryWhilePredicate;
 
     // commonly used should be first
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalMessage;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useOriginalBody;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.processor.errorhandler.RedeliveryPolicy")
     private String redeliveryPolicyRef;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String loggerRef;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.LoggingLevel", defaultValue = "ERROR",
-              enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "ERROR",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String level;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String logName;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onRedeliveryRef;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onExceptionOccurredRef;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepareFailureRef;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String retryWhileRef;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
     private String executorServiceRef;
 
-    public DefaultErrorHandlerDefinition() {
-    }
+    public DefaultErrorHandlerDefinition() {}
 
     protected DefaultErrorHandlerDefinition(DefaultErrorHandlerDefinition source) {
         this.loggerBean = source.loggerBean;
@@ -862,5 +881,4 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
         setRedeliveryPolicyRef(redeliveryPolicyRef);
         return this;
     }
-
 }

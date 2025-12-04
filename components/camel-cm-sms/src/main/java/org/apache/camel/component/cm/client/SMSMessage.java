@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.client;
 
 import jakarta.validation.constraints.NotNull;
@@ -113,5 +114,4 @@ public class SMSMessage {
         toS.append(" }");
         return toS.toString();
     }
-
 }

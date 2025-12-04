@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.util;
 
 import java.nio.charset.StandardCharsets;
@@ -40,9 +41,13 @@ public class ClickUpMockRoutes extends RouteBuilder {
     }
 
     public ClickUpMockRoutes addEndpoint(
-            String path, String method, boolean pathExactMatch, Class<?> returnType,
+            String path,
+            String method,
+            boolean pathExactMatch,
+            Class<?> returnType,
             MockProcessorResponseBodyProvider mockProcessorResponseBodyProvider) {
-        this.mocks.add(new MockProcessor<>(method, path, pathExactMatch, returnType, mockProcessorResponseBodyProvider));
+        this.mocks.add(
+                new MockProcessor<>(method, path, pathExactMatch, returnType, mockProcessorResponseBodyProvider));
         return this;
     }
 
@@ -54,11 +59,10 @@ public class ClickUpMockRoutes extends RouteBuilder {
     @Override
     public void configure() {
 
-        mocks.forEach(processor -> from(
-                "netty-http:http://localhost:" + port + "/clickup-api-mock/" + processor.path + "?httpMethodRestrict="
-                                        + processor.method + (processor.pathExactMatch ? "" : "&matchOnUriPrefix=true"))
+        mocks.forEach(processor -> from("netty-http:http://localhost:" + port + "/clickup-api-mock/" + processor.path
+                        + "?httpMethodRestrict=" + processor.method
+                        + (processor.pathExactMatch ? "" : "&matchOnUriPrefix=true"))
                 .process(processor));
-
     }
 
     public static class MockProcessor<T> implements Processor {
@@ -71,8 +75,12 @@ public class ClickUpMockRoutes extends RouteBuilder {
         private final Object lock = new Object();
         private final Class<?> returnType;
 
-        public MockProcessor(String method, String path, boolean pathExactMatch, Class<T> returnType,
-                             MockProcessorResponseBodyProvider responseBodyProvider) {
+        public MockProcessor(
+                String method,
+                String path,
+                boolean pathExactMatch,
+                Class<T> returnType,
+                MockProcessorResponseBodyProvider responseBodyProvider) {
             this.method = method;
             this.path = path;
             this.pathExactMatch = pathExactMatch;
@@ -104,9 +112,9 @@ public class ClickUpMockRoutes extends RouteBuilder {
                         final String rawBody = m.getBody(String.class);
                         LOG.debug("Recording {} {} body {}", method, path, rawBody);
                         @SuppressWarnings("unchecked")
-                        final T body
-                                = returnType != String.class
-                                        ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
+                        final T body = returnType != String.class
+                                ? (T) new ObjectMapper().readValue(rawBody, returnType)
+                                : (T) rawBody;
                         recordedMessages.add(body);
 
                         final byte[] bytes = responseBodyProvider.provide().getBytes(StandardCharsets.UTF_8);
@@ -135,7 +143,6 @@ public class ClickUpMockRoutes extends RouteBuilder {
                     .atMost(timeoutMillis, TimeUnit.MILLISECONDS)
                     .until(this::getRecordedMessages, msgs -> msgs.size() >= count);
         }
-
     }
 
     public int getPort() {
@@ -158,5 +165,4 @@ public class ClickUpMockRoutes extends RouteBuilder {
     public interface MockProcessorResponseBodyProvider {
         String provide();
     }
-
 }

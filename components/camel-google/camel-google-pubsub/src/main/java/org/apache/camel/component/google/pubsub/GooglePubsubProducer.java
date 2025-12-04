@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub;
+
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ATTRIBUTES;
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +34,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ATTRIBUTES;
-import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
-import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX;
 
 /**
  * Generic PubSub Producer
@@ -63,9 +64,12 @@ public class GooglePubsubProducer extends DefaultProducer {
 
         if (logger.isDebugEnabled()) {
             // TODO Update once baseline is Java 21
-            //            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().threadId(),
+            //            logger.debug("uploader thread/id: {} / {}. api call completed.",
+            // Thread.currentThread().threadId(),
             //                    exchange.getExchangeId());
-            logger.debug("uploader thread/id: {} / {}. api call completed.", Thread.currentThread().getId(),
+            logger.debug(
+                    "uploader thread/id: {} / {}. api call completed.",
+                    Thread.currentThread().getId(),
                     exchange.getExchangeId());
         }
 
@@ -88,7 +92,8 @@ public class GooglePubsubProducer extends DefaultProducer {
     private void send(Exchange exchange) throws Exception {
 
         GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
-        String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
+        String topicName =
+                String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
 
         Publisher publisher = endpoint.getComponent().getPublisher(topicName, endpoint);
 

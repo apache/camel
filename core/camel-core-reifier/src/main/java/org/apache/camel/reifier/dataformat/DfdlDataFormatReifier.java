@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -34,5 +35,4 @@ public class DfdlDataFormatReifier extends DataFormatReifier<DfdlDataFormat> {
         properties.put("rootElement", definition.getRootElement());
         properties.put("rootNamespace", definition.getRootNamespace());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
@@ -36,7 +37,7 @@ import org.springframework.test.annotation.DirtiesContext;
 /**
  * This test configures the context shutdown strategy, so we run it in isolation to avoid messing up with others
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public final class JmsConsumerShutdownIT extends CamelSpringTestSupport {
     @RegisterExtension
     public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
@@ -109,13 +110,9 @@ public final class JmsConsumerShutdownIT extends CamelSpringTestSupport {
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
-            from("jms:start")
-                    .to("direct:dir")
-                    .to("mock:end");
+            from("jms:start").to("direct:dir").to("mock:end");
 
-            from("seda:start")
-                    .to("direct:dir")
-                    .to("mock:end");
+            from("seda:start").to("direct:dir").to("mock:end");
 
             from("direct:dir")
                     .onException(Exception.class)
@@ -123,8 +120,6 @@ public final class JmsConsumerShutdownIT extends CamelSpringTestSupport {
                     .maximumRedeliveries(-1) // forever
                     .end()
                     .to("mock:exception");
-
         }
     }
-
 }

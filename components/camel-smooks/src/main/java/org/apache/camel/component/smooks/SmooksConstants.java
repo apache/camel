@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks;
 
 import org.apache.camel.spi.Metadata;
@@ -23,7 +24,9 @@ import org.apache.camel.spi.Metadata;
  */
 public final class SmooksConstants {
 
-    @Metadata(label = "advanced", description = "The Smooks execution context.",
-              javaType = "org.smooks.api.ExecutionContext")
+    @Metadata(
+            label = "advanced",
+            description = "The Smooks execution context.",
+            javaType = "org.smooks.api.ExecutionContext")
     public static final String SMOOKS_EXECUTION_CONTEXT = "CamelSmooksExecutionContext";
 }

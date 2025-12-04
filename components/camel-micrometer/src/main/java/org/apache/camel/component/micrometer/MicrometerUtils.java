@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
 
 import java.util.Set;
@@ -32,8 +33,7 @@ public final class MicrometerUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerUtils.class);
 
-    private MicrometerUtils() {
-    }
+    private MicrometerUtils() {}
 
     public static Meter.Type getByName(String meterName) {
         switch (meterName) {
@@ -75,8 +75,8 @@ public final class MicrometerUtils {
     }
 
     public static MeterRegistry getMeterRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
-        MeterRegistry registry = getMeterRegistryFromCamelRegistry(camelRegistry, registryName,
-                CompositeMeterRegistry.class);
+        MeterRegistry registry =
+                getMeterRegistryFromCamelRegistry(camelRegistry, registryName, CompositeMeterRegistry.class);
         if (registry != null) {
             return registry;
         }
@@ -103,8 +103,7 @@ public final class MicrometerUtils {
     }
 
     private static MeterRegistry getMeterRegistryFromCamelRegistry(
-            Registry camelRegistry, String registryName,
-            Class<? extends MeterRegistry> registryType) {
+            Registry camelRegistry, String registryName, Class<? extends MeterRegistry> registryType) {
         MeterRegistry registry = camelRegistry.lookupByNameAndType(registryName, registryType);
         if (registry != null) {
             return registry;

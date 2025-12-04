@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class QueryInstanceTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -37,9 +38,8 @@ public class QueryInstanceTest extends CamelTestSupport {
     DmsClient mockClient = Mockito.mock(DmsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -47,13 +47,12 @@ public class QueryInstanceTest extends CamelTestSupport {
             public void configure() {
                 from("direct:operation")
                         .setProperty(DMSProperties.OPERATION, constant("queryInstance"))
-                        .to("hwcloud-dms:?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + testConfiguration.getProperty("projectId") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&instanceId=" + testConfiguration.getProperty("instanceId") +
-                            "&ignoreSslVerification=true" +
-                            "&dmsClient=#dmsClient")
+                        .to("hwcloud-dms:?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + testConfiguration.getProperty("projectId") + "&region="
+                                + testConfiguration.getProperty("region") + "&instanceId="
+                                + testConfiguration.getProperty("instanceId") + "&ignoreSslVerification=true"
+                                + "&dmsClient=#dmsClient")
                         .log("Operation successful")
                         .to("mock:operation_result");
             }
@@ -70,7 +69,8 @@ public class QueryInstanceTest extends CamelTestSupport {
                 .withVpcId("vpc-id-1")
                 .withUserName("user-1");
 
-        Mockito.when(mockClient.queryInstance(Mockito.any(QueryInstanceRequest.class))).thenReturn(instance);
+        Mockito.when(mockClient.queryInstance(Mockito.any(QueryInstanceRequest.class)))
+                .thenReturn(instance);
 
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
@@ -81,10 +81,8 @@ public class QueryInstanceTest extends CamelTestSupport {
 
         assertEquals(
                 "{\"name\":\"test-instance-1\",\"engine\":\"kafka\",\"storage_space\":500,\"partition_num\":0,\"used_storage_space\":0,\"port\":0,"
-                     +
-                     "\"instance_id\":\"id-1\",\"charging_mode\":0,\"vpc_id\":\"vpc-id-1\",\"user_name\":\"user-1\",\"enable_publicip\":false,\"ssl_enable\":false,"
-                     +
-                     "\"is_logical_volume\":false,\"extend_times\":0,\"enable_auto_topic\":false}",
+                        + "\"instance_id\":\"id-1\",\"charging_mode\":0,\"vpc_id\":\"vpc-id-1\",\"user_name\":\"user-1\",\"enable_publicip\":false,\"ssl_enable\":false,"
+                        + "\"is_logical_volume\":false,\"extend_times\":0,\"enable_auto_topic\":false}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

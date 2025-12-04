@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
@@ -25,18 +29,17 @@ import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiColl
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$CalendarList} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
-           disabledReason = "Google Calendar credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.calendar.AbstractGoogleCalendarTestSupport#hasCredentials",
+        disabledReason = "Google Calendar credentials were not provided")
 public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
 
-    private static final String PATH_PREFIX
-            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarListApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection()
+            .getApiName(CalendarCalendarListApiMethod.class)
+            .getName();
 
     @Test
     public void testCalendarList() {
@@ -87,7 +90,6 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
 
                 // test route for watch
                 from("direct://WATCH").to("google-calendar://" + PATH_PREFIX + "/watch?inBody=contentChannel");
-
             }
         };
     }

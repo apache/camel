@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
 
 public class Pojo {
     private long id;
     private String data;
 
-    public Pojo() {
-    }
+    public Pojo() {}
 
     public Pojo(long id, String data) {
         this.id = id;

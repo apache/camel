@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.web.search;
 
 import org.apache.camel.Category;
@@ -30,10 +31,13 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * LangChain4j Web Search Engine
  */
-@UriEndpoint(firstVersion = "4.8.0", scheme = LangChain4jWebSearchEngine.SCHEME, title = "LangChain4j Web Search",
-             syntax = "langchain4j-web-search:searchId", producerOnly = true, category = {
-                     Category.AI
-             })
+@UriEndpoint(
+        firstVersion = "4.8.0",
+        scheme = LangChain4jWebSearchEngine.SCHEME,
+        title = "LangChain4j Web Search",
+        syntax = "langchain4j-web-search:searchId",
+        producerOnly = true,
+        category = {Category.AI})
 public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -44,10 +48,7 @@ public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
     private LangChain4jWebSearchConfiguration configuration;
 
     public LangChain4jWebSearchEndpoint(
-                                        String endpointUri,
-                                        Component component,
-                                        String searchId,
-                                        LangChain4jWebSearchConfiguration configuration) {
+            String endpointUri, Component component, String searchId, LangChain4jWebSearchConfiguration configuration) {
 
         super(endpointUri, component);
 
@@ -72,5 +73,4 @@ public class LangChain4jWebSearchEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer is not implemented for this component");
     }
-
 }

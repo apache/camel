@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.List;
@@ -65,5 +66,4 @@ public class SynchronousExecutorService extends AbstractExecutorService {
         // run the task synchronously
         runnable.run();
     }
-
 }

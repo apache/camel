@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import java.util.Map;
@@ -31,11 +32,11 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
 
     @Metadata(label = "advanced")
     private StompConfiguration configuration = new StompConfiguration();
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
-    public StompComponent() {
-    }
+    public StompComponent() {}
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -91,5 +92,4 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

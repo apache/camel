@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
 
 import org.apache.camel.Message;
@@ -43,7 +44,6 @@ public class ThymeleafSetHeaderTest extends CamelSpringTestSupport {
         mock.expectedHeaderReceived("fruit", value);
         mock.expectedBodyReceived().body().endsWith(expectedBody);
         template.request("direct:start", exchange -> {
-
             Message in = exchange.getIn();
             in.setBody(value);
         });
@@ -55,5 +55,4 @@ public class ThymeleafSetHeaderTest extends CamelSpringTestSupport {
 
         return new ClassPathXmlApplicationContext("org/apache/camel/component/thymeleaf/camel-context.xml");
     }
-
 }

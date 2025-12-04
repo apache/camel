@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.ArrayList;
@@ -36,7 +37,8 @@ import org.apache.camel.util.StringHelper;
 /**
  * Route {@link VariableRepository} which stores variables in-memory per route.
  */
-public final class RouteVariableRepository extends ServiceSupport implements BrowsableVariableRepository, CamelContextAware {
+public final class RouteVariableRepository extends ServiceSupport
+        implements BrowsableVariableRepository, CamelContextAware {
 
     private final Map<String, Map<String, Object>> routes = new ConcurrentHashMap<>();
     private CamelContext camelContext;
@@ -198,5 +200,4 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
             throw new StreamCacheException(body, e);
         }
     }
-
 }

@@ -32,9 +32,7 @@ import org.slf4j.LoggerFactory;
 public final class ResumeStrategyHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ResumeStrategyHelper.class);
 
-    private ResumeStrategyHelper() {
-
-    }
+    private ResumeStrategyHelper() {}
 
     /**
      * Executes the resume operation
@@ -45,9 +43,7 @@ public final class ResumeStrategyHelper {
      * @param  actionName     an action name that maps to a {@link ResumeAction} object in the registry
      * @throws Exception      if the strategy is unable to load the cache
      */
-    public static void resume(
-            CamelContext context, Object on, ResumeStrategy resumeStrategy,
-            String actionName)
+    public static void resume(CamelContext context, Object on, ResumeStrategy resumeStrategy, String actionName)
             throws Exception {
         resume(context, on, resumeStrategy, actionName, ResumeAdapter.class);
     }
@@ -63,8 +59,7 @@ public final class ResumeStrategyHelper {
      * @throws Exception      if the strategy is unable to load the cache
      */
     public static <T extends ResumeAdapter> void resume(
-            CamelContext context, Object on, ResumeStrategy resumeStrategy,
-            String actionName, Class<T> adapterClass)
+            CamelContext context, Object on, ResumeStrategy resumeStrategy, String actionName, Class<T> adapterClass)
             throws Exception {
         if (resumeStrategy == null) {
             LOG.debug("Skipping resume operation because there's no resume strategy defined");

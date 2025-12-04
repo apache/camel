@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -45,7 +46,9 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         CamelLogger logger = resolveLogger(definition);
 
         DefaultErrorHandler answer = new DefaultErrorHandler(
-                camelContext, processor, logger,
+                camelContext,
+                processor,
+                logger,
                 getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy,
                 getPredicate(definition.getRetryWhilePredicate(), definition.getRetryWhileRef()),
@@ -71,7 +74,8 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         return answer;
     }
 
-    private RedeliveryPolicy resolveRedeliveryPolicy(DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
+    private RedeliveryPolicy resolveRedeliveryPolicy(
+            DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
         if (definition.hasRedeliveryPolicy() && definition.getRedeliveryPolicyRef() != null) {
             throw new IllegalArgumentException(
                     "Cannot have both redeliveryPolicy and redeliveryPolicyRef set at the same time.");
@@ -108,7 +112,8 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
                         executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
                     }
                     if (executorService == null) {
-                        throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
+                        throw new IllegalArgumentException(
+                                "ExecutorService " + executorServiceRef + " not found in registry.");
                     }
                 } else {
                     // no explicit configured thread pool, so leave it up to the
@@ -122,5 +127,4 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
             lock.unlock();
         }
     }
-
 }

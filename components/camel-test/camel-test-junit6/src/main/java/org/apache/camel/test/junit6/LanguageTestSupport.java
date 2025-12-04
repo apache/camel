@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A useful base class for testing the language plugins in Camel
@@ -83,7 +84,8 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         Language language = assertResolveLanguage(getLanguageName());
 
         Expression expression = language.createExpression(expressionText);
-        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         Object value;
         if (expectedValue != null) {
@@ -93,8 +95,8 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         }
         LOG.debug("Evaluated expression: {} on exchange: {} result: {}", expression, exchange, value);
 
-        assertTrue(expectedValue.equals(value) || orThisExpectedValue.equals(value),
+        assertTrue(
+                expectedValue.equals(value) || orThisExpectedValue.equals(value),
                 "Expression: " + expression + " on Exchange: " + exchange);
     }
-
 }

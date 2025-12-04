@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class MainNettyGlobalSSLContextParametersTest extends BaseNettyTest {
@@ -40,11 +41,19 @@ public class MainNettyGlobalSSLContextParametersTest extends BaseNettyTest {
     public void testSSLInOutWithNettyConsumer() throws Exception {
         Main main = new Main();
         main.configure().sslConfig().setEnabled(true);
-        main.configure().sslConfig().setKeyStore(
-                this.getClass().getClassLoader().getResource("keystore.jks").toString());
+        main.configure()
+                .sslConfig()
+                .setKeyStore(this.getClass()
+                        .getClassLoader()
+                        .getResource("keystore.jks")
+                        .toString());
         main.configure().sslConfig().setKeystorePassword("changeit");
-        main.configure().sslConfig().setTrustStore(
-                this.getClass().getClassLoader().getResource("keystore.jks").toString());
+        main.configure()
+                .sslConfig()
+                .setTrustStore(this.getClass()
+                        .getClassLoader()
+                        .getResource("keystore.jks")
+                        .toString());
         main.configure().sslConfig().setTrustStorePassword("changeit");
         main.addProperty("camel.component.netty.useglobalsslcontextparameters", "true");
 
@@ -53,14 +62,15 @@ public class MainNettyGlobalSSLContextParametersTest extends BaseNettyTest {
                 // needClientAuth=true so we can get the client certificate details
                 from("netty:tcp://localhost:" + getPort() + "?sync=true&ssl=true&needClientAuth=true")
                         .process(exchange -> {
-                            SSLSession session
-                                    = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                            SSLSession session =
+                                    exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
                             if (session != null) {
                                 X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
                                 Principal principal = cert.getSubjectDN();
                                 log.info("Client Cert SubjectDN: {}", principal.getName());
-                                exchange.getMessage().setBody(
-                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                                exchange.getMessage()
+                                        .setBody(
+                                                "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             } else {
                                 exchange.getMessage().setBody("Cannot start conversion without SSLSession");
                             }
@@ -70,9 +80,9 @@ public class MainNettyGlobalSSLContextParametersTest extends BaseNettyTest {
 
         try {
             main.start();
-            assertThat(
-                    main.getCamelTemplate()
-                            .requestBody("netty:tcp://localhost:" + getPort() + "?sync=true&ssl=true",
+            assertThat(main.getCamelTemplate()
+                            .requestBody(
+                                    "netty:tcp://localhost:" + getPort() + "?sync=true&ssl=true",
                                     "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
                                     String.class))
                     .isEqualTo("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");

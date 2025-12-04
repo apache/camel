@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import java.net.InetSocketAddress;
@@ -31,9 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Sharable
-public class DatagramPacketStringEncoder
-        extends
-        MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+public class DatagramPacketStringEncoder extends MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketStringEncoder.class);
 
@@ -57,9 +56,7 @@ public class DatagramPacketStringEncoder
     }
 
     @Override
-    protected void encode(
-            ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
-            List<Object> out)
+    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out)
             throws Exception {
         if (msg.content() instanceof CharSequence) {
             CharSequence payload = (CharSequence) msg.content();
@@ -67,11 +64,12 @@ public class DatagramPacketStringEncoder
                 return;
             }
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<>(
-                    ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
+                    ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset),
+                    msg.recipient(),
+                    msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not a java.lang.CharSequence instance.");
         }
     }
-
 }

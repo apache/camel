@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import java.util.ArrayList;
@@ -735,48 +736,47 @@ public class DmsInstance extends SdkResponse {
 
     @Override
     public String toString() {
-        return "DmsInstance{" +
-               "name='" + name + '\'' +
-               ", engine='" + engine + '\'' +
-               ", engineVersion='" + engineVersion + '\'' +
-               ", specification='" + specification + '\'' +
-               ", storageSpace=" + storageSpace +
-               ", partitionNum=" + partitionNum +
-               ", usedStorageSpace=" + usedStorageSpace +
-               ", connectAddress='" + connectAddress + '\'' +
-               ", port=" + port +
-               ", status='" + status + '\'' +
-               ", description='" + description + '\'' +
-               ", instanceId='" + instanceId + '\'' +
-               ", resourceSpecCode='" + resourceSpecCode + '\'' +
-               ", type='" + type + '\'' +
-               ", chargingMode=" + chargingMode +
-               ", vpcId='" + vpcId + '\'' +
-               ", vpcName='" + vpcName + '\'' +
-               ", createdAt='" + createdAt + '\'' +
-               ", errorCode='" + errorCode + '\'' +
-               ", productId='" + productId + '\'' +
-               ", securityGroupId='" + securityGroupId + '\'' +
-               ", securityGroupName='" + securityGroupName + '\'' +
-               ", subnetId='" + subnetId + '\'' +
-               ", subnetName='" + subnetName + '\'' +
-               ", subnetCidr='" + subnetCidr + '\'' +
-               ", availableZones=" + availableZones +
-               ", userId='" + userId + '\'' +
-               ", userName='" + userName + '\'' +
-               ", accessUser='" + accessUser + '\'' +
-               ", orderId='" + orderId + '\'' +
-               ", maintainBegin='" + maintainBegin + '\'' +
-               ", maintainEnd='" + maintainEnd + '\'' +
-               ", enablePublicip=" + enablePublicip +
-               ", publicipAddress='" + publicipAddress + '\'' +
-               ", publicipId='" + publicipId + '\'' +
-               ", managementConnectAddress='" + managementConnectAddress + '\'' +
-               ", sslEnable=" + sslEnable +
-               ", enterpriseProjectId='" + enterpriseProjectId + '\'' +
-               ", logicalVolume=" + logicalVolume +
-               ", extendTimes=" + extendTimes +
-               ", enableAutoTopic=" + enableAutoTopic +
-               '}';
+        return "DmsInstance{" + "name='"
+                + name + '\'' + ", engine='"
+                + engine + '\'' + ", engineVersion='"
+                + engineVersion + '\'' + ", specification='"
+                + specification + '\'' + ", storageSpace="
+                + storageSpace + ", partitionNum="
+                + partitionNum + ", usedStorageSpace="
+                + usedStorageSpace + ", connectAddress='"
+                + connectAddress + '\'' + ", port="
+                + port + ", status='"
+                + status + '\'' + ", description='"
+                + description + '\'' + ", instanceId='"
+                + instanceId + '\'' + ", resourceSpecCode='"
+                + resourceSpecCode + '\'' + ", type='"
+                + type + '\'' + ", chargingMode="
+                + chargingMode + ", vpcId='"
+                + vpcId + '\'' + ", vpcName='"
+                + vpcName + '\'' + ", createdAt='"
+                + createdAt + '\'' + ", errorCode='"
+                + errorCode + '\'' + ", productId='"
+                + productId + '\'' + ", securityGroupId='"
+                + securityGroupId + '\'' + ", securityGroupName='"
+                + securityGroupName + '\'' + ", subnetId='"
+                + subnetId + '\'' + ", subnetName='"
+                + subnetName + '\'' + ", subnetCidr='"
+                + subnetCidr + '\'' + ", availableZones="
+                + availableZones + ", userId='"
+                + userId + '\'' + ", userName='"
+                + userName + '\'' + ", accessUser='"
+                + accessUser + '\'' + ", orderId='"
+                + orderId + '\'' + ", maintainBegin='"
+                + maintainBegin + '\'' + ", maintainEnd='"
+                + maintainEnd + '\'' + ", enablePublicip="
+                + enablePublicip + ", publicipAddress='"
+                + publicipAddress + '\'' + ", publicipId='"
+                + publicipId + '\'' + ", managementConnectAddress='"
+                + managementConnectAddress + '\'' + ", sslEnable="
+                + sslEnable + ", enterpriseProjectId='"
+                + enterpriseProjectId + '\'' + ", logicalVolume="
+                + logicalVolume + ", extendTimes="
+                + extendTimes + ", enableAutoTopic="
+                + enableAutoTopic + '}';
     }
 }

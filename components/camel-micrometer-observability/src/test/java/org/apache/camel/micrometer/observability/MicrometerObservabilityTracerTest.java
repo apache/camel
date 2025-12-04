@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
@@ -76,8 +77,11 @@ public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTr
 
         // Validate hierarchy
         assertEquals(SpanId.getInvalid(), testProducer.getParentSpanContext().getSpanId());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
 
         // Validate operations
         assertEquals(Op.EVENT_SENT.toString(), testProducer.getAttributes().get(AttributeKey.stringKey("op")));
@@ -101,12 +105,8 @@ public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTr
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

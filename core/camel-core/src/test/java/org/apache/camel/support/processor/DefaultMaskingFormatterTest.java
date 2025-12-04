@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class DefaultMaskingFormatterTest {
 
     @Test
     public void testDefaultOption() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
-        String answer
-                = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
@@ -42,8 +43,8 @@ public class DefaultMaskingFormatterTest {
     @Test
     public void testDisableKeyValueMask() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(false, true, true);
-        String answer
-                = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
@@ -59,8 +60,8 @@ public class DefaultMaskingFormatterTest {
     @Test
     public void testDisableXmlElementMask() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, false, true);
-        String answer
-                = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
@@ -76,8 +77,8 @@ public class DefaultMaskingFormatterTest {
     @Test
     public void testDisableJsonMask() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, true, false);
-        String answer
-                = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals("key=value, myPassword=xxxxx,\n myPassphrase=\"xxxxx\", secretKey='xxxxx'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
@@ -94,8 +95,8 @@ public class DefaultMaskingFormatterTest {
     public void testCustomMaskString() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         formatter.setMaskString("**********");
-        String answer
-                = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals("key=value, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'", answer);
 
         answer = formatter.format("<xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
@@ -111,11 +112,12 @@ public class DefaultMaskingFormatterTest {
     @Test
     public void testDifferentSensitiveKeys() {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
-        String answer
-                = formatter.format("key=value, myAccessKey=foo,\n authkey=\"foo bar\", refreshtoken='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, myAccessKey=foo,\n authkey=\"foo bar\", refreshtoken='!@#$%^&*() -+[]{};:'");
         assertEquals("key=value, myAccessKey=xxxxx,\n authkey=\"xxxxx\", refreshtoken='xxxxx'", answer);
 
-        answer = formatter.format("<subscribeKey>\n foo bar \n</subscribeKey>\n<user verificationCode=\"asdf qwert\"/>");
+        answer =
+                formatter.format("<subscribeKey>\n foo bar \n</subscribeKey>\n<user verificationCode=\"asdf qwert\"/>");
         assertEquals("<subscribeKey>\n xxxxx \n</subscribeKey>\n<user verificationCode=\"xxxxx\"/>", answer);
 
         answer = formatter.format(
@@ -130,16 +132,16 @@ public class DefaultMaskingFormatterTest {
         DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         formatter.addKeyword("cheese");
         formatter.setMaskString("**********");
-        String answer
-                = formatter.format(
-                        "key=value, Cheese=gauda, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
+        String answer = formatter.format(
+                "key=value, Cheese=gauda, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
         assertEquals(
                 "key=value, Cheese=**********, myPassword=**********,\n myPassphrase=\"**********\", secretKey='**********'",
                 answer);
 
-        answer = formatter
-                .format("<chEEse>Gauda</chEEse><xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
-        assertEquals("<chEEse>**********</chEEse><xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>",
+        answer = formatter.format(
+                "<chEEse>Gauda</chEEse><xmlPassword>\n foo bar \n</xmlPassword>\n<user password=\"asdf qwert\"/>");
+        assertEquals(
+                "<chEEse>**********</chEEse><xmlPassword>\n ********** \n</xmlPassword>\n<user password=\"**********\"/>",
                 answer);
 
         answer = formatter.format(
@@ -148,5 +150,4 @@ public class DefaultMaskingFormatterTest {
                 "{\"key\" : \"value\", \"Cheese\": \"**********\", \"Password\":\"**********\", \"Passphrase\" : \"**********\", \"SecretKey\" : \"**********\"}",
                 answer);
     }
-
 }

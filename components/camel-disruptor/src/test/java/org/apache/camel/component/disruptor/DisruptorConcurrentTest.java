@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DisruptorConcurrentTest extends CamelTestSupport {
     @Test
@@ -130,10 +131,18 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:foo?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed().to("mock:result");
+                from("disruptor:foo?concurrentConsumers=10")
+                        .to("mock:before")
+                        .delay(2000)
+                        .syncDelayed()
+                        .to("mock:result");
 
-                from("disruptor:bar?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed()
-                        .transform(body().prepend("Bye ")).to("mock:result");
+                from("disruptor:bar?concurrentConsumers=10")
+                        .to("mock:before")
+                        .delay(2000)
+                        .syncDelayed()
+                        .transform(body().prepend("Bye "))
+                        .to("mock:result");
             }
         };
     }

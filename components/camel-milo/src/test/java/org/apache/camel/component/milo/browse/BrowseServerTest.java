@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.browse;
+
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.CharBuffer;
 import java.util.Arrays;
@@ -45,13 +53,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit tests for browsing
  */
@@ -77,35 +78,29 @@ public class BrowseServerTest extends AbstractMiloServerTest {
     private static final String MOCK_TEST_8 = "mock:test8";
     private static final String MOCK_TEST_9 = "mock:test9";
 
-    private static final String MILO_BROWSE_BASE
-            = "milo-browse:opc.tcp://foo:bar@127.0.0.1:@@port@@";
+    private static final String MILO_BROWSE_BASE = "milo-browse:opc.tcp://foo:bar@127.0.0.1:@@port@@";
 
-    private static final String MILO_BROWSE_ROOT
-            = MILO_BROWSE_BASE + "?overrideHost=true&allowedSecurityPolicies=None";
+    private static final String MILO_BROWSE_ROOT = MILO_BROWSE_BASE + "?overrideHost=true&allowedSecurityPolicies=None";
 
-    private static final String MILO_BROWSE_WITHOUT_SUB_TYPES
-            = MILO_BROWSE_ROOT + "&includeSubTypes=false";
+    private static final String MILO_BROWSE_WITHOUT_SUB_TYPES = MILO_BROWSE_ROOT + "&includeSubTypes=false";
 
-    private static final String MILO_BROWSE_ROOT_RECURSIVE_2
-            = MILO_BROWSE_ROOT + "&recursive=true&depth=2";
+    private static final String MILO_BROWSE_ROOT_RECURSIVE_2 = MILO_BROWSE_ROOT + "&recursive=true&depth=2";
 
-    private static final String MILO_BROWSE_ROOT_RECURSIVE_2_ONE_ID_PER_REQ
-            = MILO_BROWSE_ROOT + "&recursive=true&depth=2&maxNodeIdsPerRequest=1";
+    private static final String MILO_BROWSE_ROOT_RECURSIVE_2_ONE_ID_PER_REQ =
+            MILO_BROWSE_ROOT + "&recursive=true&depth=2&maxNodeIdsPerRequest=1";
 
-    private static final String MILO_BROWSE_ROOT_RECURSIVE_FILTER
-            = MILO_BROWSE_ROOT + "&recursive=true&depth=2&filter=.*i=8[6,8].*";
+    private static final String MILO_BROWSE_ROOT_RECURSIVE_FILTER =
+            MILO_BROWSE_ROOT + "&recursive=true&depth=2&filter=.*i=8[6,8].*";
 
-    private static final String MILO_BROWSE_INVERSE
-            = MILO_BROWSE_ROOT + "&direction=Inverse";
+    private static final String MILO_BROWSE_INVERSE = MILO_BROWSE_ROOT + "&direction=Inverse";
 
-    private static final String MILO_BROWSE_TYPES_ONLY
-            = MILO_BROWSE_ROOT + "&nodeClasses=Object,Variable,DataType&recursive=true&depth=5";
+    private static final String MILO_BROWSE_TYPES_ONLY =
+            MILO_BROWSE_ROOT + "&nodeClasses=Object,Variable,DataType&recursive=true&depth=5";
 
-    private static final String MILO_BROWSE_NO_TYPES
-            = MILO_BROWSE_ROOT + "&nodeClasses=Variable&recursive=true&depth=5";
+    private static final String MILO_BROWSE_NO_TYPES =
+            MILO_BROWSE_ROOT + "&nodeClasses=Variable&recursive=true&depth=5";
 
-    private static final String MILO_BROWSE_NODE_VIA_ENDPOINT
-            = MILO_BROWSE_ROOT + "&node=RAW(ns=0;i=86)";
+    private static final String MILO_BROWSE_NODE_VIA_ENDPOINT = MILO_BROWSE_ROOT + "&node=RAW(ns=0;i=86)";
 
     private static final Logger LOG = LoggerFactory.getLogger(BrowseServerTest.class);
 
@@ -177,14 +172,24 @@ public class BrowseServerTest extends AbstractMiloServerTest {
             @Override
             public void configure() {
                 from(DIRECT_START_1).enrich(resolve(MILO_BROWSE_ROOT)).to(MOCK_TEST_1);
-                from(DIRECT_START_2).enrich(resolve(MILO_BROWSE_WITHOUT_SUB_TYPES)).to(MOCK_TEST_2);
-                from(DIRECT_START_3).enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_2)).to(MOCK_TEST_3);
-                from(DIRECT_START_4).enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_FILTER)).to(MOCK_TEST_4);
+                from(DIRECT_START_2)
+                        .enrich(resolve(MILO_BROWSE_WITHOUT_SUB_TYPES))
+                        .to(MOCK_TEST_2);
+                from(DIRECT_START_3)
+                        .enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_2))
+                        .to(MOCK_TEST_3);
+                from(DIRECT_START_4)
+                        .enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_FILTER))
+                        .to(MOCK_TEST_4);
                 from(DIRECT_START_5).enrich(resolve(MILO_BROWSE_INVERSE)).to(MOCK_TEST_5);
                 from(DIRECT_START_6).enrich(resolve(MILO_BROWSE_TYPES_ONLY)).to(MOCK_TEST_6);
                 from(DIRECT_START_7).enrich(resolve(MILO_BROWSE_NO_TYPES)).to(MOCK_TEST_7);
-                from(DIRECT_START_8).enrich(resolve(MILO_BROWSE_NODE_VIA_ENDPOINT)).to(MOCK_TEST_8);
-                from(DIRECT_START_9).enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_2_ONE_ID_PER_REQ)).to(MOCK_TEST_9);
+                from(DIRECT_START_8)
+                        .enrich(resolve(MILO_BROWSE_NODE_VIA_ENDPOINT))
+                        .to(MOCK_TEST_8);
+                from(DIRECT_START_9)
+                        .enrich(resolve(MILO_BROWSE_ROOT_RECURSIVE_2_ONE_ID_PER_REQ))
+                        .to(MOCK_TEST_9);
             }
         };
     }
@@ -205,8 +210,10 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
             assertNotNull(references);
 
-            final String[] displayNames = Arrays.stream(references).map(ReferenceDescription::getDisplayName)
-                    .map(LocalizedText::getText).toArray(String[]::new);
+            final String[] displayNames = Arrays.stream(references)
+                    .map(ReferenceDescription::getDisplayName)
+                    .map(LocalizedText::getText)
+                    .toArray(String[]::new);
 
             assertArrayEquals(expectedDisplayNames, displayNames);
         }
@@ -222,16 +229,19 @@ public class BrowseServerTest extends AbstractMiloServerTest {
     @SuppressWarnings("unchecked")
     private void assertBrowseResult(final Message message, final String... expectedDisplayNames) {
 
-        final Map<ExpandedNodeId, BrowseResult> browseResults = (Map<ExpandedNodeId, BrowseResult>) message.getBody(Map.class);
+        final Map<ExpandedNodeId, BrowseResult> browseResults =
+                (Map<ExpandedNodeId, BrowseResult>) message.getBody(Map.class);
         assertNotNull(browseResults);
 
         assertBrowseResult(browseResults, expectedDisplayNames);
     }
 
     @SuppressWarnings("unchecked")
-    private void assertBrowseResults(final Message message, final int expectedNumberOfResults, final int expectedNumberOfIds) {
+    private void assertBrowseResults(
+            final Message message, final int expectedNumberOfResults, final int expectedNumberOfIds) {
 
-        final Map<ExpandedNodeId, BrowseResult> browseResults = (Map<ExpandedNodeId, BrowseResult>) message.getBody(Map.class);
+        final Map<ExpandedNodeId, BrowseResult> browseResults =
+                (Map<ExpandedNodeId, BrowseResult>) message.getBody(Map.class);
         assertNotNull(browseResults);
 
         final List<?> nodes = message.getHeader(MiloConstants.HEADER_NODE_IDS, List.class);
@@ -243,23 +253,33 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
     @SuppressWarnings("unused") // For debugging tests
     private void visualizeTree(
-            final Map<ExpandedNodeId, BrowseResult> browseResults, final ExpandedNodeId expandedNodeId,
-            final String displayName, final StringBuilder builder, int depth) {
+            final Map<ExpandedNodeId, BrowseResult> browseResults,
+            final ExpandedNodeId expandedNodeId,
+            final String displayName,
+            final StringBuilder builder,
+            int depth) {
 
         BrowseResult browseResult = browseResults.get(expandedNodeId);
         if (null == browseResult) {
             return;
         }
         String indent = CharBuffer.allocate(depth * 3).toString().replace('\0', ' ');
-        builder.append(indent).append(expandedNodeId.toParseableString()).append(" (").append(displayName).append(")")
+        builder.append(indent)
+                .append(expandedNodeId.toParseableString())
+                .append(" (")
+                .append(displayName)
+                .append(")")
                 .append(System.lineSeparator());
         if (null != browseResult.getReferences()) {
             for (final ReferenceDescription referenceDescription : browseResult.getReferences()) {
-                visualizeTree(browseResults, referenceDescription.getNodeId(), referenceDescription.getDisplayName().getText(),
-                        builder, depth + 1);
+                visualizeTree(
+                        browseResults,
+                        referenceDescription.getNodeId(),
+                        referenceDescription.getDisplayName().getText(),
+                        builder,
+                        depth + 1);
             }
         }
-
     }
 
     // Test default behaviour (browsing root node)
@@ -268,8 +288,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
 
         mock1.reset();
         mock1.setExpectedCount(1);
-        mock1.expectedMessagesMatches(assertPredicate(e -> assertBrowseResult(e.getMessage(),
-                "Objects", "Types", "Views")));
+        mock1.expectedMessagesMatches(
+                assertPredicate(e -> assertBrowseResult(e.getMessage(), "Objects", "Types", "Views")));
         producer1.send(ExchangeBuilder.anExchange(context).build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock1);
     }
@@ -301,7 +321,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
     //     assertIsSatisfied(5, TimeUnit.SECONDS, mock8);
     // }
 
-    // Test that reference array is empty, if indicated that sub types are not to be included (non-recursive browse only)
+    // Test that reference array is empty, if indicated that sub types are not to be included (non-recursive browse
+    // only)
     @Test
     public void testBrowseWithoutSubTypes() throws Exception {
 
@@ -323,7 +344,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         assertIsSatisfied(5, TimeUnit.SECONDS, mock3);
     }
 
-    // Test recursive browse option with maximum depth of two; just one node per request should result in the same results
+    // Test recursive browse option with maximum depth of two; just one node per request should result in the same
+    // results
     @Test
     public void testBrowseRecursiveOneNodePerRequest() throws Exception {
 
@@ -334,7 +356,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         assertIsSatisfied(5, TimeUnit.SECONDS, mock9);
     }
 
-    // Test filter option while browsing recursively (it's expected to work on both levels, base node as well as sub nodes)
+    // Test filter option while browsing recursively (it's expected to work on both levels, base node as well as sub
+    // nodes)
     @Test
     public void testBrowseRecursiveFilter() throws Exception {
 
@@ -353,7 +376,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock5.setExpectedCount(1);
         mock5.expectedMessagesMatches(assertPredicate(e -> assertBrowseResult(e.getMessage(), "Root")));
         producer5.send(ExchangeBuilder.anExchange(context)
-                .withHeader(MiloConstants.HEADER_NODE_IDS,
+                .withHeader(
+                        MiloConstants.HEADER_NODE_IDS,
                         Collections.singletonList(Identifiers.TypesFolder.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock5);
@@ -378,7 +402,8 @@ public class BrowseServerTest extends AbstractMiloServerTest {
     //     mock6.setExpectedCount(1);
     //     mock6.expectedMessagesMatches(assertPredicate(e -> assertBrowseResults(e.getMessage(), 9, 9)));
     //     producer6.send(ExchangeBuilder.anExchange(context)
-    //             .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList(Identifiers.String.toParseableString()))
+    //             .withHeader(MiloConstants.HEADER_NODE_IDS,
+    // Collections.singletonList(Identifiers.String.toParseableString()))
     //             .build());
     //     assertIsSatisfied(5, TimeUnit.SECONDS, mock6);
     // }
@@ -390,7 +415,9 @@ public class BrowseServerTest extends AbstractMiloServerTest {
         mock7.setExpectedCount(1);
         mock7.expectedMessagesMatches(assertPredicate(e -> assertBrowseResults(e.getMessage(), 1, 0)));
         producer7.send(ExchangeBuilder.anExchange(context)
-                .withHeader(MiloConstants.HEADER_NODE_IDS, Collections.singletonList(Identifiers.String.toParseableString()))
+                .withHeader(
+                        MiloConstants.HEADER_NODE_IDS,
+                        Collections.singletonList(Identifiers.String.toParseableString()))
                 .build());
         assertIsSatisfied(5, TimeUnit.SECONDS, mock7);
     }

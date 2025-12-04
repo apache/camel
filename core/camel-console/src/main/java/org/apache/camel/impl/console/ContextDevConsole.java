@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collections;
@@ -45,17 +46,23 @@ public class ContextDevConsole extends AbstractDevConsole {
 
         String profile = "";
         if (getCamelContext().getCamelContextExtension().getProfile() != null) {
-            profile = " (profile: " + getCamelContext().getCamelContextExtension().getProfile() + ")";
+            profile =
+                    " (profile: " + getCamelContext().getCamelContextExtension().getProfile() + ")";
         }
-        sb.append(String.format("Apache Camel %s %s (%s)%s uptime %s", getCamelContext().getVersion(),
-                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
-                profile, CamelContextHelper.getUptime(getCamelContext())));
+        sb.append(String.format(
+                "Apache Camel %s %s (%s)%s uptime %s",
+                getCamelContext().getVersion(),
+                getCamelContext().getStatus().name().toLowerCase(Locale.ROOT),
+                getCamelContext().getName(),
+                profile,
+                CamelContextHelper.getUptime(getCamelContext())));
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("\n    %s", getCamelContext().getDescription()));
         }
         sb.append("\n");
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
@@ -82,7 +89,8 @@ public class ContextDevConsole extends AbstractDevConsole {
                 }
                 sb.append(String.format("\n    Total: %s/%s", mb.getRemoteExchangesTotal(), mb.getExchangesTotal()));
                 sb.append(String.format("\n    Failed: %s/%s", mb.getRemoteExchangesFailed(), mb.getExchangesFailed()));
-                sb.append(String.format("\n    Inflight: %s/%s", mb.getRemoteExchangesInflight(), mb.getExchangesInflight()));
+                sb.append(String.format(
+                        "\n    Inflight: %s/%s", mb.getRemoteExchangesInflight(), mb.getExchangesInflight()));
                 long idle = mb.getIdleSince();
                 if (idle > 0) {
                     sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
@@ -90,13 +98,17 @@ public class ContextDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Idle Since: %s", ""));
                 }
                 sb.append(String.format("\n    Reloaded: %s/%s", reloaded, reloadedFailed));
-                sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
-                sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
-                sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
+                sb.append(
+                        String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
+                sb.append(
+                        String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
                 if (mb.getExchangesTotal() > 0) {
-                    sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mb.getLastProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mb.getDeltaProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Last Time: %s", TimeUtils.printDuration(mb.getLastProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Delta Time: %s", TimeUtils.printDuration(mb.getDeltaProcessingTime(), true)));
                 }
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
@@ -134,7 +146,8 @@ public class ContextDevConsole extends AbstractDevConsole {
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
         root.put("uptime", getCamelContext().getUptime().toMillis());
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
@@ -243,5 +256,4 @@ public class ContextDevConsole extends AbstractDevConsole {
         s = s.replace(',', '.');
         return s;
     }
-
 }

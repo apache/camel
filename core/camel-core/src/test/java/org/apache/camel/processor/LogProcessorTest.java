@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -75,16 +76,26 @@ public class LogProcessorTest extends ContextTestSupport {
             public void configure() {
                 from("direct:foo").routeId("foo").log("Got ${body}").to("mock:foo");
 
-                from("direct:bar").routeId("bar").log(LoggingLevel.WARN, "Also got ${body}").to("mock:bar");
+                from("direct:bar")
+                        .routeId("bar")
+                        .log(LoggingLevel.WARN, "Also got ${body}")
+                        .to("mock:bar");
 
-                from("direct:baz").routeId("baz").log(LoggingLevel.ERROR, "cool", "Me got ${body}").to("mock:baz");
+                from("direct:baz")
+                        .routeId("baz")
+                        .log(LoggingLevel.ERROR, "cool", "Me got ${body}")
+                        .to("mock:baz");
 
-                from("direct:wombat").routeId("wombat").log(LoggingLevel.INFO, "cool", "mymarker", "Me got ${body}")
+                from("direct:wombat")
+                        .routeId("wombat")
+                        .log(LoggingLevel.INFO, "cool", "mymarker", "Me got ${body}")
                         .to("mock:wombat");
 
-                from("direct:nolog").routeId("nolog").log(LoggingLevel.TRACE, "Should not log ${body}").to("mock:bar");
+                from("direct:nolog")
+                        .routeId("nolog")
+                        .log(LoggingLevel.TRACE, "Should not log ${body}")
+                        .to("mock:bar");
             }
         };
     }
-
 }

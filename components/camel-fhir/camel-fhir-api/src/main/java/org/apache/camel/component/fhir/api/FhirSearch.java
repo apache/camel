@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.List;
@@ -67,7 +68,9 @@ public class FhirSearch {
      * @return                  the {@link IBaseBundle}
      */
     public IBaseBundle searchByResource(
-            String resourceName, Map<String, List<String>> searchParameters, SearchStyleEnum searchStyle,
+            String resourceName,
+            Map<String, List<String>> searchParameters,
+            SearchStyleEnum searchStyle,
             Map<ExtraParameters, Object> extraParameters) {
         IQuery<IBaseBundle> query = client.search().forResource(resourceName);
         query.whereMap(Objects.requireNonNullElse(searchParameters, Map.of()));

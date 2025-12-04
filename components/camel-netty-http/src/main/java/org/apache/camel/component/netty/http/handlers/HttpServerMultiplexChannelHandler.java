@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.handlers;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
+import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
@@ -47,11 +53,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 /**
  * A multiplex {@link org.apache.camel.component.netty.http.HttpServerInitializerFactory} which keeps a list of
  * handlers, and delegates to the target handler based on the http context path in the incoming request. This is used to
@@ -62,11 +63,12 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandler<Object>
         implements HttpServerConsumerChannelFactory {
 
-    private static final List<String> METHODS
-            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
+    private static final List<String> METHODS =
+            Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerMultiplexChannelHandler.class);
-    private static final AttributeKey<HttpServerChannelHandler> SERVER_HANDLER_KEY = AttributeKey.valueOf("serverHandler");
+    private static final AttributeKey<HttpServerChannelHandler> SERVER_HANDLER_KEY =
+            AttributeKey.valueOf("serverHandler");
     private final Set<HttpServerChannelHandler> consumers = new CopyOnWriteArraySet<>();
     private int port;
     private String token;
@@ -94,7 +96,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         for (HttpServerChannelHandler handler : consumers) {
             if (handler.getConsumer() == consumer) {
                 consumers.remove(handler);
-                RestConsumerContextPathMatcher.unRegister(consumer.getConfiguration().getPath());
+                RestConsumerContextPathMatcher.unRegister(
+                        consumer.getConfiguration().getPath());
             }
         }
     }
@@ -131,11 +134,16 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
 
             // special if its an OPTIONS request
             boolean isRestrictedToOptions = handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null
-                    && handler.getConsumer().getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
+                    && handler.getConsumer()
+                            .getEndpoint()
+                            .getHttpMethodRestrict()
+                            .contains("OPTIONS");
             if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
-                String allowedMethods
-                        = METHODS.stream().filter(m -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
-                if (allowedMethods == null && handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null) {
+                String allowedMethods = METHODS.stream()
+                        .filter(m -> isHttpMethodAllowed(request, m))
+                        .collect(Collectors.joining(","));
+                if (allowedMethods == null
+                        && handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null) {
                     allowedMethods = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
                 }
 
@@ -166,11 +174,12 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             }
         } else {
             // okay we cannot process this requires so return either 404 or 405.
-            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same"
+            // request
             boolean hasAnyMethod = METHODS.stream().anyMatch(m -> isHttpMethodAllowed(request, m));
             HttpResponse response;
             if (hasAnyMethod) {
-                //method match error, return 405
+                // method match error, return 405
                 response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             } else {
                 // this resource is not found, return 404
@@ -244,8 +253,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             paths.add(new HttpRestConsumerPath(handler));
         }
 
-        RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler> best
-                = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler> best =
+                RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
             answer = best.getConsumer();
         }
@@ -257,7 +266,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                 NettyHttpConsumer consumer = handler.getConsumer();
 
                 String consumerPath = consumer.getConfiguration().getPath();
-                boolean matchOnUriPrefix = consumer.getEndpoint().getConfiguration().isMatchOnUriPrefix();
+                boolean matchOnUriPrefix =
+                        consumer.getEndpoint().getConfiguration().isMatchOnUriPrefix();
                 // Just make sure the we get the right consumer path first
                 if (RestConsumerContextPathMatcher.matchPath(path, consumerPath, matchOnUriPrefix)) {
                     candidates.add(handler);
@@ -267,7 +277,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
 
         // extra filter by restrict
         candidates = candidates.stream()
-                .filter(c -> matchRestMethod(method, c.getConsumer().getEndpoint().getHttpMethodRestrict()))
+                .filter(c ->
+                        matchRestMethod(method, c.getConsumer().getEndpoint().getHttpMethodRestrict()))
                 .collect(Collectors.toList());
         if (candidates.size() == 1) {
             answer = candidates.get(0);
@@ -296,5 +307,4 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     private static boolean matchRestMethod(String method, String restrict) {
         return restrict == null || restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
     }
-
 }

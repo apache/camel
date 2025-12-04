@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -46,6 +47,7 @@ public class JmsFilterIT extends AbstractJMSTest {
 
     @Produce("direct:start")
     protected ProducerTemplate template;
+
     protected CamelContext context;
     protected ConsumerTemplate consumer;
 

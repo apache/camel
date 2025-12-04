@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
 
 import java.util.concurrent.ExecutionException;
@@ -48,8 +49,9 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         if (configuration.isAsync()) {
-            executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                    endpoint.getEndpointUri(), configuration.getThreadPoolSize());
+            executor = endpoint.getCamelContext()
+                    .getExecutorServiceManager()
+                    .newFixedThreadPool(this, endpoint.getEndpointUri(), configuration.getThreadPoolSize());
         }
         super.doStart();
     }
@@ -81,8 +83,8 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                         // create a consumer for best solution
                         OptaplannerEventSupport eventSupport = new OptaplannerEventSupport(endpoint, problemId);
                         // start solving :: Solver Job is a thread
-                        SolverJob solverJob
-                                = solverManager.solveAndListen(problemId, t -> body, eventSupport::updateBestSolution);
+                        SolverJob solverJob =
+                                solverManager.solveAndListen(problemId, t -> body, eventSupport::updateBestSolution);
 
                         // wait for result
                         populateResult(exchange, solverJob);
@@ -139,12 +141,10 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
             if (configuration.getConfigFile() == null) {
                 return null;
             }
-            SolverConfig solverConfig
-                    = SolverConfig.createFromXmlResource(configuration.getConfigFile());
+            SolverConfig solverConfig = SolverConfig.createFromXmlResource(configuration.getConfigFile());
             SolverFactory<?> solverFactory = SolverFactory.create(solverConfig);
             solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
         }
         return solverManager;
     }
-
 }

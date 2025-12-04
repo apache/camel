@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,10 +46,14 @@ public class TokenPairPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&move=ok")).choice()
+                from(fileUri("?initialDelay=0&delay=10&move=ok"))
+                        .choice()
                         // does not make so much sense to use a tokenPair in a
                         // predicate but you can do it nevertheless
-                        .when().tokenizePair("<hello>", "</hello>").to("mock:result").end();
+                        .when()
+                        .tokenizePair("<hello>", "</hello>")
+                        .to("mock:result")
+                        .end();
             }
         };
     }

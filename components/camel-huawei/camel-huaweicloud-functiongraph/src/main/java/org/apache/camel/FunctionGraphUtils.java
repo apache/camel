@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import com.google.gson.Gson;
@@ -22,8 +23,7 @@ import org.apache.camel.models.ClientConfigurations;
 
 public final class FunctionGraphUtils {
 
-    private FunctionGraphUtils() {
-    }
+    private FunctionGraphUtils() {}
 
     /**
      * Gets the fieldName from the jsonString and returns it as a String
@@ -34,7 +34,9 @@ public final class FunctionGraphUtils {
      */
     public static String extractJsonFieldAsString(String jsonString, String fieldName) {
         Gson gson = new Gson();
-        return gson.fromJson(jsonString, JsonObject.class).getAsJsonObject(fieldName).toString();
+        return gson.fromJson(jsonString, JsonObject.class)
+                .getAsJsonObject(fieldName)
+                .toString();
     }
 
     /**
@@ -45,8 +47,11 @@ public final class FunctionGraphUtils {
      * @return
      */
     public static String composeUrn(String urnFormat, ClientConfigurations clientConfigurations) {
-        return String.format(urnFormat, clientConfigurations.getRegion(),
-                clientConfigurations.getProjectId(), clientConfigurations.getFunctionPackage(),
+        return String.format(
+                urnFormat,
+                clientConfigurations.getRegion(),
+                clientConfigurations.getProjectId(),
+                clientConfigurations.getFunctionPackage(),
                 clientConfigurations.getFunctionName());
     }
 }

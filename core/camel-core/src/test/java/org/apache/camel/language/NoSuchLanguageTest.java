@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.NoSuchLanguageException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class NoSuchLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testNoSuchLanguage() {
-        NoSuchLanguageException e = assertThrows(NoSuchLanguageException.class,
-                () -> assertPredicate("foo"),
-                "Should have thrown an exception");
+        NoSuchLanguageException e = assertThrows(
+                NoSuchLanguageException.class, () -> assertPredicate("foo"), "Should have thrown an exception");
 
         assertEquals("No language could be found for: unknown", e.getMessage());
         assertEquals("unknown", e.getLanguage());

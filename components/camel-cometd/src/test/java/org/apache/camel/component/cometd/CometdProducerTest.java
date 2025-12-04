@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.component.cometd.CometdProducer.ProducerService;
 import org.cometd.bayeux.server.LocalSession;
@@ -26,17 +30,17 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class CometdProducerTest {
 
     private CometdProducer testObj;
+
     @Mock
     private CometdEndpoint endpoint;
+
     @Mock
     private BayeuxServerImpl bayeuxServerImpl;
+
     @Mock
     private LocalSession localSession;
 

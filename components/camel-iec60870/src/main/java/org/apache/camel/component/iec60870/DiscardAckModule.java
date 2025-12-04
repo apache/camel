@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870;
 
 import io.netty.channel.socket.SocketChannel;
@@ -31,14 +32,11 @@ public class DiscardAckModule implements ClientModule, ServerModule {
     }
 
     @Override
-    public void dispose() {
-    }
+    public void dispose() {}
 
     @Override
-    public void initializeClient(final Client client, final MessageManager manager) {
-    }
+    public void initializeClient(final Client client, final MessageManager manager) {}
 
     @Override
-    public void initializeServer(final Server server, final MessageManager manager) {
-    }
+    public void initializeServer(final Server server, final MessageManager manager) {}
 }

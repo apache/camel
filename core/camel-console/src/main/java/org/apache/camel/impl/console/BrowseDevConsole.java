@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collection;
@@ -75,12 +76,10 @@ public class BrowseDevConsole extends AbstractDevConsole {
      */
     public static final String BODY_MAX_CHARS = "bodyMaxChars";
 
-    @Metadata(defaultValue = "32768",
-              description = "Maximum size of the message body to include in the dump")
+    @Metadata(defaultValue = "32768", description = "Maximum size of the message body to include in the dump")
     private int bodyMaxChars = 32 * 1024;
 
-    @Metadata(defaultValue = "100",
-              description = "Maximum number of messages per endpoint to include in the dump")
+    @Metadata(defaultValue = "100", description = "Maximum number of messages per endpoint to include in the dump")
     private int limit = 100;
 
     public int getBodyMaxChars() {
@@ -120,7 +119,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
 
                 if (dump) {
-                    List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
+                    List<Exchange> list =
+                            freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
                     int queueSize = list != null ? list.size() : 0;
                     int begin = 0;
                     if (list != null && pos > 0) {
@@ -129,12 +129,12 @@ public class BrowseDevConsole extends AbstractDevConsole {
                     }
                     if (list != null) {
                         sb.append("\n");
-                        sb.append(String.format("Browse: %s (size: %d limit: %d position: %d)%n", endpoint.getEndpointUri(),
-                                queueSize, max, begin));
+                        sb.append(String.format(
+                                "Browse: %s (size: %d limit: %d position: %d)%n",
+                                endpoint.getEndpointUri(), queueSize, max, begin));
                         for (Exchange e : list) {
-                            String json
-                                    = MessageHelper.dumpAsJSon(e.getMessage(), false, false, includeBody, 2, true, true, true,
-                                            maxChars, true);
+                            String json = MessageHelper.dumpAsJSon(
+                                    e.getMessage(), false, false, includeBody, 2, true, true, true, maxChars, true);
                             sb.append(json);
                             sb.append("\n");
                         }
@@ -171,7 +171,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
             if (endpoint instanceof BrowsableEndpoint be
                     && (filter == null || PatternHelper.matchPattern(endpoint.getEndpointUri(), filter))) {
                 if (dump) {
-                    List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
+                    List<Exchange> list =
+                            freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
                     int queueSize = list != null ? list.size() : 0;
                     int begin = 0;
                     if (list != null && pos > 0) {
@@ -190,8 +191,9 @@ public class BrowseDevConsole extends AbstractDevConsole {
                                 jo.put("firstTimestamp", ts);
                             }
                             if (list.size() > 1) {
-                                ts = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L,
-                                        long.class);
+                                ts = list.get(list.size() - 1)
+                                        .getMessage()
+                                        .getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
                                 if (ts > 0) {
                                     jo.put("lastTimestamp", ts);
                                 }
@@ -200,8 +202,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
                         arr.add(jo);
                         JsonArray arr2 = new JsonArray();
                         for (Exchange e : list) {
-                            arr2.add(MessageHelper.dumpAsJSonObject(e.getMessage(), false, false, includeBody, true, true, true,
-                                    maxChars));
+                            arr2.add(MessageHelper.dumpAsJSonObject(
+                                    e.getMessage(), false, false, includeBody, true, true, true, maxChars));
                         }
                         if (!arr2.isEmpty()) {
                             jo.put("messages", arr2);
@@ -228,5 +230,4 @@ public class BrowseDevConsole extends AbstractDevConsole {
 
         return root;
     }
-
 }

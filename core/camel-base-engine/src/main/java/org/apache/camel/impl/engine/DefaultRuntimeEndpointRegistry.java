@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -42,7 +43,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport implements RuntimeEndpointRegistry, NonManagedService {
+public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport
+        implements RuntimeEndpointRegistry, NonManagedService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRuntimeEndpointRegistry.class);
 
@@ -181,7 +183,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         }
         if (getCamelContext().getManagementStrategy() != null
                 && getCamelContext().getManagementStrategy().getManagementAgent() != null) {
-            extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            extended = getCamelContext()
+                    .getManagementStrategy()
+                    .getManagementAgent()
+                    .getStatisticsLevel()
+                    .isExtended();
         }
         if (extended) {
             inputUtilization = new DefaultEndpointUtilizationStatistics(limit);

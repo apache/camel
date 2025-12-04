@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import java.util.Optional;
 
@@ -49,8 +52,6 @@ import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
-
 /**
  * A Spring aware implementation of {@link org.apache.camel.CamelContext} which will automatically register itself with
  * Springs lifecycle methods plus allows spring to be used to customize a any
@@ -58,8 +59,7 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
  * and beans via the Spring {@link ApplicationContext}
  */
 public class SpringCamelContext extends DefaultCamelContext
-        implements Lifecycle, ApplicationContextAware, Phased,
-        ApplicationListener<ApplicationEvent>, Ordered {
+        implements Lifecycle, ApplicationContextAware, Phased, ApplicationListener<ApplicationEvent>, Ordered {
 
     public static final String EXCLUDE_ROUTES = "CamelTestSpringExcludeRoutes";
 
@@ -185,7 +185,8 @@ public class SpringCamelContext extends DefaultCamelContext
         if (applicationContext != null && applicationContext.getClassLoader() != null) {
             cl = applicationContext.getClassLoader();
         } else {
-            LOG.warn("Cannot find the class loader from application context, using the thread context class loader instead");
+            LOG.warn(
+                    "Cannot find the class loader from application context, using the thread context class loader instead");
             cl = Thread.currentThread().getContextClassLoader();
         }
         LOG.debug("Set the application context classloader to: {}", cl);
@@ -221,7 +222,8 @@ public class SpringCamelContext extends DefaultCamelContext
         if (applicationContext instanceof ConfigurableApplicationContext) {
             return new SpringInjector((ConfigurableApplicationContext) applicationContext);
         } else {
-            LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: {}",
+            LOG.warn(
+                    "Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: {}",
                     applicationContext);
             return super.createInjector();
         }
@@ -256,7 +258,6 @@ public class SpringCamelContext extends DefaultCamelContext
     }
 
     @Override
-
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         Optional<ModelJAXBContextFactory> result = ResolverHelper.resolveService(
                 getCamelContextReference(),
@@ -305,5 +306,4 @@ public class SpringCamelContext extends DefaultCamelContext
     public boolean isRunning() {
         return !isStopping() && !isStopped();
     }
-
 }

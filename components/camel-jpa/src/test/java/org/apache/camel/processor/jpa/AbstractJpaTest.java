@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -31,17 +35,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public abstract class AbstractJpaTest extends CamelSpringTestSupport {
     protected TransactionTemplate transactionTemplate;
     protected EntityManager entityManager;
 
     @BeforeEach
     public void setupEntityManager() {
-        EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory",
-                EntityManagerFactory.class);
+        EntityManagerFactory entityManagerFactory =
+                applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
         transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
         entityManager = entityManagerFactory.createEntityManager();
         cleanupRepository();
@@ -78,7 +79,9 @@ public abstract class AbstractJpaTest extends CamelSpringTestSupport {
     }
 
     protected void assertEntityInDB(int size, Class<?> entityType) {
-        List<?> results = entityManager.createQuery("select o from " + entityType.getName() + " o").getResultList();
+        List<?> results = entityManager
+                .createQuery("select o from " + entityType.getName() + " o")
+                .getResultList();
         assertEquals(size, results.size());
 
         assertIsInstanceOf(entityType, results.get(0));

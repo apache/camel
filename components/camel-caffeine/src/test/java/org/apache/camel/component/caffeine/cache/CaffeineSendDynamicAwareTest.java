@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import java.util.Map;
@@ -30,14 +31,15 @@ public class CaffeineSendDynamicAwareTest extends CaffeineCacheTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("VALUE_1");
 
-        template.sendBodyAndHeaders("direct:start", "Hello World",
-                Map.of("action1", "PUT", "action2", "GET", "myKey", "foobar"));
+        template.sendBodyAndHeaders(
+                "direct:start", "Hello World", Map.of("action1", "PUT", "action2", "GET", "myKey", "foobar"));
 
         MockEndpoint.assertIsSatisfied(context);
 
         // there are 1 caffeine endpoints
         int count = (int) context.getEndpoints().stream()
-                .filter(e -> e.getEndpointUri().startsWith("caffeine-cache")).count();
+                .filter(e -> e.getEndpointUri().startsWith("caffeine-cache"))
+                .count();
         Assertions.assertEquals(1, count);
     }
 

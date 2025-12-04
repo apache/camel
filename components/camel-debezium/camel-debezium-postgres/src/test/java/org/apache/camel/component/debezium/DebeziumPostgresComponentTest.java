@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,9 +28,6 @@ import org.apache.camel.component.debezium.postgres.DebeziumPostgresComponent;
 import org.apache.camel.component.debezium.postgres.configuration.PostgresConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DebeziumPostgresComponentTest {
 
@@ -43,8 +44,8 @@ public class DebeziumPostgresComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
-                           + "databaseHostname=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "topicPrefix=test&schemaHistoryInternalFileFilename=/test";
+                + "databaseHostname=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                + "topicPrefix=test&schemaHistoryInternalFileFilename=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumPostgresComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -53,8 +54,8 @@ public class DebeziumPostgresComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final PostgresConnectorEmbeddedDebeziumConfiguration configuration
-                    = (PostgresConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
+            final PostgresConnectorEmbeddedDebeziumConfiguration configuration =
+                    (PostgresConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getDatabaseHostname());
@@ -67,8 +68,8 @@ public class DebeziumPostgresComponentTest {
 
     @Test
     void testIfCreatesComponentWithExternalConfiguration() throws Exception {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
-                = new PostgresConnectorEmbeddedDebeziumConfiguration();
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration =
+                new PostgresConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabasePassword("pwd");
@@ -82,18 +83,18 @@ public class DebeziumPostgresComponentTest {
             // set configurations
             debeziumComponent.setConfiguration(configuration);
 
-            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
+            final DebeziumEndpoint debeziumEndpoint =
+                    debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
 
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final PostgresConnectorEmbeddedDebeziumConfiguration actualConfigurations
-                    = (PostgresConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
+            final PostgresConnectorEmbeddedDebeziumConfiguration actualConfigurations =
+                    (PostgresConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getDatabaseUser(), actualConfigurations.getDatabaseUser());
             assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
         }
     }
-
 }

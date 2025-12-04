@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestServletQueryParamTest extends ServletCamelRouterTestSupport {
 
@@ -55,26 +56,26 @@ public class RestServletQueryParamTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use servlet on localhost
-                restConfiguration().component("servlet").host("localhost").endpointProperty("httpBinding", "#myBinding")
+                restConfiguration()
+                        .component("servlet")
+                        .host("localhost")
+                        .endpointProperty("httpBinding", "#myBinding")
                         .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest()
-                    .get("/users/")
+                rest().get("/users/")
                         .param()
-                            .name("auth")
-                            .type(RestParamType.query)
-                            .required(true)
+                        .name("auth")
+                        .type(RestParamType.query)
+                        .required(true)
                         .endParam()
                         .to("direct:users");
 
-                from("direct:users")
-                        .to("mock:input").process(exchange -> {
-                            String auth = exchange.getIn().getHeader("auth", String.class);
-                            exchange.getMessage().setBody(auth + ";Donald Duck");
-                        });
+                from("direct:users").to("mock:input").process(exchange -> {
+                    String auth = exchange.getIn().getHeader("auth", String.class);
+                    exchange.getMessage().setBody(auth + ";Donald Duck");
+                });
             }
         };
     }
-
 }

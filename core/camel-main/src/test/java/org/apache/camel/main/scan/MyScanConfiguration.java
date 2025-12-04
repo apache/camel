@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.scan;
 
 import org.apache.camel.CamelConfiguration;
@@ -27,5 +28,4 @@ public class MyScanConfiguration implements CamelConfiguration {
         Assertions.assertNotNull(camelContext);
         camelContext.getGlobalOptions().put("scanConfigured", "true");
     }
-
 }

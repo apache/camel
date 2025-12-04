@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -41,7 +42,6 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "hello(String.class)").to("mock:result");
-
             }
         });
         context.start();
@@ -59,7 +59,6 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "hello(*)").to("mock:result");
-
             }
         });
         context.start();
@@ -77,7 +76,9 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e2
-                from("direct:start").bean(MyBean.class, "hello(String.class, String.class)").to("mock:result");
+                from("direct:start")
+                        .bean(MyBean.class, "hello(String.class, String.class)")
+                        .to("mock:result");
                 // END SNIPPET: e2
             }
         });
@@ -95,8 +96,9 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "hello(*, String.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "hello(*, String.class)")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -133,7 +135,6 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start").bean(MyBean.class, "hello").to("mock:result");
-
             }
         });
         context.start();
@@ -150,13 +151,15 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "hello(String.class,String.class,String.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "hello(String.class,String.class,String.class)")
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Claus", "country", "Denmark"),
                 "Should have thrown an exception");
 
@@ -169,13 +172,15 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "hello(String.class,int.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "hello(String.class,int.class)")
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Claus", "country", "Denmark"),
                 "Should have thrown an exception");
 
@@ -188,13 +193,15 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "hello(int.class,String.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "hello(int.class,String.class)")
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Claus", "country", "Denmark"),
                 "Should have thrown an exception");
 
@@ -207,8 +214,9 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "times(String.class,int.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "times(String.class,int.class)")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -225,8 +233,9 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "times(byte[].class,int.class)").to("mock:result");
-
+                from("direct:start")
+                        .bean(MyBean.class, "times(byte[].class,int.class)")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -245,9 +254,9 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").bean(MyBean.class, "sendMsg(String.class ${body}, String.class {{myDestination}})")
+                from("direct:start")
+                        .bean(MyBean.class, "sendMsg(String.class ${body}, String.class {{myDestination}})")
                         .to("mock:result");
-
             }
         });
         context.start();
@@ -304,7 +313,6 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         public String sendMsg(String message, String destination) {
             return "Sending " + message + " to " + destination;
         }
-
     }
     // END SNIPPET: e1
 

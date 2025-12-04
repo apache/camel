@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.tensorflow.serving.common;
 
 public class TensorFlowServingProperties {
@@ -21,6 +22,5 @@ public class TensorFlowServingProperties {
     public static final String TENSORFLOW_SERVING_REST_PORT = "tensorflow.serving.rest.port";
     public static final String TENSORFLOW_SERVING_CONTAINER = "tensorflow.serving.container";
 
-    private TensorFlowServingProperties() {
-    }
+    private TensorFlowServingProperties() {}
 }

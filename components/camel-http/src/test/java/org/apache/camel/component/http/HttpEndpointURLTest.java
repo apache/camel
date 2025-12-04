@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.URISupport;
@@ -22,16 +27,15 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     public void testHttpEndpointURLWithIPv6() {
-        HttpEndpoint endpoint = (HttpEndpoint) context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
-        assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
+        HttpEndpoint endpoint =
+                (HttpEndpoint) context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
+        assertEquals(
+                "http://[2a00:8a00:6000:40::1413]:30300/test?test=true",
+                endpoint.getHttpUri().toString());
     }
 
     @Test
@@ -42,7 +46,8 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         HttpEndpoint http3 = context.getEndpoint("https://www.google.com?test=parameter", HttpEndpoint.class);
 
         assertEquals("http://www.google.com", http1.getHttpUri().toString(), "Get a wrong HttpUri of http1");
-        assertEquals("https://www.google.com?test=parameter", http2.getHttpUri().toString(), "Get a wrong HttpUri of http2");
+        assertEquals(
+                "https://www.google.com?test=parameter", http2.getHttpUri().toString(), "Get a wrong HttpUri of http2");
         assertEquals(http2.getHttpUri(), http3.getHttpUri(), "Get a wrong HttpUri of http2 andhttp3");
 
         // secure because protocol in remainder is https
@@ -60,10 +65,11 @@ public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     public void testConnectionManagerFromHttpUri() {
-        HttpEndpoint http1
-                = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
+        HttpEndpoint http1 = context.getEndpoint(
+                "http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
-        assertInstanceOf(PoolingHttpClientConnectionManager.class, connectionManager, "Get a wrong type of connection manager");
+        assertInstanceOf(
+                PoolingHttpClientConnectionManager.class, connectionManager, "Get a wrong type of connection manager");
         PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager) connectionManager;
         assertEquals(40, poolManager.getMaxTotal(), "Get a wrong setting of maxTotalConnections");
         assertEquals(5, poolManager.getDefaultMaxPerRoute(), "Get a wrong setting of connectionsPerRoute");
@@ -75,8 +81,8 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         HttpEndpoint http1 = context.getEndpoint(
                 "http://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)",
                 HttpEndpoint.class);
-        assertTrue(URISupport.sanitizeUri(http1.getEndpointUri()).indexOf("authPassword=xxxxxx") > 0,
+        assertTrue(
+                URISupport.sanitizeUri(http1.getEndpointUri()).indexOf("authPassword=xxxxxx") > 0,
                 "The password is not loggged");
     }
-
 }

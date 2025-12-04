@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
 
@@ -37,19 +38,20 @@ public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
             public void configuration() {
                 // global routes configuration
                 routeConfiguration()
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:error")
-                        .onException(Exception.class).handled(true).to("mock:error2");
-
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error2");
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
 
-                from("direct:start2")
-                        .throwException(new Exception("Foo2"));
+                from("direct:start2").throwException(new Exception("Foo2"));
             }
         });
         context.start();
@@ -70,19 +72,24 @@ public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
             public void configuration() {
                 // global routes configuration
                 routeConfiguration()
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:error")
-                        .onException(Exception.class).handled(true).to("mock:error2");
-
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error2");
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
 
                 from("direct:start2")
-                        .onException(Exception.class).handled(true).to("mock:error3").end()
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error3")
+                        .end()
                         .throwException(new Exception("Foo2"));
             }
         });
@@ -104,18 +111,21 @@ public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
             @Override
             public void configuration() {
                 routeConfiguration("mylocal")
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:error")
-                        .onException(Exception.class).handled(true).to("mock:error2");
-
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error2");
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
 
-                from("direct:start2").routeConfigurationId("mylocal")
+                from("direct:start2")
+                        .routeConfigurationId("mylocal")
                         .throwException(new IllegalArgumentException("Foo2"));
             }
         });
@@ -123,8 +133,7 @@ public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
 
         getMockEndpoint("mock:error").expectedBodiesReceived("Bye World");
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"),
-                "Should throw exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"), "Should throw exception");
 
         template.sendBody("direct:start2", "Bye World");
 
@@ -138,21 +147,29 @@ public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
             public void configuration() {
                 // global routes configuration
                 routeConfiguration()
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:error")
-                        .onException(Exception.class).handled(true).to("mock:error2");
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error2");
 
                 routeConfiguration("mylocal")
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:error3")
-                        .onException(Exception.class).handled(true).to("mock:error4");
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:error3")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error4");
             }
         });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
 
-                from("direct:start2").routeConfigurationId("mylocal")
+                from("direct:start2")
+                        .routeConfigurationId("mylocal")
                         .throwException(new IllegalArgumentException("Foo2"));
             }
         });
@@ -168,5 +185,4 @@ public class RoutesConfigurationOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

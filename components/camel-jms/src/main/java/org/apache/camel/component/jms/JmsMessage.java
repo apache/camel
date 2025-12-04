@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.support.MessageHelper.copyBody;
 
 import java.io.File;
 import java.util.Map;
@@ -34,8 +37,6 @@ import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.MessageHelper.copyBody;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS

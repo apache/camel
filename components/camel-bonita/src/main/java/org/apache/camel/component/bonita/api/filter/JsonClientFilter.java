@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.filter;
 
 import java.io.IOException;
@@ -25,13 +26,11 @@ import jakarta.ws.rs.client.ClientResponseFilter;
 public class JsonClientFilter implements ClientResponseFilter {
 
     @Override
-    public void filter(ClientRequestContext request, ClientResponseContext response)
-            throws IOException {
+    public void filter(ClientRequestContext request, ClientResponseContext response) throws IOException {
         String contentType = response.getHeaders().getFirst("Content-Type");
         if (contentType.startsWith("text/plain")) {
             String newContentType = "application/json" + contentType.substring(10);
             response.getHeaders().putSingle("Content-Type", newContentType);
         }
     }
-
 }

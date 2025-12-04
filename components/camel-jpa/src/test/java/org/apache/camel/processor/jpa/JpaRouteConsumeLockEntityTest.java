@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -40,7 +41,8 @@ public class JpaRouteConsumeLockEntityTest extends AbstractJpaTest {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName());
 
-                from("jpa://" + SendEmail.class.getName() + "?consumeLockEntity=true").to("mock:result");
+                from("jpa://" + SendEmail.class.getName() + "?consumeLockEntity=true")
+                        .to("mock:result");
             }
         };
     }

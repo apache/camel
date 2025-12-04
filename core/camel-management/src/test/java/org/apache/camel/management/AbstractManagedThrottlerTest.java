@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,12 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
@@ -57,8 +58,7 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName throttlerName
-                = getCamelObjectName(TYPE_PROCESSOR, "mythrottler");
+        ObjectName throttlerName = getCamelObjectName(TYPE_PROCESSOR, "mythrottler");
 
         // use route to get the total time
         ObjectName routeName = getCamelObjectName(TYPE_ROUTE, "route1");
@@ -97,7 +97,6 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
         completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
         return (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
-
     }
 
     public void runTestThrottleAsyncVisibleViaJmx() throws Exception {
@@ -114,7 +113,10 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
 
         // we pick '5' because we are right in the middle of the number of messages
         // that have been and reduces any race conditions to minimal...
-        NotifyBuilder notifier = new NotifyBuilder(context).from("seda:throttleCountAsync").whenReceived(5).create();
+        NotifyBuilder notifier = new NotifyBuilder(context)
+                .from("seda:throttleCountAsync")
+                .whenReceived(5)
+                .create();
 
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountAsync", "Message " + i);
@@ -141,7 +143,10 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
 
         getMockEndpoint("mock:endAsyncException").expectedMessageCount(10);
 
-        NotifyBuilder notifier = new NotifyBuilder(context).from("seda:throttleCountAsyncException").whenReceived(5).create();
+        NotifyBuilder notifier = new NotifyBuilder(context)
+                .from("seda:throttleCountAsyncException")
+                .whenReceived(5)
+                .create();
 
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountAsyncException", "Message " + i);
@@ -161,7 +166,7 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
     @Test
     public void testRejectedExecution() throws Exception {
         // when delaying async, we can possibly fill up the execution queue
-        //. which would through a RejectedExecutionException.. we need to make
+        // . which would through a RejectedExecutionException.. we need to make
         // sure that the delayedCount/throttledCount doesn't leak
 
         // get the stats for the route
@@ -190,7 +195,7 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
     @Test
     public void testRejectedExecutionCallerRuns() throws Exception {
         // when delaying async, we can possibly fill up the execution queue
-        //. which would through a RejectedExecutionException.. we need to make
+        // . which would through a RejectedExecutionException.. we need to make
         // sure that the delayedCount/throttledCount doesn't leak
 
         // get the stats for the route

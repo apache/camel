@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jndi;
 
 import java.util.Hashtable;
@@ -75,8 +76,8 @@ public class JndiBeanRepository implements BeanRepository {
             answer = unwrap(answer);
             return type.cast(answer);
         } catch (Exception e) {
-            String msg = "Found bean: " + name + " in JNDI Context: " + context
-                         + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            String msg = "Found bean: " + name + " in JNDI Context: " + context + " of type: "
+                    + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }

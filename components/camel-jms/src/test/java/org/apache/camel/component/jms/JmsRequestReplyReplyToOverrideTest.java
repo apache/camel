@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.Destination;
 
@@ -35,8 +38,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
@@ -56,12 +57,13 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
         // must start CamelContext because use route builder is false
         context.start();
 
-        // send request to JmsRequestReplyReplyToOverrideTest, set replyTo to JmsRequestReplyReplyToOverrideTest.reply, but actually expect reply at baz
+        // send request to JmsRequestReplyReplyToOverrideTest, set replyTo to JmsRequestReplyReplyToOverrideTest.reply,
+        // but actually expect reply at baz
         Thread sender = new Thread(new Responder());
         sender.start();
 
-        Exchange reply = template.request("jms:queue:JmsRequestReplyReplyToOverrideTest",
-                exchange -> exchange.getIn().setBody(REQUEST_BODY));
+        Exchange reply = template.request("jms:queue:JmsRequestReplyReplyToOverrideTest", exchange -> exchange.getIn()
+                .setBody(REQUEST_BODY));
         assertEquals(EXPECTED_REPLY_BODY, reply.getMessage().getBody());
     }
 
@@ -114,7 +116,6 @@ public class JmsRequestReplyReplyToOverrideTest extends AbstractJMSTest {
 
                 // send reply
                 template.send("jms:dummy", ExchangePattern.InOnly, exchange -> {
-
                     Message in = exchange.getIn();
                     in.setBody("Re: " + body);
                     in.setHeader(JmsConstants.JMS_DESTINATION_NAME, "baz");

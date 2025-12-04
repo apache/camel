@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfSpringRouterTest extends CamelSpringTestSupport {
 
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -38,19 +39,20 @@ public class CxfSpringRouterTest extends CamelSpringTestSupport {
     protected Server server;
 
     protected String getRouterAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
+        return "http://localhost:" + CXFTestSupport.getPort1() + "/"
+                + getClass().getSimpleName() + "/router";
     }
 
     protected String getServiceAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
+        return "http://localhost:" + CXFTestSupport.getPort2() + "/"
+                + getClass().getSimpleName() + "/helloworld";
     }
 
-    protected void configureFactory(ServerFactoryBean svrBean) {
-    }
+    protected void configureFactory(ServerFactoryBean svrBean) {}
 
     @BeforeEach
     public void startService() {
-        //start a service
+        // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
         svrBean.setAddress(getServiceAddress());
@@ -106,7 +108,6 @@ public class CxfSpringRouterTest extends CamelSpringTestSupport {
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("echo hello world", result, "we should get the right answer from router");
-
     }
 
     @Test
@@ -114,8 +115,7 @@ public class CxfSpringRouterTest extends CamelSpringTestSupport {
         HelloService client = getCXFClient();
         int count = client.getInvocationCount();
         client.ping();
-        //oneway ping invoked, so invocationCount ++
+        // oneway ping invoked, so invocationCount ++
         assertEquals(client.getInvocationCount(), ++count, "The ping should be invocated");
     }
-
 }

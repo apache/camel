@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cronjob;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +37,6 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesCronJobProducer extends DefaultProducer {
 
@@ -61,7 +62,6 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         }
 
         switch (operation) {
-
             case KubernetesOperations.LIST_CRON_JOB_OPERATION:
                 doList(exchange);
                 break;
@@ -96,9 +96,21 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         CronJobList cronJobList;
 
         if (ObjectHelper.isEmpty(namespace)) {
-            cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inAnyNamespace().list();
+            cronJobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .cronjobs()
+                    .inAnyNamespace()
+                    .list();
         } else {
-            cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespace).list();
+            cronJobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .cronjobs()
+                    .inNamespace(namespace)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, cronJobList.getItems());
@@ -106,7 +118,8 @@ public class KubernetesCronJobProducer extends DefaultProducer {
 
     protected void doListCronJobByLabel(Exchange exchange) {
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
         CronJobList cronJobList;
 
         if (ObjectHelper.isEmpty(labels)) {
@@ -115,10 +128,22 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            cronJobList
-                    = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inAnyNamespace().withLabels(labels).list();
+            cronJobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .cronjobs()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            cronJobList = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespace).withLabels(labels)
+            cronJobList = getEndpoint()
+                    .getKubernetesClient()
+                    .batch()
+                    .v1()
+                    .cronjobs()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
                     .list();
         }
 
@@ -134,8 +159,14 @@ public class KubernetesCronJobProducer extends DefaultProducer {
         if (ObjectHelper.isEmpty(namespaceName)) {
             throw new IllegalArgumentException("Get a specific cronjob require specify a namespace name");
         }
-        CronJob cronJob = getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespaceName)
-                .withName(cronjobName).get();
+        CronJob cronJob = getEndpoint()
+                .getKubernetesClient()
+                .batch()
+                .v1()
+                .cronjobs()
+                .inNamespace(namespaceName)
+                .withName(cronjobName)
+                .get();
 
         prepareOutboundMessage(exchange, cronJob);
     }
@@ -152,9 +183,10 @@ public class KubernetesCronJobProducer extends DefaultProducer {
             Exchange exchange, String operationName, Function<Resource<CronJob>, Object> operation) {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        CronJobSpec cronjobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_SPEC, CronJobSpec.class);
-        HashMap<String, String> annotations
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_ANNOTATIONS, HashMap.class);
+        CronJobSpec cronjobSpec =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_SPEC, CronJobSpec.class);
+        HashMap<String, String> annotations =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_ANNOTATIONS, HashMap.class);
         if (ObjectHelper.isEmpty(cronjobName)) {
             throw new IllegalArgumentException(
                     String.format("%s a specific cronjob require specify a cronjob name", operationName));
@@ -167,18 +199,32 @@ public class KubernetesCronJobProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     String.format("%s a specific cronjob require specify a cronjob spec bean", operationName));
         }
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
         CronJobBuilder cronJobBuilder = new CronJobBuilder();
         if (ObjectHelper.isEmpty(annotations)) {
-            cronJobBuilder.withNewMetadata().withName(cronjobName).withLabels(labels).endMetadata()
+            cronJobBuilder
+                    .withNewMetadata()
+                    .withName(cronjobName)
+                    .withLabels(labels)
+                    .endMetadata()
                     .withSpec(cronjobSpec);
         } else {
-            cronJobBuilder.withNewMetadata().withName(cronjobName).withLabels(labels).withAnnotations(annotations).endMetadata()
+            cronJobBuilder
+                    .withNewMetadata()
+                    .withName(cronjobName)
+                    .withLabels(labels)
+                    .withAnnotations(annotations)
+                    .endMetadata()
                     .withSpec(cronjobSpec);
         }
-        Object cronJob = operation.apply(
-                getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespaceName)
-                        .resource(cronJobBuilder.build()));
+        Object cronJob = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .batch()
+                .v1()
+                .cronjobs()
+                .inNamespace(namespaceName)
+                .resource(cronJobBuilder.build()));
 
         prepareOutboundMessage(exchange, cronJob);
     }
@@ -193,7 +239,14 @@ public class KubernetesCronJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific cronjob require specify a namespace name");
         }
 
-        getEndpoint().getKubernetesClient().batch().v1().cronjobs().inNamespace(namespaceName).withName(cronjobName).delete();
+        getEndpoint()
+                .getKubernetesClient()
+                .batch()
+                .v1()
+                .cronjobs()
+                .inNamespace(namespaceName)
+                .withName(cronjobName)
+                .delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getMessage(), true);
     }

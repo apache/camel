@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 /**
@@ -28,5 +29,4 @@ public interface JaxbConstants {
 
     String JAXB_PART_CLASS = "CamelJaxbPartClass";
     String JAXB_PART_NAMESPACE = "CamelJaxbPartNamespace";
-
 }

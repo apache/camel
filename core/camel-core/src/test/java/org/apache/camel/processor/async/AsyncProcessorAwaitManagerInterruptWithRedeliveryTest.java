@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 
@@ -28,9 +32,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends ContextTestSupport {
@@ -46,7 +47,8 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
 
     @Test
     public void testAsyncAwaitInterrupt() throws Exception {
-        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager =
+                PluginHelper.getAsyncProcessorAwaitManager(context);
         asyncProcessorAwaitManager.getStatistics().setStatisticsEnabled(true);
 
         assertEquals(0, asyncProcessorAwaitManager.size());
@@ -73,31 +75,31 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         verify(bean, atMost(4)).callMe();
 
         assertEquals(0, asyncProcessorAwaitManager.size());
-        assertEquals(1,
-                asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
-        assertEquals(1, asyncProcessorAwaitManager.getStatistics()
-                .getThreadsInterrupted());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics().getThreadsInterrupted());
     }
 
     private void createThreadToInterrupt() {
         new Thread(() -> {
-            // Get our blocked thread
-            final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+                    // Get our blocked thread
+                    final AsyncProcessorAwaitManager asyncProcessorAwaitManager =
+                            PluginHelper.getAsyncProcessorAwaitManager(context);
 
-            Awaitility.await().untilAsserted(() -> {
-                int size = asyncProcessorAwaitManager.size();
-                assertEquals(1, size);
+                    Awaitility.await().untilAsserted(() -> {
+                        int size = asyncProcessorAwaitManager.size();
+                        assertEquals(1, size);
 
-                Collection<AsyncProcessorAwaitManager.AwaitThread> threads
-                        = asyncProcessorAwaitManager.browse();
-                AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
+                        Collection<AsyncProcessorAwaitManager.AwaitThread> threads =
+                                asyncProcessorAwaitManager.browse();
+                        AsyncProcessorAwaitManager.AwaitThread thread =
+                                threads.iterator().next();
 
-                // Interrupt it
-                String id = thread.getExchange().getExchangeId();
-                asyncProcessorAwaitManager.interrupt(id);
-            });
-
-        }).start();
+                        // Interrupt it
+                        String id = thread.getExchange().getExchangeId();
+                        asyncProcessorAwaitManager.interrupt(id);
+                    });
+                })
+                .start();
     }
 
     @Override
@@ -113,10 +115,16 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
             @Override
             public void configure() {
                 // redelivery delay should not be too fast as tested on slower CI servers can cause test to fail
-                errorHandler(
-                        deadLetterChannel("mock:error").maximumRedeliveries(5).redeliveryDelay(750).asyncDelayedRedelivery());
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(750)
+                        .asyncDelayedRedelivery());
 
-                from("direct:start").routeId("myRoute").to("mock:before").bean("myBean", "callMe").to("mock:result");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("mock:before")
+                        .bean("myBean", "callMe")
+                        .to("mock:result");
             }
         };
     }

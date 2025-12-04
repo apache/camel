@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -27,10 +32,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Pull Image Request headers are applied properly
@@ -61,7 +62,6 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         Mockito.verify(dockerClient, Mockito.times(1)).pullImageCmd(repository);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(eq(tag));
         Mockito.verify(mockObject, Mockito.times(1)).withRegistry(eq(registry));
-
     }
 
     @Override
@@ -79,5 +79,4 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
     protected DockerOperation getOperation() {
         return DockerOperation.PULL_IMAGE;
     }
-
 }

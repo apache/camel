@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Exchange;
@@ -43,7 +44,8 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
         mockResultEndpoint.expectedMessageCount(2);
         RepositoryCommit commit1 = commitService.addRepositoryCommit("test-1");
         RepositoryCommit commit2 = commitService.addRepositoryCommit("test-2");
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commit1.getCommit().getMessage(), commit2.getCommit().getMessage());
+        mockResultEndpoint.expectedBodiesReceivedInAnyOrder(
+                commit1.getCommit().getMessage(), commit2.getCommit().getMessage());
 
         mockResultEndpoint.assertIsSatisfied();
     }

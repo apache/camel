@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import jakarta.mail.BodyPart;
@@ -34,5 +35,4 @@ public interface AttachmentsContentTransferEncodingResolver {
      * @return                 the content-transfer-encoding or <tt>null</tt> to rely on the mail provider
      */
     String resolveContentTransferEncoding(BodyPart messageBodyPart);
-
 }

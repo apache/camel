@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,12 +40,12 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
     @XmlAttribute
     @Metadata(required = true)
     private String urn;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String validate;
 
-    public OutputTypeDefinition() {
-    }
+    public OutputTypeDefinition() {}
 
     public OutputTypeDefinition urn(String urn) {
         setUrn(urn);
@@ -104,5 +105,4 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
     public String getLabel() {
         return "outputType[" + urn + "]";
     }
-
 }

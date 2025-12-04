@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -27,9 +31,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  *
  */
@@ -41,7 +42,7 @@ public class FtpChangedReadLockIT extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
+                + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
     @Test
@@ -54,7 +55,9 @@ public class FtpChangedReadLockIT extends FtpServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        String content = context.getTypeConverter().convertTo(String.class, testDirectory.resolve("out/slowfile.dat").toFile());
+        String content = context.getTypeConverter()
+                .convertTo(
+                        String.class, testDirectory.resolve("out/slowfile.dat").toFile());
         String[] lines = content.split(LS);
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -66,7 +69,8 @@ public class FtpChangedReadLockIT extends FtpServerTestSupport {
         LOG.debug("Writing slow file...");
 
         createDirectory(service.ftpFile("changed"));
-        FileOutputStream fos = new FileOutputStream(service.ftpFile("changed/slowfile.dat").toFile(), true);
+        FileOutputStream fos =
+                new FileOutputStream(service.ftpFile("changed/slowfile.dat").toFile(), true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line {}", i);
@@ -87,5 +91,4 @@ public class FtpChangedReadLockIT extends FtpServerTestSupport {
             }
         };
     }
-
 }

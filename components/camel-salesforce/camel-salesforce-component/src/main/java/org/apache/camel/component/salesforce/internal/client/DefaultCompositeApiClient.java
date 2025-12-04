@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayInputStream;
@@ -54,10 +55,12 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     private ObjectMapper mapper;
 
     public DefaultCompositeApiClient(
-                                     final SalesforceEndpointConfig configuration,
-                                     final String version, final SalesforceSession session,
-                                     final SalesforceHttpClient httpClient, final SalesforceLoginConfig loginConfig)
-                                                                                                                     throws SalesforceException {
+            final SalesforceEndpointConfig configuration,
+            final String version,
+            final SalesforceSession session,
+            final SalesforceHttpClient httpClient,
+            final SalesforceLoginConfig loginConfig)
+            throws SalesforceException {
         super(version, session, httpClient, loginConfig);
 
         if (configuration.getObjectMapper() != null) {
@@ -68,8 +71,10 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     }
 
     public void submitCompositeRaw(
-            final InputStream raw, final Map<String, List<String>> headers,
-            final ResponseCallback<InputStream> callback, String compositeMethod)
+            final InputStream raw,
+            final Map<String, List<String>> headers,
+            final ResponseCallback<InputStream> callback,
+            String compositeMethod)
             throws SalesforceException {
 
         final String url = versionUrl() + "composite";
@@ -92,7 +97,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     public void submitComposite(
-            final SObjectComposite composite, final Map<String, List<String>> headers,
+            final SObjectComposite composite,
+            final Map<String, List<String>> headers,
             final ResponseCallback<SObjectCompositeResponse> callback)
             throws SalesforceException {
         final String url = versionUrl() + "composite";
@@ -100,15 +106,16 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final Request.Content content = serialize(composite, composite.objectTypes());
         post.body(content);
 
-        doHttpRequest(post,
+        doHttpRequest(
+                post,
                 (response, responseHeaders, exception) -> callback.onResponse(
-                        tryToReadResponse(SObjectCompositeResponse.class, response), responseHeaders,
-                        exception));
+                        tryToReadResponse(SObjectCompositeResponse.class, response), responseHeaders, exception));
     }
 
     @Override
     public void submitCompositeBatch(
-            final SObjectBatch batch, final Map<String, List<String>> headers,
+            final SObjectBatch batch,
+            final Map<String, List<String>> headers,
             final ResponseCallback<SObjectBatchResponse> callback)
             throws SalesforceException {
         checkCompositeBatchVersion(version, batch.getVersion());
@@ -120,15 +127,16 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final Request.Content content = serialize(batch, batch.objectTypes());
         post.body(content);
 
-        doHttpRequest(post,
+        doHttpRequest(
+                post,
                 (response, responseHeaders, exception) -> callback.onResponse(
-                        tryToReadResponse(SObjectBatchResponse.class, response),
-                        responseHeaders, exception));
+                        tryToReadResponse(SObjectBatchResponse.class, response), responseHeaders, exception));
     }
 
     @Override
     public void submitCompositeTree(
-            final SObjectTree tree, final Map<String, List<String>> headers,
+            final SObjectTree tree,
+            final Map<String, List<String>> headers,
             final ResponseCallback<SObjectTreeResponse> callback)
             throws SalesforceException {
         final String url = versionUrl() + "composite/tree/" + tree.getObjectType();
@@ -138,10 +146,10 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final Request.Content content = serialize(tree, tree.objectTypes());
         post.body(content);
 
-        doHttpRequest(post,
+        doHttpRequest(
+                post,
                 (response, responseHeaders, exception) -> callback.onResponse(
-                        tryToReadResponse(SObjectTreeResponse.class, response),
-                        responseHeaders, exception));
+                        tryToReadResponse(SObjectTreeResponse.class, response), responseHeaders, exception));
     }
 
     Request createRequest(final String method, final String url, final Map<String, List<String>> headers) {
@@ -184,8 +192,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return mapper.writerFor(type);
     }
 
-    Request.Content serialize(final Object body, final Class<?>... additionalTypes)
-            throws SalesforceException {
+    Request.Content serialize(final Object body, final Class<?>... additionalTypes) throws SalesforceException {
         // input stream as entity content is needed for authentication retries
         return new InputStreamRequestContent(toJson(body));
     }
@@ -235,8 +242,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         if (Version.create(configuredVersion).compareTo(batchVersion) < 0) {
             throw new SalesforceException(
                     "Component is configured with Salesforce API version " + configuredVersion
-                                          + ", but the payload of the Composite API batch operation requires at least "
-                                          + batchVersion,
+                            + ", but the payload of the Composite API batch operation requires at least "
+                            + batchVersion,
                     0);
         }
     }

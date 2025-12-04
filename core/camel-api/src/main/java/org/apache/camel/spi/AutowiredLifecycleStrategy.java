@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
  * Marker interface for {@link LifecycleStrategy} that are used for auto-wiring components, data formats and languages.
  */
-public interface AutowiredLifecycleStrategy extends LifecycleStrategy {
-}
+public interface AutowiredLifecycleStrategy extends LifecycleStrategy {}

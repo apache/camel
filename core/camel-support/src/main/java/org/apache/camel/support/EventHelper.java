@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.List;
@@ -43,8 +44,7 @@ public final class EventHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventHelper.class);
 
-    private EventHelper() {
-    }
+    private EventHelper() {}
 
     /**
      * Checks whether event notifications is applicable or not
@@ -830,8 +830,11 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeFailureHandling(
-            CamelContext context, Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri) {
+            CamelContext context,
+            Exchange exchange,
+            Processor failureHandler,
+            boolean deadLetterChannel,
+            String deadLetterUri) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -864,7 +867,8 @@ public final class EventHelper {
 
             if (event == null) {
                 // only create event once
-                event = factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
+                event = factory.createExchangeFailureHandlingEvent(
+                        exchange, failureHandler, deadLetterChannel, deadLetterUri);
                 if (event == null) {
                     // factory could not create event so exit
                     return false;
@@ -876,8 +880,11 @@ public final class EventHelper {
     }
 
     public static boolean notifyExchangeFailureHandled(
-            CamelContext context, Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri) {
+            CamelContext context,
+            Exchange exchange,
+            Processor failureHandler,
+            boolean deadLetterChannel,
+            String deadLetterUri) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;
@@ -909,7 +916,8 @@ public final class EventHelper {
 
             if (event == null) {
                 // only create event once
-                event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
+                event = factory.createExchangeFailureHandledEvent(
+                        exchange, failureHandler, deadLetterChannel, deadLetterUri);
                 if (event == null) {
                     // factory could not create event so exit
                     return false;
@@ -1007,7 +1015,8 @@ public final class EventHelper {
         return answer;
     }
 
-    public static boolean notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
+    public static boolean notifyExchangeSent(
+            CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
             return false;

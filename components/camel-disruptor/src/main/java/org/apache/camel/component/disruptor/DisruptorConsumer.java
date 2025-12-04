@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import java.util.HashSet;
@@ -46,7 +47,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     private static final AsyncCallback NOOP_ASYNC_CALLBACK = new AsyncCallback() {
         @Override
         public void done(boolean doneSync) {
-            //Noop
+            // Noop
         }
     };
 
@@ -145,8 +146,8 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         try {
             Exchange exchange = synchronizedExchange.getExchange();
 
-            final boolean ignore = exchange.hasProperties() && exchange
-                    .getProperties().containsKey(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
+            final boolean ignore = exchange.hasProperties()
+                    && exchange.getProperties().containsKey(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
             if (ignore) {
                 // Property was set and it was set to true, so don't process Exchange.
                 LOGGER.trace("Ignoring exchange {}", exchange);
@@ -230,11 +231,11 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
             // exchanges amongst them are scheduled on their own threads and are provided with all exchanges.
             // To prevent duplicate exchange processing by worker-pool event handlers, they are all given an ordinal,
             // which can be used to determine whether he should process the exchange, or leave it for his brethren.
-            //see http://code.google.com/p/disruptor/wiki/FrequentlyAskedQuestions#How_do_you_arrange_a_Disruptor_with_multiple_consumers_so_that_e
+            // see
+            // http://code.google.com/p/disruptor/wiki/FrequentlyAskedQuestions#How_do_you_arrange_a_Disruptor_with_multiple_consumers_so_that_e
             if (sequence % concurrentConsumers == ordinal) {
                 process(event.getSynchronizedExchange());
             }
         }
-
     }
 }

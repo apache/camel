@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870;
+
+import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,8 +30,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 import org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions;
-
-import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexor> extends DefaultEndpoint {
 
@@ -71,8 +72,8 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
 
     private final AtomicReference<Handle> connectionHandle = new AtomicReference<>();
 
-    protected AbstractIecEndpoint(final String uri, final DefaultComponent component, final T connection,
-                                  final ObjectAddress address) {
+    protected AbstractIecEndpoint(
+            final String uri, final DefaultComponent component, final T connection, final ObjectAddress address) {
         super(uri, component);
 
         this.connection = requireNonNull(connection);
@@ -121,5 +122,4 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
     protected T getConnection() {
         return this.connection;
     }
-
 }

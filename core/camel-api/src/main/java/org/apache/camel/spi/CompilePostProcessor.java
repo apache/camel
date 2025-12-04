@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -39,9 +40,6 @@ public interface CompilePostProcessor {
      * @param  instance     the object created as instance of the class (if any)
      * @throws Exception    is thrown if error during post-processing
      */
-    void postCompile(
-            CamelContext camelContext, String name,
-            Class<?> clazz, byte[] byteCode, Object instance)
+    void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
             throws Exception;
-
 }

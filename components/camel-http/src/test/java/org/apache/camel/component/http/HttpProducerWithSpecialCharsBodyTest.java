@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.Exchange.CHARSET_NAME;
+import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,16 +33,10 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.Exchange.CHARSET_NAME;
-import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 class HttpProducerWithSpecialCharsBodyTest {
 
-    private static final String TEST_MESSAGE_WITH_SPECIAL_CHARACTERS
-            = """
+    private static final String TEST_MESSAGE_WITH_SPECIAL_CHARACTERS =
+            """
                     {
                         "description": "Example with special characters",
                         "BasicLatin": "\u0021 \u0023 \u0024 \u0025 \u0026 \u0027 \u0028 \u0029 \u002A \u002B \u002C \u002D \u002E \u002F \u003A \u003B \u003C \u003D \u003E \u003F",
@@ -50,8 +51,8 @@ class HttpProducerWithSpecialCharsBodyTest {
                     }
                     """;
 
-    private static final String APPLICATION_JSON_UTF8
-            = APPLICATION_JSON.getMimeType() + "; charset=" + StandardCharsets.UTF_8.name();
+    private static final String APPLICATION_JSON_UTF8 =
+            APPLICATION_JSON.getMimeType() + "; charset=" + StandardCharsets.UTF_8.name();
 
     @Test
     void createRequestEntityJsonUtf8ThroughContentType() throws CamelExchangeException, IOException {
@@ -69,10 +70,13 @@ class HttpProducerWithSpecialCharsBodyTest {
 
             assertInstanceOf(StringEntity.class, requestEntity);
             StringEntity entity = (StringEntity) requestEntity;
-            assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(),
+            assertEquals(
+                    APPLICATION_JSON_UTF8,
+                    entity.getContentType(),
                     "Content type should be given content type and charset");
             assertNull(entity.getContentEncoding(), "Content encoding should not be given");
-            assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
+            assertEquals(
+                    TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
                     new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
                     "Reading entity content with intended charset should result in the original (readable) message");
         }
@@ -95,10 +99,13 @@ class HttpProducerWithSpecialCharsBodyTest {
 
             assertInstanceOf(StringEntity.class, requestEntity);
             StringEntity entity = (StringEntity) requestEntity;
-            assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(),
+            assertEquals(
+                    APPLICATION_JSON_UTF8,
+                    entity.getContentType(),
                     "Content type should be given content type and charset");
             assertNull(entity.getContentEncoding(), "Content encoding should not be given");
-            assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
+            assertEquals(
+                    TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
                     new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
                     "Reading entity content with intended charset should result in the original (readable) message");
         }
@@ -121,10 +128,13 @@ class HttpProducerWithSpecialCharsBodyTest {
 
             assertInstanceOf(StringEntity.class, requestEntity);
             StringEntity entity = (StringEntity) requestEntity;
-            assertEquals(APPLICATION_JSON.getMimeType(), entity.getContentType(),
+            assertEquals(
+                    APPLICATION_JSON.getMimeType(),
+                    entity.getContentType(),
                     "Content type should only be given content type");
             assertNull(entity.getContentEncoding(), "Content encoding should not be given");
-            assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
+            assertEquals(
+                    TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
                     new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
                     "Reading entity content with intended charset should result in the original (readable) message");
         }

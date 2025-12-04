@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import org.apache.camel.CamelContext;
@@ -36,8 +37,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(
-            CamelContext camelContext,
-            NamedNode processorDefinition, Processor target, Processor nextTarget)
+            CamelContext camelContext, NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
         return new DelegateAsyncProcessor(new TraceProcessor(target, processorDefinition));
     }
@@ -67,5 +67,4 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             }
         }
     }
-
 }

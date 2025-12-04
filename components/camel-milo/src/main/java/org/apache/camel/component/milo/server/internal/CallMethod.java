@@ -29,19 +29,11 @@ import org.slf4j.LoggerFactory;
 
 public class CallMethod extends AbstractMethodInvocationHandler {
 
-    public static final Argument IN = new Argument(
-            "in",
-            Identifiers.String,
-            ValueRanks.Scalar,
-            null,
-            new LocalizedText("A value."));
+    public static final Argument IN =
+            new Argument("in", Identifiers.String, ValueRanks.Scalar, null, new LocalizedText("A value."));
 
-    public static final Argument OUT = new Argument(
-            "out",
-            Identifiers.String,
-            ValueRanks.Scalar,
-            null,
-            new LocalizedText("A value."));
+    public static final Argument OUT =
+            new Argument("out", Identifiers.String, ValueRanks.Scalar, null, new LocalizedText("A value."));
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -51,12 +43,12 @@ public class CallMethod extends AbstractMethodInvocationHandler {
 
     @Override
     public Argument[] getInputArguments() {
-        return new Argument[] { IN };
+        return new Argument[] {IN};
     }
 
     @Override
     public Argument[] getOutputArguments() {
-        return new Argument[] { OUT };
+        return new Argument[] {OUT};
     }
 
     @Override
@@ -65,7 +57,6 @@ public class CallMethod extends AbstractMethodInvocationHandler {
 
         String in = (String) inputValues[0].getValue();
 
-        return new Variant[] { new Variant("out-" + in) };
+        return new Variant[] {new Variant("out-" + in)};
     }
-
 }

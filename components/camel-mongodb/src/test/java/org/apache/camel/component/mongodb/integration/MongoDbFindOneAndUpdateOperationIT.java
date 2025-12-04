@@ -14,7 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.currentTimestamp;
+import static com.mongodb.client.model.Updates.set;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,20 +47,6 @@ import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
-
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.currentTimestamp;
-import static com.mongodb.client.model.Updates.set;
-import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
-import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
-import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -65,7 +66,10 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
         template.sendBodyAndHeaders("direct:findOneAndUpdate", update, headers);
 
         mock.assertIsSatisfied();
-        assertEquals(0, testCollection.countDocuments(), "Upsert was set to false, no new document should have been created.");
+        assertEquals(
+                0,
+                testCollection.countDocuments(),
+                "Upsert was set to false, no new document should have been created.");
     }
 
     @Test
@@ -83,7 +87,9 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
 
         template.sendBodyAndHeaders("direct:findOneAndUpdate", update, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Upsert was set to true, a new document should have been created.");
     }
 
@@ -96,9 +102,11 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
         Bson update = combine(set("scientist", "Darwin"), currentTimestamp("lastModified"));
 
         // Sends the filter and update parameter in the body
-        template.sendBodyAndHeader("direct:findOneAndUpdate", new Bson[] { filter, update }, UPSERT, true);
+        template.sendBodyAndHeader("direct:findOneAndUpdate", new Bson[] {filter, update}, UPSERT, true);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Upsert was set to true, a new document should have been created.");
     }
 
@@ -119,7 +127,9 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
 
         template.sendBodyAndHeaders("direct:findOneAndUpdate", update, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Upsert was set to true, a new document should have been created.");
     }
 
@@ -143,11 +153,17 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
 
         template.sendBodyAndHeaders("direct:findOneAndUpdate", update, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Dirac")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Dirac")),
                 "Update should have happened, Dirac should be present.");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Serre")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Serre")),
                 "Serre should still be present as his ID is higher.");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Connes")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Connes")),
                 "Connes should have been updated to Dirac.");
     }
 
@@ -197,11 +213,17 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
 
         template.sendBodyAndHeaders("direct:findOneAndUpdate", update, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Dirac")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Dirac")),
                 "Update should have happened, Dirac should be present.");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Serre")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Serre")),
                 "Serre should still be present as his ID is higher.");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Connes")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Connes")),
                 "Connes should have been updated to Dirac.");
     }
 
@@ -209,7 +231,8 @@ public class MongoDbFindOneAndUpdateOperationIT extends AbstractMongoDbITSupport
         return new RouteBuilder() {
             public void configure() {
                 from("direct:findOneAndUpdate")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneAndUpdate")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneAndUpdate")
                         .to(mock);
             }
         };

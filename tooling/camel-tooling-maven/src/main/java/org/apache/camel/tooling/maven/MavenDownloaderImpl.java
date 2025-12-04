@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
 
 import java.io.BufferedInputStream;
@@ -229,12 +230,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
 
-    private static final RepositoryPolicy POLICY_DEFAULT = new RepositoryPolicy(
-            true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_WARN);
-    private static final RepositoryPolicy POLICY_FRESH = new RepositoryPolicy(
-            true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, RepositoryPolicy.CHECKSUM_POLICY_WARN);
-    private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
-            false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
+    private static final RepositoryPolicy POLICY_DEFAULT =
+            new RepositoryPolicy(true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_WARN);
+    private static final RepositoryPolicy POLICY_FRESH =
+            new RepositoryPolicy(true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, RepositoryPolicy.CHECKSUM_POLICY_WARN);
+    private static final RepositoryPolicy POLICY_DISABLED =
+            new RepositoryPolicy(false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
 
     private boolean mavenCentralEnabled = true;
     private boolean mavenApacheSnapshotEnabled = true;
@@ -272,11 +273,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private AtomicInteger customRepositoryCounter = new AtomicInteger(1);
     private Settings settings;
 
-    public MavenDownloaderImpl() {
-    }
+    public MavenDownloaderImpl() {}
 
-    public MavenDownloaderImpl(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
-                               Settings settings) {
+    public MavenDownloaderImpl(
+            RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession, Settings settings) {
         this.repositorySystem = repositorySystem;
         this.repositorySystemSession = repositorySystemSession;
         this.settings = settings;
@@ -310,7 +310,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // read the settings if not provided
         Settings settings = this.settings == null
-                ? mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings) : this.settings;
+                ? mavenConfiguration(registry, repositorySystem, systemProperties, mavenSettings)
+                : this.settings;
         if (offline) {
             LOG.info("MavenDownloader in offline mode");
             settings.setOffline(true);
@@ -319,8 +320,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         if (repositorySystemSession == null) {
             // prepare the Maven session (local repository was configured within the settings)
             // this object is thread safe - it uses configurable download pool
-            repositorySystemSession = configureRepositorySystemSession(registry, systemProperties,
-                    settings, new File(settings.getLocalRepository()));
+            repositorySystemSession = configureRepositorySystemSession(
+                    registry, systemProperties, settings, new File(settings.getLocalRepository()));
         }
         defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
 
@@ -328,8 +329,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // mirroring and proxying (handled by org.eclipse.aether.RepositorySystem#newResolutionRepositories())
         List<RemoteRepository> originalRepositories = configureDefaultRepositories(settings);
 
-        remoteRepositories.addAll(repositorySystem.newResolutionRepositories(repositorySystemSession,
-                originalRepositories));
+        remoteRepositories.addAll(
+                repositorySystem.newResolutionRepositories(repositorySystemSession, originalRepositories));
 
         // mirroring/proxying Maven Central
         if (centralRepository == null && !remoteRepositories.isEmpty()) {
@@ -337,7 +338,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 if ("central".equals(repo.getId())) {
                     centralRepository = repo;
                     break;
-                } else if (repo.getHost().startsWith("repo1.maven.org") || repo.getHost().startsWith("repo2.maven.org")) {
+                } else if (repo.getHost().startsWith("repo1.maven.org")
+                        || repo.getHost().startsWith("repo2.maven.org")) {
                     centralRepository = repo;
                     break;
                 }
@@ -348,14 +350,15 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         if (mavenApacheSnapshotEnabled && !apacheSnapshotsIncluded) {
             // process apache snapshots even if it's not present in remoteRepositories, because it
             // may be used on demand for each download/resolution request
-            apacheSnapshotsResolutionRepository = repositorySystem.newResolutionRepositories(repositorySystemSession,
-                    Collections.singletonList(apacheSnapshotsRepository)).get(0);
+            apacheSnapshotsResolutionRepository = repositorySystem
+                    .newResolutionRepositories(
+                            repositorySystemSession, Collections.singletonList(apacheSnapshotsRepository))
+                    .get(0);
         }
     }
 
     @Override
-    protected void doInit() {
-    }
+    protected void doInit() {}
 
     @Override
     protected void doStop() throws Exception {
@@ -372,7 +375,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     @Override
     public List<MavenArtifact> resolveArtifacts(
             List<String> dependencyGAVs,
-            Set<String> extraRepositories, boolean transitively, boolean useApacheSnapshots)
+            Set<String> extraRepositories,
+            boolean transitively,
+            boolean useApacheSnapshots)
             throws MavenResolutionException {
         return resolveArtifacts(null, dependencyGAVs, extraRepositories, transitively, useApacheSnapshots);
     }
@@ -380,8 +385,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     @Override
     public List<MavenArtifact> resolveArtifacts(
             String rootGav,
-            List<String> dependencyGAVs, Set<String> extraRepositories,
-            boolean transitively, boolean useApacheSnapshots)
+            List<String> dependencyGAVs,
+            Set<String> extraRepositories,
+            boolean transitively,
+            boolean useApacheSnapshots)
             throws MavenResolutionException {
         ArtifactTypeRegistry artifactTypeRegistry = repositorySystemSession.getArtifactTypeRegistry();
 
@@ -394,8 +401,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             // read them
             configureRepositories(extraRemoteRepositories, extraRepositories);
             // proxy/mirror them
-            repositories.addAll(repositorySystem.newResolutionRepositories(repositorySystemSession,
-                    extraRemoteRepositories));
+            repositories.addAll(
+                    repositorySystem.newResolutionRepositories(repositorySystemSession, extraRemoteRepositories));
         }
         if (mavenApacheSnapshotEnabled && useApacheSnapshots && !apacheSnapshotsIncluded) {
             repositories.add(apacheSnapshotsResolutionRepository);
@@ -408,8 +415,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             ar.setRepositories(repositories);
             MavenGav gav = MavenGav.parseGav(depId);
             Artifact artifact = new DefaultArtifact(
-                    gav.getGroupId(), gav.getArtifactId(), gav.getClassifier(),
-                    gav.getPackaging(), gav.getVersion(), artifactTypeRegistry.get(gav.getPackaging()));
+                    gav.getGroupId(),
+                    gav.getArtifactId(),
+                    gav.getClassifier(),
+                    gav.getPackaging(),
+                    gav.getVersion(),
+                    artifactTypeRegistry.get(gav.getPackaging()));
             ar.setArtifact(artifact);
             requests.add(ar);
 
@@ -423,10 +434,11 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 collectRequest.setRoot(new Dependency(rootArtifact, "compile", false));
             }
             collectRequest.addDependency(dependency);
-            //collectRequest.addManagedDependency(...);
+            // collectRequest.addManagedDependency(...);
         }
 
-        if (remoteArtifactDownloadListener != null && repositorySystemSession instanceof DefaultRepositorySystemSession) {
+        if (remoteArtifactDownloadListener != null
+                && repositorySystemSession instanceof DefaultRepositorySystemSession) {
             DefaultRepositorySystemSession drss = (DefaultRepositorySystemSession) repositorySystemSession;
             drss.setRepositoryListener(new AbstractRepositoryListener() {
                 private final StopWatch watch = new StopWatch();
@@ -442,8 +454,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         String url = ar instanceof RemoteRepository ? ((RemoteRepository) ar).getUrl() : null;
                         String id = ar != null ? ar.getId() : null;
                         String version = a.isSnapshot() ? a.getBaseVersion() : a.getVersion();
-                        remoteArtifactDownloadListener.artifactDownloading(a.getGroupId(), a.getArtifactId(), version,
-                                id, url);
+                        remoteArtifactDownloadListener.artifactDownloading(
+                                a.getGroupId(), a.getArtifactId(), version, id, url);
                     }
                 }
 
@@ -457,24 +469,29 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         String id = ar != null ? ar.getId() : null;
                         long elapsed = watch.takenAndRestart();
                         String version = a.isSnapshot() ? a.getBaseVersion() : a.getVersion();
-                        remoteArtifactDownloadListener.artifactDownloaded(a.getGroupId(), a.getArtifactId(), version,
-                                id, url, elapsed);
+                        remoteArtifactDownloadListener.artifactDownloaded(
+                                a.getGroupId(), a.getArtifactId(), version, id, url, elapsed);
                     }
                 }
             });
         }
 
         if (transitively) {
-            DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, new AcceptAllDependencyFilter());
+            DependencyRequest dependencyRequest =
+                    new DependencyRequest(collectRequest, new AcceptAllDependencyFilter());
             try {
-                DependencyResult dependencyResult
-                        = repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
+                DependencyResult dependencyResult =
+                        repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest);
 
                 return dependencyResult.getArtifactResults().stream()
                         .map(dr -> {
                             Artifact a = dr.getArtifact();
-                            MavenGav gav = MavenGav.fromCoordinates(a.getGroupId(), a.getArtifactId(),
-                                    a.getVersion(), a.getExtension(), a.getClassifier());
+                            MavenGav gav = MavenGav.fromCoordinates(
+                                    a.getGroupId(),
+                                    a.getArtifactId(),
+                                    a.getVersion(),
+                                    a.getExtension(),
+                                    a.getClassifier());
                             return new MavenArtifact(gav, a.getFile());
                         })
                         .collect(Collectors.toList());
@@ -485,14 +502,18 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             }
         } else {
             try {
-                List<ArtifactResult> artifactResults
-                        = repositorySystem.resolveArtifacts(repositorySystemSession, requests);
+                List<ArtifactResult> artifactResults =
+                        repositorySystem.resolveArtifacts(repositorySystemSession, requests);
 
                 return artifactResults.stream()
                         .map(dr -> {
                             Artifact a = dr.getArtifact();
-                            MavenGav gav = MavenGav.fromCoordinates(a.getGroupId(), a.getArtifactId(),
-                                    a.getVersion(), a.getExtension(), a.getClassifier());
+                            MavenGav gav = MavenGav.fromCoordinates(
+                                    a.getGroupId(),
+                                    a.getArtifactId(),
+                                    a.getVersion(),
+                                    a.getExtension(),
+                                    a.getClassifier());
                             return new MavenArtifact(gav, a.getFile());
                         })
                         .collect(Collectors.toList());
@@ -521,9 +542,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         .build();
 
                 // simply configure them in addition to the default repositories
-                List<RemoteRepository> customResolutionRepository
-                        = repositorySystem.newResolutionRepositories(repositorySystemSession,
-                                Collections.singletonList(custom));
+                List<RemoteRepository> customResolutionRepository = repositorySystem.newResolutionRepositories(
+                        repositorySystemSession, Collections.singletonList(custom));
 
                 req.setRepository(customResolutionRepository.get(0));
             }
@@ -553,7 +573,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             }
             return gavs;
         } catch (Exception e) {
-            String msg = "Cannot resolve available versions in " + req.getRepository().getUrl();
+            String msg = "Cannot resolve available versions in "
+                    + req.getRepository().getUrl();
             MavenResolutionException mre = new MavenResolutionException(msg, e);
             mre.getRepositories().add(req.getRepository().getUrl());
             throw mre;
@@ -585,8 +606,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         rssCopy.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, connectTimeout);
         rssCopy.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeout);
         try {
-            rssCopy.setLocalRepositoryManager(lrmFactory.newInstance(rssCopy,
-                    new LocalRepository(localRepository)));
+            rssCopy.setLocalRepositoryManager(lrmFactory.newInstance(rssCopy, new LocalRepository(localRepository)));
         } catch (NoLocalRepositoryManagerException e) {
             LOG.warn(e.getMessage(), e);
         }
@@ -610,8 +630,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             skip = true;
         } else if (mavenSettings == null) {
             // implicit settings
-            String m2settings = System.getProperty("user.home") + File.separator + ".m2"
-                                + File.separator + "settings.xml";
+            String m2settings =
+                    System.getProperty("user.home") + File.separator + ".m2" + File.separator + "settings.xml";
             if (new File(m2settings).isFile()) {
                 mavenSettings = m2settings;
             }
@@ -625,14 +645,15 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         if (!skip) {
             if (mavenSettingsSecurity == null) {
                 // implicit security settings
-                String m2settingsSecurity = System.getProperty("user.home") + File.separator + ".m2"
-                                            + File.separator + "settings-security.xml";
+                String m2settingsSecurity = System.getProperty("user.home") + File.separator + ".m2" + File.separator
+                        + "settings-security.xml";
                 if (new File(m2settingsSecurity).isFile()) {
                     mavenSettingsSecurity = m2settingsSecurity;
                 }
             } else {
                 if (!new File(mavenSettingsSecurity).isFile()) {
-                    LOG.warn("Can't access {}. Skipping Maven settings-settings.xml configuration.",
+                    LOG.warn(
+                            "Can't access {}. Skipping Maven settings-settings.xml configuration.",
                             mavenSettingsSecurity);
                 }
                 mavenSettingsSecurity = null;
@@ -644,8 +665,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * Configure entire {@link RepositorySystem} service
      */
     RepositorySystem configureRepositorySystem(
-            DIRegistry registry,
-            Properties systemProperties, String settingsSecurityLocation, boolean offline) {
+            DIRegistry registry, Properties systemProperties, String settingsSecurityLocation, boolean offline) {
         basicRepositorySystemConfiguration(registry);
         transportConfiguration(registry, systemProperties);
         settingsConfiguration(registry, settingsSecurityLocation);
@@ -705,7 +725,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // remaining requirements of org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider
         registry.bind(LocalRepositoryManagerFactory.class, EnhancedLocalRepositoryManagerFactory.class);
-        //registry.bind(LocalRepositoryManagerFactory.class, SimpleLocalRepositoryManagerFactory.class);
+        // registry.bind(LocalRepositoryManagerFactory.class, SimpleLocalRepositoryManagerFactory.class);
 
         // remaining requirements of org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory
         registry.bind(NamedLockFactoryAdapterFactory.class, NamedLockFactoryAdapterFactoryImpl.class);
@@ -732,7 +752,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         // requirements of org.apache.maven.repository.internal.DefaultVersionResolver (these are deprecated)
         // no longer needed for Maven 3.9+ (see: MNG-7247)
-        //registry.bind(org.eclipse.aether.impl.SyncContextFactory.class,
+        // registry.bind(org.eclipse.aether.impl.SyncContextFactory.class,
         //        org.eclipse.aether.internal.impl.synccontext.legacy.DefaultSyncContextFactory.class);
 
         // requirements of org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory
@@ -740,7 +760,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         registry.bind(LocalPathPrefixComposerFactory.class, DefaultLocalPathPrefixComposerFactory.class);
 
         // additional services
-        //registry.bind(org.eclipse.aether.spi.log.LoggerFactory.class, Slf4jLoggerFactory.class);
+        // registry.bind(org.eclipse.aether.spi.log.LoggerFactory.class, Slf4jLoggerFactory.class);
 
         // resolver 1.9.x
         registry.bind(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class);
@@ -828,8 +848,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * Using the configured {@link DIRegistry}, load {@link Settings Maven settings}
      */
     Settings mavenConfiguration(
-            DIRegistry registry, RepositorySystem repositorySystem,
-            Properties systemProperties, String mavenSettings) {
+            DIRegistry registry, RepositorySystem repositorySystem, Properties systemProperties, String mavenSettings) {
         // settings are important to configure the session later
         SettingsBuilder settingsBuilder = registry.lookupByClass(SettingsBuilder.class);
         SettingsBuildingRequest sbRequest = new DefaultSettingsBuildingRequest();
@@ -842,8 +861,11 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             SettingsBuildingResult sbResult = settingsBuilder.build(sbRequest);
             settings = sbResult.getEffectiveSettings();
         } catch (SettingsBuildingException e) {
-            LOG.warn("Problem reading settings file {}: {}. Falling back to defaults.",
-                    mavenSettings, e.getMessage(), e);
+            LOG.warn(
+                    "Problem reading settings file {}: {}. Falling back to defaults.",
+                    mavenSettings,
+                    e.getMessage(),
+                    e);
             settings = new Settings();
         }
 
@@ -859,7 +881,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         if (localRepository == null || localRepository.isBlank()) {
             Path m2Repository = Paths.get(System.getProperty("user.home"), ".m2/repository");
             if (!m2Repository.toFile().isDirectory()) {
-                m2Repository = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
+                m2Repository = Paths.get(
+                        System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
                 m2Repository.toFile().mkdirs();
             }
             localRepository = m2Repository.toString();
@@ -896,8 +919,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * download Maven dependencies.
      */
     RepositorySystemSession configureRepositorySystemSession(
-            DIRegistry registry,
-            Properties systemProperties, Settings settings, File localRepository) {
+            DIRegistry registry, Properties systemProperties, Settings settings, File localRepository) {
         DefaultRepositorySystemSession session = new DefaultRepositorySystemSession();
 
         // proxies are copied from the settings to proxy selector
@@ -930,8 +952,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         //    org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory.newRepositorySession()
         Map<String, Object> serverConfigurations = new HashMap<>();
         DefaultAuthenticationSelector baseAuthenticationSelector = new DefaultAuthenticationSelector();
-        AuthenticationSelector authenticationSelector
-                = new ConservativeAuthenticationSelector(baseAuthenticationSelector);
+        AuthenticationSelector authenticationSelector =
+                new ConservativeAuthenticationSelector(baseAuthenticationSelector);
 
         int connectTimeout = ConfigurationProperties.DEFAULT_CONNECT_TIMEOUT;
         int requestTimeout = ConfigurationProperties.DEFAULT_REQUEST_TIMEOUT;
@@ -947,12 +969,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
             // see private constants in org.eclipse.aether.transport.wagon.WagonTransporter
             if (server.getFilePermissions() != null) {
-                serverConfigurations.put("aether.connector.perms.fileMode." + server.getId(),
-                        server.getFilePermissions());
+                serverConfigurations.put(
+                        "aether.connector.perms.fileMode." + server.getId(), server.getFilePermissions());
             }
             if (server.getDirectoryPermissions() != null) {
-                serverConfigurations.put("aether.connector.perms.dirMode." + server.getId(),
-                        server.getFilePermissions());
+                serverConfigurations.put(
+                        "aether.connector.perms.dirMode." + server.getId(), server.getFilePermissions());
             }
 
             if (server.getConfiguration() instanceof Xpp3Dom) {
@@ -1089,8 +1111,14 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // properly use org.eclipse.aether.RepositorySystem#newResolutionRepositories()!
         DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
         for (Mirror mirror : settings.getMirrors()) {
-            mirrorSelector.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, false,
-                    mirror.getMirrorOf(), mirror.getMirrorOfLayouts());
+            mirrorSelector.add(
+                    mirror.getId(),
+                    mirror.getUrl(),
+                    mirror.getLayout(),
+                    false,
+                    false,
+                    mirror.getMirrorOf(),
+                    mirror.getMirrorOfLayouts());
         }
 
         // no more actual requirements, but we need more services when using
@@ -1247,39 +1275,44 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     try {
                         URL url = URI.create(r.getUrl()).toURL();
                         if (repositoryURLs.add(r.getUrl())) {
-                            if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                            if (mavenApacheSnapshotEnabled
+                                    && url.getHost().equals("repository.apache.org")
                                     && url.getPath().startsWith("/snapshots")) {
                                 // record that Apache Snapshots repository is included in default (always used)
-                                // repositories and used preconfigured instance of o.e.aether.repository.RemoteRepository
+                                // repositories and used preconfigured instance of
+                                // o.e.aether.repository.RemoteRepository
                                 apacheSnapshotsIncluded = true;
                                 repositories.add(apacheSnapshotsRepository);
                             } else {
-                                RemoteRepository.Builder rb
-                                        = new RemoteRepository.Builder(r.getId(), r.getLayout(), r.getUrl());
+                                RemoteRepository.Builder rb =
+                                        new RemoteRepository.Builder(r.getId(), r.getLayout(), r.getUrl());
                                 if (r.getReleases() == null) {
                                     // default (enabled) policy for releases
                                     rb.setPolicy(defaultPolicy);
                                 } else {
                                     String updatePolicy = r.getReleases().getUpdatePolicy() == null
-                                            ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getReleases().getUpdatePolicy();
+                                            ? RepositoryPolicy.UPDATE_POLICY_DAILY
+                                            : r.getReleases().getUpdatePolicy();
                                     String checksumPolicy = r.getReleases().getChecksumPolicy() == null
-                                            ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getReleases().getChecksumPolicy();
+                                            ? RepositoryPolicy.CHECKSUM_POLICY_WARN
+                                            : r.getReleases().getChecksumPolicy();
                                     rb.setPolicy(new RepositoryPolicy(
-                                            r.getReleases().isEnabled(),
-                                            updatePolicy, checksumPolicy));
+                                            r.getReleases().isEnabled(), updatePolicy, checksumPolicy));
                                 }
-                                // if someone defines Apache snapshots repository, (s)he has to specify proper policy, sorry.
+                                // if someone defines Apache snapshots repository, (s)he has to specify proper policy,
+                                // sorry.
                                 if (r.getSnapshots() == null) {
                                     // default (disabled) policy for releases
                                     rb.setSnapshotPolicy(POLICY_DISABLED);
                                 } else {
                                     String updatePolicy = r.getSnapshots().getUpdatePolicy() == null
-                                            ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getSnapshots().getUpdatePolicy();
+                                            ? RepositoryPolicy.UPDATE_POLICY_DAILY
+                                            : r.getSnapshots().getUpdatePolicy();
                                     String checksumPolicy = r.getSnapshots().getChecksumPolicy() == null
-                                            ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getSnapshots().getChecksumPolicy();
+                                            ? RepositoryPolicy.CHECKSUM_POLICY_WARN
+                                            : r.getSnapshots().getChecksumPolicy();
                                     rb.setSnapshotPolicy(new RepositoryPolicy(
-                                            r.getSnapshots().isEnabled(),
-                                            updatePolicy, checksumPolicy));
+                                            r.getSnapshots().isEnabled(), updatePolicy, checksumPolicy));
                                 }
                                 repositories.add(rb.build());
                             }
@@ -1309,7 +1342,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         // Maven Central is always used, so skip it
                         return;
                     }
-                    if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                    if (mavenApacheSnapshotEnabled
+                            && url.getHost().equals("repository.apache.org")
                             && url.getPath().contains("/snapshots")) {
                         // Apache Snapshots added, so we'll use our own definition of this repository
                         repositories.add(apacheSnapshotsRepository);
@@ -1389,5 +1423,4 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             return true;
         }
     }
-
 }

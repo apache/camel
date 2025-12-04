@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 public class CamelContextRouteCoverage {
@@ -69,11 +70,10 @@ public class CamelContextRouteCoverage {
     @Override
     public String toString() {
 
-        return "CamelContextRouteCoverage{" +
-               "id='" + id + '\'' +
-               ", exchangesTotal=" + exchangesTotal +
-               ", totalProcessingTime=" + totalProcessingTime +
-               ", routes=" + routes +
-               '}';
+        return "CamelContextRouteCoverage{" + "id='"
+                + id + '\'' + ", exchangesTotal="
+                + exchangesTotal + ", totalProcessingTime="
+                + totalProcessingTime + ", routes="
+                + routes + '}';
     }
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.util.Map;
@@ -27,18 +32,14 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class VertxHttpFileUploadMultipartEasyTest extends VertxHttpTestSupport {
 
     @Test
     public void testVertxFileUpload() {
         File f = new File("src/test/resources/log4j2.properties");
 
-        Exchange out
-                = template.request(getProducerUri() + "/upload2?multipartUpload=true&multipartUploadName=cheese", exchange -> {
+        Exchange out = template.request(
+                getProducerUri() + "/upload2?multipartUpload=true&multipartUploadName=cheese", exchange -> {
                     exchange.getMessage().setBody(f);
                 });
 
@@ -52,16 +53,16 @@ public class VertxHttpFileUploadMultipartEasyTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri() + "/upload2")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                // undertow store the multipart-form as map in the camel message
-                                DataHandler dh = (DataHandler) exchange.getMessage().getBody(Map.class).get("cheese");
-                                String out = dh.getDataSource().getName();
-                                exchange.getMessage().setBody(out);
-                            }
-                        });
+                from(getTestServerUri() + "/upload2").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) {
+                        // undertow store the multipart-form as map in the camel message
+                        DataHandler dh = (DataHandler)
+                                exchange.getMessage().getBody(Map.class).get("cheese");
+                        String out = dh.getDataSource().getName();
+                        exchange.getMessage().setBody(out);
+                    }
+                });
             }
         };
     }

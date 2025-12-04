@@ -43,7 +43,8 @@ public class RocketMQConsumer extends DefaultConsumer implements Suspendable {
     private void startConsumer() throws MQClientException {
         mqPushConsumer = new DefaultMQPushConsumer(
                 endpoint.getConsumerGroup(),
-                RocketMQAclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
+                RocketMQAclUtils.getAclRPCHook(
+                        getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
         mqPushConsumer.setNamesrvAddr(endpoint.getNamesrvAddr());
         mqPushConsumer.setNamespaceV2(endpoint.getNamespace());
 

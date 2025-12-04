@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,8 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A JCR {@link EventListener} which can be used to delegate processing to a Camel endpoint.
@@ -92,5 +93,4 @@ public class EndpointEventListener implements EventListener {
 
         return exchange;
     }
-
 }

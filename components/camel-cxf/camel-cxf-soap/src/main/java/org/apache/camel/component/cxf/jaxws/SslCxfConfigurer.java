@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 
 public final class SslCxfConfigurer extends AbstractSslEndpointConfigurer implements CxfConfigurer {
 
-    private SslCxfConfigurer(SSLContextParameters sslContextParameters,
-                             CamelContext camelContext) {
+    private SslCxfConfigurer(SSLContextParameters sslContextParameters, CamelContext camelContext) {
         super(sslContextParameters, camelContext);
     }
 
@@ -40,8 +40,7 @@ public final class SslCxfConfigurer extends AbstractSslEndpointConfigurer implem
     }
 
     @Override
-    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
-    }
+    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {}
 
     @Override
     public void configureClient(Client client) {
@@ -50,6 +49,5 @@ public final class SslCxfConfigurer extends AbstractSslEndpointConfigurer implem
     }
 
     @Override
-    public void configureServer(Server server) {
-    }
+    public void configureServer(Server server) {}
 }

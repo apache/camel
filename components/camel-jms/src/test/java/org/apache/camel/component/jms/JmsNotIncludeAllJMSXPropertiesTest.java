@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -74,8 +76,7 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsNotIncludeAllJMSXPropertiesTest")
-                        .to("mock:result");
+                from("activemq:queue:JmsNotIncludeAllJMSXPropertiesTest").to("mock:result");
             }
         };
     }

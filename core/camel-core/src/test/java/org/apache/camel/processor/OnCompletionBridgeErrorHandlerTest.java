@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -32,9 +36,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class OnCompletionBridgeErrorHandlerTest extends ContextTestSupport {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
@@ -45,11 +46,12 @@ public class OnCompletionBridgeErrorHandlerTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         latch.countDown();
         assertMockEndpointsSatisfied();
-        Exception cause = getMockEndpoint("mock:dead").getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                Exception.class);
+        Exception cause = getMockEndpoint("mock:dead")
+                .getReceivedExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(cause);
         assertEquals("Simulated", cause.getMessage());
-
     }
 
     @Override

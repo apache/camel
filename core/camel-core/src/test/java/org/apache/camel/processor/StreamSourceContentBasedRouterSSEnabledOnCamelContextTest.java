@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,10 +31,16 @@ public class StreamSourceContentBasedRouterSSEnabledOnCamelContextTest extends S
                 // enable stream cache globally on camel context
                 context.setStreamCaching(true);
 
-                from("direct:start").choice().when().xpath("/message/text() = 'xx'").to("mock:x").when()
-                        .xpath("/message/text() = 'yy'").to("mock:y").end();
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("/message/text() = 'xx'")
+                        .to("mock:x")
+                        .when()
+                        .xpath("/message/text() = 'yy'")
+                        .to("mock:y")
+                        .end();
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.Set;
@@ -52,5 +53,4 @@ public interface RoutesBuilder {
      * @throws Exception is thrown if initialization of routes failed
      */
     Set<String> updateRoutesToCamelContext(CamelContext context) throws Exception;
-
 }

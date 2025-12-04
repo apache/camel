@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure.strategy;
 
 import java.time.Duration;
@@ -63,11 +64,14 @@ public class FilesChangedExclusiveReadLockStrategy implements GenericFileExclusi
                 .withName("ftp-acquire-exclusive-read-lock")
                 .build();
 
-        FilesExclusiveReadLockCheck exclusiveReadLockCheck
-                = new FilesExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
+        FilesExclusiveReadLockCheck exclusiveReadLockCheck =
+                new FilesExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
 
-        if (!task.run(exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
-            CamelLogger.log(LOG, readLockLoggingLevel,
+        if (!task.run(
+                exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
+            CamelLogger.log(
+                    LOG,
+                    readLockLoggingLevel,
                     "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
 
             return false;

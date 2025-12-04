@@ -41,6 +41,5 @@ public final class CliProperties {
 
     public static final String TRUSTED_CERT_PATHS = "cli.service.trusted.paths";
 
-    private CliProperties() {
-    }
+    private CliProperties() {}
 }

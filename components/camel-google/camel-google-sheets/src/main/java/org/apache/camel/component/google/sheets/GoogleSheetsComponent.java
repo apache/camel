@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets;
 
 import com.google.api.services.sheets.v4.Sheets;
@@ -32,8 +33,10 @@ public class GoogleSheetsComponent
 
     @Metadata
     GoogleSheetsConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Sheets client;
+
     @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
 
@@ -52,14 +55,27 @@ public class GoogleSheetsComponent
 
     public Sheets getClient(GoogleSheetsConfiguration config) {
         if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+            if (config.getClientId() != null
+                    && !config.getClientId().isBlank()
+                    && config.getClientSecret() != null
+                    && !config.getClientSecret().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                config.getClientId(),
+                                config.getClientSecret(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getRefreshToken(),
+                                config.getAccessToken());
+            } else if (config.getServiceAccountKey() != null
+                    && !config.getServiceAccountKey().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                config.getServiceAccountKey(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Google Sheets client");
@@ -101,7 +117,9 @@ public class GoogleSheetsComponent
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, GoogleSheetsApiName apiName,
+            String uri,
+            String methodName,
+            GoogleSheetsApiName apiName,
             GoogleSheetsConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);

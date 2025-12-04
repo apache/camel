@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -25,12 +26,9 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
     protected String modelJavaType;
     protected final List<LanguageFunctionModel> functions = new ArrayList<>();
 
-    public static class LanguageOptionModel extends BaseOptionModel {
+    public static class LanguageOptionModel extends BaseOptionModel {}
 
-    }
-
-    public LanguageModel() {
-    }
+    public LanguageModel() {}
 
     @Override
     public Kind getKind() {
@@ -117,5 +115,4 @@ public class LanguageModel extends ArtifactModel<LanguageModel.LanguageOptionMod
             this.suffix = suffix;
         }
     }
-
 }

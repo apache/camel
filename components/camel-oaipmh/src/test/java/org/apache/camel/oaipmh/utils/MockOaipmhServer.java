@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.utils;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,8 +40,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public final class MockOaipmhServer {
 
@@ -74,7 +75,8 @@ public final class MockOaipmhServer {
                 ZipEntry entry = zis.getNextEntry();
                 while (entry != null) {
                     if (!entry.isDirectory()) {
-                        cache.put(StringUtils.substringAfterLast(entry.getName(), "/"),
+                        cache.put(
+                                StringUtils.substringAfterLast(entry.getName(), "/"),
                                 IOUtils.toString(zis, StandardCharsets.UTF_8));
                     }
                     entry = zis.getNextEntry();
@@ -82,7 +84,8 @@ public final class MockOaipmhServer {
                 responseCache = Collections.unmodifiableMap(cache);
             }
         } catch (IOException ioex) {
-            throw new RuntimeCamelException("An issue occurred while initializing the OAI-PMH mock server reponse cache", ioex);
+            throw new RuntimeCamelException(
+                    "An issue occurred while initializing the OAI-PMH mock server reponse cache", ioex);
         }
         return responseCache;
     }
@@ -92,7 +95,8 @@ public final class MockOaipmhServer {
         WireMockConfiguration config = wireMockConfig().extensions(transformer);
 
         config.httpsPort(httpsPort);
-        String keyStorePath = MockOaipmhServer.class.getResource("/jettyKS/localhost.p12").toExternalForm();
+        String keyStorePath =
+                MockOaipmhServer.class.getResource("/jettyKS/localhost.p12").toExternalForm();
         config.keystorePath(keyStorePath);
         config.keystorePassword(PASSWORD);
         config.keyManagerPassword(PASSWORD);
@@ -124,7 +128,10 @@ public final class MockOaipmhServer {
         public ResponseDefinition transform(
                 Request request, ResponseDefinition responseDefinition, FileSource files, Parameters parameters) {
             String sha256Hex = DigestUtils.sha256Hex(request.getUrl());
-            return new ResponseDefinitionBuilder().withStatus(200).withBody(getResponseCache().get(sha256Hex + ".xml")).build();
+            return new ResponseDefinitionBuilder()
+                    .withStatus(200)
+                    .withBody(getResponseCache().get(sha256Hex + ".xml"))
+                    .build();
         }
 
         @Override
@@ -132,5 +139,4 @@ public final class MockOaipmhServer {
             return "oaipmh-mock-transformer";
         }
     }
-
 }

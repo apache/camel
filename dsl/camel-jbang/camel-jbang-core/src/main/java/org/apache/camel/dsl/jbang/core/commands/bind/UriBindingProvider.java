@@ -32,7 +32,10 @@ public class UriBindingProvider implements BindingProvider {
 
     @Override
     public String getEndpoint(
-            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+            EndpointType type,
+            String uriExpression,
+            Map<String, Object> endpointProperties,
+            TemplateProvider templateProvider)
             throws Exception {
         String endpointUri = uriExpression;
         Map<String, Object> endpointUriProperties = new HashMap<>();
@@ -57,8 +60,8 @@ public class UriBindingProvider implements BindingProvider {
         IOHelper.close(is);
 
         context = context.replaceFirst("\\{\\{ \\.URI }}", endpointUri);
-        context = context.replaceFirst("\\{\\{ \\.EndpointProperties }}\n",
-                templateProvider.asEndpointProperties(endpointProperties));
+        context = context.replaceFirst(
+                "\\{\\{ \\.EndpointProperties }}\n", templateProvider.asEndpointProperties(endpointProperties));
 
         return context;
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +31,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlFunctionDataSourceTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
-
+                .addScript("sql/storedProcedureTest.sql")
+                .build();
     }
 
     @Override
@@ -74,10 +74,13 @@ public class SqlFunctionDataSourceTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // required for the sql component
-                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
+                getContext()
+                        .getComponent("sql-stored", SqlStoredComponent.class)
+                        .setDataSource(db);
 
                 from("direct:query")
-                        .to("sql-stored:SUBNUMBERS_FUNCTION(OUT INTEGER resultofsub, INTEGER ${header.num1},INTEGER ${header.num2})?function=true")
+                        .to(
+                                "sql-stored:SUBNUMBERS_FUNCTION(OUT INTEGER resultofsub, INTEGER ${header.num1},INTEGER ${header.num2})?function=true")
                         .to("mock:query");
             }
         };

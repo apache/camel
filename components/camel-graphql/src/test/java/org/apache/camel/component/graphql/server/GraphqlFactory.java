@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql.server;
+
+import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
@@ -26,12 +29,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
-
 public final class GraphqlFactory {
 
-    private GraphqlFactory() {
-    }
+    private GraphqlFactory() {}
 
     public static GraphQL newGraphQL() {
         try {
@@ -57,5 +57,4 @@ public final class GraphqlFactory {
                 .type(newTypeWiring("Mutation").dataFetcher("addBook", GraphqlDataFetchers.addBookDataFetcher()))
                 .build();
     }
-
 }

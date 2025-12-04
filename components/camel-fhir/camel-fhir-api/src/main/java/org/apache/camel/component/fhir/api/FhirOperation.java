@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -62,8 +63,12 @@ public class FhirOperation {
      * @return                     the {@link IBaseResource}
      */
     public <T extends IBaseParameters> IBaseResource onType(
-            Class<IBaseResource> resourceType, String name,
-            T parameters, Class<T> outputParameterType, boolean useHttpGet, Class<IBaseResource> returnType,
+            Class<IBaseResource> resourceType,
+            String name,
+            T parameters,
+            Class<T> outputParameterType,
+            boolean useHttpGet,
+            Class<IBaseResource> returnType,
             Map<ExtraParameters, Object> extraParameters) {
         IOperationUnnamed operationUnnamed = client.operation().onType(resourceType);
         IOperationUntypedWithInput<? extends IBaseResource> operationUntypedWithInput = processNamedOperationParameters(
@@ -91,7 +96,11 @@ public class FhirOperation {
      * @return                     the {@link IBaseResource}
      */
     public <T extends IBaseParameters> IBaseResource onServer(
-            String name, T parameters, Class<T> outputParameterType, boolean useHttpGet, Class<IBaseResource> returnType,
+            String name,
+            T parameters,
+            Class<T> outputParameterType,
+            boolean useHttpGet,
+            Class<IBaseResource> returnType,
             Map<ExtraParameters, Object> extraParameters) {
         IOperationUnnamed operationUnnamed = client.operation().onServer();
         IOperationUntypedWithInput<? extends IBaseResource> operationUntypedWithInput = processNamedOperationParameters(
@@ -125,8 +134,13 @@ public class FhirOperation {
      * @return                          the {@link IBaseResource}
      */
     public <T extends IBaseParameters> IBaseResource onInstance(
-            IIdType id, String name, T parameters, Class<T> outputParameterType, boolean useHttpGet,
-            Class<IBaseResource> returnType, Map<ExtraParameters, Object> extraParameters) {
+            IIdType id,
+            String name,
+            T parameters,
+            Class<T> outputParameterType,
+            boolean useHttpGet,
+            Class<IBaseResource> returnType,
+            Map<ExtraParameters, Object> extraParameters) {
         IOperationUnnamed operationUnnamed = client.operation().onInstanceVersion(id);
         IOperationUntypedWithInput<? extends IBaseResource> operationUntypedWithInput = processNamedOperationParameters(
                 name, parameters, outputParameterType, useHttpGet, returnType, extraParameters, operationUnnamed);
@@ -154,8 +168,13 @@ public class FhirOperation {
      * @return                     the {@link IBaseResource}
      */
     public <T extends IBaseParameters> IBaseResource onInstanceVersion(
-            IIdType id, String name, T parameters, Class<T> outputParameterType, boolean useHttpGet,
-            Class<IBaseResource> returnType, Map<ExtraParameters, Object> extraParameters) {
+            IIdType id,
+            String name,
+            T parameters,
+            Class<T> outputParameterType,
+            boolean useHttpGet,
+            Class<IBaseResource> returnType,
+            Map<ExtraParameters, Object> extraParameters) {
         IOperationUnnamed operationUnnamed = client.operation().onInstanceVersion(id);
         IOperationUntypedWithInput<? extends IBaseResource> operationUntypedWithInput = processNamedOperationParameters(
                 name, parameters, outputParameterType, useHttpGet, returnType, extraParameters, operationUnnamed);
@@ -177,7 +196,10 @@ public class FhirOperation {
      * @return                 the {@link IBaseBundle}
      */
     public <T extends IBaseBundle> T processMessage(
-            String respondToUri, IBaseBundle msgBundle, boolean asynchronous, Class<T> responseClass,
+            String respondToUri,
+            IBaseBundle msgBundle,
+            boolean asynchronous,
+            Class<T> responseClass,
             Map<ExtraParameters, Object> extraParameters) {
         IOperationProcessMsg operationProcessMsg = client.operation().processMessage();
 
@@ -197,10 +219,15 @@ public class FhirOperation {
         return operationProcessMsgMode.execute();
     }
 
-    private <T extends IBaseParameters> IOperationUntypedWithInput<? extends IBaseResource> processNamedOperationParameters(
-            String name, T parameters, Class<T> outputParameterType,
-            boolean useHttpGet, Class<? extends IBaseResource> returnType, Map<ExtraParameters, Object> extraParameters,
-            IOperationUnnamed operationUnnamed) {
+    private <T extends IBaseParameters>
+            IOperationUntypedWithInput<? extends IBaseResource> processNamedOperationParameters(
+                    String name,
+                    T parameters,
+                    Class<T> outputParameterType,
+                    boolean useHttpGet,
+                    Class<? extends IBaseResource> returnType,
+                    Map<ExtraParameters, Object> extraParameters,
+                    IOperationUnnamed operationUnnamed) {
         IOperationUntyped named = operationUnnamed.named(name);
         IOperationUntypedWithInput<? extends IBaseResource> operationUntypedWithInput;
         if (outputParameterType != null) {

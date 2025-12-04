@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import java.util.ArrayList;
@@ -118,7 +119,8 @@ public class KameletProcessor extends BaseProcessorSupport
     @Override
     protected void doInit() throws Exception {
         this.component = camelContext.getComponent("kamelet", KameletComponent.class);
-        this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+        this.producer =
+                (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
 
         ServiceHelper.initService(processor, producer);
 

@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
@@ -34,15 +44,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MicrometerComponentTest {
@@ -81,8 +82,8 @@ public class MicrometerComponentTest {
 
     @Test
     public void testCreateNewEndpointForHistogram() {
-        Endpoint endpoint
-                = new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name");
+        Endpoint endpoint =
+                new MicrometerEndpoint(null, null, metricRegistry, Meter.Type.DISTRIBUTION_SUMMARY, "a name");
         assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint, is(instanceOf(MicrometerEndpoint.class)));
     }
@@ -96,7 +97,7 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetMetricsType() {
-        Meter.Type[] supportedTypes = { Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER };
+        Meter.Type[] supportedTypes = {Meter.Type.COUNTER, Meter.Type.DISTRIBUTION_SUMMARY, Meter.Type.TIMER};
         for (Meter.Type type : supportedTypes) {
             assertThat(component.getMetricsType(MicrometerUtils.getName(type) + ":metrics-name"), is(type));
         }
@@ -109,13 +110,13 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetMetricsTypeNotFound() {
-        assertThrows(RuntimeCamelException.class,
-                () -> component.getMetricsType("unknown-metrics:metrics-name"));
+        assertThrows(RuntimeCamelException.class, () -> component.getMetricsType("unknown-metrics:metrics-name"));
     }
 
     @Test
     public void testGetOrCreateMetricRegistryFoundInCamelRegistry() {
-        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class))
+                .thenReturn(null);
         when(camelRegistry.findByType(CompositeMeterRegistry.class)).thenReturn(null);
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
@@ -132,14 +133,14 @@ public class MicrometerComponentTest {
                 .thenReturn(compositeMeterRegistry);
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
         assertThat(result, is(compositeMeterRegistry));
-        inOrder.verify(camelRegistry, times(1))
-                .lookupByNameAndType("name", CompositeMeterRegistry.class);
+        inOrder.verify(camelRegistry, times(1)).lookupByNameAndType("name", CompositeMeterRegistry.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testGetOrCreateMetricRegistryFoundInCamelRegistryByType() {
-        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class))
+                .thenReturn(null);
         when(camelRegistry.findByType(CompositeMeterRegistry.class)).thenReturn(Collections.singleton(null));
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(null);
         when(camelRegistry.findByType(MeterRegistry.class)).thenReturn(Collections.singleton(metricRegistry));
@@ -154,7 +155,8 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetOrCreateCompositeMetricRegistryFoundInCamelRegistryByType() {
-        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class))
+                .thenReturn(null);
         when(camelRegistry.findByType(CompositeMeterRegistry.class))
                 .thenReturn(Collections.singleton(compositeMeterRegistry));
         MeterRegistry result = MicrometerUtils.getOrCreateMeterRegistry(camelRegistry, "name");
@@ -166,7 +168,8 @@ public class MicrometerComponentTest {
 
     @Test
     public void testGetMetricRegistryFromCamelRegistry() {
-        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class)).thenReturn(null);
+        when(camelRegistry.lookupByNameAndType("name", CompositeMeterRegistry.class))
+                .thenReturn(null);
         when(camelRegistry.findByType(CompositeMeterRegistry.class)).thenReturn(null);
         when(camelRegistry.lookupByNameAndType("name", MeterRegistry.class)).thenReturn(metricRegistry);
         MeterRegistry result = MicrometerUtils.getMeterRegistryFromCamelRegistry(camelRegistry, "name");

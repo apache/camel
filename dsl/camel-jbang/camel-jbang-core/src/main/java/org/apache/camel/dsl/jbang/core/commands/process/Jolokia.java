@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.List;
@@ -26,19 +27,25 @@ import org.jolokia.jvmagent.client.util.VirtualMachineHandlerOperations;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "jolokia",
+        description = "Attach Jolokia JVM Agent to a running Camel integration",
+        sortOptions = false,
+        showDefaultValues = true)
 public class Jolokia extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
     String name;
 
-    @CommandLine.Option(names = { "--stop" },
-                        description = "Stops the Jolokia JVM Agent in the running Camel integration")
+    @CommandLine.Option(
+            names = {"--stop"},
+            description = "Stops the Jolokia JVM Agent in the running Camel integration")
     boolean stop;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "To use a specific port number when attaching Jolokia JVM Agent (default a free port is found in range 8778-9999)")
+    @CommandLine.Option(
+            names = {"--port"},
+            description =
+                    "To use a specific port number when attaching Jolokia JVM Agent (default a free port is found in range 8778-9999)")
     int port;
 
     private volatile long pid;
@@ -53,8 +60,9 @@ public class Jolokia extends ProcessBaseCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 

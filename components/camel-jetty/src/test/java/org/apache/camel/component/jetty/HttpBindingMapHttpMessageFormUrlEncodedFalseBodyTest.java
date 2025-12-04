@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJettyTest {
 
@@ -54,13 +55,21 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
 
                                 // for unit testing make sure we got right message
                                 assertEquals("b1=x&b2=y", body, "The body message is wrong");
-                                assertEquals("a", exchange.getIn().getHeader("query1"),
+                                assertEquals(
+                                        "a",
+                                        exchange.getIn().getHeader("query1"),
                                         "Get a wrong query parameter from the message header");
-                                assertEquals("b", exchange.getIn().getHeader("query2"),
+                                assertEquals(
+                                        "b",
+                                        exchange.getIn().getHeader("query2"),
                                         "Get a wrong query parameter from the message header");
-                                assertNotEquals("x", exchange.getIn().getHeader("b1"),
+                                assertNotEquals(
+                                        "x",
+                                        exchange.getIn().getHeader("b1"),
                                         "Get a wrong form parameter from the message header");
-                                assertNotEquals("y", exchange.getIn().getHeader("b2"),
+                                assertNotEquals(
+                                        "y",
+                                        exchange.getIn().getHeader("b2"),
                                         "Get a wrong form parameter from the message header");
 
                                 // send a response
@@ -70,5 +79,4 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
             }
         };
     }
-
 }

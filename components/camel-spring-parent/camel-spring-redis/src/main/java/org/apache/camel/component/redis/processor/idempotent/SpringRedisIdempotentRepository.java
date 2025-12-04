@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.processor.idempotent;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -28,25 +29,31 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses Redis to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses Redis to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Spring Redis based message id repository")
 public class SpringRedisIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private SetOperations<String, String> setOperations;
+
     @Metadata(description = "Name of repository", required = true)
     private String repositoryName;
+
     @Metadata(description = "Redis configuration")
     private RedisConfiguration redisConfiguration;
+
     private RedisTemplate<String, String> redisTemplate;
-    @Metadata(label = "advanced", description = "Delete all keys of the currently selected database."
-                                                + " Be careful if enabling this as all existing data will be deleted.")
+
+    @Metadata(
+            label = "advanced",
+            description = "Delete all keys of the currently selected database."
+                    + " Be careful if enabling this as all existing data will be deleted.")
     private boolean flushOnStartup;
 
-    public SpringRedisIdempotentRepository() {
-    }
+    public SpringRedisIdempotentRepository() {}
 
     public SpringRedisIdempotentRepository(RedisTemplate<String, String> redisTemplate, String repositoryName) {
         this.setOperations = redisTemplate.opsForSet();

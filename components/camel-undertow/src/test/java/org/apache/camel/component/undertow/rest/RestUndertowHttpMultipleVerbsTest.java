@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.Exchange;
@@ -28,15 +29,16 @@ public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
     public void testProducerGetPut() throws Exception {
         getMockEndpoint("mock:get").expectedMessageCount(1);
         getMockEndpoint("mock:put").expectedMessageCount(0);
-        template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/123", null, Exchange.HTTP_METHOD, "GET");
+        template.requestBodyAndHeader(
+                "undertow:http://localhost:{{port}}/example/123", null, Exchange.HTTP_METHOD, "GET");
         MockEndpoint.assertIsSatisfied(context);
 
         MockEndpoint.resetMocks(context);
 
         getMockEndpoint("mock:get").expectedMessageCount(0);
         getMockEndpoint("mock:put").expectedMessageCount(1);
-        template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/456", "Hello World", Exchange.HTTP_METHOD,
-                "PUT");
+        template.requestBodyAndHeader(
+                "undertow:http://localhost:{{port}}/example/456", "Hello World", Exchange.HTTP_METHOD, "PUT");
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -49,10 +51,11 @@ public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 rest("/example")
-                        .get("{pathParamHere}").to("mock:get")
-                        .put("{pathParamHere}").to("mock:put");
+                        .get("{pathParamHere}")
+                        .to("mock:get")
+                        .put("{pathParamHere}")
+                        .to("mock:put");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.CamelContext;
@@ -79,9 +80,7 @@ public class KameletLocationTest extends CamelTestSupport {
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    routeTemplate("upper")
-                            .from("kamelet:source")
-                            .transform().simple("${body.toUpperCase()}");
+                    routeTemplate("upper").from("kamelet:source").transform().simple("${body.toUpperCase()}");
                 }
             };
         }

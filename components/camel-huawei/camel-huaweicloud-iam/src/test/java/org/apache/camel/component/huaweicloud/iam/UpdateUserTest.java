@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.huaweicloud.sdk.iam.v3.model.UpdateUserOption;
 import org.apache.camel.BindToRegistry;
@@ -25,8 +28,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateUserTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateUserTest.class.getName());
@@ -41,13 +42,12 @@ public class UpdateUserTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:update_user")
-                        .to("hwcloud-iam:updateUser?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&userId=" + testConfiguration.getProperty("userId") +
-                            "&ignoreSslVerification=true" +
-                            "&iamClient=#iamClient")
+                        .to("hwcloud-iam:updateUser?" + "accessKey="
+                                + testConfiguration.getProperty("accessKey") + "&secretKey="
+                                + testConfiguration.getProperty("secretKey") + "&region="
+                                + testConfiguration.getProperty("region") + "&userId="
+                                + testConfiguration.getProperty("userId") + "&ignoreSslVerification=true"
+                                + "&iamClient=#iamClient")
                         .log("update user successful")
                         .to("mock:update_user_result");
             }
@@ -58,15 +58,14 @@ public class UpdateUserTest extends CamelTestSupport {
     public void testUpdateUser() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:update_user_result");
         mock.expectedMinimumMessageCount(1);
-        UpdateUserOption userOption = new UpdateUserOption()
-                .withName("User 19")
-                .withDescription("First");
+        UpdateUserOption userOption = new UpdateUserOption().withName("User 19").withDescription("First");
         template.sendBody("direct:update_user", userOption);
         Exchange responseExchange = mock.getExchanges().get(0);
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"description\":\"First\",\"name\":\"User 19\"}",
+        assertEquals(
+                "{\"description\":\"First\",\"name\":\"User 19\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

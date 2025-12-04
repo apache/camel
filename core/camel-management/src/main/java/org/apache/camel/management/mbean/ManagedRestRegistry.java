@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.List;
@@ -76,11 +77,33 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "url", "baseUrl", "basePath", "uriTemplate", "method", "consumes", "produces", "inType",
-                                "outType", "kind", "state", "description" },
+                            "url",
+                            "baseUrl",
+                            "basePath",
+                            "uriTemplate",
+                            "method",
+                            "consumes",
+                            "produces",
+                            "inType",
+                            "outType",
+                            "kind",
+                            "state",
+                            "description"
+                        },
                         new Object[] {
-                                url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, kind, state,
-                                description });
+                            url,
+                            baseUrl,
+                            basePath,
+                            uriTemplate,
+                            method,
+                            consumes,
+                            produces,
+                            inType,
+                            outType,
+                            kind,
+                            state,
+                            description
+                        });
                 answer.put(data);
             }
             return answer;
@@ -93,5 +116,4 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
     public String apiDocAsJson() {
         return registry.apiDocAsJson();
     }
-
 }

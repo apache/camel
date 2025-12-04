@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,6 +33,7 @@ public abstract class BaseEndpointDslTest extends CamelTestSupport {
     }
 
     protected static String generateUniquePath(Class<?> clazz) {
-        return "target/data/files" + clazz.getSimpleName() + ThreadLocalRandom.current().nextInt(0, 100);
+        return "target/data/files" + clazz.getSimpleName()
+                + ThreadLocalRandom.current().nextInt(0, 100);
     }
 }

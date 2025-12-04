@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.metrics.eventnotifier;
 
-import io.opentelemetry.sdk.metrics.data.HistogramPointData;
-import io.opentelemetry.sdk.metrics.data.PointData;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.opentelemetry.metrics.eventnotifier;
 
 import static io.opentelemetry.api.common.AttributeKey.stringKey;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_SENT_TIMER;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ENDPOINT_NAME_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
+import io.opentelemetry.sdk.metrics.data.HistogramPointData;
+import io.opentelemetry.sdk.metrics.data.PointData;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 public class OpenTelemetryExchangeNotifierStaticTest extends OpenTelemetryExchangeEventNotifierDynamicTest {
 

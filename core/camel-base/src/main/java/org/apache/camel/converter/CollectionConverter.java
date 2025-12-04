@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
 
 import java.util.ArrayList;
@@ -40,8 +41,7 @@ public final class CollectionConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private CollectionConverter() {
-    }
+    private CollectionConverter() {}
 
     /**
      * Converts a collection to an array

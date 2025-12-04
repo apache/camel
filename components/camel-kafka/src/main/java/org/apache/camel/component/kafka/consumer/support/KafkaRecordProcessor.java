@@ -45,8 +45,10 @@ public abstract class KafkaRecordProcessor {
             message.setHeader(KafkaConstants.KEY, consumerRecord.key());
         }
 
-        LOG.debug("Setting up the exchange for message from partition {} and offset {}",
-                consumerRecord.partition(), consumerRecord.offset());
+        LOG.debug(
+                "Setting up the exchange for message from partition {} and offset {}",
+                consumerRecord.partition(),
+                consumerRecord.offset());
 
         message.setBody(consumerRecord.value());
     }
@@ -63,7 +65,7 @@ public abstract class KafkaRecordProcessor {
 
         StreamSupport.stream(consumerRecord.headers().spliterator(), false)
                 .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
-                .forEach(header -> exchange.getIn().setHeader(header.key(),
-                        headerDeserializer.deserialize(header.key(), header.value())));
+                .forEach(header -> exchange.getIn()
+                        .setHeader(header.key(), headerDeserializer.deserialize(header.key(), header.value())));
     }
 }

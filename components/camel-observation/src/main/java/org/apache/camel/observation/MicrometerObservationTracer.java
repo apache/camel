@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
 
 import io.micrometer.observation.Observation;
@@ -68,8 +69,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
             case PRODUCER:
                 throw new UnsupportedOperationException("Cannot extract when sending a message");
             case SPAN_KIND_SERVER:
-                RequestReplyReceiverContext<Object, Message> replyReceiverContext
-                        = new RequestReplyReceiverContext<>((carrier, key) -> {
+                RequestReplyReceiverContext<Object, Message> replyReceiverContext =
+                        new RequestReplyReceiverContext<>((carrier, key) -> {
                             Object val = adapter.get(key);
                             return val != null ? val.toString() : null;
                         });
@@ -78,11 +79,10 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
                 return replyReceiverContext;
             case CONSUMER:
             case SPAN_KIND_CLIENT:
-                ReceiverContext<Message> receiverContext
-                        = new ReceiverContext<>((carrier, key) -> {
-                            Object val = adapter.get(key);
-                            return val != null ? val.toString() : null;
-                        });
+                ReceiverContext<Message> receiverContext = new ReceiverContext<>((carrier, key) -> {
+                    Object val = adapter.get(key);
+                    return val != null ? val.toString() : null;
+                });
                 receiverContext.setCarrier(exchange.getIn());
                 return receiverContext;
             default:
@@ -94,8 +94,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
             org.apache.camel.tracing.SpanKind kind, InjectAdapter adapter, Exchange exchange) {
         switch (kind) {
             case SPAN_KIND_CLIENT:
-                RequestReplySenderContext<Object, Message> senderContext
-                        = new RequestReplySenderContext<>((carrier, key, value) -> adapter.put(key, value));
+                RequestReplySenderContext<Object, Message> senderContext =
+                        new RequestReplySenderContext<>((carrier, key, value) -> adapter.put(key, value));
                 senderContext.setResponse(exchange.getMessage());
                 senderContext.setCarrier(exchange.getIn());
                 return senderContext;
@@ -130,8 +130,7 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected SpanAdapter startSendingEventSpan(
-            String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange,
-            InjectAdapter injectAdapter) {
+            String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter) {
         Observation.Context context = spanKindToContextOnInject(kind, injectAdapter, exchange);
         Observation observation = Observation.createNotStarted(CAMEL_CONTEXT_NAME, () -> context, observationRegistry);
         observation.contextualName(operationName);
@@ -140,8 +139,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
         try {
             if (parentObservation != null && parentObservation != observationRegistry.getCurrentObservation()) {
                 // Because Camel allows to close scopes multiple times
-                TracingObservationHandler.TracingContext tracingContext
-                        = parentObservation.getContextView().get(TracingObservationHandler.TracingContext.class);
+                TracingObservationHandler.TracingContext tracingContext =
+                        parentObservation.getContextView().get(TracingObservationHandler.TracingContext.class);
                 if (tracingContext != null) {
                     Span parentSpan = tracingContext.getSpan();
                     scope = tracer.withSpan(parentSpan);
@@ -173,7 +172,10 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected SpanAdapter startExchangeBeginSpan(
-            Exchange exchange, SpanDecorator sd, String operationName, org.apache.camel.tracing.SpanKind kind,
+            Exchange exchange,
+            SpanDecorator sd,
+            String operationName,
+            org.apache.camel.tracing.SpanKind kind,
             SpanAdapter parent) {
         boolean parentPresent = parent != null;
         Observation.Context context = spanKindToContextOnExtract(kind, sd, exchange);
@@ -196,5 +198,4 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
         // Inject happens on start of an observation
     }
-
 }

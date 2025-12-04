@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.lang.reflect.Method;
@@ -74,8 +75,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         private Object result;
         private EntityManager manager;
 
-        private DataHolder() {
-        }
+        private DataHolder() {}
     }
 
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
@@ -104,7 +104,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         recreateEntityManagerIfNeeded();
 
-        final int[] messagePolled = { 0 };
+        final int[] messagePolled = {0};
         try {
             transactionStrategy.executeInTransaction(() -> {
                 if (getEndpoint().isJoinTransaction()) {
@@ -144,7 +144,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     if (!isTransacted()) {
                         LOG.warn(
                                 "Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.",
-                                cause.getMessage(), cause);
+                                cause.getMessage(),
+                                cause);
                     } else {
                         // rollback all by throwing exception
                         throw cause;
@@ -175,8 +176,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
-                    maxMessagesPerPoll, total);
+            LOG.debug(
+                    "Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    maxMessagesPerPoll,
+                    total);
             total = maxMessagesPerPoll;
         }
 
@@ -368,11 +371,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             LOG.debug("Failed to achieve lock on entity: {}. Reason: {}", entity, e.getMessage(), e);
 
             if (e instanceof PessimisticLockException || e instanceof OptimisticLockException) {
-                //transaction marked as rollback can't continue gracefully
+                // transaction marked as rollback can't continue gracefully
                 throw (PersistenceException) e;
             }
-            //TODO: Find if possible an alternative way to handle results of native queries.
-            //Result of native queries are Arrays and cannot be locked by all JPA Providers.
+            // TODO: Find if possible an alternative way to handle results of native queries.
+            // Result of native queries are Arrays and cannot be locked by all JPA Providers.
             return entity.getClass().isArray();
         }
     }
@@ -444,8 +447,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
 
         // else do nothing
-        return (EntityManager em, Object entityBean, Exchange exchange) -> {
-        };
+        return (EntityManager em, Object entityBean, Exchange exchange) -> {};
     }
 
     protected DeleteHandler<Object> createDeleteHandler() {
@@ -474,9 +476,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             return (EntityManager em, Object entityBean, Exchange exchange) -> em.remove(entityBean);
         }
 
-        return (EntityManager em, Object entityBean, Exchange exchange) -> {
-        };
-
+        return (EntityManager em, Object entityBean, Exchange exchange) -> {};
     }
 
     protected boolean checkParameters(Method method) {

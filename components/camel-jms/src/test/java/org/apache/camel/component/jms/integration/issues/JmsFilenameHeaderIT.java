@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.issues;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -36,8 +39,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test for sending the filename for file producer over the JMS wire.
  */
@@ -46,6 +47,7 @@ public class JmsFilenameHeaderIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -100,5 +102,4 @@ public class JmsFilenameHeaderIT extends AbstractJMSTest {
         amq.setHeaderFilterStrategy(new ClassicJmsHeaderFilterStrategy());
         return amq;
     }
-
 }

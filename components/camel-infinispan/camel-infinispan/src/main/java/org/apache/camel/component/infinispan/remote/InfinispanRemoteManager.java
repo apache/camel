@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
 
 import java.util.Properties;
 import java.util.Set;
@@ -30,8 +33,6 @@ import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
-
-import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
 
 public class InfinispanRemoteManager extends ServiceSupport implements InfinispanManager<RemoteCacheManager> {
     private final InfinispanRemoteConfiguration configuration;
@@ -80,7 +81,9 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                 if (configuration.isSecure()) {
                     if (ObjectHelper.isNotEmpty(configuration.getUsername())
                             && ObjectHelper.isNotEmpty(configuration.getPassword())) {
-                        builder.security().authentication().username(configuration.getUsername())
+                        builder.security()
+                                .authentication()
+                                .username(configuration.getUsername())
                                 .password(configuration.getPassword());
                     } else {
                         throw new IllegalArgumentException(
@@ -108,8 +111,7 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                 if (ObjectHelper.isNotEmpty(configuration.getConfigurationProperties())) {
                     configuration.getConfigurationProperties().forEach((k, v) -> {
                         properties.put(
-                                k.startsWith("infinispan.client.hotrod.") ? k : "infinispan.client.hotrod." + k,
-                                v);
+                                k.startsWith("infinispan.client.hotrod.") ? k : "infinispan.client.hotrod." + k, v);
                     });
                 }
                 if (!properties.isEmpty()) {
@@ -147,9 +149,7 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
     public <K, V> BasicCache<K, V> getCache() {
         RemoteCache<K, V> cache = cacheContainer.getCache();
 
-        return configuration.hasFlags()
-                ? cache.withFlags(configuration.getFlags())
-                : cache;
+        return configuration.hasFlags() ? cache.withFlags(configuration.getFlags()) : cache;
     }
 
     @Override
@@ -161,9 +161,7 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
             cache = cacheContainer.getCache(cacheName);
         }
 
-        return configuration.hasFlags()
-                ? cache.withFlags(configuration.getFlags())
-                : cache;
+        return configuration.hasFlags() ? cache.withFlags(configuration.getFlags()) : cache;
     }
 
     @Override

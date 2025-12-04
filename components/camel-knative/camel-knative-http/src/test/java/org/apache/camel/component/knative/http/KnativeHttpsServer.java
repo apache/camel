@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import io.vertx.core.Handler;
@@ -58,15 +59,10 @@ public class KnativeHttpsServer extends KnativeHttpServer {
     protected HttpServerOptions getServerOptions() {
         return new HttpServerOptions()
                 .setSsl(true)
-                .setKeyCertOptions(
-                        new PemKeyCertOptions()
-                                .setKeyPath("keystore/server.pem")
-                                .setCertPath("keystore/server.crt"))
+                .setKeyCertOptions(new PemKeyCertOptions()
+                        .setKeyPath("keystore/server.pem")
+                        .setCertPath("keystore/server.crt"))
                 .setTrustOptions(
-                        new JksOptions()
-                                .setPath("keystore/truststore.jks")
-                                .setPassword("secr3t")
-
-                );
+                        new JksOptions().setPath("keystore/truststore.jks").setPassword("secr3t"));
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.firehose.client;
 
 import org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClien
  */
 public final class KinesisFirehoseClientFactory {
 
-    private KinesisFirehoseClientFactory() {
-    }
+    private KinesisFirehoseClientFactory() {}
 
     /**
      * Return the correct aws Kinesis Firehose client (based on remote vs local).

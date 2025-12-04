@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -43,8 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeFileOperationIT extends Base {
     private DataLakeFileSystemClientWrapper fileSystemClientWrapper;
@@ -59,8 +60,7 @@ public class DataLakeFileOperationIT extends Base {
         fileSystemClientWrapper.createFileSystem(null, null, null);
 
         final InputStream inputStream = new ByteArrayInputStream("testing".getBytes(Charset.defaultCharset()));
-        final FileParallelUploadOptions options
-                = new FileParallelUploadOptions(inputStream);
+        final FileParallelUploadOptions options = new FileParallelUploadOptions(inputStream);
         fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName).uploadWithResponse(options, null);
     }
 
@@ -71,8 +71,8 @@ public class DataLakeFileOperationIT extends Base {
 
     @Test
     void testGetFile(@TempDir Path testDir) throws Exception {
-        final DataLakeFileClientWrapper fileClientWrapper
-                = fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName);
+        final DataLakeFileClientWrapper fileClientWrapper =
+                fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName);
         final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, fileClientWrapper);
 
         final Exchange exchange = new DefaultExchange(context);
@@ -83,7 +83,8 @@ public class DataLakeFileOperationIT extends Base {
         assertNotNull(response.getHeaders());
 
         final InputStream inputStream = (InputStream) response.getBody();
-        final String bufferedText = new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset())).readLine();
+        final String bufferedText =
+                new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset())).readLine();
 
         assertEquals("testing", bufferedText);
 
@@ -101,8 +102,8 @@ public class DataLakeFileOperationIT extends Base {
 
     @Test
     void testDownloadToFile(@TempDir Path testDir) throws IOException {
-        final DataLakeFileClientWrapper fileClientWrapper
-                = fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName);
+        final DataLakeFileClientWrapper fileClientWrapper =
+                fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName);
         final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, fileClientWrapper);
 
         final Exchange exchange = new DefaultExchange(context);
@@ -123,7 +124,8 @@ public class DataLakeFileOperationIT extends Base {
 
     @Test
     void testDownloadLink() {
-        final DataLakeFileClientWrapper clientWrapper = fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName);
+        final DataLakeFileClientWrapper clientWrapper =
+                fileSystemClientWrapper.getDataLakeFileClientWrapper(randomFileName);
         final DataLakeFileOperations fileOperations = new DataLakeFileOperations(configuration, clientWrapper);
 
         final DataLakeOperationResponse response = fileOperations.downloadLink(null);

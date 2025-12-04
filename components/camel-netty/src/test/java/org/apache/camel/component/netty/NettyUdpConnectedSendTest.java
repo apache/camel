@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -36,9 +39,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-//We need to run the tests with fix order
+// We need to run the tests with fix order
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class NettyUdpConnectedSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
@@ -51,7 +52,8 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
     public void createNettyUdpReceiver() {
         group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
-        bootstrap.group(group)
+        bootstrap
+                .group(group)
                 .channel(NioDatagramChannel.class)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
@@ -59,7 +61,8 @@ public class NettyUdpConnectedSendTest extends BaseNettyTest {
                         channel.pipeline().addLast(new UdpHandler());
                         channel.pipeline().addLast(new ContentHandler());
                     }
-                }).localAddress(new InetSocketAddress(getPort()));
+                })
+                .localAddress(new InetSocketAddress(getPort()));
     }
 
     public void bind() {

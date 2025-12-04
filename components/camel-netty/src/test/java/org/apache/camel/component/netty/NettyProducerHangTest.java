@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-
 public class NettyProducerHangTest extends CamelTestSupport {
 
     private static final int PORT = 4093;
@@ -38,35 +39,38 @@ public class NettyProducerHangTest extends CamelTestSupport {
     @Test
     public void nettyProducerHangsOnTheSecondRequestToTheSocketWhichIsClosed() {
         new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    acceptReplyAcceptClose();
-                    acceptReplyAcceptClose();
-                } catch (IOException e) {
-                    LOG.error("Exception occurred: {}", e.getMessage(), e);
-                }
-            }
-        }).start();
+                    @Override
+                    public void run() {
+                        try {
+                            acceptReplyAcceptClose();
+                            acceptReplyAcceptClose();
+                        } catch (IOException e) {
+                            LOG.error("Exception occurred: {}", e.getMessage(), e);
+                        }
+                    }
+                })
+                .start();
 
-        String response1
-                = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
+        String response1 = template.requestBody(
+                "netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
         LOG.info("Received first response <{}>", response1);
 
         try {
             // our test server will close the socket now so we should get an error
-            template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request2", String.class);
+            template.requestBody(
+                    "netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request2", String.class);
         } catch (Exception e) {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
 
-        String response2
-                = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
+        String response2 = template.requestBody(
+                "netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
         LOG.info("Received 2nd response <{}>", response2);
 
         try {
             // our test server will close the socket now so we should get an error
-            template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request4", String.class);
+            template.requestBody(
+                    "netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request4", String.class);
         } catch (Exception e) {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
@@ -80,7 +84,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
         LOG.info("Open socket and accept data");
         try (InputStream is = soc.getInputStream();
-             OutputStream os = soc.getOutputStream()) {
+                OutputStream os = soc.getOutputStream()) {
             // read first message
             is.read(buf);
 
@@ -97,5 +101,4 @@ public class NettyProducerHangTest extends CamelTestSupport {
         }
         LOG.info("Close socket");
     }
-
 }

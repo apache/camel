@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
 
 import java.util.Map;
@@ -36,8 +37,7 @@ public final class LRASagaStep {
 
     private Optional<Long> timeoutInMilliseconds;
 
-    private LRASagaStep() {
-    }
+    private LRASagaStep() {}
 
     public static LRASagaStep fromCamelSagaStep(CamelSagaStep step, Exchange exchange) {
         LRASagaStep t = new LRASagaStep();
@@ -74,10 +74,10 @@ public final class LRASagaStep {
     @Override
     public String toString() {
         return "LRASagaStep{"
-               + "compensation=" + compensation
-               + ", completion=" + completion
-               + ", options=" + options
-               + ", timeoutInMilliseconds=" + timeoutInMilliseconds
-               + '}';
+                + "compensation=" + compensation
+                + ", completion=" + completion
+                + ", options=" + options
+                + ", timeoutInMilliseconds=" + timeoutInMilliseconds
+                + '}';
     }
 }

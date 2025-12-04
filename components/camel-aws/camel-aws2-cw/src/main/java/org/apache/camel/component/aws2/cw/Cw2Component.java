@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw;
 
 import java.util.Map;
@@ -47,7 +48,8 @@ public class Cw2Component extends HealthCheckComponent {
             throw new IllegalArgumentException("Metric namespace must be specified.");
         }
 
-        Cw2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Cw2Configuration();
+        Cw2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Cw2Configuration();
         configuration.setNamespace(remaining);
 
         Cw2Endpoint endpoint = new Cw2Endpoint(uri, this, configuration);

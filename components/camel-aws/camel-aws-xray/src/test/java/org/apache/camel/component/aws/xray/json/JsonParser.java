@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray.json;
 
 import java.util.ArrayDeque;
@@ -25,9 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public final class JsonParser {
 
-    private JsonParser() {
-
-    }
+    private JsonParser() {}
 
     public static JsonStructure parse(final String jsonString) {
         String json = jsonString.replace("\n", "");

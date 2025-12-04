@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 
@@ -24,8 +27,6 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @Test
@@ -43,7 +44,8 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @Test
     public void testUnmarshalFieldWhenContainingDoubleQuote() {
         String body = "123,\"He said \"\"lets go to Hawaii!\"\"\",10.5,true\r\n";
-        BindyCsvRowFormat191431 unmarshalled = template.requestBody("direct:unmarshal1", body, BindyCsvRowFormat191431.class);
+        BindyCsvRowFormat191431 unmarshalled =
+                template.requestBody("direct:unmarshal1", body, BindyCsvRowFormat191431.class);
         assertEquals("123", unmarshalled.getFirstField());
         assertEquals("He said \"lets go to Hawaii!\"", unmarshalled.getSecondField());
         assertEquals(10.5, unmarshalled.getaNumber());
@@ -65,7 +67,8 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @Test
     public void testUnmarshalFieldWhenContainingOtherConfiguredQuoteCharacter() {
         String body = "123,'He said \\'lets go to Hawaii!\\'',10.5,true\r\n";
-        BindyCsvRowFormat191432 unmarshalled = template.requestBody("direct:unmarshal2", body, BindyCsvRowFormat191432.class);
+        BindyCsvRowFormat191432 unmarshalled =
+                template.requestBody("direct:unmarshal2", body, BindyCsvRowFormat191432.class);
         assertEquals("123", unmarshalled.getFirstField());
         assertEquals("He said 'lets go to Hawaii!'", unmarshalled.getSecondField());
         assertEquals(10.5, unmarshalled.getaNumber());
@@ -87,7 +90,8 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @Test
     public void testUnmarshalFieldWhenContainingComma() {
         String body = "123,\"Then, lets go to Hawaii!\",10.5,true\r\n";
-        BindyCsvRowFormat191431 unmarshalled = template.requestBody("direct:unmarshal1", body, BindyCsvRowFormat191431.class);
+        BindyCsvRowFormat191431 unmarshalled =
+                template.requestBody("direct:unmarshal1", body, BindyCsvRowFormat191431.class);
         assertEquals("123", unmarshalled.getFirstField());
         assertEquals("Then, lets go to Hawaii!", unmarshalled.getSecondField());
         assertEquals(10.5, unmarshalled.getaNumber());
@@ -109,7 +113,8 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @Test
     public void testUnmarshalFieldWhenContainingOtherConfiguredSeparator() {
         String body = "123;\"Then; lets go to Hawaii!\";10.5;true\r\n";
-        BindyCsvRowFormat191433 unmarshalled = template.requestBody("direct:unmarshal3", body, BindyCsvRowFormat191433.class);
+        BindyCsvRowFormat191433 unmarshalled =
+                template.requestBody("direct:unmarshal3", body, BindyCsvRowFormat191433.class);
         assertEquals("123", unmarshalled.getFirstField());
         assertEquals("Then; lets go to Hawaii!", unmarshalled.getSecondField());
         assertEquals(10.5, unmarshalled.getaNumber());
@@ -169,10 +174,13 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
 
         @DataField(pos = 1)
         private String firstField;
+
         @DataField(pos = 2)
         private String secondField;
+
         @DataField(pos = 3, pattern = "#.##")
         private Double aNumber;
+
         @DataField(pos = 4)
         private Boolean aBoolean;
 
@@ -212,12 +220,16 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @CsvRecord(separator = ",", quoting = true, quote = "'", quotingEscaped = true, quotingOnlyWhenNeeded = true)
     public static class BindyCsvRowFormat191432 implements Serializable {
         private static final long serialVersionUID = 1L;
+
         @DataField(pos = 1)
         private String firstField;
+
         @DataField(pos = 2)
         private String secondField;
+
         @DataField(pos = 3, pattern = "#.##")
         private Double aNumber;
+
         @DataField(pos = 4)
         private Boolean aBoolean;
 
@@ -257,12 +269,16 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @CsvRecord(separator = ";", quoting = true, quotingOnlyWhenNeeded = true)
     public static class BindyCsvRowFormat191433 implements Serializable {
         private static final long serialVersionUID = 1L;
+
         @DataField(pos = 1)
         private String firstField;
+
         @DataField(pos = 2)
         private String secondField;
+
         @DataField(pos = 3, pattern = "#.##")
         private Double aNumber;
+
         @DataField(pos = 4)
         private Boolean aBoolean;
 
@@ -302,12 +318,16 @@ public class BindySimpleCsvQuotingOnlyWhenNeededTest extends CamelTestSupport {
     @CsvRecord(separator = ",", quoting = true, quotingOnlyWhenNeeded = true, crlf = "UNIX")
     public static class BindyCsvRowFormat191434 implements Serializable {
         private static final long serialVersionUID = 1L;
+
         @DataField(pos = 1)
         private String firstField;
+
         @DataField(pos = 2)
         private String secondField;
+
         @DataField(pos = 3, pattern = "#.##")
         private Double aNumber;
+
         @DataField(pos = 4)
         private Boolean aBoolean;
 

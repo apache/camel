@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.threadpool;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.management.ManagementFactory;
 import java.util.Set;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for CAMEL-7715.
@@ -55,7 +56,9 @@ public class ThreadPoolTest extends JmsTestSupport {
             @Override
             public void configure() {
                 from("direct:start").to("sjms:queue:foo.ThreadPoolTest").routeId(FROM_ROUTE);
-                from("sjms:queue:foo.ThreadPoolTest").to("log:test.log.1?showBody=true").routeId(TO_ROUTE);
+                from("sjms:queue:foo.ThreadPoolTest")
+                        .to("log:test.log.1?showBody=true")
+                        .routeId(TO_ROUTE);
             }
         };
     }
@@ -114,5 +117,4 @@ public class ThreadPoolTest extends JmsTestSupport {
         }
         return count;
     }
-
 }

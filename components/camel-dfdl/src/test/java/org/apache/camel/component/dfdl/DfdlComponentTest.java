@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dfdl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,6 +27,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
+import org.xmlunit.builder.DiffBuilder;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,9 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.daffodil.japi.Diagnostic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.xmlunit.builder.DiffBuilder;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DfdlComponentTest extends CamelTestSupport {
     @EndpointInject(value = "mock:result")
@@ -54,10 +56,12 @@ public class DfdlComponentTest extends CamelTestSupport {
         var exchange = mockEndpoint.getExchanges().get(0);
         var comp = new StreamSource(context.getClassResolver().loadResourceAsStream("X12-837P-message.xml"));
         var test = exchange.getMessage().getBody(Document.class);
-        assertFalse(DiffBuilder
-                .compare(comp)
+        assertFalse(DiffBuilder.compare(comp)
                 .withTest(test)
-                .ignoreComments().ignoreWhitespace().build().hasDifferences());
+                .ignoreComments()
+                .ignoreWhitespace()
+                .build()
+                .hasDifferences());
     }
 
     @Test
@@ -68,8 +72,7 @@ public class DfdlComponentTest extends CamelTestSupport {
                 .send();
         mockEndpoint.expectedMessageCount(1);
         var exchange = mockEndpoint.getExchanges().get(0);
-        var comp = new BufferedReader(
-                new InputStreamReader(
+        var comp = new BufferedReader(new InputStreamReader(
                         context.getClassResolver().loadResourceAsStream("X12-837P-message.edi.txt")))
                 .lines()
                 .toArray(String[]::new);
@@ -91,8 +94,7 @@ public class DfdlComponentTest extends CamelTestSupport {
         var parseResult = ((DfdlParseException) exception).getParseResult();
         var location = parseResult.location();
         assertTrue(location.toString().contains("0"));
-        var diagString = parseResult.getDiagnostics()
-                .stream()
+        var diagString = parseResult.getDiagnostics().stream()
                 .map(Diagnostic::getMessage)
                 .collect(Collectors.joining("\n"));
         assertTrue(diagString.contains("initiator 'ISA' not found"));
@@ -101,14 +103,11 @@ public class DfdlComponentTest extends CamelTestSupport {
     @Test
     public void testUnparseError() throws Exception {
         var template = context.createFluentProducerTemplate();
-        var exchange = template.to("direct:unparse")
-                .withBody("<Unexpected />")
-                .send();
+        var exchange = template.to("direct:unparse").withBody("<Unexpected />").send();
         var exception = exchange.getException();
         assertInstanceOf(DfdlUnparseException.class, exception);
         var unparseResult = ((DfdlUnparseException) exception).getUnparseResult();
-        var diagString = unparseResult.getDiagnostics()
-                .stream()
+        var diagString = unparseResult.getDiagnostics().stream()
                 .map(Diagnostic::getMessage)
                 .collect(Collectors.joining("\n"));
         assertTrue(diagString.contains("Expected element start event for {}X12_837P"));
@@ -119,9 +118,7 @@ public class DfdlComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:parse")
-                        .to("dfdl:X12-837P.dfdl.xsd")
-                        .to("mock:result");
+                from("direct:parse").to("dfdl:X12-837P.dfdl.xsd").to("mock:result");
                 from("direct:unparse")
                         .to("dfdl:X12-837P.dfdl.xsd?parseDirection=UNPARSE")
                         .to("mock:result");

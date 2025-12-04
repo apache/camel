@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -25,9 +29,6 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Must run last
@@ -59,7 +60,8 @@ public class ZMicrometerRoutePolicyExcludePatternTest extends AbstractMicrometer
         // additionally one for App info gauge
         List<Meter> meters = meterRegistry.getMeters();
         assertEquals(7, meters.size());
-        meters.forEach(meter -> assertTrue(meter instanceof Timer || meter instanceof Counter || meter instanceof Gauge));
+        meters.forEach(
+                meter -> assertTrue(meter instanceof Timer || meter instanceof Counter || meter instanceof Gauge));
     }
 
     @Override
@@ -67,12 +69,9 @@ public class ZMicrometerRoutePolicyExcludePatternTest extends AbstractMicrometer
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .to("direct:bar")
-                        .to("mock:foo");
+                from("direct:foo").routeId("foo").to("direct:bar").to("mock:foo");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
             }
         };
     }

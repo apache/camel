@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Timeout(60)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
@@ -40,13 +41,15 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
     @Test
     public void testJmsRequestReplyTempReplyTo() {
-        Exchange reply = template.request("activemq:queue:JmsRequestReplyFixedReplyToInEndpointTest",
+        Exchange reply = template.request(
+                "activemq:queue:JmsRequestReplyFixedReplyToInEndpointTest",
                 exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
 
@@ -62,7 +65,8 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
                 exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
-        assertEquals("ActiveMQQueue[JmsRequestReplyFixedReplyToInEndpointTest.reply]",
+        assertEquals(
+                "ActiveMQQueue[JmsRequestReplyFixedReplyToInEndpointTest.reply]",
                 reply.getMessage().getHeader("JMSReplyTo", String.class));
     }
 
@@ -73,7 +77,8 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
                 exchange -> exchange.getIn().setBody("World"));
         assertEquals("Hello World", reply.getMessage().getBody());
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
-        assertEquals("ActiveMQQueue[JmsRequestReplyFixedReplyToInEndpointTest.reply]",
+        assertEquals(
+                "ActiveMQQueue[JmsRequestReplyFixedReplyToInEndpointTest.reply]",
                 reply.getMessage().getHeader("JMSReplyTo", String.class));
 
         reply = template.request(
@@ -81,7 +86,8 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
                 exchange -> exchange.getIn().setBody("Moon"));
         assertEquals("Hello Moon", reply.getMessage().getBody());
         assertTrue(reply.getMessage().hasHeaders(), "Should have headers");
-        assertEquals("ActiveMQQueue[JmsRequestReplyFixedReplyToInEndpointTest.reply]",
+        assertEquals(
+                "ActiveMQQueue[JmsRequestReplyFixedReplyToInEndpointTest.reply]",
                 reply.getMessage().getHeader("JMSReplyTo", String.class));
     }
 
@@ -95,8 +101,7 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsRequestReplyFixedReplyToInEndpointTest")
-                        .transform(body().prepend("Hello "));
+                from("activemq:queue:JmsRequestReplyFixedReplyToInEndpointTest").transform(body().prepend("Hello "));
             }
         };
     }

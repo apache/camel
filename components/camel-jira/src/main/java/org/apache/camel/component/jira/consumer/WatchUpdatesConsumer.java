@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.consumer;
 
 import java.lang.reflect.Method;
@@ -56,9 +57,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
     private void initIssues(Collection<Issue> issues) {
         watchedIssues.clear();
         issues.forEach(i -> watchedIssues.put(i.getId(), i));
-        watchedIssuesKeys = issues.stream()
-                .map(Issue::getKey)
-                .collect(Collectors.joining(","));
+        watchedIssuesKeys = issues.stream().map(Issue::getKey).collect(Collectors.joining(","));
     }
 
     @Override

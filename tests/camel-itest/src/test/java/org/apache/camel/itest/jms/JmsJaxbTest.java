@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jms;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -94,7 +95,9 @@ public class JmsJaxbTest extends CamelTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("jms:queue:error").redeliveryDelay(0));
 
-                onException(InvalidOrderException.class).maximumRedeliveries(0).handled(true)
+                onException(InvalidOrderException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
                         .to("jms:queue:invalid");
 
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.itest.jms");
@@ -102,8 +105,11 @@ public class JmsJaxbTest extends CamelTestSupport {
                 from("jms:queue:in")
                         .unmarshal(jaxb)
                         .choice()
-                        .when().method(JmsJaxbTest.class, "isWine").to("jms:queue:wine")
-                        .otherwise().throwException(new InvalidOrderException("We only like wine"))
+                        .when()
+                        .method(JmsJaxbTest.class, "isWine")
+                        .to("jms:queue:wine")
+                        .otherwise()
+                        .throwException(new InvalidOrderException("We only like wine"))
                         .end();
 
                 from("jms:queue:wine").to("mock:wine");
@@ -116,5 +122,4 @@ public class JmsJaxbTest extends CamelTestSupport {
     public static boolean isWine(PurchaseOrder order) {
         return "Wine".equalsIgnoreCase(order.getName());
     }
-
 }

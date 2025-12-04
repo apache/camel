@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
 
 import java.util.HashMap;
@@ -123,9 +124,7 @@ public class KnativeResource {
     }
 
     public String getCloudEventType() {
-        return this.cloudEventType != null
-                ? this.cloudEventType
-                : getMetadata(Knative.KNATIVE_CLOUD_EVENT_TYPE);
+        return this.cloudEventType != null ? this.cloudEventType : getMetadata(Knative.KNATIVE_CLOUD_EVENT_TYPE);
     }
 
     public void setCloudEventType(String cloudEventType) {
@@ -133,9 +132,7 @@ public class KnativeResource {
     }
 
     public String getPath() {
-        return this.path != null
-                ? this.path
-                : getMetadata(Knative.SERVICE_META_PATH);
+        return this.path != null ? this.path : getMetadata(Knative.SERVICE_META_PATH);
     }
 
     public void setPath(String path) {
@@ -143,9 +140,7 @@ public class KnativeResource {
     }
 
     public String getObjectApiVersion() {
-        return this.objectApiVersion != null
-                ? this.objectApiVersion
-                : getMetadata(Knative.KNATIVE_OBJECT_API_VERSION);
+        return this.objectApiVersion != null ? this.objectApiVersion : getMetadata(Knative.KNATIVE_OBJECT_API_VERSION);
     }
 
     public void setObjectApiVersion(String objectApiVersion) {
@@ -153,9 +148,7 @@ public class KnativeResource {
     }
 
     public String getObjectKind() {
-        return this.objectKind != null
-                ? this.objectKind
-                : getMetadata(Knative.KNATIVE_OBJECT_KIND);
+        return this.objectKind != null ? this.objectKind : getMetadata(Knative.KNATIVE_OBJECT_KIND);
     }
 
     public void setObjectKind(String objectKind) {
@@ -163,9 +156,7 @@ public class KnativeResource {
     }
 
     public String getObjectName() {
-        return this.objectName != null
-                ? this.objectName
-                : getMetadata(Knative.KNATIVE_OBJECT_NAME);
+        return this.objectName != null ? this.objectName : getMetadata(Knative.KNATIVE_OBJECT_NAME);
     }
 
     public void setObjectName(String objectName) {
@@ -237,7 +228,9 @@ public class KnativeResource {
     public Boolean getReply() {
         return this.reply != null
                 ? this.reply
-                : getOptionalMetadata(Knative.KNATIVE_REPLY).map(Boolean::parseBoolean).orElse(true);
+                : getOptionalMetadata(Knative.KNATIVE_REPLY)
+                        .map(Boolean::parseBoolean)
+                        .orElse(true);
     }
 
     public void setReply(Boolean reply) {
@@ -245,9 +238,7 @@ public class KnativeResource {
     }
 
     public String getContentType() {
-        return this.contentType != null
-                ? this.contentType
-                : getMetadata(Knative.CONTENT_TYPE);
+        return this.contentType != null ? this.contentType : getMetadata(Knative.CONTENT_TYPE);
     }
 
     public void setContentType(String contentType) {
@@ -259,23 +250,21 @@ public class KnativeResource {
             return false;
         }
 
-        return Objects.equals(type, getType())
-                && Objects.equals(name, getName());
+        return Objects.equals(type, getType()) && Objects.equals(name, getName());
     }
 
     @Override
     public String toString() {
-        return "KnativeResource{" +
-               "name='" + name + '\'' +
-               ", url='" + url + '\'' +
-               ", metadata=" + metadata +
-               ", ceOverrides=" + ceOverrides +
-               ", filters=" + filters +
-               ", type=" + type +
-               ", endpointKind=" + endpointKind +
-               ", reply=" + reply +
-               ", contentType='" + contentType + '\'' +
-               '}';
+        return "KnativeResource{" + "name='"
+                + name + '\'' + ", url='"
+                + url + '\'' + ", metadata="
+                + metadata + ", ceOverrides="
+                + ceOverrides + ", filters="
+                + filters + ", type="
+                + type + ", endpointKind="
+                + endpointKind + ", reply="
+                + reply + ", contentType='"
+                + contentType + '\'' + '}';
     }
 
     public static KnativeResource from(KnativeResource resource) {

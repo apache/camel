@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
@@ -68,19 +69,21 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private ReceivedContentMic receivedContentMic;
     private String parsedBodyPartFields;
 
-    public AS2MessageDispositionNotificationEntity(ClassicHttpRequest request,
-                                                   HttpResponse response,
-                                                   DispositionMode dispositionMode,
-                                                   AS2DispositionType dispositionType,
-                                                   AS2DispositionModifier dispositionModifier,
-                                                   String[] failureFields,
-                                                   String[] errorFields,
-                                                   String[] warningFields,
-                                                   Map<String, String> extensionFields,
-                                                   String charset,
-                                                   boolean isMainBody,
-                                                   PrivateKey decryptingPrivateKey,
-                                                   Certificate[] validateSigningCertificateChain) throws HttpException {
+    public AS2MessageDispositionNotificationEntity(
+            ClassicHttpRequest request,
+            HttpResponse response,
+            DispositionMode dispositionMode,
+            AS2DispositionType dispositionType,
+            AS2DispositionModifier dispositionModifier,
+            String[] failureFields,
+            String[] errorFields,
+            String[] warningFields,
+            Map<String, String> extensionFields,
+            String charset,
+            boolean isMainBody,
+            PrivateKey decryptingPrivateKey,
+            Certificate[] validateSigningCertificateChain)
+            throws HttpException {
         super(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset), null);
         setMainBody(isMainBody);
 
@@ -94,8 +97,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         // don't include a mic if a error occurred processing the message,
         // for instance with decryption or signature validation.
         if (dispositionModifier == null || !dispositionModifier.isError()) {
-            this.receivedContentMic
-                    = MicUtils.createReceivedContentMic(request, validateSigningCertificateChain, decryptingPrivateKey);
+            this.receivedContentMic =
+                    MicUtils.createReceivedContentMic(request, validateSigningCertificateChain, decryptingPrivateKey);
         }
         this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
 
@@ -112,19 +115,20 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
         }
     }
 
-    public AS2MessageDispositionNotificationEntity(String reportingUA,
-                                                   String mtnName,
-                                                   String finalRecipient,
-                                                   String originalMessageId,
-                                                   DispositionMode dispositionMode,
-                                                   AS2DispositionType dispositionType,
-                                                   AS2DispositionModifier dispositionModifier,
-                                                   String[] failureFields,
-                                                   String[] errorFields,
-                                                   String[] warningFields,
-                                                   Map<String, String> extensionFields,
-                                                   ReceivedContentMic receivedContentMic,
-                                                   String parsedBodyPartFields) {
+    public AS2MessageDispositionNotificationEntity(
+            String reportingUA,
+            String mtnName,
+            String finalRecipient,
+            String originalMessageId,
+            DispositionMode dispositionMode,
+            AS2DispositionType dispositionType,
+            AS2DispositionModifier dispositionModifier,
+            String[] failureFields,
+            String[] errorFields,
+            String[] warningFields,
+            Map<String, String> extensionFields,
+            ReceivedContentMic receivedContentMic,
+            String parsedBodyPartFields) {
         super(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION), null);
         this.reportingUA = reportingUA;
         this.mtnName = mtnName;
@@ -192,7 +196,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
-        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
+        try (CanonicalOutputStream canonicalOutstream =
+                new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
             // Write out mime part headers if this is not the main body of
             // message.
@@ -201,8 +206,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
-                                             // headers and body; RFC2046 -
-                                             // 5.1.1
+                // headers and body; RFC2046 -
+                // 5.1.1
             }
 
             if (parsedBodyPartFields != null) {
@@ -269,9 +274,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
             }
 
             if (receivedContentMic != null) {
-                Header as2ReceivedContentMicField = new BasicHeader(
-                        RECEIVED_CONTENT_MIC,
-                        receivedContentMic.toString());
+                Header as2ReceivedContentMicField =
+                        new BasicHeader(RECEIVED_CONTENT_MIC, receivedContentMic.toString());
                 canonicalOutstream.writeln(as2ReceivedContentMicField.toString());
             }
         }

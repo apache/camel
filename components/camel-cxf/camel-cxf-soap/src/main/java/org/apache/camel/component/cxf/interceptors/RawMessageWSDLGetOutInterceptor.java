@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.interceptors;
 
 import java.io.OutputStream;
@@ -51,7 +52,7 @@ public class RawMessageWSDLGetOutInterceptor extends AbstractPhaseInterceptor<Me
         try {
             enc = doc.getXmlEncoding();
         } catch (Exception ex) {
-            //ignore - not dom level 3
+            // ignore - not dom level 3
         }
         if (enc == null) {
             enc = "utf-8";
@@ -64,6 +65,5 @@ public class RawMessageWSDLGetOutInterceptor extends AbstractPhaseInterceptor<Me
         } catch (XMLStreamException e) {
             throw new Fault(e);
         }
-
     }
 }

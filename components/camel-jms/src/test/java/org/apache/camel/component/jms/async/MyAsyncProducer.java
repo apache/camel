@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.async;
 
 import java.util.concurrent.ExecutorService;
@@ -49,8 +50,9 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         executor.submit(() -> {
-
-            LOG.info("Simulating a task which takes {} millis to reply", getEndpoint().getDelay());
+            LOG.info(
+                    "Simulating a task which takes {} millis to reply",
+                    getEndpoint().getDelay());
 
             Thread.sleep(getEndpoint().getDelay());
             int count = counter.incrementAndGet();
@@ -71,8 +73,8 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
         });
 
         // indicate from this point forward its being routed asynchronously
-        LOG.info("Task submitted, now tell Camel routing engine to that this Exchange is being continued asynchronously");
+        LOG.info(
+                "Task submitted, now tell Camel routing engine to that this Exchange is being continued asynchronously");
         return false;
     }
-
 }

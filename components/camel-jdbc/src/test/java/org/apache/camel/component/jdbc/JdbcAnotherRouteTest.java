@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import org.apache.camel.EndpointInject;
@@ -41,7 +42,9 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // trigger every second
-                from("timer://kickoff?period=1000").setBody(constant("select * from customer")).to("jdbc:testdb")
+                from("timer://kickoff?period=1000")
+                        .setBody(constant("select * from customer"))
+                        .to("jdbc:testdb")
                         .to("mock:result");
             }
         };

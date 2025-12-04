@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam.integration;
 
 import org.apache.camel.EndpointInject;
@@ -53,7 +54,9 @@ public class IAMListAccessKeyIT extends Aws2IAMBase {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(IAM2Constants.OPERATION, IAM2Operations.listAccessKeys);
-                exchange.getIn().setBody(ListAccessKeysRequest.builder().userName("test").build());
+                exchange.getIn()
+                        .setBody(
+                                ListAccessKeysRequest.builder().userName("test").build());
             }
         });
 
@@ -67,9 +70,9 @@ public class IAMListAccessKeyIT extends Aws2IAMBase {
             public void configure() {
                 from("direct:createUser").to("aws2-iam://test?operation=createUser");
                 from("direct:createAccessKey").to("aws2-iam://test?operation=createAccessKey");
-                from("direct:listKeys").to("aws2-iam://test?operation=listAccessKeys&pojoRequest=true")
+                from("direct:listKeys")
+                        .to("aws2-iam://test?operation=listAccessKeys&pojoRequest=true")
                         .to("mock:result");
-
             }
         };
     }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.StringReader;
 import java.net.URL;
@@ -42,11 +48,6 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode
  */
@@ -56,13 +57,14 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected static final String SERVICE_NAME_PROP = "serviceName=" + SERVICE_NAME;
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
 
-    protected static final String DETAILS = "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\">"
-                                            + "<personId></personId></UnknownPersonFault></detail>";
+    protected static final String DETAILS =
+            "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\">"
+                    + "<personId></personId></UnknownPersonFault></detail>";
 
-    protected final String serviceAddress = "http://localhost:" + CXFTestSupport.getPort1()
-                                            + "/" + getClass().getSimpleName() + "/PersonService";
-    protected final String fromURI = "cxf://" + serviceAddress + "?"
-                                     + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
+    protected final String serviceAddress =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/PersonService";
+    protected final String fromURI = "cxf://" + serviceAddress + "?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&"
+            + WSDL_URL_PROP + "&dataFormat=payload";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -72,10 +74,10 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
                     public void process(final Exchange exchange) throws Exception {
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
                         SoapFault fault = new SoapFault("Get the null value of person name", faultCode);
-                        Element details = StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
+                        Element details =
+                                StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
                         fault.setDetail(details);
                         exchange.setException(fault);
-
                     }
                 });
             }
@@ -92,8 +94,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
         Client c = ClientProxy.getClient(client);
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
+        ((BindingProvider) client).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
 
         Holder<String> personId = new Holder<>();
         personId.value = "";
@@ -111,6 +112,5 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
         assertNotNull(t);
         assertTrue(t instanceof UnknownPersonFault);
         assertEquals(0, context.getInflightRepository().size());
-
     }
 }

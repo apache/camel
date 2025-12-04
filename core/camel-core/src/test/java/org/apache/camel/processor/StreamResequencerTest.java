@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Random;
@@ -35,15 +39,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "s390x" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class StreamResequencerTest extends ContextTestSupport {
 
-    protected void sendBodyAndHeader(String endpointUri, final Object body, final String headerName, final Object headerValue) {
+    protected void sendBodyAndHeader(
+            String endpointUri, final Object body, final String headerName, final Object headerValue) {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -104,7 +107,9 @@ public class StreamResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(header("seqnum")).stream().timeout(1000).deliveryAttemptInterval(10)
+                from("direct:start").resequence(header("seqnum")).stream()
+                        .timeout(1000)
+                        .deliveryAttemptInterval(10)
                         .to("mock:result");
                 // END SNIPPET: example
             }
@@ -164,6 +169,5 @@ public class StreamResequencerTest extends ContextTestSupport {
                 template.sendBodyAndHeader("direct:start", "msg" + i, "seqnum", i);
             }
         }
-
     }
 }

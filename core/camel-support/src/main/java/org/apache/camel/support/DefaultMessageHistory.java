@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.Message;
@@ -108,9 +109,6 @@ public class DefaultMessageHistory implements MessageHistory {
 
     @Override
     public String toString() {
-        return "DefaultMessageHistory["
-               + "routeId=" + routeId
-               + ", node=" + nodeId
-               + ']';
+        return "DefaultMessageHistory[" + "routeId=" + routeId + ", node=" + nodeId + ']';
     }
 }

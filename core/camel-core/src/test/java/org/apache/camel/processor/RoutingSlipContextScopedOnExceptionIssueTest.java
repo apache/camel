@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -37,13 +38,17 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
-                        assertEquals("fail", routeId);
-                    }
-                }).to("mock:error");
+                onException(Exception.class)
+                        .handled(true)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String routeId =
+                                        exchange.getUnitOfWork().getRoute().getRouteId();
+                                assertEquals("fail", routeId);
+                            }
+                        })
+                        .to("mock:error");
 
                 interceptSendToEndpoint("direct*").process(new Processor() {
                     public void process(Exchange exchange) {
@@ -81,13 +86,17 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        String routeId = exchange.getUnitOfWork().getRoute().getRouteId();
-                        assertEquals("fail", routeId);
-                    }
-                }).to("mock:error");
+                onException(Exception.class)
+                        .handled(true)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                String routeId =
+                                        exchange.getUnitOfWork().getRoute().getRouteId();
+                                assertEquals("fail", routeId);
+                            }
+                        })
+                        .to("mock:error");
 
                 from("direct:start").routeId("start").routingSlip(header("foo"));
 
@@ -99,9 +108,15 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
         context.start();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://foo");
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.TO_ENDPOINT)
+                .isEqualTo("mock://foo");
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://fail");
+        getMockEndpoint("mock:error")
+                .message(0)
+                .exchangeProperty(Exchange.FAILURE_ENDPOINT)
+                .isEqualTo("direct://fail");
 
         String foo = "direct:foo,direct:fail";
 
@@ -113,5 +128,4 @@ public class RoutingSlipContextScopedOnExceptionIssueTest extends ContextTestSup
 
         assertMockEndpointsSatisfied();
     }
-
 }

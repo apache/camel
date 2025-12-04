@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TypeConverterAllowNullTest {
 
@@ -69,7 +70,5 @@ public class TypeConverterAllowNullTest {
             order.setId(Integer.parseInt(value.toString()));
             return (T) order;
         }
-
     }
-
 }

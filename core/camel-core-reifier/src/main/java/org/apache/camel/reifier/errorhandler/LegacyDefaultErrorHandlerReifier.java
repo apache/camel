@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,12 +42,15 @@ public class LegacyDefaultErrorHandlerReifier<T extends DefaultErrorHandlerPrope
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
         // optimize to use shared default instance if using out of the box settings
-        RedeliveryPolicy redeliveryPolicy
-                = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
+        RedeliveryPolicy redeliveryPolicy = definition.hasRedeliveryPolicy()
+                ? definition.getRedeliveryPolicy()
+                : definition.getDefaultRedeliveryPolicy();
         CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
 
         DefaultErrorHandler answer = new DefaultErrorHandler(
-                camelContext, processor, logger,
+                camelContext,
+                processor,
+                logger,
                 getProcessor(definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy,
                 getPredicate(definition.getRetryWhile(), definition.getRetryWhileRef()),
@@ -73,7 +77,8 @@ public class LegacyDefaultErrorHandlerReifier<T extends DefaultErrorHandlerPrope
                         executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
                     }
                     if (executorService == null) {
-                        throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
+                        throw new IllegalArgumentException(
+                                "ExecutorService " + executorServiceRef + " not found in registry.");
                     }
                 } else {
                     // no explicit configured thread pool, so leave it up to the
@@ -88,5 +93,4 @@ public class LegacyDefaultErrorHandlerReifier<T extends DefaultErrorHandlerPrope
             lock.unlock();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import org.apache.camel.spi.UriParam;
@@ -33,5 +34,4 @@ public abstract class TahuDefaultEndpoint extends DefaultEndpoint {
     public TahuConfiguration getConfiguration() {
         return configuration;
     }
-
 }

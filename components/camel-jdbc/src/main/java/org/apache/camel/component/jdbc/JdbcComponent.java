@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.util.Map;
@@ -38,6 +39,7 @@ public class JdbcComponent extends DefaultComponent {
 
     @Metadata
     private DataSource dataSource;
+
     @Metadata(label = "advanced")
     private ConnectionStrategy connectionStrategy;
 

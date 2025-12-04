@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,10 +37,6 @@ import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
 
 public class PdfTextExtractionTest extends CamelTestSupport {
 
@@ -80,10 +81,11 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         document.save(output);
 
         // Encryption happens after saving.
-        PDDocument encryptedDocument
-                = Loader.loadPDF(new RandomAccessReadBuffer(new ByteArrayInputStream(output.toByteArray())), userPass);
+        PDDocument encryptedDocument =
+                Loader.loadPDF(new RandomAccessReadBuffer(new ByteArrayInputStream(output.toByteArray())), userPass);
 
-        template.sendBodyAndHeader("direct:start",
+        template.sendBodyAndHeader(
+                "direct:start",
                 encryptedDocument,
                 PdfHeaderConstants.DECRYPTION_MATERIAL_HEADER_NAME,
                 new StandardDecryptionMaterial(userPass));
@@ -107,9 +109,7 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("pdf:extractText")
-                        .to("mock:result");
+                from("direct:start").to("pdf:extractText").to("mock:result");
             }
         };
     }

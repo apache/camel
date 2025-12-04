@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.util.Collections;
@@ -36,8 +37,7 @@ public final class CML extends Library {
     private static final CML INSTANCE = new CML();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<>();
 
-    private CML() {
-    }
+    private CML() {}
 
     public static CML getInstance() {
         return INSTANCE;
@@ -60,18 +60,26 @@ public final class CML extends Library {
     @Override
     public Map<String, Val.Func> functions(DataFormatService dataFormats, Header header) {
         Map<String, Val.Func> answer = new HashMap<>();
-        answer.put("properties", makeSimpleFunc(
-                Collections.singletonList("key"), //parameters list
-                params -> properties(params.get(0))));
-        answer.put("header", makeSimpleFunc(
-                Collections.singletonList("key"), //parameters list
-                params -> header(params.get(0), dataFormats)));
-        answer.put("variable", makeSimpleFunc(
-                Collections.singletonList("key"), //parameters list
-                params -> variable(params.get(0), dataFormats)));
-        answer.put("exchangeProperty", makeSimpleFunc(
-                Collections.singletonList("key"), //parameters list
-                params -> exchangeProperty(params.get(0), dataFormats)));
+        answer.put(
+                "properties",
+                makeSimpleFunc(
+                        Collections.singletonList("key"), // parameters list
+                        params -> properties(params.get(0))));
+        answer.put(
+                "header",
+                makeSimpleFunc(
+                        Collections.singletonList("key"), // parameters list
+                        params -> header(params.get(0), dataFormats)));
+        answer.put(
+                "variable",
+                makeSimpleFunc(
+                        Collections.singletonList("key"), // parameters list
+                        params -> variable(params.get(0), dataFormats)));
+        answer.put(
+                "exchangeProperty",
+                makeSimpleFunc(
+                        Collections.singletonList("key"), // parameters list
+                        params -> exchangeProperty(params.get(0), dataFormats)));
 
         return answer;
     }
@@ -82,7 +90,8 @@ public final class CML extends Library {
 
     private Val properties(Val key) {
         if (key instanceof Val.Str) {
-            return new Val.Str(exchange.get().getContext().resolvePropertyPlaceholders("{{" + ((Val.Str) key).value() + "}}"));
+            return new Val.Str(
+                    exchange.get().getContext().resolvePropertyPlaceholders("{{" + ((Val.Str) key).value() + "}}"));
         }
         throw new IllegalArgumentException("Expected String got: " + key.prettyName());
     }

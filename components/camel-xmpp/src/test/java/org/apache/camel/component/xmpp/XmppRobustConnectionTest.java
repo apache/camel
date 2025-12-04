@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,10 +28,11 @@ import org.junit.jupiter.api.condition.OS;
  * Test to verify that the XMPP consumer will reconnect when the connection is lost. Also verifies that the XMPP
  * producer will lazily re-establish a lost connection.
  */
-@DisabledOnOs({ OS.AIX, OS.SOLARIS })
+@DisabledOnOs({OS.AIX, OS.SOLARIS})
 public class XmppRobustConnectionTest extends XmppBaseContainerTest {
 
-    @Disabled("Since upgrade to smack 4.2.0 the robust connection handling doesn't seem to work, as consumerEndpoint below receives only 5 payloads instead of the expected 9")
+    @Disabled(
+            "Since upgrade to smack 4.2.0 the robust connection handling doesn't seem to work, as consumerEndpoint below receives only 5 payloads instead of the expected 9")
     @Test
     public void testXmppChatWithRobustConnection() throws Exception {
         MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
@@ -73,23 +75,20 @@ public class XmppRobustConnectionTest extends XmppBaseContainerTest {
             public void configure() {
                 onException(RuntimeException.class).handled(true).to("mock:error");
 
-                from("direct:start").id("direct:start")
-                        .to(getProducerUri());
+                from("direct:start").id("direct:start").to(getProducerUri());
 
-                from(getConsumerUri())
-                        .to("mock:out");
+                from(getConsumerUri()).to("mock:out");
             }
         };
     }
 
     protected String getProducerUri() {
         return "xmpp://" + xmppServer.getUrl()
-               + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
+                + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
         return "xmpp://" + xmppServer.getUrl()
-               + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
+                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
-
 }

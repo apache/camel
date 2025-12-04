@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,9 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the FileRenameStrategy using preMove options
@@ -53,7 +54,8 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         // create a file in inprogress to let there be a duplicate file
         testDirectory("inprogress", true);
 
-        try (FileWriter fw = new FileWriter(testFile("inprogress/" + TEST_FILE_NAME_2).toFile())) {
+        try (FileWriter fw =
+                new FileWriter(testFile("inprogress/" + TEST_FILE_NAME_2).toFile())) {
             fw.write("I was there once in London");
             fw.flush();
         }
@@ -74,14 +76,15 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) {
-                                GenericFile<File> file
-                                        = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                                GenericFile<File> file =
+                                        (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
                                 assertNotNull(file);
                                 assertTrue(file.getRelativeFilePath().contains("inprogress"));
                             }
-                        }).convertBodyTo(String.class).to("mock:report");
+                        })
+                        .convertBodyTo(String.class)
+                        .to("mock:report");
             }
         };
     }
-
 }

@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
-
-import java.util.Map;
-
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.Map;
+
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test behavior in the component for initializing an endpoint. Not much here beyond checking that the code for the
@@ -38,8 +39,8 @@ public class JMXComponentTest {
 
     @Test
     public void withObjectProperties() {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.propOne=prop1&key.propTwo=prop2",
-                JMXEndpoint.class);
+        JMXEndpoint ep = context.getEndpoint(
+                "jmx:platform?objectDomain=FooDomain&key.propOne=prop1&key.propTwo=prop2", JMXEndpoint.class);
         assertNotNull(ep);
 
         Map<String, String> props = ep.getObjectProperties();
@@ -52,7 +53,8 @@ public class JMXComponentTest {
 
     @Test
     public void withObjectName() {
-        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
+        JMXEndpoint ep =
+                context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
         assertNotNull(ep);
 
         assertEquals("theObjectName", ep.getObjectName());

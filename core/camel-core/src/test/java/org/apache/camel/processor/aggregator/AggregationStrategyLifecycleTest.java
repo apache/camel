@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
@@ -58,12 +59,16 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), strategy).completionSize(3).to("mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), strategy)
+                        .completionSize(3)
+                        .to("mock:aggregated");
             }
         };
     }
 
-    private static final class MyCompletionStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
+    private static final class MyCompletionStrategy extends ServiceSupport
+            implements AggregationStrategy, CamelContextAware {
 
         private CamelContext camelContext;
         private String separator;
@@ -74,7 +79,9 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
                 return newExchange;
             }
 
-            String body = oldExchange.getIn().getBody(String.class) + separator + newExchange.getIn().getBody(String.class);
+            String body = oldExchange.getIn().getBody(String.class)
+                    + separator
+                    + newExchange.getIn().getBody(String.class);
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }

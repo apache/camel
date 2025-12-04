@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,10 +29,13 @@ public class SplitterOnPrepareExceptionStreamingTest extends SplitterOnPrepareEx
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(",")).onPrepare(new FixNamePrepare()).stopOnException().streaming()
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .onPrepare(new FixNamePrepare())
+                        .stopOnException()
+                        .streaming()
                         .to("mock:a");
             }
         };
     }
-
 }

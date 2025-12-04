@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.io.Serializable;
@@ -256,7 +257,8 @@ public final class ComponentVerifierExtension {
              * A combination of parameters is illegal. See {@link VerificationError#getParameterKeys()} for the set of
              * affected parameters
              */
-            StandardCode ILLEGAL_PARAMETER_GROUP_COMBINATION = new StandardErrorCode("ILLEGAL_PARAMETER_GROUP_COMBINATION");
+            StandardCode ILLEGAL_PARAMETER_GROUP_COMBINATION =
+                    new StandardErrorCode("ILLEGAL_PARAMETER_GROUP_COMBINATION");
             /**
              * A parameter <em>value</em> is not valid
              */

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JoorLanguageTest extends LanguageTestSupport {
 
@@ -80,12 +81,15 @@ public class JoorLanguageTest extends LanguageTestSupport {
         assertEquals("Tony", exchange.getIn().getHeader("tiger"));
 
         exchange.getIn().setHeader("user", "Donald");
-        assertExpression("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
+        assertExpression(
+                "Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
                 "User: Donald");
-        assertExpression("var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
+        assertExpression(
+                "var user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
                 "User: Donald");
         exchange.getIn().removeHeader("user");
-        assertExpression("Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
+        assertExpression(
+                "Object user = message.getHeader('user'); return user != null ? 'User: ' + user : 'No user exists';",
                 "No user exists");
     }
 
@@ -232,5 +236,4 @@ public class JoorLanguageTest extends LanguageTestSupport {
         assertExpression("3 * optionalExchangePropertyAs(\"bar\", java.lang.Integer).get()", "66");
         assertExpression("var num = optionalExchangePropertyAs(\"bar\", int).get(); return num * 4", "88");
     }
-
 }

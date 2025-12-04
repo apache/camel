@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grok;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class GrokFileUnmarshalTest extends CamelTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -33,7 +34,8 @@ public class GrokFileUnmarshalTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("file:src/test/resources/org/apache/camel/component/grok/data?fileName=access_log.txt&noop=true")
-                        .unmarshal().grok("%{COMMONAPACHELOG}")
+                        .unmarshal()
+                        .grok("%{COMMONAPACHELOG}")
                         .to("mock:apachelog");
             }
         };

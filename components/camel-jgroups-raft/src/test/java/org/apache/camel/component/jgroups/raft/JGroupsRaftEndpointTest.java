@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -28,9 +32,6 @@ import org.jgroups.raft.RaftHandle;
 import org.jgroups.raft.StateMachine;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JGroupsRaftEndpointTest extends CamelTestSupport {
 
     static final String CLUSTER_NAME = "JGroupsRaftEndpointTest";
@@ -38,8 +39,8 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
     static final String CLUSTER_NAME1 = "JGroupsraftEndpointTest1";
     static final String CONFIGURED_ENDPOINT_URI1 = "jgroups-raft:" + CLUSTER_NAME1 + "?raftHandle=#rh";
     static final String CLUSTER_NAME2 = "JGroupsraftEndpointTest2";
-    static final String CONFIGURED_ENDPOINT_URI2
-            = "jgroups-raft:" + CLUSTER_NAME2 + "?stateMachine=#sm&raftId=C&channelProperties=raftC.xml";
+    static final String CONFIGURED_ENDPOINT_URI2 =
+            "jgroups-raft:" + CLUSTER_NAME2 + "?stateMachine=#sm&raftId=C&channelProperties=raftC.xml";
 
     StateMachine sm = new StateMachine() {
 
@@ -49,12 +50,10 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
         }
 
         @Override
-        public void readContentFrom(DataInput dataInput) {
-        }
+        public void readContentFrom(DataInput dataInput) {}
 
         @Override
-        public void writeContentTo(DataOutput dataOutput) {
-        }
+        public void writeContentTo(DataOutput dataOutput) {}
     };
 
     @Override

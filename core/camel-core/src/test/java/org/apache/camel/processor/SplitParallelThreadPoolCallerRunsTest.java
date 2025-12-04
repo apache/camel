@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.List;
@@ -75,15 +76,13 @@ public class SplitParallelThreadPoolCallerRunsTest extends ContextTestSupport {
                         .maxQueueSize(0)
                         .build("inner");
 
-                from("direct:start")
-                        .split(body()).parallelProcessing()
-                        .to("direct:inner?synchronous=true");
+                from("direct:start").split(body()).parallelProcessing().to("direct:inner?synchronous=true");
 
                 from("direct:inner")
-                        .split(body()).executorService(executorService)
+                        .split(body())
+                        .executorService(executorService)
                         .log("${body}");
             }
         };
     }
-
 }

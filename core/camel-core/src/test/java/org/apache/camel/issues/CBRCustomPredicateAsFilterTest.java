@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
 
@@ -69,7 +70,12 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(filter).to("mock:good").otherwise().to("mock:secret");
+                from("direct:start")
+                        .choice()
+                        .when(filter)
+                        .to("mock:good")
+                        .otherwise()
+                        .to("mock:secret");
             }
         };
     }

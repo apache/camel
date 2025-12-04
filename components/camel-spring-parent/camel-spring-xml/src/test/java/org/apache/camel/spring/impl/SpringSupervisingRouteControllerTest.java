@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,15 +37,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/impl/SpringSupervisingRouteControllerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/impl/SpringSupervisingRouteControllerTest.xml");
     }
 
     @Test
@@ -59,11 +61,14 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, mock, mock2, mock3, mock4);
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").toString());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").toString());
         // cheese was not able to start
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("cheese").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("cheese").toString());
         // cake was not able to start
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("cake").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("cake").toString());
 
         SupervisingRouteController src = context.getRouteController().adapt(SupervisingRouteController.class);
 
@@ -73,13 +78,15 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
         assertTrue(e instanceof IllegalArgumentException);
 
         // bar is no auto startup
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("bar").toString());
     }
 
     public static class MyJmsComponent extends SedaComponent {
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+                throws Exception {
             return new MyJmsEndpoint(remaining);
         }
     }
@@ -118,5 +125,4 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
             }
         }
     }
-
 }

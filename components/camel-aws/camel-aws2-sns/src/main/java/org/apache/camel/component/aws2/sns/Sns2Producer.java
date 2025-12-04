@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
 
 import java.nio.ByteBuffer;
@@ -81,8 +82,10 @@ public class Sns2Producer extends DefaultProducer {
         } else {
             PublishBatchRequest.Builder publishBatchRequestBuilder = PublishBatchRequest.builder();
             publishBatchRequestBuilder.topicArn(getConfiguration().getTopicArn());
-            publishBatchRequestBuilder.publishBatchRequestEntries(exchange.getMessage().getBody(List.class));
-            PublishBatchResponse response = getEndpoint().getSNSClient().publishBatch(publishBatchRequestBuilder.build());
+            publishBatchRequestBuilder.publishBatchRequestEntries(
+                    exchange.getMessage().getBody(List.class));
+            PublishBatchResponse response =
+                    getEndpoint().getSNSClient().publishBatch(publishBatchRequestBuilder.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(response);
         }
@@ -140,9 +143,10 @@ public class Sns2Producer extends DefaultProducer {
                     mav.stringValue(value.toString());
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof List) {
-                    String resultString = ((List<?>) value).stream()
-                            .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
-                            .collect(Collectors.joining(", "));
+                    String resultString = ((List<?>) value)
+                            .stream()
+                                    .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
+                                    .collect(Collectors.joining(", "));
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String.Array");
                     mav.stringValue("[" + resultString + "]");
@@ -150,7 +154,9 @@ public class Sns2Producer extends DefaultProducer {
                 } else {
                     // cannot translate the message header to message attribute
                     // value
-                    LOG.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(),
+                    LOG.warn(
+                            "Cannot put the message header key={}, value={} into Sns MessageAttribute",
+                            entry.getKey(),
                             entry.getValue());
                 }
             }
@@ -162,18 +168,18 @@ public class Sns2Producer extends DefaultProducer {
         if (getEndpoint().getConfiguration().isFifoTopic()) {
             // use strategies
             if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
-                MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+                MessageGroupIdStrategy messageGroupIdStrategy =
+                        getEndpoint().getConfiguration().getMessageGroupIdStrategy();
                 String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
                 request.messageGroupId(messageGroupId);
             }
 
             if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
-                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
-                        = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy =
+                        getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
                 String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
                 request.messageDeduplicationId(messageDeduplicationId);
             }
-
         }
     }
 
@@ -184,7 +190,8 @@ public class Sns2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (snsProducerToString == null) {
-            snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            snsProducerToString =
+                    "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return snsProducerToString;
     }
@@ -202,9 +209,7 @@ public class Sns2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -221,5 +226,4 @@ public class Sns2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

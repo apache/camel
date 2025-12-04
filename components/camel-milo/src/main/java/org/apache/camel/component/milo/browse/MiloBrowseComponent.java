@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.browse;
 
 import java.util.Map;
@@ -42,13 +43,12 @@ public class MiloBrowseComponent extends DefaultComponent {
         final MiloClientConfiguration browseConfiguration = new MiloClientConfiguration(getConfiguration());
         browseConfiguration.setEndpointUri(remaining);
 
-        final MiloBrowseEndpoint endpoint
-                = new MiloBrowseEndpoint(uri, this, browseConfiguration.getEndpointUri(), getMiloClientConnectionManager());
+        final MiloBrowseEndpoint endpoint = new MiloBrowseEndpoint(
+                uri, this, browseConfiguration.getEndpointUri(), getMiloClientConnectionManager());
         endpoint.setConfiguration(browseConfiguration);
         setProperties(endpoint, parameters);
 
         return endpoint;
-
     }
 
     public MiloClientConfiguration getConfiguration() {

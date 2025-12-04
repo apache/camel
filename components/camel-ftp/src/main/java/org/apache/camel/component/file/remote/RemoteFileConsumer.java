@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.util.List;
@@ -43,8 +44,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected transient boolean autoCreatedDone;
     protected transient boolean autoCreateWarning;
 
-    protected RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
-                                 GenericFileProcessStrategy processStrategy) {
+    protected RemoteFileConsumer(
+            RemoteFileEndpoint<T> endpoint,
+            Processor processor,
+            RemoteFileOperations<T> operations,
+            GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
         this.setRetrieveFile(endpoint.isDownload());
@@ -206,8 +210,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                        remoteServer(), e.getMessage(), e);
+                LOG.debug(
+                        "Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(),
+                        e.getMessage(),
+                        e);
             }
         }
     }
@@ -224,8 +231,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             getOperations().forceDisconnect();
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
-                        remoteServer(), e.getMessage(), e);
+                LOG.debug(
+                        "Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                        remoteServer(),
+                        e.getMessage(),
+                        e);
             }
         }
     }

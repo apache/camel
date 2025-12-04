@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
 
 import java.util.ArrayList;
@@ -80,12 +81,11 @@ public final class AS2HeaderUtils {
 
     private static final TokenParser TOKEN_PARSER = TokenParser.INSTANCE;
 
-    private static final BitSet TOKEN_DELIMS = TokenParser.INIT_BITSET(NAME_VALUE_DELIMITER, PARAM_DELIMITER,
-            ELEM_DELIMITER);
+    private static final BitSet TOKEN_DELIMS =
+            TokenParser.INIT_BITSET(NAME_VALUE_DELIMITER, PARAM_DELIMITER, ELEM_DELIMITER);
     private static final BitSet VALUE_DELIMS = TokenParser.INIT_BITSET(PARAM_DELIMITER, ELEM_DELIMITER);
 
-    private AS2HeaderUtils() {
-    }
+    private AS2HeaderUtils() {}
 
     public static Header createHeader(String headerName, String[]... elements) {
         StringBuilder sb = new StringBuilder();
@@ -164,9 +164,11 @@ public final class AS2HeaderUtils {
         return null;
     }
 
-    public static void addAuthorizationHeader(HttpMessage message, String userName, String password, String accessToken) {
+    public static void addAuthorizationHeader(
+            HttpMessage message, String userName, String password, String accessToken) {
         if (userName != null && password != null) {
-            message.addHeader(AS2Header.AUTHORIZATION,
+            message.addHeader(
+                    AS2Header.AUTHORIZATION,
                     ("Basic " + java.util.Base64.getEncoder().encodeToString((userName + ":" + password).getBytes())));
         } else if (accessToken != null) {
             message.addHeader(AS2Header.AUTHORIZATION, "Bearer " + accessToken);

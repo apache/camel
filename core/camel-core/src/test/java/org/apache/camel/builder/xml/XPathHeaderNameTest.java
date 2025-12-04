@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,10 +30,13 @@ public class XPathHeaderNameTest extends ContextTestSupport {
     public void testChoiceWithHeaderNamePremium() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:premium");
         mock.expectedBodiesReceived("<response>OK</response>");
-        mock.expectedHeaderReceived("invoiceDetails",
-                "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
+        mock.expectedHeaderReceived(
+                "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
 
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>", "invoiceDetails",
+        template.sendBodyAndHeader(
+                "direct:in",
+                "<response>OK</response>",
+                "invoiceDetails",
                 "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
@@ -42,10 +46,13 @@ public class XPathHeaderNameTest extends ContextTestSupport {
     public void testChoiceWithHeaderNameStandard() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:standard");
         mock.expectedBodiesReceived("<response>OK</response>");
-        mock.expectedHeaderReceived("invoiceDetails",
-                "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
+        mock.expectedHeaderReceived(
+                "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
 
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>", "invoiceDetails",
+        template.sendBodyAndHeader(
+                "direct:in",
+                "<response>OK</response>",
+                "invoiceDetails",
                 "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
@@ -67,17 +74,26 @@ public class XPathHeaderNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                var premium = expression().xpath().expression("/invoice/@orderType = 'premium'").source("header:invoiceDetails")
+                var premium = expression()
+                        .xpath()
+                        .expression("/invoice/@orderType = 'premium'")
+                        .source("header:invoiceDetails")
                         .end();
-                var standard = expression().xpath().expression("/invoice/@orderType = 'standard'")
-                        .source("header:invoiceDetails").end();
+                var standard = expression()
+                        .xpath()
+                        .expression("/invoice/@orderType = 'standard'")
+                        .source("header:invoiceDetails")
+                        .end();
 
-                from("direct:in").choice().when(premium)
+                from("direct:in")
+                        .choice()
+                        .when(premium)
                         .to("mock:premium")
                         .when(standard)
                         .to("mock:standard")
                         .otherwise()
-                        .to("mock:unknown").end();
+                        .to("mock:unknown")
+                        .end();
             }
         };
     }

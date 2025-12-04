@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,8 @@ public class DisruptorVmInOnlyChainedTest extends AbstractVmTestSupport {
     void testInOnlyDisruptorVmChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
 
-        TestSupport.resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");
+        TestSupport.resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class)
+                .expectedBodiesReceived("start-a");
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b");
 
         template.sendBody("disruptor-vm:a", "start");

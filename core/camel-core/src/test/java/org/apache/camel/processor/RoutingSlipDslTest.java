@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,11 @@ public class RoutingSlipDslTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").routingSlip().message(m -> m.getHeader("recipientListHeader", String.class).split(",")).end();
+                from("direct:a")
+                        .routingSlip()
+                        .message(m ->
+                                m.getHeader("recipientListHeader", String.class).split(","))
+                        .end();
             }
         };
     }

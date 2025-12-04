@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 /**
@@ -87,5 +88,4 @@ public interface AggregateProcessorStatistics {
      * @param statisticsEnabled <tt>true</tt> to enable
      */
     void setStatisticsEnabled(boolean statisticsEnabled);
-
 }

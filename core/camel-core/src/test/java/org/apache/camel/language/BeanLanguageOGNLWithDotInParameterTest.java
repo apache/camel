@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,7 +32,6 @@ public class BeanLanguageOGNLWithDotInParameterTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Override
@@ -46,7 +46,9 @@ public class BeanLanguageOGNLWithDotInParameterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("goto").simple("${bean:myBean?method=whereToMate('MyAppV1.2.3', 'blah')}")
+                from("direct:start")
+                        .setHeader("goto")
+                        .simple("${bean:myBean?method=whereToMate('MyAppV1.2.3', 'blah')}")
                         .to("mock:result");
             }
         };
@@ -57,6 +59,5 @@ public class BeanLanguageOGNLWithDotInParameterTest extends ContextTestSupport {
         public String whereToMate(String version, String id) {
             return "mock:" + version + "/" + id;
         }
-
     }
 }

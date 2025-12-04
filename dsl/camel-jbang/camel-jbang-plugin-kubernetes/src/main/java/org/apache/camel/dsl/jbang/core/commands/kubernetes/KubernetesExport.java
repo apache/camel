@@ -54,79 +54,112 @@ import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "export", description = "Export as Maven/Gradle project that contains a Kubernetes deployment manifest",
-         sortOptions = false)
+@Command(
+        name = "export",
+        description = "Export as Maven/Gradle project that contains a Kubernetes deployment manifest",
+        sortOptions = false)
 public class KubernetesExport extends Export {
 
-    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    @CommandLine.Option(
+            names = {"--service-account"},
+            description = "The service account used to run the application.")
     protected String serviceAccount;
 
-    @CommandLine.Option(names = { "--config" },
-                        description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
+    @CommandLine.Option(
+            names = {"--config"},
+            description =
+                    "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
     protected String[] configs;
 
-    @CommandLine.Option(names = { "--resource" },
-                        description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
+    @CommandLine.Option(
+            names = {"--resource"},
+            description =
+                    "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
     protected String[] resources;
 
-    @CommandLine.Option(names = { "--env" },
-                        description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
+    @CommandLine.Option(
+            names = {"--env"},
+            description =
+                    "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
     protected String[] envVars;
 
-    @CommandLine.Option(names = { "--volume" },
-                        description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
+    @CommandLine.Option(
+            names = {"--volume"},
+            description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
     protected String[] volumes;
 
-    @CommandLine.Option(names = { "--connect" },
-                        description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
+    @CommandLine.Option(
+            names = {"--connect"},
+            description =
+                    "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
     protected String[] connects;
 
-    @CommandLine.Option(names = { "--annotation" },
-                        description = "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
+    @CommandLine.Option(
+            names = {"--annotation"},
+            description =
+                    "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
     protected String[] annotations;
 
-    @CommandLine.Option(names = { "--label" },
-                        description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
+    @CommandLine.Option(
+            names = {"--label"},
+            description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
     protected String[] labels;
 
-    @CommandLine.Option(names = { "--trait" },
-                        description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
+    @CommandLine.Option(
+            names = {"--trait"},
+            description =
+                    "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
     protected String[] traits;
 
-    @CommandLine.Option(names = { "--image" },
-                        description = "The image name to be built.")
+    @CommandLine.Option(
+            names = {"--image"},
+            description = "The image name to be built.")
     protected String image;
 
-    @CommandLine.Option(names = { "--image-registry" },
-                        description = "The image registry to hold the app container image.")
+    @CommandLine.Option(
+            names = {"--image-registry"},
+            description = "The image registry to hold the app container image.")
     protected String imageRegistry;
 
-    @CommandLine.Option(names = { "--image-group" },
-                        description = "The image registry group used to push images to.")
+    @CommandLine.Option(
+            names = {"--image-group"},
+            description = "The image registry group used to push images to.")
     protected String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, podman).")
+    @CommandLine.Option(
+            names = {"--image-builder"},
+            defaultValue = "jib",
+            description = "The image builder used to build the container image (e.g. docker, jib, podman).")
     protected String imageBuilder = "jib";
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true",
-                        description = "Whether to push the container image to a given image registry.")
+    @CommandLine.Option(
+            names = {"--image-push"},
+            defaultValue = "true",
+            description = "Whether to push the container image to a given image registry.")
     protected boolean imagePush = true;
 
-    @CommandLine.Option(names = { "--image-platform" },
-                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    @CommandLine.Option(
+            names = {"--image-platform"},
+            description =
+                    "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
     protected String[] imagePlatforms;
 
-    @CommandLine.Option(names = { "--base-image" },
-                        description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>).")
+    @CommandLine.Option(
+            names = {"--base-image"},
+            description =
+                    "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>).")
     protected String baseImage;
 
-    @CommandLine.Option(names = { "--registry-mirror" },
-                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    @CommandLine.Option(
+            names = {"--registry-mirror"},
+            description =
+                    "Optional Docker registry mirror where to pull images from when building the container image.")
     protected String registryMirror;
 
-    @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
+    @CommandLine.Option(
+            names = {"--cluster-type"},
+            description =
+                    "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
     protected String clusterType;
 
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
@@ -244,8 +277,13 @@ public class KubernetesExport extends Export {
             addFile(Run.RUN_JAVA_SH);
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
-            printer().printf("Project export failed: %s - %s%n", e.getMessage(),
-                    Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("unknown reason"));
+            printer()
+                    .printf(
+                            "Project export failed: %s - %s%n",
+                            e.getMessage(),
+                            Optional.ofNullable(e.getCause())
+                                    .map(Throwable::getMessage)
+                                    .orElse("unknown reason"));
             return 1;
         }
 
@@ -291,15 +329,14 @@ public class KubernetesExport extends Export {
         var applicationProfileProperties = new String[0];
         if (this.profile != null) {
             // override from profile specific configuration
-            applicationProfileProperties
-                    = extractPropertiesTraits(exportBaseDir.resolve("application-" + profile + ".properties"));
+            applicationProfileProperties =
+                    extractPropertiesTraits(exportBaseDir.resolve("application-" + profile + ".properties"));
         } else {
             for (String f : files) {
                 String name = FileUtil.stripPath(f);
                 if ("application.properties".equals(name)) {
                     // load default properties configuration
-                    applicationProfileProperties
-                            = extractPropertiesTraits(exportBaseDir.resolve(f));
+                    applicationProfileProperties = extractPropertiesTraits(exportBaseDir.resolve(f));
                 }
             }
         }
@@ -318,8 +355,14 @@ public class KubernetesExport extends Export {
             // Remove OpenAPI spec option to avoid duplicate handling by parent export command
             openapi = null;
         }
-        TraitHelper.configureContainerImage(traitsSpec, image,
-                resolvedImageRegistry, resolvedImageGroup, projectName, getVersion(), buildProperties);
+        TraitHelper.configureContainerImage(
+                traitsSpec,
+                image,
+                resolvedImageRegistry,
+                resolvedImageGroup,
+                projectName,
+                getVersion(),
+                buildProperties);
         TraitHelper.configureEnvVars(traitsSpec, envVars);
         TraitHelper.configureConnects(traitsSpec, connects);
 
@@ -364,8 +407,8 @@ public class KubernetesExport extends Export {
         }
 
         if (imagePlatforms != null) {
-            buildProperties.add("jkube.container-image.platforms=%s".formatted(
-                    Arrays.stream(imagePlatforms).distinct().collect(Collectors.joining(","))));
+            buildProperties.add("jkube.container-image.platforms=%s"
+                    .formatted(Arrays.stream(imagePlatforms).distinct().collect(Collectors.joining(","))));
         }
 
         // Runtime specific for Main
@@ -378,12 +421,13 @@ public class KubernetesExport extends Export {
         var managementPort = httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
-        boolean cronJobEnabled = traitsSpec.getCronjob() != null && traitsSpec.getCronjob().getEnabled();
+        boolean cronJobEnabled =
+                traitsSpec.getCronjob() != null && traitsSpec.getCronjob().getEnabled();
         if (cronJobEnabled) {
             // set this property to allow the JVM to finish quickly once there are no more exchange messages
             // important for cronjobs so that the jvm can end quickly
-            addToApplicationProperties(
-                    "camel.main.duration-max-idle-seconds=" + traitsSpec.getCronjob().getDurationMaxIdleSeconds());
+            addToApplicationProperties("camel.main.duration-max-idle-seconds="
+                    + traitsSpec.getCronjob().getDurationMaxIdleSeconds());
         } else {
             setContainerHealthPaths(managementPort);
         }
@@ -401,13 +445,14 @@ public class KubernetesExport extends Export {
         new TraitCatalog().apply(traitsSpec, context, clusterType, runtime);
 
         // Dump each fragment to its respective kind
-        var kubeFragments = context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
+        var kubeFragments =
+                context.buildItems().stream().map(KubernetesHelper::toJsonMap).toList();
         for (var map : kubeFragments) {
             var ymlFragment = KubernetesHelper.dumpYaml(map);
             var kind = map.get("kind").toString().toLowerCase();
-            ExportHelper.safeCopy(new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
+            ExportHelper.safeCopy(
+                    new ByteArrayInputStream(ymlFragment.getBytes(StandardCharsets.UTF_8)),
                     Paths.get(exportDir, "src/main/jkube", kind + ".yml"));
-
         }
 
         context.doWithConfigurationResources((fileName, content) -> {
@@ -416,11 +461,14 @@ public class KubernetesExport extends Export {
                 if (Files.exists(targetPath)) {
                     Files.writeString(targetPath, "%n%s".formatted(content), StandardOpenOption.APPEND);
                 } else {
-                    ExportHelper.safeCopy(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), targetPath);
+                    ExportHelper.safeCopy(
+                            new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), targetPath);
                 }
             } catch (Exception e) {
-                printer().printf("Failed to create configuration resource %s - %s%n",
-                        exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
+                printer()
+                        .printf(
+                                "Failed to create configuration resource %s - %s%n",
+                                exportDir + SRC_MAIN_RESOURCES + fileName, e.getMessage());
             }
         });
 
@@ -445,7 +493,8 @@ public class KubernetesExport extends Export {
     protected Traits getTraitSpec(String[] applicationProfileProperties, String[] applicationProperties) {
 
         var annotationsTraits = TraitHelper.extractTraitsFromAnnotations(this.annotations);
-        var allTraits = TraitHelper.mergeTraits(traits, annotationsTraits, applicationProfileProperties, applicationProperties);
+        var allTraits =
+                TraitHelper.mergeTraits(traits, annotationsTraits, applicationProfileProperties, applicationProperties);
 
         Traits traitsSpec;
         if (allTraits.length > 0) {
@@ -516,7 +565,8 @@ public class KubernetesExport extends Export {
 
     private void setContainerHealthPaths(int port) {
         // the camel-observability-services artifact is added as dependency if observe=true in run command
-        // it renames the container health base path to /observe, so this has to be in the container health probes http path
+        // it renames the container health base path to /observe, so this has to be in the container health probes http
+        // path
         // only quarkus and sb runtimes, because there is no published health endpoints when using runtime=main
         String probePort = port > 0 ? "" + port : "9876";
         if (RuntimeType.quarkus == runtime) {
@@ -528,7 +578,8 @@ public class KubernetesExport extends Export {
             // addDependencies("org.springframework.boot:spring-boot-starter-actuator");
             // jkube reads spring-boot properties to set the kubernetes container health probes path
             // in this case, jkube reads from the application.properties and not from the build properties in pom.xml
-            addToApplicationProperties("management.endpoints.web.base-path=/observe",
+            addToApplicationProperties(
+                    "management.endpoints.web.base-path=/observe",
                     "management.server.port=" + probePort,
                     // jkube uses the old property to enable the readiness/liveness probes
                     // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
@@ -613,7 +664,8 @@ public class KubernetesExport extends Export {
     /**
      * Configurer used to customize internal options for the Export command.
      */
-    public record ExportConfigurer(RuntimeType runtime,
+    public record ExportConfigurer(
+            RuntimeType runtime,
             Path exportBaseDir,
             String quarkusVersion,
             List<String> files,
@@ -652,6 +704,5 @@ public class KubernetesExport extends Export {
             boolean logging,
             String loggingLevel,
             boolean verbose,
-            boolean skipPlugins) {
-    }
+            boolean skipPlugins) {}
 }

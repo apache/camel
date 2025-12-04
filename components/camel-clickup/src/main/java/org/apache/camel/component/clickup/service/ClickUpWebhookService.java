@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.service;
 
 import java.io.IOException;
@@ -60,7 +61,9 @@ public class ClickUpWebhookService {
                 throw new RuntimeException("Cannot find the matching webhook.", e);
             }
 
-            LOG.info("Found webhook {} with the same configuration, reusing it", matchingWebhook.get().getId());
+            LOG.info(
+                    "Found webhook {} with the same configuration, reusing it",
+                    matchingWebhook.get().getId());
 
             return matchingWebhook.get();
         }
@@ -105,5 +108,4 @@ public class ClickUpWebhookService {
 
         LOG.debug("The message signature {} matches {}.", signature, calculatedSignature);
     }
-
 }

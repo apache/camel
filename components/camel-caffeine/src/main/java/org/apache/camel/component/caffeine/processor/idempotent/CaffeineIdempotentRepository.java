@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.processor.idempotent;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -26,9 +27,10 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses Caffiene cache to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses Caffiene cache to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Caffeine based message id repository")
 public class CaffeineIdempotentRepository extends ServiceSupport implements IdempotentRepository {

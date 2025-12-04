@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -37,11 +43,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * This test cannot run in parallel: it reuses the same path for different test iterations
  */
@@ -51,6 +52,7 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -74,7 +76,7 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "message1.xml", "message1.txt" })
+    @ValueSource(strings = {"message1.xml", "message1.txt"})
     @DisplayName("Tests stream type with both a small (message1.xml) and a large file (message1.txt)")
     public void testStreamType(String filename) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -87,18 +89,22 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Object body = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody();
+        Object body = getMockEndpoint("mock:result")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody();
         InputStream is = assertIsInstanceOf(InputStream.class, body);
         assertNotNull(is);
 
         // assert on the content of input versus output file
-        String srcContent = context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/", filename));
+        String srcContent =
+                context.getTypeConverter().mandatoryConvertTo(String.class, new File("src/test/data/", filename));
 
         String targetName = FileUtil.stripPath(new File("target/stream/JmsStreamMessageTypeTest/out/").list()[0]);
 
-        String dstContent
-                = context.getTypeConverter().mandatoryConvertTo(String.class,
-                        new File("target/stream/JmsStreamMessageTypeTest/out/", targetName));
+        String dstContent = context.getTypeConverter()
+                .mandatoryConvertTo(String.class, new File("target/stream/JmsStreamMessageTypeTest/out/", targetName));
         assertEquals(srcContent, dstContent, "both the source and destination files should have the same content");
     }
 
@@ -109,7 +115,8 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
             public void configure() {
                 from("file:target/stream/JmsStreamMessageTypeTest/in").to("jms:queue:JmsStreamMessageTypeTest");
 
-                from("jms:queue:JmsStreamMessageTypeTest").to("file:target/stream/JmsStreamMessageTypeTest/out")
+                from("jms:queue:JmsStreamMessageTypeTest")
+                        .to("file:target/stream/JmsStreamMessageTypeTest/out")
                         .to("mock:result");
             }
         };

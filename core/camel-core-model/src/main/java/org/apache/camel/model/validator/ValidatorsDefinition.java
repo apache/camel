@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.validator;
 
 import java.util.List;
@@ -36,13 +37,13 @@ import org.apache.camel.spi.Metadata;
 public class ValidatorsDefinition {
 
     @XmlElements({
-            @XmlElement(name = "endpointValidator", type = EndpointValidatorDefinition.class),
-            @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
-            @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class) })
+        @XmlElement(name = "endpointValidator", type = EndpointValidatorDefinition.class),
+        @XmlElement(name = "predicateValidator", type = PredicateValidatorDefinition.class),
+        @XmlElement(name = "customValidator", type = CustomValidatorDefinition.class)
+    })
     private List<ValidatorDefinition> validators;
 
-    public ValidatorsDefinition() {
-    }
+    public ValidatorsDefinition() {}
 
     protected ValidatorsDefinition(ValidatorsDefinition source) {
         this.validators = ProcessorDefinitionHelper.deepCopyDefinitions(source.validators);
@@ -58,5 +59,4 @@ public class ValidatorsDefinition {
     public List<ValidatorDefinition> getValidators() {
         return validators;
     }
-
 }

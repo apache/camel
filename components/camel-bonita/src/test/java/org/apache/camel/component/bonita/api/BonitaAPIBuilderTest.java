@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 public class BonitaAPIBuilderTest {
 
     @Test
     public void testNullBuilderInput() {
-        assertThrows(IllegalArgumentException.class,
-                () -> BonitaAPIBuilder.build(null));
+        assertThrows(IllegalArgumentException.class, () -> BonitaAPIBuilder.build(null));
     }
 }

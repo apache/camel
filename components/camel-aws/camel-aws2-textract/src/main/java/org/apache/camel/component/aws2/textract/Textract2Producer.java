@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.textract;
 
 import java.util.List;
@@ -86,7 +87,8 @@ public class Textract2Producer extends DefaultProducer {
     }
 
     private Textract2Operations determineOperation(Exchange exchange) {
-        Textract2Operations operation = exchange.getIn().getHeader(Textract2Constants.OPERATION, Textract2Operations.class);
+        Textract2Operations operation =
+                exchange.getIn().getHeader(Textract2Constants.OPERATION, Textract2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -100,7 +102,8 @@ public class Textract2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (textractProducerToString == null) {
-            textractProducerToString = "TextractProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            textractProducerToString =
+                    "TextractProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return textractProducerToString;
     }
@@ -118,7 +121,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.detectDocumentText((DetectDocumentTextRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Document Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Detect Document Text command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -133,7 +138,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.detectDocumentText(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Document Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Detect Document Text command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -149,7 +156,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.analyzeDocument((AnalyzeDocumentRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Analyze Document command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Analyze Document command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -173,7 +182,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.analyzeDocument(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Analyze Document command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Analyze Document command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -189,7 +200,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.analyzeExpense((AnalyzeExpenseRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Analyze Expense command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Analyze Expense command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -204,7 +217,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.analyzeExpense(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Analyze Expense command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Analyze Expense command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -212,7 +227,8 @@ public class Textract2Producer extends DefaultProducer {
         }
     }
 
-    private void startDocumentTextDetection(TextractClient textractClient, Exchange exchange) throws InvalidPayloadException {
+    private void startDocumentTextDetection(TextractClient textractClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof StartDocumentTextDetectionRequest) {
@@ -220,7 +236,8 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.startDocumentTextDetection((StartDocumentTextDetectionRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Document Text Detection command returned the error code {}",
+                    LOG.trace(
+                            "Start Document Text Detection command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
@@ -236,7 +253,8 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.startDocumentTextDetection(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Document Text Detection command returned the error code {}",
+                LOG.trace(
+                        "Start Document Text Detection command returned the error code {}",
                         ase.awsErrorDetails().errorCode());
                 throw ase;
             }
@@ -245,7 +263,8 @@ public class Textract2Producer extends DefaultProducer {
         }
     }
 
-    private void startDocumentAnalysis(TextractClient textractClient, Exchange exchange) throws InvalidPayloadException {
+    private void startDocumentAnalysis(TextractClient textractClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof StartDocumentAnalysisRequest) {
@@ -253,7 +272,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.startDocumentAnalysis((StartDocumentAnalysisRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Start Document Analysis command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -276,7 +297,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.startDocumentAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Start Document Analysis command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -292,7 +315,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.startExpenseAnalysis((StartExpenseAnalysisRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Start Expense Analysis command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -307,7 +332,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.startExpenseAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Start Expense Analysis command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -315,7 +342,8 @@ public class Textract2Producer extends DefaultProducer {
         }
     }
 
-    private void getDocumentTextDetection(TextractClient textractClient, Exchange exchange) throws InvalidPayloadException {
+    private void getDocumentTextDetection(TextractClient textractClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetDocumentTextDetectionRequest) {
@@ -323,7 +351,8 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.getDocumentTextDetection((GetDocumentTextDetectionRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Document Text Detection command returned the error code {}",
+                    LOG.trace(
+                            "Get Document Text Detection command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
@@ -356,7 +385,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.getDocumentTextDetection(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Document Text Detection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Document Text Detection command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -372,7 +403,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.getDocumentAnalysis((GetDocumentAnalysisRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Document Analysis command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -404,7 +437,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.getDocumentAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Document Analysis command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -420,7 +455,9 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.getExpenseAnalysis((GetExpenseAnalysisRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Expense Analysis command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -452,7 +489,9 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.getExpenseAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Get Expense Analysis command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -473,9 +512,8 @@ public class Textract2Producer extends DefaultProducer {
         }
 
         if (ObjectHelper.isNotEmpty(s3Bucket) && ObjectHelper.isNotEmpty(s3Object)) {
-            S3Object.Builder s3ObjectBuilder = S3Object.builder()
-                    .bucket(s3Bucket)
-                    .name(s3Object);
+            S3Object.Builder s3ObjectBuilder =
+                    S3Object.builder().bucket(s3Bucket).name(s3Object);
 
             String s3ObjectVersion = getConfiguration().getS3ObjectVersion();
             if (ObjectHelper.isEmpty(s3ObjectVersion)) {
@@ -485,9 +523,7 @@ public class Textract2Producer extends DefaultProducer {
                 s3ObjectBuilder.version(s3ObjectVersion);
             }
 
-            return Document.builder()
-                    .s3Object(s3ObjectBuilder.build())
-                    .build();
+            return Document.builder().s3Object(s3ObjectBuilder.build()).build();
         } else {
             // Use bytes from message body
             byte[] documentBytes = exchange.getIn().getMandatoryBody(byte[].class);
@@ -512,9 +548,7 @@ public class Textract2Producer extends DefaultProducer {
             throw new IllegalArgumentException("S3 bucket and object must be specified for async operations");
         }
 
-        S3Object.Builder s3ObjectBuilder = S3Object.builder()
-                .bucket(s3Bucket)
-                .name(s3Object);
+        S3Object.Builder s3ObjectBuilder = S3Object.builder().bucket(s3Bucket).name(s3Object);
 
         String s3ObjectVersion = getConfiguration().getS3ObjectVersion();
         if (ObjectHelper.isEmpty(s3ObjectVersion)) {
@@ -524,9 +558,7 @@ public class Textract2Producer extends DefaultProducer {
             s3ObjectBuilder.version(s3ObjectVersion);
         }
 
-        return DocumentLocation.builder()
-                .s3Object(s3ObjectBuilder.build())
-                .build();
+        return DocumentLocation.builder().s3Object(s3ObjectBuilder.build()).build();
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
@@ -537,9 +569,7 @@ public class Textract2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();

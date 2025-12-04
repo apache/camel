@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.mosquitto.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -28,10 +29,12 @@ import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-@InfraService(service = MosquittoInfraService.class,
-              description = "Mosquitto is a message broker that implements MQTT protocol",
-              serviceAlias = { "mosquitto" })
-public class MosquittoLocalContainerInfraService implements MosquittoInfraService, ContainerService<GenericContainer<?>> {
+@InfraService(
+        service = MosquittoInfraService.class,
+        description = "Mosquitto is a message broker that implements MQTT protocol",
+        serviceAlias = {"mosquitto"})
+public class MosquittoLocalContainerInfraService
+        implements MosquittoInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "mosquitto";
     public static final int CONTAINER_PORT = 1883;
 
@@ -40,14 +43,13 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
     private final GenericContainer<?> container;
 
     public MosquittoLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(MosquittoLocalContainerInfraService.class,
-                MosquittoProperties.MOSQUITTO_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                MosquittoLocalContainerInfraService.class, MosquittoProperties.MOSQUITTO_CONTAINER));
     }
 
     public MosquittoLocalContainerInfraService(int port) {
         String imageName = LocalPropertyResolver.getProperty(
-                MosquittoLocalContainerInfraService.class,
-                MosquittoProperties.MOSQUITTO_CONTAINER);
+                MosquittoLocalContainerInfraService.class, MosquittoProperties.MOSQUITTO_CONTAINER);
 
         container = initContainer(imageName, port);
     }

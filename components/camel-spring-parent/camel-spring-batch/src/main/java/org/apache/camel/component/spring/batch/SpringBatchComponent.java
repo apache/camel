@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch;
 
 import java.util.Map;
@@ -30,16 +31,15 @@ public class SpringBatchComponent extends DefaultComponent {
 
     @Metadata(autowired = true)
     private JobLauncher jobLauncher;
+
     @Metadata(autowired = true)
     private JobRegistry jobRegistry;
 
-    public SpringBatchComponent() {
-    }
+    public SpringBatchComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(
-                uri, this, jobLauncher, remaining, jobRegistry);
+        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, remaining, jobRegistry);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -48,7 +48,8 @@ public class SpringBatchComponent extends DefaultComponent {
     protected void doInit() throws Exception {
         super.doInit();
         if (jobLauncher == null) {
-            jobLauncher = getCamelContext().getRegistry()
+            jobLauncher = getCamelContext()
+                    .getRegistry()
                     .lookupByNameAndType(SpringBatchConstants.DEFAULT_JOB_LAUNCHER_REF_NAME, JobLauncher.class);
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos;
 
 import com.ibm.cloud.objectstorage.services.s3.AmazonS3;
@@ -29,51 +30,74 @@ import org.apache.camel.spi.UriParams;
 public class IBMCOSConfiguration implements Cloneable {
 
     private String bucketName;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private AmazonS3 cosClient;
+
     @UriParam(label = "security", secret = true)
     private String apiKey;
+
     @UriParam(label = "security", secret = true)
     private String serviceInstanceId;
+
     @UriParam
     private String endpointUrl;
+
     @UriParam
     private String location;
+
     @UriParam(label = "consumer")
     private String fileName;
+
     @UriParam
     private String prefix;
+
     @UriParam
     private String delimiter;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+
     @UriParam(label = "consumer")
     private boolean moveAfterRead;
+
     @UriParam(label = "consumer")
     private String destinationBucket;
+
     @UriParam(label = "consumer")
     private String destinationBucketPrefix;
+
     @UriParam(label = "consumer")
     private String destinationBucketSuffix;
+
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
+
     @UriParam(label = "producer")
     private boolean multiPartUpload;
+
     @UriParam(label = "producer", defaultValue = "" + 25 * 1024 * 1024)
     private long partSize = 25L * 1024 * 1024;
+
     @UriParam(label = "producer")
     private String storageClass;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+
     @UriParam(label = "producer")
     private IBMCOSOperations operation;
+
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean autocloseBody = true;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean autoCreateBucket;
+
     @UriParam(label = "producer")
     private String keyName;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeFolders = true;
 

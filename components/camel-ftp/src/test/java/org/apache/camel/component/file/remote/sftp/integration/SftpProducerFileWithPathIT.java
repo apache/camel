@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -23,15 +27,14 @@ import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpProducerFileWithPathIT extends SftpServerTestSupport {
 
     private String getFtpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}?password=admin&knownHostsFile="
-               + service.getKnownHostsFile();
+                + service.getKnownHostsFile();
     }
 
     @Test
@@ -59,8 +62,8 @@ public class SftpProducerFileWithPathIT extends SftpServerTestSupport {
 
     @Test
     public void testProducerFileWithPathExistDirCheckUsingLs() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME,
-                "bye/andrea.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME, "bye/andrea.txt");
 
         File file = ftpFile("bye/andrea.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
@@ -69,10 +72,10 @@ public class SftpProducerFileWithPathIT extends SftpServerTestSupport {
 
     @Test
     public void testProducerFileWithPathExistDirCheckUsingLsTwice() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME,
-                "bye/andrea.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&existDirCheckUsingLs=false", "Bye Again World", Exchange.FILE_NAME,
-                "bye/claus.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&existDirCheckUsingLs=false", "Bye World", Exchange.FILE_NAME, "bye/andrea.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&existDirCheckUsingLs=false", "Bye Again World", Exchange.FILE_NAME, "bye/claus.txt");
 
         File file = ftpFile("bye/andrea.txt").toFile();
         assertTrue(file.exists(), "The uploaded file should exists");
@@ -82,5 +85,4 @@ public class SftpProducerFileWithPathIT extends SftpServerTestSupport {
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Bye Again World", IOConverter.toString(file, null));
     }
-
 }

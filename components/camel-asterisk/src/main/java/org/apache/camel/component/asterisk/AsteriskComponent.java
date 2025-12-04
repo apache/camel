@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
 
 import java.util.Map;
@@ -29,8 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("asterisk")
 public class AsteriskComponent extends DefaultComponent {
 
-    public AsteriskComponent() {
-    }
+    public AsteriskComponent() {}
 
     public AsteriskComponent(CamelContext context) {
         super(context);

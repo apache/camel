@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import org.apache.camel.Message;
@@ -33,16 +34,22 @@ public final class ConsulHealthProducer extends AbstractConsulProducer<HealthCli
 
     @InvokeOnHeader(ConsulHealthActions.NODE_CHECKS)
     protected void nodeChecks(Message message) throws Exception {
-        processConsulResponse(message,
-                getClient().getNodeChecks(getMandatoryHeader(message, ConsulConstants.CONSUL_NODE, String.class),
-                        buildQueryOptions(message, getConfiguration())));
+        processConsulResponse(
+                message,
+                getClient()
+                        .getNodeChecks(
+                                getMandatoryHeader(message, ConsulConstants.CONSUL_NODE, String.class),
+                                buildQueryOptions(message, getConfiguration())));
     }
 
     @InvokeOnHeader(ConsulHealthActions.SERVICE_CHECKS)
     protected void serviceChecks(Message message) throws Exception {
-        processConsulResponse(message,
-                getClient().getServiceChecks(getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
-                        buildQueryOptions(message, getConfiguration())));
+        processConsulResponse(
+                message,
+                getClient()
+                        .getServiceChecks(
+                                getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
+                                buildQueryOptions(message, getConfiguration())));
     }
 
     @InvokeOnHeader(ConsulHealthActions.SERVICE_INSTANCES)
@@ -50,22 +57,29 @@ public final class ConsulHealthProducer extends AbstractConsulProducer<HealthCli
         boolean healthyOnly = message.getHeader(ConsulConstants.CONSUL_HEALTHY_ONLY, false, boolean.class);
 
         if (healthyOnly) {
-            processConsulResponse(message,
-                    getClient().getHealthyServiceInstances(
-                            getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
-                            buildQueryOptions(message, getConfiguration())));
+            processConsulResponse(
+                    message,
+                    getClient()
+                            .getHealthyServiceInstances(
+                                    getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
+                                    buildQueryOptions(message, getConfiguration())));
         } else {
-            processConsulResponse(message,
-                    getClient().getAllServiceInstances(
-                            getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
-                            buildQueryOptions(message, getConfiguration())));
+            processConsulResponse(
+                    message,
+                    getClient()
+                            .getAllServiceInstances(
+                                    getMandatoryHeader(message, ConsulConstants.CONSUL_SERVICE, String.class),
+                                    buildQueryOptions(message, getConfiguration())));
         }
     }
 
     @InvokeOnHeader(ConsulHealthActions.CHECKS)
     protected void checks(Message message) throws Exception {
-        processConsulResponse(message,
-                getClient().getChecksByState(getMandatoryHeader(message, ConsulConstants.CONSUL_HEALTHY_STATE, State.class),
-                        buildQueryOptions(message, getConfiguration())));
+        processConsulResponse(
+                message,
+                getClient()
+                        .getChecksByState(
+                                getMandatoryHeader(message, ConsulConstants.CONSUL_HEALTHY_STATE, State.class),
+                                buildQueryOptions(message, getConfiguration())));
     }
 }

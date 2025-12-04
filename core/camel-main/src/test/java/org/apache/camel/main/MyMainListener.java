@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
@@ -22,8 +23,8 @@ public class MyMainListener extends MainListenerSupport {
 
     @Override
     public void beforeConfigure(BaseMainSupport main) {
-        main.getCamelContext().getPropertiesComponent().setOverrideProperties(propertiesOf(
-                "camel.context.name", "my-special-override"));
+        main.getCamelContext()
+                .getPropertiesComponent()
+                .setOverrideProperties(propertiesOf("camel.context.name", "my-special-override"));
     }
-
 }

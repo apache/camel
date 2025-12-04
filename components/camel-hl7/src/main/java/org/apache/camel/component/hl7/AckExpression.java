@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
@@ -71,9 +72,7 @@ public class AckExpression extends ExpressionAdapter {
             if (t instanceof HL7Exception) {
                 hl7Exception = (HL7Exception) t;
             } else {
-                hl7Exception = new HL7Exception(
-                        errorMessage != null ? errorMessage : t.getMessage(),
-                        errorCode, t);
+                hl7Exception = new HL7Exception(errorMessage != null ? errorMessage : t.getMessage(), errorCode, t);
             }
         }
         return hl7Exception;
@@ -82,5 +81,4 @@ public class AckExpression extends ExpressionAdapter {
     private boolean isSuccess(AcknowledgmentCode code) {
         return code.name().endsWith("A");
     }
-
 }

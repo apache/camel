@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +31,4 @@ import org.apache.camel.util.function.ThrowingConsumer;
  * @see EndpointRouteBuilder#addEndpointRoutes(CamelContext, LambdaEndpointRouteBuilder)
  */
 @FunctionalInterface
-public interface LambdaEndpointRouteBuilder extends ThrowingConsumer<EndpointRouteBuilder, Exception> {
-
-}
+public interface LambdaEndpointRouteBuilder extends ThrowingConsumer<EndpointRouteBuilder, Exception> {}

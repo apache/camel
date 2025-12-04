@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import org.apache.camel.spi.Metadata;
@@ -25,13 +26,15 @@ public interface BedrockAgentRuntimeConstants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsBedrockAgentRuntimeOperation";
 
-    @Metadata(description = "When retrieving and generating a response, this header will contain the citations",
-              javaType = "String")
+    @Metadata(
+            description = "When retrieving and generating a response, this header will contain the citations",
+            javaType = "String")
     String CITATIONS = "CamelAwsBedrockAgentRuntimeCitations";
 
-    @Metadata(description = "When retrieving and generating a response, this header will contain he unique identifier of the session. "
-                            +
-                            "Reuse the same value to continue the same session with the knowledge base.",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "When retrieving and generating a response, this header will contain he unique identifier of the session. "
+                            + "Reuse the same value to continue the same session with the knowledge base.",
+            javaType = "String")
     String SESSION_ID = "CamelAwsBedrockAgentRuntimeSessionId";
 }

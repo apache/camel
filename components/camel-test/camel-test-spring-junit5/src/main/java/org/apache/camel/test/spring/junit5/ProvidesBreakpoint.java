@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.lang.annotation.Documented;
@@ -31,6 +32,5 @@ import org.apache.camel.spi.Breakpoint;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-public @interface ProvidesBreakpoint {
-}
+@Target({ElementType.METHOD})
+public @interface ProvidesBreakpoint {}

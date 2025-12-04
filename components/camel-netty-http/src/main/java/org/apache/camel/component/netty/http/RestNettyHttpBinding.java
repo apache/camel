@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
 
 import java.net.URI;
 import java.util.Map;
@@ -24,15 +27,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
-import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
-
 /**
  * A {@link org.apache.camel.component.netty.http.NettyHttpBinding} that supports the Rest DSL.
  */
 public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
 
-    public RestNettyHttpBinding() {
-    }
+    public RestNettyHttpBinding() {}
 
     public RestNettyHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
         super(headerFilterStrategy);

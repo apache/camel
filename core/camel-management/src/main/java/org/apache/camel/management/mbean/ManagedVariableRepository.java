@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Map;
@@ -72,9 +73,11 @@ public class ManagedVariableRepository extends ManagedService implements Managed
             final TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.camelVariablesTabularType());
             final CompositeType type = CamelOpenMBeanTypes.camelVariablesCompositeType();
 
-            for (Map.Entry<String, Object> entry : variableRepository.getVariables().entrySet()) {
+            for (Map.Entry<String, Object> entry :
+                    variableRepository.getVariables().entrySet()) {
                 String key = entry.getKey();
-                String className = entry.getValue() != null ? entry.getValue().getClass().getName() : "";
+                String className =
+                        entry.getValue() != null ? entry.getValue().getClass().getName() : "";
                 String value = entry.getValue() != null ? entry.getValue().toString() : "";
                 if (value.length() > 1000) {
                     value = value.substring(0, 1000) + "...";
@@ -83,17 +86,9 @@ public class ManagedVariableRepository extends ManagedService implements Managed
                 CompositeData data = new CompositeDataSupport(
                         type,
                         new String[] {
-                                "id",
-                                "key",
-                                "className",
-                                "value",
+                            "id", "key", "className", "value",
                         },
-                        new Object[] {
-                                getId(),
-                                key,
-                                className,
-                                value
-                        });
+                        new Object[] {getId(), key, className, value});
                 answer.put(data);
             }
 
@@ -102,5 +97,4 @@ public class ManagedVariableRepository extends ManagedService implements Managed
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

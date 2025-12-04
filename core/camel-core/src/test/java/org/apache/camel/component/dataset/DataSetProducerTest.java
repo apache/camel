@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataSetProducerTest extends ContextTestSupport {
 
@@ -73,8 +74,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == i % 2) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(),
-                        Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(
+                        dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
             }
@@ -84,13 +85,14 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToLenient()
-            throws Exception {
+    public void
+            testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToLenient()
+                    throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == i % 2) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(),
-                        Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(
+                        dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
             }
@@ -100,12 +102,13 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToStrict()
-            throws Exception {
+    public void
+            testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToStrict()
+                    throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
-            template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToStrict, dataSet.getDefaultBody(), Exchange.DATASET_INDEX,
-                    i);
+            template.sendBodyAndHeader(
+                    dataSetUriWithDataSetIndexSetToStrict, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
         }
 
         assertMockEndpointsSatisfied();
@@ -136,8 +139,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == (size % 2)) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody(), Exchange.DATASET_INDEX,
-                        size - i);
+                template.sendBodyAndHeader(
+                        dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, size - i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody());
             }
@@ -154,8 +157,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == (size % 2)) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(),
-                        Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(
+                        dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
             }
@@ -176,9 +179,10 @@ public class DataSetProducerTest extends ContextTestSupport {
 
         // Check as much of the string as possible - but the ExchangeID at
         // the end will be unique
-        String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to:" + " No '"
-                                     + Exchange.DATASET_INDEX
-                                     + "' header available of type: java.lang.Long";
+        String expectedErrorString =
+                "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to:" + " No '"
+                        + Exchange.DATASET_INDEX
+                        + "' header available of type: java.lang.Long";
         List<Endpoint> endpoints = context.getEndpoints().stream()
                 .filter(e -> e.getEndpointUri().startsWith(dataSetUriWithDataSetIndexSetToStrict))
                 .toList();
@@ -312,9 +316,10 @@ public class DataSetProducerTest extends ContextTestSupport {
 
         // Check as much of the string as possible - but the ExchangeID at
         // the end will be unique
-        String expectedErrorString = "Caught exception on " + dataSetUri + " due to: " + "Header: " + Exchange.DATASET_INDEX
-                                     + " does not match. Expected: " + size / 2
-                                     + " but was: " + (size / 2 + 10);
+        String expectedErrorString =
+                "Caught exception on " + dataSetUri + " due to: " + "Header: " + Exchange.DATASET_INDEX
+                        + " does not match. Expected: " + size / 2
+                        + " but was: " + (size / 2 + 10);
         List<Endpoint> endpoints = context.getEndpoints().stream()
                 .filter(e -> e.getEndpointUri().startsWith(dataSetUri))
                 .toList();
@@ -377,8 +382,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         // Check as much of the string as possible - but the ExchangeID at
         // the end will be unique
         String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToLenient + " due to: "
-                                     + "Header: " + Exchange.DATASET_INDEX
-                                     + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10);
+                + "Header: " + Exchange.DATASET_INDEX
+                + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10);
         List<Endpoint> endpoints = context.getEndpoints().stream()
                 .filter(e -> e.getEndpointUri().startsWith(dataSetUriWithDataSetIndexSetToLenient))
                 .toList();
@@ -415,8 +420,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         // Check as much of the string as possible - but the ExchangeID at
         // the end will be unique
         String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to: "
-                                     + "Header: " + Exchange.DATASET_INDEX
-                                     + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10);
+                + "Header: " + Exchange.DATASET_INDEX
+                + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10);
         List<Endpoint> endpoints = context.getEndpoints().stream()
                 .filter(e -> e.getEndpointUri().startsWith(dataSetUriWithDataSetIndexSetToStrict))
                 .toList();

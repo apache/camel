@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,7 +40,9 @@ public class PollDynamicFileNameTest extends ContextTestSupport {
 
         // there should only be 1 file endpoint
         long c = context.getEndpoints().stream()
-                .filter(e -> e.getEndpointKey().startsWith("file") && e.getEndpointUri().contains("?fileName=")).count();
+                .filter(e -> e.getEndpointKey().startsWith("file")
+                        && e.getEndpointUri().contains("?fileName="))
+                .count();
         Assertions.assertEquals(1, c, "There should only be 1 file endpoint");
     }
 
@@ -57,7 +60,9 @@ public class PollDynamicFileNameTest extends ContextTestSupport {
 
         // there should only be 1 file endpoint
         long c = context.getEndpoints().stream()
-                .filter(e -> e.getEndpointKey().startsWith("file") && e.getEndpointUri().contains("?fileName=")).count();
+                .filter(e -> e.getEndpointKey().startsWith("file")
+                        && e.getEndpointUri().contains("?fileName="))
+                .count();
         Assertions.assertEquals(1, c, "There should only be 1 file endpoint");
     }
 

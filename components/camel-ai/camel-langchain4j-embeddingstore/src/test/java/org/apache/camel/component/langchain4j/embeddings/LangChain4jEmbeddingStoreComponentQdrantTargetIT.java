@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +53,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestSupport {
@@ -69,10 +70,16 @@ public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestS
         CamelContext context = super.createCamelContext();
 
         // Need to create the Qdrant collection before we attempt to add/search/remove from it
-        QdrantClient client
-                = new QdrantClient(QdrantGrpcClient.newBuilder(QDRANT.getGrpcHost(), QDRANT.getGrpcPort(), false).build());
-        client.createCollectionAsync(COLLECTION_NAME,
-                Collections.VectorParams.newBuilder().setDistance(distance).setSize(dimension).build()).get();
+        QdrantClient client =
+                new QdrantClient(QdrantGrpcClient.newBuilder(QDRANT.getGrpcHost(), QDRANT.getGrpcPort(), false)
+                        .build());
+        client.createCollectionAsync(
+                        COLLECTION_NAME,
+                        Collections.VectorParams.newBuilder()
+                                .setDistance(distance)
+                                .setSize(dimension)
+                                .build())
+                .get();
 
         EmbeddingStore<TextSegment> embeddingStore = QdrantEmbeddingStore.builder()
                 .host(QDRANT.getGrpcHost())
@@ -98,7 +105,8 @@ public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestS
         TextSegment segment1 = TextSegment.from("I like football.");
         Embedding embedding = embeddingModel.embed(segment1).content();
 
-        Exchange result = fluentTemplate.to("direct:add")
+        Exchange result = fluentTemplate
+                .to("direct:add")
                 .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.ADD)
                 .withBody(embedding) // ignored
                 .withHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, embedding)
@@ -121,7 +129,8 @@ public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestS
         Embedding embedding = embeddingModel.embed(segment1).content();
 
         Filter filter = metadataKey("sky").isEqualTo("blue");
-        Exchange result = fluentTemplate.to("direct:search")
+        Exchange result = fluentTemplate
+                .to("direct:search")
                 .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.SEARCH)
                 .withHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, embedding)
                 .withHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, segment1)
@@ -130,7 +139,8 @@ public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestS
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        List<EmbeddingMatch<TextSegment>> embeddingMatches = (List) result.getIn().getBody();
+        List<EmbeddingMatch<TextSegment>> embeddingMatches =
+                (List) result.getIn().getBody();
         assertThat(embeddingMatches).isNotNull();
         assertTrue(embeddingMatches.size() > 0);
         for (EmbeddingMatch<TextSegment> em : embeddingMatches) {
@@ -143,7 +153,8 @@ public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestS
     @Test
     @Order(3)
     public void remove() {
-        Exchange result = fluentTemplate.to("direct:remove")
+        Exchange result = fluentTemplate
+                .to("direct:remove")
                 .withHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.REMOVE)
                 .withBody(CREATEID)
                 .request(Exchange.class);
@@ -158,17 +169,22 @@ public class LangChain4jEmbeddingStoreComponentQdrantTargetIT extends CamelTestS
             public void configure() {
                 from("direct:add")
                         .to("langchain4j-embeddingstore:test")
-                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION).constant(LangChain4jEmbeddingStoreAction.ADD)
+                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION)
+                        .constant(LangChain4jEmbeddingStoreAction.ADD)
                         .to(QDRANT_URI);
 
                 from("direct:search")
                         .to("langchain4j-embeddingstore:test")
-                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION, constant(LangChain4jEmbeddingStoreAction.SEARCH))
+                        .setHeader(
+                                LangChain4jEmbeddingStoreHeaders.ACTION,
+                                constant(LangChain4jEmbeddingStoreAction.SEARCH))
                         .to(QDRANT_URI);
 
                 from("direct:remove")
                         .to("langchain4j-embeddingstore:test")
-                        .setHeader(LangChain4jEmbeddingStoreHeaders.ACTION, constant(LangChain4jEmbeddingStoreAction.REMOVE))
+                        .setHeader(
+                                LangChain4jEmbeddingStoreHeaders.ACTION,
+                                constant(LangChain4jEmbeddingStoreAction.REMOVE))
                         .to(QDRANT_URI);
             }
         };

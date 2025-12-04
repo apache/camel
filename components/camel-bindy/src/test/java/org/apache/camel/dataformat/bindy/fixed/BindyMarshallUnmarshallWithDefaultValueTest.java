@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -29,14 +32,13 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSupport {
 
     @Test
     public void testUnMarshallMessage() {
         MockEndpoint mock = getMockEndpoint("mock:resultUnmarshal");
-        template.sendBody("direct:unmarshal", "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     ");
+        template.sendBody(
+                "direct:unmarshal", "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     ");
 
         // check the model
         Order order = mock.getReceivedExchanges().get(0).getIn().getBody(Order.class);
@@ -50,7 +52,8 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
     @Test
     public void testUnMarshallMessageWithEol() {
         MockEndpoint mock = getMockEndpoint("mock:resultUnmarshalEol");
-        template.sendBody("direct:unmarshaleol",
+        template.sendBody(
+                "direct:unmarshaleol",
                 "10A9              ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     QWERTY");
 
         // check the model
@@ -88,23 +91,26 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
             @Override
             public void configure() {
                 from("direct:marshal")
-                        .marshal().bindy(BindyType.Fixed, Order.class)
+                        .marshal()
+                        .bindy(BindyType.Fixed, Order.class)
                         .to("mock:resultMarshal");
 
                 from("direct:marshaleol")
-                        .marshal().bindy(BindyType.Fixed, OrderEol.class)
+                        .marshal()
+                        .bindy(BindyType.Fixed, OrderEol.class)
                         .to("mock:resultMarshalEol");
 
                 from("direct:unmarshaleol")
-                        .unmarshal().bindy(BindyType.Fixed, OrderEol.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, OrderEol.class)
                         .to("mock:resultUnmarshalEol");
 
                 from("direct:unmarshal")
-                        .unmarshal().bindy(BindyType.Fixed, Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, Order.class)
                         .to("mock:resultUnmarshal");
             }
         };
-
     }
 
     private Order createOrder() {
@@ -281,10 +287,11 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
 
@@ -426,11 +433,11 @@ public class BindyMarshallUnmarshallWithDefaultValueTest extends CamelTestSuppor
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

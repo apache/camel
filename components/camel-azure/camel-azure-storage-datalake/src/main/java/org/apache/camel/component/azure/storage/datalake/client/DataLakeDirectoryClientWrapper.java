@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.client;
 
 import java.time.Duration;
@@ -36,10 +37,15 @@ public class DataLakeDirectoryClientWrapper {
     }
 
     public Response<DataLakeFileClient> createFileWithResponse(
-            final String fileName, final String permission, final String umask, final PathHttpHeaders headers,
-            final Map<String, String> metadata, final DataLakeRequestConditions requestConditions, final Duration timeout) {
-        return client.createFileWithResponse(fileName, permission, umask, headers, metadata, requestConditions, timeout,
-                Context.NONE);
+            final String fileName,
+            final String permission,
+            final String umask,
+            final PathHttpHeaders headers,
+            final Map<String, String> metadata,
+            final DataLakeRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.createFileWithResponse(
+                fileName, permission, umask, headers, metadata, requestConditions, timeout, Context.NONE);
     }
 
     public Response<Void> deleteWithResponse(

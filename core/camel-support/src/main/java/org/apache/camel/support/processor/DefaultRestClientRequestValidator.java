@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
+
+import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 import java.util.Arrays;
 
@@ -25,8 +28,6 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
-
-import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 public class DefaultRestClientRequestValidator implements RestClientRequestValidator {
 
@@ -100,5 +101,4 @@ public class DefaultRestClientRequestValidator implements RestClientRequestValid
         // success
         return null;
     }
-
 }

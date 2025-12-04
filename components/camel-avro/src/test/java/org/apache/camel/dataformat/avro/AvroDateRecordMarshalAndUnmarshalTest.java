@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.avro;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,10 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.avro.example.DateRecord;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AvroDateRecordMarshalAndUnmarshalTest extends CamelTestSupport {
 
@@ -75,10 +76,8 @@ public class AvroDateRecordMarshalAndUnmarshalTest extends CamelTestSupport {
         LocalDate date = LocalDate.of(2024, 1, 15);
         Instant timestamp = Instant.parse("2024-01-15T10:30:00Z");
 
-        DateRecord input = DateRecord.newBuilder()
-                .setDate(date)
-                .setTimestamp(timestamp)
-                .build();
+        DateRecord input =
+                DateRecord.newBuilder().setDate(date).setTimestamp(timestamp).build();
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);

@@ -72,7 +72,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -83,7 +84,6 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
-
     }
 
     @Test
@@ -96,7 +96,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -106,7 +107,6 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
-
     }
 
     @Test
@@ -120,7 +120,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -140,7 +141,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -167,7 +169,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -192,7 +195,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -212,7 +216,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -240,7 +245,8 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
-                from("direct:test").to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
+                from("direct:test")
+                        .to("influxdb2:influxDbBean?org={{influxdb2.testOrg}}&bucket={{influxdb2.testBucket}}")
                         .to("mock:test");
             }
         });
@@ -251,7 +257,6 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
-
     }
 
     private Map<String, Object> createMapPoint() {
@@ -262,5 +267,4 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
         pointMap.put("CPU", 1);
         return pointMap;
     }
-
 }

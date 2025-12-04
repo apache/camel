@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.annotation.Annotation;
@@ -71,7 +72,11 @@ final class ParameterInfo {
         sb.append("[index=").append(index);
         sb.append(", type=").append(type);
         sb.append(", varargs=").append(varargs);
-        sb.append(", annotations=").append(annotations == null ? "null" : Arrays.asList(annotations).toString());
+        sb.append(", annotations=")
+                .append(
+                        annotations == null
+                                ? "null"
+                                : Arrays.asList(annotations).toString());
         sb.append(", expression=").append(expression);
         sb.append(']');
         return sb.toString();

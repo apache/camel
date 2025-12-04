@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,41 +44,40 @@ public class OnCompletionAfterChainedSedaRoutesTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:a")
-                    .onCompletion()
+                        .onCompletion()
                         .log("a - done")
                         .process(exchange -> exchange.getMessage().setBody("completion:a"))
                         .to("mock:completion")
                         .end()
-                    .to("seda:b");
+                        .to("seda:b");
 
                 from("seda:b")
-                    .onCompletion()
+                        .onCompletion()
                         .log("b - done")
                         .process(exchange -> exchange.getMessage().setBody("completion:b"))
                         .to("mock:completion")
                         .end()
-                    .delay(100)
-                    .to("seda:c");
+                        .delay(100)
+                        .to("seda:c");
 
                 from("seda:c")
-                    .onCompletion()
+                        .onCompletion()
                         .log("c - done")
                         .process(exchange -> exchange.getMessage().setBody("completion:c"))
                         .to("mock:completion")
                         .end()
-                    .delay(100)
-                    .to("seda:d");
+                        .delay(100)
+                        .to("seda:d");
 
                 from("seda:d")
-                    .onCompletion()
+                        .onCompletion()
                         .log("d - done")
                         .process(exchange -> exchange.getMessage().setBody("completion:d"))
                         .to("mock:completion")
                         .end()
-                    .delay(100)
-                    .to("mock:completion");
+                        .delay(100)
+                        .to("mock:completion");
             }
-
         };
     }
 }

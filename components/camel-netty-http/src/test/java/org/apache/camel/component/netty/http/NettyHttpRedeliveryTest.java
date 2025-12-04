@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpRedeliveryTest extends BaseNettyTest {
 
@@ -53,25 +54,30 @@ public class NettyHttpRedeliveryTest extends BaseNettyTest {
             @Override
             public void configure() {
                 onException(Exception.class)
-                        .maximumRedeliveries(50).redeliveryDelay(100).onExceptionOccurred(
-                                new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) {
-                                        // signal to start the route (after 5 attempts)
-                                        latch.countDown();
-                                        // and there is only 1 inflight
-                                        assertEquals(1, context.getInflightRepository().size());
-                                    }
-                                });
+                        .maximumRedeliveries(50)
+                        .redeliveryDelay(100)
+                        .onExceptionOccurred(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                // signal to start the route (after 5 attempts)
+                                latch.countDown();
+                                // and there is only 1 inflight
+                                assertEquals(1, context.getInflightRepository().size());
+                            }
+                        });
 
-                from("timer:foo?repeatCount=1").routeId("foo")
-                        .to("netty-http:http://0.0.0.0:{{port}}/bar?keepAlive=false&disconnect=true&connectTimeout=100ms")
+                from("timer:foo?repeatCount=1")
+                        .routeId("foo")
+                        .to(
+                                "netty-http:http://0.0.0.0:{{port}}/bar?keepAlive=false&disconnect=true&connectTimeout=100ms")
                         .to("mock:result");
 
-                from("netty-http:http://0.0.0.0:{{port}}/bar").routeId("bar").autoStartup(false)
-                        .setBody().constant("Bye World");
+                from("netty-http:http://0.0.0.0:{{port}}/bar")
+                        .routeId("bar")
+                        .autoStartup(false)
+                        .setBody()
+                        .constant("Bye World");
             }
         };
     }
-
 }

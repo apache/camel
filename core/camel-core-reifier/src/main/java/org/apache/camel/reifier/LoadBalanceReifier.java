@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Channel;
@@ -34,7 +35,8 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
 
     @Override
     public Processor createProcessor() throws Exception {
-        LoadBalancer loadBalancer = LoadBalancerReifier.reifier(route, definition.getLoadBalancerType()).createLoadBalancer();
+        LoadBalancer loadBalancer = LoadBalancerReifier.reifier(route, definition.getLoadBalancerType())
+                .createLoadBalancer();
         if (loadBalancer instanceof DisabledAware da) {
             da.setDisabled(isDisabled(camelContext, definition));
         }
@@ -53,9 +55,8 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
             // compilation errors on earlier versions of JDK6
             // on Windows boxes or with IBM JDKs etc.
             if (LoadBalanceDefinition.class.isInstance(processorType)) {
-                throw new IllegalArgumentException(
-                        "Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: "
-                                                   + processorType);
+                throw new IllegalArgumentException("Loadbalancer already configured to: "
+                        + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
             }
             Processor processor = createProcessor(processorType);
             Channel channel = wrapChannel(processor, processorType);
@@ -72,5 +73,4 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
         }
         return wrapChannel(loadBalancer, definition, inherit);
     }
-
 }

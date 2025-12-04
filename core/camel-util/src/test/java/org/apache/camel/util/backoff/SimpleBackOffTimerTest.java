@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.backoff;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -26,9 +30,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SimpleBackOffTimerTest {
 
     @Test
@@ -36,36 +37,36 @@ public class SimpleBackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).removeOnComplete(false).build();
+        final BackOff backOff =
+                BackOff.builder().delay(100).removeOnComplete(false).build();
         final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
         final AtomicLong first = new AtomicLong();
 
-        BackOffTimer.Task task = timer.schedule(
-                backOff,
-                context -> {
-                    assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
-                    assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
-                    if (first.get() == 0) {
-                        first.set(context.getFirstAttemptTime());
-                    } else {
-                        assertEquals(first.get(), context.getFirstAttemptTime());
-                    }
+        BackOffTimer.Task task = timer.schedule(backOff, context -> {
+            assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
+            assertEquals(100, context.getCurrentDelay());
+            assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
+            if (first.get() == 0) {
+                first.set(context.getFirstAttemptTime());
+            } else {
+                assertEquals(first.get(), context.getFirstAttemptTime());
+            }
 
-                    return counter.get() < 5;
-                });
+            return counter.get() < 5;
+        });
 
-        task.whenComplete(
-                (context, throwable) -> {
-                    assertEquals(5, counter.get());
-                    latch.countDown();
-                });
+        task.whenComplete((context, throwable) -> {
+            assertEquals(5, counter.get());
+            latch.countDown();
+        });
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
 
         assertEquals(1, timer.size());
-        assertEquals(BackOffTimer.Task.Status.Completed, timer.getTasks().iterator().next().getStatus());
+        assertEquals(
+                BackOffTimer.Task.Status.Completed,
+                timer.getTasks().iterator().next().getStatus());
         timer.close();
     }
 
@@ -74,31 +75,34 @@ public class SimpleBackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).maxAttempts(5L).removeOnComplete(false).build();
+        final BackOff backOff = BackOff.builder()
+                .delay(100)
+                .maxAttempts(5L)
+                .removeOnComplete(false)
+                .build();
         final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
 
-        BackOffTimer.Task task = timer.schedule(
-                backOff,
-                context -> {
-                    assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
-                    assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
+        BackOffTimer.Task task = timer.schedule(backOff, context -> {
+            assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
+            assertEquals(100, context.getCurrentDelay());
+            assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
 
-                    return true;
-                });
+            return true;
+        });
 
-        task.whenComplete(
-                (context, throwable) -> {
-                    assertEquals(5, counter.get());
-                    assertEquals(BackOffTimer.Task.Status.Exhausted, context.getStatus());
-                    latch.countDown();
-                });
+        task.whenComplete((context, throwable) -> {
+            assertEquals(5, counter.get());
+            assertEquals(BackOffTimer.Task.Status.Exhausted, context.getStatus());
+            latch.countDown();
+        });
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
 
         assertEquals(1, timer.size());
-        assertEquals(BackOffTimer.Task.Status.Exhausted, timer.getTasks().iterator().next().getStatus());
+        assertEquals(
+                BackOffTimer.Task.Status.Exhausted,
+                timer.getTasks().iterator().next().getStatus());
         timer.close();
     }
 
@@ -107,31 +111,34 @@ public class SimpleBackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).maxElapsedTime(400).removeOnComplete(false).build();
+        final BackOff backOff = BackOff.builder()
+                .delay(100)
+                .maxElapsedTime(400)
+                .removeOnComplete(false)
+                .build();
         final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
 
-        BackOffTimer.Task task = timer.schedule(
-                backOff,
-                context -> {
-                    assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
-                    assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
+        BackOffTimer.Task task = timer.schedule(backOff, context -> {
+            assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
+            assertEquals(100, context.getCurrentDelay());
+            assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
 
-                    return true;
-                });
+            return true;
+        });
 
-        task.whenComplete(
-                (context, throwable) -> {
-                    assertTrue(counter.get() <= 5);
-                    assertEquals(BackOffTimer.Task.Status.Exhausted, context.getStatus());
-                    latch.countDown();
-                });
+        task.whenComplete((context, throwable) -> {
+            assertTrue(counter.get() <= 5);
+            assertEquals(BackOffTimer.Task.Status.Exhausted, context.getStatus());
+            latch.countDown();
+        });
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
 
         assertEquals(1, timer.size());
-        assertEquals(BackOffTimer.Task.Status.Exhausted, timer.getTasks().iterator().next().getStatus());
+        assertEquals(
+                BackOffTimer.Task.Status.Exhausted,
+                timer.getTasks().iterator().next().getStatus());
         timer.close();
     }
 
@@ -140,28 +147,28 @@ public class SimpleBackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(5);
         final AtomicBoolean done = new AtomicBoolean();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).removeOnComplete(false).build();
+        final BackOff backOff =
+                BackOff.builder().delay(100).removeOnComplete(false).build();
         final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
 
-        BackOffTimer.Task task = timer.schedule(
-                backOff,
-                context -> {
-                    assertEquals(BackOffTimer.Task.Status.Active, context.getStatus());
+        BackOffTimer.Task task = timer.schedule(backOff, context -> {
+            assertEquals(BackOffTimer.Task.Status.Active, context.getStatus());
 
-                    latch.countDown();
+            latch.countDown();
 
-                    return false;
-                });
+            return false;
+        });
 
-        task.whenComplete(
-                (context, throwable) -> {
-                    assertEquals(BackOffTimer.Task.Status.Inactive, context.getStatus());
-                    done.set(true);
-                });
+        task.whenComplete((context, throwable) -> {
+            assertEquals(BackOffTimer.Task.Status.Inactive, context.getStatus());
+            done.set(true);
+        });
 
         latch.await(2, TimeUnit.SECONDS);
         assertEquals(1, timer.size());
-        assertEquals(BackOffTimer.Task.Status.Completed, timer.getTasks().iterator().next().getStatus());
+        assertEquals(
+                BackOffTimer.Task.Status.Completed,
+                timer.getTasks().iterator().next().getStatus());
         task.cancel();
         assertEquals(0, timer.size());
         assertTrue(done.get());
@@ -176,30 +183,28 @@ public class SimpleBackOffTimerTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
-        final BackOff backOff = BackOff.builder().delay(100).removeOnComplete(true).build();
+        final BackOff backOff =
+                BackOff.builder().delay(100).removeOnComplete(true).build();
         final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
         final AtomicLong first = new AtomicLong();
 
-        BackOffTimer.Task task = timer.schedule(
-                backOff,
-                context -> {
-                    assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
-                    assertEquals(100, context.getCurrentDelay());
-                    assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
-                    if (first.get() == 0) {
-                        first.set(context.getFirstAttemptTime());
-                    } else {
-                        assertEquals(first.get(), context.getFirstAttemptTime());
-                    }
+        BackOffTimer.Task task = timer.schedule(backOff, context -> {
+            assertEquals(counter.incrementAndGet(), context.getCurrentAttempts());
+            assertEquals(100, context.getCurrentDelay());
+            assertEquals(100L * counter.get(), context.getCurrentElapsedTime());
+            if (first.get() == 0) {
+                first.set(context.getFirstAttemptTime());
+            } else {
+                assertEquals(first.get(), context.getFirstAttemptTime());
+            }
 
-                    return counter.get() < 5;
-                });
+            return counter.get() < 5;
+        });
 
-        task.whenComplete(
-                (context, throwable) -> {
-                    assertEquals(5, counter.get());
-                    latch.countDown();
-                });
+        task.whenComplete((context, throwable) -> {
+            assertEquals(5, counter.get());
+            latch.countDown();
+        });
 
         latch.await(5, TimeUnit.SECONDS);
         executor.shutdownNow();
@@ -208,5 +213,4 @@ public class SimpleBackOffTimerTest {
         assertEquals(0, timer.size());
         timer.close();
     }
-
 }

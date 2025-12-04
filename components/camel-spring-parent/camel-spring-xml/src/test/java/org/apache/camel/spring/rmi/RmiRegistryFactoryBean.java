@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.rmi;
 
 import java.rmi.RemoteException;
@@ -100,8 +101,8 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
         if (this.clientSocketFactory instanceof RMIServerSocketFactory) {
             this.serverSocketFactory = (RMIServerSocketFactory) this.clientSocketFactory;
         }
-        if (this.clientSocketFactory != null && this.serverSocketFactory == null ||
-                this.clientSocketFactory == null && this.serverSocketFactory != null) {
+        if (this.clientSocketFactory != null && this.serverSocketFactory == null
+                || this.clientSocketFactory == null && this.serverSocketFactory != null) {
             throw new IllegalArgumentException(
                     "Both RMIClientSocketFactory and RMIServerSocketFactory or none required");
         }
@@ -122,8 +123,10 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
      * @throws java.rmi.RemoteException if the registry couldn't be located or created
      */
     protected Registry getRegistry(
-            String registryHost, int registryPort,
-            RMIClientSocketFactory clientSocketFactory, RMIServerSocketFactory serverSocketFactory)
+            String registryHost,
+            int registryPort,
+            RMIClientSocketFactory clientSocketFactory,
+            RMIServerSocketFactory serverSocketFactory)
             throws RemoteException {
 
         if (registryHost != null) {
@@ -246,5 +249,4 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
             UnicastRemoteObject.unexportObject(this.registry, true);
         }
     }
-
 }

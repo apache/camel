@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
@@ -22,9 +26,6 @@ import org.apache.hc.core5.http.HeaderElements;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test that show custom header filter useful to send Connection Close header
@@ -36,10 +37,13 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -55,9 +59,8 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
-        HttpEndpoint endpoiont
-                = (HttpEndpoint) component.createEndpoint("http://localhost:"
-                                                          + localServer.getLocalPort() + "/myget?connectionClose=true");
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint(
+                "http://localhost:" + localServer.getLocalPort() + "/myget?connectionClose=true");
         try (HttpProducer producer = new HttpProducer(endpoiont)) {
             Exchange exchange = producer.createExchange();
             exchange.getIn().setBody(null);

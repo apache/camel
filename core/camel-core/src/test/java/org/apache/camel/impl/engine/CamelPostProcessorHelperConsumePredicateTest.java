@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
@@ -81,5 +82,4 @@ public class CamelPostProcessorHelperConsumePredicateTest extends ContextTestSup
             template.sendBody("mock:high", body);
         }
     }
-
 }

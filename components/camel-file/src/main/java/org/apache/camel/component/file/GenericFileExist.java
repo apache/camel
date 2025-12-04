@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 /**
  * Represent the kinds of options when writing a file and what to do in case of an existing file exists.
  */
 public enum GenericFileExist {
-
     Override,
     Append,
     Fail,

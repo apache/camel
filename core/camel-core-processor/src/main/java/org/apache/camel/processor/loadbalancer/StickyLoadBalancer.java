@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.Map;
@@ -63,7 +64,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public int getNumberOfHashGroups() {
         return numberOfHashGroups;
@@ -74,7 +75,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * A strategy to create the key for the sticky load balancing map. The default implementation uses the hash code of
@@ -93,5 +94,4 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
         }
         return hashCode;
     }
-
 }

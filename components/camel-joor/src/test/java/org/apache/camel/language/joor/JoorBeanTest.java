@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import org.apache.camel.Header;
@@ -30,7 +31,8 @@ public class JoorBeanTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().method(JoorBeanTest.class, "priority")
+                        .transform()
+                        .method(JoorBeanTest.class, "priority")
                         .to("mock:result");
             }
         };
@@ -38,8 +40,8 @@ public class JoorBeanTest extends CamelTestSupport {
 
     @Test
     public void testBean() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("User tony is a high roller", "Regular user",
-                "User scott is a high roller");
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived("User tony is a high roller", "Regular user", "User scott is a high roller");
 
         template.sendBodyAndHeader("direct:start", 123, "user", "tony");
         template.sendBodyAndHeader("direct:start", 18, "user", "mickey");
@@ -55,5 +57,4 @@ public class JoorBeanTest extends CamelTestSupport {
             return "Regular user";
         }
     }
-
 }

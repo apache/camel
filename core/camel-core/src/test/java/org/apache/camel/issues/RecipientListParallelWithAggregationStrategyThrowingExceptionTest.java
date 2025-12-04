@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.AggregationStrategy;
@@ -49,9 +50,13 @@ public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest e
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").recipientList(header("recipients")).aggregationStrategy(new MyAggregateBean())
+                from("direct:start")
+                        .recipientList(header("recipients"))
+                        .aggregationStrategy(new MyAggregateBean())
                         .parallelProcessing()
-                        .shareUnitOfWork().end().to("mock:end");
+                        .shareUnitOfWork()
+                        .end()
+                        .to("mock:end");
             }
         };
     }

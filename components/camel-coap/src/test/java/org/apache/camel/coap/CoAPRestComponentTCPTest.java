@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import org.apache.camel.model.rest.RestConfigurationDefinition;
@@ -46,5 +47,4 @@ public class CoAPRestComponentTCPTest extends CoAPRestComponentTestBase {
     protected void decorateRestConfiguration(RestConfigurationDefinition restConfig) {
         // Nothing here
     }
-
 }

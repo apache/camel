@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URL;
 import java.util.List;
@@ -35,8 +38,6 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;
@@ -53,7 +54,8 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = (JAXBContext) PluginHelper.getModelJAXBContextFactory(context).newJAXBContext();
+        jaxbContext =
+                (JAXBContext) PluginHelper.getModelJAXBContextFactory(context).newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {
@@ -88,7 +90,11 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
         assertEquals(2, context.getRoutes().size());
 
         for (Route route : context.getRoutes()) {
-            assertTrue(context.getRouteController().getRouteStatus(route.getRouteId()).isStarted(), "Route should be started");
+            assertTrue(
+                    context.getRouteController()
+                            .getRouteStatus(route.getRouteId())
+                            .isStarted(),
+                    "Route should be started");
         }
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
@@ -105,5 +111,4 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
             }
         };
     }
-
 }

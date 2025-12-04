@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.junit.jupiter.api.Test;
@@ -26,17 +32,12 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test
     public void testConfigureGroupAndName() throws Exception {
-        QuartzEndpoint endpoint
-                = checkEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=100");
+        QuartzEndpoint endpoint =
+                checkEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=100");
 
         Scheduler scheduler = endpoint.getComponent().getScheduler();
         TriggerKey triggerKey = endpoint.getTriggerKey();

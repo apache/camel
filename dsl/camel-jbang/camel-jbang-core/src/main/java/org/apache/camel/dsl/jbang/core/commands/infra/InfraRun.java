@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
+
+import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelJBangCommand;
 
 import java.io.Console;
 import java.io.File;
@@ -39,9 +42,11 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelJBangCommand;
-
-@CommandLine.Command(name = "run", description = "Run an external service", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "run",
+        description = "Run an external service",
+        sortOptions = false,
+        showDefaultValues = true)
 public class InfraRun extends InfraBaseCommand {
 
     @CommandLine.Spec
@@ -50,11 +55,15 @@ public class InfraRun extends InfraBaseCommand {
     @CommandLine.Parameters(description = "Service name", arity = "1")
     private List<String> serviceName;
 
-    @CommandLine.Option(names = { "--log" },
-                        description = "Log container output to console")
+    @CommandLine.Option(
+            names = {"--log"},
+            description = "Log container output to console")
     boolean logToStdout;
 
-    @CommandLine.Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    @CommandLine.Option(
+            names = {"--background"},
+            defaultValue = "false",
+            description = "Run in the background")
     boolean background;
 
     public InfraRun(CamelJBangMain main) {
@@ -76,16 +85,17 @@ public class InfraRun extends InfraBaseCommand {
     private Integer run(String testService, String testServiceImplementation) throws Exception {
         List<TestInfraService> services = getMetadata();
 
-        TestInfraService testInfraService = services
-                .stream()
+        TestInfraService testInfraService = services.stream()
                 .filter(service -> {
-                    if (testServiceImplementation != null && !testServiceImplementation.isEmpty()
+                    if (testServiceImplementation != null
+                            && !testServiceImplementation.isEmpty()
                             && service.aliasImplementation() != null) {
                         return service.alias().contains(testService)
                                 && service.aliasImplementation().contains(testServiceImplementation);
                     } else if (testServiceImplementation == null) {
                         return service.alias().contains(testService)
-                                && (service.aliasImplementation() == null || service.aliasImplementation().isEmpty());
+                                && (service.aliasImplementation() == null
+                                        || service.aliasImplementation().isEmpty());
                     }
 
                     return false;
@@ -96,8 +106,9 @@ public class InfraRun extends InfraBaseCommand {
         if (testInfraService == null) {
             String message = ", use the list command for the available services";
             if (testServiceImplementation != null) {
-                printer().println("service " + testService + " with implementation " + testServiceImplementation + " not found"
-                                  + message);
+                printer()
+                        .println("service " + testService + " with implementation " + testServiceImplementation
+                                + " not found" + message);
             }
             printer().println("service " + testService + " not found" + message);
             return 1;
@@ -128,8 +139,7 @@ public class InfraRun extends InfraBaseCommand {
         pb.command(cmds);
 
         Process p = pb.start();
-        printer().println(
-                "Running " + testService + " in background with PID: " + p.pid());
+        printer().println("Running " + testService + " in background with PID: " + p.pid());
         return 0;
     }
 
@@ -195,10 +205,13 @@ public class InfraRun extends InfraBaseCommand {
         Path jsonFile = createFile(jsonName);
         Files.write(jsonFile, jsonMapper.writeValueAsString(properties).getBytes());
 
-        if (Arrays.stream(actualService.getClass().getInterfaces()).anyMatch(c -> c.getName().contains("ContainerService"))) {
+        if (Arrays.stream(actualService.getClass().getInterfaces())
+                .anyMatch(c -> c.getName().contains("ContainerService"))) {
             Object containerLogConsumer = cl.loadClass("org.apache.camel.test.infra.common.CamelLogConsumer")
-                    .getConstructor(Path.class, boolean.class).newInstance(logFile, logToStdout);
-            actualService.getClass()
+                    .getConstructor(Path.class, boolean.class)
+                    .newInstance(logFile, logToStdout);
+            actualService
+                    .getClass()
                     .getMethod("followLog", cl.loadClass("org.testcontainers.containers.output.BaseConsumer"))
                     .invoke(actualService, containerLogConsumer);
         }
@@ -215,38 +228,43 @@ public class InfraRun extends InfraBaseCommand {
             if (!jsonOutput) {
                 printer().println("Press ENTER to stop the execution");
             }
-            Thread t = new Thread(() -> {
-                boolean quit = false;
-                do {
-                    String line = c.readLine();
-                    if (line != null) {
-                        quit = true;
-                        latch.countDown();
-                    }
-                } while (!quit);
-            }, "WaitEnter");
+            Thread t = new Thread(
+                    () -> {
+                        boolean quit = false;
+                        do {
+                            String line = c.readLine();
+                            if (line != null) {
+                                quit = true;
+                                latch.countDown();
+                            }
+                        } while (!quit);
+                    },
+                    "WaitEnter");
             t.start();
         } else {
             // wait for this process to be stopped
-            printer().println("Running (use camel infra stop "
-                              + testService + (testServiceImplementation != null ? " " + testServiceImplementation : "")
-                              + " to stop the execution)");
+            printer()
+                    .println("Running (use camel infra stop "
+                            + testService + (testServiceImplementation != null ? " " + testServiceImplementation : "")
+                            + " to stop the execution)");
         }
 
         // always wait for external signal to stop if the json-file is deleted
-        Thread t = new Thread(() -> {
-            while (latch.getCount() > 0) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    // ignore
-                }
-                File f = jsonFile.toFile();
-                if (!f.exists()) {
-                    latch.countDown();
-                }
-            }
-        }, "WaitShutdownSignal");
+        Thread t = new Thread(
+                () -> {
+                    while (latch.getCount() > 0) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                        File f = jsonFile.toFile();
+                        if (!f.exists()) {
+                            latch.countDown();
+                        }
+                    }
+                },
+                "WaitShutdownSignal");
         t.start();
 
         try {
@@ -282,7 +300,7 @@ public class InfraRun extends InfraBaseCommand {
 
     private static Path createFile(String name) throws IOException {
         Path logDir = CommandLineHelper.getCamelDir();
-        Files.createDirectories(logDir); //make sure the parent dir exists
+        Files.createDirectories(logDir); // make sure the parent dir exists
         Path logFile = logDir.resolve(name);
         Files.createFile(logFile);
         return logFile;
@@ -296,13 +314,11 @@ public class InfraRun extends InfraBaseCommand {
             downloader.setClassLoader(cl);
             downloader.start();
             // download required camel-test-infra-* dependency
-            downloader.downloadDependency(testInfraService.groupId(),
-                    testInfraService.artifactId(),
-                    testInfraService.version(), true);
+            downloader.downloadDependency(
+                    testInfraService.groupId(), testInfraService.artifactId(), testInfraService.version(), true);
 
-            MavenArtifact ma = downloader.downloadArtifact(testInfraService.groupId(),
-                    testInfraService.artifactId(),
-                    testInfraService.version());
+            MavenArtifact ma = downloader.downloadArtifact(
+                    testInfraService.groupId(), testInfraService.artifactId(), testInfraService.version());
             cl.addFile(ma.getFile());
         } catch (Exception e) {
             printer.printErr(e);

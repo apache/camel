@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.startup;
 
 import org.apache.camel.StartupStep;
@@ -29,7 +30,8 @@ public class DefaultStartupStep implements StartupStep {
     private final long time;
     private long duration;
 
-    public DefaultStartupStep(String type, String name, String description, int id, int parentId, int level, long time) {
+    public DefaultStartupStep(
+            String type, String name, String description, int id, int parentId, int level, long time) {
         this.type = type;
         this.name = name;
         this.description = description;
@@ -83,5 +85,4 @@ public class DefaultStartupStep implements StartupStep {
     public void endStep() {
         this.duration = System.currentTimeMillis() - time;
     }
-
 }

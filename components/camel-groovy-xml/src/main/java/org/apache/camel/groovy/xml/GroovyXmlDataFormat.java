@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.groovy.xml;
 
 import java.io.InputStream;
@@ -219,7 +220,5 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         }
     }
 
-    record Line(String key, String value, int kind, Map<String, String> attrs) {
-    }
-
+    record Line(String key, String value, int kind, Map<String, String> attrs) {}
 }

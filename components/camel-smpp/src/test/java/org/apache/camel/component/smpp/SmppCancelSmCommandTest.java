@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,10 +30,6 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class SmppCancelSmCommandTest {
 
@@ -52,8 +53,16 @@ public class SmppCancelSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616",
-                TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
+        verify(session)
+                .cancelShortMessage(
+                        "",
+                        "1",
+                        TypeOfNumber.UNKNOWN,
+                        NumberingPlanIndicator.UNKNOWN,
+                        "1616",
+                        TypeOfNumber.UNKNOWN,
+                        NumberingPlanIndicator.UNKNOWN,
+                        "1717");
 
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
@@ -73,8 +82,16 @@ public class SmppCancelSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).cancelShortMessage("XXX", "1", TypeOfNumber.NATIONAL, NumberingPlanIndicator.NATIONAL, "1818",
-                TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919");
+        verify(session)
+                .cancelShortMessage(
+                        "XXX",
+                        "1",
+                        TypeOfNumber.NATIONAL,
+                        NumberingPlanIndicator.NATIONAL,
+                        "1818",
+                        TypeOfNumber.INTERNATIONAL,
+                        NumberingPlanIndicator.INTERNET,
+                        "1919");
 
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }

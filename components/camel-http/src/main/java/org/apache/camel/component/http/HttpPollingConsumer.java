@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.io.IOException;
@@ -78,44 +79,44 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
         // set optional timeout in millis
         if (timeout > 0) {
-            RequestConfig requestConfig = RequestConfig.custom().setResponseTimeout(timeout, TimeUnit.MILLISECONDS).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setResponseTimeout(timeout, TimeUnit.MILLISECONDS)
+                    .build();
             httpClientContext.setRequestConfig(requestConfig);
         }
 
         HttpEntity responseEntity = null;
         try {
             // execute request
-            responseEntity = executeMethod(
-                    method, httpClientContext,
-                    response -> {
-                        int responseCode = response.getCode();
-                        HttpEntity entity = response.getEntity();
-                        Object body = HttpHelper.cacheResponseBodyFromInputStream(entity.getContent(), exchange);
+            responseEntity = executeMethod(method, httpClientContext, response -> {
+                int responseCode = response.getCode();
+                HttpEntity entity = response.getEntity();
+                Object body = HttpHelper.cacheResponseBodyFromInputStream(entity.getContent(), exchange);
 
-                        // lets store the result in the output message.
-                        Message message = exchange.getMessage();
-                        message.setBody(body);
+                // lets store the result in the output message.
+                Message message = exchange.getMessage();
+                message.setBody(body);
 
-                        // lets set the headers
-                        Header[] headers = response.getHeaders();
-                        HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
-                        for (Header header : headers) {
-                            String name = header.getName();
-                            // mapping the content-type
-                            if (name.equalsIgnoreCase("content-type")) {
-                                name = Exchange.CONTENT_TYPE;
-                            }
-                            String value = header.getValue();
-                            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                                message.setHeader(name, value);
-                            }
-                        }
-                        message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
-                        if (response.getReasonPhrase() != null) {
-                            message.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, response.getReasonPhrase());
-                        }
-                        return entity;
-                    });
+                // lets set the headers
+                Header[] headers = response.getHeaders();
+                HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
+                for (Header header : headers) {
+                    String name = header.getName();
+                    // mapping the content-type
+                    if (name.equalsIgnoreCase("content-type")) {
+                        name = Exchange.CONTENT_TYPE;
+                    }
+                    String value = header.getValue();
+                    if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                        message.setHeader(name, value);
+                    }
+                }
+                message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+                if (response.getReasonPhrase() != null) {
+                    message.setHeader(HttpConstants.HTTP_RESPONSE_TEXT, response.getReasonPhrase());
+                }
+                return entity;
+            });
 
             return exchange;
         } catch (IOException e) {
@@ -148,7 +149,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public HttpClient getHttpClient() {
         return httpClient;
@@ -159,7 +160,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected HttpUriRequest createMethod(Exchange exchange) {
         String uri = HttpHelper.createURL(exchange, endpoint);
@@ -167,10 +168,8 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
+    protected void doStart() throws Exception {}
 
     @Override
-    protected void doStop() throws Exception {
-    }
+    protected void doStop() throws Exception {}
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -28,8 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Test for situation where the two end bytes are split across different byte buffers.
  */
@@ -42,7 +43,6 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
         decoder.setCharset("iso-8859-1");
 
         return decoder;
-
     }
 
     @BindToRegistry("hl7encoder")
@@ -62,14 +62,16 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
                                 // check presence of correct message type
                                 exchange.getIn().getBody(MDM_T02.class);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
 
     @Test
     public void testSendHL7Message() throws Exception {
-        BufferedReader in = IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
+        BufferedReader in =
+                IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
         String line = "";
         String message = "";
         while (line != null) {
@@ -81,9 +83,8 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
         assertEquals(1022, message.length());
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder",
-                message);
+        template.requestBody(
+                "netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder", message);
         mockEndpoint.assertIsSatisfied();
     }
-
 }

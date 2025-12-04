@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import org.apache.camel.Exchange;
@@ -28,8 +29,26 @@ import org.slf4j.LoggerFactory;
 public class IrcProducer extends DefaultProducer {
 
     public static final String[] COMMANDS = new String[] {
-            "AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
-            "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST" };
+        "AWAY",
+        "INVITE",
+        "ISON",
+        "JOIN",
+        "KICK",
+        "LIST",
+        "NAMES",
+        "PRIVMSG",
+        "MODE",
+        "NICK",
+        "NOTICE",
+        "PART",
+        "PONG",
+        "QUIT",
+        "TOPIC",
+        "WHO",
+        "WHOIS",
+        "WHOWAS",
+        "USERHOST"
+    };
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
 
@@ -54,7 +73,8 @@ public class IrcProducer extends DefaultProducer {
             reconnect();
         }
         if (connection == null || !connection.isConnected()) {
-            throw new RuntimeCamelException("Lost connection" + (connection == null ? "" : " to " + connection.getHost()));
+            throw new RuntimeCamelException(
+                    "Lost connection" + (connection == null ? "" : " to " + connection.getHost()));
         }
 
         if (msg != null) {
@@ -82,20 +102,26 @@ public class IrcProducer extends DefaultProducer {
     protected void reconnect() {
         // create new connection
         if (connection == null || connection.isConnected()) {
-            connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
+            connection =
+                    getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
         } else {
             // reconnecting
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Reconnecting to {}:{}", getEndpoint().getConfiguration().getHostname(),
+                LOG.debug(
+                        "Reconnecting to {}:{}",
+                        getEndpoint().getConfiguration().getHostname(),
                         getEndpoint().getConfiguration().getNickname());
             }
             getEndpoint().getComponent().closeConnection(connection);
-            connection = getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
+            connection =
+                    getEndpoint().getComponent().getIRCConnection(getEndpoint().getConfiguration());
         }
         connection.addIRCEventListener(listener);
-        LOG.debug("Sleeping for {} seconds before sending commands.",
+        LOG.debug(
+                "Sleeping for {} seconds before sending commands.",
                 getEndpoint().getConfiguration().getCommandTimeout() / 1000);
-        // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
+        // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after
+        // connection established
         try {
             Thread.sleep(getEndpoint().getConfiguration().getCommandTimeout());
         } catch (InterruptedException ex) {
@@ -140,7 +166,8 @@ public class IrcProducer extends DefaultProducer {
         public void onKick(String channel, IRCUser user, String passiveNick, String msg) {
 
             // check to see if I got kick and if so rejoin if autoRejoin is on
-            if (passiveNick.equals(connection.getNick()) && getEndpoint().getConfiguration().isAutoRejoin()) {
+            if (passiveNick.equals(connection.getNick())
+                    && getEndpoint().getConfiguration().isAutoRejoin()) {
                 getEndpoint().joinChannel(channel);
             }
         }
@@ -149,7 +176,5 @@ public class IrcProducer extends DefaultProducer {
         public void onError(int num, String msg) {
             IrcProducer.this.getEndpoint().handleIrcError(num);
         }
-
     }
-
 }

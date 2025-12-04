@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream.write;
 
 import org.apache.camel.*;
@@ -27,7 +28,6 @@ import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 /**
  * Manage and invoke AWS Timestream.
  */
-
 public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implements EndpointServiceLocation {
 
     /** AWS TimestreamWriteClient for TimestreamWrite Endpoint **/
@@ -52,7 +52,8 @@ public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implem
         super.doStart();
         awsTimestreamWriteClient = getConfiguration().getAwsTimestreamWriteClient() != null
                 ? getConfiguration().getAwsTimestreamWriteClient()
-                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamWriteClient();
+                : Timestream2ClientFactory.getTimestreamClient(getConfiguration())
+                        .getTimestreamWriteClient();
     }
 
     @Override
@@ -86,5 +87,4 @@ public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implem
     public String getServiceProtocol() {
         return "timestream-write";
     }
-
 }

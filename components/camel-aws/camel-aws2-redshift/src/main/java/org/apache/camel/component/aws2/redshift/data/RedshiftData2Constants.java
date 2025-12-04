@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
 
 import org.apache.camel.spi.Metadata;
@@ -53,8 +54,10 @@ public interface RedshiftData2Constants {
     @Metadata(description = "The maximum number of SQL statements to return in the response.", javaType = "Integer")
     String LIST_STATEMENTS_MAX_RESULTS = "CamelAwsRedshiftDataStatementsMaxResults";
 
-    @Metadata(description = "The name of the SQL statement specified as input to BatchExecuteStatement or ExecuteStatement to identify the query.",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "The name of the SQL statement specified as input to BatchExecuteStatement or ExecuteStatement to identify the query.",
+            javaType = "String")
     String STATEMENT_NAME = "CamelAwsRedshiftDataStatementName";
 
     @Metadata(description = "The status of the SQL statement to list.", javaType = "String")
@@ -81,12 +84,16 @@ public interface RedshiftData2Constants {
     @Metadata(description = "ID of the statement", javaType = "String")
     String STATEMENT_ID = "CamelAwsRedshiftDataStatementId";
 
-    @Metadata(description = "A value that indicates whether to send an event to the Amazon EventBridge event bus after the SQL statement runs.",
-              javaType = "Boolean")
+    @Metadata(
+            description =
+                    "A value that indicates whether to send an event to the Amazon EventBridge event bus after the SQL statement runs.",
+            javaType = "Boolean")
     String WITH_EVENT = "CamelAwsRedshiftDataWithEvent";
 
-    @Metadata(description = "A unique, case-sensitive identifier that you provide to ensure the idempotency of the request.",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "A unique, case-sensitive identifier that you provide to ensure the idempotency of the request.",
+            javaType = "String")
     String CLIENT_TOKEN = "CamelAwsRedshiftDataClientToken";
 
     @Metadata(description = "The SQL statement text to run.", javaType = "String")
@@ -97,5 +104,4 @@ public interface RedshiftData2Constants {
 
     @Metadata(description = "The List of SQL statements text to run.", javaType = "List")
     String SQL_STATEMENT_LIST = "CamelAwsRedshiftDataSqlStatementList";
-
 }

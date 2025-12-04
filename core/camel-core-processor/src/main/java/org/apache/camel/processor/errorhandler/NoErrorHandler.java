@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.util.concurrent.CompletableFuture;
@@ -54,7 +55,8 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
 
     @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
         return callback.getFuture();
     }
@@ -109,5 +111,4 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(output);
     }
-
 }

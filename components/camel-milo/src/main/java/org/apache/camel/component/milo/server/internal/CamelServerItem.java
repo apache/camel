@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.server.internal;
 
 import java.util.Collection;
@@ -53,8 +54,11 @@ public class CamelServerItem {
     private final Set<Consumer<DataValue>> listeners = new CopyOnWriteArraySet<>();
     private DataValue value = new DataValue(StatusCode.BAD);
 
-    public CamelServerItem(final String itemId, final UaNodeContext nodeContext, final UShort namespaceIndex,
-                           final UaObjectNode baseNode) {
+    public CamelServerItem(
+            final String itemId,
+            final UaNodeContext nodeContext,
+            final UShort namespaceIndex,
+            final UaObjectNode baseNode) {
 
         this.itemId = itemId;
         this.baseNode = baseNode;
@@ -66,8 +70,7 @@ public class CamelServerItem {
         // create variable node
 
         final Predicate<AttributeId> filter = AttributeId.Value::equals;
-        this.item = UaVariableNode.build(nodeContext, builder -> builder
-                .setNodeId(nodeId)
+        this.item = UaVariableNode.build(nodeContext, builder -> builder.setNodeId(nodeId)
                 .setBrowseName(qname)
                 .setDisplayName(displayName)
                 .setAccessLevel(AccessLevel.toValue(AccessLevel.READ_WRITE))
@@ -83,7 +86,8 @@ public class CamelServerItem {
                     }
 
                     @Override
-                    public void setAttribute(AttributeFilterContext ctx, AttributeId attributeId, @Nullable Object value) {
+                    public void setAttribute(
+                            AttributeFilterContext ctx, AttributeId attributeId, @Nullable Object value) {
                         if (filter.test(attributeId) && ctx.getSession().isPresent()) {
                             setDataValue((DataValue) value);
                         }

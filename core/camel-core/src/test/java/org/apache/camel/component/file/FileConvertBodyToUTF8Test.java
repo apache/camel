@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConvertBodyToUTF8Test extends ContextTestSupport {
 
@@ -39,7 +40,9 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(String.class, "UTF-8").to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class, "UTF-8")
+                        .to("mock:result");
             }
         });
 
@@ -52,5 +55,4 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         boolean same = ObjectHelper.equal(body, data);
         assertTrue(same, "Should be same byte data");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,11 @@ public class RestNettyProducerPutTest extends BaseNettyTest {
     public void testNettyProducerPut() throws Exception {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
-        fluentTemplate.withBody("Donald Duck").withHeader("id", "123").to("direct:start").send();
+        fluentTemplate
+                .withBody("Donald Duck")
+                .withHeader("id", "123")
+                .to("direct:start")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -40,15 +45,11 @@ public class RestNettyProducerPutTest extends BaseNettyTest {
                 // configure to use localhost with the given port
                 restConfiguration().component("netty-http").host("localhost").port(getPort());
 
-                from("direct:start")
-                        .to("rest:put:users/{id}");
+                from("direct:start").to("rest:put:users/{id}");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .put("{id}")
-                        .to("mock:input");
+                rest("/users/").put("{id}").to("mock:input");
             }
         };
     }
-
 }

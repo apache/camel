@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,32 +35,39 @@ public class TokenizerExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(required = true)
     private String token;
+
     @XmlAttribute
     private String endToken;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String inheritNamespaceTagName;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String regex;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String xml;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String includeTokens;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String group;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String groupDelimiter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String skipFirst;
 
-    public TokenizerExpression() {
-    }
+    public TokenizerExpression() {}
 
     protected TokenizerExpression(TokenizerExpression source) {
         super(source);

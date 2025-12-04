@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.crypto.processor;
+
+import static java.lang.String.format;
 
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -26,8 +29,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.commons.codec.binary.Base64;
-
-import static java.lang.String.format;
 
 public class SigningProcessor extends DigitalSignatureProcessor {
 
@@ -66,10 +67,11 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         if (pk == null) {
             pk = exchange.getIn().getHeader(DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY, PrivateKey.class);
             if (pk == null) {
-                throw new IllegalStateException(
-                        format("Cannot sign message as no Private Key has been supplied. "
-                               + "Either supply one in the route definition sign(keystore, alias) or sign(privateKey) "
-                               + "or via the message header '%s'", DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY));
+                throw new IllegalStateException(format(
+                        "Cannot sign message as no Private Key has been supplied. "
+                                + "Either supply one in the route definition sign(keystore, alias) or sign(privateKey) "
+                                + "or via the message header '%s'",
+                        DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY));
             }
         }
         return pk;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.ArrayList;
@@ -44,8 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for API Component Endpoints.
  */
-public abstract class AbstractApiEndpoint<E extends ApiName, T>
-        extends ScheduledPollEndpoint
+public abstract class AbstractApiEndpoint<E extends ApiName, T> extends ScheduledPollEndpoint
         implements ApiEndpoint, PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
@@ -82,9 +82,13 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     private Set<String> configurationPropertyNames;
     private Map<String, Object> configurationProperties;
 
-    public AbstractApiEndpoint(String endpointUri, Component component,
-                               E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper,
-                               T endpointConfiguration) {
+    public AbstractApiEndpoint(
+            String endpointUri,
+            Component component,
+            E apiName,
+            String methodName,
+            ApiMethodHelper<? extends ApiMethod> methodHelper,
+            T endpointConfiguration) {
         super(endpointUri, component);
 
         this.apiName = apiName;
@@ -107,27 +111,35 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             configureScheduledPollConsumerProperties(options);
 
             PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
-            PropertyConfigurer configurer2
-                    = PropertyConfigurerHelper.resolvePropertyConfigurer(getCamelContext(), getConfiguration());
+            PropertyConfigurer configurer2 =
+                    PropertyConfigurerHelper.resolvePropertyConfigurer(getCamelContext(), getConfiguration());
 
             // we have a mix of options that are general endpoint and then specialized
             // so we need to configure first without reflection
             // use configurer and ignore case as end users may type an option name with mixed case
-            PropertyBindingSupport.build().withConfigurer(configurer)
-                    .withIgnoreCase(true).withReflection(false)
+            PropertyBindingSupport.build()
+                    .withConfigurer(configurer)
+                    .withIgnoreCase(true)
+                    .withReflection(false)
                     .bind(getCamelContext(), this, options);
-            PropertyBindingSupport.build().withConfigurer(configurer2)
-                    .withIgnoreCase(true).withReflection(false)
+            PropertyBindingSupport.build()
+                    .withConfigurer(configurer2)
+                    .withIgnoreCase(true)
+                    .withReflection(false)
                     .bind(getCamelContext(), getConfiguration(), options);
 
             // after reflection-free then we fallback to allow reflection
             // in case some options are still left
             if (!options.isEmpty()) {
-                PropertyBindingSupport.build().withConfigurer(configurer)
-                        .withIgnoreCase(true).withReflection(true)
+                PropertyBindingSupport.build()
+                        .withConfigurer(configurer)
+                        .withIgnoreCase(true)
+                        .withReflection(true)
                         .bind(getCamelContext(), this, options);
-                PropertyBindingSupport.build().withConfigurer(configurer2)
-                        .withIgnoreCase(true).withReflection(true)
+                PropertyBindingSupport.build()
+                        .withConfigurer(configurer2)
+                        .withIgnoreCase(true)
+                        .withReflection(true)
                         .bind(getCamelContext(), getConfiguration(), options);
             }
         }
@@ -175,9 +187,8 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
         // error if there are no candidates
         if (candidates.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format("No matching method for %s/%s, with arguments %s",
-                            apiName.getName(), methodName, arguments));
+            throw new IllegalArgumentException(String.format(
+                    "No matching method for %s/%s, with arguments %s", apiName.getName(), methodName, arguments));
         }
 
         // log missing/extra properties for debugging
@@ -193,8 +204,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     protected void configureConsumer(Consumer consumer) throws Exception {
         super.configureConsumer(consumer);
         if (getConfiguration() instanceof AbstractApiConfiguration config && consumer instanceof AbstractApiConsumer) {
-            ((AbstractApiConsumer<?, ?>) consumer)
-                    .setSplitResult(config.isSplitResult());
+            ((AbstractApiConsumer<?, ?>) consumer).setSplitResult(config.isSplitResult());
         }
     }
 
@@ -272,7 +282,9 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     public final void setInBody(String inBody) throws IllegalArgumentException {
         // validate property name
         ObjectHelper.notNull(inBody, "inBody");
-        if (!getPropertiesHelper().getValidEndpointProperties(getCamelContext(), getConfiguration()).contains(inBody)) {
+        if (!getPropertiesHelper()
+                .getValidEndpointProperties(getCamelContext(), getConfiguration())
+                .contains(inBody)) {
             throw new IllegalArgumentException("Unknown property " + inBody);
         }
         this.inBody = inBody;
@@ -321,8 +333,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             final ExecutorServiceManager manager = context.getExecutorServiceManager();
 
             // try to lookup a pool first based on profile
-            ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(
-                    threadProfileName);
+            ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(threadProfileName);
             if (poolProfile == null) {
                 poolProfile = manager.getDefaultThreadPoolProfile();
             }

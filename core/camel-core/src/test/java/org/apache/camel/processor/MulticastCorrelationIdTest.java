@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class MulticastCorrelationIdTest extends ContextTestSupport {
 
     @Test
     void testCorrelationIdIsNotOverwrittenByMulticast() {
         String originalCorrelationId = "SOME_ID";
-        Exchange exchange
-                = template.request("direct:start", e -> e.setProperty(Exchange.CORRELATION_ID, originalCorrelationId));
+        Exchange exchange =
+                template.request("direct:start", e -> e.setProperty(Exchange.CORRELATION_ID, originalCorrelationId));
 
         assertEquals(originalCorrelationId, exchange.getProperty(Exchange.CORRELATION_ID));
     }
@@ -45,5 +46,4 @@ class MulticastCorrelationIdTest extends ContextTestSupport {
             }
         };
     }
-
 }

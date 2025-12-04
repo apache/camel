@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsPollingConsumerTest extends JmsTestSupport {
 
@@ -123,10 +124,12 @@ public class JmsPollingConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").log("Sending ${body} to queue.start.JmsPollingConsumerTest")
+                from("direct:start")
+                        .log("Sending ${body} to queue.start.JmsPollingConsumerTest")
                         .to("sjms:queue.start.JmsPollingConsumerTest");
 
-                from("sjms:queue.foo.JmsPollingConsumerTest").log("Received ${body} from queue.start.JmsPollingConsumerTest")
+                from("sjms:queue.foo.JmsPollingConsumerTest")
+                        .log("Received ${body} from queue.start.JmsPollingConsumerTest")
                         .to("mock:result");
             }
         };

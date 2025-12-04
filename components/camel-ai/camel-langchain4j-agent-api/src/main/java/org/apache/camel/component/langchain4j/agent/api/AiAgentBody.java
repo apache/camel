@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.api;
 
 /**
@@ -65,8 +66,7 @@ public class AiAgentBody<C> {
     /**
      * Creates an empty AI agent body. Use the fluent setter methods to configure the instance.
      */
-    public AiAgentBody() {
-    }
+    public AiAgentBody() {}
 
     /**
      * Creates an AI agent body with a user message.
@@ -240,5 +240,4 @@ public class AiAgentBody<C> {
         this.content = content;
         return this;
     }
-
 }

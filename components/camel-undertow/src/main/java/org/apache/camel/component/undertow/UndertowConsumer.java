@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
@@ -109,8 +110,12 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
              * note that the new CamelWebSocketHandler() we pass to registerEndpoint() does not necessarily have to be
              * the same instance that is returned from there
              */
-            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this,
-                    endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent()
+                    .registerEndpoint(
+                            this,
+                            endpoint.getHttpHandlerRegistrationInfo(),
+                            endpoint.getSslContext(),
+                            new CamelWebSocketHandler());
             this.webSocketHandler.setConsumer(this);
         } else {
             // allow for HTTP 1.1 continue
@@ -123,18 +128,19 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                     accessLogReceiver = new JBossLoggingAccessLogReceiver();
                 }
                 httpHandler = new AccessLogHandler(
-                        httpHandler,
-                        accessLogReceiver,
-                        "common",
-                        AccessLogHandler.class.getClassLoader());
+                        httpHandler, accessLogReceiver, "common", AccessLogHandler.class.getClassLoader());
             }
             if (endpoint.getHandlers() != null) {
                 httpHandler = this.wrapHandler(httpHandler, endpoint);
             }
-            endpoint.getComponent().registerEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(),
-                    Handlers.httpContinueRead(
-                            // wrap with EagerFormParsingHandler to enable undertow form parsers
-                            httpHandler));
+            endpoint.getComponent()
+                    .registerEndpoint(
+                            this,
+                            endpoint.getHttpHandlerRegistrationInfo(),
+                            endpoint.getSslContext(),
+                            Handlers.httpContinueRead(
+                                    // wrap with EagerFormParsingHandler to enable undertow form parsers
+                                    httpHandler));
         }
     }
 
@@ -146,7 +152,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             this.webSocketHandler.setConsumer(null);
         }
         UndertowEndpoint endpoint = getEndpoint();
-        endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+        endpoint.getComponent()
+                .unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
     }
 
     @Override
@@ -171,7 +178,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         HttpString requestMethod = httpExchange.getRequestMethod();
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
             final String allowedMethods = evalAllowedMethods();
-            //return list of allowed methods in response headers
+            // return list of allowed methods in response headers
             httpExchange.setStatusCode(StatusCodes.OK);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
             // do not include content-type as that would indicate to the caller that we can only do text/plain
@@ -180,7 +187,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             return;
         }
 
-        //perform blocking operation on exchange
+        // perform blocking operation on exchange
         if (httpExchange.isInIoThread()) {
             httpExchange.dispatch(this);
             return;
@@ -194,7 +201,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         }
 
         if (getEndpoint().getSecurityProvider() != null) {
-            //security provider decides, whether endpoint is accessible
+            // security provider decides, whether endpoint is accessible
             int statusCode = getEndpoint().getSecurityProvider().authenticate(httpExchange, computeAllowedRoles());
             if (statusCode != StatusCodes.OK) {
                 httpExchange.setStatusCode(statusCode);
@@ -202,19 +209,19 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                 return;
             }
         } else if (computeAllowedRoles() != null && !computeAllowedRoles().isEmpty()) {
-            //this case could happen due to bad configuration
-            //if allowedRoles are present but securityProvider is not, access has to be denied in this case
+            // this case could happen due to bad configuration
+            // if allowedRoles are present but securityProvider is not, access has to be denied in this case
             LOG.warn("Illegal state caused by missing securitProvider but existing allowed roles!");
             httpExchange.setStatusCode(StatusCodes.FORBIDDEN);
             httpExchange.endExchange();
             return;
         }
 
-        //create new Exchange
-        //binding is used to extract header and payload(if available)
+        // create new Exchange
+        // binding is used to extract header and payload(if available)
         Exchange camelExchange = createExchange(httpExchange);
         try {
-            //Unit of Work to process the Exchange
+            // Unit of Work to process the Exchange
             createUoW(camelExchange);
             getProcessor().process(camelExchange);
             sendResponse(httpExchange, camelExchange);
@@ -229,7 +236,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     private String evalAllowedMethods() {
         StringJoiner methodsBuilder = new StringJoiner(",");
 
-        Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
+        Collection<HttpHandlerRegistrationInfo> handlers =
+                getEndpoint().getComponent().getHandlers();
         for (HttpHandlerRegistrationInfo reg : handlers) {
             URI uri = reg.getUri();
             // what other HTTP methods may exists for the same path
@@ -261,8 +269,12 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (body == null) {
             LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             // respect Content-Type assigned from HttpBinding if any
-            String contentType = camelExchange.getIn().getHeader(UndertowConstants.CONTENT_TYPE,
-                    MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"), String.class);
+            String contentType = camelExchange
+                    .getIn()
+                    .getHeader(
+                            UndertowConstants.CONTENT_TYPE,
+                            MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"),
+                            String.class);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, contentType);
             httpExchange.getResponseSender().send(""); // empty body
             return;
@@ -271,7 +283,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         if (getEndpoint().isUseStreaming() && body instanceof InputStream) {
             httpExchange.startBlocking();
             try (InputStream input = (InputStream) body;
-                 OutputStream output = httpExchange.getOutputStream()) {
+                    OutputStream output = httpExchange.getOutputStream()) {
                 // flush on each write so that it won't cause OutOfMemoryError
                 IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
             }
@@ -316,7 +328,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
      * @param eventType         the type of the event
      */
     public void sendEventNotification(
-            String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
+            String connectionKey,
+            WebSocketHttpExchange transportExchange,
+            WebSocketChannel channel,
+            EventType eventType) {
         final Exchange exchange = createExchange(true);
 
         final Message in = exchange.getIn();
@@ -345,8 +360,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             if (EndpointHelper.isReferenceParameter(obj)) {
                 obj = obj.substring(1);
             }
-            CamelUndertowHttpHandler h
-                    = CamelContextHelper.mandatoryLookup(endpoint.getCamelContext(), obj, CamelUndertowHttpHandler.class);
+            CamelUndertowHttpHandler h =
+                    CamelContextHelper.mandatoryLookup(endpoint.getCamelContext(), obj, CamelUndertowHttpHandler.class);
             h.setNext(nextHandler);
             nextHandler = h;
         }
@@ -359,7 +374,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
 
         Message in = getEndpoint().getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
 
-        //securityProvider could add its own header into result exchange
+        // securityProvider could add its own header into result exchange
         if (getEndpoint().getSecurityProvider() != null) {
             getEndpoint().getSecurityProvider().addHeader((key, value) -> in.setHeader(key, value), httpExchange);
         }
@@ -370,5 +385,4 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         exchange.setIn(in);
         return exchange;
     }
-
 }

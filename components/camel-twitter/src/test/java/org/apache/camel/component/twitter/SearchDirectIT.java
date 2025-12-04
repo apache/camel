@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -23,8 +24,10 @@ import org.slf4j.LoggerFactory;
 /**
  * consumes tweets
  */
-@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
-                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+@EnabledIfSystemProperty(
+        named = "enable.twitter.itests",
+        matches = "true",
+        disabledReason = "Likely has API limits, so it's better to keep it off by default")
 public class SearchDirectIT extends CamelTwitterConsumerITSupport {
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
 
 @Deprecated
@@ -40,6 +41,5 @@ public final class SlackConstants {
     public static final String SLACK_ATTACHMENT_FOOTER_ICON_FIELD = "footer_icon";
     public static final String SLACK_ATTACHMENT_TS_FIELD = "ts";
 
-    private SlackConstants() {
-    }
+    private SlackConstants() {}
 }

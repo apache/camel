@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twilio;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,18 +33,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link com.twilio.rest.api.v2010.Account} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.twilio.AbstractTwilioTestSupport#hasCredentials",
-           disabledReason = "Twilio credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.twilio.AbstractTwilioTestSupport#hasCredentials",
+        disabledReason = "Twilio credentials were not provided")
 public class AccountIT extends AbstractTwilioTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountIT.class);
-    private static final String PATH_PREFIX = TwilioApiCollection.getCollection().getApiName(AccountApiMethod.class).getName();
+    private static final String PATH_PREFIX = TwilioApiCollection.getCollection()
+            .getApiName(AccountApiMethod.class)
+            .getName();
 
     @Test
     public void testFetcher() {
@@ -53,7 +57,9 @@ public class AccountIT extends AbstractTwilioTestSupport {
 
     @Test
     public void testFetcherWithPathSid() {
-        final Account result = requestBodyAndHeaders("direct://FETCHER", null,
+        final Account result = requestBodyAndHeaders(
+                "direct://FETCHER",
+                null,
                 headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
 
         assertNotNull(result, "fetcher result not null");
@@ -74,8 +80,8 @@ public class AccountIT extends AbstractTwilioTestSupport {
 
     @Test
     public void testReaderWithStatusActive() {
-        final ResourceSet<Account> result = requestBodyAndHeaders("direct://READER", null,
-                headers("CamelTwilioStatus", "active"));
+        final ResourceSet<Account> result =
+                requestBodyAndHeaders("direct://READER", null, headers("CamelTwilioStatus", "active"));
 
         assertNotNull(result, "reader result not null");
         result.forEach(account -> {
@@ -95,13 +101,10 @@ public class AccountIT extends AbstractTwilioTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for fetcher
-                from("direct://FETCHER")
-                        .to("twilio://" + PATH_PREFIX + "/fetch");
+                from("direct://FETCHER").to("twilio://" + PATH_PREFIX + "/fetch");
 
                 // test route for reader
-                from("direct://READER")
-                        .to("twilio://" + PATH_PREFIX + "/read");
-
+                from("direct://READER").to("twilio://" + PATH_PREFIX + "/read");
             }
         };
     }

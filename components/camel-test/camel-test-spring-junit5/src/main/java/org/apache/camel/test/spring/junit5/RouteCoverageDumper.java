@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.io.ByteArrayInputStream;
@@ -36,27 +37,25 @@ public final class RouteCoverageDumper {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteCoverageDumper.class);
 
-    private RouteCoverageDumper() {
-    }
+    private RouteCoverageDumper() {}
 
     public static void dumpRouteCoverage(CamelContext context, String testClassName, String testName) {
         try {
             String dir = "target/camel-route-coverage";
             String name = testClassName + "-" + testName + ".xml";
 
-            ManagedCamelContext managedCamelContext
-                    = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+            ManagedCamelContext managedCamelContext =
+                    context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
             if (managedCamelContext == null) {
-                LOG.warn(
-                        "Cannot dump route coverage to file as JMX is not enabled."
-                         + " Ensure camel-management JAR is on classpath (can be test scope)."
-                         + " Override useJmx() method to enable JMX in the unit test classes."
-                         + " Or when using Spring you can add the @EnableRouteCoverage annotation to the test classes.");
+                LOG.warn("Cannot dump route coverage to file as JMX is not enabled."
+                        + " Ensure camel-management JAR is on classpath (can be test scope)."
+                        + " Override useJmx() method to enable JMX in the unit test classes."
+                        + " Or when using Spring you can add the @EnableRouteCoverage annotation to the test classes.");
             } else {
                 ManagedCamelContextMBean mBean = managedCamelContext.getManagedCamelContext();
                 String xml = mBean.dumpRoutesCoverageAsXml();
                 String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml(testClassName, testName) + xml
-                                  + "\n</camelRouteCoverage>";
+                        + "\n</camelRouteCoverage>";
 
                 File file = new File(dir);
                 // ensure dir exists
@@ -72,7 +71,6 @@ public final class RouteCoverageDumper {
         } catch (Exception e) {
             LOG.warn("Error during dumping route coverage statistic. This exception is ignored.", e);
         }
-
     }
 
     /**

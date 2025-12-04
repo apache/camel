@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
 
@@ -72,7 +73,7 @@ public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri(
-                        "?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&idempotentRepository=#myRepo"))
+                                "?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&idempotentRepository=#myRepo"))
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -80,7 +81,8 @@ public class FileIdempotentReadLockDelayedTest extends ContextTestSupport {
                                 int size = myRepo.getCacheSize();
                                 assertTrue(size == 1 || size == 2);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
 
 import java.util.UUID;
@@ -61,7 +62,9 @@ public class NodeState {
     @Override
     public String toString() {
         try {
-            return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).writeValueAsString(this);
+            return new ObjectMapper()
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .writeValueAsString(this);
         } catch (Exception e) {
             return super.toString();
         }

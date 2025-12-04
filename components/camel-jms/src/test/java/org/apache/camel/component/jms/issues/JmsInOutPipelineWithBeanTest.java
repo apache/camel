@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test from an user request on the forum.
  */
@@ -40,9 +41,11 @@ public class JmsInOutPipelineWithBeanTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @BindToRegistry("dummyBean")
     private final MyDummyBean bean = new MyDummyBean();
 
@@ -73,12 +76,18 @@ public class JmsInOutPipelineWithBeanTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:JmsInOutPipelineWithBeanTest.A").to("bean:dummyBean")
-                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.a").to("activemq:JmsInOutPipelineWithBeanTest.dest.b");
-                from("activemq:JmsInOutPipelineWithBeanTest.B").to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
-                        .to("bean:dummyBean").to("activemq:JmsInOutPipelineWithBeanTest.dest.b");
-                from("activemq:JmsInOutPipelineWithBeanTest.C").to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
-                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.b").to("bean:dummyBean");
+                from("activemq:JmsInOutPipelineWithBeanTest.A")
+                        .to("bean:dummyBean")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.b");
+                from("activemq:JmsInOutPipelineWithBeanTest.B")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
+                        .to("bean:dummyBean")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.b");
+                from("activemq:JmsInOutPipelineWithBeanTest.C")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.a")
+                        .to("activemq:JmsInOutPipelineWithBeanTest.dest.b")
+                        .to("bean:dummyBean");
 
                 from("activemq:JmsInOutPipelineWithBeanTest.dest.a").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
@@ -111,5 +120,4 @@ public class JmsInOutPipelineWithBeanTest extends AbstractJMSTest {
             exchange.getMessage().setBody(body + ",From Bean");
         }
     }
-
 }

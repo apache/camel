@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlParseTreeTest {
 
@@ -65,16 +66,15 @@ public class XmlParseTreeTest {
 
     @Test
     void testXmlTreeWithEmptyRoute() throws Exception {
-        String textTotest = "<camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\">\r\n" +
-                            "    <route id=\"a route\">\r\n" +
-                            "    </route>\r\n" +
-                            "</camelContext>\n";
+        String textTotest = "<camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\">\r\n"
+                + "    <route id=\"a route\">\r\n"
+                + "    </route>\r\n"
+                + "</camelContext>\n";
         File camelFile = new File(tempDir, "testXmlTreeWithEmptyRoute.xml");
         Files.copy(new ByteArrayInputStream(textTotest.getBytes()), camelFile.toPath());
-        List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(new ByteArrayInputStream(textTotest.getBytes()), "",
-                camelFile.getAbsolutePath());
+        List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(
+                new ByteArrayInputStream(textTotest.getBytes()), "", camelFile.getAbsolutePath());
 
         assertEquals(0, list.size());
     }
-
 }

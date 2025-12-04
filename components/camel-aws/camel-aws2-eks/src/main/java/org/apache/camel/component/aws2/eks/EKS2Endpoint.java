@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.eks.EksClient;
 /**
  * Manage AWS EKS cluster instances.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-eks", title = "AWS Elastic Kubernetes Service (EKS)",
-             syntax = "aws2-eks:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = EKS2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-eks",
+        title = "AWS Elastic Kubernetes Service (EKS)",
+        syntax = "aws2-eks:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = EKS2Constants.class)
 public class EKS2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private EksClient eksClient;
@@ -67,7 +73,8 @@ public class EKS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         eksClient = configuration.getEksClient() != null
-                ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration).getEksClient();
+                ? configuration.getEksClient()
+                : EKS2ClientFactory.getEksClient(configuration).getEksClient();
     }
 
     @Override

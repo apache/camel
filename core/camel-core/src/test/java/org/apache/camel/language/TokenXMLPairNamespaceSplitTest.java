@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -72,12 +73,15 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
                 from("direct:pair")
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split().tokenizeXML("order", "orders").to("mock:split");
+                        .split()
+                        .tokenizeXML("order", "orders")
+                        .to("mock:split");
 
                 from("direct:pair2")
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split(body().tokenizeXML("order", "orders")).to("mock:split");
+                        .split(body().tokenizeXML("order", "orders"))
+                        .to("mock:split");
             }
         };
     }

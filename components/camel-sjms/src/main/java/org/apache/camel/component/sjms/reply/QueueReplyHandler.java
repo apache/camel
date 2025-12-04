@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
 
 import org.apache.camel.AsyncCallback;
@@ -24,9 +25,13 @@ import org.apache.camel.Exchange;
  */
 public class QueueReplyHandler extends TemporaryQueueReplyHandler {
 
-    public QueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                             String originalCorrelationId, String correlationId, long timeout) {
+    public QueueReplyHandler(
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long timeout) {
         super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
     }
-
 }

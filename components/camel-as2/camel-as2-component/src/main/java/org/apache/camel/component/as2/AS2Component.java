@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.security.Security;
@@ -40,6 +41,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
 
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
@@ -58,8 +60,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, AS2ApiName apiName,
-            AS2Configuration endpointConfiguration) {
+            String uri, String methodName, AS2ApiName apiName, AS2Configuration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new AS2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -105,5 +106,4 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
-
 }

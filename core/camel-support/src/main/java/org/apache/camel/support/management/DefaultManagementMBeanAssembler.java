@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.management;
 
 import javax.management.JMException;
@@ -61,7 +62,8 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         if (obj instanceof ManagedInstance managedInstance) {
             // there may be a custom embedded instance which have additional methods
             custom = managedInstance.getInstance();
-            if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
+            if (custom != null
+                    && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
                 LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info into different groups (mbi = both, standard = standard out of the box mbi)
                 mbi = assembler.getMBeanInfo(camelContext, obj, custom, name.toString());
@@ -82,8 +84,12 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         RequiredModelMBean mbean;
         RequiredModelMBean mixinMBean = null;
 
-        boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getMask() != null
-                && camelContext.getManagementStrategy().getManagementAgent().getMask();
+        boolean sanitize =
+                camelContext.getManagementStrategy().getManagementAgent().getMask() != null
+                        && camelContext
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getMask();
 
         // if we have a custom mbean then create a mixin mbean for the standard mbean which we would
         // otherwise have created that contains the out of the box attributes and operations

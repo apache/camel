@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
 
@@ -22,10 +27,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CwComponentRegistryClientTest extends CamelTestSupport {
 
@@ -37,8 +38,8 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
         CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        Cw2Endpoint endpoint = (Cw2Endpoint) component
-                .createEndpoint("aws2-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
+        Cw2Endpoint endpoint = (Cw2Endpoint) component.createEndpoint(
+                "aws2-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertEquals("testMetric", endpoint.getConfiguration().getName());
@@ -60,8 +61,8 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
         CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        Cw2Endpoint endpoint
-                = (Cw2Endpoint) component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy");
+        Cw2Endpoint endpoint =
+                (Cw2Endpoint) component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertSame(cloudWatchClient, endpoint.getConfiguration().getAmazonCwClient());

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.MyBarSingleton;
@@ -22,9 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -40,7 +41,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -49,8 +51,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlXPath() throws Exception {
-        String xml
-                = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myOtherRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myOtherRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -59,8 +61,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlHeader() throws Exception {
-        String xml
-                = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myFooRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myFooRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -69,8 +71,8 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlBean() throws Exception {
-        String xml
-                = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myBeanRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myBeanRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -82,15 +84,24 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").filter(simple("${body} > 10")).to("mock:result");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .filter(simple("${body} > 10"))
+                        .to("mock:result");
 
-                from("direct:other").routeId("myOtherRoute").filter(xpath("/foo")).to("mock:result");
+                from("direct:other")
+                        .routeId("myOtherRoute")
+                        .filter(xpath("/foo"))
+                        .to("mock:result");
 
                 from("direct:foo").routeId("myFooRoute").filter().header("bar").to("mock:result");
 
-                from("direct:bean").routeId("myBeanRoute").filter().method("myCoolBean").to("mock:result");
+                from("direct:bean")
+                        .routeId("myBeanRoute")
+                        .filter()
+                        .method("myCoolBean")
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -26,15 +32,11 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SaxonXsltEndpointConfigurationTest extends CamelSpringTestSupport {
     @Test
     public void testComponentConfiguration() {
-        Configuration configuration = context.getRegistry().lookupByNameAndType("saxon-configuration", Configuration.class);
+        Configuration configuration =
+                context.getRegistry().lookupByNameAndType("saxon-configuration", Configuration.class);
         Map<?, ?> properties = context.getRegistry().lookupByNameAndType("saxon-properties", Map.class);
         XsltSaxonComponent component = context.getComponent("xslt-saxon", XsltSaxonComponent.class);
         XsltSaxonEndpoint endpoint = null;

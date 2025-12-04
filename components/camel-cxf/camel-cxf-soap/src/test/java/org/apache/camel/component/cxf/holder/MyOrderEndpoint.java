@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.holder;
 
 import jakarta.jws.WebParam;
@@ -23,12 +24,13 @@ import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.RequestWrapper;
 
 @WebService
-@XmlSeeAlso({ MyOrderType.class })
+@XmlSeeAlso({MyOrderType.class})
 public interface MyOrderEndpoint {
     String myOrder(Holder<String> strPart, int iAmount, Holder<String> strCustomer);
 
     @RequestWrapper(className = "org.apache.camel.component.cxf.holder.MyOrderType")
     String mySecureOrder(
             @WebParam(name = "iAmount") int iAmount,
-            @WebParam(mode = WebParam.Mode.INOUT, name = "ENVELOPE_HEADER", header = true) Holder<String> envelopeHeader);
+            @WebParam(mode = WebParam.Mode.INOUT, name = "ENVELOPE_HEADER", header = true)
+                    Holder<String> envelopeHeader);
 }

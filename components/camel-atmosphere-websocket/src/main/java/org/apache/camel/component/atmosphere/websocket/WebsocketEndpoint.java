@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.net.URI;
@@ -33,19 +34,25 @@ import org.apache.camel.util.StringHelper;
 /**
  * Expose WebSocket endpoints using the Atmosphere framework.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet",
-             title = "Atmosphere Websocket", syntax = "atmosphere-websocket:servicePath", category = {
-                     Category.HTTP, Category.NETWORKING },
-             headersClass = WebsocketConstants.class)
-@Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
-                              + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
-                              + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
-                              + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,nonProxyHosts,"
-                              + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,"
-                              + "oauth2CachedTokensExpirationMarginSeconds,oauth2ResourceIndicator,oauth2BodyAuthentication",
-          annotations = {
-                  "protocol=http",
-          })
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "atmosphere-websocket",
+        extendsScheme = "servlet",
+        title = "Atmosphere Websocket",
+        syntax = "atmosphere-websocket:servicePath",
+        category = {Category.HTTP, Category.NETWORKING},
+        headersClass = WebsocketConstants.class)
+@Metadata(
+        excludeProperties =
+                "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
+                        + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
+                        + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
+                        + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,nonProxyHosts,"
+                        + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,"
+                        + "oauth2CachedTokensExpirationMarginSeconds,oauth2ResourceIndicator,oauth2BodyAuthentication",
+        annotations = {
+            "protocol=http",
+        })
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;
@@ -54,8 +61,10 @@ public class WebsocketEndpoint extends ServletEndpoint {
     @UriPath(description = "Name of websocket endpoint")
     @Metadata(required = true)
     private String servicePath;
+
     @UriParam
     private boolean sendToAll;
+
     @UriParam
     private boolean useStreaming;
 

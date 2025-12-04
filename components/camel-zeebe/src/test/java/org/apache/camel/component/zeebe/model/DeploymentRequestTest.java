@@ -17,11 +17,11 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 
 public class DeploymentRequestTest {
 
@@ -37,13 +37,12 @@ public class DeploymentRequestTest {
 
         String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
         assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-
     }
 
     @Test
     public void unmarshalTest() {
-        DeploymentRequest unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, DeploymentRequest.class));
+        DeploymentRequest unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, DeploymentRequest.class));
 
         DeploymentRequest message = new DeploymentRequest();
         message.setName("test.bpmn");

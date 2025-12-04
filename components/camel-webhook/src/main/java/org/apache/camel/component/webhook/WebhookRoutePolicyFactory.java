@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import org.apache.camel.CamelContext;
@@ -27,8 +28,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 public class WebhookRoutePolicyFactory implements RoutePolicyFactory {
     private WebhookAction action;
 
-    public WebhookRoutePolicyFactory() {
-    }
+    public WebhookRoutePolicyFactory() {}
 
     public WebhookRoutePolicyFactory(WebhookAction action) {
         this.action = action;

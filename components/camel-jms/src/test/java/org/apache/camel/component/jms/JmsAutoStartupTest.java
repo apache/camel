@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Timeout(60)
 public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
@@ -45,8 +46,7 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
 
         template.sendBody("activemq:queue:JmsAutoStartupTest", "Hello World");
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         mock.reset();
         mock.expectedBodiesReceived("Hello World");
@@ -62,11 +62,11 @@ public class JmsAutoStartupTest extends AbstractPersistentJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                endpoint = context.getEndpoint("activemq:queue:JmsAutoStartupTest?autoStartup=false", JmsEndpoint.class);
+                endpoint =
+                        context.getEndpoint("activemq:queue:JmsAutoStartupTest?autoStartup=false", JmsEndpoint.class);
 
                 from(endpoint).to("mock:result");
             }
         };
     }
-
 }

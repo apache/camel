@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.io.IOException;
@@ -2669,7 +2670,6 @@ public final class HL723Converter {
             return genericMessage;
         } catch (HL7Exception conversionEx) {
             throw new TypeConversionException(hl7String, String.class, conversionEx);
-
         }
     }
 

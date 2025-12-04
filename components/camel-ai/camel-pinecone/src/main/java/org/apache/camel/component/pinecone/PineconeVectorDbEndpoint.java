@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone;
 
 import io.pinecone.clients.Pinecone;
@@ -31,16 +32,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations on the Pinecone Vector Database.
  */
-@UriEndpoint(firstVersion = "4.6.0",
-             scheme = PineconeVectorDb.SCHEME,
-             title = "Pinecone",
-             syntax = "pinecone:collection",
-             producerOnly = true,
-             category = {
-                     Category.DATABASE,
-                     Category.AI
-             },
-             headersClass = PineconeVectorDbHeaders.class)
+@UriEndpoint(
+        firstVersion = "4.6.0",
+        scheme = PineconeVectorDb.SCHEME,
+        title = "Pinecone",
+        syntax = "pinecone:collection",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.AI},
+        headersClass = PineconeVectorDbHeaders.class)
 public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -52,10 +51,8 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     private Pinecone client;
 
-    public PineconeVectorDbEndpoint(String endpointUri,
-                                    Component component,
-                                    String collection,
-                                    PineconeVectorDbConfiguration configuration) {
+    public PineconeVectorDbEndpoint(
+            String endpointUri, Component component, String collection, PineconeVectorDbConfiguration configuration) {
         super(endpointUri, component);
         this.collection = collection;
         this.configuration = configuration;
@@ -109,10 +106,9 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
         }
 
         // Check to see if a proxyHost/proxyPort pair is configured
-        if ((getConfiguration().getProxyHost() != null) &&
-                (getConfiguration().getProxyPort() != null)) {
-            builder = builder.withProxy(getConfiguration().getProxyHost(),
-                    getConfiguration().getProxyPort());
+        if ((getConfiguration().getProxyHost() != null) && (getConfiguration().getProxyPort() != null)) {
+            builder = builder.withProxy(
+                    getConfiguration().getProxyHost(), getConfiguration().getProxyPort());
         }
 
         return builder.build();

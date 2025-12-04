@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity;
 
 import java.util.Map;
@@ -31,20 +32,16 @@ public class XmlVerifierComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private XmlVerifierConfiguration verifierConfiguration;
 
-    public XmlVerifierComponent() {
-    }
+    public XmlVerifierComponent() {}
 
     public XmlVerifierComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected Endpoint createEndpoint(
-            String uri, String remaining,
-            Map<String, Object> parameters)
-            throws Exception {
-        XmlVerifierConfiguration config
-                = verifierConfiguration != null ? verifierConfiguration.copy() : new XmlVerifierConfiguration();
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        XmlVerifierConfiguration config =
+                verifierConfiguration != null ? verifierConfiguration.copy() : new XmlVerifierConfiguration();
         XmlVerifierEndpoint endpoint = new XmlVerifierEndpoint(uri, this, config);
         endpoint.setName(remaining);
         setProperties(endpoint, parameters);
@@ -64,5 +61,4 @@ public class XmlVerifierComponent extends DefaultComponent {
     public void setVerifierConfiguration(XmlVerifierConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SplitStopOnExceptionIssueTest extends ContextTestSupport {
 
@@ -61,10 +62,17 @@ public class SplitStopOnExceptionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setProperty("foo", constant("before")).split().tokenize(",")
-                        .setProperty("foo", constant("changed")).to("mock:line")
-                        .filter(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced exception"))
-                        .end().end().to("mock:result");
+                from("direct:start")
+                        .setProperty("foo", constant("before"))
+                        .split()
+                        .tokenize(",")
+                        .setProperty("foo", constant("changed"))
+                        .to("mock:line")
+                        .filter(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Forced exception"))
+                        .end()
+                        .end()
+                        .to("mock:result");
             }
         };
     }

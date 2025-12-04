@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,14 +35,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test for HL7 DataFormat.
  */
 public class HL7DataFormatTest extends CamelTestSupport {
-    private static final String NONE_ISO_8859_1 = "\u221a\u00c4\u221a\u00e0\u221a\u00e5\u221a\u00ed\u221a\u00f4\u2248\u00ea";
+    private static final String NONE_ISO_8859_1 =
+            "\u221a\u00c4\u221a\u00e0\u221a\u00e5\u221a\u00ed\u221a\u00f4\u2248\u00ea";
 
     private HL7DataFormat hl7 = new HL7DataFormat();
     private HL7DataFormat hl7big5 = new HL7DataFormat() {
@@ -143,7 +145,8 @@ public class HL7DataFormatTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Message.class);
-        mock.expectedHeaderReceived(HL7Constants.HL7_CHARSET, HL7Charset.getHL7Charset(charset).getHL7CharsetName());
+        mock.expectedHeaderReceived(
+                HL7Constants.HL7_CHARSET, HL7Charset.getHL7Charset(charset).getHL7CharsetName());
         mock.expectedHeaderReceived(Exchange.CHARSET_NAME, charset);
 
         // Message with explicit encoding in MSH-18
@@ -200,7 +203,8 @@ public class HL7DataFormatTest extends CamelTestSupport {
     private static String createHL7WithCharsetAsString(HL7Charset charset) {
         String hl7Charset = charset == null ? "" : charset.getHL7CharsetName();
         String line1 = String.format(
-                "MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||QRY^A19|1234|P|2.4||||||%s", hl7Charset);
+                "MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||QRY^A19|1234|P|2.4||||||%s",
+                hl7Charset);
         String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
 
         StringBuilder body = new StringBuilder();
@@ -240,5 +244,4 @@ public class HL7DataFormatTest extends CamelTestSupport {
         adr.getMSH().getCharacterSet(0).setValue(charset.getHL7CharsetName());
         return adr;
     }
-
 }

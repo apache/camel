@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management;
 
 /**
@@ -34,14 +35,15 @@ public final class JmxSystemPropertyKeys {
     public static final String USE_PLATFORM_MBS = "org.apache.camel.jmx.usePlatformMBeanServer";
 
     // whether all processors or only processors with a custom id given should be registered
-    public static final String ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID
-            = "org.apache.camel.jmx.onlyRegisterProcessorWithCustomId";
+    public static final String ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID =
+            "org.apache.camel.jmx.onlyRegisterProcessorWithCustomId";
 
     // whether to enable gathering load statistics in the background
     public static final String LOAD_STATISTICS_ENABLED = "org.apache.camel.jmx.loadStatisticsEnabled";
 
     // whether to enable gathering endpoint runtime statistics
-    public static final String ENDPOINT_RUNTIME_STATISTICS_ENABLED = "org.apache.camel.jmx.endpointRuntimeStatisticsEnabled";
+    public static final String ENDPOINT_RUNTIME_STATISTICS_ENABLED =
+            "org.apache.camel.jmx.endpointRuntimeStatisticsEnabled";
 
     // the level of statistics enabled
     public static final String STATISTICS_LEVEL = "org.apache.camel.jmx.statisticsLevel";
@@ -53,10 +55,12 @@ public final class JmxSystemPropertyKeys {
     public static final String REGISTER_NEW_ROUTES = "org.apache.camel.jmx.registerNewRoutes";
 
     // whether to register routes created by route templates (not kamelets)
-    public static final String REGISTER_ROUTES_CREATED_BY_TEMPLATE = "org.apache.camel.jmx.registerRoutesCreateByTemplate";
+    public static final String REGISTER_ROUTES_CREATED_BY_TEMPLATE =
+            "org.apache.camel.jmx.registerRoutesCreateByTemplate";
 
     // whether to register routes created by Kamelets
-    public static final String REGISTER_ROUTES_CREATED_BY_KAMELET = "org.apache.camel.jmx.registerRoutesCreateByKamelet";
+    public static final String REGISTER_ROUTES_CREATED_BY_KAMELET =
+            "org.apache.camel.jmx.registerRoutesCreateByKamelet";
 
     // Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
     public static final String MASK = "org.apache.camel.jmx.mask";
@@ -76,5 +80,4 @@ public final class JmxSystemPropertyKeys {
     private JmxSystemPropertyKeys() {
         // not instantiated
     }
-
 }

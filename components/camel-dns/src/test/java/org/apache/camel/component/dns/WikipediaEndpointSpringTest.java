@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns;
 
 import java.util.HashMap;
@@ -36,11 +37,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class WikipediaEndpointSpringTest extends CamelSpringTestSupport {
 
-    private static final String RESPONSE_MONKEY
-            = "\"A monkey is a nonhuman " + "primate mammal with the exception usually of the lemurs and "
-              + "tarsiers. More specifically, the term monkey refers to a subset "
-              + "of monkeys: any of the smaller longer-tailed catarrhine or "
-              + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
+    private static final String RESPONSE_MONKEY = "\"A monkey is a nonhuman "
+            + "primate mammal with the exception usually of the lemurs and "
+            + "tarsiers. More specifically, the term monkey refers to a subset "
+            + "of monkeys: any of the smaller longer-tailed catarrhine or "
+            + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -68,5 +69,4 @@ public class WikipediaEndpointSpringTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("Wikipedia.xml");
     }
-
 }

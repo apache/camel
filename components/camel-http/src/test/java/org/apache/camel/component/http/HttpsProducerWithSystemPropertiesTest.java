@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -34,9 +38,6 @@ import org.apache.hc.core5.ssl.SSLContexts;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * If SSLContext is created via system properties, is cached. Automatically created next sslContext (with different
@@ -91,16 +92,18 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
         expectedHeaders.put("User-Agent", "myCoolCamelCaseAgent");
 
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(sslcontext)
                 .setSslSetupHandler(socket -> socket.setNeedClientAuth(true))
                 .register("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .register("/header/",
+                .register(
+                        "/header/",
                         new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
                 .create();
         localServer.start();
-
     }
 
     @Override
@@ -115,30 +118,28 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     public void httpGetWithProxyFromSystemProperties() {
 
         String endpointUri = "https://localhost:" + localServer.getLocalPort()
-                             + "/header/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true";
-        Exchange exchange = template.request(endpointUri, exchange1 -> {
-        });
+                + "/header/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true";
+        Exchange exchange = template.request(endpointUri, exchange1 -> {});
 
         assertExchange(exchange);
     }
 
     @Test
     public void testTwoWaySuccessfull() {
-        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
-                                             + "/mail/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "https://localhost:" + localServer.getLocalPort()
+                        + "/mail/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true",
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
 
     @Test
     public void testTwoWayFailure() {
-        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
-                                             + "/mail/?x509HostnameVerifier=x509HostnameVerifier",
-                exchange1 -> {
-                });
-        //exchange does not have response code, because it was rejected
+        Exchange exchange = template.request(
+                "https://localhost:" + localServer.getLocalPort() + "/mail/?x509HostnameVerifier=x509HostnameVerifier",
+                exchange1 -> {});
+        // exchange does not have response code, because it was rejected
         assertTrue(exchange.getMessage().getHeaders().isEmpty());
     }
 }

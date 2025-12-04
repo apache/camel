@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -42,16 +43,17 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     // if we extend PolicyDefinition so we must make a copy of the class
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
+
     @XmlTransient
     private Class<? extends Policy> type = TransactedPolicy.class;
+
     @XmlTransient
     private Policy policy;
 
     @XmlAttribute
     private String ref;
 
-    public TransactedDefinition() {
-    }
+    public TransactedDefinition() {}
 
     protected TransactedDefinition(TransactedDefinition source) {
         super(source);
@@ -173,5 +175,4 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         setRef(ref);
         return this;
     }
-
 }

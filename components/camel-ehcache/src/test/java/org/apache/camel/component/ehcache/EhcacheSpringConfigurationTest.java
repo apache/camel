@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -28,19 +32,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class EhcacheSpringConfigurationTest extends CamelSpringTestSupport {
 
     @EndpointInject("ehcache://myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
     private EhcacheEndpoint ehcacheConf;
-    @EndpointInject("ehcache://myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
+
+    @EndpointInject(
+            "ehcache://myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/ehcache/EhcacheSpringConfigurationTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/ehcache/EhcacheSpringConfigurationTest.xml");
     }
 
     // *****************************

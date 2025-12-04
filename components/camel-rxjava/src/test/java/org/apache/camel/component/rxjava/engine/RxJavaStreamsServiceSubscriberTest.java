@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rxjava.engine;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTestSupport {
 
     @Test
@@ -35,10 +36,8 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:sub1")
-                        .to("mock:sub1");
-                from("reactive-streams:sub2")
-                        .to("mock:sub2");
+                from("reactive-streams:sub1").to("mock:sub1");
+                from("reactive-streams:sub2").to("mock:sub2");
                 from("timer:tick?period=50")
                         .setBody()
                         .simple("${random(500)}")
@@ -87,15 +86,15 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
             public void configure() {
                 from("reactive-streams:singleConsumer")
                         .process()
-                        .message(m -> m.setHeader("thread", Thread.currentThread().getId()))
+                        .message(m ->
+                                m.setHeader("thread", Thread.currentThread().getId()))
                         .to("mock:singleBucket");
             }
         });
 
         context.start();
 
-        Flowable.range(0, 1000).subscribe(
-                crs.streamSubscriber("singleConsumer", Number.class));
+        Flowable.range(0, 1000).subscribe(crs.streamSubscriber("singleConsumer", Number.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:singleBucket");
         endpoint.expectedMessageCount(1000);
@@ -123,15 +122,15 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
             public void configure() {
                 from("reactive-streams:multipleConsumers?concurrentConsumers=3")
                         .process()
-                        .message(m -> m.setHeader("thread", Thread.currentThread().getId()))
+                        .message(m ->
+                                m.setHeader("thread", Thread.currentThread().getId()))
                         .to("mock:multipleBucket");
             }
         });
 
         context.start();
 
-        Flowable.range(0, 1000).subscribe(
-                crs.streamSubscriber("multipleConsumers", Number.class));
+        Flowable.range(0, 1000).subscribe(crs.streamSubscriber("multipleConsumers", Number.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:multipleBucket");
         endpoint.expectedMessageCount(1000);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.messagehistory;
 
 import org.apache.camel.CamelContextAware;
@@ -26,5 +27,4 @@ import org.apache.camel.component.micrometer.json.AbstractMicrometerService;
  */
 @ManagedResource(description = "MicrometerMessageHistory")
 public final class MicrometerMessageHistoryService extends AbstractMicrometerService
-        implements CamelContextAware, StaticService, MicrometerMessageHistoryMBean {
-}
+        implements CamelContextAware, StaticService, MicrometerMessageHistoryMBean {}

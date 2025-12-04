@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.nio.file.Path;
@@ -37,7 +38,8 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
         // folder
         mock.message(0).header(Exchange.FILE_NAME_PRODUCED).contains("target");
 
-        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME, "FileHeaderFileNameProducedTest.txt");
+        template.requestBodyAndHeader(
+                "direct:in", "Hello World", Exchange.FILE_NAME, "FileHeaderFileNameProducedTest.txt");
 
         mock.assertIsSatisfied();
     }
@@ -46,9 +48,10 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to(fileUri(Path.of("target"), "?fileExist=Override")).to("mock:result");
+                from("direct:in")
+                        .to(fileUri(Path.of("target"), "?fileExist=Override"))
+                        .to("mock:result");
             }
         };
     }
-
 }

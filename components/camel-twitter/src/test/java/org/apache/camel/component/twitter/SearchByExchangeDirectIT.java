@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +31,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
-@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
-                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+@EnabledIfSystemProperty(
+        named = "enable.twitter.itests",
+        matches = "true",
+        disabledReason = "Likely has API limits, so it's better to keep it off by default")
 public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
 
     @Produce("direct:start")
@@ -127,17 +130,20 @@ public class SearchByExchangeDirectIT extends CamelTwitterITSupport {
             public void configure() {
                 from("direct:start")
                         .toF("twitter-search://java?%s", getUriTokens())
-                        .split().body()
+                        .split()
+                        .body()
                         .to("mock:result");
 
                 from("direct:header")
                         .toF("twitter-search://foo?%s", getUriTokens())
-                        .split().body()
+                        .split()
+                        .body()
                         .to("mock:result");
 
                 from("direct:double")
                         .toF("twitter-search://foo?filterOld=false&%s", getUriTokens())
-                        .split().body()
+                        .split()
+                        .body()
                         .to("mock:result");
             }
         };

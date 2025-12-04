@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.ArrayList;
@@ -37,11 +38,10 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
     @Override
     public List<Exchange> browse(
-            JmsOperations template, String queue, final JmsBrowsableEndpoint endpoint,
-            final int limit) {
+            JmsOperations template, String queue, final JmsBrowsableEndpoint endpoint, final int limit) {
         if (endpoint.getSelector() != null) {
-            return template.browseSelected(queue, endpoint.getSelector(),
-                    (session, browser) -> doBrowse(endpoint, session, browser, limit));
+            return template.browseSelected(
+                    queue, endpoint.getSelector(), (session, browser) -> doBrowse(endpoint, session, browser, limit));
         } else {
             return template.browse(queue, (session, browser) -> doBrowse(endpoint, session, browser, limit));
         }
@@ -51,15 +51,17 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
     public BrowsableEndpoint.BrowseStatus browseStatus(
             JmsOperations template, String queue, JmsBrowsableEndpoint endpoint, int limit) {
         if (endpoint.getSelector() != null) {
-            return template.browseSelected(queue, endpoint.getSelector(),
+            return template.browseSelected(
+                    queue,
+                    endpoint.getSelector(),
                     (session, browser) -> doBrowseStatus(endpoint, session, browser, limit));
         } else {
             return template.browse(queue, (session, browser) -> doBrowseStatus(endpoint, session, browser, limit));
         }
     }
 
-    private static List<Exchange> doBrowse(JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser, int limit)
-            throws JMSException {
+    private static List<Exchange> doBrowse(
+            JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser, int limit) throws JMSException {
 
         if (limit <= 0) {
             limit = Integer.MAX_VALUE;
@@ -79,8 +81,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
     }
 
     private static BrowsableEndpoint.BrowseStatus doBrowseStatus(
-            JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser, int limit)
-            throws JMSException {
+            JmsBrowsableEndpoint endpoint, Session session, QueueBrowser browser, int limit) throws JMSException {
         if (limit <= 0) {
             limit = Integer.MAX_VALUE;
         }
@@ -105,5 +106,4 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
         }
         return new BrowsableEndpoint.BrowseStatus(size, ts1, ts2);
     }
-
 }

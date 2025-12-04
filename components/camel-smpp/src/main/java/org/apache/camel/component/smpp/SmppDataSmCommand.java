@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.util.HashMap;
@@ -73,14 +74,18 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Sent a data short message for exchange id '{}' and message id '{}'",
-                    exchange.getExchangeId(), result.getMessageId());
+            log.debug(
+                    "Sent a data short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(),
+                    result.getMessageId());
         }
 
         Message message = ExchangeHelper.getResultMessage(exchange);
         message.setHeader(SmppConstants.ID, result.getMessageId());
-        message.setHeader(SmppConstants.OPTIONAL_PARAMETERS, createOptionalParameterByName(result.getOptionalParameters()));
-        message.setHeader(SmppConstants.OPTIONAL_PARAMETER, createOptionalParameterByCode(result.getOptionalParameters()));
+        message.setHeader(
+                SmppConstants.OPTIONAL_PARAMETERS, createOptionalParameterByName(result.getOptionalParameters()));
+        message.setHeader(
+                SmppConstants.OPTIONAL_PARAMETER, createOptionalParameterByCode(result.getOptionalParameters()));
     }
 
     protected Map<String, String> createOptionalParameterByName(OptionalParameter[] optionalParameters) {
@@ -123,13 +128,16 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
             } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag), ((OctetString) optPara).getValue());
             } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag),
+                optParams.put(
+                        java.lang.Short.valueOf(optPara.tag),
                         java.lang.Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
             } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag),
+                optParams.put(
+                        java.lang.Short.valueOf(optPara.tag),
                         java.lang.Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
             } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag),
+                optParams.put(
+                        java.lang.Short.valueOf(optPara.tag),
                         Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
             } else if (Null.class.isInstance(optPara)) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag), null);
@@ -139,7 +147,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         return optParams;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     protected DataSm createDataSm(Exchange exchange) {
         Message in = exchange.getIn();
         DataSm dataSm = new DataSm();

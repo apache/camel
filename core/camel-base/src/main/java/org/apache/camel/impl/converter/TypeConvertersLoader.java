@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
 
 import java.io.IOException;
@@ -48,7 +49,6 @@ public class TypeConvertersLoader extends AnnotationTypeConverterLoader {
     @Override
     protected String[] findPackageNames() throws IOException {
         // this method doesn't change the behavior of the CorePackageScanClassResolver
-        return new String[] { name };
+        return new String[] {name};
     }
-
 }

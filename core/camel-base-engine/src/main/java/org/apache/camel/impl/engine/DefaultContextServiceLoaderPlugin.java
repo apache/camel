@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ServiceLoader;
@@ -63,15 +64,17 @@ public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements
      */
     @Override
     protected void doStart() throws Exception {
-        contextServicePlugins = ServiceLoader.load(ContextServicePlugin.class,
-                camelContext.getApplicationContextClassLoader());
+        contextServicePlugins =
+                ServiceLoader.load(ContextServicePlugin.class, camelContext.getApplicationContextClassLoader());
         for (ContextServicePlugin plugin : contextServicePlugins) {
             try {
                 plugin.load(camelContext);
             } catch (Exception e) {
                 LOG.warn(
                         "Loading of plugin {} failed, however the exception will be ignored so others plugins can be initialized. Reason: {}",
-                        plugin.getClass().getName(), e.getMessage(), e);
+                        plugin.getClass().getName(),
+                        e.getMessage(),
+                        e);
             }
         }
     }
@@ -85,7 +88,9 @@ public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements
                 } catch (Exception e) {
                     LOG.warn(
                             "Unloading of plugin {} failed, however the exception will be ignored so shutdown can continue. Reason: {}",
-                            plugin.getClass().getName(), e.getMessage(), e);
+                            plugin.getClass().getName(),
+                            e.getMessage(),
+                            e);
                 }
             }
         }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -40,10 +45,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class ComplexTypesTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ComplexTypesTest.class);
@@ -74,9 +75,7 @@ public class ComplexTypesTest extends CamelTestSupport {
                         .endResponseMessage()
                         .outType(SampleComplexResponseType.InnerClass.class)
                         .to("direct:request");
-                from("direct:request")
-                        .routeId("complex request type")
-                        .log("/complex request invoked");
+                from("direct:request").routeId("complex request type").log("/complex request invoked");
 
                 rest().get("/complexResponse")
                         .description("Demo complex response type")
@@ -135,8 +134,11 @@ public class ComplexTypesTest extends CamelTestSupport {
     @ParameterizedTest
     @MethodSource("uriAndVersionVariations")
     public void testSchema(String uri, String version) throws Exception {
-        checkSchemaGeneration(uri, version,
-                "V" + version.replace(".", "") + "SchemaFor" + uri.substring(1).replace("complex", "ComplexTypes") + ".json");
+        checkSchemaGeneration(
+                uri,
+                version,
+                "V" + version.replace(".", "") + "SchemaFor" + uri.substring(1).replace("complex", "ComplexTypes")
+                        + ".json");
     }
 
     static Stream<Arguments> uriAndVersionVariations() {
@@ -156,7 +158,8 @@ public class ComplexTypesTest extends CamelTestSupport {
 
         List<RestDefinition> rests = context.getRestDefinitions().stream()
                 // So we get the security schema and the route schema
-                .filter(def -> def.getVerbs().isEmpty() || def.getVerbs().get(0).getPath().equals(uri))
+                .filter(def -> def.getVerbs().isEmpty()
+                        || def.getVerbs().get(0).getPath().equals(uri))
                 .collect(Collectors.toList());
 
         RestOpenApiReader reader = new RestOpenApiReader();
@@ -169,8 +172,7 @@ public class ComplexTypesTest extends CamelTestSupport {
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("org/apache/camel/openapi/" + schemaResource);
         assertNotNull(is);
-        String expected = new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8))
+        String expected = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
                 .lines()
                 .collect(Collectors.joining("\n"));
         is.close();
@@ -181,7 +183,7 @@ public class ComplexTypesTest extends CamelTestSupport {
     private BeanConfig getBeanConfig(String apiVersion) {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");

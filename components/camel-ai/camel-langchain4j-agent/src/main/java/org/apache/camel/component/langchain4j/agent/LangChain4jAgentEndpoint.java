@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
+
+import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHEME;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -28,13 +31,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHEME;
-
-@UriEndpoint(firstVersion = "4.14.0", scheme = SCHEME,
-             title = "LangChain4j Agent",
-             syntax = "langchain4j-agent:agentId",
-             producerOnly = true,
-             category = { Category.AI }, headersClass = Headers.class)
+@UriEndpoint(
+        firstVersion = "4.14.0",
+        scheme = SCHEME,
+        title = "LangChain4j Agent",
+        syntax = "langchain4j-agent:agentId",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = Headers.class)
 public class LangChain4jAgentEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The Agent id")
@@ -43,8 +47,8 @@ public class LangChain4jAgentEndpoint extends DefaultEndpoint {
     @UriParam
     private LangChain4jAgentConfiguration configuration;
 
-    public LangChain4jAgentEndpoint(String endpointUri, Component component, String agentId,
-                                    LangChain4jAgentConfiguration configuration) {
+    public LangChain4jAgentEndpoint(
+            String endpointUri, Component component, String agentId, LangChain4jAgentConfiguration configuration) {
         super(endpointUri, component);
         this.agentId = agentId;
         this.configuration = configuration;

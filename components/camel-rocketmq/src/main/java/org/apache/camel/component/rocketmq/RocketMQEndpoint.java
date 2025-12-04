@@ -34,50 +34,71 @@ import org.apache.camel.support.DefaultMessage;
 /**
  * Send and receive messages from <a href="https://rocketmq.apache.org/">RocketMQ</a> cluster.
  */
-@UriEndpoint(firstVersion = "3.20.0", scheme = "rocketmq", syntax = "rocketmq:topicName", title = "RocketMQ",
-             category = Category.MESSAGING, headersClass = RocketMQConstants.class)
+@UriEndpoint(
+        firstVersion = "3.20.0",
+        scheme = "rocketmq",
+        syntax = "rocketmq:topicName",
+        title = "RocketMQ",
+        category = Category.MESSAGING,
+        headersClass = RocketMQConstants.class)
 public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private String topicName;
+
     @UriParam(label = "producer")
     private String producerGroup;
+
     @UriParam(label = "consumer")
     private String consumerGroup;
+
     @UriParam(label = "consumer", defaultValue = "tag", enums = "tag,sql")
     private String messageSelectorType = "tag";
+
     @UriParam(label = "consumer", defaultValue = "*")
     private String subscribeTags = "*";
+
     @UriParam(label = "consumer", defaultValue = "1 = 1")
     private String subscribeSql = "1 = 1";
+
     @UriParam(label = "producer")
     private String sendTag = "";
+
     @UriParam(label = "producer")
     private String replyToTopic;
+
     @UriParam(label = "producer")
     private String replyToConsumerGroup;
+
     @UriParam(label = "common", defaultValue = "localhost:9876")
     private String namesrvAddr = "localhost:9876";
+
     @UriParam(label = "common")
     private String namespace;
+
     @UriParam(label = "common")
     private boolean enableTrace;
+
     @UriParam(label = "common", defaultValue = "LOCAL", enums = "LOCAL,CLOUD")
     private String accessChannel = "LOCAL";
+
     @UriParam(label = "advanced", defaultValue = "10000")
     private long requestTimeoutMillis = 10000L;
+
     @UriParam(label = "advanced", defaultValue = "1000")
     private long requestTimeoutCheckerIntervalMillis = 1000L;
+
     @UriParam(label = "producer")
     private boolean waitForSendResult;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
 
-    public RocketMQEndpoint() {
-    }
+    public RocketMQEndpoint() {}
 
     public RocketMQEndpoint(String endpointUri, RocketMQComponent component) {
         super(endpointUri, component);

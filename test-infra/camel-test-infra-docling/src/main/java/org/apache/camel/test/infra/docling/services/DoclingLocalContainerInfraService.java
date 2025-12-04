@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.docling.services;
 
 import java.time.Duration;
@@ -29,9 +30,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = DoclingInfraService.class,
-              description = "Document processing and conversion service",
-              serviceAlias = { "docling" })
+@InfraService(
+        service = DoclingInfraService.class,
+        description = "Document processing and conversion service",
+        serviceAlias = {"docling"})
 public class DoclingLocalContainerInfraService implements DoclingInfraService, ContainerService<GenericContainer<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingLocalContainerInfraService.class);
@@ -42,8 +44,8 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
     private final GenericContainer<?> container;
 
     public DoclingLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(DoclingLocalContainerInfraService.class,
-                DoclingProperties.DOCLING_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                DoclingLocalContainerInfraService.class, DoclingProperties.DOCLING_CONTAINER));
     }
 
     public DoclingLocalContainerInfraService(String imageName) {

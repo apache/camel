@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jta;
 
 import java.util.Map;
@@ -58,7 +59,9 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
         LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition);
 
         JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(
-                camelContext, processor, logger,
+                camelContext,
+                processor,
+                logger,
                 getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy,
                 transactionPolicy,
@@ -72,8 +75,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
         return answer;
     }
 
-    private JtaTransactionPolicy resolveTransactionPolicy(
-            JtaTransactionErrorHandlerDefinition definition) {
+    private JtaTransactionPolicy resolveTransactionPolicy(JtaTransactionErrorHandlerDefinition definition) {
 
         JtaTransactionPolicy answer = (JtaTransactionPolicy) definition.getTransactedPolicy();
         if (answer == null && definition.getTransactedPolicyRef() != null) {
@@ -129,7 +131,8 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
         return answer;
     }
 
-    private RedeliveryPolicy resolveRedeliveryPolicy(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+    private RedeliveryPolicy resolveRedeliveryPolicy(
+            TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
         RedeliveryPolicy answer = null;
         RedeliveryPolicyDefinition def = definition.getRedeliveryPolicy();
         if (def == null && definition.getRedeliveryPolicyRef() != null) {
@@ -176,7 +179,8 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
                         executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
                     }
                     if (executorService == null) {
-                        throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
+                        throw new IllegalArgumentException(
+                                "ExecutorService " + executorServiceRef + " not found in registry.");
                     }
                 } else {
                     // no explicit configured thread pool, so leave it up to the
@@ -190,5 +194,4 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
             lock.unlock();
         }
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NoErrorHandlerTest extends ContextTestSupport {
 
@@ -78,11 +79,13 @@ public class NoErrorHandlerTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("direct:start").process(exchange -> {
-                    if (++counter < 3) {
-                        throw new IllegalArgumentException("Forced by unit test");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(exchange -> {
+                            if (++counter < 3) {
+                                throw new IllegalArgumentException("Forced by unit test");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

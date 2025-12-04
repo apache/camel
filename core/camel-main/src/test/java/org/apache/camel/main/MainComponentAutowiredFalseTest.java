@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.net.ContentHandler;
@@ -82,8 +83,7 @@ public class MainComponentAutowiredFalseTest {
         private CookiePolicy cookiePolicy;
         private String hello;
 
-        public MyComponent() {
-        }
+        public MyComponent() {}
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
@@ -120,11 +120,12 @@ public class MainComponentAutowiredFalseTest {
 
         @Override
         public String[] getAutowiredNames() {
-            return new String[] { "contentHandlerFactory" };
+            return new String[] {"contentHandlerFactory"};
         }
 
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if ("contentHandlerFactory".equals(name)) {
                 MyComponent comp = (MyComponent) target;
                 comp.setContentHandlerFactory((ContentHandlerFactory) value);
@@ -162,5 +163,4 @@ public class MainComponentAutowiredFalseTest {
             return null;
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.LazyStartProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class LazyStartProducerTest extends ContextTestSupport {
 
@@ -96,5 +97,4 @@ public class LazyStartProducerTest extends ContextTestSupport {
         MockEndpoint mock2 = getMockEndpoint("mock:foo?lazyStartProducer=true");
         assertTrue(mock2.isLazyStartProducer());
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf;
+
+import static org.apache.camel.component.pdf.PDFUtil.textToPDF;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,11 +33,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.pdf.PDFUtil.textToPDF;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PdfConverterTest extends CamelTestSupport {
 
@@ -66,7 +67,6 @@ public class PdfConverterTest extends CamelTestSupport {
             return true;
         });
         resultEndpoint.assertIsSatisfied();
-
     }
 
     @Override
@@ -74,9 +74,7 @@ public class PdfConverterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("pdf:extractText")
-                        .to("mock:result");
+                from("direct:start").to("pdf:extractText").to("mock:result");
             }
         };
     }

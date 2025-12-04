@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -78,17 +79,37 @@ public class SimpleLanguageBeanFunctionMethodValueWithParenthesisTest extends Co
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:single").choice().when().simple("${bean:foo?method=bar(${body}, 'a()b')}").to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:single")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?method=bar(${body}, 'a()b')}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:double").choice().when().simple("${bean:foo?method=bar(${body}, \"a()b\")}").to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:double")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?method=bar(${body}, \"a()b\")}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:header").choice().when().simple("${bean:foo?method=bar(${body}, ${header.myHeader})}")
-                        .to("mock:result").otherwise().to("mock:other");
+                from("direct:header")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?method=bar(${body}, ${header.myHeader})}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:cron").choice().when().simple("${bean:foo?method=bar(${body.id}, ${body.cron})}").to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:cron")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?method=bar(${body.id}, ${body.cron})}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }
@@ -119,5 +140,4 @@ public class SimpleLanguageBeanFunctionMethodValueWithParenthesisTest extends Co
             return cron;
         }
     }
-
 }

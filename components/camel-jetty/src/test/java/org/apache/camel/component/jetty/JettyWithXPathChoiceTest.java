@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class JettyWithXPathChoiceTest extends BaseJettyTest {
     protected MockEndpoint x;
@@ -65,11 +66,18 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
             public void configure() {
                 from("jetty:http://localhost:{{port}}/myworld")
                         // use stream caching
-                        .streamCaching().choice().when().xpath("/one").to("mock:x").when().xpath("/two").to("mock:y")
-                        .otherwise().to("mock:z").end();
-
+                        .streamCaching()
+                        .choice()
+                        .when()
+                        .xpath("/one")
+                        .to("mock:x")
+                        .when()
+                        .xpath("/two")
+                        .to("mock:y")
+                        .otherwise()
+                        .to("mock:z")
+                        .end();
             }
         };
     }
-
 }

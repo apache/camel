@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity;
 
 import java.io.InputStream;
@@ -90,8 +91,8 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                  + (includeNewLine ? "\n" : "")
-                  + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+                + (includeNewLine ? "\n" : "")
+                + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
 
     public SignatureDigestMethodTest() throws Exception {
@@ -119,12 +120,13 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
         registry.bind("keySelectorDefault", getDefaultKeySelector());
         registry.bind("envelopingSignatureChecker", getEnvelopingXmlSignatureChecker());
         registry.bind("xmlSignature2MessageWithTimestampProperty", getXmlSignature2MessageWithTimestampdProperty());
-        registry.bind("validationFailedHandlerIgnoreManifestFailures", getValidationFailedHandlerIgnoreManifestFailures());
+        registry.bind(
+                "validationFailedHandlerIgnoreManifestFailures", getValidationFailedHandlerIgnoreManifestFailures());
         registry.bind("signatureProperties", getSignatureProperties());
         registry.bind("nodesearchxpath", getNodeSerachXPath());
         Map<String, String> namespaceMap = Collections.singletonMap("ns", "http://test");
-        List<XPathFilterParameterSpec> xpaths = Collections
-                .singletonList(XmlSignatureHelper.getXpathFilter("/ns:root/a/@ID", namespaceMap));
+        List<XPathFilterParameterSpec> xpaths =
+                Collections.singletonList(XmlSignatureHelper.getXpathFilter("/ns:root/a/@ID", namespaceMap));
         registry.bind("xpathsToIdAttributes", xpaths);
 
         registry.bind("parentXpathBean", getParentXPathBean());
@@ -132,106 +134,129 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha1")
-                        .to("xmlsecurity-sign:sha1?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2000/09/xmldsig#sha1")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha1")
+                            .to("xmlsecurity-sign:sha1?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2000/09/xmldsig#sha1")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha224")
+                            .to("xmlsecurity-sign:sha224?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2001/04/xmldsig-more#sha224")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha256")
+                            .to("xmlsecurity-sign:sha256?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha256")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha384")
+                            .to("xmlsecurity-sign:sha384?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2001/04/xmldsig-more#sha384")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha512")
+                            .to("xmlsecurity-sign:sha512?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha512")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:ripemd160")
+                            .to("xmlsecurity-sign:ripemd160?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#ripemd160")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:whirlpool")
+                            .to("xmlsecurity-sign:whirlpool?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#whirlpool")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha3_224")
+                            .to("xmlsecurity-sign:sha3_224?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-224")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha3_256")
+                            .to("xmlsecurity-sign:sha3_256?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-256")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha3_384")
+                            .to("xmlsecurity-sign:sha3_384?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-384")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    // START SNIPPET: signature and digest algorithm
+                    from("direct:sha3_512")
+                            .to("xmlsecurity-sign:sha3_512?keyAccessor=#accessor"
+                                    + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-512")
+                            .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector")
+                            .to("mock:result");
+                    // END SNIPPET: signature and digest algorithm
+                }
             }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha224")
-                        .to("xmlsecurity-sign:sha224?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2001/04/xmldsig-more#sha224")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha256")
-                        .to("xmlsecurity-sign:sha256?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha256")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha384")
-                        .to("xmlsecurity-sign:sha384?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2001/04/xmldsig-more#sha384")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha512")
-                        .to("xmlsecurity-sign:sha512?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha512")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:ripemd160")
-                        .to("xmlsecurity-sign:ripemd160?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#ripemd160")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:whirlpool")
-                        .to("xmlsecurity-sign:whirlpool?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#whirlpool")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha3_224")
-                        .to("xmlsecurity-sign:sha3_224?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-224")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha3_256")
-                        .to("xmlsecurity-sign:sha3_256?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-256")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha3_384")
-                        .to("xmlsecurity-sign:sha3_384?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-384")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        }, new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: signature and digest algorithm
-                from("direct:sha3_512")
-                        .to("xmlsecurity-sign:sha3_512?keyAccessor=#accessor"
-                            + "&digestAlgorithm=http://www.w3.org/2007/05/xmldsig-more#sha3-512")
-                        .to("xmlsecurity-verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
-                // END SNIPPET: signature and digest algorithm
-            }
-        } };
+        };
     }
 
     @Test
@@ -330,10 +355,11 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
 
     public Exchange doTestSignatureRoute(RouteBuilder builder) throws Exception {
-        return doSignatureRouteTest(builder, null, Collections.<String, Object> emptyMap());
+        return doSignatureRouteTest(builder, null, Collections.<String, Object>emptyMap());
     }
 
-    public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
+    public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers)
+            throws Exception {
         CamelContext context = new DefaultCamelContext();
         try {
             context.addRoutes(builder);
@@ -415,7 +441,8 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
     }
 
     public static String getBaseUri() {
-        String uri = "file:/" + System.getProperty("user.dir") + "/src/test/resources/org/apache/camel/component/xmlsecurity/";
+        String uri = "file:/" + System.getProperty("user.dir")
+                + "/src/test/resources/org/apache/camel/component/xmlsecurity/";
         return uri.replace('\\', '/');
     }
 
@@ -526,5 +553,4 @@ public class SignatureDigestMethodTest extends CamelTestSupport {
         Map<String, String> prefix2Namespace = Collections.singletonMap("ns", "http://test");
         return XmlSignatureHelper.getXpathFilter("/ns:root/a[last()]", prefix2Namespace);
     }
-
 }

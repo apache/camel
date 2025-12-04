@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,11 +36,11 @@ public class DatasonnetExpression extends SingleInputTypedExpressionDefinition {
 
     @XmlAttribute(name = "bodyMediaType")
     private String bodyMediaType;
+
     @XmlAttribute(name = "outputMediaType")
     private String outputMediaType;
 
-    public DatasonnetExpression() {
-    }
+    public DatasonnetExpression() {}
 
     protected DatasonnetExpression(DatasonnetExpression source) {
         super(source);

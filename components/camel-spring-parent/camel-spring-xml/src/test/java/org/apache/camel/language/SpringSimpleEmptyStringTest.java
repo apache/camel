@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.spring.SpringTestSupport;
@@ -36,5 +37,4 @@ public class SpringSimpleEmptyStringTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

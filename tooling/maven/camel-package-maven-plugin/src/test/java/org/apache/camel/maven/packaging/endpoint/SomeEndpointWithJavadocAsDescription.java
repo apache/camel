@@ -14,12 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 
-@UriEndpoint(scheme = "some", syntax = "some", title = "some", headersClass = SomeEndpointWithJavadocAsDescription.class)
+@UriEndpoint(
+        scheme = "some",
+        syntax = "some",
+        title = "some",
+        headersClass = SomeEndpointWithJavadocAsDescription.class)
 public final class SomeEndpointWithJavadocAsDescription {
 
     /**
@@ -28,7 +33,5 @@ public final class SomeEndpointWithJavadocAsDescription {
     @Metadata
     public static final String NO_DESCRIPTION = "no-description";
 
-    private SomeEndpointWithJavadocAsDescription() {
-
-    }
+    private SomeEndpointWithJavadocAsDescription() {}
 }

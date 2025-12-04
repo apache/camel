@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.ByteArrayInputStream;
 import java.io.Reader;
@@ -25,10 +30,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class StreamCachingAllowDenyTest extends ContextTestSupport {
 
@@ -53,7 +54,8 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         template.sendBody("direct:a", new ByteArrayInputStream("Hello World".getBytes()));
         assertMockEndpointsSatisfied();
         // should be converted
-        assertInstanceOf(StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
+        assertInstanceOf(
+                StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
 
         assertEquals("Hello World", a.assertExchangeReceived(0).getIn().getBody(String.class));
 
@@ -93,7 +95,8 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         template.sendBody("direct:a", new StringReader("Bye World"));
         assertMockEndpointsSatisfied();
         // should be converted
-        assertInstanceOf(StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
+        assertInstanceOf(
+                StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
         assertEquals("Bye World", a.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
@@ -114,7 +117,8 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         template.sendBody("direct:a", new ByteArrayInputStream("Hello World".getBytes()));
         assertMockEndpointsSatisfied();
         // should be converted
-        assertInstanceOf(StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
+        assertInstanceOf(
+                StreamCache.class, a.getReceivedExchanges().get(0).getMessage().getBody());
 
         assertEquals("Hello World", a.assertExchangeReceived(0).getIn().getBody(String.class));
 
@@ -157,5 +161,4 @@ public class StreamCachingAllowDenyTest extends ContextTestSupport {
         assertFalse(a.getReceivedExchanges().get(0).getMessage().getBody() instanceof StreamCache);
         assertEquals("Bye World", a.assertExchangeReceived(0).getIn().getBody(String.class));
     }
-
 }

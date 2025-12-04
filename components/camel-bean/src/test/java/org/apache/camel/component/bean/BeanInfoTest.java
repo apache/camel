@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static net.bytebuddy.matcher.ElementMatchers.named;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
 
 import java.util.Collections;
 
@@ -33,11 +39,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static net.bytebuddy.matcher.ElementMatchers.named;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.lenient;
-
 @ExtendWith(MockitoExtension.class)
 public class BeanInfoTest {
 
@@ -54,9 +55,7 @@ public class BeanInfoTest {
         beanComponent = new BeanComponent();
         lenient().when(context.getComponent("bean", BeanComponent.class)).thenReturn(beanComponent);
         lenient().when(context.getRegistry()).thenReturn(registry);
-        lenient()
-                .when(registry.findByType(ParameterMappingStrategy.class))
-                .thenReturn(Collections.EMPTY_SET);
+        lenient().when(registry.findByType(ParameterMappingStrategy.class)).thenReturn(Collections.EMPTY_SET);
     }
 
     @Test
@@ -114,12 +113,10 @@ public class BeanInfoTest {
                     .subclass(MyClass.class)
                     .modifiers(SyntheticState.SYNTHETIC, Visibility.PUBLIC, Ownership.STATIC)
                     .method(named("myMethod"))
-                    .intercept(MethodDelegation.to(
-                            new Object() {
-                                @RuntimeType
-                                public void intercept() {
-                                }
-                            }))
+                    .intercept(MethodDelegation.to(new Object() {
+                        @RuntimeType
+                        public void intercept() {}
+                    }))
                     .make()
                     .load(getClass().getClassLoader())
                     .getLoaded()
@@ -133,8 +130,7 @@ public class BeanInfoTest {
 
     public static class MyClass {
         @Handler
-        public void myMethod() {
-        }
+        public void myMethod() {}
 
         public String myOtherMethod() {
             return "";
@@ -143,8 +139,7 @@ public class BeanInfoTest {
 
     public static class MyDerivedClass extends MyClass {
         @Override
-        public void myMethod() {
-        }
+        public void myMethod() {}
     }
 
     @FunctionalInterface
@@ -152,5 +147,4 @@ public class BeanInfoTest {
         @Handler
         String myMethod();
     }
-
 }

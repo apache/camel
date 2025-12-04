@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.temp;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,10 +42,8 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Tags({ @Tag("exclusive") })
+@Tags({@Tag("exclusive")})
 public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable();
@@ -80,9 +81,10 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
             public void configure() {
                 from("direct:start")
                         .routeId("route-1")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest?recoveryInterval="
-                                                   + recoveryInterval)
+                                        + recoveryInterval)
                         .to("mock:result");
 
                 from("jms:queue:JmsRequestReplyTemporaryRefreshFailureOnStartupTest")
@@ -96,14 +98,13 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
     @Test
     @Order(1)
     public void testTemporaryRefreshFailureOnStartup() throws Exception {
-        //the first message will fail
+        // the first message will fail
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(0);
 
-        //the first request will return with an error
-        //because the broker is not started yet
-        Assertions.assertThrows(Exception.class,
-                () -> template.requestBody("direct:start", "ping"));
+        // the first request will return with an error
+        // because the broker is not started yet
+        Assertions.assertThrows(Exception.class, () -> template.requestBody("direct:start", "ping"));
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -120,11 +121,9 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
 
         waitForRoutes();
 
-        Awaitility.await()
-                .atMost(15, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    Assertions.assertDoesNotThrow(() -> template.requestBody("direct:start", "ping"));
-                });
+        Awaitility.await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
+            Assertions.assertDoesNotThrow(() -> template.requestBody("direct:start", "ping"));
+        });
 
         mockEndpoint.assertIsSatisfied();
     }

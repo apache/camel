@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -25,7 +26,7 @@ public class FromFtpRecursiveNoopIT extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/noop?password=admin&binary=false&initialDelay=3000"
-               + "&recursive=true&noop=true";
+                + "&recursive=true&noop=true";
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -46,8 +47,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private int lineNumber = -1;
     private String location;
 
-    protected OptionalIdentifiedDefinition() {
-    }
+    protected OptionalIdentifiedDefinition() {}
 
     protected OptionalIdentifiedDefinition(OptionalIdentifiedDefinition<?> source) {
         this.camelContext = source.camelContext;

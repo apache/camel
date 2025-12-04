@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PayLoadConvertToPOJOTest extends CamelSpringTestSupport {
 
@@ -54,8 +55,8 @@ public class PayLoadConvertToPOJOTest extends CamelSpringTestSupport {
     public void testClient() throws Exception {
 
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-        factory.setAddress("http://localhost:" + getPort1() + "/"
-                           + getClass().getSimpleName() + "/CamelContext/RouterPort");
+        factory.setAddress(
+                "http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/CamelContext/RouterPort");
         factory.setServiceClass(Person.class);
         Person person = factory.create(Person.class);
         GetPerson payload = new GetPerson();
@@ -63,27 +64,27 @@ public class PayLoadConvertToPOJOTest extends CamelSpringTestSupport {
 
         GetPersonResponse reply = person.getPerson(payload);
         assertEquals("1234", reply.getPersonId(), "Get the wrong person id.");
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").streamCaching().process(new Processor() {
+                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD")
+                        .streamCaching()
+                        .process(new Processor() {
 
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // just try to turn the payload to the parameter we want
-                        // to use
-                        GetPerson request = exchange.getIn().getBody(GetPerson.class);
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // just try to turn the payload to the parameter we want
+                                // to use
+                                GetPerson request = exchange.getIn().getBody(GetPerson.class);
 
-                        GetPersonResponse reply = new GetPersonResponse();
-                        reply.setPersonId(request.getPersonId());
-                        exchange.getMessage().setBody(reply);
-                    }
-
-                });
+                                GetPersonResponse reply = new GetPersonResponse();
+                                reply.setPersonId(request.getPersonId());
+                                exchange.getMessage().setBody(reply);
+                            }
+                        });
             }
         };
     }
@@ -92,5 +93,4 @@ public class PayLoadConvertToPOJOTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/converter/PayloadConverterBeans.xml");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.sql;
 
 import java.util.Map;
@@ -37,8 +38,7 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
-    public GoogleBigQuerySQLComponent() {
-    }
+    public GoogleBigQuerySQLComponent() {}
 
     public GoogleBigQuerySQLComponent(GoogleBigQuerySQLConfiguration configuration) {
         this.configuration = configuration;
@@ -57,8 +57,8 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
             throw new IllegalArgumentException("Google BigQuery Endpoint format \"projectId:<query>\"");
         }
 
-        GoogleBigQuerySQLConfiguration conf
-                = configuration != null ? configuration.copy() : new GoogleBigQuerySQLConfiguration();
+        GoogleBigQuerySQLConfiguration conf =
+                configuration != null ? configuration.copy() : new GoogleBigQuerySQLConfiguration();
         conf.parseRemaining(remaining);
 
         GoogleBigQuerySQLEndpoint endpoint = new GoogleBigQuerySQLEndpoint(uri, this, conf);

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointWithJMXTest extends ContextTestSupport {
 
@@ -57,14 +58,15 @@ public class AsyncEndpointWithJMXTest extends ContextTestSupport {
                 from("direct:start")
                         .to("mock:before")
                         .to("log:before")
-                        .process(exchange -> beforeThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                beforeThreadName = Thread.currentThread().getName())
                         .to("async:bye:camel")
-                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:after")
                         .to("mock:result");
             }
         };
     }
-
 }

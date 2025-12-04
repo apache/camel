@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,17 +30,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @DisabledOnOs(OS.WINDOWS)
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
-    private final String serverUri
-            = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
+    private final String serverUri =
+            "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
 
     @Test
     public void testNettySuspendResume() {
@@ -59,12 +60,11 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         // resume
         consumer.resume();
 
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    // and send request which should be processed
-                    String nextReply = template.requestBody(serverUri, "Moon", String.class);
-                    assertEquals("Bye Moon", nextReply);
-                });
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            // and send request which should be processed
+            String nextReply = template.requestBody(serverUri, "Moon", String.class);
+            assertEquals("Bye Moon", nextReply);
+        });
     }
 
     @Override
@@ -72,10 +72,8 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(serverUri).routeId("foo")
-                        .transform(body().prepend("Bye "));
+                from(serverUri).routeId("foo").transform(body().prepend("Bye "));
             }
         };
     }
-
 }

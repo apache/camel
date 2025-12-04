@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import org.apache.camel.spi.Metadata;
@@ -29,11 +30,16 @@ public class TelegramConfiguration {
 
     public static final String ENDPOINT_TYPE_BOTS = "bots";
 
-    @UriPath(description = "The endpoint type. Currently, only the 'bots' type is supported.", enums = ENDPOINT_TYPE_BOTS)
+    @UriPath(
+            description = "The endpoint type. Currently, only the 'bots' type is supported.",
+            enums = ENDPOINT_TYPE_BOTS)
     @Metadata(required = true)
     private String type;
 
-    @UriParam(description = "The authorization token for using the bot (ask the BotFather)", label = "security", secret = true)
+    @UriParam(
+            description = "The authorization token for using the bot (ask the BotFather)",
+            label = "security",
+            secret = true)
     @Metadata(required = true)
     private String authorizationToken;
 
@@ -43,30 +49,42 @@ public class TelegramConfiguration {
     @UriParam(description = "HTTP proxy port which could be used when sending out the message.", label = "proxy")
     private Integer proxyPort;
 
-    @UriParam(description = "HTTP proxy type which could be used when sending out the message.", label = "proxy",
-              defaultValue = "HTTP")
+    @UriParam(
+            description = "HTTP proxy type which could be used when sending out the message.",
+            label = "proxy",
+            defaultValue = "HTTP")
     private TelegramProxyType proxyType = TelegramProxyType.HTTP;
 
-    @UriParam(description = "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "
+    @UriParam(
+            description =
+                    "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "
                             + "(eg. when a telegram user starts a conversation with a bot, its client sends automatically a '/start' message containing the chat id). "
                             + "It is an optional parameter, as the chat id can be set dynamically for each outgoing message (using body or headers).",
-              label = "producer")
+            label = "producer")
     private String chatId;
 
-    @UriParam(description = "Timeout in seconds for long polling. Put 0 for short polling or a bigger number for long polling. Long polling produces shorter response time.",
-              optionalPrefix = "consumer.", defaultValue = "30", label = "consumer")
+    @UriParam(
+            description =
+                    "Timeout in seconds for long polling. Put 0 for short polling or a bigger number for long polling. Long polling produces shorter response time.",
+            optionalPrefix = "consumer.",
+            defaultValue = "30",
+            label = "consumer")
     private Integer timeout = 30;
 
-    @UriParam(description = "Limit on the number of updates that can be received in a single polling request.",
-              optionalPrefix = "consumer.", defaultValue = "100", label = "consumer")
+    @UriParam(
+            description = "Limit on the number of updates that can be received in a single polling request.",
+            optionalPrefix = "consumer.",
+            defaultValue = "100",
+            label = "consumer")
     private Integer limit = 100;
 
-    @UriParam(label = "advanced",
-              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
     private String baseUri;
 
-    public TelegramConfiguration() {
-    }
+    public TelegramConfiguration() {}
 
     public String getType() {
         return type;

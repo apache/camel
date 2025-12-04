@@ -30,8 +30,7 @@ public final class DebeziumDb2Component extends DebeziumComponent<Db2ConnectorEm
     @Metadata
     private Db2ConnectorEmbeddedDebeziumConfiguration configuration = new Db2ConnectorEmbeddedDebeziumConfiguration();
 
-    public DebeziumDb2Component() {
-    }
+    public DebeziumDb2Component() {}
 
     public DebeziumDb2Component(final CamelContext context) {
         super(context);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.util.List;
@@ -47,7 +48,8 @@ public class DaprConfigurationHandler implements DaprOperationHandler {
         configRequest.setMetadata(metadata);
 
         DaprClient client = endpoint.getClient();
-        Map<String, ConfigurationItem> response = client.getConfiguration(configRequest).block();
+        Map<String, ConfigurationItem> response =
+                client.getConfiguration(configRequest).block();
 
         return DaprOperationResponse.createFromConfig(response);
     }
@@ -58,7 +60,8 @@ public class DaprConfigurationHandler implements DaprOperationHandler {
         String configKeys = configurationOptionsProxy.getConfigKeys(exchange);
 
         if (ObjectHelper.isEmpty(configStore) || ObjectHelper.isEmpty(configKeys)) {
-            throw new IllegalArgumentException("configStore and configKeys are mandatory for get configuration operation");
+            throw new IllegalArgumentException(
+                    "configStore and configKeys are mandatory for get configuration operation");
         }
     }
 }

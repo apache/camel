@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.List;
@@ -23,15 +24,14 @@ import org.infinispan.protostream.domain.User;
 public class InfinispanRemoteQueryTestSupport extends InfinispanRemoteTestSupport {
 
     public static final User[] USERS = new User[] {
-            createUser("nameA", "surnameA"),
-            createUser("nameA", "surnameB"),
-            createUser("nameB", "surnameB") };
+        createUser("nameA", "surnameA"), createUser("nameA", "surnameB"), createUser("nameB", "surnameB")
+    };
 
     public static final User[] CQ_USERS = new User[] {
-            createUser("CQ01", "surname01"),
-            createUser("CQ02", "surname01"),
-            createUser("NQ03", "surname03"),
-            createUser("NQ04", "surname04")
+        createUser("CQ01", "surname01"),
+        createUser("CQ02", "surname01"),
+        createUser("NQ03", "surname03"),
+        createUser("NQ04", "surname04")
     };
 
     public static String createKey(User user) {
@@ -77,5 +77,4 @@ public class InfinispanRemoteQueryTestSupport extends InfinispanRemoteTestSuppor
         }
         return false;
     }
-
 }

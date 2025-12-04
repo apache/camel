@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.io.BufferedReader;
@@ -55,8 +56,7 @@ import org.slf4j.LoggerFactory;
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
 
-    public BindyCsvDataFormat() {
-    }
+    public BindyCsvDataFormat() {}
 
     public BindyCsvDataFormat(Class<?> type) {
         super(type);
@@ -161,7 +161,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // Retrieve the separator defined to split the record
             String separator = factory.getSeparator();
             String quote = factory.getQuote();
-            org.apache.camel.util.ObjectHelper.notNull(separator,
+            org.apache.camel.util.ObjectHelper.notNull(
+                    separator,
                     "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
             Boolean removeQuotes = factory.getRemoveQuotes();
             AtomicInteger count = new AtomicInteger();
@@ -198,19 +199,23 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 IOHelper.close(in, "in", LOG);
             }
         }
-
     }
 
     private Consumer<String> consumeFile(
-            BindyCsvFactory factory, List<Map<String, Object>> models,
-            String separator, Boolean removeQuotes, String quote, AtomicInteger count) {
+            BindyCsvFactory factory,
+            List<Map<String, Object>> models,
+            String separator,
+            Boolean removeQuotes,
+            String quote,
+            AtomicInteger count) {
         return line -> {
             try {
                 String trimmedLine;
 
                 // Trim the line coming in to remove any trailing whitespace
                 if (factory.isTrimLine()) {
-                    // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
+                    // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by
+                    // tabs)
                     if (separator.equals("\t")) {
                         // trim only trailing whitespaces (remove new lines etc but keep tab character)
                         trimmedLine = line.replaceAll("[ \\n\\x0B\\f\\r]+$", "");
@@ -254,8 +259,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     escapedSubstringToHandle += pattern.split(substring).length - 1;
                 }
 
-                String[] tokens = pattern.split(trimmedLine,
-                        factory.getAutospanLine() ? factory.getMaxpos() + escapedSubstringToHandle : -1);
+                String[] tokens = pattern.split(
+                        trimmedLine, factory.getAutospanLine() ? factory.getMaxpos() + escapedSubstringToHandle : -1);
 
                 List<String> result = Arrays.asList(tokens);
 

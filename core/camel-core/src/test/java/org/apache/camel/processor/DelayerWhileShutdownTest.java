@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.Phaser;
@@ -52,8 +53,14 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(1000).to("mock:result");
-                from("seda:b").process(e -> phaser.arriveAndAwaitAdvance()).delay(1).to("mock:result");
+                from("seda:a")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .delay(1000)
+                        .to("mock:result");
+                from("seda:b")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .delay(1)
+                        .to("mock:result");
             }
         };
     }

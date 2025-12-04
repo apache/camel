@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb.message;
 
 import jakarta.xml.bind.JAXBElement;
@@ -40,8 +41,7 @@ public class ObjectFactory {
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
      * org.apache.camel.converter.jaxb.message
      */
-    public ObjectFactory() {
-    }
+    public ObjectFactory() {}
 
     /**
      * Create an instance of {@link Message }
@@ -54,5 +54,4 @@ public class ObjectFactory {
     public JAXBElement<Message> createMessage(Message value) {
         return new JAXBElement<>(MESSAGE_QNAME, Message.class, null, value);
     }
-
 }

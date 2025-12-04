@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,16 +33,14 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RoasterSimpleRouteBuilderConfigureTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterSimpleRouteBuilderConfigureTest.class);
 
     @Test
     void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster
-                .parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource)
+                Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelLanguageExpressions(method, "simple");
@@ -71,5 +72,4 @@ public class RoasterSimpleRouteBuilderConfigureTest {
         }
         return -1;
     }
-
 }

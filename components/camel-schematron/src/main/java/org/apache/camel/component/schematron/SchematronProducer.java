@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron;
 
 import java.util.HashMap;
@@ -54,7 +55,8 @@ public class SchematronProducer extends DefaultProducer {
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        final SchematronProcessor schematronProcessor = SchematronProcessorFactory.newSchematronEngine(endpoint.getRules());
+        final SchematronProcessor schematronProcessor =
+                SchematronProcessorFactory.newSchematronEngine(endpoint.getRules());
         final Object payload = exchange.getIn().getBody();
         final String report;
 
@@ -102,5 +104,4 @@ public class SchematronProducer extends DefaultProducer {
         }
         return status;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs.constants;
 
 /**
@@ -29,6 +30,5 @@ public final class OBSOperations {
     public static final String GET_OBJECT = "getObject";
     public static final String PUT_OBJECT = "putObject";
 
-    private OBSOperations() {
-    }
+    private OBSOperations() {}
 }

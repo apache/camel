@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.http.common;
 
-import org.apache.camel.Exchange;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.http.common;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.Exchange;
+import org.junit.jupiter.api.Test;
 
 public class HttpRestHeaderFilterStrategyTest {
 
@@ -29,8 +30,7 @@ public class HttpRestHeaderFilterStrategyTest {
     @Test
     public void shouldDecideOnApplingHeaderFilterToTemplateTokens() {
         final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy(
-                "{uriToken1}{uriToken2}",
-                "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%3F%7D%26");
+                "{uriToken1}{uriToken2}", "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%3F%7D%26");
 
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED));
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED));
@@ -41,9 +41,8 @@ public class HttpRestHeaderFilterStrategyTest {
 
     @Test
     public void shouldDecideOnApplingHeaderFilterToTemplateTokensUnencoded() {
-        final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy(
-                "{uriToken1}{uriToken2}",
-                "q1={queryToken1}&q2={queryToken2?}&");
+        final HttpRestHeaderFilterStrategy strategy =
+                new HttpRestHeaderFilterStrategy("{uriToken1}{uriToken2}", "q1={queryToken1}&q2={queryToken2?}&");
 
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED));
         assertTrue(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
@@ -60,9 +61,14 @@ import org.xnio.Options;
 /**
  * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-             category = { Category.HTTP, Category.NETWORKING }, lenientProperties = true,
-             headersClass = UndertowConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "undertow",
+        title = "Undertow",
+        syntax = "undertow:httpURI",
+        category = {Category.HTTP, Category.NETWORKING},
+        lenientProperties = true,
+        headersClass = UndertowConstants.class)
 public class UndertowEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
 
@@ -78,68 +84,101 @@ public class UndertowEndpoint extends DefaultEndpoint
     @UriPath
     @Metadata(required = true)
     private URI httpURI;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean useStreaming;
+
     @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
+
     @UriParam(label = "advanced")
     private AccessLogReceiver accessLogReceiver;
+
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean matchOnUriPrefix = Boolean.FALSE;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean accessLog = Boolean.FALSE;
+
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean transferException = Boolean.FALSE;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean muteException = Boolean.FALSE;
+
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
+
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean tcpNoDelay = Boolean.TRUE;
+
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean reuseAddresses = Boolean.TRUE;
+
     @UriParam(label = "producer", prefix = "option.", multiValue = true)
     private Map<String, Object> options;
+
     @UriParam(label = "consumer")
     private boolean optionsEnabled;
+
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
+
     @UriParam(label = "producer,websocket")
     private Boolean sendToAll;
+
     @UriParam(label = "producer,websocket", defaultValue = "30000")
     private Integer sendTimeout = 30000;
+
     @UriParam(label = "consumer,websocket", defaultValue = "false")
     private boolean fireWebSocketChannelEvents;
-    @UriParam(label = "consumer,advanced",
-              description = "Specifies a comma-delimited set of io.undertow.server.HttpHandler instances to lookup in"
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Specifies a comma-delimited set of io.undertow.server.HttpHandler instances to lookup in"
                             + " your Registry. These handlers are added to the Undertow handler chain (for example, to add security)."
                             + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
                             + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
     private String handlers;
+
     @UriParam(
-              label = "producer", defaultValue = "true",
-              description = "If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header,"
+            label = "producer",
+            defaultValue = "true",
+            description =
+                    "If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header,"
                             + " useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client,"
                             + " this allows applications which use the Host header to generate accurate URL's for a proxied service.")
     private boolean preserveHostHeader = true;
-    @UriParam(label = "security",
-              description = "OConfiguration used by UndertowSecurityProvider. Security configuration object for use "
+
+    @UriParam(
+            label = "security",
+            description =
+                    "OConfiguration used by UndertowSecurityProvider. Security configuration object for use "
                             + "from UndertowSecurityProvider. Configuration is UndertowSecurityProvider specific. Each provider decides whether accepts configuration.")
     private Object securityConfiguration;
-    @UriParam(label = "security",
-              description = "Configuration used by UndertowSecurityProvider. Comma separated list of allowed roles.")
+
+    @UriParam(
+            label = "security",
+            description = "Configuration used by UndertowSecurityProvider. Comma separated list of allowed roles.")
     private String allowedRoles;
-    @UriParam(label = "security",
-              description = "Security provider allows plug in the provider, which will be used to secure requests. "
-                            + "SPI approach could be used too (endpoint then finds security provider using SPI).")
+
+    @UriParam(
+            label = "security",
+            description = "Security provider allows plug in the provider, which will be used to secure requests. "
+                    + "SPI approach could be used too (endpoint then finds security provider using SPI).")
     private UndertowSecurityProvider securityProvider;
 
     public UndertowEndpoint(String uri, UndertowComponent component) {
@@ -198,7 +237,7 @@ public class UndertowEndpoint extends DefaultEndpoint
     }
 
     // Service Registration
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public Map<String, String> getServiceProperties() {
@@ -549,16 +588,19 @@ public class UndertowEndpoint extends DefaultEndpoint
     private void initSecurityProvider() throws Exception {
         Object securityConfiguration = getSecurityConfiguration();
         if (securityConfiguration != null) {
-            ServiceLoader<UndertowSecurityProvider> securityProvider = ServiceLoader.load(UndertowSecurityProvider.class);
+            ServiceLoader<UndertowSecurityProvider> securityProvider =
+                    ServiceLoader.load(UndertowSecurityProvider.class);
 
             Iterator<UndertowSecurityProvider> iter = securityProvider.iterator();
             List<String> providers = new LinkedList<>();
             while (iter.hasNext()) {
                 UndertowSecurityProvider security = iter.next();
-                //only securityProvider, who accepts security configuration, could be used
+                // only securityProvider, who accepts security configuration, could be used
                 if (security.acceptConfiguration(securityConfiguration, getEndpointUri())) {
                     this.securityProvider = security;
-                    LOG.info("Security provider found {}", securityProvider.getClass().getName());
+                    LOG.info(
+                            "Security provider found {}",
+                            securityProvider.getClass().getName());
                     break;
                 }
                 providers.add(security.getClass().getName());
@@ -581,7 +623,8 @@ public class UndertowEndpoint extends DefaultEndpoint
 
     public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
         if (registrationInfo == null) {
-            registrationInfo = new HttpHandlerRegistrationInfo(getHttpURI(), getHttpMethodRestrict(), getMatchOnUriPrefix());
+            registrationInfo =
+                    new HttpHandlerRegistrationInfo(getHttpURI(), getHttpMethodRestrict(), getMatchOnUriPrefix());
         }
         return registrationInfo;
     }
@@ -628,5 +671,4 @@ public class UndertowEndpoint extends DefaultEndpoint
     public void setHandlers(String handlers) {
         this.handlers = handlers;
     }
-
 }

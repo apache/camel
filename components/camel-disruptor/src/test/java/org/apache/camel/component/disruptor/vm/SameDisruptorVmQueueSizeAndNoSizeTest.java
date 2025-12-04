@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor.vm;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -66,8 +67,9 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
             fail("Should fail");
         } catch (ResolveEndpointFailedException e) {
             IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Cannot use existing queue disruptor-vm://bar as the existing queue size " + 1024
-                         + " does not match given queue size 256",
+            assertEquals(
+                    "Cannot use existing queue disruptor-vm://bar as the existing queue size " + 1024
+                            + " does not match given queue size 256",
                     ise.getMessage());
         }
     }
@@ -77,11 +79,12 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor-vm:foo?size=128&blockWhenFull=false").routeId("foo").noAutoStartup()
+                from("disruptor-vm:foo?size=128&blockWhenFull=false")
+                        .routeId("foo")
+                        .noAutoStartup()
                         .to("mock:foo");
 
-                from("disruptor-vm:bar").routeId("bar").noAutoStartup()
-                        .to("mock:bar");
+                from("disruptor-vm:bar").routeId("bar").noAutoStartup().to("mock:bar");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Isolated("Parallel execution can cause timeout before all multicast messages are sent")
 public class BeanRecipientListTimeoutTest extends ContextTestSupport {
@@ -80,7 +81,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
         @RecipientList(aggregationStrategy = "myStrategy", parallelProcessing = true, timeout = 1000)
         public String[] route(String body) {
-            return new String[] { "direct:a", "direct:b", "direct:c" };
+            return new String[] {"direct:a", "direct:b", "direct:c"};
         }
     }
 
@@ -114,5 +115,4 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.io.BufferedReader;
@@ -37,8 +38,7 @@ import picocli.CommandLine;
  * Command to update a Camel project to a specified version. This command supports updating projects for different
  * runtimes such as Camel Main, Spring Boot, and Quarkus. It uses Maven and OpenRewrite to apply the necessary updates.
  */
-@CommandLine.Command(name = "run",
-                     description = "Update Camel project")
+@CommandLine.Command(name = "run", description = "Update Camel project")
 public class UpdateRun extends CamelCommand {
 
     @CommandLine.Mixin
@@ -61,15 +61,17 @@ public class UpdateRun extends CamelCommand {
         try (Stream<Path> files = Files.list(Path.of("."))) {
             // Check if the current directory contains a Maven project (i.e., a pom.xml file)
             if (files.noneMatch(f -> f.getFileName().toString().equals("pom.xml"))) {
-                printer().println("No Maven Project found in the current directory, " +
-                                  "please execute camel upgrade run command in the directory containing the Maven project to update");
+                printer()
+                        .println(
+                                "No Maven Project found in the current directory, "
+                                        + "please execute camel upgrade run command in the directory containing the Maven project to update");
 
                 return -1;
             }
         }
 
         List<String> command = new ArrayList<>();
-        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader(); ) {
             downloader.setRepositories(updateMixin.repos);
             downloader.start();
 
@@ -89,8 +91,10 @@ public class UpdateRun extends CamelCommand {
 
                 return -1;
             } catch (DownloadException e) {
-                printer().println(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
-                        "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
+                printer()
+                        .println(String.format(
+                                "Cannot find Camel Upgrade Recipes %s:%s:%s",
+                                "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
 
                 return -1;
             }
@@ -111,11 +115,10 @@ public class UpdateRun extends CamelCommand {
      */
     private int executeCommand(List<String> command) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(command);
-        Process p = pb.redirectErrorStream(true)
-                .start();
+        Process p = pb.redirectErrorStream(true).start();
 
         try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+                BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
 
             String line;
             while ((line = stdInput.readLine()) != null || (line = stdError.readLine()) != null) {
@@ -132,7 +135,6 @@ public class UpdateRun extends CamelCommand {
             int exitCode = p.exitValue();
 
             return exitCode;
-
         }
     }
 }

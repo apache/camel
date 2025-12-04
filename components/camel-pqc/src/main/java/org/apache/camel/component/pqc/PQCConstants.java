@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
 
 import org.apache.camel.spi.Metadata;
@@ -31,15 +32,18 @@ public interface PQCConstants {
     @Metadata(description = "The result of verification of a Body signature", javaType = "Boolean")
     String VERIFY = "CamelPQCVerification";
 
-    @Metadata(description = "The extracted key in case of extractSecretKeyFromEncapsulation operation and storeExtractedSecretKeyAsHeader option enabled",
-              javaType = "Boolean")
+    @Metadata(
+            description =
+                    "The extracted key in case of extractSecretKeyFromEncapsulation operation and storeExtractedSecretKeyAsHeader option enabled",
+            javaType = "Boolean")
     String SECRET_KEY = "CamelPQCSecretKey";
 
     @Metadata(description = "The remaining signatures for a stateful key", javaType = "Long")
     String REMAINING_SIGNATURES = "CamelPQCRemainingSignatures";
 
-    @Metadata(description = "The key state for a stateful key",
-              javaType = "org.apache.camel.component.pqc.stateful.StatefulKeyState")
+    @Metadata(
+            description = "The key state for a stateful key",
+            javaType = "org.apache.camel.component.pqc.stateful.StatefulKeyState")
     String KEY_STATE = "CamelPQCKeyState";
 
     @Metadata(description = "The key ID for stateful key operations", javaType = "String")

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.jaxb;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,13 +69,10 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.URISupport;
 
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
-
 public final class JaxbHelper {
     private static final String CAMEL_NS = "http://camel.apache.org/schema/spring";
 
-    private JaxbHelper() {
-    }
+    private JaxbHelper() {}
 
     public static JAXBContext getJAXBContext(CamelContext context) throws Exception {
         return (JAXBContext) PluginHelper.getModelJAXBContextFactory(context).newJAXBContext();
@@ -111,7 +111,8 @@ public final class JaxbHelper {
      * @param route     the route
      * @param locations the map of source locations for EIPs in the route
      */
-    public static void extractSourceLocations(RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
+    public static void extractSourceLocations(
+            RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
         // input
         String id = route.getRouteId();
         String loc = route.getInput().getLocation();
@@ -297,15 +298,16 @@ public final class JaxbHelper {
         }
     }
 
-    public static void applySourceLocations(RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
+    public static void applySourceLocations(
+            RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
         KeyValueHolder<Integer, String> kv = locations.get(route.getRouteId());
         if (kv != null && route.getInput() != null) {
             route.getInput().setLineNumber(kv.getKey());
             route.getInput().setLocation(kv.getValue());
         }
 
-        Collection<OptionalIdentifiedDefinition> def
-                = filterTypeInOutputs(route.getOutputs(), OptionalIdentifiedDefinition.class);
+        Collection<OptionalIdentifiedDefinition> def =
+                filterTypeInOutputs(route.getOutputs(), OptionalIdentifiedDefinition.class);
         for (OptionalIdentifiedDefinition out : def) {
             kv = locations.get(out.getId());
             if (kv != null) {
@@ -381,7 +383,8 @@ public final class JaxbHelper {
         return type.cast(result);
     }
 
-    public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
+    public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream)
+            throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
@@ -416,8 +419,8 @@ public final class JaxbHelper {
         return answer;
     }
 
-    public static RouteConfigurationsDefinition loadRouteConfigurationsDefinition(CamelContext context, InputStream inputStream)
-            throws Exception {
+    public static RouteConfigurationsDefinition loadRouteConfigurationsDefinition(
+            CamelContext context, InputStream inputStream) throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
         removeNoiseFromUris(dom.getDocumentElement());
@@ -582,8 +585,8 @@ public final class JaxbHelper {
         return answer;
     }
 
-    public static RestConfigurationDefinition loadRestConfigurationDefinition(CamelContext context, InputStream inputStream)
-            throws Exception {
+    public static RestConfigurationDefinition loadRestConfigurationDefinition(
+            CamelContext context, InputStream inputStream) throws Exception {
         // load rest configuration using JAXB
         Document dom = newXmlConverter(context).toDOMDocument(inputStream, null);
 
@@ -594,7 +597,8 @@ public final class JaxbHelper {
         Object result = unmarshaller.unmarshal(dom);
 
         if (result == null) {
-            throw new IOException("Cannot unmarshal to rest configuration using JAXB from input stream: " + inputStream);
+            throw new IOException(
+                    "Cannot unmarshal to rest configuration using JAXB from input stream: " + inputStream);
         }
 
         if (result instanceof RestConfigurationDefinition restConfigurationDefinition) {
@@ -685,5 +689,4 @@ public final class JaxbHelper {
             }
         }
     }
-
 }

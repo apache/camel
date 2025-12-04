@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.function.BiFunction;
 
@@ -30,8 +33,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.support.ObjectHelper;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
     public ClaimCheckReifier(Route route, ProcessorDefinition<?> definition) {
@@ -44,7 +45,8 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
         ClaimCheckProcessor claim = new ClaimCheckProcessor();
         claim.setDisabled(isDisabled(camelContext, definition));
-        claim.setOperation(parse(ClaimCheckOperation.class, definition.getOperation()).name());
+        claim.setOperation(
+                parse(ClaimCheckOperation.class, definition.getOperation()).name());
         claim.setKey(parseString(definition.getKey()));
         claim.setFilter(parseString(definition.getFilter()));
 
@@ -56,7 +58,8 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
         // only filter or aggregation strategy can be configured not both
         String filter = parseString(definition.getFilter());
         if (filter != null && strategy != null) {
-            throw new IllegalArgumentException("Cannot use both filter and custom aggregation strategy on ClaimCheck EIP");
+            throw new IllegalArgumentException(
+                    "Cannot use both filter and custom aggregation strategy on ClaimCheck EIP");
         }
 
         // validate filter, we cannot have both +/- at the same time
@@ -74,7 +77,8 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             }
             if (includeBody && excludeBody) {
                 throw new IllegalArgumentException(
-                        "Cannot have both include and exclude body at the same time in the filter: " + definition.getFilter());
+                        "Cannot have both include and exclude body at the same time in the filter: "
+                                + definition.getFilter());
             }
             boolean includeHeaders = false;
             boolean excludeHeaders = false;
@@ -89,7 +93,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             if (includeHeaders && excludeHeaders) {
                 throw new IllegalArgumentException(
                         "Cannot have both include and exclude headers at the same time in the filter: "
-                                                   + definition.getFilter());
+                                + definition.getFilter());
             }
             boolean includeHeader = false;
             boolean excludeHeader = false;
@@ -104,7 +108,7 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             if (includeHeader && excludeHeader) {
                 throw new IllegalArgumentException(
                         "Cannot have both include and exclude header at the same time in the filter: "
-                                                   + definition.getFilter());
+                                + definition.getFilter());
             }
         }
 
@@ -121,15 +125,15 @@ public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
             } else if (aggStrategy instanceof BiFunction biFunction) {
                 strategy = new AggregationStrategyBiFunctionAdapter(biFunction);
             } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
+                strategy =
+                        new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
             } else {
-                throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: "
+                        + definition.getAggregationStrategy());
             }
         }
 
         CamelContextAware.trySetCamelContext(strategy, camelContext);
         return strategy;
     }
-
 }

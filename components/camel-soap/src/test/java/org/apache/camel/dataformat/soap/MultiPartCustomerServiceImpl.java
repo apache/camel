@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
 
 import jakarta.xml.ws.Holder;
@@ -84,9 +85,7 @@ public class MultiPartCustomerServiceImpl implements MultiPartCustomerService {
     }
 
     @Override
-    public void saveCustomerToo(
-            SaveCustomer parameters, Product product,
-            Holder<Company> company) {
+    public void saveCustomerToo(SaveCustomer parameters, Product product, Holder<Company> company) {
         if (product == null) {
             throw new IllegalArgumentException("product may not be null.");
         }
@@ -103,5 +102,4 @@ public class MultiPartCustomerServiceImpl implements MultiPartCustomerService {
 
         lastSavedCustomer = parameters.getCustomer();
     }
-
 }

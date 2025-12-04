@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -38,7 +39,6 @@ public class JolokiaITCase extends JBangTestSupport {
         Assertions.assertThat(execute("jolokia FromDirectoryRoute --stop"))
                 .as("Jolokia should stop")
                 .contains("Stopped Jolokia for PID " + processID);
-
     }
 
     @Test
@@ -50,9 +50,7 @@ public class JolokiaITCase extends JBangTestSupport {
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
                 .pollInterval(Duration.ofSeconds(1))
-                .untilAsserted(() -> Assertions
-                        .assertThat(
-                                execInContainer("curl http://localhost:8888/hawtio/"))
+                .untilAsserted(() -> Assertions.assertThat(execInContainer("curl http://localhost:8888/hawtio/"))
                         .as("Hawtio should be reachable")
                         .contains("content=\"Hawtio Management Console\""));
         Assertions.assertThat(execInContainer("curl http://127.0.0.1:8778/jolokia/"))

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
 
 import org.apache.camel.Exchange;
@@ -25,12 +26,12 @@ import org.slf4j.LoggerFactory;
 
 public class JGroupsRaftConsumerTest extends JGroupsRaftAbstractTest {
     private static final String CLUSTER_NAME = "JGroupsRaftConsumerTest";
-    private static final String CONFIGURED_ENDPOINT_URI
-            = "jgroups-raft:" + CLUSTER_NAME + "?raftId=A&channelProperties=raftABC.xml&enableRoleChangeEvents=true";
-    private static final String CONFIGURED_ENDPOINT_URI2
-            = "jgroups-raft:" + CLUSTER_NAME + "?raftId=B&channelProperties=raftABC.xml&enableRoleChangeEvents=true";
-    private static final String CONFIGURED_ENDPOINT_URI3
-            = "jgroups-raft:" + CLUSTER_NAME + "?raftId=C&channelProperties=raftABC.xml&enableRoleChangeEvents=true";
+    private static final String CONFIGURED_ENDPOINT_URI =
+            "jgroups-raft:" + CLUSTER_NAME + "?raftId=A&channelProperties=raftABC.xml&enableRoleChangeEvents=true";
+    private static final String CONFIGURED_ENDPOINT_URI2 =
+            "jgroups-raft:" + CLUSTER_NAME + "?raftId=B&channelProperties=raftABC.xml&enableRoleChangeEvents=true";
+    private static final String CONFIGURED_ENDPOINT_URI3 =
+            "jgroups-raft:" + CLUSTER_NAME + "?raftId=C&channelProperties=raftABC.xml&enableRoleChangeEvents=true";
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftConsumerTest.class);
 
@@ -52,7 +53,10 @@ public class JGroupsRaftConsumerTest extends JGroupsRaftAbstractTest {
         JGroupsRaftEndpoint endpoint2 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI2, JGroupsRaftEndpoint.class);
         JGroupsRaftEndpoint endpoint3 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI3, JGroupsRaftEndpoint.class);
 
-        waitForLeader(5, endpoint.getResolvedRaftHandle(), endpoint2.getResolvedRaftHandle(),
+        waitForLeader(
+                5,
+                endpoint.getResolvedRaftHandle(),
+                endpoint2.getResolvedRaftHandle(),
                 endpoint3.getResolvedRaftHandle());
 
         MockEndpoint mock = getMockEndpoint("mock:out");
@@ -63,34 +67,37 @@ public class JGroupsRaftConsumerTest extends JGroupsRaftAbstractTest {
 
         for (Exchange exc : mock.getReceivedExchanges()) {
             LOG.info("mock"
-                     + exc.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class));
+                    + exc.getIn()
+                            .getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class));
             if (leaderEventExchange != null) {
                 break;
             }
-            if (JGroupsRaftEventType.LEADER.equals(
-                    exc.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class))) {
+            if (JGroupsRaftEventType.LEADER.equals(exc.getIn()
+                    .getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class))) {
                 leaderEventExchange = exc;
             }
         }
         for (Exchange exc : mock2.getReceivedExchanges()) {
             LOG.info("mock2"
-                     + exc.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class));
+                    + exc.getIn()
+                            .getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class));
             if (leaderEventExchange != null) {
                 break;
             }
-            if (JGroupsRaftEventType.LEADER.equals(
-                    exc.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class))) {
+            if (JGroupsRaftEventType.LEADER.equals(exc.getIn()
+                    .getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class))) {
                 leaderEventExchange = exc;
             }
         }
         for (Exchange exc : mock3.getReceivedExchanges()) {
             LOG.info("mock3"
-                     + exc.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class));
+                    + exc.getIn()
+                            .getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class));
             if (leaderEventExchange != null) {
                 break;
             }
-            if (JGroupsRaftEventType.LEADER.equals(
-                    exc.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class))) {
+            if (JGroupsRaftEventType.LEADER.equals(exc.getIn()
+                    .getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.class))) {
                 leaderEventExchange = exc;
             }
         }

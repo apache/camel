@@ -86,6 +86,7 @@ public class SmbServiceFactory {
 
     private static class SingletonServiceHolder {
         static final SmbService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<SmbService> instance = builder();
             instance.addLocalMapping(() -> new SingletonSmbService(new SmbLocalContainerService(), "smb"))

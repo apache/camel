@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jte;
 
 import gg.jte.TemplateEngine;
@@ -33,15 +34,21 @@ import org.apache.camel.util.StringHelper;
 /**
  * Transform messages using a Java based template engine (JTE).
  */
-@UriEndpoint(firstVersion = "4.4.0", scheme = "jte", title = "JTE", syntax = "jte:resourceUri",
-             remote = false, producerOnly = true, category = { Category.TRANSFORMATION }, headersClass = JteConstants.class)
+@UriEndpoint(
+        firstVersion = "4.4.0",
+        scheme = "jte",
+        title = "JTE",
+        syntax = "jte:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION},
+        headersClass = JteConstants.class)
 public class JteEndpoint extends ResourceEndpoint {
 
     @UriParam
     private boolean allowTemplateFromHeader;
 
-    public JteEndpoint() {
-    }
+    public JteEndpoint() {}
 
     public JteEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
@@ -96,7 +103,9 @@ public class JteEndpoint extends ResourceEndpoint {
             String newResourceUri = exchange.getIn().getHeader(JteConstants.JTE_RESOURCE_URI, String.class);
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(JteConstants.JTE_RESOURCE_URI);
-                log.debug("{} set to {} creating new endpoint to handle exchange", JteConstants.JTE_RESOURCE_URI,
+                log.debug(
+                        "{} set to {} creating new endpoint to handle exchange",
+                        JteConstants.JTE_RESOURCE_URI,
                         newResourceUri);
                 JteEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
@@ -150,5 +159,4 @@ public class JteEndpoint extends ResourceEndpoint {
         s = s.trim();
         ExchangeHelper.setInOutBodyPatternAware(exchange, s);
     }
-
 }

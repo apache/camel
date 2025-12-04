@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -38,8 +41,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> pattern where the list
@@ -106,7 +107,8 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
 
         private final RecipientList recipientList;
 
-        public RecipientListPipeline(RecipientList recipientList, CamelContext camelContext, Collection<Processor> processors) {
+        public RecipientListPipeline(
+                RecipientList recipientList, CamelContext camelContext, Collection<Processor> processors) {
             super(camelContext, processors);
             this.recipientList = recipientList;
         }
@@ -196,15 +198,30 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
             }
         }
         if (timeout > 0) {
-            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
-            aggregateExecutorService
-                    = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
+            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they
+            // come in
+            aggregateExecutorService = camelContext
+                    .getExecutorServiceManager()
+                    .newScheduledThreadPool(this, "RecipientList-AggregateTask", 0);
         }
 
         recipientListProcessor = new RecipientListProcessor(
-                camelContext, null, expression, delimiter, producerCache, getAggregationStrategy(),
-                isParallelProcessing(), getExecutorService(), isShutdownExecutorService(), isStreaming(),
-                isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(), getCacheSize());
+                camelContext,
+                null,
+                expression,
+                delimiter,
+                producerCache,
+                getAggregationStrategy(),
+                isParallelProcessing(),
+                getExecutorService(),
+                isShutdownExecutorService(),
+                isStreaming(),
+                isStopOnException(),
+                getTimeout(),
+                getOnPrepare(),
+                isShareUnitOfWork(),
+                isParallelAggregate(),
+                getCacheSize());
         recipientListProcessor.setSynchronous(synchronous);
         recipientListProcessor.setErrorHandler(errorHandler);
         recipientListProcessor.setAggregateExecutorService(aggregateExecutorService);

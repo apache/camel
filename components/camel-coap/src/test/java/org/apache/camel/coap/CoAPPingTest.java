@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import org.apache.camel.Produce;
@@ -41,10 +42,14 @@ public class CoAPPingTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/TestResource", PORT).to("log:exch").transform(body().convertTo(Boolean.class))
+                fromF("coap://localhost:%d/TestResource", PORT)
+                        .to("log:exch")
+                        .transform(body().convertTo(Boolean.class))
                         .to("log:exch");
 
-                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
+                from("direct:start")
+                        .toF("coap://localhost:%d/TestResource", PORT)
+                        .to("mock:result");
             }
         };
     }

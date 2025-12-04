@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -48,5 +49,4 @@ public class PojoConsumerTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoConsumer.xml");
     }
-
 }

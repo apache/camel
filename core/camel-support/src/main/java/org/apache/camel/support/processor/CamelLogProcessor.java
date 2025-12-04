@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.Set;
@@ -60,8 +61,11 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
         this.listeners = null;
     }
 
-    public CamelLogProcessor(CamelLogger logger, ExchangeFormatter formatter, MaskingFormatter maskingFormatter,
-                             Set<LogListener> listeners) {
+    public CamelLogProcessor(
+            CamelLogger logger,
+            ExchangeFormatter formatter,
+            MaskingFormatter maskingFormatter,
+            Set<LogListener> listeners) {
         this.logger = logger;
         this.formatter = formatter;
         this.maskingFormatter = maskingFormatter;
@@ -144,7 +148,10 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Exception t) {
-                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                LOG.warn(
+                        "Ignoring an exception thrown by {}: {}",
+                        listener.getClass().getName(),
+                        t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
                 }
@@ -164,7 +171,10 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             try {
                 listener.afterLog(exchange, logger, message);
             } catch (Exception t) {
-                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                LOG.warn(
+                        "Ignoring an exception thrown by {}: {}",
+                        listener.getClass().getName(),
+                        t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
                 }
@@ -201,5 +211,4 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
             return exchange.toString();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -42,59 +43,79 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
 
     @XmlElementRef
     private List<ParamDefinition> params = new ArrayList<>();
+
     @XmlElementRef
     private List<ResponseMessageDefinition> responseMsgs = new ArrayList<>();
+
     @XmlElementRef
     private List<SecurityDefinition> security = new ArrayList<>();
 
     @XmlAttribute
     private String path;
+
     @XmlAttribute
     private String consumes;
+
     @XmlAttribute
     private String produces;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String disabled;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String type;
+
     @XmlTransient
     private Class<?> typeClass;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String outType;
+
     @XmlTransient
     private Class<?> outTypeClass;
+
     @XmlAttribute
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private String bindingMode;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String apiDocs;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String deprecated;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String streamCache;
+
     @XmlAttribute
     private String routeId;
+
     @XmlElement(required = true)
     private ToDefinition to;
 
@@ -467,5 +488,4 @@ public abstract class VerbDefinition extends OptionalIdentifiedDefinition<VerbDe
     }
 
     public abstract String asVerb();
-
 }

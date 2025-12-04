@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.concurrent.TimeUnit;
@@ -105,5 +106,4 @@ public class ThreadPoolProfileBuilder {
     public ThreadPoolProfile build() {
         return profile;
     }
-
 }

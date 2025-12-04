@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -26,9 +30,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Timeout(30)
 public class JmsDurableTopicIT extends AbstractPersistentJMSTest {
@@ -48,7 +49,8 @@ public class JmsDurableTopicIT extends AbstractPersistentJMSTest {
 
     @Test
     public void testDurableTopic() {
-        final CompletableFuture<Object> future = template.asyncSendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
+        final CompletableFuture<Object> future =
+                template.asyncSendBody("activemq:topic:JmsDurableTopicTest", "Hello World");
         final Object request = assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
         assertNotNull(request);
 

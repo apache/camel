@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
@@ -27,8 +30,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JettyComponentMuteExceptionTest extends BaseJettyTest {
 
     @Test
@@ -37,7 +38,7 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
         get.addHeader("Accept", "application/text");
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(get)) {
+                CloseableHttpResponse response = client.execute(get)) {
 
             String responseString = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             assertEquals("", responseString);
@@ -53,10 +54,10 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
                 JettyHttpComponent12 jc = context.getComponent("jetty", JettyHttpComponent12.class);
                 jc.setMuteException(true);
 
-                from("jetty:http://localhost:{{port}}/foo").to("mock:destination")
+                from("jetty:http://localhost:{{port}}/foo")
+                        .to("mock:destination")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
-
 }

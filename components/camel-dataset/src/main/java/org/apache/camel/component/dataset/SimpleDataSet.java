@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 /**
@@ -23,15 +24,14 @@ package org.apache.camel.component.dataset;
 public class SimpleDataSet extends DataSetSupport {
     private Object defaultBody = "<hello>world!</hello>";
 
-    public SimpleDataSet() {
-    }
+    public SimpleDataSet() {}
 
     public SimpleDataSet(int size) {
         super(size);
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public Object getDefaultBody() {
         return defaultBody;
@@ -42,7 +42,7 @@ public class SimpleDataSet extends DataSetSupport {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Creates the message body for a given message

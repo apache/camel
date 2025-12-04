@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
 import org.apache.camel.Category;
@@ -35,8 +36,14 @@ import org.slf4j.LoggerFactory;
  * Interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a> v1, a time series
  * database.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean",
-             category = { Category.DATABASE }, producerOnly = true, headersClass = InfluxDbConstants.class)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "influxdb",
+        title = "InfluxDB",
+        syntax = "influxdb:connectionBean",
+        category = {Category.DATABASE},
+        producerOnly = true,
+        headersClass = InfluxDbConstants.class)
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);
@@ -48,18 +55,25 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String connectionBean;
+
     @UriParam
     private String databaseName;
+
     @UriParam(defaultValue = "default")
     private String retentionPolicy = "default";
+
     @UriParam(defaultValue = "false")
     private boolean batch;
+
     @UriParam(defaultValue = InfluxDbOperations.INSERT)
     private String operation = InfluxDbOperations.INSERT;
+
     @UriParam
     private String query;
+
     @UriParam(defaultValue = "false")
     private boolean checkDatabaseExistence;
+
     @UriParam(defaultValue = "false")
     private boolean autoCreateDatabase;
 
@@ -84,7 +98,6 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
         if (checkDatabaseExistence) {
             ensureDatabaseExists();
         }
-
     }
 
     public InfluxDB getInfluxDB() {
@@ -189,13 +202,19 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private void ensureDatabaseExists() {
         QueryResult result = getInfluxDB().query(new Query(SHOW_DATABASES));
 
-        //values are located in the first item in series, where list of values is the first item in the Serie's values,
-        //if any object on the 'path' is null, database does not exist
+        // values are located in the first item in series, where list of values is the first item in the Serie's values,
+        // if any object on the 'path' is null, database does not exist
         boolean exists;
         try {
-            //NPE could be thrown from objects deep in the structure.
-            //try catch block with NullPointerException is used on purpose
-            exists = result.getResults().get(0).getSeries().get(0).getValues().get(0).contains(databaseName);
+            // NPE could be thrown from objects deep in the structure.
+            // try catch block with NullPointerException is used on purpose
+            exists = result.getResults()
+                    .get(0)
+                    .getSeries()
+                    .get(0)
+                    .getValues()
+                    .get(0)
+                    .contains(databaseName);
         } catch (NullPointerException e) {
             exists = false;
         }

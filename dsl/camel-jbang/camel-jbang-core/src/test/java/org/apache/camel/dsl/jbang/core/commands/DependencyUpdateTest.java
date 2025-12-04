@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +38,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class DependencyUpdateTest extends CamelCommandBaseTest {
 
     private File workingDir;
@@ -46,7 +47,8 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
     public void setup() throws Exception {
         super.setup();
         Path base = Paths.get("target");
-        workingDir = Files.createTempDirectory(base, "camel-dependency-update-tests").toFile();
+        workingDir =
+                Files.createTempDirectory(base, "camel-dependency-update-tests").toFile();
     }
 
     @AfterEach
@@ -67,14 +69,13 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
     private void checkOneDependencyAddedForArangoDb(RuntimeType rt) throws Exception, IOException {
         StringPrinter secondUpdateCommandPrinter = new StringPrinter();
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(secondUpdateCommandPrinter));
-        CommandLine.populateCommand(command,
-                "--dir=" + workingDir,
-                new File(workingDir, "pom.xml").getAbsolutePath());
+        CommandLine.populateCommand(command, "--dir=" + workingDir, new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit, secondUpdateCommandPrinter.getLines().toString());
 
         List<String> lines = secondUpdateCommandPrinter.getLines();
-        Assertions.assertEquals(1, lines.size(), secondUpdateCommandPrinter.getLines().toString());
+        Assertions.assertEquals(
+                1, lines.size(), secondUpdateCommandPrinter.getLines().toString());
         Assertions.assertEquals("Updating pom.xml with 1 dependency added", lines.get(0));
 
         String pomContent = new String(Files.readAllBytes(new File(workingDir, "pom.xml").toPath()));
@@ -97,7 +98,9 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
     private void addArangodbToCamelFile() throws IOException {
         File camelFile = new File(workingDir, "src/main/resources/camel/my.camel.yaml");
         String camelFileContent = new String(Files.readAllBytes(camelFile.toPath()));
-        camelFileContent = camelFileContent.replace("- log: ${body}", """
+        camelFileContent = camelFileContent.replace(
+                "- log: ${body}",
+                """
                 - to:
                              uri: arangodb
                              parameters:
@@ -108,9 +111,7 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
 
     private void checkNoUpdateOnFreshlyGeneratedproject() throws Exception {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
-        CommandLine.populateCommand(command,
-                "--dir=" + workingDir,
-                new File(workingDir, "pom.xml").getAbsolutePath());
+        CommandLine.populateCommand(command, "--dir=" + workingDir, new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit, printer.getLines().toString());
 
@@ -124,17 +125,20 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
         Init initCommand = new Init(new CamelJBangMain().withPrinter(initCommandPrinter));
         String camelFilePath = new File(workingDir, "my.camel.yaml").getAbsolutePath();
         CommandLine.populateCommand(initCommand, camelFilePath);
-        Assertions.assertEquals(0, initCommand.doCall(), initCommandPrinter.getLines().toString());
+        Assertions.assertEquals(
+                0, initCommand.doCall(), initCommandPrinter.getLines().toString());
 
         StringPrinter exportCommandPrinter = new StringPrinter();
         Export exportCommand = new Export(new CamelJBangMain().withPrinter(exportCommandPrinter));
-        CommandLine.populateCommand(exportCommand,
+        CommandLine.populateCommand(
+                exportCommand,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
                 "--camel-version=4.13.0",
                 "--runtime=" + rt.runtime(),
                 camelFilePath);
-        Assertions.assertEquals(0, exportCommand.doCall(), exportCommandPrinter.getLines().toString());
+        Assertions.assertEquals(
+                0, exportCommand.doCall(), exportCommandPrinter.getLines().toString());
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -143,5 +147,4 @@ class DependencyUpdateTest extends CamelCommandBaseTest {
                 Arguments.of(RuntimeType.springBoot),
                 Arguments.of(RuntimeType.main));
     }
-
 }

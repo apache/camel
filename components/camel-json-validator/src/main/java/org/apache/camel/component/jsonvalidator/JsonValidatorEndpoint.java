@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
 
 import java.io.InputStream;
@@ -39,29 +40,45 @@ import org.apache.camel.spi.UriParam;
  * Validate JSON payloads using NetworkNT JSON Schema.
  */
 @ManagedResource(description = "Managed JsonValidatorEndpoint")
-@UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator",
-             syntax = "json-validator:resourceUri",
-             remote = false, producerOnly = true, category = { Category.VALIDATION })
+@UriEndpoint(
+        scheme = "json-validator",
+        firstVersion = "2.20.0",
+        title = "JSON Schema Validator",
+        syntax = "json-validator:resourceUri",
+        remote = false,
+        producerOnly = true,
+        category = {Category.VALIDATION})
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
     private volatile JsonSchema schema;
 
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
+
     @UriParam(defaultValue = "true")
     private boolean failOnNullHeader = true;
+
     @UriParam(description = "To validate against a header instead of the message body.")
     private String headerName;
+
     @UriParam(label = "advanced")
     private JsonValidatorErrorHandler errorHandler = new DefaultJsonValidationErrorHandler();
+
     @UriParam(label = "advanced")
     private JsonUriSchemaLoader uriSchemaLoader = new DefaultJsonUriSchemaLoader();
-    @UriParam(label = "advanced",
-              description = "Comma-separated list of Jackson DeserializationFeature enum values which will be enabled for parsing exchange body")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Comma-separated list of Jackson DeserializationFeature enum values which will be enabled for parsing exchange body")
     private String enabledDeserializationFeatures;
-    @UriParam(label = "advanced",
-              description = "Comma-separated list of Jackson DeserializationFeature enum values which will be disabled for parsing exchange body")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Comma-separated list of Jackson DeserializationFeature enum values which will be disabled for parsing exchange body")
     private String disabledDeserializationFeatures;
+
     @UriParam(label = "advanced", description = "The used Jackson object mapper")
     private ObjectMapper objectMapper;
 
@@ -142,8 +159,9 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                 if (cache == null) {
                     cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, content);
                 }
-                try (InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange,
-                        cache != null ? cache : content)) {
+                try (InputStream is = exchange.getContext()
+                        .getTypeConverter()
+                        .mandatoryConvertTo(InputStream.class, exchange, cache != null ? cache : content)) {
                     JsonNode node = objectMapper.readTree(is);
                     if (node == null) {
                         throw new NoJsonBodyValidationException(exchange);

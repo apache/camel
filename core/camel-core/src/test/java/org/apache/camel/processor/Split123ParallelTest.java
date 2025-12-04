@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,12 +40,12 @@ public class Split123ParallelTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .split(body().tokenize(","), new StringAggregationStrategy()).parallelProcessing()
+                        .split(body().tokenize(","), new StringAggregationStrategy())
+                        .parallelProcessing()
                         .to("mock:foo")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

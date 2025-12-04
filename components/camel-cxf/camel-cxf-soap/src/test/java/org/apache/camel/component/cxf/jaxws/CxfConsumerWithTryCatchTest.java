@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.util.List;
@@ -35,7 +36,9 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SIMPLE_ENDPOINT_URI).choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION))
+                from(SIMPLE_ENDPOINT_URI)
+                        .choice()
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 Message in = exchange.getIn();
@@ -56,7 +59,8 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
                                 throw new IllegalStateException();
                             }
                         })
-                        .doCatch(IllegalStateException.class).process(new Processor() {
+                        .doCatch(IllegalStateException.class)
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 Message in = exchange.getIn();
@@ -76,5 +80,4 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
     public void testXmlDeclaration() {
         // do nothing here
     }
-
 }

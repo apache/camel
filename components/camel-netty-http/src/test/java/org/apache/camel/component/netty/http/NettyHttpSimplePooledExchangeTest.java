@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,8 +34,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
@@ -63,8 +64,9 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         MockEndpoint.assertIsSatisfied(context);
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            PooledObjectFactory.Statistics stat
-                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            PooledObjectFactory.Statistics stat = context.getCamelContextExtension()
+                    .getExchangeFactoryManager()
+                    .getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(0, stat.getAcquiredCounter());
             assertEquals(1, stat.getReleasedCounter());
@@ -83,17 +85,17 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                () -> {
-                    String reqOut = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Earth", String.class);
-                    assertEquals("Bye Earth", reqOut);
-                });
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            String reqOut = template.requestBody("netty-http:http://localhost:{{port}}/pooled", "Earth", String.class);
+            assertEquals("Bye Earth", reqOut);
+        });
 
         MockEndpoint.assertIsSatisfied(context);
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            PooledObjectFactory.Statistics stat
-                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            PooledObjectFactory.Statistics stat = context.getCamelContextExtension()
+                    .getExchangeFactoryManager()
+                    .getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(2, stat.getAcquiredCounter());
             assertEquals(3, stat.getReleasedCounter());
@@ -109,9 +111,9 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
                 from("netty-http:http://0.0.0.0:{{port}}/pooled")
                         .convertBodyTo(String.class)
                         .to("mock:input")
-                        .transform().simple("Bye ${body}");
+                        .transform()
+                        .simple("Bye ${body}");
             }
         };
     }
-
 }

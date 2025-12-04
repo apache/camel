@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.List;
@@ -83,5 +84,4 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
      * @return the route context
      */
     Route getRoute();
-
 }

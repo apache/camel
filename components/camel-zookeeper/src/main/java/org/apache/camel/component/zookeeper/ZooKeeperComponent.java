@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.net.URI;
@@ -35,8 +36,7 @@ public class ZooKeeperComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private ZooKeeperConfiguration configuration = new ZooKeeperConfiguration();
 
-    public ZooKeeperComponent() {
-    }
+    public ZooKeeperComponent() {}
 
     public ZooKeeperComponent(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;

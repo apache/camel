@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.config;
 
 import java.util.Optional;
@@ -23,14 +24,19 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Display user configuration value", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "get",
+        description = "Display user configuration value",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ConfigGet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
     String key;
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(
+            names = {"--global"},
+            description = "Use global or local configuration")
     boolean global = true;
 
     public ConfigGet(CamelJBangMain main) {
@@ -39,14 +45,16 @@ public class ConfigGet extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        CommandLineHelper.loadProperties(properties -> {
-            Optional<Object> maybeProperty = Optional.ofNullable(properties.get(key));
-            if (maybeProperty.isPresent()) {
-                printer().println(String.valueOf(maybeProperty.get()));
-            } else {
-                printer().println(key + " key not found");
-            }
-        }, !global);
+        CommandLineHelper.loadProperties(
+                properties -> {
+                    Optional<Object> maybeProperty = Optional.ofNullable(properties.get(key));
+                    if (maybeProperty.isPresent()) {
+                        printer().println(String.valueOf(maybeProperty.get()));
+                    } else {
+                        printer().println(key + " key not found");
+                    }
+                },
+                !global);
 
         return 0;
     }

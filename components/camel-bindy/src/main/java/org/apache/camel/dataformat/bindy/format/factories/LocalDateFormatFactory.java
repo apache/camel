@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.time.LocalDate;
@@ -87,5 +88,4 @@ public class LocalDateFormatFactory extends AbstractFormatFactory {
             this.pattern = pattern;
         }
     }
-
 }

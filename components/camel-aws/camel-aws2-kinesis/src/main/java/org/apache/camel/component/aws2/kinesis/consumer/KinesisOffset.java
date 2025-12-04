@@ -22,8 +22,7 @@ import org.apache.camel.resume.Offset;
 public class KinesisOffset implements Offset<String> {
     private String offset;
 
-    public KinesisOffset() {
-    }
+    public KinesisOffset() {}
 
     public KinesisOffset(String offset) {
         this.offset = offset;

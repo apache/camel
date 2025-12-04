@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Map;
@@ -25,10 +30,6 @@ import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JsonPathSplitSingleListOptionTest extends CamelTestSupport {
 
     @Override
@@ -37,14 +38,13 @@ public class JsonPathSplitSingleListOptionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // use option to force returning a list even for a single element selected
-                var jsonpath
-                        = expression().jsonpath().option(JsonPathExpression.Option.ALWAYS_RETURN_LIST)
-                                .expression("$.store.book[0]").end();
+                var jsonpath = expression()
+                        .jsonpath()
+                        .option(JsonPathExpression.Option.ALWAYS_RETURN_LIST)
+                        .expression("$.store.book[0]")
+                        .end();
 
-                from("direct:start")
-                        .split(jsonpath)
-                        .to("mock:authors")
-                        .convertBodyTo(String.class);
+                from("direct:start").split(jsonpath).to("mock:authors").convertBodyTo(String.class);
             }
         };
     }
@@ -58,7 +58,11 @@ public class JsonPathSplitSingleListOptionTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Map row = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(Map.class);
+        Map row = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(Map.class);
         assertEquals("Nigel Rees", row.get("author"));
         assertEquals(Double.valueOf("8.95"), row.get("price"));
 
@@ -68,5 +72,4 @@ public class JsonPathSplitSingleListOptionTest extends CamelTestSupport {
         assertTrue(out.contains("\"title\": \"Sword's of Honour\""));
         assertTrue(out.contains("\"price\": 12.99,"));
     }
-
 }

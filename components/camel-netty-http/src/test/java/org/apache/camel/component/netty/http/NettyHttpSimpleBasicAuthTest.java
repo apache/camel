@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,11 +30,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
@@ -44,12 +45,13 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
     }
 
     private void sendUnauthorizedRequest() {
-        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+        CamelExecutionException exception = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class),
                 "Should have thrown a CamelExecutionException");
 
-        NettyHttpOperationFailedException cause
-                = assertIsInstanceOf(NettyHttpOperationFailedException.class, exception.getCause());
+        NettyHttpOperationFailedException cause =
+                assertIsInstanceOf(NettyHttpOperationFailedException.class, exception.getCause());
         assertEquals(UNAUTHORIZED.code(), cause.getStatusCode(), "Should have sent back HTTP status 401");
     }
 
@@ -68,15 +70,16 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization",
-                auth, String.class);
+        String out = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Order(3)
-    @DisplayName("Tests whether it returns unauthorized (HTTP 401) for unauthorized access after a successful authorization")
+    @DisplayName(
+            "Tests whether it returns unauthorized (HTTP 401) for unauthorized access after a successful authorization")
     @Test
     void testBasicAuthPostAuth() {
         sendUnauthorizedRequest();
@@ -89,9 +92,9 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

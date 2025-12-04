@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,14 +31,13 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SettlementBatchSummaryGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(SettlementBatchSummaryGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(SettlementBatchSummaryGatewayApiMethod.class)
+            .getName();
 
     // TODO provide parameter values for generate
     @Disabled
@@ -69,11 +71,9 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 // test route for generate
-                from("direct://GENERATE")
-                        .to("braintree://" + PATH_PREFIX + "/generate?inBody=settlementDate");
+                from("direct://GENERATE").to("braintree://" + PATH_PREFIX + "/generate?inBody=settlementDate");
                 // test route for generate
-                from("direct://GENERATE_1")
-                        .to("braintree://" + PATH_PREFIX + "/generate");
+                from("direct://GENERATE_1").to("braintree://" + PATH_PREFIX + "/generate");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public class InfinispanRemoteComponent extends InfinispanComponent {
     @Metadata(description = "Component configuration")
     private InfinispanRemoteConfiguration configuration = new InfinispanRemoteConfiguration();
 
-    public InfinispanRemoteComponent() {
-    }
+    public InfinispanRemoteComponent() {}
 
     public InfinispanRemoteComponent(CamelContext camelContext) {
         super(camelContext);

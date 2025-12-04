@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -68,8 +69,7 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, FhirApiName apiName,
-            FhirConfiguration endpointConfiguration) {
+            String uri, String methodName, FhirApiName apiName, FhirConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
 

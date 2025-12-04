@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,9 +33,6 @@ import java.util.Arrays;
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class IOHelperCharsetTest extends ContextTestSupport {
 
     private static final String CONTENT = "G\u00f6tzend\u00e4mmerung,Joseph und seine Br\u00fcder";
@@ -41,9 +42,9 @@ public class IOHelperCharsetTest extends ContextTestSupport {
         switchToDefaultCharset(StandardCharsets.UTF_8);
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
         try (InputStream in = IOHelper.toInputStream(file, "UTF-8");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-             BufferedReader naiveReader = new BufferedReader(
-                     new InputStreamReader(Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                BufferedReader naiveReader = new BufferedReader(new InputStreamReader(
+                        Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
@@ -56,9 +57,9 @@ public class IOHelperCharsetTest extends ContextTestSupport {
         switchToDefaultCharset(StandardCharsets.ISO_8859_1);
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
         try (InputStream in = IOHelper.toInputStream(file, "UTF-8");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.ISO_8859_1));
-             BufferedReader naiveReader = new BufferedReader(
-                     new InputStreamReader(Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.ISO_8859_1));
+                BufferedReader naiveReader = new BufferedReader(new InputStreamReader(
+                        Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
@@ -71,10 +72,9 @@ public class IOHelperCharsetTest extends ContextTestSupport {
         switchToDefaultCharset(StandardCharsets.UTF_8);
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
         try (InputStream in = IOHelper.toInputStream(file, "ISO-8859-1");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-             BufferedReader naiveReader = new BufferedReader(
-                     new InputStreamReader(
-                             Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.ISO_8859_1))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                BufferedReader naiveReader = new BufferedReader(new InputStreamReader(
+                        Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.ISO_8859_1))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
@@ -87,7 +87,7 @@ public class IOHelperCharsetTest extends ContextTestSupport {
         switchToDefaultCharset(StandardCharsets.UTF_8);
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
         try (InputStream in = IOHelper.toInputStream(file, "ISO-8859-1");
-             InputStream naiveIn = Files.newInputStream(Paths.get(file.getAbsolutePath()))) {
+                InputStream naiveIn = Files.newInputStream(Paths.get(file.getAbsolutePath()))) {
             byte[] bytes = new byte[8192];
             in.read(bytes);
             byte[] naiveBytes = new byte[8192];
@@ -100,8 +100,8 @@ public class IOHelperCharsetTest extends ContextTestSupport {
     public void testToReaderFileWithCharsetUTF8() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
         try (BufferedReader reader = IOHelper.toReader(file, "UTF-8");
-             BufferedReader naiveReader = new BufferedReader(
-                     new InputStreamReader(Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
+                BufferedReader naiveReader = new BufferedReader(new InputStreamReader(
+                        Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
@@ -113,9 +113,8 @@ public class IOHelperCharsetTest extends ContextTestSupport {
     public void testToReaderFileWithCharsetLatin1() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
         try (BufferedReader reader = IOHelper.toReader(file, "ISO-8859-1");
-             BufferedReader naiveReader = new BufferedReader(
-                     new InputStreamReader(
-                             Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.ISO_8859_1))) {
+                BufferedReader naiveReader = new BufferedReader(new InputStreamReader(
+                        Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.ISO_8859_1))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);

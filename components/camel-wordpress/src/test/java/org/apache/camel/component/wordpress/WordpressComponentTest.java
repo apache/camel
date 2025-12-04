@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class WordpressComponentTest extends CamelTestSupport {
 
@@ -36,8 +37,8 @@ public class WordpressComponentTest extends CamelTestSupport {
         final WordpressComponent component = new WordpressComponent(context);
         component.init();
 
-        final WordpressEndpoint endpoint = (WordpressEndpoint) component
-                .createEndpoint(
+        final WordpressEndpoint endpoint = (WordpressEndpoint)
+                component.createEndpoint(
                         "wordpress:post?apiVersion=2&url=http://mysite.com&criteria.search=test&criteria.page=1&criteria.perPage=10&criteria.orderBy=author&criteria.categories=camel,dozer,json");
 
         assertThat(endpoint.getConfiguration().getSearchCriteria(), instanceOf(PostSearchCriteria.class));
@@ -47,8 +48,8 @@ public class WordpressComponentTest extends CamelTestSupport {
         assertThat(endpoint.getConfiguration().getCriteria().get("search"), is("test"));
         assertThat(endpoint.getConfiguration().getCriteria().get("orderBy"), is("author"));
 
-        LOGGER.info("Categories are {}",
+        LOGGER.info(
+                "Categories are {}",
                 ((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories());
     }
-
 }

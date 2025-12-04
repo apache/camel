@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class TwoCamelContextDirectEndpointTest {
     private DefaultCamelContext camel1;
@@ -58,7 +59,6 @@ public class TwoCamelContextDirectEndpointTest {
     public void tearDown() {
         camel1.stop();
         camel2.stop();
-
     }
 
     @Test

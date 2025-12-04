@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +32,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateSerializedHeadersTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateSerializedHeadersTest.class);
@@ -75,10 +76,10 @@ public class LevelDBAggregateSerializedHeadersTest extends LevelDBTestSupport {
                 from("seda:start?size=" + SIZE)
                         .to("log:input?groupSize=500")
                         .aggregate(header("id"), new IntegerAggregationStrategy())
-                            .aggregationRepository(getRepo())
-                            .completionSize(SIZE)
-                            .to("log:output?showHeaders=true")
-                            .to("mock:result")
+                        .aggregationRepository(getRepo())
+                        .completionSize(SIZE)
+                        .to("log:output?showHeaders=true")
+                        .to("mock:result")
                         .end();
             }
         };

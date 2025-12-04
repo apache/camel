@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelContext;
@@ -38,7 +39,8 @@ public class MinaSslGlobalContextParametersTcpTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true", body, "cheese", 123);
+        template.sendBodyAndHeader(
+                "mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true", body, "cheese", 123);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -55,7 +57,8 @@ public class MinaSslGlobalContextParametersTcpTest extends BaseMinaTest {
             public void configure() {
                 fromF("mina:tcp://localhost:%s?sync=false&minaLogger=true", getPort())
                         .to("log:before?showAll=true")
-                        .to("mock:result").to("log:after?showAll=true");
+                        .to("mock:result")
+                        .to("log:after?showAll=true");
             }
         };
     }

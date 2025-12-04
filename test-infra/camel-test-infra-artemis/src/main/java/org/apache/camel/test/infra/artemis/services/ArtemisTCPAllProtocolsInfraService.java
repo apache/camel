@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
@@ -40,15 +41,17 @@ public class ArtemisTCPAllProtocolsInfraService extends AbstractArtemisEmbeddedS
         configuration.setPersistenceEnabled(false);
         try {
             configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
-            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
-            configuration.addConnectorConfiguration("connector",
-                    new TransportConfiguration(NettyConnectorFactory.class.getName()));
+            configuration.addAcceptorConfiguration(
+                    "connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
+            configuration.addConnectorConfiguration(
+                    "connector", new TransportConfiguration(NettyConnectorFactory.class.getName()));
             configuration.setJournalDirectory("target/data/journal");
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
             throw new ArtemisRunException("vm acceptor cannot be configured", e);
         }
-        configuration.addAddressSetting("#",
+        configuration.addAddressSetting(
+                "#",
                 new AddressSettings()
                         .setAddressFullMessagePolicy(AddressFullMessagePolicy.FAIL)
                         .setDeadLetterAddress(SimpleString.of("DLQ"))

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
 
@@ -101,13 +102,20 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start").doTry().to("bean:A").setHeader("CamelJmsDestinationName", constant("queue:outQueue"))
-                        .to(ExchangePattern.InOut, "bean:B").setHeader("Status", constant("CamsResponse"))
-                        .doCatch(ExchangeTimedOutException.class).setHeader("Status", constant("TimeOut"))
-                        .doCatch(Exception.class).setHeader("Status", constant("ExceptionGeneral"))
-                        .end().to("bean:C").transform(body());
+                from("direct:start")
+                        .doTry()
+                        .to("bean:A")
+                        .setHeader("CamelJmsDestinationName", constant("queue:outQueue"))
+                        .to(ExchangePattern.InOut, "bean:B")
+                        .setHeader("Status", constant("CamsResponse"))
+                        .doCatch(ExchangeTimedOutException.class)
+                        .setHeader("Status", constant("TimeOut"))
+                        .doCatch(Exception.class)
+                        .setHeader("Status", constant("ExceptionGeneral"))
+                        .end()
+                        .to("bean:C")
+                        .transform(body());
             }
         };
     }
-
 }

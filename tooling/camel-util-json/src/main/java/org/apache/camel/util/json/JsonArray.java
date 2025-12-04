@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.json;
 
 import java.io.IOException;
@@ -42,8 +43,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     private static final long serialVersionUID = 1L;
 
     /** Instantiates an empty JsonArray. */
-    public JsonArray() {
-    }
+    public JsonArray() {}
 
     /**
      * Instantiate a new JsonArray using ArrayList's constructor of the same type.

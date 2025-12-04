@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,10 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DistributedTimeoutTest extends AbstractDistributedTest {
 
@@ -88,10 +89,15 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy())
-                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
-                        .discardOnCompletionTimeout().completionSize(3).completionTimeout(200)
-                        .completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository)
+                        .optimisticLocking()
+                        .discardOnCompletionTimeout()
+                        .completionSize(3)
+                        .completionTimeout(200)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:aggregated");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,8 +65,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @EnabledIfEnvironmentVariable(named = "TELEGRAM_AUTHORIZATION_TOKEN", matches = ".*")
 public class TelegramServiceIT extends TelegramTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramServiceIT.class);
@@ -88,7 +89,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -98,7 +100,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setText("This is a <b>HTML</b> <i>auto-generated</i> message from the Bot");
         msg.setParseMode(TelegramParseMode.HTML.getCode());
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -108,7 +111,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setText("This is a *Markdown* _auto-generated_ message from the Bot");
         msg.setParseMode(TelegramParseMode.MARKDOWN.getCode());
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -117,20 +121,20 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setText("Choose one option!");
 
-        InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
-                .text("Option One - I").build();
+        InlineKeyboardButton buttonOptionOneI =
+                InlineKeyboardButton.builder().text("Option One - I").build();
 
-        InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
-                .text("Option One - II").build();
+        InlineKeyboardButton buttonOptionOneII =
+                InlineKeyboardButton.builder().text("Option One - II").build();
 
-        InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
-                .text("Option Two - I").build();
+        InlineKeyboardButton buttonOptionTwoI =
+                InlineKeyboardButton.builder().text("Option Two - I").build();
 
-        InlineKeyboardButton buttonOptionThreeI = InlineKeyboardButton.builder()
-                .text("Option Three - I").build();
+        InlineKeyboardButton buttonOptionThreeI =
+                InlineKeyboardButton.builder().text("Option Three - I").build();
 
-        InlineKeyboardButton buttonOptionThreeII = InlineKeyboardButton.builder()
-                .text("Option Three - II").build();
+        InlineKeyboardButton buttonOptionThreeII =
+                InlineKeyboardButton.builder().text("Option Three - II").build();
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
@@ -143,7 +147,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
 
         msg.setReplyMarkup(replyMarkup);
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -174,13 +179,13 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setText("Your answer was accepted!");
 
-        ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
-                .removeKeyboard(true)
-                .build();
+        ReplyKeyboardMarkup replyMarkup =
+                ReplyKeyboardMarkup.builder().removeKeyboard(true).build();
 
         msg.setReplyMarkup(replyMarkup);
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -192,7 +197,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setParseMode("Markdown");
         msg.setDisableNotification(false);
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -204,7 +210,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -215,8 +222,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setPhoto(image);
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
-        msg.setReplyMarkup(
-                new ForceReply(true));
+        msg.setReplyMarkup(new ForceReply(true));
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -230,11 +236,12 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setPhoto(image);
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.png");
-        msg.setReplyMarkup(
-                InlineKeyboardMarkup.builder()
-                        .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                                .url("https://camel.apache.org").build()))
-                        .build());
+        msg.setReplyMarkup(InlineKeyboardMarkup.builder()
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
+                .build());
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -251,7 +258,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setCaption("Photo");
         msg.setDisableNotification(false);
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -263,7 +271,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("audio.mp3");
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -278,8 +287,10 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setDurationSeconds(5);
         msg.setPerformer("Myself");
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                        .url("https://camel.apache.org").build()))
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
                 .build();
         msg.setReplyMarkup(replyMarkup);
 
@@ -296,7 +307,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("video.mp4");
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -313,8 +325,10 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setHeight(50);
 
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                        .url("https://camel.apache.org").build()))
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
                 .build();
         msg.setReplyMarkup(replyMarkup);
 
@@ -331,7 +345,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.txt");
 
-        Assertions.assertDoesNotThrow(() -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
+        Assertions.assertDoesNotThrow(
+                () -> template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg));
     }
 
     @Test
@@ -344,11 +359,12 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setFilenameWithExtension("file.txt");
         msg.setCaption("A document");
         ReplyMarkup replyMarkup = InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                        .url("https://camel.apache.org").build()))
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
                 .build();
-        msg.setReplyMarkup(
-                replyMarkup);
+        msg.setReplyMarkup(replyMarkup);
 
         MessageResult result = sendMessage(msg);
         Assertions.assertTrue(result.isOk());
@@ -363,8 +379,10 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setLatitude(latitude);
         msg.setLongitude(longitude);
         msg.setReplyMarkup(InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                        .url("https://camel.apache.org").build()))
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
                 .build());
 
         MessageResult result = sendMessage(msg);
@@ -380,8 +398,10 @@ public class TelegramServiceIT extends TelegramTestSupport {
         msg.setLatitude(latitude);
         msg.setLongitude(longitude);
         msg.setReplyMarkup(InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                        .url("https://camel.apache.org").build()))
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
                 .build());
 
         MessageResult result = sendMessage(msg);
@@ -443,7 +463,7 @@ public class TelegramServiceIT extends TelegramTestSupport {
     @Test
     public void testEditTextMessageWithUrl() {
 
-        //Given
+        // Given
         final String originalText = "ORIGINAL";
         final String urlDescription = "Inline URL";
         final String url = "http://www.example.com/";
@@ -464,7 +484,8 @@ public class TelegramServiceIT extends TelegramTestSupport {
 
         Assertions.assertEquals(urlDescription, response.getMessage().getText());
         Assertions.assertEquals(url, response.getMessage().getEntities().get(0).getUrl());
-        Assertions.assertEquals("text_link", response.getMessage().getEntities().get(0).getType());
+        Assertions.assertEquals(
+                "text_link", response.getMessage().getEntities().get(0).getType());
     }
 
     @Test
@@ -473,10 +494,10 @@ public class TelegramServiceIT extends TelegramTestSupport {
         String originalCaption = "original caption";
         String newCaption = "edited caption";
 
-        //Send message with caption
+        // Send message with caption
         Integer messageId = sendSamplePhotoMessageAndGetMessageId(originalCaption);
 
-        //edit message
+        // edit message
         EditMessageCaptionMessage editMessageCaptionMessage = EditMessageCaptionMessage.builder()
                 .caption(newCaption)
                 .messageId(messageId)
@@ -489,16 +510,16 @@ public class TelegramServiceIT extends TelegramTestSupport {
     @Test
     void testEditCaptionMessageWithUrl() throws IOException {
 
-        //Given
+        // Given
         String originalCaption = "original caption";
         final String urlDescription = "Inline URL";
         final String url = "http://www.example.com/";
         final String newCaptionWithUrl = String.format("<a href=\"%s\">%s</a>", url, urlDescription);
 
-        //Send message
+        // Send message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId(originalCaption);
 
-        //edit message
+        // edit message
         EditMessageCaptionMessage editMessageCaptionMessage = EditMessageCaptionMessage.builder()
                 .caption(newCaptionWithUrl)
                 .messageId(messageId)
@@ -509,21 +530,22 @@ public class TelegramServiceIT extends TelegramTestSupport {
         IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertEquals(urlDescription, incomingMessage.getCaption());
         Assertions.assertEquals(url, incomingMessage.getCaptionEntities().get(0).getUrl());
-        Assertions.assertEquals("text_link", incomingMessage.getCaptionEntities().get(0).getType());
+        Assertions.assertEquals(
+                "text_link", incomingMessage.getCaptionEntities().get(0).getType());
     }
 
     @Disabled("Unlike testEditMediaToAnimation, this does not work. It needs to be investigated")
     @Test
     void testEditMediaToAudio() throws IOException {
 
-        //given
+        // given
         String mediaUrl = "https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3";
         String caption = "caption";
 
-        //send photo message
+        // send photo message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //update to audio message
+        // update to audio message
         InputMediaAudio inputMediaAudio = new InputMediaAudio();
         inputMediaAudio.setCaption(caption);
         inputMediaAudio.setMedia(mediaUrl);
@@ -543,14 +565,14 @@ public class TelegramServiceIT extends TelegramTestSupport {
     @Test
     void testEditMediaToAnimation() throws IOException {
 
-        //given
+        // given
         String mediaUrl = "http://file-examples.com/storage/fe783a5cbb6323602a28c66/2017/10/file_example_GIF_500kB.gif";
         String caption = "caption";
 
-        //send photo message
+        // send photo message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //update to animation
+        // update to animation
         InputMediaAnimation inputMediaAnimation = new InputMediaAnimation();
         inputMediaAnimation.setCaption(caption);
         inputMediaAnimation.setMedia(mediaUrl);
@@ -570,14 +592,14 @@ public class TelegramServiceIT extends TelegramTestSupport {
     @Test
     void testEditMediaToVideo() throws IOException {
 
-        //given
+        // given
         String mediaUrl = "http://mirrors.standaloneinstaller.com/video-sample/small.mp4";
         String caption = "caption";
 
-        //send photo message
+        // send photo message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //update to video message
+        // update to video message
         InputMediaVideo inputMediaVideo = new InputMediaVideo();
         inputMediaVideo.setCaption(caption);
         inputMediaVideo.setMedia(mediaUrl);
@@ -597,14 +619,14 @@ public class TelegramServiceIT extends TelegramTestSupport {
     @Test
     void testEditMediaToPhoto() throws IOException {
 
-        //given
+        // given
         String mediaUrl = "https://sample-videos.com/img/Sample-jpg-image-50kb.jpg";
         String caption = "caption";
 
-        //send photo message
+        // send photo message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //update to another photo message
+        // update to another photo message
         InputMediaPhoto inputMediaPhoto = new InputMediaPhoto();
         inputMediaPhoto.setCaption(String.format("<b>%s</b>", caption));
         inputMediaPhoto.setParseMode("HTML");
@@ -619,16 +641,17 @@ public class TelegramServiceIT extends TelegramTestSupport {
         IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertNotNull(incomingMessage.getPhoto());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
-        Assertions.assertEquals("bold", incomingMessage.getCaptionEntities().get(0).getType());
+        Assertions.assertEquals(
+                "bold", incomingMessage.getCaptionEntities().get(0).getType());
     }
 
     @Test
     void testEditMarkupMessage() throws IOException {
 
-        //send message
+        // send message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //edit markup
+        // edit markup
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
                 .text("camel")
                 .url("https://camel.apache.org/")
@@ -646,18 +669,21 @@ public class TelegramServiceIT extends TelegramTestSupport {
         MessageResult incomingMessage = sendMessage(editMessageReplyMarkupMessage);
         Assertions.assertTrue(incomingMessage.isOk());
 
-        Assertions.assertEquals(buttonOptionOneI,
-                ((InlineKeyboardMarkup) incomingMessage.getMessage().getReplyMarkup()).getInlineKeyboard()
-                        .get(0).get(0));
+        Assertions.assertEquals(
+                buttonOptionOneI,
+                ((InlineKeyboardMarkup) incomingMessage.getMessage().getReplyMarkup())
+                        .getInlineKeyboard()
+                        .get(0)
+                        .get(0));
     }
 
     @Test
     void testDeleteMessage() {
 
-        //send message
+        // send message
         Integer messageId = sendSampleTextMessageAndGetMessageId("text");
 
-        //delete message
+        // delete message
         EditMessageDelete messageDelete = new EditMessageDelete(chatId, messageId);
 
         MessageResult incomingMessage = sendMessage(messageDelete);
@@ -675,8 +701,9 @@ public class TelegramServiceIT extends TelegramTestSupport {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setCallbackGame(new CallbackGame(gameShortName));
         inlineKeyboardButton.setText(gameText);
-        InlineKeyboardMarkup inlineKeyboardMarkup
-                = InlineKeyboardMarkup.builder().addRow(Collections.singletonList(inlineKeyboardButton)).build();
+        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
+                .addRow(Collections.singletonList(inlineKeyboardButton))
+                .build();
 
         OutgoingGameMessage outgoingGameMessage = new OutgoingGameMessage();
         outgoingGameMessage.setGameShortName(gameShortName);

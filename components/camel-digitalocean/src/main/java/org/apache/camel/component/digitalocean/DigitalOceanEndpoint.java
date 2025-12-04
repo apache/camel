@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean;
 
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
@@ -49,8 +50,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Manage Droplets and resources within the DigitalOcean cloud.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation",
-             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = DigitalOceanHeaders.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "digitalocean",
+        title = "DigitalOcean",
+        syntax = "digitalocean:operation",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = DigitalOceanHeaders.class)
 public class DigitalOceanEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);
@@ -105,7 +112,6 @@ public class DigitalOceanEndpoint extends DefaultEndpoint implements EndpointSer
             default:
                 throw new UnsupportedOperationException("Operation specified is not valid for producer");
         }
-
     }
 
     @Override
@@ -132,7 +138,6 @@ public class DigitalOceanEndpoint extends DefaultEndpoint implements EndpointSer
                         new UsernamePasswordCredentials(
                                 configuration.getHttpProxyUser(), configuration.getHttpProxyPassword()));
                 builder.setDefaultCredentialsProvider(credsProvider);
-
             }
 
             digitalOceanClient = new DigitalOceanClient("v2", configuration.getOAuthToken(), builder.build());
@@ -149,5 +154,4 @@ public class DigitalOceanEndpoint extends DefaultEndpoint implements EndpointSer
     public DigitalOceanClient getDigitalOceanClient() {
         return digitalOceanClient;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft.cluster;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,8 +32,6 @@ import org.awaitility.Awaitility;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
 
@@ -129,5 +130,4 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         }
         return result;
     }
-
 }

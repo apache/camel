@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,13 +44,22 @@ public class OnExceptionCallSubRouteNoErrorHandlerTest extends ContextTestSuppor
             public void configure() {
                 onException(Exception.class).to("mock:error").end();
 
-                from("direct:start").to("mock:start").doTry().to("direct:bar").to("mock:afterbar").doCatch(Exception.class)
-                        .to("mock:catch").end().to("mock:result");
+                from("direct:start")
+                        .to("mock:start")
+                        .doTry()
+                        .to("direct:bar")
+                        .to("mock:afterbar")
+                        .doCatch(Exception.class)
+                        .to("mock:catch")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:bar")
                         // disable error handling so we can handle the exceptions in
                         // the doTry .. doCatch
-                        .errorHandler(noErrorHandler()).to("mock:bar").throwException(new IllegalArgumentException("Damn"));
+                        .errorHandler(noErrorHandler())
+                        .to("mock:bar")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

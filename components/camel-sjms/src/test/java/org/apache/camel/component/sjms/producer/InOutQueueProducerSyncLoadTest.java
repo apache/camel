@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,18 +38,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test.InOutQueueProducerSyncLoadTest";
     private MessageConsumer mc1;
     private MessageConsumer mc2;
 
-    public InOutQueueProducerSyncLoadTest() {
-    }
+    public InOutQueueProducerSyncLoadTest() {}
 
     @BeforeEach
     public void setupConsumers() throws Exception {
@@ -91,9 +91,8 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
             };
             executor.execute(worker);
         }
-        while (context.getInflightRepository().size() > 0) {
+        while (context.getInflightRepository().size() > 0) {}
 
-        }
         executor.shutdown();
         while (!executor.isTerminated()) {
             //
@@ -106,9 +105,11 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
-                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
-                                                   + TEST_DESTINATION_NAME
-                                                   + ".response&concurrentConsumers=20")
+                        .to(
+                                ExchangePattern.InOut,
+                                "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
+                                        + TEST_DESTINATION_NAME
+                                        + ".response&concurrentConsumers=20")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
             }
         };

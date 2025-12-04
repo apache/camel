@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cluster;
 
 import java.util.List;
@@ -233,7 +234,8 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
                 managedInstance = true;
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
+                    LOGGER.debug(
+                            "Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
                             configuration.getNamespace(),
                             String.join(",", configuration.getNodes()));
                 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
 
 import java.io.Closeable;
@@ -110,8 +111,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         return createIterator(new InputStreamReader(in, charset));
     }
 
-    protected Iterator<?> createIterator(InputStream in)
-            throws XMLStreamException, IOException {
+    protected Iterator<?> createIterator(InputStream in) throws XMLStreamException, IOException {
         return createIterator(new XmlStreamReader(in));
     }
 
@@ -192,7 +192,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private Object nextToken;
 
-        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in)
+                throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
@@ -201,7 +202,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     int d = s.indexOf(':');
                     String pfx = StringHelper.before(s, ":", "");
                     this.splitpath[i] = new AttributedQName(
-                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx),
+                            d > 0 ? s.substring(d + 1) : s,
+                            pfx);
                 }
             }
 
@@ -397,10 +400,18 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     if (!skip.contains(e.getKey())) {
                         boolean defaultNS = e.getKey() == null || e.getKey().isEmpty();
                         if (defaultNS) {
-                            sb.append(" xmlns").append("=").append(quote).append(e.getValue()).append(quote);
+                            sb.append(" xmlns")
+                                    .append("=")
+                                    .append(quote)
+                                    .append(e.getValue())
+                                    .append(quote);
                         } else {
                             sb.append(" xmlns:")
-                                    .append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
+                                    .append(e.getKey())
+                                    .append("=")
+                                    .append(quote)
+                                    .append(e.getValue())
+                                    .append(quote);
                         }
                     }
                 }
@@ -413,7 +424,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 }
             } else if (mode == 't') {
                 int bp = 0;
-                for (;;) {
+                for (; ; ) {
                     int ep = token.indexOf('>', bp);
                     bp = token.indexOf('<', ep);
                     if (bp < 0) {
@@ -513,7 +524,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         break;
                     case XMLStreamConstants.END_ELEMENT:
                         if ((backtrack || trackdepth > 0 && depth == trackdepth)
-                                && mode == 'w' && group > 1 && !tokens.isEmpty()) {
+                                && mode == 'w'
+                                && group > 1
+                                && !tokens.isEmpty()) {
                             // flush the left over using the current context
                             code = XMLStreamConstants.END_ELEMENT;
                             return getGroupedToken();

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,10 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
 
@@ -81,11 +82,15 @@ public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
         assertTrue(direct.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                direct.getSpanContext().getTraceId());
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
     }
 
     @Override
@@ -93,10 +98,7 @@ public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
 
                 from("direct:variable")
                         .setVariable("myVar", constant("testValue"))
@@ -104,5 +106,4 @@ public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
             }
         };
     }
-
 }

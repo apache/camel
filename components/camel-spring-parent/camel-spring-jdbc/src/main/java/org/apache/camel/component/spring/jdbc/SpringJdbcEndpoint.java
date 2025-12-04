@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.jdbc;
 
 import javax.sql.DataSource;
@@ -26,13 +27,16 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Access databases through SQL and JDBC with Spring Transaction support.
  */
-@UriEndpoint(firstVersion = "3.10.0", scheme = "spring-jdbc", title = "Spring JDBC", syntax = "spring-jdbc:dataSourceName",
-             producerOnly = true,
-             category = { Category.DATABASE })
+@UriEndpoint(
+        firstVersion = "3.10.0",
+        scheme = "spring-jdbc",
+        title = "Spring JDBC",
+        syntax = "spring-jdbc:dataSourceName",
+        producerOnly = true,
+        category = {Category.DATABASE})
 public class SpringJdbcEndpoint extends JdbcEndpoint {
 
-    public SpringJdbcEndpoint() {
-    }
+    public SpringJdbcEndpoint() {}
 
     public SpringJdbcEndpoint(String endpointUri, Component component, DataSource dataSource) {
         super(endpointUri, component, dataSource);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.Comparator;
@@ -29,8 +30,7 @@ import org.apache.camel.support.ObjectHelper;
  */
 public final class GenericFileDefaultSorter {
 
-    private GenericFileDefaultSorter() {
-    }
+    private GenericFileDefaultSorter() {}
 
     /**
      * Returns a new sory by file language expression
@@ -69,7 +69,10 @@ public final class GenericFileDefaultSorter {
      * @return            the comparator
      */
     public static Comparator<Exchange> sortByFileLanguage(
-            final CamelContext context, final String expression, final boolean reverse, final boolean ignoreCase,
+            final CamelContext context,
+            final String expression,
+            final boolean reverse,
+            final boolean ignoreCase,
             final Comparator<Exchange> nested) {
 
         // the expression should be enclosed by ${ }
@@ -100,5 +103,4 @@ public final class GenericFileDefaultSorter {
             }
         };
     }
-
 }

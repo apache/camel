@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 import java.util.Properties;
 
@@ -25,9 +29,6 @@ import org.apache.camel.test.spring.junit5.UseOverridePropertiesWithPropertiesCo
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 @CamelSpringTest
 @ContextConfiguration
@@ -52,5 +53,4 @@ public class CamelSpringOverridePropertiesForPropertyInjectTest {
 
         assertThat(response, is(EXPECTED_PROPERTY_VALUE));
     }
-
 }

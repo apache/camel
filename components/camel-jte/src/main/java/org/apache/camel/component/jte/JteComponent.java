@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jte;
 
 import java.nio.file.Path;
@@ -39,14 +40,19 @@ public class JteComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "jte-classes")
     private String workDir = "jte-classes";
+
     @Metadata
     private boolean preCompile;
+
     @Metadata(defaultValue = "Plain")
     private ContentType contentType = ContentType.Plain;
+
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata
     private boolean allowContextMapAll;
 
@@ -75,13 +81,13 @@ public class JteComponent extends DefaultComponent {
         Path dir = Path.of(workDir);
         if (preCompile) {
             LOG.info("Using pre-compiling JTE templates: {}", workDir);
-            templateEngine
-                    = TemplateEngine.createPrecompiled(dir, contentType, getCamelContext().getApplicationContextClassLoader());
+            templateEngine = TemplateEngine.createPrecompiled(
+                    dir, contentType, getCamelContext().getApplicationContextClassLoader());
         } else {
             LOG.info("Using runtime compiled JTE templates: {}", workDir);
             codeResolver = new JteCodeResolver(getCamelContext());
-            templateEngine = TemplateEngine.create(codeResolver, dir, contentType,
-                    getCamelContext().getApplicationContextClassLoader());
+            templateEngine = TemplateEngine.create(
+                    codeResolver, dir, contentType, getCamelContext().getApplicationContextClassLoader());
         }
     }
 
@@ -174,5 +180,4 @@ public class JteComponent extends DefaultComponent {
     public void setAllowContextMapAll(boolean allowContextMapAll) {
         this.allowContextMapAll = allowContextMapAll;
     }
-
 }

@@ -124,8 +124,11 @@ public class XmlStreamDetector {
                         }
                         for (int at = 0; at < reader.getAttributeCount(); at++) {
                             QName qn = reader.getAttributeName(at);
-                            String prefix = qn.getPrefix() == null ? "" : qn.getPrefix().trim();
-                            String nsURI = qn.getNamespaceURI() == null ? "" : qn.getNamespaceURI().trim();
+                            String prefix =
+                                    qn.getPrefix() == null ? "" : qn.getPrefix().trim();
+                            String nsURI = qn.getNamespaceURI() == null
+                                    ? ""
+                                    : qn.getNamespaceURI().trim();
                             String value = reader.getAttributeValue(at);
                             String localPart = qn.getLocalPart();
                             if (nsURI.isEmpty() || prefix.isEmpty()) {
@@ -157,5 +160,4 @@ public class XmlStreamDetector {
 
         return information;
     }
-
 }

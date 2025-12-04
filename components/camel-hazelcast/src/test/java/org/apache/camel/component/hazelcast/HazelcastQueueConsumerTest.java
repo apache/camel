@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,14 +40,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
 
     @Mock
@@ -49,16 +50,15 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
     @Override
     @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
-        when(queue.addItemListener(any(ItemListener.class), eq(true))).thenAnswer(
-                invocationOnMock -> {
-                    // Wait until the consumer is set
-                    while (consumer == null) {
-                        Thread.onSpinWait();
-                    }
-                    consumer.accept(invocationOnMock.getArgument(0, ItemListener.class));
-                    return UUID.randomUUID();
-                });
+        when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
+        when(queue.addItemListener(any(ItemListener.class), eq(true))).thenAnswer(invocationOnMock -> {
+            // Wait until the consumer is set
+            while (consumer == null) {
+                Thread.onSpinWait();
+            }
+            consumer.accept(invocationOnMock.getArgument(0, ItemListener.class));
+            return UUID.randomUUID();
+        });
     }
 
     @Override
@@ -94,11 +94,16 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice()
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.QUEUE_PREFIX))
+                        .log("object...")
+                        .choice()
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-                        .log("...added").to("mock:added")
+                        .log("...added")
+                        .to("mock:added")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
-                        .log("...removed").to("mock:removed").otherwise()
+                        .log("...removed")
+                        .to("mock:removed")
+                        .otherwise()
                         .log("fail!");
             }
         };
@@ -110,5 +115,4 @@ public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
         assertNull(headers.get(HazelcastConstants.OBJECT_ID));
         assertNotNull(headers.get(HazelcastConstants.LISTENER_TIME));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.routing;
 
 import java.util.Map;
@@ -77,8 +78,7 @@ public class BeanRouter implements AfterVisitor, Consumer, PreExecutionLifecycle
     protected BeanRouterObserver camelRouterObservable;
     protected CamelContext camelContext;
 
-    public BeanRouter() {
-    }
+    public BeanRouter() {}
 
     public BeanRouter(final CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -172,25 +172,26 @@ public class BeanRouter implements AfterVisitor, Consumer, PreExecutionLifecycle
                 Processor processor = exchange -> {
                     Message in = exchange.getIn();
                     in.setBody(bean);
-                    in.setHeader(correlationIdName.orElse(null),
+                    in.setHeader(
+                            correlationIdName.orElse(null),
                             correlationIdPattern.get().apply(FreeMarkerUtils.getMergedModel(executionContext)));
                 };
                 producerTemplate.send(toEndpoint, processor);
             } else {
-                producerTemplate.sendBodyAndHeaders(toEndpoint, bean,
-                        Map.of(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, executionContext));
+                producerTemplate.sendBodyAndHeaders(
+                        toEndpoint, bean, Map.of(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, executionContext));
             }
         } catch (final Exception e) {
-            throw new SmooksException(String.format("Exception routing beanId [%s] to endpoint [%s]", beanId, toEndpoint), e);
+            throw new SmooksException(
+                    String.format("Exception routing beanId [%s] to endpoint [%s]", beanId, toEndpoint), e);
         }
     }
 
     protected Object getBeanFromExecutionContext(final ExecutionContext executionContext, final String beanId) {
         final Object bean = executionContext.getBeanContext().getBean(beanId);
         if (bean == null) {
-            throw new SmooksException(
-                    String.format("Exception routing beanId [%s]. The bean was not found in the Smooks execution context",
-                            beanId));
+            throw new SmooksException(String.format(
+                    "Exception routing beanId [%s]. The bean was not found in the Smooks execution context", beanId));
         }
 
         return bean;

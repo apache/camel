@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.policy;
 
 import java.util.HashSet;
@@ -130,7 +131,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         StringHelper.notEmpty(lockKey, "lockKey", this);
         StringHelper.notEmpty(lockValue, "lockValue", this);
 
-        executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
+        executorService =
+                getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
 
         locks = instance.getMap(lockMapName);
         future = executorService.submit(this::acquireLeadership);
@@ -159,18 +161,12 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
 
     protected void setLeader(boolean isLeader) {
         if (isLeader && leader.compareAndSet(false, isLeader)) {
-            LOGGER.info("Leadership taken (map={}, key={}, val={})",
-                    lockMapName,
-                    lockKey,
-                    lockValue);
+            LOGGER.info("Leadership taken (map={}, key={}, val={})", lockMapName, lockKey, lockValue);
 
             startAllStoppedConsumers();
         } else {
             if (!leader.getAndSet(isLeader) && isLeader) {
-                LOGGER.info("Leadership lost (map={}, key={} val={})",
-                        lockMapName,
-                        lockKey,
-                        lockValue);
+                LOGGER.info("Leadership lost (map={}, key={} val={})", lockMapName, lockKey, lockValue);
             }
         }
     }
@@ -306,7 +302,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
                     // Wait almost forever
                     Thread.sleep(Long.MAX_VALUE);
                 } else {
-                    LOGGER.debug("Failed to acquire lock (map={}, key={}, val={}) after {} {}",
+                    LOGGER.debug(
+                            "Failed to acquire lock (map={}, key={}, val={}) after {} {}",
                             lockMapName,
                             lockKey,
                             lockValue,

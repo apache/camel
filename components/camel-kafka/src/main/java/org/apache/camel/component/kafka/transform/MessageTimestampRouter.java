@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.transform;
 
 import java.text.ParseException;
@@ -33,9 +34,11 @@ import org.apache.camel.util.ObjectHelper;
 public class MessageTimestampRouter {
 
     public void process(
-            @ExchangeProperty("topicFormat") String topicFormat, @ExchangeProperty("timestampFormat") String timestampFormat,
+            @ExchangeProperty("topicFormat") String topicFormat,
+            @ExchangeProperty("timestampFormat") String timestampFormat,
             @ExchangeProperty("timestampKeys") String timestampKeys,
-            @ExchangeProperty("timestampKeyFormat") String timestampKeyFormat, Exchange ex)
+            @ExchangeProperty("timestampKeyFormat") String timestampKeyFormat,
+            Exchange ex)
             throws ParseException {
         final Pattern TOPIC = Pattern.compile("$[topic]", Pattern.LITERAL);
 
@@ -47,8 +50,7 @@ public class MessageTimestampRouter {
         ObjectMapper mapper = new ObjectMapper();
         List<String> splittedKeys = new ArrayList<>();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
-        });
+        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {});
         if (ObjectHelper.isNotEmpty(timestampKeys)) {
             splittedKeys = Arrays.stream(timestampKeys.split(",")).collect(Collectors.toList());
         }
@@ -62,7 +64,8 @@ public class MessageTimestampRouter {
             }
         }
         Long timestamp = null;
-        if (ObjectHelper.isNotEmpty(timestampKeyFormat) && ObjectHelper.isNotEmpty(rawTimestamp)
+        if (ObjectHelper.isNotEmpty(timestampKeyFormat)
+                && ObjectHelper.isNotEmpty(rawTimestamp)
                 && !timestampKeyFormat.equalsIgnoreCase("timestamp")) {
             final SimpleDateFormat timestampKeyFmt = new SimpleDateFormat(timestampKeyFormat);
             timestampKeyFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -85,5 +88,4 @@ public class MessageTimestampRouter {
             ex.getMessage().setHeader("kafka.OVERRIDE_TOPIC", updatedTopic);
         }
     }
-
 }

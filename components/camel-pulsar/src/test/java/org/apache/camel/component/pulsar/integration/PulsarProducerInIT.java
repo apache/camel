@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,9 +36,6 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PulsarProducerInIT extends PulsarITSupport {
 
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
@@ -47,14 +48,14 @@ public class PulsarProducerInIT extends PulsarITSupport {
     private ProducerTemplate producerTemplate1;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1"
-                    + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+            + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 
     @EndpointInject("pulsar:" + TOPIC_URI + "1?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1"
-                    + "&batchingEnabled=false" + "&chunkingEnabled=true"
-                    + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+            + "&batchingEnabled=false" + "&chunkingEnabled=true"
+            + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from1;
 
     @EndpointInject("mock:result")
@@ -90,7 +91,11 @@ public class PulsarProducerInIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
@@ -106,8 +111,8 @@ public class PulsarProducerInIT extends PulsarITSupport {
 
     @Test
     public void testLargeMessageWithChunkingDisabled() {
-        Throwable e = assertThrows(CamelExecutionException.class,
-                () -> producerTemplate.sendBody(new byte[10 * 1024 * 1024]));
+        Throwable e = assertThrows(
+                CamelExecutionException.class, () -> producerTemplate.sendBody(new byte[10 * 1024 * 1024]));
         assertTrue(ExceptionUtils.getThrowableList(e).stream().anyMatch(ex -> ex instanceof PulsarClientException));
     }
 

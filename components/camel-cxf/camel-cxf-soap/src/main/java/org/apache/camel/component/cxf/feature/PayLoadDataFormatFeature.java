@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.feature;
 
 import javax.xml.transform.Source;
@@ -41,16 +42,15 @@ import org.slf4j.LoggerFactory;
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LoggerFactory.getLogger(PayLoadDataFormatFeature.class);
     private static final boolean DEFAULT_ALLOW_STREAMING;
-    static {
 
+    static {
         String s = System.getProperty("org.apache.camel.component.cxf.streaming");
         DEFAULT_ALLOW_STREAMING = s == null || Boolean.parseBoolean(s);
     }
 
     boolean allowStreaming = DEFAULT_ALLOW_STREAMING;
 
-    public PayLoadDataFormatFeature() {
-    }
+    public PayLoadDataFormatFeature() {}
 
     public PayLoadDataFormatFeature(Boolean streaming) {
         if (streaming != null) {
@@ -68,15 +68,12 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         // and thus we need to remove those interceptors to prevent Holder
         // object from being created and stuck into the contents list
         // instead of Source objects
-        removeInterceptor(client.getEndpoint().getInInterceptors(),
-                HolderInInterceptor.class);
-        removeInterceptor(client.getEndpoint().getOutInterceptors(),
-                HolderOutInterceptor.class);
+        removeInterceptor(client.getEndpoint().getInInterceptors(), HolderInInterceptor.class);
+        removeInterceptor(client.getEndpoint().getOutInterceptors(), HolderOutInterceptor.class);
         // The SoapHeaderInterceptor maps various headers onto method parameters.
         // At this point, we expect all the headers to remain as headers, not
         // part of the body, so we remove that one.
-        removeInterceptor(client.getEndpoint().getBinding().getInInterceptors(),
-                SoapHeaderInterceptor.class);
+        removeInterceptor(client.getEndpoint().getBinding().getInInterceptors(), SoapHeaderInterceptor.class);
         client.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
         resetPartTypes(client.getEndpoint().getBinding());
 
@@ -92,12 +89,9 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         }
         // Need to remove some interceptors that are incompatible
         // See above.
-        removeInterceptor(server.getEndpoint().getInInterceptors(),
-                HolderInInterceptor.class);
-        removeInterceptor(server.getEndpoint().getOutInterceptors(),
-                HolderOutInterceptor.class);
-        removeInterceptor(server.getEndpoint().getBinding().getInInterceptors(),
-                SoapHeaderInterceptor.class);
+        removeInterceptor(server.getEndpoint().getInInterceptors(), HolderInInterceptor.class);
+        removeInterceptor(server.getEndpoint().getOutInterceptors(), HolderOutInterceptor.class);
+        removeInterceptor(server.getEndpoint().getBinding().getInInterceptors(), SoapHeaderInterceptor.class);
         resetPartTypes(server.getEndpoint().getBinding());
 
         LOG.info("Initialized CXF Server: {} in Payload mode with allow streaming: {}", server, allowStreaming);
@@ -139,7 +133,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         if (bmi != null) {
             int size = bmi.getMessageParts().size();
             for (int x = 0; x < size; x++) {
-                //last part can be streamed, others need DOM parsing
+                // last part can be streamed, others need DOM parsing
                 if (x < (size - 1)) {
                     bmi.getMessageParts().get(x).setTypeClass(allowStreaming ? DOMSource.class : null);
                 } else {
@@ -153,7 +147,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         if (msgInfo != null) {
             int size = msgInfo.getMessageParts().size();
             for (int x = 0; x < size; x++) {
-                //last part can be streamed, others need DOM parsing
+                // last part can be streamed, others need DOM parsing
                 if (x < (size - 1)) {
                     msgInfo.getMessageParts().get(x).setTypeClass(allowStreaming ? DOMSource.class : null);
                 } else {
@@ -162,5 +156,4 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             }
         }
     }
-
 }

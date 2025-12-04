@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayOutputStream;
@@ -55,10 +56,11 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         DeploymentInfo servletBuilder = getDeploymentInfo();
         manager = Servlets.newContainer().addDeployment(servletBuilder);
         manager.deploy();
-        PathHandler path = Handlers.path(Handlers.redirect(CONTEXT))
-                .addPrefixPath(CONTEXT, manager.start());
-        server = Undertow.builder().addHttpListener(port, "localhost")
-                .setHandler(path).build();
+        PathHandler path = Handlers.path(Handlers.redirect(CONTEXT)).addPrefixPath(CONTEXT, manager.start());
+        server = Undertow.builder()
+                .addHttpListener(port, "localhost")
+                .setHandler(path)
+                .build();
         server.start();
         contextUrl = "http://localhost:" + port + CONTEXT;
 
@@ -86,7 +88,8 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
     }
 
     protected WebResponse query(WebRequest req, boolean exceptionsThrownOnErrorStatus) throws IOException {
-        String params = req.params.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+        String params = req.params.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining("&"));
         String urlStr = params.isEmpty() ? req.url : req.url + "?" + params;
         URL url = new URL(urlStr);
@@ -240,9 +243,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
         public String getContentType() {
             String content = con.getContentType();
-            return content != null && content.contains(";")
-                    ? content.substring(0, content.indexOf(";"))
-                    : content;
+            return content != null && content.contains(";") ? content.substring(0, content.indexOf(";")) : content;
         }
 
         public InputStream getInputStream() throws IOException {
@@ -312,5 +313,4 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
             super(code, message, url);
         }
     }
-
 }

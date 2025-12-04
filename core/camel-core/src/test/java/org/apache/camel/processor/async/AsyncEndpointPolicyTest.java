@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -33,9 +37,6 @@ import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
@@ -80,17 +81,29 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
                 from("direct:start")
                         // wraps the entire route in the same policy
-                        .policy("foo").to("mock:foo").to("async:bye:camel").to("mock:bar").to("mock:result");
+                        .policy("foo")
+                        .to("mock:foo")
+                        .to("async:bye:camel")
+                        .to("mock:bar")
+                        .to("mock:result");
 
-                from("direct:send").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").to("mock:response");
+                from("direct:send")
+                        .to("mock:before")
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:response");
             }
         };
     }
@@ -125,14 +138,14 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                 }
 
                 public void process(Exchange exchange) {
-                    final AsyncProcessorAwaitManager awaitManager
-                            = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
+                    final AsyncProcessorAwaitManager awaitManager =
+                            PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
                     awaitManager.process(this, exchange);
                 }
 
                 public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback
-                            = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                            new AsyncCallbackToCompletableFutureAdapter<>(exchange);
                     process(exchange, callback);
                     return callback.getFuture();
                 }
@@ -143,5 +156,4 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
             return invoked;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.wasm;
 
 import org.apache.camel.CamelContext;
@@ -31,8 +32,7 @@ public class WasmLanguage extends TypedLanguageSupport implements PropertyConfig
 
     private String module;
 
-    public WasmLanguage() {
-    }
+    public WasmLanguage() {}
 
     public String getModule() {
         return module;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 /**
@@ -24,8 +25,7 @@ public class ApiMethodAlias {
     private String methodPattern;
     private String methodAlias;
 
-    public ApiMethodAlias() {
-    }
+    public ApiMethodAlias() {}
 
     public ApiMethodAlias(String methodPattern, String methodAlias) {
         this.methodPattern = methodPattern;

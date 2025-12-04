@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +48,8 @@ public class AggregateSimplePredicateTest extends ContextTestSupport {
                         // and when the aggregated body contains A+B+C then complete
                         // the aggregation
                         // and send it to mock:aggregated
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionPredicate(body().contains("A+B+C"))
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionPredicate(body().contains("A+B+C"))
                         .to("mock:aggregated");
                 // END SNIPPET: e1
             }

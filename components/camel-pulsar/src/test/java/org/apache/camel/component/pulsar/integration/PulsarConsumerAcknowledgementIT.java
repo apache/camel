@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.CompletableFuture;
@@ -56,12 +57,16 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
 
         String topicUri = PulsarConsumerAcknowledgementIT.TOPIC_URI + ++topicId;
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
+        producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(producerName)
+                .topic(topicUri)
+                .create();
 
         from = context.getEndpoint("pulsar:" + topicUri + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                                   + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                                   + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
-                                   + "&negativeAckRedeliveryDelayMicros=100000");
+                + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000"
+                + "&negativeAckRedeliveryDelayMicros=100000");
         to = context.getEndpoint("mock:result", MockEndpoint.class);
     }
 
@@ -87,7 +92,11 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test
@@ -101,8 +110,8 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
                 from(from).routeId("testAcknowledge:myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
                 });
             }
@@ -124,8 +133,8 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
                 from(from).routeId("testAcknowledgeAsync:myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     try {
                         CompletableFuture<Void> f = receipt.acknowledgeAsync();
                         f.get();
@@ -144,7 +153,8 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
     @Test
     public void testAcknowledgeCumulative() throws Exception {
         to.expectedMessageCount(2);
-        to.expectedBodiesReceived("testAcknowledgeCumulative: Hello World!", "testAcknowledgeCumulative: Hello World Again!");
+        to.expectedBodiesReceived(
+                "testAcknowledgeCumulative: Hello World!", "testAcknowledgeCumulative: Hello World Again!");
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -152,8 +162,8 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
                 from(from).routeId("testAcknowledgeCumulative:myRoute").to(to).process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                    PulsarMessageReceipt receipt =
+                            (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     // Ack the second message. The first will also be acked.
                     if (exchange.getIn().getBody().equals("testAcknowledgeCumulative: Hello World Again!")) {
                         receipt.acknowledgeCumulative();
@@ -171,27 +181,33 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
     @Test
     public void testAcknowledgeCumulativeAsync() throws Exception {
         to.expectedMessageCount(2);
-        to.expectedBodiesReceived("testAcknowledgeCumulativeAsync: Hello World!",
-                "testAcknowledgeCumulativeAsync: Hello World Again!");
+        to.expectedBodiesReceived(
+                "testAcknowledgeCumulativeAsync: Hello World!", "testAcknowledgeCumulativeAsync: Hello World Again!");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(from).routeId("testAcknowledgeCumulativeAsync:myRoute").to(to).process(exchange -> {
-                    LOGGER.info("Processing message {}", exchange.getIn().getBody());
+                from(from)
+                        .routeId("testAcknowledgeCumulativeAsync:myRoute")
+                        .to(to)
+                        .process(exchange -> {
+                            LOGGER.info(
+                                    "Processing message {}", exchange.getIn().getBody());
 
-                    PulsarMessageReceipt receipt
-                            = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
-                    // Ack the second message. The first will also be acked.
-                    if (exchange.getIn().getBody().equals("testAcknowledgeCumulativeAsync: Hello World Again!")) {
-                        try {
-                            CompletableFuture<Void> f = receipt.acknowledgeCumulativeAsync();
-                            f.get();
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage());
-                        }
-                    }
-                });
+                            PulsarMessageReceipt receipt = (PulsarMessageReceipt)
+                                    exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                            // Ack the second message. The first will also be acked.
+                            if (exchange.getIn()
+                                    .getBody()
+                                    .equals("testAcknowledgeCumulativeAsync: Hello World Again!")) {
+                                try {
+                                    CompletableFuture<Void> f = receipt.acknowledgeCumulativeAsync();
+                                    f.get();
+                                } catch (Exception e) {
+                                    LOGGER.error(e.getMessage());
+                                }
+                            }
+                        });
             }
         });
 
@@ -214,12 +230,12 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
                     if (processed.compareAndSet(false, true)) {
-                        PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                        PulsarMessageReceipt receipt =
+                                (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                         receipt.negativeAcknowledge();
                     } else {
-                        PulsarMessageReceipt receipt = (PulsarMessageReceipt) exchange.getIn()
-                                .getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                        PulsarMessageReceipt receipt =
+                                (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                         receipt.acknowledge();
                     }
                 });

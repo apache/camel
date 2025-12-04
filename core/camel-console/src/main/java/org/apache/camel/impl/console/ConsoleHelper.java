@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
+
+import static org.apache.camel.support.LoggerHelper.extractSourceLocationLineNumber;
 
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -31,12 +34,9 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.support.LoggerHelper.extractSourceLocationLineNumber;
-
 public final class ConsoleHelper {
 
-    private ConsoleHelper() {
-    }
+    private ConsoleHelper() {}
 
     public static List<JsonObject> loadSourceAsJson(CamelContext camelContext, String location) {
         if (location == null) {
@@ -138,5 +138,4 @@ public final class ConsoleHelper {
         }
         return null;
     }
-
 }

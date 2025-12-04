@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static java.util.Map.entry;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
-
-import static java.util.Map.entry;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThymeleafComponentTest extends CamelTestSupport {
 
@@ -71,32 +72,34 @@ public class ThymeleafComponentTest extends CamelTestSupport {
          * Listens for the templateMode property binding to allow verification of the <code>createEndpoint()</code>
          * method in <code>ThymeleafComponent</code>.
          */
-        context.getRegistry().bind(UUID.randomUUID().toString(),
-                (PropertyBindingListener) (target, key, value) -> {
-                    if ("templateMode".equals(key)) {
-                        templateMode = (String) value;
-                    }
-                });
+        context.getRegistry().bind(UUID.randomUUID().toString(), (PropertyBindingListener) (target, key, value) -> {
+            if ("templateMode".equals(key)) {
+                templateMode = (String) value;
+            }
+        });
 
         ThymeleafComponent component = new ThymeleafComponent();
         assertNotNull(component);
         component.setCamelContext(context);
 
-        Map<String, Object> parameters = new HashMap<>(
-                Map.ofEntries(entry("templateMode", "CSS"), entry("allowContextMapAll", true), entry("resolver", "STRING")));
+        Map<String, Object> parameters = new HashMap<>(Map.ofEntries(
+                entry("templateMode", "CSS"), entry("allowContextMapAll", true), entry("resolver", "STRING")));
 
-        ThymeleafEndpoint thymeleafEndpoint = (ThymeleafEndpoint) component.createEndpoint("thymeleaf", "dontcare", parameters);
+        ThymeleafEndpoint thymeleafEndpoint =
+                (ThymeleafEndpoint) component.createEndpoint("thymeleaf", "dontcare", parameters);
         thymeleafEndpoint.setTemplate(stringTemplate());
 
         assertEquals(TemplateMode.CSS.name(), thymeleafEndpoint.getTemplateMode());
 
-        assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
-        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
+        assertEquals(
+                1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
+        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream()
+                .findFirst()
+                .get();
         assertTrue(resolver instanceof StringTemplateResolver);
 
         StringTemplateResolver templateResolver = (StringTemplateResolver) resolver;
         assertEquals(TemplateMode.CSS, templateResolver.getTemplateMode());
         assertEquals(TemplateMode.CSS.name(), templateMode);
     }
-
 }

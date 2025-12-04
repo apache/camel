@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test demonstrating interaction between camel-spring-ai-chat and camel-spring-ai-tools components.
@@ -63,8 +64,7 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         weatherMock.expectedHeaderReceived("city", "Paris");
 
         // Test that the LLM can call a single tool (weather) during conversation
-        String response = template().requestBody("direct:weatherChat",
-                "What's the weather in Paris?", String.class);
+        String response = template().requestBody("direct:weatherChat", "What's the weather in Paris?", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response.toLowerCase()).containsAnyOf("paris", "sunny", "22", "weather");
@@ -83,8 +83,8 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         weatherMock.reset();
         weatherMock.expectedMinimumMessageCount(1);
 
-        String weatherResponse = template().requestBody("direct:multiToolChat",
-                "What's the weather in London?", String.class);
+        String weatherResponse =
+                template().requestBody("direct:multiToolChat", "What's the weather in London?", String.class);
 
         assertThat(weatherResponse).isNotNull();
         assertThat(weatherResponse.toLowerCase()).containsAnyOf("london", "cloudy", "15", "weather");
@@ -98,8 +98,7 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         calculatorMock.reset();
         calculatorMock.expectedMinimumMessageCount(1);
 
-        String mathResponse = template().requestBody("direct:multiToolChat",
-                "What is 5 plus 3?", String.class);
+        String mathResponse = template().requestBody("direct:multiToolChat", "What is 5 plus 3?", String.class);
 
         assertThat(mathResponse).isNotNull();
         assertThat(mathResponse).containsAnyOf("8", "eight");
@@ -116,8 +115,8 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         weatherMock.expectedMinimumMessageCount(1);
 
         // Test that tool parameters are properly passed from LLM to Camel route
-        String response = template().requestBody("direct:weatherChat",
-                "Tell me about the weather in Paris", String.class);
+        String response =
+                template().requestBody("direct:weatherChat", "Tell me about the weather in Paris", String.class);
 
         assertThat(response).isNotNull();
         // The LLM should have called the weather tool with city="Paris"
@@ -142,8 +141,8 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         weatherMock.reset();
         weatherMock.expectedMinimumMessageCount(1);
 
-        String weatherResponse = template().requestBody("direct:weatherChat",
-                "What's the weather in Paris?", String.class);
+        String weatherResponse =
+                template().requestBody("direct:weatherChat", "What's the weather in Paris?", String.class);
         assertThat(weatherResponse).isNotNull();
 
         weatherMock.assertIsSatisfied();
@@ -153,8 +152,9 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         calculatorMock.reset();
         calculatorMock.expectedMinimumMessageCount(1);
 
-        String mathResponse = template().requestBody("direct:mathChat",
-                "Calculate the following mathematical expression 5 plus 3", String.class);
+        String mathResponse = template()
+                .requestBody(
+                        "direct:mathChat", "Calculate the following mathematical expression 5 plus 3", String.class);
         assertThat(mathResponse).isNotNull();
         assertThat(mathResponse).containsAnyOf("8", "eight");
 
@@ -168,12 +168,16 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
         weatherMock.expectedMinimumMessageCount(1);
 
         // Test a conversation where tools might be called
-        String response = template().requestBody("direct:weatherChat",
-                "What's the weather in Paris and London? Please check both cities.", String.class);
+        String response = template()
+                .requestBody(
+                        "direct:weatherChat",
+                        "What's the weather in Paris and London? Please check both cities.",
+                        String.class);
 
         assertThat(response).isNotNull();
         // The LLM should respond with something about weather
-        assertThat(response.toLowerCase()).containsAnyOf("paris", "london", "weather", "sunny", "cloudy", "temperature");
+        assertThat(response.toLowerCase())
+                .containsAnyOf("paris", "london", "weather", "sunny", "cloudy", "temperature");
 
         // Verify the weather tool was invoked at least once
         weatherMock.assertIsSatisfied();
@@ -226,16 +230,13 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
                         .to("mock:calculator");
 
                 // Chat endpoint with weather tools only
-                from("direct:weatherChat")
-                        .to("spring-ai-chat:weatherChat?tags=weather&chatModel=#chatModel");
+                from("direct:weatherChat").to("spring-ai-chat:weatherChat?tags=weather&chatModel=#chatModel");
 
                 // Chat endpoint with math tools only
-                from("direct:mathChat")
-                        .to("spring-ai-chat:mathChat?tags=math&chatModel=#chatModel");
+                from("direct:mathChat").to("spring-ai-chat:mathChat?tags=math&chatModel=#chatModel");
 
                 // Chat endpoint with multiple tools (weather + math)
-                from("direct:multiToolChat")
-                        .to("spring-ai-chat:multiToolChat?tags=weather,math&chatModel=#chatModel");
+                from("direct:multiToolChat").to("spring-ai-chat:multiToolChat?tags=weather,math&chatModel=#chatModel");
             }
         };
     }

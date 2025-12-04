@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,9 +27,6 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataFormatTest extends CamelTestSupport {
 
@@ -84,11 +85,13 @@ public class DataFormatTest extends CamelTestSupport {
 
                 from("direct:start").marshal(example).to("direct:marshalled");
 
-                from("direct:marshalled").unmarshal().jaxb("org.apache.camel.example").to("mock:result");
+                from("direct:marshalled")
+                        .unmarshal()
+                        .jaxb("org.apache.camel.example")
+                        .to("mock:result");
 
                 from("direct:prettyPrint").marshal(person).to("mock:result");
             }
         };
     }
-
 }

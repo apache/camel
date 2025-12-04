@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.security.GeneralSecurityException;
@@ -59,7 +60,9 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.trace("Configuring server-side SSLContext parameters on SSLContext [{}]...", context);
         if (this.getSessionTimeout() != null) {
-            LOG.debug("Configuring server-side SSLContext session timeout on SSLContext [{}] to [{}].", context,
+            LOG.debug(
+                    "Configuring server-side SSLContext session timeout on SSLContext [{}] to [{}].",
+                    context,
                     this.getSessionTimeout());
             this.configureSessionContext(context.getServerSessionContext(), this.getSessionTimeout());
         }
@@ -82,8 +85,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
         if (this.getClientAuthentication() != null) {
 
-            final ClientAuthentication clientAuthValue
-                    = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
+            final ClientAuthentication clientAuthValue =
+                    ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<>() {
                 @Override
@@ -115,14 +118,15 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     }
 
     @Override
-    protected List<Configurer<SSLServerSocket>> getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext context) {
-        List<Configurer<SSLServerSocket>> sslServerSocketConfigurers
-                = super.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
+    protected List<Configurer<SSLServerSocket>> getSSLServerSocketFactorySSLServerSocketConfigurers(
+            SSLContext context) {
+        List<Configurer<SSLServerSocket>> sslServerSocketConfigurers =
+                super.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
 
         if (this.getClientAuthentication() != null) {
 
-            final ClientAuthentication clientAuthValue
-                    = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
+            final ClientAuthentication clientAuthValue =
+                    ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
 
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<>() {
                 @Override

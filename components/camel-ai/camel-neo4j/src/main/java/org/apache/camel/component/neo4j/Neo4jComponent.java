@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j;
 
 import java.util.Map;
@@ -57,5 +58,4 @@ public class Neo4jComponent extends DefaultComponent {
     public void setConfiguration(Neo4jConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

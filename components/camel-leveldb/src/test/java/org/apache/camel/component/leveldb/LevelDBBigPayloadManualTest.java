@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,14 +33,11 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test issue with leveldb file store growing to large
  */
 @Disabled("Run this test manually")
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBBigPayloadManualTest extends LevelDBTestSupport {
 
     private static final long TIME = 60 * 1000;
@@ -71,9 +72,11 @@ public class LevelDBBigPayloadManualTest extends LevelDBTestSupport {
             public void configure() {
                 from("timer:foo")
                         .bean(BigPayload.class)
-                        .aggregate(method(LevelDBBigPayloadManualTest.class, "number"), new UseLatestAggregationStrategy())
+                        .aggregate(
+                                method(LevelDBBigPayloadManualTest.class, "number"), new UseLatestAggregationStrategy())
                         .aggregationRepository(getRepo())
-                        .completionSize(2).completionTimeout(5000)
+                        .completionSize(2)
+                        .completionTimeout(5000)
                         .log("Aggregated key ${header.CamelAggregatedCorrelationKey}");
             }
         };
@@ -83,5 +86,4 @@ public class LevelDBBigPayloadManualTest extends LevelDBTestSupport {
         // return 123; (will not cause leveldb to grow in size)
         return NUMBER.incrementAndGet();
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,18 +36,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
 
     private static final String DATA = "ABC\u00e6";
 
-    private static final String INPUT_FILE
-            = "input." + FileProducerCharsetUTFtoISOConvertBodyToTest.class.getSimpleName() + ".txt";
-    private static final String OUTPUT_FILE
-            = "output." + FileProducerCharsetUTFtoISOConvertBodyToTest.class.getSimpleName() + ".txt";
+    private static final String INPUT_FILE =
+            "input." + FileProducerCharsetUTFtoISOConvertBodyToTest.class.getSimpleName() + ".txt";
+    private static final String OUTPUT_FILE =
+            "output." + FileProducerCharsetUTFtoISOConvertBodyToTest.class.getSimpleName() + ".txt";
 
     @BeforeEach
     void writeTestData() {

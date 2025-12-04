@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.groovy;
 
 import org.apache.camel.CamelContext;
@@ -54,7 +55,9 @@ public class GroovyCompilerRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .setBody().groovy("""
+                        .setBody()
+                        .groovy(
+                                """
                                 Dude d = new Dude()
                                 return d.order(header.amount)
                                 """)

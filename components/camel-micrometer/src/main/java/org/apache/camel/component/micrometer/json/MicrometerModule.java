@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.json;
 
 import java.io.IOException;
@@ -141,7 +142,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(Gauge gauge, JsonGenerator json, SerializerProvider provider) throws IOException {
+        protected void serializeStatistics(Gauge gauge, JsonGenerator json, SerializerProvider provider)
+                throws IOException {
             json.writeNumberField("value", gauge.value());
         }
     }
@@ -184,7 +186,6 @@ public class MicrometerModule extends Module {
                 throws IOException {
             serializeSnapshot(json, timer.takeSnapshot(), timeUnit);
         }
-
     }
 
     private static final class FunctionTimerSerializer extends MeterSerializer<FunctionTimer> {
@@ -233,9 +234,7 @@ public class MicrometerModule extends Module {
 
         @Override
         protected void serializeStatistics(
-                AbstractDistributionSummary distributionSummary,
-                JsonGenerator json,
-                SerializerProvider provider)
+                AbstractDistributionSummary distributionSummary, JsonGenerator json, SerializerProvider provider)
                 throws IOException {
             serializeSnapshot(json, distributionSummary.takeSnapshot(), timeUnit);
         }
@@ -253,55 +252,54 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        public void serialize(
-                MeterRegistry registry,
-                JsonGenerator json,
-                SerializerProvider provider)
+        public void serialize(MeterRegistry registry, JsonGenerator json, SerializerProvider provider)
                 throws IOException {
 
             json.writeStartObject();
             json.writeStringField("version", VERSION.toString());
             json.writeObjectField("gauges", meters(registry, Gauge.class, matchingNames, matchingTags));
             json.writeObjectField("counters", meters(registry, Counter.class, matchingNames, matchingTags));
-            json.writeObjectField("functionCounters", meters(registry, FunctionCounter.class, matchingNames, matchingTags));
+            json.writeObjectField(
+                    "functionCounters", meters(registry, FunctionCounter.class, matchingNames, matchingTags));
             json.writeObjectField("timers", meters(registry, Timer.class, matchingNames, matchingTags));
             json.writeObjectField("functionTimers", meters(registry, FunctionTimer.class, matchingNames, matchingTags));
             json.writeObjectField("longTaskTimers", meters(registry, LongTaskTimer.class, matchingNames, matchingTags));
-            json.writeObjectField("distributionSummaries",
-                    meters(registry, DistributionSummary.class, matchingNames, matchingTags));
+            json.writeObjectField(
+                    "distributionSummaries", meters(registry, DistributionSummary.class, matchingNames, matchingTags));
             json.writeEndObject();
         }
 
         private Set<Meter> meters(
-                MeterRegistry meterRegistry, Class<? extends Meter> clazz, Predicate<String> matchingNames,
+                MeterRegistry meterRegistry,
+                Class<? extends Meter> clazz,
+                Predicate<String> matchingNames,
                 Iterable<Tag> matchingTags) {
             if (meterRegistry instanceof CompositeMeterRegistry) {
-                return ((CompositeMeterRegistry) meterRegistry).getRegistries().stream()
-                        .flatMap(reg -> meters(reg, clazz, matchingNames, matchingTags).stream())
-                        .sorted(Comparator.comparing(o -> o.getId().getName()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                return ((CompositeMeterRegistry) meterRegistry)
+                        .getRegistries().stream()
+                                .flatMap(reg -> meters(reg, clazz, matchingNames, matchingTags).stream())
+                                .sorted(Comparator.comparing(o -> o.getId().getName()))
+                                .collect(Collectors.toCollection(LinkedHashSet::new));
             }
             return Search.in(meterRegistry).name(matchingNames).tags(matchingTags).meters().stream()
                     .filter(clazz::isInstance)
                     .sorted(Comparator.comparing(o -> o.getId().getName()))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
-
     }
 
     @Override
     public void setupModule(SetupContext setupContext) {
-        setupContext.addSerializers(new SimpleSerializers(
-                Arrays.asList(
-                        new IdSerializer(),
-                        new TagSerializer(),
-                        new GaugeSerializer(),
-                        new CounterSerializer(),
-                        new FunctionCounterSerializer(),
-                        new TimerSerializer(timeUnit),
-                        new FunctionTimerSerializer(timeUnit),
-                        new LongTaskTimerSerializer(timeUnit),
-                        new DistributionSummarySerializer(timeUnit),
-                        new MeterRegistrySerializer(matchingNames, matchingTags))));
+        setupContext.addSerializers(new SimpleSerializers(Arrays.asList(
+                new IdSerializer(),
+                new TagSerializer(),
+                new GaugeSerializer(),
+                new CounterSerializer(),
+                new FunctionCounterSerializer(),
+                new TimerSerializer(timeUnit),
+                new FunctionTimerSerializer(timeUnit),
+                new LongTaskTimerSerializer(timeUnit),
+                new DistributionSummarySerializer(timeUnit),
+                new MeterRegistrySerializer(matchingNames, matchingTags))));
     }
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.camel.CamelExecutionException;
@@ -23,17 +28,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
 
     @Test
     public void testRequestTimeout() {
         try {
-            template.requestBody("netty-http:http://localhost:{{port}}/timeout?requestTimeout=1000", "Hello Camel",
-                    String.class);
+            template.requestBody(
+                    "netty-http:http://localhost:{{port}}/timeout?requestTimeout=1000", "Hello Camel", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
@@ -57,8 +58,8 @@ public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
                                 }
                             }
                         })
-                        .transform().constant("Bye World");
-
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }

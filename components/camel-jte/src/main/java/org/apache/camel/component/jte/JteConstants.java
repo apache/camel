@@ -14,21 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jte;
 
 import org.apache.camel.spi.Metadata;
 
 public class JteConstants {
 
-    @Metadata(description = "A URI for the template resource to use instead of the endpoint configured.", javaType = "String")
+    @Metadata(
+            description = "A URI for the template resource to use instead of the endpoint configured.",
+            javaType = "String")
     public static final String JTE_RESOURCE_URI = "CamelJteResourceUri";
+
     @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
     public static final String JTE_TEMPLATE = "CamelJteTemplate";
+
     @Metadata(description = "The data model", javaType = "Object")
     public static final String JTE_DATA_MODEL = "CamelJteDataModel";
 
     private JteConstants() {
         // Utility class
     }
-
 }

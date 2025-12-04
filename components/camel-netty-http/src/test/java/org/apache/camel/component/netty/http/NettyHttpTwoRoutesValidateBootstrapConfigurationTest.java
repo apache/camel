@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNettyTest {
 
@@ -36,20 +37,22 @@ public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNe
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?reconnect=false")
                         .to("mock:foo")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
                 // we cannot have a 2nd route on same port with different option that the 1st route
                 from("netty-http:http://0.0.0.0:{{port}}/bar?reconnect=true")
                         .to("mock:bar")
-                        .transform().constant("Bye Camel");
+                        .transform()
+                        .constant("Bye Camel");
             }
         });
         try {
             context.start();
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Bootstrap configuration must be identical when adding additional consumer"));
+            assertTrue(e.getMessage()
+                    .startsWith("Bootstrap configuration must be identical when adding additional consumer"));
         }
     }
-
 }

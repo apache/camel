@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common.exception;
 
 import java.util.Optional;
@@ -26,5 +27,4 @@ public class InvalidExpressionException extends MarkedYamlEngineException {
     public InvalidExpressionException(Node node, String message) {
         super(null, Optional.empty(), message, node != null ? node.getStartMark() : Optional.empty());
     }
-
 }

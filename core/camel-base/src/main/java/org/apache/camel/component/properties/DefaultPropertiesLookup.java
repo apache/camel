@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Properties;
@@ -67,8 +68,8 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                 if (local instanceof OrderedLocationProperties locationProperties) {
                     Object val = locationProperties.getDefaultValue(name);
                     if (val != null) {
-                        localDefaultValue
-                                = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, val);
+                        localDefaultValue =
+                                component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, val);
                     }
                 }
                 onLookup(name, answer, localDefaultValue, loc);

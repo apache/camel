@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,9 +44,12 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).useOriginalMessage()
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .useOriginalMessage()
                         .to(fileUri("error"));
-                from(fileUri("?delete=true&initialDelay=0&delay=10")).setBody(simple("${body} IS processed!"))
+                from(fileUri("?delete=true&initialDelay=0&delay=10"))
+                        .setBody(simple("${body} IS processed!"))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -53,7 +57,8 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

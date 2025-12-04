@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @SuppressWarnings("javadoc")
 public class UnicodeHelperTest {
 
@@ -34,10 +35,10 @@ public class UnicodeHelperTest {
     private static final String UCSTR = cps2String(
             0x1f645, // FACE WITH NO GOOD GESTURE; Basiszeichen (Geste)
             0x1f3ff, // EMOJI MODIFIER FITZPATRICK TYPE-6; Hautfarbe für #1
-            0x200d,  // ZERO WIDTH JOINER [ZWJ]; Steuerzeichen zum Verbinden
-            0x2642,  // MALE SIGN; Geschlecht für #1
-            0xfe0f   // VARIATION SELECTOR-16 [VS16]; Darstellung als Piktogramm für #4
-    );
+            0x200d, // ZERO WIDTH JOINER [ZWJ]; Steuerzeichen zum Verbinden
+            0x2642, // MALE SIGN; Geschlecht für #1
+            0xfe0f // VARIATION SELECTOR-16 [VS16]; Darstellung als Piktogramm für #4
+            );
 
     @Test
     public void testLengthCPs() {
@@ -169,8 +170,8 @@ public class UnicodeHelperTest {
 
         final UnicodeHelper lh2 = new UnicodeHelper(
                 "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
-                                                    + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A"
-                                                    + "k\u035fh" + "z",
+                        + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A"
+                        + "k\u035fh" + "z",
                 Method.CODEPOINTS);
 
         assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
@@ -190,8 +191,8 @@ public class UnicodeHelperTest {
 
         final UnicodeHelper lh2 = new UnicodeHelper(
                 "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A" + "k\u035fh" + "z"
-                                                    + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A"
-                                                    + "k\u035fh" + "z",
+                        + "a" + new String(Character.toChars(0x1f600)) + "a" + UCSTR + "A"
+                        + "k\u035fh" + "z",
                 Method.GRAPHEME);
 
         assertEquals(1, lh2.indexOf(new String(Character.toChars(0x1f600))));
@@ -214,7 +215,8 @@ public class UnicodeHelperTest {
         final String result = buf.toString();
 
         if (LOG.isDebugEnabled()) {
-            final String cpStr = Arrays.stream(cps).boxed()
+            final String cpStr = Arrays.stream(cps)
+                    .boxed()
                     .map(i -> "0x" + Integer.toString(i, 16))
                     .collect(Collectors.joining(", "));
             LOG.debug("Built string '{}' from CPs [ {} ].", result, cpStr);

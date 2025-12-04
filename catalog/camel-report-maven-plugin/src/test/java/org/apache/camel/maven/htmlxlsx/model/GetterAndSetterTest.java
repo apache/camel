@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,8 +40,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * A utility class which allows for testing entity and transfer object classes. This is mainly for code coverage since
  * these types of objects are normally nothing more than getters and setters. If any logic exists in the method, then
@@ -46,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @param <T> The object type to test.
  */
-
 public abstract class GetterAndSetterTest<T> {
 
     /**
@@ -165,7 +165,10 @@ public abstract class GetterAndSetterTest<T> {
 
         try {
             return clazz.getDeclaredConstructor().newInstance();
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalAccessException
+                | InstantiationException
+                | InvocationTargetException
+                | NoSuchMethodException e) {
             throw new RuntimeException("Unable to create objects for field '" + fieldName + "'.", e);
         }
     }
@@ -185,8 +188,7 @@ public abstract class GetterAndSetterTest<T> {
 
         final T instance = getInstance();
 
-        for (final Method method : instance.getClass()
-                .getMethods()) {
+        for (final Method method : instance.getClass().getMethods()) {
             final String methodName = method.getName();
 
             if (this.ignoredGetFields.contains(methodName)) {
@@ -235,17 +237,14 @@ public abstract class GetterAndSetterTest<T> {
             final GetterSetterPair pair = entry.getValue();
 
             final String objectName = entry.getKey();
-            final String fieldName = objectName.substring(0, 1)
-                    .toLowerCase() + objectName.substring(1);
+            final String fieldName = objectName.substring(0, 1).toLowerCase() + objectName.substring(1);
 
             if (pair.hasGetterAndSetter()) {
                 /* Create an object. */
-                final Class<?> parameterType = pair.getSetter()
-                        .getParameterTypes()[0];
+                final Class<?> parameterType = pair.getSetter().getParameterTypes()[0];
                 final Object newObject = createObject(fieldName, parameterType);
 
-                pair.getSetter()
-                        .invoke(instance, newObject);
+                pair.getSetter().invoke(instance, newObject);
 
                 callGetter(fieldName, pair.getGetter(), instance, newObject);
             } else if (pair.getGetter() != null) {
@@ -253,10 +252,9 @@ public abstract class GetterAndSetterTest<T> {
                  * Object is immutable (no setter but Hibernate or something else sets it via reflection). Use
                  * reflection to set object and verify that same object is returned when calling the getter.
                  */
-                final Object newObject = createObject(fieldName, pair.getGetter()
-                        .getReturnType());
-                final Field field = instance.getClass()
-                        .getDeclaredField(fieldName);
+                final Object newObject =
+                        createObject(fieldName, pair.getGetter().getReturnType());
+                final Field field = instance.getClass().getDeclaredField(fieldName);
                 field.setAccessible(true);
                 field.set(instance, newObject);
 
@@ -283,5 +281,4 @@ public abstract class GetterAndSetterTest<T> {
 
         assertEquals(expected, getResult, fieldName + " is different");
     }
-
 }

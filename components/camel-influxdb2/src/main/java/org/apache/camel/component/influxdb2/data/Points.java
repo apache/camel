@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb2.data;
 
 import java.util.ArrayList;
@@ -29,9 +30,7 @@ import com.influxdb.client.write.Point;
 public final class Points {
     private List<Point> points = new ArrayList<>();
 
-    private Points() {
-
-    }
+    private Points() {}
 
     private Points(List<Point> points) {
         this.points = points;
@@ -66,8 +65,6 @@ public final class Points {
 
     @Override
     public String toString() {
-        return "Points{" +
-               "points=" + points +
-               '}';
+        return "Points{" + "points=" + points + '}';
     }
 }

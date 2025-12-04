@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.converter;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -32,10 +37,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 public class BindyConverterTest extends CamelTestSupport {
@@ -192,23 +193,21 @@ public class BindyConverterTest extends CamelTestSupport {
         RouteBuilder routeBuilder = new RouteBuilder() {
             @Override
             public void configure() {
-                BindyDataFormat bindy = new BindyDataFormat()
-                        .classType(DataModel.class)
-                        .type(BindyType.Fixed);
+                BindyDataFormat bindy =
+                        new BindyDataFormat().classType(DataModel.class).type(BindyType.Fixed);
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, DataModel.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, DataModel.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
 
-                BindyDataFormat bindy2 = new BindyDataFormat()
-                        .classType(AllCombinations.class)
-                        .type(BindyType.Fixed);
+                BindyDataFormat bindy2 =
+                        new BindyDataFormat().classType(AllCombinations.class).type(BindyType.Fixed);
                 from(URI_DIRECT_THROUGH)
                         .marshal(bindy2)
-                        .unmarshal().bindy(BindyType.Fixed, AllCombinations.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, AllCombinations.class)
                         .to(URI_MOCK_THROUGH);
             }
         };

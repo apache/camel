@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,13 +48,24 @@ public class LoopDoWhileDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:simple").loopDoWhile(simple("${body.length} <= 5")).to("mock:loop").transform(body().append("A"))
-                        .delay(10).end()
-                        .end().to("mock:result");
-                from("direct:functional").loopDoWhile().body(String.class, b -> b.length() <= 5).to("mock:loop").transform()
+                from("direct:simple")
+                        .loopDoWhile(simple("${body.length} <= 5"))
+                        .to("mock:loop")
+                        .transform(body().append("A"))
+                        .delay(10)
+                        .end()
+                        .end()
+                        .to("mock:result");
+                from("direct:functional")
+                        .loopDoWhile()
+                        .body(String.class, b -> b.length() <= 5)
+                        .to("mock:loop")
+                        .transform()
                         .body(String.class, b -> b += "A")
-                        .delay(10).end()
-                        .end().to("mock:result");
+                        .delay(10)
+                        .end()
+                        .end()
+                        .to("mock:result");
             }
         };
     }

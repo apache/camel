@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -27,13 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the configuration of {@link ExecEndpoint}
@@ -70,7 +71,8 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointDefaultConf() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test");
-        assertTrue(e instanceof ExecEndpoint,
+        assertTrue(
+                e instanceof ExecEndpoint,
                 "The Camel Exec component must create instances of " + ExecEndpoint.class.getSimpleName());
         assertNull(e.getArgs());
         assertNull(e.getWorkingDir());
@@ -92,7 +94,9 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointCustomBinding() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test?binding=#customBinding");
-        assertSame(customBinding, e.getBinding(),
+        assertSame(
+                customBinding,
+                e.getBinding(),
                 "Expected is the custom customBinding reference from the application context");
     }
 
@@ -100,7 +104,9 @@ public class ExecEndpointTest {
     @DirtiesContext
     public void testCreateEndpointCustomCommandExecutor() throws Exception {
         ExecEndpoint e = createExecEndpoint("exec:test?commandExecutor=#customExecutor");
-        assertSame(customExecutor, e.getCommandExecutor(),
+        assertSame(
+                customExecutor,
+                e.getCommandExecutor(),
                 "Expected is the custom customExecutor reference from the application context");
     }
 

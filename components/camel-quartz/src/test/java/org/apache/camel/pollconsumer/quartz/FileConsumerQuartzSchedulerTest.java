@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.pollconsumer.quartz;
 
 import java.nio.file.Path;
@@ -46,11 +47,11 @@ public class FileConsumerQuartzSchedulerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(TestSupport.fileUri(testDirectory, "?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?")).routeId("foo")
+                from(TestSupport.fileUri(testDirectory, "?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?"))
+                        .routeId("foo")
                         .noAutoStartup()
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +29,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromSmbPreMoveFileExpressionIT extends SmbServerTestSupport {
 
@@ -65,7 +66,8 @@ public class FromSmbPreMoveFileExpressionIT extends SmbServerTestSupport {
 
         // assert file is created
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World this file will be moved",
+                .untilAsserted(() -> assertEquals(
+                        "Hello World this file will be moved",
                         new String(copyFileContentFromContainer("/data/rw/premoveexpr/hello.txt"))));
     }
 
@@ -73,14 +75,18 @@ public class FromSmbPreMoveFileExpressionIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // assert the file is pre moved
-                        await().atMost(3, TimeUnit.SECONDS)
-                                .untilAsserted(() -> assertEquals("Hello World this file will be moved",
-                                        new String(copyFileContentFromContainer("/data/rw/inprogress/hello.bak"))));
-                    }
-                }).to("mock:result");
+                from(getSmbUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // assert the file is pre moved
+                                await().atMost(3, TimeUnit.SECONDS)
+                                        .untilAsserted(() -> assertEquals(
+                                                "Hello World this file will be moved",
+                                                new String(copyFileContentFromContainer(
+                                                        "/data/rw/inprogress/hello.bak"))));
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -27,10 +32,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class DualCamelContextManagedTest extends SpringTestSupport {
@@ -48,7 +49,8 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
     @Test
     public void testDualCamelContextManaged() throws Exception {
 
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on1 = null;
         ObjectName on2 = null;
@@ -88,5 +90,4 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
             }
         }
     }
-
 }

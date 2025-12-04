@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,16 +29,25 @@ public class SplitSubUnitOfWorkStopOnExceptionIssueTest extends SplitSubUnitOfWo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("direct:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("direct:dead")
+                        .useOriginalMessage()
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0));
 
                 from("direct:dead").setBody(simple("${body}")).to("mock:dead");
 
-                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b")
-                        .to("direct:line").end().to("mock:result");
+                from("direct:start")
+                        .to("mock:a")
+                        .split(body().tokenize(","))
+                        .shareUnitOfWork()
+                        .stopOnException()
+                        .to("mock:b")
+                        .to("direct:line")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
             }
         };
     }
-
 }

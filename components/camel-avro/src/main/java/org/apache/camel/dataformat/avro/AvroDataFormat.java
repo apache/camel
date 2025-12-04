@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.avro;
 
 import java.io.InputStream;
@@ -44,10 +45,12 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Dataformat("avro")
-@Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
-                              "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures," +
-                              "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
-                              "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
+@Metadata(
+        excludeProperties =
+                "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType,"
+                        + "collectionTypeName,collectionType,useList,moduleClassNames,moduleRefs,enableFeatures,"
+                        + "disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper,"
+                        + "contentTypeHeader,schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
@@ -56,8 +59,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     private transient Schema actualSchema;
     private String instanceClassName;
 
-    public AvroDataFormat() {
-    }
+    public AvroDataFormat() {}
 
     public AvroDataFormat(Schema schema) {
         this.schema = schema;
@@ -136,7 +138,9 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         // the schema should be from the graph class name
-        Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
+        Schema useSchema = actualSchema != null
+                ? actualSchema
+                : loadSchema(graph.getClass().getName());
 
         SpecificData specificData = getSpecificData(useSchema);
 
@@ -167,5 +171,4 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         SpecificData specificData = new SpecificDataNoCache(classLoader);
         return specificData;
     }
-
 }

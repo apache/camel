@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -47,9 +48,16 @@ public class SalesforceLoginConfig {
         lazyLogin = false;
     }
 
-    private SalesforceLoginConfig(AuthenticationType type, String loginUrl, String clientId, String clientSecret,
-                                  String refreshToken, String userName, String password,
-                                  boolean lazyLogin, KeyStoreParameters keystore) {
+    private SalesforceLoginConfig(
+            AuthenticationType type,
+            String loginUrl,
+            String clientId,
+            String clientSecret,
+            String refreshToken,
+            String userName,
+            String password,
+            boolean lazyLogin,
+            KeyStoreParameters keystore) {
         this.type = type;
         this.loginUrl = loginUrl;
         this.clientId = clientId;
@@ -61,18 +69,41 @@ public class SalesforceLoginConfig {
         this.keystore = keystore;
     }
 
-    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String userName, String password,
-                                 boolean lazyLogin) {
-        this(AuthenticationType.USERNAME_PASSWORD, loginUrl, clientId, clientSecret, null, userName, password, lazyLogin, null);
+    public SalesforceLoginConfig(
+            String loginUrl,
+            String clientId,
+            String clientSecret,
+            String userName,
+            String password,
+            boolean lazyLogin) {
+        this(
+                AuthenticationType.USERNAME_PASSWORD,
+                loginUrl,
+                clientId,
+                clientSecret,
+                null,
+                userName,
+                password,
+                lazyLogin,
+                null);
     }
 
-    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String refreshToken,
-                                 boolean lazyLogin) {
-        this(AuthenticationType.REFRESH_TOKEN, loginUrl, clientId, clientSecret, refreshToken, null, null, lazyLogin, null);
+    public SalesforceLoginConfig(
+            String loginUrl, String clientId, String clientSecret, String refreshToken, boolean lazyLogin) {
+        this(
+                AuthenticationType.REFRESH_TOKEN,
+                loginUrl,
+                clientId,
+                clientSecret,
+                refreshToken,
+                null,
+                null,
+                lazyLogin,
+                null);
     }
 
-    public SalesforceLoginConfig(String loginUrl, String clientId, String userName, KeyStoreParameters keystore,
-                                 boolean lazyLogin) {
+    public SalesforceLoginConfig(
+            String loginUrl, String clientId, String userName, KeyStoreParameters keystore, boolean lazyLogin) {
         this(AuthenticationType.JWT, loginUrl, clientId, null, null, userName, null, lazyLogin, keystore);
     }
 
@@ -183,18 +214,17 @@ public class SalesforceLoginConfig {
         }
 
         if (hasPassword && hasRefreshToken || hasPassword && hasKeystore || hasRefreshToken && hasKeystore) {
-            throw new IllegalArgumentException(
-                    "The provided authentication configuration can be used in multiple ways"
-                                               + " for instance both with username/password and refresh_token. Either remove some of the configuration"
-                                               + " options, so that authentication method can be auto-determined or explicitly set the authentication"
-                                               + " type.");
+            throw new IllegalArgumentException("The provided authentication configuration can be used in multiple ways"
+                    + " for instance both with username/password and refresh_token. Either remove some of the configuration"
+                    + " options, so that authentication method can be auto-determined or explicitly set the authentication"
+                    + " type.");
         }
 
         throw new IllegalArgumentException(
                 "You must specify parameters aligned with one of the supported authentication methods:"
-                                           + " for username and password authentication: userName, password, clientSecret;"
-                                           + " for refresh token authentication: refreshToken, clientSecret;"
-                                           + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
+                        + " for username and password authentication: userName, password, clientSecret;"
+                        + " for refresh token authentication: refreshToken, clientSecret;"
+                        + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
     }
 
     public void setType(AuthenticationType type) {
@@ -269,9 +299,9 @@ public class SalesforceLoginConfig {
     @Override
     public String toString() {
         return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + ","
-               + "clientId='" + clientId + '\'' + ", clientSecret='********'"
-               + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'"
-               + ", keystore=********', audience='" + jwtAudience + '\'' + ","
-               + ", lazyLogin=" + lazyLogin + ']';
+                + "clientId='" + clientId + '\'' + ", clientSecret='********'"
+                + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'"
+                + ", keystore=********', audience='" + jwtAudience + '\'' + ","
+                + ", lazyLogin=" + lazyLogin + ']';
     }
 }

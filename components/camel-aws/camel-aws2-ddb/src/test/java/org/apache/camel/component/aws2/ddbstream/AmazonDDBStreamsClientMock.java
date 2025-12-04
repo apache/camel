@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
+
+import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.STREAM_ARN;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,15 +35,15 @@ import software.amazon.awssdk.services.dynamodb.model.StreamDescription;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsServiceClientConfiguration;
 
-import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.STREAM_ARN;
-
 class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
 
     private final Map<Shard, String> shardsToIterators = new HashMap<>();
 
     @Override
     public ListStreamsResponse listStreams(ListStreamsRequest listStreamsRequest) {
-        return ListStreamsResponse.builder().streams(Stream.builder().streamArn(STREAM_ARN).build()).build();
+        return ListStreamsResponse.builder()
+                .streams(Stream.builder().streamArn(STREAM_ARN).build())
+                .build();
     }
 
     @Override
@@ -51,7 +54,10 @@ class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
     @Override
     public DescribeStreamResponse describeStream(DescribeStreamRequest describeStreamRequest) {
         return DescribeStreamResponse.builder()
-                .streamDescription(StreamDescription.builder().shards(shardsToIterators.keySet()).build()).build();
+                .streamDescription(StreamDescription.builder()
+                        .shards(shardsToIterators.keySet())
+                        .build())
+                .build();
     }
 
     @Override
@@ -60,7 +66,8 @@ class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
                 .filter(s -> s.getKey().shardId().equals(request.shardId()))
                 .map(Entry::getValue)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No mocked reponse was configured for " + request.shardId()));
+                .orElseThrow(
+                        () -> new IllegalStateException("No mocked reponse was configured for " + request.shardId()));
         return GetShardIteratorResponse.builder().shardIterator(shardIterator).build();
     }
 
@@ -70,8 +77,7 @@ class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     void setMockedShardAndIteratorResponse(Shard shard, String iterator) {
         shardsToIterators.put(shard, iterator);

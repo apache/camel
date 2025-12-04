@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test regexp function as the reg exp value should be template text only and not any embedded functions etc.
@@ -32,8 +33,8 @@ public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
     public void testSimpleRegexp() {
         exchange.getIn().setBody("12.34.5678");
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange));
@@ -41,5 +42,4 @@ public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setBody("12.2a.22ab");
         assertFalse(pre.matches(exchange));
     }
-
 }

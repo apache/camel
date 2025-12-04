@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.avro.transform;
 
 import java.io.InputStream;
@@ -103,7 +104,8 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
         if (answer != null) {
             exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, answer);
             exchange.setProperty(SchemaHelper.CONTENT_SCHEMA_TYPE, SchemaType.AVRO.type());
-            exchange.setProperty(SchemaHelper.CONTENT_CLASS, SchemaHelper.resolveContentClass(exchange, this.contentClass));
+            exchange.setProperty(
+                    SchemaHelper.CONTENT_CLASS, SchemaHelper.resolveContentClass(exchange, this.contentClass));
         }
     }
 
@@ -135,8 +137,9 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
             if (contentClass != null) {
                 answer = this.schemes.computeIfAbsent(contentClass, t -> {
                     Resource res = PluginHelper.getResourceLoader(exchange.getContext())
-                            .resolveResource("classpath:schemas/" + SchemaType.AVRO.name().toLowerCase(Locale.US) + "/" + t
-                                             + "." + SchemaType.AVRO.type());
+                            .resolveResource("classpath:schemas/"
+                                    + SchemaType.AVRO.name().toLowerCase(Locale.US) + "/" + t + "."
+                                    + SchemaType.AVRO.type());
 
                     try {
                         if (res.exists()) {
@@ -154,8 +157,7 @@ public class AvroSchemaResolver implements SchemaResolver, Processor {
                     try {
                         return Avro.mapper().schemaFor(Class.forName(contentClass));
                     } catch (JsonMappingException | ClassNotFoundException e) {
-                        throw new RuntimeException(
-                                "Unable to compute Avro schema for type: " + t, e);
+                        throw new RuntimeException("Unable to compute Avro schema for type: " + t, e);
                     }
                 });
             }

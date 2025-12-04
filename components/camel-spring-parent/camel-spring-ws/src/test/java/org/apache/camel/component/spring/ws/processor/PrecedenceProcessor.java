@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.processor;
 
 import java.io.InputStream;
@@ -41,20 +42,28 @@ public class PrecedenceProcessor implements Processor {
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(is);
 
-        exchange.getMessage().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION,
-                new URI("http://actionPrecedence.com"));
-        exchange.getMessage().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO,
-                new URI("http://replyPrecedence.to"));
-        exchange.getMessage().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO,
-                new URI("http://faultPrecedence.to"));
+        exchange.getMessage()
+                .setHeader(
+                        SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, new URI("http://actionPrecedence.com"));
+        exchange.getMessage()
+                .setHeader(
+                        SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO,
+                        new URI("http://replyPrecedence.to"));
+        exchange.getMessage()
+                .setHeader(
+                        SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO,
+                        new URI("http://faultPrecedence.to"));
 
-        exchange.getMessage().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
-                new URI("http://outputHeader.com"));
-        exchange.getMessage().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
-                new URI("http://faultHeader.com"));
+        exchange.getMessage()
+                .setHeader(
+                        SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
+                        new URI("http://outputHeader.com"));
+        exchange.getMessage()
+                .setHeader(
+                        SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
+                        new URI("http://faultHeader.com"));
 
         exchange.getMessage().copyFrom(exchange.getIn());
         exchange.getMessage().setBody(doc);
     }
-
 }

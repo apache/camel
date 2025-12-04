@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.io.LineNumberReader;
@@ -59,5 +60,4 @@ public class GroovyValidationException extends Exception {
         }
         return -1;
     }
-
 }

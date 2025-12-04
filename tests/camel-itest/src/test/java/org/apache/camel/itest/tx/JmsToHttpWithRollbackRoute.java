@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.tx;
+
+import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
 
 import jakarta.annotation.Resource;
 
@@ -23,8 +26,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
-
-import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http before returning a response. Is transacted.
@@ -62,7 +63,8 @@ public class JmsToHttpWithRollbackRoute extends RouteBuilder {
                 // do a choice if the response is okay or not
                 .choice()
                 // do a xpath to compare if the status is NOT okay
-                .when().xpath("/reply/status != 'ok'")
+                .when()
+                .xpath("/reply/status != 'ok'")
                 // as this is based on an unit test we use mocks to verify how many times we did rollback
                 .to("mock:JmsToHttpWithRollbackRoute")
                 // response is not okay so force a rollback
@@ -82,5 +84,4 @@ public class JmsToHttpWithRollbackRoute extends RouteBuilder {
             }
         });
     }
-
 }

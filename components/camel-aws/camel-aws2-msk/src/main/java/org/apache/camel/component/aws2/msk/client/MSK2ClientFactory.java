@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.msk.client;
 
 import org.apache.camel.component.aws2.msk.MSK2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientStandardImpl;
  */
 public final class MSK2ClientFactory {
 
-    private MSK2ClientFactory() {
-    }
+    private MSK2ClientFactory() {}
 
     /**
      * Return the correct AWS Kafka client (based on remote vs local).

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
 
 import org.apache.camel.EndpointInject;
@@ -38,7 +39,6 @@ class BlobCopyProducerManualIT extends CamelTestSupport {
             exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, "test214");
             exchange.getMessage().setHeader(BlobConstants.SOURCE_BLOB_ACCOUNT_NAME, "testblob214");
         });
-
     }
 
     @Override
@@ -47,7 +47,8 @@ class BlobCopyProducerManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:copyBlob")
-                        .to("azure-storage-blob://testblob214/test215?operation=copyBlob&sourceBlobAccessKey=RAW(sourceAccessKey)&credentialType=SHARED_ACCOUNT_KEY&accessKey=(accessKey)");
+                        .to(
+                                "azure-storage-blob://testblob214/test215?operation=copyBlob&sourceBlobAccessKey=RAW(sourceAccessKey)&credentialType=SHARED_ACCOUNT_KEY&accessKey=(accessKey)");
             }
         };
     }

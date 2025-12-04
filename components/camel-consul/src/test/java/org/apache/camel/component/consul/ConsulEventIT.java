@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -24,10 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.kiwiproject.consul.model.EventResponse;
 import org.kiwiproject.consul.model.event.Event;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsulEventIT extends ConsulTestSupport {
 
@@ -40,8 +41,12 @@ public class ConsulEventIT extends ConsulTestSupport {
         mock.expectedMinimumMessageCount(1);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
-        fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE)
-                .withHeader(ConsulConstants.CONSUL_KEY, key).withBody(val).to("direct:event").send();
+        fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulEventActions.FIRE)
+                .withHeader(ConsulConstants.CONSUL_KEY, key)
+                .withBody(val)
+                .to("direct:event")
+                .send();
 
         mock.assertIsSatisfied();
 

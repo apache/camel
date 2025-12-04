@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelException;
@@ -24,8 +25,7 @@ public class LoopTestProcessor implements Processor {
     private int count;
     private int index;
 
-    public LoopTestProcessor() {
-    }
+    public LoopTestProcessor() {}
 
     public LoopTestProcessor(int count) {
         setCount(count);
@@ -53,7 +53,8 @@ public class LoopTestProcessor implements Processor {
 
         int len = Thread.currentThread().getStackTrace().length;
         if (len > 120) {
-            exchange.setException(new CamelException("Call strackframe is too large. Expected 120 or less, was: " + len));
+            exchange.setException(
+                    new CamelException("Call strackframe is too large. Expected 120 or less, was: " + len));
         }
     }
 }

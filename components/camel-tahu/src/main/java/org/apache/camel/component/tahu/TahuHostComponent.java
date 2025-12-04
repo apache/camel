@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class TahuHostComponent extends TahuDefaultComponent {
         super(configuration);
     }
 
-    protected TahuHostEndpoint doCreateEndpoint(String uri, List<String> descriptorSegments, TahuConfiguration tahuConfig)
-            throws Exception {
+    protected TahuHostEndpoint doCreateEndpoint(
+            String uri, List<String> descriptorSegments, TahuConfiguration tahuConfig) throws Exception {
 
         String hostId = descriptorSegments.get(0);
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.topic;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_TOPIC;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -30,21 +33,27 @@ import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_TOPIC;
-
 /**
  * Send and receive messages to/from <a href="http://www.hazelcast.com/">Hazelcast</a> distributed topic.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = SCHEME_TOPIC, title = "Hazelcast Topic",
-             syntax = "hazelcast-topic:cacheName", category = { Category.CACHE, Category.CLUSTERING },
-             headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = SCHEME_TOPIC,
+        title = "Hazelcast Topic",
+        syntax = "hazelcast-topic:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
     private final HazelcastTopicConfiguration configuration;
 
-    public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
-                                  String cacheName, final HazelcastTopicConfiguration configuration) {
+    public HazelcastTopicEndpoint(
+            HazelcastInstance hazelcastInstance,
+            String endpointUri,
+            Component component,
+            String cacheName,
+            final HazelcastTopicConfiguration configuration) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         this.configuration = configuration;
         setCommand(HazelcastCommand.topic);
@@ -57,8 +66,8 @@ public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements 
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastTopicConsumer answer
-                = new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName, configuration.isReliable());
+        HazelcastTopicConsumer answer =
+                new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName, configuration.isReliable());
         configureConsumer(answer);
         return answer;
     }

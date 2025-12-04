@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -33,16 +38,13 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MultiPartFormTest extends BaseJettyTest {
     private HttpEntity createMultipartRequestEntity() {
         File file = new File("src/test/resources/log4j2.properties");
-        return MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
-                .addBinaryBody(file.getName(), file).build();
-
+        return MultipartEntityBuilder.create()
+                .addTextBody("comment", "A binary file of some kind")
+                .addBinaryBody(file.getName(), file)
+                .build();
     }
 
     @Test
@@ -50,7 +52,7 @@ public class MultiPartFormTest extends BaseJettyTest {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/test");
         post.setEntity(createMultipartRequestEntity());
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(post)) {
+                CloseableHttpResponse response = client.execute(post)) {
             int status = response.getCode();
 
             assertEquals(200, status, "Get a wrong response status");
@@ -62,8 +64,8 @@ public class MultiPartFormTest extends BaseJettyTest {
 
     @Test
     public void testSendMultiPartFormFromCamelHttpComponnent() {
-        String result
-                = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
+        String result = template.requestBody(
+                "http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
@@ -98,7 +100,8 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().read() != -1,
+                        assertTrue(
+                                data.getDataSource().getInputStream().read() != -1,
                                 "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message
@@ -112,11 +115,9 @@ public class MultiPartFormTest extends BaseJettyTest {
 
                         exchange.getMessage().setBody(in.getHeader("comment"));
                     }
-
                 });
                 // END SNIPPET: e1
             }
         };
     }
-
 }

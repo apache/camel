@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3StreamUploadTimestampTimeoutIT extends Aws2S3Base {
 
@@ -57,37 +58,39 @@ public class S3StreamUploadTimestampTimeoutIT extends Aws2S3Base {
 
             long afterUpload = System.currentTimeMillis();
 
-            Awaitility.await().atMost(11, TimeUnit.SECONDS)
+            Awaitility.await()
+                    .atMost(11, TimeUnit.SECONDS)
                     .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
-            Awaitility.await().atMost(11, TimeUnit.SECONDS)
-                    .untilAsserted(() -> {
-                        Exchange ex = template.request("direct:listObjects", this::process);
+            Awaitility.await().atMost(11, TimeUnit.SECONDS).untilAsserted(() -> {
+                Exchange ex = template.request("direct:listObjects", this::process);
 
-                        List<S3Object> resp = ex.getMessage().getBody(List.class);
-                        assertEquals(1, resp.size());
+                List<S3Object> resp = ex.getMessage().getBody(List.class);
+                assertEquals(1, resp.size());
 
-                        // Verify the uploaded file uses timestamp naming strategy
-                        S3Object s3Object = resp.get(0);
-                        String key = s3Object.key();
+                // Verify the uploaded file uses timestamp naming strategy
+                S3Object s3Object = resp.get(0);
+                String key = s3Object.key();
 
-                        // The file should either be the base name or have a timestamp suffix
-                        if ("fileTest.txt".equals(key)) {
-                            // This is fine - it's the base file
-                        } else if (key.startsWith("fileTest-") && key.endsWith(".txt")) {
-                            // Extract and validate timestamp
-                            String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
-                            try {
-                                long timestamp = Long.parseLong(timestampStr);
-                                assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload + 11000, // Allow extra time for timeout
-                                        "Timestamp " + timestamp + " should be within expected range");
-                            } catch (NumberFormatException e) {
-                                throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
-                            }
-                        } else {
-                            throw new AssertionError("Unexpected filename format: " + key);
-                        }
-                    });
+                // The file should either be the base name or have a timestamp suffix
+                if ("fileTest.txt".equals(key)) {
+                    // This is fine - it's the base file
+                } else if (key.startsWith("fileTest-") && key.endsWith(".txt")) {
+                    // Extract and validate timestamp
+                    String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
+                    try {
+                        long timestamp = Long.parseLong(timestampStr);
+                        assertTrue(
+                                timestamp >= beforeUpload
+                                        && timestamp <= afterUpload + 11000, // Allow extra time for timeout
+                                "Timestamp " + timestamp + " should be within expected range");
+                    } catch (NumberFormatException e) {
+                        throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
+                    }
+                } else {
+                    throw new AssertionError("Unexpected filename format: " + key);
+                }
+            });
         }
     }
 
@@ -100,15 +103,13 @@ public class S3StreamUploadTimestampTimeoutIT extends Aws2S3Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint1
-                        = String.format(
-                                "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=timestamp&streamingUploadTimeout=10000",
-                                name.get());
+                String awsEndpoint1 = String.format(
+                        "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=fileTest.txt&batchMessageNumber=25&namingStrategy=timestamp&streamingUploadTimeout=10000",
+                        name.get());
 
                 from("direct:stream1").to(awsEndpoint1).to("mock:result");
 
-                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true",
-                        name.get());
+                String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());
 
                 from("direct:listObjects").to(awsEndpoint);
             }

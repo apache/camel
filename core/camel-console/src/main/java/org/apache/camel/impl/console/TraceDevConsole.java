@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Map;
@@ -33,8 +34,10 @@ import org.apache.camel.util.json.JsonObject;
 @Configurer(extended = true)
 public class TraceDevConsole extends AbstractDevConsole {
 
-    @Metadata(defaultValue = "100",
-              description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
+    @Metadata(
+            defaultValue = "100",
+            description =
+                    "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
     private int capacity = 100;
 
     /**
@@ -100,16 +103,28 @@ public class TraceDevConsole extends AbstractDevConsole {
                     sb.append("Trace Filter: ").append(tracer.getTraceFilter()).append("\n");
                 }
                 if (tracer.getTracePattern() != null) {
-                    sb.append("Trace Pattern: ").append(tracer.getTracePattern()).append("\n");
+                    sb.append("Trace Pattern: ")
+                            .append(tracer.getTracePattern())
+                            .append("\n");
                 }
                 sb.append("Trace Rests: ").append(tracer.isTraceRests()).append("\n");
                 sb.append("Trace Templates: ").append(tracer.isTraceTemplates()).append("\n");
                 sb.append("Body Max Chars: ").append(tracer.getBodyMaxChars()).append("\n");
-                sb.append("Body Include Files: ").append(tracer.isBodyIncludeFiles()).append("\n");
-                sb.append("Body Include Streams: ").append(tracer.isBodyIncludeStreams()).append("\n");
-                sb.append("Include Exchange Properties: ").append(tracer.isIncludeExchangeProperties()).append("\n");
-                sb.append("Include Exchange Variables: ").append(tracer.isIncludeExchangeVariables()).append("\n");
-                sb.append("Include Exception: ").append(tracer.isIncludeException()).append("\n");
+                sb.append("Body Include Files: ")
+                        .append(tracer.isBodyIncludeFiles())
+                        .append("\n");
+                sb.append("Body Include Streams: ")
+                        .append(tracer.isBodyIncludeStreams())
+                        .append("\n");
+                sb.append("Include Exchange Properties: ")
+                        .append(tracer.isIncludeExchangeProperties())
+                        .append("\n");
+                sb.append("Include Exchange Variables: ")
+                        .append(tracer.isIncludeExchangeVariables())
+                        .append("\n");
+                sb.append("Include Exception: ")
+                        .append(tracer.isIncludeException())
+                        .append("\n");
             }
         }
 
@@ -176,5 +191,4 @@ public class TraceDevConsole extends AbstractDevConsole {
 
         return root;
     }
-
 }

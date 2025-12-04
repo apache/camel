@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.slack.api.SlackConfig;
 import org.apache.camel.component.slack.helper.SlackHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SlackHelperTest {
 

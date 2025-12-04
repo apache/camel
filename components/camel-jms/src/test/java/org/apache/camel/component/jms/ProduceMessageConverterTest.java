@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.JMSException;
@@ -41,9 +42,11 @@ public class ProduceMessageConverterTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @BindToRegistry("myMessageConverter")
     private final MyMessageConverter conv = new MyMessageConverter();
 
@@ -97,5 +100,4 @@ public class ProduceMessageConverterTest extends AbstractJMSTest {
             return null;
         }
     }
-
 }

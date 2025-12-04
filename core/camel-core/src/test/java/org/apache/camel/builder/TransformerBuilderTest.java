@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.lang.reflect.Field;
 
@@ -27,9 +31,6 @@ import org.apache.camel.processor.transformer.ProcessorTransformer;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TransformerBuilderTest extends TestSupport {
 

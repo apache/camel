@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 import org.apache.camel.Exchange;
@@ -21,14 +22,19 @@ import org.apache.camel.spi.Metadata;
 
 public interface Kinesis2Constants {
 
-    @Metadata(description = "The sequence number of the record, as defined in\n" +
-                            "http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax]",
-              javaType = "String")
+    @Metadata(
+            description =
+                    "The sequence number of the record, as defined in\n"
+                            + "http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax]",
+            javaType = "String")
     String SEQUENCE_NUMBER = "CamelAwsKinesisSequenceNumber";
+
     @Metadata(description = "The time AWS assigned as the arrival time of the record.", javaType = "String")
     String APPROX_ARRIVAL_TIME = "CamelAwsKinesisApproximateArrivalTimestamp";
+
     @Metadata(description = "Identifies which shard in the stream the data record is assigned to.", javaType = "String")
     String PARTITION_KEY = "CamelAwsKinesisPartitionKey";
+
     @Metadata(description = "The timestamp of the message", javaType = "long")
     String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 

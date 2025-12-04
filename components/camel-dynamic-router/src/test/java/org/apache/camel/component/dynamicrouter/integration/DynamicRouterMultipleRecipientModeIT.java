@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.integration;
+
+import static org.apache.camel.builder.Builder.body;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,10 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.builder.Builder.body;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 /**
  * This test utilizes Spring XML to show the usage of the Dynamic Router, and to test basic functionality.
@@ -79,32 +80,56 @@ class DynamicRouterMultipleRecipientModeIT {
         // Create a subscription that accepts an exchange when the message body contains an even number
         // The destination URI is for the endpoint "mockOne"
         Predicate evenPredicate = body().regex("^\\d*[02468]$");
-        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", evenPredicate,
-                Map.of("controlAction", "subscribe",
-                        "subscribeChannel", "test",
-                        "subscriptionId", "evenNumberSubscription",
-                        "destinationUri", mockOne.getEndpointUri(),
-                        "priority", 2));
+        subscribe.sendBodyAndHeaders(
+                "direct:subscribe-no-url-predicate",
+                evenPredicate,
+                Map.of(
+                        "controlAction",
+                        "subscribe",
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "evenNumberSubscription",
+                        "destinationUri",
+                        mockOne.getEndpointUri(),
+                        "priority",
+                        2));
 
         // Create a subscription that accepts an exchange when the message body contains an odd number
         // The destination URI is for the endpoint "mockTwo"
         Predicate oddPredicate = body().regex("^\\d*[13579]$");
-        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", oddPredicate,
-                Map.of("controlAction", "subscribe",
-                        "subscribeChannel", "test",
-                        "subscriptionId", "oddNumberSubscription",
-                        "destinationUri", mockTwo.getEndpointUri(),
-                        "priority", 2));
+        subscribe.sendBodyAndHeaders(
+                "direct:subscribe-no-url-predicate",
+                oddPredicate,
+                Map.of(
+                        "controlAction",
+                        "subscribe",
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "oddNumberSubscription",
+                        "destinationUri",
+                        mockTwo.getEndpointUri(),
+                        "priority",
+                        2));
 
         // Create a subscription that accepts an exchange when the message body contains any number
         // The destination URI is for the endpoint "mockThree"
         Predicate allPredicate = body().regex("^\\d+$");
-        subscribe.sendBodyAndHeaders("direct:subscribe-no-url-predicate", allPredicate,
-                Map.of("controlAction", "subscribe",
-                        "subscribeChannel", "test",
-                        "subscriptionId", "allNumberSubscription",
-                        "destinationUri", mockThree.getEndpointUri(),
-                        "priority", 1));
+        subscribe.sendBodyAndHeaders(
+                "direct:subscribe-no-url-predicate",
+                allPredicate,
+                Map.of(
+                        "controlAction",
+                        "subscribe",
+                        "subscribeChannel",
+                        "test",
+                        "subscriptionId",
+                        "allNumberSubscription",
+                        "destinationUri",
+                        mockThree.getEndpointUri(),
+                        "priority",
+                        1));
 
         sendMessagesAndAssert();
     }

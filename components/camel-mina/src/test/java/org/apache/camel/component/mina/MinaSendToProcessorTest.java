@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mina;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class MinaSendToProcessorTest extends BaseMinaTest {
 
@@ -29,8 +30,7 @@ public class MinaSendToProcessorTest extends BaseMinaTest {
 
             @Override
             public void configure() {
-                from("direct:start")
-                        .toF(uri, getPort());
+                from("direct:start").toF(uri, getPort());
             }
         };
     }

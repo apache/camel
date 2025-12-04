@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,22 +26,31 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
     private String token;
+
     @Metadata
     private String serviceUrl;
+
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata
     private String secrets;
+
     @Metadata
     private String eventStreamTopic;
+
     @Metadata
     private String eventStreamBootstrapServers;
+
     @Metadata
     private String eventStreamUsername;
+
     @Metadata
     private String eventStreamPassword;
+
     @Metadata
     private String eventStreamGroupId;
+
     @Metadata(defaultValue = "3000")
     private long eventStreamConsumerPollTimeout = 3000;
 

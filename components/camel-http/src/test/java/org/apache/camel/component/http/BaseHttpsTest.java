@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
-
-import java.util.Map;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.hc.core5.http.HttpStatus;
 
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.hc.core5.http.HttpStatus;
 
 public abstract class BaseHttpsTest extends HttpsServerTestSupport {
 

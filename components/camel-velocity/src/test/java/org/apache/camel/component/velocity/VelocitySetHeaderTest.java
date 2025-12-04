@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.Exchange;
@@ -44,7 +45,6 @@ public class VelocitySetHeaderTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(value);
-
             }
         });
         mock.assertIsSatisfied();
@@ -54,5 +54,4 @@ public class VelocitySetHeaderTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/velocity/camel-context.xml");
     }
-
 }

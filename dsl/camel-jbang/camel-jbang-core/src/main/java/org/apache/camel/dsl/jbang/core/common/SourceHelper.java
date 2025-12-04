@@ -38,8 +38,7 @@ import org.apache.camel.util.IOHelper;
 
 public class SourceHelper {
 
-    private static final String[] ACCEPTED_FILE_EXT
-            = new String[] { "java", "xml", "yaml" };
+    private static final String[] ACCEPTED_FILE_EXT = new String[] {"java", "xml", "yaml"};
 
     public static Source resolveSource(String source) {
         List<Source> resolved = resolveSources(Collections.singletonList(source));
@@ -75,7 +74,8 @@ public class SourceHelper {
                                         sourceScheme,
                                         FileUtil.stripPath(uri),
                                         IOHelper.loadText(resolver.resolve(uri).getInputStream()),
-                                        FileUtil.onlyExt(uri), compression));
+                                        FileUtil.onlyExt(uri),
+                                        compression));
                             }
                         }
                     }
@@ -85,7 +85,8 @@ public class SourceHelper {
                                     sourceScheme,
                                     fileName,
                                     IOHelper.loadText(resolver.resolve(source).getInputStream()),
-                                    fileExtension, compression));
+                                    fileExtension,
+                                    compression));
                         }
                     }
                     case HTTPS -> {
@@ -94,7 +95,8 @@ public class SourceHelper {
                                     sourceScheme,
                                     fileName,
                                     IOHelper.loadText(resolver.resolve(source).getInputStream()),
-                                    fileExtension, compression));
+                                    fileExtension,
+                                    compression));
                         }
                     }
                     case FILE -> {
@@ -103,7 +105,8 @@ public class SourceHelper {
                                     sourceScheme,
                                     fileName,
                                     IOHelper.loadText(resolver.resolve(source).getInputStream()),
-                                    fileExtension, compression));
+                                    fileExtension,
+                                    compression));
                         }
                     }
                     case CLASSPATH -> {
@@ -113,7 +116,8 @@ public class SourceHelper {
                                     sourceScheme,
                                     fileName,
                                     IOHelper.loadText(resolver.resolve(source).getInputStream()),
-                                    fileExtension, compression));
+                                    fileExtension,
+                                    compression));
                         }
                     }
                     case GITHUB, RAW_GITHUB -> {
@@ -126,7 +130,8 @@ public class SourceHelper {
                                         sourceScheme,
                                         FileUtil.stripPath(uri),
                                         IOHelper.loadText(resolver.resolve(uri).getInputStream()),
-                                        FileUtil.onlyExt(uri), compression));
+                                        FileUtil.onlyExt(uri),
+                                        compression));
                             }
                         }
                     }
@@ -139,12 +144,8 @@ public class SourceHelper {
 
                             if (!Files.isDirectory(sourcePath)) {
                                 try (var is = Files.newInputStream(sourcePath)) {
-                                    resolved.add(
-                                            new Source(
-                                                    sourceScheme,
-                                                    fileName,
-                                                    IOHelper.loadText(is),
-                                                    fileExtension, compression));
+                                    resolved.add(new Source(
+                                            sourceScheme, fileName, IOHelper.loadText(is), fileExtension, compression));
                                 }
                             }
                         }
@@ -160,5 +161,4 @@ public class SourceHelper {
     public static boolean isAcceptedSourceFile(String fileExt) {
         return Arrays.stream(ACCEPTED_FILE_EXT).anyMatch(e -> e.equalsIgnoreCase(fileExt));
     }
-
 }

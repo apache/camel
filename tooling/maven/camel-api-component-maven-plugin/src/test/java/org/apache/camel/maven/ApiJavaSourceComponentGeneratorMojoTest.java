@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -57,5 +58,4 @@ public class ApiJavaSourceComponentGeneratorMojoTest extends AbstractGeneratorMo
 
         return mojo;
     }
-
 }

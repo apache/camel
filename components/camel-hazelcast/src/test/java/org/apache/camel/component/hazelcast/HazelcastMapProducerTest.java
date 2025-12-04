@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anySet;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -35,20 +47,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anySet;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Mock
     private IMap<Object, Object> map;
 
@@ -69,8 +71,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
 
     @Test
     public void testWithInvalidOperation() {
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:putInvalid", "my-foo"));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:putInvalid", "my-foo"));
     }
 
     @Test
@@ -158,7 +159,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         String sql = "bar > 1000";
 
         when(map.values(any(SqlPredicate.class)))
-                .thenReturn(Arrays.<Object> asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
+                .thenReturn(Arrays.<Object>asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
         template.sendBodyAndHeader("direct:queue", null, HazelcastConstants.QUERY, sql);
         verify(map).values(any(SqlPredicate.class));
 
@@ -170,8 +171,9 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
 
     @Test
     public void testEmptyQuery() {
-        when(map.values()).thenReturn(
-                Arrays.<Object> asList(new Dummy("beta", 2000), new Dummy("gamma", 3000), new Dummy("delta", 4000)));
+        when(map.values())
+                .thenReturn(Arrays.<Object>asList(
+                        new Dummy("beta", 2000), new Dummy("gamma", 3000), new Dummy("delta", 4000)));
         template.sendBody("direct:queue", null);
         verify(map).values();
 
@@ -265,45 +267,57 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                from("direct:putInvalid")
+                        .setHeader(HazelcastConstants.OPERATION, constant("bogus"))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
+                from("direct:put")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:putIfAbsent").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT_IF_ABSENT))
+                from("direct:putIfAbsent")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT_IF_ABSENT))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.UPDATE))
+                from("direct:update")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.UPDATE))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+                from("direct:get")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:getAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_ALL))
+                from("direct:getAll")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_ALL))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
+                from("direct:delete")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:queue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.QUERY))
+                from("direct:queue")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.QUERY))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
+                from("direct:clear")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:evict").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT))
+                from("direct:evict")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:evictAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT_ALL))
+                from("direct:evictAll")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.EVICT_ALL))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
+                from("direct:containsKey")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
@@ -312,8 +326,8 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:putWithOperationNumber").toF("hazelcast-%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX,
-                        HazelcastOperation.PUT);
+                from("direct:putWithOperationNumber")
+                        .toF("hazelcast-%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastOperation.PUT);
                 from("direct:putWithOperationName").toF("hazelcast-%sfoo?operation=PUT", HazelcastConstants.MAP_PREFIX);
             }
         };

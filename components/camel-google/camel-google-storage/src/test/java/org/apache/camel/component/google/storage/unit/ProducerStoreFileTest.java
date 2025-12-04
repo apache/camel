@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.unit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,10 +39,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
     private static final String FILE_ENDPOINT = "target/test-classes/tostore";
     private static final String FILE_NAME = "FileToStore.txt";
@@ -50,7 +51,8 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
         return new RouteBuilder() {
             public void configure() {
                 String endpoint = "google-storage://myCamelBucket?autoCreateBucket=true";
-                String endpointWithObjectName = "google-storage://myCamelBucket?autoCreateBucket=true&objectName=" + FILE_NAME;
+                String endpointWithObjectName =
+                        "google-storage://myCamelBucket?autoCreateBucket=true&objectName=" + FILE_NAME;
 
                 from("direct:fromFile").to(endpoint);
                 from("direct:fromFileWithObjectNameInConfig").to(endpointWithObjectName);
@@ -65,8 +67,8 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
             exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
             exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_LENGTH, Files.size(filePath));
-            GenericFile<File> genericFile = FileConsumer.asGenericFile(FILE_ENDPOINT,
-                    filePath.toFile(), StandardCharsets.UTF_8.name(), false);
+            GenericFile<File> genericFile =
+                    FileConsumer.asGenericFile(FILE_ENDPOINT, filePath.toFile(), StandardCharsets.UTF_8.name(), false);
             exchange.getIn().setBody(genericFile);
         });
         assertNotNull(storeFileExchange);
@@ -85,8 +87,8 @@ public class ProducerStoreFileTest extends GoogleCloudStorageBaseTest {
         Exchange storeFileExchange = template.request("direct:fromFile", exchange -> {
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
             exchange.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_ENCODING, "text/plain");
-            GenericFile<File> genericFile = FileConsumer.asGenericFile(FILE_ENDPOINT,
-                    filePath.toFile(), StandardCharsets.UTF_8.name(), false);
+            GenericFile<File> genericFile =
+                    FileConsumer.asGenericFile(FILE_ENDPOINT, filePath.toFile(), StandardCharsets.UTF_8.name(), false);
             exchange.getIn().setBody(genericFile);
         });
         assertNotNull(storeFileExchange);

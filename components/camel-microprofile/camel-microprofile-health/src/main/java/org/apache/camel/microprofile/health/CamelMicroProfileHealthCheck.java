@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.apache.camel.health.HealthCheck.*;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
-
-import static org.apache.camel.health.HealthCheck.*;
 
 /**
  * A MicroProfile {@link HealthCheck} that invokes the supplied Camel health check, reports its health status and

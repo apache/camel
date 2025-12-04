@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,18 +35,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @MockitoSettings
 public class RedisListTest extends RedisTestSupport {
 
     @Mock
     private RedisTemplate<String, String> redisTemplate;
+
     @Mock
     private ListOperations<String, String> listOperations;
 
@@ -63,7 +65,8 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteBLPOP() throws Exception {
-        when(listOperations.leftPop(anyString(), anyLong(), any(TimeUnit.class))).thenReturn("value");
+        when(listOperations.leftPop(anyString(), anyLong(), any(TimeUnit.class)))
+                .thenReturn("value");
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "BLPOP",
@@ -76,7 +79,8 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteBRPOP() throws Exception {
-        when(listOperations.rightPop(anyString(), anyLong(), any(TimeUnit.class))).thenReturn("value");
+        when(listOperations.rightPop(anyString(), anyLong(), any(TimeUnit.class)))
+                .thenReturn("value");
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "BRPOP",
@@ -129,8 +133,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLINDEX() throws Exception {
-        when(listOperations.index(anyString(), anyLong()))
-                .thenReturn("value");
+        when(listOperations.index(anyString(), anyLong())).thenReturn("value");
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "LINDEX",
@@ -143,8 +146,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLINSERTBEFORE() throws Exception {
-        when(listOperations.leftPush(anyString(), anyString(), anyString()))
-                .thenReturn(2L);
+        when(listOperations.leftPush(anyString(), anyString(), anyString())).thenReturn(2L);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "LINSERT",
@@ -159,8 +161,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLINSERTAFTER() throws Exception {
-        when(listOperations.rightPush(anyString(), anyString(), anyString()))
-                .thenReturn(2L);
+        when(listOperations.rightPush(anyString(), anyString(), anyString())).thenReturn(2L);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "LINSERT",
@@ -203,8 +204,7 @@ public class RedisListTest extends RedisTestSupport {
         List<String> values = new ArrayList<>();
         values.add("value");
 
-        when(listOperations.range(anyString(), anyLong(), anyLong()))
-                .thenReturn(values);
+        when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(values);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "LRANGE",
@@ -218,8 +218,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLREM() throws Exception {
-        when(listOperations.remove(anyString(), anyLong(), anyString()))
-                .thenReturn(2L);
+        when(listOperations.remove(anyString(), anyLong(), anyString())).thenReturn(2L);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "LREM",

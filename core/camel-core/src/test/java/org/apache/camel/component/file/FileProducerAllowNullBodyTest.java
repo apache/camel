@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,12 +33,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests to ensure that When the allowNullBody option is set to true it will create an empty file and not throw an
@@ -77,15 +78,17 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
     @Test
     @DisplayName("Tests that an exception will be thrown if allowNullBody is absent and a null body is sent")
     public void testAllowNullBodyFalse() {
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody(fileUri("?fileName=allowNullBody.txt"), null),
                 "Should have thrown a GenericFileOperationFailedException");
 
-        GenericFileOperationFailedException cause
-                = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
         assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
 
-        assertFalse(Files.exists(testFile("allowNullBody.txt")),
+        assertFalse(
+                Files.exists(testFile("allowNullBody.txt")),
                 "allowNullBody set to false with null body should not create a new file");
     }
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Iterator;
 import java.util.Properties;
@@ -32,10 +37,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class MailMessageTest extends CamelTestSupport {
     private Session mailSession;
     private MimeMessage mimeMessage;
@@ -44,8 +45,9 @@ public class MailMessageTest extends CamelTestSupport {
 
     @Test
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO,
-                new Address[] { new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost") });
+        mimeMessage.setRecipients(
+                Message.RecipientType.TO,
+                new Address[] {new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost")});
 
         Exchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = (MailMessage) exchange.getIn();
@@ -69,7 +71,7 @@ public class MailMessageTest extends CamelTestSupport {
 
     @Test
     public void testMailMessageHandlesSingleHeader() throws Exception {
-        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] { new InternetAddress("frank@localhost") });
+        mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("frank@localhost")});
 
         Exchange exchange = endpoint.createExchange(mimeMessage);
         MailMessage in = (MailMessage) exchange.getIn();

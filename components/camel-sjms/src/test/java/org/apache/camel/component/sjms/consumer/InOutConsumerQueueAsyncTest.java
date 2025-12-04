@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -49,12 +50,14 @@ public class InOutConsumerQueueAsyncTest extends JmsCommonTestSupport {
             public void configure() {
                 from("sjms:queue:start.queue.InOutConsumerQueueAsyncTest?asyncConsumer=true")
                         .log("Requesting ${body} with thread ${threadName}")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "sjms:queue:in.out.queue.InOutConsumerQueueAsyncTest?replyToConcurrentConsumers=2&replyTo=in.out.queue.response")
                         .log("Result ${body} with thread ${threadName}")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.queue.InOutConsumerQueueAsyncTest?concurrentConsumers=2").to("log:before")
+                from("sjms:queue:in.out.queue.InOutConsumerQueueAsyncTest?concurrentConsumers=2")
+                        .to("log:before")
                         .log("Replying ${body} with thread ${threadName}")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

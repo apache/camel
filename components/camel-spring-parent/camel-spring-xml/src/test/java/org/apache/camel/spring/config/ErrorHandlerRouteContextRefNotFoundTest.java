@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
@@ -23,9 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
@@ -46,7 +47,8 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/ErrorHandlerRouteContextRefNotFoundTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/ErrorHandlerRouteContextRefNotFoundTest.xml");
     }
 
     @Test

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http.rest;
 
-import org.apache.camel.component.netty.http.RestContextPathMatcher;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http.rest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.component.netty.http.RestContextPathMatcher;
+import org.junit.jupiter.api.Test;
 
 public class RestPathMatchingTest {
 
@@ -87,5 +88,4 @@ public class RestPathMatchingTest {
         assertFalse(matcher.matchRestPath("/123/list/2014", "/{user}/list/{year}", false));
         assertFalse(matcher.matchRestPath("/1234567890/list/2014", "/{user}/list/{year}", false));
     }
-
 }

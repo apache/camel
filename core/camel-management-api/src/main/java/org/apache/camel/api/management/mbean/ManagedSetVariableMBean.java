@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -28,5 +29,4 @@ public interface ManagedSetVariableMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Expression to return the value of the variable")
     String getExpression();
-
 }

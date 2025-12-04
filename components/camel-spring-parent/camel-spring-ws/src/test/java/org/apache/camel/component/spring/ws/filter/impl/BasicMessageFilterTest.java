@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.filter.impl;
 
 import jakarta.activation.DataHandler;
@@ -61,7 +62,6 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         DomPoxMessage domPoxMessage = new DomPoxMessageFactory().createWebServiceMessage();
         filter.filterConsumer(exchange, domPoxMessage);
         filter.filterProducer(exchange, domPoxMessage);
-
     }
 
     @Test
@@ -80,7 +80,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         filter.filterConsumer(exchange, message);
 
         Assertions.assertThat(message.getAttachments()).isEmpty();
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isEmpty();
+        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements())
+                .isEmpty();
 
         Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isEmpty();
     }
@@ -89,12 +90,18 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     public void removeCamelInternalHeaderAttributes() throws Exception {
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
-                "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
-                "mustBeRemoved");
+        exchange.getOut()
+                .getHeaders()
+                .put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
+        exchange.getOut()
+                .getHeaders()
+                .put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, "mustBeRemoved");
+        exchange.getOut()
+                .getHeaders()
+                .put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION, "mustBeRemoved");
+        exchange.getOut()
+                .getHeaders()
+                .put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION, "mustBeRemoved");
         exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
 
         exchange.getOut().getHeaders().put("breadcrumbId", "mustBeRemoved");
@@ -102,7 +109,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         filter.filterConsumer(exchange, message);
 
         Assertions.assertThat(message.getAttachments()).isEmpty();
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isEmpty();
+        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements())
+                .isEmpty();
 
         Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isEmpty();
     }
@@ -115,10 +123,13 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
         Assertions.assertThat(message.getAttachments()).isEmpty();
 
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isNotEmpty().hasSize(1);
+        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements())
+                .isNotEmpty()
+                .hasSize(1);
 
-        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isNotEmpty().hasSize(1);
-
+        Assertions.assertThat(message.getSoapHeader().getAllAttributes())
+                .isNotEmpty()
+                .hasSize(1);
     }
 
     @Test
@@ -131,10 +142,13 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
         Assertions.assertThat(message.getAttachments()).isEmpty();
 
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isNotEmpty().hasSize(1);
+        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements())
+                .isNotEmpty()
+                .hasSize(1);
 
-        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isNotEmpty().hasSize(2);
-
+        Assertions.assertThat(message.getSoapHeader().getAllAttributes())
+                .isNotEmpty()
+                .hasSize(2);
     }
 
     @Test
@@ -147,8 +161,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void producerWithAttachment() throws Exception {
-        exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment",
-                new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getIn(AttachmentMessage.class)
+                .addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterProducer(exchange, message);
 
@@ -158,8 +172,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void consumerWithAttachment() throws Exception {
-        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment",
-                new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getMessage(AttachmentMessage.class)
+                .addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterConsumer(exchange, message);
 

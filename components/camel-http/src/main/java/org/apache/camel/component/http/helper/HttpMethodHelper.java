@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.helper;
 
 import java.net.URI;
@@ -50,7 +51,8 @@ public final class HttpMethodHelper {
             try {
                 uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
             } catch (Exception e) {
-                throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+                throw new RuntimeExchangeException(
+                        "Cannot resolve property placeholders with uri: " + uriString, exchange, e);
             }
             // in case the URI string contains unsafe characters
             uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
@@ -92,5 +94,4 @@ public final class HttpMethodHelper {
 
         return answer;
     }
-
 }

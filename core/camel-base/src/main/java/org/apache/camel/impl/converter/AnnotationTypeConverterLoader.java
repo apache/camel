@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.converter;
+
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,10 +50,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.lang.reflect.Modifier.isPublic;
-import static java.lang.reflect.Modifier.isStatic;
 
 /**
  * A class which will auto-discover {@link Converter} objects and methods to pre-load the {@link TypeConverterRegistry}
@@ -126,7 +127,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
             Set<Class<?>> scannedClasses = resolver.findAnnotated(Converter.class, packageNames);
             if (!scannedClasses.isEmpty()) {
-                LOG.debug("Found {} packages with {} @Converter classes to load", packageNames.length, scannedClasses.size());
+                LOG.debug(
+                        "Found {} packages with {} @Converter classes to load",
+                        packageNames.length,
+                        scannedClasses.size());
                 classes.addAll(scannedClasses);
             }
         }
@@ -158,7 +162,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      * @param  classes      to add loaded @Converter classes
      * @return              the filtered package names
      */
-    protected String[] filterPackageNamesOnly(PackageScanClassResolver resolver, String[] packageNames, Set<Class<?>> classes) {
+    protected String[] filterPackageNamesOnly(
+            PackageScanClassResolver resolver, String[] packageNames, Set<Class<?>> classes) {
         if (packageNames == null || packageNames.length == 0) {
             return packageNames;
         }
@@ -309,11 +314,17 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
             // if we should ignore then only log at debug level
             if (ignore) {
-                LOG.debug("Ignoring converter type: {} as a dependent class could not be found: {}",
-                        type.getCanonicalName(), e, e);
+                LOG.debug(
+                        "Ignoring converter type: {} as a dependent class could not be found: {}",
+                        type.getCanonicalName(),
+                        e,
+                        e);
             } else {
-                LOG.warn("Ignoring converter type: {} as a dependent class could not be found: {}",
-                        type.getCanonicalName(), e, e);
+                LOG.warn(
+                        "Ignoring converter type: {} as a dependent class could not be found: {}",
+                        type.getCanonicalName(),
+                        e,
+                        e);
             }
         }
     }
@@ -323,88 +334,116 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     private CachingInjector<?> handleHasConverterAnnotation(
-            TypeConverterRegistry registry, Class<?> type,
-            CachingInjector<?> injector, Method method, boolean allowNull) {
+            TypeConverterRegistry registry,
+            Class<?> type,
+            CachingInjector<?> injector,
+            Method method,
+            boolean allowNull) {
         if (isValidConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
                 LOG.warn(
                         "Ignoring bad converter on type: {} method: {} as a converter method is not a public and concrete method",
-                        type.getCanonicalName(), method);
+                        type.getCanonicalName(),
+                        method);
             } else {
                 Class<?> toType = method.getReturnType();
                 if (toType.equals(Void.class)) {
-                    LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method returns a void method",
-                            type.getCanonicalName(), method);
+                    LOG.warn(
+                            "Ignoring bad converter on type: {} method: {} as a converter method returns a void method",
+                            type.getCanonicalName(),
+                            method);
                 } else {
                     Class<?> fromType = method.getParameterTypes()[0];
                     if (isStatic(modifiers)) {
-                        registerTypeConverter(registry, method, toType, fromType,
-                                new StaticMethodTypeConverter(method, allowNull));
+                        registerTypeConverter(
+                                registry, method, toType, fromType, new StaticMethodTypeConverter(method, allowNull));
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
                         }
-                        registerTypeConverter(registry, method, toType, fromType,
+                        registerTypeConverter(
+                                registry,
+                                method,
+                                toType,
+                                fromType,
                                 new InstanceMethodTypeConverter(injector, method, registry, allowNull));
                     }
                 }
             }
         } else {
-            LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method should have one parameter",
-                    type.getCanonicalName(), method);
+            LOG.warn(
+                    "Ignoring bad converter on type: {} method: {} as a converter method should have one parameter",
+                    type.getCanonicalName(),
+                    method);
         }
         return injector;
     }
 
     private CachingInjector<?> handleHasFallbackConverterAnnotation(
-            TypeConverterRegistry registry, Class<?> type,
-            CachingInjector<?> injector, Method method, boolean allowNull) {
+            TypeConverterRegistry registry,
+            Class<?> type,
+            CachingInjector<?> injector,
+            Method method,
+            boolean allowNull) {
         if (isValidFallbackConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method is not "
-                         + "a public and concrete method",
-                        type.getCanonicalName(), method);
+                LOG.warn(
+                        "Ignoring bad fallback converter on type: {} method: {} as a fallback converter method is not "
+                                + "a public and concrete method",
+                        type.getCanonicalName(),
+                        method);
             } else {
                 Class<?> toType = method.getReturnType();
                 if (toType.equals(Void.class)) {
-                    LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method "
-                             + "returns a void method",
-                            type.getCanonicalName(), method);
+                    LOG.warn(
+                            "Ignoring bad fallback converter on type: {} method: {} as a fallback converter method "
+                                    + "returns a void method",
+                            type.getCanonicalName(),
+                            method);
                 } else {
                     if (isStatic(modifiers)) {
-                        registerFallbackTypeConverter(registry,
-                                new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
+                        registerFallbackTypeConverter(
+                                registry, new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
                         }
-                        registerFallbackTypeConverter(registry,
-                                new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull), method);
+                        registerFallbackTypeConverter(
+                                registry,
+                                new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull),
+                                method);
                     }
                 }
             }
         } else {
-            LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method should have "
-                     + "one parameter",
-                    type.getCanonicalName(), method);
+            LOG.warn(
+                    "Ignoring bad fallback converter on type: {} method: {} as a fallback converter method should have "
+                            + "one parameter",
+                    type.getCanonicalName(),
+                    method);
         }
         return injector;
     }
 
     protected void registerTypeConverter(
             TypeConverterRegistry registry,
-            Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
+            Method method,
+            Class<?> toType,
+            Class<?> fromType,
+            TypeConverter typeConverter) {
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
 
     protected boolean isValidConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return parameterTypes.length == 1 || parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1]);
+        return parameterTypes.length == 1
+                || parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1]);
     }
 
-    protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
+    protected void registerFallbackTypeConverter(
+            TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
         boolean canPromote = false;
         // check whether the annotation may indicate it can promote
         if (method.getAnnotation(Converter.class) != null) {
@@ -415,8 +454,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidFallbackConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return parameterTypes.length == 3 || parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1])
-                && TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1]);
+        return parameterTypes.length == 3
+                || parameterTypes.length == 4
+                        && Exchange.class.isAssignableFrom(parameterTypes[1])
+                        && TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1]);
     }
 
     /**
@@ -438,5 +479,4 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         return packages.toArray(new String[0]);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -33,8 +34,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
 
-    public PipelineDefinition() {
-    }
+    public PipelineDefinition() {}
 
     protected PipelineDefinition(PipelineDefinition source) {
         super(source);
@@ -65,5 +65,4 @@ public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
     public String getLabel() {
         return "pipeline";
     }
-
 }

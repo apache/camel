@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbProducerFileWithPathIT extends SmbServerTestSupport {
 
@@ -37,7 +38,8 @@ public class SmbProducerFileWithPathIT extends SmbServerTestSupport {
         sendFile(getSmbUrl(), "Hello World", "hello/jono.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
+                .untilAsserted(() -> assertEquals(
+                        "Hello World",
                         new String(
                                 copyFileContentFromContainer("/data/rw/uploadWithPath/hello/jono.txt"),
                                 StandardCharsets.ISO_8859_1)));

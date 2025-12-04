@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -55,19 +56,22 @@ public class OnCompletionWhenTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").onCompletion().onWhen(body().contains("Hello"))
+                from("direct:start")
+                        .onCompletion()
+                        .onWhen(body().contains("Hello"))
                         // this route is only invoked when the original route is
                         // complete as a kind
                         // of completion callback. And also only if the onWhen
                         // predicate is true
-                        .to("log:sync").to("mock:sync")
+                        .to("log:sync")
+                        .to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here the original route contiues
-                        .to("log:original").to("mock:result");
+                        .to("log:original")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

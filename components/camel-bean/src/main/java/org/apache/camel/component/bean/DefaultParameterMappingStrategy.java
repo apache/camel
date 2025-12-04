@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.HashMap;
@@ -43,14 +44,13 @@ public final class DefaultParameterMappingStrategy implements ParameterMappingSt
         MAP.put(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
         MAP.put(Registry.class, ExpressionBuilder.registryExpression());
         MAP.put(CamelContext.class, ExpressionBuilder.camelContextExpression());
-    };
-
-    private DefaultParameterMappingStrategy() {
     }
+    ;
+
+    private DefaultParameterMappingStrategy() {}
 
     @Override
     public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
         return MAP.get(parameterType);
     }
-
 }

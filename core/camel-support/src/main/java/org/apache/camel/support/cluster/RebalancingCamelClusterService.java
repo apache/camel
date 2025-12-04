@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cluster;
 
 import java.util.ArrayList;
@@ -58,8 +59,8 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
         this.periodMillis = periodMillis;
     }
 
-    public RebalancingCamelClusterService(CamelContext camelContext, CamelPreemptiveClusterService delegate,
-                                          long periodMillis) {
+    public RebalancingCamelClusterService(
+            CamelContext camelContext, CamelPreemptiveClusterService delegate, long periodMillis) {
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
         this.periodMillis = periodMillis;
@@ -69,8 +70,9 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
     public void start() {
         delegate.start();
         if (serializedExecutor == null) {
-            serializedExecutor = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "RebalancingClusterService");
+            serializedExecutor = getCamelContext()
+                    .getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "RebalancingClusterService");
             serializedExecutor.execute(this::reconcile);
         }
     }
@@ -194,7 +196,9 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
         for (String group : this.getNamespaces()) {
             try {
                 CamelPreemptiveClusterView view = delegate.getView(group);
-                Set<String> viewMembers = view.getMembers().stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
+                Set<String> viewMembers = view.getMembers().stream()
+                        .map(CamelClusterMember::getId)
+                        .collect(Collectors.toSet());
                 if (members != null && !members.equals(viewMembers)) {
                     LOG.debug("View members don't match: {} vs {}", members, viewMembers);
                     return null;
@@ -209,9 +213,7 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
     }
 
     private void rescheduleAfterDelay() {
-        this.serializedExecutor.schedule(this::reconcile,
-                this.periodMillis,
-                TimeUnit.MILLISECONDS);
+        this.serializedExecutor.schedule(this::reconcile, this.periodMillis, TimeUnit.MILLISECONDS);
     }
 
     @Override

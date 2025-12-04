@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import io.netty.buffer.ByteBuf;
@@ -53,8 +54,10 @@ public class DelimiterBasedFrameDecoder extends io.netty.handler.codec.Delimiter
             a = delimiters[1];
             b = delimiters[0];
         }
-        return a.capacity() == 2 && b.capacity() == 1
-                && a.getByte(0) == '\r' && a.getByte(1) == '\n'
+        return a.capacity() == 2
+                && b.capacity() == 1
+                && a.getByte(0) == '\r'
+                && a.getByte(1) == '\n'
                 && b.getByte(0) == '\n';
     }
 }

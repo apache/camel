@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.onexception;
 
 import java.util.Map;
@@ -34,8 +35,7 @@ public class OrderService {
      * @return                      the out payload
      * @throws OrderFailedException is thrown if the order cannot be processed
      */
-    public Object handleOrder(@Headers Map<String, Object> headers, @Body String payload)
-            throws OrderFailedException {
+    public Object handleOrder(@Headers Map<String, Object> headers, @Body String payload) throws OrderFailedException {
         if ("Order: kaboom".equals(payload)) {
             throw new OrderFailedException("Cannot order: kaboom");
         } else {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import java.io.File;
@@ -93,11 +94,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         }
     }
 
-    protected void findInFileSystem(
-            File dir,
-            Set<Resource> resources,
-            String subPattern,
-            Predicate<String> filter)
+    protected void findInFileSystem(File dir, Set<Resource> resources, String subPattern, Predicate<String> filter)
             throws Exception {
 
         final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
@@ -111,10 +108,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     }
 
     protected void findInClasspath(
-            String packageName,
-            Set<Resource> resources,
-            String subPattern,
-            Predicate<String> filter) {
+            String packageName, Set<Resource> resources, String subPattern, Predicate<String> filter) {
 
         // special for root package
         if (".".equals(packageName)) {
@@ -168,7 +162,8 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                     loadImplementationsInDirectory(subPattern, packageName, file, resources, filter);
                 } else {
                     InputStream stream;
-                    if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
+                    if (urlPath.startsWith("http:")
+                            || urlPath.startsWith("https:")
                             || urlPath.startsWith("sonicfs:")
                             || isAcceptableScheme(urlPath)) {
                         // load resources using http/https, sonicfs and other acceptable scheme
@@ -224,10 +219,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     }
 
     protected List<String> doLoadImplementationsInJar(
-            String packageName,
-            InputStream stream,
-            String urlPath,
-            Predicate<String> filter) {
+            String packageName, InputStream stream, String urlPath, Predicate<String> filter) {
 
         List<String> entries = new ArrayList<>();
 
@@ -254,7 +246,6 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                         }
                     }
                 }
-
             }
         } catch (IOException ioe) {
             LOG.warn("Cannot search jar file '{} due to an IOException: {}", urlPath, ioe.getMessage(), ioe);
@@ -266,11 +257,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
     }
 
     private void loadImplementationsInDirectory(
-            String subPattern,
-            String parent,
-            File location,
-            Set<Resource> resources,
-            Predicate<String> filter) {
+            String subPattern, String parent, File location, Set<Resource> resources, Predicate<String> filter) {
         File[] files = location.listFiles();
         if (files == null || files.length == 0) {
             return;
@@ -306,5 +293,4 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             }
         }
     }
-
 }

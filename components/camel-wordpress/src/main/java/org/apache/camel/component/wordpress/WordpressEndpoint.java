@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress;
 
 import java.util.Arrays;
@@ -46,8 +47,12 @@ import org.apache.camel.util.PropertiesHelper;
 /**
  * Manage posts and users using the WordPress API.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "WordPress", syntax = "wordpress:operation",
-             category = { Category.CLOUD, Category.API, Category.CMS })
+@UriEndpoint(
+        firstVersion = "2.21.0",
+        scheme = "wordpress",
+        title = "WordPress",
+        syntax = "wordpress:operation",
+        category = {Category.CLOUD, Category.API, Category.CMS})
 public class WordpressEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     public static final String ENDPOINT_SERVICE_POST = "post,user";
@@ -56,8 +61,10 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
     @Metadata(required = true)
     private String operation;
 
-    @UriPath(description = "The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete",
-             enums = "delete")
+    @UriPath(
+            description =
+                    "The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete",
+            enums = "delete")
     private String operationDetail;
 
     @UriParam
@@ -144,7 +151,9 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
             PropertyBindingSupport.bindProperties(getCamelContext(), configuration, options);
 
             if (configuration.getSearchCriteria() == null) {
-                final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation).getCriteriaType().newInstance();
+                final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation)
+                        .getCriteriaType()
+                        .newInstance();
                 Map<String, Object> criteriaOptions = PropertiesHelper.extractProperties(options, "criteria.");
                 // any property that has a "," should be a List
                 criteriaOptions = criteriaOptions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
@@ -165,15 +174,14 @@ public class WordpressEndpoint extends DefaultEndpoint implements EndpointServic
     }
 
     private void initServiceProvider() {
-        final WordpressAPIConfiguration apiConfiguration
-                = new WordpressAPIConfiguration(configuration.getUrl(), configuration.getApiVersion());
+        final WordpressAPIConfiguration apiConfiguration =
+                new WordpressAPIConfiguration(configuration.getUrl(), configuration.getApiVersion());
         // basic auth
         if (ObjectHelper.isNotEmpty(configuration.getUser())) {
-            apiConfiguration
-                    .setAuthentication(new WordpressBasicAuthentication(configuration.getUser(), configuration.getPassword()));
+            apiConfiguration.setAuthentication(
+                    new WordpressBasicAuthentication(configuration.getUser(), configuration.getPassword()));
         }
 
         WordpressServiceProvider.getInstance().init(apiConfiguration);
     }
-
 }

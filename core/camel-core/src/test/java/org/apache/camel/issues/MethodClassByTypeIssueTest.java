@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +51,10 @@ public class MethodClassByTypeIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a").transform().method(MyTransformBean.class, "transformMe").to("mock:a");
+                from("direct:a")
+                        .transform()
+                        .method(MyTransformBean.class, "transformMe")
+                        .to("mock:a");
 
                 from("direct:b").transform().method(methodClass, "transformMe").to("mock:b");
             }

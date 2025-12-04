@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.concurrent.ExecutorService;
@@ -95,13 +96,12 @@ class DownloadThreadPool extends ServiceSupport implements CamelContextAware {
             long taken = watch.taken();
             String url = downloadRecord.repoUrl();
             String id = downloadRecord.repoId();
-            String msg = "Downloaded: " + gav + " (took: "
-                         + TimeUtils.printDuration(taken, true) + ") from: " + id + "@" + url;
+            String msg = "Downloaded: " + gav + " (took: " + TimeUtils.printDuration(taken, true) + ") from: " + id
+                    + "@" + url;
             log.info(msg);
         } else {
             long taken = watch.taken();
-            String msg = "Resolved: " + gav + " (took: "
-                         + TimeUtils.printDuration(taken, true) + ")";
+            String msg = "Resolved: " + gav + " (took: " + TimeUtils.printDuration(taken, true) + ")";
             if (verbose || taken > 2000) {
                 // slow resolving then log
                 log.info(msg);

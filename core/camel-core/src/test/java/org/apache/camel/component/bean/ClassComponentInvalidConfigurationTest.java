@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
 
@@ -37,13 +38,13 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("class:org.apache.camel.component.bean.XXX").to("mock:result");
+                from("direct:start")
+                        .to("class:org.apache.camel.component.bean.XXX")
+                        .to("mock:result");
             }
         });
 
-        Exception e = assertThrows(Exception.class,
-                () -> context.start(),
-                "Should have thrown exception");
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
 
         ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
         ClassNotFoundException not = assertIsInstanceOf(ClassNotFoundException.class, cause.getCause());
@@ -55,13 +56,13 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("class:org.apache.camel.component.bean.MyPrefixBean?bean.foo=bar").to("mock:result");
+                from("direct:start")
+                        .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.foo=bar")
+                        .to("mock:result");
             }
         });
 
-        Exception e = assertThrows(Exception.class,
-                () -> context.start(),
-                "Should have thrown exception");
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
 
         ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
         assertTrue(cause.getMessage().contains("Unknown parameters"));

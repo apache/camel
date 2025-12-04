@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,7 +36,8 @@ public class DisabledProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // the EIPs are disabled but there are still 4 outputs
-        Assertions.assertEquals(4, context.getRouteDefinitions().get(0).getOutputs().size());
+        Assertions.assertEquals(
+                4, context.getRouteDefinitions().get(0).getOutputs().size());
     }
 
     @Override
@@ -44,9 +46,12 @@ public class DisabledProcessorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("mock:foo").disabled()
-                        .to("mock:bar").disabled(false)
-                        .to("mock:baz").disabled(true)
+                        .to("mock:foo")
+                        .disabled()
+                        .to("mock:bar")
+                        .disabled(false)
+                        .to("mock:baz")
+                        .disabled(true)
                         .to("mock:result");
             }
         };

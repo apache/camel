@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import javax.cache.event.CacheEntryCreatedListener;
@@ -25,9 +26,9 @@ import javax.cache.event.CacheEntryUpdatedListener;
 
 class JCacheEntryEventListener
         implements CacheEntryCreatedListener<Object, Object>,
-        CacheEntryUpdatedListener<Object, Object>,
-        CacheEntryRemovedListener<Object, Object>,
-        CacheEntryExpiredListener<Object, Object> {
+                CacheEntryUpdatedListener<Object, Object>,
+                CacheEntryRemovedListener<Object, Object>,
+                CacheEntryExpiredListener<Object, Object> {
 
     @Override
     public void onCreated(Iterable<CacheEntryEvent<?, ?>> events) throws CacheEntryListenerException {
@@ -49,6 +50,5 @@ class JCacheEntryEventListener
         onEvents(events);
     }
 
-    protected void onEvents(Iterable<CacheEntryEvent<?, ?>> events) {
-    }
+    protected void onEvents(Iterable<CacheEntryEvent<?, ?>> events) {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -83,8 +84,11 @@ public class StreamResequencer extends BaseProcessorSupport
      * @param processor  next processor that processes re-ordered exchanges.
      * @param comparator a sequence element comparator for exchanges.
      */
-    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator,
-                             Expression expression) {
+    public StreamResequencer(
+            CamelContext camelContext,
+            Processor processor,
+            SequenceElementComparator<Exchange> comparator,
+            Expression expression) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
         this.engine = new ResequencerEngine<>(comparator);
@@ -325,7 +329,5 @@ public class StreamResequencer extends BaseProcessorSupport
                 deliveryRequestLock.unlock();
             }
         }
-
     }
-
 }

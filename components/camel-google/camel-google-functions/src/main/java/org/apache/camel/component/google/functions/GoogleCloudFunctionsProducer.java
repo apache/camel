@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions;
 
 import java.util.List;
@@ -93,10 +94,13 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
             response = Lists.newArrayList(pagedListResponse.iterateAll());
         } else {
-            ListFunctionsRequest request = ListFunctionsRequest
-                    .newBuilder().setParent(LocationName
-                            .of(getConfiguration().getProject(), getConfiguration().getLocation()).toString())
-                    .setPageSize(Integer.MAX_VALUE).build();
+            ListFunctionsRequest request = ListFunctionsRequest.newBuilder()
+                    .setParent(LocationName.of(
+                                    getConfiguration().getProject(),
+                                    getConfiguration().getLocation())
+                            .toString())
+                    .setPageSize(Integer.MAX_VALUE)
+                    .build();
             ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
             response = Lists.newArrayList(pagedListResponse.iterateAll());
         }
@@ -110,8 +114,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             CloudFunctionName request = exchange.getIn().getMandatoryBody(CloudFunctionName.class);
             response = client.getFunction(request);
         } else {
-            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
-                    getConfiguration().getLocation(), getConfiguration().getFunctionName());
+            CloudFunctionName cfName = CloudFunctionName.of(
+                    getConfiguration().getProject(),
+                    getConfiguration().getLocation(),
+                    getConfiguration().getFunctionName());
             response = client.getFunction(cfName);
         }
         Message message = getMessageForResponse(exchange);
@@ -125,9 +131,13 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             response = client.callFunction(request);
         } else {
             String data = exchange.getIn().getBody(String.class);
-            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
-                    getConfiguration().getLocation(), getConfiguration().getFunctionName());
-            CallFunctionRequest request = CallFunctionRequest.newBuilder().setName(cfName.toString()).setData(data)
+            CloudFunctionName cfName = CloudFunctionName.of(
+                    getConfiguration().getProject(),
+                    getConfiguration().getLocation(),
+                    getConfiguration().getFunctionName());
+            CallFunctionRequest request = CallFunctionRequest.newBuilder()
+                    .setName(cfName.toString())
+                    .setData(data)
                     .build();
             response = client.callFunction(request);
         }
@@ -143,9 +153,12 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             GenerateDownloadUrlRequest request = exchange.getIn().getMandatoryBody(GenerateDownloadUrlRequest.class);
             response = client.generateDownloadUrl(request);
         } else {
-            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
-                    getConfiguration().getLocation(), getConfiguration().getFunctionName());
-            GenerateDownloadUrlRequest request = GenerateDownloadUrlRequest.newBuilder().setName(cfName.toString())
+            CloudFunctionName cfName = CloudFunctionName.of(
+                    getConfiguration().getProject(),
+                    getConfiguration().getLocation(),
+                    getConfiguration().getFunctionName());
+            GenerateDownloadUrlRequest request = GenerateDownloadUrlRequest.newBuilder()
+                    .setName(cfName.toString())
                     .build();
             response = client.generateDownloadUrl(request);
         }
@@ -161,9 +174,10 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             GenerateUploadUrlRequest request = exchange.getIn().getMandatoryBody(GenerateUploadUrlRequest.class);
             response = client.generateUploadUrl(request);
         } else {
-            LocationName locationName = LocationName.of(getConfiguration().getProject(),
-                    getConfiguration().getLocation());
-            GenerateUploadUrlRequest request = GenerateUploadUrlRequest.newBuilder().setParent(locationName.toString())
+            LocationName locationName = LocationName.of(
+                    getConfiguration().getProject(), getConfiguration().getLocation());
+            GenerateUploadUrlRequest request = GenerateUploadUrlRequest.newBuilder()
+                    .setParent(locationName.toString())
                     .build();
             response = client.generateUploadUrl(request);
         }
@@ -182,17 +196,23 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             final String project = getConfiguration().getProject();
             final String location = getConfiguration().getLocation();
             final String functionName = getConfiguration().getFunctionName();
-            final String entryPoint = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.ENTRY_POINT,
-                    String.class);
+            final String entryPoint =
+                    exchange.getIn().getHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, String.class);
             final String runtime = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.RUNTIME, String.class);
-            final String sourceArchiveUrl = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL,
-                    String.class);
+            final String sourceArchiveUrl =
+                    exchange.getIn().getHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL, String.class);
             CloudFunction function = CloudFunction.newBuilder()
-                    .setName(CloudFunctionName.of(project, location, functionName).toString()).setEntryPoint(entryPoint)
-                    .setRuntime(runtime).setHttpsTrigger(HttpsTrigger.getDefaultInstance())
-                    .setSourceArchiveUrl(sourceArchiveUrl).build();
+                    .setName(CloudFunctionName.of(project, location, functionName)
+                            .toString())
+                    .setEntryPoint(entryPoint)
+                    .setRuntime(runtime)
+                    .setHttpsTrigger(HttpsTrigger.getDefaultInstance())
+                    .setSourceArchiveUrl(sourceArchiveUrl)
+                    .build();
             CreateFunctionRequest request = CreateFunctionRequest.newBuilder()
-                    .setLocation(LocationName.of(project, location).toString()).setFunction(function).build();
+                    .setLocation(LocationName.of(project, location).toString())
+                    .setFunction(function)
+                    .build();
             response = client.createFunctionAsync(request).get();
         }
         Message message = getMessageForResponse(exchange);
@@ -219,9 +239,13 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             DeleteFunctionRequest request = exchange.getIn().getMandatoryBody(DeleteFunctionRequest.class);
             response = client.deleteFunctionAsync(request).get();
         } else {
-            CloudFunctionName cfName = CloudFunctionName.of(getConfiguration().getProject(),
-                    getConfiguration().getLocation(), getConfiguration().getFunctionName());
-            DeleteFunctionRequest request = DeleteFunctionRequest.newBuilder().setName(cfName.toString()).build();
+            CloudFunctionName cfName = CloudFunctionName.of(
+                    getConfiguration().getProject(),
+                    getConfiguration().getLocation(),
+                    getConfiguration().getFunctionName());
+            DeleteFunctionRequest request = DeleteFunctionRequest.newBuilder()
+                    .setName(cfName.toString())
+                    .build();
             response = client.deleteFunctionAsync(request).get();
         }
         Message message = getMessageForResponse(exchange);
@@ -229,8 +253,8 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
     }
 
     private GoogleCloudFunctionsOperations determineOperation(Exchange exchange) {
-        GoogleCloudFunctionsOperations operation = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.OPERATION,
-                GoogleCloudFunctionsOperations.class);
+        GoogleCloudFunctionsOperations operation = exchange.getIn()
+                .getHeader(GoogleCloudFunctionsConstants.OPERATION, GoogleCloudFunctionsOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation() == null
                     ? GoogleCloudFunctionsOperations.callFunction
@@ -246,5 +270,4 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
     private GoogleCloudFunctionsConfiguration getConfiguration() {
         return this.endpoint.getConfiguration();
     }
-
 }

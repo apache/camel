@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -34,8 +37,6 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class DataFormatConcurrentTest extends CamelTestSupport {
 
@@ -79,9 +80,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:unmarshalFallback")
-                        .convertBodyTo(Foo.class)
-                        .process(exchange -> latch.countDown());
+                from("direct:unmarshalFallback").convertBodyTo(Foo.class).process(exchange -> latch.countDown());
             }
         });
 
@@ -121,9 +120,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:marshalFallback")
-                        .convertBodyTo(String.class)
-                        .process(exchange -> latch.countDown());
+                from("direct:marshalFallback").convertBodyTo(String.class).process(exchange -> latch.countDown());
             }
         });
 
@@ -181,8 +178,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         latch.await();
         long duration = watch.taken();
 
-        LOG.info("Sending {} messages to {} took {} ms",
-                payloads.length, template.getDefaultEndpoint().getEndpointUri(), duration);
+        LOG.info(
+                "Sending {} messages to {} took {} ms",
+                payloads.length,
+                template.getDefaultEndpoint().getEndpointUri(),
+                duration);
     }
 
     public void marshal(final CountDownLatch latch) throws Exception {
@@ -207,8 +207,11 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         latch.await();
         long duration = watch.taken();
 
-        LOG.info("Sending {} messages to {} took {} ms",
-                payloads.length, template.getDefaultEndpoint().getEndpointUri(), duration);
+        LOG.info(
+                "Sending {} messages to {} took {} ms",
+                payloads.length,
+                template.getDefaultEndpoint().getEndpointUri(),
+                duration);
     }
 
     /**

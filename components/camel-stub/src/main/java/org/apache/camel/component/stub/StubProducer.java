@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import org.apache.camel.AsyncCallback;
@@ -26,8 +27,13 @@ import org.apache.camel.component.seda.SedaProducer;
 
 public class StubProducer extends SedaProducer {
 
-    public StubProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete, long timeout,
-                        boolean blockWhenFull, boolean discardWhenFull, long offerTimeout) {
+    public StubProducer(
+            SedaEndpoint endpoint,
+            WaitForTaskToComplete waitForTaskToComplete,
+            long timeout,
+            boolean blockWhenFull,
+            boolean discardWhenFull,
+            long offerTimeout) {
         super(endpoint, waitForTaskToComplete, timeout, blockWhenFull, discardWhenFull, offerTimeout);
     }
 
@@ -56,5 +62,4 @@ public class StubProducer extends SedaProducer {
 
         return super.process(exchange, cb);
     }
-
 }

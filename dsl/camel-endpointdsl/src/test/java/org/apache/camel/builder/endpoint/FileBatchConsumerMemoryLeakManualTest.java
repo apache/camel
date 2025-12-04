@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test to test CAMEL-1652
@@ -73,12 +74,12 @@ public class FileBatchConsumerMemoryLeakManualTest extends BaseEndpointDslTest {
                                 buf.setLength(1000000);
                                 exchange.getIn().setBody(buf.toString());
                             }
-                        }).to(file("target/data/filesorter/archiv"));
+                        })
+                        .to(file("target/data/filesorter/archiv"));
             }
         });
         context.start();
 
         Thread.sleep(30 * 1000L);
     }
-
 }

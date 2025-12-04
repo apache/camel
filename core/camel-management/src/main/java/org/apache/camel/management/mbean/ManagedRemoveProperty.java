@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.processor.RemovePropertyProcessor;
 @ManagedResource(description = "Managed RemoveProperty")
 public class ManagedRemoveProperty extends ManagedProcessor implements ManagedRemovePropertyMBean {
 
-    public ManagedRemoveProperty(CamelContext context, RemovePropertyProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedRemoveProperty(
+            CamelContext context, RemovePropertyProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw;
 
 import org.apache.camel.spi.Metadata;
@@ -24,18 +25,25 @@ import org.apache.camel.spi.Metadata;
 public interface Cw2Constants {
     @Metadata(description = "The Amazon CW metric namespace.", javaType = "String")
     String METRIC_NAMESPACE = "CamelAwsCwMetricNamespace";
+
     @Metadata(description = "The Amazon CW metric name.", javaType = "String")
     String METRIC_NAME = "CamelAwsCwMetricName";
+
     @Metadata(description = "The Amazon CW metric value.", javaType = "Double")
     String METRIC_VALUE = "CamelAwsCwMetricValue";
+
     @Metadata(description = "The Amazon CW metric unit.", javaType = "String")
     String METRIC_UNIT = "CamelAwsCwMetricUnit";
+
     @Metadata(description = "The Amazon CW metric timestamp.", javaType = "Date")
     String METRIC_TIMESTAMP = "CamelAwsCwMetricTimestamp";
+
     @Metadata(description = "A map of dimension names and dimension values.", javaType = "Map<String, String>")
     String METRIC_DIMENSIONS = "CamelAwsCwMetricDimensions";
+
     @Metadata(description = "The Amazon CW metric dimension name.", javaType = "String")
     String METRIC_DIMENSION_NAME = "CamelAwsCwMetricDimensionName";
+
     @Metadata(description = "The Amazon CW metric dimension value.", javaType = "String")
     String METRIC_DIMENSION_VALUE = "CamelAwsCwMetricDimensionValue";
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues.error.ncd;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -29,14 +33,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -44,7 +46,8 @@ public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
     @Test
     public void testNoClassDef() {
         try {
-            template.requestBody("activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true", "Hello World");
+            template.requestBody(
+                    "activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true", "Hello World");
             fail("Should throw exception");
         } catch (Exception e) {
             final String s = ExceptionHelper.stackTraceToString(e);

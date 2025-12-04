@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.producer.support;
+
+import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
 
 import java.util.Iterator;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
-
 public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, ProducerRecord<Object, Object>>> {
     private final Iterator<Object> msgList;
     private final Exchange exchange;
@@ -34,8 +35,12 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
     private final String msgTopic;
     private final PropagatedHeadersProvider propagatedHeadersProvider;
 
-    public KeyValueHolderIterator(Iterator<Object> msgList, Exchange exchange, KafkaConfiguration kafkaConfiguration,
-                                  String msgTopic, PropagatedHeadersProvider propagatedHeadersProvider) {
+    public KeyValueHolderIterator(
+            Iterator<Object> msgList,
+            Exchange exchange,
+            KafkaConfiguration kafkaConfiguration,
+            String msgTopic,
+            PropagatedHeadersProvider propagatedHeadersProvider) {
         this.msgList = msgList;
         this.exchange = exchange;
         this.kafkaConfiguration = kafkaConfiguration;
@@ -65,20 +70,23 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
 
             final Exchange ex = innerExchange == null ? exchange : innerExchange;
 
-            final Object value = tryConvertToSerializedType(ex, innerMessage.getBody(),
-                    kafkaConfiguration.getValueSerializer());
+            final Object value =
+                    tryConvertToSerializedType(ex, innerMessage.getBody(), kafkaConfiguration.getValueSerializer());
 
             return new KeyValueHolder<>(
                     body,
                     new ProducerRecord<>(
-                            innerTopic, innerPartitionKey, innerTimestamp, innerKey, value,
+                            innerTopic,
+                            innerPartitionKey,
+                            innerTimestamp,
+                            innerKey,
+                            value,
                             propagatedHeadersProvider.getHeaders(ex, innerMessage)));
         }
 
         return new KeyValueHolder<>(
                 body,
-                new ProducerRecord<>(
-                        msgTopic, null, null, null, body, propagatedHeadersProvider.getDefaultHeaders()));
+                new ProducerRecord<>(msgTopic, null, null, null, body, propagatedHeadersProvider.getDefaultHeaders()));
     }
 
     private Message getInnerMessage(Object object) {
@@ -121,8 +129,7 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
             innerKey = kafkaConfiguration.getKey() != null ? kafkaConfiguration.getKey() : innerKey;
 
             if (innerKey != null) {
-                innerKey = tryConvertToSerializedType(innerExchange, innerKey,
-                        kafkaConfiguration.getKeySerializer());
+                innerKey = tryConvertToSerializedType(innerExchange, innerKey, kafkaConfiguration.getKeySerializer());
             }
 
             return innerKey;
@@ -134,9 +141,7 @@ public class KeyValueHolderIterator implements Iterator<KeyValueHolder<Object, P
     private Integer getInnerPartitionKey(Message innerMessage) {
         Integer partitionKey = innerMessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
 
-        return kafkaConfiguration.getPartitionKey() != null
-                ? kafkaConfiguration.getPartitionKey()
-                : partitionKey;
+        return kafkaConfiguration.getPartitionKey() != null ? kafkaConfiguration.getPartitionKey() : partitionKey;
     }
 
     @Override

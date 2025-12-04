@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
 
 import java.io.File;
 
@@ -25,8 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
-
 public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileDefaultMoveExistingFileStrategy.class);
@@ -35,7 +36,8 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
+    public boolean moveExistingFile(
+            GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException {
 
         // need to evaluate using a dummy and simulate the file first, to have
@@ -82,9 +84,8 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
                     throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                 }
             } else {
-                throw new GenericFileOperationFailedException(
-                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
-                                                              + to);
+                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: "
+                        + to + " as there already exists a file: " + to);
             }
         }
 
@@ -95,5 +96,4 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
 
         return true;
     }
-
 }

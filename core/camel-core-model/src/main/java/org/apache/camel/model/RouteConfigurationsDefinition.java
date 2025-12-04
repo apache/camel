@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -42,14 +43,14 @@ public class RouteConfigurationsDefinition extends OptionalIdentifiedDefinition<
 
     @XmlTransient
     private CamelContext camelContext;
+
     @XmlTransient
     private Resource resource;
 
     @XmlElementRef
     private List<RouteConfigurationDefinition> routeConfigurations = new ArrayList<>();
 
-    public RouteConfigurationsDefinition() {
-    }
+    public RouteConfigurationsDefinition() {}
 
     @Override
     public String getShortName() {
@@ -141,5 +142,4 @@ public class RouteConfigurationsDefinition extends OptionalIdentifiedDefinition<
         CamelContextAware.trySetCamelContext(config, camelContext);
         return config;
     }
-
 }

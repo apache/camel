@@ -28,10 +28,10 @@ import org.apache.camel.spi.annotations.Component;
 public final class DebeziumOracleComponent extends DebeziumComponent<OracleConnectorEmbeddedDebeziumConfiguration> {
 
     @Metadata
-    private OracleConnectorEmbeddedDebeziumConfiguration configuration = new OracleConnectorEmbeddedDebeziumConfiguration();
+    private OracleConnectorEmbeddedDebeziumConfiguration configuration =
+            new OracleConnectorEmbeddedDebeziumConfiguration();
 
-    public DebeziumOracleComponent() {
-    }
+    public DebeziumOracleComponent() {}
 
     public DebeziumOracleComponent(final CamelContext context) {
         super(context);

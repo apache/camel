@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
 
 import java.io.BufferedInputStream;
@@ -216,6 +217,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
          * Indicator whether the file input stream caches are closed on completion of the exchanges.
          */
         private final boolean closedOnCompletion;
+
         private final Lock lock = new ReentrantLock();
         private final AtomicInteger exchangeCounter = new AtomicInteger();
         private File tempFile;
@@ -261,7 +263,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     public void onDone(Exchange exchange) {
                         int actualExchanges = exchangeCounter.decrementAndGet();
                         if (actualExchanges == 0) {
-                            // only one exchange (one thread) left, therefore we must not synchronize the following lines of code
+                            // only one exchange (one thread) left, therefore we must not synchronize the following
+                            // lines of code
                             try {
                                 closeFileInputStreams();
                                 if (outputStream != null) {
@@ -273,8 +276,10 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                             try {
                                 cleanUpTempFile();
                             } catch (Exception e) {
-                                LOG.warn("Error deleting temporary cache file: {}. This exception will be ignored.",
-                                        tempFile, e);
+                                LOG.warn(
+                                        "Error deleting temporary cache file: {}. This exception will be ignored.",
+                                        tempFile,
+                                        e);
                             }
                         }
                     }
@@ -284,16 +289,21 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                         return "OnCompletion[CachedOutputStream]";
                     }
                 };
-                UnitOfWork streamCacheUnitOfWork
-                        = exchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
+                UnitOfWork streamCacheUnitOfWork =
+                        exchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
                 if (streamCacheUnitOfWork != null && streamCacheUnitOfWork.getRoute() != null) {
-                    // The stream cache must sometimes not be closed when the exchange is deleted. This is for example the
-                    // case in the splitter and multi-cast case with AggregationStrategy where the result of the sub-routes
-                    // are aggregated later in the main route. Here, the cached streams of the sub-routes must be closed with
+                    // The stream cache must sometimes not be closed when the exchange is deleted. This is for example
+                    // the
+                    // case in the splitter and multi-cast case with AggregationStrategy where the result of the
+                    // sub-routes
+                    // are aggregated later in the main route. Here, the cached streams of the sub-routes must be closed
+                    // with
                     // the Unit of Work of the main route.
-                    // streamCacheUnitOfWork.getRoute() != null means that the unit of work is still active and the done method
+                    // streamCacheUnitOfWork.getRoute() != null means that the unit of work is still active and the done
+                    // method
                     // was not yet called: It can happen that streamCacheUnitOfWork.getRoute() == null in the split or
-                    // multi-cast case when there is a timeout on the main route and an exchange of the sub-route is added after
+                    // multi-cast case when there is a timeout on the main route and an exchange of the sub-route is
+                    // added after
                     // the timeout. This we have to avoid because the stream cache would never be closed then.
                     streamCacheUnitOfWork.addSynchronization(onCompletion);
                 } else {
@@ -310,13 +320,16 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             }
             if (closedOnCompletion && exchangeCounter.get() == 0) {
                 // exchange was already stopped -> in this case the tempFile would never be deleted.
-                // This can happen when in the splitter or Multi-cast case with parallel processing, the CachedOutputStream is created when the main unit of work
-                // is still active, but has a timeout and after the timeout which stops the unit of work the FileOutputStream is created.
-                // We only can throw here an Exception and inform the user that the processing took longer than the set timeout.
-                String error
-                        = "Cannot create a FileOutputStream for Stream Caching, because this FileOutputStream would never be removed from the file system."
-                          + " This situation can happen with a Splitter or Multi Cast in parallel processing if there is a timeout set on the Splitter or Multi Cast, "
-                          + " and the processing in a sub-branch takes longer than the timeout. Consider to increase the timeout.";
+                // This can happen when in the splitter or Multi-cast case with parallel processing, the
+                // CachedOutputStream is created when the main unit of work
+                // is still active, but has a timeout and after the timeout which stops the unit of work the
+                // FileOutputStream is created.
+                // We only can throw here an Exception and inform the user that the processing took longer than the set
+                // timeout.
+                String error =
+                        "Cannot create a FileOutputStream for Stream Caching, because this FileOutputStream would never be removed from the file system."
+                                + " This situation can happen with a Splitter or Multi Cast in parallel processing if there is a timeout set on the Splitter or Multi Cast, "
+                                + " and the processing in a sub-branch takes longer than the timeout. Consider to increase the timeout.";
                 LOG.error(error);
                 throw new IOException(error);
             }
@@ -382,7 +395,5 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         CipherPair getCiphers() {
             return ciphers;
         }
-
     }
-
 }

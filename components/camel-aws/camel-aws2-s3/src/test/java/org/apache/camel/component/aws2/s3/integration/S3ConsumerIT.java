@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -69,17 +70,15 @@ public class S3ConsumerIT extends Aws2S3Base {
             }
         });
 
-        Awaitility.await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         // in-progress should remove keys when complete
         AWS2S3Endpoint s3 = (AWS2S3Endpoint) context.getRoute("s3consumer").getEndpoint();
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    Assertions.assertFalse(s3.getInProgressRepository().contains("test.txt"));
-                    Assertions.assertFalse(s3.getInProgressRepository().contains("test1.txt"));
-                    Assertions.assertFalse(s3.getInProgressRepository().contains("test2.txt"));
-                });
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            Assertions.assertFalse(s3.getInProgressRepository().contains("test.txt"));
+            Assertions.assertFalse(s3.getInProgressRepository().contains("test1.txt"));
+            Assertions.assertFalse(s3.getInProgressRepository().contains("test2.txt"));
+        });
     }
 
     @Override
@@ -92,18 +91,19 @@ public class S3ConsumerIT extends Aws2S3Base {
                 from("direct:putObject").startupOrder(1).to(awsEndpoint);
 
                 from("aws2-s3://" + name.get()
-                     + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
+                                + "?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=true&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
                         .routeId("s3consumer")
-                        .startupOrder(2).log("${body}")
+                        .startupOrder(2)
+                        .log("${body}")
                         .process(e -> {
                             String key = e.getMessage().getHeader(AWS2S3Constants.KEY, String.class);
                             log.info("Processing S3Object: {}", key);
                             // should be in-progress
-                            AWS2S3Endpoint s3 = (AWS2S3Endpoint) context.getRoute("s3consumer").getEndpoint();
+                            AWS2S3Endpoint s3 = (AWS2S3Endpoint)
+                                    context.getRoute("s3consumer").getEndpoint();
                             Assertions.assertTrue(s3.getInProgressRepository().contains(key));
                         })
                         .to("mock:result");
-
             }
         };
     }

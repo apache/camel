@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestPathPlaceholderTest extends ContextTestSupport {
 
@@ -63,7 +64,6 @@ public class FromRestPathPlaceholderTest extends ContextTestSupport {
                 rest("/say/{{mypath}}").get().to("direct:hello");
 
                 from("direct:hello").log("Hello");
-
             }
         };
     }

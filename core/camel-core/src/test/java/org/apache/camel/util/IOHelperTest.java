@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,8 +35,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class IOHelperTest {
 
@@ -115,7 +116,6 @@ public class IOHelperTest {
         exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
         exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
         assertEquals("iso-8859-1", ExchangeHelper.getCharsetName(exchange, false));
-
     }
 
     @Test
@@ -142,5 +142,4 @@ public class IOHelperTest {
         cs = ExchangeHelper.getCharset(exchange, false);
         assertEquals("ISO-8859-1", cs.name());
     }
-
 }

@@ -20,6 +20,4 @@ package org.apache.camel.test.infra.couchbase.services;
 import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
-public interface CouchbaseService extends CouchbaseInfraService, TestService, ContainerTestService {
-
-}
+public interface CouchbaseService extends CouchbaseInfraService, TestService, ContainerTestService {}

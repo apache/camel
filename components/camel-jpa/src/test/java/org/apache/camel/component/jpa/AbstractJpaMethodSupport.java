@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AbstractJpaMethodSupport extends CamelTestSupport {
 
@@ -56,7 +57,9 @@ public class AbstractJpaMethodSupport extends CamelTestSupport {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 entityManager.joinTransaction();
-                entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
+                entityManager
+                        .createQuery("delete from " + Customer.class.getName())
+                        .executeUpdate();
                 return null;
             }
         });
@@ -77,7 +80,8 @@ public class AbstractJpaMethodSupport extends CamelTestSupport {
     }
 
     protected void assertEntitiesInDatabase(int count, String entity) {
-        List<?> results = entityManager.createQuery("select o from " + entity + " o").getResultList();
+        List<?> results =
+                entityManager.createQuery("select o from " + entity + " o").getResultList();
         assertEquals(count, results.size());
     }
 

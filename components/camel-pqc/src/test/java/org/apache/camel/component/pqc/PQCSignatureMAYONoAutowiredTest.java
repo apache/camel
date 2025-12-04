@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -30,8 +33,6 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignatureMAYONoAutowiredTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -43,15 +44,16 @@ public class PQCSignatureMAYONoAutowiredTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureMAYONoAutowiredTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignatureMAYONoAutowiredTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign&signatureAlgorithm=MAYO").to("mock:sign")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign&signatureAlgorithm=MAYO")
+                        .to("mock:sign")
                         .to("pqc:verify?operation=verify&signatureAlgorithm=MAYO")
                         .to("mock:verify");
             }

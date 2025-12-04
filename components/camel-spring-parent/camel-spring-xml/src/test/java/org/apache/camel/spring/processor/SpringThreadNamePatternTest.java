@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -35,7 +36,9 @@ public class SpringThreadNamePatternTest extends SpringTestSupport {
 
     @Test
     public void testThreadNamePattern() throws Exception {
-        assertEquals("Riding the thread #counter#", context.getExecutorServiceManager().getThreadNamePattern());
+        assertEquals(
+                "Riding the thread #counter#",
+                context.getExecutorServiceManager().getThreadNamePattern());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

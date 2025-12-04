@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.doc;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
@@ -24,10 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class EipDocumentationTest extends CamelTestSupport {
@@ -63,8 +64,9 @@ public class EipDocumentationTest extends CamelTestSupport {
             // there should be javadoc included
             assertTrue(json.contains("If enabled then processing each splitted messages occurs concurrently."));
             // and it support outputs
-            assertTrue(json.contains(
-                    "\"outputs\": { \"kind\": \"element\", \"displayName\": \"Outputs\", \"required\": true, \"type\": \"array\", \"javaType\""));
+            assertTrue(
+                    json.contains(
+                            "\"outputs\": { \"kind\": \"element\", \"displayName\": \"Outputs\", \"required\": true, \"type\": \"array\", \"javaType\""));
         }
     }
 
@@ -90,7 +92,7 @@ public class EipDocumentationTest extends CamelTestSupport {
             assertTrue(json.contains("\"name\": \"failover\""));
             assertTrue(json.contains(
                     "\"exception\": { \"kind\": \"element\", \"displayName\": \"Exception\", \"required\": false, \"type\": \"array\""
-                                     + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": false"));
+                            + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": false"));
         }
     }
 

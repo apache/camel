@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +31,6 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RuntimeCamelCatalogTest {
 
@@ -117,7 +118,8 @@ public class RuntimeCamelCatalogTest {
         map.put("showExchangePattern", "false");
         map.put("style", "Tab");
 
-        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
+        assertEquals(
+                "log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
                 catalog.asEndpointUri("log", map, false));
     }
 
@@ -146,8 +148,7 @@ public class RuntimeCamelCatalogTest {
                 "timer:foo?period=RAW(5000)",
                 catalog.asEndpointUri("timer", mapOf("timerName", "foo", "period", "5000"), false));
         assertEquals(
-                "timer:defaultName?period=RAW(5000)",
-                catalog.asEndpointUri("timer", mapOf("period", "5000"), false));
+                "timer:defaultName?period=RAW(5000)", catalog.asEndpointUri("timer", mapOf("period", "5000"), false));
     }
 
     @Test
@@ -182,5 +183,4 @@ public class RuntimeCamelCatalogTest {
         assertEquals("foo", map.get("name"));
         assertEquals("true", map.get("blockWhenFull"));
     }
-
 }

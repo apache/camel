@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
 
 import org.apache.camel.StaticService;
@@ -27,5 +28,4 @@ public interface RepositoryResolver extends StaticService {
      * @return         url of the maven repository
      */
     String resolveRepository(String idOrUrl);
-
 }

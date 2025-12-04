@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +26,8 @@ public final class Knative {
     public static final String MIME_STRUCTURED_CONTENT_MODE = "application/cloudevents+json";
     public static final String MIME_BATCH_CONTENT_MODE = "application/cloudevents-batch+json";
 
-    public static final String KNATIVE_TRANSPORT_RESOURCE_PATH = "META-INF/services/org/apache/camel/knative/transport/";
+    public static final String KNATIVE_TRANSPORT_RESOURCE_PATH =
+            "META-INF/services/org/apache/camel/knative/transport/";
 
     public static final String KNATIVE_FILTER_PREFIX = "filter.";
     public static final String KNATIVE_CE_OVERRIDE_PREFIX = "ce.override.";
@@ -42,8 +44,7 @@ public final class Knative {
     public static final String KNATIVE_OBJECT_KIND = "knative.kind";
     public static final String KNATIVE_OBJECT_NAME = "knative.name";
 
-    private Knative() {
-    }
+    private Knative() {}
 
     public enum EndpointKind {
         source,

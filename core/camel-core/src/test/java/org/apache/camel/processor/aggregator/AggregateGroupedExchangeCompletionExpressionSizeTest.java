@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.apache.camel.builder.AggregationStrategies.groupedExchange;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.AggregationStrategies.groupedExchange;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -47,8 +48,12 @@ public class AggregateGroupedExchangeCompletionExpressionSizeTest extends Contex
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").aggregate(constant(true)).completionSize(header("size")).eagerCheckCompletion()
-                        .aggregationStrategy(groupedExchange()).to("mock:result");
+                from("direct:start")
+                        .aggregate(constant(true))
+                        .completionSize(header("size"))
+                        .eagerCheckCompletion()
+                        .aggregationStrategy(groupedExchange())
+                        .to("mock:result");
             }
         };
     }

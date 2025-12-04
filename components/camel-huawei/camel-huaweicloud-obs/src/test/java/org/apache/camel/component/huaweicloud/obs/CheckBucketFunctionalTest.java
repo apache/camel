@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CheckBucketFunctionalTest extends CamelTestSupport {
 
@@ -38,12 +39,11 @@ public class CheckBucketFunctionalTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:check_bucket")
-                        .to("hwcloud-obs:checkBucketExists?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&bucketName=" + BUCKET_NAME +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-obs:checkBucketExists?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&bucketName="
+                                + BUCKET_NAME + "&ignoreSslVerification=true")
                         .log("Check bucket exists successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:check_bucket_result");

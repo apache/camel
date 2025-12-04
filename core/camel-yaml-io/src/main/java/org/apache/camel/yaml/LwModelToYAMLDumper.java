@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -51,8 +54,6 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.yaml.out.ModelWriter;
 
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
-
 /**
  * Lightweight {@link org.apache.camel.spi.ModelToYAMLDumper} based on the generated {@link ModelWriter}.
  */
@@ -66,8 +67,12 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
     @Override
     public String dumpModelAsYaml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders,
-            boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
+            CamelContext context,
+            NamedNode definition,
+            boolean resolvePlaceholders,
+            boolean uriAsParameters,
+            boolean generatedIds,
+            boolean sourceLocation)
             throws Exception {
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
@@ -98,8 +103,10 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 }
                 // write location information
                 if (sourceLocation || context.isDebugging()) {
-                    String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
-                    int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
+                    String loc =
+                            (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
+                    int line =
+                            (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
                     if (line != -1) {
                         writer.addAttribute("sourceLineNumber", Integer.toString(line));
                         writer.addAttribute("sourceLocation", loc);
@@ -243,7 +250,8 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
      * @param route     the route
      * @param locations the map of source locations for EIPs in the route
      */
-    private static void extractSourceLocations(RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
+    private static void extractSourceLocations(
+            RouteDefinition route, Map<String, KeyValueHolder<Integer, String>> locations) {
         // input
         String id = route.getRouteId();
         String loc = route.getInput().getLocation();
@@ -447,5 +455,4 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             }
         }
     }
-
 }

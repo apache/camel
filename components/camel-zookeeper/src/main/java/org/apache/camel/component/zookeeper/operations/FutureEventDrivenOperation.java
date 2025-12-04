@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
+
+import static java.lang.String.format;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -26,8 +29,6 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooKeeper;
-
-import static java.lang.String.format;
 
 /**
  * <code>FutureEventDrivenOperation</code> uses ZooKeepers {@link Watcher} mechanism to await specific ZooKeeper events.
@@ -64,8 +65,9 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
 
         if (LOG.isTraceEnabled() && waitForAnyWatchedType.getCount() > 0) {
 
-            LOG.trace(String.format("Received event of type %s did not match any watched types %s", received,
-                    Arrays.toString(awaitedTypes)));
+            LOG.trace(String.format(
+                    "Received event of type %s did not match any watched types %s",
+                    received, Arrays.toString(awaitedTypes)));
         }
     }
 
@@ -101,5 +103,4 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
     public EventType[] getWatchedForTypes() {
         return awaitedTypes;
     }
-
 }

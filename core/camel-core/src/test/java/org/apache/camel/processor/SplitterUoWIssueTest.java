@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,8 +51,11 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&delete=true&sortBy=file:name"))
-                        .split(body().tokenize(",")).to("seda:queue").end()
-                        .log("End of file ${file:name}").to("mock:result");
+                        .split(body().tokenize(","))
+                        .to("seda:queue")
+                        .end()
+                        .log("End of file ${file:name}")
+                        .to("mock:result");
 
                 from("seda:queue").log("Token: ${body}").to("mock:foo");
             }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.util.FileUtil.normalizePath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -22,15 +27,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.util.FileUtil.normalizePath;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringStreamCachingStrategyTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringStreamCachingStrategyTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringStreamCachingStrategyTest.xml");
     }
 
     @Test
@@ -38,14 +40,29 @@ public class SpringStreamCachingStrategyTest extends SpringTestSupport {
         context.getStreamCachingStrategy().start();
 
         assertTrue(context.getStreamCachingStrategy().isEnabled());
-        assertEquals(normalizePath("target/cachedir"),
-                normalizePath(context.getStreamCachingStrategy().getSpoolDirectory().toString()));
-        assertEquals(Integer.valueOf(IOHelper.DEFAULT_BUFFER_SIZE).intValue(),
+        assertEquals(
+                normalizePath("target/cachedir"),
+                normalizePath(
+                        context.getStreamCachingStrategy().getSpoolDirectory().toString()));
+        assertEquals(
+                Integer.valueOf(IOHelper.DEFAULT_BUFFER_SIZE).intValue(),
                 context.getStreamCachingStrategy().getBufferSize());
-        assertEquals(Long.valueOf(8192).longValue(), context.getStreamCachingStrategy().getSpoolThreshold());
-        assertEquals("java.io.ByteArrayInputStream",
-                context.getStreamCachingStrategy().getAllowClasses().iterator().next().getName());
-        assertEquals("java.io.Reader", context.getStreamCachingStrategy().getDenyClasses().iterator().next().getName());
+        assertEquals(
+                Long.valueOf(8192).longValue(),
+                context.getStreamCachingStrategy().getSpoolThreshold());
+        assertEquals(
+                "java.io.ByteArrayInputStream",
+                context.getStreamCachingStrategy()
+                        .getAllowClasses()
+                        .iterator()
+                        .next()
+                        .getName());
+        assertEquals(
+                "java.io.Reader",
+                context.getStreamCachingStrategy()
+                        .getDenyClasses()
+                        .iterator()
+                        .next()
+                        .getName());
     }
-
 }

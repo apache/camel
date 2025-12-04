@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -74,14 +75,17 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
                         // try to redeliver at most 3 times
                         .maximumRedeliveries(3)
                         // setting delay to zero is just to make unit testing faster
-                        .redeliveryDelay(0).onRedelivery(new MyIORedeliverProcessor());
+                        .redeliveryDelay(0)
+                        .onRedelivery(new MyIORedeliverProcessor());
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
                 // we configure our Dead Letter Channel to invoke
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5).onRedelivery(new MyRedeliverProcessor())
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(5)
+                        .onRedelivery(new MyRedeliverProcessor())
                         // setting delay to zero is just to make unit testing faster
                         .redeliveryDelay(0L));
                 // END SNIPPET: e2
@@ -138,7 +142,6 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
             if (++counter <= 3) {
                 throw new IllegalArgumentException("Forced by unit test");
             }
-
         }
     }
 
@@ -150,8 +153,6 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
             if (++counter <= 3) {
                 throw new IOException("Cannot connect");
             }
-
         }
     }
-
 }

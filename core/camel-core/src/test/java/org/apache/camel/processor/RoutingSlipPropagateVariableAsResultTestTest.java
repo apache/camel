@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,21 +40,13 @@ public class RoutingSlipPropagateVariableAsResultTestTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routingSlip(header("slip"))
-                        .to("mock:result");
+                from("direct:start").routingSlip(header("slip")).to("mock:result");
 
-                from("direct:slip1")
-                        .transform(body().append("B"))
-                        .setVariable("foo1", simple("${body}"));
+                from("direct:slip1").transform(body().append("B")).setVariable("foo1", simple("${body}"));
 
-                from("direct:slip2")
-                        .transform(body().append("C"))
-                        .setVariable("foo2", simple("${body}"));
+                from("direct:slip2").transform(body().append("C")).setVariable("foo2", simple("${body}"));
 
-                from("direct:slip3")
-                        .transform(body().append("D"))
-                        .setVariable("foo3", simple("${body}"));
+                from("direct:slip3").transform(body().append("D")).setVariable("foo3", simple("${body}"));
             }
         };
     }

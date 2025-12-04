@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +26,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.awaitility.Awaitility.await;
 
 /**
  *
@@ -35,8 +36,7 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/mina/SpringMultipleUDPTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/mina/SpringMultipleUDPTest-context.xml");
     }
 
     @Test
@@ -49,7 +49,6 @@ public class MinaSpringMultipleUDPTest extends CamelSpringTestSupport {
         }
 
         // Sleep for awhile to let the messages go through.
-        await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 }

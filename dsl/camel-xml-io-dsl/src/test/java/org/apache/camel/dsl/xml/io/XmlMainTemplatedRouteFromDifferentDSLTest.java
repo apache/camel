@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.Main;
 import org.apache.camel.model.ModelCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class XmlMainTemplatedRouteFromDifferentDSLTest {
 
@@ -45,7 +46,9 @@ class XmlMainTemplatedRouteFromDifferentDSLTest {
 
         CamelContext context = main.getCamelContext();
         assertEquals(1, ((ModelCamelContext) context).getRouteDefinitions().size());
-        assertEquals("my-route", ((ModelCamelContext) context).getRouteDefinitions().get(0).getId());
+        assertEquals(
+                "my-route",
+                ((ModelCamelContext) context).getRouteDefinitions().get(0).getId());
 
         MockEndpoint mock = context.getEndpoint("mock:barVal", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello Camel");

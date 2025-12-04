@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,20 +31,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerInVariablesTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -57,7 +57,10 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        fluentTemplate.to("direct:query").withBody("Hi there!").withVariable("names", new String[] { "Camel", "AMQ" })
+        fluentTemplate
+                .to("direct:query")
+                .withBody("Hi there!")
+                .withVariable("names", new String[] {"Camel", "AMQ"})
                 .request();
 
         MockEndpoint.assertIsSatisfied(context);
@@ -79,7 +82,11 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
         names.add("Camel");
         names.add("AMQ");
 
-        fluentTemplate.to("direct:query").withBody("Hi there!").withVariable("names", names).request();
+        fluentTemplate
+                .to("direct:query")
+                .withBody("Hi there!")
+                .withVariable("names", names)
+                .request();
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -96,7 +103,11 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        fluentTemplate.to("direct:query").withBody("Hi there!").withVariable("names", "Camel,AMQ").request();
+        fluentTemplate
+                .to("direct:query")
+                .withBody("Hi there!")
+                .withVariable("names", "Camel,AMQ")
+                .request();
 
         MockEndpoint.assertIsSatisfied(context);
 

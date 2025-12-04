@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
 
 import java.net.URI;
@@ -50,27 +51,29 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     // we want to be able to configure these following options
     @Metadata
     private String coordinatorUrl;
+
     @Metadata
     private String coordinatorContextPath = LRAConstants.DEFAULT_COORDINATOR_CONTEXT_PATH;
+
     @Metadata
     private String localParticipantUrl;
+
     @Metadata
     private String localParticipantContextPath = LRAConstants.DEFAULT_LOCAL_PARTICIPANT_CONTEXT_PATH;
 
-    public LRASagaService() {
-    }
+    public LRASagaService() {}
 
     @Override
     public CompletableFuture<CamelSagaCoordinator> newSaga(Exchange exchange) {
-        return client.newLRA(exchange)
-                .thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
+        return client.newLRA(exchange).thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
     }
 
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
         CompletableFuture<CamelSagaCoordinator> coordinator;
         try {
-            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, URI.create(id).toURL()));
+            coordinator = CompletableFuture.completedFuture(
+                    new LRASagaCoordinator(this, URI.create(id).toURL()));
         } catch (Exception ex) {
             coordinator = CompletableFuture.failedFuture(ex);
         }
@@ -87,8 +90,8 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     @Override
     protected void doStart() throws Exception {
         if (this.executorService == null) {
-            this.executorService = camelContext.getExecutorServiceManager()
-                    .newDefaultScheduledThreadPool(this, "saga-lra");
+            this.executorService =
+                    camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this, "saga-lra");
         }
         if (this.client == null) {
             this.client = createLRAClient();

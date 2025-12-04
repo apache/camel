@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +29,6 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
 
@@ -88,7 +89,8 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
      * @param  previous the previous slip
      * @return          endpoints to go, or <tt>null</tt> to indicate the end
      */
-    public String slip(String body, @Headers Map<String, Object> headers, @Header(Exchange.SLIP_ENDPOINT) String previous) {
+    public String slip(
+            String body, @Headers Map<String, Object> headers, @Header(Exchange.SLIP_ENDPOINT) String previous) {
         bodies.add(body);
         if (previous != null) {
             previouses.add(previous);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import java.util.EnumMap;
@@ -138,10 +139,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
             if (value == null) {
                 continue;
             }
-            if (value instanceof Byte
-                    || value instanceof Short
-                    || value instanceof Integer
-                    || value instanceof Long) {
+            if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
                 attributesBuilder.put(key, ((Number) value).longValue());
             } else if (value instanceof Float || value instanceof Double) {
                 attributesBuilder.put(key, ((Number) value).doubleValue());

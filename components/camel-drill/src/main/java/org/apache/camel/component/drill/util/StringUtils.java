@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.drill.util;
 
 public final class StringUtils {
 
-    private StringUtils() {
-    }
+    private StringUtils() {}
 
     public static boolean isBlank(String str) {
         int strLen;
@@ -39,5 +39,4 @@ public final class StringUtils {
     public static boolean isNotBlank(String str) {
         return !isBlank(str);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,9 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
@@ -59,8 +60,8 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     @Override
     protected void doPostSetup() {
         this.gateway = getGateway();
-        this.customer = gateway.customer().create(
-                new CustomerRequest()
+        this.customer = gateway.customer()
+                .create(new CustomerRequest()
                         .firstName("user")
                         .lastName(UUID.randomUUID().toString()))
                 .getTarget();
@@ -92,8 +93,9 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
     }
 
     private PaymentMethod createPaymentMethod() {
-        Result<? extends PaymentMethod> result = this.gateway.paymentMethod().create(
-                new PaymentMethodRequest()
+        Result<? extends PaymentMethod> result = this.gateway
+                .paymentMethod()
+                .create(new PaymentMethodRequest()
                         .customerId(this.customer.getId())
                         .paymentMethodNonce("fake-valid-payroll-nonce"));
 
@@ -114,7 +116,8 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
         assertNotNull(this.gateway, "BraintreeGateway can't be null");
         assertNotNull(this.customer, "Customer can't be null");
 
-        final Result<PaymentMethod> result = requestBody("direct://CREATE",
+        final Result<PaymentMethod> result = requestBody(
+                "direct://CREATE",
                 new PaymentMethodRequest()
                         .customerId(this.customer.getId())
                         .paymentMethodNonce("fake-valid-payroll-nonce"),
@@ -133,8 +136,8 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
         assertNotNull(this.customer, "Customer can't be null");
 
         final PaymentMethod paymentMethod = createPaymentMethod();
-        final Result<PaymentMethod> deleteResult = requestBody(
-                "direct://DELETE", paymentMethod.getToken(), Result.class);
+        final Result<PaymentMethod> deleteResult =
+                requestBody("direct://DELETE", paymentMethod.getToken(), Result.class);
 
         assertNotNull(deleteResult, "create result");
         assertTrue(deleteResult.isSuccess());
@@ -150,8 +153,7 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
         final PaymentMethod paymentMethod = createPaymentMethod();
         this.paymentMethodsTokens.add(paymentMethod.getToken());
 
-        final PaymentMethod method = requestBody(
-                "direct://FIND", paymentMethod.getToken(), PaymentMethod.class);
+        final PaymentMethod method = requestBody("direct://FIND", paymentMethod.getToken(), PaymentMethod.class);
 
         assertNotNull(method, "find result");
         LOG.info("PaymentMethod found - token={}", method.getToken());
@@ -166,14 +168,17 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
         this.paymentMethodsTokens.add(paymentMethod.getToken());
 
         final Result<PaymentMethod> result = requestBodyAndHeaders(
-                "direct://UPDATE", null,
+                "direct://UPDATE",
+                null,
                 new BraintreeHeaderBuilder()
                         .add("token", paymentMethod.getToken())
-                        .add("request", new PaymentMethodRequest()
-                                .billingAddress()
-                                .company("Apache")
-                                .streetAddress("100 Maple Lane")
-                                .done())
+                        .add(
+                                "request",
+                                new PaymentMethodRequest()
+                                        .billingAddress()
+                                        .company("Apache")
+                                        .streetAddress("100 Maple Lane")
+                                        .done())
                         .build(),
                 Result.class);
 
@@ -192,17 +197,13 @@ public class PaymentMethodGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create
-                from("direct://CREATE")
-                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                from("direct://CREATE").to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for delete
-                from("direct://DELETE")
-                        .to("braintree://" + PATH_PREFIX + "/delete?inBody=token");
+                from("direct://DELETE").to("braintree://" + PATH_PREFIX + "/delete?inBody=token");
                 // test route for find
-                from("direct://FIND")
-                        .to("braintree://" + PATH_PREFIX + "/find?inBody=token");
+                from("direct://FIND").to("braintree://" + PATH_PREFIX + "/find?inBody=token");
                 // test route for update
-                from("direct://UPDATE")
-                        .to("braintree://" + PATH_PREFIX + "/update");
+                from("direct://UPDATE").to("braintree://" + PATH_PREFIX + "/update");
             }
         };
     }

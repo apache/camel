@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.base;
 
 import java.util.Map;
@@ -32,11 +33,16 @@ public class HttpOperationFailedException extends CamelException implements Http
     private final Map<String, String> responseHeaders;
     private final String responseBody;
 
-    public HttpOperationFailedException(String uri, int statusCode, String statusText, String location,
-                                        Map<String, String> responseHeaders, String responseBody) {
+    public HttpOperationFailedException(
+            String uri,
+            int statusCode,
+            String statusText,
+            String location,
+            Map<String, String> responseHeaders,
+            String responseBody) {
         // sanitize uri so we do not show sensitive information such as passwords
         super("HTTP operation failed invoking " + URISupport.sanitizeUri(uri) + " with statusCode: " + statusCode
-              + (location != null ? ", redirectLocation: " + location : ""));
+                + (location != null ? ", redirectLocation: " + location : ""));
         this.uri = URISupport.sanitizeUri(uri);
         this.statusCode = statusCode;
         this.statusText = statusText;

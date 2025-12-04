@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.Set;
@@ -22,8 +23,7 @@ import org.infinispan.notifications.Listener;
 import org.infinispan.notifications.cachelistener.event.Event;
 
 public final class InfinispanEmbeddedEventListeners {
-    private InfinispanEmbeddedEventListeners() {
-    }
+    private InfinispanEmbeddedEventListeners() {}
 
     // ******************************************
     //

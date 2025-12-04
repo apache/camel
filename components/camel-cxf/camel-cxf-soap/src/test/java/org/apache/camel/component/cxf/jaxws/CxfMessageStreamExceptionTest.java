@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.Exchange;
@@ -29,15 +30,18 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: onException
-                from("direct:start").onException(SoapFault.class).maximumRedeliveries(0).handled(true)
+                from("direct:start")
+                        .onException(SoapFault.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                SoapFault fault = exchange
-                                        .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
+                                SoapFault fault = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
                                 exchange.getMessage().setBody(fault);
                             }
-
-                        }).end().to(serviceURI);
+                        })
+                        .end()
+                        .to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: MessageStreamFault
                 from(routerEndpointURI).process(new Processor() {
@@ -49,7 +53,6 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                         // Set the response code here
                         out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, Integer.valueOf(500));
                     }
-
                 });
                 // END SNIPPET: MessageStreamFault
             }

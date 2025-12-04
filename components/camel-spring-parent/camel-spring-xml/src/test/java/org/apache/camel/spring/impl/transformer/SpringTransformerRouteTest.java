@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.impl.transformer;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.transformer.TransformerRouteTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A TransformerTest demonstrates contract based declarative transformation via Spring DSL.
@@ -31,7 +32,8 @@ public class SpringTransformerRouteTest extends TransformerRouteTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/impl/transformer/SpringTransformerRouteTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/impl/transformer/SpringTransformerRouteTest.xml");
     }
 
     public static class MyXmlProcessor implements Processor {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTemplateTest extends CamelTestSupport {
 
@@ -36,8 +37,11 @@ public class StringTemplateTest extends CamelTestSupport {
             exchange.setProperty("item", "7");
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getMessage().getBody());
-        assertEquals("org/apache/camel/component/stringtemplate/template.tm",
+        assertEquals(
+                "Dear Christian. You ordered item 7 on Monday.",
+                response.getMessage().getBody());
+        assertEquals(
+                "org/apache/camel/component/stringtemplate/template.tm",
                 response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
         assertEquals("Christian", response.getMessage().getHeader("name"));
     }
@@ -57,7 +61,9 @@ public class StringTemplateTest extends CamelTestSupport {
             exchange1.setProperty("item", "7");
         });
 
-        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals(
+                "Dear Willem. You ordered item 7 on Monday.",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -66,8 +72,9 @@ public class StringTemplateTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").to(
-                        "string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true&allowContextMapAll=true");
+                from("direct:a")
+                        .to(
+                                "string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

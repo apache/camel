@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests that a Disruptor producer blocks when a message is sent while the ring buffer is full.
@@ -36,8 +37,7 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
     private static final String MOCK_URI = "mock:blockWhenFullOutput";
 
     private static final String DEFAULT_URI = "disruptor:foo?size=" + QUEUE_SIZE;
-    private static final String EXCEPTION_WHEN_FULL_URI = "disruptor:foo?blockWhenFull=false&size="
-                                                          + QUEUE_SIZE;
+    private static final String EXCEPTION_WHEN_FULL_URI = "disruptor:foo?blockWhenFull=false&size=" + QUEUE_SIZE;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -67,8 +67,8 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
         final DisruptorEndpoint disruptor = context.getEndpoint(DEFAULT_URI, DisruptorEndpoint.class);
         assertEquals(QUEUE_SIZE, disruptor.getRemainingCapacity());
 
-        assertThrows(CamelExecutionException.class,
-                () -> sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20));
+        assertThrows(
+                CamelExecutionException.class, () -> sendSoManyOverCapacity(EXCEPTION_WHEN_FULL_URI, QUEUE_SIZE, 20));
     }
 
     /**
@@ -80,5 +80,4 @@ public class DisruptorBlockWhenFullTest extends CamelTestSupport {
             template.sendBody(uri, "Message " + i);
         }
     }
-
 }

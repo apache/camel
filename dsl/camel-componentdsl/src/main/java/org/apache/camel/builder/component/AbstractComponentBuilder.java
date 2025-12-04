@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.component;
 
 import java.util.LinkedHashMap;
@@ -65,7 +66,8 @@ public abstract class AbstractComponentBuilder<C extends Component> {
     }
 
     private void configureComponentProperties(final Component component, final CamelContext context) {
-        properties.forEach((key, value) -> setPropertyOnComponent(component, key, resolvePropertyValue(value, context)));
+        properties.forEach(
+                (key, value) -> setPropertyOnComponent(component, key, resolvePropertyValue(value, context)));
     }
 
     private Object resolvePropertyValue(final Object value, final CamelContext context) {

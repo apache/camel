@@ -72,7 +72,8 @@ public class TransientResumeStrategy implements ResumeStrategy {
     }
 
     @Override
-    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack) throws Exception {
+    public void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, UpdateCallBack updateCallBack)
+            throws Exception {
         // this is NO-OP
     }
 
@@ -101,7 +102,9 @@ public class TransientResumeStrategy implements ResumeStrategy {
         // this is NO-OP
     }
 
-    public static ResumeStrategyConfigurationBuilder<ResumeStrategyConfigurationBuilder<?, ?>, ResumeStrategyConfiguration> configurationBuilder() {
+    public static ResumeStrategyConfigurationBuilder<
+                    ResumeStrategyConfigurationBuilder<?, ?>, ResumeStrategyConfiguration>
+            configurationBuilder() {
         return new ResumeStrategyConfigurationBuilder<>() {
             @Override
             public ResumeStrategyConfigurationBuilder<?, ?> withCacheFillPolicy(Cacheable.FillPolicy cacheFillPolicy) {
@@ -141,7 +144,8 @@ public class TransientResumeStrategy implements ResumeStrategy {
             }
 
             @Override
-            public Object computeIfPresent(Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
+            public Object computeIfPresent(
+                    Object key, BiFunction<? super Object, ? super Object, ? super Object> remapping) {
                 return cache.computeIfPresent(key, remapping);
             }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
 
 import org.apache.camel.spi.Metadata;
@@ -24,14 +25,20 @@ import org.apache.camel.spi.Metadata;
 public interface STS2Constants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsStsOperation";
+
     @Metadata(description = "The Amazon Resource Name (ARN) of the role to assume.", javaType = "String")
     String ROLE_ARN = "CamelAwsStsRoleArn";
+
     @Metadata(description = "An identifier for the assumed role session.", javaType = "String")
     String ROLE_SESSION_NAME = "CamelAwsStsRoleSessionName";
+
     @Metadata(description = "The name of the federated user.", javaType = "String")
     String FEDERATED_NAME = "CamelAwsStsFederatedName";
-    @Metadata(description = "The duration, in seconds, of the role session. It could go from 900 seconds, to 1 to 12 hours (dependent on administrator settings. The default if not specified is 3600 seconds.",
-              javaType = "Integer")
+
+    @Metadata(
+            description =
+                    "The duration, in seconds, of the role session. It could go from 900 seconds, to 1 to 12 hours (dependent on administrator settings. The default if not specified is 3600 seconds.",
+            javaType = "Integer")
     String ASSUME_ROLE_DURATION_SECONDS = "CamelAwsStsAssumeRoleDurationSeconds";
 
     String ACCESS_KEY_ID = "CamelAwsStsAccessKeyId";

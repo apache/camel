@@ -17,6 +17,12 @@
 
 package org.apache.camel.component.mllp;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
@@ -38,12 +44,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
 
@@ -94,20 +94,16 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         MllpComponent mllpComponent = createCamelContext().getComponent("mllp", MllpComponent.class);
 
-        defaultStrategyEndpoint = Mockito.spy(
-                (MllpEndpoint) mllpComponent.createEndpoint(
-                        String.format("mllp://%s:%d?idleTimeout=%d", mllpServer.getListenHost(), mllpServer.getListenPort(),
-                                IDLE_TIMEOUT)));
+        defaultStrategyEndpoint = Mockito.spy((MllpEndpoint) mllpComponent.createEndpoint(String.format(
+                "mllp://%s:%d?idleTimeout=%d", mllpServer.getListenHost(), mllpServer.getListenPort(), IDLE_TIMEOUT)));
 
-        resetStrategyEndpoint = Mockito.spy(
-                (MllpEndpoint) mllpComponent.createEndpoint(
-                        String.format("mllp://%s:%d?idleTimeout=%d&idleTimeoutStrategy=reset", mllpServer.getListenHost(),
-                                mllpServer.getListenPort(), IDLE_TIMEOUT)));
+        resetStrategyEndpoint = Mockito.spy((MllpEndpoint) mllpComponent.createEndpoint(String.format(
+                "mllp://%s:%d?idleTimeout=%d&idleTimeoutStrategy=reset",
+                mllpServer.getListenHost(), mllpServer.getListenPort(), IDLE_TIMEOUT)));
 
-        closeStrategyEndpoint = Mockito.spy(
-                (MllpEndpoint) mllpComponent.createEndpoint(
-                        String.format("mllp://%s:%d?idleTimeout=%d&idleTimeoutStrategy=close", mllpServer.getListenHost(),
-                                mllpServer.getListenPort(), IDLE_TIMEOUT)));
+        closeStrategyEndpoint = Mockito.spy((MllpEndpoint) mllpComponent.createEndpoint(String.format(
+                "mllp://%s:%d?idleTimeout=%d&idleTimeoutStrategy=close",
+                mllpServer.getListenHost(), mllpServer.getListenPort(), IDLE_TIMEOUT)));
 
         defaultStrategyProducer = Mockito.spy(new MllpTcpClientProducer(defaultStrategyEndpoint));
         defaultStrategyProducer.start();
@@ -115,8 +111,7 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
         defaultStrategyMllpBufferField.setAccessible(true);
         defaultStrategyMllpSocketBuffer = Mockito.spy(new MllpSocketBuffer(defaultStrategyEndpoint));
         defaultStrategyMllpBufferField.set(defaultStrategyProducer, defaultStrategyMllpSocketBuffer);
-        when(defaultStrategyEndpoint.createProducer())
-                .thenReturn(defaultStrategyProducer);
+        when(defaultStrategyEndpoint.createProducer()).thenReturn(defaultStrategyProducer);
 
         resetStrategyProducer = Mockito.spy(new MllpTcpClientProducer(resetStrategyEndpoint));
 
@@ -124,16 +119,14 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
         resetStrategyMllpBufferField.setAccessible(true);
         resetStrategyMllpSocketBuffer = Mockito.spy(new MllpSocketBuffer(resetStrategyEndpoint));
         resetStrategyMllpBufferField.set(resetStrategyProducer, resetStrategyMllpSocketBuffer);
-        when(resetStrategyEndpoint.createProducer())
-                .thenReturn(resetStrategyProducer);
+        when(resetStrategyEndpoint.createProducer()).thenReturn(resetStrategyProducer);
 
         closeStrategyProducer = Mockito.spy(new MllpTcpClientProducer(closeStrategyEndpoint));
         Field closeStrategyMllpBufferField = MllpTcpClientProducer.class.getDeclaredField("mllpBuffer");
         closeStrategyMllpBufferField.setAccessible(true);
         closeStrategyMllpSocketBuffer = Mockito.spy(new MllpSocketBuffer(closeStrategyEndpoint));
         closeStrategyMllpBufferField.set(closeStrategyProducer, closeStrategyMllpSocketBuffer);
-        when(closeStrategyEndpoint.createProducer())
-                .thenReturn(closeStrategyProducer);
+        when(closeStrategyEndpoint.createProducer()).thenReturn(closeStrategyProducer);
 
         defaultStrategyProducer.start();
         resetStrategyProducer.start();
@@ -151,7 +144,9 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
         template.sendBody(Hl7TestMessageGenerator.generateMessage());
 
         // Need to send one message to get the connection established
-        Awaitility.await().atMost(IDLE_TIMEOUT * 3, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(IDLE_TIMEOUT * 3, TimeUnit.MILLISECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS));
     }
 
@@ -188,7 +183,8 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
             }
 
             private void route(String routeId, Endpoint sourceEndpoint, Endpoint destinationEndpoint) {
-                from(sourceEndpoint).routeId(routeId)
+                from(sourceEndpoint)
+                        .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
                         .to(destinationEndpoint)
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")

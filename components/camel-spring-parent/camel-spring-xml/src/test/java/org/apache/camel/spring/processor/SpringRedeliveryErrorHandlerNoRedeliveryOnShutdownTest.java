@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.RedeliveryErrorHandlerNoRedeliveryOnShutdownTest;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
-public class SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends RedeliveryErrorHandlerNoRedeliveryOnShutdownTest {
+public class SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest
+        extends RedeliveryErrorHandlerNoRedeliveryOnShutdownTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest.xml");
     }
 }

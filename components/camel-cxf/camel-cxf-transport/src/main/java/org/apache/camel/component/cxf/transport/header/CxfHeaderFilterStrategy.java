@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport.header;
 
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-        //filter the operationName and operationName
+        // filter the operationName and operationName
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
         getOutFilter().add(CxfConstants.OPERATION_NAMESPACE.toLowerCase());
 
@@ -140,19 +141,17 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     private void addToMessageHeaderFilterMap(MessageHeaderFilter filter) {
         for (String ns : filter.getActivationNamespaces()) {
-            if (messageHeaderFiltersMap.containsKey(ns)
-                    && !allowFilterNamespaceClash) {
+            if (messageHeaderFiltersMap.containsKey(ns) && !allowFilterNamespaceClash) {
                 throw new IllegalArgumentException(
-                        "More then one MessageHeaderRelay activates "
-                                                   + "for the same namespace: " + ns);
+                        "More then one MessageHeaderRelay activates " + "for the same namespace: " + ns);
             }
             messageHeaderFiltersMap.put(ns, filter);
         }
     }
 
     private MessageHeaderFilter getMessageHeaderFilter(Exchange exchange) {
-        BindingOperationInfo boi = exchange.getProperty(BindingOperationInfo.class.getName(),
-                BindingOperationInfo.class);
+        BindingOperationInfo boi =
+                exchange.getProperty(BindingOperationInfo.class.getName(), BindingOperationInfo.class);
         String ns = null;
         if (boi != null) {
             BindingInfo b = boi.getBinding();
@@ -236,5 +235,4 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     public void setRelayAllMessageHeaders(boolean relayAllMessageHeaders) {
         this.relayAllMessageHeaders = relayAllMessageHeaders;
     }
-
 }

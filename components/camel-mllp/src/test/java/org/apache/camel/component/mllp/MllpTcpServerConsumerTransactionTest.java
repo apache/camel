@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.util.concurrent.TimeUnit;
@@ -98,8 +99,9 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
                         .log(LoggingLevel.INFO, routeId, "Test route failed")
                         .to(failure);
 
-                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
+                fromF(
+                                "mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
+                                mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route received message")
                         .to("target://test-queue?transacted=true");
@@ -109,7 +111,6 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
                         .process(exchange -> System.out.println(exchange.getIn().getBody()))
                         .log(LoggingLevel.INFO, routeId, "Test JMS Consumer received message")
                         .to(result);
-
             }
         };
     }

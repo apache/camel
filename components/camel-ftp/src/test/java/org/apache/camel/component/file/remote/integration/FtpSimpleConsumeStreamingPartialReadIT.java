@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -25,11 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpSimpleConsumeStreamingPartialReadIT extends FtpServerTestSupport {
 
@@ -66,15 +67,19 @@ public class FtpSimpleConsumeStreamingPartialReadIT extends FtpServerTestSupport
             @Override
             public void configure() {
                 from("ftp://localhost:{{ftp.server.port}}"
-                     + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
-                     + "&move=done&moveFailed=failed&stepwise=false")
-                        .routeId("foo").noAutoStartup().process(new Processor() {
+                                + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
+                                + "&move=done&moveFailed=failed&stepwise=false")
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getIn().getBody(InputStream.class).read();
                             }
-                        }).to("mock:result").process(new Processor() {
+                        })
+                        .to("mock:result")
+                        .process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {

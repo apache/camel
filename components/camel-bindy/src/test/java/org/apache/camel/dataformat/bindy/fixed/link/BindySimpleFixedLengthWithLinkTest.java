@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.link;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,10 +32,6 @@ import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test validates that header and footer records are successfully marshalled / unmarshalled in conjunction with the
@@ -47,6 +48,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
 
     @EndpointInject(URI_MOCK_UNMARSHALL_RESULT)
     private MockEndpoint unmarshallResult;
+
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
 
@@ -109,13 +111,9 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
                 bindy.setLocale("en");
                 bindy.type(BindyType.Fixed);
 
-                from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal(bindy)
-                        .to(URI_MOCK_UNMARSHALL_RESULT);
+                from(URI_DIRECT_UNMARSHALL).unmarshal(bindy).to(URI_MOCK_UNMARSHALL_RESULT);
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
             }
         };
 
@@ -158,7 +156,6 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         public void setSubRec(SubRec subRec) {
             this.subRec = subRec;
         }
-
     }
 
     @Link
@@ -175,7 +172,5 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
         public void setFieldB(String fieldB) {
             this.fieldB = fieldB;
         }
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress;
 
 import java.net.URI;
@@ -35,18 +36,27 @@ public class WordpressConfiguration {
     @UriParam(description = "The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/")
     @Metadata(required = true)
     private String url;
+
     @UriParam(description = "The Wordpress REST API version", defaultValue = WordpressConstants.API_VERSION)
     private String apiVersion = WordpressConstants.API_VERSION;
+
     @UriParam(description = "Authorized user to perform writing operations")
     private String user;
+
     @UriParam(description = "Password from authorized user")
     private String password;
-    @UriParam(description = "The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post")
+
+    @UriParam(
+            description =
+                    "The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post")
     private Integer id;
+
     @UriParam(description = "The criteria to use with complex searches.", prefix = "criteria.", multiValue = true)
     private Map<String, Object> criteria;
+
     @UriParam(description = "Whether to bypass trash and force deletion.")
     private boolean force;
+
     @UriParam(description = "Search criteria")
     private SearchCriteria searchCriteria;
 
@@ -127,5 +137,4 @@ public class WordpressConfiguration {
             throw new IllegalArgumentException("Impossible to set Wordpress API URL", e);
         }
     }
-
 }

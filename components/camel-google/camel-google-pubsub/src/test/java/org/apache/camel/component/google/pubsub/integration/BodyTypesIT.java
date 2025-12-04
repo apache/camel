@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,11 +42,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BodyTypesIT extends PubsubTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BodyTypesIT.class);
@@ -94,7 +95,7 @@ public class BodyTypesIT extends PubsubTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
 
-        byte[] body = { 1, 2, 3 };
+        byte[] body = {1, 2, 3};
 
         exchange.getIn().setBody(body);
 
@@ -122,7 +123,6 @@ public class BodyTypesIT extends PubsubTestSupport {
         assertTrue(receivedExchange.getIn().getBody() instanceof byte[], "Received body is of byte[] type");
 
         assertTrue(Arrays.equals(body, (byte[]) receivedExchange.getIn().getBody()), "Received body equals sent");
-
     }
 
     @Test
@@ -159,7 +159,6 @@ public class BodyTypesIT extends PubsubTestSupport {
         Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
 
         assertEquals("VALUE1212", ((Map) bodyReceived).get("KEY"), "Received body is a Map");
-
     }
 
     public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {

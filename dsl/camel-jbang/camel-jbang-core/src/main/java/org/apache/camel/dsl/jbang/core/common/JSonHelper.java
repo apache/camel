@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.util.StringHelper;
@@ -23,8 +24,7 @@ import org.fusesource.jansi.Ansi;
 
 public final class JSonHelper {
 
-    private JSonHelper() {
-    }
+    private JSonHelper() {}
 
     /**
      * Prints the JSon in pretty mode with no color
@@ -44,21 +44,28 @@ public final class JSonHelper {
             public String color(Yytoken.Types type, Object value) {
                 String s = value != null ? value.toString() : "null";
                 switch (type) {
-                    case COLON, COMMA, LEFT_SQUARE, RIGHT_SQUARE, LEFT_BRACE, RIGHT_BRACE ->
-                        s = Ansi.ansi().bgDefault().bold().a(s).reset().toString();
+                    case COLON, COMMA, LEFT_SQUARE, RIGHT_SQUARE, LEFT_BRACE, RIGHT_BRACE -> s =
+                            Ansi.ansi().bgDefault().bold().a(s).reset().toString();
                     case VALUE -> {
                         if (Yytoken.Types.COLON == prev) {
                             if (StringHelper.isQuoted(s)) {
-                                s = Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
+                                s = Ansi.ansi()
+                                        .fg(Ansi.Color.GREEN)
+                                        .a(s)
+                                        .reset()
+                                        .toString();
                             } else {
                                 s = Ansi.ansi().bgDefault().a(s).reset().toString();
                             }
                         } else {
-                            s = Ansi.ansi().fgBright(Ansi.Color.BLUE).a(s).reset().toString();
+                            s = Ansi.ansi()
+                                    .fgBright(Ansi.Color.BLUE)
+                                    .a(s)
+                                    .reset()
+                                    .toString();
                         }
                     }
-                    default -> {
-                    }
+                    default -> {}
                 }
                 prev = type;
                 return s;

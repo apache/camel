@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -56,8 +57,11 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
                 // with 1 second between.
                 // however if we are stopping then do not allow any redeliver
                 // attempts.
-                errorHandler(defaultErrorHandler().allowRedeliveryWhileStopping(false).maximumRedeliveries(20)
-                        .redeliveryDelay(1000).retryAttemptedLogLevel(LoggingLevel.INFO));
+                errorHandler(defaultErrorHandler()
+                        .allowRedeliveryWhileStopping(false)
+                        .maximumRedeliveries(20)
+                        .redeliveryDelay(1000)
+                        .retryAttemptedLogLevel(LoggingLevel.INFO));
 
                 from("seda:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
                 // END SNIPPET: e1

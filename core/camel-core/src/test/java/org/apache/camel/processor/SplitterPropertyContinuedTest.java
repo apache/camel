@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,10 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:error").message(0).exchangeProperty("errorCode").isEqualTo("ERR-1");
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
-        getMockEndpoint("mock:split").allMessages().exchangeProperty("errorCode").isNull();
+        getMockEndpoint("mock:split")
+                .allMessages()
+                .exchangeProperty("errorCode")
+                .isNull();
 
         template.sendBody("direct:start", "A,Kaboom,B,C");
 
@@ -46,12 +50,22 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
             public void configure() {
                 onException(Exception.class).continued(true).setProperty("errorCode", constant("ERR-1"));
 
-                from("direct:start").split(body()).log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}")
-                        .choice().when(body().contains("Kaboom"))
-                        .throwException(new IllegalArgumentException("Damn")).end()
-                        .log("Step #2 - Body: ${body} with error code: ${exchangeProperty.errorCode}").choice()
-                        .when(simple("${exchangeProperty.errorCode} != null")).to("mock:error").otherwise().to("mock:split")
-                        .end().end().to("mock:end");
+                from("direct:start")
+                        .split(body())
+                        .log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}")
+                        .choice()
+                        .when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .end()
+                        .log("Step #2 - Body: ${body} with error code: ${exchangeProperty.errorCode}")
+                        .choice()
+                        .when(simple("${exchangeProperty.errorCode} != null"))
+                        .to("mock:error")
+                        .otherwise()
+                        .to("mock:split")
+                        .end()
+                        .end()
+                        .to("mock:end");
             }
         };
     }

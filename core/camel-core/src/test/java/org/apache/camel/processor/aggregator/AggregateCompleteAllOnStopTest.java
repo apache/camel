@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +25,9 @@ import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
 
     @Test
@@ -54,14 +56,17 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start").routeId("foo")
+                from("seda:start")
+                        .routeId("foo")
                         .to("mock:input")
                         .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .aggregationRepository(new MemoryAggregationRepository())
-                        .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10)
+                        .completionSize(2)
+                        .completionTimeout(100)
+                        .completeAllOnStop()
+                        .completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };
     }
-
 }

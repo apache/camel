@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870.server;
 
 import java.util.concurrent.CompletableFuture;
@@ -99,7 +100,8 @@ public class ServerConsumer extends DefaultConsumer {
 
         message.setBody(request);
 
-        message.setHeader(Constants.ADDRESS, ObjectAddress.valueOf(request.getHeader().getAsduAddress(), request.getAddress()));
+        message.setHeader(
+                Constants.ADDRESS, ObjectAddress.valueOf(request.getHeader().getAsduAddress(), request.getAddress()));
         message.setHeader(Constants.VALUE, request.getValue());
         message.setHeader(Constants.INFORMATION_OBJECT_ADDRESS, request.getAddress());
         message.setHeader(Constants.ASDU_HEADER, request.getHeader());

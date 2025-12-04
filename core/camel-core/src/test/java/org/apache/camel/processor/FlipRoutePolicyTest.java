@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,7 +24,8 @@ import org.apache.camel.spi.RoutePolicy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-@Isolated("This test has a rather strict dependency on timing and threads under the hood, therefore run in isolated mode to reduce flakiness")
+@Isolated(
+        "This test has a rather strict dependency on timing and threads under the hood, therefore run in isolated mode to reduce flakiness")
 public class FlipRoutePolicyTest extends ContextTestSupport {
 
     @Test
@@ -46,13 +48,24 @@ public class FlipRoutePolicyTest extends ContextTestSupport {
                 RoutePolicy policy = new FlipRoutePolicy("foo", "bar");
 
                 // use the flip route policy in the foo route
-                from("timer://foo?delay=0&period=10").routeId("foo").routePolicy(policy).setBody().constant("Foo message")
-                        .to("log:foo").to("mock:foo");
+                from("timer://foo?delay=0&period=10")
+                        .routeId("foo")
+                        .routePolicy(policy)
+                        .setBody()
+                        .constant("Foo message")
+                        .to("log:foo")
+                        .to("mock:foo");
 
                 // use the flip route policy in the bar route and do NOT start
                 // this route on startup
-                from("timer://bar?delay=0&period=10").routeId("bar").routePolicy(policy).autoStartup(false).setBody()
-                        .constant("Bar message").to("log:bar").to("mock:bar");
+                from("timer://bar?delay=0&period=10")
+                        .routeId("bar")
+                        .routePolicy(policy)
+                        .autoStartup(false)
+                        .setBody()
+                        .constant("Bar message")
+                        .to("log:bar")
+                        .to("mock:bar");
             }
         };
     }

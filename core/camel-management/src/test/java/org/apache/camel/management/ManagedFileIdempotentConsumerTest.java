@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Set;
@@ -32,10 +37,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
@@ -61,7 +62,8 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
 
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String path = (String) mbeanServer.getAttribute(on, "FilePath");
-        assertEquals(FileUtil.normalizePath(testFile("idempotentfilestore.dat").toString()), FileUtil.normalizePath(path));
+        assertEquals(
+                FileUtil.normalizePath(testFile("idempotentfilestore.dat").toString()), FileUtil.normalizePath(path));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());
@@ -92,7 +94,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
         assertEquals(4, size.intValue());
 
         // remove one from repo
-        mbeanServer.invoke(on, "remove", new Object[] { "1" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "remove", new Object[] {"1"}, new String[] {"java.lang.String"});
 
         // reset
         mbeanServer.invoke(on, "reset", null, null);

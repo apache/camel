@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ErrorHandlerDynamicContinueTest extends ContextTestSupport {
 
@@ -47,9 +48,11 @@ public class ErrorHandlerDynamicContinueTest extends ContextTestSupport {
     public void testNotContinued() throws Exception {
         getMockEndpoint("mock:start").expectedMessageCount(1);
 
-        CamelExecutionException exception = assertThrows(CamelExecutionException.class, () -> template.sendBodyAndHeader(
-                "direct:start", "Hello World",
-                "exception", "uoe"));
+        CamelExecutionException exception = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(
+                        "direct:start", "Hello World",
+                        "exception", "uoe"));
 
         assertEquals(UnsupportedOperationException.class, exception.getCause().getClass());
         assertMockEndpointsSatisfied();
@@ -60,20 +63,20 @@ public class ErrorHandlerDynamicContinueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .maximumRedeliveries(1)
-                        .continued(exchange -> {
-                            Exception e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                            return e instanceof IllegalArgumentException;
-                        });
+                onException(Exception.class).maximumRedeliveries(1).continued(exchange -> {
+                    Exception e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    return e instanceof IllegalArgumentException;
+                });
 
                 from("direct:start")
-                    .to("mock:start")
-                    .choice()
-                        .when(simple("${header.exception} == 'iae'")).throwException(new IllegalArgumentException("Forced"))
-                        .otherwise().throwException(new UnsupportedOperationException())
-                    .end()
-                    .to("mock:result");
+                        .to("mock:start")
+                        .choice()
+                        .when(simple("${header.exception} == 'iae'"))
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .otherwise()
+                        .throwException(new UnsupportedOperationException())
+                        .end()
+                        .to("mock:result");
             }
         };
     }

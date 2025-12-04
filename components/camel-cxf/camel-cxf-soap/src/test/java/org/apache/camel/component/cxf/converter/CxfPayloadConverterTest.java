@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,11 +45,6 @@ import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private Document document;
@@ -107,7 +108,9 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         assertTrue(payload instanceof CxfPayload);
         assertEquals(1, payload.getBodySources().size(), "Get a wrong size of body");
         assertEquals(1, payload.getBody().size(), "Get a wrong size of body");
-        assertEquals("streamsource", payload.getBodySources().get(0).getClass().getSimpleName().toLowerCase(),
+        assertEquals(
+                "streamsource",
+                payload.getBodySources().get(0).getClass().getSimpleName().toLowerCase(),
                 "expects stream source");
     }
 
@@ -201,5 +204,4 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         out = exchange.getIn().getBody(SAXSource.class);
         assertNotNull(out, "Should be able to convert a non-empty payload");
     }
-
 }

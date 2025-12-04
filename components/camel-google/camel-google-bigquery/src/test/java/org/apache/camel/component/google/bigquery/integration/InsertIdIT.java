@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.integration;
 
 import java.util.HashMap;
@@ -33,8 +34,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+        disabledReason = "Credentials were not provided")
 public class InsertIdIT extends BigQueryITSupport {
     private static final String TABLE_ID = "insertId";
 
@@ -44,12 +46,10 @@ public class InsertIdIT extends BigQueryITSupport {
     @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
-                    + TABLE_ID + "?useAsInsertId=col1")
+    @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:" + TABLE_ID + "?useAsInsertId=col1")
     private Endpoint bigqueryEndpointWithInsertId;
 
-    @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
-                    + TABLE_ID)
+    @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:" + TABLE_ID)
     private Endpoint bigqueryEndpoint;
 
     @EndpointInject("mock:sendResult")
@@ -78,10 +78,7 @@ public class InsertIdIT extends BigQueryITSupport {
                         .to(bigqueryEndpointWithInsertId)
                         .to(sendResultWithInsertId);
 
-                from(directIn)
-                        .routeId("SingleRow")
-                        .to(bigqueryEndpoint)
-                        .to(sendResult);
+                from(directIn).routeId("SingleRow").to(bigqueryEndpoint).to(sendResult);
             }
         };
     }
@@ -141,5 +138,4 @@ public class InsertIdIT extends BigQueryITSupport {
 
         assertRowExist(TABLE_ID, object);
     }
-
 }

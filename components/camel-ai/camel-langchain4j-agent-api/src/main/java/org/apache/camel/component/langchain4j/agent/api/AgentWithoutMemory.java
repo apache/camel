@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.api;
 
 import java.util.List;
@@ -49,10 +50,8 @@ public class AgentWithoutMemory implements Agent {
     /**
      * Create AI service with a single universal tool that handles multiple Camel routes and additional tools
      */
-    private AiAgentWithoutMemoryService createAiAgentService(
-            ToolProvider toolProvider) {
-        var builder = AiServices.builder(AiAgentWithoutMemoryService.class)
-                .chatModel(configuration.getChatModel());
+    private AiAgentWithoutMemoryService createAiAgentService(ToolProvider toolProvider) {
+        var builder = AiServices.builder(AiAgentWithoutMemoryService.class).chatModel(configuration.getChatModel());
 
         // Apache Camel Tool Provider
         if (toolProvider != null) {
@@ -62,8 +61,7 @@ public class AgentWithoutMemory implements Agent {
         // MCP Clients - create MCP ToolProvider if MCP clients are configured
         // import org.apache.camel.util.ObjectHelper
         if (ObjectHelper.isNotEmpty(configuration.getMcpClients())) {
-            McpToolProvider.Builder mcpBuilder = McpToolProvider.builder()
-                    .mcpClients(configuration.getMcpClients());
+            McpToolProvider.Builder mcpBuilder = McpToolProvider.builder().mcpClients(configuration.getMcpClients());
 
             // Apply MCP tool filter if configured
             if (configuration.getMcpToolProviderFilter() != null) {
@@ -74,7 +72,8 @@ public class AgentWithoutMemory implements Agent {
         }
 
         // Additional custom LangChain4j Tool Instances (objects with @Tool methods)
-        if (configuration.getCustomTools() != null && !configuration.getCustomTools().isEmpty()) {
+        if (configuration.getCustomTools() != null
+                && !configuration.getCustomTools().isEmpty()) {
             builder.tools(configuration.getCustomTools());
         }
 
@@ -84,12 +83,14 @@ public class AgentWithoutMemory implements Agent {
         }
 
         // Input Guardrails
-        if (configuration.getInputGuardrailClasses() != null && !configuration.getInputGuardrailClasses().isEmpty()) {
+        if (configuration.getInputGuardrailClasses() != null
+                && !configuration.getInputGuardrailClasses().isEmpty()) {
             builder.inputGuardrailClasses((List) configuration.getInputGuardrailClasses());
         }
 
         // Output Guardrails
-        if (configuration.getOutputGuardrailClasses() != null && !configuration.getOutputGuardrailClasses().isEmpty()) {
+        if (configuration.getOutputGuardrailClasses() != null
+                && !configuration.getOutputGuardrailClasses().isEmpty()) {
             builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
         }
 

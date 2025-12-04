@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -51,7 +52,8 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
                 // should use consumer.delay as
                 // the URI parameter name. The FTP Component is an extension of
                 // the File Component.
-                from("ftp://tiger:scott@localhost/public/reports?binary=true&delay=" + delay).to("file://target/test-reports");
+                from("ftp://tiger:scott@localhost/public/reports?binary=true&delay=" + delay)
+                        .to("file://target/test-reports");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,15 +27,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-// Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.vault.aws.accessKey, -Dcamel.vault.aws.secretKey and -Dcamel.vault.aws.region
+// Must be manually tested. Provide your own accessKey and secretKey using -Dcamel.vault.aws.accessKey,
+// -Dcamel.vault.aws.secretKey and -Dcamel.vault.aws.region
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.vault.aws.accessKey", matches = ".*",
-                                 disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "camel.vault.aws.secretKey", matches = ".*",
-                                 disabledReason = "Secret key not provided"),
-        @EnabledIfSystemProperty(named = "camel.vault.aws.region", matches = ".*", disabledReason = "Region not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.vault.aws.accessKey",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.vault.aws.secretKey",
+            matches = ".*",
+            disabledReason = "Secret key not provided"),
+    @EnabledIfSystemProperty(named = "camel.vault.aws.region", matches = ".*", disabledReason = "Region not provided"),
 })
 public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport {
 
@@ -64,8 +70,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:database_sample#username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:database_sample#password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:database_sample#username}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:database_sample#password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -85,8 +95,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:database_sample/prod#username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:database_sample/prod#password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:database_sample/prod#username}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:database_sample/prod#password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -106,8 +120,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:normalkey#username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:normalkey#password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:normalkey#username}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:normalkey#password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -150,7 +168,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{aws:database_sample#not_existent}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{aws:database_sample#not_existent}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -170,8 +190,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:postgresql#additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:postgresql#additional2:secret}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:postgresql#additional1:admin}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:postgresql#additional2:secret}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -191,8 +215,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:test-3#additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:test-3#additional2:secret}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:test-3#additional1:admin}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:test-3#additional2:secret}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -213,8 +241,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{aws:test-3#additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{aws:test-3#additional2}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{aws:test-3#additional1}}"))
+                            .to("mock:bar");
+                    from("direct:password")
+                            .setBody(simple("{{aws:test-3#additional2}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -257,7 +289,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{aws:secretsuper}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{aws:secretsuper}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -278,8 +312,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{aws:postgresql#additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{aws:postgresql#additional2}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{aws:postgresql#additional1}}"))
+                            .to("mock:bar");
+                    from("direct:password")
+                            .setBody(simple("{{aws:postgresql#additional2}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -300,7 +338,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:newsecret#additional1:admin}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:newsecret#additional1:admin}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -319,8 +359,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:postgresql#username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:postgresql#password:password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:postgresql#username:oscerd}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:postgresql#password:password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -340,8 +384,12 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{aws:db_sample#username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{aws:db_sample#password:password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{aws:db_sample#username:oscerd}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{aws:db_sample#password:password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -361,7 +409,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test#id@1fa8765f-d76c-4a77-82cf-2e247624acc4}}")).to("mock:bar");
+                from("direct:version")
+                        .setBody(simple("{{aws:test#id@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -380,7 +430,9 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test@1fa8765f-d76c-4a77-82cf-2e247624acc4}}")).to("mock:bar");
+                from("direct:version")
+                        .setBody(simple("{{aws:test@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -399,7 +451,8 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
+                from("direct:version")
+                        .setBody(simple("{{aws:test:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
                         .to("mock:bar");
             }
         });
@@ -419,7 +472,8 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test1:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
+                from("direct:version")
+                        .setBody(simple("{{aws:test1:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
                         .to("mock:bar");
             }
         });
@@ -439,7 +493,8 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test1:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
+                from("direct:version")
+                        .setBody(simple("{{aws:test1:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
                         .to("mock:bar");
             }
         });
@@ -459,7 +514,8 @@ public class SecretsManagerNoEnvPropertiesSourceTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{aws:test#id:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
+                from("direct:version")
+                        .setBody(simple("{{aws:test#id:pippo@1fa8765f-d76c-4a77-82cf-2e247624acc4}}"))
                         .to("mock:bar");
             }
         });

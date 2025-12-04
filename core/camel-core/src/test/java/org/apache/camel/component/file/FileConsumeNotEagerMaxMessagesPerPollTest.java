@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,9 +35,12 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("AAA", "BBB");
 
-        template.sendBodyAndHeader(fileUri(), "CCC", Exchange.FILE_NAME, "ccc.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
-        template.sendBodyAndHeader(fileUri(), "AAA", Exchange.FILE_NAME, "aaa.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
-        template.sendBodyAndHeader(fileUri(), "BBB", Exchange.FILE_NAME, "bbb.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(
+                fileUri(), "CCC", Exchange.FILE_NAME, "ccc.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(
+                fileUri(), "AAA", Exchange.FILE_NAME, "aaa.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
+        template.sendBodyAndHeader(
+                fileUri(), "BBB", Exchange.FILE_NAME, "bbb.FileConsumeNotEagerMaxMessagesPerPollTest.txt");
 
         // start route
         context.getRouteController().startRoute("foo");
@@ -57,10 +61,12 @@ public class FileConsumeNotEagerMaxMessagesPerPollTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10&"
-                             + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name"))
-                        .routeId("foo").autoStartup(false).convertBodyTo(String.class).to("mock:result");
+                                + "maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false&sortBy=file:name"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

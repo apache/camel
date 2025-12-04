@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -53,8 +54,8 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
-    public PropertyBindingException(Object target, String propertyName, Object value, String optionPrefix, String optionKey,
-                                    Throwable e) {
+    public PropertyBindingException(
+            Object target, String propertyName, Object value, String optionPrefix, String optionKey, Throwable e) {
         initCause(e);
         this.target = target;
         this.propertyName = propertyName;
@@ -71,8 +72,8 @@ public class PropertyBindingException extends RuntimeCamelException {
             key = optionPrefix.endsWith(".") ? optionPrefix + optionKey : optionPrefix + "." + optionKey;
         }
         if (key != null) {
-            return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName
-                   + " on bean: " + target + " with value: " + stringValue;
+            return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName + " on bean: "
+                    + target + " with value: " + stringValue;
         } else {
             return "Error binding properties on bean: " + target;
         }
@@ -97,5 +98,4 @@ public class PropertyBindingException extends RuntimeCamelException {
     public String getOptionKey() {
         return optionKey;
     }
-
 }

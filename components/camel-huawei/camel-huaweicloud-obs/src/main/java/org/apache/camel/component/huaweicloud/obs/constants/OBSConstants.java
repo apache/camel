@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs.constants;
 
 /**
@@ -24,6 +25,5 @@ public final class OBSConstants {
     public static final String FOLDER = "folder";
     public static final String FILE = "file";
 
-    private OBSConstants() {
-    }
+    private OBSConstants() {}
 }

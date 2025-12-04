@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.kafka.integration.batching;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -31,11 +36,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 abstract class BatchingProcessingITSupport extends BaseKafkaTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BatchingProcessingITSupport.class);
@@ -114,10 +114,12 @@ abstract class BatchingProcessingITSupport extends BaseKafkaTestSupport {
         final Object body = message.getBody();
         final List<?> list = assertInstanceOf(List.class, body, "The body should be a list");
 
-        assertEquals(expectedCount, list.size(), "It should have received " + expectedCount + " instead of " + list.size());
+        assertEquals(
+                expectedCount, list.size(), "It should have received " + expectedCount + " instead of " + list.size());
 
         for (var object : list) {
-            final Exchange exchange = assertInstanceOf(Exchange.class, object, "The list content should be an exchange");
+            final Exchange exchange =
+                    assertInstanceOf(Exchange.class, object, "The list content should be an exchange");
 
             final Message messageInList = exchange.getMessage();
             LOG.info("Received message {}", messageInList);
@@ -130,9 +132,11 @@ abstract class BatchingProcessingITSupport extends BaseKafkaTestSupport {
 
             assertTrue(messageBodyStr.contains("message-"), "The message body should start with message-");
             assertTrue(messageInList.hasHeaders(), "The message in list should have headers");
-            assertNotNull(messageInList.getHeader(KafkaConstants.PARTITION, Integer.class),
+            assertNotNull(
+                    messageInList.getHeader(KafkaConstants.PARTITION, Integer.class),
                     "The message in list should have the partition information");
-            assertNotNull(messageInList.getHeader(KafkaConstants.TOPIC, String.class),
+            assertNotNull(
+                    messageInList.getHeader(KafkaConstants.TOPIC, String.class),
                     "The message in list should have the correct topic information");
         }
     }

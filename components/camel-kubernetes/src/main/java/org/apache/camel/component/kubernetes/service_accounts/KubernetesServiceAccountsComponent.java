@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.service_accounts;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
@@ -24,7 +25,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesServiceAccountsComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesServiceAccountsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+    protected KubernetesServiceAccountsEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config) {
         return new KubernetesServiceAccountsEndpoint(uri, this, config);
     }
 }

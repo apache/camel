@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import java.net.URISyntaxException;
@@ -38,26 +39,37 @@ final class FilesToken {
 
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String sv;
+
     @UriParam(label = "security", description = "part of account SAS token", secret = true)
     private String ss;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String srt;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String sp;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String se;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String st;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String spr;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String sig;
+
     @UriParam(label = "security", description = "part of service SAS token", secret = true)
     private String si;
+
     @UriParam(label = "security", description = "part of service SAS token", secret = true)
     private String sr;
+
     @UriParam(label = "security", description = "part of service SAS token", secret = true)
     private String sdd;
+
     @UriParam(label = "security", description = "part of SAS token", secret = true)
     private String sip;
 
@@ -125,9 +137,19 @@ final class FilesToken {
     // params in Azure order
     public String toURIQuery() {
         try {
-            return Stream
-                    .of(e("sv", sv), e("ss", ss), e("srt", srt), e("sp", sp), e("se", se), e("st", st),
-                            e("spr", spr), e("sig", sig), e("si", si), e("sr", sr), e("sdd", sdd), e("sip", sip))
+            return Stream.of(
+                            e("sv", sv),
+                            e("ss", ss),
+                            e("srt", srt),
+                            e("sp", sp),
+                            e("se", se),
+                            e("st", st),
+                            e("spr", spr),
+                            e("sig", sig),
+                            e("si", si),
+                            e("sr", sr),
+                            e("sdd", sdd),
+                            e("sip", sip))
                     .filter(Objects::nonNull)
                     .collect(Collectors.joining("&"));
         } catch (URISyntaxException e) {
@@ -159,12 +181,18 @@ final class FilesToken {
             return false;
         }
         FilesToken other = (FilesToken) obj;
-        return Objects.equals(sdd, other.sdd) && Objects.equals(se, other.se)
-                && Objects.equals(si, other.si) && Objects.equals(sig, other.sig)
-                && Objects.equals(sip, other.sip) && Objects.equals(sp, other.sp)
-                && Objects.equals(spr, other.spr) && Objects.equals(sr, other.sr)
-                && Objects.equals(srt, other.srt) && Objects.equals(ss, other.ss)
-                && Objects.equals(st, other.st) && Objects.equals(sv, other.sv);
+        return Objects.equals(sdd, other.sdd)
+                && Objects.equals(se, other.se)
+                && Objects.equals(si, other.si)
+                && Objects.equals(sig, other.sig)
+                && Objects.equals(sip, other.sip)
+                && Objects.equals(sp, other.sp)
+                && Objects.equals(spr, other.spr)
+                && Objects.equals(sr, other.sr)
+                && Objects.equals(srt, other.srt)
+                && Objects.equals(ss, other.ss)
+                && Objects.equals(st, other.st)
+                && Objects.equals(sv, other.sv);
     }
 
     String getSv() {
@@ -214,5 +242,4 @@ final class FilesToken {
     String getSip() {
         return sip;
     }
-
 }

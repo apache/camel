@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
@@ -55,8 +56,15 @@ import org.slf4j.LoggerFactory;
  * Transforms XML payload using an XSLT template.
  */
 @ManagedResource(description = "Managed XsltEndpoint")
-@UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true,
-             remote = false, category = { Category.CORE, Category.TRANSFORMATION }, headersClass = XsltConstants.class)
+@UriEndpoint(
+        firstVersion = "1.3.0",
+        scheme = "xslt",
+        title = "XSLT",
+        syntax = "xslt:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.CORE, Category.TRANSFORMATION},
+        headersClass = XsltConstants.class)
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
@@ -68,34 +76,49 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @UriPath
     @Metadata(required = true)
     private String resourceUri;
+
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
+
     @UriParam(label = "advanced")
     private String transformerFactoryClass;
+
     @UriParam(label = "advanced")
     private TransformerFactory transformerFactory;
+
     @UriParam(label = "advanced")
     private ResultHandlerFactory resultHandlerFactory;
+
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
+
     @UriParam(defaultValue = "string")
     private XsltOutput output = XsltOutput.string;
+
     @UriParam(defaultValue = "0")
     private int transformerCacheSize;
+
     @UriParam(label = "advanced")
     private ErrorListener errorListener;
+
     @UriParam(label = "advanced")
     private URIResolver uriResolver;
+
     @UriParam
     private boolean deleteOutputFile;
+
     @UriParam(label = "advanced")
     private EntityResolver entityResolver;
+
     @UriParam(label = "advanced")
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
+
     @UriParam(label = "advanced")
     private XsltMessageLogger xsltMessageLogger;
+
     @UriParam
     private String source;
 
@@ -108,7 +131,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return false;
     }
 
-    @ManagedOperation(description = "Clears the cached XSLT stylesheet, forcing to re-load the stylesheet on next request")
+    @ManagedOperation(
+            description = "Clears the cached XSLT stylesheet, forcing to re-load the stylesheet on next request")
     public void clearCachedStylesheet() {
         this.cacheCleared = true;
     }
@@ -131,7 +155,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
             if (newResourceUri != null) {
                 exchange.getIn().removeHeader(XsltConstants.XSLT_RESOURCE_URI);
 
-                LOG.trace("{} set to {} creating new endpoint to handle exchange", XsltConstants.XSLT_RESOURCE_URI,
+                LOG.trace(
+                        "{} set to {} creating new endpoint to handle exchange",
+                        XsltConstants.XSLT_RESOURCE_URI,
                         newResourceUri);
                 XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
                 newEndpoint.onExchange(exchange);
@@ -295,7 +321,8 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.errorListener = errorListener;
     }
 
-    @ManagedAttribute(description = "Cache for the resource content (the stylesheet file) when it is loaded on startup.")
+    @ManagedAttribute(
+            description = "Cache for the resource content (the stylesheet file) when it is loaded on startup.")
     public boolean isContentCache() {
         return contentCache;
     }
@@ -437,14 +464,15 @@ public class XsltEndpoint extends ProcessorEndpoint {
                     : ((XsltComponent) getComponent()).getTransformerFactoryClass();
             if (trFactoryClass != null) {
                 // provide the class loader of this component to work in OSGi environments
-                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(trFactoryClass,
-                        TransformerFactory.class, XsltComponent.class.getClassLoader());
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(
+                        trFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
                 LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
 
-                final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
-                        ? transformerFactoryConfigurationStrategy
-                        : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
+                final TransformerFactoryConfigurationStrategy tfConfigStrategy =
+                        transformerFactoryConfigurationStrategy != null
+                                ? transformerFactoryConfigurationStrategy
+                                : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
                 if (tfConfigStrategy != null) {
                     tfConfigStrategy.configure(factory, this);
                 }

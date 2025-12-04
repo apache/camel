@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,41 +26,30 @@ import org.apache.camel.dsl.java.joor.support.MockRestConsumerFactory;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JavaMainTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/java/MyRoutesDummy.java,org/apache/camel/main/java/MyRoutesScan.java",
-                null);
+        doTestMain("org/apache/camel/main/java/MyRoutesDummy.java,org/apache/camel/main/java/MyRoutesScan.java", null);
     }
 
     @Test
     public void testMainRoutesCollectorScan() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/java/MyRoutes*.java",
-                "**/*Rest*.java,**/*Template*.java");
+        doTestMain("org/apache/camel/main/java/MyRoutes*.java", "**/*Rest*.java,**/*Template*.java");
     }
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirClasspathPath() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain(
-                "org/apache/camel/main/**/*.java",
-                "**/*Rest*.java,**/*Template*.java");
+        doTestMain("org/apache/camel/main/**/*.java", "**/*Rest*.java,**/*Template*.java");
     }
 
     @Test
     public void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain(
-                "classpath:org/apache/camel/main/java/MyRoutes*.java",
-                "**/*Rest*.java,**/*Template*.java");
+        doTestMain("classpath:org/apache/camel/main/java/MyRoutes*.java", "**/*Rest*.java,**/*Template*.java");
     }
 
     @Test
@@ -68,9 +61,7 @@ public class JavaMainTest {
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirFilePath() throws Exception {
-        doTestMain(
-                "file:src/test/resources/org/**/*.java",
-                "**/*Rest*.java,**/*Template*.java");
+        doTestMain("file:src/test/resources/org/**/*.java", "**/*Rest*.java,**/*Template*.java");
     }
 
     @Test
@@ -104,5 +95,4 @@ public class JavaMainTest {
 
         main.stop();
     }
-
 }

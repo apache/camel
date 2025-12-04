@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,10 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EnableProcessorsTest extends OpenTelemetryTracerTestSupport {
 
@@ -77,11 +78,20 @@ public class EnableProcessorsTest extends OpenTelemetryTracerTestSupport {
         assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerLog.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerProcessor.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), innerToLog.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                direct.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                innerLog.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                innerProcessor.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
+        assertEquals(
+                testProducer.getSpanContext().getTraceId(),
+                innerToLog.getSpanContext().getTraceId());
 
         // Validate operations
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
@@ -89,11 +99,20 @@ public class EnableProcessorsTest extends OpenTelemetryTracerTestSupport {
 
         // Validate hierarchy
         assertFalse(testProducer.getParentSpanContext().isValid());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), innerLog.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), innerProcessor.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-        assertEquals(log.getSpanContext().getSpanId(), innerToLog.getParentSpanContext().getSpanId());
+        assertEquals(
+                testProducer.getSpanContext().getSpanId(),
+                direct.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(),
+                innerLog.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(),
+                innerProcessor.getParentSpanContext().getSpanId());
+        assertEquals(
+                direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+        assertEquals(
+                log.getSpanContext().getSpanId(),
+                innerToLog.getParentSpanContext().getSpanId());
     }
 
     @Override
@@ -114,5 +133,4 @@ public class EnableProcessorsTest extends OpenTelemetryTracerTestSupport {
             }
         };
     }
-
 }

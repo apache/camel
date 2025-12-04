@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Arrays;
@@ -49,7 +50,10 @@ public class SplitterMethodCallTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").split().method("splitterBean", "splitWords").to("mock:result");
+                from("direct:start")
+                        .split()
+                        .method("splitterBean", "splitWords")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -67,7 +71,6 @@ public class SplitterMethodCallTest extends ContextTestSupport {
             // as we like. As this is based on a unit test we just do it easy
             return Arrays.asList(body.split("@"));
         }
-
     }
     // END SNIPPET: e2
 }

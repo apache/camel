@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.base64;
 
 import org.apache.camel.spi.PropertiesFunction;
@@ -23,7 +24,7 @@ import org.apache.commons.codec.binary.Base64;
 public class Base64PropertiesFunction implements PropertiesFunction {
 
     private final int lineLength = Base64.MIME_CHUNK_SIZE;
-    private final byte[] lineSeparator = { '\r', '\n' };
+    private final byte[] lineSeparator = {'\r', '\n'};
     private final Base64 codec;
 
     public Base64PropertiesFunction() {

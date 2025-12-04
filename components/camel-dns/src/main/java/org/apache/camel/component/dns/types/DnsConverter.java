@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns.types;
 
 import java.net.InetAddress;
@@ -32,8 +33,7 @@ import org.xbill.DNS.Record;
 @Converter(generateLoader = true)
 public final class DnsConverter {
 
-    private DnsConverter() {
-    }
+    private DnsConverter() {}
 
     @Converter
     public static String toString(Record recordObject) {
@@ -68,5 +68,4 @@ public final class DnsConverter {
     public static InetAddress toInetAddress(String domain) throws UnknownHostException {
         return Address.getByName(domain);
     }
-
 }

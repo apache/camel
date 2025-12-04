@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.io.ByteArrayOutputStream;
@@ -121,8 +122,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         LOG.debug("Initializing XQueryBuilder {}", this);
         if (configuration == null) {
             configuration = new Configuration();
-            configuration.setParseOptions(new ParseOptions().withSpaceStrippingRule(isStripsAllWhiteSpace()
-                    ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance()));
+            configuration.setParseOptions(new ParseOptions()
+                    .withSpaceStrippingRule(
+                            isStripsAllWhiteSpace()
+                                    ? AllElementsSpaceStrippingRule.getInstance()
+                                    : IgnorableSpaceStrippingRule.getInstance()));
             LOG.debug("Created new Configuration {}", configuration);
         } else {
             LOG.debug("Using existing Configuration {}", configuration);
@@ -175,7 +179,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 } else if (resultType.isAssignableFrom(Node.class)) {
                     return evaluateAsDOM(exchange);
                 } else {
-                    throw new IllegalArgumentException("ResultType: " + resultType.getCanonicalName() + " not supported");
+                    throw new IllegalArgumentException(
+                            "ResultType: " + resultType.getCanonicalName() + " not supported");
                 }
             }
             switch (resultsFormat) {
@@ -281,7 +286,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     // Static helper methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Creates a new {@link XQueryBuilder} to evaluate against the expression from the string.
@@ -547,7 +552,9 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         Configuration config = getConfiguration();
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
-        Object payload = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Object payload = source != null
+                ? source.evaluate(exchange, Object.class)
+                : exchange.getMessage().getBody();
         Item item = exchange.getContext().getTypeConverter().tryConvertTo(Item.class, exchange, payload);
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
@@ -655,9 +662,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         addParameters(dynamicQueryContext, getParameters());
 
-        dynamicQueryContext.setParameter(
-                StructuredQName.fromClarkName("exchange"),
-                getAsParameter(exchange));
+        dynamicQueryContext.setParameter(StructuredQName.fromClarkName("exchange"), getAsParameter(exchange));
         if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
             dynamicQueryContext.setParameter(
                     StructuredQName.fromClarkName("out.body"),
@@ -671,7 +676,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         addParameters(dynamicQueryContext, map, "");
     }
 
-    protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map, String parameterPrefix) {
+    protected void addParameters(
+            DynamicQueryContext dynamicQueryContext, Map<String, Object> map, String parameterPrefix) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
             // skip headers with null values
@@ -704,5 +710,4 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     protected boolean matches(List<?> results) {
         return ObjectHelper.matches(results);
     }
-
 }

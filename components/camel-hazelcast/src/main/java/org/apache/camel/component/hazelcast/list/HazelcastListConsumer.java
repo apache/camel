@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.list;
 
 import java.util.UUID;
@@ -35,8 +36,8 @@ public class HazelcastListConsumer extends HazelcastDefaultConsumer {
 
     private UUID listener;
 
-    public HazelcastListConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
-                                 String cacheName) {
+    public HazelcastListConsumer(
+            HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         queue = hazelcastInstance.getList(cacheName);
@@ -55,5 +56,4 @@ public class HazelcastListConsumer extends HazelcastDefaultConsumer {
 
         super.doStop();
     }
-
 }

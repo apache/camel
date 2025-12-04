@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.CHILD_ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.LINK_TYPE;
+import static org.apache.camel.component.jira.JiraConstants.PARENT_ISSUE_KEY;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -23,10 +28,6 @@ import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
-
-import static org.apache.camel.component.jira.JiraConstants.CHILD_ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.LINK_TYPE;
-import static org.apache.camel.component.jira.JiraConstants.PARENT_ISSUE_KEY;
 
 public class AddIssueLinkProducer extends DefaultProducer {
 

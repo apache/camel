@@ -14,26 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringPGPDataFormatTest.xml"), true);
+                new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringPGPDataFormatTest.xml"),
+                true);
     }
 
     @Test
     void testEncryption() {
         assertDoesNotThrow(() -> doRoundTripEncryptionTests("direct:inline"));
     }
-
 }

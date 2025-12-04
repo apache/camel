@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,8 +43,10 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .threads().to("mock:result");
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .threads()
+                        .to("mock:result");
             }
         });
         context.start();
@@ -65,18 +68,24 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .threads().process(new Processor() {
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .threads()
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damn I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -101,15 +110,18 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .threads().process(new Processor() {
+                        .idempotentConsumer(
+                                header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .threads()
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String id = exchange.getIn().getHeader("messageId", String.class);
                                 if (id.equals("2")) {
                                     throw new IllegalArgumentException("Damn I cannot handle id 2");
                                 }
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -148,5 +160,4 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
         startEndpoint = resolveMandatoryEndpoint("direct:start");
         resultEndpoint = getMockEndpoint("mock:result");
     }
-
 }

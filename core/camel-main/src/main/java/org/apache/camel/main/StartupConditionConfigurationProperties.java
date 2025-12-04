@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,16 +31,22 @@ public class StartupConditionConfigurationProperties implements BootstrapCloseab
 
     @Metadata(defaultValue = "false")
     private boolean enabled;
+
     @Metadata(defaultValue = "500")
     private int interval = 500;
+
     @Metadata(defaultValue = "20000")
     private int timeout = 20000;
+
     @Metadata(defaultValue = "stop", enums = "fail,stop,ignore")
     private String onTimeout = "stop";
+
     @Metadata
     private String environmentVariableExists;
+
     @Metadata
     private String fileExists;
+
     @Metadata
     private String customClassNames;
 
@@ -194,5 +201,4 @@ public class StartupConditionConfigurationProperties implements BootstrapCloseab
         this.customClassNames = customClassNames;
         return this;
     }
-
 }

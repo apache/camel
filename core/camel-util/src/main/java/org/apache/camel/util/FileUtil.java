@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public final class FileUtil {
      * The System property key for the user directory.
      */
     private static final String USER_DIR_KEY = "user.dir";
+
     private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
     private static final boolean IS_WINDOWS = initWindowsOs();
 
@@ -349,7 +351,7 @@ public final class FileUtil {
         sb.append(String.valueOf(separator).repeat(cntSlashsAtStart));
 
         // now we build back using FIFO so need to use descending
-        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext(); ) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(separator);
@@ -497,9 +499,8 @@ public final class FileUtil {
 
         copyFile(from, to);
         if (!deleteFile(from)) {
-            throw new IOException(
-                    "Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from
-                                  + "' after copy succeeded");
+            throw new IOException("Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '"
+                    + from + "' after copy succeeded");
         }
 
         return true;
@@ -658,5 +659,4 @@ public final class FileUtil {
 
         return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:");
     }
-
 }

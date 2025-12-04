@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import java.util.Map;
@@ -29,8 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("jcr")
 public class JcrComponent extends DefaultComponent {
 
-    public JcrComponent() {
-    }
+    public JcrComponent() {}
 
     public JcrComponent(CamelContext context) {
         super(context);

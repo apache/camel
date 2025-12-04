@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.util;
 
 import java.io.File;
@@ -74,5 +75,4 @@ public class ExtraClassesClassLoader extends ClassLoader {
             return defineClass(name, bytes, 0, bytes.length);
         }
     }
-
 }

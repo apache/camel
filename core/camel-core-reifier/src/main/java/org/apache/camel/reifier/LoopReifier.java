@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
@@ -48,10 +49,9 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         } else {
             expression = createExpression(definition.getExpression());
         }
-        LoopProcessor answer
-                = new LoopProcessor(camelContext, output, expression, predicate, prepare, isCopy, isBreakOnShutdown);
+        LoopProcessor answer =
+                new LoopProcessor(camelContext, output, expression, predicate, prepare, isCopy, isBreakOnShutdown);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
-
 }

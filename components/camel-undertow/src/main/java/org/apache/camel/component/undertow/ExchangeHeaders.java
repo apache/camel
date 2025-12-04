@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import io.undertow.util.HttpString;
@@ -24,26 +25,32 @@ import io.undertow.util.HttpString;
 public final class ExchangeHeaders {
 
     public static final HttpString AUTHENTICATION = new HttpString("CamelAuthentication");
-    public static final HttpString AUTHENTICATION_FAILURE_POLICY_ID = new HttpString("CamelAuthenticationFailurePolicyId");
+    public static final HttpString AUTHENTICATION_FAILURE_POLICY_ID =
+            new HttpString("CamelAuthenticationFailurePolicyId");
+
     @Deprecated(since = "4.17.0")
     // No longer in use in Camel code, we can safely remove it after deprecation period stands just in case any
     // user is making use of the constant for their scope.
     public static final HttpString ACCEPT_CONTENT_TYPE = new HttpString("CamelAcceptContentType");
+
     public static final HttpString AGGREGATED_SIZE = new HttpString("CamelAggregatedSize");
     public static final HttpString AGGREGATED_TIMEOUT = new HttpString("CamelAggregatedTimeout");
     public static final HttpString AGGREGATED_COMPLETED_BY = new HttpString("CamelAggregatedCompletedBy");
     public static final HttpString AGGREGATED_CORRELATION_KEY = new HttpString("CamelAggregatedCorrelationKey");
     public static final HttpString AGGREGATION_STRATEGY = new HttpString("CamelAggregationStrategy");
-    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS = new HttpString("CamelAggregationCompleteAllGroups");
-    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE
-            = new HttpString("CamelAggregationCompleteAllGroupsInclusive");
+    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS =
+            new HttpString("CamelAggregationCompleteAllGroups");
+    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE =
+            new HttpString("CamelAggregationCompleteAllGroupsInclusive");
     public static final HttpString ASYNC_WAIT = new HttpString("CamelAsyncWait");
 
     public static final HttpString BATCH_INDEX = new HttpString("CamelBatchIndex");
     public static final HttpString BATCH_SIZE = new HttpString("CamelBatchSize");
     public static final HttpString BATCH_COMPLETE = new HttpString("CamelBatchComplete");
+
     @Deprecated
     public static final HttpString BEAN_MULTI_PARAMETER_ARRAY = new HttpString("CamelBeanMultiParameterArray");
+
     public static final HttpString BINDING = new HttpString("CamelBinding");
     // do not prefix with Camel and use lower-case starting letter as its a shared key
     // used across other Apache products such as AMQ, SMX etc.
@@ -68,6 +75,7 @@ public final class ExchangeHeaders {
     public static final HttpString EXCEPTION_HANDLED = new HttpString("CamelExceptionHandled");
     public static final HttpString EVALUATE_EXPRESSION_RESULT = new HttpString("CamelEvaluateExpressionResult");
     public static final HttpString ERRORHANDLER_HANDLED = new HttpString("CamelErrorHandlerHandled");
+
     @Deprecated
     public static final HttpString EXTERNAL_REDELIVERED = new HttpString("CamelExternalRedelivered");
 
@@ -103,8 +111,8 @@ public final class ExchangeHeaders {
     public static final HttpString HTTP_CHUNKED = new HttpString("CamelHttpChunked");
 
     public static final HttpString INTERCEPTED_ENDPOINT = new HttpString("CamelInterceptedEndpoint");
-    public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED
-            = new HttpString("CamelInterceptSendToEndpointWhenMatched");
+    public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED =
+            new HttpString("CamelInterceptSendToEndpointWhenMatched");
 
     public static final HttpString LANGUAGE_SCRIPT = new HttpString("CamelLanguageScript");
     public static final HttpString LOG_DEBUG_BODY_MAX_CHARS = new HttpString("CamelLogDebugBodyMaxChars");
@@ -165,7 +173,5 @@ public final class ExchangeHeaders {
     public static final HttpString XSLT_FATAL_ERROR = new HttpString("CamelXsltFatalError");
     public static final HttpString XSLT_WARNING = new HttpString("CamelXsltWarning");
 
-    private ExchangeHeaders() {
-    }
-
+    private ExchangeHeaders() {}
 }

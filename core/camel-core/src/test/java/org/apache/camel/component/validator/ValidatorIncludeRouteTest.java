@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,10 +39,10 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\">\n"
-                      + "  <p:firstName>James</p:firstName>\n"
-                      + "  <p:lastName>Strachan</p:lastName>\n" + "  <p:city>London</p:city>\n" + "  <h:health>\n"
-                      + "      <h:lastCheck>2011-12-23</h:lastCheck>\n"
-                      + "      <h:status>OK</h:status>\n" + "  </h:health>\n" + "</p:person>";
+                + "  <p:firstName>James</p:firstName>\n"
+                + "  <p:lastName>Strachan</p:lastName>\n" + "  <p:city>London</p:city>\n" + "  <h:health>\n"
+                + "      <h:lastCheck>2011-12-23</h:lastCheck>\n"
+                + "      <h:status>OK</h:status>\n" + "  </h:health>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
@@ -54,8 +55,8 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<p:person user=\"hiram\"  xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\">\n"
-                      + "  <p:firstName>Hiram</p:firstName>\n"
-                      + "  <p:lastName>Chirino</p:lastName>\n" + "  <p:city>Tampa</p:city>\n" + "</p:person>";
+                + "  <p:firstName>Hiram</p:firstName>\n"
+                + "  <p:lastName>Chirino</p:lastName>\n" + "  <p:city>Tampa</p:city>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
@@ -68,8 +69,8 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<p:person user=\"hiram\"  xmlns:p=\"org.person\">\n" + "  <p:firstName>Hiram</p:firstName>\n"
-                      + "  <p:lastName>Chirino</p:lastName>\n"
-                      + "  <p:city>Tampa</p:city>\n" + "</p:person>";
+                + "  <p:lastName>Chirino</p:lastName>\n"
+                + "  <p:city>Tampa</p:city>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
@@ -82,10 +83,10 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\">\n"
-                      + "  <p:firstName>James</p:firstName>\n"
-                      + "  <p:lastName>Strachan</p:lastName>\n" + "  <p:city>London</p:city>\n" + "  <h:health>\n"
-                      + "      <h:lastCheck>2011-12-23</h:lastCheck>\n"
-                      + "  </h:health>\n" + "</p:person>";
+                + "  <p:firstName>James</p:firstName>\n"
+                + "  <p:lastName>Strachan</p:lastName>\n" + "  <p:city>London</p:city>\n" + "  <h:health>\n"
+                + "      <h:lastCheck>2011-12-23</h:lastCheck>\n"
+                + "  </h:health>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
@@ -98,8 +99,8 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\">\n"
-                      + "  <p:firstName>James</p:firstName>\n"
-                      + "  <p:lastName>Strachan</p:lastName>\n" + "</p:person>";
+                + "  <p:firstName>James</p:firstName>\n"
+                + "  <p:lastName>Strachan</p:lastName>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
@@ -112,7 +113,7 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         finallyEndpoint.expectedMessageCount(1);
 
         String body = "<p:person user=\"james\" xmlns:p=\"org.person\">\n" + "  <p:firstName>James</p:firstName>\n"
-                      + "  <p:lastName>Strachan</p:lastName>\n" + "</p:person>";
+                + "  <p:lastName>Strachan</p:lastName>\n" + "</p:person>";
 
         template.sendBody("direct:start", body);
 
@@ -134,11 +135,16 @@ public class ValidatorIncludeRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/person.xsd").to("mock:valid")
-                        .doCatch(ValidationException.class).to("mock:invalid")
-                        .doFinally().to("mock:finally").end();
+                from("direct:start")
+                        .doTry()
+                        .to("validator:org/apache/camel/component/validator/person.xsd")
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
             }
         };
     }
-
 }

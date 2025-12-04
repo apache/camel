@@ -23,7 +23,5 @@ public final class OpenldapProperties {
     public static final String PORT_LDAP_OVER_SSL = "openldap.port.ldap.ssl";
     public static final String OPENLDAP_CONTAINER = "openldap.container";
 
-    private OpenldapProperties() {
-
-    }
+    private OpenldapProperties() {}
 }

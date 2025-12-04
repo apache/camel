@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.avro;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import org.apache.avro.NameValidator;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JacksonAvroMarshalUnmarshalPojoTest extends CamelTestSupport {
 
@@ -60,11 +61,11 @@ public class JacksonAvroMarshalUnmarshalPojoTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) {
         String schemaJson = "{\n"
-                            + "\"type\": \"record\",\n"
-                            + "\"name\": \"Pojo\",\n"
-                            + "\"fields\": [\n"
-                            + " {\"name\": \"text\", \"type\": \"string\"}\n"
-                            + "]}";
+                + "\"type\": \"record\",\n"
+                + "\"name\": \"Pojo\",\n"
+                + "\"fields\": [\n"
+                + " {\"name\": \"text\", \"type\": \"string\"}\n"
+                + "]}";
         Schema raw = new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(schemaJson);
         AvroSchema schema = new AvroSchema(raw);
         SchemaResolver resolver = ex -> schema;
@@ -86,8 +87,7 @@ public class JacksonAvroMarshalUnmarshalPojoTest extends CamelTestSupport {
 
         private String text;
 
-        public Pojo() {
-        }
+        public Pojo() {}
 
         public Pojo(String text) {
             this.text = text;
@@ -101,5 +101,4 @@ public class JacksonAvroMarshalUnmarshalPojoTest extends CamelTestSupport {
             this.text = text;
         }
     }
-
 }

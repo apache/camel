@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import java.util.Properties;
@@ -77,7 +78,8 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     protected String resolvePlaceholder(String placeholder, Properties props) {
         String value = props.getProperty(placeholder);
         if (parser != null) {
-            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
+            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure
+            // twice for the inside and outside camel context
             return parser.parseProperty(placeholder, value, props::getProperty);
         } else {
             return value;
@@ -86,7 +88,10 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
     @Override
     public String parseUri(
-            String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional,
+            String text,
+            PropertiesLookup properties,
+            boolean fallback,
+            boolean keepUnresolvedOptional,
             boolean nestedPlaceholder)
             throws IllegalArgumentException {
         // first let Camel parse the text as it may contain Camel placeholders
@@ -201,7 +206,10 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
         @Override
         public String parseUri(
-                String text, PropertiesLookup properties, boolean fallback, boolean keepUnresolvedOptional,
+                String text,
+                PropertiesLookup properties,
+                boolean fallback,
+                boolean keepUnresolvedOptional,
                 boolean nestedPlaceholder)
                 throws IllegalArgumentException {
             String answer = null;
@@ -226,5 +234,4 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
             return parser.parseProperty(key, value, properties);
         }
     }
-
 }

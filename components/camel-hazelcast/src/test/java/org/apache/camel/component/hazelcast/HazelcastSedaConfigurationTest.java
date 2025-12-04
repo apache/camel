@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hazelcast;
 
-import org.apache.camel.PropertyBindingException;
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.hazelcast;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,20 +23,30 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.apache.camel.PropertyBindingException;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
 public class HazelcastSedaConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithTransferExchange() throws Exception {
-        HazelcastSedaEndpoint hzlqEndpoint
-                = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?transferExchange=true");
+        HazelcastSedaEndpoint hzlqEndpoint =
+                (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?transferExchange=true");
 
         assertEquals("foo", hzlqEndpoint.getConfiguration().getQueueName(), "Invalid queue name");
-        assertTrue(hzlqEndpoint.getConfiguration().isTransferExchange(), "Default value of concurrent consumers is invalid");
+        assertTrue(
+                hzlqEndpoint.getConfiguration().isTransferExchange(),
+                "Default value of concurrent consumers is invalid");
 
         hzlqEndpoint = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?transferExchange=false");
 
         assertEquals("foo", hzlqEndpoint.getConfiguration().getQueueName(), "Invalid queue name");
-        assertFalse(hzlqEndpoint.getConfiguration().isTransferExchange(), "Default value of concurrent consumers is invalid");
+        assertFalse(
+                hzlqEndpoint.getConfiguration().isTransferExchange(),
+                "Default value of concurrent consumers is invalid");
     }
 
     @Test
@@ -49,43 +54,59 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
         HazelcastSedaEndpoint hzlqEndpoint = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo");
 
         assertEquals("foo", hzlqEndpoint.getConfiguration().getQueueName(), "Invalid queue name");
-        assertEquals(1, hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
+        assertEquals(
+                1,
+                hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
                 "Default value of concurrent consumers is invalid");
-        assertEquals(1000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Default value of pool timeout is invalid");
-        assertEquals(1000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Default value of on error delay is invalid");
+        assertEquals(
+                1000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Default value of pool timeout is invalid");
+        assertEquals(
+                1000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Default value of on error delay is invalid");
     }
 
     @Test
     public void createEndpointWithConcurrentConsumersParam() throws Exception {
-        HazelcastSedaEndpoint hzlqEndpoint
-                = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?concurrentConsumers=4");
+        HazelcastSedaEndpoint hzlqEndpoint =
+                (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?concurrentConsumers=4");
 
         assertEquals("foo", hzlqEndpoint.getConfiguration().getQueueName(), "Invalid queue name");
-        assertEquals(4, hzlqEndpoint.getConfiguration().getConcurrentConsumers(), "Value of concurrent consumers is invalid");
-        assertEquals(1000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Default value of pool timeout is invalid");
-        assertEquals(1000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Default value of on error delay is invalid");
+        assertEquals(
+                4,
+                hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
+                "Value of concurrent consumers is invalid");
+        assertEquals(
+                1000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Default value of pool timeout is invalid");
+        assertEquals(
+                1000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Default value of on error delay is invalid");
     }
 
     @Test
     public void createEndpointWithPoolIntevalParam() throws Exception {
-        HazelcastSedaEndpoint hzlqEndpoint = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?pollTimeout=4000");
+        HazelcastSedaEndpoint hzlqEndpoint =
+                (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?pollTimeout=4000");
 
         assertEquals("foo", hzlqEndpoint.getConfiguration().getQueueName(), "Invalid queue name");
-        assertEquals(1, hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
+        assertEquals(
+                1,
+                hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
                 "Default value of concurrent consumers is invalid");
         assertEquals(4000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Invalid pool timeout");
-        assertEquals(1000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Default value of on error delay is invalid");
+        assertEquals(
+                1000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Default value of on error delay is invalid");
     }
 
     @Test
     public void createEndpointWithOnErrorDelayParam() throws Exception {
-        HazelcastSedaEndpoint hzlqEndpoint
-                = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?onErrorDelay=5000");
+        HazelcastSedaEndpoint hzlqEndpoint =
+                (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?onErrorDelay=5000");
 
         assertEquals("foo", hzlqEndpoint.getConfiguration().getQueueName(), "Invalid queue name");
-        assertEquals(1, hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
+        assertEquals(
+                1,
+                hzlqEndpoint.getConfiguration().getConcurrentConsumers(),
                 "Default value of concurrent consumers is invalid");
-        assertEquals(1000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Default value of pool timeout is invalid");
+        assertEquals(
+                1000, hzlqEndpoint.getConfiguration().getPollTimeout(), "Default value of pool timeout is invalid");
         assertEquals(5000, hzlqEndpoint.getConfiguration().getOnErrorDelay(), "Value of on error delay is invalid");
     }
 
@@ -98,5 +119,4 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
             assertIsInstanceOf(PropertyBindingException.class, e.getCause());
         }
     }
-
 }

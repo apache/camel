@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.util.ArrayDeque;
@@ -127,8 +128,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     private Optional<MetaData> tableDefinition(MetaContext context) throws Exception {
         final List<String> names = getObjectHierarchy(context);
         final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
-        final String baseUrn
-                = (String) context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
+        final String baseUrn =
+                (String) context.getParameters().getOrDefault("baseUrn", "org:apache:camel:component:servicenow");
 
         // Schema
         root.put("$schema", "http://json-schema.org/schema#");
@@ -153,19 +154,19 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         final String dateFormat = properties.getOrDefault("glide.sys.date_format", "yyyy-MM-dd");
         final String timeFormat = properties.getOrDefault("glide.sys.time_format", "HH:mm:ss");
 
-        return Optional.of(
-                MetaDataBuilder.on(getCamelContext())
-                        .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
-                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                        .withAttribute("date.format", dateFormat)
-                        .withAttribute("time.format", timeFormat)
-                        .withAttribute("date-time.format", dateFormat + " " + timeFormat)
-                        .withPayload(root)
-                        .build());
+        return Optional.of(MetaDataBuilder.on(getCamelContext())
+                .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
+                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                .withAttribute("date.format", dateFormat)
+                .withAttribute("time.format", timeFormat)
+                .withAttribute("date-time.format", dateFormat + " " + timeFormat)
+                .withPayload(root)
+                .build());
     }
 
     private Optional<MetaData> importSetList(MetaContext context) throws Exception {
-        Optional<JsonNode> response = context.getClient().reset()
+        Optional<JsonNode> response = context.getClient()
+                .reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
                 .path(context.getConfiguration().getApiVersion())
@@ -184,7 +185,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 throw new IllegalStateException("Unable to determine sys_id of sys_import_set_row");
             }
 
-            response = context.getClient().reset()
+            response = context.getClient()
+                    .reset()
                     .types(MediaType.APPLICATION_JSON_TYPE)
                     .path("now")
                     .path(context.getConfiguration().getApiVersion())
@@ -196,7 +198,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
-                final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
+                final ObjectNode root =
+                        context.getConfiguration().getOrCreateMapper().createObjectNode();
 
                 processResult(response.get(), n -> {
                     final JsonNode name = n.findValue("name");
@@ -207,12 +210,11 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     }
                 });
 
-                return Optional.of(
-                        MetaDataBuilder.on(getCamelContext())
-                                .withAttribute(MetaData.CONTENT_TYPE, "application/json")
-                                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                                .withPayload(root)
-                                .build());
+                return Optional.of(MetaDataBuilder.on(getCamelContext())
+                        .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                        .withPayload(root)
+                        .build());
             }
         }
 
@@ -220,7 +222,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
     }
 
     private Optional<MetaData> tableList(MetaContext context) throws Exception {
-        Optional<JsonNode> response = context.getClient().reset()
+        Optional<JsonNode> response = context.getClient()
+                .reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
                 .path(context.getConfiguration().getApiVersion())
@@ -235,7 +238,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             final JsonNode node = response.get();
             final JsonNode sysId = node.findValue("sys_id");
 
-            response = context.getClient().reset()
+            response = context.getClient()
+                    .reset()
                     .types(MediaType.APPLICATION_JSON_TYPE)
                     .path("now")
                     .path(context.getConfiguration().getApiVersion())
@@ -246,7 +250,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
-                final ObjectNode root = context.getConfiguration().getOrCreateMapper().createObjectNode();
+                final ObjectNode root =
+                        context.getConfiguration().getOrCreateMapper().createObjectNode();
 
                 processResult(response.get(), n -> {
                     final JsonNode superClass = n.findValue("super_class");
@@ -258,7 +263,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                         final String superId = superClass.textValue();
 
                         if (impId != null && superId != null && ObjectHelper.equal(impId, superId)) {
-                            LOGGER.debug("skip table: name={}, label={} because it refers to an import set", name, label);
+                            LOGGER.debug(
+                                    "skip table: name={}, label={} because it refers to an import set", name, label);
                             return;
                         }
                     }
@@ -275,13 +281,12 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     }
                 });
 
-                return Optional.of(
-                        MetaDataBuilder.on(getCamelContext())
-                                .withAttribute(MetaData.CONTENT_TYPE, "application/json")
-                                .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
-                                .withAttribute("Meta-Context", ServiceNowConstants.RESOURCE_IMPORT)
-                                .withPayload(root)
-                                .build());
+                return Optional.of(MetaDataBuilder.on(getCamelContext())
+                        .withAttribute(MetaData.CONTENT_TYPE, "application/json")
+                        .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
+                        .withAttribute("Meta-Context", ServiceNowConstants.RESOURCE_IMPORT)
+                        .withPayload(root)
+                        .build());
             }
         }
 
@@ -300,7 +305,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         String offset = "0";
 
         while (true) {
-            Response response = context.getClient().reset()
+            Response response = context.getClient()
+                    .reset()
                     .types(MediaType.APPLICATION_JSON_TYPE)
                     .path("now")
                     .path(context.getConfiguration().getApiVersion())
@@ -312,13 +318,14 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     .query("sysparm_query", "name=glide.sys.date_format^ORname=glide.sys.time_format")
                     .invoke(HttpMethod.GET);
 
-            findResultNode(response).ifPresent(node -> processResult(node, n -> {
-                if (n.hasNonNull("name") && n.hasNonNull("value")) {
-                    properties.putIfAbsent(
-                            n.findValue("name").asText(),
-                            n.findValue("value").asText());
-                }
-            }));
+            findResultNode(response)
+                    .ifPresent(node -> processResult(node, n -> {
+                        if (n.hasNonNull("name") && n.hasNonNull("value")) {
+                            properties.putIfAbsent(
+                                    n.findValue("name").asText(),
+                                    n.findValue("value").asText());
+                        }
+                    }));
 
             Optional<String> next = ServiceNowHelper.findOffset(response, ServiceNowConstants.LINK_NEXT);
             if (next.isPresent()) {
@@ -337,7 +344,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         String offset = "0";
 
         while (true) {
-            Response response = context.getClient().reset()
+            Response response = context.getClient()
+                    .reset()
                     .types(MediaType.APPLICATION_JSON_TYPE)
                     .path("now")
                     .path(context.getConfiguration().getApiVersion())
@@ -348,9 +356,10 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     .query("sysparm_offset", offset)
                     .invoke(HttpMethod.GET);
 
-            findResultNode(response).ifPresent(node -> processResult(node, n -> {
-                processDictionaryNode(context, root, n);
-            }));
+            findResultNode(response)
+                    .ifPresent(node -> processResult(node, n -> {
+                        processDictionaryNode(context, root, n);
+                    }));
 
             Optional<String> next = ServiceNowHelper.findOffset(response, ServiceNowConstants.LINK_NEXT);
             if (next.isPresent()) {
@@ -374,7 +383,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 boolean included = true;
 
                 if (ObjectHelper.isNotEmpty(fields) && ObjectHelper.isNotEmpty(exclude)) {
-                    boolean isIncluded = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull)
+                    boolean isIncluded = Stream.of(fields.split(","))
+                            .map(StringHelper::trimToNull)
+                            .filter(Objects::nonNull)
                             .anyMatch(id::equalsIgnoreCase);
                     boolean isExcluded = Pattern.compile(exclude).matcher(id).matches();
 
@@ -386,7 +397,9 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     included = isIncluded || !isExcluded;
                 } else if (ObjectHelper.isNotEmpty(fields)) {
                     // Only include fields that are explicit included
-                    included = Stream.of(fields.split(",")).map(StringHelper::trimToNull).filter(Objects::nonNull)
+                    included = Stream.of(fields.split(","))
+                            .map(StringHelper::trimToNull)
+                            .filter(Objects::nonNull)
                             .anyMatch(id::equalsIgnoreCase);
                 } else if (ObjectHelper.isNotEmpty(exclude)) {
                     // Only include fields non excluded
@@ -401,8 +414,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 LOGGER.debug("Load dictionary element <{}>", context.getStack());
 
                 try {
-                    final DictionaryEntry entry
-                            = context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
+                    final DictionaryEntry entry =
+                            context.getConfiguration().getOrCreateMapper().treeToValue(node, DictionaryEntry.class);
                     final ObjectNode property = ((ObjectNode) root.get("properties")).putObject(id);
 
                     // Add custom fields for code generation, json schema
@@ -444,7 +457,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
                             if (entry.getReference().getValue() != null) {
                                 // the referenced object type
-                                servicenow.put("sys_db_object", entry.getReference().getValue());
+                                servicenow.put(
+                                        "sys_db_object", entry.getReference().getValue());
                             }
 
                             break;
@@ -487,7 +501,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         String query = String.format("name=%s", context.getObjectName());
 
         while (true) {
-            Optional<JsonNode> response = context.getClient().reset()
+            Optional<JsonNode> response = context.getClient()
+                    .reset()
                     .types(MediaType.APPLICATION_JSON_TYPE)
                     .path("now")
                     .path(context.getConfiguration().getApiVersion())
@@ -583,7 +598,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
             }
             if (!configuration.hasOauthTokenUrl()) {
-                configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
+                configuration.setOauthTokenUrl(
+                        String.format("https://%s.service-now.com/oauth_token.do", instanceName));
             }
 
             this.client = new ServiceNowClient(getCamelContext(), configuration);
@@ -617,5 +633,4 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             return stack;
         }
     }
-
 }

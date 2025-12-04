@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -46,7 +47,8 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
     @Override
     public void notify(CamelEvent event) throws Exception {
         if (notificationBroadcaster != null) {
-            // its recommended to send light weight events and we don't want to have the entire Exchange/CamelContext etc
+            // its recommended to send light weight events and we don't want to have the entire Exchange/CamelContext
+            // etc
             // serialized as these are the typical source of the EventObject. So we use our own source which is just
             // a human readable name, which can be configured.
             String type = event.getClass().getSimpleName();

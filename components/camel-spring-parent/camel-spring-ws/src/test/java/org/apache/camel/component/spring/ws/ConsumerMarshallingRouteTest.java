@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,11 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.ws.client.core.WebServiceTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -115,23 +116,26 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
                 // request webservice
                 from("direct:webservice-marshall")
                         .marshal(jaxb)
-                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
+                        .to(
+                                "spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
 
                 // request webservice
                 from("direct:webservice-marshall-unmarshall")
                         .marshal(jaxb)
-                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
+                        .to(
+                                "spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuote&webServiceTemplate=#webServiceTemplate")
                         .unmarshal(jaxb);
 
                 // provide web service
-                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping").process(
-                        new StockQuoteResponseProcessor());
+                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuote?endpointMapping=#endpointMapping")
+                        .process(new StockQuoteResponseProcessor());
 
                 // request webservice
                 from("direct:webservice-marshall-asinonly")
                         .marshal(jaxb)
-                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsInOnly&webServiceTemplate=#webServiceTemplate")
+                        .to(
+                                "spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsInOnly&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
 
                 // provide web service
@@ -142,16 +146,15 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
                 // request webservice
                 from("direct:webservice-marshall-asin")
                         .marshal(jaxb)
-                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsIn&webServiceTemplate=#webServiceTemplate")
+                        .to(
+                                "spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsIn&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
 
                 // provide web service
                 from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsIn?endpointMapping=#endpointMapping")
                         .setHeader("setin", constant("true"))
                         .process(new StockQuoteResponseProcessor());
-
             }
         };
     }
-
 }

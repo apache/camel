@@ -14,12 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.metrics.messagehistory;
 
-import io.opentelemetry.api.common.AttributeKey;
-import io.opentelemetry.api.common.Attributes;
-import org.apache.camel.NamedNode;
-import org.apache.camel.Route;
+package org.apache.camel.opentelemetry.metrics.messagehistory;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
@@ -27,6 +23,11 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_HISTORY;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.NODE_ID_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
+
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Route;
 
 public interface OpenTelemetryHistoryNamingStrategy {
 
@@ -40,7 +41,8 @@ public interface OpenTelemetryHistoryNamingStrategy {
 
     default Attributes getAttributes(Route route, NamedNode node) {
         return Attributes.of(
-                AttributeKey.stringKey(CAMEL_CONTEXT_ATTRIBUTE), route.getCamelContext().getName(),
+                AttributeKey.stringKey(CAMEL_CONTEXT_ATTRIBUTE),
+                        route.getCamelContext().getName(),
                 AttributeKey.stringKey(KIND_ATTRIBUTE), KIND_HISTORY,
                 AttributeKey.stringKey(ROUTE_ID_ATTRIBUTE), route.getId(),
                 AttributeKey.stringKey(NODE_ID_ATTRIBUTE), node.getId());

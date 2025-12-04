@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -24,10 +29,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
 
@@ -119,14 +120,11 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .throwException(new Exception("Forced"));
+                from(getTestServerUri()).throwException(new Exception("Forced"));
 
-                from(getTestServerUri() + "/badstatus")
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(201));
+                from(getTestServerUri() + "/badstatus").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(201));
 
-                from(getTestServerUri() + "/noexception")
-                        .throwException(new Exception("Forced"));
+                from(getTestServerUri() + "/noexception").throwException(new Exception("Forced"));
 
                 from(getTestServerUri() + "/redirect")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(301))

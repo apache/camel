@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -24,20 +27,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class TemplateCacheTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
-
+                .addScript("sql/storedProcedureTest.sql")
+                .build();
     }
 
     @Override
@@ -50,8 +50,8 @@ public class TemplateCacheTest extends CamelTestSupport {
     @Test
     public void shouldCacheTemplateFunctions() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
-        CallableStatementWrapperFactory fac
-                = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
+        CallableStatementWrapperFactory fac = new CallableStatementWrapperFactory(
+                jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
 
         BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
         BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");

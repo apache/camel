@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.impl.converter.EnumTypeConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BasicEnumConverterTest {
 
@@ -40,7 +41,8 @@ public class BasicEnumConverterTest {
     @Test
     public void testConvertFromCamelCasedString() {
         StatusCodeEnum code = converter.convertTo(StatusCodeEnum.class, "NotFound");
-        assertEquals(StatusCodeEnum.NOT_FOUND, code, "Camel cased string should be converted to corresponding Enum value");
+        assertEquals(
+                StatusCodeEnum.NOT_FOUND, code, "Camel cased string should be converted to corresponding Enum value");
     }
 
     @Test

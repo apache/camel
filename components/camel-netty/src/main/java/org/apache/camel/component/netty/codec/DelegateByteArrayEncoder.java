@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.codec;
 
 import java.util.List;
@@ -31,5 +32,4 @@ public class DelegateByteArrayEncoder extends ByteArrayEncoder {
     protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
         super.encode(ctx, msg, out);
     }
-
 }

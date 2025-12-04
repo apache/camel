@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -25,13 +28,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/DualCamelContextEndpointOutsideTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/DualCamelContextEndpointOutsideTest.xml");
     }
 
     @Test
@@ -60,5 +62,4 @@ public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
         mockA.assertIsSatisfied();
         mockB.assertIsSatisfied();
     }
-
 }

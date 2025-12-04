@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunkhec;
 
 import java.io.ByteArrayOutputStream;
@@ -56,20 +57,21 @@ public class SplunkHECProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         HttpClientBuilder builder = HttpClients.custom()
-                .setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion());
+                .setUserAgent(
+                        "Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion());
         PoolingHttpClientConnectionManager connManager;
         if (endpoint.getConfiguration().isSkipTlsVerify()) {
             SSLContextBuilder sslbuilder = new SSLContextBuilder();
             sslbuilder.loadTrustMaterial(null, (chain, authType) -> true);
-            SSLConnectionSocketFactory sslsf
-                    = new SSLConnectionSocketFactory(sslbuilder.build(), NoopHostnameVerifier.INSTANCE);
+            SSLConnectionSocketFactory sslsf =
+                    new SSLConnectionSocketFactory(sslbuilder.build(), NoopHostnameVerifier.INSTANCE);
             RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
             registryBuilder.register("https", sslsf);
 
             connManager = new PoolingHttpClientConnectionManager(registryBuilder.build());
         } else {
-            SSLConnectionSocketFactory sslsf
-                    = new SSLConnectionSocketFactory(endpoint.provideSSLContext(), NoopHostnameVerifier.INSTANCE);
+            SSLConnectionSocketFactory sslsf =
+                    new SSLConnectionSocketFactory(endpoint.provideSSLContext(), NoopHostnameVerifier.INSTANCE);
             RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
             registryBuilder.register("https", sslsf);
 
@@ -85,26 +87,25 @@ public class SplunkHECProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Map<String, Object> payload = createPayload(exchange.getIn());
 
-        HttpPost httppost = new HttpPost(
-                (endpoint.getConfiguration().isHttps() ? "https" : "http") + "://"
-                                         + endpoint.getSplunkURL() + endpoint.getConfiguration().getSplunkEndpoint());
-        httppost.addHeader("Authorization", " Splunk " + endpoint.getConfiguration().getToken());
+        HttpPost httppost = new HttpPost((endpoint.getConfiguration().isHttps() ? "https" : "http") + "://"
+                + endpoint.getSplunkURL() + endpoint.getConfiguration().getSplunkEndpoint());
+        httppost.addHeader(
+                "Authorization", " Splunk " + endpoint.getConfiguration().getToken());
 
-        EntityTemplate entityTemplate = new EntityTemplate(
-                -1, ContentType.APPLICATION_JSON, null, outputStream -> MAPPER.writer().writeValue(outputStream, payload));
+        EntityTemplate entityTemplate =
+                new EntityTemplate(-1, ContentType.APPLICATION_JSON, null, outputStream -> MAPPER.writer()
+                        .writeValue(outputStream, payload));
 
         httppost.setEntity(entityTemplate);
-        httpClient.execute(
-                httppost,
-                response -> {
-                    if (response.getCode() != 200) {
-                        ByteArrayOutputStream output = new ByteArrayOutputStream();
-                        response.getEntity().writeTo(output);
+        httpClient.execute(httppost, response -> {
+            if (response.getCode() != 200) {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                response.getEntity().writeTo(output);
 
-                        throw new RuntimeException(new StatusLine(response) + "\n" + output.toString(StandardCharsets.UTF_8));
-                    }
-                    return null;
-                });
+                throw new RuntimeException(new StatusLine(response) + "\n" + output.toString(StandardCharsets.UTF_8));
+            }
+            return null;
+        });
     }
 
     @Override
@@ -149,9 +150,7 @@ public class SplunkHECProducer extends DefaultProducer {
         }
 
         Long time = message.getHeader(
-                SplunkHECConstants.INDEX_TIME,
-                endpoint.getConfiguration().getTime(),
-                Long.class);
+                SplunkHECConstants.INDEX_TIME, endpoint.getConfiguration().getTime(), Long.class);
 
         if (time != null) {
             payload.put("time", time);

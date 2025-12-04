@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.*;
 
@@ -31,8 +34,6 @@ import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignatureDILITHIUMTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -44,15 +45,17 @@ public class PQCSignatureDILITHIUMTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignatureDILITHIUMTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignatureDILITHIUMTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign")
+                        .to("mock:sign")
+                        .to("pqc:verify?operation=verify")
                         .to("mock:verify");
             }
         };
@@ -75,9 +78,10 @@ public class PQCSignatureDILITHIUMTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
-                PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
+    public KeyPair setKeyPair()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(), PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
         kpGen.initialize(DilithiumParameterSpec.dilithium5);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;

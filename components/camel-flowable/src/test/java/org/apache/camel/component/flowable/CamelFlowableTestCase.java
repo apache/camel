@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
 
 import java.util.List;
@@ -49,15 +50,21 @@ public abstract class CamelFlowableTestCase extends CamelTestSupport {
 
     @AfterEach
     public void tearDown() throws Exception {
-        List<EventDeployment> eventDeployments
-                = eventRegistryEngineConfiguration.getEventRepositoryService().createDeploymentQuery().list();
+        List<EventDeployment> eventDeployments = eventRegistryEngineConfiguration
+                .getEventRepositoryService()
+                .createDeploymentQuery()
+                .list();
         for (EventDeployment eventDeployment : eventDeployments) {
             eventRegistryEngineConfiguration.getEventRepositoryService().deleteDeployment(eventDeployment.getId());
         }
     }
 
     protected String deployProcessDefinition(String resource) {
-        return repositoryService.createDeployment().addClasspathResource(resource).deploy().getId();
+        return repositoryService
+                .createDeployment()
+                .addClasspathResource(resource)
+                .deploy()
+                .getId();
     }
 
     protected void deleteDeployment(String id) {

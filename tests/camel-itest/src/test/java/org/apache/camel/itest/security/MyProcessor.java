@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.security;
 
 import java.util.List;
@@ -42,5 +43,4 @@ public class MyProcessor implements Processor {
         // Put the result back
         exchange.getMessage().setBody(result);
     }
-
 }

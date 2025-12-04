@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnableKubernetesMockClient
 public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
@@ -38,21 +39,51 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("client")
     public NamespacedKubernetesClient loadClient() {
-        server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
-                .andReturn(200, new BuildConfigListBuilder().build()).once();
+        server.expect()
+                .withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
+                .andReturn(200, new BuildConfigListBuilder().build())
+                .once();
 
-        server.expect().withPath("/apis")
-                .andReturn(200,
-                        new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup()
+        server.expect()
+                .withPath("/apis")
+                .andReturn(
+                        200,
+                        new APIGroupListBuilder()
                                 .addNewGroup()
-                                .withApiVersion("v1").withName("security.openshift.io").endGroup().build())
+                                .withApiVersion("v1")
+                                .withName("autoscaling.k8s.io")
+                                .endGroup()
+                                .addNewGroup()
+                                .withApiVersion("v1")
+                                .withName("security.openshift.io")
+                                .endGroup()
+                                .build())
                 .always();
 
-        server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
-                .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect()
+                .withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
+                .andReturn(
+                        200,
+                        new BuildConfigListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
+                .once();
 
-        server.expect().withPath("/apis/build.openshift.io/v1/buildconfigs")
-                .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/apis/build.openshift.io/v1/buildconfigs")
+                .andReturn(
+                        200,
+                        new BuildConfigListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
 
         return client;
@@ -69,7 +100,8 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").to("openshift-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
+                from("direct:list")
+                        .to("openshift-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
                 from("direct:listByLabels")
                         .to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
             }

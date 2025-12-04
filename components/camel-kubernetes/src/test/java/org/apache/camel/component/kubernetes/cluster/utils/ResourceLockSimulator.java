@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.utils;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
@@ -57,7 +58,9 @@ public abstract class ResourceLockSimulator<T extends HasMetadata> {
         if (version != null) {
             long versionLong = Long.parseLong(version);
             if (versionLong != versionCounter) {
-                LOG.warn("Current resource version is {} while the update is related to version {}", versionCounter,
+                LOG.warn(
+                        "Current resource version is {} while the update is related to version {}",
+                        versionCounter,
                         versionLong);
                 return false;
             }
@@ -84,5 +87,4 @@ public abstract class ResourceLockSimulator<T extends HasMetadata> {
     public abstract String getResourcePath();
 
     public abstract Class<T> getResourceClass();
-
 }

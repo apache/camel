@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
 
 import org.apache.camel.Exchange;
@@ -73,7 +74,8 @@ public class NitriteConsumer extends DefaultConsumer {
                     exchange.setException(e);
                 } finally {
                     if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                        getExceptionHandler()
+                                .handleException("Error processing exchange", exchange, exchange.getException());
                     }
                     releaseExchange(exchange, false);
                 }

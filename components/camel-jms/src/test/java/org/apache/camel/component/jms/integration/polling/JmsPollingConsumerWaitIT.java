@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.jms.integration.polling;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class JmsPollingConsumerWaitIT extends JmsPollingConsumerIT {
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -53,5 +54,4 @@ public class ComponentScanDefinition {
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
     }
-
 }

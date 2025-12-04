@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
@@ -22,8 +25,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultMessageHeaderTest {
 
@@ -299,5 +300,4 @@ public class DefaultMessageHeaderTest {
         assertEquals("foo", msg.getHeader("beer", "foo"));
         assertEquals(Integer.valueOf(123), msg.getHeader("beer", "123", Integer.class));
     }
-
 }

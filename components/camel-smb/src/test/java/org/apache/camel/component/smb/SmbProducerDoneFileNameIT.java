@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,12 +29,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
@@ -39,72 +40,79 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
 
     @Test
     public void testProducerConstantDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl("constdone") + "&doneFileName=done", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                getSmbUrl("constdone") + "&doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("data/rw/constdone/hello.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "Hello World", new String(copyFileContentFromContainer("data/rw/constdone/hello.txt"))));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/constdone/done"))));
+                .untilAsserted(
+                        () -> assertEquals("", new String(copyFileContentFromContainer("/data/rw/constdone/done"))));
     }
 
     @Test
     public void testProducerPrefixDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl("prefixdone") + "&doneFileName=done-${file:name}", "Hello World",
+        template.sendBodyAndHeader(
+                getSmbUrl("prefixdone") + "&doneFileName=done-${file:name}",
+                "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/prefixdone/hello.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "Hello World", new String(copyFileContentFromContainer("/data/rw/prefixdone/hello.txt"))));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/prefixdone/done-hello.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "", new String(copyFileContentFromContainer("/data/rw/prefixdone/done-hello.txt"))));
     }
 
     @Test
     public void testProducerExtDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl("extdone") + "&doneFileName=${file:name}.done", "Hello World",
+        template.sendBodyAndHeader(
+                getSmbUrl("extdone") + "&doneFileName=${file:name}.done",
+                "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "Hello World", new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt"))));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt.done"))));
+                .untilAsserted(() ->
+                        assertEquals("", new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt.done"))));
     }
 
     @Test
     public void testProducerReplaceExtDoneFileName() {
-        template.sendBodyAndHeader(getSmbUrl("replextdone") + "&doneFileName=${file:name.noext}.done", "Hello World",
+        template.sendBodyAndHeader(
+                getSmbUrl("replextdone") + "&doneFileName=${file:name.noext}.done",
+                "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World",
-                        new String(copyFileContentFromContainer("/data/rw/replextdone/hello.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "Hello World", new String(copyFileContentFromContainer("/data/rw/replextdone/hello.txt"))));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/replextdone/hello.done"))));
+                .untilAsserted(() ->
+                        assertEquals("", new String(copyFileContentFromContainer("/data/rw/replextdone/hello.done"))));
     }
 
     @Test
     public void testProducerInvalidDoneFileName() {
         String uri = getSmbUrl("invaliddone") + "&doneFileName=${file:parent}/foo";
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
 
-        ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class,
-                ex.getCause());
+        ExpressionIllegalSyntaxException cause =
+                assertIsInstanceOf(ExpressionIllegalSyntaxException.class, ex.getCause());
 
         assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
     }
@@ -112,7 +120,8 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
     @Test
     public void testProducerEmptyDoneFileName() {
         String uri = getSmbUrl("emptydone") + "&doneFileName=";
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());

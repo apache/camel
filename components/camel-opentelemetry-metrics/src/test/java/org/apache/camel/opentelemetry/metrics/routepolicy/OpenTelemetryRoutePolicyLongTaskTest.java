@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,12 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verifies that there are point data for the 'long task' timers when long task metrics are enabled.
@@ -53,13 +54,11 @@ public class OpenTelemetryRoutePolicyLongTaskTest extends AbstractOpenTelemetryR
         MockEndpoint out = getMockEndpoint("mock:foo");
         out.expectedMessageCount(1);
 
-        template.asyncSend("direct:foo", x -> {
-        });
+        template.asyncSend("direct:foo", x -> {});
 
         long maxDuration = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION);
         assertTrue(maxDuration >= 0L && maxDuration < DELAY + TOLERANCE, "max duration of long task");
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
-                () -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 
     // verify maximum number of concurrent active long tasks using metric name 'camel.route.policy.long.task.active'
@@ -70,8 +69,7 @@ public class OpenTelemetryRoutePolicyLongTaskTest extends AbstractOpenTelemetryR
         out.expectedMessageCount(messageCnt);
 
         for (int i = 0; i < messageCnt; i++) {
-            template.asyncSend("direct:foo", x -> {
-            });
+            template.asyncSend("direct:foo", x -> {});
         }
         long maxActive = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE);
         assertEquals(messageCnt, maxActive, "max active long tasks");

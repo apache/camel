@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -28,9 +32,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ServletStreamingChunkedTest extends ServletCamelRouterTestSupport {
 
@@ -46,35 +47,37 @@ public class ServletStreamingChunkedTest extends ServletCamelRouterTestSupport {
         final CountDownLatch latch2 = new CountDownLatch(1);
 
         // use background thread to write to stream that camel-servlet uses as reponse
-        context.getExecutorServiceManager().newSingleThreadExecutor(this, "writer").execute(() -> {
-            try {
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(500);
-                LOG.info(">>>> writing <<<<");
-                pos.write("ABC".getBytes());
-                pos.flush();
+        context.getExecutorServiceManager()
+                .newSingleThreadExecutor(this, "writer")
+                .execute(() -> {
+                    try {
+                        LOG.info(">>>> sleeping <<<<");
+                        Thread.sleep(500);
+                        LOG.info(">>>> writing <<<<");
+                        pos.write("ABC".getBytes());
+                        pos.flush();
 
-                latch1.await(5, TimeUnit.SECONDS);
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(500);
-                LOG.info(">>>> writing <<<<");
-                pos.write("DEF".getBytes());
-                pos.flush();
+                        latch1.await(5, TimeUnit.SECONDS);
+                        LOG.info(">>>> sleeping <<<<");
+                        Thread.sleep(500);
+                        LOG.info(">>>> writing <<<<");
+                        pos.write("DEF".getBytes());
+                        pos.flush();
 
-                latch2.await(5, TimeUnit.SECONDS);
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(500);
-                LOG.info(">>>> writing <<<<");
-                pos.write("GHI".getBytes());
-                pos.flush();
+                        latch2.await(5, TimeUnit.SECONDS);
+                        LOG.info(">>>> sleeping <<<<");
+                        Thread.sleep(500);
+                        LOG.info(">>>> writing <<<<");
+                        pos.write("GHI".getBytes());
+                        pos.flush();
 
-            } catch (Exception e) {
-                // ignore
-            } finally {
-                LOG.info(">>>> closing <<<<");
-                IOHelper.close(pos);
-            }
-        });
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        LOG.info(">>>> closing <<<<");
+                        IOHelper.close(pos);
+                    }
+                });
 
         LOG.info(">>>> calling <<<<");
         WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
@@ -129,10 +132,8 @@ public class ServletStreamingChunkedTest extends ServletCamelRouterTestSupport {
             public void configure() throws Exception {
                 pis = new PipedInputStream(pos);
 
-                from("servlet:/hello")
-                        .setBody().constant(pis);
+                from("servlet:/hello").setBody().constant(pis);
             }
         };
     }
-
 }

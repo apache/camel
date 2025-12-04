@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.console;
 
 import java.util.Collections;
@@ -74,5 +75,4 @@ public interface DevConsole {
      * catch and handle any exception thrown by the underlying technology, including unchecked ones.
      */
     Object call(MediaType mediaType, Map<String, Object> options);
-
 }

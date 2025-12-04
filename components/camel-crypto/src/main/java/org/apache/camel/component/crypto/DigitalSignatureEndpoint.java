@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.crypto;
 
 import java.security.KeyStore;
@@ -35,15 +36,21 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name",
-             remote = false, producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
-             headersClass = DigitalSignatureConstants.class)
+@UriEndpoint(
+        firstVersion = "2.3.0",
+        scheme = "crypto",
+        title = "Crypto (JCE)",
+        syntax = "crypto:cryptoOperation:name",
+        remote = false,
+        producerOnly = true,
+        category = {Category.SECURITY, Category.TRANSFORMATION},
+        headersClass = DigitalSignatureConstants.class)
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
     @UriParam
     private DigitalSignatureConfiguration configuration;
 
-    public DigitalSignatureEndpoint(String uri, DigitalSignatureComponent component,
-                                    DigitalSignatureConfiguration configuration) {
+    public DigitalSignatureEndpoint(
+            String uri, DigitalSignatureComponent component, DigitalSignatureConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

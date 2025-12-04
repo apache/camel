@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
 
 import java.util.Map;
@@ -43,16 +44,15 @@ public class Athena2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Athena2Configuration configurationClone
-                = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
+        Athena2Configuration configurationClone =
+                this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configurationClone);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configurationClone.isUseDefaultCredentialsProvider())
                 && Boolean.FALSE.equals(configurationClone.isUseProfileCredentialsProvider())
                 && Boolean.FALSE.equals(configurationClone.isUseSessionCredentials())
                 && configurationClone.getAmazonAthenaClient() == null
-                && (configurationClone.getAccessKey() == null
-                        || configurationClone.getSecretKey() == null)) {
+                && (configurationClone.getAccessKey() == null || configurationClone.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, useSessionCredentials is set to false, accessKey/secretKey or amazonAthenaClient must be specified");
         }

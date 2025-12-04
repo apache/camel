@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import java.lang.reflect.Method;
@@ -26,10 +27,10 @@ import org.apache.camel.support.LRUCacheFactory;
 
 public final class JaxbHelper {
 
-    private static final Map<Class<?>, Method> JAXB_ELEMENT_FACTORY_METHODS = LRUCacheFactory.newLRUSoftCache(10, 100, true);
+    private static final Map<Class<?>, Method> JAXB_ELEMENT_FACTORY_METHODS =
+            LRUCacheFactory.newLRUSoftCache(10, 100, true);
 
-    private JaxbHelper() {
-    }
+    private JaxbHelper() {}
 
     public static <T> Method getJaxbElementFactoryMethod(CamelContext camelContext, Class<T> type) {
         if (camelContext == null) {
@@ -69,5 +70,4 @@ public final class JaxbHelper {
         }
         return null;
     }
-
 }

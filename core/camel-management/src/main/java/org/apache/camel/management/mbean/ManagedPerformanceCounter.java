@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.text.SimpleDateFormat;
@@ -338,19 +339,23 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         if (fullStats) {
             sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getTime())));
             sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getTime())));
-            sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"",
+            sb.append(String.format(
+                    " firstExchangeCompletedTimestamp=\"%s\"",
                     dateAsString(firstExchangeCompletedTimestamp.getValue())));
-            sb.append(String.format(" firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));
-            sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"",
-                    dateAsString(firstExchangeFailureTimestamp.getValue())));
-            sb.append(String.format(" firstExchangeFailureExchangeId=\"%s\"", nullSafe(firstExchangeFailureExchangeId)));
-            sb.append(String.format(" lastExchangeCreatedTimestamp=\"%s\"",
-                    dateAsString(lastExchangeCreatedTimestamp.getValue())));
-            sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"",
-                    dateAsString(lastExchangeCompletedTimestamp.getValue())));
-            sb.append(String.format(" lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));
-            sb.append(String.format(" lastExchangeFailureTimestamp=\"%s\"",
-                    dateAsString(lastExchangeFailureTimestamp.getValue())));
+            sb.append(String.format(
+                    " firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));
+            sb.append(String.format(
+                    " firstExchangeFailureTimestamp=\"%s\"", dateAsString(firstExchangeFailureTimestamp.getValue())));
+            sb.append(
+                    String.format(" firstExchangeFailureExchangeId=\"%s\"", nullSafe(firstExchangeFailureExchangeId)));
+            sb.append(String.format(
+                    " lastExchangeCreatedTimestamp=\"%s\"", dateAsString(lastExchangeCreatedTimestamp.getValue())));
+            sb.append(String.format(
+                    " lastExchangeCompletedTimestamp=\"%s\"", dateAsString(lastExchangeCompletedTimestamp.getValue())));
+            sb.append(String.format(
+                    " lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));
+            sb.append(String.format(
+                    " lastExchangeFailureTimestamp=\"%s\"", dateAsString(lastExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" lastExchangeFailureExchangeId=\"%s\"", nullSafe(lastExchangeFailureExchangeId)));
         }
         sb.append("/>");
@@ -404,5 +409,4 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
     private static String nullSafe(String s) {
         return s != null ? s : "";
     }
-
 }

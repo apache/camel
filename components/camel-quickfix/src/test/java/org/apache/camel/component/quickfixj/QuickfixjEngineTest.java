@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
+
+import static org.apache.camel.util.ObjectHelper.equal;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -69,17 +81,6 @@ import quickfix.field.MsgType;
 import quickfix.fix42.Email;
 import quickfix.mina.ProtocolFactory;
 
-import static org.apache.camel.util.ObjectHelper.equal;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class QuickfixjEngineTest {
     private File settingsFile;
     private ClassLoader contextClassLoader;
@@ -95,7 +96,7 @@ public class QuickfixjEngineTest {
 
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
-        URL[] urls = new URL[] { tempdir.toURI().toURL() };
+        URL[] urls = new URL[] {tempdir.toURI().toURL()};
 
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
@@ -104,8 +105,10 @@ public class QuickfixjEngineTest {
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
         settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(
+                Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
         settings.setBool(QuickfixjEngine.SETTING_USE_JMX, false);
         TestSupport.setSessionID(settings, sessionID);
@@ -121,8 +124,8 @@ public class QuickfixjEngineTest {
 
     @Test
     public void missingSettingsResource() {
-        assertThrows(FileNotFoundException.class,
-                () -> new QuickfixjEngine(camelContext, "quickfix:test", "bogus.cfg"));
+        assertThrows(
+                FileNotFoundException.class, () -> new QuickfixjEngine(camelContext, "quickfix:test", "bogus.cfg"));
     }
 
     @Test
@@ -140,7 +143,8 @@ public class QuickfixjEngineTest {
 
     @Test
     public void threadPerSessionInitiator() throws Exception {
-        settings.setString(QuickfixjEngine.SETTING_THREAD_MODEL, QuickfixjEngine.ThreadModel.ThreadPerSession.toString());
+        settings.setString(
+                QuickfixjEngine.SETTING_THREAD_MODEL, QuickfixjEngine.ThreadModel.ThreadPerSession.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
 
         writeSettings();
@@ -168,7 +172,8 @@ public class QuickfixjEngineTest {
 
     @Test
     public void threadPerSessionAcceptor() throws Exception {
-        settings.setString(QuickfixjEngine.SETTING_THREAD_MODEL, QuickfixjEngine.ThreadModel.ThreadPerSession.toString());
+        settings.setString(
+                QuickfixjEngine.SETTING_THREAD_MODEL, QuickfixjEngine.ThreadModel.ThreadPerSession.toString());
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
@@ -187,8 +192,8 @@ public class QuickfixjEngineTest {
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FARGLE", "BARGLE");
-        settings.setString(initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE,
-                SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setString(
+                initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
         TestSupport.setSessionID(settings, initiatorSessionID);
 
         writeSettings();
@@ -365,9 +370,8 @@ public class QuickfixjEngineTest {
         LogFactory logFactory = Mockito.mock(LogFactory.class);
         MessageFactory messageFactory = Mockito.mock(MessageFactory.class);
 
-        quickfixjEngine
-                = new QuickfixjEngine(
-                        camelContext, "quickfix:test", settingsFile.getName(), messageStoreFactory, logFactory, messageFactory);
+        quickfixjEngine = new QuickfixjEngine(
+                camelContext, "quickfix:test", settingsFile.getName(), messageStoreFactory, logFactory, messageFactory);
 
         assertThat(quickfixjEngine.getMessageStoreFactory(), is(messageStoreFactory));
         assertThat(quickfixjEngine.getLogFactory(), is(logFactory));
@@ -386,7 +390,8 @@ public class QuickfixjEngineTest {
         quickfixjEngine.start();
 
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Initiator,*"), null);
+        Set<ObjectName> n =
+                mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Initiator,*"), null);
         assertFalse(n.isEmpty(), "QFJ mbean not registered");
     }
 
@@ -402,7 +407,8 @@ public class QuickfixjEngineTest {
         quickfixjEngine.start();
 
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-        Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
+        Set<ObjectName> n =
+                mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
         assertFalse(n.isEmpty(), "QFJ mbean not registered");
     }
 
@@ -411,9 +417,7 @@ public class QuickfixjEngineTest {
         SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "MARKET", "TRADER");
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "TRADER", "MARKET");
 
-        quickfixjEngine = new QuickfixjEngine(
-                camelContext,
-                "quickfix:test", "examples/inprocess.qf.cfg");
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", "examples/inprocess.qf.cfg");
 
         doLogonEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
 
@@ -422,7 +426,8 @@ public class QuickfixjEngineTest {
         doLogoffEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
     }
 
-    private void doLogonEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
+    private void doLogonEventsTest(
+            SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
             throws Exception {
 
         final List<EventRecord> events = new ArrayList<>();
@@ -430,7 +435,8 @@ public class QuickfixjEngineTest {
 
         QuickfixjEventListener logonListener = new QuickfixjEventListener() {
             @Override
-            public synchronized void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
+            public synchronized void onEvent(
+                    QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
                 events.add(new EventRecord(eventCategory, sessionID, message));
                 if (eventCategory == QuickfixjEventCategory.SessionLogon) {
                     logonLatch.countDown();
@@ -447,33 +453,37 @@ public class QuickfixjEngineTest {
 
         assertThat(events.size(), is(8));
 
-        // The session events will arrive out of order as the event callbacks happen in the context of different threads so that the asserts
-        // below must cater for that, that's do not assert on the order of the arrived events but just do assert on their existence. for this
-        // to work we have've defined a relaxed comparison about the messages being sent, see the EventRecord.equals() method
+        // The session events will arrive out of order as the event callbacks happen in the context of different threads
+        // so that the asserts
+        // below must cater for that, that's do not assert on the order of the arrived events but just do assert on
+        // their existence. for this
+        // to work we have've defined a relaxed comparison about the messages being sent, see the EventRecord.equals()
+        // method
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionCreated, acceptorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionCreated, initiatorSessionID, null)));
-        assertTrue(
-                events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageSent, initiatorSessionID, new Message())));
-        assertTrue(events
-                .contains(new EventRecord(QuickfixjEventCategory.AdminMessageReceived, acceptorSessionID, new Message())));
-        assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageSent, acceptorSessionID, new Message())));
-        assertTrue(events
-                .contains(new EventRecord(QuickfixjEventCategory.AdminMessageReceived, initiatorSessionID, new Message())));
+        assertTrue(events.contains(
+                new EventRecord(QuickfixjEventCategory.AdminMessageSent, initiatorSessionID, new Message())));
+        assertTrue(events.contains(
+                new EventRecord(QuickfixjEventCategory.AdminMessageReceived, acceptorSessionID, new Message())));
+        assertTrue(events.contains(
+                new EventRecord(QuickfixjEventCategory.AdminMessageSent, acceptorSessionID, new Message())));
+        assertTrue(events.contains(
+                new EventRecord(QuickfixjEventCategory.AdminMessageReceived, initiatorSessionID, new Message())));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogon, initiatorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogon, acceptorSessionID, null)));
     }
 
     private void doApplicationMessageEventsTest(
             SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
-            throws SessionNotFound,
-            InterruptedException, FieldNotFound {
+            throws SessionNotFound, InterruptedException, FieldNotFound {
 
         final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch messageLatch = new CountDownLatch(1);
 
         QuickfixjEventListener messageListener = new QuickfixjEventListener() {
             @Override
-            public synchronized void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
+            public synchronized void onEvent(
+                    QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
                 EventRecord event = new EventRecord(eventCategory, sessionID, message);
                 events.add(event);
                 if (eventCategory == QuickfixjEventCategory.AppMessageReceived) {
@@ -491,18 +501,21 @@ public class QuickfixjEngineTest {
 
         assertThat(events.size(), is(2));
 
-        EventRecord sendEvent = new EventRecord(QuickfixjEventCategory.AppMessageSent, initiatorSessionID, new Message());
+        EventRecord sendEvent =
+                new EventRecord(QuickfixjEventCategory.AppMessageSent, initiatorSessionID, new Message());
         assertTrue(events.contains(sendEvent));
         int sendEventIndex = events.indexOf(sendEvent);
         assertThat(events.get(sendEventIndex).message.getHeader().getString(MsgType.FIELD), is(MsgType.EMAIL));
 
-        EventRecord receiveEvent = new EventRecord(QuickfixjEventCategory.AppMessageReceived, acceptorSessionID, new Message());
+        EventRecord receiveEvent =
+                new EventRecord(QuickfixjEventCategory.AppMessageReceived, acceptorSessionID, new Message());
         assertTrue(events.contains(receiveEvent));
         int receiveEventIndex = events.indexOf(receiveEvent);
         assertThat(events.get(receiveEventIndex).message.getHeader().getString(MsgType.FIELD), is(MsgType.EMAIL));
     }
 
-    private void doLogoffEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
+    private void doLogoffEventsTest(
+            SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
             throws Exception {
 
         final List<EventRecord> events = new ArrayList<>();
@@ -510,7 +523,8 @@ public class QuickfixjEngineTest {
 
         QuickfixjEventListener logoffListener = new QuickfixjEventListener() {
             @Override
-            public synchronized void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
+            public synchronized void onEvent(
+                    QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) {
                 EventRecord event = new EventRecord(eventCategory, sessionID, message);
                 events.add(event);
                 if (eventCategory == QuickfixjEventCategory.SessionLogoff) {
@@ -563,7 +577,8 @@ public class QuickfixjEngineTest {
             EventRecord other = (EventRecord) obj;
             boolean answer = equal(eventCategory, other.eventCategory) && equal(sessionID, other.sessionID);
 
-            // we do just require a "relaxed" comparison of the messages, that's they should both be either null or both not null.
+            // we do just require a "relaxed" comparison of the messages, that's they should both be either null or both
+            // not null.
             // this is required so that we can properly assert on the events being fired
             if (message == null) {
                 answer &= other.message == null;
@@ -576,7 +591,8 @@ public class QuickfixjEngineTest {
 
         @Override
         public String toString() {
-            return "EventRecord [eventCategory=" + eventCategory + ", sessionID=" + sessionID + ", message=" + message + "]";
+            return "EventRecord [eventCategory=" + eventCategory + ", sessionID=" + sessionID + ", message=" + message
+                    + "]";
         }
     }
 
@@ -593,5 +609,4 @@ public class QuickfixjEngineTest {
     private void writeSettings() throws IOException {
         TestSupport.writeSettings(settings, settingsFile);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import org.apache.camel.Exchange;
@@ -32,5 +33,4 @@ public interface PulsarMessageReceiptFactory {
      * Creates a new instance of {@link PulsarMessageReceipt}.
      */
     PulsarMessageReceipt newInstance(Exchange exchange, Message message, Consumer consumer);
-
 }

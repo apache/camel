@@ -14,22 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Handler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
 
     @Test
     public void testConstantXPathHeaders() {
-        template.sendBodyAndHeader("bean:myBean", "<response>OK</response>",
-                "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
+        template.sendBodyAndHeader(
+                "bean:myBean",
+                "<response>OK</response>",
+                "invoiceDetails",
+                "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
 
         assertEquals("OK", myBean.response, "bean response:  " + myBean);
         assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
@@ -56,5 +60,4 @@ public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSuppor
             this.date = date;
         }
     }
-
 }

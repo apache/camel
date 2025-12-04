@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -22,16 +26,13 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class KinesisComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
-                .createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)
+                component.createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxx&secretKey=yyyyy");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
@@ -56,8 +57,8 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
-                .createEndpoint("aws2-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint(
+                "aws2-kinesis://some_stream_name?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -71,8 +72,8 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component
-                .createEndpoint(
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)
+                component.createEndpoint(
                         "aws2-kinesis://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -87,8 +88,8 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithEndpointOverride() throws Exception {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
         Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint(
-                "aws2-kinesis://some_stream_name?accessKey=xxx&secretKey=yyy&region=eu-west-1&overrideEndpoint=true" +
-                                                                                "&uriEndpointOverride=http://localhost:4567");
+                "aws2-kinesis://some_stream_name?accessKey=xxx&secretKey=yyy&region=eu-west-1&overrideEndpoint=true"
+                        + "&uriEndpointOverride=http://localhost:4567");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -102,8 +103,8 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint("aws2-kinesis://some_stream_name" +
-                                                                                "?iteratorType=AT_TIMESTAMP&messageTimestamp=1732882967.573");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint(
+                "aws2-kinesis://some_stream_name" + "?iteratorType=AT_TIMESTAMP&messageTimestamp=1732882967.573");
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals(ShardIteratorType.AT_TIMESTAMP, endpoint.getConfiguration().getIteratorType());
         assertEquals("1732882967.573", endpoint.getConfiguration().getMessageTimestamp());
@@ -112,8 +113,9 @@ public class KinesisComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithApplicationName() throws Exception {
         Kinesis2Component component = context.getComponent("aws2-kinesis", Kinesis2Component.class);
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) component.createEndpoint(
-                "aws2-kinesis://some_stream_name?accessKey=xxx&secretKey=yyy&region=eu-west-1&applicationName=myAppName");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)
+                component.createEndpoint(
+                        "aws2-kinesis://some_stream_name?accessKey=xxx&secretKey=yyy&region=eu-west-1&applicationName=myAppName");
 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("myAppName", endpoint.getConfiguration().getApplicationName());

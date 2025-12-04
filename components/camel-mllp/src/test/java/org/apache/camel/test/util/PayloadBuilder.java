@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.util;
 
 import java.io.ByteArrayOutputStream;
@@ -24,8 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 public class PayloadBuilder {
     ByteArrayOutputStream builderStream = new ByteArrayOutputStream();
 
-    public PayloadBuilder() {
-    }
+    public PayloadBuilder() {}
 
     public PayloadBuilder(byte b) throws IOException {
         this.append(b);
@@ -109,9 +109,7 @@ public class PayloadBuilder {
 
     public static byte[] build(char start, String s) {
         try {
-            return new PayloadBuilder(start)
-                    .append(s)
-                    .build();
+            return new PayloadBuilder(start).append(s).build();
         } catch (IOException e) {
             throw new RuntimeCamelException("PayloadBuilder.build(String) failure", e);
         }
@@ -119,10 +117,7 @@ public class PayloadBuilder {
 
     public static byte[] build(char start, String s, char... end) {
         try {
-            return new PayloadBuilder(start)
-                    .append(s)
-                    .append(end)
-                    .build();
+            return new PayloadBuilder(start).append(s).append(end).build();
         } catch (IOException e) {
             throw new RuntimeCamelException("PayloadBuilder.build(char, String, char...) failure", e);
         }
@@ -130,9 +125,7 @@ public class PayloadBuilder {
 
     public static byte[] build(char start, byte[] bytes, char... end) {
         try {
-            return new PayloadBuilder(start)
-                    .append(bytes)
-                    .append(end).build();
+            return new PayloadBuilder(start).append(bytes).append(end).build();
         } catch (IOException e) {
             throw new RuntimeCamelException("PayloadBuilder.build(char, byte[], char...) failure", e);
         }
@@ -140,8 +133,7 @@ public class PayloadBuilder {
 
     public static byte[] build(String s, char... end) {
         try {
-            return new PayloadBuilder(s)
-                    .append(end).build();
+            return new PayloadBuilder(s).append(end).build();
         } catch (IOException e) {
             throw new RuntimeCamelException("PayloadBuilder.build(String, char...) failure", e);
         }
@@ -149,8 +141,7 @@ public class PayloadBuilder {
 
     public static byte[] build(byte[] bytes, char... end) {
         try {
-            return new PayloadBuilder(bytes)
-                    .append(end).build();
+            return new PayloadBuilder(bytes).append(end).build();
         } catch (IOException e) {
             throw new RuntimeCamelException("PayloadBuilder.build(byte[], char...) failure", e);
         }
@@ -158,8 +149,7 @@ public class PayloadBuilder {
 
     public static byte[] build(byte[] bytes, String s) {
         try {
-            return new PayloadBuilder(bytes)
-                    .append(s).build();
+            return new PayloadBuilder(bytes).append(s).build();
         } catch (IOException e) {
             throw new RuntimeCamelException("PayloadBuilder.build(byte[], String) failure", e);
         }

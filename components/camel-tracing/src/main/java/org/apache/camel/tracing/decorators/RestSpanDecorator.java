@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import java.net.URLDecoder;
@@ -59,7 +60,6 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
                 }
             }
         });
-
     }
 
     protected static String getPath(String uri) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.Map;
@@ -36,13 +37,15 @@ public interface TaxonomySPI {
     @Path("/v{apiVersion}/taxonomies")
     @Produces(MediaType.APPLICATION_JSON)
     Map<String, Taxonomy> list(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
+            @PathParam("apiVersion") String apiVersion,
+            @QueryParam("context") Context context,
             @QueryParam("type") String postType);
 
     @GET
     @Path("/v{apiVersion}/taxonomies/{taxonomy}")
     @Produces(MediaType.APPLICATION_JSON)
     Taxonomy retrieve(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
+            @PathParam("apiVersion") String apiVersion,
+            @QueryParam("context") Context context,
             @PathParam("taxonomy") String taxonomy);
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ public class IronMQComponent extends HealthCheckComponent {
         super(context);
     }
 
-    public IronMQComponent() {
-    }
+    public IronMQComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

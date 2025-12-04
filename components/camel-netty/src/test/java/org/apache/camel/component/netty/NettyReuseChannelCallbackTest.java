@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +40,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Regression test for CAMEL-16227
@@ -97,8 +98,14 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
         assertFalse(channels.get(1).isOpen(), "And closed when routing done");
 
         assertEquals(4, eventEndpoints.size(), "Should get 4 events for netty endpoints");
-        assertSame(eventEndpoints.get(0), eventEndpoints.get(1), "Sending and sent event should contain the same endpoint");
-        assertSame(eventEndpoints.get(2), eventEndpoints.get(3), "Sending and sent event should contain the same endpoint");
+        assertSame(
+                eventEndpoints.get(0),
+                eventEndpoints.get(1),
+                "Sending and sent event should contain the same endpoint");
+        assertSame(
+                eventEndpoints.get(2),
+                eventEndpoints.get(3),
+                "Sending and sent event should contain the same endpoint");
         assertEquals(2, times.size(), "Should get 2 ExchangeSent events");
         // one side effect of mixing callbacks in wrong time taken reported in event
         times.forEach(time -> assertTrue(time < 900));
@@ -115,7 +122,8 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
                 // If they URIs would be the same there would be one NettyEndpoint instance
                 // but still 2 separate NettyProducer instances.
                 from("direct:start")
-                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true&requestTimeout=1000")
+                        .to(
+                                "netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true&requestTimeout=1000")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -125,7 +133,8 @@ class NettyReuseChannelCallbackTest extends BaseNettyTest {
                             }
                         })
                         .to("mock:a")
-                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true&requestTimeout=2000")
+                        .to(
+                                "netty:tcp://localhost:{{port}}?textline=true&sync=true&reuseChannel=true&disconnect=true&requestTimeout=2000")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {

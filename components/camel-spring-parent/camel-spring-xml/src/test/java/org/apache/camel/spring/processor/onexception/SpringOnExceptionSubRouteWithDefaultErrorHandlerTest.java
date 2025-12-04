@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.onexception;
 
-import org.apache.camel.CamelContext;
-
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+import org.apache.camel.CamelContext;
 
 /**
  * Unit test for onException with the spring DSL.
@@ -27,7 +28,8 @@ public class SpringOnExceptionSubRouteWithDefaultErrorHandlerTest extends Spring
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
+        return createSpringCamelContext(
+                this,
                 "/org/apache/camel/spring/processor/onexception/onExceptionSubRouteWithDefaultErrorHandlerTest.xml");
     }
 }

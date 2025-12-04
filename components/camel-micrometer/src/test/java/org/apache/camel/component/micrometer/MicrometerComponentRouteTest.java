@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
 
 import java.util.Date;
@@ -75,7 +76,6 @@ public class MicrometerComponentRouteTest extends CamelTestSupport {
                         .to("micrometer:summary:E?value=12000000031")
                         .to("micrometer:timer:T?action=stop")
                         .to("mock:result");
-
             }
         };
     }

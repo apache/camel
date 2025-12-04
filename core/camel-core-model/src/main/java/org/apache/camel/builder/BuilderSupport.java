@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
@@ -37,8 +38,7 @@ public abstract class BuilderSupport implements CamelContextAware {
     private CamelContext camelContext;
     private ErrorHandlerFactory errorHandlerFactory;
 
-    protected BuilderSupport() {
-    }
+    protected BuilderSupport() {}
 
     protected BuilderSupport(CamelContext context) {
         this.camelContext = context;
@@ -574,5 +574,4 @@ public abstract class BuilderSupport implements CamelContextAware {
     public boolean hasErrorHandlerFactory() {
         return this.errorHandlerFactory != null;
     }
-
 }

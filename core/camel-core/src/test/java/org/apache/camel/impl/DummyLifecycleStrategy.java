@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
@@ -89,7 +90,11 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 
     @Override
     public void onThreadPoolAdd(
-            CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId,
+            CamelContext camelContext,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
             String threadPoolProfileId) {
         events.add("onThreadPoolAdd");
     }

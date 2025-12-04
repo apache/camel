@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -29,8 +32,6 @@ import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Repository;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CreateIssueProducerTest extends GitHubComponentTestBase {
 
     @Override
@@ -43,7 +44,6 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
                         .process(new MockIssueCreateProducerProcessor())
                         .to("github://createissue?state=success&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
         };
     }
 
@@ -73,5 +73,4 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_ISSUE_TITLE, "Error");
         }
     }
-
 }

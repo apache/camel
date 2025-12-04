@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AdviceWithLambdaTest extends ContextTestSupport {
 
@@ -40,7 +41,10 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvised() throws Exception {
         AdviceWith.adviceWith(context, null, a -> {
-            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+            a.interceptSendToEndpoint("mock:foo")
+                    .skipSendToOriginalEndpoint()
+                    .to("log:foo")
+                    .to("mock:advised");
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -56,8 +60,11 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedSimple() throws Exception {
         AdviceWith.adviceWith(context, null, a -> {
-            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().transform(a.simple("Hello ${body}"))
-                    .to("log:foo").to("mock:advised");
+            a.interceptSendToEndpoint("mock:foo")
+                    .skipSendToOriginalEndpoint()
+                    .transform(a.simple("Hello ${body}"))
+                    .to("log:foo")
+                    .to("mock:advised");
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -91,7 +98,10 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
             AdviceWith.adviceWith(context, 0, a -> {
                 a.from("direct:bar").to("mock:bar");
 
-                a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+                a.interceptSendToEndpoint("mock:foo")
+                        .skipSendToOriginalEndpoint()
+                        .to("log:foo")
+                        .to("mock:advised");
             });
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
@@ -102,7 +112,9 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedThrowException() throws Exception {
         AdviceWith.adviceWith(context, "myRoute", a -> {
-            a.interceptSendToEndpoint("mock:foo").to("mock:advised").throwException(new IllegalArgumentException("Damn"));
+            a.interceptSendToEndpoint("mock:foo")
+                    .to("mock:advised")
+                    .throwException(new IllegalArgumentException("Damn"));
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -123,7 +135,10 @@ public class AdviceWithLambdaTest extends ContextTestSupport {
     @Test
     public void testAdvisedRouteDefinition() throws Exception {
         AdviceWith.adviceWith(context, context.getRouteDefinitions().get(0), a -> {
-            a.interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+            a.interceptSendToEndpoint("mock:foo")
+                    .skipSendToOriginalEndpoint()
+                    .to("log:foo")
+                    .to("mock:advised");
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);

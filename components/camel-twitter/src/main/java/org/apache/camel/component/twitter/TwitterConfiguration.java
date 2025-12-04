@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.component.twitter.data.EndpointType;
@@ -27,46 +28,67 @@ public class TwitterConfiguration {
 
     @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct")
     private EndpointType type = EndpointType.POLLING;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String accessTokenSecret;
+
     @UriParam(label = "security", secret = true)
     private String consumerKey;
+
     @UriParam(label = "security", secret = true)
     private String consumerSecret;
+
     @UriParam(label = "consumer,filter")
     private String userIds;
+
     @UriParam(label = "consumer,filter", defaultValue = "true")
     private boolean filterOld = true;
+
     @UriParam(label = "consumer,filter", defaultValue = "1")
     private long sinceId = 1;
+
     @UriParam(label = "consumer,filter")
     private String lang;
+
     @UriParam(label = "consumer,filter", defaultValue = "5")
     private Integer count = 5;
+
     @UriParam(label = "consumer,filter", defaultValue = "1")
     private Integer numberOfPages = 1;
+
     @UriParam(label = "consumer,sort", defaultValue = "true")
     private boolean sortById = true;
+
     @UriParam(label = "proxy")
     private String httpProxyHost;
+
     @UriParam(label = "proxy")
     private String httpProxyUser;
+
     @UriParam(label = "proxy")
     private String httpProxyPassword;
+
     @UriParam(label = "proxy")
     private Integer httpProxyPort;
+
     @UriParam(label = "consumer,advanced")
     private String locations;
+
     @UriParam(label = "consumer,advanced")
     private Double latitude;
+
     @UriParam(label = "consumer,advanced")
     private Double longitude;
+
     @UriParam(label = "consumer,advanced")
     private Double radius;
+
     @UriParam(label = "consumer,advanced", defaultValue = "km", enums = "km,mi")
     private String distanceMetric;
+
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean extendedMode = true;
 
@@ -81,8 +103,10 @@ public class TwitterConfiguration {
      */
     public void checkComplete() {
         if (twitter == null
-                && (ObjectHelper.isEmpty(consumerKey) || ObjectHelper.isEmpty(consumerSecret)
-                        || ObjectHelper.isEmpty(accessToken) || ObjectHelper.isEmpty(accessTokenSecret))) {
+                && (ObjectHelper.isEmpty(consumerKey)
+                        || ObjectHelper.isEmpty(consumerSecret)
+                        || ObjectHelper.isEmpty(accessToken)
+                        || ObjectHelper.isEmpty(accessTokenSecret))) {
             throw new IllegalArgumentException(
                     "twitter or all of consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
@@ -378,5 +402,4 @@ public class TwitterConfiguration {
     public boolean isExtendedMode() {
         return extendedMode;
     }
-
 }

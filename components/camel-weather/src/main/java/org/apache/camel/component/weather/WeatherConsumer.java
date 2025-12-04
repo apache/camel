@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 import org.apache.camel.Exchange;
@@ -56,43 +57,43 @@ public class WeatherConsumer extends ScheduledPollConsumer {
         HttpClient httpClient = getEndpoint().getConfiguration().getHttpClient();
         HttpGet getMethod = new HttpGet(query);
         try {
-            return httpClient.execute(
-                    getMethod,
-                    response -> {
-                        try {
-                            if (HttpStatus.SC_OK != response.getCode()) {
-                                LOG.warn("HTTP call for weather returned error status code {} - {} as a result with query: {}",
-                                        status,
-                                        response.getCode(), query);
-                                return 0;
-                            }
-                            String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
-                            LOG.debug("Got back the Weather information {}", weather);
-                            if (ObjectHelper.isEmpty(weather)) {
-                                // empty response
-                                return 0;
-                            }
+            return httpClient.execute(getMethod, response -> {
+                try {
+                    if (HttpStatus.SC_OK != response.getCode()) {
+                        LOG.warn(
+                                "HTTP call for weather returned error status code {} - {} as a result with query: {}",
+                                status,
+                                response.getCode(),
+                                query);
+                        return 0;
+                    }
+                    String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
+                    LOG.debug("Got back the Weather information {}", weather);
+                    if (ObjectHelper.isEmpty(weather)) {
+                        // empty response
+                        return 0;
+                    }
 
-                            Exchange exchange = getEndpoint().createExchange();
-                            String header = getEndpoint().getConfiguration().getHeaderName();
-                            if (header != null) {
-                                exchange.getIn().setHeader(header, weather);
-                            } else {
-                                exchange.getIn().setBody(weather);
-                            }
-                            exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
+                    Exchange exchange = getEndpoint().createExchange();
+                    String header = getEndpoint().getConfiguration().getHeaderName();
+                    if (header != null) {
+                        exchange.getIn().setHeader(header, weather);
+                    } else {
+                        exchange.getIn().setBody(weather);
+                    }
+                    exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
 
-                            try {
-                                getProcessor().process(exchange);
-                            } catch (Exception e) {
-                                throw new RuntimeCamelException(e);
-                            }
+                    try {
+                        getProcessor().process(exchange);
+                    } catch (Exception e) {
+                        throw new RuntimeCamelException(e);
+                    }
 
-                            return 1;
-                        } finally {
-                            getMethod.reset();
-                        }
-                    });
+                    return 1;
+                } finally {
+                    getMethod.reset();
+                }
+            });
         } catch (RuntimeCamelException e) {
             if (e.getCause() instanceof Exception ex) {
                 throw ex;
@@ -100,5 +101,4 @@ public class WeatherConsumer extends ScheduledPollConsumer {
             throw e;
         }
     }
-
 }

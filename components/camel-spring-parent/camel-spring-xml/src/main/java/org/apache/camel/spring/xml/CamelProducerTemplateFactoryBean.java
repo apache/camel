@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -54,5 +55,4 @@ public class CamelProducerTemplateFactoryBean extends AbstractCamelProducerTempl
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-
 }

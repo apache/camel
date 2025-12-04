@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.File;
@@ -249,15 +250,23 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     protected void doDownloadDependency(
-            String groupId, String artifactId, String version, boolean transitively,
-            boolean hidden, String extraRepos) {
+            String groupId,
+            String artifactId,
+            String version,
+            boolean transitively,
+            boolean hidden,
+            String extraRepos) {
         doDownloadDependencyWithParent(null, groupId, artifactId, version, transitively, hidden, extraRepos);
     }
 
     protected void doDownloadDependencyWithParent(
             String parentGav,
-            String groupId, String artifactId, String version, boolean transitively,
-            boolean hidden, String extraRepos) {
+            String groupId,
+            String artifactId,
+            String version,
+            boolean transitively,
+            boolean hidden,
+            String extraRepos) {
 
         if (versionResolver != null && version != null) {
             version = versionResolver.resolve(version);
@@ -292,69 +301,75 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         String gav = groupId + ":" + artifactId + ":" + version;
         String targetVersion = version;
-        threadPool.download(LOG, () -> {
-            List<String> deps = List.of(gav);
+        threadPool.download(
+                LOG,
+                () -> {
+                    List<String> deps = List.of(gav);
 
-            // include Apache snapshot to make it easy to use upcoming releases
-            boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && targetVersion.contains("SNAPSHOT");
+                    // include Apache snapshot to make it easy to use upcoming releases
+                    boolean useApacheSnapshots =
+                            "org.apache.camel".equals(groupId) && targetVersion.contains("SNAPSHOT");
 
-            // include extra repositories (if any) - these will be used in addition
-            // to the ones detected from ~/.m2/settings.xml and configured in
-            // org.apache.camel.main.download.MavenDependencyDownloader#repos
-            Set<String> extraRepositories = new LinkedHashSet<>(resolveExtraRepositories(extraRepos));
-            if (knownReposResolver != null) {
-                // and from known extra repositories (if any)
-                String known = knownReposResolver.getRepo(artifactId);
-                extraRepositories.addAll(resolveExtraRepositories(known));
-            }
-
-            List<MavenArtifact> artifacts = resolveDependenciesViaAether(parentGav, deps, extraRepositories,
-                    transitively, useApacheSnapshots);
-            List<File> files = new ArrayList<>();
-            if (verbose) {
-                LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
-            } else {
-                LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
-            }
-
-            for (MavenArtifact a : artifacts) {
-                File file = a.getFile();
-                // only add to classpath if not already present (do not trigger listener)
-                if (!alreadyOnClasspath(a.getGav().getGroupId(), a.getGav().getArtifactId(),
-                        a.getGav().getVersion(), false)) {
-                    if (classLoader instanceof DependencyDownloaderClassLoader) {
-                        DependencyDownloaderClassLoader ddc = (DependencyDownloaderClassLoader) classLoader;
-                        ddc.addFile(file);
+                    // include extra repositories (if any) - these will be used in addition
+                    // to the ones detected from ~/.m2/settings.xml and configured in
+                    // org.apache.camel.main.download.MavenDependencyDownloader#repos
+                    Set<String> extraRepositories = new LinkedHashSet<>(resolveExtraRepositories(extraRepos));
+                    if (knownReposResolver != null) {
+                        // and from known extra repositories (if any)
+                        String known = knownReposResolver.getRepo(artifactId);
+                        extraRepositories.addAll(resolveExtraRepositories(known));
                     }
-                    files.add(file);
+
+                    List<MavenArtifact> artifacts = resolveDependenciesViaAether(
+                            parentGav, deps, extraRepositories, transitively, useApacheSnapshots);
+                    List<File> files = new ArrayList<>();
                     if (verbose) {
-                        LOG.info("Added classpath: {}", a.getGav());
+                        LOG.info("Dependencies: {} -> [{}]", gav, artifacts);
                     } else {
-                        LOG.debug("Added classpath: {}", a.getGav());
+                        LOG.debug("Dependencies: {} -> [{}]", gav, artifacts);
                     }
-                }
-            }
 
-            // trigger listeners after downloaded and added to classloader
-            for (File file : files) {
-                for (ArtifactDownloadListener listener : artifactDownloadListeners) {
-                    listener.onDownloadedFile(file);
-                }
-            }
-            if (!artifacts.isEmpty()) {
-                for (DownloadListener listener : downloadListeners) {
-                    listener.onDownloadedDependency(groupId, artifactId, targetVersion);
-                }
-            }
-            if (!extraRepositories.isEmpty()) {
-                for (String repo : extraRepositories) {
-                    for (DownloadListener listener : downloadListeners) {
-                        listener.onExtraRepository(repo);
+                    for (MavenArtifact a : artifacts) {
+                        File file = a.getFile();
+                        // only add to classpath if not already present (do not trigger listener)
+                        if (!alreadyOnClasspath(
+                                a.getGav().getGroupId(),
+                                a.getGav().getArtifactId(),
+                                a.getGav().getVersion(),
+                                false)) {
+                            if (classLoader instanceof DependencyDownloaderClassLoader) {
+                                DependencyDownloaderClassLoader ddc = (DependencyDownloaderClassLoader) classLoader;
+                                ddc.addFile(file);
+                            }
+                            files.add(file);
+                            if (verbose) {
+                                LOG.info("Added classpath: {}", a.getGav());
+                            } else {
+                                LOG.debug("Added classpath: {}", a.getGav());
+                            }
+                        }
                     }
-                }
-            }
 
-        }, gav);
+                    // trigger listeners after downloaded and added to classloader
+                    for (File file : files) {
+                        for (ArtifactDownloadListener listener : artifactDownloadListeners) {
+                            listener.onDownloadedFile(file);
+                        }
+                    }
+                    if (!artifacts.isEmpty()) {
+                        for (DownloadListener listener : downloadListeners) {
+                            listener.onDownloadedDependency(groupId, artifactId, targetVersion);
+                        }
+                    }
+                    if (!extraRepositories.isEmpty()) {
+                        for (String repo : extraRepositories) {
+                            for (DownloadListener listener : downloadListeners) {
+                                listener.onExtraRepository(repo);
+                            }
+                        }
+                    }
+                },
+                gav);
     }
 
     @Override
@@ -367,7 +382,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public List<MavenArtifact> downloadArtifacts(String groupId, String artifactId, String version, boolean transitively) {
+    public List<MavenArtifact> downloadArtifacts(
+            String groupId, String artifactId, String version, boolean transitively) {
         String gav = groupId + ":" + artifactId + ":" + version;
         List<String> deps = List.of(gav);
 
@@ -386,8 +402,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     @Override
     public List<String[]> resolveAvailableVersions(
-            String groupId, String artifactId,
-            String minimumVersion, String repo) {
+            String groupId, String artifactId, String minimumVersion, String repo) {
         String gav = groupId + ":" + artifactId;
         if (verbose) {
             LOG.info("Downloading available versions: {}", gav);
@@ -408,7 +423,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 } else if ("camel-quarkus-catalog".equals(artifactId)) {
                     resolveQuarkus(minimumVersion, v, extraRepos, answer);
                 } else {
-                    answer.add(new String[] { v, null });
+                    answer.add(new String[] {v, null});
                 }
             }
         } catch (Exception e) {
@@ -423,7 +438,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (VersionHelper.isGE(v, MINIMUM_QUARKUS_VERSION)) {
             String cv = resolveCamelVersionByQuarkusVersion(v, extraRepos);
             if (cv != null && VersionHelper.isGE(cv, minimumVersion)) {
-                answer.add(new String[] { cv, v });
+                answer.add(new String[] {cv, v});
             }
         }
     }
@@ -434,7 +449,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (VersionHelper.isGE(v, minimumVersion)) {
             sbv = resolveSpringBootVersionByCamelVersion(v, extraRepos);
         }
-        answer.add(new String[] { v, sbv });
+        answer.add(new String[] {v, sbv});
     }
 
     public boolean alreadyOnClasspath(String groupId, String artifactId, String version) {
@@ -552,7 +567,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // use listener to keep track of which JARs was downloaded from a remote Maven repo (and how long time it took)
         mavenDownloaderImpl.setRemoteArtifactDownloadListener(new RemoteArtifactDownloadListener() {
             @Override
-            public void artifactDownloading(String groupId, String artifactId, String version, String repoId, String repoUrl) {
+            public void artifactDownloading(
+                    String groupId, String artifactId, String version, String repoId, String repoUrl) {
                 String gav = groupId + ":" + artifactId + ":" + version;
                 if (verbose) {
                     LOG.info("Downloading: {} from: {}@{}", gav, repoId, repoUrl);
@@ -598,18 +614,19 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     public List<MavenArtifact> resolveDependenciesViaAether(
-            List<String> depIds,
-            Set<String> extraRepositories, boolean transitively, boolean useApacheSnapshots) {
-        return resolveDependenciesViaAether(null, depIds, extraRepositories, transitively,
-                useApacheSnapshots);
+            List<String> depIds, Set<String> extraRepositories, boolean transitively, boolean useApacheSnapshots) {
+        return resolveDependenciesViaAether(null, depIds, extraRepositories, transitively, useApacheSnapshots);
     }
 
     public List<MavenArtifact> resolveDependenciesViaAether(
             String parentGav,
-            List<String> depIds, Set<String> extraRepositories,
-            boolean transitively, boolean useApacheSnapshots) {
+            List<String> depIds,
+            Set<String> extraRepositories,
+            boolean transitively,
+            boolean useApacheSnapshots) {
         try {
-            return mavenDownloader.resolveArtifacts(parentGav, depIds, extraRepositories, transitively, useApacheSnapshots);
+            return mavenDownloader.resolveArtifacts(
+                    parentGav, depIds, extraRepositories, transitively, useApacheSnapshots);
         } catch (MavenResolutionException e) {
             String repos = (e.getRepositories() == null || e.getRepositories().isEmpty())
                     ? "(empty URL list)"
@@ -621,8 +638,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
     }
 
-    private String resolveCamelVersionByQuarkusVersion(String quarkusVersion, Set<String> extraRepos)
-            throws Exception {
+    private String resolveCamelVersionByQuarkusVersion(String quarkusVersion, Set<String> extraRepos) throws Exception {
         String gav = "org.apache.camel.quarkus" + ":" + "camel-quarkus" + ":pom:" + quarkusVersion;
 
         try {
@@ -687,5 +703,4 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         return null;
     }
-
 }

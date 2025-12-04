@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
+
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait.DEFAULT_CONTAINER_PORT_NAME;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,8 +33,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.ClusterType;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Ingress;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
-
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait.DEFAULT_CONTAINER_PORT_NAME;
 
 public class IngressTrait extends BaseTrait {
 
@@ -53,7 +54,8 @@ public class IngressTrait extends BaseTrait {
         }
 
         // must be explicitly enabled
-        if (traitConfig.getIngress() == null || !Optional.ofNullable(traitConfig.getIngress().getEnabled()).orElse(false)) {
+        if (traitConfig.getIngress() == null
+                || !Optional.ofNullable(traitConfig.getIngress().getEnabled()).orElse(false)) {
             return false;
         }
 
@@ -64,24 +66,29 @@ public class IngressTrait extends BaseTrait {
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
         Ingress ingressTrait = Optional.ofNullable(traitConfig.getIngress()).orElseGet(Ingress::new);
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
 
         IngressBuilder ingressBuilder = new IngressBuilder();
-        ingressBuilder.withNewMetadata()
-                .withName(context.getName())
-                .endMetadata();
+        ingressBuilder.withNewMetadata().withName(context.getName()).endMetadata();
         if (ingressTrait.getAnnotations() != null) {
-            ingressBuilder.editMetadata().withAnnotations(ingressTrait.getAnnotations()).endMetadata();
+            ingressBuilder
+                    .editMetadata()
+                    .withAnnotations(ingressTrait.getAnnotations())
+                    .endMetadata();
         }
 
         HTTPIngressPath path = new HTTPIngressPathBuilder()
                 .withPath(Optional.ofNullable(ingressTrait.getPath()).orElse(DEFAULT_INGRESS_PATH))
-                .withPathType(Optional.ofNullable(ingressTrait.getPathType()).orElse(DEFAULT_INGRESS_PATH_TYPE).getValue())
+                .withPathType(Optional.ofNullable(ingressTrait.getPathType())
+                        .orElse(DEFAULT_INGRESS_PATH_TYPE)
+                        .getValue())
                 .withNewBackend()
                 .withNewService()
                 .withName(context.getName())
                 .withNewPort()
-                .withName(Optional.ofNullable(containerTrait.getServicePortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
+                .withName(
+                        Optional.ofNullable(containerTrait.getServicePortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
                 .endPort()
                 .endService()
                 .endBackend()
@@ -97,7 +104,8 @@ public class IngressTrait extends BaseTrait {
 
         ingressBuilder
                 .withNewSpec()
-                .withIngressClassName(Optional.ofNullable(ingressTrait.getIngressClass()).orElse(DEFAULT_INGRESS_CLASS_NAME))
+                .withIngressClassName(
+                        Optional.ofNullable(ingressTrait.getIngressClass()).orElse(DEFAULT_INGRESS_CLASS_NAME))
                 .withRules(rule)
                 .endSpec();
 

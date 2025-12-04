@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,8 +56,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Disabled("TODO: https://issues.apache.org/jira/projects/CAMEL/issues/CAMEL-16718")
 // this test was working before due to a netty ref count exception was ignored (seems we attempt to write 2 times)
 // now this real caused exception is detected by Camel
@@ -70,7 +71,8 @@ public class ProxyProtocolTest {
 
     private String url;
 
-    public void createContext(final Function<RouteBuilder, RouteDefinition> variant, final String url) throws Exception {
+    public void createContext(final Function<RouteBuilder, RouteDefinition> variant, final String url)
+            throws Exception {
         this.url = url;
         context = new DefaultCamelContext();
 
@@ -84,8 +86,7 @@ public class ProxyProtocolTest {
 
                 // origin service that serves `"origin server"` on
                 // http://localhost:originPort/path
-                from("netty-http:http://localhost:" + ORIGIN_PORT + "/path")
-                        .process(ProxyProtocolTest::origin);
+                from("netty-http:http://localhost:" + ORIGIN_PORT + "/path").process(ProxyProtocolTest::origin);
             }
         });
         context.start();
@@ -138,7 +139,8 @@ public class ProxyProtocolTest {
 
     @ParameterizedTest
     @MethodSource("routeOptions")
-    public void shouldSupportQueryParameters(Function<RouteBuilder, RouteDefinition> variant, String url) throws Exception {
+    public void shouldSupportQueryParameters(Function<RouteBuilder, RouteDefinition> variant, String url)
+            throws Exception {
         createContext(variant, url);
 
         // request for http://test/path?q=... will be proxied by
@@ -154,7 +156,8 @@ public class ProxyProtocolTest {
         final ShutdownStrategy shutdownStrategy = context.getShutdownStrategy();
         shutdownStrategy.setTimeout(100);
         shutdownStrategy.setTimeUnit(TimeUnit.MILLISECONDS);
-        shutdownStrategy.shutdownForced(context, context.getCamelContextExtension().getRouteStartupOrder());
+        shutdownStrategy.shutdownForced(
+                context, context.getCamelContextExtension().getRouteStartupOrder());
 
         context.stop();
     }
@@ -165,24 +168,26 @@ public class ProxyProtocolTest {
                 .to("netty-http:http://localhost:" + ORIGIN_PORT)
                 .process(ProxyProtocolTest::uppercase);
 
-        final Function<RouteBuilder, RouteDefinition> dynamicPath = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-                .process(ProxyProtocolTest::uppercase)
-                .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
-                .process(ProxyProtocolTest::uppercase);
+        final Function<RouteBuilder, RouteDefinition> dynamicPath =
+                r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+                        .process(ProxyProtocolTest::uppercase)
+                        .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
+                        .process(ProxyProtocolTest::uppercase);
 
-        final Function<RouteBuilder, RouteDefinition> dynamicUrl = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-                .process(ProxyProtocolTest::uppercase)
-                .toD("netty-http:"
-                     + "${headers." + Exchange.HTTP_SCHEME + "}://"
-                     + "${headers." + Exchange.HTTP_HOST + "}:"
-                     + "${headers." + Exchange.HTTP_PORT + "}/"
-                     + "${headers." + Exchange.HTTP_PATH + "}")
-                .process(ProxyProtocolTest::uppercase);
+        final Function<RouteBuilder, RouteDefinition> dynamicUrl =
+                r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
+                        .process(ProxyProtocolTest::uppercase)
+                        .toD("netty-http:"
+                                + "${headers." + Exchange.HTTP_SCHEME + "}://"
+                                + "${headers." + Exchange.HTTP_HOST + "}:"
+                                + "${headers." + Exchange.HTTP_PORT + "}/"
+                                + "${headers." + Exchange.HTTP_PATH + "}")
+                        .process(ProxyProtocolTest::uppercase);
 
         return Arrays.asList(
-                new Object[] { single, "http://test/path" },
-                new Object[] { dynamicPath, "http://test/path" },
-                new Object[] { dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path" });
+                new Object[] {single, "http://test/path"},
+                new Object[] {dynamicPath, "http://test/path"},
+                new Object[] {dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path"});
     }
 
     @BeforeAll

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.BytesMessage;
 import jakarta.jms.Message;
@@ -25,16 +30,11 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JmsMessageTypeTest extends JmsTestSupport {
 
     private static final String TEST_DESTINATION_NAME = "test.foo.JmsMessageTypeTest";
 
-    public JmsMessageTypeTest() {
-    }
+    public JmsMessageTypeTest() {}
 
     @Override
     protected boolean useJmx() {
@@ -67,8 +67,7 @@ public class JmsMessageTypeTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("sjms:queue:" + TEST_DESTINATION_NAME + "?jmsMessageType=Bytes");
+                from("direct:start").to("sjms:queue:" + TEST_DESTINATION_NAME + "?jmsMessageType=Bytes");
             }
         };
     }

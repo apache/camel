@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
@@ -27,15 +31,14 @@ import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test simple scenario, without custom component configuration
  */
 public class FhirSimpleIT extends AbstractFhirTestSupport {
 
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirCreateApiMethod.class)
+            .getName();
     private static final String GIVEN_NAME = UUID.randomUUID().toString();
     private static final String FAMILY_NAME = UUID.randomUUID().toString();
 
@@ -47,7 +50,8 @@ public class FhirSimpleIT extends AbstractFhirTestSupport {
 
     @Test
     public void testCreateResource() {
-        Patient patient = new Patient().addName(new HumanName().addGiven(GIVEN_NAME).setFamily(FAMILY_NAME));
+        Patient patient =
+                new Patient().addName(new HumanName().addGiven(GIVEN_NAME).setFamily(FAMILY_NAME));
 
         MethodOutcome result = requestBody("direct://RESOURCE", patient);
 
@@ -60,8 +64,8 @@ public class FhirSimpleIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct://RESOURCE")
-                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource&serverUrl=" + service.getServiceBaseURL()
-                            + "&fhirVersion=R4");
+                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource&serverUrl="
+                                + service.getServiceBaseURL() + "&fhirVersion=R4");
             }
         };
     }

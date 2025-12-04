@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.ognl;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -45,8 +46,10 @@ public class OgnlInvokeMethodTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("name").ognl("request.body.name")
-                        .setHeader("dangerous").ognl("request.body.isDangerous()")
+                        .setHeader("name")
+                        .ognl("request.body.name")
+                        .setHeader("dangerous")
+                        .ognl("request.body.isDangerous()")
                         .to("mock:result");
             }
         };

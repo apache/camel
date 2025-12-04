@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DockerConfigurationTest {
 
@@ -46,7 +47,8 @@ public class DockerConfigurationTest {
         Message message = new DefaultMessage(camelContext);
         message.setHeader(DockerConstants.DOCKER_HOST, host);
 
-        String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
+        String configurationProp =
+                DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);
     }
 
@@ -59,8 +61,8 @@ public class DockerConfigurationTest {
         configuration.setParameters(parameters);
 
         Message message = new DefaultMessage(camelContext);
-        String configurationProp = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
+        String configurationProp =
+                DockerHelper.getProperty(DockerConstants.DOCKER_HOST, configuration, message, String.class);
         assertEquals(host, configurationProp);
     }
-
 }

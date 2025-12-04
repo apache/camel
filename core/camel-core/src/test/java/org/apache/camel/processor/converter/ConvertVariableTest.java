@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ConvertVariableTest extends ContextTestSupport {
 
     private FluentProducerTemplate fluent;
@@ -53,7 +54,9 @@ public class ConvertVariableTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     // set an invalid charset
-                    from("direct:invalid").convertVariableTo("foo", String.class, "ASSI").to("mock:endpoint");
+                    from("direct:invalid")
+                            .convertVariableTo("foo", String.class, "ASSI")
+                            .to("mock:endpoint");
                 }
             });
             fail("Should have thrown an exception");
@@ -67,13 +70,17 @@ public class ConvertVariableTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:foo")
-                        .convertVariableTo("foo", byte[].class, "iso-8859-1").to("mock:foo");
+                        .convertVariableTo("foo", byte[].class, "iso-8859-1")
+                        .to("mock:foo");
             }
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion etc
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.CHARSET_NAME)
+                .isNull();
 
         fluent.to("direct:foo").withVariable("foo", "Hello World").send();
 
@@ -85,16 +92,21 @@ public class ConvertVariableTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:foo")
-                        .convertVariableTo("foo", byte[].class, "iso-8859-1").to("mock:foo");
+                        .convertVariableTo("foo", byte[].class, "iso-8859-1")
+                        .to("mock:foo");
             }
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion
         // etc
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.CHARSET_NAME)
+                .isEqualTo("UTF-8");
 
-        fluent.to("direct:foo").withVariable("foo", "Hello World")
+        fluent.to("direct:foo")
+                .withVariable("foo", "Hello World")
                 .withExchangeProperty(Exchange.CHARSET_NAME, "UTF-8")
                 .send();
 
@@ -183,7 +195,8 @@ public class ConvertVariableTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedVariableReceived("foo", body);
 
-        fluent.to("direct:charset3").withVariable("foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_16)))
+        fluent.to("direct:charset3")
+                .withVariable("foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_16)))
                 .send();
 
         assertMockEndpointsSatisfied();
@@ -213,7 +226,8 @@ public class ConvertVariableTest extends ContextTestSupport {
         result.expectedVariableReceived("foo", body);
         result.expectedMessageCount(1);
 
-        fluent.to("direct:charset3").withVariable("foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)))
+        fluent.to("direct:charset3")
+                .withVariable("foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)))
                 .send();
 
         // should NOT be okay as we expected utf-8 but got it in utf-16
@@ -225,14 +239,23 @@ public class ConvertVariableTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").convertVariableTo("foo", Integer.class).to("mock:result");
-                from("direct:optional").convertVariableTo("foo", Integer.class, false).to("mock:result");
+                from("direct:optional")
+                        .convertVariableTo("foo", Integer.class, false)
+                        .to("mock:result");
                 from("direct:invalid").convertVariableTo("foo", Date.class).to("mock:result");
-                from("direct:charset").convertVariableTo("foo", byte[].class, "iso-8859-1").to("mock:result");
-                from("direct:charset2").convertVariableTo("foo", byte[].class, "utf-16").to("mock:result");
-                from("direct:charset3").convertVariableTo("foo", String.class, "utf-16").to("mock:result");
-                from("direct:bar").convertVariableTo("foo", "bar", Integer.class).to("mock:result");
+                from("direct:charset")
+                        .convertVariableTo("foo", byte[].class, "iso-8859-1")
+                        .to("mock:result");
+                from("direct:charset2")
+                        .convertVariableTo("foo", byte[].class, "utf-16")
+                        .to("mock:result");
+                from("direct:charset3")
+                        .convertVariableTo("foo", String.class, "utf-16")
+                        .to("mock:result");
+                from("direct:bar")
+                        .convertVariableTo("foo", "bar", Integer.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

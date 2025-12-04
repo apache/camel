@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.processor;
 
 import org.apache.camel.Exchange;
@@ -28,5 +29,4 @@ public class FaultResponseProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         exchange.setException(new RuntimeException("Sample Error"));
     }
-
 }

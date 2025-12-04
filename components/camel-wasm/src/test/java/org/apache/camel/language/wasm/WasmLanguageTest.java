@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.wasm;
+
+import static org.assertj.core.api.Assertions.as;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -27,16 +31,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.assertj.core.api.Assertions.as;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class WasmLanguageTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "transform@functions.wasm",
-            "transform@file:{{wasm.resources.path}}/functions.wasm"
-    })
+    @ValueSource(strings = {"transform@functions.wasm", "transform@file:{{wasm.resources.path}}/functions.wasm"})
     public void testLanguage(String expression) throws Exception {
         try (CamelContext cc = new DefaultCamelContext()) {
 
@@ -47,9 +45,7 @@ public class WasmLanguageTest {
                 public void configure() throws Exception {
                     from("direct:in")
                             .transform()
-                            .wasm(
-                                    StringHelper.before(expression, "@"),
-                                    StringHelper.after(expression, "@"));
+                            .wasm(StringHelper.before(expression, "@"), StringHelper.after(expression, "@"));
                 }
             });
             cc.start();
@@ -59,11 +55,8 @@ public class WasmLanguageTest {
                     .withBody("hello")
                     .request(Exchange.class);
 
-            assertThat(out.getMessage().getHeaders())
-                    .containsEntry("foo", "bar");
-            assertThat(out.getMessage().getBody(String.class))
-                    .isEqualTo("HELLO");
-
+            assertThat(out.getMessage().getHeaders()).containsEntry("foo", "bar");
+            assertThat(out.getMessage().getBody(String.class)).isEqualTo("HELLO");
         }
     }
 
@@ -76,9 +69,7 @@ public class WasmLanguageTest {
             cc.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:in")
-                            .transform()
-                            .wasm("transform_err", "functions.wasm");
+                    from("direct:in").transform().wasm("transform_err", "functions.wasm");
                 }
             });
             cc.start();

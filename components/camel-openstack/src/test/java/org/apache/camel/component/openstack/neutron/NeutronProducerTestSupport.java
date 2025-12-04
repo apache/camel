@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron;
+
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.openstack4j.api.networking.NetworkingService;
-
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class NeutronProducerTestSupport extends AbstractProducerTestSupport {

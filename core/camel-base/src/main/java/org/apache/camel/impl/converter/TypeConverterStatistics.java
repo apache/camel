@@ -122,12 +122,18 @@ final class TypeConverterStatistics implements ConverterStatistics {
     }
 
     @Override
-    public void logMappingStatisticsMessage(Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
+    public void logMappingStatisticsMessage(
+            Map<TypeConvertible<?, ?>, TypeConverter> converters, TypeConverter missConverter) {
         final AtomicInteger misses = computeCachedMisses(converters, missConverter);
 
         LOG.info(
                 "TypeConverterStatistics utilization[noop={}, attempts={}, hits={}, misses={}, failures={}] mappings[total={}, misses={}]",
-                getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter(), converters.size(),
+                getNoopCounter(),
+                getAttemptCounter(),
+                getHitCounter(),
+                getMissCounter(),
+                getFailedCounter(),
+                converters.size(),
                 misses);
     }
 }

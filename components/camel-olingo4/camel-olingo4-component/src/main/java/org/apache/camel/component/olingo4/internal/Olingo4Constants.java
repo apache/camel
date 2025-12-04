@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4.internal;
 
 import org.apache.camel.spi.Metadata;
@@ -30,6 +31,7 @@ public interface Olingo4Constants {
     String THREAD_PROFILE_NAME = "CamelOlingo4";
 
     String RESPONSE_HTTP_HEADERS = "responseHttpHeaders";
+
     @Metadata(label = "producer", description = "The response Http headers", javaType = "Map<String, String>")
     String FULL_RESPONSE_HTTP_HEADERS = PROPERTY_PREFIX + RESPONSE_HTTP_HEADERS;
 }

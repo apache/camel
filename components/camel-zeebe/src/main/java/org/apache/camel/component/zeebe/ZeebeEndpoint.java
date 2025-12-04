@@ -36,13 +36,21 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Zeebe component which integrates with Camunda Zeebe to interact with the API.
  */
-@UriEndpoint(firstVersion = "3.21.0", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
-             category = { Category.WORKFLOW, Category.SAAS },
-             headersClass = ZeebeConstants.class)
+@UriEndpoint(
+        firstVersion = "3.21.0",
+        scheme = "zeebe",
+        title = "Zeebe",
+        syntax = "zeebe:operationName",
+        category = {Category.WORKFLOW, Category.SAAS},
+        headersClass = ZeebeConstants.class)
 public class ZeebeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    @UriPath(label = "common", description = "The operation to use", enums = "startProcess," +
-                                                                             "cancelProcess,publishMessage,completeJob,failJob,updateJobRetries,worker,throwError,deployResource")
+    @UriPath(
+            label = "common",
+            description = "The operation to use",
+            enums =
+                    "startProcess,"
+                            + "cancelProcess,publishMessage,completeJob,failJob,updateJobRetries,worker,throwError,deployResource")
     @Metadata(required = true)
     private OperationName operationName;
 
@@ -58,8 +66,7 @@ public class ZeebeEndpoint extends DefaultEndpoint implements EndpointServiceLoc
     @Metadata(label = "consumer", description = "Timeout for job worker.")
     private int timeout = 10;
 
-    public ZeebeEndpoint() {
-    }
+    public ZeebeEndpoint() {}
 
     public ZeebeEndpoint(String uri, ZeebeComponent component, OperationName operationName) {
         super(uri, component);

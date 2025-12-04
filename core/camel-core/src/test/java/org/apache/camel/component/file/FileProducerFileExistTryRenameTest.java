@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -34,8 +35,8 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         mock.expectedFileExists(testFile(TEST_FILE_NAME), "Bye World");
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        template.sendBodyAndHeader(fileUri("?fileExist=TryRename&tempPrefix=tmp"), "Bye World",
-                Exchange.FILE_NAME, TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("?fileExist=TryRename&tempPrefix=tmp"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME);
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
@@ -46,7 +47,9 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).autoStartup(false).convertBodyTo(String.class)
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
@@ -58,5 +59,4 @@ public interface HeaderFilterStrategy {
      * @return             <tt>true</tt> if this header should be filtered (skipped).
      */
     boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange);
-
 }

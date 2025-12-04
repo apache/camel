@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,5 +70,4 @@ public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy
     public static void setCounter(int value) {
         CONTEXT_COUNTER.set(value);
     }
-
 }

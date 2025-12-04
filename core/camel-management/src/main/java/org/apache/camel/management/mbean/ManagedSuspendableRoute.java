@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.concurrent.TimeUnit;
@@ -53,5 +54,4 @@ public class ManagedSuspendableRoute extends ManagedRoute implements ManagedSusp
         }
         context.getRouteController().resumeRoute(getRouteId());
     }
-
 }

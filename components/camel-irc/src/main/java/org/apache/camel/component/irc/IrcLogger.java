@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import org.schwering.irc.lib.IRCEventAdapter;
@@ -60,7 +61,8 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void onKick(String chan, IRCUser user, String passiveNick, String msg) {
-        log.debug("Server: {} - onKick chan={} user={} passiveNick={} msg=\"{}\"", server, chan, user, passiveNick, msg);
+        log.debug(
+                "Server: {} - onKick chan={} user={} passiveNick={} msg=\"{}\"", server, chan, user, passiveNick, msg);
     }
 
     @Override
@@ -120,7 +122,12 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void unknown(String prefix, String command, String middle, String trailing) {
-        log.info("Server: {} - unknown prefix={} command={} middle={} trailing={}", server, prefix, command,
-                middle, trailing);
+        log.info(
+                "Server: {} - unknown prefix={} command={} middle={} trailing={}",
+                server,
+                prefix,
+                command,
+                middle,
+                trailing);
     }
 }

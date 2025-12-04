@@ -42,8 +42,7 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
 
     private boolean cacheTokens = true;
 
-    public KnativeOidcServiceOptions() {
-    }
+    public KnativeOidcServiceOptions() {}
 
     public KnativeOidcServiceOptions(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -71,8 +70,9 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
             Optional<String> oidcTokenPath = propertiesComponent.resolveProperty(PROPERTY_PREFIX + "token.path");
             oidcTokenPath.ifPresent(token -> this.oidcTokenPath = token);
 
-            boolean cacheTokens = Boolean.parseBoolean(
-                    propertiesComponent.resolveProperty(PROPERTY_PREFIX + "cache.tokens").orElse("true"));
+            boolean cacheTokens = Boolean.parseBoolean(propertiesComponent
+                    .resolveProperty(PROPERTY_PREFIX + "cache.tokens")
+                    .orElse("true"));
             setCacheTokens(cacheTokens);
         }
     }
@@ -83,8 +83,8 @@ public class KnativeOidcServiceOptions implements KnativeHttpServiceOptions {
     public String retrieveOidcToken() {
         if (oidcToken == null || !cacheTokens) {
             try {
-                oidcToken = IOHelper
-                        .loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
+                oidcToken = IOHelper.loadText(
+                                ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), oidcTokenPath))
                         .trim();
             } catch (IOException e) {
                 throw new RuntimeException(e);

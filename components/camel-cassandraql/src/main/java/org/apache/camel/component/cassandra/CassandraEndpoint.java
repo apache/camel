@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cassandra;
 
 import java.net.InetSocketAddress;
@@ -51,8 +52,13 @@ import org.slf4j.LoggerFactory;
  * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API). Based on Cassandra Java Driver provided by
  * DataStax.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
-             category = { Category.DATABASE, Category.BIGDATA }, headersClass = CassandraConstants.class)
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "cql",
+        title = "Cassandra CQL",
+        syntax = "cql:beanRef:hosts:port/keyspace",
+        category = {Category.DATABASE, Category.BIGDATA},
+        headersClass = CassandraConstants.class)
 public class CassandraEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraEndpoint.class);
 
@@ -60,31 +66,45 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
 
     @UriPath(description = "beanRef is defined using bean:id")
     private String beanRef;
+
     @UriPath
     private String hosts;
+
     @UriPath
     private Integer port;
+
     @UriPath
     private String keyspace;
+
     @UriParam(defaultValue = "datacenter1")
     private String datacenter = "datacenter1";
+
     @UriParam
     private String cql;
+
     @UriParam(defaultValue = "true")
     private boolean prepareStatements = true;
+
     @UriParam
     private String clusterName;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "advanced")
     private CqlSession session;
+
     private DefaultConsistencyLevel consistencyLevel;
+
     @UriParam(label = "advanced")
     private String loadBalancingPolicyClass;
+
     @UriParam(label = "advanced")
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
+
     @UriParam(label = "advanced")
     private String extraTypeCodecs;
 
@@ -142,7 +162,9 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
             Object bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanRef);
             if (bean instanceof CqlSession) {
                 session = (CqlSession) bean;
-                keyspace = session.getKeyspace().isPresent() ? session.getKeyspace().get().toString() : null;
+                keyspace = session.getKeyspace().isPresent()
+                        ? session.getKeyspace().get().toString()
+                        : null;
             } else {
                 throw new IllegalArgumentException("CQL Bean type should be of type CqlSession but was " + bean);
             }
@@ -200,7 +222,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
 
             for (String codec : c) {
                 if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
-                    sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
+                    sessionBuilder.addTypeCodecs(
+                            CassandraExtraCodecs.valueOf(codec).codec());
                 }
             }
         }
@@ -213,7 +236,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
      */
     protected PreparedStatement prepareStatement(String cql) {
         SimpleStatement statement = SimpleStatement.builder(cql)
-                .setConsistencyLevel(consistencyLevel).build();
+                .setConsistencyLevel(consistencyLevel)
+                .build();
         return getSessionHolder().getSession().prepare(statement);
     }
 

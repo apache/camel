@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.firehose.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.model.Record;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Must be manually tested.")
 public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
@@ -56,8 +57,12 @@ public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) {
                 List<Record> recs = new ArrayList<Record>();
-                Record rec = Record.builder().data(SdkBytes.fromString("Test1", Charset.defaultCharset())).build();
-                Record rec1 = Record.builder().data(SdkBytes.fromString("Test2", Charset.defaultCharset())).build();
+                Record rec = Record.builder()
+                        .data(SdkBytes.fromString("Test1", Charset.defaultCharset()))
+                        .build();
+                Record rec1 = Record.builder()
+                        .data(SdkBytes.fromString("Test2", Charset.defaultCharset()))
+                        .build();
                 recs.add(rec);
                 recs.add(rec1);
                 exchange.getIn().setBody(recs);
@@ -72,7 +77,8 @@ public class KinesisFirehoseComponentManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
+                        .to(
+                                "aws2-kinesis-firehose://cc?amazonKinesisFirehoseClient=#FirehoseClient&operation=sendBatchRecord");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.util.Optional;
@@ -83,7 +84,8 @@ public final class SshShellOutputStringHelper {
      * @param  mapper a mapping function to convert the string between the token to type T
      * @return        an Optional describing the result of applying a mapping function to the text between the token.
      */
-    public static <T> Optional<T> betweenBeforeLast(String text, String after, String before, Function<String, T> mapper) {
+    public static <T> Optional<T> betweenBeforeLast(
+            String text, String after, String before, Function<String, T> mapper) {
         String result = betweenBeforeLast(text, after, before);
         if (result == null) {
             return Optional.empty();

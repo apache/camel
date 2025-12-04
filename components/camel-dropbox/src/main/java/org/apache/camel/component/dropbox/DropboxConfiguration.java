@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox;
 
 import com.dropbox.core.DbxRequestConfig;
@@ -29,47 +30,51 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DropboxConfiguration {
 
-    //specific dropbox operation for the component
+    // specific dropbox operation for the component
     @UriPath
     @Metadata(required = true)
     private DropboxOperation operation;
 
-    //dropbox auth options
+    // dropbox auth options
     @UriParam
     @Metadata(label = "security", required = true, secret = true)
     private String accessToken;
+
     @UriParam
     @Metadata(label = "security", required = true, secret = true)
     private Long expireIn;
+
     @UriParam
     @Metadata(label = "security", required = true, secret = true)
     private String refreshToken;
+
     @UriParam
     @Metadata(label = "security", required = true, secret = true)
     private String apiKey;
+
     @UriParam
     @Metadata(label = "security", required = true, secret = true)
     private String apiSecret;
 
-    //local path to put files
+    // local path to put files
     @UriParam(label = "producer")
     private String localPath;
-    //where to put files on dropbox
+    // where to put files on dropbox
     @UriParam(label = "common")
     private String remotePath;
-    //new path on dropbox when moving files
+    // new path on dropbox when moving files
     @UriParam(label = "producer")
     private String newRemotePath;
-    //search query on dropbox
+    // search query on dropbox
     @UriParam(label = "common")
     private String query;
-    //in case of uploading if force or add existing file
+    // in case of uploading if force or add existing file
     @UriParam(label = "producer")
     private DropboxUploadMode uploadMode;
-    //id of the app
+    // id of the app
     @UriParam(label = "common")
     private String clientIdentifier;
-    //reference to dropbox client
+    // reference to dropbox client
     @UriParam(label = "advanced")
     private DbxClientV2 client;
 
@@ -227,5 +232,4 @@ public class DropboxConfiguration {
     public void setUploadMode(DropboxUploadMode uploadMode) {
         this.uploadMode = uploadMode;
     }
-
 }

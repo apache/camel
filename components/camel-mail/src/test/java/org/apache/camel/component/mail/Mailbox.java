@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.List;
@@ -48,8 +49,9 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 public final class Mailbox {
 
     private static final GreenMail GREEN_MAIL;
-    private static final ServerSetup[] SERVER_SETUP
-            = new ServerSetup[] { ServerSetupTest.SMTP, ServerSetupTest.POP3, ServerSetupTest.IMAP };
+    private static final ServerSetup[] SERVER_SETUP =
+            new ServerSetup[] {ServerSetupTest.SMTP, ServerSetupTest.POP3, ServerSetupTest.IMAP};
+
     static {
         GREEN_MAIL = new GreenMail(SERVER_SETUP);
         GREEN_MAIL.start();
@@ -60,9 +62,7 @@ public final class Mailbox {
     private Mailbox(MailFolder folder) {
         final List<StoredMessage> msgs = folder.getMessages();
         synchronized (msgs) {
-            this.messages = msgs.stream()
-                    .map(StoredMessage::getMimeMessage)
-                    .collect(Collectors.toList());
+            this.messages = msgs.stream().map(StoredMessage::getMimeMessage).collect(Collectors.toList());
         }
     }
 
@@ -222,11 +222,10 @@ public final class Mailbox {
 
         public Mailbox getFolder(String folderName) {
             final GreenMailUser greenMailUser = greenMail.getUserManager().getUserByEmail(user.getEmail());
-            final MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(greenMailUser, folderName);
+            final MailFolder folder =
+                    greenMail.getManagers().getImapHostManager().getFolder(greenMailUser, folderName);
             final List<StoredMessage> messages = folder.getMessages();
             return new Mailbox(folder);
         }
-
     }
-
 }

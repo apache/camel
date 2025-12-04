@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
@@ -30,12 +34,11 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Isolated("Seems to have problem running along with other tests")
-@DisabledIfSystemProperty(named = "activemq.instance.type", matches = "remote",
-                          disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
+@DisabledIfSystemProperty(
+        named = "activemq.instance.type",
+        matches = "remote",
+        disabledReason = "Requires control of ActiveMQ, so it can only run locally (embedded or container)")
 public class ReconnectProducerTest extends JmsExclusiveTestSupport {
     private static final String TEST_DESTINATION_NAME = "sync.queue.producer.test.ReconnectProducerTest";
 
@@ -83,7 +86,6 @@ public class ReconnectProducerTest extends JmsExclusiveTestSupport {
 
         mock.assertIsSatisfied();
         mc.close();
-
     }
 
     /**
@@ -94,13 +96,10 @@ public class ReconnectProducerTest extends JmsExclusiveTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("sjms:queue:" + TEST_DESTINATION_NAME + "?concurrentConsumers=10");
+                from("direct:start").to("sjms:queue:" + TEST_DESTINATION_NAME + "?concurrentConsumers=10");
 
-                from("direct:finish")
-                        .to("log:test.log.1?showBody=true", "mock:result");
+                from("direct:finish").to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }
-
 }

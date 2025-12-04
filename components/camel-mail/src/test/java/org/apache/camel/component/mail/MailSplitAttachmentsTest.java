@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -35,9 +39,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests the {@link SplitAttachmentsExpression}.
@@ -62,7 +63,8 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
         in.setBody("Hello World");
         in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
-        in.addAttachment("log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
+        in.addAttachment(
+                "log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
     }
 
     @Test
@@ -88,7 +90,9 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
 
         byte[] expected1 = IOUtils.toByteArray(new FileDataSource("src/test/data/logo.jpeg").getInputStream());
         byte[] expected2 = Files.readString(Paths.get("src/test/resources/log4j2.properties"), StandardCharsets.UTF_8)
-                .replace("\n", "\r\n").trim().getBytes(StandardCharsets.UTF_8);
+                .replace("\n", "\r\n")
+                .trim()
+                .getBytes(StandardCharsets.UTF_8);
 
         assertArrayEquals(expected1, first.getBody(byte[].class));
         assertArrayEquals(expected2, second.getBody(byte[].class));

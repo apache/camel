@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.LinkedHashMap;
@@ -44,43 +45,57 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
 
     @XmlTransient
     private Resource resource;
+
     @XmlTransient
     private P parent;
     // special for java-dsl to allow using lambda style
     @XmlTransient
     private Class<?> beanClass;
+
     @XmlTransient
     private RouteTemplateContext.BeanSupplier<Object> beanSupplier;
 
     @XmlAttribute(required = true)
     private String name;
+
     @XmlAttribute(required = true)
     private String type;
+
     @XmlAttribute
     private String initMethod;
+
     @XmlAttribute
     private String destroyMethod;
+
     @XmlAttribute
     private String factoryMethod;
+
     @XmlAttribute
     private String factoryBean;
+
     @XmlAttribute
     private String builderClass;
+
     @XmlAttribute
     @Metadata(defaultValue = "build")
     private String builderMethod;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String scriptLanguage;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", label = "advanced", defaultValue = "true")
     private String scriptPropertyPlaceholders;
+
     @XmlElement(name = "constructors")
     @XmlJavaTypeAdapter(BeanConstructorsAdapter.class)
     private Map<Integer, Object> constructors;
+
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(BeanPropertiesAdapter.class)
     private Map<String, Object> properties;
+
     @XmlElement(name = "script")
     @Metadata(label = "advanced")
     private String script;
@@ -561,5 +576,4 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     public void setResource(Resource resource) {
         this.resource = resource;
     }
-
 }

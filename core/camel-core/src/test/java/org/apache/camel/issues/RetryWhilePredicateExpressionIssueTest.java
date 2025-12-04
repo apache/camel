@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.apache.camel.builder.PredicateBuilder.and;
+import static org.apache.camel.builder.PredicateBuilder.isNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.PredicateBuilder.and;
-import static org.apache.camel.builder.PredicateBuilder.isNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -44,13 +45,17 @@ public class RetryWhilePredicateExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).redeliveryDelay(0).retryWhile(new Predicate() {
-                    @Override
-                    public boolean matches(Exchange exchange) {
-                        Predicate predicate = and(simple("${body.areWeCool} == 'no'"), isNotNull(header("foo")));
-                        return predicate.matches(exchange);
-                    }
-                });
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .redeliveryDelay(0)
+                        .retryWhile(new Predicate() {
+                            @Override
+                            public boolean matches(Exchange exchange) {
+                                Predicate predicate =
+                                        and(simple("${body.areWeCool} == 'no'"), isNotNull(header("foo")));
+                                return predicate.matches(exchange);
+                            }
+                        });
 
                 from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }

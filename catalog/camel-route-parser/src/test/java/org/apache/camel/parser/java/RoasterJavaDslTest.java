@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RoasterJavaDslTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterJavaDslTest.class);
@@ -43,11 +44,11 @@ public class RoasterJavaDslTest extends CamelTestSupport {
 
     @Test
     void parseTree() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster
-                .parse(new File("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java"));
+        JavaClassSource clazz = (JavaClassSource)
+                Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java"));
 
-        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz,
-                "src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", true);
+        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(
+                clazz, "src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
         assertEquals("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", details.getFileName());
@@ -81,5 +82,4 @@ public class RoasterJavaDslTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

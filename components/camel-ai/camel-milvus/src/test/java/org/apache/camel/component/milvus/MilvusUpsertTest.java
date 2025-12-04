@@ -17,21 +17,19 @@
 
 package org.apache.camel.component.milvus;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MilvusUpsertTest extends MilvusTestSupport {
 
     @DisplayName("Tests that trying to upsert without passing the action name triggers a failure")
     @Test
     public void upsertWithoutRequiredParameters() {
-        Exchange result = fluentTemplate.to("milvus:upsert")
-                .withBody(null)
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("milvus:upsert").withBody(null).request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isInstanceOf(NoSuchHeaderException.class);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.Exchange;
@@ -39,9 +40,12 @@ public class InOutConsumerQueueTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("sjms:queue:start.queue.InOutConsumerQueueTest").to("log:request")
-                        .to("sjms:queue:in.out.queue.InOutConsumerQueueTest?exchangePattern=InOut&replyTo=in.out.queue.response")
-                        .to("log:response").to("mock:result");
+                from("sjms:queue:start.queue.InOutConsumerQueueTest")
+                        .to("log:request")
+                        .to(
+                                "sjms:queue:in.out.queue.InOutConsumerQueueTest?exchangePattern=InOut&replyTo=in.out.queue.response")
+                        .to("log:response")
+                        .to("mock:result");
 
                 from("sjms:queue:in.out.queue.InOutConsumerQueueTest").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -54,5 +58,4 @@ public class InOutConsumerQueueTest extends JmsTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.AsyncCallback;
@@ -43,7 +44,8 @@ public final class LazyStartProducer extends DefaultAsyncProducer implements Del
                 lock.lock();
                 try {
                     if (delegate == null) {
-                        AsyncProducer newDelegate = AsyncProcessorConverterHelper.convert(getEndpoint().createProducer());
+                        AsyncProducer newDelegate = AsyncProcessorConverterHelper.convert(
+                                getEndpoint().createProducer());
                         if (!ServiceHelper.isStarted(newDelegate)) {
                             ServiceHelper.startService(newDelegate);
                         }

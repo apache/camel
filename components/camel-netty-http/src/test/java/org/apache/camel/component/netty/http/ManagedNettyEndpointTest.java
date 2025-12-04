@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -28,8 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedNettyEndpointTest extends BaseNettyTest {
@@ -54,17 +55,16 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
         // should not add 10 endpoints
         getMockEndpoint("mock:foo").expectedMessageCount(10);
         for (int i = 0; i < 10; i++) {
-            String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?param" + i + "=value" + i,
-                    "Hello World", String.class);
+            String out = template.requestBody(
+                    "netty-http:http://localhost:{{port}}/foo?param" + i + "=value" + i, "Hello World", String.class);
             assertEquals("param" + i + "=value" + i, out);
         }
         MockEndpoint.assertIsSatisfied(context);
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName()
-                             + ",type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + context.getManagementName()
+                + ",type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
         mbeanServer.isRegistered(on);
 
         // should only be 2 endpoints in JMX
@@ -80,9 +80,9 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:foo")
-                        .transform().header(Exchange.HTTP_QUERY);
+                        .transform()
+                        .header(Exchange.HTTP_QUERY);
             }
         };
     }
-
 }

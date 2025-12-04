@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import io.opentelemetry.api.trace.SpanKind;
@@ -24,15 +25,27 @@ import org.junit.jupiter.api.Test;
 class TwoServiceTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB").setOperation("ServiceB")
-                    .setParentId(1),
-            new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB").setOperation("ServiceB")
-                    .setParentId(2)
-                    .setKind(SpanKind.CLIENT),
-            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
-                    .setParentId(3),
-            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
-                    .setKind(SpanKind.CLIENT)
+        new SpanTestData()
+                .setLabel("ServiceB server")
+                .setUri("direct://ServiceB")
+                .setOperation("ServiceB")
+                .setParentId(1),
+        new SpanTestData()
+                .setLabel("ServiceB server")
+                .setUri("direct://ServiceB")
+                .setOperation("ServiceB")
+                .setParentId(2)
+                .setKind(SpanKind.CLIENT),
+        new SpanTestData()
+                .setLabel("ServiceA server")
+                .setUri("direct://ServiceA")
+                .setOperation("ServiceA")
+                .setParentId(3),
+        new SpanTestData()
+                .setLabel("ServiceA server")
+                .setUri("direct://ServiceA")
+                .setOperation("ServiceA")
+                .setKind(SpanKind.CLIENT)
     };
 
     TwoServiceTest() {
@@ -56,9 +69,7 @@ class TwoServiceTest extends CamelOpenTelemetryTestSupport {
                         .delay(simple("${random(1000,2000)}"))
                         .to("direct:ServiceB");
 
-                from("direct:ServiceB")
-                        .log("ServiceB has been called")
-                        .delay(simple("${random(0,500)}"));
+                from("direct:ServiceB").log("ServiceB has been called").delay(simple("${random(0,500)}"));
             }
         };
     }

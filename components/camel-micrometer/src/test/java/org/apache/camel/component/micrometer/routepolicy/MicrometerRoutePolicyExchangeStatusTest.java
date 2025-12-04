@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.micrometer.routepolicy;
 
-import io.micrometer.core.instrument.Counter;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.micrometer.routepolicy;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import io.micrometer.core.instrument.Counter;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerRoutePolicyTest {
 
@@ -44,13 +45,16 @@ public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerR
         }
 
         MockEndpoint.assertIsSatisfied(context);
-        Counter exchangesSucceededCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME)
-                .tag(ROUTE_ID_TAG, "completing").counter();
-        Counter exchangesFailedCounter = meterRegistry.find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME)
-                .tag(ROUTE_ID_TAG, "failing").counter();
+        Counter exchangesSucceededCounter = meterRegistry
+                .find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME)
+                .tag(ROUTE_ID_TAG, "completing")
+                .counter();
+        Counter exchangesFailedCounter = meterRegistry
+                .find(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME)
+                .tag(ROUTE_ID_TAG, "failing")
+                .counter();
         assertEquals(count / 2.0D, exchangesSucceededCounter.count(), 0.01D);
         assertEquals(count / 2.0D, exchangesFailedCounter.count(), 0.01D);
-
     }
 
     @Override
@@ -58,10 +62,10 @@ public class MicrometerRoutePolicyExchangeStatusTest extends AbstractMicrometerR
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:completing").routeId("completing")
-                        .to("mock:result");
+                from("direct:completing").routeId("completing").to("mock:result");
 
-                from("direct:failing").routeId("failing")
+                from("direct:failing")
+                        .routeId("failing")
                         .throwException(RuntimeException.class, "Failing")
                         .to("mock:result");
             }

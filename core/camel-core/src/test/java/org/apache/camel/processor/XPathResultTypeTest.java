@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,10 +26,10 @@ public class XPathResultTypeTest extends ContextTestSupport {
     @Test
     public void xpathLongAndObject() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"
-                     + "<Books count=\"2\">\n"
-                     + "  <Book Id=\"1\" ISBN=\"1\"><Titel>First</Titel></Book>\n"
-                     + "  <Book Id=\"2\" ISBN=\"2\"><Titel>SECOND</Titel></Book>\n"
-                     + "</Books>";
+                + "<Books count=\"2\">\n"
+                + "  <Book Id=\"1\" ISBN=\"1\"><Titel>First</Titel></Book>\n"
+                + "  <Book Id=\"2\" ISBN=\"2\"><Titel>SECOND</Titel></Book>\n"
+                + "</Books>";
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).exchangeProperty("BOOK_COUNT").isEqualTo(2);
@@ -46,13 +47,12 @@ public class XPathResultTypeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .setProperty("BOOK_COUNT", xpath( "//Books/@count", Long.class))
-                    .split(xpath("//Books/Book"))
+                        .setProperty("BOOK_COUNT", xpath("//Books/@count", Long.class))
+                        .split(xpath("//Books/Book"))
                         .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

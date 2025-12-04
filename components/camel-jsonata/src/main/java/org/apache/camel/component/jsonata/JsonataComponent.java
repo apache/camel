@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
 
 import java.util.Map;
@@ -29,21 +30,21 @@ public class JsonataComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
-    @Metadata(label = "advanced",
-              description = "To configure custom frame bindings and inject user functions.")
+
+    @Metadata(label = "advanced", description = "To configure custom frame bindings and inject user functions.")
     protected JsonataFrameBinding frameBinding;
 
-    public JsonataComponent() {
-    }
+    public JsonataComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
-        JsonataFrameBinding frameBinding
-                = resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBinding.class);
+        JsonataFrameBinding frameBinding =
+                resolveAndRemoveReferenceParameter(parameters, "frameBinding", JsonataFrameBinding.class);
         if (frameBinding == null) {
             // fallback to component configured
             frameBinding = getFrameBinding();

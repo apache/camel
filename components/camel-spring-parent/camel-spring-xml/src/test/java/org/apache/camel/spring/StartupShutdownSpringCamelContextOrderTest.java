@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
@@ -33,9 +34,8 @@ public class StartupShutdownSpringCamelContextOrderTest extends StartupShutdownO
 
     @Override
     ConfigurableApplicationContext createContext() {
-        final ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(
-                CamelContextConfiguration.class, Beans.class);
+        final ConfigurableApplicationContext context =
+                new AnnotationConfigApplicationContext(CamelContextConfiguration.class, Beans.class);
         return context;
     }
-
 }

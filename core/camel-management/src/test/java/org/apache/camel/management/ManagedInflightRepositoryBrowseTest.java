@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,10 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_SERVICE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedInflightRepositoryBrowseTest extends ManagementTestSupport {
@@ -48,7 +49,8 @@ public class ManagedInflightRepositoryBrowseTest extends ManagementTestSupport {
             public void configure() {
                 context.getInflightRepository().setInflightBrowseEnabled(true);
 
-                from("direct:start").routeId("foo")
+                from("direct:start")
+                        .routeId("foo")
                         .to("mock:a")
                         .process(exchange -> {
                             MBeanServer mbeanServer = getMBeanServer();
@@ -57,18 +59,18 @@ public class ManagedInflightRepositoryBrowseTest extends ManagementTestSupport {
                             Integer size = (Integer) mbeanServer.getAttribute(name, "Size");
                             assertEquals(1, size.intValue());
 
-                            Integer routeSize = (Integer) mbeanServer.invoke(name, "size", new Object[] { "foo" },
-                                    new String[] { "java.lang.String" });
+                            Integer routeSize = (Integer) mbeanServer.invoke(
+                                    name, "size", new Object[] {"foo"}, new String[] {"java.lang.String"});
                             assertEquals(1, routeSize.intValue());
 
                             TabularData data = (TabularData) mbeanServer.invoke(name, "browse", null, null);
                             assertNotNull(data);
 
                             assertEquals(1, data.size());
-                        }).id("myProcessor")
+                        })
+                        .id("myProcessor")
                         .to("mock:result");
             }
         };
     }
-
 }

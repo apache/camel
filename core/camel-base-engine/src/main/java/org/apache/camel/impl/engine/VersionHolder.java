@@ -30,8 +30,7 @@ class VersionHolder {
         VERSION = doGetVersion();
     }
 
-    VersionHolder() {
-    }
+    VersionHolder() {}
 
     private static String doGetVersion() {
         InputStream is = null;

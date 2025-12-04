@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -26,9 +30,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFtpDoNotDeleteFileIfProcessFailsIT extends FtpServerTestSupport {
 
@@ -79,7 +80,10 @@ public class FromFtpDoNotDeleteFileIfProcessFailsIT extends FtpServerTestSupport
         return new RouteBuilder() {
             public void configure() {
                 // use no delay for fast unit testing
-                onException(IllegalArgumentException.class).maximumRedeliveries(2).redeliveryDelay(0).to("mock:error");
+                onException(IllegalArgumentException.class)
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .to("mock:error");
 
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) {

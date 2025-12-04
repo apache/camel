@@ -27,7 +27,10 @@ import java.util.Map;
 public interface BindingProvider {
 
     String getEndpoint(
-            EndpointType type, String uriExpression, Map<String, Object> endpointProperties, TemplateProvider templateProvider)
+            EndpointType type,
+            String uriExpression,
+            Map<String, Object> endpointProperties,
+            TemplateProvider templateProvider)
             throws Exception;
 
     boolean canHandle(String uriExpression);
@@ -38,5 +41,4 @@ public interface BindingProvider {
         STEP,
         ERROR_HANDLER
     }
-
 }

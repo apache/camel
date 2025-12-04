@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -114,7 +115,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             sb.append(String.format("\n    State: %s", mrb.getState()));
             if (mrb.getLastError() != null) {
-                String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
+                String phase = StringHelper.capitalize(
+                        mrb.getLastError().getPhase().name().toLowerCase());
                 String ago = TimeUtils.printSince(mrb.getLastError().getDate().getTime());
                 sb.append(String.format("\n    Error Ago: %s", ago));
                 sb.append(String.format("\n    Error Phase: %s", phase));
@@ -155,8 +157,10 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
             sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
             if (mrb.getExchangesTotal() > 0) {
-                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
-                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
             }
             Date last = mrb.getLastExchangeCreatedTimestamp();
             if (last != null) {
@@ -184,7 +188,8 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private void includeProcessorsText(ManagedRouteMBean mrb, StringBuilder sb) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -245,7 +250,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             jo.put("state", mrb.getState());
             jo.put("uptime", mrb.getUptime());
             if (mrb.getLastError() != null) {
-                String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
+                String phase = StringHelper.capitalize(
+                        mrb.getLastError().getPhase().name().toLowerCase());
                 JsonObject eo = new JsonObject();
                 eo.put("phase", phase);
                 eo.put("timestamp", mrb.getLastError().getDate().getTime());
@@ -313,7 +319,8 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private void includeProcessorsJson(ManagedRouteMBean mrb, JsonArray arr) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -322,7 +329,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             return;
         }
 
-        List<ManagedProcessorMBean> mps = ids.stream().map(mcc::getManagedProcessor)
+        List<ManagedProcessorMBean> mps = ids.stream()
+                .map(mcc::getManagedProcessor)
                 .filter(Objects::nonNull)
                 // sort processors by index
                 .sorted(Comparator.comparingInt(ManagedProcessorMBean::getIndex))
@@ -338,7 +346,8 @@ public class RouteDevConsole extends AbstractDevConsole {
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             List<Route> routes = getCamelContext().getRoutes();
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
@@ -403,7 +412,8 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private String calculateRouteCoverage(ManagedRouteMBean mrb, boolean percent) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -444,8 +454,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         }
         String[] patterns = filter.split(",");
         // find matching IDs
-        List<String> ids = camelContext.getRoutes()
-                .stream()
+        List<String> ids = camelContext.getRoutes().stream()
                 .filter(r -> {
                     for (String p : patterns) {
                         String source = r.getRouteId();
@@ -459,7 +468,8 @@ public class RouteDevConsole extends AbstractDevConsole {
                     }
                     return false;
                 })
-                .map(Route::getRouteId).toList();
+                .map(Route::getRouteId)
+                .toList();
         for (String id : ids) {
             try {
                 if ("start".equals(command)) {
@@ -492,5 +502,4 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
         }
     }
-
 }

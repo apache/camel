@@ -53,6 +53,5 @@ public abstract class BaseTrait implements Trait {
     }
 
     @Override
-    public void applyRuntimeSpecificProperties(Traits traitConfig, TraitContext context, RuntimeType runtimeType) {
-    }
+    public void applyRuntimeSpecificProperties(Traits traitConfig, TraitContext context, RuntimeType runtimeType) {}
 }

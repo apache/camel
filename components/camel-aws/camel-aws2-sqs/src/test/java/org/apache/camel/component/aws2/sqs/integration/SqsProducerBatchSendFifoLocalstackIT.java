@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs.integration;
 
 import java.util.ArrayList;
@@ -56,17 +57,21 @@ public class SqsProducerBatchSendFifoLocalstackIT extends Aws2SQSBaseTest {
     protected RouteBuilder createRouteBuilder() {
         final String sqsEndpointUri = String.format(
                 "aws2-sqs://%s.fifo?messageGroupIdStrategy=useExchangeId"
-                                                    + "&messageDeduplicationIdStrategy=useContentBasedDeduplication&autoCreateQueue=true",
+                        + "&messageDeduplicationIdStrategy=useContentBasedDeduplication&autoCreateQueue=true",
                 sharedNameGenerator.getName());
 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
+                from("direct:start")
+                        .startupOrder(2)
+                        .setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .to(sqsEndpointUri);
 
                 fromF("aws2-sqs://%s.fifo?deleteAfterRead=false&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}").to("mock:result");
+                        .startupOrder(1)
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

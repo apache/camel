@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import org.apache.camel.CamelContext;
@@ -38,9 +39,8 @@ class WebhookRoutePolicy extends RoutePolicySupport {
         if (route.getEndpoint() instanceof WebhookEndpoint) {
             WebhookEndpoint webhook = (WebhookEndpoint) route.getEndpoint();
             if (webhook.getConfiguration() != null && webhook.getConfiguration().isWebhookAutoRegister()) {
-                throw new IllegalStateException(
-                        "Webhook auto-register is enabled on endpoint " + webhook
-                                                + ": it must be disabled when the WebhookRoutePolicy is active");
+                throw new IllegalStateException("Webhook auto-register is enabled on endpoint " + webhook
+                        + ": it must be disabled when the WebhookRoutePolicy is active");
             }
             executeWebhookAction(webhook.getEndpoint());
         }
@@ -49,7 +49,9 @@ class WebhookRoutePolicy extends RoutePolicySupport {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        context.getExecutorServiceManager().newThread("terminator", context::stop).start();
+        context.getExecutorServiceManager()
+                .newThread("terminator", context::stop)
+                .start();
     }
 
     private void executeWebhookAction(WebhookCapableEndpoint endpoint) {

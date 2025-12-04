@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +30,6 @@ import org.apache.camel.PollingConsumer;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * To test that using polling consumer with file will not keep scheduled file consumer keep running in the background.
@@ -48,15 +49,17 @@ public class FilePollingConsumerTest extends ContextTestSupport {
 
         // sleep a bit to ensure polling consumer would be suspended after we
         // have used it
-        Awaitility.await().pollDelay(500, TimeUnit.MILLISECONDS).untilAsserted(() -> Assertions
-                .assertDoesNotThrow(() -> template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt")));
+        Awaitility.await()
+                .pollDelay(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> Assertions.assertDoesNotThrow(
+                        () -> template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt")));
 
         // sleep a bit to ensure polling consumer would not have picked up that
         // file
-        Awaitility.await().pollDelay(1000, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .pollDelay(1000, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertTrue(Files.exists(testFile("bye.txt")), "File should exist bye.txt"));
 
         consumer.stop();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.util.stream.Stream;
@@ -25,5 +26,4 @@ public class SnmpTestSupport extends CamelTestSupport {
     static Stream<Integer> supportedVersions() {
         return Stream.of(0, 1, 3);
     }
-
 }

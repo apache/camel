@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import java.util.HashMap;
@@ -35,7 +36,11 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
     // START SNIPPET: e2
     private Connector createSslSocketConnector(CamelContext context, int port) {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("file://" + this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        ksp.setResource("file://"
+                + this.getClass()
+                        .getClassLoader()
+                        .getResource("jsse/localhost.p12")
+                        .toString());
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();

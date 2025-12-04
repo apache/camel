@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.lang.management.ManagementFactory;
@@ -110,11 +111,7 @@ public class SimpleBeanFixture {
      * Gets the mxbean for our remote object using the specified name
      */
     protected ISimpleMXBean getMXBean(ObjectName aObjectName) {
-        return MBeanServerInvocationHandler.newProxyInstance(
-                server,
-                aObjectName,
-                ISimpleMXBean.class,
-                false);
+        return MBeanServerInvocationHandler.newProxyInstance(server, aObjectName, ISimpleMXBean.class, false);
         // revert the above change to the below when we move to JDK 1.6
         //        ISimpleMXBean simpleBean = JMX.newMXBeanProxy(server, aObjectName, ISimpleMXBean.class);
         //        return simpleBean;
@@ -172,8 +169,7 @@ public class SimpleBeanFixture {
      * Override this to control the properties that make up the endpoint
      */
     protected JMXUriBuilder buildFromURI() {
-        JMXUriBuilder uri = new JMXUriBuilder().withObjectDomain(DOMAIN)
-                .withObjectName("simpleBean");
+        JMXUriBuilder uri = new JMXUriBuilder().withObjectDomain(DOMAIN).withObjectName("simpleBean");
         return uri;
     }
 
@@ -181,8 +177,7 @@ public class SimpleBeanFixture {
      * Override this to put stuff into the registry so it's available to be referenced. (i.e. NotificationFilter or
      * Hashtable<String,String> for ObjectProperties
      */
-    protected void initRegistry() {
-    }
+    protected void initRegistry() {}
 
     protected DefaultCamelContext getContext() {
         return mContext;

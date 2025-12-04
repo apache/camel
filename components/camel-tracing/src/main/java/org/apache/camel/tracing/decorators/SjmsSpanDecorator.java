@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Endpoint;
@@ -40,5 +41,4 @@ public class SjmsSpanDecorator extends AbstractMessagingSpanDecorator {
     public String getComponentClassName() {
         return "org.apache.camel.component.sjms.SjmsComponent";
     }
-
 }

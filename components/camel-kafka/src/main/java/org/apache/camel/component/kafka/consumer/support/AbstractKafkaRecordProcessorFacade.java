@@ -39,8 +39,10 @@ public abstract class AbstractKafkaRecordProcessorFacade implements KafkaRecordP
     protected final KafkaConsumerListener consumerListener;
 
     protected AbstractKafkaRecordProcessorFacade(
-                                                 KafkaConsumer camelKafkaConsumer, String threadId, CommitManager commitManager,
-                                                 KafkaConsumerListener consumerListener) {
+            KafkaConsumer camelKafkaConsumer,
+            String threadId,
+            CommitManager commitManager,
+            KafkaConsumerListener consumerListener) {
         this.camelKafkaConsumer = camelKafkaConsumer;
         this.threadId = threadId;
         this.commitManager = commitManager;
@@ -62,10 +64,10 @@ public abstract class AbstractKafkaRecordProcessorFacade implements KafkaRecordP
      * @param partitionRecords records from partition
      * @param partition        topic/partition information
      */
-    protected void logRecordsInPartition(List<ConsumerRecord<Object, Object>> partitionRecords, TopicPartition partition) {
+    protected void logRecordsInPartition(
+            List<ConsumerRecord<Object, Object>> partitionRecords, TopicPartition partition) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Records count {} received for partition {}", partitionRecords.size(),
-                    partition);
+            LOG.debug("Records count {} received for partition {}", partitionRecords.size(), partition);
         }
     }
 
@@ -82,9 +84,12 @@ public abstract class AbstractKafkaRecordProcessorFacade implements KafkaRecordP
 
     protected void logRecord(ConsumerRecord<Object, Object> consumerRecord) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Partition = {}, offset = {}, key = {}, value = {}", consumerRecord.partition(),
-                    consumerRecord.offset(), consumerRecord.key(), consumerRecord.value());
+            LOG.trace(
+                    "Partition = {}, offset = {}, key = {}, value = {}",
+                    consumerRecord.partition(),
+                    consumerRecord.offset(),
+                    consumerRecord.key(),
+                    consumerRecord.value());
         }
     }
-
 }

@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import io.dapr.client.DaprClient;
 import org.apache.camel.Exchange;
@@ -30,20 +40,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class DaprInvokeServiceTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+
     @Mock
     private DaprEndpoint endpoint;
 
@@ -64,7 +66,8 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("myBody");
 
-        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
+        final DaprServiceInvocationHandler operation =
+                new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
         final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
@@ -81,7 +84,8 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
+        final DaprServiceInvocationHandler operation =
+                new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
         assertDoesNotThrow(() -> operation.validateConfiguration(exchange));
     }
 
@@ -95,7 +99,8 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
+        final DaprServiceInvocationHandler operation =
+                new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
         Exception ex = assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         assertEquals("serviceToInvoke and methodToInvoke are mandatory to invoke a service", ex.getMessage());

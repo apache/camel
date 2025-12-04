@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.dsl.yaml;
 
 import java.io.File;
@@ -59,15 +60,16 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 
 @Mojo(
-      name = "generate-yaml-schema",
-      inheritByDefault = false,
-      defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-      requiresDependencyResolution = ResolutionScope.COMPILE,
-      threadSafe = true,
-      requiresProject = false)
+        name = "generate-yaml-schema",
+        inheritByDefault = false,
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE,
+        threadSafe = true,
+        requiresProject = false)
 public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     @Parameter(required = true)
     private File outputFile;
+
     @Parameter(defaultValue = "true")
     private boolean additionalProperties = true;
 
@@ -94,7 +96,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
 
         definitions = items.putObject("definitions");
-        step = definitions.withObject("/org.apache.camel.model.ProcessorDefinition")
+        step = definitions
+                .withObject("/org.apache.camel.model.ProcessorDefinition")
                 .put("type", "object")
                 .put("maxProperties", 1);
         if (!additionalProperties) {
@@ -118,11 +121,12 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         Set<String> inheritedDefinitions = new HashSet<>();
         Set<String> inlineDefinitions = new HashSet<>();
         for (Map.Entry<String, ClassInfo> entry : types.entrySet()) {
-            Set<String> nodes = annotationValue(entry.getValue(), YAML_TYPE_ANNOTATION, "nodes")
-                    .map(AnnotationValue::asStringArray)
-                    .stream()
-                    .flatMap(Stream::of)
-                    .collect(Collectors.toCollection(TreeSet::new));
+            Set<String> nodes =
+                    annotationValue(entry.getValue(), YAML_TYPE_ANNOTATION, "nodes")
+                            .map(AnnotationValue::asStringArray)
+                            .stream()
+                            .flatMap(Stream::of)
+                            .collect(Collectors.toCollection(TreeSet::new));
 
             final DotName name = DotName.createSimple(entry.getKey());
             final ClassInfo info = view.getClassByName(name);
@@ -170,25 +174,34 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
     }
 
-    private void generate(String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
+    private void generate(
+            String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
         final ObjectNode definition = definitions.withObject("/" + type);
         final List<AnnotationInstance> properties = new ArrayList<>();
 
-        annotationValue(info, YAML_TYPE_ANNOTATION, "displayName").map(AnnotationValue::asString).ifPresent(v -> {
-            definition.put("title", v);
-        });
-        annotationValue(info, YAML_TYPE_ANNOTATION, "description").map(AnnotationValue::asString).ifPresent(v -> {
-            definition.put("description", v);
-        });
-        annotationValue(info, YAML_TYPE_ANNOTATION, "deprecated").map(AnnotationValue::asBoolean).ifPresent(v -> {
-            if (v) {
-                definition.put("deprecated", true);
-            }
-        });
+        annotationValue(info, YAML_TYPE_ANNOTATION, "displayName")
+                .map(AnnotationValue::asString)
+                .ifPresent(v -> {
+                    definition.put("title", v);
+                });
+        annotationValue(info, YAML_TYPE_ANNOTATION, "description")
+                .map(AnnotationValue::asString)
+                .ifPresent(v -> {
+                    definition.put("description", v);
+                });
+        annotationValue(info, YAML_TYPE_ANNOTATION, "deprecated")
+                .map(AnnotationValue::asBoolean)
+                .ifPresent(v -> {
+                    if (v) {
+                        definition.put("deprecated", true);
+                    }
+                });
 
         ObjectNode objectDefinition = definition;
 
-        if (annotationValue(info, YAML_TYPE_ANNOTATION, "inline").map(AnnotationValue::asBoolean).orElse(false)) {
+        if (annotationValue(info, YAML_TYPE_ANNOTATION, "inline")
+                .map(AnnotationValue::asBoolean)
+                .orElse(false)) {
             ArrayNode oneOf = definition.withArray("oneOf");
             oneOf.addObject().put("type", "string");
 
@@ -203,8 +216,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         collectYamlProperties(properties, info);
 
-        properties.sort(
-                Comparator.comparing(property -> annotationValue(property, "name").map(AnnotationValue::asString).orElse("")));
+        properties.sort(Comparator.comparing(property ->
+                annotationValue(property, "name").map(AnnotationValue::asString).orElse("")));
 
         Map<String, ObjectNode> oneOfGroups = new HashMap<>();
         for (AnnotationInstance property : properties) {
@@ -358,7 +371,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private void kebabToCamelCaseProperties(ObjectNode props, ArrayNode required) {
         Map<String, JsonNode> rebuild = new LinkedHashMap<>();
         // the properties are in mixed kebab-case and camelCase
-        for (Iterator<String> it = props.fieldNames(); it.hasNext();) {
+        for (Iterator<String> it = props.fieldNames(); it.hasNext(); ) {
             String n = it.next();
             String t = StringHelper.dashToCamelCase(n);
             JsonNode prop = props.get(n);
@@ -442,7 +455,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     if (!additionalProperties) {
                         itemSchema.put("additionalProperties", false);
                     }
-                    itemSchema.put("type", "object")
+                    itemSchema
+                            .put("type", "object")
                             .withObject("/properties/" + propertyName)
                             .put("$ref", "#/items/definitions/" + arrayType);
                 } else {
@@ -454,7 +468,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     if (!additionalProperties) {
                         itemSchema.put("additionalProperties", false);
                     }
-                    itemSchema.put("type", "object")
+                    itemSchema
+                            .put("type", "object")
                             .withObject("/properties/" + propertyName)
                             .put("type", arrayType);
                 } else {
@@ -477,17 +492,19 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             return;
         }
 
-        annotationValue(info, YAML_TYPE_ANNOTATION, "properties")
-                .map(AnnotationValue::asNestedArray)
-                .stream()
+        annotationValue(info, YAML_TYPE_ANNOTATION, "properties").map(AnnotationValue::asNestedArray).stream()
                 .flatMap(Stream::of)
                 .forEach(property -> {
-                    final String propertyName = annotationValue(property, "name").map(AnnotationValue::asString).orElse("");
-                    final String propertyType = annotationValue(property, "type").map(AnnotationValue::asString).orElse("");
+                    final String propertyName = annotationValue(property, "name")
+                            .map(AnnotationValue::asString)
+                            .orElse("");
+                    final String propertyType = annotationValue(property, "type")
+                            .map(AnnotationValue::asString)
+                            .orElse("");
 
                     if (ObjectHelper.isEmpty(propertyName) || ObjectHelper.isEmpty(propertyType)) {
-                        getLog().warn(
-                                "Missing name or type for property + " + property + " on type " + info.name().toString());
+                        getLog().warn("Missing name or type for property + " + property + " on type "
+                                + info.name().toString());
                         return;
                     }
 
@@ -503,7 +520,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                         annotations.add(property);
                     } else {
                         boolean matches = annotations.stream()
-                                .map(p -> annotationValue(p, "name").map(AnnotationValue::asString).orElse(""))
+                                .map(p -> annotationValue(p, "name")
+                                        .map(AnnotationValue::asString)
+                                        .orElse(""))
                                 .anyMatch(propertyName::equals);
 
                         if (matches) {
@@ -516,9 +535,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
                     DotName superName = info.superName();
                     if (superName != null) {
-                        collectYamlProperties(
-                                annotations,
-                                view.getClassByName(superName));
+                        collectYamlProperties(annotations, view.getClassByName(superName));
                     }
                 });
     }
@@ -533,7 +550,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         if (target.has("required")) {
             extractRequiredFromComposition(negations, target);
             var required = target.withArray("required");
-            negations.withObject("/not")
+            negations
+                    .withObject("/not")
                     .withArray("anyOf")
                     .addObject()
                     .withArray("required")
@@ -541,10 +559,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         } else if (target.has("$ref")) {
             // At this point, referred object might not yet be processed.
             // Just copy the $ref and let postProcessInheritance() handle it.
-            negations.withObject("/not")
-                    .withArray("anyOf")
-                    .addObject()
-                    .set("$ref", target.get("$ref"));
+            negations.withObject("/not").withArray("anyOf").addObject().set("$ref", target.get("$ref"));
         }
     }
 
@@ -556,11 +571,13 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         composition.forEach(compositionEntry -> {
             if (!compositionEntry.has("$ref")) {
-                String parentName = StringHelper.after(compositionEntry.get("$ref").asText(), "/definitions/");
+                String parentName =
+                        StringHelper.after(compositionEntry.get("$ref").asText(), "/definitions/");
                 ObjectNode referredObject = definitions.withObject("/" + parentName);
                 extractRequiredFromComposition(negations, referredObject);
                 if (referredObject.has("required")) {
-                    negations.withObject("/not")
+                    negations
+                            .withObject("/not")
                             .withArray("anyOf")
                             .addObject()
                             .withArray("required")
@@ -569,7 +586,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 return;
             }
             if (compositionEntry.has("required")) {
-                negations.withObject("/not")
+                negations
+                        .withObject("/not")
                         .withArray("anyOf")
                         .addObject()
                         .withArray("required")
@@ -645,9 +663,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 continue;
             }
             if (compositionEntry.has("properties")) {
-                compositionEntry.withObject("/properties")
-                        .properties()
-                        .stream()
+                compositionEntry.withObject("/properties").properties().stream()
                         .filter(prop -> !definition.withObject("/properties").has(prop.getKey()))
                         .forEach(prop -> definition.withObject("/properties").putObject(prop.getKey()));
             }
@@ -662,10 +678,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             }
             JsonNode parent = definitions.withObject("/" + parentName);
             postProcessComposition(parentName, definition, parent, inheritedDefinitions);
-            parent
-                    .withObject("/properties")
-                    .properties()
-                    .stream()
+            parent.withObject("/properties").properties().stream()
                     .filter(prop -> !definition.withObject("/properties").has(prop.getKey()))
                     .forEach(prop -> definition.withObject("/properties").putObject(prop.getKey()));
         }
@@ -684,10 +697,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         StreamSupport.stream(notAnyOf.spliterator(), false)
                 .filter(n -> !n.has("$ref"))
                 .forEach(processed::add);
-        extractedRequired.forEach(required -> processed
-                .addObject()
-                .withArray("required")
-                .addAll(required));
+        extractedRequired.forEach(
+                required -> processed.addObject().withArray("required").addAll(required));
     }
 
     private void postProcessNotRef(List<ArrayNode> extracted, JsonNode objectWithRef) {

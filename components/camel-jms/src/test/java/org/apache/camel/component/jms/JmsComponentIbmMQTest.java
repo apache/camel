@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class JmsComponentIbmMQTest extends CamelTestSupport {
@@ -54,8 +55,7 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("jms:queue:DEV.QUEUE.1");
+                from("direct:start").to("jms:queue:DEV.QUEUE.1");
 
                 from("jms:queue:DEV.QUEUE.1")
                         .process(exchange -> exchange.getIn().setBody("Hello there!"))
@@ -67,9 +67,8 @@ public class JmsComponentIbmMQTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = ConnectionFactoryHelper.createConnectionFactory(
-                        service.queueManager(), service.channel(), service.listenerPort());
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(
+                service.queueManager(), service.channel(), service.listenerPort());
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

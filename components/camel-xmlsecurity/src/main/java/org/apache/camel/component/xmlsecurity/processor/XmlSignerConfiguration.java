@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.util.Collections;
@@ -39,44 +40,60 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     @UriParam
     private XPathFilterParameterSpec parentXpath;
+
     @UriParam
     private List<XPathFilterParameterSpec> xpathsToIdAttributes = Collections.emptyList();
+
     @UriParam
-    private List<AlgorithmMethod> transformMethods = Collections.singletonList(XmlSignatureHelper
-            .getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
+    private List<AlgorithmMethod> transformMethods =
+            Collections.singletonList(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
+
     @UriParam
     private KeyAccessor keyAccessor;
+
     @UriParam(defaultValue = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
     private AlgorithmMethod canonicalizationMethod = new XmlSignatureTransform(CanonicalizationMethod.INCLUSIVE);
+
     @UriParam(defaultValue = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
     private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+
     @UriParam
     private String digestAlgorithm;
+
     @UriParam(defaultValue = "true")
     private Boolean addKeyInfoReference = Boolean.TRUE;
+
     @UriParam(defaultValue = "ds")
     private String prefixForXmlSignatureNamespace = "ds";
+
     @UriParam
     private String contentObjectId;
+
     @UriParam
     private String signatureId;
+
     @UriParam
     private String contentReferenceUri;
+
     @UriParam
     private String contentReferenceType;
+
     @UriParam
     private String parentLocalName;
+
     @UriParam
     private String parentNamespace;
+
     @UriParam(defaultValue = "false")
     private Boolean plainText = Boolean.FALSE;
+
     @UriParam(defaultValue = "UTF-8")
     private String plainTextEncoding = "UTF-8";
+
     @UriParam
     private XmlSignatureProperties properties;
 
-    public XmlSignerConfiguration() {
-    }
+    public XmlSignerConfiguration() {}
 
     public XmlSignerConfiguration copy() {
         try {
@@ -357,5 +374,4 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     public void setParentXpath(XPathFilterParameterSpec parentXpath) {
         this.parentXpath = parentXpath;
     }
-
 }

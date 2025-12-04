@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
 
 import java.io.IOException;
@@ -57,7 +58,8 @@ final class LumberjackMessageHandler extends SimpleChannelInboundHandler<Lumberj
                             notifyMessageProcessed(ctx, msg.getSequenceNumber(), window);
                         } else {
                             ctx.close();
-                            // Mark that we shouldn't process the next messages that are already decoded and are waiting in netty queues
+                            // Mark that we shouldn't process the next messages that are already decoded and are waiting
+                            // in netty queues
                             process = false;
                         }
                     });
@@ -80,5 +82,4 @@ final class LumberjackMessageHandler extends SimpleChannelInboundHandler<Lumberj
             ctx.writeAndFlush(new LumberjackAck(window.getVersion(), sequenceNumber));
         }
     }
-
 }

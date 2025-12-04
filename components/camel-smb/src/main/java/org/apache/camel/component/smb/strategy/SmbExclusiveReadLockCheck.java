@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb.strategy;
 
 import java.util.Date;
@@ -91,7 +92,8 @@ public class SmbExclusiveReadLockCheck {
 
     private boolean isReadLockAcquired(
             long lastModified, long length, long newLastModified, long newLength, long newOlderThan) {
-        return newLength >= minLength && (minAge == 0 && newLastModified == lastModified && newLength == length
-                || minAge != 0 && newLastModified < newOlderThan);
+        return newLength >= minLength
+                && (minAge == 0 && newLastModified == lastModified && newLength == length
+                        || minAge != 0 && newLastModified < newOlderThan);
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated("Creates lots of threads")
 public class AggregatorConcurrencyTest extends ContextTestSupport {
@@ -82,19 +83,23 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).aggregate(constant(true), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        Exchange answer = oldExchange != null ? oldExchange : newExchange;
-                        COUNTER.getAndIncrement();
+                from(uri)
+                        .aggregate(constant(true), new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                Exchange answer = oldExchange != null ? oldExchange : newExchange;
+                                COUNTER.getAndIncrement();
 
-                        Integer newIndex = newExchange.getIn().getHeader("index", Integer.class);
-                        int total = SUM.addAndGet(newIndex);
-                        answer.getIn().setHeader("total", total);
+                                Integer newIndex = newExchange.getIn().getHeader("index", Integer.class);
+                                int total = SUM.addAndGet(newIndex);
+                                answer.getIn().setHeader("total", total);
 
-                        LOG.debug("Index: {}. Total so far: {}", newIndex, total);
-                        return answer;
-                    }
-                }).completionTimeout(60000).completionPredicate(exchangeProperty(Exchange.AGGREGATED_SIZE).isEqualTo(100))
+                                LOG.debug("Index: {}. Total so far: {}", newIndex, total);
+                                return answer;
+                            }
+                        })
+                        .completionTimeout(60000)
+                        .completionPredicate(
+                                exchangeProperty(Exchange.AGGREGATED_SIZE).isEqualTo(100))
                         .to("direct:foo");
 
                 from("direct:foo").setBody().header("total").to("mock:result");

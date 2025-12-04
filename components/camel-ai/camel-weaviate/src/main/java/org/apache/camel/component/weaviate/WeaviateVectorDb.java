@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate;
 
 import org.apache.camel.spi.Metadata;
@@ -21,8 +22,7 @@ import org.apache.camel.spi.Metadata;
 public class WeaviateVectorDb {
     public static final String SCHEME = "weaviate";
 
-    private WeaviateVectorDb() {
-    }
+    private WeaviateVectorDb() {}
 
     /**
      * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use
@@ -30,8 +30,10 @@ public class WeaviateVectorDb {
      */
     @Deprecated
     public static class Headers {
-        @Metadata(description = "The action to be performed.", javaType = "String",
-                  enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
+        @Metadata(
+                description = "The action to be performed.",
+                javaType = "String",
+                enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
         public static final String ACTION = "CamelWeaviateAction";
 
         @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
@@ -43,7 +45,10 @@ public class WeaviateVectorDb {
         @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
         public static final String COLLECTION_NAME = "CamelWeaviateCollectionName";
 
-        @Metadata(description = "Collection Similarity Metric", javaType = "String", enums = "cosine,euclidean,dotproduct")
+        @Metadata(
+                description = "Collection Similarity Metric",
+                javaType = "String",
+                enums = "cosine,euclidean,dotproduct")
         public static final String COLLECTION_SIMILARITY_METRIC = "CamelWeaviateCollectionSimilarityMetric";
 
         @Metadata(description = "Collection Dimension", javaType = "int")
@@ -78,6 +83,5 @@ public class WeaviateVectorDb {
 
         @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
         public static final String KEY_VALUE = "CamelWeaviateKeyValue";
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.torchserve.common;
 
 public class TorchServeProperties {
@@ -22,6 +23,5 @@ public class TorchServeProperties {
     public static final String TORCHSERVE_METRICS_PORT = "torchserve.metrics.port";
     public static final String TORCHSERVE_CONTAINER = "torchserve.container";
 
-    private TorchServeProperties() {
-    }
+    private TorchServeProperties() {}
 }

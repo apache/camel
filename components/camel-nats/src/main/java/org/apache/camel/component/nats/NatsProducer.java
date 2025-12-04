@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats;
 
 import java.io.IOException;
@@ -83,13 +84,11 @@ public class NatsProducer extends DefaultAsyncProducer {
         if (exchange.getPattern().isOutCapable()) {
             LOG.debug("Requesting to topic: {}", config.getTopic());
 
-            final NatsMessage.Builder builder = NatsMessage.builder()
-                    .data(body)
-                    .subject(config.getTopic())
-                    .headers(this.buildHeaders(exchange));
+            final NatsMessage.Builder builder =
+                    NatsMessage.builder().data(body).subject(config.getTopic()).headers(this.buildHeaders(exchange));
             final CompletableFuture<Message> requestFuture = this.connection.request(builder.build());
-            final CompletableFuture timeoutFuture = this.failAfter(exchange,
-                    Duration.ofMillis(config.getRequestTimeout()));
+            final CompletableFuture timeoutFuture =
+                    this.failAfter(exchange, Duration.ofMillis(config.getRequestTimeout()));
             CompletableFuture.anyOf(requestFuture, timeoutFuture).whenComplete((message, e) -> {
                 if (e == null) {
                     final Message msg = (Message) message;
@@ -97,7 +96,10 @@ public class NatsProducer extends DefaultAsyncProducer {
                     exchange.getMessage().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
                     exchange.getMessage().setHeader(NatsConstants.NATS_SID, msg.getSID());
                     exchange.getMessage().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
-                    exchange.getMessage().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
+                    exchange.getMessage()
+                            .setHeader(
+                                    NatsConstants.NATS_QUEUE_NAME,
+                                    msg.getSubscription().getQueueName());
                     exchange.getMessage().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
                 } else {
                     exchange.setException(e.getCause());
@@ -114,7 +116,8 @@ public class NatsProducer extends DefaultAsyncProducer {
         } else {
             LOG.debug("Publishing to subject: {}", config.getTopic());
             try {
-                if (config.isJetstreamEnabled() && this.connection.getServerInfo().isJetStreamAvailable()) {
+                if (config.isJetstreamEnabled()
+                        && this.connection.getServerInfo().isJetStreamAvailable()) {
                     publishWithJetStream(config, body, exchange);
                 } else {
                     publishWithoutJetStream(config, body, exchange);
@@ -131,7 +134,8 @@ public class NatsProducer extends DefaultAsyncProducer {
 
     private Headers buildHeaders(final Exchange exchange) {
         final Headers headers = new Headers();
-        final HeaderFilterStrategy filteringStrategy = this.getEndpoint().getConfiguration().getHeaderFilterStrategy();
+        final HeaderFilterStrategy filteringStrategy =
+                this.getEndpoint().getConfiguration().getHeaderFilterStrategy();
         exchange.getIn().getHeaders().forEach((key, value) -> {
             if (!filteringStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
                 String headerValue;
@@ -148,31 +152,32 @@ public class NatsProducer extends DefaultAsyncProducer {
             } else {
                 LOG.debug("Excluding header {} as per strategy", key);
             }
-
         });
         return headers;
     }
 
     private <T> CompletableFuture<T> failAfter(Exchange exchange, Duration duration) {
         final CompletableFuture<T> future = new CompletableFuture<>();
-        this.scheduler.schedule(() -> {
-            final ExchangeTimedOutException ex = new ExchangeTimedOutException(exchange, duration.toMillis());
-            return future.completeExceptionally(ex);
-        }, duration.toNanos(), TimeUnit.NANOSECONDS);
+        this.scheduler.schedule(
+                () -> {
+                    final ExchangeTimedOutException ex = new ExchangeTimedOutException(exchange, duration.toMillis());
+                    return future.completeExceptionally(ex);
+                },
+                duration.toNanos(),
+                TimeUnit.NANOSECONDS);
         return future;
     }
 
     @Override
     protected void doStart() throws Exception {
         // try to lookup a pool first based on profile
-        ThreadPoolProfile profile
-                = this.executorServiceManager.getThreadPoolProfile(NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME);
+        ThreadPoolProfile profile = this.executorServiceManager.getThreadPoolProfile(
+                NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME);
         if (profile == null) {
             profile = this.executorServiceManager.getDefaultThreadPoolProfile();
         }
-        this.scheduler
-                = this.executorServiceManager.newScheduledThreadPool(this,
-                        NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME, profile);
+        this.scheduler = this.executorServiceManager.newScheduledThreadPool(
+                this, NatsConstants.NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME, profile);
         super.doStart();
         LOG.debug("Starting Nats Producer");
 
@@ -193,7 +198,8 @@ public class NatsProducer extends DefaultAsyncProducer {
             if (this.connection != null && !this.connection.getStatus().equals(Status.CLOSED)) {
                 if (this.getEndpoint().getConfiguration().isFlushConnection()) {
                     LOG.debug("Flushing Nats Connection");
-                    this.connection.flush(Duration.ofMillis(this.getEndpoint().getConfiguration().getFlushTimeout()));
+                    this.connection.flush(Duration.ofMillis(
+                            this.getEndpoint().getConfiguration().getFlushTimeout()));
                 }
                 this.connection.close();
             }
@@ -201,7 +207,8 @@ public class NatsProducer extends DefaultAsyncProducer {
         super.doStop();
     }
 
-    private void publishWithJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) throws Exception {
+    private void publishWithJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange)
+            throws Exception {
         LOG.debug("JetStream is available");
         JetStreamManagement jsm;
         JetStream js;
@@ -219,10 +226,8 @@ public class NatsProducer extends DefaultAsyncProducer {
             throw new Exception("Failed to initialize JetStream: " + e.getMessage(), e);
         }
 
-        final NatsMessage.Builder builder = NatsMessage.builder()
-                .data(body)
-                .subject(config.getTopic())
-                .headers(this.buildHeaders(exchange));
+        final NatsMessage.Builder builder =
+                NatsMessage.builder().data(body).subject(config.getTopic()).headers(this.buildHeaders(exchange));
 
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             final String replySubject = config.getReplySubject();
@@ -250,10 +255,8 @@ public class NatsProducer extends DefaultAsyncProducer {
     }
 
     private void publishWithoutJetStream(NatsConfiguration config, final byte[] body, final Exchange exchange) {
-        final NatsMessage.Builder builder = NatsMessage.builder()
-                .data(body)
-                .subject(config.getTopic())
-                .headers(this.buildHeaders(exchange));
+        final NatsMessage.Builder builder =
+                NatsMessage.builder().data(body).subject(config.getTopic()).headers(this.buildHeaders(exchange));
 
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             final String replySubject = config.getReplySubject();
@@ -261,5 +264,4 @@ public class NatsProducer extends DefaultAsyncProducer {
         }
         this.connection.publish(builder.build());
     }
-
 }

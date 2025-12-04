@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 public class XOfFormB implements OneOfForm {
@@ -45,5 +46,4 @@ public class XOfFormB implements OneOfForm {
     public void setY(String y) {
         this.y = y;
     }
-
 }

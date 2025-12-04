@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,12 +38,15 @@ public class GrokDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     @Metadata
     private String pattern;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String flattened;
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String allowMultipleMatchesPerLine;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String namedOnly;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -43,51 +44,63 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
 
     @XmlTransient
     private ExecutorService executorServiceBean;
+
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
+
     @XmlTransient
     private Processor onPrepareProcessor;
 
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
+
     @Deprecated(since = "4.7.0")
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String parallelAggregate;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String synchronous;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String streaming;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String stopOnException;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.time.Duration", defaultValue = "0")
     private String timeout;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepare;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
 
-    public MulticastDefinition() {
-    }
+    public MulticastDefinition() {}
 
     protected MulticastDefinition(MulticastDefinition source) {
         super(source);

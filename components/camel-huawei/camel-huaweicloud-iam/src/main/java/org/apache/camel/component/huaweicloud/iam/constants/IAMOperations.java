@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam.constants;
 
 /**
@@ -27,6 +28,5 @@ public final class IAMOperations {
     public static final String GET_GROUP_USERS = "getGroupUsers";
     public static final String UPDATE_GROUP = "updateGroup";
 
-    private IAMOperations() {
-    }
+    private IAMOperations() {}
 }

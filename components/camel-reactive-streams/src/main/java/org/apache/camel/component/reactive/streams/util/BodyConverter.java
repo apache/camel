@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.util;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +39,6 @@ public final class BodyConverter<T> implements Function<Exchange, T> {
 
     @SuppressWarnings("unchecked")
     public static <C> BodyConverter<C> forType(Class<C> type) {
-        return BodyConverter.class.cast(
-                CACHE.computeIfAbsent(type, BodyConverter::new));
+        return BodyConverter.class.cast(CACHE.computeIfAbsent(type, BodyConverter::new));
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.util.LinkedList;
@@ -31,8 +32,7 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
  */
 public final class CoAPHelper {
 
-    private CoAPHelper() {
-    }
+    private CoAPHelper() {}
 
     /**
      * Determines which CoAP request method to use based on the content of the target request URI, the message body or
@@ -85,7 +85,8 @@ public final class CoAPHelper {
     public static void convertCoapResponseToMessage(CoapResponse coapResponse, Message message) {
         String mt = MediaTypeRegistry.toString(coapResponse.getOptions().getContentFormat());
         message.setHeader(CoAPConstants.CONTENT_TYPE, mt);
-        message.setHeader(CoAPConstants.COAP_RESPONSE_CODE, coapResponse.getCode().toString());
+        message.setHeader(
+                CoAPConstants.COAP_RESPONSE_CODE, coapResponse.getCode().toString());
         message.setBody(coapResponse.getPayload());
     }
 }

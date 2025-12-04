@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +35,6 @@ import org.apache.camel.component.servicenow.model.ImportSetResult;
 import org.apache.camel.component.servicenow.model.Incident;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * To set-up ServiceNow for this tests:
@@ -55,16 +56,17 @@ public class ServiceNowImportSetIT extends ServiceNowITSupport {
         incident.description = UUID.randomUUID().toString();
         incident.correlationId = UUID.randomUUID().toString();
 
-        template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                        .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
-                        .put(ServiceNowConstants.RESPONSE_MODEL, ImportSetResult.class)
-                        .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
-                        .build());
+        template()
+                .sendBodyAndHeaders(
+                        "direct:servicenow",
+                        incident,
+                        kvBuilder()
+                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
+                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                                .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
+                                .put(ServiceNowConstants.RESPONSE_MODEL, ImportSetResult.class)
+                                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
+                                .build());
 
         mock.assertIsSatisfied();
 
@@ -95,17 +97,18 @@ public class ServiceNowImportSetIT extends ServiceNowITSupport {
         IncidentImportRequest incident = new IncidentImportRequest();
         incident.description = UUID.randomUUID().toString();
 
-        template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                        .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
-                        .put(ServiceNowConstants.RESPONSE_MODEL, Incident.class)
-                        .put(ServiceNowConstants.RETRIEVE_TARGET_RECORD, true)
-                        .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
-                        .build());
+        template()
+                .sendBodyAndHeaders(
+                        "direct:servicenow",
+                        incident,
+                        kvBuilder()
+                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
+                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                                .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
+                                .put(ServiceNowConstants.RESPONSE_MODEL, Incident.class)
+                                .put(ServiceNowConstants.RETRIEVE_TARGET_RECORD, true)
+                                .put(ServiceNowParams.PARAM_TABLE_NAME, "u_test_imp_incident")
+                                .build());
 
         mock.assertIsSatisfied();
 
@@ -141,6 +144,7 @@ public class ServiceNowImportSetIT extends ServiceNowITSupport {
     private static final class IncidentImportRequest {
         @JsonProperty("description")
         public String description;
+
         @JsonProperty("correlation_id")
         public String correlationId;
     }

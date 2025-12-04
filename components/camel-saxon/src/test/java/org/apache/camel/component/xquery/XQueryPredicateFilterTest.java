@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.EndpointInject;
@@ -56,11 +57,12 @@ public class XQueryPredicateFilterTest extends CamelTestSupport {
 
                 context.setTracing(true);
 
-                from("direct:xpath").split(splitter).filter().xquery("//record[type=2]")
+                from("direct:xpath")
+                        .split(splitter)
+                        .filter()
+                        .xquery("//record[type=2]")
                         .to("mock:result");
-
             }
         };
     }
-
 }

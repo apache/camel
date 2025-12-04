@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
 
 import com.ibm.cloud.cloudant.v1.Cloudant;
@@ -49,9 +50,8 @@ public class CouchDbClientWrapper {
             }
 
             if (!alreadyCreated) {
-                PutDatabaseOptions putDatabaseOptions = new PutDatabaseOptions.Builder()
-                        .db(dbName)
-                        .build();
+                PutDatabaseOptions putDatabaseOptions =
+                        new PutDatabaseOptions.Builder().db(dbName).build();
 
                 client.putDatabase(putDatabaseOptions).execute();
             }
@@ -61,10 +61,8 @@ public class CouchDbClientWrapper {
     }
 
     public Response<DocumentResult> update(Document doc) {
-        PostDocumentOptions postDocumentOptions = new PostDocumentOptions.Builder()
-                .document(doc)
-                .db(dbName)
-                .build();
+        PostDocumentOptions postDocumentOptions =
+                new PostDocumentOptions.Builder().document(doc).db(dbName).build();
 
         return client.postDocument(postDocumentOptions).execute();
     }
@@ -100,10 +98,8 @@ public class CouchDbClientWrapper {
     }
 
     public Response get(String id) {
-        GetDocumentOptions getDocumentOptions = new GetDocumentOptions.Builder()
-                .docId(id)
-                .db(dbName)
-                .build();
+        GetDocumentOptions getDocumentOptions =
+                new GetDocumentOptions.Builder().docId(id).db(dbName).build();
 
         return client.getDocument(getDocumentOptions).execute();
     }
@@ -116,12 +112,12 @@ public class CouchDbClientWrapper {
      * @return The latest update sequence
      */
     public String getLatestUpdateSequence() {
-        GetDatabaseInformationOptions getDatabaseInformationOptions = new GetDatabaseInformationOptions.Builder()
-                .db(dbName)
-                .build();
+        GetDatabaseInformationOptions getDatabaseInformationOptions =
+                new GetDatabaseInformationOptions.Builder().db(dbName).build();
 
-        return client.getDatabaseInformation(getDatabaseInformationOptions).execute()
-                .getResult().getUpdateSeq();
+        return client.getDatabaseInformation(getDatabaseInformationOptions)
+                .execute()
+                .getResult()
+                .getUpdateSeq();
     }
-
 }

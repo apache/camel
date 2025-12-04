@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import javax.xml.transform.TransformerFactory;
@@ -25,9 +26,11 @@ import org.apache.camel.component.xslt.XsltOutput;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
-@Metadata(label = "bean",
-          description = "The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages (uses Saxon).",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Metadata(
+        label = "bean",
+        description =
+                "The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages (uses Saxon).",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
 
@@ -35,17 +38,27 @@ public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
 
     @Metadata(description = "The name of the XSL transformation file to use", required = true)
     private String xslFile;
-    @Metadata(description = "The exchange property name that contains the XML payloads as an input",
-              defaultValue = "new-exchange")
+
+    @Metadata(
+            description = "The exchange property name that contains the XML payloads as an input",
+            defaultValue = "new-exchange")
     private String propertyName;
-    @Metadata(defaultValue = "string", enums = "string,bytes,DOM,file",
-              description = "Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three"
+
+    @Metadata(
+            defaultValue = "string",
+            enums = "string,bytes,DOM,file",
+            description =
+                    "Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three"
                             + " options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify"
                             + " the filename in the IN header with the key XsltConstants.XSLT_FILE_NAME which is also CamelXsltFileName. Also any"
                             + " paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.")
     private XsltOutput output = XsltOutput.string;
-    @Metadata(label = "advanced", description = "To use a custom XSLT transformer factory, specified as a FQN class name")
+
+    @Metadata(
+            label = "advanced",
+            description = "To use a custom XSLT transformer factory, specified as a FQN class name")
     private String transformerFactoryClass;
+
     private TransformerFactory transformerFactory;
 
     public XsltSaxonAggregationStrategy(String xslFileLocation) {
@@ -59,5 +72,4 @@ public class XsltSaxonAggregationStrategy extends XsltAggregationStrategy {
         answer.setAllowStAX(true);
         return answer;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -95,5 +96,4 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
     protected void sendBody() {
         template.sendBodyAndHeader("direct:a", "answer", "myHeader", "mock:x#mock:y#mock:z");
     }
-
 }

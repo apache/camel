@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.io.Serializable;
@@ -31,8 +32,7 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
     private int lineNumber;
     private boolean accepted;
 
-    public ConfigurationPropertiesValidationResult() {
-    }
+    public ConfigurationPropertiesValidationResult() {}
 
     public String getFileName() {
         return fileName;
@@ -249,5 +249,4 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
             return key;
         }
     }
-
 }

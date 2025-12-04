@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +34,6 @@ import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /*
  * AsyncTest tests the execution of a new spin off async components.
@@ -72,7 +73,6 @@ public class AsyncTest extends ExchangeTestSupport {
             // Body will be altered by the async component
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(MockTrace trace, String expectedBody) {
@@ -129,7 +129,8 @@ public class AsyncTest extends ExchangeTestSupport {
 
         // Validate message logging
         assertEquals("A direct message", direct.logEntries().get(0).fields().get("message"));
-        assertEquals("An async message", asyncDirectFrom.logEntries().get(0).fields().get("message"));
+        assertEquals(
+                "An async message", asyncDirectFrom.logEntries().get(0).fields().get("message"));
         String expectedAsyncBody = "Bye Camel";
 
         if (expectedBody == null) {

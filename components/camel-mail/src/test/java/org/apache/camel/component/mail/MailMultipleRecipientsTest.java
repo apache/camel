@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.HashMap;
@@ -66,7 +67,8 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         // START SNIPPET: e2
         // here we have pre configured the to receivers to claus and willem. Notice we use comma to separate
         // the two recipients. Camel also support using colon as separator char
-        template.sendBody(claus.uriPrefix(Protocol.smtp) + "&to=claus@localhost,willem@localhost&cc=james@localhost",
+        template.sendBody(
+                claus.uriPrefix(Protocol.smtp) + "&to=claus@localhost,willem@localhost&cc=james@localhost",
                 "Hello World");
         // END SNIPPET: e2
 
@@ -84,15 +86,18 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(claus.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:claus");
+                from(claus.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:claus");
 
-                from(willem.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:willem");
+                from(willem.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:willem");
 
-                from(hadrian.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:hadrian");
+                from(hadrian.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:hadrian");
 
-                from(tracy.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100").to("mock:tracy");
+                from(tracy.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100")
+                        .to("mock:tracy");
             }
         };
     }
-
 }

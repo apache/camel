@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -58,7 +59,7 @@ public class MethodCallByTypeRefExistingBeanTest extends ContextTestSupport {
 
         private final String field;
 
-        //No default constructor available
+        // No default constructor available
         public MyBean(String field) {
             this.field = field;
         }
@@ -67,6 +68,5 @@ public class MethodCallByTypeRefExistingBeanTest extends ContextTestSupport {
         public String hello(String text) {
             return "Hello " + field + text;
         }
-
     }
 }

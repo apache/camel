@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.tts;
 
 import java.io.InputStream;
@@ -78,8 +79,8 @@ public class WatsonTextToSpeechProducer extends DefaultProducer {
     }
 
     private WatsonTextToSpeechOperations determineOperation(Exchange exchange) {
-        WatsonTextToSpeechOperations operation
-                = exchange.getIn().getHeader(WatsonTextToSpeechConstants.OPERATION, WatsonTextToSpeechOperations.class);
+        WatsonTextToSpeechOperations operation =
+                exchange.getIn().getHeader(WatsonTextToSpeechConstants.OPERATION, WatsonTextToSpeechOperations.class);
 
         if (operation == null) {
             operation = getEndpoint().getConfiguration().getOperation();
@@ -107,19 +108,26 @@ public class WatsonTextToSpeechProducer extends DefaultProducer {
             throw new IllegalArgumentException("Text to synthesize must be specified");
         }
 
-        String voice = exchange.getIn().getHeader(WatsonTextToSpeechConstants.VOICE,
-                getEndpoint().getConfiguration().getVoice(), String.class);
-        String accept = exchange.getIn().getHeader(WatsonTextToSpeechConstants.ACCEPT,
-                getEndpoint().getConfiguration().getAccept(), String.class);
-        String customizationId = exchange.getIn().getHeader(WatsonTextToSpeechConstants.CUSTOMIZATION_ID,
-                getEndpoint().getConfiguration().getCustomizationId(), String.class);
+        String voice = exchange.getIn()
+                .getHeader(
+                        WatsonTextToSpeechConstants.VOICE,
+                        getEndpoint().getConfiguration().getVoice(),
+                        String.class);
+        String accept = exchange.getIn()
+                .getHeader(
+                        WatsonTextToSpeechConstants.ACCEPT,
+                        getEndpoint().getConfiguration().getAccept(),
+                        String.class);
+        String customizationId = exchange.getIn()
+                .getHeader(
+                        WatsonTextToSpeechConstants.CUSTOMIZATION_ID,
+                        getEndpoint().getConfiguration().getCustomizationId(),
+                        String.class);
 
         LOG.trace("Synthesizing text with TTS: voice={}, accept={}", voice, accept);
 
-        SynthesizeOptions.Builder builder = new SynthesizeOptions.Builder()
-                .text(text)
-                .voice(voice)
-                .accept(accept);
+        SynthesizeOptions.Builder builder =
+                new SynthesizeOptions.Builder().text(text).voice(voice).accept(accept);
 
         if (customizationId != null && !customizationId.isBlank()) {
             builder.customizationId(customizationId);
@@ -166,9 +174,7 @@ public class WatsonTextToSpeechProducer extends DefaultProducer {
 
         LOG.trace("Getting voice information for: {}", voiceName);
 
-        GetVoiceOptions options = new GetVoiceOptions.Builder()
-                .voice(voiceName)
-                .build();
+        GetVoiceOptions options = new GetVoiceOptions.Builder().voice(voiceName).build();
 
         Voice voice = tts.getVoice(options).execute().getResult();
 
@@ -216,9 +222,8 @@ public class WatsonTextToSpeechProducer extends DefaultProducer {
 
         LOG.trace("Getting custom model: {}", modelId);
 
-        GetCustomModelOptions options = new GetCustomModelOptions.Builder()
-                .customizationId(modelId)
-                .build();
+        GetCustomModelOptions options =
+                new GetCustomModelOptions.Builder().customizationId(modelId).build();
 
         CustomModel customModel = tts.getCustomModel(options).execute().getResult();
 
@@ -241,15 +246,17 @@ public class WatsonTextToSpeechProducer extends DefaultProducer {
             throw new IllegalArgumentException("Word must be specified");
         }
 
-        String voice = exchange.getIn().getHeader(WatsonTextToSpeechConstants.VOICE,
-                getEndpoint().getConfiguration().getVoice(), String.class);
+        String voice = exchange.getIn()
+                .getHeader(
+                        WatsonTextToSpeechConstants.VOICE,
+                        getEndpoint().getConfiguration().getVoice(),
+                        String.class);
         String format = exchange.getIn().getHeader(WatsonTextToSpeechConstants.FORMAT, String.class);
 
         LOG.trace("Getting pronunciation for word: {}, voice: {}, format: {}", word, voice, format);
 
-        GetPronunciationOptions.Builder builder = new GetPronunciationOptions.Builder()
-                .text(word)
-                .voice(voice);
+        GetPronunciationOptions.Builder builder =
+                new GetPronunciationOptions.Builder().text(word).voice(voice);
 
         if (format != null && !format.isBlank()) {
             builder.format(format);

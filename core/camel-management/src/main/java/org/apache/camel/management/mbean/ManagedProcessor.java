@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -64,7 +65,8 @@ public class ManagedProcessor extends ManagedPerformanceCounter
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
         this.stepId = step != null
-                ? step.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)) : null;
+                ? step.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
+                : null;
         this.sourceLocation = definition.getLocation();
         if (sourceLocation == null) {
             RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
@@ -76,7 +78,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
+        boolean enabled = context.getManagementStrategy()
+                .getManagementAgent()
+                .getStatisticsLevel()
+                .isDefaultOrExtended();
         setStatisticsEnabled(enabled);
     }
 

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.mail.Message;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.mail.Mailbox.MailboxUser;
 import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for contentType option.
@@ -78,8 +79,8 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
     public void testSendPlainMailContentTypeInHeader() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE,
-                "text/plain; charset=iso-8859-1");
+        template.sendBodyAndHeader(
+                "direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE, "text/plain; charset=iso-8859-1");
 
         Mailbox box = claus.getInbox();
         Message msg = box.get(0);
@@ -104,7 +105,8 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // Camel will fixup the Content-Type if you do not have a space after the semi colon
-        template.sendBodyAndHeader("direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE, "text/plain;charset=iso-8859-1");
+        template.sendBodyAndHeader(
+                "direct:b", "Hello World", MailConstants.MAIL_CONTENT_TYPE, "text/plain;charset=iso-8859-1");
 
         Mailbox box = claus.getInbox();
         Message msg = box.get(0);
@@ -123,5 +125,4 @@ public class MailCustomContentTypeTest extends CamelTestSupport {
             }
         };
     }
-
 }

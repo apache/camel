@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.skipheader;
 
 import java.math.BigDecimal;
@@ -149,9 +150,10 @@ public class Order {
     @Override
     public String toString() {
         return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-               + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-               + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-               + this.firstName + ", " + this.lastName + ", "
-               + String.valueOf(this.orderDate);
+                + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                + ", "
+                + this.firstName + ", " + this.lastName + ", "
+                + String.valueOf(this.orderDate);
     }
 }

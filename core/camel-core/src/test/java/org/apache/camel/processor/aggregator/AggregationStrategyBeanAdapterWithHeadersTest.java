@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.Map;
@@ -44,8 +45,10 @@ public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeaders"))
-                        .completionSize(3).to("mock:result");
+                from("direct:start")
+                        .aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeaders"))
+                        .completionSize(3)
+                        .to("mock:result");
             }
         };
     }

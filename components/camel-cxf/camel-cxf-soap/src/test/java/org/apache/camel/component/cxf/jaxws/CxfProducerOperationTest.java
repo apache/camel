@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,24 +27,22 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";
 
     @Override
     protected String getSimpleEndpointUri() {
         return "cxf://" + getSimpleServerAddress()
-               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
-               + "&defaultOperationName=" + ECHO_OPERATION;
+                + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+                + "&defaultOperationName=" + ECHO_OPERATION;
     }
 
     @Override
     protected String getJaxwsEndpointUri() {
         return "cxf://" + getJaxWsServerAddress()
-               + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
-               + "&defaultOperationName=" + GREET_ME_OPERATION
-               + "&defaultOperationNamespace=" + NAMESPACE;
+                + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
+                + "&defaultOperationName=" + GREET_ME_OPERATION
+                + "&defaultOperationNamespace=" + NAMESPACE;
     }
 
     @Override
@@ -60,7 +61,6 @@ public class CxfProducerOperationTest extends CxfProducerTest {
             }
         });
         return exchange;
-
     }
 
     @Override
@@ -100,6 +100,5 @@ public class CxfProducerOperationTest extends CxfProducerTest {
         }
 
         assertEquals("param:para1para2", exchange.getMessage().getBody(String.class), "Get a wrong response.");
-
     }
 }

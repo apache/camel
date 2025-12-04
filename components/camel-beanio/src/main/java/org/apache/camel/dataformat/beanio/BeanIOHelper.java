@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 import java.util.List;
@@ -32,13 +33,13 @@ public final class BeanIOHelper {
     }
 
     public static BeanReaderErrorHandler getOrCreateBeanReaderErrorHandler(
-            BeanIOConfiguration configuration, Exchange exchange,
-            List<Object> results, BeanIOIterator iterator)
+            BeanIOConfiguration configuration, Exchange exchange, List<Object> results, BeanIOIterator iterator)
             throws Exception {
         BeanReaderErrorHandler answer = null;
 
         if (ObjectHelper.isNotEmpty(configuration.getBeanReaderErrorHandlerType())) {
-            Class<?> clazz = exchange.getContext().getClassResolver()
+            Class<?> clazz = exchange.getContext()
+                    .getClassResolver()
                     .resolveMandatoryClass(configuration.getBeanReaderErrorHandlerType());
             Object instance = exchange.getContext().getInjector().newInstance(clazz);
             answer = (BeanReaderErrorHandler) instance;
@@ -62,5 +63,4 @@ public final class BeanIOHelper {
 
         return answer;
     }
-
 }

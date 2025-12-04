@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -28,7 +29,7 @@ public class FromFtpMoveFileToHiddenFolderRecursiveIT extends FtpServerTestSuppo
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&recursive=true&binary=false"
-               + "&move=${file:parent}/.done/${file:onlyname}&initialDelay=3000&delay=5000";
+                + "&move=${file:parent}/.done/${file:onlyname}&initialDelay=3000&delay=5000";
     }
 
     @Override

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +35,6 @@ import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @Test
@@ -43,10 +44,10 @@ public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport implem
         pumpDataIntoTestCollection();
 
         // result sorted by _id
-        Object result = template
-                .requestBody("direct:aggregate",
-                        "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}},"
-                                                 + "{ $group: { _id: \"$scientist\", count: { $sum: 1 }} },{ $sort : { _id : 1}} ]");
+        Object result = template.requestBody(
+                "direct:aggregate",
+                "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}},"
+                        + "{ $group: { _id: \"$scientist\", count: { $sum: 1 }} },{ $sort : { _id : 1}} ]");
 
         assertTrue(result instanceof List, "Result is not of type List");
 
@@ -66,9 +67,9 @@ public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport implem
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
-        Object result = template
-                .requestBody("direct:aggregateDBCursor",
-                        "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]");
+        Object result = template.requestBody(
+                "direct:aggregateDBCursor",
+                "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]");
 
         assertTrue(result instanceof MongoIterable, "Result is not of type DBCursor");
 
@@ -94,9 +95,10 @@ public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport implem
         options.put(MongoDbConstants.BATCH_SIZE, 10);
         options.put(MongoDbConstants.ALLOW_DISK_USE, true);
 
-        Object result = template
-                .requestBodyAndHeaders("direct:aggregateDBCursor",
-                        "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]", options);
+        Object result = template.requestBodyAndHeaders(
+                "direct:aggregateDBCursor",
+                "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]",
+                options);
 
         assertTrue(result instanceof MongoIterable, "Result is not of type DBCursor");
 
@@ -117,9 +119,11 @@ public class MongoDbAggregateOperationIT extends AbstractMongoDbITSupport implem
         return new RouteBuilder() {
             public void configure() {
                 from("direct:aggregate")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
                 from("direct:aggregateDBCursor")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&dynamicity=true&outputType=MongoIterable")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&dynamicity=true&outputType=MongoIterable")
                         .to("mock:resultAggregateDBCursor");
             }
         };

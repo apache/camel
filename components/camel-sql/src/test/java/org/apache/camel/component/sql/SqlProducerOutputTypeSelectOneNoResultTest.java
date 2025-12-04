@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.EndpointInject;
@@ -33,14 +34,12 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/createAndPopulateDatabase5.sql")
                 .build();
-
     }
 
     @Override
@@ -67,7 +66,8 @@ public class SqlProducerOutputTypeSelectOneNoResultTest extends CamelTestSupport
 
                 from("direct:start")
                         .to("sql:select id from mytable where 1 = 2?outputHeader=myHeader&outputType=SelectOne")
-                        .log("${body}").to("mock:result");
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

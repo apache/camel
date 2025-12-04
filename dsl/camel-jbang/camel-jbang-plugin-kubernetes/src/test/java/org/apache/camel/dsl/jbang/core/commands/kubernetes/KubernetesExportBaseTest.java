@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.ByteArrayInputStream;
@@ -48,8 +49,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import picocli.CommandLine;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class KubernetesExportBaseTest extends KubernetesBaseTest {
 
     protected File workingDir;
@@ -67,7 +67,7 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
             throw new RuntimeCamelException(e);
         }
 
-        defaultArgs = new String[] { "--dir=" + workingDir, "--quiet" };
+        defaultArgs = new String[] {"--dir=" + workingDir, "--quiet"};
     }
 
     protected KubernetesExport createCommand(String[] files, String... args) {
@@ -138,7 +138,8 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
     }
 
     protected String readResource(File workingDir, String path) throws IOException {
-        try (FileInputStream fis = new FileInputStream(workingDir.toPath().resolve(path).toFile())) {
+        try (FileInputStream fis =
+                new FileInputStream(workingDir.toPath().resolve(path).toFile())) {
             return IOHelper.loadText(fis);
         }
     }
@@ -171,5 +172,4 @@ public class KubernetesExportBaseTest extends KubernetesBaseTest {
     private String toGAV(Dependency d) {
         return d.getGroupId() + ":" + d.getArtifactId() + ":" + d.getVersion();
     }
-
 }

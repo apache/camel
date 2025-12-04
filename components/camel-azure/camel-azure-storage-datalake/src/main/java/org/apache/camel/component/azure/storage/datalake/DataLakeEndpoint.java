@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.util.Map;
@@ -37,9 +38,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Sends and receives files to/from Azure Data Lake Storage.
  */
-@UriEndpoint(firstVersion = "3.8.0", scheme = "azure-storage-datalake", title = "Azure Storage Data Lake Service",
-             syntax = "azure-storage-datalake:accountName/fileSystemName",
-             category = { Category.CLOUD, Category.FILE, Category.BIGDATA }, headersClass = DataLakeConstants.class)
+@UriEndpoint(
+        firstVersion = "3.8.0",
+        scheme = "azure-storage-datalake",
+        title = "Azure Storage Data Lake Service",
+        syntax = "azure-storage-datalake:accountName/fileSystemName",
+        category = {Category.CLOUD, Category.FILE, Category.BIGDATA},
+        headersClass = DataLakeConstants.class)
 public class DataLakeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam(description = "service client of data lake")
@@ -48,8 +53,7 @@ public class DataLakeEndpoint extends ScheduledPollEndpoint implements EndpointS
     @UriParam(description = "configuration object of azure data lake")
     private DataLakeConfiguration configuration;
 
-    public DataLakeEndpoint() {
-    }
+    public DataLakeEndpoint() {}
 
     public DataLakeEndpoint(final String uri, final Component component, final DataLakeConfiguration configuration) {
         super(uri, component);

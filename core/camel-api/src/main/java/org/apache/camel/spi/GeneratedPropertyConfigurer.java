@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
  * A auto generated {@link PropertyConfigurer} for fast configuration of Camel components & endpoints.
  */
-public interface GeneratedPropertyConfigurer extends PropertyConfigurer {
-
-}
+public interface GeneratedPropertyConfigurer extends PropertyConfigurer {}

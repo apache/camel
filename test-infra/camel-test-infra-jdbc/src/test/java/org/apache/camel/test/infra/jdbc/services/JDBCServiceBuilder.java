@@ -27,8 +27,7 @@ public final class JDBCServiceBuilder {
 
     private JdbcDatabaseContainer<?> container;
 
-    protected JDBCServiceBuilder() {
-    }
+    protected JDBCServiceBuilder() {}
 
     public static JDBCServiceBuilder newBuilder() {
         JDBCServiceBuilder jdbcServiceBuilder = new JDBCServiceBuilder();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
 
 import java.nio.charset.Charset;
@@ -122,11 +123,14 @@ public final class Hl7Util {
         if (length > hl7Bytes.length) {
             LOG.warn(
                     "The length specified for the HL7 payload array <{}> is greater than the actual length of the array <{}> - only validating {} bytes",
-                    length, hl7Bytes.length, hl7Bytes.length);
+                    length,
+                    hl7Bytes.length,
+                    hl7Bytes.length);
         }
 
         if (hl7Bytes.length < 3 || hl7Bytes[0] != 'M' || hl7Bytes[1] != 'S' || hl7Bytes[2] != 'H') {
-            return String.format("The first segment of the HL7 payload {%s} is not an MSH segment",
+            return String.format(
+                    "The first segment of the HL7 payload {%s} is not an MSH segment",
                     new String(hl7Bytes, 0, Math.min(3, hl7Bytes.length)));
         }
 
@@ -135,16 +139,19 @@ public final class Hl7Util {
         if (hl7Bytes[validationLength - 1] != MllpProtocolConstants.SEGMENT_DELIMITER
                 && hl7Bytes[validationLength - 1] != MllpProtocolConstants.MESSAGE_TERMINATOR) {
             String format = "The HL7 payload terminating byte [%#x] is incorrect - expected [%#x]  {ASCII [<CR>]}";
-            return String.format(format, hl7Bytes[validationLength - 2], (byte) MllpProtocolConstants.SEGMENT_DELIMITER);
+            return String.format(
+                    format, hl7Bytes[validationLength - 2], (byte) MllpProtocolConstants.SEGMENT_DELIMITER);
         }
 
         for (int i = 0; i < validationLength; ++i) {
             switch (hl7Bytes[i]) {
                 case MllpProtocolConstants.START_OF_BLOCK:
-                    return String.format("HL7 payload contains an embedded START_OF_BLOCK {%#x, ASCII <VT>} at index %d",
+                    return String.format(
+                            "HL7 payload contains an embedded START_OF_BLOCK {%#x, ASCII <VT>} at index %d",
                             hl7Bytes[i], i);
                 case MllpProtocolConstants.END_OF_BLOCK:
-                    return String.format("HL7 payload contains an embedded END_OF_BLOCK {%#x, ASCII <FS>} at index %d",
+                    return String.format(
+                            "HL7 payload contains an embedded END_OF_BLOCK {%#x, ASCII <FS>} at index %d",
                             hl7Bytes[i], i);
                 default:
                     // continue on
@@ -227,7 +234,9 @@ public final class Hl7Util {
 
         if (fieldSeparatorIndexes.isEmpty()) {
             throw new MllpAcknowledgementGenerationException(
-                    "Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes, logPhi);
+                    "Failed to find the end of the MSH Segment while attempting to generate response",
+                    hl7MessageBytes,
+                    logPhi);
         }
 
         if (fieldSeparatorIndexes.size() < 8) {
@@ -244,7 +253,8 @@ public final class Hl7Util {
         mllpSocketBuffer.openMllpEnvelope();
 
         // Build the MSH Segment
-        mllpSocketBuffer.write(hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
+        mllpSocketBuffer.write(
+                hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
         writeFieldToBuffer(3, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-5
         writeFieldToBuffer(4, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-6
         writeFieldToBuffer(1, mllpSocketBuffer, hl7MessageBytes, fieldSeparatorIndexes); // MSH-3
@@ -252,7 +262,8 @@ public final class Hl7Util {
 
         // MSH-7
         mllpSocketBuffer.write(fieldSeparator);
-        // TODO static field TIMESTAMP_FORMAT of type java.text.DateFormat isn't thread safe! Think about using ThreadLocal
+        // TODO static field TIMESTAMP_FORMAT of type java.text.DateFormat isn't thread safe! Think about using
+        // ThreadLocal
         mllpSocketBuffer.write(TIMESTAMP_FORMAT.format(new Date()).getBytes());
 
         // Don't copy MSH-8
@@ -274,12 +285,15 @@ public final class Hl7Util {
         if (-1 == msh92start) {
             LOG.warn("Didn't find component separator for MSH-9.2 - sending ACK in MSH-9");
         } else {
-            final String msh9Content = convertToPrintFriendlyString(hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1,
-                    fieldSeparatorIndexes.get(8));
+            final String msh9Content = convertToPrintFriendlyString(
+                    hl7MessageBytes, fieldSeparatorIndexes.get(7) + 1, fieldSeparatorIndexes.get(8));
             final int[] componentIndexesInMsh9 = caretPositionsIn(msh9Content);
-            final int componentDiff = componentIndexesInMsh9[componentIndexesInMsh9.length - 1] - componentIndexesInMsh9[0];
+            final int componentDiff =
+                    componentIndexesInMsh9[componentIndexesInMsh9.length - 1] - componentIndexesInMsh9[0];
 
-            if (componentIndexesInMsh9.length == 2) { //MSH-9.3 is an optional field since 2.3.1, required since 2.5; this is a non-breaking change by just checking the number of the components in the field MSH-9
+            if (componentIndexesInMsh9.length
+                    == 2) { // MSH-9.3 is an optional field since 2.3.1, required since 2.5; this is a non-breaking
+                // change by just checking the number of the components in the field MSH-9
                 mllpSocketBuffer.write(componentSeparator);
                 mllpSocketBuffer.write(hl7MessageBytes, msh92start + 1, componentDiff - 1);
                 mllpSocketBuffer.write(componentSeparator);
@@ -296,7 +310,9 @@ public final class Hl7Util {
         }
 
         // MSH-10 through the end of the MSH
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(9),
+        mllpSocketBuffer.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(9),
                 fieldSeparatorIndexes.get(fieldSeparatorIndexes.size() - 1) - fieldSeparatorIndexes.get(9));
 
         mllpSocketBuffer.write(MllpProtocolConstants.SEGMENT_DELIMITER);
@@ -327,7 +343,8 @@ public final class Hl7Util {
             return EMPTY_REPLACEMENT_VALUE;
         }
 
-        int conversionLength = (logPhiMaxBytes > 0) ? Integer.min(phiString.length(), logPhiMaxBytes) : phiString.length();
+        int conversionLength =
+                (logPhiMaxBytes > 0) ? Integer.min(phiString.length(), logPhiMaxBytes) : phiString.length();
 
         StringBuilder builder = new StringBuilder(conversionLength + STRING_BUFFER_PAD_SIZE);
 
@@ -354,7 +371,8 @@ public final class Hl7Util {
      * @return               a String representation of the byte[]
      */
     public String convertToPrintFriendlyString(byte[] phiBytes, int startPosition, int endPosition) {
-        return bytesToPrintFriendlyStringBuilder(phiBytes, startPosition, endPosition).toString();
+        return bytesToPrintFriendlyStringBuilder(phiBytes, startPosition, endPosition)
+                .toString();
     }
 
     /**
@@ -381,8 +399,7 @@ public final class Hl7Util {
      *
      * @return               a String representation of the byte[]
      */
-    public StringBuilder bytesToPrintFriendlyStringBuilder(
-            byte[] phiBytes, int startPosition, int endPosition) {
+    public StringBuilder bytesToPrintFriendlyStringBuilder(byte[] phiBytes, int startPosition, int endPosition) {
         StringBuilder answer = new StringBuilder();
 
         appendBytesAsPrintFriendlyString(answer, phiBytes, startPosition, endPosition);
@@ -471,8 +488,13 @@ public final class Hl7Util {
      * @param fieldSeparatorIndexes the list of the indices of the field separators
      */
     private static void writeFieldToBuffer(
-            int fieldNumber, MllpSocketBuffer mllpSocketBuffer, byte[] hl7MessageBytes, List<Integer> fieldSeparatorIndexes) {
-        mllpSocketBuffer.write(hl7MessageBytes, fieldSeparatorIndexes.get(fieldNumber),
+            int fieldNumber,
+            MllpSocketBuffer mllpSocketBuffer,
+            byte[] hl7MessageBytes,
+            List<Integer> fieldSeparatorIndexes) {
+        mllpSocketBuffer.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(fieldNumber),
                 fieldSeparatorIndexes.get(fieldNumber + 1) - fieldSeparatorIndexes.get(fieldNumber));
     }
 }

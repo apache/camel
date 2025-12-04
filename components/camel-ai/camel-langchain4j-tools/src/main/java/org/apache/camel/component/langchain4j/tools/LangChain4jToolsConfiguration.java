@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 import dev.langchain4j.model.chat.ChatModel;
@@ -31,8 +32,7 @@ public class LangChain4jToolsConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private ChatModel chatModel;
 
-    public LangChain4jToolsConfiguration() {
-    }
+    public LangChain4jToolsConfiguration() {}
 
     /**
      * Chat Model of type dev.langchain4j.model.chat.ChatModel

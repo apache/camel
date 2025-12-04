@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MockValueBuilderIssueTest extends ContextTestSupport {
 
@@ -45,10 +46,10 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        Throwable e = assertThrows(Throwable.class, this::assertMockEndpointsSatisfied,
-                "Should fail");
+        Throwable e = assertThrows(Throwable.class, this::assertMockEndpointsSatisfied, "Should fail");
 
-        String s = "Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4 evaluated as: 123 contains 4";
+        String s =
+                "Assertion error at index 0 on mock mock://result with predicate: exchangeProperty(foo) contains 4 evaluated as: 123 contains 4";
         assertTrue(e.getMessage().startsWith(s));
     }
 

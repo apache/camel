@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.dsl.yaml.support;
 
 import java.io.File;
@@ -37,8 +38,7 @@ import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
 public final class IndexerSupport {
-    private IndexerSupport() {
-    }
+    private IndexerSupport() {}
 
     public static ClassLoader getClassLoader(MavenProject project) {
         if (project == null) {
@@ -86,7 +86,7 @@ public final class IndexerSupport {
     public static List<FieldInfo> fields(IndexView view, ClassInfo type, Predicate<FieldInfo> filter) {
         List<FieldInfo> answer = new ArrayList<>();
 
-        for (ClassInfo current = type; current != null;) {
+        for (ClassInfo current = type; current != null; ) {
             for (FieldInfo fieldInfo : current.fields()) {
                 if (filter.test(fieldInfo)) {
                     answer.add(fieldInfo);
@@ -111,7 +111,7 @@ public final class IndexerSupport {
     public static List<MethodInfo> methods(IndexView view, ClassInfo type, Predicate<MethodInfo> filter) {
         List<MethodInfo> answer = new ArrayList<>();
 
-        for (ClassInfo current = type; current != null;) {
+        for (ClassInfo current = type; current != null; ) {
             for (MethodInfo methodInfo : current.methods()) {
                 if (filter.test(methodInfo)) {
                     answer.add(methodInfo);

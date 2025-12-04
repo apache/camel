@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format;
 
 public class FormatException extends Exception {
 
     private static final long serialVersionUID = 2243166587373950715L;
 
-    public FormatException() {
-    }
+    public FormatException() {}
 
     public FormatException(String message) {
         super(message);
@@ -34,5 +34,4 @@ public class FormatException extends Exception {
     public FormatException(Throwable cause) {
         super(cause);
     }
-
 }

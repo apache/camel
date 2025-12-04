@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,8 +26,6 @@ import java.util.Properties;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WeaviateComponentConfigurationTest extends CamelTestSupport {
 
@@ -36,8 +37,8 @@ public class WeaviateComponentConfigurationTest extends CamelTestSupport {
     @Test
     void createEndpointWithMinimalConfiguration() throws Exception {
         WeaviateVectorDbComponent component = context.getComponent("weaviate", WeaviateVectorDbComponent.class);
-        WeaviateVectorDbEndpoint endpoint = (WeaviateVectorDbEndpoint) component
-                .createEndpoint(
+        WeaviateVectorDbEndpoint endpoint = (WeaviateVectorDbEndpoint)
+                component.createEndpoint(
                         "weaviate://test-collection?host=localhost:7979&scheme=http&proxyHost=localhost&proxyPort=7777&proxyScheme=https&apiKey=foobar123");
         assertEquals("localhost:7979", endpoint.getConfiguration().getHost());
         assertEquals("http", endpoint.getConfiguration().getScheme());
@@ -53,9 +54,8 @@ public class WeaviateComponentConfigurationTest extends CamelTestSupport {
         Map<String, Object> propsMap = (Map) properties;
 
         WeaviateVectorDbComponent component = context.getComponent("weaviate", WeaviateVectorDbComponent.class);
-        WeaviateVectorDbEndpoint endpoint = (WeaviateVectorDbEndpoint) component
-                .createEndpoint(
-                        "weaviate://test-collection", "", propsMap);
+        WeaviateVectorDbEndpoint endpoint =
+                (WeaviateVectorDbEndpoint) component.createEndpoint("weaviate://test-collection", "", propsMap);
         assertEquals("bighost:7878", endpoint.getConfiguration().getHost());
         assertEquals("ftp", endpoint.getConfiguration().getScheme());
         assertEquals("littlehost", endpoint.getConfiguration().getProxyHost());
@@ -63,5 +63,4 @@ public class WeaviateComponentConfigurationTest extends CamelTestSupport {
         assertEquals("ftps", endpoint.getConfiguration().getProxyScheme());
         assertEquals("barfoo123", endpoint.getConfiguration().getApiKey());
     }
-
 }

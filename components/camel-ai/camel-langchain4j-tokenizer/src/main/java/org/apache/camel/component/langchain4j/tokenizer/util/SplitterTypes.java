@@ -24,7 +24,5 @@ public final class SplitterTypes {
     public static final String LINE = "line";
     public static final String CHARACTER = "character";
 
-    private SplitterTypes() {
-
-    }
+    private SplitterTypes() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -33,14 +34,15 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends AbstractJM
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
     @Test
     public void testRestartJmsConsumerPickupChanges() throws Exception {
-        JmsEndpoint endpoint = context.getEndpoint("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Request",
-                JmsEndpoint.class);
+        JmsEndpoint endpoint = context.getEndpoint(
+                "activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.Request", JmsEndpoint.class);
         JmsConsumer consumer = endpoint.createConsumer(exchange -> template.send("mock:result", exchange));
 
         consumer.start();

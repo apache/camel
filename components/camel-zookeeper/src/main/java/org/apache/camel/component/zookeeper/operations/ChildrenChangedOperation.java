@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
 
 import java.util.List;
@@ -41,8 +42,8 @@ public class ChildrenChangedOperation extends FutureEventDrivenOperation<List<St
 
     @Override
     protected void installWatch() {
-        connection.getChildren(getNode(), this, (int rc, String path, Object ctx, List<String> children, Stat stat) -> {
-        }, null);
+        connection.getChildren(
+                getNode(), this, (int rc, String path, Object ctx, List<String> children, Stat stat) -> {}, null);
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
@@ -23,8 +24,7 @@ public class MyConstructorProcessor implements Processor {
 
     private String prefix = "";
 
-    public MyConstructorProcessor() {
-    }
+    public MyConstructorProcessor() {}
 
     public MyConstructorProcessor(String prefix) {
         this.prefix = prefix;

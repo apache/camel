@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,9 +48,7 @@ public class LogComponentCustomizeThreeTest extends ContextTestSupport {
                     s.setPrefix("Hello");
                 });
 
-                from("direct:start")
-                        .bean(myService)
-                        .to("mock:result");
+                from("direct:start").bean(myService).to("mock:result");
             }
         };
     }

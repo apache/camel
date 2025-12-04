@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import java.util.Map;
@@ -27,10 +28,10 @@ import org.apache.camel.converter.jaxb.mapper.DefaultNamespacePrefixMapper;
  */
 public final class NamespacePrefixMapperFactory {
 
-    private NamespacePrefixMapperFactory() {
-    }
+    private NamespacePrefixMapperFactory() {}
 
-    static JaxbNamespacePrefixMapper newNamespacePrefixMapper(CamelContext camelContext, Map<String, String> namespaces) {
+    static JaxbNamespacePrefixMapper newNamespacePrefixMapper(
+            CamelContext camelContext, Map<String, String> namespaces) {
         DefaultNamespacePrefixMapper mapper = new DefaultNamespacePrefixMapper();
         CamelContextAware.trySetCamelContext(mapper, camelContext);
         mapper.setNamespaces(namespaces);

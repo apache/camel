@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.eks;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.eks;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,7 +52,8 @@ public class EKS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
         context.getRegistry().bind("amazonEcsClient", clientMock);
         EKS2Component component = context.getComponent("aws2-eks", EKS2Component.class);
-        EKS2Endpoint endpoint = (EKS2Endpoint) component.createEndpoint("aws2-eks://TestDomain?accessKey=xxx&secretKey=yyy");
+        EKS2Endpoint endpoint =
+                (EKS2Endpoint) component.createEndpoint("aws2-eks://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getEksClient());
     }

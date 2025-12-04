@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,8 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultExecBindingTest extends CamelTestSupport {
 
@@ -57,5 +58,4 @@ public class DefaultExecBindingTest extends CamelTestSupport {
         Component component = context.getComponent("exec");
         return (ExecEndpoint) component.createEndpoint(uri);
     }
-
 }

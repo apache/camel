@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,8 +32,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.jupiter.api.BeforeEach;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * JcrRouteDifferentWorkspaceTestSupport

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.out;
 
 import java.io.IOException;
@@ -100,5 +101,4 @@ public class BaseWriter extends ServiceSupport implements CamelContextAware {
     protected void domElements(List<Element> elements) throws IOException {
         // not in use for yaml-dsl
     }
-
 }

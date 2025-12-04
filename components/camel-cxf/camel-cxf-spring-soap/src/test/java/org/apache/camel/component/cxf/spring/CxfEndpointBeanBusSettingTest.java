@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -22,15 +25,13 @@ import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.cxf.Bus;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {
 
     static int port1 = CXFTestSupport.getPort1();
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[] { "org/apache/camel/component/cxf/spring/CxfEndpointBeansBusSetting.xml" };
+        return new String[] {"org/apache/camel/component/cxf/spring/CxfEndpointBeansBusSetting.xml"};
     }
 
     @Test
@@ -52,7 +53,6 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         assertEquals(cxf2, ctx.getBean("cxf2"));
         assertEquals(cxf2, endpoint.getBus());
         assertEquals("snarf", endpoint.getBus().getProperty("foo"));
-
     }
 
     @Test
@@ -62,8 +62,8 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         assertEquals(ctx.getBean("cxf1"), endpoint.getBus());
 
         endpoint = camelContext.getEndpoint(
-                "cxf:http://localhost:" + port1 + "/CxfEndpointBeanBusSettingTest/router1?bus=#cxf1", CxfEndpoint.class);
+                "cxf:http://localhost:" + port1 + "/CxfEndpointBeanBusSettingTest/router1?bus=#cxf1",
+                CxfEndpoint.class);
         assertEquals(ctx.getBean("cxf1"), endpoint.getBus());
     }
-
 }

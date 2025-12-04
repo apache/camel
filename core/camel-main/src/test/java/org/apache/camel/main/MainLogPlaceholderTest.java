@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainLogPlaceholderTest {
 
@@ -35,7 +36,8 @@ public class MainLogPlaceholderTest {
             public void configure() {
                 from("timer:tick?period=10")
                         .log("{{message}}")
-                        .transform().constant("Hello {{message}}")
+                        .transform()
+                        .constant("Hello {{message}}")
                         .wireTap("{{tap}}");
             }
         });
@@ -51,5 +53,4 @@ public class MainLogPlaceholderTest {
 
         main.stop();
     }
-
 }

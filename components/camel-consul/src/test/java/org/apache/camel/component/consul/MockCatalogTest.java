@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
+
+import static java.util.Collections.singletonList;
+import static org.apache.camel.builder.Builder.constant;
 
 import java.util.List;
 
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.kiwiproject.consul.model.health.ImmutableNode;
 import org.kiwiproject.consul.model.health.Node;
 
-import static java.util.Collections.singletonList;
-import static org.apache.camel.builder.Builder.constant;
-
 public class MockCatalogTest extends CamelTestSupport {
 
     @Test
@@ -41,14 +42,11 @@ public class MockCatalogTest extends CamelTestSupport {
         AdviceWith.adviceWith(context, "servicesRoute", a -> {
             a.mockEndpointsAndSkip("consul:catalog*");
         });
-        mockConsulAgent.returnReplyBody(constant(singletonList(ImmutableNode.builder()
-                .node("node-1")
-                .address("localhost")
-                .build())));
+        mockConsulAgent.returnReplyBody(constant(singletonList(
+                ImmutableNode.builder().node("node-1").address("localhost").build())));
 
         @SuppressWarnings("unchecked")
-        List<Node> result = fluentTemplate.to("direct:start")
-                .request(List.class);
+        List<Node> result = fluentTemplate.to("direct:start").request(List.class);
         Assertions.assertEquals(1, result.size());
     }
 
@@ -57,7 +55,8 @@ public class MockCatalogTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("servicesRoute")
+                from("direct:start")
+                        .routeId("servicesRoute")
                         .to("consul:catalog?action=" + ConsulCatalogActions.LIST_NODES);
             }
         };

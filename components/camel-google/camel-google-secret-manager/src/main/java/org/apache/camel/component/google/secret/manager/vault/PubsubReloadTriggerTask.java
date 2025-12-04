@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager.vault;
 
 import java.io.InputStream;
@@ -71,8 +72,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
 
-    public PubsubReloadTriggerTask() {
-    }
+    public PubsubReloadTriggerTask() {}
 
     @Override
     public CamelContext getCamelContext() {
@@ -137,8 +137,11 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
         boolean useDefaultInstance = Boolean.parseBoolean(System.getenv(CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE));
         String projectId = System.getenv(CAMEL_VAULT_GCP_PROJECT_ID);
         String subscription = System.getenv(CAMEL_VAULT_GCP_SUBSCRIPTION_NAME);
-        if (ObjectHelper.isEmpty(serviceAccountKey) && ObjectHelper.isEmpty(projectId) && ObjectHelper.isEmpty(subscription)) {
-            GcpVaultConfiguration gcpVaultConfiguration = getCamelContext().getVaultConfiguration().gcp();
+        if (ObjectHelper.isEmpty(serviceAccountKey)
+                && ObjectHelper.isEmpty(projectId)
+                && ObjectHelper.isEmpty(subscription)) {
+            GcpVaultConfiguration gcpVaultConfiguration =
+                    getCamelContext().getVaultConfiguration().gcp();
             if (ObjectHelper.isNotEmpty(gcpVaultConfiguration)) {
                 serviceAccountKey = gcpVaultConfiguration.getServiceAccountKey();
                 projectId = gcpVaultConfiguration.getProjectId();
@@ -146,12 +149,12 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                 subscription = gcpVaultConfiguration.getSubscriptionName();
             }
         }
-        if (ObjectHelper.isNotEmpty(serviceAccountKey) && ObjectHelper.isNotEmpty(projectId)
+        if (ObjectHelper.isNotEmpty(serviceAccountKey)
+                && ObjectHelper.isNotEmpty(projectId)
                 && ObjectHelper.isNotEmpty(subscription)) {
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
-            Credentials myCredentials = ServiceAccountCredentials
-                    .fromStream(resolveMandatoryResourceAsInputStream);
+            InputStream resolveMandatoryResourceAsInputStream =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), serviceAccountKey);
+            Credentials myCredentials = ServiceAccountCredentials.fromStream(resolveMandatoryResourceAsInputStream);
             ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
             Subscriber.Builder builder = Subscriber.newBuilder(subscriptionName, new FilteringEventMessageReceiver());
             builder.setCredentialsProvider(FixedCredentialsProvider.create(myCredentials));
@@ -229,8 +232,11 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
             if (eventType.equalsIgnoreCase(SECRET_UPDATE) || eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
                 if (matchSecret(secretId)) {
                     int secretNameBeginInd = secretId.lastIndexOf("/") + 1;
-                    updates.put(secretId.substring(secretNameBeginInd),
-                            Instant.ofEpochSecond(message.getPublishTime().getSeconds(), message.getPublishTime().getNanos()));
+                    updates.put(
+                            secretId.substring(secretNameBeginInd),
+                            Instant.ofEpochSecond(
+                                    message.getPublishTime().getSeconds(),
+                                    message.getPublishTime().getNanos()));
                     if (isReloadEnabled()) {
                         LOG.info("Update for GCP secret: {} detected, triggering CamelContext reload", secretId);
                         triggerReloading = true;
@@ -246,8 +252,6 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                 }
             }
             consumer.ack();
-
         }
-
     }
 }

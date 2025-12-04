@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,10 +28,6 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
 
@@ -58,7 +59,10 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
                 // configure to use undertow on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration()
-                        .component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
+                        .component("undertow")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.json)
                         .componentProperty("muteException", "true")
                         .endpointProperty("keepAlive", "false");
 
@@ -76,5 +80,4 @@ public class RestUndertowProducerGetPojoTest extends BaseUndertowTest {
             }
         };
     }
-
 }

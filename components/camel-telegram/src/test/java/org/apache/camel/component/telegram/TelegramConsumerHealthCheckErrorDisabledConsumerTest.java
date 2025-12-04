@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,8 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
 
         // enabling routes health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
-        HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
+        HealthCheckRepository repo =
+                hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
         repo.setEnabled(true);
         hcr.register(repo);
         // enabling consumers health check is a bit cumbersome via low-level Java code
@@ -65,8 +67,8 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
         Assertions.assertFalse(down, "None health-check should be DOWN");
 
         // wait until HC is UP
-        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
-                () -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.UP)));
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS)
+                .until(() -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.UP)));
 
         // if we grab the health check by id, we can also check it afterwards
         HealthCheck hc = hcr.getCheck("telegram").get();
@@ -81,23 +83,21 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token").routeId("telegram")
-                                .convertBodyTo(String.class)
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .routeId("telegram")
+                            .convertBodyTo(String.class)
+                            .to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port)
-                .addErrorEndpoint(
-                        "getUpdates",
-                        "GET",
-                        401);
+        return new TelegramMockRoutes(port).addErrorEndpoint("getUpdates", "GET", 401);
     }
 }

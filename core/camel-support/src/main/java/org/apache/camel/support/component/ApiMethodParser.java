@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.lang.reflect.Array;
@@ -35,8 +36,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ApiMethodParser<T> {
 
-    private static final String METHOD_PREFIX
-            = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<((?!\\sextends\\s)[^>])+>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
+    private static final String METHOD_PREFIX =
+            "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<((?!\\sextends\\s)[^>])+>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
 
     private static final String JAVA_LANG = "java.lang.";
     private static final Map<String, Class<?>> PRIMITIVE_TYPES;
@@ -169,7 +170,8 @@ public abstract class ApiMethodParser<T> {
             final String returnType = rt;
             final Class<?> resultType = forName(returnType);
 
-            // use the signature arguments from the parser so we do not have to use our own magic regexp parsing that is flawed
+            // use the signature arguments from the parser so we do not have to use our own magic regexp parsing that is
+            // flawed
             Map<String, String> args = signaturesArguments.get(signature);
             if (args != null) {
                 for (Map.Entry<String, String> entry : args.entrySet()) {
@@ -239,9 +241,11 @@ public abstract class ApiMethodParser<T> {
             try {
                 method = proxyType.getMethod(name, argTypes.toArray(new Class<?>[0]));
             } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException("Method not found [" + signature + "] in type " + proxyType.getName());
+                throw new IllegalArgumentException(
+                        "Method not found [" + signature + "] in type " + proxyType.getName());
             }
-            result.add(new ApiMethodModel(name, resultType, arguments, properties, method, descriptions.get(name), signature));
+            result.add(new ApiMethodModel(
+                    name, resultType, arguments, properties, method, descriptions.get(name), signature));
         }
 
         // allow derived classes to post process
@@ -266,8 +270,10 @@ public abstract class ApiMethodParser<T> {
                     } else {
                         // same number of args, compare arg names, kinda arbitrary to use alphabetized order
                         for (int i = 0; i < nArgs1; i++) {
-                            final int argCompare
-                                    = model1.arguments.get(i).getName().compareTo(model2.arguments.get(i).getName());
+                            final int argCompare = model1.arguments
+                                    .get(i)
+                                    .getName()
+                                    .compareTo(model2.arguments.get(i).getName());
                             if (argCompare != 0) {
                                 return argCompare;
                             }
@@ -311,10 +317,9 @@ public abstract class ApiMethodParser<T> {
                     allArguments.put(name, type);
                 } else {
                     if (argClass != type) {
-                        throw new IllegalArgumentException(
-                                "Argument [" + name
-                                                           + "] is used in multiple methods with different types "
-                                                           + argClass.getCanonicalName() + ", " + type.getCanonicalName());
+                        throw new IllegalArgumentException("Argument [" + name
+                                + "] is used in multiple methods with different types "
+                                + argClass.getCanonicalName() + ", " + type.getCanonicalName());
                     }
                 }
             }
@@ -390,9 +395,14 @@ public abstract class ApiMethodParser<T> {
 
         private String uniqueName;
 
-        ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, List<ApiMethodArg> properties,
-                       Method method,
-                       String description, String signature) {
+        ApiMethodModel(
+                String name,
+                Class<?> resultType,
+                List<ApiMethodArg> arguments,
+                List<ApiMethodArg> properties,
+                Method method,
+                String description,
+                String signature) {
             this.name = name;
             this.resultType = resultType;
             this.arguments = arguments;
@@ -402,8 +412,15 @@ public abstract class ApiMethodParser<T> {
             this.signature = signature;
         }
 
-        ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments,
-                       List<ApiMethodArg> properties, Method method, String description, String signature) {
+        ApiMethodModel(
+                String uniqueName,
+                String name,
+                Class<?> resultType,
+                List<ApiMethodArg> arguments,
+                List<ApiMethodArg> properties,
+                Method method,
+                String description,
+                String signature) {
             this.name = name;
             this.uniqueName = uniqueName;
             this.resultType = resultType;

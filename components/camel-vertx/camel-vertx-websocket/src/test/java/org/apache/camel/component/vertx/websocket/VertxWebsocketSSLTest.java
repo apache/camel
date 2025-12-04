@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import org.apache.camel.CamelContext;
@@ -158,11 +159,14 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
             mockEndpoint.expectedBodiesReceived("Hello World 1", "Hello World 2", "Hello World 3");
 
             ProducerTemplate template = context.createProducerTemplate();
-            template.sendBody("vertx-websocket:wss:localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
+            template.sendBody(
+                    "vertx-websocket:wss:localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
                     "World 1");
-            template.sendBody("vertx-websocket:wss:/localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
+            template.sendBody(
+                    "vertx-websocket:wss:/localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
                     "World 2");
-            template.sendBody("vertx-websocket:wss://localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
+            template.sendBody(
+                    "vertx-websocket:wss://localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
                     "World 3");
 
             mockEndpoint.assertIsSatisfied();
@@ -179,10 +183,13 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
             public void configure() {
                 fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port)
                         .log("Server consumer received message: ${body}")
-                        .toF("vertx-websocket:localhost:%d/echo?sendToAll=true&sslContextParameters=#clientSSLParameters",
+                        .toF(
+                                "vertx-websocket:localhost:%d/echo?sendToAll=true&sslContextParameters=#clientSSLParameters",
                                 port);
 
-                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&sslContextParameters=#clientSSLParameters", port)
+                fromF(
+                                "vertx-websocket:localhost:%d/echo?consumeAsClient=true&sslContextParameters=#clientSSLParameters",
+                                port)
                         .log("Client consumer received message: ${body}")
                         .to("mock:result");
             }
@@ -209,6 +216,5 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
     }
 
     @Override
-    protected void startCamelContext() {
-    }
+    protected void startCamelContext() {}
 }

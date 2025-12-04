@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,14 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport {
 
@@ -63,8 +64,7 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
 
     @Test
     public void testWithInvalidOperationName() {
-        assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:setInvalid", 4711));
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:setInvalid", 4711));
     }
 
     @Test
@@ -145,38 +145,45 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
             @Override
             public void configure() throws Exception {
 
-                from("direct:setInvalid").setHeader(HazelcastConstants.OPERATION, constant("invalid"))
+                from("direct:setInvalid")
+                        .setHeader(HazelcastConstants.OPERATION, constant("invalid"))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.SET_VALUE))
+                from("direct:set")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.SET_VALUE))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+                from("direct:get")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:increment").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.INCREMENT)).to(
-                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:increment")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.INCREMENT))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:decrement").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DECREMENT)).to(
-                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:decrement")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DECREMENT))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:destroy").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DESTROY)).to(
-                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:destroy")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DESTROY))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
                 from("direct:compareAndSet")
-                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.COMPARE_AND_SET)).to(
-                                String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.COMPARE_AND_SET))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:getAndAdd").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_AND_ADD)).to(
-                        String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+                from("direct:getAndAdd")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_AND_ADD))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
-                from("direct:setWithOperationNumber").toF("hazelcast-%sfoo?operation=%s",
-                        HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastOperation.SET_VALUE);
-                from("direct:setWithOperationName").toF("hazelcast-%sfoo?operation=setvalue",
-                        HazelcastConstants.ATOMICNUMBER_PREFIX);
-
+                from("direct:setWithOperationNumber")
+                        .toF(
+                                "hazelcast-%sfoo?operation=%s",
+                                HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastOperation.SET_VALUE);
+                from("direct:setWithOperationName")
+                        .toF("hazelcast-%sfoo?operation=setvalue", HazelcastConstants.ATOMICNUMBER_PREFIX);
             }
         };
     }
-
 }

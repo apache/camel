@@ -101,7 +101,5 @@ public class CouchbaseRemoteInfraService implements CouchbaseInfraService {
     }
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 }

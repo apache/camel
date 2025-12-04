@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.annotation.Resource;
 
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
@@ -99,7 +100,8 @@ public class SSLContextParametersFactoryBeanTest {
         assertEquals(1, params.getCipherSuitesFilter().getExclude().size());
 
         assertNotNull(params.getSecureSocketProtocols());
-        assertEquals(1, params.getSecureSocketProtocols().getSecureSocketProtocol().size());
+        assertEquals(
+                1, params.getSecureSocketProtocols().getSecureSocketProtocol().size());
         assertNotNull(params.getSecureSocketProtocolsFilter());
         assertEquals(1, params.getSecureSocketProtocolsFilter().getInclude().size());
         assertEquals(1, params.getSecureSocketProtocolsFilter().getExclude().size());

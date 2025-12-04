@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.univocity;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.dataformat.univocity;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * This class tests the options of {@link UniVocityFixedDataFormat}.
@@ -90,8 +91,12 @@ public final class UniVocityFixedDataFormatTest {
         dataFormat.setHeaders("A,B,C");
 
         assertEquals("A,B,C", dataFormat.getHeaders());
-        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureWriterSettings().getHeaders());
-        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureParserSettings().getHeaders());
+        assertArrayEquals(
+                new String[] {"A", "B", "C"},
+                dataFormat.createAndConfigureWriterSettings().getHeaders());
+        assertArrayEquals(
+                new String[] {"A", "B", "C"},
+                dataFormat.createAndConfigureParserSettings().getHeaders());
     }
 
     @Test
@@ -131,8 +136,10 @@ public final class UniVocityFixedDataFormatTest {
         dataFormat.setLineSeparator("ls");
 
         assertEquals("ls", dataFormat.getLineSeparator());
-        assertEquals("ls", dataFormat.createAndConfigureWriterSettings().getFormat().getLineSeparatorString());
-        assertEquals("ls", dataFormat.createAndConfigureParserSettings().getFormat().getLineSeparatorString());
+        assertEquals(
+                "ls", dataFormat.createAndConfigureWriterSettings().getFormat().getLineSeparatorString());
+        assertEquals(
+                "ls", dataFormat.createAndConfigureParserSettings().getFormat().getLineSeparatorString());
     }
 
     @Test
@@ -142,8 +149,10 @@ public final class UniVocityFixedDataFormatTest {
         dataFormat.setNormalizedLineSeparator('n');
 
         assertEquals(Character.valueOf('n'), dataFormat.getNormalizedLineSeparator());
-        assertEquals('n', dataFormat.createAndConfigureWriterSettings().getFormat().getNormalizedNewline());
-        assertEquals('n', dataFormat.createAndConfigureParserSettings().getFormat().getNormalizedNewline());
+        assertEquals(
+                'n', dataFormat.createAndConfigureWriterSettings().getFormat().getNormalizedNewline());
+        assertEquals(
+                'n', dataFormat.createAndConfigureParserSettings().getFormat().getNormalizedNewline());
     }
 
     @Test
@@ -153,8 +162,10 @@ public final class UniVocityFixedDataFormatTest {
         dataFormat.setComment('c');
 
         assertEquals(Character.valueOf('c'), dataFormat.getComment());
-        assertEquals('c', dataFormat.createAndConfigureWriterSettings().getFormat().getComment());
-        assertEquals('c', dataFormat.createAndConfigureParserSettings().getFormat().getComment());
+        assertEquals(
+                'c', dataFormat.createAndConfigureWriterSettings().getFormat().getComment());
+        assertEquals(
+                'c', dataFormat.createAndConfigureParserSettings().getFormat().getComment());
     }
 
     @Test
@@ -182,8 +193,10 @@ public final class UniVocityFixedDataFormatTest {
         dataFormat.setPadding('p');
 
         assertEquals(Character.valueOf('p'), dataFormat.getPadding());
-        assertEquals('p', dataFormat.createAndConfigureWriterSettings().getFormat().getPadding());
-        assertEquals('p', dataFormat.createAndConfigureParserSettings().getFormat().getPadding());
+        assertEquals(
+                'p', dataFormat.createAndConfigureWriterSettings().getFormat().getPadding());
+        assertEquals(
+                'p', dataFormat.createAndConfigureParserSettings().getFormat().getPadding());
     }
 
     @Test

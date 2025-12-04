@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -56,8 +57,13 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         super(projectHelper, buildContext);
     }
 
-    PackageComponentMojo(Log log, MavenProject project, MavenProjectHelper projectHelper,
-                         File buildDir, File componentOutDir, BuildContext buildContext) {
+    PackageComponentMojo(
+            Log log,
+            MavenProject project,
+            MavenProjectHelper projectHelper,
+            File buildDir,
+            File componentOutDir,
+            BuildContext buildContext) {
         this(projectHelper, buildContext);
 
         setLog(log);
@@ -86,7 +92,10 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
         // can stop the build before the end and eclipse always needs to know
         // about that directory
         if (projectHelper != null) {
-            projectHelper.addResource(project, componentOutDir.getPath(), Collections.singletonList("**/component.properties"),
+            projectHelper.addResource(
+                    project,
+                    componentOutDir.getPath(),
+                    Collections.singletonList("**/component.properties"),
                     Collections.emptyList());
         }
 
@@ -109,7 +118,6 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
 
                     count++;
                     fileNames.add(file.getName());
-
                 }
             }
         }
@@ -120,7 +128,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
             String properties = createProperties(project, "components", names);
             updateResource(camelMetaDir.toPath(), "component.properties", properties);
             log.info("Generated components containing " + count + " Camel "
-                     + (count > 1 ? "components: " : "component: ") + names);
+                    + (count > 1 ? "components: " : "component: ") + names);
         } else {
             log.debug(
                     "No META-INF/services/org/apache/camel/component directory found. Are you sure you have created a Camel component?");
@@ -128,5 +136,4 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
 
         return count;
     }
-
 }

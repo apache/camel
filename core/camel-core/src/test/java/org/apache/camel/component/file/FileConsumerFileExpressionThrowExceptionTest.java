@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,11 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for expression option for file consumer.
@@ -58,8 +59,9 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("bean"
-                             + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true"))
+                from(fileUri(
+                                "bean"
+                                        + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true"))
                         .to("mock:result");
                 // specify a method name that does not exist
             }
@@ -103,5 +105,4 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
             return false;
         }
     }
-
 }

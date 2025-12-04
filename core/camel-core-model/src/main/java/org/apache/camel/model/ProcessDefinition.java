@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -40,8 +41,7 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     @XmlAttribute(required = true)
     private String ref;
 
-    public ProcessDefinition() {
-    }
+    public ProcessDefinition() {}
 
     protected ProcessDefinition(ProcessDefinition source) {
         super(source);
@@ -114,5 +114,4 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
     public void setRef(String ref) {
         this.ref = ref;
     }
-
 }

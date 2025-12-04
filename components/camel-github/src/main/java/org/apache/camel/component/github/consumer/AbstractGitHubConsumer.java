@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import java.util.Queue;
@@ -47,7 +48,9 @@ public abstract class AbstractGitHubConsumer extends ScheduledBatchPollingConsum
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_REPOSITORY_SERVICE);
         if (service != null) {
-            LOG.debug("Using RepositoryService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using RepositoryService found in registry {}",
+                    service.getClass().getCanonicalName());
             repositoryService = (RepositoryService) service;
         } else {
             repositoryService = new RepositoryService();
@@ -74,8 +77,10 @@ public abstract class AbstractGitHubConsumer extends ScheduledBatchPollingConsum
         int total = exchanges.size();
         int answer = total;
         if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
-                    this.maxMessagesPerPoll, total);
+            LOG.debug(
+                    "Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    this.maxMessagesPerPoll,
+                    total);
             total = this.maxMessagesPerPoll;
         }
 
@@ -90,5 +95,4 @@ public abstract class AbstractGitHubConsumer extends ScheduledBatchPollingConsum
 
         return answer;
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 
@@ -34,10 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * Unit test that verify header propagation functionality for CxfRsProducer that uses WebClient API.
  *
@@ -49,7 +50,7 @@ public class CxfRsProducerHeaderTest {
     static int port3 = CXFTestSupport.getPort("CxfRsProducerHeaderTest.1");
 
     private static final Object RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                                           + "<Customer><id>123</id><name>John</name></Customer>";
+            + "<Customer><id>123</id><name>John</name></Customer>";
 
     @Autowired
     protected CamelContext camelContext;
@@ -66,7 +67,6 @@ public class CxfRsProducerHeaderTest {
                 inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
                 inMessage.setBody(null);
             }
-
         });
 
         // verify the out message is a Response object by default
@@ -75,7 +75,9 @@ public class CxfRsProducerHeaderTest {
         assertEquals(200, response.getStatus());
 
         // test converter (from Response to InputStream)
-        assertEquals(RESPONSE, CxfUtils.getStringFromInputStream(exchange.getMessage().getBody(InputStream.class)));
+        assertEquals(
+                RESPONSE,
+                CxfUtils.getStringFromInputStream(exchange.getMessage().getBody(InputStream.class)));
     }
 
     @Test
@@ -92,7 +94,6 @@ public class CxfRsProducerHeaderTest {
                 inMessage.setHeader("my-user-defined-header", "my-value");
                 inMessage.setBody(null);
             }
-
         });
 
         // get the response message
@@ -137,8 +138,6 @@ public class CxfRsProducerHeaderTest {
 
             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
             exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/xml");
-
         }
-
     }
 }

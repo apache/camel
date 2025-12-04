@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,10 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpHeaderTest extends BaseJettyTest {
 
@@ -66,7 +67,8 @@ public class HttpHeaderTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
+                from("direct:start")
+                        .setHeader("SOAPAction", constant("http://xxx.com/interfaces/ticket"))
                         .setHeader("Content-Type", constant("text/xml; charset=utf-8"))
                         .setHeader(Exchange.HTTP_PROTOCOL_VERSION, constant("HTTP/1.1"))
                         .to("http://localhost:{{port}}/myapp/mytest");
@@ -74,7 +76,8 @@ public class HttpHeaderTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) {
                         Map<String, Object> headers = exchange.getIn().getHeaders();
-                        ServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
+                        ServletRequest request =
+                                exchange.getIn(HttpMessage.class).getRequest();
                         assertNotNull(request);
                         assertEquals("HTTP/1.1", request.getProtocol(), "Get a wong http protocol version");
                         for (Entry<String, Object> entry : headers.entrySet()) {
@@ -93,9 +96,7 @@ public class HttpHeaderTest extends BaseJettyTest {
                 // The setting only effect on a new server endpoint
                 from("jetty:http://localhost:{{port2}}/server/mytest?sendServerVersion=false&sendDateHeader=true")
                         .transform(constant("Response!"));
-
             }
         };
     }
-
 }

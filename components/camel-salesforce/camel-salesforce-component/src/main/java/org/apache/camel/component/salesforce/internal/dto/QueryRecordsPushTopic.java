@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.dto;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
@@ -21,5 +22,4 @@ import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 /**
  * Salesforce Query Records DTO for PushTopic
  */
-public class QueryRecordsPushTopic extends AbstractQueryRecordsBase<PushTopic> {
-}
+public class QueryRecordsPushTopic extends AbstractQueryRecordsBase<PushTopic> {}

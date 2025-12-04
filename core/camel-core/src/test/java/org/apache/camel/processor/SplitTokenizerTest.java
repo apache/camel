@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -92,7 +93,8 @@ public class SplitTokenizerTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("<person name=\"Claus\"/>", "<person>James</person>", "<person>Willem</person>");
 
-        String xml = "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
+        String xml =
+                "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
         template.sendBody("direct:f", xml);
 
         assertMockEndpointsSatisfied();
@@ -106,7 +108,11 @@ public class SplitTokenizerTest extends ContextTestSupport {
 
                 from("direct:a").split().tokenize(",").to("mock:split");
 
-                var byHeader = expression().tokenize().token(",").source("header:myHeader").end();
+                var byHeader = expression()
+                        .tokenize()
+                        .token(",")
+                        .source("header:myHeader")
+                        .end();
                 from("direct:b").split(byHeader).to("mock:split");
 
                 from("direct:c").split().tokenize("(\\W+)\\s*", true).to("mock:split");
@@ -115,11 +121,14 @@ public class SplitTokenizerTest extends ContextTestSupport {
 
                 from("direct:e").split().tokenizeXML("person").to("mock:split");
 
-                from("direct:f").split().xpath("//person")
+                from("direct:f")
+                        .split()
+                        .xpath("//person")
                         // To test the body is not empty
                         // it will call the ObjectHelper.evaluateValuePredicate()
-                        .filter().simple("${body}").to("mock:split");
-
+                        .filter()
+                        .simple("${body}")
+                        .to("mock:split");
             }
         };
     }

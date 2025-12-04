@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.concurrent.TimeUnit;
@@ -34,8 +35,7 @@ public class FileSortByExpressionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(folder), "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME,
-                "copenhagen.xml");
+        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.xml");
     }
 
     @Test
@@ -63,7 +63,8 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("b/?initialDelay=0&delay=10&sortBy=reverse:file:ext")).convertBodyTo(String.class)
+                from(fileUri("b/?initialDelay=0&delay=10&sortBy=reverse:file:ext"))
+                        .convertBodyTo(String.class)
                         .to("mock:reverse");
             }
         });
@@ -74,5 +75,4 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         // wait a bit for the file processing to complete
         assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
     }
-
 }

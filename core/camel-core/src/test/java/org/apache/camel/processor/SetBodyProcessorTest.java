@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -77,9 +78,14 @@ public class SetBodyProcessorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:foo").setBody(simple("Bye ${body}")).to("mock:result");
+                from("direct:start")
+                        .to("mock:foo")
+                        .setBody(simple("Bye ${body}"))
+                        .to("mock:result");
 
-                from("direct:start2").setBody(simple("${header.text.replace('a','b')}")).to("mock:test");
+                from("direct:start2")
+                        .setBody(simple("${header.text.replace('a','b')}"))
+                        .to("mock:test");
             }
         };
     }

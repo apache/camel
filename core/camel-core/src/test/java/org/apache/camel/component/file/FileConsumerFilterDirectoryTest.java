@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,8 +33,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader(fileUri("foo"), "This is a file to be filtered", Exchange.FILE_NAME,
-                "skipme.txt");
+        template.sendBodyAndHeader(fileUri("foo"), "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(100);
         mock.assertIsSatisfied();
@@ -45,8 +45,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri("foo"), "This is a file to be filtered", Exchange.FILE_NAME,
-                "skipme.txt");
+        template.sendBodyAndHeader(fileUri("foo"), "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
 
         template.sendBodyAndHeader(fileUri("barbar"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -58,10 +57,10 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(fileUri(
-                        "?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4"))
-                        .convertBodyTo(String.class).to("mock:result");
+                                "?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

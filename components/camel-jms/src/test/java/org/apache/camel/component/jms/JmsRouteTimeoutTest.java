@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -28,11 +34,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
@@ -41,6 +42,7 @@ public class JmsRouteTimeoutTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -48,20 +50,22 @@ public class JmsRouteTimeoutTest extends AbstractJMSTest {
     @Test
     public void testTimeout() {
         // send an in-out with a timeout for 1 sec
-        Exception e = assertThrows(Exception.class,
-                () -> template.requestBody("activemq:queue:JmsRouteTimeoutTest.testTimeout?requestTimeout=1000", "Hello World"),
+        Exception e = assertThrows(
+                Exception.class,
+                () -> template.requestBody(
+                        "activemq:queue:JmsRouteTimeoutTest.testTimeout?requestTimeout=1000", "Hello World"),
                 "Should have timed out with an exception");
 
-        assertInstanceOf(ExchangeTimedOutException.class, e.getCause(), "Should have timed out with a timeout exception");
-
+        assertInstanceOf(
+                ExchangeTimedOutException.class, e.getCause(), "Should have timed out with a timeout exception");
     }
 
     @Test
     public void testNoTimeout() {
         // START SNIPPET: e1
         // send a in-out with a timeout for 5 sec
-        Object out = assertDoesNotThrow(() -> template
-                .requestBody("activemq:queue:JmsRouteTimeoutTest.testTimeout?requestTimeout=5000", "Hello World"));
+        Object out = assertDoesNotThrow(() -> template.requestBody(
+                "activemq:queue:JmsRouteTimeoutTest.testTimeout?requestTimeout=5000", "Hello World"));
         // END SNIPPET: e1
         assertEquals("Bye World", out);
     }
@@ -75,7 +79,9 @@ public class JmsRouteTimeoutTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsRouteTimeoutTest.testTimeout").delay(3000).transform(constant("Bye World"));
+                from("activemq:queue:JmsRouteTimeoutTest.testTimeout")
+                        .delay(3000)
+                        .transform(constant("Bye World"));
                 from("activemq:queue:JmsRouteTimeoutTest.testNoTimeout").transform(constant("Bye World"));
             }
         };

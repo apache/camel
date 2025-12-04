@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
@@ -82,5 +83,4 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
         Language lan = camelContext.resolveLanguage(language);
         return lan.createExpression(uri);
     }
-
 }

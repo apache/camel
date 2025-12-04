@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import org.apache.camel.Exchange;
@@ -32,7 +33,9 @@ public class SpringDataFormatWithEncodingTest extends CamelSpringTestSupport {
         bean.setPrice(2.5);
 
         MockEndpoint mock = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        mock.message(0).body(String.class).startsWith("<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>");
+        mock.message(0)
+                .body(String.class)
+                .startsWith("<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"yes\"?>");
         mock.message(0).body(String.class).contains("purchaseOrder");
         mock.message(0).body(String.class).contains("amount=\"23.0\"");
         mock.message(0).body(String.class).contains("price=\"2.5\"");

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
@@ -32,10 +37,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrpcConsumerAggregationTest extends CamelTestSupport {
 
@@ -55,9 +56,12 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
 
     @BeforeEach
     public void startGrpcChannels() {
-        syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT).usePlaintext().build();
-        asyncRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_REQUEST_TEST_PORT).usePlaintext().build();
+        syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT)
+                .usePlaintext()
+                .build();
+        asyncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_REQUEST_TEST_PORT)
+                .usePlaintext()
+                .build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
         asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
@@ -76,8 +80,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     @Test
     public void testSyncSyncMethodInSync() {
         LOG.info("gRPC pingSyncSync method blocking test start");
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponse pongResponse = blockingStub.pingSyncSync(pingRequest);
 
         assertNotNull(pongResponse);
@@ -88,8 +94,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     @Test
     public void testSyncAsyncMethodInSync() {
         LOG.info("gRPC pingSyncAsync method blocking test start");
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         Iterator<PongResponse> pongResponseIter = blockingStub.pingSyncAsync(pingRequest);
         while (pongResponseIter.hasNext()) {
             PongResponse pongResponse = pongResponseIter.next();
@@ -103,8 +111,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     public void testSyncSyncMethodInAsync() throws Exception {
         LOG.info("gRPC pingSyncSync method async test start");
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
@@ -121,8 +131,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     public void testSyncAsyncMethodInAsync() throws Exception {
         LOG.info("gRPC pingSyncAsync method async test start");
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         nonBlockingStub.pingSyncAsync(pingRequest, responseObserver);
@@ -139,8 +151,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     public void testAsyncSyncMethodInAsync() throws Exception {
         LOG.info("gRPC pingAsyncSync method async test start");
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncSync(responseObserver);
@@ -160,8 +174,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
     public void testAsyncAsyncMethodInAsync() throws Exception {
         LOG.info("gRPC pingAsyncAsync method async test start");
         final CountDownLatch latch = new CountDownLatch(1);
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
         StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
@@ -183,11 +199,11 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                                + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                         .bean(new GrpcMessageBuilder(), "buildPongResponse");
 
                 from("grpc://localhost:" + GRPC_ASYNC_REQUEST_TEST_PORT
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                                + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };
@@ -224,13 +240,17 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
 
     public class GrpcMessageBuilder {
         public PongResponse buildPongResponse(PingRequest pingRequest) {
-            return PongResponse.newBuilder().setPongName(pingRequest.getPingName() + GRPC_TEST_PONG_VALUE)
-                    .setPongId(pingRequest.getPingId()).build();
+            return PongResponse.newBuilder()
+                    .setPongName(pingRequest.getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(pingRequest.getPingId())
+                    .build();
         }
 
         public PongResponse buildAsyncPongResponse(List<PingRequest> pingRequests) {
-            return PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
-                    .setPongId(pingRequests.get(0).getPingId()).build();
+            return PongResponse.newBuilder()
+                    .setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(pingRequests.get(0).getPingId())
+                    .build();
         }
     }
 }

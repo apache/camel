@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model;
 
 public final class ServiceBuilder {
@@ -21,8 +22,7 @@ public final class ServiceBuilder {
     private Boolean enabled;
     private Service.Type type;
 
-    private ServiceBuilder() {
-    }
+    private ServiceBuilder() {}
 
     public static ServiceBuilder service() {
         return new ServiceBuilder();

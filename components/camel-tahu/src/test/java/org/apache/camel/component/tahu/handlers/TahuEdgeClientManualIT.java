@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.time.Instant;
@@ -54,7 +55,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Disabled("Manual test for underlying TahuEdgeClient implementation complies with Sparkplug B TCK for Edge Nodes and Devices")
+@Disabled(
+        "Manual test for underlying TahuEdgeClient implementation complies with Sparkplug B TCK for Edge Nodes and Devices")
 @SuppressWarnings("unused")
 public class TahuEdgeClientManualIT {
 
@@ -67,16 +69,16 @@ public class TahuEdgeClientManualIT {
     private static final String EDGE_NODE_ID = "E2";
     private static final EdgeNodeDescriptor EDGE_NODE_DESCRIPTOR = new EdgeNodeDescriptor(GROUP_ID, EDGE_NODE_ID);
     private static final List<String> DEVICE_IDS = Arrays.asList("D2");
-    private static final List<DeviceDescriptor> DEVICE_DESCRIPTORS = Arrays
-            .asList(new DeviceDescriptor(EDGE_NODE_DESCRIPTOR, "D2"));
+    private static final List<DeviceDescriptor> DEVICE_DESCRIPTORS =
+            Arrays.asList(new DeviceDescriptor(EDGE_NODE_DESCRIPTOR, "D2"));
     private static final String PRIMARY_HOST_ID = "IamHost";
     private static final boolean USE_ALIASES = false;
     private static final Long REBIRTH_DEBOUNCE_DELAY = 5000L;
 
     private static final MqttServerName MQTT_SERVER_NAME_1 = new MqttServerName("Mqtt Server One");
     private static final String MQTT_CLIENT_ID_1 = "Sparkplug-Tahu-Compatible-Impl-One";
-    private static final MqttServerUrl MQTT_SERVER_URL_1 = MqttServerUrl
-            .getMqttServerUrlSafe(SparkplugTCKService.getMqttHostAddress());
+    private static final MqttServerUrl MQTT_SERVER_URL_1 =
+            MqttServerUrl.getMqttServerUrlSafe(SparkplugTCKService.getMqttHostAddress());
     private static final String USERNAME_1 = "admin";
     private static final String PASSWORD_1 = "changeme";
     private static final MqttServerName MQTT_SERVER_NAME_2 = new MqttServerName("Mqtt Server Two");
@@ -85,15 +87,13 @@ public class TahuEdgeClientManualIT {
     private static final String USERNAME_2 = "admin";
     private static final String PASSWORD_2 = "changeme";
     private static final int KEEP_ALIVE_TIMEOUT = 30;
-    private static final Topic NDEATH_TOPIC = new Topic(
-            SparkplugMeta.SPARKPLUG_B_TOPIC_PREFIX, GROUP_ID, EDGE_NODE_ID,
-            MessageType.NDEATH);
+    private static final Topic NDEATH_TOPIC =
+            new Topic(SparkplugMeta.SPARKPLUG_B_TOPIC_PREFIX, GROUP_ID, EDGE_NODE_ID, MessageType.NDEATH);
 
     private static final List<MqttServerDefinition> mqttServerDefinitions = new ArrayList<>();
 
     private static DataSimulator dataSimulator = new RandomDataSimulator(
-            10,
-            DEVICE_DESCRIPTORS.stream().collect(Collectors.toMap(Function.identity(), __ -> 50)));
+            10, DEVICE_DESCRIPTORS.stream().collect(Collectors.toMap(Function.identity(), __ -> 50)));
 
     private static final BdSeqManager bdSeqManager = new AtomicBdSeqManager();
     private static final ExecutorService handlerExecutorService = Executors.newSingleThreadExecutor();
@@ -103,10 +103,13 @@ public class TahuEdgeClientManualIT {
     @BeforeAll
     public static void beforeAll() throws Exception {
         mqttServerDefinitions.add(new MqttServerDefinition(
-                MQTT_SERVER_NAME_1, new MqttClientId(MQTT_CLIENT_ID_1, false),
-                MqttServerUrl.getMqttServerUrlSafe(SparkplugTCKService.getMqttHostAddress()), USERNAME_1, PASSWORD_1,
-                KEEP_ALIVE_TIMEOUT, NDEATH_TOPIC));
-
+                MQTT_SERVER_NAME_1,
+                new MqttClientId(MQTT_CLIENT_ID_1, false),
+                MqttServerUrl.getMqttServerUrlSafe(SparkplugTCKService.getMqttHostAddress()),
+                USERNAME_1,
+                PASSWORD_1,
+                KEEP_ALIVE_TIMEOUT,
+                NDEATH_TOPIC));
     }
 
     @BeforeEach
@@ -122,13 +125,14 @@ public class TahuEdgeClientManualIT {
                 .clientExecutorService(handlerExecutorService)
                 .build();
 
-        tahuEdgeClient.addDeviceMetricDataPayloadMap(EDGE_NODE_DESCRIPTOR,
-                dataSimulator.getNodeBirthPayload(EDGE_NODE_DESCRIPTOR));
+        tahuEdgeClient.addDeviceMetricDataPayloadMap(
+                EDGE_NODE_DESCRIPTOR, dataSimulator.getNodeBirthPayload(EDGE_NODE_DESCRIPTOR));
 
         for (DeviceDescriptor deviceDescriptor : DEVICE_DESCRIPTORS) {
             SparkplugBPayloadMap deviceMetricPayloadMap = new SparkplugBPayloadMap();
 
-            deviceMetricPayloadMap.setMetrics(dataSimulator.getDeviceBirthPayload(deviceDescriptor).getMetrics());
+            deviceMetricPayloadMap.setMetrics(
+                    dataSimulator.getDeviceBirthPayload(deviceDescriptor).getMetrics());
 
             tahuEdgeClient.addDeviceMetricDataPayloadMap(deviceDescriptor, deviceMetricPayloadMap);
         }
@@ -153,7 +157,8 @@ public class TahuEdgeClientManualIT {
 
     @ParameterizedTest
     @MethodSource("handlerTestArgsProvider")
-    public void handlerTest(String testName, boolean startHandlerBeforeTCKInitiate, int maxSentDataCount) throws Exception {
+    public void handlerTest(String testName, boolean startHandlerBeforeTCKInitiate, int maxSentDataCount)
+            throws Exception {
         LOG.info("handlerTest: Starting {}", testName);
 
         if (startHandlerBeforeTCKInitiate) {
@@ -185,7 +190,6 @@ public class TahuEdgeClientManualIT {
         }
 
         spTckService.spTckResultMockEndpoint.assertIsSatisfied();
-
     }
 
     private String createEdgeTestParams(String testName) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.List;
@@ -56,8 +57,8 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
-            //TODO  must close on SSL exception
-            //sslHandler.setCloseOnSSLException(true);
+            // TODO  must close on SSL exception
+            // sslHandler.setCloseOnSSLException(true);
             LOG.debug("Client SSL handler configured and added to the ChannelPipeline: {}", sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
@@ -85,10 +86,12 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         // do we use request timeout?
         if (producer.getConfiguration().getRequestTimeout() > 0) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
+                LOG.trace(
+                        "Using request timeout {} millis",
+                        producer.getConfiguration().getRequestTimeout());
             }
-            ChannelHandler timeout
-                    = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            ChannelHandler timeout =
+                    new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
             addToPipeline("timeout", channelPipeline, timeout);
         }
 
@@ -116,7 +119,8 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             answer = configuration.getSslContextParameters().createSSLContext(producer.getContext());
         } else {
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
-            answer = sslEngineFactory.createSSLContext(producer.getContext(),
+            answer = sslEngineFactory.createSSLContext(
+                    producer.getContext(),
                     configuration.getKeyStoreFormat(),
                     configuration.getSecurityProvider(),
                     configuration.getKeyStoreResource(),
@@ -144,7 +148,8 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             }
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
-                engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+                engine.setEnabledProtocols(
+                        producer.getConfiguration().getEnabledProtocols().split(","));
             }
             return new SslHandler(engine);
         }

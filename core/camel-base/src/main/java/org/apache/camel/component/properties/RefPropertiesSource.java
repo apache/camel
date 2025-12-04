@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.io.FileNotFoundException;
@@ -61,7 +62,8 @@ public class RefPropertiesSource implements LocationPropertiesSource, Ordered {
         }
     }
 
-    protected Properties lookupPropertiesInRegistry(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+    protected Properties lookupPropertiesInRegistry(
+            PropertiesComponent propertiesComponent, PropertiesLocation location) {
         String path = location.getPath();
         Properties answer = null;
 
@@ -72,8 +74,8 @@ public class RefPropertiesSource implements LocationPropertiesSource, Ordered {
             answer = new OrderedProperties();
             answer.putAll((Map<?, ?>) obj);
         } else if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
-            throw RuntimeCamelException
-                    .wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
+            throw RuntimeCamelException.wrapRuntimeCamelException(
+                    new FileNotFoundException("Properties " + path + " not found in registry"));
         }
 
         return answer;
@@ -83,5 +85,4 @@ public class RefPropertiesSource implements LocationPropertiesSource, Ordered {
     public int getOrder() {
         return order;
     }
-
 }

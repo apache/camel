@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,13 +43,20 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
 
         int[] sizes = new int[total + 1];
         for (int i = 0; i < total; i++) {
-            int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
-                    int.class);
+            int size = getMockEndpoint("mock:line")
+                    .getReceivedExchanges()
+                    .get(i)
+                    .getMessage()
+                    .getHeader("stackSize", int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 110, "Stackframe should be < 110");
             log.debug("#{} size {}", i, size);
         }
-        int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
+        int size = getMockEndpoint("mock:result")
+                .getReceivedExchanges()
+                .get(0)
+                .getMessage()
+                .getHeader("stackSize", int.class);
         sizes[total] = size;
         log.debug("#{} size {}", total, size);
 
@@ -66,17 +74,17 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .transacted()
-                    .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
-                    .log("BEGIN: ${body} stack-size ${header.stackSize}")
-                    .split(body())
+                        .transacted()
+                        .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                        .log("BEGIN: ${body} stack-size ${header.stackSize}")
+                        .split(body())
                         .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
                         .log("LINE: ${body} stack-size ${header.stackSize}")
                         .to("mock:line")
-                    .end()
-                    .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
-                    .log("RESULT: ${body} stack-size ${header.stackSize}")
-                    .to("mock:result");
+                        .end()
+                        .setHeader("stackSize", TransactedStackSizeTest::currentStackSize)
+                        .log("RESULT: ${body} stack-size ${header.stackSize}")
+                        .to("mock:result");
             }
         };
     }
@@ -88,5 +96,4 @@ public class TransactedStackSizeTest extends TransactionClientDataSourceSupport 
         }
         return depth;
     }
-
 }

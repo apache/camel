@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URL;
 
@@ -22,8 +25,6 @@ import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -61,5 +62,4 @@ public class ValidatingProcessorFromUrlTest extends ValidatingProcessorTest {
             // expected
         }
     }
-
 }

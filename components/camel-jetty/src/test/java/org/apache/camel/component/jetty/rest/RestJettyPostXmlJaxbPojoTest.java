@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,9 +26,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyPostXmlJaxbPojoTest extends BaseJettyTest {
 
@@ -35,7 +36,8 @@ public class RestJettyPostXmlJaxbPojoTest extends BaseJettyTest {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "text/xml");
+        template.sendBodyAndHeader(
+                "http://localhost:" + getPort() + "/users/new", body, Exchange.CONTENT_TYPE, "text/xml");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -69,12 +71,15 @@ public class RestJettyPostXmlJaxbPojoTest extends BaseJettyTest {
             public void configure() {
                 // configure to use jetty on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/").post("new").type(UserJaxbPojo.class).to("mock:input");
             }
         };
     }
-
 }

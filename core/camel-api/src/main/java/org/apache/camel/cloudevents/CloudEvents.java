@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cloudevents;
 
 import java.util.Collection;
@@ -24,23 +25,17 @@ public enum CloudEvents implements CloudEvent {
     //
     // V1.0 - https://github.com/cloudevents/spec/blob/v1.0/spec.md
     //
-    v1_0(new CloudEventImpl(
-            "1.0",
-            CloudEventAttributes.V1_0_ATTRIBUTES)),
+    v1_0(new CloudEventImpl("1.0", CloudEventAttributes.V1_0_ATTRIBUTES)),
 
     //
     // V1.0.1 - https://github.com/cloudevents/spec/blob/v1.0.1/spec.md
     //
-    v1_0_1(new CloudEventImpl(
-            "1.0.1",
-            CloudEventAttributes.V1_0_ATTRIBUTES)),
+    v1_0_1(new CloudEventImpl("1.0.1", CloudEventAttributes.V1_0_ATTRIBUTES)),
 
     //
     // V1.0.2 - https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md
     //
-    v1_0_2(new CloudEventImpl(
-            "1.0.2",
-            CloudEventAttributes.V1_0_ATTRIBUTES));
+    v1_0_2(new CloudEventImpl("1.0.2", CloudEventAttributes.V1_0_ATTRIBUTES));
 
     private final CloudEvent instance;
 

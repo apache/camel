@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -39,8 +40,7 @@ public class InputContactMessageContent implements InputMessageContent {
 
     private String vcard;
 
-    public InputContactMessageContent() {
-    }
+    public InputContactMessageContent() {}
 
     public static Builder builder() {
         return new Builder();
@@ -52,8 +52,7 @@ public class InputContactMessageContent implements InputMessageContent {
         private String lastName;
         private String vcard;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder phoneNumber(String phoneNumber) {
             this.phoneNumber = phoneNumber;

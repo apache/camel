@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.consumer;
 
 import java.util.Collections;
@@ -77,7 +78,8 @@ public class NewCommentsConsumer extends AbstractJiraConsumer {
         Collections.reverse(newComments);
 
         lastCommentId = newComments.stream().mapToLong(Comment::getId).max().orElse(lastCommentId);
-        LOG.debug("End: Jira NewCommentsConsumer: retrieving issue comments. {} new comments since last run.",
+        LOG.debug(
+                "End: Jira NewCommentsConsumer: retrieving issue comments. {} new comments since last run.",
                 newComments.size());
         return newComments;
     }

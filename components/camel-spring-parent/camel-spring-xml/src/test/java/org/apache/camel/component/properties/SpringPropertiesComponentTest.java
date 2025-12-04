@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.xml.CamelContextFactoryBean;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringPropertiesComponentTest extends BaseSpringPropertiesComponentTest {
 
     @Test
     public void testResolutionOfPlaceholdersOnFactoryBean() {
-        final CamelContextFactoryBean factoryBean = applicationContext.getBean("&myCamelContext",
-                CamelContextFactoryBean.class);
+        final CamelContextFactoryBean factoryBean =
+                applicationContext.getBean("&myCamelContext", CamelContextFactoryBean.class);
 
         assertEquals("{{autoStartup}}", factoryBean.getAutoStartup());
 
@@ -36,5 +37,4 @@ public class SpringPropertiesComponentTest extends BaseSpringPropertiesComponent
 
         assertTrue(context.isAutoStartup());
     }
-
 }

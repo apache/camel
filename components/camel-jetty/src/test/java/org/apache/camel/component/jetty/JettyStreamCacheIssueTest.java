@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyStreamCacheIssueTest extends BaseJettyTest {
     private String input;
@@ -59,12 +60,12 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + getPort() + "/input").process(new Processor() {
                     @Override
                     public void process(final Exchange exchange) {
-                        // Get message returns the in message if an out one is not present, which is the expectation here
+                        // Get message returns the in message if an out one is not present, which is the expectation
+                        // here
                         assertEquals(input, exchange.getMessage().getBody(String.class));
                     }
                 });
             }
         };
     }
-
 }

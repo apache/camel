@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 import java.io.File;
 import java.io.IOError;
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
-
 public class FileWatchComponentTestBase extends CamelTestSupport {
 
     @RegisterExtension
@@ -51,7 +52,9 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
 
     static void assertFileEvent(String expectedFileName, FileEventEnum expectedEventType, Exchange exchange) {
         assertEquals(expectedFileName, exchange.getIn().getBody(File.class).getName());
-        assertEquals(expectedEventType, exchange.getIn().getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class));
+        assertEquals(
+                expectedEventType,
+                exchange.getIn().getHeader(FileWatchConstants.EVENT_TYPE_HEADER, FileEventEnum.class));
     }
 
     @Override
@@ -92,9 +95,9 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
     protected String testPath() {
         try {
             return folder.toRealPath()
-                   + folder.getFileSystem().getSeparator()
-                   + getClass().getSimpleName() + "_" + testNameExtension.getCurrentTestName()
-                   + folder.getFileSystem().getSeparator();
+                    + folder.getFileSystem().getSeparator()
+                    + getClass().getSimpleName() + "_" + testNameExtension.getCurrentTestName()
+                    + folder.getFileSystem().getSeparator();
         } catch (IOException e) {
             throw new IOError(e);
         }

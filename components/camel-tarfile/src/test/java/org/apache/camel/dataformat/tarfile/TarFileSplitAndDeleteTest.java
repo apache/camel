@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +36,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @BeforeEach
@@ -46,7 +47,9 @@ class TarFileSplitAndDeleteTest extends CamelTestSupport {
     @Test
     void testDeleteTarFileWhenUnmarshalWithDataFormat() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
-                .from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
+                .from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat")
+                .whenDone(1)
+                .create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithDataFormat");
 
@@ -60,8 +63,10 @@ class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     void testDeleteTarFileWhenUnmarshalWithSplitter() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter")
-                .whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter")
+                .whenDone(1)
+                .create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithSplitter");
 
@@ -83,15 +88,17 @@ class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
                 from("file://target/testDeleteTarFileWhenUnmarshalWithDataFormat?delete=true")
                         .unmarshal(dataFormat)
-                        .split(bodyAs(Iterator.class)).streaming()
-                            .convertBodyTo(String.class)
-                            .to("mock:end")
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
+                        .convertBodyTo(String.class)
+                        .to("mock:end")
                         .end();
 
                 from("file://target/testDeleteTarFileWhenUnmarshalWithSplitter?delete=true")
-                        .split(new TarSplitter()).streaming()
-                            .convertBodyTo(String.class)
-                            .to("mock:end")
+                        .split(new TarSplitter())
+                        .streaming()
+                        .convertBodyTo(String.class)
+                        .to("mock:end")
                         .end();
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.handlers;
 
 import org.apache.camel.component.undertow.UndertowConsumer;
@@ -51,5 +52,4 @@ public class RestConsumerPath implements RestConsumerContextPathMatcher.Consumer
     public String toString() {
         return getConsumerPath();
     }
-
 }

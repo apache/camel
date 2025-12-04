@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,8 +26,8 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 @ManagedResource(description = "Managed Idempotent Consumer")
 public class ManagedIdempotentConsumer extends ManagedProcessor implements ManagedIdempotentConsumerMBean {
 
-    public ManagedIdempotentConsumer(CamelContext context, IdempotentConsumer idempotentConsumer,
-                                     IdempotentConsumerDefinition definition) {
+    public ManagedIdempotentConsumer(
+            CamelContext context, IdempotentConsumer idempotentConsumer, IdempotentConsumerDefinition definition) {
         super(context, idempotentConsumer, definition);
     }
 
@@ -84,5 +85,4 @@ public class ManagedIdempotentConsumer extends ManagedProcessor implements Manag
     public void clear() {
         getProcessor().clear();
     }
-
 }

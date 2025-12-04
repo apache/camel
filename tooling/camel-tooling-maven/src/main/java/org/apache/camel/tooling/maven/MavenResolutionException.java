@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
 
 import java.util.ArrayList;
@@ -23,8 +24,7 @@ public class MavenResolutionException extends Exception {
 
     private final List<String> repositoriesUsed = new ArrayList<>();
 
-    public MavenResolutionException() {
-    }
+    public MavenResolutionException() {}
 
     public MavenResolutionException(String message) {
         super(message);
@@ -37,5 +37,4 @@ public class MavenResolutionException extends Exception {
     public List<String> getRepositories() {
         return repositoriesUsed;
     }
-
 }

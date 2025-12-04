@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
 
 import java.io.IOException;
@@ -92,15 +93,16 @@ public class SlackProducer extends DefaultAsyncProducer {
         }
 
         if (!response.isOk()) {
-            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+            exchange.setException(
+                    new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
         }
 
         return false;
     }
 
-    private ChatPostMessageResponse sendLegacySlackMessage(SlackMessage slackMessage) throws IOException, SlackApiException {
-        return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req
-                .channel(slackEndpoint.getChannel())
+    private ChatPostMessageResponse sendLegacySlackMessage(SlackMessage slackMessage)
+            throws IOException, SlackApiException {
+        return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req.channel(slackEndpoint.getChannel())
                 .username(slackEndpoint.getUsername())
                 .iconUrl(slackEndpoint.getIconUrl())
                 .iconEmoji(slackEndpoint.getIconEmoji())
@@ -108,8 +110,7 @@ public class SlackProducer extends DefaultAsyncProducer {
     }
 
     private ChatPostMessageResponse sendMessage(Message message) throws IOException, SlackApiException {
-        return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req
-                .channel(slackEndpoint.getChannel())
+        return slack.methods(slackEndpoint.getToken()).chatPostMessage(req -> req.channel(slackEndpoint.getChannel())
                 .username(slackEndpoint.getUsername())
                 .iconUrl(slackEndpoint.getIconUrl())
                 .iconEmoji(slackEndpoint.getIconEmoji())
@@ -142,7 +143,8 @@ public class SlackProducer extends DefaultAsyncProducer {
         }
 
         if (response.getCode() < 200 || response.getCode() > 299) {
-            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+            exchange.setException(
+                    new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
         }
 
         return false;

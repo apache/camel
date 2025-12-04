@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.Map;
@@ -25,8 +26,7 @@ import org.apache.camel.util.URISupport;
 
 public final class RawParameterHelper {
 
-    private RawParameterHelper() {
-    }
+    private RawParameterHelper() {}
 
     /**
      * Traverses the given parameters, and resolve any parameter values which uses the RAW token syntax:

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap.name;
 
 import java.lang.annotation.Annotation;
@@ -69,9 +70,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private TypeInfo getOutInfo(Method method) {
         ResponseWrapper respWrap = method.getAnnotation(ResponseWrapper.class);
         if (respWrap != null && respWrap.className() != null) {
-            return new TypeInfo(
-                    respWrap.className(),
-                    new QName(respWrap.targetNamespace(), respWrap.localName()));
+            return new TypeInfo(respWrap.className(), new QName(respWrap.targetNamespace(), respWrap.localName()));
         }
         Class<?> returnType = method.getReturnType();
         if (Void.TYPE.equals(returnType)) {
@@ -82,9 +81,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             if (webResult != null) {
                 return new TypeInfo(type.getName(), new QName(webResult.targetNamespace(), webResult.name()));
             } else {
-                throw new IllegalArgumentException(
-                        "Result type of method " + method.getName()
-                                                   + " is not annotated with WebResult. This is not yet supported");
+                throw new IllegalArgumentException("Result type of method " + method.getName()
+                        + " is not annotated with WebResult. This is not yet supported");
             }
         }
     }
@@ -119,9 +117,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         }
 
         if (webParams.size() != types.length) {
-            throw new IllegalArgumentException(
-                    "The number of @WebParam annotations for Method " + method.getName()
-                                               + " does not match the number of parameters. This is not supported.");
+            throw new IllegalArgumentException("The number of @WebParam annotations for Method " + method.getName()
+                    + " does not match the number of parameters. This is not supported.");
         }
 
         Iterator<WebParam> webParamIter = webParams.iterator();
@@ -129,8 +126,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         while (webParamIter.hasNext()) {
             WebParam webParam = webParamIter.next();
             typeInfos.add(new TypeInfo(
-                    types[++paramCounter].getName(),
-                    new QName(webParam.targetNamespace(), webParam.name())));
+                    types[++paramCounter].getName(), new QName(webParam.targetNamespace(), webParam.name())));
         }
 
         return typeInfos;
@@ -162,7 +158,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                     if (ti.getTypeName() != null) {
                         if (!ti.getTypeName().equals("jakarta.xml.ws.Holder")
                                 && !inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())) {
-                            LOG.warn("Ambiguous QName mapping. The type [{}] is already mapped to a QName in this context.",
+                            LOG.warn(
+                                    "Ambiguous QName mapping. The type [{}] is already mapped to a QName in this context.",
                                     ti.getTypeName());
                             continue;
                         }
@@ -231,8 +228,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 qName = fallBackStrategy.findQNameForSoapActionOrType(soapAction, type);
             } catch (Exception e) {
                 String msg = "No method found that matches the given SoapAction " + soapAction
-                             + " or that has an " + (isClient ? "input" : "output") + " of type "
-                             + type.getName();
+                        + " or that has an " + (isClient ? "input" : "output") + " of type "
+                        + type.getName();
                 throw new RuntimeCamelException(msg, e);
             }
         }
@@ -263,5 +260,4 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
 
         return perSoapActionFaultNameToException.get(faultName);
     }
-
 }

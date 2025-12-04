@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,7 +55,12 @@ public class InterceptSendToEndpointWithStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("mock:b").choice().when(body().isEqualTo("stop")).stop().otherwise().to("mock:c");
+                interceptSendToEndpoint("mock:b")
+                        .choice()
+                        .when(body().isEqualTo("stop"))
+                        .stop()
+                        .otherwise()
+                        .to("mock:c");
 
                 from("direct:start").to("mock:a").to("mock:b").to("mock:result");
             }

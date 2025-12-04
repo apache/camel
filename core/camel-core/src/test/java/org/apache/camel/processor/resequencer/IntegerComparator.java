@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 public class IntegerComparator implements SequenceElementComparator<Integer> {
@@ -37,5 +38,4 @@ public class IntegerComparator implements SequenceElementComparator<Integer> {
     public boolean isValid(Integer o1) {
         return o1 != null;
     }
-
 }

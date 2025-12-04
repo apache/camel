@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Properties;
@@ -35,9 +36,7 @@ public class OptionalPropertyPlaceholderEipTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .split(body()).delimiter("{{?myDelim}}")
-                        .to("mock:line");
+                from("direct:start").split(body()).delimiter("{{?myDelim}}").to("mock:line");
             }
         });
         context.start();
@@ -56,9 +55,7 @@ public class OptionalPropertyPlaceholderEipTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .split(body()).delimiter("{{?myDelim}}")
-                        .to("mock:line");
+                from("direct:start").split(body()).delimiter("{{?myDelim}}").to("mock:line");
             }
         });
         context.start();
@@ -77,8 +74,8 @@ public class OptionalPropertyPlaceholderEipTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

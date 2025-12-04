@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache.policy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.URI;
 
@@ -27,10 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-//This test requires a registered CacheManager, but the others do not.
+// This test requires a registered CacheManager, but the others do not.
 public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
 
     @BindToRegistry("cachemanager-hzsecond")
@@ -76,5 +77,4 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
         cacheManager.getCacheNames().forEach(s -> cacheManager.destroyCache(s));
         Caching.getCachingProvider().close(URI.create("hzsecond"), null);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.util.List;
@@ -29,5 +30,4 @@ public interface RestDefinitionsResolver {
     String JMX_REST_DEFINITION_RESOLVER = "jmx-rest-definition-resolver";
 
     List<RestDefinition> getRestDefinitions(CamelContext camelContext, String camelId) throws Exception;
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.util;
 
 import org.apache.camel.Converter;
@@ -37,8 +38,7 @@ import org.apache.camel.component.telegram.model.Update;
 @Converter(generateLoader = true)
 public final class TelegramConverter {
 
-    private TelegramConverter() {
-    }
+    private TelegramConverter() {}
 
     @Converter
     public static String toString(Update update, Exchange exchange) {
@@ -109,10 +109,9 @@ public final class TelegramConverter {
 
         // If the message is a string, it will be converted to a OutgoingTextMessage
         if (type == null) {
-            throw new IllegalStateException(
-                    "Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE
-                                            + " to be set with an appropriate org.apache.camel.component.telegram"
-                                            + ".TelegramMediaType object");
+            throw new IllegalStateException("Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE
+                    + " to be set with an appropriate org.apache.camel.component.telegram"
+                    + ".TelegramMediaType object");
         }
 
         OutgoingMessage result;
@@ -122,7 +121,8 @@ public final class TelegramConverter {
             case PHOTO_PNG: {
                 OutgoingPhotoMessage img = new OutgoingPhotoMessage();
                 String caption = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                ReplyMarkup replyMarkup =
+                        (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
                 String fileName = "photo." + type.getFileExtension();
 
                 img.setCaption(caption);
@@ -136,7 +136,8 @@ public final class TelegramConverter {
             case AUDIO: {
                 OutgoingAudioMessage audio = new OutgoingAudioMessage();
                 String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                ReplyMarkup replyMarkup =
+                        (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
                 String fileName = "audio." + type.getFileExtension();
 
                 audio.setTitle(title);
@@ -150,7 +151,8 @@ public final class TelegramConverter {
             case VIDEO: {
                 OutgoingVideoMessage video = new OutgoingVideoMessage();
                 String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                ReplyMarkup replyMarkup =
+                        (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
                 String fileName = "video." + type.getFileExtension();
 
                 video.setCaption(title);
@@ -166,7 +168,8 @@ public final class TelegramConverter {
                 // this can be any file
                 OutgoingDocumentMessage document = new OutgoingDocumentMessage();
                 String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                ReplyMarkup replyMarkup =
+                        (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
 
                 document.setCaption(title);
                 document.setFilenameWithExtension("file");
@@ -191,5 +194,4 @@ public final class TelegramConverter {
         }
         return mode;
     }
-
 }

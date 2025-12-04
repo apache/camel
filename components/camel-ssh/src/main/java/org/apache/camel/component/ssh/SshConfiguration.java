@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.net.URI;
@@ -36,50 +37,69 @@ public class SshConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
     private int port = DEFAULT_SSH_PORT;
+
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "consumer")
     private String pollCommand;
+
     @UriParam(label = "security")
     private KeyPairProvider keyPairProvider;
+
     @UriParam(label = "security")
     private String keyType;
+
     @UriParam(label = "security")
     private String certResource;
+
     @UriParam(label = "security", secret = true)
     private String certResourcePassword;
+
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
+
     @UriParam()
     private String knownHostsResource;
+
     @UriParam(defaultValue = "false")
     private boolean failOnUnknownHost;
+
     @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
     private String channelType = Channel.CHANNEL_EXEC;
+
     @UriParam(label = "advanced")
     private String shellPrompt;
+
     @UriParam(label = "advanced", defaultValue = "100")
     private long sleepForShellPrompt;
+
     @UriParam(label = "security")
     private String kex;
+
     @UriParam(label = "security")
     private String ciphers;
+
     @UriParam(label = "security")
     private String macs;
+
     @UriParam(label = "security")
     private String signatures;
+
     @UriParam(label = "advanced")
     private String compressions;
+
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private ClientBuilder clientBuilder;
 
-    public SshConfiguration() {
-    }
+    public SshConfiguration() {}
 
     public SshConfiguration(URI uri) {
         configure(uri);

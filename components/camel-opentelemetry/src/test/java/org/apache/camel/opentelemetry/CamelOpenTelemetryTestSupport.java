@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -50,10 +54,7 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 @SetSystemProperty(key = "io.opentelemetry.context.enableStrictContext", value = "true")
 class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
@@ -155,7 +156,9 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         if (async) {
             final List<SpanData> unsortedSpans = spans;
             spans = Arrays.stream(expected)
-                    .map(td -> findSpan(td, unsortedSpans)).distinct().toList();
+                    .map(td -> findSpan(td, unsortedSpans))
+                    .distinct()
+                    .toList();
             assertEquals(expected.length, spans.size(), "Incorrect number of spans after sorting");
         }
 
@@ -167,14 +170,17 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected SpanData findSpan(SpanTestData testdata, List<SpanData> spans) {
-        return spans.stream().filter(s -> {
-            boolean matched = s.getName().equals(testdata.getOperation());
-            if (s.getAttributes().get(CAMEL_URI_KEY) != null) {
-                matched = matched && Objects.equals(s.getAttributes().get(CAMEL_URI_KEY), testdata.getUri());
-            }
-            matched = matched && s.getKind().equals(testdata.getKind());
-            return matched;
-        }).findFirst().orElse(null);
+        return spans.stream()
+                .filter(s -> {
+                    boolean matched = s.getName().equals(testdata.getOperation());
+                    if (s.getAttributes().get(CAMEL_URI_KEY) != null) {
+                        matched = matched && Objects.equals(s.getAttributes().get(CAMEL_URI_KEY), testdata.getUri());
+                    }
+                    matched = matched && s.getKind().equals(testdata.getKind());
+                    return matched;
+                })
+                .findFirst()
+                .orElse(null);
     }
 
     protected Tracer getTracer() {
@@ -234,7 +240,9 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         if (!td.getLogMessages().isEmpty()) {
             assertEquals(td.getLogMessages().size(), span.getEvents().size(), td.getLabel());
             for (int i = 0; i < td.getLogMessages().size(); i++) {
-                assertEquals(td.getLogMessages().get(i), span.getEvents().get(i).getAttributes().get(MESSAGE_KEY));
+                assertEquals(
+                        td.getLogMessages().get(i),
+                        span.getEvents().get(i).getAttributes().get(MESSAGE_KEY));
             }
         }
 
@@ -249,7 +257,12 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected void verifySameTrace() {
-        assertEquals(1, otelExtension.getSpans().stream().map(SpanData::getTraceId).distinct().count());
+        assertEquals(
+                1,
+                otelExtension.getSpans().stream()
+                        .map(SpanData::getTraceId)
+                        .distinct()
+                        .count());
     }
 
     protected Function<OpenTelemetryTracer, InterceptStrategy> getTracingStrategy() {

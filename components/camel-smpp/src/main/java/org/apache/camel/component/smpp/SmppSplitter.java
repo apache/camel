@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import java.util.concurrent.locks.Lock;
@@ -133,7 +134,7 @@ public class SmppSplitter {
 
     public byte[][] split(byte[] message) {
         if (!isSplitRequired()) {
-            return new byte[][] { message };
+            return new byte[][] {message};
         }
 
         int segmentLength = getSegmentLength();

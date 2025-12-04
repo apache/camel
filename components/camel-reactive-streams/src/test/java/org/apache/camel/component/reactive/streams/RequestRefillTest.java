@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -28,9 +32,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServi
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the number of refill requests that are sent to a published from a Camel consumer.
@@ -87,7 +88,10 @@ public class RequestRefillTest extends BaseReactiveTest {
 
         mock.assertIsSatisfied();
 
-        Long sum = mock.getExchanges().stream().map(x -> x.getIn().getBody(Long.class)).reduce((l, r) -> l + r).get();
+        Long sum = mock.getExchanges().stream()
+                .map(x -> x.getIn().getBody(Long.class))
+                .reduce((l, r) -> l + r)
+                .get();
         assertEquals(numReqs * (numReqs + 1) / 2, sum.longValue());
         return requests;
     }

@@ -14,28 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
+
 public class PropertyBindingExceptionTest {
-    public static final String EXPECTED_EXCEPTION_MESSAGE
-            = "Error binding property (prefix.property=value) with name: property";
+    public static final String EXPECTED_EXCEPTION_MESSAGE =
+            "Error binding property (prefix.property=value) with name: property";
 
     @Test
     public void exceptionMessageTest() {
         PropertyBindingException pbe = new PropertyBindingException(
                 new Object(), "property", "value", "prefix", "property", new Throwable("The casue!"));
-        assertTrue(pbe.getMessage().startsWith(EXPECTED_EXCEPTION_MESSAGE),
+        assertTrue(
+                pbe.getMessage().startsWith(EXPECTED_EXCEPTION_MESSAGE),
                 "PropertyBindingException message should start with [" + EXPECTED_EXCEPTION_MESSAGE + "] while is ["
-                                                                            + pbe.getMessage() + "] instead.");
+                        + pbe.getMessage() + "] instead.");
 
         pbe = new PropertyBindingException(
                 new Object(), "property", "value", "prefix.", "property", new Throwable("The casue!"));
-        assertTrue(pbe.getMessage().startsWith(EXPECTED_EXCEPTION_MESSAGE),
+        assertTrue(
+                pbe.getMessage().startsWith(EXPECTED_EXCEPTION_MESSAGE),
                 "PropertyBindingException message should start with [" + EXPECTED_EXCEPTION_MESSAGE + "] while is ["
-                                                                            + pbe.getMessage() + "] instead.");
+                        + pbe.getMessage() + "] instead.");
     }
 }

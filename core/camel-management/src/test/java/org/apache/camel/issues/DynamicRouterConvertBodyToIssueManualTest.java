@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.util.Map;
@@ -51,7 +52,8 @@ public class DynamicRouterConvertBodyToIssueManualTest extends ContextTestSuppor
             @Override
             public void configure() {
                 from("seda:foo")
-                        .dynamicRouter().method(DynamicRouterConvertBodyToIssueManualTest.class, "slip")
+                        .dynamicRouter()
+                        .method(DynamicRouterConvertBodyToIssueManualTest.class, "slip")
                         .to("mock:result");
 
                 from("direct:while_body")
@@ -88,5 +90,4 @@ public class DynamicRouterConvertBodyToIssueManualTest extends ContextTestSuppor
             return "direct:while_body";
         }
     }
-
 }

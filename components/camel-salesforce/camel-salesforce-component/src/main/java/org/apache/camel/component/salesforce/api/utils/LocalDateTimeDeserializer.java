@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.io.IOException;
@@ -36,11 +37,9 @@ final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException {
+    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toLocalDateTime();
     }
-
 }

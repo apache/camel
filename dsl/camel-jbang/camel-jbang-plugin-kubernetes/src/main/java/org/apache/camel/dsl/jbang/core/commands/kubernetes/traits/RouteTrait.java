@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
+
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait.DEFAULT_CONTAINER_PORT_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,8 +37,6 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait.DEFAULT_CONTAINER_PORT_NAME;
-
 public class RouteTrait extends BaseTrait {
 
     public static final int RouteTrait = 2200;
@@ -51,7 +52,8 @@ public class RouteTrait extends BaseTrait {
         }
 
         // must be explicitly enabled
-        if (traitConfig.getRoute() == null || !Optional.ofNullable(traitConfig.getRoute().getEnabled()).orElse(false)) {
+        if (traitConfig.getRoute() == null
+                || !Optional.ofNullable(traitConfig.getRoute().getEnabled()).orElse(false)) {
             return false;
         }
 
@@ -62,18 +64,21 @@ public class RouteTrait extends BaseTrait {
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
         Route routeTrait = Optional.ofNullable(traitConfig.getRoute()).orElseGet(Route::new);
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
 
         RouteBuilder routeBuilder = new RouteBuilder();
-        routeBuilder.withNewMetadata()
-                .withName(context.getName())
-                .endMetadata();
+        routeBuilder.withNewMetadata().withName(context.getName()).endMetadata();
         if (routeTrait.getAnnotations() != null) {
-            routeBuilder.editMetadata().withAnnotations(routeTrait.getAnnotations()).endMetadata();
+            routeBuilder
+                    .editMetadata()
+                    .withAnnotations(routeTrait.getAnnotations())
+                    .endMetadata();
         }
 
         IntOrString servicePortName = new IntOrStringBuilder()
-                .withValue(Optional.ofNullable(containerTrait.getServicePortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
+                .withValue(
+                        Optional.ofNullable(containerTrait.getServicePortName()).orElse(DEFAULT_CONTAINER_PORT_NAME))
                 .build();
         routeBuilder
                 .withNewSpec()
@@ -108,12 +113,12 @@ public class RouteTrait extends BaseTrait {
         }
 
         if (routeTrait.getTlsInsecureEdgeTerminationPolicy() != null) {
-            tlsConfigBuilder.withInsecureEdgeTerminationPolicy(routeTrait.getTlsInsecureEdgeTerminationPolicy().getValue());
+            tlsConfigBuilder.withInsecureEdgeTerminationPolicy(
+                    routeTrait.getTlsInsecureEdgeTerminationPolicy().getValue());
         }
 
         routeBuilder.editSpec().withTls(tlsConfigBuilder.build()).endSpec();
         context.add(routeBuilder);
-
     }
 
     @Override
@@ -140,5 +145,4 @@ public class RouteTrait extends BaseTrait {
             return value;
         }
     }
-
 }

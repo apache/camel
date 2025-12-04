@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
@@ -32,10 +37,6 @@ import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DelayedMonoPublisherTest {
 
@@ -83,12 +84,10 @@ public class DelayedMonoPublisherTest {
         LinkedList<Throwable> exceptions = new LinkedList<>();
         CountDownLatch latch = new CountDownLatch(1);
 
-        Flowable.fromPublisher(pub)
-                .subscribe(item -> {
-                }, e -> {
-                    exceptions.add(e);
-                    latch.countDown();
-                });
+        Flowable.fromPublisher(pub).subscribe(item -> {}, e -> {
+            exceptions.add(e);
+            latch.countDown();
+        });
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
 
@@ -208,22 +207,18 @@ public class DelayedMonoPublisherTest {
         ConcurrentLinkedDeque<Throwable> exceptions = new ConcurrentLinkedDeque<>();
         CountDownLatch latch = new CountDownLatch(2);
 
-        Flowable.fromPublisher(pub)
-                .subscribe(item -> {
-                }, e -> {
-                    exceptions.add(e);
-                    latch.countDown();
-                });
+        Flowable.fromPublisher(pub).subscribe(item -> {}, e -> {
+            exceptions.add(e);
+            latch.countDown();
+        });
 
         Thread.sleep(200);
         pub.setException(ex);
 
-        Flowable.fromPublisher(pub)
-                .subscribe(item -> {
-                }, e -> {
-                    exceptions.add(e);
-                    latch.countDown();
-                });
+        Flowable.fromPublisher(pub).subscribe(item -> {}, e -> {
+            exceptions.add(e);
+            latch.countDown();
+        });
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
 
@@ -263,8 +258,7 @@ public class DelayedMonoPublisherTest {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         Exception ex = new RuntimeCamelException("An exception");
         pub.setException(ex);
-        assertThrows(IllegalStateException.class,
-                () -> pub.setData(1));
+        assertThrows(IllegalStateException.class, () -> pub.setData(1));
     }
 
     @Test
@@ -272,16 +266,14 @@ public class DelayedMonoPublisherTest {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
         Exception ex = new RuntimeCamelException("An exception");
-        assertThrows(IllegalStateException.class,
-                () -> pub.setException(ex));
+        assertThrows(IllegalStateException.class, () -> pub.setException(ex));
     }
 
     @Test
     public void testOnlyOneDataAllowed() {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
-        assertThrows(IllegalStateException.class,
-                () -> pub.setData(2));
+        assertThrows(IllegalStateException.class, () -> pub.setData(2));
     }
 
     @Test
@@ -289,8 +281,6 @@ public class DelayedMonoPublisherTest {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         final RuntimeCamelException runtimeException = new RuntimeCamelException("An exception");
         pub.setException(runtimeException);
-        assertThrows(IllegalStateException.class,
-                () -> pub.setException(runtimeException));
+        assertThrows(IllegalStateException.class, () -> pub.setException(runtimeException));
     }
-
 }

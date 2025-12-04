@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.nova;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.KeypairProducer;
@@ -28,13 +36,6 @@ import org.mockito.quality.Strictness;
 import org.openstack4j.api.compute.KeypairService;
 import org.openstack4j.model.compute.Keypair;
 import org.openstack4j.openstack.compute.domain.NovaKeypair;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class KeypairProducerTest extends NovaProducerTestSupport {
@@ -92,7 +93,6 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
         assertEquals(privatecKey, result.getPrivateKey());
         assertEquals(dummyKeypair.getName(), result.getName());
         assertEquals(dummyKeypair.getPublicKey(), result.getPublicKey());
-
     }
 
     @Test

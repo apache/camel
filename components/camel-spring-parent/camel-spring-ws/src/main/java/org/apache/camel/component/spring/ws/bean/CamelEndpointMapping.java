@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.bean;
 
 import java.net.URISyntaxException;
@@ -123,7 +124,8 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
                     messageKey = getUriPath();
 
                     if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
-                        String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
+                        String lookupKey = key.getLookupKey()
+                                .substring(0, key.getLookupKey().length() - 1);
 
                         if (messageKey.startsWith(lookupKey)) {
                             return endpointEntry.getValue();
@@ -159,7 +161,9 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
     private String getSoapAction(MessageContext messageContext) {
         if (messageContext.getRequest() instanceof SoapMessage request) {
             String soapAction = request.getSoapAction();
-            if (StringUtils.hasLength(soapAction) && soapAction.startsWith(DOUBLE_QUOTE) && soapAction.endsWith(DOUBLE_QUOTE)) {
+            if (StringUtils.hasLength(soapAction)
+                    && soapAction.startsWith(DOUBLE_QUOTE)
+                    && soapAction.endsWith(DOUBLE_QUOTE)) {
                 return soapAction.substring(1, soapAction.length() - 1);
             }
             return soapAction;
@@ -196,14 +200,16 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
     }
 
     private String getRootQName(MessageContext messageContext) throws TransformerException {
-        QName qName = PayloadRootUtils.getPayloadRootQName(messageContext.getRequest().getPayloadSource(), transformerFactory);
+        QName qName = PayloadRootUtils.getPayloadRootQName(
+                messageContext.getRequest().getPayloadSource(), transformerFactory);
         return qName != null ? qName.toString() : null;
     }
 
     private String getXPathResult(MessageContext messageContext, XPathExpression expression) {
         if (expression != null) {
-            Node domNode
-                    = camelContext.getTypeConverter().convertTo(Node.class, messageContext.getRequest().getPayloadSource());
+            Node domNode = camelContext
+                    .getTypeConverter()
+                    .convertTo(Node.class, messageContext.getRequest().getPayloadSource());
             if (domNode != null) {
                 return expression.evaluateAsString(domNode.getFirstChild());
             }
@@ -262,7 +268,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
     @Override
     public final void setActorOrRole(String actorOrRole) {
         Assert.notNull(actorOrRole, "actorOrRole must not be null");
-        actorsOrRoles = new String[] { actorOrRole };
+        actorsOrRoles = new String[] {actorOrRole};
     }
 
     @Override
@@ -275,5 +281,4 @@ public class CamelEndpointMapping extends AbstractEndpointMapping
     public final void setUltimateReceiver(boolean ultimateReceiver) {
         this.isUltimateReceiver = ultimateReceiver;
     }
-
 }

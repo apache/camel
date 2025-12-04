@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,8 +34,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusterServiceViewTest {
 
@@ -123,16 +124,18 @@ public class ClusterServiceViewTest {
 
     @Test
     public void testMultipleViewListeners() throws Exception {
-        final TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
+        final TestClusterService service =
+                new TestClusterService(UUID.randomUUID().toString());
         final TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
         final int events = 1 + new Random().nextInt(10);
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events);
 
-        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
-            results.add(i);
-            latch.countDown();
-        }));
+        IntStream.range(0, events)
+                .forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
+                    results.add(i);
+                    latch.countDown();
+                }));
 
         service.start();
         view.setLeader(true);
@@ -144,16 +147,18 @@ public class ClusterServiceViewTest {
 
     @Test
     public void testLateViewListeners() throws Exception {
-        final TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
+        final TestClusterService service =
+                new TestClusterService(UUID.randomUUID().toString());
         final TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
         final int events = 1 + new Random().nextInt(10);
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events * 2);
 
-        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
-            results.add(i);
-            latch.countDown();
-        }));
+        IntStream.range(0, events)
+                .forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
+                    results.add(i);
+                    latch.countDown();
+                }));
 
         service.start();
         view.setLeader(true);
@@ -211,12 +216,10 @@ public class ClusterServiceViewTest {
         }
 
         @Override
-        protected void doStart() {
-        }
+        protected void doStart() {}
 
         @Override
-        protected void doStop() {
-        }
+        protected void doStop() {}
 
         public boolean isLeader() {
             return leader;

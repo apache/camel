@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -65,7 +66,6 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
         } finally {
             shutdownServer();
         }
-
     }
 
     @Override
@@ -73,13 +73,16 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true").id("client")
+                from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true")
+                        .id("client")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
                                 exchange.getMessage().setBody("Bye " + body);
                             }
-                        }).to("mock:receive").noAutoStartup();
+                        })
+                        .to("mock:receive")
+                        .noAutoStartup();
             }
         };
     }
@@ -100,12 +103,13 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             workerGroup = new NioEventLoopGroup();
 
             bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+            bootstrap
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
                     .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
             channel = cf.channel();
-
         }
 
         public void shutdown() {
@@ -113,7 +117,6 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-
     }
 
     private static class ServerHandler extends SimpleChannelInboundHandler<String> {
@@ -151,8 +154,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             ChannelPipeline pipeline = ch.pipeline();
 
             // Add the text line codec combination first,
-            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                    8192, Delimiters.lineDelimiter()));
+            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
             // the encoder and decoder are static as these are sharable
             pipeline.addLast("decoder", DECODER);
             pipeline.addLast("encoder", ENCODER);
@@ -161,5 +163,4 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             pipeline.addLast("handler", SERVERHANDLER);
         }
     }
-
 }

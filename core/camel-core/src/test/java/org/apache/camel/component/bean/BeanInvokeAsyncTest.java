@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -29,8 +32,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for Java 8 {@link CompletableFuture} as return type on a bean being called from a Camel route.
@@ -54,7 +55,6 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         runTestSendBody("Bye World", "Hello World", this::changeSomething);
         runTestSendBody("Bye All", null, this::changeSomething);
         runTestSendBody("Bye All", "", this::changeSomething);
-
     }
 
     @Test
@@ -67,7 +67,8 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
     @Test
     public void testThrowSomething() {
 
-        ExecutionException e = assertThrows(ExecutionException.class,
+        ExecutionException e = assertThrows(
+                ExecutionException.class,
                 () -> runTestSendBody(m -> m.expectedMessageCount(0), "SomeProblem", this::throwSomething),
                 "Exception expected");
 
@@ -78,12 +79,13 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         assertEquals("SomeProblem", e.getCause().getCause().getMessage());
     }
 
-    private void runTestSendBody(String expectedBody, String sentBody, Function<String, String> processor) throws Exception {
+    private void runTestSendBody(String expectedBody, String sentBody, Function<String, String> processor)
+            throws Exception {
         runTestSendBody(m -> m.expectedBodiesReceived(expectedBody), sentBody, processor);
     }
 
-    private void runTestSendBody(Consumer<MockEndpoint> mockPreparer, String sentBody, Function<String, String> processor)
-            throws Exception {
+    private void runTestSendBody(
+            Consumer<MockEndpoint> mockPreparer, String sentBody, Function<String, String> processor) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
         mockPreparer.accept(mock);
@@ -115,7 +117,9 @@ public class BeanInvokeAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:entry").bean(BeanInvokeAsyncTest.this, "asyncMethod").to("mock:result");
+                from("direct:entry")
+                        .bean(BeanInvokeAsyncTest.this, "asyncMethod")
+                        .to("mock:result");
             }
         };
     }

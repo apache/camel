@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.mail.internet.InternetAddress;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Mail replyTo support.
@@ -44,7 +45,8 @@ public class MailReplyToTest extends CamelTestSupport {
         mock.expectedHeaderReceived(MailConstants.MAIL_REPLY_TO, "noReply1@localhost,noReply2@localhost");
         mock.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("direct:a", body, MailConstants.MAIL_REPLY_TO, "noReply1@localhost,noReply2@localhost");
+        template.sendBodyAndHeader(
+                "direct:a", body, MailConstants.MAIL_REPLY_TO, "noReply1@localhost,noReply2@localhost");
 
         mock.assertIsSatisfied();
 
@@ -81,12 +83,11 @@ public class MailReplyToTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .to(christian.uriPrefix(Protocol.smtp) + "&subject=Camel");
+                from("direct:a").to(christian.uriPrefix(Protocol.smtp) + "&subject=Camel");
 
                 from("direct:b")
                         .to(christian.uriPrefix(Protocol.smtp)
-                            + "&subject=Camel&replyTo=noReply1@localhost,noReply2@localhost");
+                                + "&subject=Camel&replyTo=noReply1@localhost,noReply2@localhost");
 
                 from(christian.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100")
                         .to("mock:result");

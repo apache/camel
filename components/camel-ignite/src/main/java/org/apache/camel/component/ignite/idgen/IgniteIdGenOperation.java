@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.idgen;
 
 /**
  * Enumeration of ID Generator / AtomicSequence operations.
  */
 public enum IgniteIdGenOperation {
-
     ADD_AND_GET,
     GET,
     GET_AND_ADD,
     GET_AND_INCREMENT,
     INCREMENT_AND_GET
-
 }

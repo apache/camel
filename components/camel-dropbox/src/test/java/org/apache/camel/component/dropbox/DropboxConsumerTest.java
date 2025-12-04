@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -23,8 +26,6 @@ import org.apache.camel.component.dropbox.integration.consumer.DropboxScheduledP
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DropboxConsumerTest extends CamelTestSupport {
 
     @Override
@@ -32,17 +33,17 @@ public class DropboxConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("dropbox://get?accessToken=accessToken" +
-                     "&expireIn=1000" +
-                     "&refreshToken=refreshToken" +
-                     "&apiKey=apiKey&apiSecret=apiSecret" +
-                     "&remotePath=/path").to("mock:test1");
+                from("dropbox://get?accessToken=accessToken" + "&expireIn=1000"
+                                + "&refreshToken=refreshToken"
+                                + "&apiKey=apiKey&apiSecret=apiSecret"
+                                + "&remotePath=/path")
+                        .to("mock:test1");
 
-                from("dropbox://get?accessToken=accessToken" +
-                     "&expireIn=1000" +
-                     "&refreshToken=refreshToken" +
-                     "&apiKey=apiKey&apiSecret=apiSecret" +
-                     "&remotePath=/path with spaces/file").to("mock:test2");
+                from("dropbox://get?accessToken=accessToken" + "&expireIn=1000"
+                                + "&refreshToken=refreshToken"
+                                + "&apiKey=apiKey&apiSecret=apiSecret"
+                                + "&remotePath=/path with spaces/file")
+                        .to("mock:test2");
             }
         };
     }
@@ -50,11 +51,10 @@ public class DropboxConsumerTest extends CamelTestSupport {
     @Test
     public void shouldCreateGetConsumer() throws Exception {
         // Given
-        Endpoint dropboxEndpoint1 = context.getEndpoint("dropbox://get?accessToken=accessToken" +
-                                                        "&expireIn=1000" +
-                                                        "&refreshToken=refreshToken" +
-                                                        "&apiKey=apiKey&apiSecret=apiSecret" +
-                                                        "&remotePath=/path");
+        Endpoint dropboxEndpoint1 = context.getEndpoint("dropbox://get?accessToken=accessToken" + "&expireIn=1000"
+                + "&refreshToken=refreshToken"
+                + "&apiKey=apiKey&apiSecret=apiSecret"
+                + "&remotePath=/path");
 
         // When
         Consumer consumer1 = dropboxEndpoint1.createConsumer(null);
@@ -63,12 +63,10 @@ public class DropboxConsumerTest extends CamelTestSupport {
         assertTrue(consumer1 instanceof DropboxScheduledPollGetConsumer);
 
         // Given
-        Endpoint dropboxEndpoint2
-                = context.getEndpoint("dropbox://get?accessToken=accessToken" +
-                                      "&expireIn=1000" +
-                                      "&refreshToken=refreshToken" +
-                                      "&apiKey=apiKey&apiSecret=apiSecret" +
-                                      "&remotePath=/path with spaces/file");
+        Endpoint dropboxEndpoint2 = context.getEndpoint("dropbox://get?accessToken=accessToken" + "&expireIn=1000"
+                + "&refreshToken=refreshToken"
+                + "&apiKey=apiKey&apiSecret=apiSecret"
+                + "&remotePath=/path with spaces/file");
 
         // When
         Consumer consumer2 = dropboxEndpoint2.createConsumer(null);
@@ -76,5 +74,4 @@ public class DropboxConsumerTest extends CamelTestSupport {
         // Then
         assertTrue(consumer2 instanceof DropboxScheduledPollGetConsumer);
     }
-
 }

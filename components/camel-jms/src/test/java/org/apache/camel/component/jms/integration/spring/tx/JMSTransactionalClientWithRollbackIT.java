@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.camel.Exchange;
@@ -28,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Simple integration test for a transaction client EIP pattern and JMS.
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class JMSTransactionalClientWithRollbackIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -59,5 +60,4 @@ public class JMSTransactionalClientWithRollbackIT extends AbstractSpringJMSITSup
             exchange.getIn().setHeader("count", ++count);
         }
     }
-
 }

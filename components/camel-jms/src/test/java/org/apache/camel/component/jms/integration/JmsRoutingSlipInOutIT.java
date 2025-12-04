@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import java.util.Map;
@@ -42,9 +43,11 @@ public class JmsRoutingSlipInOutIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @BindToRegistry("myBean")
     private final MyBean bean = new MyBean();
 
@@ -67,10 +70,14 @@ public class JmsRoutingSlipInOutIT extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsRoutingSlipInOutTest.start").to("direct:start").to("bean:myBean?method=doResult")
+                from("activemq:queue:JmsRoutingSlipInOutTest.start")
+                        .to("direct:start")
+                        .to("bean:myBean?method=doResult")
                         .to("mock:result");
 
-                from("direct:start").to("bean:myBean?method=createSlip").setExchangePattern(ExchangePattern.InOut)
+                from("direct:start")
+                        .to("bean:myBean?method=createSlip")
+                        .setExchangePattern(ExchangePattern.InOut)
                         .routingSlip(header("mySlip"))
                         .to("bean:myBean?method=backFromSlip");
 

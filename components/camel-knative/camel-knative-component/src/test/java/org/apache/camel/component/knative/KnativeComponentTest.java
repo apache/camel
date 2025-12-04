@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
+
+import static org.apache.camel.component.knative.spi.KnativeEnvironment.mandatoryLoadFromResource;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.apache.camel.component.knative.spi.KnativeEnvironment.mandatoryLoadFromResource;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class KnativeComponentTest {
 
@@ -61,7 +62,7 @@ public class KnativeComponentTest {
     // **************************
 
     @ParameterizedTest
-    @ValueSource(strings = { "classpath:/environment.json", "classpath:/environment_classic.json" })
+    @ValueSource(strings = {"classpath:/environment.json", "classpath:/environment_classic.json"})
     void testLoadEnvironment(String resource) throws Exception {
         KnativeEnvironment env = mandatoryLoadFromResource(context, resource);
 
@@ -75,11 +76,14 @@ public class KnativeComponentTest {
         component.setConsumerFactory(new KnativeTransportNoop());
         component.setProducerFactory(new KnativeTransportNoop());
 
-        context.getRegistry().bind("ereg", KnativeEnvironmentSupport.endpoint(Knative.EndpointKind.source, "ereg", null));
-        context.getRegistry().bind("creg", KnativeEnvironmentSupport.channel(Knative.EndpointKind.source, "creg", null));
-        context.getRegistry().bind("evsinkreg", KnativeEnvironmentSupport.event(Knative.EndpointKind.sink, "evsinkreg", null));
-        context.getRegistry().bind("evsourcereg",
-                KnativeEnvironmentSupport.event(Knative.EndpointKind.source, "evsourcereg", null));
+        context.getRegistry()
+                .bind("ereg", KnativeEnvironmentSupport.endpoint(Knative.EndpointKind.source, "ereg", null));
+        context.getRegistry()
+                .bind("creg", KnativeEnvironmentSupport.channel(Knative.EndpointKind.source, "creg", null));
+        context.getRegistry()
+                .bind("evsinkreg", KnativeEnvironmentSupport.event(Knative.EndpointKind.sink, "evsinkreg", null));
+        context.getRegistry()
+                .bind("evsourcereg", KnativeEnvironmentSupport.event(Knative.EndpointKind.source, "evsourcereg", null));
         context.addComponent("knative", component);
 
         //
@@ -87,14 +91,19 @@ public class KnativeComponentTest {
         //
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:channel/c1", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source)).isPresent();
-            assertThat(endpoint.lookupServiceDefinition("e1", Knative.EndpointKind.source)).isNotPresent();
-            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source))
+                    .isPresent();
+            assertThat(endpoint.lookupServiceDefinition("e1", Knative.EndpointKind.source))
+                    .isNotPresent();
+            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("url", "http://localhost:8081");
         }
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:channel/creg", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("creg", Knative.EndpointKind.source)).isPresent();
+            assertThat(endpoint.lookupServiceDefinition("creg", Knative.EndpointKind.source))
+                    .isPresent();
         }
 
         //
@@ -102,14 +111,19 @@ public class KnativeComponentTest {
         //
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:endpoint/e1", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("e1", Knative.EndpointKind.source)).isPresent();
-            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source)).isNotPresent();
-            assertThat(endpoint.lookupServiceDefinition("e1", Knative.EndpointKind.source)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("e1", Knative.EndpointKind.source))
+                    .isPresent();
+            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source))
+                    .isNotPresent();
+            assertThat(endpoint.lookupServiceDefinition("e1", Knative.EndpointKind.source))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("url", "http://localhost:9001");
         }
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:endpoint/ereg", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("ereg", Knative.EndpointKind.source)).isPresent();
+            assertThat(endpoint.lookupServiceDefinition("ereg", Knative.EndpointKind.source))
+                    .isPresent();
         }
 
         //
@@ -117,31 +131,49 @@ public class KnativeComponentTest {
         //
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:event/event", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink)).isPresent();
-            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink)).isPresent();
-            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source)).isNotPresent();
-            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink))
+                    .isPresent();
+            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink))
+                    .isPresent();
+            assertThat(endpoint.lookupServiceDefinition("c1", Knative.EndpointKind.source))
+                    .isNotPresent();
+            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("url", "http://broker-example/default/example-broker");
-            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("example-broker", Knative.EndpointKind.sink))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("ceOverrides", Collections.emptyMap());
-            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("url", "http://broker-example/default/example-broker-1");
-            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink)).isPresent().get()
-                    .hasFieldOrPropertyWithValue("ceOverrides",
+            assertThat(endpoint.lookupServiceDefinition("example-broker-1", Knative.EndpointKind.sink))
+                    .isPresent()
+                    .get()
+                    .hasFieldOrPropertyWithValue(
+                            "ceOverrides",
                             Stream.of("ce-source=custom-source", "ce-type=custom-type", "ce-subject=custom-subject")
                                     .map(it -> it.split("="))
                                     .collect(Collectors.toMap(it -> it[0], it -> it[1])));
         }
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:event/evt1", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("evt1", Knative.EndpointKind.source)).isPresent();
-            assertThat(endpoint.lookupServiceDefinition("evt1", Knative.EndpointKind.source)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("evt1", Knative.EndpointKind.source))
+                    .isPresent();
+            assertThat(endpoint.lookupServiceDefinition("evt1", Knative.EndpointKind.source))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("path", "/events/evt1");
         }
         {
             KnativeEndpoint endpoint = context.getEndpoint("knative:event", KnativeEndpoint.class);
-            assertThat(endpoint.lookupServiceDefinition("default", Knative.EndpointKind.source)).isPresent();
-            assertThat(endpoint.lookupServiceDefinition("default", Knative.EndpointKind.source)).isPresent().get()
+            assertThat(endpoint.lookupServiceDefinition("default", Knative.EndpointKind.source))
+                    .isPresent();
+            assertThat(endpoint.lookupServiceDefinition("default", Knative.EndpointKind.source))
+                    .isPresent()
+                    .get()
                     .hasFieldOrPropertyWithValue("path", "/events/");
         }
     }

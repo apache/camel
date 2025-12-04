@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThrottlerInvalidConfiguredTest extends ContextTestSupport {
 
@@ -48,5 +49,4 @@ public class ThrottlerInvalidConfiguredTest extends ContextTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

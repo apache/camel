@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +34,8 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-producer.xml");
+        applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-producer.xml");
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 

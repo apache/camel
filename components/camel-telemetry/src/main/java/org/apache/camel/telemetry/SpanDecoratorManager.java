@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import org.apache.camel.Endpoint;
@@ -26,5 +27,4 @@ public interface SpanDecoratorManager {
     SpanDecorator get(Endpoint endpoint);
 
     SpanDecorator get(String component);
-
 }

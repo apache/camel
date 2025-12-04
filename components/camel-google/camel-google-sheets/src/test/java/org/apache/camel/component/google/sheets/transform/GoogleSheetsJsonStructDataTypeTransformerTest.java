@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets.transform;
 
 import java.util.Arrays;
@@ -41,7 +42,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 public class GoogleSheetsJsonStructDataTypeTransformerTest {
 
-    private final GoogleSheetsJsonStructDataTypeTransformer transformer = new GoogleSheetsJsonStructDataTypeTransformer();
+    private final GoogleSheetsJsonStructDataTypeTransformer transformer =
+            new GoogleSheetsJsonStructDataTypeTransformer();
     private DefaultCamelContext camelContext;
 
     private String spreadsheetId;
@@ -54,66 +56,125 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
 
     public static Stream<Arguments> transformFromSplitValuesData() {
         return Stream.of(
-                Arguments.of("A1", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "A", Collections.singletonList("a1"),
+                Arguments.of(
+                        "A1",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "A",
+                        Collections.singletonList("a1"),
                         "{\"spreadsheetId\":\"%s\", \"A\":\"a1\"}"),
-                Arguments.of("A1:A5", "Sheet1", RangeCoordinate.DIMENSION_COLUMNS, "A",
+                Arguments.of(
+                        "A1:A5",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_COLUMNS,
+                        "A",
                         Arrays.asList("a1", "a2", "a3", "a4", "a5"),
                         "{\"spreadsheetId\":\"%s\", \"#1\":\"a1\",\"#2\":\"a2\",\"#3\":\"a3\",\"#4\":\"a4\",\"#5\":\"a5\"}"),
-                Arguments.of("A1:B2", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "A", Arrays.asList("a1", "b1"),
+                Arguments.of(
+                        "A1:B2",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "A",
+                        Arrays.asList("a1", "b1"),
                         "{\"spreadsheetId\":\"%s\", \"A\":\"a1\",\"B\":\"b1\"}"),
-                Arguments.of("A1:B2", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "Foo,Bar", Arrays.asList("a1", "b1"),
+                Arguments.of(
+                        "A1:B2",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "Foo,Bar",
+                        Arrays.asList("a1", "b1"),
                         "{\"spreadsheetId\":\"%s\", \"Foo\":\"a1\",\"Bar\":\"b1\"}"),
-                Arguments.of("A1:B2", "Sheet1", RangeCoordinate.DIMENSION_COLUMNS, "A", Arrays.asList("a1", "a2"),
+                Arguments.of(
+                        "A1:B2",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_COLUMNS,
+                        "A",
+                        Arrays.asList("a1", "a2"),
                         "{\"spreadsheetId\":\"%s\", \"#1\":\"a1\",\"#2\":\"a2\"}"));
     }
 
     public static Stream<Arguments> transformFromValueRangeData() {
         return Stream.of(
-                Arguments.of("A1:A5", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "A",
-                        Arrays.asList(Collections.singletonList("a1"),
+                Arguments.of(
+                        "A1:A5",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "A",
+                        Arrays.asList(
+                                Collections.singletonList("a1"),
                                 Collections.singletonList("a2"),
                                 Collections.singletonList("a3"),
                                 Collections.singletonList("a4"),
                                 Collections.singletonList("a5")),
-                        Arrays.asList("{\"spreadsheetId\":\"%s\", \"A\":\"a1\"}",
+                        Arrays.asList(
+                                "{\"spreadsheetId\":\"%s\", \"A\":\"a1\"}",
                                 "{\"spreadsheetId\":\"%s\", \"A\":\"a2\"}",
                                 "{\"spreadsheetId\":\"%s\", \"A\":\"a3\"}",
                                 "{\"spreadsheetId\":\"%s\", \"A\":\"a4\"}",
                                 "{\"spreadsheetId\":\"%s\", \"A\":\"a5\"}")),
-                Arguments.of("A1:A5", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "Foo",
-                        Arrays.asList(Collections.singletonList("a1"),
+                Arguments.of(
+                        "A1:A5",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "Foo",
+                        Arrays.asList(
+                                Collections.singletonList("a1"),
                                 Collections.singletonList("a2"),
                                 Collections.singletonList("a3"),
                                 Collections.singletonList("a4"),
                                 Collections.singletonList("a5")),
-                        Arrays.asList("{\"spreadsheetId\":\"%s\", \"Foo\":\"a1\"}",
+                        Arrays.asList(
+                                "{\"spreadsheetId\":\"%s\", \"Foo\":\"a1\"}",
                                 "{\"spreadsheetId\":\"%s\", \"Foo\":\"a2\"}",
                                 "{\"spreadsheetId\":\"%s\", \"Foo\":\"a3\"}",
                                 "{\"spreadsheetId\":\"%s\", \"Foo\":\"a4\"}",
                                 "{\"spreadsheetId\":\"%s\", \"Foo\":\"a5\"}")),
-                Arguments.of("A1:A5", "Sheet1", RangeCoordinate.DIMENSION_COLUMNS, "A",
+                Arguments.of(
+                        "A1:A5",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_COLUMNS,
+                        "A",
                         Collections.singletonList(Arrays.asList("a1", "a2", "a3", "a4", "a5")),
                         Collections.singletonList(
                                 "{\"spreadsheetId\":\"%s\", \"#1\":\"a1\",\"#2\":\"a2\",\"#3\":\"a3\",\"#4\":\"a4\",\"#5\":\"a5\"}")),
-                Arguments.of("A1:B2", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "A",
+                Arguments.of(
+                        "A1:B2",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "A",
                         Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")),
-                        Arrays.asList("{\"spreadsheetId\":\"%s\", \"A\":\"a1\",\"B\":\"b1\"}",
+                        Arrays.asList(
+                                "{\"spreadsheetId\":\"%s\", \"A\":\"a1\",\"B\":\"b1\"}",
                                 "{\"spreadsheetId\":\"%s\", \"A\":\"a2\",\"B\":\"b2\"}")),
-                Arguments.of("A1:B2", "Sheet1", RangeCoordinate.DIMENSION_ROWS, "Foo,Bar",
+                Arguments.of(
+                        "A1:B2",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_ROWS,
+                        "Foo,Bar",
                         Arrays.asList(Arrays.asList("a1", "b1"), Arrays.asList("a2", "b2")),
-                        Arrays.asList("{\"spreadsheetId\":\"%s\", \"Foo\":\"a1\",\"Bar\":\"b1\"}",
+                        Arrays.asList(
+                                "{\"spreadsheetId\":\"%s\", \"Foo\":\"a1\",\"Bar\":\"b1\"}",
                                 "{\"spreadsheetId\":\"%s\", \"Foo\":\"a2\",\"Bar\":\"b2\"}")),
-                Arguments.of("A1:B2", "Sheet1", RangeCoordinate.DIMENSION_COLUMNS, "A",
+                Arguments.of(
+                        "A1:B2",
+                        "Sheet1",
+                        RangeCoordinate.DIMENSION_COLUMNS,
+                        "A",
                         Arrays.asList(Arrays.asList("a1", "a2"), Arrays.asList("b1", "b2")),
-                        Arrays.asList("{\"spreadsheetId\":\"%s\", \"#1\":\"a1\",\"#2\":\"a2\"}",
+                        Arrays.asList(
+                                "{\"spreadsheetId\":\"%s\", \"#1\":\"a1\",\"#2\":\"a2\"}",
                                 "{\"spreadsheetId\":\"%s\", \"#1\":\"b1\",\"#2\":\"b2\"}")));
     }
 
     @ParameterizedTest
     @MethodSource("transformFromSplitValuesData")
     public void testTransformFromSplitValues(
-            String range, String sheetName, String majorDimension, String columnNames,
-            List<List<Object>> values, String expectedValueModel)
+            String range,
+            String sheetName,
+            String majorDimension,
+            String columnNames,
+            List<List<Object>> values,
+            String expectedValueModel)
             throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
 
@@ -132,8 +193,12 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     @ParameterizedTest
     @MethodSource("transformFromValueRangeData")
     public void testTransformFromValueRange(
-            String range, String sheetName, String majorDimension, String columnNames,
-            List<List<Object>> values, List<String> expectedValueModel)
+            String range,
+            String sheetName,
+            String majorDimension,
+            String columnNames,
+            List<List<Object>> values,
+            List<String> expectedValueModel)
             throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
 
@@ -152,7 +217,8 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         Assertions.assertEquals(expectedValueModel.size(), model.size());
         Iterator<String> modelIterator = model.iterator();
         for (String expected : expectedValueModel) {
-            JSONAssert.assertEquals(String.format(expected, spreadsheetId), modelIterator.next(), JSONCompareMode.STRICT);
+            JSONAssert.assertEquals(
+                    String.format(expected, spreadsheetId), modelIterator.next(), JSONCompareMode.STRICT);
         }
     }
 
@@ -165,14 +231,17 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(
+                spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
         Assertions.assertEquals("A1", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("RAW",
-                inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
+        Assertions.assertEquals(
+                "RAW", inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(0L, valueRange.getValues().size());
     }
 
@@ -181,23 +250,23 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
 
-        String model = "{" +
-                       "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                       "\"A\": \"a1\"," +
-                       "\"B\": \"b1\"" +
-                       "}";
+        String model = "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"A\": \"a1\"," + "\"B\": \"b1\"" + "}";
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(
+                spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
         Assertions.assertEquals("A1:B1", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(1L, valueRange.getValues().size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
         Assertions.assertEquals("b1", valueRange.getValues().get(0).get(1));
@@ -209,23 +278,24 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B1");
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "Foo,Bar");
 
-        String model = "{" +
-                       "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                       "\"Foo\": \"a1\"," +
-                       "\"Bar\": \"b1\"" +
-                       "}";
+        String model =
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"Foo\": \"a1\"," + "\"Bar\": \"b1\"" + "}";
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(
+                spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
         Assertions.assertEquals("A1:B1", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(1L, valueRange.getValues().size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
         Assertions.assertEquals("b1", valueRange.getValues().get(0).get(1));
@@ -235,26 +305,27 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     public void testTransformToValueRangeColumnDimension() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:A2");
-        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension",
-                RangeCoordinate.DIMENSION_COLUMNS);
+        inbound.getMessage()
+                .setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension", RangeCoordinate.DIMENSION_COLUMNS);
 
-        String model = "{" +
-                       "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                       "\"#1\": \"a1\"," +
-                       "\"#2\": \"a2\"" +
-                       "}";
+        String model =
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"#1\": \"a1\"," + "\"#2\": \"a2\"" + "}";
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
-        Assertions.assertEquals(spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
+        Assertions.assertEquals(
+                spreadsheetId, inbound.getMessage().getHeader(GoogleSheetsStreamConstants.SPREADSHEET_ID));
         Assertions.assertEquals("A1:A2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_COLUMNS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_COLUMNS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(1L, valueRange.getValues().size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
         Assertions.assertEquals("a2", valueRange.getValues().get(0).get(1));
@@ -265,27 +336,23 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B2");
 
-        List<String> model = Arrays.asList("{" +
-                                           "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                           "\"A\": \"a1\"," +
-                                           "\"B\": \"b1\"" +
-                                           "}",
-                "{" +
-                                                "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                                "\"A\": \"a2\"," +
-                                                "\"B\": \"b2\"" +
-                                                "}");
+        List<String> model = Arrays.asList(
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"A\": \"a1\"," + "\"B\": \"b1\"" + "}",
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"A\": \"a2\"," + "\"B\": \"b2\"" + "}");
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals("A1:B2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(2L, valueRange.getValues().size());
         Assertions.assertEquals(2L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
@@ -299,31 +366,27 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     public void testTransformToValueRangeMultipleColumns() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B2");
-        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension",
-                RangeCoordinate.DIMENSION_COLUMNS);
+        inbound.getMessage()
+                .setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension", RangeCoordinate.DIMENSION_COLUMNS);
 
-        List<String> model = Arrays.asList("{" +
-                                           "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                           "\"#1\": \"a1\"," +
-                                           "\"#2\": \"a2\"" +
-                                           "}",
-                "{" +
-                                                "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                                "\"#1\": \"b1\"," +
-                                                "\"#2\": \"b2\"" +
-                                                "}");
+        List<String> model = Arrays.asList(
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"#1\": \"a1\"," + "\"#2\": \"a2\"" + "}",
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"#1\": \"b1\"," + "\"#2\": \"b2\"" + "}");
 
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals("A1:B2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_COLUMNS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_COLUMNS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(2L, valueRange.getValues().size());
         Assertions.assertEquals(2L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
@@ -338,28 +401,24 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:C2");
 
-        List<String> model = Arrays.asList("{" +
-                                           "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                           "\"A\": \"a1\"," +
-                                           "\"C\": \"c1\"" +
-                                           "}",
-                "{" +
-                                                "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                                "\"A\": \"a2\"," +
-                                                "\"B\": \"b2\"" +
-                                                "}");
+        List<String> model = Arrays.asList(
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"A\": \"a1\"," + "\"C\": \"c1\"" + "}",
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"A\": \"a2\"," + "\"B\": \"b2\"" + "}");
 
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals("A1:C2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(2L, valueRange.getValues().size());
         Assertions.assertEquals(3L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
@@ -375,31 +434,27 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
     public void testTransformToValueRangeAutoFillRowValues() throws Exception {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:C3");
-        inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension",
-                RangeCoordinate.DIMENSION_COLUMNS);
+        inbound.getMessage()
+                .setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension", RangeCoordinate.DIMENSION_COLUMNS);
 
-        List<String> model = Arrays.asList("{" +
-                                           "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                           "\"#1\": \"a1\"," +
-                                           "\"#3\": \"c1\"" +
-                                           "}",
-                "{" +
-                                                "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                                                "\"#1\": \"a2\"," +
-                                                "\"#2\": \"b2\"" +
-                                                "}");
+        List<String> model = Arrays.asList(
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"#1\": \"a1\"," + "\"#3\": \"c1\"" + "}",
+                "{" + "\"spreadsheetId\": \"" + spreadsheetId + "\"," + "\"#1\": \"a2\"," + "\"#2\": \"b2\"" + "}");
 
         inbound.getMessage().setBody(model);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals("A1:C3", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_COLUMNS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_COLUMNS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(2L, valueRange.getValues().size());
         Assertions.assertEquals(3L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
@@ -416,27 +471,29 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         Exchange inbound = new DefaultExchange(camelContext);
         inbound.getMessage().setHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A1:B2");
 
-        String body = "[{" +
-                      "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                      "\"A\": \"a1\"," +
-                      "\"B\": \"b1\"" +
-                      "}," +
-                      "{" +
-                      "\"spreadsheetId\": \"" + spreadsheetId + "\"," +
-                      "\"A\": \"a2\"," +
-                      "\"B\": \"b2\"" +
-                      "}]";
+        String body = "[{" + "\"spreadsheetId\": \""
+                + spreadsheetId + "\"," + "\"A\": \"a1\","
+                + "\"B\": \"b1\""
+                + "},"
+                + "{"
+                + "\"spreadsheetId\": \""
+                + spreadsheetId + "\"," + "\"A\": \"a2\","
+                + "\"B\": \"b2\""
+                + "}]";
         inbound.getMessage().setBody(body);
 
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals("A1:B2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(2L, valueRange.getValues().size());
         Assertions.assertEquals(2L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));
@@ -457,12 +514,15 @@ public class GoogleSheetsJsonStructDataTypeTransformerTest {
         transformer.transform(inbound.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals("A1:B2", inbound.getMessage().getHeader(GoogleSheetsStreamConstants.RANGE));
-        Assertions.assertEquals(RangeCoordinate.DIMENSION_ROWS,
+        Assertions.assertEquals(
+                RangeCoordinate.DIMENSION_ROWS,
                 inbound.getMessage().getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION));
-        Assertions.assertEquals("USER_ENTERED",
+        Assertions.assertEquals(
+                "USER_ENTERED",
                 inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption"));
 
-        ValueRange valueRange = (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
+        ValueRange valueRange =
+                (ValueRange) inbound.getMessage().getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "values");
         Assertions.assertEquals(1L, valueRange.getValues().size());
         Assertions.assertEquals(2L, valueRange.getValues().get(0).size());
         Assertions.assertEquals("a1", valueRange.getValues().get(0).get(0));

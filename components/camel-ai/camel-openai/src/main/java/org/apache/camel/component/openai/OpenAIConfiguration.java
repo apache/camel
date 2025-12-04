@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openai;
 
 import org.apache.camel.spi.Metadata;
@@ -31,7 +32,9 @@ public class OpenAIConfiguration implements Cloneable {
     private String apiKey;
 
     @UriParam
-    @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.")
+    @Metadata(
+            description =
+                    "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.")
     private String baseUrl;
 
     @UriParam(defaultValue = "gpt-5")
@@ -59,8 +62,11 @@ public class OpenAIConfiguration implements Cloneable {
     private String outputClass;
 
     @UriParam
-    @Metadata(description = "JSON schema for structured output validation", supportFileReference = true, largeInput = true,
-              inputLanguage = "json")
+    @Metadata(
+            description = "JSON schema for structured output validation",
+            supportFileReference = true,
+            largeInput = true,
+            inputLanguage = "json")
     private String jsonSchema;
 
     @UriParam(defaultValue = "false")
@@ -76,8 +82,10 @@ public class OpenAIConfiguration implements Cloneable {
     private String userMessage;
 
     @UriParam
-    @Metadata(description = "System message to prepend. When set and conversationMemory is enabled, the conversation history is reset.",
-              largeInput = true)
+    @Metadata(
+            description =
+                    "System message to prepend. When set and conversationMemory is enabled, the conversation history is reset.",
+            largeInput = true)
     private String systemMessage;
 
     @UriParam
@@ -85,7 +93,9 @@ public class OpenAIConfiguration implements Cloneable {
     private String developerMessage;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
+    @Metadata(
+            description =
+                    "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
     private boolean storeFullResponse = false;
 
     public String getApiKey() {

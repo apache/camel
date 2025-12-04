@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.routingslip;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,8 +58,7 @@ public class RoutingSlipPOJOTest extends ContextTestSupport {
     public static class MyRoutingSlipPOJO {
         @RoutingSlip
         public String[] doSomething(String body) {
-            return new String[] { "mock:foo", "direct:b", "mock:result" };
+            return new String[] {"mock:foo", "direct:b", "mock:result"};
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.util.StringHelper;
@@ -39,7 +40,8 @@ public final class PropertiesLocation {
 
         idx = location.lastIndexOf(';');
         if (idx != -1) {
-            this.optional = StringHelper.after(location.substring(idx + 1), "optional=", Boolean::valueOf).orElse(false);
+            this.optional = StringHelper.after(location.substring(idx + 1), "optional=", Boolean::valueOf)
+                    .orElse(false);
             location = location.substring(0, idx);
         } else {
             this.optional = false;

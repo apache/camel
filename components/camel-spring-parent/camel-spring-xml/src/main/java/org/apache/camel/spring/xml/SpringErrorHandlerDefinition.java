@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,38 +38,54 @@ public class SpringErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(defaultValue = "DefaultErrorHandler", required = true)
     private SpringErrorHandlerType type = SpringErrorHandlerType.DefaultErrorHandler;
+
     @XmlAttribute
     private String deadLetterUri;
+
     @XmlAttribute
     private String deadLetterHandleNewException;
+
     @XmlAttribute
     @Metadata(defaultValue = "ERROR")
     private LoggingLevel level;
+
     @XmlAttribute
     @Metadata(defaultValue = "WARN")
     private LoggingLevel rollbackLoggingLevel;
+
     @XmlAttribute
     private String logName;
+
     @XmlAttribute
     private Boolean useOriginalMessage;
+
     @XmlAttribute
     private Boolean useOriginalBody;
+
     @XmlAttribute
     private String transactionTemplateRef;
+
     @XmlAttribute
     private String transactionManagerRef;
+
     @XmlAttribute
     private String onRedeliveryRef;
+
     @XmlAttribute
     private String onExceptionOccurredRef;
+
     @XmlAttribute
     private String onPrepareFailureRef;
+
     @XmlAttribute
     private String retryWhileRef;
+
     @XmlAttribute
     private String redeliveryPolicyRef;
+
     @XmlAttribute
     private String executorServiceRef;
+
     @XmlElement
     private CamelRedeliveryPolicyFactoryBean redeliveryPolicy;
 

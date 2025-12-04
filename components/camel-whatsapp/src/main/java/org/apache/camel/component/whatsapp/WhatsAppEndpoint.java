@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 import java.net.http.HttpClient;
@@ -37,12 +38,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Send messages to WhatsApp.
  */
-@UriEndpoint(firstVersion = "3.19.0", scheme = "whatsapp", title = "WhatsApp", syntax = "whatsapp:phoneNumberId",
-             producerOnly = true,
-             category = {
-                     Category.CLOUD, Category.API,
-                     Category.CHAT },
-             headersClass = WhatsAppConstants.class)
+@UriEndpoint(
+        firstVersion = "3.19.0",
+        scheme = "whatsapp",
+        title = "WhatsApp",
+        syntax = "whatsapp:phoneNumberId",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.API, Category.CHAT},
+        headersClass = WhatsAppConstants.class)
 public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(WhatsAppEndpoint.class);
 
@@ -51,12 +54,14 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @UriParam(label = "advanced", description = "HttpClient implementation")
     private HttpClient httpClient;
+
     @UriParam(label = "advanced", description = "WhatsApp service implementation")
     private WhatsAppService whatsappService;
 
     private WebhookConfiguration webhookConfiguration;
 
-    public WhatsAppEndpoint(String endpointUri, Component component, WhatsAppConfiguration configuration, HttpClient client) {
+    public WhatsAppEndpoint(
+            String endpointUri, Component component, WhatsAppConfiguration configuration, HttpClient client) {
         super(endpointUri, component);
         this.configuration = configuration;
         this.httpClient = client;
@@ -66,12 +71,17 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
     protected void doStart() throws Exception {
         super.doStart();
         if (httpClient == null) {
-            httpClient
-                    = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).connectTimeout(Duration.ofSeconds(10)).build();
+            httpClient = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_2)
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
         }
         if (whatsappService == null) {
             whatsappService = new WhatsAppServiceRestAPIAdapter(
-                    httpClient, configuration.getBaseUri(), configuration.getApiVersion(), configuration.getPhoneNumberId(),
+                    httpClient,
+                    configuration.getBaseUri(),
+                    configuration.getApiVersion(),
+                    configuration.getPhoneNumberId(),
                     configuration.getAuthorizationToken());
         }
         LOG.debug("client {}", httpClient);
@@ -106,8 +116,7 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
     }
 
     @Override
-    public void registerWebhook() throws Exception {
-    }
+    public void registerWebhook() throws Exception {}
 
     @Override
     public void setWebhookConfiguration(WebhookConfiguration webhookConfiguration) {
@@ -116,8 +125,7 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
     }
 
     @Override
-    public void unregisterWebhook() throws Exception {
-    }
+    public void unregisterWebhook() throws Exception {}
 
     public WhatsAppConfiguration getConfiguration() {
         return configuration;

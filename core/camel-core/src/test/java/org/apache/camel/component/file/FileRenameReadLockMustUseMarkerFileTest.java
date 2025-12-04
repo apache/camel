@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -24,8 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport {
 
@@ -54,20 +55,24 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?readLock=rename&initialDelay=0&delay=10")).routeId("foo").autoStartup(false)
+                from(fileUri("?readLock=rename&initialDelay=0&delay=10"))
+                        .routeId("foo")
+                        .autoStartup(false)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 // got a file, so we should have a .camelLock file as
                                 // well
                                 String name = exchange.getIn().getHeader(Exchange.FILE_PATH)
-                                              + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+                                        + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
                                 File lock = new File(name);
 
                                 // lock file should exist
                                 assertTrue(lock.exists(), "Lock file should exist: " + name);
                             }
-                        }).convertBodyTo(String.class).to("mock:result");
+                        })
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

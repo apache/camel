@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.generator.openapi;
 
 import java.io.File;
@@ -35,8 +36,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-      requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(
+        name = "generate",
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        requiresDependencyResolution = ResolutionScope.COMPILE,
+        threadSafe = true)
 public class GenerateMojo extends AbstractGenerateMojo {
 
     @Parameter
@@ -71,8 +75,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
         if (openapi == null) {
             throw new MojoExecutionException(
                     "Unable to generate REST DSL OpenApi sources from specification: "
-                                             + specificationUri
-                                             + ". Check that the specification is available at the given URI and that it has version OpenAPI 3.0.x or 3.1.x.");
+                            + specificationUri
+                            + ". Check that the specification is available at the given URI and that it has version OpenAPI 3.0.x or 3.1.x.");
         }
 
         final RestDslSourceCodeGenerator<Path> generator = RestDslGenerator.toPath(openapi);
@@ -156,5 +160,4 @@ public class GenerateMojo extends AbstractGenerateMojo {
             project.addCompileSourceRoot(outputDirectory);
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqlStoredDataSourceTest extends CamelTestSupport {
 
@@ -39,7 +40,8 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
+                .addScript("sql/storedProcedureTest.sql")
+                .build();
         // END SNIPPET: e2
 
         registry.bind("jdbc/myDataSource", db);
@@ -72,7 +74,9 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
             public void configure() {
                 // required for the sql component
 
-                from("direct:query").to("sql-stored:NILADIC()?dataSource=#jdbc/myDataSource").to("mock:query");
+                from("direct:query")
+                        .to("sql-stored:NILADIC()?dataSource=#jdbc/myDataSource")
+                        .to("mock:query");
             }
         };
     }

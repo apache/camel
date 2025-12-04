@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,10 @@ public class JdbcAggregateRecoverDeadLetterChannelTest extends AbstractJdbcAggre
         getMockEndpoint("mock:aggregated").expectedMessageCount(4);
         getMockEndpoint("mock:dead").expectedBodiesReceived("ABCDE");
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(3);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -66,7 +70,8 @@ public class JdbcAggregateRecoverDeadLetterChannelTest extends AbstractJdbcAggre
 
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
+                        .completionSize(5)
+                        .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))

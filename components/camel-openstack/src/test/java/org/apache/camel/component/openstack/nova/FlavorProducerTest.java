@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.nova;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,15 +46,6 @@ import org.openstack4j.api.compute.FlavorService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.builder.FlavorBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class FlavorProducerTest extends NovaProducerTestSupport {
@@ -92,7 +93,7 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         final String expectedFlavorID = UUID.randomUUID().toString();
         when(testOSFlavor.getId()).thenReturn(expectedFlavorID);
 
-        //send dummyFlavor to create
+        // send dummyFlavor to create
         msg.setBody(dummyFlavor);
         producer.process(exchange);
 
@@ -129,7 +130,7 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET);
         msg.setHeader(OpenstackConstants.ID, "anything - client is mocked");
 
-        //should return dummyFlavor
+        // should return dummyFlavor
         producer.process(exchange);
 
         final Flavor result = msg.getBody(Flavor.class);
@@ -179,12 +180,8 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
     }
 
     private Flavor createTestFlavor() {
-        FlavorBuilder builder = Builders.flavor()
-                .name("dummy flavor")
-                .ram(3)
-                .vcpus(2)
-                .disk(5)
-                .swap(2);
+        FlavorBuilder builder =
+                Builders.flavor().name("dummy flavor").ram(3).vcpus(2).disk(5).swap(2);
         return builder.build();
     }
 

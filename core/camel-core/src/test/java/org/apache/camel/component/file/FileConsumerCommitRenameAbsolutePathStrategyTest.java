@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,9 +43,10 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri(
-                        "reports?move=" + testDirectory("done").toAbsolutePath() + "/${file:name}&initialDelay=0&delay=10"))
-                        .convertBodyTo(String.class).to("mock:report");
+                from(fileUri("reports?move=" + testDirectory("done").toAbsolutePath()
+                                + "/${file:name}&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:report");
             }
         };
     }

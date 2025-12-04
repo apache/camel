@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
 
 import java.util.Map;
@@ -169,8 +170,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getIn().getBody(),
-                        exchange.getIn().getHeaders());
+                        exchange.getIn().getBody(), exchange.getIn().getHeaders());
             }
         });
     }
@@ -202,8 +202,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getIn().getBody(expectedType),
-                        exchange.getIn().getHeaders());
+                        exchange.getIn().getBody(expectedType), exchange.getIn().getHeaders());
             }
         });
     }
@@ -228,8 +227,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getOut().getBody(),
-                        exchange.getOut().getHeaders());
+                        exchange.getOut().getBody(), exchange.getOut().getHeaders());
             }
         });
     }

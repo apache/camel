@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks.client;
 
 import org.apache.camel.component.aws2.eks.EKS2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientStandardImpl;
  */
 public final class EKS2ClientFactory {
 
-    private EKS2ClientFactory() {
-    }
+    private EKS2ClientFactory() {}
 
     /**
      * Return the correct AWS EKS client (based on remote vs local).

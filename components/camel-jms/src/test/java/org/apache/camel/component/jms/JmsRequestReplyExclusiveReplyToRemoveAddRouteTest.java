@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -27,13 +30,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -50,8 +52,10 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends AbstractJ
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start2").routeId("start2")
-                        .to("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest?replyTo=JmsRequestReplyExclusiveReplyToRemoveAddRouteTest.reply&replyToType=Exclusive")
+                from("direct:start2")
+                        .routeId("start2")
+                        .to(
+                                "activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest?replyTo=JmsRequestReplyExclusiveReplyToRemoveAddRouteTest.reply&replyToType=Exclusive")
                         .to("log:start2");
             }
         });
@@ -73,11 +77,14 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends AbstractJ
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start")
-                        .to("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest?replyTo=JmsRequestReplyExclusiveReplyToRemoveAddRouteTest.reply&replyToType=Exclusive")
+                from("direct:start")
+                        .routeId("start")
+                        .to(
+                                "activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest?replyTo=JmsRequestReplyExclusiveReplyToRemoveAddRouteTest.reply&replyToType=Exclusive")
                         .to("log:start");
 
-                from("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest").routeId("foo")
+                from("activemq:queue:JmsRequestReplyExclusiveReplyToRemoveAddRouteTest")
+                        .routeId("foo")
                         .transform(body().prepend("Hello "));
             }
         };

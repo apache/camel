@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.prometheus;
 
 import java.io.IOException;
@@ -39,8 +40,7 @@ public final class BindersHelper {
     private static final Logger LOG = LoggerFactory.getLogger(BindersHelper.class);
     private static final String JANDEX_INDEX = "META-INF/micrometer-binder-index.dat";
 
-    private BindersHelper() {
-    }
+    private BindersHelper() {}
 
     public static List<String> discoverBinders(ClassResolver classResolver, String names) throws IOException {
         List<String> answer = new ArrayList<>();
@@ -88,7 +88,10 @@ public final class BindersHelper {
                     answer.add(mb);
                 }
             } catch (Exception e) {
-                LOG.warn("Error creating MeterBinder: {} due to: {}. This exception is ignored.", fqn, e.getMessage(),
+                LOG.warn(
+                        "Error creating MeterBinder: {} due to: {}. This exception is ignored.",
+                        fqn,
+                        e.getMessage(),
                         e);
             }
         }
@@ -108,5 +111,4 @@ public final class BindersHelper {
         }
         return null;
     }
-
 }

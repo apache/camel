@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
@@ -39,16 +40,20 @@ public class BasicValidationHandler implements HttpRequestHandler {
     protected final Object expectedContent;
     protected final String responseContent;
 
-    public BasicValidationHandler(String expectedMethod, String expectedQuery,
-                                  Object expectedContent, String responseContent) {
+    public BasicValidationHandler(
+            String expectedMethod, String expectedQuery, Object expectedContent, String responseContent) {
         this.expectedMethod = expectedMethod;
         this.expectedQuery = expectedQuery;
         this.expectedContent = expectedContent;
         this.responseContent = responseContent;
     }
 
-    public BasicValidationHandler(String expectedUri, String expectedMethod, String expectedQuery,
-                                  Object expectedContent, String responseContent) {
+    public BasicValidationHandler(
+            String expectedUri,
+            String expectedMethod,
+            String expectedQuery,
+            Object expectedContent,
+            String responseContent) {
         this.expectedUri = expectedUri;
         this.expectedMethod = expectedMethod;
         this.expectedQuery = expectedQuery;
@@ -57,9 +62,7 @@ public class BasicValidationHandler implements HttpRequestHandler {
     }
 
     @Override
-    public void handle(
-            final ClassicHttpRequest request, final ClassicHttpResponse response,
-            final HttpContext context)
+    public void handle(final ClassicHttpRequest request, final ClassicHttpResponse response, final HttpContext context)
             throws HttpException, IOException {
 
         if (expectedUri != null && !expectedUri.equals(request.getRequestUri())) {
@@ -124,5 +127,4 @@ public class BasicValidationHandler implements HttpRequestHandler {
     protected String buildResponse(ClassicHttpRequest request) {
         return responseContent;
     }
-
 }

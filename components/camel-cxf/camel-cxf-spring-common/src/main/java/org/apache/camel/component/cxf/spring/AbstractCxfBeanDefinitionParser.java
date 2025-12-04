@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
 
 import java.util.HashMap;
@@ -64,10 +65,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
     }
 
     @Override
-    protected String resolveId(
-            Element elem,
-            AbstractBeanDefinition definition,
-            ParserContext ctx)
+    protected String resolveId(Element elem, AbstractBeanDefinition definition, ParserContext ctx)
             throws BeanDefinitionStoreException {
         String id = super.resolveId(elem, definition, ctx);
 
@@ -84,7 +82,8 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
 
     @SuppressWarnings("unchecked")
     protected Map<String, Object> getPropertyMap(BeanDefinitionBuilder bean, boolean lazyInstantiation) {
-        PropertyValue propertyValue = bean.getBeanDefinition().getPropertyValues().getPropertyValue("properties");
+        PropertyValue propertyValue =
+                bean.getBeanDefinition().getPropertyValues().getPropertyValue("properties");
 
         Map<String, Object> map = null;
         if (propertyValue == null) {
@@ -97,5 +96,4 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
         }
         return map;
     }
-
 }

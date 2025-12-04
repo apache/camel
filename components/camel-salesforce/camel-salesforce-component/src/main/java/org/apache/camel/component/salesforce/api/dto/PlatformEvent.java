@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
 
 import java.io.Serializable;
@@ -37,8 +38,9 @@ public final class PlatformEvent implements Serializable {
     private final Map<String, String> eventData = new HashMap<>();
 
     @JsonCreator
-    public PlatformEvent(@JsonProperty("CreatedDate") final ZonedDateTime created,
-                         @JsonProperty("CreatedById") final String createdById) {
+    public PlatformEvent(
+            @JsonProperty("CreatedDate") final ZonedDateTime created,
+            @JsonProperty("CreatedById") final String createdById) {
         this.created = created;
         this.createdById = createdById;
     }
@@ -51,7 +53,8 @@ public final class PlatformEvent implements Serializable {
 
         final PlatformEvent other = (PlatformEvent) obj;
 
-        return Objects.equals(created, other.created) && Objects.equals(createdById, other.createdById)
+        return Objects.equals(created, other.created)
+                && Objects.equals(createdById, other.createdById)
                 && Objects.equals(eventData, other.eventData);
     }
 
@@ -79,8 +82,13 @@ public final class PlatformEvent implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("PlatformEvent: createdById: ").append(createdById).append(", createdId: ")
-                .append(created).append(", data: ").append(eventData)
+        return new StringBuilder()
+                .append("PlatformEvent: createdById: ")
+                .append(createdById)
+                .append(", createdId: ")
+                .append(created)
+                .append(", data: ")
+                .append(eventData)
                 .toString();
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail.stream;
 
 import java.util.ArrayList;
@@ -37,19 +38,21 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Poll for incoming messages in Google Mail.
  */
-@UriEndpoint(firstVersion = "2.22.0",
-             scheme = "google-mail-stream",
-             title = "Google Mail Stream",
-             syntax = "google-mail-stream:index",
-             consumerOnly = true,
-             category = { Category.CLOUD, Category.MAIL }, headersClass = GoogleMailStreamConstants.class)
+@UriEndpoint(
+        firstVersion = "2.22.0",
+        scheme = "google-mail-stream",
+        title = "Google Mail Stream",
+        syntax = "google-mail-stream:index",
+        consumerOnly = true,
+        category = {Category.CLOUD, Category.MAIL},
+        headersClass = GoogleMailStreamConstants.class)
 public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleMailStreamConfiguration configuration;
 
-    public GoogleMailStreamEndpoint(String uri, GoogleMailStreamComponent component,
-                                    GoogleMailStreamConfiguration endpointConfiguration) {
+    public GoogleMailStreamEndpoint(
+            String uri, GoogleMailStreamComponent component, GoogleMailStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -63,9 +66,11 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
     public Consumer createConsumer(Processor processor) throws Exception {
         String unreadLabelId = null;
         List<String> labelsIds = new ArrayList<>();
-        ListLabelsResponse listResponse = getClient().users().labels().list("me").execute();
+        ListLabelsResponse listResponse =
+                getClient().users().labels().list("me").execute();
         for (Label label : listResponse.getLabels()) {
-            Label countLabel = getClient().users().labels().get("me", label.getId()).execute();
+            Label countLabel =
+                    getClient().users().labels().get("me", label.getId()).execute();
             if (countLabel.getName().equalsIgnoreCase("UNREAD")) {
                 unreadLabelId = countLabel.getId();
             }
@@ -73,7 +78,8 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
         if (ObjectHelper.isNotEmpty(getConfiguration().getLabels())) {
             List<String> plainLabels = splitLabels(getConfiguration().getLabels());
             for (Label label : listResponse.getLabels()) {
-                Label countLabel = getClient().users().labels().get("me", label.getId()).execute();
+                Label countLabel =
+                        getClient().users().labels().get("me", label.getId()).execute();
                 for (String plainLabel : plainLabels) {
                     if (countLabel.getName().equalsIgnoreCase(plainLabel)) {
                         labelsIds.add(countLabel.getId());
@@ -81,7 +87,8 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint implements E
                 }
             }
         }
-        final GoogleMailStreamConsumer consumer = new GoogleMailStreamConsumer(this, processor, unreadLabelId, labelsIds);
+        final GoogleMailStreamConsumer consumer =
+                new GoogleMailStreamConsumer(this, processor, unreadLabelId, labelsIds);
         configureConsumer(consumer);
         return consumer;
     }

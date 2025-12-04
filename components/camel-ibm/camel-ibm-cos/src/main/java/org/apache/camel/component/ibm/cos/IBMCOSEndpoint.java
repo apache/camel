@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos;
 
 import java.util.Map;
@@ -46,9 +47,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Store and retrieve objects from IBM Cloud Object Storage.
  */
-@UriEndpoint(firstVersion = "4.16.0", scheme = "ibm-cos", title = "IBM Cloud Object Storage",
-             syntax = "ibm-cos:bucketName", category = { Category.CLOUD, Category.FILE },
-             headersClass = IBMCOSConstants.class)
+@UriEndpoint(
+        firstVersion = "4.16.0",
+        scheme = "ibm-cos",
+        title = "IBM Cloud Object Storage",
+        syntax = "ibm-cos:bucketName",
+        category = {Category.CLOUD, Category.FILE},
+        headersClass = IBMCOSConstants.class)
 public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IBMCOSEndpoint.class);
@@ -59,13 +64,16 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
     @UriPath(description = "Bucket name")
     @Metadata(required = true)
     private String bucketName;
+
     @UriParam
     private IBMCOSConfiguration configuration;
+
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
+
     @UriParam(label = "consumer,advanced")
-    private IdempotentRepository inProgressRepository
-            = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
+    private IdempotentRepository inProgressRepository =
+            MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
 
     public IBMCOSEndpoint(String uri, Component comp, IBMCOSConfiguration configuration) {
         super(uri, comp);
@@ -115,8 +123,7 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
     protected void doStart() throws Exception {
         super.doStart();
 
-        cosClient = configuration.getCosClient() != null
-                ? configuration.getCosClient() : createCosClient();
+        cosClient = configuration.getCosClient() != null ? configuration.getCosClient() : createCosClient();
 
         String fileName = getConfiguration().getFileName();
 
@@ -164,16 +171,13 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
     private AmazonS3 createCosClient() {
         AWSCredentials credentials;
         if (configuration.getApiKey() != null) {
-            credentials = new BasicIBMOAuthCredentials(
-                    configuration.getApiKey(),
-                    configuration.getServiceInstanceId());
+            credentials = new BasicIBMOAuthCredentials(configuration.getApiKey(), configuration.getServiceInstanceId());
         } else {
             throw new IllegalArgumentException("API Key must be provided");
         }
 
-        ClientConfiguration clientConfig = new ClientConfiguration()
-                .withRequestTimeout(5000)
-                .withTcpKeepAlive(true);
+        ClientConfiguration clientConfig =
+                new ClientConfiguration().withRequestTimeout(5000).withTcpKeepAlive(true);
 
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
@@ -183,9 +187,7 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
         if (configuration.getEndpointUrl() != null) {
             // For IBM COS, use null as the signing region - it will be determined from the endpoint
             builder.withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration(
-                            configuration.getEndpointUrl(),
-                            null));
+                    new AwsClientBuilder.EndpointConfiguration(configuration.getEndpointUrl(), null));
         }
 
         return builder.build();

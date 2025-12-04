@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.io.BufferedReader;
@@ -52,7 +53,8 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
         Properties answer = new OrderedProperties();
         String path = location.getPath();
 
-        InputStream is = propertiesComponent.getCamelContext().getClassResolver().loadResourceAsStream(path);
+        InputStream is =
+                propertiesComponent.getCamelContext().getClassResolver().loadResourceAsStream(path);
         Reader reader = null;
         if (is == null) {
             if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {

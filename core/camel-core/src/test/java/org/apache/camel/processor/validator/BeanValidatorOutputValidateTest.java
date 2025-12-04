@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.validator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class BeanValidatorOutputValidateTest extends ContextTestSupport {
 
     @Override
@@ -40,7 +41,9 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
             public void configure() {
                 validator().type("toValidate").withBean("testValidator");
 
-                onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}")
+                onException(ValidationException.class)
+                        .handled(true)
+                        .log("Invalid validation: ${exception.message}")
                         .to("mock:invalid");
 
                 from("direct:in").outputTypeWithValidate("toValidate").to("mock:out");

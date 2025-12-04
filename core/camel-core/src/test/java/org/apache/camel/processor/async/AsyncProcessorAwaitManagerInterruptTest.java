@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
@@ -28,14 +32,12 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport {
 
     @Test
     public void testAsyncAwaitInterrupt() throws Exception {
-        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager =
+                PluginHelper.getAsyncProcessorAwaitManager(context);
         asyncProcessorAwaitManager.getStatistics().setStatisticsEnabled(true);
 
         assertEquals(0, asyncProcessorAwaitManager.size());
@@ -53,10 +55,8 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
 
         assertEquals(0, asyncProcessorAwaitManager.size());
-        assertEquals(1,
-                asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
-        assertEquals(1, asyncProcessorAwaitManager.getStatistics()
-                .getThreadsInterrupted());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics().getThreadsInterrupted());
     }
 
     @Override
@@ -66,27 +66,34 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").routeId("myRoute").to("mock:before").to("async:bye:camel?delay=2000").id("myAsync")
-                        .to("mock:after").process(new Processor() {
+                from("direct:start")
+                        .routeId("myRoute")
+                        .to("mock:before")
+                        .to("async:bye:camel?delay=2000")
+                        .id("myAsync")
+                        .to("mock:after")
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                final AsyncProcessorAwaitManager asyncProcessorAwaitManager
-                                        = PluginHelper.getAsyncProcessorAwaitManager(context);
+                                final AsyncProcessorAwaitManager asyncProcessorAwaitManager =
+                                        PluginHelper.getAsyncProcessorAwaitManager(context);
                                 int size = asyncProcessorAwaitManager.size();
                                 log.info("async inflight: {}", size);
                                 assertEquals(1, size);
 
-                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads
-                                        = asyncProcessorAwaitManager.browse();
-                                AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
+                                Collection<AsyncProcessorAwaitManager.AwaitThread> threads =
+                                        asyncProcessorAwaitManager.browse();
+                                AsyncProcessorAwaitManager.AwaitThread thread =
+                                        threads.iterator().next();
 
                                 // lets interrupt it
                                 String id = thread.getExchange().getExchangeId();
                                 asyncProcessorAwaitManager.interrupt(id);
                             }
-                        }).transform(constant("Hi Camel")).to("mock:result");
+                        })
+                        .transform(constant("Hi Camel"))
+                        .to("mock:result");
             }
         };
     }
-
 }

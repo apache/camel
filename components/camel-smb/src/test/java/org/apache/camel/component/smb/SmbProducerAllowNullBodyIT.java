@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
-
-import java.util.concurrent.TimeUnit;
-
-import org.apache.camel.CamelExecutionException;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.awaitility.Awaitility.await;
@@ -28,6 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.junit.jupiter.api.Test;
 
 public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
 
@@ -42,8 +43,8 @@ public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
         template.sendBody(getSmbUrl() + "&fileName=allowNullBody1.txt&allowNullBody=true", null);
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("",
-                        new String(copyFileContentFromContainer("/data/rw/nullbody/allowNullBody1.txt"))));
+                .untilAsserted(() -> assertEquals(
+                        "", new String(copyFileContentFromContainer("/data/rw/nullbody/allowNullBody1.txt"))));
     }
 
     @Test
@@ -51,12 +52,12 @@ public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
         String uri = getSmbUrl() + "&fileName=allowNullBody2.txt&allowNullBody=false";
         Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody(uri, null));
 
-        GenericFileOperationFailedException cause
-                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().endsWith("allowNullBody2.txt"));
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertNull((copyFileContentFromContainer("/data/rw/nullbody/allowNullBody2.txt"))));
+                .untilAsserted(
+                        () -> assertNull((copyFileContentFromContainer("/data/rw/nullbody/allowNullBody2.txt"))));
     }
-
 }

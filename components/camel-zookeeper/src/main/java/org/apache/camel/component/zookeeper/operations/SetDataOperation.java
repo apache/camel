@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
+
+import static java.lang.String.format;
 
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
-
-import static java.lang.String.format;
 
 /**
  * <code>SetDataOperation</code> sets the content of a ZooKeeper node. An optional version may be specified that the
@@ -44,10 +45,12 @@ public class SetDataOperation extends ZooKeeperOperation<byte[]> {
             Stat statistics = connection.setData(node, data, version);
             if (LOG.isDebugEnabled()) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace(format("Set data of node '%s'  with '%d' bytes of data, retrieved statistics '%s' ",
+                    LOG.trace(format(
+                            "Set data of node '%s'  with '%d' bytes of data, retrieved statistics '%s' ",
                             node, data != null ? data.length : 0, statistics));
                 } else {
-                    LOG.debug(format("Set data of node '%s' with '%d' bytes of data", node, data != null ? data.length : 0));
+                    LOG.debug(format(
+                            "Set data of node '%s' with '%d' bytes of data", node, data != null ? data.length : 0));
                 }
             }
             return new OperationResult<>(data, statistics);
@@ -69,5 +72,4 @@ public class SetDataOperation extends ZooKeeperOperation<byte[]> {
         copy.version = -1; // set the version to -1 for 'any version'
         return copy;
     }
-
 }

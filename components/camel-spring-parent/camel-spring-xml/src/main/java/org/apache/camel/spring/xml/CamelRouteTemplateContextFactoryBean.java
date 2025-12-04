@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ import org.springframework.beans.factory.FactoryBean;
 @Metadata(label = "spring,configuration,routing")
 @XmlRootElement(name = "routeTemplateContext")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelRouteTemplateContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteTemplateDefinition>> {
+public class CamelRouteTemplateContextFactoryBean extends IdentifiedType
+        implements FactoryBean<List<RouteTemplateDefinition>> {
 
     @XmlElement(name = "routeTemplate", required = true)
     @Metadata(description = "Route Templates")
@@ -63,5 +65,4 @@ public class CamelRouteTemplateContextFactoryBean extends IdentifiedType impleme
     public void setRouteTemplates(List<RouteTemplateDefinition> routeTemplates) {
         this.routeTemplates = routeTemplates;
     }
-
 }

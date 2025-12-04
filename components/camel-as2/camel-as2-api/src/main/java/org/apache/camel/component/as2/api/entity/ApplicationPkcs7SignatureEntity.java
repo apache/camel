@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayOutputStream;
@@ -43,11 +44,17 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
 
     private byte[] signature;
 
-    public ApplicationPkcs7SignatureEntity(MimeEntity data, CMSSignedDataGenerator signer, String charset,
-                                           String contentTransferEncoding, boolean isMainBody) throws HttpException {
-        super(ContentType
-                .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset)),
-              contentTransferEncoding);
+    public ApplicationPkcs7SignatureEntity(
+            MimeEntity data,
+            CMSSignedDataGenerator signer,
+            String charset,
+            String contentTransferEncoding,
+            boolean isMainBody)
+            throws HttpException {
+        super(
+                ContentType.parse(
+                        EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset)),
+                contentTransferEncoding);
 
         ObjectHelper.notNull(data, "Data");
         ObjectHelper.notNull(signer, "Signer");
@@ -62,13 +69,12 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         }
     }
 
-    public ApplicationPkcs7SignatureEntity(byte[] signature,
-                                           String charset,
-                                           String contentTransferEncoding,
-                                           boolean isMainBody) {
-        super(ContentType
-                .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset)),
-              contentTransferEncoding);
+    public ApplicationPkcs7SignatureEntity(
+            byte[] signature, String charset, String contentTransferEncoding, boolean isMainBody) {
+        super(
+                ContentType.parse(
+                        EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset)),
+                contentTransferEncoding);
 
         this.signature = ObjectHelper.notNull(signature, "signature");
 
@@ -87,19 +93,22 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
 
         // Write out mime part headers if this is not the main body of message.
         if (!isMainBody()) {
-            try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
+            try (CanonicalOutputStream canonicalOutstream =
+                    new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
                 for (Header header : getAllHeaders()) {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
-                                             // headers and body; RFC2046 -
-                                             // 5.1.1
+                // headers and body; RFC2046 -
+                // 5.1.1
             }
         }
 
         // Write out signed data.
-        String transferEncoding = getContentTransferEncoding() == null ? null : getContentTransferEncoding().getValue();
+        String transferEncoding = getContentTransferEncoding() == null
+                ? null
+                : getContentTransferEncoding().getValue();
         try (OutputStream transferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
 
             transferEncodedStream.write(signature);
@@ -117,7 +126,6 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
             CMSSignedData signedData = signer.generate(contentData, false);
             return signedData.getEncoded();
         }
-
     }
 
     @Override

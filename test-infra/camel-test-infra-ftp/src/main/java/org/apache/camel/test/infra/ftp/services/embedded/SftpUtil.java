@@ -29,9 +29,7 @@ public final class SftpUtil {
     private static boolean checked;
     private static boolean hasRequiredAlgorithms;
 
-    private SftpUtil() {
-
-    }
+    private SftpUtil() {}
 
     @Deprecated
     public static boolean hasRequiredAlgorithms() {
@@ -56,7 +54,11 @@ public final class SftpUtil {
             String name = System.getProperty("os.name");
             String message = e.getMessage();
 
-            LOG.warn("SunX509 is not available on this platform [{}] Testing is skipped! Real cause: {}", name, message, e);
+            LOG.warn(
+                    "SunX509 is not available on this platform [{}] Testing is skipped! Real cause: {}",
+                    name,
+                    message,
+                    e);
             return false;
         } finally {
             checked = true;

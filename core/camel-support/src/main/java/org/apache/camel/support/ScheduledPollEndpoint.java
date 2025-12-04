@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.Map;
@@ -33,9 +34,10 @@ import org.apache.camel.util.PropertiesHelper;
  */
 public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
-    private static final String SPRING_SCHEDULER
-            = "org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler";
-    private static final String QUARTZ_SCHEDULER = "org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler";
+    private static final String SPRING_SCHEDULER =
+            "org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler";
+    private static final String QUARTZ_SCHEDULER =
+            "org.apache.camel.pollconsumer.quartz.QuartzScheduledPollConsumerScheduler";
 
     private static final int DEFAULT_INITIAL_DELAY = 1000;
     private static final int DEFAULT_DELAY = 500;
@@ -43,56 +45,109 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private transient ScheduledPollConsumerScheduler consumerScheduler;
 
     // if adding more options then align with org.apache.camel.support.ScheduledPollConsumer
-    @UriParam(defaultValue = "true", label = "consumer,scheduler",
-              description = "Whether the scheduler should be auto started.")
+    @UriParam(
+            defaultValue = "true",
+            label = "consumer,scheduler",
+            description = "Whether the scheduler should be auto started.")
     private boolean startScheduler = true;
-    @UriParam(defaultValue = "" + DEFAULT_INITIAL_DELAY, label = "consumer,scheduler",
-              description = "Milliseconds before the first poll starts.")
+
+    @UriParam(
+            defaultValue = "" + DEFAULT_INITIAL_DELAY,
+            label = "consumer,scheduler",
+            description = "Milliseconds before the first poll starts.")
     private long initialDelay = -1;
-    @UriParam(defaultValue = "" + DEFAULT_DELAY, label = "consumer,scheduler",
-              description = "Milliseconds before the next poll.")
+
+    @UriParam(
+            defaultValue = "" + DEFAULT_DELAY,
+            label = "consumer,scheduler",
+            description = "Milliseconds before the next poll.")
     private long delay = -1;
-    @UriParam(defaultValue = "MILLISECONDS", label = "consumer,scheduler",
-              description = "Time unit for initialDelay and delay options.")
+
+    @UriParam(
+            defaultValue = "MILLISECONDS",
+            label = "consumer,scheduler",
+            description = "Time unit for initialDelay and delay options.")
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    @UriParam(defaultValue = "true", label = "consumer,scheduler",
-              description = "Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.")
+
+    @UriParam(
+            defaultValue = "true",
+            label = "consumer,scheduler",
+            description =
+                    "Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.")
     private boolean useFixedDelay = true;
-    @UriParam(label = "consumer,advanced",
-              description = "A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation"
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation"
                             + " to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.")
     private PollingConsumerPollStrategy pollStrategy;
-    @UriParam(defaultValue = "TRACE", label = "consumer,scheduler",
-              description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+
+    @UriParam(
+            defaultValue = "TRACE",
+            label = "consumer,scheduler",
+            description =
+                    "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
-    @UriParam(label = "consumer",
-              description = "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead.")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead.")
     private boolean sendEmptyMessageWhenIdle;
-    @UriParam(label = "consumer,scheduler",
-              description = "If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages.")
+
+    @UriParam(
+            label = "consumer,scheduler",
+            description =
+                    "If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages.")
     private boolean greedy;
-    @UriParam(defaultValue = "none", label = "consumer,scheduler",
-              description = "To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler")
+
+    @UriParam(
+            defaultValue = "none",
+            label = "consumer,scheduler",
+            description =
+                    "To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler")
     private Object scheduler = "none";
-    @UriParam(prefix = "scheduler.", multiValue = true, label = "consumer,scheduler",
-              description = "To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler.")
+
+    @UriParam(
+            prefix = "scheduler.",
+            multiValue = true,
+            label = "consumer,scheduler",
+            description =
+                    "To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler.")
     private Map<String, Object> schedulerProperties;
-    @UriParam(label = "consumer,scheduler",
-              description = "Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.")
+
+    @UriParam(
+            label = "consumer,scheduler",
+            description =
+                    "Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.")
     private ScheduledExecutorService scheduledExecutorService;
-    @UriParam(label = "consumer,scheduler",
-              description = "To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row."
+
+    @UriParam(
+            label = "consumer,scheduler",
+            description =
+                    "To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row."
                             + " The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again."
                             + " When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.")
     private int backoffMultiplier;
-    @UriParam(label = "consumer,scheduler",
-              description = "The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.")
+
+    @UriParam(
+            label = "consumer,scheduler",
+            description =
+                    "The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.")
     private int backoffIdleThreshold;
-    @UriParam(label = "consumer,scheduler",
-              description = "The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.")
+
+    @UriParam(
+            label = "consumer,scheduler",
+            description =
+                    "The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.")
     private int backoffErrorThreshold;
-    @UriParam(label = "consumer,scheduler", defaultValue = "0",
-              description = "Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once."
+
+    @UriParam(
+            label = "consumer,scheduler",
+            defaultValue = "0",
+            description =
+                    "Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once."
                             + " If you set it to 5, it will only fire five times. A value of zero or negative means fire forever.")
     private long repeatCount;
 
@@ -100,8 +155,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
-    protected ScheduledPollEndpoint() {
-    }
+    protected ScheduledPollEndpoint() {}
 
     @Override
     protected void configureConsumer(Consumer consumer) throws Exception {
@@ -131,25 +185,27 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             if ("spring".equals(schedulerKey)) {
                 // special for scheduler if its "spring" or "quartz"
                 try {
-                    Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver()
+                    Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext()
+                            .getClassResolver()
                             .resolveMandatoryClass(SPRING_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     consumerScheduler = getCamelContext().getInjector().newInstance(clazz);
                 } catch (ClassNotFoundException e) {
                     throw new IllegalArgumentException(
                             "Cannot load " + SPRING_SCHEDULER
-                                                       + " from classpath. Make sure camel-spring.jar is on the classpath.",
+                                    + " from classpath. Make sure camel-spring.jar is on the classpath.",
                             e);
                 }
             } else if ("quartz".equals(schedulerKey)) {
                 // special for scheduler if its "spring" or "quartz"
                 try {
-                    Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext().getClassResolver()
+                    Class<? extends ScheduledPollConsumerScheduler> clazz = getCamelContext()
+                            .getClassResolver()
                             .resolveMandatoryClass(QUARTZ_SCHEDULER, ScheduledPollConsumerScheduler.class);
                     consumerScheduler = getCamelContext().getInjector().newInstance(clazz);
                 } catch (ClassNotFoundException e) {
                     throw new IllegalArgumentException(
                             "Cannot load " + QUARTZ_SCHEDULER
-                                                       + " from classpath. Make sure camel-quartz.jar is on the classpath.",
+                                    + " from classpath. Make sure camel-quartz.jar is on the classpath.",
                             e);
                 }
             } else if (!"none".equals(schedulerKey)) {
@@ -158,14 +214,14 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                     if (EndpointHelper.isReferenceParameter(str)) {
                         str = str.substring(1);
                     }
-                    consumerScheduler = CamelContextHelper.mandatoryLookup(getCamelContext(), str,
-                            ScheduledPollConsumerScheduler.class);
+                    consumerScheduler = CamelContextHelper.mandatoryLookup(
+                            getCamelContext(), str, ScheduledPollConsumerScheduler.class);
                 } else if (schedulerKey instanceof ScheduledPollConsumerScheduler scheduler) {
                     consumerScheduler = scheduler;
                 } else {
                     throw new IllegalArgumentException(
                             "Scheduler must either be a reference to a custom scheduler or an ScheduledPollConsumerScheduler type, was: "
-                                                       + schedulerKey.getClass().getName());
+                                    + schedulerKey.getClass().getName());
                 }
             }
         }
@@ -414,5 +470,4 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     public void setRepeatCount(long repeatCount) {
         this.repeatCount = repeatCount;
     }
-
 }

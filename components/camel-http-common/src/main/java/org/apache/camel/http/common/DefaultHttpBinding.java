@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
+
+import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,8 +63,6 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.http.HttpUtil.determineResponseCode;
-
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
  * <p/>
@@ -94,8 +95,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private HeaderFilterStrategy headerFilterStrategy = new org.apache.camel.http.base.HttpHeaderFilterStrategy();
     private String fileNameExtWhitelist;
 
-    public DefaultHttpBinding() {
-    }
+    public DefaultHttpBinding() {}
 
     @Deprecated
     public DefaultHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
@@ -177,9 +177,10 @@ public class DefaultHttpBinding implements HttpBinding {
                     String value = values.nextElement();
                     // use http helper to extract parameter value as it may contain multiple values
                     Object extracted = HttpHelper.extractHttpParameterValue(value);
-                    //apply the headerFilterStrategy
+                    // apply the headerFilterStrategy
                     if (headerFilterStrategy != null
-                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(
+                                    name, extracted, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, extracted);
                     }
                 }
@@ -217,9 +218,12 @@ public class DefaultHttpBinding implements HttpBinding {
             // only deserialize java if allowed
             if (allowJavaSerializedObject || isTransferException()) {
                 try {
-                    InputStream is
-                            = message.getExchange().getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                    Object object = HttpHelper.deserializeJavaObjectFromStream(is, message.getExchange().getContext());
+                    InputStream is = message.getExchange()
+                            .getContext()
+                            .getTypeConverter()
+                            .mandatoryConvertTo(InputStream.class, body);
+                    Object object = HttpHelper.deserializeJavaObjectFromStream(
+                            is, message.getExchange().getContext());
                     if (object != null) {
                         message.setBody(object);
                     }
@@ -234,7 +238,7 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     protected void populateRequestParameters(HttpServletRequest request, Message message) {
-        //we populate the http request parameters without checking the request method
+        // we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
@@ -251,7 +255,8 @@ public class DefaultHttpBinding implements HttpBinding {
                     // use http helper to extract parameter value as it may contain multiple values
                     Object extracted = HttpHelper.extractHttpParameterValue(value);
                     if (headerFilterStrategy != null
-                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(
+                                    name, extracted, message.getExchange())) {
                         HttpHelper.appendHeader(headers, name, value);
                     }
                 }
@@ -259,7 +264,8 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    protected void readFormUrlEncodedBody(HttpServletRequest request, Message message) throws UnsupportedEncodingException {
+    protected void readFormUrlEncodedBody(HttpServletRequest request, Message message)
+            throws UnsupportedEncodingException {
         LOG.trace("readFormUrlEncodedBody {}", request);
         // should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
         // and map those to Camel headers
@@ -268,7 +274,8 @@ public class DefaultHttpBinding implements HttpBinding {
             Map<String, Object> headers = message.getHeaders();
             Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
             boolean skipWwwFormUrlEncoding = flag != null ? flag : false;
-            if (request.getMethod().equals("POST") && request.getContentType() != null
+            if (request.getMethod().equals("POST")
+                    && request.getContentType() != null
                     && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
                     && !skipWwwFormUrlEncoding) {
                 String charset = request.getCharacterEncoding();
@@ -292,11 +299,13 @@ public class DefaultHttpBinding implements HttpBinding {
                             String name = URLDecoder.decode(pair[0], charset);
                             String value = URLDecoder.decode(pair[1], charset);
                             if (headerFilterStrategy != null
-                                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                                    && !headerFilterStrategy.applyFilterToExternalHeaders(
+                                            name, value, message.getExchange())) {
                                 HttpHelper.appendHeader(headers, name, value);
                             }
                         } else {
-                            throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+                            throw new IllegalArgumentException(
+                                    "Invalid parameter, expected to be a pair but was " + param);
                         }
                     }
                 }
@@ -352,7 +361,8 @@ public class DefaultHttpBinding implements HttpBinding {
                 } else {
                     LOG.debug(
                             "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                            fileName, fileNameExtWhitelist);
+                            fileName,
+                            fileNameExtWhitelist);
                 }
             }
         }
@@ -417,7 +427,8 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     @Override
-    public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+    public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange)
+            throws IOException {
         doWriteResponse(message, response, exchange);
     }
 
@@ -441,7 +452,8 @@ public class DefaultHttpBinding implements HttpBinding {
             final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
             while (it.hasNext()) {
                 String headerValue = convertHeaderValueToString(exchange, it.next());
-                if (headerValue != null && headerFilterStrategy != null
+                if (headerValue != null
+                        && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     response.addHeader(key, headerValue);
                 }
@@ -495,7 +507,8 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+    protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange)
+            throws IOException {
         // if content type is serialized Java object, then serialize and write it to the response
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
@@ -542,7 +555,9 @@ public class DefaultHttpBinding implements HttpBinding {
                         bos.writeTo(os);
                     } else {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Streaming response in non-chunked mode with content-length {} and buffer size: {}", len,
+                            LOG.debug(
+                                    "Streaming response in non-chunked mode with content-length {} and buffer size: {}",
+                                    len,
                                     len);
                         }
                         copyStream(stream.getInputStream(), os, len);
@@ -566,8 +581,10 @@ public class DefaultHttpBinding implements HttpBinding {
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing response in non-chunked mode as plain text with content-length {} and buffer size: {}",
-                            dataByteLength, response.getBufferSize());
+                    LOG.debug(
+                            "Writing response in non-chunked mode as plain text with content-length {} and buffer size: {}",
+                            dataByteLength,
+                            response.getBufferSize());
                 }
                 try {
                     response.getWriter().print(data);
@@ -592,7 +609,8 @@ public class DefaultHttpBinding implements HttpBinding {
         return answer;
     }
 
-    protected void doWriteGZIPResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+    protected void doWriteGZIPResponse(Message message, HttpServletResponse response, Exchange exchange)
+            throws IOException {
         ServletOutputStream os = response.getOutputStream();
         GZIPOutputStream gos = new GZIPOutputStream(os);
 

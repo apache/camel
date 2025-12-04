@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration.events;
 
 import java.util.Map;
@@ -25,9 +26,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 public class KubernetesEventsConsumerLabelsIT extends KubernetesConsumerTestSupport {
     @Test
@@ -46,12 +50,12 @@ public class KubernetesEventsConsumerLabelsIT extends KubernetesConsumerTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kubernetes-events://%s?oauthToken=%s&namespace=%s&labelKey=%s&labelValue=%s",
-                        host, authToken, ns2, "testkey", "testvalue")
+                fromF(
+                                "kubernetes-events://%s?oauthToken=%s&namespace=%s&labelKey=%s&labelValue=%s",
+                                host, authToken, ns2, "testkey", "testvalue")
                         .process(new KubernetesProcessor())
                         .to(result);
             }
         };
-
     }
 }

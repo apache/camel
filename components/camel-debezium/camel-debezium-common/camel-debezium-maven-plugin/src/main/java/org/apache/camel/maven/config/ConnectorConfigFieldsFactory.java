@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.config;
 
 import java.util.HashMap;
@@ -29,13 +30,14 @@ import org.apache.kafka.common.config.ConfigDef;
 
 public final class ConnectorConfigFieldsFactory {
 
-    private static final String[] ILLEGAL_CHARS = { "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~" };
+    private static final String[] ILLEGAL_CHARS = {"%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~"};
 
-    private ConnectorConfigFieldsFactory() {
-    }
+    private ConnectorConfigFieldsFactory() {}
 
     public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(
-            final ConfigDef configDef, final Class<?> configClass, final Set<String> requiredFields,
+            final ConfigDef configDef,
+            final Class<?> configClass,
+            final Set<String> requiredFields,
             final Map<String, Object> overriddenDefaultValues) {
         // first we extract deprecated fields
         final Set<String> deprecatedFields = getDeprecatedFieldsFromConfigClass(configClass);
@@ -44,7 +46,9 @@ public final class ConnectorConfigFieldsFactory {
     }
 
     public static Map<String, ConnectorConfigField> createConnectorFieldsAsMap(
-            final ConfigDef configDef, final Set<String> deprecatedFields, final Set<String> requiredFields,
+            final ConfigDef configDef,
+            final Set<String> deprecatedFields,
+            final Set<String> requiredFields,
             final Map<String, Object> overriddenDefaultValues) {
         ObjectHelper.notNull(configDef, "configDef");
         ObjectHelper.notNull(deprecatedFields, "deprecatedFields");
@@ -57,9 +61,12 @@ public final class ConnectorConfigFieldsFactory {
         configDef.configKeys().forEach((name, configKey) -> {
             // check if name is clean
             if (!StringUtils.containsAny(name, ILLEGAL_CHARS)) {
-                results.put(name,
+                results.put(
+                        name,
                         new ConnectorConfigField(
-                                configKey, deprecatedFields.contains(name), requiredFields.contains(name),
+                                configKey,
+                                deprecatedFields.contains(name),
+                                requiredFields.contains(name),
                                 overriddenDefaultValues.getOrDefault(name, null)));
             }
         });

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -25,12 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
 
     @Test
@@ -38,7 +39,8 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true").to("mock:foo");
+                from("activemq:queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true")
+                        .to("mock:foo");
             }
         });
 
@@ -48,7 +50,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
         } catch (Exception e) {
             assertEquals(
                     "Failed to create Consumer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true. "
-                         + "Reason: Cannot get JMS Connection on startup for destination JmsTestConnectionOnStartupTest",
+                            + "Reason: Cannot get JMS Connection on startup for destination JmsTestConnectionOnStartupTest",
                     e.getMessage());
         }
     }
@@ -66,10 +68,12 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (Exception ex) {
-            FailedToCreateProducerException e = assertIsInstanceOf(FailedToCreateProducerException.class, ex.getCause());
-            assertTrue(e.getMessage()
-                    .startsWith(
-                            "Failed to create Producer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true."));
+            FailedToCreateProducerException e =
+                    assertIsInstanceOf(FailedToCreateProducerException.class, ex.getCause());
+            assertTrue(
+                    e.getMessage()
+                            .startsWith(
+                                    "Failed to create Producer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true."));
             assertTrue(e.getCause().toString().contains("jakarta.jms.JMSException: Failed to create session factory"));
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.CamelContext;
@@ -58,22 +59,32 @@ public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTest
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:bar").onException(IllegalArgumentException.class).handled(true).to("mock:handled").end()
-                        .to("mock:bar")
-                        .throwException(new IllegalArgumentException("Damn"));
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:bar")
+                            .onException(IllegalArgumentException.class)
+                            .handled(true)
+                            .to("mock:handled")
+                            .end()
+                            .to("mock:bar")
+                            .throwException(new IllegalArgumentException("Damn"));
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
 
+                    from("direct:foo")
+                            .onException(Exception.class)
+                            .handled(true)
+                            .to("mock:exc")
+                            .end()
+                            .to("mock:foo")
+                            .throwException(new IllegalArgumentException("Damn"));
+                }
             }
-        }, new RouteBuilder() {
-            @Override
-            public void configure() {
-
-                from("direct:foo").onException(Exception.class).handled(true).to("mock:exc").end().to("mock:foo")
-                        .throwException(new IllegalArgumentException("Damn"));
-
-            }
-        } };
+        };
     }
 }

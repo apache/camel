@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
 
 import java.lang.reflect.Field;
@@ -89,7 +90,8 @@ public final class ReflectionHelper {
             try {
                 cc.doWith(aClazz);
             } catch (IllegalAccessException ex) {
-                throw new IllegalStateException("Shouldn't be illegal to access class '" + aClazz.getName() + "': " + ex);
+                throw new IllegalStateException(
+                        "Shouldn't be illegal to access class '" + aClazz.getName() + "': " + ex);
             }
         }
     }
@@ -110,7 +112,8 @@ public final class ReflectionHelper {
                 try {
                     fc.doWith(field);
                 } catch (IllegalAccessException ex) {
-                    throw new IllegalStateException("Shouldn't be illegal to access field '" + field.getName() + "': " + ex);
+                    throw new IllegalStateException(
+                            "Shouldn't be illegal to access field '" + field.getName() + "': " + ex);
                 }
             }
             targetClass = targetClass.getSuperclass();
@@ -139,7 +142,8 @@ public final class ReflectionHelper {
             try {
                 mc.doWith(method);
             } catch (IllegalAccessException ex) {
-                throw new IllegalStateException("Shouldn't be illegal to access method '" + method.getName() + "': " + ex);
+                throw new IllegalStateException(
+                        "Shouldn't be illegal to access method '" + method.getName() + "': " + ex);
             }
         }
         if (clazz.getSuperclass() != null) {
@@ -217,7 +221,8 @@ public final class ReflectionHelper {
                 f.setAccessible(oldAccessible);
             }
         } catch (Exception ex) {
-            throw new UnsupportedOperationException("Cannot inject value of class: " + value.getClass() + " into: " + f);
+            throw new UnsupportedOperationException(
+                    "Cannot inject value of class: " + value.getClass() + " into: " + f);
         }
     }
 
@@ -238,5 +243,4 @@ public final class ReflectionHelper {
         }
         return null;
     }
-
 }

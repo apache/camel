@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.TagConstants;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CqlSpanDecoratorTest {
 
@@ -39,8 +40,8 @@ public class CqlSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn("cql://host1,host2:8080/" + keyspace + "?cql="
-                                                           + cql + "&consistencyLevel=quorum");
+        Mockito.when(endpoint.getEndpointUri())
+                .thenReturn("cql://host1,host2:8080/" + keyspace + "?cql=" + cql + "&consistencyLevel=quorum");
         Mockito.when(exchange.getIn()).thenReturn(message);
 
         SpanDecorator decorator = new CqlSpanDecorator();
@@ -64,7 +65,8 @@ public class CqlSpanDecoratorTest {
 
         Mockito.when(endpoint.getEndpointUri()).thenReturn("cql://host1,host2?consistencyLevel=quorum");
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(CqlSpanDecorator.CAMEL_CQL_QUERY, String.class)).thenReturn(cql);
+        Mockito.when(message.getHeader(CqlSpanDecorator.CAMEL_CQL_QUERY, String.class))
+                .thenReturn(cql);
 
         SpanDecorator decorator = new CqlSpanDecorator();
 
@@ -76,5 +78,4 @@ public class CqlSpanDecoratorTest {
         assertEquals(cql, span.tags().get(TagConstants.DB_STATEMENT));
         assertNull(span.tags().get(TagConstants.DB_NAME));
     }
-
 }

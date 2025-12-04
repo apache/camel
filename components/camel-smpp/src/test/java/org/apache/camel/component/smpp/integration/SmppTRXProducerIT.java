@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -32,11 +38,6 @@ import org.jsmpp.examples.SMPPServerSimulator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class SmppTRXProducerIT extends CamelTestSupport {
 
@@ -80,7 +81,9 @@ class SmppTRXProducerIT extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+        assertEquals(
+                SmppMessageType.DeliveryReceipt.toString(),
+                resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.SUBMITTED));
@@ -100,16 +103,16 @@ class SmppTRXProducerIT extends CamelTestSupport {
                 @Override
                 public void configure() {
                     from("direct:start2")
-                            .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
-                                "&messageReceiverRouteId=TYPO_IN_MessageReceiverRouteId");
+                            .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer"
+                                    + "&messageReceiverRouteId=TYPO_IN_MessageReceiverRouteId");
                 }
             });
 
             fail("FailedToStartRouteException expected!");
 
         } catch (FailedToStartRouteException expected) {
-            assertEquals("java.lang.IllegalArgumentException:" +
-                         " No route with id 'TYPO_IN_MessageReceiverRouteId' found!",
+            assertEquals(
+                    "java.lang.IllegalArgumentException:" + " No route with id 'TYPO_IN_MessageReceiverRouteId' found!",
                     expected.getCause().getMessage());
         }
     }
@@ -122,8 +125,8 @@ class SmppTRXProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start2")
-                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
-                            "&messageReceiverRouteId=testMessageReceiverRouteId2");
+                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer"
+                                + "&messageReceiverRouteId=testMessageReceiverRouteId2");
             }
         });
 
@@ -141,17 +144,19 @@ class SmppTRXProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
-                            "&messageReceiverRouteId=testMessageReceiverRouteId");
+                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer"
+                                + "&messageReceiverRouteId=testMessageReceiverRouteId");
 
-                from("direct:messageReceiver").id("testMessageReceiverRouteId")
+                from("direct:messageReceiver")
+                        .id("testMessageReceiverRouteId")
                         .choice()
                         .when(simple("${header.CamelSmppSourceAddr} == '555'"))
                         .to("mock:garbage") // SMPPServerSimulator.run send a test message, ignore it
                         .otherwise()
                         .to("mock:result");
 
-                from("direct:messageReceiver2").id("testMessageReceiverRouteId2")
+                from("direct:messageReceiver2")
+                        .id("testMessageReceiverRouteId2")
                         .to("mock:result2");
             }
         };

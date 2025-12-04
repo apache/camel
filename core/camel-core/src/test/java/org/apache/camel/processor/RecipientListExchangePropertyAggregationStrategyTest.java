@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListExchangePropertyAggregationStrategyTest extends ContextTestSupport {
 
@@ -46,8 +47,8 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
         // would be the last one
         mock.expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://c");
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "slip", "direct:a,direct:b,direct:c",
-                String.class);
+        String out = template.requestBodyAndHeader(
+                "direct:start", "Hello World", "slip", "direct:a,direct:b,direct:c", String.class);
         assertEquals("Hello c", out);
 
         assertMockEndpointsSatisfied();
@@ -62,7 +63,10 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").recipientList(header("slip")).aggregationStrategy(strategy).to("mock:result");
+                from("direct:start")
+                        .recipientList(header("slip"))
+                        .aggregationStrategy(strategy)
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a").transform(constant("Hello a"));
                 from("direct:b").to("mock:b").transform(constant("Hello b"));
@@ -85,5 +89,4 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
             return uris;
         }
     }
-
 }

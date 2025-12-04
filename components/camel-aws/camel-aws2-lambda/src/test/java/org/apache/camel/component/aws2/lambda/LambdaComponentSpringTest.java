@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -48,10 +53,6 @@ import software.amazon.awssdk.services.lambda.model.PublishVersionResponse;
 import software.amazon.awssdk.services.lambda.model.TagResourceResponse;
 import software.amazon.awssdk.services.lambda.model.UntagResourceResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
     @Test
@@ -63,18 +64,20 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(Lambda2Constants.RUNTIME, "nodejs6.10");
                 exchange.getIn().setHeader(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
                 exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Hello with node.js on Lambda");
-                exchange.getIn().setHeader(Lambda2Constants.ROLE, "arn:aws:iam::643534317684:role/lambda-execution-role");
+                exchange.getIn()
+                        .setHeader(Lambda2Constants.ROLE, "arn:aws:iam::643534317684:role/lambda-execution-role");
 
                 ClassLoader classLoader = getClass().getClassLoader();
-                File file = new File(
-                        classLoader.getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
-                                .getFile());
+                File file = new File(classLoader
+                        .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
+                        .getFile());
                 FileInputStream inputStream = new FileInputStream(file);
                 exchange.getIn().setBody(inputStream);
             }
         });
 
-        CreateFunctionResponse result = (CreateFunctionResponse) exchange.getMessage().getBody();
+        CreateFunctionResponse result =
+                (CreateFunctionResponse) exchange.getMessage().getBody();
         assertEquals("GetHelloWithName", result.functionName());
         assertEquals("Hello with node.js on Lambda", result.description());
         assertNotNull(result.functionArn());
@@ -86,9 +89,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:deleteFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
         assertNotNull(exchange.getMessage().getBody(DeleteFunctionResponse.class));
     }
@@ -98,9 +99,7 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
         GetFunctionResponse result = (GetFunctionResponse) exchange.getMessage().getBody();
         assertEquals("GetHelloWithName", result.configuration().functionName());
@@ -112,7 +111,10 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct:getFunctionPojo", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setBody(GetFunctionRequest.builder().functionName("GetHelloWithName").build());
+                exchange.getIn()
+                        .setBody(GetFunctionRequest.builder()
+                                .functionName("GetHelloWithName")
+                                .build());
             }
         });
         GetFunctionResponse result = (GetFunctionResponse) exchange.getMessage().getBody();
@@ -123,12 +125,11 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     public void lambdaListFunctionsTest() {
         Exchange exchange = template.send("direct:listFunctions", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
 
-        ListFunctionsResponse result = (ListFunctionsResponse) exchange.getMessage().getBody();
+        ListFunctionsResponse result =
+                (ListFunctionsResponse) exchange.getMessage().getBody();
         assertEquals(1, result.functions().size());
         assertEquals("GetHelloWithName", result.functions().get(0).functionName());
     }
@@ -151,8 +152,9 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct:createEventSourceMapping", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_ARN,
-                        "arn:aws:sqs:eu-central-1:643534317684:testqueue");
+                exchange.getIn()
+                        .setHeader(
+                                Lambda2Constants.EVENT_SOURCE_ARN, "arn:aws:sqs:eu-central-1:643534317684:testqueue");
                 exchange.getIn().setHeader(Lambda2Constants.EVENT_SOURCE_BATCH_SIZE, 100);
             }
         });
@@ -180,13 +182,13 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
     public void lambdaListEventSourceMappingTest() throws Exception {
         Exchange exchange = template.send("direct:listEventSourceMapping", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
         MockEndpoint.assertIsSatisfied(context);
 
         ListEventSourceMappingsResponse result = exchange.getMessage().getBody(ListEventSourceMappingsResponse.class);
-        assertEquals("arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName",
+        assertEquals(
+                "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName",
                 result.eventSourceMappings().get(0).functionArn());
     }
 
@@ -196,8 +198,10 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct:listTags", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Lambda2Constants.RESOURCE_ARN,
-                        "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn()
+                        .setHeader(
+                                Lambda2Constants.RESOURCE_ARN,
+                                "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
             }
         });
         MockEndpoint.assertIsSatisfied(context);
@@ -214,8 +218,10 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) {
                 Map<String, String> tags = new HashMap<>();
                 tags.put("test", "added-tag");
-                exchange.getIn().setHeader(Lambda2Constants.RESOURCE_ARN,
-                        "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn()
+                        .setHeader(
+                                Lambda2Constants.RESOURCE_ARN,
+                                "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_TAGS, tags);
             }
         });
@@ -233,14 +239,17 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) {
                 List<String> tagKeys = new ArrayList<>();
                 tagKeys.add("test");
-                exchange.getIn().setHeader(Lambda2Constants.RESOURCE_ARN,
-                        "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn()
+                        .setHeader(
+                                Lambda2Constants.RESOURCE_ARN,
+                                "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
                 exchange.getIn().setHeader(Lambda2Constants.RESOURCE_TAG_KEYS, tagKeys);
             }
         });
         MockEndpoint.assertIsSatisfied(context);
 
-        UntagResourceResponse result = (UntagResourceResponse) exchange.getMessage().getBody();
+        UntagResourceResponse result =
+                (UntagResourceResponse) exchange.getMessage().getBody();
         assertNotNull(result);
     }
 
@@ -255,7 +264,8 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         });
         MockEndpoint.assertIsSatisfied(context);
 
-        PublishVersionResponse result = (PublishVersionResponse) exchange.getMessage().getBody();
+        PublishVersionResponse result =
+                (PublishVersionResponse) exchange.getMessage().getBody();
         assertNotNull(result);
         assertEquals("GetHelloWithName", result.functionName());
         assertEquals("This is my description", result.description());
@@ -272,7 +282,8 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         });
         MockEndpoint.assertIsSatisfied(context);
 
-        ListVersionsByFunctionResponse result = (ListVersionsByFunctionResponse) exchange.getMessage().getBody();
+        ListVersionsByFunctionResponse result =
+                (ListVersionsByFunctionResponse) exchange.getMessage().getBody();
         assertNotNull(result);
         assertEquals("GetHelloWithName", result.versions().get(0).functionName());
         assertEquals("1", result.versions().get(0).version());

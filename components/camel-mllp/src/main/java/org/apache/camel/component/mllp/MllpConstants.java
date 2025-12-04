@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import org.apache.camel.spi.Metadata;
@@ -24,23 +25,28 @@ import org.apache.camel.spi.Metadata;
 public final class MllpConstants {
     @Metadata(description = "The local TCP Address of the Socket", javaType = "String")
     public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
+
     @Metadata(description = "The remote TCP Address of the Socket", javaType = "String")
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
+
     @Metadata(description = "The HL7 Acknowledgment received in bytes", javaType = "byte[]")
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
+
     @Metadata(description = "The HL7 Acknowledgment received, converted to a String", javaType = "String")
     public static final String MLLP_ACKNOWLEDGEMENT_STRING = "CamelMllpAcknowledgementString";
+
     @Metadata(description = "The HL7 acknowledgement type (AA, AE, AR, etc)", javaType = "String")
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
+
     public static final String MLLP_ACKNOWLEDGEMENT_MSA_TEXT = "CamelMllpAcknowledgementMsaText";
 
     public static final String MLLP_ACKNOWLEDGEMENT_EXCEPTION = "CamelMllpAcknowledgementException";
     public static final String MLLP_AUTO_ACKNOWLEDGE = "CamelMllpAutoAcknowledge";
     /*
-     Connection Control Exchange Properties
-      - For Consumers, "SEND" => ACKNOWLEDGEMENT
-      - For Producers, "SEND" => MESSAGE
-      */
+    Connection Control Exchange Properties
+     - For Consumers, "SEND" => ACKNOWLEDGEMENT
+     - For Producers, "SEND" => MESSAGE
+     */
     public static final String MLLP_CLOSE_CONNECTION_BEFORE_SEND = "CamelMllpCloseConnectionBeforeSend";
     public static final String MLLP_RESET_CONNECTION_BEFORE_SEND = "CamelMllpResetConnectionBeforeSend";
     public static final String MLLP_CLOSE_CONNECTION_AFTER_SEND = "CamelMllpCloseConnectionAfterSend";
@@ -87,6 +93,6 @@ public final class MllpConstants {
     public static final String MLLP_CHARSET = "CamelMllpCharset";
 
     private MllpConstants() {
-        //utility class, never constructed
+        // utility class, never constructed
     }
 }

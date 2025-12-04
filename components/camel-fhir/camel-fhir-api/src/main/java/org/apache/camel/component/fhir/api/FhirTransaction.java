@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.List;
@@ -42,8 +43,10 @@ public class FhirTransaction {
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return                 the {@link IBaseResource}s
      */
-    public List<IBaseResource> withResources(List<IBaseResource> resources, Map<ExtraParameters, Object> extraParameters) {
-        ITransactionTyped<List<IBaseResource>> transactionTyped = client.transaction().withResources(resources);
+    public List<IBaseResource> withResources(
+            List<IBaseResource> resources, Map<ExtraParameters, Object> extraParameters) {
+        ITransactionTyped<List<IBaseResource>> transactionTyped =
+                client.transaction().withResources(resources);
         ExtraParameters.process(extraParameters, transactionTyped);
         return transactionTyped.execute();
     }

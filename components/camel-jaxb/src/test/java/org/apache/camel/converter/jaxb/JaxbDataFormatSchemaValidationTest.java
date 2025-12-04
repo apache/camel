@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -28,11 +34,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
@@ -64,8 +65,9 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
         LOG.info(payload);
 
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains(
-                "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
+        assertTrue(
+                payload.contains(
+                        "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">"));
         assertTrue(payload.contains("<firstName>Christian</firstName>"));
         assertTrue(payload.contains("<lastName>Mueller</lastName>"));
         assertTrue(payload.contains("<age>36</age>"));
@@ -79,8 +81,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
     public void testMarshallWithValidationException() {
         Person person = new Person();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:marshall", person));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:marshall", person));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -94,7 +95,8 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
         mockUnmarshall.expectedMessageCount(1);
 
         String xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-                .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
+                .append(
+                        "<person xmlns=\"person.jaxb.converter.camel.apache.org\" xmlns:ns2=\"address.jaxb.converter.camel.apache.org\">")
                 .append("<firstName>Christian</firstName>")
                 .append("<lastName>Mueller</lastName>")
                 .append("<age>36</age>")
@@ -120,8 +122,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
                 .append("<person xmlns=\"person.jaxb.converter.camel.apache.org\" />")
                 .toString();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:unmarshall", xml));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:unmarshall", xml));
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
@@ -140,13 +141,9 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
                 jaxbDataFormat.setAccessExternalSchemaProtocols("file");
 
-                from("direct:marshall")
-                        .marshal(jaxbDataFormat)
-                        .to("mock:marshall");
+                from("direct:marshall").marshal(jaxbDataFormat).to("mock:marshall");
 
-                from("direct:unmarshall")
-                        .unmarshal(jaxbDataFormat)
-                        .to("mock:unmarshall");
+                from("direct:unmarshall").unmarshal(jaxbDataFormat).to("mock:unmarshall");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.ws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,9 +27,6 @@ import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.component.undertow.UndertowConstants;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUndertowTest {
     @Test
@@ -39,7 +40,7 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
 
         assertEquals(2, testClient.getReceived().size());
 
-        //Cannot guarantee the order in which messages are received
+        // Cannot guarantee the order in which messages are received
         assertTrue(testClient.getReceived().contains("The bar has Beer"));
         assertTrue(testClient.getReceived().contains("Broadcasting to Bar"));
 
@@ -54,11 +55,12 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
                 final int port = getPort();
                 from("undertow:ws://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
-                        .transform().simple("The bar has ${body}")
+                        .transform()
+                        .simple("The bar has ${body}")
                         .to("undertow:ws://localhost:" + port + "/bar");
 
                 from("timer://foo?fixedRate=true&period=12000")
-                        //Use a period which is longer then the latch await time
+                        // Use a period which is longer then the latch await time
                         .setBody(constant("Broadcasting to Bar"))
                         .log(">>> Broadcasting message to Bar WebSocket Client")
                         .setHeader(UndertowConstants.SEND_TO_ALL, constant(true))

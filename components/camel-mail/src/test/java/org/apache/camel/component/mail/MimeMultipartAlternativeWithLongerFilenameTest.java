@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
@@ -34,13 +40,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSupport {
-    private static final MailboxUser ryanWithLongerFilename = Mailbox.getOrCreateUser("ryanWithLongerFilename", "secret");
+    private static final MailboxUser ryanWithLongerFilename =
+            Mailbox.getOrCreateUser("ryanWithLongerFilename", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
@@ -49,7 +51,8 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         Mailbox.clearAll();
 
         // create an exchange with a normal body and attachment to be produced as email
-        MailEndpoint endpoint = context.getEndpoint(ryanWithLongerFilename.uriPrefix(Protocol.smtp), MailEndpoint.class);
+        MailEndpoint endpoint =
+                context.getEndpoint(ryanWithLongerFilename.uriPrefix(Protocol.smtp), MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
         endpoint.getConfiguration().setAlternativeBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
 
@@ -73,7 +76,8 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         mock.assertIsSatisfied();
 
         Exchange out = mock.assertExchangeReceived(0);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage) out.getIn()).getMessage().getSize());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(
+                ((MailMessage) out.getIn()).getMessage().getSize());
         ((MailMessage) out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
         assertTrue(dumpedMessage.indexOf(expectString) > 0, "There should have the " + expectString);
@@ -83,7 +87,8 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         assertEquals(alternativeBody, out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
+        Map<String, DataHandler> attachments =
+                out.getIn(AttachmentMessage.class).getAttachments();
         assertNotNull(attachments, "Should not have null attachments");
         assertEquals(1, attachments.size());
         assertEquals(2, out.getIn().getBody(MimeMultipart.class).getCount(), "multipart body should have 2 parts");

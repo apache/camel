@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Channel;
 import org.apache.camel.DelegateProcessor;
@@ -34,14 +38,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public abstract class AbstractTransactionIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -65,11 +66,12 @@ public abstract class AbstractTransactionIT extends AbstractSpringJMSITSupport {
 
         notify.matchesWaitTime();
 
-        Assertions.assertEquals(2, getConditionalExceptionProcessor().getCount(),
+        Assertions.assertEquals(
+                2,
+                getConditionalExceptionProcessor().getCount(),
                 "Expected only 2 calls to process() (1 failure, 1 success) but encountered "
-                                                                                  + getConditionalExceptionProcessor()
-                                                                                          .getCount()
-                                                                                  + ".");
+                        + getConditionalExceptionProcessor().getCount()
+                        + ".");
     }
 
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor() {

@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.huaweicloud.image;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.huaweicloud.sdk.image.v2.model.RunImageTaggingResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,8 +28,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class TagRecognitionWithImageContentTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -35,14 +35,17 @@ public class TagRecognitionWithImageContentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(ImageRecognitionProperties.IMAGE_CONTENT,
+                        .setProperty(
+                                ImageRecognitionProperties.IMAGE_CONTENT,
                                 constant(testConfiguration.getProperty("imageContent")))
-                        .setProperty(ImageRecognitionProperties.THRESHOLD,
+                        .setProperty(
+                                ImageRecognitionProperties.THRESHOLD,
                                 constant(testConfiguration.getProperty("tagThreshold")))
-                        .to("hwcloud-imagerecognition:tagRecognition?accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey") + "&projectId="
-                            + testConfiguration.getProperty("projectId") + "&region="
-                            + testConfiguration.getProperty("region") + "&ignoreSslVerification=true")
+                        .to("hwcloud-imagerecognition:tagRecognition?accessKey="
+                                + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey") + "&projectId="
+                                + testConfiguration.getProperty("projectId") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true")
                         .log("perform tag recognition successful")
                         .to("mock:perform_tag_recognition_result");
             }
@@ -68,5 +71,4 @@ public class TagRecognitionWithImageContentTest extends CamelTestSupport {
 
         assertTrue(responseExchange.getIn().getBody() instanceof RunImageTaggingResponse);
     }
-
 }

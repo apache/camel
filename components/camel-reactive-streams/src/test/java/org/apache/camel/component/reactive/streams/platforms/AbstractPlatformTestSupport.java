@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.platforms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,9 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
@@ -48,8 +49,7 @@ public abstract class AbstractPlatformTestSupport extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:endpoint")
-                        .to("reactive-streams:integers");
+                from("direct:endpoint").to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
 
@@ -74,7 +74,6 @@ public abstract class AbstractPlatformTestSupport extends BaseReactiveTest {
         for (Integer number : elements) {
             assertTrue(number < 0);
         }
-
     }
 
     @Test
@@ -85,8 +84,7 @@ public abstract class AbstractPlatformTestSupport extends BaseReactiveTest {
         new RouteBuilder() {
             @Override
             public void configure() {
-                from("reactive-streams:integers")
-                        .to("mock:endpoint");
+                from("reactive-streams:integers").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -109,7 +107,6 @@ public abstract class AbstractPlatformTestSupport extends BaseReactiveTest {
             assertNotNull(number);
             assertTrue(number < 0);
         }
-
     }
 
     @Override
@@ -120,5 +117,4 @@ public abstract class AbstractPlatformTestSupport extends BaseReactiveTest {
     protected abstract void changeSign(Publisher<Integer> data, Consumer<Integer> consume);
 
     protected abstract void changeSign(Iterable<Integer> data, Subscriber<Integer> camel);
-
 }

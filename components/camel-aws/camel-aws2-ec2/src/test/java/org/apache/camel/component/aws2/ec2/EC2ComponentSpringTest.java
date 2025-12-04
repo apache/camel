@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,9 +42,6 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesResponse;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 
     @Test
@@ -56,7 +57,8 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
+        RunInstancesResponse resultGet =
+                (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.instances().get(0).imageId());
         assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
         assertEquals("instance-1", resultGet.instances().get(0).instanceId());
@@ -77,13 +79,16 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        RunInstancesResponse resultGet = (RunInstancesResponse) exchange.getMessage().getBody();
+        RunInstancesResponse resultGet =
+                (RunInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.instances().get(0).imageId());
         assertEquals(InstanceType.T2_MICRO, resultGet.instances().get(0).instanceType());
         assertEquals("instance-1", resultGet.instances().get(0).instanceId());
         assertEquals(2, resultGet.instances().get(0).securityGroups().size());
-        assertEquals("id-3", resultGet.instances().get(0).securityGroups().get(0).groupId());
-        assertEquals("id-4", resultGet.instances().get(0).securityGroups().get(1).groupId());
+        assertEquals(
+                "id-3", resultGet.instances().get(0).securityGroups().get(0).groupId());
+        assertEquals(
+                "id-4", resultGet.instances().get(0).securityGroups().get(1).groupId());
     }
 
     @Test
@@ -98,10 +103,15 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        StartInstancesResponse resultGet = (StartInstancesResponse) exchange.getMessage().getBody();
+        StartInstancesResponse resultGet =
+                (StartInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.startingInstances().get(0).instanceId());
-        assertEquals(InstanceStateName.STOPPED, resultGet.startingInstances().get(0).previousState().name());
-        assertEquals(InstanceStateName.RUNNING, resultGet.startingInstances().get(0).currentState().name());
+        assertEquals(
+                InstanceStateName.STOPPED,
+                resultGet.startingInstances().get(0).previousState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.startingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -116,10 +126,15 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        StopInstancesResponse resultGet = (StopInstancesResponse) exchange.getMessage().getBody();
+        StopInstancesResponse resultGet =
+                (StopInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.stoppingInstances().get(0).instanceId());
-        assertEquals(InstanceStateName.RUNNING, resultGet.stoppingInstances().get(0).previousState().name());
-        assertEquals(InstanceStateName.STOPPED, resultGet.stoppingInstances().get(0).currentState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.stoppingInstances().get(0).previousState().name());
+        assertEquals(
+                InstanceStateName.STOPPED,
+                resultGet.stoppingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -134,10 +149,15 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        TerminateInstancesResponse resultGet = (TerminateInstancesResponse) exchange.getMessage().getBody();
+        TerminateInstancesResponse resultGet =
+                (TerminateInstancesResponse) exchange.getMessage().getBody();
         assertEquals("test-1", resultGet.terminatingInstances().get(0).instanceId());
-        assertEquals(InstanceStateName.RUNNING, resultGet.terminatingInstances().get(0).previousState().name());
-        assertEquals(InstanceStateName.TERMINATED, resultGet.terminatingInstances().get(0).currentState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.terminatingInstances().get(0).previousState().name());
+        assertEquals(
+                InstanceStateName.TERMINATED,
+                resultGet.terminatingInstances().get(0).currentState().name());
     }
 
     @Test
@@ -153,7 +173,8 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        DescribeInstancesResponse resultGet = (DescribeInstancesResponse) exchange.getMessage().getBody();
+        DescribeInstancesResponse resultGet =
+                (DescribeInstancesResponse) exchange.getMessage().getBody();
         assertEquals(1, resultGet.reservations().size());
         assertEquals(1, resultGet.reservations().get(0).instances().size());
     }
@@ -173,9 +194,12 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeInstanceStatusResponse resultGet = (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
+        DescribeInstanceStatusResponse resultGet =
+                (DescribeInstanceStatusResponse) exchange.getMessage().getBody();
         assertEquals(1, resultGet.instanceStatuses().size());
-        assertEquals(InstanceStateName.RUNNING, resultGet.instanceStatuses().get(0).instanceState().name());
+        assertEquals(
+                InstanceStateName.RUNNING,
+                resultGet.instanceStatuses().get(0).instanceState().name());
     }
 
     @Test
@@ -204,11 +228,14 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        MonitorInstancesResponse resultGet = (MonitorInstancesResponse) exchange.getMessage().getBody();
+        MonitorInstancesResponse resultGet =
+                (MonitorInstancesResponse) exchange.getMessage().getBody();
 
         assertEquals(1, resultGet.instanceMonitorings().size());
         assertEquals("test-1", resultGet.instanceMonitorings().get(0).instanceId());
-        assertEquals(MonitoringState.ENABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
+        assertEquals(
+                MonitoringState.ENABLED,
+                resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
     @Test
@@ -224,15 +251,19 @@ public class EC2ComponentSpringTest extends CamelSpringTestSupport {
             }
         });
 
-        UnmonitorInstancesResponse resultGet = (UnmonitorInstancesResponse) exchange.getMessage().getBody();
+        UnmonitorInstancesResponse resultGet =
+                (UnmonitorInstancesResponse) exchange.getMessage().getBody();
 
         assertEquals(1, resultGet.instanceMonitorings().size());
         assertEquals("test-1", resultGet.instanceMonitorings().get(0).instanceId());
-        assertEquals(MonitoringState.DISABLED, resultGet.instanceMonitorings().get(0).monitoring().state());
+        assertEquals(
+                MonitoringState.DISABLED,
+                resultGet.instanceMonitorings().get(0).monitoring().state());
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/ec2/EC2ComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/ec2/EC2ComponentSpringTest-context.xml");
     }
 }

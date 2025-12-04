@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.lzf;
 
 import java.io.InputStream;
@@ -45,8 +46,10 @@ public class LZFDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
-        OutputStream compressedOutput = usingParallelCompression ? new PLZFOutputStream(stream) : new LZFOutputStream(stream);
+        InputStream is =
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+        OutputStream compressedOutput =
+                usingParallelCompression ? new PLZFOutputStream(stream) : new LZFOutputStream(stream);
         try {
             IOHelper.copy(is, compressedOutput);
         } finally {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
 
 import java.util.ArrayList;
@@ -58,28 +59,20 @@ public class QdrantConverter {
     @Converter
     public static PointsSelector toPointSelector(Common.PointId id) {
         return Points.PointsSelector.newBuilder()
-                .setPoints(
-                        Points.PointsIdsList.newBuilder()
-                                .addIds(id)
-                                .build())
+                .setPoints(Points.PointsIdsList.newBuilder().addIds(id).build())
                 .build();
     }
 
     @Converter
     public static PointsSelector toPointSelector(Common.Condition condition) {
         return Points.PointsSelector.newBuilder()
-                .setFilter(
-                        Common.Filter.newBuilder()
-                                .addMust(condition)
-                                .build())
+                .setFilter(Common.Filter.newBuilder().addMust(condition).build())
                 .build();
     }
 
     @Converter
     public static PointsSelector toPointSelector(Common.Filter filter) {
-        return Points.PointsSelector.newBuilder()
-                .setFilter(filter)
-                .build();
+        return Points.PointsSelector.newBuilder().setFilter(filter).build();
     }
 
     @Converter
@@ -96,5 +89,4 @@ public class QdrantConverter {
     public static Common.PointId toPointId(UUID id) {
         return PointIdFactory.id(id);
     }
-
 }

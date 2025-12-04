@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.python;
 
 import java.util.Collections;
@@ -111,5 +112,4 @@ public class PythonLanguage extends TypedLanguageSupport implements ScriptingLan
             return new PythonLanguage(Collections.unmodifiableMap(cache));
         }
     }
-
 }

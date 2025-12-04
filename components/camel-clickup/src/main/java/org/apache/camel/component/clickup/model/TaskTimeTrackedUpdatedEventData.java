@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import java.io.Serial;
@@ -51,17 +52,15 @@ public class TaskTimeTrackedUpdatedEventData implements Serializable {
             case TIME_TRACKING_CREATED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.CREATION;
             case TIME_TRACKING_EDITED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.UPDATE;
             case TIME_TRACKING_DELETED_DESCRIPTION -> TaskTimeTrackedUpdatedEventAction.DELETION;
-            default ->
-                throw new RuntimeException("Could not determine event action. Unknown event description: " + this.description);
+            default -> throw new RuntimeException(
+                    "Could not determine event action. Unknown event description: " + this.description);
         };
     }
 
     @Override
     public String toString() {
-        return "TaskTimeTrackedUpdatedEventData{" +
-               "description='" + description + '\'' +
-               ", IntervalId='" + IntervalId + '\'' +
-               '}';
+        return "TaskTimeTrackedUpdatedEventData{" + "description='"
+                + description + '\'' + ", IntervalId='"
+                + IntervalId + '\'' + '}';
     }
-
 }

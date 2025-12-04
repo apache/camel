@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.pubsub;
+
+import static org.apache.camel.component.salesforce.internal.client.PubSubApiClient.PUBSUB_ERROR_AUTH_ERROR;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,8 +29,6 @@ import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-
-import static org.apache.camel.component.salesforce.internal.client.PubSubApiClient.PUBSUB_ERROR_AUTH_ERROR;
 
 // Stub implementation that throws an auth error
 public class AuthErrorPubSubServer extends PubSubGrpc.PubSubImplBase {
@@ -45,9 +46,12 @@ public class AuthErrorPubSubServer extends PubSubGrpc.PubSubImplBase {
                 if (subscribeCalls == 1) {
                     TimerTask task = new TimerTask() {
                         public void run() {
-                            StatusRuntimeException e = new StatusRuntimeException(Status.UNAUTHENTICATED, new Metadata());
-                            e.getTrailers().put(Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER),
-                                    PUBSUB_ERROR_AUTH_ERROR);
+                            StatusRuntimeException e =
+                                    new StatusRuntimeException(Status.UNAUTHENTICATED, new Metadata());
+                            e.getTrailers()
+                                    .put(
+                                            Metadata.Key.of("error-code", Metadata.ASCII_STRING_MARSHALLER),
+                                            PUBSUB_ERROR_AUTH_ERROR);
                             client.onError(e);
                         }
                     };
@@ -58,14 +62,10 @@ public class AuthErrorPubSubServer extends PubSubGrpc.PubSubImplBase {
             }
 
             @Override
-            public void onError(Throwable t) {
-
-            }
+            public void onError(Throwable t) {}
 
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() {}
         };
     }
 }

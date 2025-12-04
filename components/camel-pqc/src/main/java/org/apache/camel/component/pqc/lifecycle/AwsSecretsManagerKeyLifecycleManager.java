@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.ByteArrayInputStream;
@@ -129,8 +130,8 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
      * @param keyPrefix        Prefix for secret names
      * @param endpointOverride Custom endpoint for testing (optional, e.g., http://localhost:4566 for LocalStack)
      */
-    public AwsSecretsManagerKeyLifecycleManager(String region, String accessKey, String secretKey, String keyPrefix,
-                                                String endpointOverride) {
+    public AwsSecretsManagerKeyLifecycleManager(
+            String region, String accessKey, String secretKey, String keyPrefix, String endpointOverride) {
         this.keyPrefix = keyPrefix != null ? keyPrefix : "pqc/keys";
 
         // Build SecretsManagerClient
@@ -151,8 +152,11 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
 
         this.secretsManagerClient = clientBuilder.build();
 
-        LOG.info("Initialized AwsSecretsManagerKeyLifecycleManager with region: {}, keyPrefix: {}, endpointOverride: {}",
-                region, this.keyPrefix, endpointOverride);
+        LOG.info(
+                "Initialized AwsSecretsManagerKeyLifecycleManager with region: {}, keyPrefix: {}, endpointOverride: {}",
+                region,
+                this.keyPrefix,
+                endpointOverride);
 
         try {
             loadExistingKeys();
@@ -265,28 +269,22 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
 
         // Store private key separately (strict IAM policy recommended in production)
         String privateSecretName = getSecretName(keyId, "private");
-        String privateSecretValue = objectMapper.writeValueAsString(new SecretData(
-                privateKeyBase64,
-                "PKCS8",
-                metadata.getAlgorithm()));
+        String privateSecretValue =
+                objectMapper.writeValueAsString(new SecretData(privateKeyBase64, "PKCS8", metadata.getAlgorithm()));
 
         createOrUpdateSecret(privateSecretName, privateSecretValue, "PQC Private Key: " + keyId);
 
         // Store public key separately (can have read-only IAM policy)
         String publicSecretName = getSecretName(keyId, "public");
-        String publicSecretValue = objectMapper.writeValueAsString(new SecretData(
-                publicKeyBase64,
-                "X509",
-                metadata.getAlgorithm()));
+        String publicSecretValue =
+                objectMapper.writeValueAsString(new SecretData(publicKeyBase64, "X509", metadata.getAlgorithm()));
 
         createOrUpdateSecret(publicSecretName, publicSecretValue, "PQC Public Key: " + keyId);
 
         // Store metadata separately
         String metadataSecretName = getSecretName(keyId, "metadata");
-        String metadataSecretValue = objectMapper.writeValueAsString(new MetadataData(
-                metadataBase64,
-                keyId,
-                metadata.getAlgorithm()));
+        String metadataSecretValue =
+                objectMapper.writeValueAsString(new MetadataData(metadataBase64, keyId, metadata.getAlgorithm()));
 
         createOrUpdateSecret(metadataSecretName, metadataSecretValue, "PQC Key Metadata: " + keyId);
 
@@ -320,10 +318,10 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         byte[] publicKeyBytes = Base64.getDecoder().decode(publicData.getKey());
 
         // Use KeyFormatConverter to reconstruct keys from standard formats
-        PrivateKey privateKey = KeyFormatConverter.importPrivateKey(privateKeyBytes,
-                KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(privateData.getAlgorithm()));
-        PublicKey publicKey = KeyFormatConverter.importPublicKey(publicKeyBytes,
-                KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(publicData.getAlgorithm()));
+        PrivateKey privateKey = KeyFormatConverter.importPrivateKey(
+                privateKeyBytes, KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(privateData.getAlgorithm()));
+        PublicKey publicKey = KeyFormatConverter.importPublicKey(
+                publicKeyBytes, KeyLifecycleManager.KeyFormat.DER, getAlgorithmName(publicData.getAlgorithm()));
 
         KeyPair keyPair = new KeyPair(publicKey, privateKey);
 
@@ -384,8 +382,8 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         String nextToken = null;
 
         do {
-            ListSecretsRequest.Builder requestBuilder = ListSecretsRequest.builder()
-                    .maxResults(100);
+            ListSecretsRequest.Builder requestBuilder =
+                    ListSecretsRequest.builder().maxResults(100);
 
             if (nextToken != null) {
                 requestBuilder.nextToken(nextToken);
@@ -452,8 +450,8 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         KeyMetadata metadata = getKeyMetadata(keyId);
         if (metadata != null) {
             metadata.setStatus(KeyMetadata.KeyStatus.REVOKED);
-            metadata.setDescription((metadata.getDescription() != null ? metadata.getDescription() + "; " : "")
-                                    + "Revoked: " + reason);
+            metadata.setDescription(
+                    (metadata.getDescription() != null ? metadata.getDescription() + "; " : "") + "Revoked: " + reason);
             updateKeyMetadata(keyId, metadata);
             LOG.info("Revoked key in AWS Secrets Manager: {} - {}", keyId, reason);
         }
@@ -503,9 +501,8 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
     }
 
     private GetSecretValueResponse getSecret(String secretName) {
-        GetSecretValueRequest request = GetSecretValueRequest.builder()
-                .secretId(secretName)
-                .build();
+        GetSecretValueRequest request =
+                GetSecretValueRequest.builder().secretId(secretName).build();
         return secretsManagerClient.getSecretValue(request);
     }
 
@@ -580,8 +577,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
                     return org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
                     return new org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec(
-                            10,
-                            org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
+                            10, org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
                 case "XMSSMT":
                     return org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
                 case "LMS":
@@ -639,8 +635,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         private String format;
         private String algorithm;
 
-        public SecretData() {
-        }
+        public SecretData() {}
 
         public SecretData(String key, String format, String algorithm) {
             this.key = key;
@@ -681,8 +676,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         private String keyId;
         private String algorithm;
 
-        public MetadataData() {
-        }
+        public MetadataData() {}
 
         public MetadataData(String metadata, String keyId, String algorithm) {
             this.metadata = metadata;

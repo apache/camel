@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.Collection;
@@ -30,8 +31,7 @@ import org.yaml.snakeyaml.representer.Representer;
 
 public final class YamlHelper {
 
-    private YamlHelper() {
-    }
+    private YamlHelper() {}
 
     /**
      * Creates new Yaml instance. The implementation provided by Snakeyaml is not thread-safe. It is better to create a
@@ -52,7 +52,8 @@ public final class YamlHelper {
             protected NodeTuple representJavaBeanProperty(
                     Object javaBean, Property property, Object propertyValue, Tag customTag) {
                 // if value of property is null, ignore it.
-                if (propertyValue == null || (propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty())
+                if (propertyValue == null
+                        || (propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty())
                         || (propertyValue instanceof Map && ((Map<?, ?>) propertyValue).isEmpty())) {
                     return null;
                 } else {

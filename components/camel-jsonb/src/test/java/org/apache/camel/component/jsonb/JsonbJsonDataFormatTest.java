@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonb;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,9 +31,11 @@ public class JsonbJsonDataFormatTest extends JsonbMarshalTest {
                 from("direct:back").unmarshal().json(JsonLibrary.Jsonb).to("mock:reverse");
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Jsonb);
-                from("direct:backPojo").unmarshal().json(JsonLibrary.Jsonb, TestPojo.class).to("mock:reversePojo");
+                from("direct:backPojo")
+                        .unmarshal()
+                        .json(JsonLibrary.Jsonb, TestPojo.class)
+                        .to("mock:reversePojo");
             }
         };
     }
-
 }

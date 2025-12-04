@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Consumer;
@@ -60,5 +61,4 @@ public interface PollingConsumerPollStrategy {
      *                      <tt>true</tt> to try immediately again
      */
     boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception;
-
 }

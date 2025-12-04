@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.swift.mt;
 
 import java.io.InputStream;
@@ -45,8 +46,7 @@ public class SwiftMtDataFormat extends ServiceSupport implements DataFormat, Dat
     /**
      * Constructs a {@code SwiftMtDataFormat} with the default configuration.
      */
-    public SwiftMtDataFormat() {
-    }
+    public SwiftMtDataFormat() {}
 
     /**
      * Constructs a {@code SwiftMtDataFormat} with the given parameter.

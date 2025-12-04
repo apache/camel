@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.util;
 
 import org.apache.camel.dataformat.bindy.FormattingOptions;
@@ -26,9 +27,9 @@ import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
  */
 public final class ConverterUtils {
 
-    private static final byte[] WINDOWS_RETURN_BYTES = { 13, 10 };
-    private static final byte[] UNIX_RETURN_BYTES = { 10 };
-    private static final byte[] MAC_RETURN_BYTES = { 13 };
+    private static final byte[] WINDOWS_RETURN_BYTES = {13, 10};
+    private static final byte[] UNIX_RETURN_BYTES = {10};
+    private static final byte[] MAC_RETURN_BYTES = {13};
     private static final String CRLF = "\r\n";
     private static final String LINE_BREAK = "\n";
     private static final String CARRIAGE_RETURN = "\r";
@@ -73,7 +74,8 @@ public final class ConverterUtils {
         }
     }
 
-    public static FormattingOptions convert(DataField dataField, Class<?> clazz, BindyConverter converter, String locale) {
+    public static FormattingOptions convert(
+            DataField dataField, Class<?> clazz, BindyConverter converter, String locale) {
         return new FormattingOptions()
                 .forClazz(clazz)
                 .withPattern(dataField.pattern())

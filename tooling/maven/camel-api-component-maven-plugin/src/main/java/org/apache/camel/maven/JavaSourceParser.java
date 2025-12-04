@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +44,6 @@ import org.jboss.forge.roaster.model.source.TypeVariableSource;
 import org.jboss.forge.roaster.model.util.Types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
 
 /**
  * Java source parser that are used for parsing the proxy API class.
@@ -237,8 +238,12 @@ public class JavaSourceParser {
     }
 
     private static String resolveParameterizedType(
-            AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms,
-            ParameterSource ps, Type type, ClassLoader classLoader) {
+            AbstractGenericCapableJavaSource rootClazz,
+            AbstractGenericCapableJavaSource clazz,
+            MethodSource ms,
+            ParameterSource ps,
+            Type type,
+            ClassLoader classLoader) {
         String answer = resolveType(rootClazz, clazz, ms, type, classLoader);
 
         if (type.isParameterized()) {
@@ -250,7 +255,8 @@ public class JavaSourceParser {
             for (Type t : types) {
                 if (hasTypeVariableBounds(ms, clazz, t.getName())) {
                     bounds = true;
-                    // okay now it gets complex as we have a type like T which is a type variable and we need to resolve that into
+                    // okay now it gets complex as we have a type like T which is a type variable and we need to resolve
+                    // that into
                     // what base class that is
                     String tn = resolveTypeVariable(ms, clazz, t.getName());
                     if (tn != null) {
@@ -261,7 +267,8 @@ public class JavaSourceParser {
             }
             if (!bounds && !found) {
                 // argh this is getting complex, it may be T or just java.lang.String but this **** generics and roaster
-                // does not make this easy, so let see if we can find out if all the types are a qualified type or only a variable
+                // does not make this easy, so let see if we can find out if all the types are a qualified type or only
+                // a variable
                 boolean fqn = types.stream().allMatch(t -> {
                     // if its from java itself then its okay
                     if (t.getQualifiedName().startsWith("java")) {
@@ -282,7 +289,8 @@ public class JavaSourceParser {
                 answer = type.getQualifiedName();
             }
         } else if (ms.hasTypeVariable(answer) || clazz.hasTypeVariable(answer)) {
-            // okay now it gets complex as we have a type like T which is a type variable and we need to resolve that into
+            // okay now it gets complex as we have a type like T which is a type variable and we need to resolve that
+            // into
             // what base class that is
             answer = resolveTypeVariable(ms, clazz, answer);
         }
@@ -340,7 +348,10 @@ public class JavaSourceParser {
     }
 
     private static String resolveType(
-            AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms, Type type,
+            AbstractGenericCapableJavaSource rootClazz,
+            AbstractGenericCapableJavaSource clazz,
+            MethodSource ms,
+            Type type,
             ClassLoader classLoader) {
         String name = type.getName();
         // if the type is from a type variable (eg T extends Foo generic style)
@@ -511,8 +522,11 @@ public class JavaSourceParser {
             char[] arr = desc.toCharArray();
             for (int i = 0; i < arr.length; i++) {
                 ch = arr[i];
-                boolean accept = Character.isAlphabetic(ch) || Character.isWhitespace(ch) || ch == '\''
-                        || ch == '-' || ch == '_';
+                boolean accept = Character.isAlphabetic(ch)
+                        || Character.isWhitespace(ch)
+                        || ch == '\''
+                        || ch == '-'
+                        || ch == '_';
                 boolean last = i == arr.length - 1;
                 accept |= last && ch == '.';
                 if (!accept) {

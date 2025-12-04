@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -44,24 +45,30 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
 
     @XmlTransient
     private Resource resource;
+
     @XmlElement
     private ErrorHandlerDefinition errorHandler;
+
     @XmlElement(name = "intercept")
     private List<InterceptDefinition> intercepts = new ArrayList<>();
+
     @XmlElement(name = "interceptFrom")
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<>();
+
     @XmlElement(name = "interceptSendToEndpoint")
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<>();
+
     @XmlElement(name = "onException")
     private List<OnExceptionDefinition> onExceptions = new ArrayList<>();
+
     @XmlElement(name = "onCompletion")
     private List<OnCompletionDefinition> onCompletions = new ArrayList<>();
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String precondition;
 
-    public RouteConfigurationDefinition() {
-    }
+    public RouteConfigurationDefinition() {}
 
     @Override
     public String toString() {
@@ -288,5 +295,4 @@ public class RouteConfigurationDefinition extends OptionalIdentifiedDefinition<R
         interceptSendTos.add(answer);
         return answer;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
+
+import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Iterator;
 
@@ -24,15 +28,11 @@ import io.restassured.specification.RequestSpecification;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PlatformHttpTest extends AbstractPlatformHttpTest {
 
     @Test
     public void testGet() {
-        given()
-                .header("Accept", "application/json")
+        given().header("Accept", "application/json")
                 .port(port)
                 .expect()
                 .statusCode(200)
@@ -62,12 +62,9 @@ public class PlatformHttpTest extends AbstractPlatformHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/get")
-                        .setBody().constant("get");
-                from("platform-http:/post")
-                        .transform().body(String.class, b -> b.toUpperCase());
+                from("platform-http:/get").setBody().constant("get");
+                from("platform-http:/post").transform().body(String.class, b -> b.toUpperCase());
             }
         };
     }
-
 }

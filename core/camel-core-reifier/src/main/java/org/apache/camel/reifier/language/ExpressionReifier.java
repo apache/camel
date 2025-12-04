@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.language;
 
 import java.util.HashMap;
@@ -57,8 +58,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     private static final Pattern SINGLE_TO_DOUBLE = Pattern.compile("'(\\{\\{.*?}})'"); // non-greedy mode
 
     // for custom reifiers
-    private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<?>,
+                    BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>>
+            EXPRESSIONS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -87,8 +90,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         ExpressionReifier<? extends ExpressionDefinition> answer = null;
         if (!EXPRESSIONS.isEmpty()) {
             // custom take precedence
-            BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> reifier
-                    = EXPRESSIONS.get(definition.getClass());
+            BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> reifier =
+                    EXPRESSIONS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(camelContext, definition);
             }
@@ -152,7 +155,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             // prepare before creating
             prepareExpression();
             if (definition.getExpressionType() != null) {
-                expression = reifier(camelContext, definition.getExpressionType()).createExpression();
+                expression =
+                        reifier(camelContext, definition.getExpressionType()).createExpression();
             } else if (definition.getExpressionValue() != null) {
                 expression = definition.getExpressionValue();
             } else {
@@ -191,7 +195,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             // prepare before creating
             prepareExpression();
             if (definition.getExpressionType() != null) {
-                predicate = reifier(camelContext, definition.getExpressionType()).createPredicate();
+                predicate =
+                        reifier(camelContext, definition.getExpressionType()).createPredicate();
             } else if (definition.getExpressionValue() != null) {
                 predicate = new ExpressionToPredicateAdapter(definition.getExpressionValue());
             } else {
@@ -232,8 +237,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         return language.createPredicate(exp);
     }
 
-    protected void configureLanguage(Language language) {
-    }
+    protected void configureLanguage(Language language) {}
 
     protected void configurePredicate(Predicate predicate) {
         // allows to perform additional logic after the properties has been
@@ -286,5 +290,4 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.validation.constraints;
 
 import jakarta.validation.ConstraintValidator;
@@ -34,8 +35,7 @@ public class E164Validator implements ConstraintValidator<E164, String> {
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
 
     @Override
-    public void initialize(final E164 constraintAnnotation) {
-    }
+    public void initialize(final E164 constraintAnnotation) {}
 
     @Override
     public boolean isValid(final String value, final ConstraintValidatorContext context) {
@@ -63,5 +63,4 @@ public class E164Validator implements ConstraintValidator<E164, String> {
         // PhoneNumberFormat.E164));
 
     }
-
 }

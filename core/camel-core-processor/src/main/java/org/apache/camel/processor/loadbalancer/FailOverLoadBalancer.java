@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
@@ -165,7 +166,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        exchange.getContext().getCamelContextExtension().getReactiveExecutor()
+        exchange.getContext()
+                .getCamelContextExtension()
+                .getReactiveExecutor()
                 .schedule(new State(exchange, callback, processors)::run);
         return false;
     }
@@ -255,10 +258,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             // process the exchange
             LOG.debug("Processing failover at attempt {} for {}", attempts, copy);
-            processor.process(copy, doneSync -> exchange.getContext().getCamelContextExtension().getReactiveExecutor()
+            processor.process(copy, doneSync -> exchange.getContext()
+                    .getCamelContextExtension()
+                    .getReactiveExecutor()
                     .schedule(this::run));
         }
-
     }
 
     /**
@@ -295,5 +299,4 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         // reset state
         reset();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
 
 import org.apache.camel.EndpointInject;
@@ -52,17 +53,16 @@ public class ManualAcknowledgementAsyncIT extends PubsubTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in")
-                        .routeId("send-to-topic")
-                        .to("google-pubsub:{{project.id}}:" + TOPIC_NAME);
+                from("direct:in").routeId("send-to-topic").to("google-pubsub:{{project.id}}:" + TOPIC_NAME);
 
                 from("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?synchronousPull=false&ackMode=NONE")
                         .autoStartup(false)
                         .routeId(ROUTE_ID)
                         .to("mock:receiveResult")
                         .process(exchange -> {
-                            GooglePubsubAcknowledge acknowledge
-                                    = exchange.getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
+                            GooglePubsubAcknowledge acknowledge = exchange.getIn()
+                                    .getHeader(
+                                            GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE,
                                             GooglePubsubAcknowledge.class);
 
                             if (ManualAcknowledgementAsyncIT.ack) {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-
 /**
  * Unit test to poll a fixed file from the FTP server without using the list command.
  */
@@ -35,7 +36,7 @@ public class FromFtpUseListFalseIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin"
-               + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true";
+                + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true";
     }
 
     @BeforeEach
@@ -43,8 +44,8 @@ public class FromFtpUseListFalseIT extends FtpServerTestSupport {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint
-                = context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin&binary=false");
+        Endpoint endpoint =
+                context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");
@@ -61,8 +62,7 @@ public class FromFtpUseListFalseIT extends FtpServerTestSupport {
 
         // just allow to poll a few more times, but we should only get the file
         // once
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> mock.assertIsSatisfied());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
     }
 
     @Override

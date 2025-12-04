@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.RejectedExecutionException;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends ContextTestSupport {
 
@@ -62,7 +63,9 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(5).redeliveryDelay(5000)
+                errorHandler(deadLetterChannel("mock:dead")
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(5000)
                         .allowRedeliveryWhileStopping(false));
 
                 from("seda:start").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));

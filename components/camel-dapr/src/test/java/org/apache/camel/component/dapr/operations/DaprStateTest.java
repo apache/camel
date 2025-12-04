@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -43,20 +53,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class DaprStateTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+
     @Mock
     private DaprEndpoint endpoint;
 
@@ -162,7 +164,8 @@ public class DaprStateTest extends CamelTestSupport {
         State<byte[]> mockResult = new State<>("myKey", "myValue".getBytes(StandardCharsets.UTF_8), null, null);
 
         when(endpoint.getClient()).thenReturn(client);
-        when(client.getState(any(GetStateRequest.class), eq(TypeRef.get(byte[].class)))).thenReturn(Mono.just(mockResult));
+        when(client.getState(any(GetStateRequest.class), eq(TypeRef.get(byte[].class))))
+                .thenReturn(Mono.just(mockResult));
 
         DaprConfiguration configuration = new DaprConfiguration();
         configuration.setOperation(DaprOperation.state);
@@ -206,7 +209,8 @@ public class DaprStateTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     void testGetBulk() throws Exception {
-        List<State<byte[]>> mockResult = List.of(new State<>("myKey", "myValue".getBytes(StandardCharsets.UTF_8), null, null));
+        List<State<byte[]>> mockResult =
+                List.of(new State<>("myKey", "myValue".getBytes(StandardCharsets.UTF_8), null, null));
 
         when(endpoint.getClient()).thenReturn(client);
         when(client.getBulkState(any(GetBulkStateRequest.class), eq(TypeRef.get(byte[].class))))
@@ -300,7 +304,8 @@ public class DaprStateTest extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     void testExecuteTransaction() throws Exception {
         when(endpoint.getClient()).thenReturn(client);
-        when(client.executeStateTransaction(any(ExecuteStateTransactionRequest.class))).thenReturn(Mono.empty());
+        when(client.executeStateTransaction(any(ExecuteStateTransactionRequest.class)))
+                .thenReturn(Mono.empty());
 
         DaprConfiguration configuration = new DaprConfiguration();
         configuration.setOperation(DaprOperation.state);
@@ -310,8 +315,8 @@ public class DaprStateTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
         TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
-        List<TransactionalStateOperation<?>> transactions
-                = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+        List<TransactionalStateOperation<?>> transactions =
+                List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
         exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
 
         final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
@@ -342,8 +347,8 @@ public class DaprStateTest extends CamelTestSupport {
 
         // case 3: valid configuration
         TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
-        List<TransactionalStateOperation<?>> transactions
-                = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+        List<TransactionalStateOperation<?>> transactions =
+                List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
         exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
         assertDoesNotThrow(() -> operation.validateConfiguration(exchange));
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +38,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Tag("standalone")
 public class BulkApiManualIT extends AbstractBulkApiTestBase {
 
@@ -55,7 +56,8 @@ public class BulkApiManualIT extends AbstractBulkApiTestBase {
             httpClient.start();
 
             final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
-            final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
+            final Request logoutGet =
+                    httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
             final ContentResponse response = logoutGet.send();
             assertEquals(HttpStatus.OK_200, response.getStatus());

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -24,8 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -42,7 +43,8 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
 
     @Test
     public void testArrayBlockingQueueFactory() {
-        SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue?queueFactory=#arrayQueueFactory", SedaEndpoint.class);
+        SedaEndpoint endpoint =
+                resolveMandatoryEndpoint("seda:arrayQueue?queueFactory=#arrayQueueFactory", SedaEndpoint.class);
 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         ArrayBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(ArrayBlockingQueue.class, queue);
@@ -52,8 +54,8 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testArrayBlockingQueueFactoryAndSize() {
-        SedaEndpoint endpoint
-                = resolveMandatoryEndpoint("seda:arrayQueue100?queueFactory=#arrayQueueFactory&size=100", SedaEndpoint.class);
+        SedaEndpoint endpoint = resolveMandatoryEndpoint(
+                "seda:arrayQueue100?queueFactory=#arrayQueueFactory&size=100", SedaEndpoint.class);
 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         ArrayBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(ArrayBlockingQueue.class, queue);

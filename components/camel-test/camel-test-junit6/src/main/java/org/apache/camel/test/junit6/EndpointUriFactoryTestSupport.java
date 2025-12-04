@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
 
 import java.util.Map;
@@ -37,7 +38,8 @@ public abstract class EndpointUriFactoryTestSupport extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                EndpointUriFactory factory = getContext().getCamelContextExtension().getEndpointUriFactory(scheme());
+                EndpointUriFactory factory =
+                        getContext().getCamelContextExtension().getEndpointUriFactory(scheme());
                 String uri = factory.buildUri(scheme(), pathParameters(), false);
                 from(uri).to("mock:out");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -35,8 +36,7 @@ public class InputLocationMessageContent implements InputMessageContent {
     @JsonProperty("live_period")
     private Integer livePeriod;
 
-    public InputLocationMessageContent() {
-    }
+    public InputLocationMessageContent() {}
 
     public static Builder builder() {
         return new Builder();
@@ -47,8 +47,7 @@ public class InputLocationMessageContent implements InputMessageContent {
         private Float longitude;
         private Integer livePeriod;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder latitude(Float latitude) {
             this.latitude = latitude;

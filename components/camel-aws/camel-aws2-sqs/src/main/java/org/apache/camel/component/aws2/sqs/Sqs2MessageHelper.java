@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import java.nio.ByteBuffer;
@@ -27,8 +28,7 @@ public final class Sqs2MessageHelper {
     public static final String TYPE_STRING = "String";
     public static final String TYPE_BINARY = "Binary";
 
-    private Sqs2MessageHelper() {
-    }
+    private Sqs2MessageHelper() {}
 
     public static MessageAttributeValue toMessageAttributeValue(Object value) {
         if (value instanceof String && !((String) value).isEmpty()) {
@@ -113,5 +113,4 @@ public final class Sqs2MessageHelper {
 
         return null;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 // This bean when in a header, should get serialized as "sanitized unsafe", not { "unsafe": "unsafe" }

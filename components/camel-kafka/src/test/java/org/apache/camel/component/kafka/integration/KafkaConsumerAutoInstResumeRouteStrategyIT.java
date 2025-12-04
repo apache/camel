@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
 
 import java.time.Duration;
@@ -84,17 +85,22 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseKafkaTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kafka:%s?groupId=%s_GROUP&autoCommitIntervalMs=1000"
-                      + "&autoOffsetReset=earliest&consumersCount=1", TOPIC, TOPIC)
-                        .resumable().configuration(getDefaultKafkaResumeStrategyConfigurationBuilder())
+                fromF(
+                                "kafka:%s?groupId=%s_GROUP&autoCommitIntervalMs=1000"
+                                        + "&autoOffsetReset=earliest&consumersCount=1",
+                                TOPIC, TOPIC)
+                        .resumable()
+                        .configuration(getDefaultKafkaResumeStrategyConfigurationBuilder())
                         .process(e -> process(e))
                         .routeId("resume-strategy-auto-route")
-                        // Note: this is for manually testing the ResumableCompletion onFailure exception logging. Uncomment it for testing it
+                        // Note: this is for manually testing the ResumableCompletion onFailure exception logging.
+                        // Uncomment it for testing it
                         // .process(e -> e.setException(new RuntimeCamelException("Mock error in test")))
                         .to("mock:sentMessages");
 
-                fromF("kafka:%s?groupId=%s_GROUP&autoCommitIntervalMs=1000", "resumable-route-auto-offsets",
-                        "resumable-route-auto-offsets")
+                fromF(
+                                "kafka:%s?groupId=%s_GROUP&autoCommitIntervalMs=1000",
+                                "resumable-route-auto-offsets", "resumable-route-auto-offsets")
                         .to(KafkaTestUtil.MOCK_RESULT);
             }
         };

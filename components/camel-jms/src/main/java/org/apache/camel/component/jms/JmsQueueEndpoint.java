@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.Collections;
@@ -35,14 +36,17 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
-    public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-                            JmsConfiguration configuration) {
+    public JmsQueueEndpoint(String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
         setDestinationType("queue");
     }
 
-    public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
-                            JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+    public JmsQueueEndpoint(
+            String uri,
+            JmsComponent component,
+            String destination,
+            JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
         setDestinationType("queue");
         if (queueBrowseStrategy == null) {
@@ -123,5 +127,4 @@ public class JmsQueueEndpoint extends JmsEndpoint implements JmsBrowsableEndpoin
     protected QueueBrowseStrategy createQueueBrowseStrategy() {
         return new DefaultQueueBrowseStrategy();
     }
-
 }

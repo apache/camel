@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.stream;
 
 import java.security.SecureRandom;
@@ -27,8 +28,9 @@ import org.junit.jupiter.api.Test;
 
 public class CachedOutputStreamDirectMemoryTest extends CamelTestSupport {
 
-    private static final int SPOOL_THRESHOLD = 2 * 1024 * 1024; //Must be greater than -XX:MaxDirectMemorySize in surefire
-    private static final long BYTES_TO_WRITE = 2 * SPOOL_THRESHOLD; //Must be greater than SPOOL_THRESHOLD
+    private static final int SPOOL_THRESHOLD =
+            2 * 1024 * 1024; // Must be greater than -XX:MaxDirectMemorySize in surefire
+    private static final long BYTES_TO_WRITE = 2 * SPOOL_THRESHOLD; // Must be greater than SPOOL_THRESHOLD
 
     @Override
     protected RouteBuilder createRouteBuilder() {

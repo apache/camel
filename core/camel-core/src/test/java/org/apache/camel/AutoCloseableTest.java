@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AutoCloseableTest {
 
@@ -31,7 +32,7 @@ public class AutoCloseableTest {
         ProducerTemplate usedProducer = null;
 
         try (CamelContext context = new DefaultCamelContext();
-             ProducerTemplate producer = context.createProducerTemplate()) {
+                ProducerTemplate producer = context.createProducerTemplate()) {
             usedContext = context;
             usedProducer = producer;
 
@@ -48,5 +49,4 @@ public class AutoCloseableTest {
         assertThat(usedContext.isStopped()).isTrue();
         assertThat(((DefaultProducerTemplate) usedProducer).isStopped()).isTrue();
     }
-
 }

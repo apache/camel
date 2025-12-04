@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elasticsearch.rest.client;
 
 import org.apache.camel.spi.Metadata;
@@ -26,18 +27,19 @@ public class ElasticSearchRestClientConstant {
     @Metadata(description = "The JSON Query to perform for search", javaType = "String")
     public static final String SEARCH_QUERY = "SEARCH_QUERY";
 
-    @Metadata(description = "Advanced - The JSON Index Settings and/or Mappings Query to perform to create an index",
-              javaType = "String")
+    @Metadata(
+            description = "Advanced - The JSON Index Settings and/or Mappings Query to perform to create an index",
+            javaType = "String")
     public static final String INDEX_SETTINGS = "INDEX_SETTINGS";
 
     @Metadata(description = "The Index name", javaType = "String")
     public static final String INDEX_NAME = "INDEX_NAME";
 
-    @Metadata(description = "The operation to perform",
-              javaType = "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation")
+    @Metadata(
+            description = "The operation to perform",
+            javaType = "org.apache.camel.component.elasticsearch.rest.client.ElasticsearchRestClientOperation")
     public static final String OPERATION = "OPERATION";
 
     public static final int SOCKET_CONNECTION_TIMEOUT = 30000;
     public static final int SNIFFER_INTERVAL_AND_FAILURE_DELAY = 60000;
-
 }

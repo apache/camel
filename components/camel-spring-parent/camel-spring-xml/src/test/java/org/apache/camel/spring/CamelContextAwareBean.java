@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
@@ -31,5 +32,4 @@ public class CamelContextAwareBean implements CamelContextAware {
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-
 }

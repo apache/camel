@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,8 +30,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.org.bouncycastle.util.Strings;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SnsTopicProducerByteArrayHeaderIT extends Aws2SNSBase {
 
@@ -47,8 +48,8 @@ public class SnsTopicProducerByteArrayHeaderIT extends Aws2SNSBase {
         });
 
         assertNotNull(exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
-        Assertions.assertEquals("HeaderTest",
-                Strings.fromByteArray((byte[]) exchange.getMessage().getHeaders().get("value1")));
+        Assertions.assertEquals("HeaderTest", Strings.fromByteArray((byte[])
+                exchange.getMessage().getHeaders().get("value1")));
     }
 
     @Test
@@ -63,8 +64,8 @@ public class SnsTopicProducerByteArrayHeaderIT extends Aws2SNSBase {
         });
 
         assertNotNull(exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
-        Assertions.assertEquals("HeaderTest",
-                Strings.fromByteArray((byte[]) exchange.getMessage().getHeaders().get("value1")));
+        Assertions.assertEquals("HeaderTest", Strings.fromByteArray((byte[])
+                exchange.getMessage().getHeaders().get("value1")));
     }
 
     @Override
@@ -73,7 +74,9 @@ public class SnsTopicProducerByteArrayHeaderIT extends Aws2SNSBase {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true", sharedNameGenerator.getName());
+                        .toF(
+                                "aws2-sns://%s?subject=The+subject+message&autoCreateTopic=true",
+                                sharedNameGenerator.getName());
             }
         };
     }

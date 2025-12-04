@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedSanitizeTest;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 @DisabledOnOs(OS.AIX)
 public class SpringManagedSanitizeTest extends ManagedSanitizeTest {
@@ -30,5 +31,4 @@ public class SpringManagedSanitizeTest extends ManagedSanitizeTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedSanitizeTest.xml");
     }
-
 }

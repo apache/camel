@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 /**
@@ -22,21 +23,19 @@ package org.apache.camel.model;
 public final class Constants {
 
     public static final String JAXB_CONTEXT_PACKAGES = "org.apache.camel:"
-                                                       + "org.apache.camel.model:"
-                                                       + "org.apache.camel.model.app:"
-                                                       + "org.apache.camel.model.cloud:"
-                                                       + "org.apache.camel.model.config:"
-                                                       + "org.apache.camel.model.dataformat:"
-                                                       + "org.apache.camel.model.errorhandler:"
-                                                       + "org.apache.camel.model.language:"
-                                                       + "org.apache.camel.model.loadbalancer:"
-                                                       + "org.apache.camel.model.rest:"
-                                                       + "org.apache.camel.model.transformer:"
-                                                       + "org.apache.camel.model.validator";
+            + "org.apache.camel.model:"
+            + "org.apache.camel.model.app:"
+            + "org.apache.camel.model.cloud:"
+            + "org.apache.camel.model.config:"
+            + "org.apache.camel.model.dataformat:"
+            + "org.apache.camel.model.errorhandler:"
+            + "org.apache.camel.model.language:"
+            + "org.apache.camel.model.loadbalancer:"
+            + "org.apache.camel.model.rest:"
+            + "org.apache.camel.model.transformer:"
+            + "org.apache.camel.model.validator";
 
     public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
 
-    private Constants() {
-    }
-
+    private Constants() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.base64;
 
 import java.io.InputStream;
@@ -34,7 +35,7 @@ import org.apache.commons.codec.binary.Base64OutputStream;
 public class Base64DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int lineLength = Base64.MIME_CHUNK_SIZE;
-    private byte[] lineSeparator = { '\r', '\n' };
+    private byte[] lineSeparator = {'\r', '\n'};
     private boolean urlSafe;
 
     @Override

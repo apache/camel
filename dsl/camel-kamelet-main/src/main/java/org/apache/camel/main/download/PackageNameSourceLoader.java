@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.IOException;
@@ -29,8 +30,8 @@ import org.apache.camel.spi.Resource;
  */
 public class PackageNameSourceLoader extends DefaultSourceLoader {
 
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+    private static final Pattern PACKAGE_PATTERN =
+            Pattern.compile("^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
     private final String packageName;
 
@@ -73,5 +74,4 @@ public class PackageNameSourceLoader extends DefaultSourceLoader {
         }
         return sb.toString();
     }
-
 }

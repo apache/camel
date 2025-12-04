@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.TestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.file.remote;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.Test;
 
 public class UriConfigurationTest extends CamelTestSupport {
 
@@ -89,8 +90,8 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testFtpExplicitConfiguration() {
-        FtpEndpoint<?> endpoint
-                = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint(
+                "ftp://user@hostname:1021/some/file?password=secret&binary=true", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -103,8 +104,8 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSftpExplicitConfiguration() {
-        SftpEndpoint endpoint
-                = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true", SftpEndpoint.class);
+        SftpEndpoint endpoint = context.getEndpoint(
+                "sftp://user@hostname:1021/some/file?password=secret&binary=true", SftpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
@@ -169,7 +170,8 @@ public class UriConfigurationTest extends CamelTestSupport {
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
-        RemoteFileEndpoint<?> endpoint = TestSupport.resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
+        RemoteFileEndpoint<?> endpoint =
+                TestSupport.resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
         assertNotNull(endpoint, "Could not find endpoint: " + endpointUri);
 
         String file = endpoint.getConfiguration().getDirectory();
@@ -258,5 +260,4 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals("foo\\bar\\hello.txt", config.normalizePath("foo/bar/hello.txt"));
         assertEquals("foo\\bar\\hello.txt", config.normalizePath("foo\\bar\\hello.txt"));
     }
-
 }

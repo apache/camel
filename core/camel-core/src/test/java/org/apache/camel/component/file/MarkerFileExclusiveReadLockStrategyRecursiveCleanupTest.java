@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated("This test is regularly flaky")
 public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends ContextTestSupport {
@@ -56,7 +57,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?fileName=d1.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10"))
+                                "d1?fileName=d1.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10"))
                         .to("mock:result");
             }
         });
@@ -78,7 +79,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2"))
+                                "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2"))
                         .to("mock:result");
             }
         });
@@ -104,7 +105,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
+                                "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
                         .to("mock:result");
             }
         });
@@ -129,7 +130,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?antInclude=**/*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
+                                "d1?antInclude=**/*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
                         .to("mock:result");
             }
         });
@@ -154,7 +155,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true"))
+                                "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true"))
                         .to("mock:result");
             }
         });
@@ -187,5 +188,4 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
         assertFileNotExists(testFile(dir + "/" + fileName));
         assertFileNotExists(testFile(dir + "/" + fileName + FileComponent.DEFAULT_LOCK_FILE_POSTFIX));
     }
-
 }

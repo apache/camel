@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import java.net.URLDecoder;
@@ -53,7 +54,6 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
                 span.setTag(param, val);
             }
         });
-
     }
 
     protected static String getPath(String uri) {

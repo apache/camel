@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -43,8 +46,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-
 /**
  * Updates the SensitiveHelper.java with the known secret option names
  */
@@ -58,8 +59,9 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
     // extra keys that are regarded as secret which may not yet been in any component
     // they MUST be in lowercase and without a dash
-    private static final String[] EXTRA_KEYS
-            = new String[] { "apipassword", "apiuser", "apiusername", "api_key", "api_secret", "secret", "keystorePassword" };
+    private static final String[] EXTRA_KEYS =
+            new String[] {"apipassword", "apiuser", "apiusername", "api_key", "api_secret", "secret", "keystorePassword"
+            };
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/")
     protected File jsonDir;
@@ -152,7 +154,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         secrets.addAll(Arrays.asList(EXTRA_KEYS));
 
         getLog().info("There are " + secrets.size()
-                      + " distinct secret options across all the Camel components/dataformats/languages");
+                + " distinct secret options across all the Camel components/dataformats/languages");
 
         try {
             boolean updated = updateSensitiveHelperKeys(camelDir, secrets);
@@ -238,7 +240,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             } else {
                 String before = Strings.before(text, PATTERN_START_TOKEN);
                 String after = Strings.after(text, PATTERN_END_TOKEN);
-                text = before + PATTERN_START_TOKEN + "\n" + spaces52 + changed + "\n" + spaces52 + PATTERN_END_TOKEN + after;
+                text = before + PATTERN_START_TOKEN + "\n" + spaces52 + changed + "\n" + spaces52 + PATTERN_END_TOKEN
+                        + after;
                 PackageHelper.writeText(java, text);
                 return true;
             }
@@ -254,5 +257,4 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
         String json = JsonMapper.serialize(arr);
         PackageHelper.writeText(target, json);
     }
-
 }

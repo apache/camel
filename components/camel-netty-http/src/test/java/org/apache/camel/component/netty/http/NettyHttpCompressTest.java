@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -27,8 +30,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Isolated
 public class NettyHttpCompressTest extends BaseNettyTest {
 
@@ -38,9 +39,8 @@ public class NettyHttpCompressTest extends BaseNettyTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("content-type", "text/plain; charset=\"UTF-8\"");
         headers.put("Accept-Encoding", "compress, gzip");
-        byte[] out
-                = template.requestBodyAndHeaders("netty-http:http://localhost:{{port}}/foo", data,
-                        headers, byte[].class);
+        byte[] out =
+                template.requestBodyAndHeaders("netty-http:http://localhost:{{port}}/foo", data, headers, byte[].class);
         // deflate the zip
         GZIPInputStream zis = new GZIPInputStream(new ByteArrayInputStream(out));
         String s = IOHelper.loadText(zis);
@@ -55,7 +55,10 @@ public class NettyHttpCompressTest extends BaseNettyTest {
             @Override
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?compression=true")
-                        .transform().constant("Bye World").setHeader("content-type").constant("text/plain; charset=\"UTF-8\"");
+                        .transform()
+                        .constant("Bye World")
+                        .setHeader("content-type")
+                        .constant("text/plain; charset=\"UTF-8\"");
             }
         };
     }

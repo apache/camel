@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
 
 import java.nio.file.Path;
@@ -116,50 +117,40 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
                 // QR-Code default
                 DataFormat code1 = new BarcodeDataFormat();
 
-                from("direct:code1")
-                        .marshal(code1)
-                        .to(TestSupport.fileUri(testDirectory));
+                from("direct:code1").marshal(code1).to(TestSupport.fileUri(testDirectory));
 
                 // QR-Code with modified size
                 DataFormat code2 = new BarcodeDataFormat(200, 200);
 
-                from("direct:code2")
-                        .marshal(code2)
-                        .to(TestSupport.fileUri(testDirectory));
+                from("direct:code2").marshal(code2).to(TestSupport.fileUri(testDirectory));
 
                 // QR-Code with JPEG type
                 DataFormat code3 = new BarcodeDataFormat(BarcodeImageType.JPG);
 
-                from("direct:code3")
-                        .marshal(code3)
-                        .to(TestSupport.fileUri(testDirectory));
+                from("direct:code3").marshal(code3).to(TestSupport.fileUri(testDirectory));
 
                 // PDF-417 code with modified size and image type
                 DataFormat code4 = new BarcodeDataFormat(200, 200, BarcodeImageType.JPG, BarcodeFormat.PDF_417);
 
-                from("direct:code4")
-                        .marshal(code4)
-                        .to(TestSupport.fileUri(testDirectory));
+                from("direct:code4").marshal(code4).to(TestSupport.fileUri(testDirectory));
 
                 // AZTEC with modified size and PNG type
                 DataFormat code5 = new BarcodeDataFormat(200, 200, BarcodeImageType.PNG, BarcodeFormat.AZTEC);
 
-                from("direct:code5")
-                        .marshal(code5)
-                        .to(TestSupport.fileUri(testDirectory));
+                from("direct:code5").marshal(code5).to(TestSupport.fileUri(testDirectory));
 
                 // generic file read --->
                 //
                 // read file and route it
                 from(TestSupport.fileUri(testDirectory, "?noop=true&initialDelay=0&delay=10"))
-                        .multicast().to("direct:unmarshall", "mock:image");
+                        .multicast()
+                        .to("direct:unmarshall", "mock:image");
 
                 // get the message from code
                 from("direct:unmarshall")
                         .unmarshal(code1) // for unmarshalling, the instance doesn't matter
                         .to("log:OUT")
                         .to("mock:out");
-
             }
         };
     }

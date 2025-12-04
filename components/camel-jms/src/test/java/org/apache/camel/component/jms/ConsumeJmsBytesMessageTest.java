@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 
@@ -37,10 +42,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsumeJmsBytesMessageTest extends AbstractJMSTest {
 
@@ -77,7 +78,7 @@ public class ConsumeJmsBytesMessageTest extends AbstractJMSTest {
 
         endpoint.expectedMessageCount(1);
 
-        byte[] bytes = new byte[] { 1, 2, 3 };
+        byte[] bytes = new byte[] {1, 2, 3};
 
         template.sendBody("direct:test", bytes);
 

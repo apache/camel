@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
 
 import java.math.BigInteger;
@@ -53,8 +54,8 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
     }
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private final KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
+    private final KafkaIdempotentRepository kafkaIdempotentRepository =
+            new KafkaIdempotentRepository(REPOSITORY_TOPIC, getBootstrapServers());
 
     @BeforeEach
     public void before() {
@@ -74,11 +75,11 @@ public class KafkaConsumerIdempotentWithProcessorIT extends KafkaConsumerIdempot
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaConsumerIdempotentWithProcessorIT&autoOffsetReset=earliest"
-                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
-                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                                + "?groupId=KafkaConsumerIdempotentWithProcessorIT&autoOffsetReset=earliest"
+                                + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
+                                + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .routeId("idemp-with-prop")
                         .process(exchange -> {
                             byte[] id = exchange.getIn().getHeader("id", byte[].class);

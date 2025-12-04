@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import java.util.ArrayDeque;
@@ -46,8 +47,8 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     private volatile String lastSha;
     private boolean started = false;
 
-    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName,
-                          String startingSha) throws Exception {
+    public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName, String startingSha)
+            throws Exception {
         super(endpoint, processor);
         this.branchName = branchName;
         this.startingSha = startingSha;
@@ -65,7 +66,9 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         Registry registry = getEndpoint().getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
         if (service != null) {
-            LOG.debug("Using CommitService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using CommitService found in registry {}",
+                    service.getClass().getCanonicalName());
             commitService = (CommitService) service;
         } else {
             commitService = new CommitService();
@@ -85,7 +88,10 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             lastSha = null;
 
             if (startingSha.equals("last")) {
-                LOG.info("Indexing current commits on: {}/{}@{}", getEndpoint().getRepoOwner(), getEndpoint().getRepoName(),
+                LOG.info(
+                        "Indexing current commits on: {}/{}@{}",
+                        getEndpoint().getRepoOwner(),
+                        getEndpoint().getRepoName(),
                         branchName);
                 List<RepositoryCommit> commits = commitService.getCommits(getRepository(), branchName, null);
                 if (!commits.isEmpty()) {
@@ -162,10 +168,16 @@ public class CommitConsumer extends AbstractGitHubConsumer {
                 RepositoryCommit newCommit = newCommits.pop();
                 Exchange e = createExchange(true);
                 if (newCommit.getAuthor() != null) {
-                    e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_AUTHOR, newCommit.getAuthor().getName());
+                    e.getMessage()
+                            .setHeader(
+                                    GitHubConstants.GITHUB_COMMIT_AUTHOR,
+                                    newCommit.getAuthor().getName());
                 }
                 if (newCommit.getCommitter() != null) {
-                    e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_COMMITTER, newCommit.getCommitter().getName());
+                    e.getMessage()
+                            .setHeader(
+                                    GitHubConstants.GITHUB_COMMIT_COMMITTER,
+                                    newCommit.getCommitter().getName());
                 }
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_SHA, newCommit.getSha());
                 e.getMessage().setHeader(GitHubConstants.GITHUB_COMMIT_URL, newCommit.getUrl());
@@ -189,8 +201,10 @@ public class CommitConsumer extends AbstractGitHubConsumer {
         int total = exchanges.size();
         int answer = total;
         if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
-                    this.maxMessagesPerPoll, total);
+            LOG.debug(
+                    "Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    this.maxMessagesPerPoll,
+                    total);
             total = this.maxMessagesPerPoll;
         }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.transformer;
 
 import java.util.HashMap;
@@ -33,8 +34,11 @@ import org.apache.camel.spi.Transformer;
 public abstract class TransformerReifier<T> extends AbstractReifier {
 
     // for custom reifiers
-    private static final Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> TRANSFORMERS
-            = new HashMap<>(0);
+    private static final Map<
+                    Class<?>,
+                    BiFunction<
+                            CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>>
+            TRANSFORMERS = new HashMap<>(0);
 
     protected final T definition;
 
@@ -45,7 +49,8 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
 
     public static void registerReifier(
             Class<?> processorClass,
-            BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> creator) {
+            BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>
+                    creator) {
         if (TRANSFORMERS.isEmpty()) {
             ReifierStrategy.addReifierClearer(TransformerReifier::clearReifiers);
         }
@@ -58,8 +63,8 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
         TransformerReifier<? extends TransformerDefinition> answer = null;
         if (!TRANSFORMERS.isEmpty()) {
             // custom take precedence
-            BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> reifier
-                    = TRANSFORMERS.get(definition.getClass());
+            BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>
+                    reifier = TRANSFORMERS.get(definition.getClass());
             if (reifier != null) {
                 answer = reifier.apply(camelContext, definition);
             }
@@ -98,5 +103,4 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
     }
 
     protected abstract Transformer doCreateTransformer();
-
 }

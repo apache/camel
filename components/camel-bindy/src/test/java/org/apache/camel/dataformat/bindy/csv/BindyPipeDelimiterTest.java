@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -24,8 +27,6 @@ import org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyPipeDelimiterTest extends CamelTestSupport {
 
@@ -38,11 +39,13 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        MyData rec1 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        MyData rec2 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
+        MyData rec1 = (MyData)
+                mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        MyData rec2 = (MyData)
+                mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
 
-        //MyData rec1 = (MyData) map1.values().iterator().next();
-        //MyData rec2 = (MyData) map2.values().iterator().next();
+        // MyData rec1 = (MyData) map1.values().iterator().next();
+        // MyData rec2 = (MyData) map2.values().iterator().next();
 
         assertEquals("COL1", rec1.getCol1());
         assertEquals("COL2", rec1.getCol2());
@@ -89,16 +92,17 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:unmarshal")
-                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
+                        .unmarshal()
+                        .bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
                         .to("log:after.unmarshal")
                         .to("mock:result");
 
                 from("direct:marshal")
-                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
+                        .marshal()
+                        .bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
                         .to("log:after.marshal")
                         .to("mock:result");
             }
         };
     }
-
 }

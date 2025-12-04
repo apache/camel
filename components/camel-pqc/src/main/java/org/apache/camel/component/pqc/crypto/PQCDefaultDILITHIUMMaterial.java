@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,8 +39,8 @@ public class PQCDefaultDILITHIUMMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
-                    PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(), PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +48,8 @@ public class PQCDefaultDILITHIUMMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
-                PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(), PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
         kpGen.initialize(DilithiumParameterSpec.dilithium5);
         return kpGen;
     }

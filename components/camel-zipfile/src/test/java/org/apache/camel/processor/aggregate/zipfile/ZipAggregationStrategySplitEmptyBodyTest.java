@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.zipfile;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,9 +40,10 @@ public class ZipAggregationStrategySplitEmptyBodyTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setBody().constant("")
+                        .setBody()
+                        .constant("")
                         .split(body(), new ZipAggregationStrategy())
-                            .to("mock:split")
+                        .to("mock:split")
                         .end()
                         .to("mock:result");
             }

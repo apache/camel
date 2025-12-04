@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ReflectionHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RecipientListParallelTimeoutTest extends ContextTestSupport {
 
@@ -63,17 +64,25 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList(header("slip")).aggregationStrategy(new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
+                from("direct:start")
+                        .recipientList(header("slip"))
+                        .aggregationStrategy(new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
 
-                        String body = oldExchange.getIn().getBody(String.class);
-                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                        return oldExchange;
-                    }
-                }).parallelProcessing().timeout(500).id("foo").to("mock:result");
+                                String body = oldExchange.getIn().getBody(String.class);
+                                oldExchange
+                                        .getIn()
+                                        .setBody(body + newExchange.getIn().getBody(String.class));
+                                return oldExchange;
+                            }
+                        })
+                        .parallelProcessing()
+                        .timeout(500)
+                        .id("foo")
+                        .to("mock:result");
 
                 from("direct:a").delay(1000).setBody(constant("A"));
 

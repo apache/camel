@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.examples;
 
 import jakarta.persistence.Entity;
@@ -26,6 +27,7 @@ public class Address {
     @Id
     @GeneratedValue
     private Long id;
+
     private String addressLine1;
     private String addressLine2;
 
@@ -56,7 +58,7 @@ public class Address {
     @Override
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
-        return "Address[id: " + getId() + ", addressLine1: " + getAddressLine1() + ", addressLine2: " + getAddressLine2() + "]";
+        return "Address[id: " + getId() + ", addressLine1: " + getAddressLine1() + ", addressLine2: "
+                + getAddressLine2() + "]";
     }
-
 }

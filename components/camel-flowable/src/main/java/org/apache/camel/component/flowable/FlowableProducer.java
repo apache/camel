@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
 
 import org.apache.camel.Endpoint;
@@ -29,8 +30,10 @@ public class FlowableProducer extends DefaultProducer {
     protected CamelInboundChannelModel camelInboundChannel;
     protected EventRegistryEngineConfiguration eventRegistryEngineConfiguration;
 
-    public FlowableProducer(CamelInboundChannelModel camelInboundChannel, Endpoint endpoint,
-                            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
+    public FlowableProducer(
+            CamelInboundChannelModel camelInboundChannel,
+            Endpoint endpoint,
+            EventRegistryEngineConfiguration eventRegistryEngineConfiguration) {
 
         super(endpoint);
         this.camelInboundChannel = camelInboundChannel;

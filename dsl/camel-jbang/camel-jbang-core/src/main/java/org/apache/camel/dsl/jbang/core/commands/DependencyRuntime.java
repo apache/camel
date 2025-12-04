@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
@@ -31,22 +32,30 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "runtime", description = "Display Camel runtime and version for given Maven project",
-                     sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "runtime",
+        description = "Display Camel runtime and version for given Maven project",
+        sortOptions = false,
+        showDefaultValues = true)
 public class DependencyRuntime extends CamelCommand {
 
     @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")
     Path pomXml;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @CommandLine.Option(
+            names = {"--download"},
+            defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @CommandLine.Option(
+            names = {"--json"},
+            description = "Output in JSON Format")
     boolean jsonOutput;
 
     public DependencyRuntime(CamelJBangMain main) {
@@ -116,12 +125,12 @@ public class DependencyRuntime extends CamelCommand {
         }
 
         if (springBootVersion == null && camelSpringBootVersion != null) {
-            springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(mavenRepos(model, repositories),
-                    camelSpringBootVersion, download);
+            springBootVersion = CatalogLoader.resolveSpringBootVersionFromCamelSpringBoot(
+                    mavenRepos(model, repositories), camelSpringBootVersion, download);
         }
         if (camelSpringBootVersion != null && camelVersion == null) {
-            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(mavenRepos(model, repositories),
-                    camelSpringBootVersion, download);
+            camelVersion = CatalogLoader.resolveCamelVersionFromSpringBoot(
+                    mavenRepos(model, repositories), camelSpringBootVersion, download);
         }
         if (quarkusVersion != null && camelVersion == null) {
             String repos = mavenRepos(model, repositories);
@@ -143,9 +152,18 @@ public class DependencyRuntime extends CamelCommand {
 
         if (jsonOutput) {
             DependencyRuntimeDTO dto = new DependencyRuntimeDTO(
-                    runtime, camelVersion, camelSpringBootVersion, camelQuarkusVersion, springBootVersion, quarkusVersion,
-                    camelSpringBootBomGroupId, camelSpringBootBomArtifactId, quarkusBomGroupId, quarkusBomArtifactId,
-                    camelQuarkusBomGroupId, camelQuarkusBomArtifactId);
+                    runtime,
+                    camelVersion,
+                    camelSpringBootVersion,
+                    camelQuarkusVersion,
+                    springBootVersion,
+                    quarkusVersion,
+                    camelSpringBootBomGroupId,
+                    camelSpringBootBomArtifactId,
+                    quarkusBomGroupId,
+                    quarkusBomArtifactId,
+                    camelQuarkusBomGroupId,
+                    camelQuarkusBomArtifactId);
             printer().println(Jsoner.serialize(dto.toMap()));
         } else {
             printer().println("Runtime: " + runtime);

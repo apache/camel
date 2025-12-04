@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 
@@ -32,9 +36,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CxfNonWrapperTest extends CamelSpringTestSupport {
     int port1 = CXFTestSupport.getPort1();
 
@@ -47,10 +48,13 @@ public class CxfNonWrapperTest extends CamelSpringTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {
 
         URL wsdlURL = getClass().getClassLoader().getResource("person-non-wrapper.wsdl");
-        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
+        PersonService ss =
+                new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
         Person client = ss.getSoap();
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) client)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port1 + "/CxfNonWrapperTest/PersonService/");
 
         GetPerson request = new GetPerson();
@@ -67,5 +71,4 @@ public class CxfNonWrapperTest extends CamelSpringTestSupport {
             // We expect to get fault here
         }
     }
-
 }

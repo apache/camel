@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.Processor;
@@ -44,5 +45,4 @@ public class MyInjectionRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
         from(getStartEndpointUri()).process(getMyProcessor()).to("mock:result");
     }
-
 }

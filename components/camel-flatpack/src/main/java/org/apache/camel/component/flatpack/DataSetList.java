@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
 
 import java.math.BigDecimal;
@@ -304,8 +305,7 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     }
 
     @Override
-    public Date getDate(String column, SimpleDateFormat sdf, Supplier<Date> defaultSupplier)
-            throws ParseException {
+    public Date getDate(String column, SimpleDateFormat sdf, Supplier<Date> defaultSupplier) throws ParseException {
         return dataSet.getDate(column, sdf, defaultSupplier);
     }
 
@@ -344,5 +344,4 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
     public Optional<Record> getRecord() {
         return dataSet.getRecord();
     }
-
 }

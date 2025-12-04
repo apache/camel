@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
@@ -140,5 +141,4 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      * @param deleteOrphanLockFiles <tt>true</tt> to delete files, <tt>false</tt> to skip this check
      */
     void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles);
-
 }

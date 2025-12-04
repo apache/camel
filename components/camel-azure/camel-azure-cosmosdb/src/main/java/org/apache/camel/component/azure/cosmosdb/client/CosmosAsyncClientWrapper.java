@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb.client;
 
 import com.azure.cosmos.CosmosAsyncClient;
@@ -38,8 +39,7 @@ public class CosmosAsyncClientWrapper {
         this.client = client;
     }
 
-    public Mono<CosmosDatabaseResponse> createDatabaseIfNotExists(
-            CosmosDatabaseProperties databaseProperties) {
+    public Mono<CosmosDatabaseResponse> createDatabaseIfNotExists(CosmosDatabaseProperties databaseProperties) {
         return client.createDatabaseIfNotExists(databaseProperties);
     }
 
@@ -48,14 +48,12 @@ public class CosmosAsyncClientWrapper {
     }
 
     public Mono<CosmosDatabaseResponse> createDatabaseIfNotExists(
-            String id,
-            ThroughputProperties throughputProperties) {
+            String id, ThroughputProperties throughputProperties) {
         return client.createDatabaseIfNotExists(id, throughputProperties);
     }
 
     public Mono<CosmosDatabaseResponse> createDatabase(
-            CosmosDatabaseProperties databaseProperties,
-            CosmosDatabaseRequestOptions options) {
+            CosmosDatabaseProperties databaseProperties, CosmosDatabaseRequestOptions options) {
         return client.createDatabase(databaseProperties, options);
     }
 
@@ -75,14 +73,11 @@ public class CosmosAsyncClientWrapper {
     }
 
     public Mono<CosmosDatabaseResponse> createDatabase(
-            CosmosDatabaseProperties databaseProperties,
-            ThroughputProperties throughputProperties) {
+            CosmosDatabaseProperties databaseProperties, ThroughputProperties throughputProperties) {
         return client.createDatabase(databaseProperties, throughputProperties);
     }
 
-    public Mono<CosmosDatabaseResponse> createDatabase(
-            String id,
-            ThroughputProperties throughputProperties) {
+    public Mono<CosmosDatabaseResponse> createDatabase(String id, ThroughputProperties throughputProperties) {
         return client.createDatabase(id, throughputProperties);
     }
 
@@ -90,15 +85,12 @@ public class CosmosAsyncClientWrapper {
         return client.readAllDatabases();
     }
 
-    public CosmosPagedFlux<CosmosDatabaseProperties> queryDatabases(
-            String query,
-            CosmosQueryRequestOptions options) {
+    public CosmosPagedFlux<CosmosDatabaseProperties> queryDatabases(String query, CosmosQueryRequestOptions options) {
         return client.queryDatabases(query, options);
     }
 
     public CosmosPagedFlux<CosmosDatabaseProperties> queryDatabases(
-            SqlQuerySpec querySpec,
-            CosmosQueryRequestOptions options) {
+            SqlQuerySpec querySpec, CosmosQueryRequestOptions options) {
         return client.queryDatabases(querySpec, options);
     }
 

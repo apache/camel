@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -33,12 +40,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class SmppReplaceSmCommandTest {
 
@@ -79,10 +80,17 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
-                (String) isNull(), (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq((byte) 0),
-                eq("new short message body".getBytes()));
+        verify(session)
+                .replaceShortMessage(
+                        eq("1"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq("new short message body".getBytes()));
 
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
@@ -97,15 +105,24 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
         exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY,
-                new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
+        exchange.getIn()
+                .setHeader(
+                        SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setBody("new short message body");
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
-                eq("-300101001831100+"), eq("-300101003702200+"),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
+        verify(session)
+                .replaceShortMessage(
+                        eq("1"),
+                        eq(TypeOfNumber.NATIONAL),
+                        eq(NumberingPlanIndicator.NATIONAL),
+                        eq("1818"),
+                        eq("-300101001831100+"),
+                        eq("-300101003702200+"),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
+                        eq((byte) 0),
+                        eq("new short message body".getBytes()));
 
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
@@ -120,15 +137,24 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
         exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY,
-                new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
+        exchange.getIn()
+                .setHeader(
+                        SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
         exchange.getIn().setBody("new short message body");
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
-                eq("-300101001831100+"), eq("000003000000000R"),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)), eq((byte) 0), eq("new short message body".getBytes()));
+        verify(session)
+                .replaceShortMessage(
+                        eq("1"),
+                        eq(TypeOfNumber.NATIONAL),
+                        eq(NumberingPlanIndicator.NATIONAL),
+                        eq("1818"),
+                        eq("-300101001831100+"),
+                        eq("000003000000000R"),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE)),
+                        eq((byte) 0),
+                        eq("new short message body".getBytes()));
 
         assertEquals("1", exchange.getMessage().getHeader(SmppConstants.ID));
     }
@@ -136,8 +162,8 @@ public class SmppReplaceSmCommandTest {
     @Test
     public void bodyWithSmscDefaultDataCodingNarrowedToCharset() throws Exception {
         final int dataCoding = 0x00; /* SMSC-default */
-        byte[] body = { (byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF };
-        byte[] bodyNarrowed = { '?', 'A', 'B', '\0', '?', (byte) 0x7F, 'C', '?' };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
+        byte[] bodyNarrowed = {'?', 'A', 'B', '\0', '?', (byte) 0x7F, 'C', '?'};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
@@ -146,22 +172,24 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage((String) isNull(),
-                eq(TypeOfNumber.UNKNOWN),
-                eq(NumberingPlanIndicator.UNKNOWN),
-                eq("1616"),
-                (String) isNull(),
-                (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq((byte) 0),
-                eq(bodyNarrowed));
+        verify(session)
+                .replaceShortMessage(
+                        (String) isNull(),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq(bodyNarrowed));
     }
 
     @Test
     public void bodyWithLatin1DataCodingNarrowedToCharset() throws Exception {
         final int dataCoding = 0x03; /* ISO-8859-1 (Latin1) */
-        byte[] body = { (byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF };
-        byte[] bodyNarrowed = { '?', 'A', 'B', '\0', '?', (byte) 0x7F, 'C', '?' };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
+        byte[] bodyNarrowed = {'?', 'A', 'B', '\0', '?', (byte) 0x7F, 'C', '?'};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
@@ -170,21 +198,23 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage((String) isNull(),
-                eq(TypeOfNumber.UNKNOWN),
-                eq(NumberingPlanIndicator.UNKNOWN),
-                eq("1616"),
-                (String) isNull(),
-                (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq((byte) 0),
-                eq(bodyNarrowed));
+        verify(session)
+                .replaceShortMessage(
+                        (String) isNull(),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq(bodyNarrowed));
     }
 
     @Test
     public void bodyWithSMPP8bitDataCodingNotModified() throws Exception {
         final int dataCoding = 0x04; /* SMPP 8-bit */
-        byte[] body = { (byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
@@ -193,22 +223,23 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage((String) isNull(),
-                eq(TypeOfNumber.UNKNOWN),
-                eq(NumberingPlanIndicator.UNKNOWN),
-                eq("1616"),
-                (String) isNull(),
-                (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq((byte) 0),
-                eq(body));
-
+        verify(session)
+                .replaceShortMessage(
+                        (String) isNull(),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq(body));
     }
 
     @Test
     public void bodyWithGSM8bitDataCodingNotModified() throws Exception {
         final int dataCoding = 0xF7; /* GSM 8-bit class 3 */
-        byte[] body = { (byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
@@ -217,21 +248,23 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage((String) isNull(),
-                eq(TypeOfNumber.UNKNOWN),
-                eq(NumberingPlanIndicator.UNKNOWN),
-                eq("1616"),
-                (String) isNull(),
-                (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq((byte) 0),
-                eq(body));
+        verify(session)
+                .replaceShortMessage(
+                        (String) isNull(),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq(body));
     }
 
     @Test
     public void eightBitDataCodingOverridesDefaultAlphabet() throws Exception {
         final int binDataCoding = 0xF7; /* GSM 8-bit class 3 */
-        byte[] body = { (byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
 
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
@@ -241,26 +274,26 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage((String) isNull(),
-                eq(TypeOfNumber.UNKNOWN),
-                eq(NumberingPlanIndicator.UNKNOWN),
-                eq("1616"),
-                (String) isNull(),
-                (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq((byte) 0),
-                eq(body));
+        verify(session)
+                .replaceShortMessage(
+                        (String) isNull(),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq(body));
     }
 
     @Test
     public void latin1DataCodingOverridesEightBitAlphabet() throws Exception {
         final int latin1DataCoding = 0x03; /* ISO-8859-1 (Latin1) */
-        byte[] body = { (byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF };
-        byte[] bodyNarrowed = { '?', 'A', 'B', '\0', '?', (byte) 0x7F, 'C', '?' };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
+        byte[] bodyNarrowed = {'?', 'A', 'B', '\0', '?', (byte) 0x7F, 'C', '?'};
 
-        Exchange exchange = new DefaultExchange(
-                new DefaultCamelContext(),
-                ExchangePattern.InOut);
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
         exchange.getIn().setHeader(SmppConstants.ALPHABET, Alphabet.ALPHA_8_BIT.value());
         exchange.getIn().setHeader(SmppConstants.DATA_CODING, latin1DataCoding);
@@ -268,14 +301,16 @@ public class SmppReplaceSmCommandTest {
 
         command.execute(exchange);
 
-        verify(session).replaceShortMessage((String) isNull(),
-                eq(TypeOfNumber.UNKNOWN),
-                eq(NumberingPlanIndicator.UNKNOWN),
-                eq("1616"),
-                (String) isNull(),
-                (String) isNull(),
-                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
-                eq((byte) 0),
-                eq(bodyNarrowed));
+        verify(session)
+                .replaceShortMessage(
+                        (String) isNull(),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        (String) isNull(),
+                        (String) isNull(),
+                        eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)),
+                        eq((byte) 0),
+                        eq(bodyNarrowed));
     }
 }

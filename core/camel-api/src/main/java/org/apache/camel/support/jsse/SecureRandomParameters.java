@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.security.GeneralSecurityException;
@@ -43,14 +44,17 @@ public class SecureRandomParameters extends JsseParameters {
 
         SecureRandom secureRandom;
         if (this.getProvider() != null) {
-            secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()),
-                    this.parsePropertyValue(this.getProvider()));
+            secureRandom = SecureRandom.getInstance(
+                    this.parsePropertyValue(this.getAlgorithm()), this.parsePropertyValue(this.getProvider()));
         } else {
             secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()));
         }
 
-        LOG.debug("SecureRandom [{}] is using provider [{}] and algorithm [{}].",
-                secureRandom, secureRandom.getProvider(), secureRandom.getAlgorithm());
+        LOG.debug(
+                "SecureRandom [{}] is using provider [{}] and algorithm [{}].",
+                secureRandom,
+                secureRandom.getProvider(),
+                secureRandom.getAlgorithm());
 
         return secureRandom;
     }

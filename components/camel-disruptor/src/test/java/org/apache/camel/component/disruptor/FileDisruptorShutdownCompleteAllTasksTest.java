@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
@@ -22,9 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport {
 
@@ -48,9 +49,12 @@ public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(url).routeId("route1")
+                from(url)
+                        .routeId("route1")
                         // let it complete all tasks during shutdown
-                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").delay(1000)
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .to("log:delay")
+                        .delay(1000)
                         .to("disruptor:foo?size=8");
 
                 from("disruptor:foo?size=8").routeId("route2").to("log:bar").to("mock:bar");

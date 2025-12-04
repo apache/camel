@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
 
 import org.apache.camel.AsyncCallback;
@@ -67,5 +68,4 @@ public class CamelEventHandler {
         exchange.getIn().setBody(event);
         return exchange;
     }
-
 }

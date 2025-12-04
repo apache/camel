@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -27,7 +28,8 @@ import org.apache.camel.spi.Language;
  */
 @XmlTransient
 @Deprecated(since = "3.17.0")
-public class DeadLetterChannelConfiguration extends DefaultErrorHandlerConfiguration implements DeadLetterChannelProperties {
+public class DeadLetterChannelConfiguration extends DefaultErrorHandlerConfiguration
+        implements DeadLetterChannelProperties {
 
     // has no additional configurations
 
@@ -43,5 +45,4 @@ public class DeadLetterChannelConfiguration extends DefaultErrorHandlerConfigura
 
         return answer;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 import org.apache.camel.Exchange;
@@ -32,6 +33,5 @@ public abstract class HazelcastDefaultProducer extends DefaultProducer {
     protected HazelcastOperation lookupOperation(Exchange exchange) {
 
         return HazelcastComponentHelper.lookupOperation(exchange, getEndpoint().getDefaultOperation());
-
     }
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -28,11 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.when;
 
 public class AWS2S3StreamUploadProducerTimestampTest {
 
@@ -113,8 +114,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithLong() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn(Exchange.MESSAGE_TIMESTAMP);
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -132,8 +133,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithDate() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn(Exchange.MESSAGE_TIMESTAMP);
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -152,8 +153,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithString() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn(Exchange.MESSAGE_TIMESTAMP);
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -171,8 +172,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithInvalidString() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn(Exchange.MESSAGE_TIMESTAMP);
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -188,8 +189,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithMissingHeader() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn(Exchange.MESSAGE_TIMESTAMP);
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -203,8 +204,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithNullHeader() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn(Exchange.MESSAGE_TIMESTAMP);
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);
@@ -218,8 +219,8 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     public void testExtractTimestampFromExchangeWithCustomHeaderName() throws Exception {
         when(configuration.getTimestampHeaderName()).thenReturn("MyCustomTimestamp");
 
-        Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "extractTimestampFromExchange", Exchange.class);
+        Method method =
+                AWS2S3StreamUploadProducer.class.getDeclaredMethod("extractTimestampFromExchange", Exchange.class);
         method.setAccessible(true);
 
         Exchange exchange = new DefaultExchange(camelContext);

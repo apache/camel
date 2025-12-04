@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 import java.util.List;
@@ -48,9 +52,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CxfPayLoadSoapHeaderSpringTest extends CamelSpringTestSupport {
     static int port1 = CXFTestSupport.getPort1();
     static int port2 = CXFTestSupport.getPort2();
@@ -58,8 +59,7 @@ public class CxfPayLoadSoapHeaderSpringTest extends CamelSpringTestSupport {
 
     protected void start(String n) {
         Object implementor = new PizzaImpl();
-        String address = "http://localhost:" + port2 + "/" + n
-                         + "/new_pizza_service/services/PizzaService";
+        String address = "http://localhost:" + port2 + "/" + n + "/new_pizza_service/services/PizzaService";
         Endpoint.publish(address, implementor);
     }
 
@@ -86,34 +86,40 @@ public class CxfPayLoadSoapHeaderSpringTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: payload
-                from(getRouterEndpointURI()).process(new Processor() {
-                    @SuppressWarnings("unchecked")
-                    public void process(Exchange exchange) throws Exception {
-                        CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Source> elements = payload.getBodySources();
-                        assertNotNull(elements, "We should get the elements here");
-                        assertEquals(1, elements.size(), "Get the wrong elements size");
+                from(getRouterEndpointURI())
+                        .process(new Processor() {
+                            @SuppressWarnings("unchecked")
+                            public void process(Exchange exchange) throws Exception {
+                                CxfPayload<SoapHeader> payload =
+                                        exchange.getIn().getBody(CxfPayload.class);
+                                List<Source> elements = payload.getBodySources();
+                                assertNotNull(elements, "We should get the elements here");
+                                assertEquals(1, elements.size(), "Get the wrong elements size");
 
-                        Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        elements.set(0, new DOMSource(el));
-                        assertEquals("http://camel.apache.org/pizza/types",
-                                el.getNamespaceURI(), "Get the wrong namespace URI");
+                                Element el = new XmlConverter().toDOMElement(elements.get(0));
+                                elements.set(0, new DOMSource(el));
+                                assertEquals(
+                                        "http://camel.apache.org/pizza/types",
+                                        el.getNamespaceURI(),
+                                        "Get the wrong namespace URI");
 
-                        List<SoapHeader> headers = payload.getHeaders();
-                        assertNotNull(headers, "We should get the headers here");
-                        assertEquals(1, headers.size(), "Get the wrong headers size");
-                        assertEquals("http://camel.apache.org/pizza/types",
-                                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
-                        // alternatively you can also get the SOAP header via the camel header:
-                        headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
-                        assertNotNull(headers, "We should get the headers here");
-                        assertEquals(1, headers.size(), "Get the wrong headers size");
-                        assertEquals("http://camel.apache.org/pizza/types",
-                                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
-
-                    }
-
-                })
+                                List<SoapHeader> headers = payload.getHeaders();
+                                assertNotNull(headers, "We should get the headers here");
+                                assertEquals(1, headers.size(), "Get the wrong headers size");
+                                assertEquals(
+                                        "http://camel.apache.org/pizza/types",
+                                        ((Element) (headers.get(0).getObject())).getNamespaceURI(),
+                                        "Get the wrong namespace URI");
+                                // alternatively you can also get the SOAP header via the camel header:
+                                headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
+                                assertNotNull(headers, "We should get the headers here");
+                                assertEquals(1, headers.size(), "Get the wrong headers size");
+                                assertEquals(
+                                        "http://camel.apache.org/pizza/types",
+                                        ((Element) (headers.get(0).getObject())).getNamespaceURI(),
+                                        "Get the wrong namespace URI");
+                            }
+                        })
                         .to(getServiceEndpointURI());
                 // END SNIPPET: payload
             }
@@ -146,11 +152,12 @@ public class CxfPayLoadSoapHeaderSpringTest extends CamelSpringTestSupport {
         assertNotNull(service, "Service is null");
 
         Pizza pizza = service.getPizzaPort();
-        ((BindingProvider) pizza).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) pizza)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port1 + "/" + getClass().getSimpleName()
-                                                                + "/pizza_service/services/PizzaService");
+                                + "/pizza_service/services/PizzaService");
         return pizza;
     }
-
 }

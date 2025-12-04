@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -32,15 +33,21 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "groovy", description = "Groovy Sources used of Camel integrations", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "groovy",
+        description = "Groovy Sources used of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListGroovy extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = CamelProcessorStatus.PidNameCompletionCandidates.class,
-                        description = "Sort by pid or name", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = CamelProcessorStatus.PidNameCompletionCandidates.class,
+            description = "Sort by pid or name",
+            defaultValue = "pid")
     String sort;
 
     public ListGroovy(CamelJBangMain main) {
@@ -52,58 +59,82 @@ public class ListGroovy extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
 
-                        JsonObject jo = (JsonObject) root.get("groovy");
-                        if (jo != null) {
-                            jo = (JsonObject) jo.get("compiler");
-                        }
-                        if (jo != null) {
-                            row = row.copy();
-                            row.compiledCounter = jo.getInteger("compiledCounter");
-                            row.preloaddCounter = jo.getInteger("preloadedCounter");
-                            row.classesSize = jo.getInteger("classesSize");
-                            row.time = jo.getLong("compiledTime");
-                            row.last = jo.getLong("lastCompilationTimestamp");
-                            row.compiledClasses.clear();
-                            JsonArray arr = jo.getCollection("classes");
-                            for (int i = 0; arr != null && i < arr.size(); i++) {
-                                row.compiledClasses.add(arr.getString(i));
-                            }
-                            rows.add(row);
-                        }
+                JsonObject jo = (JsonObject) root.get("groovy");
+                if (jo != null) {
+                    jo = (JsonObject) jo.get("compiler");
+                }
+                if (jo != null) {
+                    row = row.copy();
+                    row.compiledCounter = jo.getInteger("compiledCounter");
+                    row.preloaddCounter = jo.getInteger("preloadedCounter");
+                    row.classesSize = jo.getInteger("classesSize");
+                    row.time = jo.getLong("compiledTime");
+                    row.last = jo.getLong("lastCompilationTimestamp");
+                    row.compiledClasses.clear();
+                    JsonArray arr = jo.getCollection("classes");
+                    for (int i = 0; arr != null && i < arr.size(); i++) {
+                        row.compiledClasses.add(arr.getString(i));
                     }
-                });
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("PRELOAD").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.preloaddCounter),
-                    new Column().header("COMPILE").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.compiledCounter),
-                    new Column().header("TIME").headerAlign(HorizontalAlign.CENTER).with(this::getTime),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
-                    new Column().header("CLASSES").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(60, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getClasses))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("PRELOAD")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> "" + r.preloaddCounter),
+                                    new Column()
+                                            .header("COMPILE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> "" + r.compiledCounter),
+                                    new Column()
+                                            .header("TIME")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getTime),
+                                    new Column()
+                                            .header("SINCE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getLast),
+                                    new Column()
+                                            .header("CLASSES")
+                                            .headerAlign(HorizontalAlign.LEFT)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(60, OverflowBehaviour.ELLIPSIS_LEFT)
+                                            .with(this::getClasses))));
         }
 
         return 0;
@@ -162,5 +193,4 @@ public class ListGroovy extends ProcessWatchCommand {
             }
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch;
 
 import org.apache.camel.Category;
@@ -29,9 +30,14 @@ import org.opensearch.client.RestClient;
 /**
  * Send requests to OpenSearch via Java Client API.
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "opensearch", title = "OpenSearch",
-             syntax = "opensearch:clusterName", producerOnly = true,
-             category = { Category.SEARCH, Category.MONITORING }, headersClass = OpensearchConstants.class)
+@UriEndpoint(
+        firstVersion = "4.0.0",
+        scheme = "opensearch",
+        title = "OpenSearch",
+        syntax = "opensearch:clusterName",
+        producerOnly = true,
+        category = {Category.SEARCH, Category.MONITORING},
+        headersClass = OpensearchConstants.class)
 public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -39,8 +45,8 @@ public class OpensearchEndpoint extends DefaultEndpoint implements EndpointServi
 
     private final RestClient client;
 
-    public OpensearchEndpoint(String uri, OpensearchComponent component, OpensearchConfiguration config,
-                              RestClient client) {
+    public OpensearchEndpoint(
+            String uri, OpensearchComponent component, OpensearchConfiguration config, RestClient client) {
         super(uri, component);
         this.configuration = config;
         this.client = client;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.yaml.dsl.kamelet;
 
 import org.apache.camel.Endpoint;
@@ -43,7 +44,10 @@ public class AwsRawSecretTest extends CamelTestSupport {
         context.setRouteController(new DefaultSupervisingRouteController());
         context.start();
 
-        Endpoint e = context.getEndpoints().stream().filter(p -> p instanceof AWS2S3Endpoint).findFirst().orElse(null);
+        Endpoint e = context.getEndpoints().stream()
+                .filter(p -> p instanceof AWS2S3Endpoint)
+                .findFirst()
+                .orElse(null);
         AWS2S3Endpoint a = Assertions.assertInstanceOf(AWS2S3Endpoint.class, e);
         Assertions.assertEquals(KEY_1, a.getConfiguration().getAccessKey());
         Assertions.assertEquals(KEY_2, a.getConfiguration().getSecretKey());
@@ -58,7 +62,8 @@ public class AwsRawSecretTest extends CamelTestSupport {
                 context.getPropertiesComponent().addInitialProperty("aws.secretAccessKey", KEY_2);
 
                 from("kamelet:my-aws-s3-source?accessKey={{aws.accessKeyId}}&bucketNameOrArn=mybucket&region=eu-south-2&autoCreateBucket=false&cheeseKey={{aws.secretAccessKey}}")
-                        .autoStartup(false).routeId("myroute")
+                        .autoStartup(false)
+                        .routeId("myroute")
                         .to("mock:result");
             }
         };

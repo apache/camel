@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal;
 
 public enum OperationName {
@@ -23,18 +24,15 @@ public enum OperationName {
     GET_RESOURCES("getResources"),
     GET_GLOBAL_OBJECTS("getGlobalObjects"),
     GET_BASIC_INFO("getBasicInfo"),
-    GET_DESCRIPTION(
-                    "getDescription"),
+    GET_DESCRIPTION("getDescription"),
     GET_SOBJECT("getSObject"),
     CREATE_SOBJECT("createSObject"),
     UPDATE_SOBJECT("updateSObject"),
     DELETE_SOBJECT("deleteSObject"),
-    GET_SOBJECT_WITH_ID(
-                        "getSObjectWithId"),
+    GET_SOBJECT_WITH_ID("getSObjectWithId"),
     UPSERT_SOBJECT("upsertSObject"),
     DELETE_SOBJECT_WITH_ID("deleteSObjectWithId"),
-    GET_BLOB_FIELD(
-                   "getBlobField"),
+    GET_BLOB_FIELD("getBlobField"),
     QUERY("query"),
     QUERY_MORE("queryMore"),
     QUERY_ALL("queryAll"),
@@ -50,10 +48,8 @@ public enum OperationName {
     ABORT_JOB("abortJob"),
     CREATE_BATCH("createBatch"),
     GET_BATCH("getBatch"),
-    GET_ALL_BATCHES(
-                    "getAllBatches"),
-    GET_REQUEST(
-                "getRequest"),
+    GET_ALL_BATCHES("getAllBatches"),
+    GET_REQUEST("getRequest"),
     GET_RESULTS("getResults"),
     CREATE_BATCH_QUERY("createBatchQuery"),
     GET_QUERY_RESULT_IDS("getQueryResultIds"),
@@ -81,8 +77,7 @@ public enum OperationName {
     GET_RECENT_REPORTS("getRecentReports"),
     GET_REPORT_DESCRIPTION("getReportDescription"),
     EXECUTE_SYNCREPORT("executeSyncReport"),
-    EXECUTE_ASYNCREPORT(
-                        "executeAsyncReport"),
+    EXECUTE_ASYNCREPORT("executeAsyncReport"),
     GET_REPORT_INSTANCES("getReportInstances"),
     GET_REPORT_RESULTS("getReportResults"),
 

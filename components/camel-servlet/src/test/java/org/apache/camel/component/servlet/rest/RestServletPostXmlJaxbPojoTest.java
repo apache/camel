@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestServletPostXmlJaxbPojoTest extends ServletCamelRouterTestSupport {
 
@@ -37,8 +38,7 @@ public class RestServletPostXmlJaxbPojoTest extends ServletCamelRouterTestSuppor
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/users/new",
-                new ByteArrayInputStream(body.getBytes()), "application/json");
+                contextUrl + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
@@ -59,8 +59,7 @@ public class RestServletPostXmlJaxbPojoTest extends ServletCamelRouterTestSuppor
 
         String body = "<user name=\"Donald Duck\" id=\"456\"></user>";
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/users/new",
-                new ByteArrayInputStream(body.getBytes()), "foo");
+                contextUrl + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "foo");
         WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
@@ -81,11 +80,8 @@ public class RestServletPostXmlJaxbPojoTest extends ServletCamelRouterTestSuppor
                 restConfiguration().component("servlet").bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .post("new").type(UserJaxbPojo.class)
-                        .to("mock:input");
+                rest("/users/").post("new").type(UserJaxbPojo.class).to("mock:input");
             }
         };
     }
-
 }

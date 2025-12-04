@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.beans;
 
 import org.apache.camel.BindToRegistry;
@@ -30,5 +31,4 @@ public class GreeterMessage {
     public void setMsg(String msg) {
         this.msg = msg;
     }
-
 }

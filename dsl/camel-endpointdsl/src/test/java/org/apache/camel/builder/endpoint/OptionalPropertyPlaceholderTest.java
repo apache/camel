@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
 
@@ -35,7 +36,11 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).to(mock("result").advanced().retainFirst("{{?maxKeep}}").failFast(false));
+                from(direct("start"))
+                        .to(mock("result")
+                                .advanced()
+                                .retainFirst("{{?maxKeep}}")
+                                .failFast(false));
             }
         });
         context.start();
@@ -59,7 +64,11 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).to(mock("result").advanced().retainFirst("{{?maxKeep}}").failFast(false));
+                from(direct("start"))
+                        .to(mock("result")
+                                .advanced()
+                                .retainFirst("{{?maxKeep}}")
+                                .failFast(false));
             }
         });
         context.start();
@@ -71,7 +80,11 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        assertEquals(1, getMockEndpoint("mock:result?retainFirst=1").getReceivedExchanges().size());
+        assertEquals(
+                1,
+                getMockEndpoint("mock:result?retainFirst=1")
+                        .getReceivedExchanges()
+                        .size());
     }
 
     @Test
@@ -117,5 +130,4 @@ public class OptionalPropertyPlaceholderTest extends BaseEndpointDslTest {
 
         assertEquals(2, getMockEndpoint("mock:result").getReceivedExchanges().size());
     }
-
 }

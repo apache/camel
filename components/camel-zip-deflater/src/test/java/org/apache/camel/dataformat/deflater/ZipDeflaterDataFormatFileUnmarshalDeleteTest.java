@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.deflater;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSupport {
 
@@ -59,11 +60,13 @@ public class ZipDeflaterDataFormatFileUnmarshalDeleteTest extends CamelTestSuppo
             @Override
             public void configure() {
                 from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
-                        .marshal().zipDeflater()
+                        .marshal()
+                        .zipDeflater()
                         .to("file:target/data/zip/out?fileName=${file:name}.zip");
 
                 from("file:target/data/zip/out?initialDelay=0&delay=10&delete=true")
-                        .unmarshal().zipDeflater()
+                        .unmarshal()
+                        .zipDeflater()
                         .to("mock:result");
             }
         };

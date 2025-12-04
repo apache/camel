@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,8 +34,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 public class BonitaAuthFilterAlreadyConnectedTest {
 
     @Mock
@@ -44,7 +45,6 @@ public class BonitaAuthFilterAlreadyConnectedTest {
         Map<String, Cookie> resultCookies = new HashMap<>();
         resultCookies.put("JSESSIONID", new Cookie("JSESSIONID", "something"));
         Mockito.when(requestContext.getCookies()).thenReturn(resultCookies);
-
     }
 
     @Test

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collections;
@@ -156,7 +157,8 @@ public class ReloadDevConsole extends AbstractDevConsole {
 
     protected ExecutorService getOrCreateReloadTask() {
         if (reloadThread == null) {
-            reloadThread = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "ReloadOnDemand");
+            reloadThread =
+                    getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "ReloadOnDemand");
         }
         return reloadThread;
     }

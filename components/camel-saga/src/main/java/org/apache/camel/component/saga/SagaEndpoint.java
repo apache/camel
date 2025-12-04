@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.saga;
 
 import org.apache.camel.Category;
@@ -29,8 +30,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Execute custom actions within a route using the Saga EIP.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true,
-             category = { Category.CLUSTERING }, headersClass = SagaConstants.class)
+@UriEndpoint(
+        firstVersion = "2.21.0",
+        scheme = "saga",
+        title = "Saga",
+        syntax = "saga:action",
+        producerOnly = true,
+        category = {Category.CLUSTERING},
+        headersClass = SagaConstants.class)
 public class SagaEndpoint extends DefaultEndpoint {
 
     public enum SagaEndpointAction {
@@ -44,7 +51,8 @@ public class SagaEndpoint extends DefaultEndpoint {
 
     public SagaEndpoint(String endpointUri, SagaComponent component, String action) {
         super(endpointUri, component);
-        this.action = SagaEndpointAction.valueOf(ObjectHelper.notNull(action, "action").toUpperCase());
+        this.action = SagaEndpointAction.valueOf(
+                ObjectHelper.notNull(action, "action").toUpperCase());
     }
 
     @Override
@@ -62,5 +70,4 @@ public class SagaEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not allowed for saga endpoint");
     }
-
 }

@@ -33,8 +33,8 @@ public class X2JOutputFileTest extends CamelTestSupport {
         mock.expectedBodiesReceived("{\"hello\":\"world!\"}");
         mock.message(0).body().isInstanceOf(File.class);
 
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
-                "target/X2JOutputFileTest.json");
+        template.sendBodyAndHeader(
+                "direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/X2JOutputFileTest.json");
 
         MockEndpoint.assertIsSatisfied(context);
     }

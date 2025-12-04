@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,44 +36,42 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-
 public class BeanIODataFormatComplexTest extends CamelTestSupport {
 
     private static Locale defaultLocale;
 
     private final String recordData = "0001917A112345.678900           " + Constants.LS
-                                      + "0002374A159303290.020           " + Constants.LS
-                                      + "0015219B1SECURITY ONE           " + Constants.LS
-                                      + "END OF SECTION 1                " + Constants.LS
-                                      + "0076647A10.0000000001           " + Constants.LS
-                                      + "0135515A1999999999999           " + Constants.LS
-                                      + "2000815B1SECURITY TWO           " + Constants.LS
-                                      + "2207122B1SECURITY THR           " + Constants.LS
-                                      + "END OF FILE 000007              " + Constants.LS;
+            + "0002374A159303290.020           " + Constants.LS
+            + "0015219B1SECURITY ONE           " + Constants.LS
+            + "END OF SECTION 1                " + Constants.LS
+            + "0076647A10.0000000001           " + Constants.LS
+            + "0135515A1999999999999           " + Constants.LS
+            + "2000815B1SECURITY TWO           " + Constants.LS
+            + "2207122B1SECURITY THR           " + Constants.LS
+            + "END OF FILE 000007              " + Constants.LS;
 
     private final String data = "0000000A1030808PRICE            " + Constants.LS
-                                + "0000000B1030808SECURITY         " + Constants.LS
-                                + "HEADER END                      " + Constants.LS
-                                + recordData;
+            + "0000000B1030808SECURITY         " + Constants.LS
+            + "HEADER END                      " + Constants.LS
+            + recordData;
 
     private final String unExpectedData = "0000000A1030808PRICE            " + Constants.LS
-                                          + "0000000B1030808SECURITY         " + Constants.LS
-                                          + "0000000B1030808SECURITY         " + Constants.LS
-                                          + "HEADER END                      " + Constants.LS
-                                          + recordData;
+            + "0000000B1030808SECURITY         " + Constants.LS
+            + "0000000B1030808SECURITY         " + Constants.LS
+            + "HEADER END                      " + Constants.LS
+            + recordData;
 
     private final String invalidData = "0000000A1030808PRICE            " + Constants.LS
-                                       + "0000000B1030808SECURITY         EXTRA DATA" + Constants.LS
-                                       + "0000000B1030808SECURITY         " + Constants.LS
-                                       + "HEADER END                      " + Constants.LS
-                                       + recordData;
+            + "0000000B1030808SECURITY         EXTRA DATA" + Constants.LS
+            + "0000000B1030808SECURITY         " + Constants.LS
+            + "HEADER END                      " + Constants.LS
+            + recordData;
 
     private final String unidentifiedData = "0000000A1030808PRICE            " + Constants.LS
-                                            + "0000000C1030808SECURITY         " + Constants.LS
-                                            + "0000000B1030808SECURITY         " + Constants.LS
-                                            + "HEADER END                      " + Constants.LS
-                                            + recordData;
+            + "0000000C1030808SECURITY         " + Constants.LS
+            + "0000000B1030808SECURITY         " + Constants.LS
+            + "HEADER END                      " + Constants.LS
+            + recordData;
 
     @BeforeAll
     public static void setLocale() {
@@ -229,29 +230,37 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                BeanIODataFormat format
-                        = new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
+                BeanIODataFormat format =
+                        new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
 
-                BeanIODataFormat forgivingFormat
-                        = new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
+                BeanIODataFormat forgivingFormat =
+                        new BeanIODataFormat("org/apache/camel/dataformat/beanio/mappings.xml", "securityData");
                 forgivingFormat.setIgnoreInvalidRecords(true);
                 forgivingFormat.setIgnoreUnexpectedRecords(true);
                 forgivingFormat.setIgnoreUnidentifiedRecords(true);
 
-                from("direct:unmarshal").unmarshal(format).split(simple("${body}")).to("mock:beanio-unmarshal");
+                from("direct:unmarshal")
+                        .unmarshal(format)
+                        .split(simple("${body}"))
+                        .to("mock:beanio-unmarshal");
 
-                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("${body}"))
+                from("direct:unmarshal-forgiving")
+                        .unmarshal(forgivingFormat)
+                        .split(simple("${body}"))
                         .to("mock:beanio-unmarshal");
 
                 from("direct:marshal").marshal(format).to("mock:beanio-marshal");
 
-                var df = dataFormat().beanio()
+                var df = dataFormat()
+                        .beanio()
                         .mapping("org/apache/camel/dataformat/beanio/mappings.xml")
                         .streamName("securityData")
                         .encoding("UTF-8")
                         .end();
                 from("direct:unmarshalEncoding")
-                        .unmarshal(df).split(simple("${body}")).to("mock:beanio-unmarshal");
+                        .unmarshal(df)
+                        .split(simple("${body}"))
+                        .to("mock:beanio-unmarshal");
             }
         };
     }

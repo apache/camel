@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
 
 @Timeout(30)
 public class JmsJettyAsyncTest extends CamelTestSupport {
@@ -63,9 +64,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
                         .to("http://0.0.0.0:" + port + "/myapp")
                         .to("log:result?groupSize=10", "mock:result");
 
-                from("jetty:http://0.0.0.0:" + port + "/myapp")
-                        .delay(10)
-                        .transform(body().prepend("Bye "));
+                from("jetty:http://0.0.0.0:" + port + "/myapp").delay(10).transform(body().prepend("Bye "));
             }
         };
     }

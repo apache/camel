@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.File;
@@ -67,8 +68,8 @@ import org.apache.camel.util.StringHelper;
  */
 public final class ExchangeHelper {
 
-    private static final String DEFAULT_CHARSET_NAME
-            = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    private static final String DEFAULT_CHARSET_NAME =
+            ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
     private static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_NAME);
 
     private static Exchange DUMMY;
@@ -76,8 +77,7 @@ public final class ExchangeHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ExchangeHelper() {
-    }
+    private ExchangeHelper() {}
 
     /**
      * Gets a singleton dummy exchange used for special purposes only.
@@ -244,7 +244,8 @@ public final class ExchangeHelper {
      * @throws TypeConversionException is thrown if error during type conversion
      * @throws NoSuchHeaderException   is thrown if no headers exists
      */
-    public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type) throws TypeConversionException {
+    public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type)
+            throws TypeConversionException {
         T answer = exchange.getIn().getHeader(name, type);
         if (answer == null) {
             answer = exchange.getProperty(name, type);
@@ -765,7 +766,8 @@ public final class ExchangeHelper {
      * @throws CamelExecutionException               is thrown if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type)
+    public static <T> T extractFutureBody(
+            CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type)
             throws TimeoutException {
         try {
             if (timeout > 0) {
@@ -837,7 +839,8 @@ public final class ExchangeHelper {
         final Object history = source.getProperty(ExchangePropertyKey.MESSAGE_HISTORY);
         if (history != null) {
             // use thread-safe list as message history may be accessed concurrently
-            target.setProperty(ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>((List<MessageHistory>) history));
+            target.setProperty(
+                    ExchangePropertyKey.MESSAGE_HISTORY, new CopyOnWriteArrayList<>((List<MessageHistory>) history));
         }
     }
 
@@ -1038,8 +1041,7 @@ public final class ExchangeHelper {
             String charset = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             if (value instanceof Path path) {
                 try {
-                    scanner = new Scanner(
-                            Files.newByteChannel(path, StandardOpenOption.READ), charset, delimiter);
+                    scanner = new Scanner(Files.newByteChannel(path, StandardOpenOption.READ), charset, delimiter);
                 } catch (IOException e) {
                     throw new RuntimeCamelException(e);
                 }
@@ -1219,10 +1221,12 @@ public final class ExchangeHelper {
             return false;
         }
         // same logic as in Pipeline/PipelineHelper
-        boolean stop
-                = exchange.isRouteStop() || exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()
-                        || exchange.getExchangeExtension().isErrorHandlerHandledSet()
-                                && exchange.getExchangeExtension().isErrorHandlerHandled();
+        boolean stop = exchange.isRouteStop()
+                || exchange.isFailed()
+                || exchange.isRollbackOnly()
+                || exchange.isRollbackOnlyLast()
+                || exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                        && exchange.getExchangeExtension().isErrorHandlerHandled();
         if (stop) {
             return false;
         }
@@ -1258,8 +1262,8 @@ public final class ExchangeHelper {
      * @throws IllegalArgumentException is thrown if the repository does not eists
      */
     public static VariableRepository getVariableRepository(Exchange exchange, String id) {
-        VariableRepositoryFactory factory
-                = exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
+        VariableRepositoryFactory factory =
+                exchange.getContext().getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class);
         VariableRepository repo = factory.getVariableRepository(id);
         if (repo == null) {
             throw new IllegalArgumentException("VariableRepository with id: " + id + " does not exist");
@@ -1309,5 +1313,4 @@ public final class ExchangeHelper {
         }
         return exchange.getMessage().getBody(type);
     }
-
 }

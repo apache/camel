@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import org.apache.camel.Component;
@@ -28,13 +29,14 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
 
     @UriParam(label = "producer", defaultValue = "SIMPLE")
     private ExecutorType executorType;
+
     @UriParam(label = "producer")
     private String inputHeader;
+
     @UriParam(label = "producer")
     private String outputHeader;
 
-    protected BaseMyBatisEndpoint() {
-    }
+    protected BaseMyBatisEndpoint() {}
 
     protected BaseMyBatisEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -105,5 +107,4 @@ public abstract class BaseMyBatisEndpoint extends DefaultPollingEndpoint {
     public void setOutputHeader(String outputHeader) {
         this.outputHeader = outputHeader;
     }
-
 }

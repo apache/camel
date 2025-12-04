@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,22 +41,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveFilesIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveFilesApiMethod.class)
+            .getName();
 
     @Test
     public void testCopy() {
@@ -123,13 +126,13 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
     @Test
     public void testList() {
         // upload a test file
-        //File testFile = uploadTestFile();
+        // File testFile = uploadTestFile();
 
         FileList result = requestBody("direct://LIST", "{}");
         assertNotNull(result, "list result");
         assertTrue(result.getFiles().size() >= 1);
 
-        //File testFile2 = uploadTestFile();
+        // File testFile2 = uploadTestFile();
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("CamelGoogleDrive.maxResults", 1);
@@ -198,7 +201,6 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
 
         assertNotNull(requestBody("direct://TRASH", fileId), "trash result");
         assertNotNull(requestBody("direct://UNTRASH", fileId), "untrash result");
-
     }
 
     @Test
@@ -260,7 +262,8 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is com.google.api.services.drive.model.Channel
         headers.put("CamelGoogleDrive.contentChannel", null);
 
-        final com.google.api.services.drive.Drive.Files.Watch result = requestBodyAndHeaders("direct://WATCH", null, headers);
+        final com.google.api.services.drive.Drive.Files.Watch result =
+                requestBodyAndHeaders("direct://WATCH", null, headers);
 
         assertNotNull(result, "watch result");
         LOG.debug("watch: {}", result);
@@ -271,8 +274,7 @@ public class DriveFilesIT extends AbstractGoogleDriveTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for list
-                from("direct://LIST")
-                        .to("google-drive://" + PATH_PREFIX + "/list");
+                from("direct://LIST").to("google-drive://" + PATH_PREFIX + "/list");
             }
         };
     }

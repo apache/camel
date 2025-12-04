@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Properties;
@@ -104,12 +105,19 @@ class ChoiceInPreconditionModeTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute")
-                    .choice().precondition().id("mySwitch")
-                        .when(simple("{{?red}}")).to("mock:red").id("myRed")
-                        .when(simple("{{?blue}}")).to("mock:blue").id("myBlue")
-                    .end()
-                    .to("mock:end");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .choice()
+                        .precondition()
+                        .id("mySwitch")
+                        .when(simple("{{?red}}"))
+                        .to("mock:red")
+                        .id("myRed")
+                        .when(simple("{{?blue}}"))
+                        .to("mock:blue")
+                        .id("myBlue")
+                        .end()
+                        .to("mock:end");
             }
         });
         context.start();
@@ -131,13 +139,21 @@ class ChoiceInPreconditionModeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("myRoute")
-                        .choice().precondition(true).id("mySwitch")
-                        .when(simple("{{red}}")).to("mock:red").id("myRed")
-                        .when(simple("{{blue}}")).to("mock:blue").id("myBlue")
-                        .otherwise().to("mock:yellow").id("myYellow");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .choice()
+                        .precondition(true)
+                        .id("mySwitch")
+                        .when(simple("{{red}}"))
+                        .to("mock:red")
+                        .id("myRed")
+                        .when(simple("{{blue}}"))
+                        .to("mock:blue")
+                        .id("myBlue")
+                        .otherwise()
+                        .to("mock:yellow")
+                        .id("myYellow");
             }
         };
     }
-
 }

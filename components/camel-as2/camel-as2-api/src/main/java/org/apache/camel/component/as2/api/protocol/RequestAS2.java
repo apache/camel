@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
@@ -42,7 +43,8 @@ public class RequestAS2 implements HttpRequestInterceptor {
     }
 
     @Override
-    public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+    public void process(HttpRequest request, EntityDetails entity, HttpContext context)
+            throws HttpException, IOException {
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
@@ -88,5 +90,4 @@ public class RequestAS2 implements HttpRequestInterceptor {
         // SHOULD be set to aid in message reconciliation
         request.addHeader(AS2Header.MESSAGE_ID, AS2Utils.createMessageId(clientFQDN));
     }
-
 }

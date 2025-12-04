@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
 
@@ -29,7 +30,8 @@ public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
     public void testMixedCase() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/HelloWorld");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/SHoppING/HelloWorld", "Camel", String.class);
+        String out =
+                template.requestBody("netty-http:http://localhost:{{port}}/SHoppING/HelloWorld", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
         MockEndpoint.assertIsSatisfied(context);

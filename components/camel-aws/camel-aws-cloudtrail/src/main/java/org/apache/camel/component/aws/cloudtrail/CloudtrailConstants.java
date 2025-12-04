@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail;
 
 import org.apache.camel.spi.Metadata;
 
 public interface CloudtrailConstants {
 
-    @Metadata(description = "The event ID of the cloud trail event consumed.",
-              javaType = "String")
+    @Metadata(description = "The event ID of the cloud trail event consumed.", javaType = "String")
     String EVENT_ID = "CamelAwsCloudTrailEventId";
-    @Metadata(description = "The event Name of the cloud trail event consumed.",
-              javaType = "String")
+
+    @Metadata(description = "The event Name of the cloud trail event consumed.", javaType = "String")
     String EVENT_NAME = "CamelAwsCloudTrailEventName";
-    @Metadata(description = "The event Source of the cloud trail event consumed.",
-              javaType = "String")
+
+    @Metadata(description = "The event Source of the cloud trail event consumed.", javaType = "String")
     String EVENT_SOURCE = "CamelAwsCloudTrailEventSource";
-    @Metadata(description = "The associated username of the event of the cloud trail event consumed.",
-              javaType = "String")
+
+    @Metadata(
+            description = "The associated username of the event of the cloud trail event consumed.",
+            javaType = "String")
     String USERNAME = "CamelAwsCloudTrailEventUsername";
 }

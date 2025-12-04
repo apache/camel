@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,10 +37,10 @@ public class StreamRouteBuilderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader("stream", constant(System.out))
+                from("direct:start")
+                        .setHeader("stream", constant(System.out))
                         .to("stream:err", "stream:out", "stream:header");
             }
         };
     }
-
 }

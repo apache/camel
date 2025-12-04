@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe;
 
 import java.net.URI;
@@ -30,29 +31,32 @@ import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
 public final class Transcribe2ClientFactory {
 
-    private Transcribe2ClientFactory() {
-    }
+    private Transcribe2ClientFactory() {}
 
     public static TranscribeClient getTranscribeClient(Transcribe2Configuration configuration) {
         TranscribeClient client = null;
         Transcribe2InternalClient transcribeInternalClient = null;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost())
+                && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             ProxyConfiguration.Builder proxyConfig = ProxyConfiguration.builder();
             proxyConfig = proxyConfig.endpoint(URI.create(configuration.getProxyProtocol() + "://"
-                                                          + configuration.getProxyHost() + ":" + configuration.getProxyPort()));
+                    + configuration.getProxyHost() + ":" + configuration.getProxyPort()));
             if (ObjectHelper.isNotEmpty(configuration.getProxyUsername())
                     && ObjectHelper.isNotEmpty(configuration.getProxyPassword())) {
                 proxyConfig.username(configuration.getProxyUsername());
                 proxyConfig.password(configuration.getProxyPassword());
             }
-            ApacheHttpClient.Builder httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
+            ApacheHttpClient.Builder httpClientBuilder =
+                    ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             if (configuration.isUseDefaultCredentialsProvider()) {
-                transcribeInternalClient = new Transcribe2ClientIAMOptimizedImpl(httpClientBuilder.build(), configuration);
+                transcribeInternalClient =
+                        new Transcribe2ClientIAMOptimizedImpl(httpClientBuilder.build(), configuration);
             } else if (configuration.isUseProfileCredentialsProvider()) {
-                transcribeInternalClient
-                        = new Transcribe2ClientIAMProfileOptimizedImpl(httpClientBuilder.build(), configuration);
+                transcribeInternalClient =
+                        new Transcribe2ClientIAMProfileOptimizedImpl(httpClientBuilder.build(), configuration);
             } else if (configuration.isUseSessionCredentials()) {
-                transcribeInternalClient = new Transcribe2ClientSessionTokenImpl(httpClientBuilder.build(), configuration);
+                transcribeInternalClient =
+                        new Transcribe2ClientSessionTokenImpl(httpClientBuilder.build(), configuration);
             } else {
                 transcribeInternalClient = new Transcribe2ClientStandardImpl(httpClientBuilder.build(), configuration);
             }

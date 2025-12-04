@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import java.util.List;
@@ -44,8 +45,7 @@ public final class JqFunctions {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JqFunctions.class);
 
-    private JqFunctions() {
-    }
+    private JqFunctions() {}
 
     public static void load(CamelContext camelContext, Scope scope) {
         Map<String, Function> fromServiceLoader = BuiltinFunctionLoader.getInstance()
@@ -97,7 +97,8 @@ public final class JqFunctions {
     public abstract static class ExchangeAwareFunction implements Function {
 
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        public void apply(
+                Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
                 throws JsonQueryException {
 
             Exchange exchange = EXCHANGE_LOCAL.get();
@@ -149,18 +150,10 @@ public final class JqFunctions {
             args.get(0).apply(scope, in, name -> {
                 if (args.size() == 2) {
                     args.get(1).apply(scope, in, defval -> {
-                        extract(
-                                exchange,
-                                name.asText(),
-                                defval.asText(),
-                                output);
+                        extract(exchange, name.asText(), defval.asText(), output);
                     });
                 } else {
-                    extract(
-                            exchange,
-                            name.asText(),
-                            null,
-                            output);
+                    extract(exchange, name.asText(), null, output);
                 }
             });
         }
@@ -208,18 +201,10 @@ public final class JqFunctions {
             args.get(0).apply(scope, in, name -> {
                 if (args.size() == 2) {
                     args.get(1).apply(scope, in, defval -> {
-                        extract(
-                                exchange,
-                                name.asText(),
-                                defval.asText(),
-                                output);
+                        extract(exchange, name.asText(), defval.asText(), output);
                     });
                 } else {
-                    extract(
-                            exchange,
-                            name.asText(),
-                            null,
-                            output);
+                    extract(exchange, name.asText(), null, output);
                 }
             });
         }
@@ -252,7 +237,8 @@ public final class JqFunctions {
         public static final String NAME = "constant";
 
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        public void apply(
+                Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
                 throws JsonQueryException {
             FunctionCall fc = (FunctionCall) args.get(0);
             String t = fc.toString();
@@ -291,18 +277,10 @@ public final class JqFunctions {
             args.get(0).apply(scope, in, name -> {
                 if (args.size() == 2) {
                     args.get(1).apply(scope, in, defval -> {
-                        extract(
-                                exchange,
-                                name.asText(),
-                                defval.asText(),
-                                output);
+                        extract(exchange, name.asText(), defval.asText(), output);
                     });
                 } else {
-                    extract(
-                            exchange,
-                            name.asText(),
-                            null,
-                            output);
+                    extract(exchange, name.asText(), null, output);
                 }
             });
         }
@@ -335,7 +313,8 @@ public final class JqFunctions {
         public static final String NAME = "body";
 
         @Override
-        public void apply(Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
+        public void apply(
+                Scope scope, List<Expression> args, JsonNode in, Path path, PathOutput output, Version version)
                 throws JsonQueryException {
             Exchange exchange = EXCHANGE_LOCAL.get();
             if (exchange != null) {
@@ -349,5 +328,4 @@ public final class JqFunctions {
             }
         }
     }
-
 }

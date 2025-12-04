@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.lang.reflect.Field;
@@ -35,7 +36,8 @@ public class AnnotationDependencyInjectionTest {
         Assertions.assertNull(value);
 
         // annotation with no value
-        value = AnnotationHelper.getAnnotationValue(MyNoValueSpringBean.class, "org.springframework.stereotype.Component");
+        value = AnnotationHelper.getAnnotationValue(
+                MyNoValueSpringBean.class, "org.springframework.stereotype.Component");
         Assertions.assertEquals("", value);
 
         // annotation with value
@@ -43,12 +45,13 @@ public class AnnotationDependencyInjectionTest {
         Assertions.assertEquals("theNameHere", value);
 
         Field f = MySpringBean.class.getDeclaredField("camelContext");
-        value = AnnotationHelper.getAnnotationValue(f, "org.springframework.beans.factory.annotation.Autowired", "required");
+        value = AnnotationHelper.getAnnotationValue(
+                f, "org.springframework.beans.factory.annotation.Autowired", "required");
         Assertions.assertEquals(Boolean.TRUE, value);
 
         Method m = MySpringBean.class.getDeclaredMethod("cheese");
-        String[] names
-                = (String[]) AnnotationHelper.getAnnotationValue(m, "org.springframework.context.annotation.Bean", "value");
+        String[] names = (String[])
+                AnnotationHelper.getAnnotationValue(m, "org.springframework.context.annotation.Bean", "value");
         Assertions.assertEquals("a1", names[0]);
         Assertions.assertEquals("a2", names[1]);
     }

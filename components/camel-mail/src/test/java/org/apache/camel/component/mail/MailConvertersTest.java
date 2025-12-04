@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 
@@ -29,10 +34,6 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MailConvertersTest extends CamelTestSupport {
 
@@ -53,7 +54,11 @@ public class MailConvertersTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        Message mailMessage = mock.getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(MailMessage.class)
+                .getMessage();
         assertNotNull(mailMessage);
 
         String s = MailConverters.toString(mailMessage);
@@ -69,7 +74,11 @@ public class MailConvertersTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        Message mailMessage = mock.getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(MailMessage.class)
+                .getMessage();
         assertNotNull(mailMessage);
 
         InputStream is = MailConverters.toInputStream(mailMessage);
@@ -91,7 +100,11 @@ public class MailConvertersTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        Message mailMessage = mock.getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(MailMessage.class)
+                .getMessage();
         assertNotNull(mailMessage);
 
         Object content = mailMessage.getContent();
@@ -116,7 +129,11 @@ public class MailConvertersTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        Message mailMessage = mock.getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(MailMessage.class)
+                .getMessage();
         assertNotNull(mailMessage);
 
         Object content = mailMessage.getContent();
@@ -141,7 +158,11 @@ public class MailConvertersTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        Message mailMessage = mock.getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(MailMessage.class)
+                .getMessage();
         assertNotNull(mailMessage);
 
         Object content = mailMessage.getContent();
@@ -158,7 +179,8 @@ public class MailConvertersTest extends CamelTestSupport {
             public void configure() {
                 from("direct:a").to(james.uriPrefix(Protocol.smtp));
 
-                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false").to("mock:result");
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.Iterator;
 
@@ -43,9 +47,6 @@ import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a> pattern where the list of actual
@@ -90,7 +91,6 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
          * @return          the slip(s).
          */
         Object next(Exchange exchange);
-
     }
 
     public RoutingSlip(CamelContext camelContext) {
@@ -263,22 +263,26 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                 break;
             }
 
-            //process and prepare the routing slip
+            // process and prepare the routing slip
             boolean sync = processExchange(endpoint, current, exchange, originalCallback, iter, prototype);
             current = prepareExchangeForRoutingSlip(current, endpoint);
 
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: {} is continued being processed asynchronously",
+                    LOG.trace(
+                            "Processing exchangeId: {} is continued being processed asynchronously",
                             exchange.getExchangeId());
                 }
                 // the remainder of the routing slip will be completed async
-                // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                // so we break out now, then the callback will be invoked which then continue routing from where we left
+                // here
                 return false;
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+                LOG.trace(
+                        "Processing exchangeId: {} is continued being processed synchronously",
+                        exchange.getExchangeId());
             }
 
             // we ignore some kind of exceptions and allow us to continue
@@ -315,7 +319,8 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
         return true;
     }
 
-    protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
+    protected static Object prepareRecipient(Exchange exchange, Object recipient)
+            throws NoTypeConversionAvailableException {
         return ProcessorHelper.prepareRecipient(exchange, recipient);
     }
 
@@ -356,7 +361,8 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
         return copy;
     }
 
-    protected AsyncProcessor createErrorHandler(Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
+    protected AsyncProcessor createErrorHandler(
+            Route route, Exchange exchange, AsyncProcessor processor, Endpoint endpoint) {
         AsyncProcessor answer = processor;
 
         boolean tryBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, boolean.class);
@@ -374,8 +380,12 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
     }
 
     protected boolean processExchange(
-            final Endpoint endpoint, final Exchange exchange, final Exchange original,
-            final AsyncCallback originalCallback, final RoutingSlipIterator iter, final boolean prototype) {
+            final Endpoint endpoint,
+            final Exchange exchange,
+            final Exchange original,
+            final AsyncCallback originalCallback,
+            final RoutingSlipIterator iter,
+            final boolean prototype) {
 
         // this does the actual processing so log at trace level
         if (LOG.isTraceEnabled()) {
@@ -426,10 +436,13 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
 
                             // we ignore some kind of exceptions and allow us to continue
                             if (isIgnoreInvalidEndpoints()) {
-                                FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
+                                FailedToCreateProducerException e =
+                                        current.getException(FailedToCreateProducerException.class);
                                 if (e != null) {
                                     if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Endpoint uri is invalid: {}. This exception will be ignored.", endpoint,
+                                        LOG.debug(
+                                                "Endpoint uri is invalid: {}. This exception will be ignored.",
+                                                endpoint,
                                                 e);
                                     }
                                     current.setException(null);
@@ -472,18 +485,22 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
 
                             if (!sync) {
                                 if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Processing exchangeId: {} is continued being processed asynchronously",
+                                    LOG.trace(
+                                            "Processing exchangeId: {} is continued being processed asynchronously",
                                             original.getExchangeId());
                                 }
                                 return;
                             }
                         }
 
-                        // logging nextExchange as it contains the exchange that might have altered the payload and since
+                        // logging nextExchange as it contains the exchange that might have altered the payload and
+                        // since
                         // we are logging the completion if will be confusing if we log the original instead
-                        // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+                        // we could also consider logging the original and the nextExchange then we have *before* and
+                        // *after* snapshots
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
+                            LOG.trace(
+                                    "Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
                         }
 
                         // copy results back to the original exchange

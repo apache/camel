@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +25,8 @@ public class AnnotationHelperTest {
     @Test
     public void testGetAnnotationByFQN() {
         // no annotation
-        String value = AnnotationHelper.getAnnotationValue(AnnotationHelperTest.class, "org.junit.jupiter.api.DisplayName");
+        String value =
+                AnnotationHelper.getAnnotationValue(AnnotationHelperTest.class, "org.junit.jupiter.api.DisplayName");
         Assertions.assertNull(value);
 
         // annotation with value
@@ -34,8 +36,8 @@ public class AnnotationHelperTest {
 
     @Test
     public void testHasAnnotationByFQN() {
-        Assertions.assertFalse(AnnotationHelper.hasAnnotation(AnnotationHelperTest.class, "org.junit.jupiter.api.DisplayName"));
+        Assertions.assertFalse(
+                AnnotationHelper.hasAnnotation(AnnotationHelperTest.class, "org.junit.jupiter.api.DisplayName"));
         Assertions.assertTrue(AnnotationHelper.hasAnnotation(MyPojo.class, "org.junit.jupiter.api.DisplayName"));
     }
-
 }

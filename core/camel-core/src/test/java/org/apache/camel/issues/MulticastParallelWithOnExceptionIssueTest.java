@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +26,18 @@ public class MulticastParallelWithOnExceptionIssueTest extends MulticastWithOnEx
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
+                onException(Exception.class)
+                        .handled(true)
+                        .to("log:onException")
+                        .to("mock:end4")
+                        .transform(constant("Stop!"));
 
-                from("direct:start").multicast().parallelProcessing().to("mock:end1", "mock:end2").end().to("mock:end3")
+                from("direct:start")
+                        .multicast()
+                        .parallelProcessing()
+                        .to("mock:end1", "mock:end2")
+                        .end()
+                        .to("mock:end3")
                         .transform(constant("Hello to you too!"));
             }
         };

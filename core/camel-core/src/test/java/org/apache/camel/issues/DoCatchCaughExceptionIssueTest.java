@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on user forum issue
@@ -42,16 +43,19 @@ public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("direct:test").doTry().throwException(new IllegalArgumentException("Forced by me"))
-                        .doCatch(Exception.class).process(new Processor() {
+                from("direct:test")
+                        .doTry()
+                        .throwException(new IllegalArgumentException("Forced by me"))
+                        .doCatch(Exception.class)
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 Exception error = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                                 assertEquals("Forced by me", error.getMessage());
                                 exchange.getMessage().setBody(error.getMessage() + " but I fixed it");
                             }
-                        }).end();
+                        })
+                        .end();
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.activemq6;
 
 import java.util.Collections;
@@ -40,14 +41,18 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
     private int maximumBrowseSize = 100;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
-    public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
-                                 JmsConfiguration configuration) {
+    public ActiveMQQueueEndpoint(
+            String uri, JmsComponent component, String destination, JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);
         setDestinationType("queue");
     }
 
-    public ActiveMQQueueEndpoint(String uri, JmsComponent component, String destination,
-                                 JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
+    public ActiveMQQueueEndpoint(
+            String uri,
+            JmsComponent component,
+            String destination,
+            JmsConfiguration configuration,
+            QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
         setDestinationType("queue");
         if (queueBrowseStrategy == null) {
@@ -118,5 +123,4 @@ public class ActiveMQQueueEndpoint extends ActiveMQEndpoint implements JmsBrowsa
     protected QueueBrowseStrategy createQueueBrowseStrategy() {
         return new DefaultQueueBrowseStrategy();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import org.apache.camel.Category;
@@ -33,11 +34,18 @@ import org.jsmpp.bean.DeliverSm;
 /**
  * Send and receive SMS messages using a SMSC (Short Message Service Center).
  */
-@UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
-             category = { Category.MOBILE }, lenientProperties = true, headersClass = SmppConstants.class)
+@UriEndpoint(
+        firstVersion = "2.2.0",
+        scheme = "smpp,smpps",
+        title = "SMPP",
+        syntax = "smpp:host:port",
+        category = {Category.MOBILE},
+        lenientProperties = true,
+        headersClass = SmppConstants.class)
 public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private SmppBinding binding;
+
     @UriParam
     private SmppConfiguration configuration;
 
@@ -96,9 +104,7 @@ public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      * @param  deliverSm       the received message from the SMSC
      * @return                 a new exchange
      */
-    public Exchange createOnAcceptDeliverSmExchange(
-            ExchangePattern exchangePattern,
-            DeliverSm deliverSm)
+    public Exchange createOnAcceptDeliverSmExchange(ExchangePattern exchangePattern, DeliverSm deliverSm)
             throws Exception {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
@@ -140,9 +146,9 @@ public class SmppEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      */
     public String getConnectionString() {
         return (configuration.isUsingSSL() ? "smpps://" : "smpp://")
-               + (getConfiguration().getSystemId() != null ? getConfiguration().getSystemId() + "@" : "")
-               + getConfiguration().getHost() + ":"
-               + getConfiguration().getPort();
+                + (getConfiguration().getSystemId() != null ? getConfiguration().getSystemId() + "@" : "")
+                + getConfiguration().getHost() + ":"
+                + getConfiguration().getPort();
     }
 
     /**

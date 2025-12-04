@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xj;
 
 import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
@@ -26,8 +27,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("xj")
 public class XJComponent extends XsltSaxonComponent {
 
-    public XJComponent() {
-    }
+    public XJComponent() {}
 
     @Override
     protected XJEndpoint createXsltEndpoint(String uri) {

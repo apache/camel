@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -36,9 +40,6 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnableKubernetesMockClient
 public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
@@ -52,15 +53,35 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     void listTest() {
-        server.expect().withPath("/api/v1/pods")
-                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        server.expect().withPath("/api/v1/namespaces/test/pods")
-                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().build()).once();
+        server.expect()
+                .withPath("/api/v1/pods")
+                .andReturn(
+                        200,
+                        new PodListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
+                .once();
+        server.expect()
+                .withPath("/api/v1/namespaces/test/pods")
+                .andReturn(
+                        200,
+                        new PodListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
+                .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
         assertEquals(3, result.size());
 
-        Exchange ex = template.request("direct:list",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
+        Exchange ex = template.request("direct:list", exchange -> exchange.getIn()
+                .setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test"));
         List<?> resultNamespace = ex.getMessage().getBody(List.class);
 
         assertEquals(2, resultNamespace.size());
@@ -72,17 +93,36 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
                 "key1", "value1",
                 "key2", "value2");
 
-        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+        String urlEncodedLabels = toUrlEncoded(labels.entrySet().stream()
+                .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(",")));
 
-        server.expect().withPath("/api/v1/pods?labelSelector=" + urlEncodedLabels)
-                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/api/v1/pods?labelSelector=" + urlEncodedLabels)
+                .andReturn(
+                        200,
+                        new PodListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
-        server.expect().withPath("/api/v1/namespaces/test/pods?labelSelector=" + urlEncodedLabels)
-                .andReturn(200, new PodListBuilder().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/api/v1/namespaces/test/pods?labelSelector=" + urlEncodedLabels)
+                .andReturn(
+                        200,
+                        new PodListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
-        Exchange ex = template.request("direct:listByLabels",
-                exchange -> exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels));
+        Exchange ex = template.request("direct:listByLabels", exchange -> exchange.getIn()
+                .setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels));
 
         assertEquals(3, ex.getMessage().getBody(List.class).size());
 
@@ -96,11 +136,27 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     void getPodTest() {
-        Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").and().build();
-        Pod pod2 = new PodBuilder().withNewMetadata().withName("pod2").withNamespace("ns1").and().build();
+        Pod pod1 = new PodBuilder()
+                .withNewMetadata()
+                .withName("pod1")
+                .withNamespace("test")
+                .and()
+                .build();
+        Pod pod2 = new PodBuilder()
+                .withNewMetadata()
+                .withName("pod2")
+                .withNamespace("ns1")
+                .and()
+                .build();
 
-        server.expect().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
-        server.expect().withPath("/api/v1/namespaces/ns1/pods/pod2").andReturn(200, pod2).once();
+        server.expect()
+                .withPath("/api/v1/namespaces/test/pods/pod1")
+                .andReturn(200, pod1)
+                .once();
+        server.expect()
+                .withPath("/api/v1/namespaces/ns1/pods/pod2")
+                .andReturn(200, pod2)
+                .once();
         Exchange ex = template.request("direct:getPod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "pod1");
@@ -115,9 +171,19 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     void createPod() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         PodSpec spec = new PodSpecBuilder().withHostname("SomeHostname").build();
-        Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").withLabels(labels).and()
-                .withSpec(spec).build();
-        server.expect().post().withPath("/api/v1/namespaces/test/pods").andReturn(200, pod1).once();
+        Pod pod1 = new PodBuilder()
+                .withNewMetadata()
+                .withName("pod1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .post()
+                .withPath("/api/v1/namespaces/test/pods")
+                .andReturn(200, pod1)
+                .once();
 
         Exchange ex = template.request("direct:createPod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -138,12 +204,31 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     void updatePod() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         PodSpec spec = new PodSpecBuilder().withHostname("SomeHostname").build();
-        Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").withLabels(labels).and()
-                .withSpec(spec).build();
-        server.expect().get().withPath("/api/v1/namespaces/test/pods/pod1")
-                .andReturn(200, new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").endMetadata().build())
+        Pod pod1 = new PodBuilder()
+                .withNewMetadata()
+                .withName("pod1")
+                .withNamespace("test")
+                .withLabels(labels)
+                .and()
+                .withSpec(spec)
+                .build();
+        server.expect()
+                .get()
+                .withPath("/api/v1/namespaces/test/pods/pod1")
+                .andReturn(
+                        200,
+                        new PodBuilder()
+                                .withNewMetadata()
+                                .withName("pod1")
+                                .withNamespace("test")
+                                .endMetadata()
+                                .build())
                 .once();
-        server.expect().put().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
+        server.expect()
+                .put()
+                .withPath("/api/v1/namespaces/test/pods/pod1")
+                .andReturn(200, pod1)
+                .once();
 
         Exchange ex = template.request("direct:updatePod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -162,8 +247,16 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
 
     @Test
     void deletePod() {
-        Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").and().build();
-        server.expect().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
+        Pod pod1 = new PodBuilder()
+                .withNewMetadata()
+                .withName("pod1")
+                .withNamespace("test")
+                .and()
+                .build();
+        server.expect()
+                .withPath("/api/v1/namespaces/test/pods/pod1")
+                .andReturn(200, pod1)
+                .once();
 
         Exchange ex = template.request("direct:deletePod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
@@ -184,9 +277,12 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels")
                         .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels");
                 from("direct:getPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=getPod");
-                from("direct:createPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=createPod");
-                from("direct:updatePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=updatePod");
-                from("direct:deletePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=deletePod");
+                from("direct:createPod")
+                        .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=createPod");
+                from("direct:updatePod")
+                        .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=updatePod");
+                from("direct:deletePod")
+                        .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=deletePod");
             }
         };
     }

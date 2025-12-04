@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.common;
 
 import java.util.function.Function;
@@ -48,6 +49,7 @@ public class KeyManagerFactoryOptions implements KeyCertOptions {
     @Override
     public Function<String, X509KeyManager> keyManagerMapper(Vertx vertx) {
         return keyManagerFactory.getKeyManagers()[0] instanceof X509KeyManager
-                ? serverName -> (X509KeyManager) keyManagerFactory.getKeyManagers()[0] : null;
+                ? serverName -> (X509KeyManager) keyManagerFactory.getKeyManagers()[0]
+                : null;
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -57,8 +58,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
 
         camelContext.addComponent("async", new MyAsyncComponent());
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                service.serviceAddress());
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);

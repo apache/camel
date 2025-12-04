@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -32,11 +38,6 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for setting arbitrary payload in PAYLOAD mode
@@ -76,8 +77,8 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
     private Exchange sendJaxWsDispatchPayload(final String name, final boolean oneway) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                CxfPayload<SoapHeader> request = encodeRequestInPayload(oneway ? PAYLOAD_ONEWAY_TEMPLATE : PAYLOAD_TEMPLATE,
-                        name, exchange);
+                CxfPayload<SoapHeader> request =
+                        encodeRequestInPayload(oneway ? PAYLOAD_ONEWAY_TEMPLATE : PAYLOAD_TEMPLATE, name, exchange);
                 exchange.getIn().setBody(request, CxfPayload.class);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, DISPATCH_NS);
                 // set the operation for oneway; otherwise use the default operation
@@ -93,7 +94,8 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         String payloadstr = String.format(form, name);
         CxfPayload<T> payload = null;
         try {
-            Document doc = getDocumentBuilderFactory().newDocumentBuilder()
+            Document doc = getDocumentBuilderFactory()
+                    .newDocumentBuilder()
                     .parse(new ByteArrayInputStream(payloadstr.getBytes(StandardCharsets.UTF_8)));
             payload = CxfPayloadConverter.documentToCxfPayload(doc, exchange);
         } catch (Exception e) {

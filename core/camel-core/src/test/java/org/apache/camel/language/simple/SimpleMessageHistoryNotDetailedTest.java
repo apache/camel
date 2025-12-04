@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleMessageHistoryNotDetailedTest extends ContextTestSupport {
 
@@ -34,7 +35,8 @@ public class SimpleMessageHistoryNotDetailedTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String result = getMockEndpoint("mock:result").getExchanges().get(0).getIn().getBody(String.class);
+        String result =
+                getMockEndpoint("mock:result").getExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(result);
 
         assertTrue(result.contains("mock:a"));
@@ -52,8 +54,13 @@ public class SimpleMessageHistoryNotDetailedTest extends ContextTestSupport {
                 // turn on message history
                 context.setMessageHistory(true);
 
-                from("direct:start").to("mock:a").log("${messageHistory(false)}").to("mock:b").log("${messageHistory(false)}")
-                        .transform().simple("${messageHistory(false)}")
+                from("direct:start")
+                        .to("mock:a")
+                        .log("${messageHistory(false)}")
+                        .to("mock:b")
+                        .log("${messageHistory(false)}")
+                        .transform()
+                        .simple("${messageHistory(false)}")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.apache.camel.support.MessageHelper.copyBody;
 
 import java.io.File;
 import java.util.Map;
@@ -36,8 +39,6 @@ import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.MessageHelper.copyBody;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
@@ -194,7 +195,8 @@ public class SjmsMessage extends DefaultMessage {
                 // use binding to do the lookup as it has to consider using encoded keys
                 answer = getBinding().getObjectProperty(jmsMessage, name);
             } catch (JMSException e) {
-                throw new RuntimeExchangeException("Unable to retrieve header from JMS Message: " + name, getExchange(), e);
+                throw new RuntimeExchangeException(
+                        "Unable to retrieve header from JMS Message: " + name, getExchange(), e);
             }
         }
         // only look if we have populated headers otherwise there are no headers at all
@@ -308,5 +310,4 @@ public class SjmsMessage extends DefaultMessage {
     private String getSanitizedString(Object value) {
         return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
-
 }

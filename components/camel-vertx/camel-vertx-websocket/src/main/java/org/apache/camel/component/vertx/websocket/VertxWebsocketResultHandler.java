@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.util.HashMap;
@@ -67,7 +68,8 @@ class VertxWebsocketResultHandler {
     private void onComplete() {
         if (!errors.isEmpty()) {
             if (errors.size() == 1) {
-                final Map.Entry<String, Throwable> entry = errors.entrySet().iterator().next();
+                final Map.Entry<String, Throwable> entry =
+                        errors.entrySet().iterator().next();
                 final String msg = "Sending message to WebSocket peer for connection key " + entry.getKey() + " failed";
                 exchange.setException(new CamelExecutionException(msg, exchange, entry.getValue()));
             } else {

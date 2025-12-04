@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProducerSimpleGetTest extends BaseNettyTest {
 
@@ -42,8 +43,8 @@ public class NettyHttpProducerSimpleGetTest extends BaseNettyTest {
     public void testHttpSimpleHeader() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD,
-                "GET", String.class);
+        String out = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "GET", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -55,8 +56,8 @@ public class NettyHttpProducerSimpleGetTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World",
-                Exchange.HTTP_METHOD, "GET", String.class);
+        String out = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "GET", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -69,9 +70,9 @@ public class NettyHttpProducerSimpleGetTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.csv;
 
 import java.io.Serializable;
@@ -28,25 +29,32 @@ public class MyCsvRecord2 implements Serializable {
 
     @DataField(pos = 1)
     private String attention;
+
     @DataField(pos = 2)
     private String addressLine1;
+
     @DataField(pos = 3)
     private String addressLine2;
+
     @DataField(pos = 4)
     private String city;
+
     @DataField(pos = 5)
     private String state;
+
     @DataField(pos = 6)
     private String zip;
+
     @DataField(pos = 7)
     private String country;
+
     @DataField(pos = 8)
     private String dummy1;
+
     @DataField(pos = 9)
     private String dummy2;
 
-    public MyCsvRecord2() {
-    }
+    public MyCsvRecord2() {}
 
     public String getAttention() {
         return attention;
@@ -123,8 +131,7 @@ public class MyCsvRecord2 implements Serializable {
     @Override
     public String toString() {
         return "Record [attention=" + attention + ", addressLine1=" + addressLine1 + ", addressLine2="
-               + addressLine2 + ", city=" + city + ", state=" + state + ", zip=" + zip + ", country="
-               + country + ", dummy1=" + dummy1 + ", dummy2=" + dummy2 + "]";
+                + addressLine2 + ", city=" + city + ", state=" + state + ", zip=" + zip + ", country="
+                + country + ", dummy1=" + dummy1 + ", dummy2=" + dummy2 + "]";
     }
-
 }

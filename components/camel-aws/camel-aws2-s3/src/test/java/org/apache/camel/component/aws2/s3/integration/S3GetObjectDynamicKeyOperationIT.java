@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 
@@ -29,9 +33,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.utils.IoUtils;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class S3GetObjectDynamicKeyOperationIT extends Aws2S3Base {
 
@@ -86,7 +87,6 @@ public class S3GetObjectDynamicKeyOperationIT extends Aws2S3Base {
                 from("direct:putObject").to(awsEndpoint);
 
                 from("direct:getObject").to(awsEndpoint).to("mock:result");
-
             }
         };
     }

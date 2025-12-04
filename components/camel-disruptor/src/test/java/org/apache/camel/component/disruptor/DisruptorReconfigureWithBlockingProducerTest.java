@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,8 +28,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("CAMEL-13629: Flaky test")
 public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSupport {
@@ -40,13 +41,15 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
         ProducerThread producerThread = new ProducerThread();
         producerThread.start();
 
-        //synchronize with the producer to the point that the buffer is full
+        // synchronize with the producer to the point that the buffer is full
         assertTrue(producerThread.awaitFullBufferProduced());
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:foo?multipleConsumers=true&size=8").id("testRoute").to("mock:b");
+                from("disruptor:foo?multipleConsumers=true&size=8")
+                        .id("testRoute")
+                        .to("mock:b");
             }
         });
 
@@ -57,7 +60,7 @@ public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSuppo
         // be on the safe side and check that it was at least faster than 2 seconds.
         assertTrue(watch.taken() < 2000, "Reconfigure of Disruptor blocked");
 
-        //Wait and check that the producer has produced all messages without throwing an exception
+        // Wait and check that the producer has produced all messages without throwing an exception
         assertTrue(producerThread.checkResult());
         MockEndpoint.assertIsSatisfied(context);
     }

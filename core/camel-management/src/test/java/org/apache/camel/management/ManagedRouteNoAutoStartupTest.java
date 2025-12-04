@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Extended test to see if mbeans is removed and stats are correct
  */
@@ -43,8 +44,7 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").autoStartup(false)
-                        .to("mock:result");
+                from("direct:start").autoStartup(false).to("mock:result");
             }
         };
     }
@@ -112,5 +112,4 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals(0, set.size(), "Should be 1 processor");
     }
-
 }

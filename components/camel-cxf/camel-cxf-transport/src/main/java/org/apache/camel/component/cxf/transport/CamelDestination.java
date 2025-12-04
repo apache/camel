@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
@@ -69,12 +70,18 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this(camelContext, bus, ci, info, null, false);
     }
 
-    public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info,
-                            HeaderFilterStrategy headerFilterStrategy, boolean checkException) {
+    public CamelDestination(
+            CamelContext camelContext,
+            Bus bus,
+            ConduitInitiator ci,
+            EndpointInfo info,
+            HeaderFilterStrategy headerFilterStrategy,
+            boolean checkException) {
         super(bus, getTargetReference(info, bus), info);
         this.camelContext = camelContext;
         conduitInitiator = ci;
-        camelDestinationUri = endpointInfo.getAddress().substring(CamelTransportConstants.CAMEL_TRANSPORT_PREFIX.length());
+        camelDestinationUri =
+                endpointInfo.getAddress().substring(CamelTransportConstants.CAMEL_TRANSPORT_PREFIX.length());
         if (camelDestinationUri.startsWith("//")) {
             camelDestinationUri = camelDestinationUri.substring(2);
         }
@@ -102,7 +109,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
      */
     @Override
     protected Conduit getInbuiltBackChannel(Message inMessage) {
-        //we can pass the message back by looking up the camelExchange from inMessage
+        // we can pass the message back by looking up the camelExchange from inMessage
         return new BackChannelConduit(inMessage);
     }
 
@@ -154,8 +161,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         LOG.debug("server received request: {}", camelExchange);
         DefaultCxfMessageMapper beanBinding = new DefaultCxfMessageMapper();
-        org.apache.cxf.message.Message inMessage
-                = beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
+        org.apache.cxf.message.Message inMessage =
+                beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 
         inMessage.put(CamelTransportConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl) inMessage).setDestination(this);
@@ -178,7 +185,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     private void initConfig() {
-        //we could configure the camel context here
+        // we could configure the camel context here
         if (bus != null) {
             Configurer configurer = bus.getExtension(Configurer.class);
             if (null != configurer) {
@@ -236,7 +243,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         protected java.util.logging.Logger getLogger() {
             return JUL_LOG;
         }
-
     }
 
     /**
@@ -246,9 +252,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
      * @param  decoupledTarget the decoupled target
      * @return                 <tt>true</tt> if partial responses is supported
      */
-    protected boolean markPartialResponse(
-            Message partialResponse,
-            EndpointReferenceType decoupledTarget) {
+    protected boolean markPartialResponse(Message partialResponse, EndpointReferenceType decoupledTarget) {
         return true;
     }
 
@@ -262,8 +266,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     protected void propagateResponseHeadersToCamel(Message outMessage, Exchange camelExchange) {
         // copy the camel in message header to the out message
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-        CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage,
-                camelExchange.getOut(), camelExchange);
+        CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, camelExchange.getOut(), camelExchange);
     }
 
     /**
@@ -311,5 +314,4 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             // Do nothing here
         }
     }
-
 }

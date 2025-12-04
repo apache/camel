@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.secrets.vault;
 
 import java.time.Instant;
@@ -54,7 +55,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 propertiesFunction = (SecretPropertiesFunction) pf;
             }
         }
-        KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+        KubernetesVaultConfiguration kubernetes =
+                getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
         if (kubernetes != null && kubernetes.isRefreshEnabled()) {
             PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
             secretsRefreshTask = scheduler.getTaskByType(SecretsReloadTriggerTask.class);
@@ -69,11 +71,12 @@ public class SecretsDevConsole extends AbstractDevConsole {
             sb.append("Kubernetes Secrets Cluster:");
             KubernetesClient client = propertiesFunction.getClient();
             if (client != null && client.getMasterUrl() != null) {
-                sb.append(String.format("\n    Master Url: %s", client.getMasterUrl().toString()));
+                sb.append(String.format(
+                        "\n    Master Url: %s", client.getMasterUrl().toString()));
                 sb.append("\n    Login: OAuth Token");
             }
-            KubernetesVaultConfiguration kubernetes
-                    = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+            KubernetesVaultConfiguration kubernetes =
+                    getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
             if (kubernetes != null) {
                 sb.append(String.format("\n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
             }
@@ -108,7 +111,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
                 root.put("login", "OAuth Token");
             }
         }
-        KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+        KubernetesVaultConfiguration kubernetes =
+                getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
         if (kubernetes != null) {
             root.put("refreshEnabled", kubernetes.isRefreshEnabled());
         }

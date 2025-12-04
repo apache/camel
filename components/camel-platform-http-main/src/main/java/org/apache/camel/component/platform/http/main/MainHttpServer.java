@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
@@ -302,9 +303,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
         Optional<PlatformHttpPluginRegistry> result = ResolverHelper.resolveService(
-                getCamelContext(),
-                PlatformHttpPluginRegistry.FACTORY,
-                PlatformHttpPluginRegistry.class);
+                getCamelContext(), PlatformHttpPluginRegistry.FACTORY, PlatformHttpPluginRegistry.class);
         return result.orElseThrow(() -> new IllegalArgumentException(
                 "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
     }
@@ -316,5 +315,4 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 (server != null ? server.getPort() : getPort()),
                 "HTTP endpoints summary");
     }
-
 }

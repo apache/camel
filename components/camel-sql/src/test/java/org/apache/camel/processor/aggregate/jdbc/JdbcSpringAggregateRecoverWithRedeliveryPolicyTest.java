@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.util.concurrent.TimeUnit;
@@ -32,8 +33,7 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return newAppContext(
-                "JdbcSpringDataSource.xml", "JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
+        return newAppContext("JdbcSpringDataSource.xml", "JdbcSpringAggregateRecoverWithRedeliveryPolicyTest.xml");
     }
 
     @Test
@@ -47,7 +47,10 @@ public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpr
         // should be marked as redelivered
         getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         // on the 2nd redelivery attempt we success
-        getMockEndpoint("mock:result").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:result")
+                .message(0)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(3);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);

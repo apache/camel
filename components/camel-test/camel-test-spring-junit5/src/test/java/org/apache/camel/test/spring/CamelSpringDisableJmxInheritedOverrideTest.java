@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.test.spring.junit5.DisableJmx;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DisableJmx
-public class CamelSpringDisableJmxInheritedOverrideTest
-        extends CamelSpringDisableJmxTest {
+public class CamelSpringDisableJmxInheritedOverrideTest extends CamelSpringDisableJmxTest {
 
     @Override
     @Test
     public void testJmx() {
-        assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());
+        assertEquals(
+                DefaultManagementStrategy.class,
+                camelContext.getManagementStrategy().getClass());
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADR_A19;
@@ -26,8 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the HL7MLLPNetty Codec.
@@ -63,12 +64,15 @@ public class HL7MLLPNettyCodecTest extends HL7TestSupport {
 
                                 assertEquals("2.4", input.getVersion());
                                 QRD qrd = (QRD) input.get("QRD");
-                                assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                                assertEquals(
+                                        "0101701234",
+                                        qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
                                 Message response = createHL7AsMessage();
                                 exchange.getMessage().setBody(response);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -85,7 +89,8 @@ public class HL7MLLPNettyCodecTest extends HL7TestSupport {
         in.append(line2);
 
         String out = template.requestBody(
-                "netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder", in.toString(),
+                "netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder",
+                in.toString(),
                 String.class);
         // END SNIPPET: e2
 

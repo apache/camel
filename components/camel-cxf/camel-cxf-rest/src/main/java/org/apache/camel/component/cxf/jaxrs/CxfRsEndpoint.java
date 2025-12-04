@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_CXF_RS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,16 +69,21 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_CXF_RS;
-
 /**
  * Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = SCHEME_CXF_RS, title = "CXF-RS", syntax = "cxfrs:beanId:address",
-             category = { Category.REST }, lenientProperties = true, headersClass = CxfConstants.class)
-@Metadata(annotations = {
-        "protocol=http",
-})
+@UriEndpoint(
+        firstVersion = "2.0.0",
+        scheme = SCHEME_CXF_RS,
+        title = "CXF-RS",
+        syntax = "cxfrs:beanId:address",
+        category = {Category.REST},
+        lenientProperties = true,
+        headersClass = CxfConstants.class)
+@Metadata(
+        annotations = {
+            "protocol=http",
+        })
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
@@ -91,66 +99,96 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     @UriPath(description = "To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.")
     private String beanId;
+
     @UriPath
     private String address;
+
     @UriParam
     private List<Class<?>> resourceClasses;
+
     @UriParam(label = "consumer,advanced", javaType = "java.lang.String")
     private List<Object> serviceBeans = new LinkedList<>();
+
     private String serviceBeansRef;
+
     @UriParam
     private String modelRef;
+
     @UriParam(label = "consumer", defaultValue = "Default")
     private BindingStyle bindingStyle = BindingStyle.Default;
+
     @UriParam(label = "consumer")
     private String publishedEndpointUrl;
+
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
+
     @UriParam(label = "advanced")
     private CxfRsBinding binding;
+
     @UriParam(javaType = "java.lang.String")
     private List<Object> providers = new LinkedList<>();
+
     private String providersRef;
+
     @UriParam
     private List<String> schemaLocations;
+
     @UriParam
     private List<Feature> features = new ModCountCopyOnWriteArrayList<>();
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean httpClientAPI = true;
+
     @UriParam(label = "producer,advanced")
     private boolean ignoreDeleteMethodMessageBody;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+
     @UriParam(label = "producer,advanced", defaultValue = "10")
     private int maxClientCacheSize = 10;
+
     @UriParam(label = "producer")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "producer")
     private HostnameVerifier hostnameVerifier;
+
     @UriParam(label = "logging")
     private boolean loggingFeatureEnabled;
+
     @UriParam(label = "logging", defaultValue = "" + AbstractLoggingInterceptor.DEFAULT_LIMIT)
     private int loggingSizeLimit = AbstractLoggingInterceptor.DEFAULT_LIMIT;
+
     @UriParam
     private boolean skipFaultLogging;
+
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long continuationTimeout = 30000;
+
     @UriParam(label = "advanced")
     private boolean defaultBus;
+
     @UriParam(label = "advanced")
     private boolean performInvocation;
+
     @UriParam(label = "advanced")
     private boolean propagateContexts;
+
     @UriParam(label = "advanced")
     private CxfRsConfigurer cxfRsConfigurer;
+
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
-    @UriParam(defaultValue = "false", label = "producer,advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @UriParam(
+            defaultValue = "false",
+            label = "producer,advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
-    public CxfRsEndpoint() {
-    }
+    public CxfRsEndpoint() {}
 
     public CxfRsEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -164,7 +202,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setProperties(bean.getProperties());
         // Update the sfb address by resolving the properties
         bean.setAddress(getAddress());
-
     }
 
     @Override
@@ -220,7 +257,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @Override
     public Producer createProducer() throws Exception {
         if (bindingStyle == BindingStyle.SimpleConsumer) {
-            throw new IllegalArgumentException("The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");
+            throw new IllegalArgumentException(
+                    "The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");
         }
         final CxfRsProducer cxfRsProducer = new CxfRsProducer(this);
         if (isSynchronous()) {
@@ -274,7 +312,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
         List<Object> beans = new ArrayList<>(serviceBeans);
         if (serviceBeansRef != null) {
-            beans.addAll(EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeansRef, Object.class));
+            beans.addAll(
+                    EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeansRef, Object.class));
         }
         sfb.setServiceBeans(beans);
 
@@ -325,7 +364,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // the model info (when a given model does provide this info) as opposed
         // to a matched method which is of no real use with a default handler.
         sfb.setModelBeans(resources);
-
     }
 
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
@@ -799,8 +837,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             }
         }
 
-        chainedConfigurer = ChainedCxfRsConfigurer
-                .create(getNullSafeCxfRsEndpointConfigurer(),
+        chainedConfigurer = ChainedCxfRsConfigurer.create(
+                        getNullSafeCxfRsEndpointConfigurer(),
                         SslCxfRsConfigurer.create(sslContextParameters, getCamelContext()))
                 .addChild(HostnameVerifierCxfRsConfigurer.create(hostnameVerifier));
     }
@@ -847,8 +885,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         this.propagateContexts = propagateContexts;
     }
 
-    private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
-    }
+    private static class InterceptorHolder extends AbstractBasicInterceptorProvider {}
 
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;

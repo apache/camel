@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -28,26 +32,23 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 @Disabled
 public class NettyHttpStreamTest extends BaseNettyTest {
     public static final long SIZE = 10 * 256;
 
     @Test
     public void testUploadStream() {
-        //prepare new request
+        // prepare new request
         DefaultExchange request = new DefaultExchange(context);
         request.getIn().setBody("dummy");
 
-        //trigger request
+        // trigger request
         Exchange response = template.send("direct:upstream-call", request);
 
-        //validate response success
+        // validate response success
         assertFalse(response.isFailed(), "ups");
 
-        //validate request stream at server
+        // validate request stream at server
         MockEndpoint mock = context.getEndpoint("mock:stream-size", MockEndpoint.class);
         Long requestSize = mock.getExchanges().get(0).getIn().getBody(Long.class);
         assertEquals(SIZE, requestSize.longValue(), "request size not matching.");
@@ -55,17 +56,17 @@ public class NettyHttpStreamTest extends BaseNettyTest {
 
     @Test
     public void testDownloadStream() {
-        //prepare new request
+        // prepare new request
         DefaultExchange request = new DefaultExchange(context);
         request.getIn().setBody("dummy");
 
-        //trigger request
+        // trigger request
         Exchange response = template.send("direct:download-call", request);
 
-        //validate response success
+        // validate response success
         assertFalse(response.isFailed(), "ups");
 
-        //validate response stream at client
+        // validate response stream at client
         assertEquals(SIZE, response.getIn().getBody(Long.class).longValue(), "response size not matching.");
     }
 
@@ -96,8 +97,7 @@ public class NettyHttpStreamTest extends BaseNettyTest {
 }
 
 final class Helper {
-    private Helper() {
-    }
+    private Helper() {}
 
     public static void processStream(Exchange exchange) throws Exception {
         InputStream is = exchange.getIn().getBody(InputStream.class);

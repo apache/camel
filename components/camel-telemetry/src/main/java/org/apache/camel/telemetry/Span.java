@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import java.util.Map;
@@ -31,5 +32,4 @@ public interface Span {
     void setComponent(String component);
 
     void setError(boolean isError);
-
 }

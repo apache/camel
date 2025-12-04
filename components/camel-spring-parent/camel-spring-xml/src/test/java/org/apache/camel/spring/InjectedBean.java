@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.apache.camel.Endpoint;
@@ -25,22 +26,31 @@ import org.apache.camel.ProducerTemplate;
 public class InjectedBean {
     @EndpointInject("direct:fieldInjectedEndpoint")
     private Endpoint fieldInjectedEndpoint;
+
     private Endpoint propertyInjectedEndpoint;
+
     @EndpointInject("direct:fieldInjectedProducer")
     private Producer fieldInjectedProducer;
+
     private Producer propertyInjectedProducer;
+
     @EndpointInject("direct:fieldInjectedCamelTemplate")
     private ProducerTemplate fieldInjectedCamelTemplate;
+
     private ProducerTemplate propertyInjectedCamelTemplate;
+
     @EndpointInject
     private ProducerTemplate injectByFieldName;
+
     private ProducerTemplate injectByPropertyName;
+
     @EndpointInject("direct:fieldInjectedEndpoint")
     private PollingConsumer fieldInjectedPollingConsumer;
+
     private PollingConsumer propertyInjectedPollingConsumer;
 
     // Endpoint
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public Endpoint getFieldInjectedEndpoint() {
         return fieldInjectedEndpoint;
     }
@@ -55,7 +65,7 @@ public class InjectedBean {
     }
 
     // Producer
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     public Producer getFieldInjectedProducer() {
         return fieldInjectedProducer;
@@ -71,7 +81,7 @@ public class InjectedBean {
     }
 
     // CamelTemplate
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public ProducerTemplate getFieldInjectedCamelTemplate() {
         return fieldInjectedCamelTemplate;
     }
@@ -86,7 +96,7 @@ public class InjectedBean {
     }
 
     // ProducerTemplate
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public ProducerTemplate getInjectByFieldName() {
         return injectByFieldName;
@@ -106,7 +116,7 @@ public class InjectedBean {
     }
 
     // PollingConsumer
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public PollingConsumer getFieldInjectedPollingConsumer() {
         return fieldInjectedPollingConsumer;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,8 +37,7 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
     @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
 
-    public SetExchangePatternDefinition() {
-    }
+    public SetExchangePatternDefinition() {}
 
     protected SetExchangePatternDefinition(SetExchangePatternDefinition source) {
         super(source);
@@ -91,5 +91,4 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
     public String getLabel() {
         return "setExchangePattern[" + pattern + "]";
     }
-
 }

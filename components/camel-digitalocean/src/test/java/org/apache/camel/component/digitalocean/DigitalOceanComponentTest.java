@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import com.myjeeva.digitalocean.pojo.Account;
@@ -27,9 +31,6 @@ import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DigitalOceanComponentTest extends CamelTestSupport {
 
@@ -58,6 +59,7 @@ public class DigitalOceanComponentTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:getAccountInfo", null);
         MockEndpoint.assertIsSatisfied(context);
         assertIsInstanceOf(Account.class, exchange.getMessage().getBody());
-        assertEquals("camel@apache.org", exchange.getMessage().getBody(Account.class).getEmail());
+        assertEquals(
+                "camel@apache.org", exchange.getMessage().getBody(Account.class).getEmail());
     }
 }

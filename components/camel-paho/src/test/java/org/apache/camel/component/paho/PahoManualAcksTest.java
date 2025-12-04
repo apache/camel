@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import org.apache.camel.ConsumerTemplate;
@@ -32,8 +33,10 @@ public class PahoManualAcksTest extends PahoTestSupport {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
@@ -42,8 +45,7 @@ public class PahoManualAcksTest extends PahoTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test")
-                        .to("paho:queue?brokerUrl=" + service.serviceAddress() + "&qos=2");
+                from("direct:test").to("paho:queue?brokerUrl=" + service.serviceAddress() + "&qos=2");
 
                 from("paho:queue?brokerUrl=" + service.serviceAddress() + "&qos=2&manualAcksEnabled=true")
                         .to("mock:test");

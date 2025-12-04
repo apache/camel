@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +25,6 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
@@ -82,5 +83,4 @@ public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
         // no more so return null
         return null;
     }
-
 }

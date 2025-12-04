@@ -29,78 +29,98 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "enabled", "host", "tlsCACertificate", "tlsCACertificateSecret", "tlsCertificate",
-        "tlsCertificateSecret", "tlsDestinationCACertificate", "tlsDestinationCACertificateSecret",
-        "tlsInsecureEdgeTerminationPolicy", "tlsKey", "tlsKeySecret", "tlsTermination" })
+    "annotations",
+    "enabled",
+    "host",
+    "tlsCACertificate",
+    "tlsCACertificateSecret",
+    "tlsCertificate",
+    "tlsCertificateSecret",
+    "tlsDestinationCACertificate",
+    "tlsDestinationCACertificateSecret",
+    "tlsInsecureEdgeTerminationPolicy",
+    "tlsKey",
+    "tlsKeySecret",
+    "tlsTermination"
+})
 public class Route {
     @JsonProperty("annotations")
-    @JsonPropertyDescription("The annotations added to route. This can be used to set route specific annotations For annotations options see https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html#route-specific-annotations CLI usage example: -t \"route.annotations.'haproxy.router.openshift.io/balance'=true\"")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The annotations added to route. This can be used to set route specific annotations For annotations options see https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html#route-specific-annotations CLI usage example: -t \"route.annotations.'haproxy.router.openshift.io/balance'=true\"")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Map<String, String> annotations;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("host")
     @JsonPropertyDescription("To configure the host exposed by the route.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private String host;
+
     @JsonProperty("tlsCACertificate")
-    @JsonPropertyDescription("The TLS CA certificate contents. \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The TLS CA certificate contents. \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsCACertificate;
+
     @JsonProperty("tlsCACertificateSecret")
-    @JsonPropertyDescription("The secret name and key reference to the TLS CA certificate. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The secret name and key reference to the TLS CA certificate. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsCACertificateSecret;
+
     @JsonProperty("tlsCertificate")
-    @JsonPropertyDescription("The TLS certificate contents. \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The TLS certificate contents. \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsCertificate;
+
     @JsonProperty("tlsCertificateSecret")
-    @JsonPropertyDescription("The secret name and key reference to the TLS certificate. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The secret name and key reference to the TLS certificate. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsCertificateSecret;
+
     @JsonProperty("tlsDestinationCACertificate")
-    @JsonPropertyDescription("The destination CA certificate provides the contents of the ca certificate of the final destination.  When using reencrypt termination this file should be provided in order to have routers use it for health checks on the secure connection. If this field is not specified, the router may provide its own destination CA and perform hostname validation using the short service name (service.namespace.svc), which allows infrastructure generated certificates to automatically verify. \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The destination CA certificate provides the contents of the ca certificate of the final destination.  When using reencrypt termination this file should be provided in order to have routers use it for health checks on the secure connection. If this field is not specified, the router may provide its own destination CA and perform hostname validation using the short service name (service.namespace.svc), which allows infrastructure generated certificates to automatically verify. \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsDestinationCACertificate;
+
     @JsonProperty("tlsDestinationCACertificateSecret")
-    @JsonPropertyDescription("The secret name and key reference to the destination CA certificate. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The secret name and key reference to the destination CA certificate. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsDestinationCACertificateSecret;
+
     @JsonProperty("tlsInsecureEdgeTerminationPolicy")
-    @JsonPropertyDescription("To configure how to deal with insecure traffic, e.g. `Allow`, `Disable` or `Redirect` traffic. \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "To configure how to deal with insecure traffic, e.g. `Allow`, `Disable` or `Redirect` traffic. \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private TlsInsecureEdgeTerminationPolicy tlsInsecureEdgeTerminationPolicy;
+
     @JsonProperty("tlsKey")
-    @JsonPropertyDescription("The TLS certificate key contents. \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The TLS certificate key contents. \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsKey;
+
     @JsonProperty("tlsKeySecret")
-    @JsonPropertyDescription("The secret name and key reference to the TLS certificate key. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The secret name and key reference to the TLS certificate key. The format is \"secret-name[/key-name]\", the value represents the secret name, if there is only one key in the secret it will be read, otherwise you can set a key name separated with a \"/\". \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String tlsKeySecret;
+
     @JsonProperty("tlsTermination")
-    @JsonPropertyDescription("The TLS termination type, like `edge`, `passthrough` or `reencrypt`. \n Refer to the OpenShift route documentation for additional information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The TLS termination type, like `edge`, `passthrough` or `reencrypt`. \n Refer to the OpenShift route documentation for additional information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private TlsTermination tlsTermination;
 
-    public Route() {
-    }
+    public Route() {}
 
     public Map<String, String> getAnnotations() {
         return this.annotations;

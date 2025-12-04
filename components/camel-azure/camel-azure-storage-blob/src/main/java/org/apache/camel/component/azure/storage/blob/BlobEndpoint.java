@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.util.Map;
@@ -39,9 +40,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Store and retrieve blobs from Azure Storage Blob Service.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
-             syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE },
-             headersClass = BlobConstants.class)
+@UriEndpoint(
+        firstVersion = "3.3.0",
+        scheme = "azure-storage-blob",
+        title = "Azure Storage Blob Service",
+        syntax = "azure-storage-blob:accountName/containerName",
+        category = {Category.CLOUD, Category.FILE},
+        headersClass = BlobConstants.class)
 public class BlobEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -76,7 +81,8 @@ public class BlobEndpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         blobServiceClient = configuration.getServiceClient() != null
-                ? configuration.getServiceClient() : BlobClientFactory.createBlobServiceClient(configuration);
+                ? configuration.getServiceClient()
+                : BlobClientFactory.createBlobServiceClient(configuration);
     }
 
     public void setResponseOnExchange(final BlobOperationResponse response, final Exchange exchange) {

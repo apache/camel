@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -46,9 +47,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:test")
-                        .bean(new FailingBean())
-                        .to("log:end", "mock:end");
+                from("seda:test").bean(new FailingBean()).to("log:end", "mock:end");
             }
         };
     }
@@ -71,8 +70,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
 
         private int messageNo;
 
-        public CannotMarshal() {
-        }
+        public CannotMarshal() {}
 
         public CannotMarshal(int messageNo) {
             this.messageNo = messageNo;
@@ -86,8 +84,7 @@ public class JaxbErrorLogTest extends CamelTestSupport {
             this.messageNo = messageNo;
         }
 
-        public void setUhoh(String name) {
-        }
+        public void setUhoh(String name) {}
 
         public String getUhoh() {
             throw new RuntimeCamelException("Can't marshal this");
@@ -98,5 +95,4 @@ public class JaxbErrorLogTest extends CamelTestSupport {
             return "MessageNo. " + messageNo;
         }
     }
-
 }

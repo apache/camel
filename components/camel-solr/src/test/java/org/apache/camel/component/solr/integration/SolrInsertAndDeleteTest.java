@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,78 +44,78 @@ import org.apache.solr.common.SolrInputDocument;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
     @Test
     public void testDeleteById() throws Exception {
 
-        //insert, commit and verify
+        // insert, commit and verify
         solrInsertTestEntry();
         solrCommit();
         assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
 
-        //delete
-        template.sendBodyAndHeader("direct:start", TEST_ID, SolrConstants.PARAM_OPERATION,
-                SolrConstants.OPERATION_DELETE_BY_ID);
+        // delete
+        template.sendBodyAndHeader(
+                "direct:start", TEST_ID, SolrConstants.PARAM_OPERATION, SolrConstants.OPERATION_DELETE_BY_ID);
         solrCommit();
 
-        //verify
+        // verify
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
     }
 
     @Test
     public void testDeleteListOfIDsViaSplit() throws Exception {
 
-        //insert, commit and verify
+        // insert, commit and verify
         solrInsertTestEntry(TEST_ID);
         solrInsertTestEntry(TEST_ID2);
         solrCommit();
         assertEquals(2, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
 
-        //delete
-        template.sendBodyAndHeader(DEFAULT_START_ENDPOINT_SPLIT_THEN_COMMIT, Arrays.asList(TEST_ID, TEST_ID2),
+        // delete
+        template.sendBodyAndHeader(
+                DEFAULT_START_ENDPOINT_SPLIT_THEN_COMMIT,
+                Arrays.asList(TEST_ID, TEST_ID2),
                 SolrConstants.PARAM_OPERATION,
                 SolrConstants.OPERATION_DELETE_BY_ID);
 
-        //verify
+        // verify
         assertEquals(0, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
     }
 
     @Test
     public void testDeleteListOfIDsInOneDeleteOperation() throws Exception {
 
-        //insert, commit and verify
+        // insert, commit and verify
         solrInsertTestEntry(TEST_ID);
         solrInsertTestEntry(TEST_ID2);
         solrCommit();
         assertEquals(2, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
 
-        //delete
+        // delete
         Map<String, Object> headers = new HashMap<>(SolrUtils.getHeadersForCommit());
         headers.put(SolrConstants.PARAM_OPERATION, SolrConstants.OPERATION_DELETE_BY_ID);
         template.sendBodyAndHeaders(DEFAULT_START_ENDPOINT, Arrays.asList(TEST_ID, TEST_ID2), headers);
 
-        //verify
+        // verify
         assertEquals(0, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
     }
 
     @Test
     public void testDeleteByQuery() throws Exception {
 
-        //insert, commit and verify
+        // insert, commit and verify
         solrInsertTestEntry(TEST_ID);
         solrInsertTestEntry(TEST_ID2);
         solrCommit();
         assertEquals(2, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
 
-        //delete
+        // delete
         Map<String, Object> headers = new HashMap<>(SolrUtils.getHeadersForCommit());
         headers.put(SolrConstants.PARAM_OPERATION, SolrConstants.OPERATION_DELETE_BY_QUERY);
         template.sendBodyAndHeaders("direct:start", "id:test*", headers);
 
-        //verify
+        // verify
         assertEquals(0, executeSolrQuery("id:test*").getResults().getNumFound(), "wrong number of entries found");
     }
 
@@ -190,8 +193,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     @Test
     public void testInsertStreaming() {
         // TODO rename method
-        ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.id", "MA147LL/A");
+        ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext()).withHeader("SolrField.id", "MA147LL/A");
         executeInsert(builder.build());
 
         QueryResponse response = executeSolrQuery("id:MA147LL/A");
@@ -201,8 +203,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
     @Test
     public void indexSingleDocumentOnlyWithId() {
-        ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.id", "MA147LL/A");
+        ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext()).withHeader("SolrField.id", "MA147LL/A");
         executeInsert(builder.build());
 
         // Check things were indexed.
@@ -239,7 +240,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
     @Test
     public void setMultiValuedFieldInHeader() {
-        String[] categories = { "electronics", "apple" };
+        String[] categories = {"electronics", "apple"};
         ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
                 .withBody("Test body for iPod.")
                 .withHeader("SolrField.id", "MA147LL/A")
@@ -278,8 +279,8 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     @Test
     public void indexWithAutoCommit() {
         // new exchange - not autocommit route
-        ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.content", "NO_AUTO_COMMIT");
+        ExchangeBuilder builder =
+                ExchangeBuilder.anExchange(camelContext()).withHeader("SolrField.content", "NO_AUTO_COMMIT");
         executeInsert(DEFAULT_START_ENDPOINT, builder.build(), false);
         // not committed
         QueryResponse response = executeSolrQuery("*:*");
@@ -291,8 +292,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
         assertEquals(1, response.getResults().getNumFound());
 
         // new exchange - autocommit route
-        builder = ExchangeBuilder.anExchange(camelContext())
-                .withHeader("SolrField.content", "AUTO_COMMIT");
+        builder = ExchangeBuilder.anExchange(camelContext()).withHeader("SolrField.content", "AUTO_COMMIT");
         executeInsert(DEFAULT_START_ENDPOINT_AUTO_COMMIT, builder.build(), false);
         // should be committed
         response = executeSolrQuery("*:*");
@@ -346,8 +346,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
         map.put("series_t", "Test");
         map.put("sequence_i", "3");
         map.put("genre_s", "Test");
-        builder = ExchangeBuilder.anExchange(camelContext())
-                .withBody(map);
+        builder = ExchangeBuilder.anExchange(camelContext()).withBody(map);
         executeInsert(builder.build());
         QueryResponse response = executeSolrQuery("id:0553579934");
         assertEquals(0, response.getStatus());
@@ -356,8 +355,8 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
     @Test
     public void queryDocumentsToCSVUpdateHandlerWithoutParameters() {
-        ExchangeBuilder builder = ExchangeBuilder.anExchange(camelContext())
-                .withBody(new File("src/test/resources/data/books.csv"));
+        ExchangeBuilder builder =
+                ExchangeBuilder.anExchange(camelContext()).withBody(new File("src/test/resources/data/books.csv"));
         executeInsert(builder.build());
         QueryResponse response = executeSolrQuery("*:*");
         assertEquals(0, response.getStatus());
@@ -407,69 +406,70 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
     @Test
     public void testCommit() {
-        //insert and verify
+        // insert and verify
         solrInsertTestEntry();
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
-        //commit
+        // commit
         template.sendBodyAndHeaders("direct:start", null, SolrUtils.getHeadersForCommit());
-        //verify exists after commit
+        // verify exists after commit
         assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
     }
 
     @Test
     public void testSoftCommit() {
-        //insert and verify
+        // insert and verify
         solrInsertTestEntry();
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
-        //commit
+        // commit
         template.sendBodyAndHeaders("direct:start", null, SolrUtils.getHeadersForCommit("softCommit"));
-        //verify exists after commit
+        // verify exists after commit
         assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
     }
 
     @Test
     public void testRollback() {
-        //insert and verify
+        // insert and verify
         solrInsertTestEntry();
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
-        //rollback
+        // rollback
         template.sendBodyAndHeaders("direct:start", null, SolrUtils.getHeadersForCommit("rollback"));
-        //verify after rollback
+        // verify after rollback
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
-        //commit
+        // commit
         template.sendBodyAndHeaders("direct:start", null, SolrUtils.getHeadersForCommit());
-        //verify after commit (again)
+        // verify after commit (again)
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
-
     }
 
     @Test
     public void testOptimize() {
-        //insert and verify
+        // insert and verify
         solrInsertTestEntry();
         assertEquals(0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
-        //optimize (be careful with this operation: it reorganizes your index!)
+        // optimize (be careful with this operation: it reorganizes your index!)
         template.sendBodyAndHeaders("direct:start", null, SolrUtils.getHeadersForCommit("optimize"));
-        //verify exists after optimize
+        // verify exists after optimize
         assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
     }
 
     @Test
     public void testAddBean() {
 
-        //add bean
+        // add bean
         SolrInsertAndDeleteTest.Item item = new Item();
         item.id = TEST_ID;
-        item.categories = new String[] { "aaa", "bbb", "ccc" };
+        item.categories = new String[] {"aaa", "bbb", "ccc"};
 
         template.sendBodyAndHeaders(
                 "direct:start",
                 item,
                 Map.of(
-                        SolrConstants.PARAM_OPERATION, SolrConstants.OPERATION_ADD_BEAN,
-                        SolrConstants.HEADER_PARAM_PREFIX + "commit", "true"));
+                        SolrConstants.PARAM_OPERATION,
+                        SolrConstants.OPERATION_ADD_BEAN,
+                        SolrConstants.HEADER_PARAM_PREFIX + "commit",
+                        "true"));
 
-        //verify
+        // verify
         assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
     }
 
@@ -478,26 +478,28 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
         List<SolrInsertAndDeleteTest.Item> beans = new ArrayList<>();
 
-        //add bean1
+        // add bean1
         SolrInsertAndDeleteTest.Item item1 = new Item();
         item1.id = TEST_ID;
-        item1.categories = new String[] { "aaa", "bbb", "ccc" };
+        item1.categories = new String[] {"aaa", "bbb", "ccc"};
         beans.add(item1);
 
-        //add bean2
+        // add bean2
         SolrInsertAndDeleteTest.Item item2 = new Item();
         item2.id = TEST_ID2;
-        item2.categories = new String[] { "aaa", "bbb", "ccc" };
+        item2.categories = new String[] {"aaa", "bbb", "ccc"};
         beans.add(item2);
 
         template.sendBodyAndHeaders(
                 "direct:start",
                 beans,
                 Map.of(
-                        SolrConstants.PARAM_OPERATION, SolrConstants.OPERATION_ADD_BEAN,
-                        SolrConstants.HEADER_PARAM_PREFIX + "commit", "true"));
+                        SolrConstants.PARAM_OPERATION,
+                        SolrConstants.OPERATION_ADD_BEAN,
+                        SolrConstants.HEADER_PARAM_PREFIX + "commit",
+                        "true"));
 
-        //verify
+        // verify
         assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
         assertEquals(1, executeSolrQuery("id:" + TEST_ID2).getResults().getNumFound(), "wrong number of entries found");
         assertEquals(2, executeSolrQuery("*:*").getResults().getNumFound(), "wrong number of entries found");
@@ -517,10 +519,8 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
 
             @Override
             public void configure() {
-                from(DEFAULT_START_ENDPOINT)
-                        .to(DEFAULT_SOLR_ENDPOINT);
-                from(DEFAULT_START_ENDPOINT_AUTO_COMMIT)
-                        .to(DEFAULT_SOLR_ENDPOINT + "?autoCommit=true");
+                from(DEFAULT_START_ENDPOINT).to(DEFAULT_SOLR_ENDPOINT);
+                from(DEFAULT_START_ENDPOINT_AUTO_COMMIT).to(DEFAULT_SOLR_ENDPOINT + "?autoCommit=true");
                 from(DEFAULT_START_ENDPOINT_SPLIT_THEN_COMMIT)
                         .filter(header(SolrConstants.PARAM_OPERATION).isNull())
                         .setHeader(SolrConstants.PARAM_OPERATION, constant(SolrOperation.INSERT))
@@ -531,12 +531,12 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
                         .setBody(constant((Object) null))
                         .setHeader(SolrConstants.HEADER_PARAM_PREFIX + "commit", constant(true))
                         .to(DEFAULT_SOLR_ENDPOINT);
-                from(TEST_DATA_PATH_URI + "?noop=true&initialDelay=0&filename=books.csv").autoStartup(false)
+                from(TEST_DATA_PATH_URI + "?noop=true&initialDelay=0&filename=books.csv")
+                        .autoStartup(false)
                         .routeId("file-route")
                         .to(DEFAULT_SOLR_ENDPOINT + "?autoCommit=true")
                         .to(DEFAULT_MOCK_ENDPOINT);
             }
         };
     }
-
 }

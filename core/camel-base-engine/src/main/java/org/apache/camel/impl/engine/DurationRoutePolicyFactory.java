@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -30,21 +31,30 @@ import org.apache.camel.support.PatternHelper;
  * This can be used to stop a set of routes (or CamelContext) after they have processed a number of messages, or has
  * been running for N seconds.
  */
-@Metadata(label = "bean",
-          description = "RoutePolicyFactory which executes for a duration and then triggers an action."
+@Metadata(
+        label = "bean",
+        description =
+                "RoutePolicyFactory which executes for a duration and then triggers an action."
                         + " This can be used to stop a set of routes after they have processed a number of messages, or has been running for N seconds.",
-          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicyFactory" })
+        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicyFactory"})
 @Configurer(metadataOnly = true)
 public class DurationRoutePolicyFactory implements RoutePolicyFactory {
 
-    @Metadata(description = "Route pattern to select a set of routes (by their route id). By default all routes are selected")
+    @Metadata(
+            description =
+                    "Route pattern to select a set of routes (by their route id). By default all routes are selected")
     private String fromRouteId;
+
     @Metadata(description = "Maximum seconds Camel is running before the action is triggered")
     private int maxSeconds;
+
     @Metadata(description = "Maximum number of messages to process before the action is triggered")
     private int maxMessages;
-    @Metadata(description = "Action to perform", enums = "STOP_CAMEL_CONTEXT,STOP_ROUTE,SUSPEND_ROUTE,SUSPEND_ALL_ROUTES",
-              defaultValue = "STOP_ROUTE")
+
+    @Metadata(
+            description = "Action to perform",
+            enums = "STOP_CAMEL_CONTEXT,STOP_ROUTE,SUSPEND_ROUTE,SUSPEND_ALL_ROUTES",
+            defaultValue = "STOP_ROUTE")
     private DurationRoutePolicy.Action action = DurationRoutePolicy.Action.STOP_ROUTE;
 
     @Override
@@ -106,5 +116,4 @@ public class DurationRoutePolicyFactory implements RoutePolicyFactory {
     public void setAction(DurationRoutePolicy.Action action) {
         this.action = action;
     }
-
 }

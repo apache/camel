@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
 
 public final class SpringAiEmbeddings {
     public static final String SCHEME = "spring-ai-embeddings";
 
-    private SpringAiEmbeddings() {
-    }
+    private SpringAiEmbeddings() {}
 }

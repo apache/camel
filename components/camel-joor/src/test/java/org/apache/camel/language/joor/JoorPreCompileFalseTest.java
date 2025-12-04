@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import org.apache.camel.Exchange;
@@ -33,7 +34,8 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
                 joor.setPreCompile(false);
 
                 from("direct:start")
-                        .transform().joor("resource:file:target/update.joor")
+                        .transform()
+                        .joor("resource:file:target/update.joor")
                         .to("mock:result");
             }
         };
@@ -41,7 +43,8 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
 
     @Test
     public void testPreCompileFalse() throws Exception {
-        template.sendBodyAndHeader("file:target?fileExist=Override", "'Hello ' + body", Exchange.FILE_NAME, "update.joor");
+        template.sendBodyAndHeader(
+                "file:target?fileExist=Override", "'Hello ' + body", Exchange.FILE_NAME, "update.joor");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello Camel");
         template.sendBody("direct:start", "World");
@@ -52,7 +55,8 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
         // update file
         MockEndpoint.resetMocks(context);
 
-        template.sendBodyAndHeader("file:target?fileExist=Override", "'Bye ' + body", Exchange.FILE_NAME, "update.joor");
+        template.sendBodyAndHeader(
+                "file:target?fileExist=Override", "'Bye ' + body", Exchange.FILE_NAME, "update.joor");
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Bye Camel");
 
@@ -61,5 +65,4 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

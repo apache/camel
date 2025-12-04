@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MDCSplitParallelProcessingTest extends ContextTestSupport {
 
@@ -52,7 +53,8 @@ public class MDCSplitParallelProcessingTest extends ContextTestSupport {
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
 
-                from("direct:a").routeId("route-async")
+                from("direct:a")
+                        .routeId("route-async")
                         .process(e -> {
                             // custom is propagated
                             MDC.put("custom.hello", "World");
@@ -63,11 +65,11 @@ public class MDCSplitParallelProcessingTest extends ContextTestSupport {
                         })
                         .process(checker)
                         .to("log:foo")
-                        .split(body().tokenize(",")).parallelProcessing()
+                        .split(body().tokenize(","))
+                        .parallelProcessing()
                         .process(checker)
                         .end()
                         .to("mock:end");
-
             }
         };
     }
@@ -136,8 +138,6 @@ public class MDCSplitParallelProcessingTest extends ContextTestSupport {
                 contextId = MDC.get("camel.contextId");
                 assertTrue(contextId != null && !contextId.isEmpty());
             }
-
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.atomicnumber;
 
 import java.util.Map;
@@ -32,8 +33,8 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     private final IAtomicLong atomicnumber;
 
-    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
-                                         String cacheName) {
+    public HazelcastAtomicnumberProducer(
+            HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
         super(endpoint);
         this.atomicnumber = hazelcastInstance.getCPSubsystem().getAtomicLong(cacheName);
     }
@@ -52,7 +53,6 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
         HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-
             case INCREMENT:
                 this.increment(exchange);
                 break;
@@ -82,9 +82,9 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -123,5 +123,4 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
     private void destroy() {
         this.atomicnumber.destroy();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -34,8 +35,8 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
         mock.expectedHeaderReceived("cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
         mock.expectedHeaderReceived("numberExists", "true");
 
-        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails",
-                "<number xmlns=\"http://acme.com/cheese\">55</number>");
+        template.sendBodyAndHeader(
+                "direct:in", "body", "cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
         mock.assertIsSatisfied();
     }
@@ -45,16 +46,27 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
         return new RouteBuilder() {
             public void configure() {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
-                var xq = expression().xquery().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
-                        .source("header:cheeseDetails").end();
-                var xqExist = expression().xquery().expression("exists(/c:number)").namespaces(ns).resultType(String.class)
-                        .source("header:cheeseDetails").end();
-                from("direct:in").choice()
+                var xq = expression()
+                        .xquery()
+                        .expression("/c:number = 55")
+                        .namespaces(ns)
+                        .resultType(Integer.class)
+                        .source("header:cheeseDetails")
+                        .end();
+                var xqExist = expression()
+                        .xquery()
+                        .expression("exists(/c:number)")
+                        .namespaces(ns)
+                        .resultType(String.class)
+                        .source("header:cheeseDetails")
+                        .end();
+                from("direct:in")
+                        .choice()
                         .when(xq)
-                            .setHeader("numberExists", xqExist)
-                            .to("mock:55")
+                        .setHeader("numberExists", xqExist)
+                        .to("mock:55")
                         .otherwise()
-                            .to("mock:other")
+                        .to("mock:other")
                         .end();
             }
         };

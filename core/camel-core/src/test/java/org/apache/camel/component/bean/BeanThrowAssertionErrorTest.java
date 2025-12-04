@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanThrowAssertionErrorTest extends ContextTestSupport {
 
@@ -33,9 +34,7 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello Camel");
         assertMockEndpointsSatisfied();
 
-        assertThrows(Exception.class,
-                () -> template.sendBody("direct:start", "Hello World"),
-                "Should fail");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"), "Should fail");
     }
 
     @Test
@@ -44,9 +43,7 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
         template.sendBody("direct:start2", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertThrows(Exception.class,
-                () -> template.sendBody("direct:start2", "Hello Camel"),
-                "Should fail");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start2", "Hello Camel"), "Should fail");
     }
 
     @Override
@@ -58,9 +55,7 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
                         .bean(BeanThrowAssertionErrorTest.this, "doSomething")
                         .to("mock:result");
 
-                from("direct:start2")
-                        .bean(new MyProcessorBean())
-                        .to("mock:result");
+                from("direct:start2").bean(new MyProcessorBean()).to("mock:result");
             }
         };
     }
@@ -76,5 +71,4 @@ public class BeanThrowAssertionErrorTest extends ContextTestSupport {
             assertEquals("Hello World", exchange.getMessage().getBody());
         }
     }
-
 }

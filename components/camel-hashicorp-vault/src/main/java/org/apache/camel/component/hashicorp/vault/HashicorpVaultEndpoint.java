@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault;
 
 import org.apache.camel.Category;
@@ -32,14 +33,18 @@ import org.springframework.vault.core.VaultTemplate;
 /**
  * Manage secrets in Hashicorp Vault Service
  */
-@UriEndpoint(firstVersion = "3.18.0", scheme = "hashicorp-vault", title = "Hashicorp Vault",
-             syntax = "hashicorp-vault:secretsEngine", category = {
-                     Category.CLOUD, Category.CLOUD },
-             producerOnly = true,
-             headersClass = HashicorpVaultConstants.class)
-@Metadata(annotations = {
-        "vault=hashicorp-vault",
-})
+@UriEndpoint(
+        firstVersion = "3.18.0",
+        scheme = "hashicorp-vault",
+        title = "Hashicorp Vault",
+        syntax = "hashicorp-vault:secretsEngine",
+        category = {Category.CLOUD, Category.CLOUD},
+        producerOnly = true,
+        headersClass = HashicorpVaultConstants.class)
+@Metadata(
+        annotations = {
+            "vault=hashicorp-vault",
+        })
 public class HashicorpVaultEndpoint extends DefaultEndpoint {
 
     private VaultTemplate vaultTemplate;
@@ -47,8 +52,8 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
     @UriParam
     private HashicorpVaultConfiguration configuration;
 
-    public HashicorpVaultEndpoint(final String uri, final Component component,
-                                  final HashicorpVaultConfiguration configuration) {
+    public HashicorpVaultEndpoint(
+            final String uri, final Component component, final HashicorpVaultConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -56,8 +61,8 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
     @Override
     public void doInit() throws Exception {
         super.doInit();
-        vaultTemplate = configuration.getVaultTemplate() != null
-                ? configuration.getVaultTemplate() : createVaultTemplate();
+        vaultTemplate =
+                configuration.getVaultTemplate() != null ? configuration.getVaultTemplate() : createVaultTemplate();
     }
 
     private VaultTemplate createVaultTemplate() {
@@ -68,9 +73,7 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
         vaultEndpoint.setPort(Integer.parseInt(configuration.getPort()));
         vaultEndpoint.setScheme(configuration.getScheme());
 
-        vaultTemplate = new VaultTemplate(
-                vaultEndpoint,
-                new TokenAuthentication(configuration.getToken()));
+        vaultTemplate = new VaultTemplate(vaultEndpoint, new TokenAuthentication(configuration.getToken()));
 
         return vaultTemplate;
     }

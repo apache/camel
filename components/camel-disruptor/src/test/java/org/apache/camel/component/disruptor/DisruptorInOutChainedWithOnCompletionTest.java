@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport {
     @Test
@@ -45,18 +46,22 @@ public class DisruptorInOutChainedWithOnCompletionTest extends CamelTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:a").process(new Processor() {
-                    @Override
-                    public void process(final Exchange exchange) {
-                        // should come in last
-                        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                from("disruptor:a")
+                        .process(new Processor() {
                             @Override
-                            public void onDone(final Exchange exchange) {
-                                template.sendBody("mock:c", "onCustomCompletion");
+                            public void process(final Exchange exchange) {
+                                // should come in last
+                                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                                    @Override
+                                    public void onDone(final Exchange exchange) {
+                                        template.sendBody("mock:c", "onCustomCompletion");
+                                    }
+                                });
                             }
-                        });
-                    }
-                }).to("mock:a").transform(simple("${body}-a")).to("disruptor:b");
+                        })
+                        .to("mock:a")
+                        .transform(simple("${body}-a"))
+                        .to("disruptor:b");
 
                 from("disruptor:b").to("mock:b").transform(simple("${body}-b")).to("disruptor:c");
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeFileSystemOperationIT extends Base {
 
@@ -44,11 +45,11 @@ public class DataLakeFileSystemOperationIT extends Base {
 
     @Test
     void testCreateAndDeleteFileSystem() {
-        final DataLakeFileSystemClientWrapper fileSystemClientWrapper
-                = serviceClientWrapper.getDataLakeFileSystemClientWrapper("testcontainer");
+        final DataLakeFileSystemClientWrapper fileSystemClientWrapper =
+                serviceClientWrapper.getDataLakeFileSystemClientWrapper("testcontainer");
 
-        final DataLakeFileSystemOperations operations
-                = new DataLakeFileSystemOperations(configuration, fileSystemClientWrapper);
+        final DataLakeFileSystemOperations operations =
+                new DataLakeFileSystemOperations(configuration, fileSystemClientWrapper);
 
         final DataLakeOperationResponse responseCreate = operations.createFileSystem(null);
 
@@ -62,8 +63,11 @@ public class DataLakeFileSystemOperationIT extends Base {
         assertNotNull(responseDelete.getHeaders().get(DataLakeConstants.RAW_HTTP_HEADERS));
         assertTrue((boolean) responseDelete.getBody());
 
-        Awaitility.given().ignoreException(DataLakeStorageException.class).with()
-                .pollInterval(100, TimeUnit.MILLISECONDS).atMost(60, TimeUnit.SECONDS)
+        Awaitility.given()
+                .ignoreException(DataLakeStorageException.class)
+                .with()
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .atMost(60, TimeUnit.SECONDS)
                 .until(() -> {
                     final DataLakeOperationResponse responseRecreate = operations.createFileSystem(null);
                     assertNotNull(responseRecreate);

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.operations;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -35,12 +42,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class QueueOperationsTest extends CamelTestSupport {
@@ -60,7 +61,8 @@ public class QueueOperationsTest extends CamelTestSupport {
     public void testDeleteMessage() {
         // mocking
         final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
-        when(client.deleteMessage(any(), any(), any())).thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+        when(client.deleteMessage(any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
 
         final QueueOperations operations = new QueueOperations(configuration, client);
         final Exchange exchange = new DefaultExchange(context);
@@ -84,7 +86,7 @@ public class QueueOperationsTest extends CamelTestSupport {
 
     @Test
     public void testUpdateMessage() {
-        //mocking
+        // mocking
         final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
         final UpdateMessageResult result = new UpdateMessageResult("12", OffsetDateTime.now());
         when(client.updateMessage(any(), any(), any(), any(), any()))

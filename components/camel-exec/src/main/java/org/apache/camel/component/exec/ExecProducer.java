@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
 
 import org.apache.camel.Exchange;
@@ -59,7 +60,8 @@ public class ExecProducer extends DefaultProducer {
         ExecResult result = executor.execute(execCommand);
 
         ObjectHelper.notNull(result, "The command executor must return a not-null result");
-        logger.log(String.format("The command %s had exit value %s", execCommand, result.getExitValue()),
+        logger.log(
+                String.format("The command %s had exit value %s", execCommand, result.getExitValue()),
                 execCommand.getCommandLogLevel());
         if (result.getExitValue() != 0) {
             log.error("The command {} returned exit value {}", execCommand, result.getExitValue());

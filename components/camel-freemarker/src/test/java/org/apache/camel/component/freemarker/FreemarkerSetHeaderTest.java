@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.freemarker;
 
 import org.apache.camel.Exchange;
@@ -38,13 +39,12 @@ public class FreemarkerSetHeaderTest extends CamelSpringTestSupport {
     protected void assertRespondsWith(final String value, String expectedBody) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        //mock.expectedHeaderReceived("fruit", value);
+        // mock.expectedHeaderReceived("fruit", value);
         mock.expectedBodiesReceived(expectedBody);
         template.request("direct:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(value);
-
             }
         });
         mock.assertIsSatisfied();
@@ -54,5 +54,4 @@ public class FreemarkerSetHeaderTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/freemarker/camel-context.xml");
     }
-
 }

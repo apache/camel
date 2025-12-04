@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,11 +33,11 @@ public class FileMarkerFileRecursiveDeleteOldLockFilesTest extends ContextTestSu
         mock.message(0).header(Exchange.FILE_NAME_ONLY).isEqualTo("bye.txt");
         mock.message(1).header(Exchange.FILE_NAME_ONLY).isEqualTo("hi.txt");
 
-        template.sendBodyAndHeader(fileUri(), "locked", Exchange.FILE_NAME,
-                "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(
+                fileUri(), "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUri("foo"), "locked", Exchange.FILE_NAME,
-                "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(
+                fileUri("foo"), "locked", Exchange.FILE_NAME, "gooday.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri("foo"), "Hi World", Exchange.FILE_NAME, "hi.txt");
 
         // start the route
@@ -50,8 +51,10 @@ public class FileMarkerFileRecursiveDeleteOldLockFilesTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name")).routeId("foo")
-                        .autoStartup(false).convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&recursive=true&sortBy=file:name"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

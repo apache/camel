@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda;
 
 import java.time.Instant;
@@ -73,8 +74,7 @@ import software.amazon.awssdk.services.lambda.model.UpdateFunctionCodeResponse;
 
 public class AmazonLambdaClientMock implements LambdaClient {
 
-    public AmazonLambdaClientMock() {
-    }
+    public AmazonLambdaClientMock() {}
 
     @Override
     public CreateAliasResponse createAlias(CreateAliasRequest createAliasRequest) {
@@ -115,7 +115,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         result.timeout(3);
         result.lastModified(Instant.now().toString());
         result.version("$LATEST");
-        result.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
+        result.tracingConfig(
+                TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
         return result.build();
     }
 
@@ -127,7 +128,10 @@ public class AmazonLambdaClientMock implements LambdaClient {
     @Override
     public DeleteEventSourceMappingResponse deleteEventSourceMapping(
             DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
-        return DeleteEventSourceMappingResponse.builder().uuid("a1239494949382882383").state("Deleting").build();
+        return DeleteEventSourceMappingResponse.builder()
+                .uuid("a1239494949382882383")
+                .state("Deleting")
+                .build();
     }
 
     @Override
@@ -137,7 +141,11 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public GetAliasResponse getAlias(GetAliasRequest getAliasRequest) {
-        return GetAliasResponse.builder().name("alias").description("an alias").functionVersion("1").build();
+        return GetAliasResponse.builder()
+                .name("alias")
+                .description("an alias")
+                .functionVersion("1")
+                .build();
     }
 
     @Override
@@ -146,7 +154,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         GetFunctionResponse.Builder result = GetFunctionResponse.builder();
         FunctionConfiguration.Builder configuration = FunctionConfiguration.builder();
         configuration.functionName(getFunctionRequest.functionName());
-        configuration.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + getFunctionRequest.functionName());
+        configuration.functionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + getFunctionRequest.functionName());
         configuration.runtime("nodejs6.10");
         configuration.role("arn:aws:iam::643534317684:role/lambda-execution-role");
         configuration.handler(getFunctionRequest.functionName() + ".handler");
@@ -156,7 +165,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         configuration.timeout(3);
         configuration.lastModified(Instant.now().toString());
         configuration.version("$LATEST");
-        configuration.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
+        configuration.tracingConfig(
+                TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
         result.configuration(configuration.build());
         return result.build();
     }
@@ -168,8 +178,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         Map<String, String> payload = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
-            payload = mapper.readValue(invokeRequest.payload().asUtf8String(), new TypeReference<Map<String, String>>() {
-            });
+            payload = mapper.readValue(
+                    invokeRequest.payload().asUtf8String(), new TypeReference<Map<String, String>>() {});
         } catch (Exception e) {
 
         }
@@ -198,7 +208,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         List<EventSourceMappingConfiguration> confList = new ArrayList<>();
         EventSourceMappingConfiguration.Builder conf = EventSourceMappingConfiguration.builder();
         conf.batchSize(100);
-        conf.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.functionName());
+        conf.functionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.functionName());
         conf.state("Enabled");
         conf.eventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
         confList.add(conf.build());
@@ -223,7 +234,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         configuration.timeout(3);
         configuration.lastModified(Instant.now().toString());
         configuration.version("$LATEST");
-        configuration.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
+        configuration.tracingConfig(
+                TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
         listFunctions.add(configuration.build());
         result.functions(listFunctions);
         return result.build();
@@ -246,7 +258,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
         configuration.timeout(3);
         configuration.lastModified(Instant.now().toString());
         configuration.version("$LATEST");
-        configuration.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
+        configuration.tracingConfig(
+                TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
         listFunctions.add(configuration.build());
         result.functions(listFunctions);
         return result.build();
@@ -262,7 +275,8 @@ public class AmazonLambdaClientMock implements LambdaClient {
     }
 
     @Override
-    public ListVersionsByFunctionResponse listVersionsByFunction(ListVersionsByFunctionRequest listVersionsByFunctionRequest) {
+    public ListVersionsByFunctionResponse listVersionsByFunction(
+            ListVersionsByFunctionRequest listVersionsByFunctionRequest) {
         ListVersionsByFunctionResponse.Builder res = ListVersionsByFunctionResponse.builder();
         FunctionConfiguration.Builder conf = FunctionConfiguration.builder();
         conf.version("1");
@@ -294,14 +308,16 @@ public class AmazonLambdaClientMock implements LambdaClient {
         UpdateFunctionCodeResponse.Builder result = UpdateFunctionCodeResponse.builder();
 
         result.functionName(updateFunctionCodeRequest.functionName());
-        result.functionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + updateFunctionCodeRequest.functionName());
+        result.functionArn(
+                "arn:aws:lambda:eu-central-1:643534317684:function:" + updateFunctionCodeRequest.functionName());
         result.codeSize(340L);
         result.codeSha256("PKt5ygvZ6G8vWJASlWIypsBmKzAdmRrvTO");
         result.memorySize(128);
         result.timeout(3);
         result.lastModified(Instant.now().toString());
         result.version("$LATEST");
-        result.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
+        result.tracingConfig(
+                TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
         return result.build();
     }
 

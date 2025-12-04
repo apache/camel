@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi.validator;
+
+import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -28,8 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 
 public class DefaultRequestValidator implements RequestValidator {
 
@@ -96,24 +97,24 @@ public class DefaultRequestValidator implements RequestValidator {
         }
 
         // Validate required operation query params
-        o.getQueryParams()
-                .stream()
+        o.getQueryParams().stream()
                 .filter(parameter -> Objects.nonNull(parameter.getRequired()) && parameter.getRequired())
                 .forEach(parameter -> {
                     Object header = message.getHeader(parameter.getName());
                     if (ObjectHelper.isEmpty(header)) {
-                        validationErrors.add("Query parameter '" + parameter.getName() + "' is required but none found.");
+                        validationErrors.add(
+                                "Query parameter '" + parameter.getName() + "' is required but none found.");
                     }
                 });
 
         // Validate operation required headers
-        o.getHeaders()
-                .stream()
+        o.getHeaders().stream()
                 .filter(parameter -> Objects.nonNull(parameter.getRequired()) && parameter.getRequired())
                 .forEach(parameter -> {
                     Object header = message.getHeader(parameter.getName());
                     if (ObjectHelper.isEmpty(header)) {
-                        validationErrors.add("Header parameter '" + parameter.getName() + "' is required but none found.");
+                        validationErrors.add(
+                                "Header parameter '" + parameter.getName() + "' is required but none found.");
                     }
                 });
 
@@ -122,5 +123,4 @@ public class DefaultRequestValidator implements RequestValidator {
 
         return Collections.unmodifiableSet(validationErrors);
     }
-
 }

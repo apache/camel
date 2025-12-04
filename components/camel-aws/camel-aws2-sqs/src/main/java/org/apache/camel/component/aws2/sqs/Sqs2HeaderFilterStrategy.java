@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -27,6 +28,5 @@ public class Sqs2HeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         setLowerCase(true);
         // filter headers begin with "Camel" or "org.apache.camel"
         setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
-
     }
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.model.Pet;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
 
@@ -39,22 +40,20 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
 
                     rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 
-                    from("direct:getPetById")
-                            .process(e -> {
-                                // build response body as POJO
-                                Pet pet = new Pet();
-                                pet.setId(e.getMessage().getHeader("petId", long.class));
-                                pet.setName("tony the tiger");
-                                pet.setStatus(Pet.Status.AVAILABLE);
-                                e.getMessage().setBody(pet);
-                            });
+                    from("direct:getPetById").process(e -> {
+                        // build response body as POJO
+                        Pet pet = new Pet();
+                        pet.setId(e.getMessage().getHeader("petId", long.class));
+                        pet.setName("tony the tiger");
+                        pet.setStatus(Pet.Status.AVAILABLE);
+                        e.getMessage().setBody(pet);
+                    });
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .get("/api/v3/pet/123")
                     .then()
                     .statusCode(200)
@@ -74,23 +73,22 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
                 @Override
                 public void configure() {
                     // turn on json binding and scan for POJO classes in the model package
-                    restConfiguration().bindingMode(RestBindingMode.json)
+                    restConfiguration()
+                            .bindingMode(RestBindingMode.json)
                             .bindingPackageScan("org.apache.camel.component.platform.http.vertx.model");
 
                     rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
 
-                    from("direct:updatePet")
-                            .process(e -> {
-                                Pet pet = e.getMessage().getBody(Pet.class);
-                                pet.setStatus(Pet.Status.PENDING);
-                            });
+                    from("direct:updatePet").process(e -> {
+                        Pet pet = e.getMessage().getBody(Pet.class);
+                        pet.setStatus(Pet.Status.PENDING);
+                    });
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .contentType("application/json")
                     .body("{\"id\":123,\"name\":\"tony the tiger\"}")
                     .put("/api/v3/pet")
@@ -102,5 +100,4 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
             context.stop();
         }
     }
-
 }

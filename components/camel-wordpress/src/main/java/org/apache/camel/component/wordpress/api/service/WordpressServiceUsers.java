@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service;
 
 import org.apache.camel.component.wordpress.api.model.User;
 import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
 
-public interface WordpressServiceUsers extends WordpressCrudService<User, UserSearchCriteria> {
-}
+public interface WordpressServiceUsers extends WordpressCrudService<User, UserSearchCriteria> {}

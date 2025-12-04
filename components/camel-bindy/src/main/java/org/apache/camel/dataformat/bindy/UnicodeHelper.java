@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import java.io.Serializable;
@@ -148,7 +149,10 @@ public class UnicodeHelper implements Serializable {
         LOG.debug("\"{}\" is splitted into {} ({} {}).", input, splitted, splitted.size() - 1, method);
         if (LOG.isTraceEnabled()) {
             for (int i = 0; i < splitted.size() - 2; i++) {
-                LOG.trace("segment [{},{}[=\"{}\".", splitted.get(i), splitted.get(i + 1),
+                LOG.trace(
+                        "segment [{},{}[=\"{}\".",
+                        splitted.get(i),
+                        splitted.get(i + 1),
                         input.substring(splitted.get(i), splitted.get(i + 1)));
             }
         }
@@ -173,7 +177,8 @@ public class UnicodeHelper implements Serializable {
 
         //
         // Caution: The BreakIterator of ICU lib (com.ibm.icu.text.BreakIterator; siehe Dependencies) ist used here,
-        //          since the Java builtin one cannot handle modern unicode (Emojis with sex, skin colour, etc.) correctly.
+        //          since the Java builtin one cannot handle modern unicode (Emojis with sex, skin colour, etc.)
+        // correctly.
         //
         final BreakIterator bit = BreakIterator.getCharacterInstance();
         bit.setText(input);

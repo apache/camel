@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml;
 
 import java.io.InputStream;
@@ -28,12 +29,10 @@ public final class LwModelHelper {
 
     private static final String NAMESPACE = "http://camel.apache.org/schema/spring";
 
-    private LwModelHelper() {
-    }
+    private LwModelHelper() {}
 
     public static RoutesDefinition loadRoutesDefinition(InputStream inputStream) throws Exception {
         ModelParser parser = new ModelParser(inputStream, NAMESPACE);
         return parser.parseRoutesDefinition().orElse(null);
     }
-
 }

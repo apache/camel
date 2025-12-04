@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,14 +42,6 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.query.SortQuery;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @MockitoSettings
 public class RedisKeyTest extends RedisTestSupport {
 
@@ -53,9 +54,7 @@ public class RedisKeyTest extends RedisTestSupport {
         Collection<String> keys = new HashSet<>();
         keys.add("key1");
         keys.add("key2");
-        sendHeaders(
-                RedisConstants.COMMAND, "DEL",
-                RedisConstants.KEYS, keys);
+        sendHeaders(RedisConstants.COMMAND, "DEL", RedisConstants.KEYS, keys);
 
         verify(redisTemplate).delete(keys);
     }
@@ -70,7 +69,6 @@ public class RedisKeyTest extends RedisTestSupport {
 
         verify(redisTemplate).hasKey("key");
         assertEquals(true, result);
-
     }
 
     @Test
@@ -165,15 +163,13 @@ public class RedisKeyTest extends RedisTestSupport {
 
         verify(redisTemplate).expireAt("key", new Date(millis));
         assertEquals(true, result);
-
     }
 
     @Test
     public void shouldExecuteRANDOMKEY() throws Exception {
         when(redisTemplate.randomKey()).thenReturn("key");
 
-        Object result = sendHeaders(
-                RedisConstants.COMMAND, "RANDOMKEY");
+        Object result = sendHeaders(RedisConstants.COMMAND, "RANDOMKEY");
 
         verify(redisTemplate).randomKey();
         assertEquals("key", result);
@@ -206,13 +202,13 @@ public class RedisKeyTest extends RedisTestSupport {
     public void shouldExecuteSORT() throws Exception {
         List<Integer> list = new ArrayList<>();
         list.add(5);
-        when(redisTemplate.sort(ArgumentMatchers.<SortQuery<String>> any())).thenReturn(list);
+        when(redisTemplate.sort(ArgumentMatchers.<SortQuery<String>>any())).thenReturn(list);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SORT",
                 RedisConstants.KEY, "key");
 
-        verify(redisTemplate).sort(ArgumentMatchers.<SortQuery<String>> any());
+        verify(redisTemplate).sort(ArgumentMatchers.<SortQuery<String>>any());
         assertEquals(list, result);
     }
 

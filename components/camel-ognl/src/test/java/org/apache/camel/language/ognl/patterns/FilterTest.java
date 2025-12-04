@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.ognl.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -46,7 +47,11 @@ public class FilterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when().ognl("request.headers.foo == 'bar'").to("mock:result");
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .ognl("request.headers.foo == 'bar'")
+                        .to("mock:result");
             }
         };
     }

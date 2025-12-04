@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.scan.c;
 
 import org.apache.camel.spring.scan.ScannableTwo;
@@ -21,7 +22,5 @@ import org.apache.camel.spring.scan.ScannableTwo;
 @ScannableTwo()
 public class ScanTargetThree {
 
-    public void someMethod() {
-    }
-
+    public void someMethod() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -51,7 +52,8 @@ public interface ModelReifierFactory {
     /**
      * Creates the error handler using the factory for the route processor.
      */
-    Processor createErrorHandler(Route route, ErrorHandlerFactory errorHandlerFactory, Processor processor) throws Exception;
+    Processor createErrorHandler(Route route, ErrorHandlerFactory errorHandlerFactory, Processor processor)
+            throws Exception;
 
     /**
      * Creates the default error handler.
@@ -77,5 +79,4 @@ public interface ModelReifierFactory {
      * Creates the validator from the model.
      */
     Validator createValidator(CamelContext camelContext, Object transformerDefinition);
-
 }

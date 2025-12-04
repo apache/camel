@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class NettyBinaryProxyTest extends BaseNettyTest {
 
@@ -46,7 +47,8 @@ public class NettyBinaryProxyTest extends BaseNettyTest {
         byte[] body = template.requestBody(
                 "netty:tcp://localhost:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder"
                         .formatted(port.getPort()),
-                "Camel".getBytes(), byte[].class);
+                "Camel".getBytes(),
+                byte[].class);
         assertArrayEquals("Camel".getBytes(), body);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -61,15 +63,18 @@ public class NettyBinaryProxyTest extends BaseNettyTest {
                 registry.bind("bytesDecoder", ChannelHandlerFactories.newByteArrayDecoder("tcp"));
                 registry.bind("bytesEncoder", ChannelHandlerFactories.newByteArrayEncoder("tcp"));
 
-                fromF("netty:tcp://0.0.0.0:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder",
-                        port.getPort())
+                fromF(
+                                "netty:tcp://0.0.0.0:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder",
+                                port.getPort())
                         .to("mock:before")
-                        .toF("netty:tcp://localhost:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder",
+                        .toF(
+                                "netty:tcp://localhost:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder",
                                 port2.getPort())
                         .to("mock:after");
 
-                fromF("netty:tcp://0.0.0.0:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder",
-                        port2.getPort())
+                fromF(
+                                "netty:tcp://0.0.0.0:%s?sync=true&disconnect=true&decoders=#bytesDecoder&encoders=#bytesEncoder",
+                                port2.getPort())
                         .to("mock:proxy");
             }
         };

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.ZonedDateTime;
 
@@ -26,10 +31,6 @@ import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("standalone")
 public class StreamingApiManualIT extends AbstractSalesforceTestBase {
@@ -58,12 +59,12 @@ public class StreamingApiManualIT extends AbstractSalesforceTestBase {
 
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
-        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " +
-                                      ZonedDateTime.now().toString());
+        merchandise.setDescription__c("Merchandise for testing Streaming API updated on "
+                + ZonedDateTime.now().toString());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
-        UpsertSObjectResult result = template().requestBody("direct:upsertSObject", merchandise,
-                UpsertSObjectResult.class);
+        UpsertSObjectResult result =
+                template().requestBody("direct:upsertSObject", merchandise, UpsertSObjectResult.class);
         assertTrue(result == null || result.getSuccess(), "Merchandise test record not created");
 
         try {
@@ -99,7 +100,6 @@ public class StreamingApiManualIT extends AbstractSalesforceTestBase {
             assertEquals(2, records.getTotalSize(), "Test topics not found");
             template().requestBody("direct:deleteSObject", records.getRecords().get(0));
             template().requestBody("direct:deleteSObject", records.getRecords().get(1));
-
         }
     }
 
@@ -111,17 +111,20 @@ public class StreamingApiManualIT extends AbstractSalesforceTestBase {
 
                 // test topic subscription
                 from("salesforce:subscribe:CamelTestTopic?notifyForFields=ALL&"
-                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
-                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
+                                + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                                + "sObjectName=Merchandise__c&"
+                                + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
                         .to("mock:CamelTestTopic");
 
                 from("salesforce:subscribe:CamelTestTopic?rawPayload=true&notifyForFields=ALL&"
-                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
-                     + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").to("mock:RawPayloadCamelTestTopic");
+                                + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                                + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
+                        .to("mock:RawPayloadCamelTestTopic");
 
                 from("salesforce:subscribe:CamelFallbackTestTopic?notifyForFields=ALL&defaultReplayId=9999&"
-                     + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
-                     + "sObjectName=Merchandise__c&" + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
+                                + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                                + "sObjectName=Merchandise__c&"
+                                + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")
                         .to("mock:CamelFallbackTestTopic");
 
                 // route for creating test record
@@ -129,16 +132,15 @@ public class StreamingApiManualIT extends AbstractSalesforceTestBase {
 
                 // route for finding test topic
                 from("direct:query")
-                        .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic " +
-                            "WHERE Name IN ('CamelTestTopic', 'CamelFallbackTestTopic')&"
-                            + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
+                        .to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic "
+                                + "WHERE Name IN ('CamelTestTopic', 'CamelFallbackTestTopic')&"
+                                + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
 
                 // route for removing test record
                 from("direct:deleteSObjectWithId").to("salesforce:deleteSObjectWithId?sObjectIdName=Name");
 
                 // route for removing topic
                 from("direct:deleteSObject").to("salesforce:deleteSObject");
-
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo2;
 
 import java.util.HashMap;
@@ -45,9 +46,14 @@ import org.apache.camel.util.CaseInsensitiveMap;
 /**
  * Communicate with OData 2.0 services using Apache Olingo.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             category = { Category.CLOUD }, headersClass = Olingo2Constants.class)
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "olingo2",
+        title = "Olingo2",
+        syntax = "olingo2:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.CLOUD},
+        headersClass = Olingo2Constants.class)
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration>
         implements EndpointServiceLocation {
 
@@ -75,10 +81,19 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private Olingo2AppWrapper apiProxy;
 
-    public Olingo2Endpoint(String uri, Olingo2Component component, Olingo2ApiName apiName, String methodName,
-                           Olingo2Configuration endpointConfiguration) {
-        super(uri, component, apiName, methodName, Olingo2ApiCollection.getCollection().getHelper(apiName),
-              endpointConfiguration);
+    public Olingo2Endpoint(
+            String uri,
+            Olingo2Component component,
+            Olingo2ApiName apiName,
+            String methodName,
+            Olingo2Configuration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                Olingo2ApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -179,8 +194,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     protected void afterConfigureProperties() {
-        olingo2endpointPropertyNames
-                = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(getCamelContext(), configuration));
+        olingo2endpointPropertyNames =
+                new HashSet<>(getPropertiesHelper().getValidEndpointProperties(getCamelContext(), configuration));
         olingo2endpointPropertyNames.add(EDM_PROPERTY);
         olingo2endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
         olingo2endpointPropertyNames.add(SERVICE_URI_PROPERTY);
@@ -255,8 +270,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             if (resourcePath == null) {
                 throw new IllegalArgumentException(
                         "Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY
-                                                   + "', or exchange header '"
-                                                   + Olingo2Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
+                                + "', or exchange header '"
+                                + Olingo2Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
             }
 
             // append keyPredicate to dynamically create resource path
@@ -274,7 +289,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     private void parseQueryParams(Map<String, Object> options) {
         // extract non-endpoint properties as query params
         final Map<String, String> queryParams = new HashMap<>();
-        for (Iterator<Map.Entry<String, Object>> it = options.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, Object>> it = options.entrySet().iterator(); it.hasNext(); ) {
 
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
@@ -308,7 +323,6 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
                 // overwrite old params in supplied map
                 oldParams.putAll(queryParams);
             }
-
         }
     }
 }

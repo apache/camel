@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.skipfields;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,9 +33,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * This test validates that bindy can skip values in the fixed-length record when absolute pos values are provided
  */
@@ -42,7 +43,8 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
     public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
     public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
-    private static final String TEST_RECORD = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     \r\n";
+    private static final String TEST_RECORD =
+            "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     \r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -63,8 +65,8 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindySimpleSkipFieldsTest.Order order
-                = (BindySimpleSkipFieldsTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindySimpleSkipFieldsTest.Order order = (BindySimpleSkipFieldsTest.Order)
+                unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertNull(order.getFirstName());
@@ -87,12 +89,11 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
                 bindy.setLocale("en");
                 bindy.type(BindyType.Fixed);
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, BindySimpleSkipFieldsTest.Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, BindySimpleSkipFieldsTest.Order.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
@@ -241,11 +242,11 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

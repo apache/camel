@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cron;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,7 @@ public final class CronHelper {
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cron/";
     private static final String FACTORY_KEY = "cron-service";
 
-    private CronHelper() {
-    }
+    private CronHelper() {}
 
     /**
      * Helper to lookup/create an instance of {@link CamelCronService}
@@ -48,5 +48,4 @@ public final class CronHelper {
         FactoryFinder finder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromSmbToAsciiFileIT extends SmbServerTestSupport {
 
@@ -77,8 +78,11 @@ public class FromSmbToAsciiFileIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).convertBodyTo(String.class)
-                        .to(TestSupport.fileUri(testDirectory, "?fileExist=Override&noop=true")).to("mock:result");
+                from(getSmbUrl())
+                        .setHeader(Exchange.FILE_NAME, constant("deleteme.txt"))
+                        .convertBodyTo(String.class)
+                        .to(TestSupport.fileUri(testDirectory, "?fileExist=Override&noop=true"))
+                        .to("mock:result");
             }
         };
     }

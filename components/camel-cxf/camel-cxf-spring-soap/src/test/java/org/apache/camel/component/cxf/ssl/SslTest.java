@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.ssl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,27 +35,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SslTest extends CamelSpringTestSupport {
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS
-            = "https://localhost:" + CXFTestSupport.getPort1() + "/CxfSslTest/SoapContext/SoapPort";
+    protected static final String JAXWS_SERVER_ADDRESS =
+            "https://localhost:" + CXFTestSupport.getPort1() + "/CxfSslTest/SoapContext/SoapPort";
 
     @AfterAll
     public static void cleanUp() {
-        //System.clearProperty("cxf.config.file");
+        // System.clearProperty("cxf.config.file");
     }
 
     @BeforeAll
     public static void startService() {
-        //System.getProperties().put("cxf.config.file", "/org/apache/camel/component/cxf/CxfSslContext.xml");
-        //Greeter implementor = new GreeterImpl();
-        //Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
+        // System.getProperties().put("cxf.config.file", "/org/apache/camel/component/cxf/CxfSslContext.xml");
+        // Greeter implementor = new GreeterImpl();
+        // Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
     }
 
     @Test
@@ -100,5 +101,4 @@ public class SslTest extends CamelSpringTestSupport {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfSslContext.xml");
     }
-
 }

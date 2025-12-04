@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wasm;
 
 import org.apache.camel.Category;
@@ -31,19 +32,25 @@ import org.apache.camel.wasm.Wasm;
 /**
  * Invoke Wasm functions.
  */
-@UriEndpoint(firstVersion = "4.4.0", scheme = Wasm.SCHEME, title = "Wasm", syntax = "wasm:functionName",
-             producerOnly = true, remote = false, category = { Category.CORE, Category.SCRIPT },
-             headersClass = Wasm.Headers.class)
+@UriEndpoint(
+        firstVersion = "4.4.0",
+        scheme = Wasm.SCHEME,
+        title = "Wasm",
+        syntax = "wasm:functionName",
+        producerOnly = true,
+        remote = false,
+        category = {Category.CORE, Category.SCRIPT},
+        headersClass = Wasm.Headers.class)
 public class WasmEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
     @UriPath(description = "The Function Name")
     private final String functionName;
+
     @UriParam
     private WasmConfiguration configuration;
 
-    public WasmEndpoint(String endpointUri, Component component, String functionName,
-                        WasmConfiguration configuration) {
+    public WasmEndpoint(String endpointUri, Component component, String functionName, WasmConfiguration configuration) {
         super(endpointUri, component);
         this.functionName = functionName;
         this.configuration = configuration;

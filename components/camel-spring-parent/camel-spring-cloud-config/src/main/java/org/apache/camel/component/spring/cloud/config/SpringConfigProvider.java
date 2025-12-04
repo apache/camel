@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.cloud.config;
 
 import org.apache.camel.CamelContext;
@@ -65,8 +66,10 @@ public class SpringConfigProvider {
      * @see                 org.apache.camel.CamelContext
      */
     public ConfigData getConfigData(CamelContext camelContext) {
-        SpringCloudConfigConfiguration configuration = camelContext.getVaultConfiguration().springConfig();
-        ConfigServerConfigDataLoader configServerConfigDataLoader = new ConfigServerConfigDataLoader(new DeferredLogs());
+        SpringCloudConfigConfiguration configuration =
+                camelContext.getVaultConfiguration().springConfig();
+        ConfigServerConfigDataLoader configServerConfigDataLoader =
+                new ConfigServerConfigDataLoader(new DeferredLogs());
 
         Environment camelEnvironment = new StandardEnvironment();
         ConfigClientProperties configClientProperties = new ConfigClientProperties(camelEnvironment);
@@ -88,22 +91,22 @@ public class SpringConfigProvider {
         // Spring Cloud Config does not expose a plain Spring API easy to use
         // This code implements a similar behaviour to Spring Boot Config usage
         ConfigurableBootstrapContext configurableBootstrapContext = new DefaultBootstrapContext();
-        configurableBootstrapContext.register(RestTemplate.class,
-                BootstrapRegistry.InstanceSupplier.of(new RestTemplate()));
-        configurableBootstrapContext.register(ConfigClientProperties.class,
-                BootstrapRegistry.InstanceSupplier.of(configClientProperties));
-        configurableBootstrapContext.register(ConfigClientRequestTemplateFactory.class,
+        configurableBootstrapContext.register(
+                RestTemplate.class, BootstrapRegistry.InstanceSupplier.of(new RestTemplate()));
+        configurableBootstrapContext.register(
+                ConfigClientProperties.class, BootstrapRegistry.InstanceSupplier.of(configClientProperties));
+        configurableBootstrapContext.register(
+                ConfigClientRequestTemplateFactory.class,
                 BootstrapRegistry.InstanceSupplier.of(new ConfigClientRequestTemplateFactory(
-                        LogFactory.getLog(SpringCloudConfigPropertiesFunction.class),
-                        configClientProperties)));
+                        LogFactory.getLog(SpringCloudConfigPropertiesFunction.class), configClientProperties)));
 
         ConfigDataLoaderContext configDataLoaderContext = () -> configurableBootstrapContext;
 
-        ConfigServerConfigDataResource configServerConfigDataResource
-                = new ConfigServerConfigDataResource(configClientProperties, true, null);
+        ConfigServerConfigDataResource configServerConfigDataResource =
+                new ConfigServerConfigDataResource(configClientProperties, true, null);
 
-        ConfigData configData = configServerConfigDataLoader.doLoad(configDataLoaderContext,
-                configServerConfigDataResource);
+        ConfigData configData =
+                configServerConfigDataLoader.doLoad(configDataLoaderContext, configServerConfigDataResource);
 
         return configData;
     }

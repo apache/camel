@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import java.io.File;
@@ -74,37 +75,118 @@ public class DoclingServeClient {
     private final long asyncTimeout;
 
     public DoclingServeClient(String baseUrl) {
-        this(baseUrl, AuthenticationScheme.NONE, null, "X-API-Key", DEFAULT_CONVERT_ENDPOINT, 2000, 300000,
-             20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
+        this(
+                baseUrl,
+                AuthenticationScheme.NONE,
+                null,
+                "X-API-Key",
+                DEFAULT_CONVERT_ENDPOINT,
+                2000,
+                300000,
+                20,
+                10,
+                30000,
+                60000,
+                30000,
+                -1,
+                2000,
+                true,
+                60000);
     }
 
     public DoclingServeClient(
-                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
-                              String apiKeyHeader) {
-        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, DEFAULT_CONVERT_ENDPOINT, 2000, 300000,
-             20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
+            String baseUrl,
+            AuthenticationScheme authenticationScheme,
+            String authenticationToken,
+            String apiKeyHeader) {
+        this(
+                baseUrl,
+                authenticationScheme,
+                authenticationToken,
+                apiKeyHeader,
+                DEFAULT_CONVERT_ENDPOINT,
+                2000,
+                300000,
+                20,
+                10,
+                30000,
+                60000,
+                30000,
+                -1,
+                2000,
+                true,
+                60000);
     }
 
     public DoclingServeClient(
-                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
-                              String apiKeyHeader, String convertEndpoint) {
-        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, convertEndpoint, 2000, 300000,
-             20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
+            String baseUrl,
+            AuthenticationScheme authenticationScheme,
+            String authenticationToken,
+            String apiKeyHeader,
+            String convertEndpoint) {
+        this(
+                baseUrl,
+                authenticationScheme,
+                authenticationToken,
+                apiKeyHeader,
+                convertEndpoint,
+                2000,
+                300000,
+                20,
+                10,
+                30000,
+                60000,
+                30000,
+                -1,
+                2000,
+                true,
+                60000);
     }
 
     public DoclingServeClient(
-                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
-                              String apiKeyHeader, String convertEndpoint, long asyncPollInterval, long asyncTimeout) {
-        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, convertEndpoint, asyncPollInterval,
-             asyncTimeout, 20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
+            String baseUrl,
+            AuthenticationScheme authenticationScheme,
+            String authenticationToken,
+            String apiKeyHeader,
+            String convertEndpoint,
+            long asyncPollInterval,
+            long asyncTimeout) {
+        this(
+                baseUrl,
+                authenticationScheme,
+                authenticationToken,
+                apiKeyHeader,
+                convertEndpoint,
+                asyncPollInterval,
+                asyncTimeout,
+                20,
+                10,
+                30000,
+                60000,
+                30000,
+                -1,
+                2000,
+                true,
+                60000);
     }
 
     public DoclingServeClient(
-                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
-                              String apiKeyHeader, String convertEndpoint, long asyncPollInterval, long asyncTimeout,
-                              int maxTotalConnections, int maxConnectionsPerRoute, int connectionTimeout,
-                              int socketTimeout, int connectionRequestTimeout, long connectionTimeToLive,
-                              int validateAfterInactivity, boolean evictIdleConnections, long maxIdleTime) {
+            String baseUrl,
+            AuthenticationScheme authenticationScheme,
+            String authenticationToken,
+            String apiKeyHeader,
+            String convertEndpoint,
+            long asyncPollInterval,
+            long asyncTimeout,
+            int maxTotalConnections,
+            int maxConnectionsPerRoute,
+            int connectionTimeout,
+            int socketTimeout,
+            int connectionRequestTimeout,
+            long connectionTimeToLive,
+            int validateAfterInactivity,
+            boolean evictIdleConnections,
+            long maxIdleTime) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.objectMapper = new ObjectMapper();
         this.authenticationScheme = authenticationScheme != null ? authenticationScheme : AuthenticationScheme.NONE;
@@ -115,22 +197,34 @@ public class DoclingServeClient {
         this.asyncTimeout = asyncTimeout;
 
         // Build connection pool and HTTP client with custom configuration
-        this.connectionManager = buildConnectionManager(maxTotalConnections, maxConnectionsPerRoute, connectionTimeout,
-                socketTimeout, connectionTimeToLive, validateAfterInactivity);
-        this.httpClient = buildHttpClient(connectionManager, connectionRequestTimeout, socketTimeout,
-                evictIdleConnections, maxIdleTime);
+        this.connectionManager = buildConnectionManager(
+                maxTotalConnections,
+                maxConnectionsPerRoute,
+                connectionTimeout,
+                socketTimeout,
+                connectionTimeToLive,
+                validateAfterInactivity);
+        this.httpClient = buildHttpClient(
+                connectionManager, connectionRequestTimeout, socketTimeout, evictIdleConnections, maxIdleTime);
 
         LOG.info(
                 "DoclingServeClient initialized with connection pool: maxTotal={}, maxPerRoute={}, connTimeout={}ms, socketTimeout={}ms",
-                maxTotalConnections, maxConnectionsPerRoute, connectionTimeout, socketTimeout);
+                maxTotalConnections,
+                maxConnectionsPerRoute,
+                connectionTimeout,
+                socketTimeout);
     }
 
     /**
      * Build a configured connection manager with pooling support.
      */
     private PoolingHttpClientConnectionManager buildConnectionManager(
-            int maxTotalConnections, int maxConnectionsPerRoute, int connectionTimeout,
-            int socketTimeout, long connectionTimeToLive, int validateAfterInactivity) {
+            int maxTotalConnections,
+            int maxConnectionsPerRoute,
+            int connectionTimeout,
+            int socketTimeout,
+            long connectionTimeToLive,
+            int validateAfterInactivity) {
 
         // Configure socket settings
         SocketConfig socketConfig = SocketConfig.custom()
@@ -142,8 +236,10 @@ public class DoclingServeClient {
                 .setConnectTimeout(Timeout.ofMilliseconds(connectionTimeout))
                 .setSocketTimeout(Timeout.ofMilliseconds(socketTimeout))
                 .setValidateAfterInactivity(TimeValue.ofMilliseconds(validateAfterInactivity))
-                .setTimeToLive(connectionTimeToLive > 0
-                        ? TimeValue.ofMilliseconds(connectionTimeToLive) : TimeValue.NEG_ONE_MILLISECOND)
+                .setTimeToLive(
+                        connectionTimeToLive > 0
+                                ? TimeValue.ofMilliseconds(connectionTimeToLive)
+                                : TimeValue.NEG_ONE_MILLISECOND)
                 .build();
 
         // Build the pooling connection manager
@@ -154,8 +250,11 @@ public class DoclingServeClient {
                 .setDefaultConnectionConfig(connectionConfig)
                 .build();
 
-        LOG.debug("Connection manager configured: maxTotal={}, maxPerRoute={}, validateAfterInactivity={}ms, ttl={}ms",
-                maxTotalConnections, maxConnectionsPerRoute, validateAfterInactivity,
+        LOG.debug(
+                "Connection manager configured: maxTotal={}, maxPerRoute={}, validateAfterInactivity={}ms, ttl={}ms",
+                maxTotalConnections,
+                maxConnectionsPerRoute,
+                validateAfterInactivity,
                 connectionTimeToLive > 0 ? connectionTimeToLive : "infinite");
 
         return connManager;
@@ -165,8 +264,11 @@ public class DoclingServeClient {
      * Build an HTTP client with the configured connection manager and request settings.
      */
     private CloseableHttpClient buildHttpClient(
-            PoolingHttpClientConnectionManager connectionManager, int connectionRequestTimeout,
-            int socketTimeout, boolean evictIdleConnections, long maxIdleTime) {
+            PoolingHttpClientConnectionManager connectionManager,
+            int connectionRequestTimeout,
+            int socketTimeout,
+            boolean evictIdleConnections,
+            long maxIdleTime) {
 
         // Configure request settings
         RequestConfig requestConfig = RequestConfig.custom()
@@ -175,9 +277,8 @@ public class DoclingServeClient {
                 .build();
 
         // Build the HTTP client
-        org.apache.hc.client5.http.impl.classic.HttpClientBuilder clientBuilder = HttpClients.custom()
-                .setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(requestConfig);
+        org.apache.hc.client5.http.impl.classic.HttpClientBuilder clientBuilder =
+                HttpClients.custom().setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfig);
 
         // Enable idle connection eviction if configured
         if (evictIdleConnections) {
@@ -187,8 +288,10 @@ public class DoclingServeClient {
 
         CloseableHttpClient client = clientBuilder.build();
 
-        LOG.debug("HTTP client configured: connectionRequestTimeout={}ms, socketTimeout={}ms",
-                connectionRequestTimeout, socketTimeout);
+        LOG.debug(
+                "HTTP client configured: connectionRequestTimeout={}ms, socketTimeout={}ms",
+                connectionRequestTimeout,
+                socketTimeout);
 
         return client;
     }
@@ -309,7 +412,8 @@ public class DoclingServeClient {
 
             // The response structure may vary, so we'll try to extract the content
             // This is a simplified implementation - adjust based on actual API response
-            if (rootNode.has("documents") && rootNode.get("documents").isArray()
+            if (rootNode.has("documents")
+                    && rootNode.get("documents").isArray()
                     && rootNode.get("documents").size() > 0) {
                 JsonNode firstDoc = rootNode.get("documents").get(0);
 
@@ -534,8 +638,7 @@ public class DoclingServeClient {
             }
         }
 
-        throw new IOException(
-                "Async conversion timed out after " + asyncTimeout + "ms for task: " + taskId);
+        throw new IOException("Async conversion timed out after " + asyncTimeout + "ms for task: " + taskId);
     }
 
     private Map<String, Object> buildRequestBody(String inputSource, String outputFormat) {
@@ -574,7 +677,8 @@ public class DoclingServeClient {
 
     private ConversionStatus parseConversionStatus(String taskId, JsonNode statusNode) {
         // Docling-serve uses "task_status" field with values: pending, started, success, failure
-        String statusStr = statusNode.has("task_status") ? statusNode.get("task_status").asText() : "unknown";
+        String statusStr =
+                statusNode.has("task_status") ? statusNode.get("task_status").asText() : "unknown";
         ConversionStatus.Status status;
 
         switch (statusStr.toLowerCase()) {
@@ -624,7 +728,9 @@ public class DoclingServeClient {
             }
         }
 
-        Integer progress = statusNode.has("task_position") ? statusNode.get("task_position").asInt() : null;
+        Integer progress = statusNode.has("task_position")
+                ? statusNode.get("task_position").asInt()
+                : null;
 
         return new ConversionStatus(taskId, status, result, errorMessage, progress);
     }
@@ -675,11 +781,20 @@ public class DoclingServeClient {
      * @return                  BatchProcessingResults containing all conversion results
      */
     public BatchProcessingResults convertDocumentsBatch(
-            List<String> inputSources, String outputFormat, int batchSize, int parallelism,
-            boolean failOnFirstError, boolean useAsync, long batchTimeout) {
+            List<String> inputSources,
+            String outputFormat,
+            int batchSize,
+            int parallelism,
+            boolean failOnFirstError,
+            boolean useAsync,
+            long batchTimeout) {
 
-        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
-                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
+        LOG.info(
+                "Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(),
+                parallelism,
+                failOnFirstError,
+                batchTimeout);
 
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
@@ -696,53 +811,63 @@ public class DoclingServeClient {
                 final int currentIndex = index.getAndIncrement();
                 final String documentId = "doc-" + currentIndex;
 
-                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
-                    // Check if we should skip this task due to early termination
-                    if (failOnFirstError && shouldCancel.get()) {
-                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
-                        cancelledResult.setBatchIndex(currentIndex);
-                        cancelledResult.setSuccess(false);
-                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
-                        return cancelledResult;
-                    }
+                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(
+                        () -> {
+                            // Check if we should skip this task due to early termination
+                            if (failOnFirstError && shouldCancel.get()) {
+                                BatchConversionResult cancelledResult =
+                                        new BatchConversionResult(documentId, inputSource);
+                                cancelledResult.setBatchIndex(currentIndex);
+                                cancelledResult.setSuccess(false);
+                                cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                                return cancelledResult;
+                            }
 
-                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
-                    result.setBatchIndex(currentIndex);
-                    long startTime = System.currentTimeMillis();
+                            BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                            result.setBatchIndex(currentIndex);
+                            long startTime = System.currentTimeMillis();
 
-                    try {
-                        LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
+                            try {
+                                LOG.debug(
+                                        "Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
 
-                        String converted;
-                        if (useAsync) {
-                            converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
-                        } else {
-                            converted = convertDocument(inputSource, outputFormat);
-                        }
+                                String converted;
+                                if (useAsync) {
+                                    converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
+                                } else {
+                                    converted = convertDocument(inputSource, outputFormat);
+                                }
 
-                        result.setResult(converted);
-                        result.setSuccess(true);
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                                result.setResult(converted);
+                                result.setSuccess(true);
+                                result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
 
-                        LOG.debug("Successfully processed document {} in {}ms", documentId,
-                                result.getProcessingTimeMs());
+                                LOG.debug(
+                                        "Successfully processed document {} in {}ms",
+                                        documentId,
+                                        result.getProcessingTimeMs());
 
-                    } catch (Exception e) {
-                        result.setSuccess(false);
-                        result.setErrorMessage(e.getMessage());
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                            } catch (Exception e) {
+                                result.setSuccess(false);
+                                result.setErrorMessage(e.getMessage());
+                                result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
 
-                        LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
-                                e.getMessage(), e);
+                                LOG.error(
+                                        "Failed to process document {} (index {}): {}",
+                                        documentId,
+                                        currentIndex,
+                                        e.getMessage(),
+                                        e);
 
-                        // Signal other tasks to cancel if failOnFirstError is enabled
-                        if (failOnFirstError) {
-                            shouldCancel.set(true);
-                        }
-                    }
+                                // Signal other tasks to cancel if failOnFirstError is enabled
+                                if (failOnFirstError) {
+                                    shouldCancel.set(true);
+                                }
+                            }
 
-                    return result;
-                }, executor);
+                            return result;
+                        },
+                        executor);
 
                 futures.add(future);
             }
@@ -777,7 +902,9 @@ public class DoclingServeClient {
 
                         // If failOnFirstError and we hit a failure, stop adding more results
                         if (failOnFirstError && !result.isSuccess()) {
-                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                            LOG.warn(
+                                    "Failing batch due to error in document {}: {}",
+                                    result.getDocumentId(),
                                     result.getErrorMessage());
                             break;
                         }
@@ -804,16 +931,18 @@ public class DoclingServeClient {
 
         results.setEndTimeMs(System.currentTimeMillis());
 
-        LOG.info("Batch conversion completed: total={}, success={}, failed={}, time={}ms",
-                results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount(),
+        LOG.info(
+                "Batch conversion completed: total={}, success={}, failed={}, time={}ms",
+                results.getTotalDocuments(),
+                results.getSuccessCount(),
+                results.getFailureCount(),
                 results.getTotalProcessingTimeMs());
 
         // If failOnFirstError is true and we have failures, throw exception
         if (failOnFirstError && results.hasAnyFailures()) {
             BatchConversionResult firstFailure = results.getFailed().get(0);
-            throw new RuntimeException(
-                    "Batch processing failed for document: " + firstFailure.getOriginalPath() + " - "
-                                       + firstFailure.getErrorMessage());
+            throw new RuntimeException("Batch processing failed for document: " + firstFailure.getOriginalPath() + " - "
+                    + firstFailure.getErrorMessage());
         }
 
         return results;
@@ -877,14 +1006,18 @@ public class DoclingServeClient {
             // Count pages if available
             if (rootNode.has(DoclingMetadataFields.PAGES)) {
                 if (rootNode.get(DoclingMetadataFields.PAGES).isArray()) {
-                    metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).size());
+                    metadata.setPageCount(
+                            rootNode.get(DoclingMetadataFields.PAGES).size());
                 } else if (rootNode.get(DoclingMetadataFields.PAGES).isInt()) {
-                    metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).asInt());
+                    metadata.setPageCount(
+                            rootNode.get(DoclingMetadataFields.PAGES).asInt());
                 }
             } else if (rootNode.has(DoclingMetadataFields.NUM_PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
+                metadata.setPageCount(
+                        rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
             } else if (rootNode.has(DoclingMetadataFields.PAGE_COUNT)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGE_COUNT).asInt());
+                metadata.setPageCount(
+                        rootNode.get(DoclingMetadataFields.PAGE_COUNT).asInt());
             }
 
             // Store raw metadata if requested
@@ -926,7 +1059,8 @@ public class DoclingServeClient {
                     : metadataNode.get(DoclingMetadataFields.CREATOR_PASCAL).asText();
             metadata.setCreator(creator);
         }
-        if (metadataNode.has(DoclingMetadataFields.PRODUCER) || metadataNode.has(DoclingMetadataFields.PRODUCER_PASCAL)) {
+        if (metadataNode.has(DoclingMetadataFields.PRODUCER)
+                || metadataNode.has(DoclingMetadataFields.PRODUCER_PASCAL)) {
             String producer = metadataNode.has(DoclingMetadataFields.PRODUCER)
                     ? metadataNode.get(DoclingMetadataFields.PRODUCER).asText()
                     : metadataNode.get(DoclingMetadataFields.PRODUCER_PASCAL).asText();
@@ -938,13 +1072,15 @@ public class DoclingServeClient {
                     : metadataNode.get(DoclingMetadataFields.SUBJECT_PASCAL).asText();
             metadata.setSubject(subject);
         }
-        if (metadataNode.has(DoclingMetadataFields.KEYWORDS) || metadataNode.has(DoclingMetadataFields.KEYWORDS_PASCAL)) {
+        if (metadataNode.has(DoclingMetadataFields.KEYWORDS)
+                || metadataNode.has(DoclingMetadataFields.KEYWORDS_PASCAL)) {
             String keywords = metadataNode.has(DoclingMetadataFields.KEYWORDS)
                     ? metadataNode.get(DoclingMetadataFields.KEYWORDS).asText()
                     : metadataNode.get(DoclingMetadataFields.KEYWORDS_PASCAL).asText();
             metadata.setKeywords(keywords);
         }
-        if (metadataNode.has(DoclingMetadataFields.LANGUAGE) || metadataNode.has(DoclingMetadataFields.LANGUAGE_PASCAL)) {
+        if (metadataNode.has(DoclingMetadataFields.LANGUAGE)
+                || metadataNode.has(DoclingMetadataFields.LANGUAGE_PASCAL)) {
             String language = metadataNode.has(DoclingMetadataFields.LANGUAGE)
                     ? metadataNode.get(DoclingMetadataFields.LANGUAGE).asText()
                     : metadataNode.get(DoclingMetadataFields.LANGUAGE_PASCAL).asText();
@@ -960,12 +1096,22 @@ public class DoclingServeClient {
         }
 
         // Extract dates - try multiple field name variations
-        extractDateField(metadata, metadataNode, DoclingMetadataFields.CREATION_DATE,
-                DoclingMetadataFields.CREATION_DATE_PASCAL, DoclingMetadataFields.CREATED,
-                DoclingMetadataFields.CREATED_PASCAL, (date) -> metadata.setCreationDate(date));
-        extractDateField(metadata, metadataNode, DoclingMetadataFields.MODIFICATION_DATE,
-                DoclingMetadataFields.MODIFICATION_DATE_PASCAL, DoclingMetadataFields.MODIFIED,
-                DoclingMetadataFields.MODIFIED_PASCAL, DoclingMetadataFields.MOD_DATE,
+        extractDateField(
+                metadata,
+                metadataNode,
+                DoclingMetadataFields.CREATION_DATE,
+                DoclingMetadataFields.CREATION_DATE_PASCAL,
+                DoclingMetadataFields.CREATED,
+                DoclingMetadataFields.CREATED_PASCAL,
+                (date) -> metadata.setCreationDate(date));
+        extractDateField(
+                metadata,
+                metadataNode,
+                DoclingMetadataFields.MODIFICATION_DATE,
+                DoclingMetadataFields.MODIFICATION_DATE_PASCAL,
+                DoclingMetadataFields.MODIFIED,
+                DoclingMetadataFields.MODIFIED_PASCAL,
+                DoclingMetadataFields.MOD_DATE,
                 (date) -> metadata.setModificationDate(date));
 
         // Extract all other fields as custom metadata if requested
@@ -997,8 +1143,13 @@ public class DoclingServeClient {
      * Extract a date field from metadata node, trying multiple field name variations.
      */
     private void extractDateField(
-            DocumentMetadata metadata, JsonNode metadataNode, String fieldName1,
-            String fieldName2, String fieldName3, String fieldName4, String fieldName5,
+            DocumentMetadata metadata,
+            JsonNode metadataNode,
+            String fieldName1,
+            String fieldName2,
+            String fieldName3,
+            String fieldName4,
+            String fieldName5,
             java.util.function.Consumer<java.time.Instant> setter) {
         String dateStr = null;
 
@@ -1023,7 +1174,8 @@ public class DoclingServeClient {
                 // Try parsing as ISO local date time
                 try {
                     java.time.LocalDateTime ldt = java.time.LocalDateTime.parse(dateStr);
-                    java.time.Instant instant = ldt.atZone(java.time.ZoneId.systemDefault()).toInstant();
+                    java.time.Instant instant =
+                            ldt.atZone(java.time.ZoneId.systemDefault()).toInstant();
                     setter.accept(instant);
                 } catch (Exception e2) {
                     LOG.debug("Failed to parse date as LocalDateTime: {}", dateStr);
@@ -1036,8 +1188,12 @@ public class DoclingServeClient {
      * Overload for extractDateField with 4 field names
      */
     private void extractDateField(
-            DocumentMetadata metadata, JsonNode metadataNode, String fieldName1,
-            String fieldName2, String fieldName3, String fieldName4,
+            DocumentMetadata metadata,
+            JsonNode metadataNode,
+            String fieldName1,
+            String fieldName2,
+            String fieldName3,
+            String fieldName4,
             java.util.function.Consumer<java.time.Instant> setter) {
         extractDateField(metadata, metadataNode, fieldName1, fieldName2, fieldName3, fieldName4, null, setter);
     }
@@ -1066,7 +1222,8 @@ public class DoclingServeClient {
     public String getPoolStats() {
         if (connectionManager != null) {
             var stats = connectionManager.getTotalStats();
-            return String.format("ConnectionPool[available=%d, leased=%d, pending=%d, max=%d]",
+            return String.format(
+                    "ConnectionPool[available=%d, leased=%d, pending=%d, max=%d]",
                     stats.getAvailable(), stats.getLeased(), stats.getPending(), stats.getMax());
         }
         return "ConnectionPool[not initialized]";

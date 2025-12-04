@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cluster;
 
 import java.util.ArrayList;
@@ -41,7 +42,8 @@ public class ConsulMasterIT {
     public static ConsulService service = ConsulServiceFactory.createService();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulMasterIT.class);
-    private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
+    private static final List<String> CLIENTS =
+            IntStream.range(0, 3).mapToObj(Integer::toString).toList();
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
@@ -85,14 +87,17 @@ public class ConsulMasterIT {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("master:my-ns:timer:consul?delay=1000&period=1000").routeId("route-" + id).log("From ${routeId}")
+                    from("master:my-ns:timer:consul?delay=1000&period=1000")
+                            .routeId("route-" + id)
+                            .log("From ${routeId}")
                             .process(e -> contextLatch.countDown());
                 }
             });
 
             // Start the context after some random time so the startup order
             // changes for each test.
-            Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
+            Awaitility.await()
+                    .pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
                     .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
             context.start();
 

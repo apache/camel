@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.AggregationStrategy;
@@ -44,12 +45,20 @@ public class FileMulticastDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?delete=true&initialDelay=0&delay=10")).multicast(new UseLatestAggregationStrategy())
-                        .shareUnitOfWork().to("direct:foo", "direct:bar")
-                        .end().convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?delete=true&initialDelay=0&delay=10"))
+                        .multicast(new UseLatestAggregationStrategy())
+                        .shareUnitOfWork()
+                        .to("direct:foo", "direct:bar")
+                        .end()
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
-                from("direct:foo").to("log:foo").aggregate(header(Exchange.FILE_NAME), new MyFileAggregator())
-                        .completionTimeout(100).convertBodyTo(String.class).to("mock:foo")
+                from("direct:foo")
+                        .to("log:foo")
+                        .aggregate(header(Exchange.FILE_NAME), new MyFileAggregator())
+                        .completionTimeout(100)
+                        .convertBodyTo(String.class)
+                        .to("mock:foo")
                         .end();
 
                 from("direct:bar").to("log:bar").convertBodyTo(String.class).to("mock:bar");

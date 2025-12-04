@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.bean;
 
 import java.lang.reflect.Method;
@@ -66,8 +67,7 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
 
     private boolean validate = true;
 
-    public BeanLanguage() {
-    }
+    public BeanLanguage() {}
 
     public boolean isValidate() {
         return validate;
@@ -168,9 +168,9 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         } else {
-            //first check case :: because of my.own.Bean::method
+            // first check case :: because of my.own.Bean::method
             int doubleColonIndex = expression.indexOf("::");
-            //need to check that not inside params
+            // need to check that not inside params
             int beginOfParameterDeclaration = expression.indexOf('(');
             if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                 beanName = expression.substring(0, doubleColonIndex);
@@ -255,8 +255,9 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
             MethodInfo mi = candidates.get(0);
             Method method = mi.getMethod();
             // map bindings to method
-            Object[] args
-                    = method.getParameterCount() > 0 && bindings != null ? bindings.values().toArray(new Object[0]) : null;
+            Object[] args = method.getParameterCount() > 0 && bindings != null
+                    ? bindings.values().toArray(new Object[0])
+                    : null;
             if (mi.isStaticMethod()) {
                 out = ObjectHelper.invokeMethod(method, null, args);
             } else {

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -28,11 +34,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -63,7 +64,8 @@ public class BindySimpleCsvBooleanUnmarshallTest {
 
         template.sendBody(expected);
 
-        List<BooleanExample> examples = (List<BooleanExample>) result.getExchanges().get(0).getIn().getBody();
+        List<BooleanExample> examples =
+                (List<BooleanExample>) result.getExchanges().get(0).getIn().getBody();
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -87,7 +89,8 @@ public class BindySimpleCsvBooleanUnmarshallTest {
 
         template.sendBody(expected);
 
-        List<BooleanExample> examples = (List<BooleanExample>) result.getExchanges().get(0).getIn().getBody();
+        List<BooleanExample> examples =
+                (List<BooleanExample>) result.getExchanges().get(0).getIn().getBody();
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -105,8 +108,8 @@ public class BindySimpleCsvBooleanUnmarshallTest {
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
+        BindyCsvDataFormat camelDataFormat =
+                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
 
         @Override
         public void configure() {
@@ -119,6 +122,5 @@ public class BindySimpleCsvBooleanUnmarshallTest {
 
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -23,7 +24,8 @@ public interface ManagedSplitterMBean extends ManagedMulticastMBean {
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression of how to split the message body, such as as-is, using a tokenizer, or using an xpath.")
+    @ManagedAttribute(
+            description =
+                    "Expression of how to split the message body, such as as-is, using a tokenizer, or using an xpath.")
     String getExpression();
-
 }

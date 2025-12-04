@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.UUID;
 
@@ -28,11 +34,6 @@ import jakarta.jms.TextMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutTempQueueProducerTest extends JmsTestSupport {
 
@@ -50,12 +51,12 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
         final String requestText = "Hello World!";
         final String responseText = "How are you";
         mc.setMessageListener(new MyMessageListener(requestText, responseText));
-        Object responseObject = template.requestBody("sjms:queue:" + QUEUE_NAME + "?exchangePattern=InOut", requestText);
+        Object responseObject =
+                template.requestBody("sjms:queue:" + QUEUE_NAME + "?exchangePattern=InOut", requestText);
         assertNotNull(responseObject);
         assertTrue(responseObject instanceof String);
         assertEquals(responseText, responseObject);
         mc.close();
-
     }
 
     @Test
@@ -75,7 +76,6 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
         assertEquals(responseText, exchange.getMessage().getBody());
         assertEquals(correlationId, exchange.getMessage().getHeader("JMSCorrelationID", String.class));
         mc.close();
-
     }
 
     protected class MyMessageListener implements MessageListener {

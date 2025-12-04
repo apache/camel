@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jcache;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.jcache;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 public class JCacheManagerTest extends JCacheComponentTestSupport {
 
@@ -42,9 +43,8 @@ public class JCacheManagerTest extends JCacheComponentTestSupport {
 
         final JCacheManager<Object, Object> objectObjectJCacheManager = new JCacheManager<>(conf);
 
-        assertThrows(IllegalStateException.class,
-                () -> {
-                    objectObjectJCacheManager.getCache();
-                });
+        assertThrows(IllegalStateException.class, () -> {
+            objectObjectJCacheManager.getCache();
+        });
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,8 +27,6 @@ import org.eclipse.jetty.server.CustomRequestLog;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Slf4jRequestLogWriter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestRequestLogTest extends BaseJettyTest {
 
@@ -54,17 +55,21 @@ public class RestRequestLogTest extends BaseJettyTest {
             @Override
             public void configure() {
                 // configure to use jetty on localhost with the given port using custom request logger
-                restConfiguration().component("jetty").host("localhost").port(getPort()).componentProperty("requestLog",
-                        "#myRequestLog");
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .componentProperty("requestLog", "#myRequestLog");
 
                 rest("/api/").get("/{id}/").to("direct:foo");
 
                 from("direct:foo").removeHeaders("CamelHttp*").to("http://localhost:" + getPort2());
 
-                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform()
+                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true")
+                        .to("mock:result")
+                        .transform()
                         .simple("Bye ${header.id}");
             }
         };
     }
-
 }

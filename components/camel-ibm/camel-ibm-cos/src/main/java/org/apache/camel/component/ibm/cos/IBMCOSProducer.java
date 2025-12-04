@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos;
 
 import java.io.InputStream;
@@ -163,9 +164,12 @@ public class IBMCOSProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(s3Object.getObjectContent());
         message.setHeader(IBMCOSConstants.E_TAG, s3Object.getObjectMetadata().getETag());
-        message.setHeader(IBMCOSConstants.CONTENT_TYPE, s3Object.getObjectMetadata().getContentType());
-        message.setHeader(IBMCOSConstants.CONTENT_LENGTH, s3Object.getObjectMetadata().getContentLength());
-        message.setHeader(IBMCOSConstants.LAST_MODIFIED, s3Object.getObjectMetadata().getLastModified());
+        message.setHeader(
+                IBMCOSConstants.CONTENT_TYPE, s3Object.getObjectMetadata().getContentType());
+        message.setHeader(
+                IBMCOSConstants.CONTENT_LENGTH, s3Object.getObjectMetadata().getContentLength());
+        message.setHeader(
+                IBMCOSConstants.LAST_MODIFIED, s3Object.getObjectMetadata().getLastModified());
     }
 
     private void getObjectRange(AmazonS3 cosClient, Exchange exchange) {
@@ -212,8 +216,7 @@ public class IBMCOSProducer extends DefaultProducer {
             keyVersions.add(new DeleteObjectsRequest.KeyVersion(key));
         }
 
-        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName)
-                .withKeys(keyVersions);
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName).withKeys(keyVersions);
 
         DeleteObjectsResult result = cosClient.deleteObjects(deleteObjectsRequest);
 
@@ -258,8 +261,7 @@ public class IBMCOSProducer extends DefaultProducer {
     private void copyObject(AmazonS3 cosClient, Exchange exchange) {
         String bucketName = determineBucketName(exchange);
         String key = determineKey(exchange);
-        String destinationBucket
-                = exchange.getIn().getHeader(IBMCOSConstants.BUCKET_DESTINATION_NAME, String.class);
+        String destinationBucket = exchange.getIn().getHeader(IBMCOSConstants.BUCKET_DESTINATION_NAME, String.class);
         String destinationKey = exchange.getIn().getHeader(IBMCOSConstants.DESTINATION_KEY, String.class);
 
         if (destinationBucket == null) {
@@ -269,11 +271,14 @@ public class IBMCOSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Destination key must be specified");
         }
 
-        LOG.trace("Copying object [{}] from bucket [{}] to bucket [{}] with key [{}]...",
-                key, bucketName, destinationBucket, destinationKey);
+        LOG.trace(
+                "Copying object [{}] from bucket [{}] to bucket [{}] with key [{}]...",
+                key,
+                bucketName,
+                destinationBucket,
+                destinationKey);
 
-        CopyObjectRequest copyObjectRequest
-                = new CopyObjectRequest(bucketName, key, destinationBucket, destinationKey);
+        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(bucketName, key, destinationBucket, destinationKey);
         cosClient.copyObject(copyObjectRequest);
     }
 

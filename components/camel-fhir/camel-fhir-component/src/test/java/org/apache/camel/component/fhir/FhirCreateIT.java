@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirCreate} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
@@ -44,7 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FhirCreateIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirCreateIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirCreateApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirCreateApiMethod.class)
+            .getName();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -67,7 +70,8 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
 
     @Test
     public void testCreateResource() {
-        Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+        Patient patient =
+                new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
 
         MethodOutcome result = requestBody("direct://RESOURCE", patient);
 
@@ -78,7 +82,8 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
 
     @Test
     public void testCreateStringResource() {
-        Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+        Patient patient =
+                new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
         String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
 
         MethodOutcome result = requestBody("direct://RESOURCE_STRING", patientString);
@@ -90,7 +95,8 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
 
     @Test
     public void testCreateStringResourceEncodeXml() {
-        Patient patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
+        Patient patient =
+                new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman"));
         String patientString = this.fhirContext.newXmlParser().encodeResourceToString(patient);
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.ENCODE_XML.getHeaderName(), Boolean.TRUE);
@@ -108,14 +114,12 @@ public class FhirCreateIT extends AbstractFhirTestSupport {
                 // test route for resource
                 String serverUrl = service.getServiceBaseURL();
                 from("direct://RESOURCE")
-                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource&serverUrl="
-                            + serverUrl);
+                        .to("fhir://" + PATH_PREFIX + "/resource?inBody=resource&serverUrl=" + serverUrl);
 
                 // test route for resource
                 from("direct://RESOURCE_STRING")
                         .to("fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&log=true&serverUrl="
-                            + serverUrl);
-
+                                + serverUrl);
             }
         };
     }

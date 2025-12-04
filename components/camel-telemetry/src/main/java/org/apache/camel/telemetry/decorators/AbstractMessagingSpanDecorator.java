@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import org.apache.camel.Endpoint;
@@ -59,5 +60,4 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     protected String getMessageId(Exchange exchange) {
         return null;
     }
-
 }

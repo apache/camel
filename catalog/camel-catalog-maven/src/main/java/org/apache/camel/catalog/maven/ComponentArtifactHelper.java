@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
+
+import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 import java.io.InputStream;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-
-import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 
 /**
  * Helper methods for loading content from Camel components that the {@link org.apache.camel.catalog.CamelCatalog}
@@ -29,32 +30,40 @@ import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
  */
 public final class ComponentArtifactHelper {
 
-    private ComponentArtifactHelper() {
-    }
+    private ComponentArtifactHelper() {}
 
     public static Properties loadComponentProperties(ClassLoader classLoader, Logger logger) {
         Properties answer = new Properties();
-        try (InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component.properties")) {
+        try (InputStream is =
+                classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component.properties")) {
             // load the component files using the recommended way by a component.properties file
 
             if (is != null) {
                 answer.load(is);
             }
         } catch (Exception e) {
-            logger.warn("Error loading META-INF/services/org/apache/camel/component.properties file due {}", e.getMessage(), e);
+            logger.warn(
+                    "Error loading META-INF/services/org/apache/camel/component.properties file due {}",
+                    e.getMessage(),
+                    e);
         }
         return answer;
     }
 
     public static String extractComponentJavaType(ClassLoader classLoader, String scheme, Logger logger) {
-        try (InputStream is = classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme)) {
+        try (InputStream is =
+                classLoader.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme)) {
             if (is != null) {
                 Properties props = new Properties();
                 props.load(is);
                 return (String) props.get("class");
             }
         } catch (Exception e) {
-            logger.warn("Error loading META-INF/services/org/apache/camel/component/{} file due {}", scheme, e.getMessage(), e);
+            logger.warn(
+                    "Error loading META-INF/services/org/apache/camel/component/{} file due {}",
+                    scheme,
+                    e.getMessage(),
+                    e);
         }
 
         return null;

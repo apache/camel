@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.example;
 
 import org.apache.camel.CamelContext;
@@ -35,5 +36,4 @@ public class SpringXPathFilterTest extends XPathFilterTest {
         return SpringCamelContext.springCamelContext(
                 new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"), true);
     }
-
 }

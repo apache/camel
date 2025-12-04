@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 import java.security.Key;
@@ -55,39 +56,24 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
      * Signing algorithms for DSA keys in order of preference
      */
     public static final String[] DSA_SIGNING_ALGORITHMS = {
-            "SHA512WITHDSA",
-            "SHA384WITHDSA",
-            "SHA256WITHDSA",
-            "SHA224WITHDSA",
-            "SHA1WITHDSA",
+        "SHA512WITHDSA", "SHA384WITHDSA", "SHA256WITHDSA", "SHA224WITHDSA", "SHA1WITHDSA",
     };
 
     /**
      * Signing algorithms for RSA keys in order of preference
      */
     public static final String[] RSA_SIGNING_ALGORITHMS = {
-            "SHA512WITHRSA",
-            "SHA384WITHRSA",
-            "SHA256WITHRSA",
-            "SHA224WITHRSA",
-            "SHA1WITHRSA",
-            "MD5WITHRSA",
-            "MD2WITHRSA",
+        "SHA512WITHRSA", "SHA384WITHRSA", "SHA256WITHRSA", "SHA224WITHRSA", "SHA1WITHRSA", "MD5WITHRSA", "MD2WITHRSA",
     };
 
     /**
      * Signing algorithms for EC keys in order of preference
      */
     public static final String[] EC_SIGNING_ALGORITHMS = {
-            "SHA512WITHECDSA",
-            "SHA384WITHECDSA",
-            "SHA256WITHECDSA",
-            "SHA224WITHECDSA",
-            "SHA1WITHECDSA",
+        "SHA512WITHECDSA", "SHA384WITHECDSA", "SHA256WITHECDSA", "SHA224WITHECDSA", "SHA1WITHECDSA",
     };
 
-    public AS2SignedDataGenerator() {
-    }
+    public AS2SignedDataGenerator() {}
 
     /**
      * Creates a <code>multipart/signed</code> content type containing the algorithms used by this generator.
@@ -101,8 +87,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
         Set<String> micAlgSet = new HashSet<>();
 
         // Collect algorithm names used by pre-calculated signers
-        for (@SuppressWarnings("rawtypes")
-        Iterator it = _signers.iterator(); it.hasNext();) {
+        for (@SuppressWarnings("rawtypes") Iterator it = _signers.iterator(); it.hasNext(); ) {
             SignerInformation signer = (SignerInformation) it.next();
             ASN1ObjectIdentifier digestOID = signer.getDigestAlgorithmID().getAlgorithm();
 
@@ -116,8 +101,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
         }
 
         // Collect algorithm names used by signer generators
-        for (@SuppressWarnings("rawtypes")
-        Iterator it = signerGens.iterator(); it.hasNext();) {
+        for (@SuppressWarnings("rawtypes") Iterator it = signerGens.iterator(); it.hasNext(); ) {
             SignerInfoGenerator signerInfoGen = (SignerInfoGenerator) it.next();
             ASN1ObjectIdentifier digestOID = signerInfoGen.getDigestAlgorithm().getAlgorithm();
 
@@ -170,5 +154,4 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
                 return new String[0];
         }
     }
-
 }

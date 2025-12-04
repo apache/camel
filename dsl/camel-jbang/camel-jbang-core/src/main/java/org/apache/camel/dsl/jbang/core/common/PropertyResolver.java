@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.function.Supplier;
 
 public final class PropertyResolver {
-    private PropertyResolver() {
-    }
+    private PropertyResolver() {}
 
     /**
      * Retrieves the value of the system property. if not defined, the fallback supplier is called.
@@ -38,5 +38,4 @@ public final class PropertyResolver {
 
         return null;
     }
-
 }

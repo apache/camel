@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec.internal;
 
 import org.apache.commons.io.IOUtils;
@@ -48,9 +49,7 @@ public class ExecutableJavaProgram {
 
     public static final int LINES_TO_PRINT_FROM_EACH_THREAD = 50;
 
-    protected ExecutableJavaProgram() {
-
-    }
+    protected ExecutableJavaProgram() {}
 
     /**
      * NOTE: This main is used exclusively by the exec tests to test "exec:java?arg=ExecutableJavaProgram". Don't use it
@@ -97,12 +96,10 @@ public class ExecutableJavaProgram {
             while (iterator.hasNext()) {
                 String line = iterator.nextLine();
                 System.out.println(line);
-
             }
         } else {
             System.out.println(args[0]);
         }
-
     }
 
     private static void doSleep() throws InterruptedException {
@@ -115,7 +112,6 @@ public class ExecutableJavaProgram {
         for (; t < SLEEP_TIME % sleepInterval; t += sleepInterval) {
             Thread.sleep(sleepInterval);
         }
-
     }
 
     private static class ErrPrinter implements Runnable {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.security.KeyStore;
@@ -40,12 +41,10 @@ public class TrustAllOptions implements TrustOptions {
 
     private static final TrustManager TRUST_ALL_MANAGER = new X509TrustManager() {
         @Override
-        public void checkClientTrusted(X509Certificate[] x509Certificates, String authType) {
-        }
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String authType) {}
 
         @Override
-        public void checkServerTrusted(X509Certificate[] x509Certificates, String authType) {
-        }
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String authType) {}
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
@@ -53,9 +52,7 @@ public class TrustAllOptions implements TrustOptions {
         }
     };
 
-    private static final Provider PROVIDER = new Provider("", "0.0", "") {
-
-    };
+    private static final Provider PROVIDER = new Provider("", "0.0", "") {};
 
     private TrustAllOptions() {
         // Avoid direct instantiation.
@@ -68,22 +65,21 @@ public class TrustAllOptions implements TrustOptions {
 
     @Override
     public TrustManagerFactory getTrustManagerFactory(Vertx vertx) {
-        return new TrustManagerFactory(new TrustManagerFactorySpi() {
-            @Override
-            protected void engineInit(KeyStore keyStore) {
-            }
+        return new TrustManagerFactory(
+                new TrustManagerFactorySpi() {
+                    @Override
+                    protected void engineInit(KeyStore keyStore) {}
 
-            @Override
-            protected void engineInit(ManagerFactoryParameters managerFactoryParameters) {
-            }
+                    @Override
+                    protected void engineInit(ManagerFactoryParameters managerFactoryParameters) {}
 
-            @Override
-            protected TrustManager[] engineGetTrustManagers() {
-                return new TrustManager[] { TRUST_ALL_MANAGER };
-            }
-        }, PROVIDER, "") {
-
-        };
+                    @Override
+                    protected TrustManager[] engineGetTrustManagers() {
+                        return new TrustManager[] {TRUST_ALL_MANAGER};
+                    }
+                },
+                PROVIDER,
+                "") {};
     }
 
     @Override
@@ -91,7 +87,7 @@ public class TrustAllOptions implements TrustOptions {
         return new Function<String, TrustManager[]>() {
             @Override
             public TrustManager[] apply(String name) {
-                return new TrustManager[] { TRUST_ALL_MANAGER };
+                return new TrustManager[] {TRUST_ALL_MANAGER};
             }
         };
     }

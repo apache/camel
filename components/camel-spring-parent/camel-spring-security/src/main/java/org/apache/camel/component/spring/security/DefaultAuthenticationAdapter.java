@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
 
 import java.util.Set;
@@ -46,5 +47,4 @@ public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
     protected Authentication convertToAuthentication(@SuppressWarnings("unused") Subject subject) {
         return null;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.integration;
 
 import java.util.HashMap;
@@ -32,8 +33,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf(value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
-           disabledReason = "Credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.bigquery.integration.BigQueryITSupport#hasCredentials",
+        disabledReason = "Credentials were not provided")
 public class SingleRowIT extends BigQueryITSupport {
     private static final String TABLE_ID = "singlerow";
 
@@ -58,10 +60,7 @@ public class SingleRowIT extends BigQueryITSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                        .routeId("SingleRow")
-                        .to(bigqueryEndpoint)
-                        .to(sendResult);
+                from(directIn).routeId("SingleRow").to(bigqueryEndpoint).to(sendResult);
             }
         };
     }
@@ -83,5 +82,4 @@ public class SingleRowIT extends BigQueryITSupport {
 
         assertRowExist(TABLE_ID, object);
     }
-
 }

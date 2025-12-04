@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
@@ -76,8 +77,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
 
-    private static final AttributeKey<NettyCamelStateCorrelationManager> CORRELATION_MANAGER_ATTR
-            = AttributeKey.valueOf("NettyCamelStateCorrelationManager");
+    private static final AttributeKey<NettyCamelStateCorrelationManager> CORRELATION_MANAGER_ATTR =
+            AttributeKey.valueOf("NettyCamelStateCorrelationManager");
 
     private ChannelGroup allChannels;
     private CamelContext context;
@@ -134,7 +135,10 @@ public class NettyProducer extends DefaultAsyncProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
                         "Created NettyProducer pool[maxTotal={}, minIdle={}, maxIdle={}, minEvictableIdleDuration={}] -> {}",
-                        config.getMaxTotal(), config.getMaxIdle(), config.getMaxIdle(), config.getMinEvictableIdleDuration(),
+                        config.getMaxTotal(),
+                        config.getMaxIdle(),
+                        config.getMaxIdle(),
+                        config.getMinEvictableIdleDuration(),
                         pool);
             }
         } else {
@@ -149,7 +153,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             workerGroup = new NettyWorkerPoolBuilder()
                     .withNativeTransport(configuration.isNativeTransport())
                     .withWorkerCount(configuration.getWorkerCount())
-                    .withName("NettyClientTCPWorker").build();
+                    .withName("NettyClientTCPWorker")
+                    .build();
         }
 
         // setup pipeline factory
@@ -193,7 +198,10 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         if (pool != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Stopping producer with channel pool[active={}, idle={}]", pool.getNumActive(), pool.getNumIdle());
+                LOG.debug(
+                        "Stopping producer with channel pool[active={}, idle={}]",
+                        pool.getNumActive(),
+                        pool.getNumIdle());
             }
             pool.close();
         }
@@ -247,7 +255,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // set the exchange encoding property
         if (getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(ExchangePropertyKey.CHARSET_NAME,
+            exchange.setProperty(
+                    ExchangePropertyKey.CHARSET_NAME,
                     IOHelper.normalizeCharset(getConfiguration().getCharsetName()));
         }
 
@@ -291,7 +300,10 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     public void processWithConnectedChannel(
-            final Exchange exchange, final BodyReleaseCallback callback, final ChannelFuture channelFuture, final Object body) {
+            final Exchange exchange,
+            final BodyReleaseCallback callback,
+            final ChannelFuture channelFuture,
+            final Object body) {
         // remember channel so we can reuse it
         final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
@@ -306,9 +318,11 @@ public class NettyProducer extends DefaultAsyncProducer {
                     // should channel be closed after complete?
                     Boolean close;
                     if (ExchangeHelper.isOutCapable(exchange)) {
-                        close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+                        close = exchange.getOut()
+                                .getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
                     } else {
-                        close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+                        close = exchange.getIn()
+                                .getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
                     }
 
                     // should we disconnect, the header can override the configuration
@@ -330,8 +344,9 @@ public class NettyProducer extends DefaultAsyncProducer {
         // Get appropriate correlation manager.
         // If we reuse channel then get it from channel. CORRELATION_MANAGER_ATTR should be set at this point.
         // Otherwise use correlation manager for this producer.
-        final NettyCamelStateCorrelationManager channelCorrelationManager
-                = Optional.ofNullable(channel.attr(CORRELATION_MANAGER_ATTR).get()).orElse(correlationManager);
+        final NettyCamelStateCorrelationManager channelCorrelationManager = Optional.ofNullable(
+                        channel.attr(CORRELATION_MANAGER_ATTR).get())
+                .orElse(correlationManager);
 
         if (exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT) != null) {
             long timeoutInMs = exchange.getIn().getHeader(NettyConstants.NETTY_REQUEST_TIMEOUT, Long.class);
@@ -344,12 +359,13 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
         }
 
-        //This will refer to original callback since netty will release body by itself
+        // This will refer to original callback since netty will release body by itself
         final AsyncCallback producerCallback;
 
         if (configuration.isReuseChannel()) {
             // use callback as-is because we should not put it back in the pool as NettyProducerCallback would do
-            // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on completion
+            // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on
+            // completion
             producerCallback = callback.getOriginalCallback();
         } else {
             producerCallback = new NettyProducerCallback(channelFuture, callback.getOriginalCallback());
@@ -395,10 +411,11 @@ public class NettyProducer extends DefaultAsyncProducer {
                         // should channel be closed after complete?
                         Boolean close;
                         if (ExchangeHelper.isOutCapable(exchange)) {
-                            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE,
-                                    Boolean.class);
+                            close = exchange.getOut()
+                                    .getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
                         } else {
-                            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+                            close = exchange.getIn()
+                                    .getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
                         }
 
                         // should we disconnect, the header can override the configuration
@@ -410,7 +427,8 @@ public class NettyProducer extends DefaultAsyncProducer {
                         // we should not close if we are reusing the channel
                         if (!configuration.isReuseChannel() && disconnect) {
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Closing channel when complete at address: {}",
+                                LOG.trace(
+                                        "Closing channel when complete at address: {}",
                                         getEndpoint().getConfiguration().getAddress());
                             }
                             NettyHelper.close(channel);
@@ -422,7 +440,6 @@ public class NettyProducer extends DefaultAsyncProducer {
                 }
             }
         });
-
     }
 
     /**
@@ -440,7 +457,10 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // if textline enabled then covert to a String which must be used for textline
         if (getConfiguration().isTextline()) {
-            body = NettyHelper.getTextlineBody(body, exchange, getConfiguration().getDelimiter(),
+            body = NettyHelper.getTextlineBody(
+                    body,
+                    exchange,
+                    getConfiguration().getDelimiter(),
                     getConfiguration().isAutoAppendDelimiter());
         }
 
@@ -495,7 +515,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             // set any additional netty options
             if (configuration.getOptions() != null) {
-                for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                for (Map.Entry<String, Object> entry :
+                        configuration.getOptions().entrySet()) {
                     // child Channel Option can not be added to Client Bootstrap
                     if (!entry.getKey().contains("child.")) {
                         clientBootstrap.option(ChannelOption.valueOf(entry.getKey()), entry.getValue());
@@ -508,12 +529,15 @@ public class NettyProducer extends DefaultAsyncProducer {
             SocketAddress socketAddress;
             if (configuration.getUnixDomainSocketPath() != null) {
                 Path udsPath = Path.of(configuration.getUnixDomainSocketPath()).toAbsolutePath();
-                LOG.debug("Creating new TCP client bootstrap connecting to {} with options {}",
-                        udsPath, clientBootstrap);
+                LOG.debug(
+                        "Creating new TCP client bootstrap connecting to {} with options {}", udsPath, clientBootstrap);
                 socketAddress = new DomainSocketAddress(udsPath.toFile());
             } else {
-                LOG.debug("Creating new TCP client bootstrap connecting to {}:{} with options: {}",
-                        configuration.getHost(), configuration.getPort(), clientBootstrap);
+                LOG.debug(
+                        "Creating new TCP client bootstrap connecting to {}:{} with options: {}",
+                        configuration.getHost(),
+                        configuration.getPort(),
+                        clientBootstrap);
                 socketAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort());
             }
             answer = clientBootstrap.connect(socketAddress);
@@ -528,19 +552,21 @@ public class NettyProducer extends DefaultAsyncProducer {
                 connectionlessClientBootstrap.channel(NioDatagramChannel.class);
             }
             connectionlessClientBootstrap.group(getWorkerGroup());
-            connectionlessClientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
+            connectionlessClientBootstrap.option(
+                    ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
             connectionlessClientBootstrap.option(ChannelOption.SO_BROADCAST, configuration.isBroadcast());
             connectionlessClientBootstrap.option(ChannelOption.SO_SNDBUF, configuration.getSendBufferSize());
             connectionlessClientBootstrap.option(ChannelOption.SO_RCVBUF, configuration.getReceiveBufferSize());
 
             if (configuration.getNetworkInterface() != null) {
-                connectionlessClientBootstrap.option(ChannelOption.IP_MULTICAST_IF,
-                        NetworkInterface.getByName(configuration.getNetworkInterface()));
+                connectionlessClientBootstrap.option(
+                        ChannelOption.IP_MULTICAST_IF, NetworkInterface.getByName(configuration.getNetworkInterface()));
             }
 
             // set any additional netty options
             if (configuration.getOptions() != null) {
-                for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
+                for (Map.Entry<String, Object> entry :
+                        configuration.getOptions().entrySet()) {
                     // child Channel Option can not be added to Client Bootstrap
                     if (!entry.getKey().contains("child.")) {
                         connectionlessClientBootstrap.option(ChannelOption.valueOf(entry.getKey()), entry.getValue());
@@ -556,18 +582,23 @@ public class NettyProducer extends DefaultAsyncProducer {
             // really fire and forget. You wont get an PortUnreachableException
             // if no one is listen on the port
             if (!configuration.isUdpConnectionlessSending()) {
-                answer = connectionlessClientBootstrap
-                        .connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+                answer = connectionlessClientBootstrap.connect(
+                        new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             } else {
                 // bind and store channel so we can close it when stopping
-                answer = connectionlessClientBootstrap.bind(new InetSocketAddress(0)).sync();
+                answer = connectionlessClientBootstrap
+                        .bind(new InetSocketAddress(0))
+                        .sync();
                 Channel channel = answer.channel();
                 allChannels.add(channel);
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Created new UDP client bootstrap connecting to {}:{} with options: {}",
-                        configuration.getHost(), configuration.getPort(), connectionlessClientBootstrap);
+                LOG.debug(
+                        "Created new UDP client bootstrap connecting to {}:{} with options: {}",
+                        configuration.getHost(),
+                        configuration.getPort(),
+                        connectionlessClientBootstrap);
             }
             return answer;
         }
@@ -665,8 +696,8 @@ public class NettyProducer extends DefaultAsyncProducer {
 
                 ChannelHandler handler = channel.pipeline().get("timeout");
                 if (handler == null) {
-                    ChannelHandler timeout
-                            = new ReadTimeoutHandler(producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+                    ChannelHandler timeout = new ReadTimeoutHandler(
+                            producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
                     channel.pipeline().addBefore("handler", "timeout", timeout);
                 }
             }
@@ -725,7 +756,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             LOG.trace("Requested channel: {}", channelFuture);
             return new DefaultPooledObject<>(channelFuture);
         }
-
     }
 
     /**

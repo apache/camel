@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +34,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest {
@@ -64,8 +65,8 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello Public", "Hello World");
 
         // we do not need auth for the public page
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public",
-                String.class);
+        String out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public", String.class);
 
         assertEquals("Bye World", out);
     }
@@ -74,12 +75,13 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
     @Test
     @Order(2)
     void testUnauthorized() {
-        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+        CamelExecutionException exception = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class),
                 "Should have thrown a CamelExecutionException");
 
-        NettyHttpOperationFailedException cause
-                = assertIsInstanceOf(NettyHttpOperationFailedException.class, exception.getCause());
+        NettyHttpOperationFailedException cause =
+                assertIsInstanceOf(NettyHttpOperationFailedException.class, exception.getCause());
         assertEquals(UNAUTHORIZED.code(), cause.getStatusCode(), "Should have sent back HTTP status 401");
     }
 
@@ -89,13 +91,11 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
     public void testBasicAuth() throws Exception {
         String auth = "Basic c2NvdHQ6c2VjcmV0";
 
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(
-                () -> {
-                    String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World",
-                            "Authorization", auth,
-                            String.class);
-                    assertEquals("Bye World", out);
-                });
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            String out = template.requestBodyAndHeader(
+                    "netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+            assertEquals("Bye World", out);
+        });
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -106,11 +106,11 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
             @Override
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true"
-                     + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
+                                + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

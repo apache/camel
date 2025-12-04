@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es;
+
+import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL;
+import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
 
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -71,9 +75,6 @@ import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL;
-import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
-
 /**
  * Represents an Elasticsearch producer.
  */
@@ -122,14 +123,13 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             return ElasticsearchOperation.DeleteIndex;
         }
 
-        ElasticsearchOperation operationConfig
-                = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.class);
+        ElasticsearchOperation operationConfig =
+                exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.class);
         if (operationConfig == null) {
             operationConfig = configuration.getOperation();
         }
         if (operationConfig == null) {
-            throw new IllegalArgumentException(
-                    ElasticsearchConstants.PARAM_OPERATION + " value is mandatory");
+            throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value is mandatory");
         }
         return operationConfig;
     }
@@ -176,15 +176,18 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                 message.setHeader(ElasticsearchConstants.PARAM_FROM, configuration.getFrom());
             }
 
-            Boolean enableDocumentOnlyMode = message.getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.class);
+            Boolean enableDocumentOnlyMode =
+                    message.getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.class);
             if (enableDocumentOnlyMode == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, configuration.isEnableDocumentOnlyMode());
             }
 
             boolean configWaitForActiveShards = false;
-            Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
+            Integer waitForActiveShards =
+                    message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
             if (waitForActiveShards == null) {
-                message.setHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, configuration.getWaitForActiveShards());
+                message.setHeader(
+                        ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, configuration.getWaitForActiveShards());
                 configWaitForActiveShards = true;
             }
 
@@ -193,7 +196,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                 documentClass = configuration.getDocumentClass();
             }
 
-            ActionContext ctx = new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
+            ActionContext ctx =
+                    new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
 
             switch (operation) {
                 case Index: {
@@ -233,20 +237,25 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                     // is it a scroll request ?
                     boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
                     if (useScroll) {
-                        // As a scroll request is expected, for the sake of simplicity, the synchronous mode is preserved
-                        int scrollKeepAliveMs
-                                = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(),
-                                        Integer.class);
-                        ElasticsearchScrollRequestIterator<?> scrollRequestIterator = new ElasticsearchScrollRequestIterator<>(
-                                searchRequestBuilder, new ElasticsearchClient(transport), scrollKeepAliveMs, exchange,
-                                documentClass);
+                        // As a scroll request is expected, for the sake of simplicity, the synchronous mode is
+                        // preserved
+                        int scrollKeepAliveMs = message.getHeader(
+                                PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
+                        ElasticsearchScrollRequestIterator<?> scrollRequestIterator =
+                                new ElasticsearchScrollRequestIterator<>(
+                                        searchRequestBuilder,
+                                        new ElasticsearchClient(transport),
+                                        scrollKeepAliveMs,
+                                        exchange,
+                                        documentClass);
                         exchange.getIn().setBody(scrollRequestIterator);
                         cleanup(ctx);
                         callback.done(true);
                         return true;
                     } else {
                         onComplete(
-                                new ElasticsearchAsyncClient(transport).search(searchRequestBuilder.build(), documentClass)
+                                new ElasticsearchAsyncClient(transport)
+                                        .search(searchRequestBuilder.build(), documentClass)
                                         .thenApply(SearchResponse::hits),
                                 ctx);
                     }
@@ -281,10 +290,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
      * Executes asynchronously a ping to the Elastic cluster.
      */
     private void processPingAsync(ActionContext ctx) {
-        onComplete(
-                ctx.getClient().ping()
-                        .thenApply(BooleanResponse::value),
-                ctx);
+        onComplete(ctx.getClient().ping().thenApply(BooleanResponse::value), ctx);
     }
 
     /**
@@ -296,9 +302,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("Wrong body type. Only MgetRequest.Builder is allowed as a type");
         }
         onComplete(
-                ctx.getClient().mget(mgetRequestBuilder.build(), documentClass)
-                        .thenApply(MgetResponse::docs),
-                ctx);
+                ctx.getClient().mget(mgetRequestBuilder.build(), documentClass).thenApply(MgetResponse::docs), ctx);
     }
 
     /**
@@ -310,7 +314,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("Wrong body type. Only MsearchRequest.Builder is allowed as a type");
         }
         onComplete(
-                ctx.getClient().msearch(msearchRequestBuilder.build(), documentClass)
+                ctx.getClient()
+                        .msearch(msearchRequestBuilder.build(), documentClass)
                         .thenApply(MsearchResponse::responses),
                 ctx);
     }
@@ -321,23 +326,23 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private void processExistsAsync(ActionContext ctx) {
         ExistsRequest.Builder builder = new ExistsRequest.Builder();
         builder.index(ctx.getMessage().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
-        onComplete(
-                ctx.getClient().indices().exists(builder.build())
-                        .thenApply(BooleanResponse::value),
-                ctx);
+        onComplete(ctx.getClient().indices().exists(builder.build()).thenApply(BooleanResponse::value), ctx);
     }
 
     /**
      * Deletes asynchronously an index.
      */
     private void processDeleteIndexAsync(ActionContext ctx) {
-        DeleteIndexRequest.Builder deleteIndexRequestBuilder = ctx.getMessage().getBody(DeleteIndexRequest.Builder.class);
+        DeleteIndexRequest.Builder deleteIndexRequestBuilder =
+                ctx.getMessage().getBody(DeleteIndexRequest.Builder.class);
         if (deleteIndexRequestBuilder == null) {
             throw new IllegalArgumentException(
                     "Wrong body type. Only String or DeleteIndexRequest.Builder is allowed as a type");
         }
         onComplete(
-                ctx.getClient().indices().delete(deleteIndexRequestBuilder.build())
+                ctx.getClient()
+                        .indices()
+                        .delete(deleteIndexRequestBuilder.build())
                         .thenApply(DeleteIndexResponse::acknowledged),
                 ctx);
     }
@@ -351,10 +356,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Wrong body type. Only String or DeleteRequest.Builder is allowed as a type");
         }
-        onComplete(
-                ctx.getClient().delete(deleteRequestBuilder.build())
-                        .thenApply(DeleteResponse::result),
-                ctx);
+        onComplete(ctx.getClient().delete(deleteRequestBuilder.build()).thenApply(DeleteResponse::result), ctx);
     }
 
     /**
@@ -366,10 +368,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Wrong body type. Only Iterable or BulkRequest.Builder is allowed as a type");
         }
-        onComplete(
-                ctx.getClient().bulk(bulkRequestBuilder.build())
-                        .thenApply(BulkResponse::items),
-                ctx);
+        onComplete(ctx.getClient().bulk(bulkRequestBuilder.build()).thenApply(BulkResponse::items), ctx);
     }
 
     /**
@@ -381,9 +380,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException(
                     "Wrong body type. Only String or GetRequest.Builder is allowed as a type");
         }
-        onComplete(
-                ctx.getClient().get(getRequestBuilder.build(), documentClass),
-                ctx);
+        onComplete(ctx.getClient().get(getRequestBuilder.build(), documentClass), ctx);
     }
 
     /**
@@ -392,7 +389,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private void processUpdateAsync(ActionContext ctx, Class<?> documentClass) {
         UpdateRequest.Builder<?, ?> updateRequestBuilder = ctx.getMessage().getBody(UpdateRequest.Builder.class);
         onComplete(
-                ctx.getClient().update(updateRequestBuilder.build(), documentClass)
+                ctx.getClient()
+                        .update(updateRequestBuilder.build(), documentClass)
                         .thenApply(WriteResponseBase::id),
                 ctx);
     }
@@ -402,10 +400,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
      */
     private void processIndexAsync(ActionContext ctx) {
         IndexRequest.Builder<?> indexRequestBuilder = ctx.getMessage().getBody(IndexRequest.Builder.class);
-        onComplete(
-                ctx.getClient().index(indexRequestBuilder.build())
-                        .thenApply(WriteResponseBase::id),
-                ctx);
+        onComplete(ctx.getClient().index(indexRequestBuilder.build()).thenApply(WriteResponseBase::id), ctx);
     }
 
     /**
@@ -419,17 +414,16 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         final Exchange exchange = ctx.getExchange();
         future.thenAccept(r -> exchange.getIn().setBody(r))
                 .thenAccept(r -> cleanup(ctx))
-                .whenComplete(
-                        (r, e) -> {
-                            try {
-                                if (e != null) {
-                                    exchange.setException(new CamelExchangeException(
-                                            "An error occurred while executing the action", exchange, e));
-                                }
-                            } finally {
-                                ctx.getCallback().done(false);
-                            }
-                        });
+                .whenComplete((r, e) -> {
+                    try {
+                        if (e != null) {
+                            exchange.setException(new CamelExchangeException(
+                                    "An error occurred while executing the action", exchange, e));
+                        }
+                    } finally {
+                        ctx.getCallback().done(false);
+                    }
+                });
     }
 
     /**
@@ -497,13 +491,16 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     }
 
     private RestClient createClient() {
-        final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        final RestClientBuilder builder =
+                RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
-                .setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
+                .setConnectTimeout(configuration.getConnectionTimeout())
+                .setSocketTimeout(configuration.getSocketTimeout()));
         if (configuration.getUser() != null && configuration.getPassword() != null) {
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
+            credentialsProvider.setCredentials(
+                    AuthScope.ANY,
                     new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()));
             builder.setHttpClientConfigCallback(httpClientBuilder -> {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
@@ -548,17 +545,16 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     private SSLContext createSslContextFromCa() {
         try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(),
-                            configuration.getCertificatePath());
+            InputStream resolveMandatoryResourceAsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                    getEndpoint().getCamelContext(), configuration.getCertificatePath());
             Certificate trustedCa = factory.generateCertificate(resolveMandatoryResourceAsInputStream);
             KeyStore trustStore = KeyStore.getInstance("pkcs12");
             trustStore.load(null, null);
             trustStore.setCertificateEntry("ca", trustedCa);
 
             final SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-            TrustManagerFactory trustManagerFactory
-                    = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustManagerFactory =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
             sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
             return sslContext;
@@ -578,8 +574,12 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         private final boolean configIndexName;
         private final boolean configWaitForActiveShards;
 
-        ActionContext(Exchange exchange, AsyncCallback callback, ElasticsearchTransport transport, boolean configIndexName,
-                      boolean configWaitForActiveShards) {
+        ActionContext(
+                Exchange exchange,
+                AsyncCallback callback,
+                ElasticsearchTransport transport,
+                boolean configIndexName,
+                boolean configWaitForActiveShards) {
             this.exchange = exchange;
             this.callback = callback;
             this.transport = transport;

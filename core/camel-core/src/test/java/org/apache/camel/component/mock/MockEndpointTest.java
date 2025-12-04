@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,11 +39,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MockEndpointTest extends ContextTestSupport {
 
@@ -128,11 +129,10 @@ public class MockEndpointTest extends ContextTestSupport {
 
         sendMessages(15, 12, 14, 13, 11);
 
-        AssertionError e = assertThrows(AssertionError.class,
-                resultEndpoint::assertIsSatisfied,
-                "Should fail");
+        AssertionError e = assertThrows(AssertionError.class, resultEndpoint::assertIsSatisfied, "Should fail");
 
-        assertEquals("mock://result Expected 5 headers with key[counter], received 4 headers. Expected header values: [7]",
+        assertEquals(
+                "mock://result Expected 5 headers with key[counter], received 4 headers. Expected header values: [7]",
                 e.getMessage());
     }
 
@@ -164,9 +164,7 @@ public class MockEndpointTest extends ContextTestSupport {
         template.send("direct:a", exchange -> exchange.setProperty("foo", 123));
         template.send("direct:a", exchange -> exchange.setProperty("foo", 789));
 
-        AssertionError e = assertThrows(AssertionError.class,
-                resultEndpoint::assertIsSatisfied,
-                "Should fail");
+        AssertionError e = assertThrows(AssertionError.class, resultEndpoint::assertIsSatisfied, "Should fail");
 
         assertEquals(
                 "mock://result Expected 2 properties with key[foo], received 1 properties. Expected property values: [456]",
@@ -365,9 +363,8 @@ public class MockEndpointTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.whenAnyExchangeReceived(exchange -> exchange.setException(new IllegalArgumentException("Forced")));
 
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBody("direct:a", "Hello World"),
-                "Should have thrown an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:a", "Hello World"), "Should have thrown an exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced", e.getCause().getMessage());
@@ -380,9 +377,8 @@ public class MockEndpointTest extends ContextTestSupport {
             throw new IllegalArgumentException("Forced");
         });
 
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBody("direct:a", "Hello World"),
-                "Should have thrown an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:a", "Hello World"), "Should have thrown an exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced", e.getCause().getMessage());
@@ -396,9 +392,8 @@ public class MockEndpointTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "Hello World");
 
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBody("direct:a", "Hello World"),
-                "Should have thrown an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:a", "Hello World"), "Should have thrown an exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced", e.getCause().getMessage());
@@ -413,9 +408,8 @@ public class MockEndpointTest extends ContextTestSupport {
         });
 
         template.sendBody("direct:a", "Hello World");
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBody("direct:a", "Bye World"),
-                "Should have thrown an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:a", "Bye World"), "Should have thrown an exception");
 
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Forced", e.getCause().getMessage());
@@ -501,9 +495,7 @@ public class MockEndpointTest extends ContextTestSupport {
     @Test
     public void testNoArgCtr() {
         MockEndpoint mock = new MockEndpoint("mock:bar", new MockComponent(context));
-        assertThrows(Exception.class,
-                () -> mock.createConsumer(null),
-                "Should have thrown an exception");
+        assertThrows(Exception.class, () -> mock.createConsumer(null), "Should have thrown an exception");
 
         assertEquals(0, mock.getFailures().size());
     }
@@ -517,9 +509,8 @@ public class MockEndpointTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
 
         assertEquals("mock://result No header with name bar found for message: 0", e.getMessage());
     }
@@ -532,9 +523,7 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.setResultWaitTime(5);
 
         // do not send any message
-        AssertionError e = assertThrows(AssertionError.class,
-                mock::assertIsSatisfied,
-                "Should fail");
+        AssertionError e = assertThrows(AssertionError.class, mock::assertIsSatisfied, "Should fail");
 
         assertEquals("mock://result Received message count 0, expected at least 1", e.getMessage());
     }
@@ -547,11 +536,11 @@ public class MockEndpointTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Hello World", "bar", "beer");
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
 
-        assertEquals("mock://result Header with name bar for message: 0. Expected: <cheese> but was: <beer>",
+        assertEquals(
+                "mock://result Header with name bar for message: 0. Expected: <cheese> but was: <beer>",
                 e.getMessage());
     }
 
@@ -564,9 +553,8 @@ public class MockEndpointTest extends ContextTestSupport {
 
         template.sendBodyAndProperty("direct:a", "Hello World", "foo", 123);
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
 
         assertEquals("mock://result No property with name bar found for message: 0", e.getMessage());
     }
@@ -614,10 +602,10 @@ public class MockEndpointTest extends ContextTestSupport {
 
         template.sendBodyAndProperty("direct:a", "Hello World", "bar", "beer");
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
-        assertEquals("mock://result Property with name bar for message: 0. Expected: <cheese> but was: <beer>",
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
+        assertEquals(
+                "mock://result Property with name bar for message: 0. Expected: <cheese> but was: <beer>",
                 e.getMessage());
     }
 
@@ -631,11 +619,11 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
         template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
 
-        String s = "Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444 evaluated as: 234 == 444";
+        String s =
+                "Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444 evaluated as: 234 == 444";
         assertTrue(e.getMessage().startsWith(s));
     }
 
@@ -649,11 +637,11 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
         template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
 
-        String s = "Assertion error at index 1 on mock mock://result with predicate: header(bar) is null evaluated as: 234 is null";
+        String s =
+                "Assertion error at index 1 on mock mock://result with predicate: header(bar) is null evaluated as: 234 is null";
         assertTrue(e.getMessage().startsWith(s));
     }
 
@@ -667,10 +655,10 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
         template.sendBodyAndHeader("direct:a", "Hello World", "bar", 234);
 
-        AssertionError e = assertThrows(AssertionError.class,
-                this::assertMockEndpointsSatisfied,
-                "Should have thrown exception");
-        String s = "Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof java.lang.String";
+        AssertionError e =
+                assertThrows(AssertionError.class, this::assertMockEndpointsSatisfied, "Should have thrown exception");
+        String s =
+                "Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof java.lang.String";
         assertTrue(e.getMessage().startsWith(s));
     }
 
@@ -1049,11 +1037,21 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals(5, mock.getExchanges().size());
         assertEquals(5, mock.getReceivedExchanges().size());
 
-        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
-        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
-        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
-        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals(
+                "<message>0</message>",
+                mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(
+                "<message>1</message>",
+                mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(
+                "<message>2</message>",
+                mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals(
+                "<message>3</message>",
+                mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals(
+                "<message>4</message>",
+                mock.getReceivedExchanges().get(4).getIn().getBody());
     }
 
     @Test
@@ -1070,11 +1068,21 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals(5, mock.getExchanges().size());
         assertEquals(5, mock.getReceivedExchanges().size());
 
-        assertEquals("<message>5</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
-        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
-        assertEquals("<message>8</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
-        assertEquals("<message>9</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals(
+                "<message>5</message>",
+                mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(
+                "<message>6</message>",
+                mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(
+                "<message>7</message>",
+                mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals(
+                "<message>8</message>",
+                mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals(
+                "<message>9</message>",
+                mock.getReceivedExchanges().get(4).getIn().getBody());
     }
 
     @Test
@@ -1092,17 +1100,37 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals(10, mock.getExchanges().size());
         assertEquals(10, mock.getReceivedExchanges().size());
 
-        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
-        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
-        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
-        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals(
+                "<message>0</message>",
+                mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(
+                "<message>1</message>",
+                mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(
+                "<message>2</message>",
+                mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals(
+                "<message>3</message>",
+                mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals(
+                "<message>4</message>",
+                mock.getReceivedExchanges().get(4).getIn().getBody());
 
-        assertEquals("<message>15</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
-        assertEquals("<message>16</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
-        assertEquals("<message>17</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
-        assertEquals("<message>18</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
-        assertEquals("<message>19</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+        assertEquals(
+                "<message>15</message>",
+                mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals(
+                "<message>16</message>",
+                mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals(
+                "<message>17</message>",
+                mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals(
+                "<message>18</message>",
+                mock.getReceivedExchanges().get(8).getIn().getBody());
+        assertEquals(
+                "<message>19</message>",
+                mock.getReceivedExchanges().get(9).getIn().getBody());
     }
 
     @Test
@@ -1120,14 +1148,30 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals(8, mock.getExchanges().size());
         assertEquals(8, mock.getReceivedExchanges().size());
 
-        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
-        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
-        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
-        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
-        assertEquals("<message>5</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
-        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
-        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals(
+                "<message>0</message>",
+                mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(
+                "<message>1</message>",
+                mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(
+                "<message>2</message>",
+                mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals(
+                "<message>3</message>",
+                mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals(
+                "<message>4</message>",
+                mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals(
+                "<message>5</message>",
+                mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals(
+                "<message>6</message>",
+                mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals(
+                "<message>7</message>",
+                mock.getReceivedExchanges().get(7).getIn().getBody());
     }
 
     @Test
@@ -1145,16 +1189,36 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals(10, mock.getExchanges().size());
         assertEquals(10, mock.getReceivedExchanges().size());
 
-        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
-        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
-        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
-        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
-        assertEquals("<message>5</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
-        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
-        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
-        assertEquals("<message>8</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
-        assertEquals("<message>9</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+        assertEquals(
+                "<message>0</message>",
+                mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(
+                "<message>1</message>",
+                mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(
+                "<message>2</message>",
+                mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals(
+                "<message>3</message>",
+                mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals(
+                "<message>4</message>",
+                mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals(
+                "<message>5</message>",
+                mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals(
+                "<message>6</message>",
+                mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals(
+                "<message>7</message>",
+                mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals(
+                "<message>8</message>",
+                mock.getReceivedExchanges().get(8).getIn().getBody());
+        assertEquals(
+                "<message>9</message>",
+                mock.getReceivedExchanges().get(9).getIn().getBody());
     }
 
     @Test
@@ -1172,16 +1236,36 @@ public class MockEndpointTest extends ContextTestSupport {
         assertEquals(10, mock.getExchanges().size());
         assertEquals(10, mock.getReceivedExchanges().size());
 
-        assertEquals("<message>0</message>", mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals("<message>1</message>", mock.getReceivedExchanges().get(1).getIn().getBody());
-        assertEquals("<message>2</message>", mock.getReceivedExchanges().get(2).getIn().getBody());
-        assertEquals("<message>3</message>", mock.getReceivedExchanges().get(3).getIn().getBody());
-        assertEquals("<message>4</message>", mock.getReceivedExchanges().get(4).getIn().getBody());
-        assertEquals("<message>6</message>", mock.getReceivedExchanges().get(5).getIn().getBody());
-        assertEquals("<message>7</message>", mock.getReceivedExchanges().get(6).getIn().getBody());
-        assertEquals("<message>8</message>", mock.getReceivedExchanges().get(7).getIn().getBody());
-        assertEquals("<message>9</message>", mock.getReceivedExchanges().get(8).getIn().getBody());
-        assertEquals("<message>10</message>", mock.getReceivedExchanges().get(9).getIn().getBody());
+        assertEquals(
+                "<message>0</message>",
+                mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(
+                "<message>1</message>",
+                mock.getReceivedExchanges().get(1).getIn().getBody());
+        assertEquals(
+                "<message>2</message>",
+                mock.getReceivedExchanges().get(2).getIn().getBody());
+        assertEquals(
+                "<message>3</message>",
+                mock.getReceivedExchanges().get(3).getIn().getBody());
+        assertEquals(
+                "<message>4</message>",
+                mock.getReceivedExchanges().get(4).getIn().getBody());
+        assertEquals(
+                "<message>6</message>",
+                mock.getReceivedExchanges().get(5).getIn().getBody());
+        assertEquals(
+                "<message>7</message>",
+                mock.getReceivedExchanges().get(6).getIn().getBody());
+        assertEquals(
+                "<message>8</message>",
+                mock.getReceivedExchanges().get(7).getIn().getBody());
+        assertEquals(
+                "<message>9</message>",
+                mock.getReceivedExchanges().get(8).getIn().getBody());
+        assertEquals(
+                "<message>10</message>",
+                mock.getReceivedExchanges().get(9).getIn().getBody());
     }
 
     @Test

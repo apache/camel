@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.mock;
 
 import java.util.*;
@@ -25,16 +26,23 @@ import com.huaweicloud.sdk.frs.v2.model.DetectFace;
 import com.huaweicloud.sdk.frs.v2.model.LiveDetectRespVideoresult;
 
 public final class MockResult {
-    private MockResult() {
-    }
+    private MockResult() {}
 
     public static List<DetectFace> getFaceDetectionResult() {
-        BoundingBox faceBox = new BoundingBox().withWidth(170).withHeight(150).withTopLeftX(30).withTopLeftY(20);
+        BoundingBox faceBox = new BoundingBox()
+                .withWidth(170)
+                .withHeight(150)
+                .withTopLeftX(30)
+                .withTopLeftY(20);
         return Collections.singletonList(new DetectFace().withBoundingBox(faceBox));
     }
 
     public static CompareFace getCompareFaceResult() {
-        BoundingBox faceBox = new BoundingBox().withWidth(170).withHeight(150).withTopLeftX(30).withTopLeftY(20);
+        BoundingBox faceBox = new BoundingBox()
+                .withWidth(170)
+                .withHeight(150)
+                .withTopLeftX(30)
+                .withTopLeftY(20);
         return new CompareFace().withBoundingBox(faceBox);
     }
 
@@ -43,6 +51,9 @@ public final class MockResult {
         actions.add(new ActionsList().withAction(1).withConfidence(0.8));
         actions.add(new ActionsList().withAction(3).withConfidence(0.9));
 
-        return new LiveDetectRespVideoresult().withAlive(true).withPicture("test_face_picture_base_64").withActions(actions);
+        return new LiveDetectRespVideoresult()
+                .withAlive(true)
+                .withPicture("test_face_picture_base_64")
+                .withActions(actions);
     }
 }

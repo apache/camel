@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +37,6 @@ import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.apache.camel.spi.PooledObjectFactory;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class PooledExchangeTest extends ContextTestSupport {
 
@@ -70,12 +71,14 @@ class PooledExchangeTest extends ContextTestSupport {
         mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(1));
         mock.assertIsSatisfied();
 
-        PooledObjectFactory.Statistics stat
-                = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+        PooledObjectFactory.Statistics stat =
+                context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
         assertEquals(1, stat.getCreatedCounter());
         assertEquals(2, stat.getAcquiredCounter());
 
-        Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertEquals(3, stat.getReleasedCounter()));
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertEquals(3, stat.getReleasedCounter()));
         assertEquals(0, stat.getDiscardedCounter());
     }
 
@@ -84,7 +87,8 @@ class PooledExchangeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:foo?period=1&delay=1&repeatCount=3").autoStartup(false)
+                from("timer:foo?period=1&delay=1&repeatCount=3")
+                        .autoStartup(false)
                         .setProperty("myprop", counter::incrementAndGet)
                         .setHeader("myheader", counter::incrementAndGet)
                         .process(new Processor() {

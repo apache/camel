@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.support.MessageHelper.copyBody;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -24,9 +28,6 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.trait.message.MessageTrait;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.support.MessageHelper.copyBody;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * The unit test for the class {@link MessageHelper}.
@@ -97,8 +98,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public void reset() {
-        }
+        public void reset() {}
 
         @Override
         public String getMessageId() {
@@ -111,8 +111,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public void setMessageId(String messageId) {
-        }
+        public void setMessageId(String messageId) {}
 
         @Override
         public boolean hasMessageId() {
@@ -155,8 +154,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public void setHeader(String name, Object value) {
-        }
+        public void setHeader(String name, Object value) {}
 
         @Override
         public Object removeHeader(String name) {
@@ -179,8 +177,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public void setHeaders(Map<String, Object> headers) {
-        }
+        public void setHeaders(Map<String, Object> headers) {}
 
         @Override
         public boolean hasHeaders() {
@@ -213,8 +210,7 @@ class MessageHelperTest {
         }
 
         @Override
-        public <T> void setBody(Object body, Class<T> type) {
-        }
+        public <T> void setBody(Object body, Class<T> type) {}
 
         @Override
         public Message copy() {
@@ -222,12 +218,10 @@ class MessageHelperTest {
         }
 
         @Override
-        public void copyFrom(Message message) {
-        }
+        public void copyFrom(Message message) {}
 
         @Override
-        public void copyFromWithNewBody(Message message, Object newBody) {
-        }
+        public void copyFromWithNewBody(Message message, Object newBody) {}
 
         @Override
         public boolean hasTrait(MessageTrait trait) {
@@ -240,11 +234,9 @@ class MessageHelperTest {
         }
 
         @Override
-        public void setPayloadForTrait(MessageTrait trait, Object object) {
-        }
+        public void setPayloadForTrait(MessageTrait trait, Object object) {}
 
         @Override
-        public void removeTrait(MessageTrait trait) {
-        }
+        public void removeTrait(MessageTrait trait) {}
     }
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,29 +40,28 @@ import org.apache.camel.component.servicenow.model.Incident;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfEnvironmentVariable(named = "SERVICENOW_INSTANCE", matches = ".*",
-                              disabledReason = "Service now instance was not provided")
+@EnabledIfEnvironmentVariable(
+        named = "SERVICENOW_INSTANCE",
+        matches = ".*",
+        disabledReason = "Service now instance was not provided")
 public class ServiceNowIT extends ServiceNowITSupport {
 
     @Test
     public void testExceptions() {
         // 404
         try {
-            template().sendBodyAndHeaders(
-                    "direct:servicenow",
-                    null,
-                    kvBuilder()
-                            .put(ServiceNowConstants.RESOURCE, "table")
-                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
-                            .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                            .build());
+            template()
+                    .sendBodyAndHeaders(
+                            "direct:servicenow",
+                            null,
+                            kvBuilder()
+                                    .put(ServiceNowConstants.RESOURCE, "table")
+                                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                                    .put(
+                                            ServiceNowParams.SYSPARM_QUERY,
+                                            "number=" + UUID.randomUUID().toString())
+                                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                                    .build());
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause() instanceof ServiceNowException);
 
@@ -67,15 +73,18 @@ public class ServiceNowIT extends ServiceNowITSupport {
 
         // 400
         try {
-            template().sendBodyAndHeaders(
-                    "direct:servicenow",
-                    null,
-                    kvBuilder()
-                            .put(ServiceNowConstants.RESOURCE, "table")
-                            .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
-                            .put(ServiceNowParams.PARAM_TABLE_NAME, "notExistingTable")
-                            .build());
+            template()
+                    .sendBodyAndHeaders(
+                            "direct:servicenow",
+                            null,
+                            kvBuilder()
+                                    .put(ServiceNowConstants.RESOURCE, "table")
+                                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                                    .put(
+                                            ServiceNowParams.SYSPARM_QUERY,
+                                            "number=" + UUID.randomUUID().toString())
+                                    .put(ServiceNowParams.PARAM_TABLE_NAME, "notExistingTable")
+                                    .build());
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause() instanceof ServiceNowException);
 
@@ -97,7 +106,8 @@ public class ServiceNowIT extends ServiceNowITSupport {
 
         ProducerTemplate template = template();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeaders("direct:servicenow", "NotAnIncidentObject", kv));
 
         assertTrue(ex.getCause() instanceof IllegalArgumentException);
@@ -116,16 +126,17 @@ public class ServiceNowIT extends ServiceNowITSupport {
         incident.setSeverity(1);
         incident.setImpact(1);
 
-        template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                        .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
-                        .put(ServiceNowConstants.RESPONSE_MODEL, JsonNode.class)
-                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                        .build());
+        template()
+                .sendBodyAndHeaders(
+                        "direct:servicenow",
+                        incident,
+                        kvBuilder()
+                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
+                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                                .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
+                                .put(ServiceNowConstants.RESPONSE_MODEL, JsonNode.class)
+                                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                                .build());
 
         mock.assertIsSatisfied();
 
@@ -147,16 +158,17 @@ public class ServiceNowIT extends ServiceNowITSupport {
         incident.setSeverity(1);
         incident.setImpact(1);
 
-        template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                        .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
-                        .put(ServiceNowConstants.RESPONSE_MODEL, String.class)
-                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                        .build());
+        template()
+                .sendBodyAndHeaders(
+                        "direct:servicenow",
+                        incident,
+                        kvBuilder()
+                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
+                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                                .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
+                                .put(ServiceNowConstants.RESPONSE_MODEL, String.class)
+                                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                                .build());
 
         mock.assertIsSatisfied();
 
@@ -178,17 +190,18 @@ public class ServiceNowIT extends ServiceNowITSupport {
         incident.setSeverity(1);
         incident.setImpact(1);
 
-        template().sendBodyAndHeaders(
-                "direct:servicenow",
-                incident,
-                kvBuilder()
-                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
-                        .put(ServiceNowConstants.API_VERSION, "v1")
-                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                        .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
-                        .put(ServiceNowConstants.RESPONSE_MODEL, JsonNode.class)
-                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                        .build());
+        template()
+                .sendBodyAndHeaders(
+                        "direct:servicenow",
+                        incident,
+                        kvBuilder()
+                                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
+                                .put(ServiceNowConstants.API_VERSION, "v1")
+                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                                .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
+                                .put(ServiceNowConstants.RESPONSE_MODEL, JsonNode.class)
+                                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                                .build());
 
         mock.assertIsSatisfied();
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
@@ -31,5 +32,4 @@ public interface EmbeddedHttpService {
      * Port number such as 8080, 443, or something else.
      */
     int getServerPort();
-
 }

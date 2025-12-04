@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMethods;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
 
@@ -51,5 +52,4 @@ public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
             }
         };
     }
-
 }

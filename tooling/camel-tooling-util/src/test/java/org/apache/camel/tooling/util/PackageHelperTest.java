@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -22,10 +27,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PackageHelperTest {
 
@@ -40,9 +41,7 @@ public class PackageHelperTest {
         Path dir = ResourceUtils.getResourceAsFile("json").toPath();
         List<String> jsonFiles;
         try (Stream<Path> stream = PackageHelper.findJsonFiles(dir)) {
-            jsonFiles = stream
-                    .map(PackageHelper::asName)
-                    .toList();
+            jsonFiles = stream.map(PackageHelper::asName).toList();
         }
 
         assertTrue(jsonFiles.contains("a"), "Files a.json must be found");

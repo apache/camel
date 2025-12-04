@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sap.netweaver;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,8 +31,8 @@ public class NetWeaverFlightDataTest extends CamelTestSupport {
     public void testNetWeaverFlight() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND,
-                NetWeaverTestConstants.NETWEAVER_FLIGHT_COMMAND);
+        template.sendBodyAndHeader(
+                "direct:start", "Dummy", NetWeaverConstants.COMMAND, NetWeaverTestConstants.NETWEAVER_FLIGHT_COMMAND);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -40,7 +41,10 @@ public class NetWeaverFlightDataTest extends CamelTestSupport {
     public void testNetWeaverFlight2() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND,
+        template.sendBodyAndHeader(
+                "direct:start",
+                "Dummy",
+                NetWeaverConstants.COMMAND,
                 NetWeaverTestConstants.NETWEAVER_FLIGHT_BOOKING_COMMAND);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -52,8 +56,9 @@ public class NetWeaverFlightDataTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("sap-netweaver:%s?username=%s&password=%s", NetWeaverTestConstants.NETWEAVER_GATEWAY_URL, username,
-                                password)
+                        .toF(
+                                "sap-netweaver:%s?username=%s&password=%s",
+                                NetWeaverTestConstants.NETWEAVER_GATEWAY_URL, username, password)
                         .to("log:response")
                         .to("mock:result");
             }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -33,9 +37,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test inspired by user forum
  */
@@ -45,6 +46,7 @@ public class JmsRouteWithCustomListenerContainerTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -93,8 +95,8 @@ public class JmsRouteWithCustomListenerContainerTest extends AbstractJMSTest {
             public void configure() {
                 from("activemq:queue:JmsRouteWithCustomListenerContainerTest?messageListenerContainerFactory=#myListenerContainerFactory")
                         .to("mock:inbox")
-                        .to(ExchangePattern.InOnly, "activemq:topic:order").bean("orderService",
-                                "handleOrder");
+                        .to(ExchangePattern.InOnly, "activemq:topic:order")
+                        .bean("orderService", "handleOrder");
 
                 from("activemq:topic:order").to("mock:topic");
             }
@@ -121,15 +123,12 @@ public class JmsRouteWithCustomListenerContainerTest extends AbstractJMSTest {
         }
     }
 
-    public static class MyListenerContainer extends DefaultMessageListenerContainer {
-
-    }
+    public static class MyListenerContainer extends DefaultMessageListenerContainer {}
 
     public static class MyOrderServiceBean {
 
         public String handleOrder(String body) {
             return "OK: " + body;
         }
-
     }
 }

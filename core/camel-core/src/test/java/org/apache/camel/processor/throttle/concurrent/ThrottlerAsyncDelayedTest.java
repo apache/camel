@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.concurrent;
 
 import java.util.concurrent.ExecutorService;
@@ -67,12 +68,20 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").throttle(3).concurrentRequestsMode().delay(INTERVAL).asyncDelayed().to("log:result",
-                        "mock:result");
+                from("seda:a")
+                        .throttle(3)
+                        .concurrentRequestsMode()
+                        .delay(INTERVAL)
+                        .asyncDelayed()
+                        .to("log:result", "mock:result");
                 // END SNIPPET: ex
 
-                from("direct:a").throttle(3).concurrentRequestsMode().delay(INTERVAL).asyncDelayed().to("log:result",
-                        "mock:result");
+                from("direct:a")
+                        .throttle(3)
+                        .concurrentRequestsMode()
+                        .delay(INTERVAL)
+                        .asyncDelayed()
+                        .to("log:result", "mock:result");
             }
         };
     }

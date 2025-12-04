@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx;
 
 import java.io.InputStream;
@@ -50,7 +51,8 @@ public class VertxJsonObjectConverterTest extends CamelTestSupport {
 
     @Test
     public void testByteBufToJsonObject() {
-        JsonObject jsonObject = context.getTypeConverter().convertTo(JsonObject.class, Unpooled.wrappedBuffer(BODY.getBytes()));
+        JsonObject jsonObject =
+                context.getTypeConverter().convertTo(JsonObject.class, Unpooled.wrappedBuffer(BODY.getBytes()));
         Assertions.assertEquals(BODY, jsonObject.toString());
     }
 
@@ -69,25 +71,29 @@ public class VertxJsonObjectConverterTest extends CamelTestSupport {
 
     @Test
     public void testJsonObjectToBuffer() {
-        Buffer result = context.getTypeConverter().convertTo(Buffer.class, Buffer.buffer(BODY).toJsonObject());
+        Buffer result = context.getTypeConverter()
+                .convertTo(Buffer.class, Buffer.buffer(BODY).toJsonObject());
         Assertions.assertEquals(BODY, result.toString());
     }
 
     @Test
     public void testJsonObjectToString() {
-        String result = context.getTypeConverter().convertTo(String.class, Buffer.buffer(BODY).toJsonObject());
+        String result = context.getTypeConverter()
+                .convertTo(String.class, Buffer.buffer(BODY).toJsonObject());
         Assertions.assertEquals(BODY, result);
     }
 
     @Test
     public void testJsonObjectToByteArray() {
-        byte[] result = context.getTypeConverter().convertTo(byte[].class, Buffer.buffer(BODY.getBytes()).toJsonObject());
+        byte[] result = context.getTypeConverter()
+                .convertTo(byte[].class, Buffer.buffer(BODY.getBytes()).toJsonObject());
         Assertions.assertEquals(BODY, new String(result));
     }
 
     @Test
     public void testJsonObjectToMap() {
-        Map<String, Object> result = context.getTypeConverter().convertTo(Map.class, Buffer.buffer(BODY).toJsonObject());
+        Map<String, Object> result = context.getTypeConverter()
+                .convertTo(Map.class, Buffer.buffer(BODY).toJsonObject());
         Assertions.assertEquals(BODY, new JsonObject(result).toString());
     }
 }

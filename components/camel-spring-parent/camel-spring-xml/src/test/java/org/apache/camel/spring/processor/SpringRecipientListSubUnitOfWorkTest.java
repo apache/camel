@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.RecipientListSubUnitOfWorkTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRecipientListSubUnitOfWorkTest extends RecipientListSubUnitOfWorkTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRecipientListSubUnitOfWorkTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/SpringRecipientListSubUnitOfWorkTest.xml");
     }
 }

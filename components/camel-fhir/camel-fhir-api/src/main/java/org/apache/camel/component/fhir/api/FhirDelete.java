@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -89,5 +90,4 @@ public class FhirDelete {
         ExtraParameters.process(extraParameters, deleteTyped);
         return deleteTyped.execute();
     }
-
 }

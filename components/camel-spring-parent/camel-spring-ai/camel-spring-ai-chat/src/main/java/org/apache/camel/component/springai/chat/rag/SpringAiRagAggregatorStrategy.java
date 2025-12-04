@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat.rag;
+
+import static org.apache.camel.component.springai.chat.SpringAiChatConstants.AUGMENTED_DATA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,6 @@ import java.util.Optional;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.springframework.ai.document.Document;
-
-import static org.apache.camel.component.springai.chat.SpringAiChatConstants.AUGMENTED_DATA;
 
 /**
  * Aggregation strategy for Retrieval Augmented Generation (RAG) with Spring AI.
@@ -60,7 +61,8 @@ public class SpringAiRagAggregatorStrategy implements AggregationStrategy {
         }
 
         // Extract new data from enricher response
-        Optional<List> newAugmentedData = Optional.ofNullable(newExchange.getIn().getBody(List.class));
+        Optional<List> newAugmentedData =
+                Optional.ofNullable(newExchange.getIn().getBody(List.class));
         if (newAugmentedData.isEmpty()) {
             return oldExchange;
         }
@@ -79,8 +81,8 @@ public class SpringAiRagAggregatorStrategy implements AggregationStrategy {
         }
 
         // Get or create augmented data list in header
-        List<Document> augmentedData
-                = Optional.ofNullable(oldExchange.getIn().getHeader(AUGMENTED_DATA, List.class)).orElse(new ArrayList<>());
+        List<Document> augmentedData = Optional.ofNullable(oldExchange.getIn().getHeader(AUGMENTED_DATA, List.class))
+                .orElse(new ArrayList<>());
         augmentedData.addAll(newDocuments);
 
         oldExchange.getIn().setHeader(AUGMENTED_DATA, augmentedData);

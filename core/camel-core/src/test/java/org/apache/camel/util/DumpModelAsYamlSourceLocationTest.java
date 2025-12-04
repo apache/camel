@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSupport {
 
@@ -35,8 +36,8 @@ public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSuppor
 
     @Test
     public void testDumpModelAsYaml() throws Exception {
-        String yaml
-                = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
+        String yaml = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(yaml);
         log.info(yaml);
 
@@ -48,7 +49,8 @@ public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSuppor
 
     @Test
     public void testDumpModelAsYamlExternal() throws Exception {
-        String yaml = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("cool"));
+        String yaml =
+                PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("cool"));
         assertNotNull(yaml);
         log.info(yaml);
 
@@ -60,8 +62,8 @@ public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSuppor
 
     @Test
     public void testDumpModelAsYamlSourceLocation() throws Exception {
-        String yaml = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("cool"),
-                true, true, false, true);
+        String yaml = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("cool"), true, true, false, true);
         assertNotNull(yaml);
         log.info(yaml);
 
@@ -74,16 +76,16 @@ public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSuppor
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:start").routeId("myRoute")
-                                .filter(simple("${body} > 10"))
-                                .to("mock:result");
-                    }
-                },
-                new MyCoolRoute()
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start")
+                            .routeId("myRoute")
+                            .filter(simple("${body} > 10"))
+                            .to("mock:result");
+                }
+            },
+            new MyCoolRoute()
         };
     }
-
 }

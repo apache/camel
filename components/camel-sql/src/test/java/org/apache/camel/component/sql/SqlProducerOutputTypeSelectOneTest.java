@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.List;
 import java.util.Map;
@@ -32,8 +35,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class SqlProducerOutputTypeSelectOneTest {
 
     private EmbeddedDatabase db;
@@ -44,7 +45,8 @@ public class SqlProducerOutputTypeSelectOneTest {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         camel1 = new DefaultCamelContext();
         camel1.getCamelContextExtension().setName("camel-1");
@@ -65,7 +67,8 @@ public class SqlProducerOutputTypeSelectOneTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("sql:select * from projects where id=3?outputType=SelectOne&outputClass=org.apache.camel.component.sql.ProjectModel")
+                        .to(
+                                "sql:select * from projects where id=3?outputType=SelectOne&outputClass=org.apache.camel.component.sql.ProjectModel")
                         .to("mock:result");
             }
         });

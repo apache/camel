@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import org.apache.camel.CamelContext;
@@ -59,8 +60,7 @@ public class RabbitMQComponentNullBodyIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
+                from("direct:start").to("spring-rabbitmq:foo?routingKey=foo.bar");
             }
         };
     }

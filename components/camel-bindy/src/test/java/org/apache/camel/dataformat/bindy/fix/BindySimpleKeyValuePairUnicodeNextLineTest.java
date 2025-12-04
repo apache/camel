@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -27,8 +30,6 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -53,7 +54,8 @@ public class BindySimpleKeyValuePairUnicodeNextLineTest {
 
         result.assertIsSatisfied();
 
-        UnicodeFixOrder unicodeFixOrder = result.getReceivedExchanges().get(0).getIn().getBody(UnicodeFixOrder.class);
+        UnicodeFixOrder unicodeFixOrder =
+                result.getReceivedExchanges().get(0).getIn().getBody(UnicodeFixOrder.class);
 
         assertEquals("1", unicodeFixOrder.getId());
         assertEquals("butter", unicodeFixOrder.getProduct());
@@ -74,8 +76,10 @@ public class BindySimpleKeyValuePairUnicodeNextLineTest {
     public static class UnicodeFixOrder {
         @KeyValuePairField(tag = 37)
         private String id;
+
         @KeyValuePairField(tag = 40)
         private String product;
+
         @KeyValuePairField(tag = 38)
         private String quantity;
 

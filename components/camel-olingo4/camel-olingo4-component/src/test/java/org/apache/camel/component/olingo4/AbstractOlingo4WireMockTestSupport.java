@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.recordSpec;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.recordSpec;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public abstract class AbstractOlingo4WireMockTestSupport extends AbstractOlingo4TestSupport {
 
@@ -40,8 +41,7 @@ public abstract class AbstractOlingo4WireMockTestSupport extends AbstractOlingo4
     public static void startWireMockServer() {
         if (useMockedBackend()) {
             LOG.info("Starting WireMock server");
-            wireMockServer = new WireMockServer(
-                    wireMockConfig().dynamicPort());
+            wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
             wireMockServer.start();
             if (isRecordingEnabled()) {
                 LOG.info("Starting WireMock recording");
@@ -81,7 +81,8 @@ public abstract class AbstractOlingo4WireMockTestSupport extends AbstractOlingo4
         if (useMockedBackend()) {
             // re-use the same session id per one WireMock server lifecycle
             if (serverUrlWithSessionId == null) {
-                serverUrlWithSessionId = getRealServiceUrl("http://localhost:" + wireMockServer.port(),
+                serverUrlWithSessionId = getRealServiceUrl(
+                        "http://localhost:" + wireMockServer.port(),
                         Map.of(CAPTURED_HEADER_NAME, getClassIdentifier()));
             }
             return serverUrlWithSessionId;
@@ -97,7 +98,8 @@ public abstract class AbstractOlingo4WireMockTestSupport extends AbstractOlingo4
     @Override
     protected String modifyServiceUrl(String hostUri, String reqUri) {
         // for wiremock we have url in format http://localhost:<random-port> which redirects to the real service
-        // but we want to use the session id but cannot append it the same as for real server because it would result to http://localhost:<random-number>/TripPinRESTierService/(S(e2ikh24z4iexhwyj5mgw4v5p))/
+        // but we want to use the session id but cannot append it the same as for real server because it would result to
+        // http://localhost:<random-number>/TripPinRESTierService/(S(e2ikh24z4iexhwyj5mgw4v5p))/
         // but we need http://localhost:<random-number>/(S(e2ikh24z4iexhwyj5mgw4v5p))/
         return useMockedBackend()
                 ? hostUri + reqUri.substring(reqUri.indexOf('/', reqUri.indexOf('/') + 1))

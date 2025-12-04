@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded.cluster;
 
 import org.apache.camel.component.infinispan.cluster.InfinispanClusterConfiguration;
@@ -22,8 +23,7 @@ import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.manager.EmbeddedCacheManager;
 
 public class InfinispanEmbeddedClusterConfiguration
-        extends InfinispanClusterConfiguration<InfinispanEmbeddedConfiguration>
-        implements Cloneable {
+        extends InfinispanClusterConfiguration<InfinispanEmbeddedConfiguration> implements Cloneable {
 
     public InfinispanEmbeddedClusterConfiguration() {
         super(new InfinispanEmbeddedConfiguration());

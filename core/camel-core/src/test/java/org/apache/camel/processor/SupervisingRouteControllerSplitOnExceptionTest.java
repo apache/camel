@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -59,8 +60,13 @@ public class SupervisingRouteControllerSplitOnExceptionTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException().handled(true).split().method(SupervisingRouteControllerSplitOnExceptionTest.class, "mySplit")
-                        .streaming().log("Exception occurred").to("mock:error");
+                onException()
+                        .handled(true)
+                        .split()
+                        .method(SupervisingRouteControllerSplitOnExceptionTest.class, "mySplit")
+                        .streaming()
+                        .log("Exception occurred")
+                        .to("mock:error");
 
                 from("direct:start")
                         .choice()
@@ -83,5 +89,4 @@ public class SupervisingRouteControllerSplitOnExceptionTest extends ContextTestS
 
         return outputMessages;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
@@ -77,5 +78,4 @@ public class ScannerTest {
         Assertions.assertTrue(s.hasNext());
         Assertions.assertEquals("data3", s.next());
     }
-
 }

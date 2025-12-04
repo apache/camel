@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,17 +32,13 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
 
     @Test
     public void testSwitchNoBodyTo204ViaHttpEmptyBody() throws Exception {
         HttpGet request = new HttpGet("http://localhost:" + getPort() + "/foo");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                CloseableHttpResponse httpResponse = httpClient.execute(request)) {
 
             assertEquals(204, httpResponse.getCode());
             assertNull(httpResponse.getEntity());
@@ -68,7 +69,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     public void testNoSwitchingHasBodyViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                CloseableHttpResponse httpResponse = httpClient.execute(request)) {
 
             assertEquals(200, httpResponse.getCode());
             assertNotNull(httpResponse.getEntity());
@@ -100,7 +101,7 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
     public void testNoSwitchingHasCodeViaHttpNoContent() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                CloseableHttpResponse httpResponse = httpClient.execute(request)) {
 
             assertEquals(200, httpResponse.getCode());
             assertNotNull(httpResponse.getEntity());
@@ -134,25 +135,20 @@ public class UndertowSwitchingStatus204Test extends BaseUndertowTest {
             @Override
             public void configure() {
 
-                from("undertow:http://localhost:{{port}}/foo")
-                        .setBody().constant("");
+                from("undertow:http://localhost:{{port}}/foo").setBody().constant("");
 
-                from("direct:foo")
-                        .to("undertow:http://localhost:{{port}}/foo");
+                from("direct:foo").to("undertow:http://localhost:{{port}}/foo");
 
-                from("undertow:http://localhost:{{port}}/bar")
-                        .setBody().constant("No Content");
+                from("undertow:http://localhost:{{port}}/bar").setBody().constant("No Content");
 
-                from("direct:bar")
-                        .to("undertow:http://localhost:{{port}}/bar");
+                from("direct:bar").to("undertow:http://localhost:{{port}}/bar");
 
                 from("undertow:http://localhost:{{port}}/foobar")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
-                        .setBody().constant("");
+                        .setBody()
+                        .constant("");
 
-                from("direct:foobar")
-                        .to("undertow:http://localhost:{{port}}/foobar");
-
+                from("direct:foobar").to("undertow:http://localhost:{{port}}/foobar");
             }
         };
     }

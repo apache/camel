@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class IBMCOSComponentTest extends CamelTestSupport {
 
@@ -39,7 +40,8 @@ public class IBMCOSComponentTest extends CamelTestSupport {
         });
         // The exception message should indicate credentials are required
         String message = exception.getMessage();
-        assertTrue(message.contains("cosClient") || message.contains("apiKey"),
+        assertTrue(
+                message.contains("cosClient") || message.contains("apiKey"),
                 "Exception should mention credentials requirement, but was: " + message);
     }
 }

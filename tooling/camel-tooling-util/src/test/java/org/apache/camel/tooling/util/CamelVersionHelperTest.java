@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tooling.util;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.tooling.util;
 
 import static org.apache.camel.tooling.util.CamelVersionHelper.isGE;
 import static org.apache.camel.tooling.util.CamelVersionHelper.prevMinor;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 public class CamelVersionHelperTest {
 

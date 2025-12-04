@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ENDPOINT_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_EXCHANGE;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
 
 import java.util.function.Predicate;
 
@@ -26,19 +36,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
-import static org.apache.camel.component.micrometer.MicrometerConstants.ENDPOINT_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.EVENT_TYPE_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.FAILED_TAG;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_EXCHANGE;
-import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
-
 public interface MicrometerExchangeEventNotifierNamingStrategy {
 
-    Predicate<Meter.Id> EVENT_NOTIFIERS
-            = id -> KIND_EXCHANGE.equals(id.getTag(KIND));
+    Predicate<Meter.Id> EVENT_NOTIFIERS = id -> KIND_EXCHANGE.equals(id.getTag(KIND));
 
     /**
      * Default naming strategy that uses micrometer naming convention.
@@ -75,12 +75,18 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
         String routeId = event.getExchange().getFromRouteId();
         if (routeId != null) {
             return Tags.of(
-                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                    KIND, KIND_EXCHANGE,
-                    EVENT_TYPE_TAG, event.getClass().getSimpleName(),
-                    ROUTE_ID_TAG, routeId,
-                    ENDPOINT_NAME, uri,
-                    FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
+                    CAMEL_CONTEXT_TAG,
+                    event.getExchange().getContext().getName(),
+                    KIND,
+                    KIND_EXCHANGE,
+                    EVENT_TYPE_TAG,
+                    event.getClass().getSimpleName(),
+                    ROUTE_ID_TAG,
+                    routeId,
+                    ENDPOINT_NAME,
+                    uri,
+                    FAILED_TAG,
+                    Boolean.toString(event.getExchange().isFailed()));
         } else {
             return Tags.of(
                     CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),

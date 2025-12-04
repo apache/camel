@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded.cluster;
 
 import java.util.concurrent.CountDownLatch;
@@ -30,7 +31,7 @@ public class InfinispanEmbeddedClusteredRoutePolicyFactoryTest extends AbstractI
         int events = ThreadLocalRandom.current().nextInt(2, 6);
         CountDownLatch contextLatch = new CountDownLatch(events);
 
-        //Set up a single node cluster.
+        // Set up a single node cluster.
         InfinispanEmbeddedClusterService clusterService = new InfinispanEmbeddedClusterService();
         clusterService.setCacheContainer(cacheContainer);
         clusterService.setId("node-" + id);

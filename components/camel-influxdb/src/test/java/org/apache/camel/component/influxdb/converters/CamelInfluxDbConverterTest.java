@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb.converters;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +29,6 @@ import org.influxdb.dto.Point;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelInfluxDbConverterTest {
 
@@ -48,7 +49,6 @@ public class CamelInfluxDbConverterTest {
         assertNotNull(line);
         LOG.debug("doesNotAddCamelHeaders generated: \"{}\"", line);
         assertFalse(line.contains(InfluxDbConstants.MEASUREMENT_NAME));
-
     }
 
     @Test
@@ -66,7 +66,6 @@ public class CamelInfluxDbConverterTest {
         assertNotNull(line);
         LOG.debug("Doublecommand generated: \"{}\"", line);
         assertTrue(line.contains("busy=99.999999"));
-
     }
 
     @Test
@@ -84,7 +83,6 @@ public class CamelInfluxDbConverterTest {
         assertNotNull(line);
         LOG.debug("Int command generated: \"{}\"", line);
         assertTrue(line.contains("busy=99999999"));
-
     }
 
     @Test
@@ -102,6 +100,5 @@ public class CamelInfluxDbConverterTest {
         assertNotNull(line);
         LOG.debug("Byte command generated: \"{}\"", line);
         assertTrue(line.contains("busy=127"));
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,66 +40,92 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
 
     @XmlAttribute
     private String instanceClass;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String objectMapper;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String useDefaultObjectMapper;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String autoDiscoverObjectMapper;
+
     @XmlAttribute
     @Metadata(defaultValue = "GoogleProtobuf")
     private ProtobufLibrary library = ProtobufLibrary.GoogleProtobuf;
+
     @XmlAttribute(name = "unmarshalType")
     private String unmarshalTypeName;
+
     @XmlTransient
     private Class<?> unmarshalType;
+
     @XmlAttribute(name = "jsonView")
     private String jsonViewTypeName;
+
     @XmlTransient
     private Class<?> jsonView;
+
     @XmlAttribute
     private String include;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowJmsType;
+
     @XmlAttribute(name = "collectionType")
     private String collectionTypeName;
+
     @XmlTransient
     private Class<?> collectionType;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useList;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String moduleClassNames;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String moduleRefs;
+
     @XmlAttribute
     private String enableFeatures;
+
     @XmlAttribute
     private String disableFeatures;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String timezone;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String schemaResolver;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String autoDiscoverSchemaResolver;
+
     @XmlAttribute
     @Metadata(enums = "native,json", defaultValue = "native")
     private String contentTypeFormat;
+
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
-              description = "Whether the data format should set the Content-Type header with the type from the data format."
+    @Metadata(
+            javaType = "java.lang.Boolean",
+            defaultValue = "true",
+            description =
+                    "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
 

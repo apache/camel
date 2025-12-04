@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.debugger;
 
 import java.util.ArrayList;
@@ -59,7 +60,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 100;
     // use tracer to capture additional information for capturing latest completed exchange message-history
-    private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
+    private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue =
+            new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
@@ -227,8 +229,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
             throw new IllegalArgumentException("The backlog size must be a positive number, was: " + backlogSize);
         }
         if (backlogSize > MAX_BACKLOG_SIZE) {
-            throw new IllegalArgumentException(
-                    "The backlog size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
+            throw new IllegalArgumentException("The backlog size cannot be greater than the max size of "
+                    + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
         }
         this.backlogSize = backlogSize;
     }
@@ -497,5 +499,4 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     protected void doStop() throws Exception {
         clear();
     }
-
 }

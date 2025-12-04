@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.io;
+
+import static org.apache.camel.util.BufferCaster.cast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +33,6 @@ import org.apache.hc.core5.http.io.SessionInputBuffer;
 import org.apache.hc.core5.util.Args;
 import org.apache.hc.core5.util.ByteArrayBuffer;
 import org.apache.hc.core5.util.CharArrayBuffer;
-
-import static org.apache.camel.util.BufferCaster.cast;
 
 public class AS2SessionInputBuffer implements SessionInputBuffer {
 
@@ -52,9 +53,8 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
     private boolean lastLineReadEnrichedByCarriageReturn;
     private boolean lastLineReadTerminatedByLineFeed;
 
-    public AS2SessionInputBuffer(final BasicHttpTransportMetrics metrics,
-                                 final int buffersize,
-                                 final int minChunkLimit) {
+    public AS2SessionInputBuffer(
+            final BasicHttpTransportMetrics metrics, final int buffersize, final int minChunkLimit) {
         this.metrics = ObjectHelper.notNull(metrics, "metrics");
         Args.positive(buffersize, "buffersize");
         this.buffer = new byte[buffersize];
@@ -259,8 +259,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         return len;
     }
 
-    private int lineFromReadBuffer(final CharArrayBuffer charbuffer, final int position)
-            throws IOException {
+    private int lineFromReadBuffer(final CharArrayBuffer charbuffer, final int position) throws IOException {
         int pos = position;
         final int off = this.bufferpos;
         int len;
@@ -299,8 +298,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         return len;
     }
 
-    private int handleDecodingResult(final CoderResult result, final CharArrayBuffer charbuffer)
-            throws IOException {
+    private int handleDecodingResult(final CoderResult result, final CharArrayBuffer charbuffer) throws IOException {
         if (result.isError()) {
             result.throwException();
         }
@@ -330,6 +328,5 @@ public class AS2SessionInputBuffer implements SessionInputBuffer {
         } catch (Exception e) {
             throw new IOException("failed to decode transfer encoding", e);
         }
-
     }
 }

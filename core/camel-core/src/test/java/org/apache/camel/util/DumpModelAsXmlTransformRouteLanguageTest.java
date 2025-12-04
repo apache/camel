@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.apache.camel.builder.Builder.language;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,10 +31,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.builder.Builder.language;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  *
  */
@@ -37,7 +38,8 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context)
+                .dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -62,7 +64,10 @@ public class DumpModelAsXmlTransformRouteLanguageTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").transform(language("constant", "Hello World")).to("mock:result")
+                from("direct:start")
+                        .routeId("myRoute")
+                        .transform(language("constant", "Hello World"))
+                        .to("mock:result")
                         .id("myMock");
             }
         };

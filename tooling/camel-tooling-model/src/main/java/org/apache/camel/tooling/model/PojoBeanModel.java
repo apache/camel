@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -23,8 +24,7 @@ public class PojoBeanModel extends ArtifactModel<PojoBeanModel.PojoBeanOptionMod
 
     protected final List<PojoBeanModel.PojoBeanOptionModel> options = new ArrayList<>();
 
-    public PojoBeanModel() {
-    }
+    public PojoBeanModel() {}
 
     public void addOption(PojoBeanModel.PojoBeanOptionModel option) {
         options.add(option);
@@ -40,7 +40,5 @@ public class PojoBeanModel extends ArtifactModel<PojoBeanModel.PojoBeanOptionMod
         return Kind.bean;
     }
 
-    public static class PojoBeanOptionModel extends BaseOptionModel {
-
-    }
+    public static class PojoBeanOptionModel extends BaseOptionModel {}
 }

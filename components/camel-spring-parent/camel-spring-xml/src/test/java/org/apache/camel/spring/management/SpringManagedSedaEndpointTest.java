@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,12 +32,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -45,7 +46,8 @@ public class SpringManagedSedaEndpointTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedSedaEndpointTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringManagedSedaEndpointTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {
@@ -85,13 +87,14 @@ public class SpringManagedSedaEndpointTest extends SpringTestSupport {
         Integer size2 = (Integer) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, size2.longValue());
 
-        String out
-                = (String) mbeanServer.invoke(name, "browseExchange", new Object[] { 0 }, new String[] { "java.lang.Integer" });
+        String out = (String)
+                mbeanServer.invoke(name, "browseExchange", new Object[] {0}, new String[] {"java.lang.Integer"});
         assertNotNull(out);
         // message body is not dumped when browsing exchange
         assertFalse(out.contains("Hi World"));
 
-        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[] { 0 }, new String[] { "java.lang.Integer" });
+        out = (String)
+                mbeanServer.invoke(name, "browseMessageBody", new Object[] {0}, new String[] {"java.lang.Integer"});
         assertNotNull(out);
         assertTrue(out.contains("Hi World"));
 

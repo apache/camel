@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.Method;
@@ -55,11 +56,13 @@ class MethodsFilter {
             Method alreadyRegistered = methods.get(i);
 
             if (Modifier.isPublic(proposedMethod.getDeclaringClass().getModifiers())) {
-                boolean overridden = ObjectHelper.isOverridingMethod(inheritingClass, proposedMethod, alreadyRegistered, false);
-                boolean overridding
-                        = ObjectHelper.isOverridingMethod(inheritingClass, alreadyRegistered, proposedMethod, false);
+                boolean overridden =
+                        ObjectHelper.isOverridingMethod(inheritingClass, proposedMethod, alreadyRegistered, false);
+                boolean overridding =
+                        ObjectHelper.isOverridingMethod(inheritingClass, alreadyRegistered, proposedMethod, false);
 
-                boolean registeredMethodIsPublic = Modifier.isPublic(alreadyRegistered.getDeclaringClass().getModifiers());
+                boolean registeredMethodIsPublic =
+                        Modifier.isPublic(alreadyRegistered.getDeclaringClass().getModifiers());
 
                 if (overridden && !registeredMethodIsPublic) {
                     // Retain the overridden method from a public class

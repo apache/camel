@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +27,10 @@ public class ToDynamicFluentTest extends ToDynamicTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toD().cacheSize(5).allowOptimisedComponents(false).uri("mock:${header.foo}");
+                        .toD()
+                        .cacheSize(5)
+                        .allowOptimisedComponents(false)
+                        .uri("mock:${header.foo}");
             }
         };
     }

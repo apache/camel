@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
 
 import org.apache.camel.spi.Metadata;
@@ -27,11 +28,13 @@ public final class MiloConstants {
 
     @Metadata(label = "producer", description = "The node ids.", javaType = "List")
     public static final String HEADER_NODE_IDS = "CamelMiloNodeIds";
-    @Metadata(label = "producer", description = "The \"await\" setting for writes.", javaType = "Boolean",
-              applicableFor = SCHEME_CLIENT)
+
+    @Metadata(
+            label = "producer",
+            description = "The \"await\" setting for writes.",
+            javaType = "Boolean",
+            applicableFor = SCHEME_CLIENT)
     public static final String HEADER_AWAIT = "await";
 
-    private MiloConstants() {
-
-    }
+    private MiloConstants() {}
 }

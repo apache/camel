@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
@@ -43,7 +44,8 @@ public class TextPlainEntity extends MimeEntity {
     @Override
     public void writeTo(OutputStream outstream) throws IOException {
         NoCloseOutputStream ncos = new NoCloseOutputStream(outstream);
-        try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
+        try (CanonicalOutputStream canonicalOutstream =
+                new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
             // Write out mime part headers if this is not the main body of message.
             if (!isMainBody()) {

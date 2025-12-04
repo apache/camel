@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.LinkedHashMap;
@@ -85,12 +86,11 @@ public class EipStatistic {
     @Override
     public String toString() {
 
-        return "EipStatistic{" +
-               "id='" + id + '\'' +
-               ", tested=" + tested +
-               ", totalProcessingTime=" + totalProcessingTime +
-               ", properties=" + properties +
-               ", childEipStatisticMap=" + childEipStatisticMap +
-               '}';
+        return "EipStatistic{" + "id='"
+                + id + '\'' + ", tested="
+                + tested + ", totalProcessingTime="
+                + totalProcessingTime + ", properties="
+                + properties + ", childEipStatisticMap="
+                + childEipStatisticMap + '}';
     }
 }

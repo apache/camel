@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.commit;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,8 +28,6 @@ import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KafkaConsumerAsyncWithOffsetRepoCommitIT extends BaseManualCommitTestSupport {
 
@@ -47,27 +48,25 @@ public class KafkaConsumerAsyncWithOffsetRepoCommitIT extends BaseManualCommitTe
             @Override
             public void configure() {
                 final String uri = "kafka:" + TOPIC
-                                   + "?groupId=KafkaConsumerAsyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false&offsetRepository=#bean:stateRepository"
-                                   + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory";
+                        + "?groupId=KafkaConsumerAsyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false&offsetRepository=#bean:stateRepository"
+                        + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualAsyncCommitFactory";
 
-                from(uri)
-                        .routeId("foo").to(KafkaTestUtil.MOCK_RESULT).process(e -> {
-                            KafkaManualCommit manual
-                                    = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                from(uri).routeId("foo").to(KafkaTestUtil.MOCK_RESULT).process(e -> {
+                    KafkaManualCommit manual =
+                            e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
 
-                            assertNotNull(manual);
-                            manual.commit();
-                        });
-                from(uri)
-                        .routeId("bar").autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
+                    assertNotNull(manual);
+                    manual.commit();
+                });
+                from(uri).routeId("bar").autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
             }
         };
     }
 
-    @DisplayName("Tests that the offset repository gets updated when using in conjunction with the Async commit manager")
+    @DisplayName(
+            "Tests that the offset repository gets updated when using in conjunction with the Async commit manager")
     @Test
     public void kafkaManualCommitWithOffsetRepo() throws Exception {
         kafkaManualCommitTestWithStateRepository(TOPIC, stateRepository);
     }
-
 }

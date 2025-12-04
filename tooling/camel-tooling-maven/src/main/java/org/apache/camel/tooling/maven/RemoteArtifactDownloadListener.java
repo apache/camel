@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
 
 public interface RemoteArtifactDownloadListener {
@@ -21,15 +22,11 @@ public interface RemoteArtifactDownloadListener {
     /**
      * Event when an artifact downloading is started from a remote maven repository (not local).
      */
-    void artifactDownloading(
-            String groupId, String artifactId, String version,
-            String repoId, String repoUrl);
+    void artifactDownloading(String groupId, String artifactId, String version, String repoId, String repoUrl);
 
     /**
      * Event when an artifact was downloaded from a remote maven repository (not local).
      */
     void artifactDownloaded(
-            String groupId, String artifactId, String version,
-            String repoId, String repoUrl, long elapsed);
-
+            String groupId, String artifactId, String version, String repoId, String repoUrl, long elapsed);
 }

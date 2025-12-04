@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
@@ -36,55 +37,65 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "thread-dump",
+        description = "List threads in a running Camel integration",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelThreadDump extends ActionWatchCommand {
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {
 
-        public IdNameStateCompletionCandidates() {
-        }
+        public IdNameStateCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("id", "name", "state").iterator();
         }
-
     }
 
     public static class StateCompletionCandidates implements Iterable<String> {
 
-        public StateCompletionCandidates() {
-        }
+        public StateCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("RUNNABLE", "BLOCKED", "WAITING", "TIMED_WAITING").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = IdNameStateCompletionCandidates.class,
-                        description = "Sort by id, name or state", defaultValue = "id")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = IdNameStateCompletionCandidates.class,
+            description = "Sort by id, name or state",
+            defaultValue = "id")
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter thread names/ids (use all to include all threads)", defaultValue = "Camel")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter thread names/ids (use all to include all threads)",
+            defaultValue = "Camel")
     String[] filters;
 
-    @CommandLine.Option(names = { "--state" }, completionCandidates = StateCompletionCandidates.class,
-                        description = "To only show threads for a given state")
+    @CommandLine.Option(
+            names = {"--state"},
+            completionCandidates = StateCompletionCandidates.class,
+            description = "To only show threads for a given state")
     String state;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--trace"},
+            description = "Include stack-traces",
+            defaultValue = "false")
     boolean trace;
 
-    @CommandLine.Option(names = { "--depth" },
-                        description = "Max depth of stack-trace", defaultValue = "1")
+    @CommandLine.Option(
+            names = {"--depth"},
+            description = "Max depth of stack-trace",
+            defaultValue = "1")
     int depth;
 
     private volatile long pid;
@@ -101,8 +112,9 @@ public class CamelThreadDump extends ActionWatchCommand {
         if (pids.isEmpty()) {
             return 0;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            printer()
+                    .println("Name or pid " + name + " matches " + pids.size()
+                            + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 0;
         }
 
@@ -140,7 +152,8 @@ public class CamelThreadDump extends ActionWatchCommand {
                 // filter
                 boolean match = false;
                 for (String filter : filters) {
-                    match |= "all".equalsIgnoreCase(filter) || filter.equals("" + row.id)
+                    match |= "all".equalsIgnoreCase(filter)
+                            || filter.equals("" + row.id)
                             || StringHelper.containsIgnoreCase(row.name, filter)
                             || PatternHelper.matchPattern(row.name, filter);
                 }
@@ -174,7 +187,8 @@ public class CamelThreadDump extends ActionWatchCommand {
         if (!rows.isEmpty()) {
             int total = jo.getInteger("threadCount");
             int peak = jo.getInteger("peakThreadCount");
-            printer().printf("PID: %s\tThreads: %d\tPeak: %d\t\tDisplay: %d/%d%n", pid, total, peak, rows.size(), total);
+            printer()
+                    .printf("PID: %s\tThreads: %d\tPeak: %d\t\tDisplay: %d/%d%n", pid, total, peak, rows.size(), total);
 
             if (depth == 1) {
                 singleTable(rows);
@@ -190,26 +204,55 @@ public class CamelThreadDump extends ActionWatchCommand {
     }
 
     protected void singleTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.id)),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(r -> r.state),
-                new Column().header("BLOCK").with(this::getBlocked),
-                new Column().header("WAIT").with(this::getWaited),
-                new Column().header("STACKTRACE").headerAlign(HorizontalAlign.RIGHT)
-                        .maxWidth(70, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getStackTrace))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("ID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> Long.toString(r.id)),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("STATE")
+                                        .headerAlign(HorizontalAlign.RIGHT)
+                                        .with(r -> r.state),
+                                new Column().header("BLOCK").with(this::getBlocked),
+                                new Column().header("WAIT").with(this::getWaited),
+                                new Column()
+                                        .header("STACKTRACE")
+                                        .headerAlign(HorizontalAlign.RIGHT)
+                                        .maxWidth(70, OverflowBehaviour.ELLIPSIS_LEFT)
+                                        .with(this::getStackTrace))));
     }
 
     protected void tableAndStackTrace(List<Row> rows) {
         for (Row row : rows) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(row), Arrays.asList(
-                    new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.id)),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(r -> r.state),
-                    new Column().header("BLOCK").with(this::getBlocked),
-                    new Column().header("WAIT").with(this::getWaited))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            List.of(row),
+                            Arrays.asList(
+                                    new Column()
+                                            .header("ID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> Long.toString(r.id)),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("STATE")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> r.state),
+                                    new Column().header("BLOCK").with(this::getBlocked),
+                                    new Column().header("WAIT").with(this::getWaited))));
             for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
                 printer().println("\t" + row.stackTrace.get(i));
             }
@@ -273,5 +316,4 @@ public class CamelThreadDump extends ActionWatchCommand {
         String lock;
         List<String> stackTrace;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -39,14 +40,20 @@ public class FaultToleranceInheritErrorHandlerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("log:start")
+                from("direct:start")
+                        .to("log:start")
                         // turn on Camel's error handler on CB so it can do redeliveries
-                        .circuitBreaker().inheritErrorHandler(true).to("mock:a")
-                        .throwException(new IllegalArgumentException("Forced")).end().to("log:result").to("mock:result");
+                        .circuitBreaker()
+                        .inheritErrorHandler(true)
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

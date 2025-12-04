@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
@@ -23,8 +26,6 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-
 public class FollowRedirectTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -32,14 +33,17 @@ public class FollowRedirectTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/someplaceelse", new BasicValidationHandler(GET.name(), null, null, "Bye World"))
                 .register("/redirect", (request, response, context) -> {
                     response.setHeader("Location", "someplaceelse");
                     response.setCode(303);
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 
@@ -61,8 +65,7 @@ public class FollowRedirectTest extends BaseHttpTest {
         HttpComponent http = context.getComponent("http", HttpComponent.class);
         http.setFollowRedirects(false);
 
-        String uri = "http://localhost:" + localServer.getLocalPort()
-                     + "/redirect?throwExceptionOnFailure=false";
+        String uri = "http://localhost:" + localServer.getLocalPort() + "/redirect?throwExceptionOnFailure=false";
         Exchange out = fluentTemplate.to(uri).send();
 
         Assertions.assertEquals(303, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
@@ -73,11 +76,9 @@ public class FollowRedirectTest extends BaseHttpTest {
         HttpComponent http = context.getComponent("http", HttpComponent.class);
         http.setRedirectHandlingDisabled(false);
 
-        String uri = "http://localhost:" + localServer.getLocalPort()
-                     + "/redirect?throwExceptionOnFailure=false";
+        String uri = "http://localhost:" + localServer.getLocalPort() + "/redirect?throwExceptionOnFailure=false";
         Exchange out = fluentTemplate.to(uri).send();
 
         Assertions.assertEquals(303, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.cv;
 
 import ai.djl.Model;
@@ -52,8 +53,8 @@ public class CustomImageGenerationPredictor extends AbstractPredictor {
     protected Image[] predict(Exchange exchange, int[] seed) {
         Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
         @SuppressWarnings("unchecked")
-        Translator<int[], Image[]> translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+        Translator<int[], Image[]> translator =
+                exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
 
         exchange.getIn().setHeader(DJLConstants.INPUT, seed);
         try (Predictor<int[], Image[]> predictor = model.newPredictor(translator)) {

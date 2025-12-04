@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,7 +38,10 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
                 from("direct:in").threads(2).to("mock:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -55,5 +59,4 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

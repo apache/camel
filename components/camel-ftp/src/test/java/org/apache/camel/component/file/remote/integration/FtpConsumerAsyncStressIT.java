@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.security.SecureRandom;
@@ -35,8 +36,8 @@ public class FtpConsumerAsyncStressIT extends FtpServerTestSupport {
     @Override
     public void doPostSetup() throws Exception {
         for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file://{{ftp.root.dir}}/filestress", "Hello World", Exchange.FILE_NAME,
-                    i + ".txt");
+            template.sendBodyAndHeader(
+                    "file://{{ftp.root.dir}}/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
         }
     }
 
@@ -59,14 +60,17 @@ public class FtpConsumerAsyncStressIT extends FtpServerTestSupport {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from(getFtpUrl()).threads(10).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // simulate some work with random time to complete
-                        SecureRandom ran = new SecureRandom();
-                        int delay = ran.nextInt(500) + 10;
-                        Thread.sleep(delay);
-                    }
-                }).to("mock:result");
+                from(getFtpUrl())
+                        .threads(10)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // simulate some work with random time to complete
+                                SecureRandom ran = new SecureRandom();
+                                int delay = ran.nextInt(500) + 10;
+                                Thread.sleep(delay);
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.core;
 
 import java.util.Objects;
@@ -87,7 +88,10 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
         final Object o = extensionContext.getTestInstance().get();
 
         LOG.info("********************************************************************************");
-        LOG.info("Testing: {} ({})", extensionContext.getDisplayName(), o.getClass().getName());
+        LOG.info(
+                "Testing: {} ({})",
+                extensionContext.getDisplayName(),
+                o.getClass().getName());
 
         fixtureProcessor.evalField(extensionContext, Produce.class, o, context);
         fixtureProcessor.evalField(extensionContext, EndpointInject.class, o, context);
@@ -108,7 +112,10 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
         lifeCycleManager.afterEach(context);
 
         final Object o = extensionContext.getTestInstance().get();
-        LOG.info("Testing done: {} ({})", extensionContext.getDisplayName(), o.getClass().getName());
+        LOG.info(
+                "Testing done: {} ({})",
+                extensionContext.getDisplayName(),
+                o.getClass().getName());
         LOG.info("********************************************************************************");
     }
 

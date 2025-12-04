@@ -46,15 +46,10 @@ public final class KafkaServiceFactory {
         }
 
         @Override
-        public final void afterAll(ExtensionContext extensionContext) {
-
-        }
-
+        public final void afterAll(ExtensionContext extensionContext) {}
     }
 
-    private KafkaServiceFactory() {
-
-    }
+    private KafkaServiceFactory() {}
 
     public static SimpleTestServiceBuilder<KafkaService> builder() {
         return new SimpleTestServiceBuilder<>("kafka");
@@ -78,19 +73,23 @@ public final class KafkaServiceFactory {
 
     private static class SingletonServiceHolder {
         static final KafkaService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<KafkaService> instance = builder();
 
             instance.addLocalMapping(
-                    () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka"))
+                            () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka"))
                     .addRemoteMapping(RemoteKafkaService::new)
-                    .addMapping("local-kafka3-container",
+                    .addMapping(
+                            "local-kafka3-container",
                             () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
-                    .addMapping("local-confluent-container",
+                    .addMapping(
+                            "local-confluent-container",
                             () -> new SingletonKafkaService(new ConfluentService(), "confluent"))
-                    .addMapping("local-strimzi-container",
-                            () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
-                    .addMapping("local-redpanda-container",
+                    .addMapping(
+                            "local-strimzi-container", () -> new SingletonKafkaService(new StrimziService(), "strimzi"))
+                    .addMapping(
+                            "local-redpanda-container",
                             () -> new SingletonKafkaService(new RedpandaService(), "redpanda"));
 
             INSTANCE = instance.build();
@@ -103,24 +102,19 @@ public final class KafkaServiceFactory {
         }
 
         public static ContainerLocalKafkaService kafka3Container() {
-            KafkaContainer container
-                    = new KafkaContainer(
-                            DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
-                                    .asCompatibleSubstituteFor("apache/kafka"));
+            KafkaContainer container = new KafkaContainer(
+                    DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+                            .asCompatibleSubstituteFor("apache/kafka"));
 
             return new ContainerLocalKafkaService(container);
         }
     }
 
-    public static class ConfluentService extends ConfluentInfraService implements KafkaService {
-    }
+    public static class ConfluentService extends ConfluentInfraService implements KafkaService {}
 
-    public static class StrimziService extends StrimziInfraService implements KafkaService {
-    }
+    public static class StrimziService extends StrimziInfraService implements KafkaService {}
 
-    public static class RedpandaService extends RedpandaInfraService implements KafkaService {
-    }
+    public static class RedpandaService extends RedpandaInfraService implements KafkaService {}
 
-    public static class RemoteKafkaService extends RemoteKafkaInfraService implements KafkaService {
-    }
+    public static class RemoteKafkaService extends RemoteKafkaInfraService implements KafkaService {}
 }

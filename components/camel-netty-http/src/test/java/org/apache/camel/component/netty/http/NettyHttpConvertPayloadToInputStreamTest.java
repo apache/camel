@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.List;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
 
     protected final String expectedBody = "<hello>world!</hello>";
@@ -37,8 +38,8 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/test", expectedBody, "Content-Type",
-                "application/xml");
+        template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -57,7 +58,9 @@ public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");
+                from("netty-http:http://localhost:{{port}}/test")
+                        .convertBodyTo(InputStream.class)
+                        .to("mock:result");
             }
         };
     }

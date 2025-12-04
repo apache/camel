@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -65,11 +66,18 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start").split(body().tokenize("@")).doTry().to("bean:error").to("mock:result")
-                        .doCatch(Exception.class).to("mock:error").doFinally().to("mock:foo")
-                        .to("mock:bar").end();
+                from("direct:start")
+                        .split(body().tokenize("@"))
+                        .doTry()
+                        .to("bean:error")
+                        .to("mock:result")
+                        .doCatch(Exception.class)
+                        .to("mock:error")
+                        .doFinally()
+                        .to("mock:foo")
+                        .to("mock:bar")
+                        .end();
             }
-
         };
     }
 
@@ -81,7 +89,5 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
             }
             return "Hi " + payload;
         }
-
     }
-
 }

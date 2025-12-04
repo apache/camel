@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,8 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         restConfiguration()
-                .contextPath("myapi").port(1234)
+                .contextPath("myapi")
+                .port(1234)
                 .component("jetty")
                 .apiComponent("swagger")
                 .apiHost("localhost")
@@ -40,12 +42,17 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
                 .corsHeaderProperty("key1", "value1")
                 .corsHeaderProperty("key2", "value2");
 
-        rest("/foo").consumes("xml").produces("json").description("my foo service")
-                .get("{id}").apiDocs(false)
-                    .description("get by id")
-                    .to("log:id")
-                .post().bindingMode(RestBindingMode.xml)
-                    .description("post something")
-                    .to("log:post");
+        rest("/foo")
+                .consumes("xml")
+                .produces("json")
+                .description("my foo service")
+                .get("{id}")
+                .apiDocs(false)
+                .description("get by id")
+                .to("log:id")
+                .post()
+                .bindingMode(RestBindingMode.xml)
+                .description("post something")
+                .to("log:post");
     }
 }

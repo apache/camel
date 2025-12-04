@@ -29,67 +29,85 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "annotations", "auto", "autoscalingMetric", "autoscalingTarget", "class", "enabled", "maxScale",
-        "minScale", "rolloutDuration", "timeoutSeconds", "visibility" })
+    "annotations",
+    "auto",
+    "autoscalingMetric",
+    "autoscalingTarget",
+    "class",
+    "enabled",
+    "maxScale",
+    "minScale",
+    "rolloutDuration",
+    "timeoutSeconds",
+    "visibility"
+})
 public class KnativeService {
     @JsonProperty("annotations")
-    @JsonPropertyDescription("The annotations added to route. This can be used to set knative service specific annotations CLI usage example: -t \"knative-service.annotations.'haproxy.router.openshift.io/balance'=true\"")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The annotations added to route. This can be used to set knative service specific annotations CLI usage example: -t \"knative-service.annotations.'haproxy.router.openshift.io/balance'=true\"")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Map<String, String> annotations;
+
     @JsonProperty("auto")
-    @JsonPropertyDescription("Automatically deploy the camel rouyte as Knative service when all conditions hold: \n * Camel route is using the Knative profile * All routes are either starting from an HTTP based consumer or a passive consumer (e.g. `direct` is a passive consumer)")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Automatically deploy the camel rouyte as Knative service when all conditions hold: \n * Camel route is using the Knative profile * All routes are either starting from an HTTP based consumer or a passive consumer (e.g. `direct` is a passive consumer)")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean auto;
+
     @JsonProperty("autoscalingMetric")
-    @JsonPropertyDescription("Configures the Knative autoscaling metric property (e.g. to set `concurrency` based or `cpu` based autoscaling). \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Configures the Knative autoscaling metric property (e.g. to set `concurrency` based or `cpu` based autoscaling). \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String autoscalingMetric;
+
     @JsonProperty("autoscalingTarget")
-    @JsonPropertyDescription("Sets the allowed concurrency level or CPU percentage (depending on the autoscaling metric) for each Pod. \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Sets the allowed concurrency level or CPU percentage (depending on the autoscaling metric) for each Pod. \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long autoscalingTarget;
+
     @JsonProperty("class")
-    @JsonPropertyDescription("Configures the Knative autoscaling class property (e.g. to set `hpa.autoscaling.knative.dev` or `kpa.autoscaling.knative.dev` autoscaling). \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Configures the Knative autoscaling class property (e.g. to set `hpa.autoscaling.knative.dev` or `kpa.autoscaling.knative.dev` autoscaling). \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Class _class;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("maxScale")
-    @JsonPropertyDescription("An upper bound for the number of Pods that can be running in parallel for the camel route. Knative has its own cap value that depends on the installation. \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "An upper bound for the number of Pods that can be running in parallel for the camel route. Knative has its own cap value that depends on the installation. \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long maxScale;
+
     @JsonProperty("minScale")
-    @JsonPropertyDescription("The minimum number of Pods that should be running at any time for the camel route. It's **zero** by default, meaning that the camel route is scaled down to zero when not used for a configured amount of time. \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The minimum number of Pods that should be running at any time for the camel route. It's **zero** by default, meaning that the camel route is scaled down to zero when not used for a configured amount of time. \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long minScale;
+
     @JsonProperty("rolloutDuration")
-    @JsonPropertyDescription("Enables to gradually shift traffic to the latest Revision and sets the rollout duration. It's disabled by default and must be expressed as a Golang `time.Duration` string representation, rounded to a second precision.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Enables to gradually shift traffic to the latest Revision and sets the rollout duration. It's disabled by default and must be expressed as a Golang `time.Duration` string representation, rounded to a second precision.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private String rolloutDuration;
+
     @JsonProperty("timeoutSeconds")
-    @JsonPropertyDescription("The maximum duration in seconds that the request instance is allowed to respond to a request. This field propagates to the camel route pod's terminationGracePeriodSeconds \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "The maximum duration in seconds that the request instance is allowed to respond to a request. This field propagates to the camel route pod's terminationGracePeriodSeconds \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Long timeoutSeconds;
+
     @JsonProperty("visibility")
-    @JsonPropertyDescription("Setting `cluster-local`, Knative service becomes a private service. Specifically, this option applies the `networking.knative.dev/visibility` label to Knative service. \n Refer to the Knative documentation for more information.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Setting `cluster-local`, Knative service becomes a private service. Specifically, this option applies the `networking.knative.dev/visibility` label to Knative service. \n Refer to the Knative documentation for more information.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Visibility visibility;
 
-    public KnativeService() {
-    }
+    public KnativeService() {}
 
     public Map<String, String> getAnnotations() {
         return this.annotations;

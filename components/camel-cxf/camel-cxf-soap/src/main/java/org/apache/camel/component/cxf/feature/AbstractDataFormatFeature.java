@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.feature;
 
 import java.util.ArrayList;
@@ -55,7 +56,9 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
 
     private void tryRemove(
-            List<Interceptor<? extends Message>> interceptors, String[] phaseNames, Set<String> needToBeKept,
+            List<Interceptor<? extends Message>> interceptors,
+            String[] phaseNames,
+            Set<String> needToBeKept,
             Interceptor<? extends Message> i) {
         boolean outside = false;
         if (i instanceof PhaseInterceptor) {
@@ -73,7 +76,8 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
 
     private void doRemove(
-            List<Interceptor<? extends Message>> interceptors, Set<String> needToBeKept,
+            List<Interceptor<? extends Message>> interceptors,
+            Set<String> needToBeKept,
             PhaseInterceptor<? extends Message> p) {
         // To support the old API
         if (needToBeKept == null) {
@@ -86,8 +90,7 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
 
     protected void removeInterceptors(
-            List<Interceptor<? extends Message>> interceptors,
-            Collection<Class<?>> toBeRemovedInterceptors) {
+            List<Interceptor<? extends Message>> interceptors, Collection<Class<?>> toBeRemovedInterceptors) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             if (toBeRemovedInterceptors.contains(interceptor.getClass())) {
                 getLogger().info("removing the interceptor {}", interceptor);
@@ -97,8 +100,7 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
 
     protected void removeInterceptor(
-            List<Interceptor<? extends Message>> interceptors,
-            Class<? extends Interceptor<? extends Message>> cls) {
+            List<Interceptor<? extends Message>> interceptors, Class<? extends Interceptor<? extends Message>> cls) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             if (interceptor.getClass().equals(cls)) {
                 interceptors.remove(interceptor);

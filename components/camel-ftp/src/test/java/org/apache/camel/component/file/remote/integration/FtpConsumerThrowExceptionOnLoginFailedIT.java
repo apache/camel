@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,11 +35,6 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test for login failure due bad password and no re connect attempts allowed
  */
@@ -46,7 +47,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedIT extends FtpServerTestSuppo
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremember"
-               + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
+                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
     }
 
     @Test
@@ -81,12 +82,12 @@ public class FtpConsumerThrowExceptionOnLoginFailedIT extends FtpServerTestSuppo
         }
 
         @Override
-        public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
-        }
+        public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {}
 
         @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) {
-            GenericFileOperationFailedException e = assertIsInstanceOf(GenericFileOperationFailedException.class, cause);
+            GenericFileOperationFailedException e =
+                    assertIsInstanceOf(GenericFileOperationFailedException.class, cause);
             assertEquals(530, e.getCode());
 
             // stop the consumer

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,8 +29,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the HL7MLLP Codec.
@@ -45,14 +46,18 @@ public class HL7MLLPCodecLongTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(exchange -> {
-                    assertEquals(70010, exchange.getIn().getBody(byte[].class).length);
-                    MDM_T02 input = (MDM_T02) exchange.getIn().getBody(Message.class);
-                    assertEquals("2.5", input.getVersion());
-                    MSH msh = input.getMSH();
-                    assertEquals("20071129144629", msh.getDateTimeOfMessage().getTime().getValue());
-                    exchange.getMessage().setBody("some response");
-                }).to("mock:result");
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec")
+                        .process(exchange -> {
+                            assertEquals(70010, exchange.getIn().getBody(byte[].class).length);
+                            MDM_T02 input = (MDM_T02) exchange.getIn().getBody(Message.class);
+                            assertEquals("2.5", input.getVersion());
+                            MSH msh = input.getMSH();
+                            assertEquals(
+                                    "20071129144629",
+                                    msh.getDateTimeOfMessage().getTime().getValue());
+                            exchange.getMessage().setBody("some response");
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -70,10 +75,9 @@ public class HL7MLLPCodecLongTest extends HL7TestSupport {
         }
         message = message.substring(0, message.length() - 1);
         assertEquals(70010, message.length());
-        String out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message,
-                String.class);
+        String out = template.requestBody(
+                "mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message, String.class);
         assertEquals("some response", out);
         // END SNIPPET: e2
     }
-
 }

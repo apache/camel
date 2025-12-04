@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu.handlers;
 
 import java.util.List;
@@ -32,10 +33,22 @@ import org.eclipse.tahu.mqtt.RandomStartupDelay;
 
 public class TahuHostApplication extends HostApplication {
 
-    TahuHostApplication(TahuHostApplicationEventHandler eventHandler, String hostId, List<String> sparkplugSubscriptions,
-                        List<MqttServerDefinition> serverDefinitions, RandomStartupDelay randomStartupDelay,
-                        PayloadDecoder<SparkplugBPayload> payloadDecoder, boolean onlineState) {
-        super(eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder, onlineState);
+    TahuHostApplication(
+            TahuHostApplicationEventHandler eventHandler,
+            String hostId,
+            List<String> sparkplugSubscriptions,
+            List<MqttServerDefinition> serverDefinitions,
+            RandomStartupDelay randomStartupDelay,
+            PayloadDecoder<SparkplugBPayload> payloadDecoder,
+            boolean onlineState) {
+        super(
+                eventHandler,
+                hostId,
+                sparkplugSubscriptions,
+                serverDefinitions,
+                randomStartupDelay,
+                payloadDecoder,
+                onlineState);
     }
 
     public void startup() {
@@ -56,8 +69,7 @@ public class TahuHostApplication extends HostApplication {
 
         private volatile TahuHostApplication tahuHostApplication;
 
-        public HostApplicationBuilder() {
-        }
+        public HostApplicationBuilder() {}
 
         public HostApplicationBuilder hostId(String hostId) {
             checkBuildState();
@@ -106,11 +118,16 @@ public class TahuHostApplication extends HostApplication {
             TahuHostApplication cachedTahuHostApplication = tahuHostApplication;
 
             if (cachedTahuHostApplication == null) {
-                TahuHostApplicationEventHandler eventHandler
-                        = new TahuHostApplicationEventHandler(onMessageConsumer, onMetricConsumer);
+                TahuHostApplicationEventHandler eventHandler =
+                        new TahuHostApplicationEventHandler(onMessageConsumer, onMetricConsumer);
 
                 cachedTahuHostApplication = tahuHostApplication = new TahuHostApplication(
-                        eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder,
+                        eventHandler,
+                        hostId,
+                        sparkplugSubscriptions,
+                        serverDefinitions,
+                        randomStartupDelay,
+                        payloadDecoder,
                         onlineState);
             }
 

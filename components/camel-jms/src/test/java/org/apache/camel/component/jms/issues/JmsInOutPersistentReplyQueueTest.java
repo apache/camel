@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
 
 import java.util.concurrent.CountDownLatch;
@@ -37,12 +38,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 // Due to processing some part of the route concurrently (may be delayed when running on the test threads)
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -73,7 +75,8 @@ public class JmsInOutPersistentReplyQueueTest extends AbstractJMSTest {
             public void configure() {
                 from("seda:start")
                         .log("Sending ${body}")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:queue:JmsInOutPersistentReplyQueueTest?replyTo=JmsInOutPersistentReplyQueueTest.myReplies")
                         // process the remainder of the route concurrently
                         .threads(5)

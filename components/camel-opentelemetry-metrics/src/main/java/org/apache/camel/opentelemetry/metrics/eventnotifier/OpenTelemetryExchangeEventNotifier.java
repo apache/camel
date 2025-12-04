@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.eventnotifier;
 
 import java.util.HashMap;
@@ -56,8 +57,8 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
 
     // Event Notifier options
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
-    private OpenTelemetryExchangeEventNotifierNamingStrategy namingStrategy
-            = OpenTelemetryExchangeEventNotifierNamingStrategy.DEFAULT;
+    private OpenTelemetryExchangeEventNotifierNamingStrategy namingStrategy =
+            OpenTelemetryExchangeEventNotifierNamingStrategy.DEFAULT;
     boolean baseEndpointURI = true;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private TimeUnit lastExchangeTimeUnit = TimeUnit.MILLISECONDS;
@@ -162,28 +163,26 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
             }
         });
 
-        this.elapsedTimer = meter
-                .histogramBuilder(getNamingStrategy().getElapsedTimerName())
+        this.elapsedTimer = meter.histogramBuilder(getNamingStrategy().getElapsedTimerName())
                 .setDescription("Time taken to complete exchange")
                 .setUnit(timeUnit.name().toLowerCase())
-                .ofLongs().build();
+                .ofLongs()
+                .build();
 
-        this.sentTimer = meter
-                .histogramBuilder(getNamingStrategy().getSentTimerName())
+        this.sentTimer = meter.histogramBuilder(getNamingStrategy().getSentTimerName())
                 .setDescription("Time taken to send message to the endpoint")
                 .setUnit(timeUnit.name().toLowerCase())
-                .ofLongs().build();
+                .ofLongs()
+                .build();
 
-        this.lastExchangeTimeGauge = meter
-                .gaugeBuilder(getNamingStrategy().getLastProcessedTimeName())
+        this.lastExchangeTimeGauge = meter.gaugeBuilder(getNamingStrategy().getLastProcessedTimeName())
                 .setDescription("Last exchange processed time since the Unix epoch")
                 .ofLongs()
                 .setUnit(lastExchangeTimeUnit.name().toLowerCase())
-                .buildWithCallback(
-                        observableMeasurement -> {
-                            observableMeasurement.record(
-                                    lastExchangeTimeUnit.convert(lastExchangeTimestampHolder.get(), TimeUnit.MILLISECONDS));
-                        });
+                .buildWithCallback(observableMeasurement -> {
+                    observableMeasurement.record(
+                            lastExchangeTimeUnit.convert(lastExchangeTimestampHolder.get(), TimeUnit.MILLISECONDS));
+                });
 
         // add existing routes
         for (Route route : getCamelContext().getRoutes()) {
@@ -201,10 +200,9 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
             ObservableLongGauge asyncGauge = meter.gaugeBuilder(name)
                     .setDescription("Route in flight messages")
                     .ofLongs()
-                    .buildWithCallback(
-                            observableMeasurement -> {
-                                observableMeasurement.record(inflightRepository.size(routeId), attributes);
-                            });
+                    .buildWithCallback(observableMeasurement -> {
+                        observableMeasurement.record(inflightRepository.size(routeId), attributes);
+                    });
             inflightGauges.put(routeId, asyncGauge);
         }
     }
@@ -262,7 +260,8 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
     }
 
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
-        Attributes attributes = getNamingStrategy().getAttributes(sentEvent, sentEvent.getEndpoint(), isBaseEndpointURI());
+        Attributes attributes =
+                getNamingStrategy().getAttributes(sentEvent, sentEvent.getEndpoint(), isBaseEndpointURI());
         this.sentTimer.record(timeUnit.convert(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS), attributes);
     }
 
@@ -275,8 +274,8 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
         String name = getNamingStrategy().getElapsedTimerName();
         TaskTimer task = (TaskTimer) doneEvent.getExchange().removeProperty("elapsedTimer:" + name);
         if (task != null) {
-            Attributes attributes = getNamingStrategy().getAttributes(
-                    doneEvent, doneEvent.getExchange().getFromEndpoint(), isBaseEndpointURI());
+            Attributes attributes = getNamingStrategy()
+                    .getAttributes(doneEvent, doneEvent.getExchange().getFromEndpoint(), isBaseEndpointURI());
             this.elapsedTimer.record(task.duration(timeUnit), attributes);
         }
         lastExchangeTimestampHolder.set(System.currentTimeMillis());

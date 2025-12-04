@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.api.model.User;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class WordpressUserOperationTest extends WordpressComponentTestSupport {
 
@@ -108,12 +109,16 @@ public class WordpressUserOperationTest extends WordpressComponentTestSupport {
 
                 from("wordpress:user?id=114913").to("mock:resultSingle");
 
-                from("direct:deleteUser").to("wordpress:user:delete?id=9&user=ben&password=password123")
+                from("direct:deleteUser")
+                        .to("wordpress:user:delete?id=9&user=ben&password=password123")
                         .to("mock:resultDelete");
-                from("direct:insertUser").to("wordpress:user?user=ben&password=password123").to("mock:resultInsert");
-                from("direct:updateUser").to("wordpress:user?id=9&user=ben&password=password123").to("mock:resultUpdate");
+                from("direct:insertUser")
+                        .to("wordpress:user?user=ben&password=password123")
+                        .to("mock:resultInsert");
+                from("direct:updateUser")
+                        .to("wordpress:user?id=9&user=ben&password=password123")
+                        .to("mock:resultUpdate");
             }
         };
     }
-
 }

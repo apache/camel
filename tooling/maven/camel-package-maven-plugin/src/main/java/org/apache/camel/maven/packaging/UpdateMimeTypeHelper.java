@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -32,8 +35,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Updates the MimeTypeHelper.java with the known types
@@ -131,7 +132,8 @@ public class UpdateMimeTypeHelper extends AbstractGeneratorMojo {
             } else {
                 String before = Strings.before(text, TYPES_START_TOKEN);
                 String after = Strings.after(text, TYPES_END_TOKEN);
-                text = before + TYPES_START_TOKEN + "\n" + spaces12 + changed + "\n" + spaces12 + TYPES_END_TOKEN + after;
+                text = before + TYPES_START_TOKEN + "\n" + spaces12 + changed + "\n" + spaces12 + TYPES_END_TOKEN
+                        + after;
                 PackageHelper.writeText(java, text);
                 return true;
             }
@@ -139,5 +141,4 @@ public class UpdateMimeTypeHelper extends AbstractGeneratorMojo {
 
         return false;
     }
-
 }

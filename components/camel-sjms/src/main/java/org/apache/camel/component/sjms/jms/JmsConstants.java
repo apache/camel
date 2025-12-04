@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.jms;
 
 /**
@@ -87,5 +88,4 @@ public interface JmsConstants {
     String JMS_DELIVERY_MODE_PERSISTENT = "PERSISTENT";
 
     String JMS_DELIVERY_MODE_NON_PERSISTENT = "NON_PERSISTENT";
-
 }

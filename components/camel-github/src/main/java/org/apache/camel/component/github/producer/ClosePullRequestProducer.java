@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
 
 import java.util.Calendar;
@@ -58,5 +59,4 @@ public class ClosePullRequestProducer extends AbstractGitHubProducer {
         // support InOut
         ExchangeHelper.setOutBodyPatternAware(exchange, pullRequest);
     }
-
 }

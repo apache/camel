@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client;
 
 import java.util.Optional;
@@ -108,17 +109,20 @@ public class TorchServeClient {
         }
 
         public TorchServeClient build() {
-            DefaultInference inference = inferenceAddress.map(DefaultInference::new)
+            DefaultInference inference = inferenceAddress
+                    .map(DefaultInference::new)
                     .or(() -> inferencePort.map(DefaultInference::new))
                     .orElse(new DefaultInference());
             inferenceKey.ifPresent(inference::setAuthToken);
 
-            DefaultManagement management = managementAddress.map(DefaultManagement::new)
+            DefaultManagement management = managementAddress
+                    .map(DefaultManagement::new)
                     .or(() -> managementPort.map(DefaultManagement::new))
                     .orElse(new DefaultManagement());
             managementKey.ifPresent(management::setAuthToken);
 
-            DefaultMetrics metrics = metricsAddress.map(DefaultMetrics::new)
+            DefaultMetrics metrics = metricsAddress
+                    .map(DefaultMetrics::new)
                     .or(() -> metricsPort.map(DefaultMetrics::new))
                     .orElse(new DefaultMetrics());
             return new TorchServeClient(inference, management, metrics);

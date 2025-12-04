@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.CamelContext;
@@ -61,7 +62,6 @@ class CamelTestSupportOneContextForAllTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         resultEndpoint.reset();
-
     }
 
     @Test
@@ -75,7 +75,6 @@ class CamelTestSupportOneContextForAllTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         resultEndpoint.reset();
-
     }
 
     @Override
@@ -102,7 +101,7 @@ class CamelTestSupportOneContextForAllTest extends CamelTestSupport {
 
         @Override
         public void addRoutes(RoutesBuilder builder) throws Exception {
-            //if routes are already added, do not add them again
+            // if routes are already added, do not add them again
             if (getRoutes().isEmpty()) {
                 super.addRoutes(builder);
             }

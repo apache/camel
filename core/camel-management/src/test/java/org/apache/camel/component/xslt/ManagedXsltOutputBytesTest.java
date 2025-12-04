@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.ManagementTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -44,7 +45,8 @@ public class ManagedXsltOutputBytesTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = getCamelObjectName(TYPE_ENDPOINT, "xslt://org/apache/camel/component/xslt/example.xsl\\?output=bytes");
+        ObjectName on =
+                getCamelObjectName(TYPE_ENDPOINT, "xslt://org/apache/camel/component/xslt/example.xsl\\?output=bytes");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("xslt://org/apache/camel/component/xslt/example.xsl?output=bytes", uri);
 

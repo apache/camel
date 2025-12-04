@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.stt;
 
 import java.io.File;
@@ -76,8 +77,8 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
     }
 
     private WatsonSpeechToTextOperations determineOperation(Exchange exchange) {
-        WatsonSpeechToTextOperations operation
-                = exchange.getIn().getHeader(WatsonSpeechToTextConstants.OPERATION, WatsonSpeechToTextOperations.class);
+        WatsonSpeechToTextOperations operation =
+                exchange.getIn().getHeader(WatsonSpeechToTextConstants.OPERATION, WatsonSpeechToTextOperations.class);
 
         if (operation == null) {
             operation = getEndpoint().getConfiguration().getOperation();
@@ -116,16 +117,31 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
             throw new IllegalArgumentException("Audio input (InputStream or File) must be specified");
         }
 
-        String model = exchange.getIn().getHeader(WatsonSpeechToTextConstants.MODEL,
-                getEndpoint().getConfiguration().getModel(), String.class);
-        String contentType = exchange.getIn().getHeader(WatsonSpeechToTextConstants.CONTENT_TYPE,
-                getEndpoint().getConfiguration().getContentType(), String.class);
-        Boolean timestamps = exchange.getIn().getHeader(WatsonSpeechToTextConstants.TIMESTAMPS,
-                getEndpoint().getConfiguration().isTimestamps(), Boolean.class);
-        Boolean wordConfidence = exchange.getIn().getHeader(WatsonSpeechToTextConstants.WORD_CONFIDENCE,
-                getEndpoint().getConfiguration().isWordConfidence(), Boolean.class);
-        Boolean speakerLabels = exchange.getIn().getHeader(WatsonSpeechToTextConstants.SPEAKER_LABELS,
-                getEndpoint().getConfiguration().isSpeakerLabels(), Boolean.class);
+        String model = exchange.getIn()
+                .getHeader(
+                        WatsonSpeechToTextConstants.MODEL,
+                        getEndpoint().getConfiguration().getModel(),
+                        String.class);
+        String contentType = exchange.getIn()
+                .getHeader(
+                        WatsonSpeechToTextConstants.CONTENT_TYPE,
+                        getEndpoint().getConfiguration().getContentType(),
+                        String.class);
+        Boolean timestamps = exchange.getIn()
+                .getHeader(
+                        WatsonSpeechToTextConstants.TIMESTAMPS,
+                        getEndpoint().getConfiguration().isTimestamps(),
+                        Boolean.class);
+        Boolean wordConfidence = exchange.getIn()
+                .getHeader(
+                        WatsonSpeechToTextConstants.WORD_CONFIDENCE,
+                        getEndpoint().getConfiguration().isWordConfidence(),
+                        Boolean.class);
+        Boolean speakerLabels = exchange.getIn()
+                .getHeader(
+                        WatsonSpeechToTextConstants.SPEAKER_LABELS,
+                        getEndpoint().getConfiguration().isSpeakerLabels(),
+                        Boolean.class);
 
         LOG.trace("Recognizing audio with STT: model={}, contentType={}", model, contentType);
 
@@ -144,7 +160,8 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
         StringBuilder transcript = new StringBuilder();
         if (results.getResults() != null && !results.getResults().isEmpty()) {
             for (SpeechRecognitionResult result : results.getResults()) {
-                if (result.getAlternatives() != null && !result.getAlternatives().isEmpty()) {
+                if (result.getAlternatives() != null
+                        && !result.getAlternatives().isEmpty()) {
                     transcript.append(result.getAlternatives().get(0).getTranscript());
                 }
             }
@@ -188,9 +205,8 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
 
         LOG.trace("Getting model information for: {}", modelName);
 
-        GetModelOptions options = new GetModelOptions.Builder()
-                .modelId(modelName)
-                .build();
+        GetModelOptions options =
+                new GetModelOptions.Builder().modelId(modelName).build();
 
         SpeechModel model = stt.getModel(options).execute().getResult();
 
@@ -238,8 +254,8 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
 
         LOG.trace("Getting custom language model: {}", modelId);
 
-        com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions options
-                = new com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions.Builder()
+        com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions options =
+                new com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions.Builder()
                         .customizationId(modelId)
                         .build();
 

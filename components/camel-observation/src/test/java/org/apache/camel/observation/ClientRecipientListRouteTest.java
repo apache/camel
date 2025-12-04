@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
 
 import io.opentelemetry.api.trace.SpanKind;
@@ -24,29 +25,53 @@ import org.junit.jupiter.api.Test;
 class ClientRecipientListRouteTest extends CamelMicrometerObservationTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(1),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setParentId(6)
-                    .setKind(SpanKind.CLIENT),
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(3),
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setParentId(6)
-                    .setKind(SpanKind.CLIENT),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(5),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setParentId(6)
-                    .setKind(SpanKind.CLIENT),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(7),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setKind(SpanKind.CLIENT)
+        new SpanTestData()
+                .setLabel("seda:a server")
+                .setUri("seda://a")
+                .setOperation("a")
+                .setKind(SpanKind.SERVER)
+                .setParentId(1),
+        new SpanTestData()
+                .setLabel("seda:a server")
+                .setUri("seda://a")
+                .setOperation("a")
+                .setParentId(6)
+                .setKind(SpanKind.CLIENT),
+        new SpanTestData()
+                .setLabel("seda:b server")
+                .setUri("seda://b")
+                .setOperation("b")
+                .setKind(SpanKind.SERVER)
+                .setParentId(3),
+        new SpanTestData()
+                .setLabel("seda:b server")
+                .setUri("seda://b")
+                .setOperation("b")
+                .setParentId(6)
+                .setKind(SpanKind.CLIENT),
+        new SpanTestData()
+                .setLabel("seda:c server")
+                .setUri("seda://c")
+                .setOperation("c")
+                .setKind(SpanKind.SERVER)
+                .setParentId(5),
+        new SpanTestData()
+                .setLabel("seda:c server")
+                .setUri("seda://c")
+                .setOperation("c")
+                .setParentId(6)
+                .setKind(SpanKind.CLIENT),
+        new SpanTestData()
+                .setLabel("direct:start server")
+                .setUri("direct://start")
+                .setOperation("start")
+                .setKind(SpanKind.SERVER)
+                .setParentId(7),
+        new SpanTestData()
+                .setLabel("direct:start server")
+                .setUri("direct://start")
+                .setOperation("start")
+                .setKind(SpanKind.CLIENT)
     };
 
     ClientRecipientListRouteTest() {
@@ -65,18 +90,15 @@ class ClientRecipientListRouteTest extends CamelMicrometerObservationTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList(constant("seda:a,seda:b,seda:c")).routeId("start");
+                from("direct:start")
+                        .recipientList(constant("seda:a,seda:b,seda:c"))
+                        .routeId("start");
 
-                from("seda:a").routeId("a")
-                        .log("routing at ${routeId}");
+                from("seda:a").routeId("a").log("routing at ${routeId}");
 
-                from("seda:b").routeId("b")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"));
+                from("seda:b").routeId("b").log("routing at ${routeId}").delay(simple("${random(1000,2000)}"));
 
-                from("seda:c").routeId("c")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,100)}"));
+                from("seda:c").routeId("c").log("routing at ${routeId}").delay(simple("${random(0,100)}"));
             }
         };
     }

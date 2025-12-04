@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.in;
 
 import java.io.IOException;
@@ -98,13 +99,19 @@ public class BaseParser {
     }
 
     protected <T> T doParse(
-            T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler)
+            T definition,
+            AttributeHandler<T> attributeHandler,
+            ElementHandler<T> elementHandler,
+            ValueHandler<T> valueHandler)
             throws IOException, XmlPullParserException {
         return doParse(definition, attributeHandler, elementHandler, valueHandler, false);
     }
 
     protected <T> T doParse(
-            T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler,
+            T definition,
+            AttributeHandler<T> attributeHandler,
+            ElementHandler<T> elementHandler,
+            ValueHandler<T> valueHandler,
             boolean supportsExternalNamespaces)
             throws IOException, XmlPullParserException {
 
@@ -123,12 +130,16 @@ public class BaseParser {
                     msg = e.getCause().getMessage();
                 }
             }
-            throw new XmlPullParserLocationException(msg, resource, parser.getLineNumber(), parser.getColumnNumber(), cause);
+            throw new XmlPullParserLocationException(
+                    msg, resource, parser.getLineNumber(), parser.getColumnNumber(), cause);
         }
     }
 
     protected <T> T doParseXml(
-            T definition, AttributeHandler<T> attributeHandler, ElementHandler<T> elementHandler, ValueHandler<T> valueHandler,
+            T definition,
+            AttributeHandler<T> attributeHandler,
+            ElementHandler<T> elementHandler,
+            ValueHandler<T> valueHandler,
             boolean supportsExternalNamespaces)
             throws IOException, XmlPullParserException {
         setLocation(definition);
@@ -326,9 +337,8 @@ public class BaseParser {
                 Element rootElement = doc.createElementNS(namespace, rootElementName);
                 doc.appendChild(rootElement);
             } catch (ParserConfigurationException e) {
-                throw new XmlPullParserException(
-                        "Problem handling external element '{" + namespace + "}" + parser.getName()
-                                                 + ": " + e.getMessage());
+                throw new XmlPullParserException("Problem handling external element '{" + namespace + "}"
+                        + parser.getName() + ": " + e.getMessage());
             }
         }
         if (doc == null) {
@@ -371,16 +381,16 @@ public class BaseParser {
 
     protected void expectTag(String name) throws XmlPullParserException, IOException {
         if (parser.nextTag() != XmlPullParser.START_TAG) {
-            throw new XmlPullParserException(
-                    "Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{" + parser.getNamespace() + "}"
-                                             + parser.getName()
-                                             + "' instead");
+            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name
+                    + "', read ending tag '{" + parser.getNamespace() + "}"
+                    + parser.getName()
+                    + "' instead");
         }
         if (!Objects.equals(name, parser.getName()) || !Objects.equals(namespace, parser.getNamespace())) {
-            throw new XmlPullParserException(
-                    "Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{" + parser.getNamespace()
-                                             + "}" + parser.getName()
-                                             + "' instead");
+            throw new XmlPullParserException("Expected starting tag '{" + namespace + "}" + name
+                    + "', read starting tag '{" + parser.getNamespace()
+                    + "}" + parser.getName()
+                    + "' instead");
         }
     }
 
@@ -425,7 +435,8 @@ public class BaseParser {
         return pn;
     }
 
-    protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
+    protected void handleOtherAttribute(Object definition, String name, String ns, String val)
+            throws XmlPullParserException {
         // Ignore
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
             return;
@@ -525,7 +536,8 @@ public class BaseParser {
         return matchNamespace(ns, namespace, secondaryNamespaces, optional);
     }
 
-    protected static boolean matchNamespace(String ns, String namespace, Set<String> secondaryNamespaces, boolean optional) {
+    protected static boolean matchNamespace(
+            String ns, String namespace, Set<String> secondaryNamespaces, boolean optional) {
         if (optional && ns.isEmpty()) {
             return true;
         }
@@ -559,5 +571,4 @@ public class BaseParser {
     protected static String sanitizeUri(String uri) {
         return uri;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.dto.composite;
 
 import java.io.Serializable;
@@ -26,8 +27,7 @@ public class RetrieveSObjectCollectionsDto implements Serializable {
     private List<String> ids;
     private List<String> fields;
 
-    public RetrieveSObjectCollectionsDto() {
-    }
+    public RetrieveSObjectCollectionsDto() {}
 
     public RetrieveSObjectCollectionsDto(List<String> ids, List<String> fields) {
         this.ids = ids;

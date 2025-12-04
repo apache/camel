@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.tarfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,11 +36,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
@@ -64,9 +65,7 @@ class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         File[] files = new File("target/out").listFiles();
         File resultFile = files[0];
         Set<String> expectedTarFiles = new HashSet<>(
-                Arrays.asList("another/hello.txt",
-                        "other/greetings.txt",
-                        "chiau.txt", "hi.txt", "hola.txt"));
+                Arrays.asList("another/hello.txt", "other/greetings.txt", "chiau.txt", "hi.txt", "hola.txt"));
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));
         try {
             int fileCount = 0;
@@ -79,7 +78,9 @@ class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                 }
                 fileCount++;
             }
-            assertEquals(AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES, fileCount,
+            assertEquals(
+                    AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES,
+                    fileCount,
                     "Tar file should contains " + AggregationStrategyWithPreservationTest.EXPECTED_NO_FILES + " files");
             assertEquals(0, expectedTarFiles.size(), "Should have found all of the tar files in the file.");
         } finally {
@@ -103,6 +104,5 @@ class AggregationStrategyWithPreservationTest extends CamelTestSupport {
                         .log("Done processing tar file: ${header.CamelFileName}");
             }
         };
-
     }
 }

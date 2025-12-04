@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.ognl;
 
-import org.apache.camel.test.junit5.LanguageTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.language.ognl;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class OgnlTest extends LanguageTestSupport {
 

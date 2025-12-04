@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -78,12 +79,23 @@ public class RouteStopTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").when(body().contains("Bye"))
-                        .to("mock:bye").stop().otherwise().to("mock:other").end()
+                from("direct:start")
+                        .choice()
+                        .when(body().contains("Hello"))
+                        .to("mock:hello")
+                        .when(body().contains("Bye"))
+                        .to("mock:bye")
+                        .stop()
+                        .otherwise()
+                        .to("mock:other")
+                        .end()
                         .to("mock:result");
                 // END SNIPPET: e1
 
-                from("direct:foo").to("mock:foo").process(e -> e.setRouteStop(true)).to("mock:result");
+                from("direct:foo")
+                        .to("mock:foo")
+                        .process(e -> e.setRouteStop(true))
+                        .to("mock:result");
             }
         };
     }

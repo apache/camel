@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.chatscript.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -25,10 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
-@InfraService(service = ChatScriptInfraService.class,
-              description = "ChatBot Engine",
-              serviceAlias = "chat-script")
-public class ChatScriptLocalContainerInfraService implements ChatScriptInfraService, ContainerService<GenericContainer<?>> {
+@InfraService(service = ChatScriptInfraService.class, description = "ChatBot Engine", serviceAlias = "chat-script")
+public class ChatScriptLocalContainerInfraService
+        implements ChatScriptInfraService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptLocalContainerInfraService.class);
     private static final int SERVICE_PORT = 1024;
     private final GenericContainer<?> container;
@@ -37,8 +37,7 @@ public class ChatScriptLocalContainerInfraService implements ChatScriptInfraServ
     // NOTE: all resources will be closed by close().
     public ChatScriptLocalContainerInfraService() {
         String containerName = LocalPropertyResolver.getProperty(
-                ChatScriptLocalContainerInfraService.class,
-                ChatScriptProperties.CHATSCRIPT_CONTAINER);
+                ChatScriptLocalContainerInfraService.class, ChatScriptProperties.CHATSCRIPT_CONTAINER);
 
         container = new GenericContainer<>(containerName) // NOSONAR
                 .withExposedPorts(SERVICE_PORT)

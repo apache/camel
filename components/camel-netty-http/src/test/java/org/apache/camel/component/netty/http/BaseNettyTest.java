@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.Collection;
@@ -50,9 +51,9 @@ public class BaseNettyTest extends CamelTestSupport {
 
     @AfterAll
     public static void verifyNoLeaks() {
-        //Force GC to bring up leaks
+        // Force GC to bring up leaks
         System.gc();
-        //Kick leak detection logging
+        // Kick leak detection logging
         ByteBufAllocator.DEFAULT.buffer(1).release();
         Collection<LogEvent> events = LogCaptureAppender.getEvents();
         if (!events.isEmpty()) {
@@ -85,5 +86,4 @@ public class BaseNettyTest extends CamelTestSupport {
     protected int getPort() {
         return port.getPort();
     }
-
 }

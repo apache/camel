@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.concurrent.TimeUnit;
@@ -31,19 +35,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for IBM COS Consumer moveAfterRead functionality.
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.apiKey", matches = ".*",
-                                 disabledReason = "IBM COS API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.serviceInstanceId", matches = ".*",
-                                 disabledReason = "IBM COS Service Instance ID not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.endpointUrl", matches = ".*",
-                                 disabledReason = "IBM COS Endpoint URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.apiKey",
+            matches = ".*",
+            disabledReason = "IBM COS API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.serviceInstanceId",
+            matches = ".*",
+            disabledReason = "IBM COS Service Instance ID not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.endpointUrl",
+            matches = ".*",
+            disabledReason = "IBM COS Endpoint URL not provided")
 })
 public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
 
@@ -77,7 +84,9 @@ public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
         if (cosClient != null && destinationBucketName != null) {
             try {
                 // Delete all objects in the destination bucket
-                cosClient.listObjectsV2(destinationBucketName).getObjectSummaries()
+                cosClient
+                        .listObjectsV2(destinationBucketName)
+                        .getObjectSummaries()
                         .forEach(obj -> cosClient.deleteObject(destinationBucketName, obj.getKey()));
 
                 // Delete the destination bucket
@@ -99,8 +108,8 @@ public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
 
         // Upload an object
         byte[] contentBytes = testContent.getBytes();
-        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata
-                = new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
+        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata =
+                new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
         metadata.setContentLength(contentBytes.length);
         cosClient.putObject(bucketName, testKey, new ByteArrayInputStream(contentBytes), metadata);
 
@@ -115,15 +124,14 @@ public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
         assertEquals(testKey, exchange.getMessage().getHeader(IBMCOSConstants.KEY, String.class));
 
         // Verify object was moved
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    assertFalse(cosClient.doesObjectExist(bucketName, testKey),
-                            "Source object should not exist after move");
-                    // The route is configured with destinationBucketPrefix=moved-
-                    String expectedDestinationKey = "moved-" + testKey;
-                    assertTrue(cosClient.doesObjectExist(destinationBucketName, expectedDestinationKey),
-                            "Destination object should exist after move at: " + expectedDestinationKey);
-                });
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertFalse(cosClient.doesObjectExist(bucketName, testKey), "Source object should not exist after move");
+            // The route is configured with destinationBucketPrefix=moved-
+            String expectedDestinationKey = "moved-" + testKey;
+            assertTrue(
+                    cosClient.doesObjectExist(destinationBucketName, expectedDestinationKey),
+                    "Destination object should exist after move at: " + expectedDestinationKey);
+        });
     }
 
     @Test
@@ -136,8 +144,8 @@ public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
 
         // Upload an object
         byte[] contentBytes = testContent.getBytes();
-        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata
-                = new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
+        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata =
+                new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
         metadata.setContentLength(contentBytes.length);
         cosClient.putObject(bucketName, testKey, new ByteArrayInputStream(contentBytes), metadata);
 
@@ -147,7 +155,8 @@ public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
         // Verify object was moved with prefix
         String expectedDestinationKey = prefix + testKey;
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(cosClient.doesObjectExist(destinationBucketName, expectedDestinationKey),
+                .untilAsserted(() -> assertTrue(
+                        cosClient.doesObjectExist(destinationBucketName, expectedDestinationKey),
                         "Destination object with prefix should exist: " + expectedDestinationKey));
     }
 
@@ -157,8 +166,9 @@ public class IBMCOSConsumerMoveAfterReadIT extends IBMCOSTestSupport {
             @Override
             public void configure() {
                 fromF(buildEndpointUri()
-                      + "&deleteAfterRead=false&moveAfterRead=true&destinationBucket="
-                      + destinationBucketName + "&destinationBucketPrefix=moved-&delay=2000&maxMessagesPerPoll=10")
+                                + "&deleteAfterRead=false&moveAfterRead=true&destinationBucket="
+                                + destinationBucketName
+                                + "&destinationBucketPrefix=moved-&delay=2000&maxMessagesPerPoll=10")
                         .to("mock:result");
             }
         };

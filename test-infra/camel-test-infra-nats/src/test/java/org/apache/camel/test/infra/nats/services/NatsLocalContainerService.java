@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.nats.services;
 
-public class NatsLocalContainerService extends NatsLocalContainerInfraService implements NatsService {
-}
+public class NatsLocalContainerService extends NatsLocalContainerInfraService implements NatsService {}

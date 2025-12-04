@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +36,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 public class JpaProducer extends DefaultProducer {
 
@@ -166,8 +167,12 @@ public class JpaProducer extends DefaultProducer {
     @Override
     public void process(final Exchange exchange) {
         // resolve the entity manager before evaluating the expression
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
-                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
+        final EntityManager entityManager = getTargetEntityManager(
+                exchange,
+                entityManagerFactory,
+                getEndpoint().isUsePassedInEntityManager(),
+                getEndpoint().isSharedEntityManager(),
+                true);
 
         if (findEntity) {
             processFind(exchange, entityManager);
@@ -187,17 +192,13 @@ public class JpaProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void configureParameters(Query query, Exchange exchange) {
-        final int maxResults = exchange.getIn().getHeader(
-                JpaConstants.JPA_MAXIMUM_RESULTS,
-                getEndpoint().getMaximumResults(),
-                Integer.class);
+        final int maxResults = exchange.getIn()
+                .getHeader(JpaConstants.JPA_MAXIMUM_RESULTS, getEndpoint().getMaximumResults(), Integer.class);
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
-        final int firstResult = exchange.getIn().getHeader(
-                JpaConstants.JPA_FIRST_RESULT,
-                getEndpoint().getFirstResult(),
-                Integer.class);
+        final int firstResult = exchange.getIn()
+                .getHeader(JpaConstants.JPA_FIRST_RESULT, getEndpoint().getFirstResult(), Integer.class);
         if (firstResult > 0) {
             query.setFirstResult(firstResult);
         }
@@ -438,10 +439,7 @@ public class JpaProducer extends DefaultProducer {
             LOG.debug("Find: {} -> {}", key, answer);
 
             if (JpaProducer.this.getEndpoint().isSingleResult() && answer == null) {
-                throw new NoResultException(
-                        String.format(
-                                "No results for key %s and singleResult requested",
-                                key));
+                throw new NoResultException(String.format("No results for key %s and singleResult requested", key));
             }
 
             putAnswer(exchange, answer, JpaProducer.this.getEndpoint().getOutputTarget());

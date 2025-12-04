@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.zookeeper.integration.ZooKeeperITSupport;
 import org.apache.camel.component.zookeeper.operations.AnyOfOperations;
@@ -22,8 +25,6 @@ import org.apache.camel.component.zookeeper.operations.ExistenceChangedOperation
 import org.apache.camel.component.zookeeper.operations.ExistsOperation;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnyOfOperationIT extends ZooKeeperITSupport {
 
@@ -47,8 +48,7 @@ public class AnyOfOperationIT extends ZooKeeperITSupport {
     private AnyOfOperations getExistsOrWaitOperation(String node) {
         ZooKeeper connection = getConnection();
         AnyOfOperations operation = new AnyOfOperations(
-                node, new ExistsOperation(connection, node),
-                new ExistenceChangedOperation(connection, node));
+                node, new ExistsOperation(connection, node), new ExistenceChangedOperation(connection, node));
         return operation;
     }
 }

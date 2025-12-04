@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 
@@ -52,8 +53,10 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?delete=true&initialDelay=0&delay=10")).autoStartup(false)
-                        .routeId("FromFilePollThirdTimeOkTest").process(new Processor() {
+                from(fileUri("?delete=true&initialDelay=0&delay=10"))
+                        .autoStartup(false)
+                        .routeId("FromFilePollThirdTimeOkTest")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 counter++;
                                 if (counter < 3) {
@@ -62,9 +65,10 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
                                     throw new IllegalArgumentException("Forced by unittest");
                                 }
                             }
-                        }).convertBodyTo(String.class).to("mock:result");
+                        })
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

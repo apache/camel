@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery;
 
 import org.apache.camel.spi.Metadata;
@@ -24,33 +25,53 @@ public final class GoogleBigQueryConstants {
     public static final String SCHEME_BIGQUERY_SQL = "google-bigquery-sql";
     public static final String SCHEME_BIGQUERY = "google-bigquery";
 
-    @Metadata(description = "Table suffix to use when inserting data", javaType = "String", applicableFor = SCHEME_BIGQUERY)
+    @Metadata(
+            description = "Table suffix to use when inserting data",
+            javaType = "String",
+            applicableFor = SCHEME_BIGQUERY)
     public static final String TABLE_SUFFIX = "CamelGoogleBigQueryTableSuffix";
-    @Metadata(description = "Table id where data will be submitted. If specified will override endpoint configuration",
-              javaType = "String", applicableFor = SCHEME_BIGQUERY)
+
+    @Metadata(
+            description = "Table id where data will be submitted. If specified will override endpoint configuration",
+            javaType = "String",
+            applicableFor = SCHEME_BIGQUERY)
     public static final String TABLE_ID = "CamelGoogleBigQueryTableId";
+
     @Metadata(description = "InsertId to use when inserting data", javaType = "String", applicableFor = SCHEME_BIGQUERY)
     public static final String INSERT_ID = "CamelGoogleBigQueryInsertId";
-    @Metadata(description = "Partition decorator to indicate partition to use when inserting data", javaType = "String",
-              applicableFor = SCHEME_BIGQUERY)
+
+    @Metadata(
+            description = "Partition decorator to indicate partition to use when inserting data",
+            javaType = "String",
+            applicableFor = SCHEME_BIGQUERY)
     public static final String PARTITION_DECORATOR = "CamelGoogleBigQueryPartitionDecorator";
+
     @Metadata(description = "Preprocessed query text", javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String TRANSLATED_QUERY = "CamelGoogleBigQueryTranslatedQuery";
-    @Metadata(description = "A custom `JobId` to use", javaType = "com.google.cloud.bigquery.JobId",
-              applicableFor = SCHEME_BIGQUERY_SQL)
+
+    @Metadata(
+            description = "A custom `JobId` to use",
+            javaType = "com.google.cloud.bigquery.JobId",
+            applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String JOB_ID = "CamelGoogleBigQueryJobId";
-    @Metadata(description = "The page token to retrieve a specific page of results from BigQuery. " +
-                            "If not set, the first page is returned",
-              javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
+
+    @Metadata(
+            description = "The page token to retrieve a specific page of results from BigQuery. "
+                    + "If not set, the first page is returned",
+            javaType = "String",
+            applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String PAGE_TOKEN = "CamelGoogleBigQueryPageToken";
-    @Metadata(description = "The next page token returned by BigQuery. Use this token in the " +
-                            "`CamelGoogleBigQueryPageToken` header of a subsequent request to retrieve the next page of results",
-              javaType = "String", applicableFor = SCHEME_BIGQUERY_SQL)
+
+    @Metadata(
+            description =
+                    "The next page token returned by BigQuery. Use this token in the "
+                            + "`CamelGoogleBigQueryPageToken` header of a subsequent request to retrieve the next page of results",
+            javaType = "String",
+            applicableFor = SCHEME_BIGQUERY_SQL)
     public static final String NEXT_PAGE_TOKEN = "CamelGoogleBigQueryNextPageToken";
 
     /**
      * Prevent instantiation.
      */
-    private GoogleBigQueryConstants() {
-    }
+    private GoogleBigQueryConstants() {}
 }

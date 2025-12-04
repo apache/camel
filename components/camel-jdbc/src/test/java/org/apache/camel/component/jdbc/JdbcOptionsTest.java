@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -25,10 +30,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JdbcOptionsTest extends AbstractJdbcTestSupport {
 
@@ -80,7 +81,8 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
             template.sendBody("jdbc:xxx", "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertEquals("No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
+            assertEquals(
+                    "No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
                     e.getCause().getMessage());
         }
     }

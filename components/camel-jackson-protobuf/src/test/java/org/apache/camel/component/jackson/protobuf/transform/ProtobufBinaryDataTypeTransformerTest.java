@@ -50,27 +50,39 @@ class ProtobufBinaryDataTypeTransformerTest {
                 """);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     { "name": "Christoph", "age": 32 }
-                """, Json.mapper().writeValueAsString(
-                Protobuf.mapper().reader().with(protobufSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Protobuf.mapper()
+                                .reader()
+                                .with(protobufSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
     void shouldHandlePojo() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        ProtobufSchema protobufSchema
-                = Protobuf.mapper().schemaLoader()
-                        .load(ProtobufBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.proto"));
+        ProtobufSchema protobufSchema = Protobuf.mapper()
+                .schemaLoader()
+                .load(ProtobufBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.proto"));
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
         exchange.getMessage().setBody(new Person("Mickey", 20));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Mickey","age":20}
-                """, Json.mapper().writeValueAsString(
-                Protobuf.mapper().reader().with(protobufSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Protobuf.mapper()
+                                .reader()
+                                .with(protobufSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
@@ -79,15 +91,24 @@ class ProtobufBinaryDataTypeTransformerTest {
 
         ProtobufSchema protobufSchema = getSchema();
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, protobufSchema);
-        exchange.getMessage().setBody(Json.mapper().readerFor(JsonNode.class).readValue("""
+        exchange.getMessage()
+                .setBody(Json.mapper()
+                        .readerFor(JsonNode.class)
+                        .readValue("""
                     { "name": "Goofy", "age": 25 }
                 """));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Goofy","age":25}
-                """, Json.mapper().writeValueAsString(
-                Protobuf.mapper().reader().with(protobufSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Protobuf.mapper()
+                                .reader()
+                                .with(protobufSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
@@ -100,22 +121,29 @@ class ProtobufBinaryDataTypeTransformerTest {
         exchange.getMessage().setBody(new Person("Donald", 19));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Donald","age":19}
-                """, Json.mapper().writeValueAsString(
-                Protobuf.mapper().reader().with(protobufSchema).readTree(exchange.getMessage().getBody(byte[].class))), true);
+                """,
+                Json.mapper()
+                        .writeValueAsString(Protobuf.mapper()
+                                .reader()
+                                .with(protobufSchema)
+                                .readTree(exchange.getMessage().getBody(byte[].class))),
+                true);
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("protobuf-binary"));
+        Transformer transformer =
+                camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("protobuf-binary"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(ProtobufBinaryDataTypeTransformer.class, transformer.getClass());
     }
 
     private ProtobufSchema getSchema() throws IOException {
-        return Protobuf.mapper().schemaLoader()
+        return Protobuf.mapper()
+                .schemaLoader()
                 .load(ProtobufBinaryDataTypeTransformerTest.class.getResourceAsStream("Person.proto"));
     }
 }

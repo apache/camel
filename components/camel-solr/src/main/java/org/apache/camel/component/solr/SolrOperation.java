@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import java.util.Map;
@@ -44,19 +45,23 @@ import org.apache.solr.client.solrj.request.UpdateRequest;
  *
  */
 public enum SolrOperation {
-
     DELETE(Map.of(
-            SolrConstants.OPERATION_DELETE_BY_ID, "",
-            SolrConstants.OPERATION_DELETE_BY_QUERY, SolrConstants.PARAM_DELETE_BY_QUERY)) {
+            SolrConstants.OPERATION_DELETE_BY_ID,
+            "",
+            SolrConstants.OPERATION_DELETE_BY_QUERY,
+            SolrConstants.PARAM_DELETE_BY_QUERY)) {
         @Override
         SolrRequest<?> getSolrRequest(SolrProducer.ActionContext ctx) throws InvalidPayloadException {
             return SolrOperation.getSolrRequestForUpdates(ctx);
         }
     },
     INSERT(Map.of(
-            SolrConstants.OPERATION_INSERT_STREAMING, "",
-            SolrConstants.OPERATION_ADD_BEAN, "",
-            SolrConstants.OPERATION_ADD_BEANS, "",
+            SolrConstants.OPERATION_INSERT_STREAMING,
+            "",
+            SolrConstants.OPERATION_ADD_BEAN,
+            "",
+            SolrConstants.OPERATION_ADD_BEANS,
+            "",
             SolrConstants.OPERATION_COMMIT,
             SolrConstants.HEADER_PARAM_PREFIX + SolrConstants.HEADER_PARAM_OPERATION_COMMIT,
             SolrConstants.OPERATION_SOFT_COMMIT,
@@ -91,7 +96,8 @@ public enum SolrOperation {
 
     abstract SolrRequest<?> getSolrRequest(SolrProducer.ActionContext ctx) throws InvalidPayloadException;
 
-    private static SolrRequest<?> getSolrRequestForUpdates(SolrProducer.ActionContext ctx) throws InvalidPayloadException {
+    private static SolrRequest<?> getSolrRequestForUpdates(SolrProducer.ActionContext ctx)
+            throws InvalidPayloadException {
         if (SolrRequestConverter.isUseContentStreamUpdateRequest(ctx)) {
             return ctx.exchange().getMessage().getMandatoryBody(ContentStreamUpdateRequest.class);
         }
@@ -119,29 +125,24 @@ public enum SolrOperation {
 
     public String getActionParameter(String actionString) {
         String actionParameter = actionsToDeprecate.get(actionString);
-        return ObjectHelper.isNotEmpty(actionParameter)
-                ? actionParameter
-                : null;
+        return ObjectHelper.isNotEmpty(actionParameter) ? actionParameter : null;
     }
 
     public String createFutureDeprecationMessage(String actionString, String actionParameter) {
         String message = String.format(
                 "The operation obtained from the exchange header '%s=%s' is going to be deprecated in future versions of camel-solr."
-                                       + " Please use the operation value '%1$s=%s' instead",
-                SolrConstants.PARAM_OPERATION,
-                actionString,
-                name());
+                        + " Please use the operation value '%1$s=%s' instead",
+                SolrConstants.PARAM_OPERATION, actionString, name());
         if (actionParameter == null) {
             message += ".";
         } else {
-            message += "and add the header '" + actionParameter
-                       + "=true' to the exchange for the desired operation. ";
+            message += "and add the header '" + actionParameter + "=true' to the exchange for the desired operation. ";
             if (!actionString.equals(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
-                message += "For info on the solr parameters for commit related update requests, have a look at the solr documentation "
-                           + "on https://solr.apache.org/guide/solr/latest/configuration-guide/commits-transaction-logs.html#explicit-commits";
+                message +=
+                        "For info on the solr parameters for commit related update requests, have a look at the solr documentation "
+                                + "on https://solr.apache.org/guide/solr/latest/configuration-guide/commits-transaction-logs.html#explicit-commits";
             }
         }
         return message;
     }
-
 }

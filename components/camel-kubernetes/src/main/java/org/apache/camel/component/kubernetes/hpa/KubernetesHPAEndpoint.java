@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.hpa;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_HPA;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,13 +28,16 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_HPA;
-
 /**
  * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_HPA, title = "Kubernetes HPA", syntax = "kubernetes-hpa:masterUrl",
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = SCHEME_HPA,
+        title = "Kubernetes HPA",
+        syntax = "kubernetes-hpa:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesHPAEndpoint(String uri, KubernetesHPAComponent component, KubernetesConfiguration config) {
@@ -48,7 +54,5 @@ public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
         Consumer consumer = new KubernetesHPAConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-
     }
-
 }

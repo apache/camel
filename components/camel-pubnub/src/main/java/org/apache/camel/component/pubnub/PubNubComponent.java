@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
 
 import java.util.Map;
@@ -35,15 +36,14 @@ public class PubNubComponent extends DefaultComponent {
         super(context);
     }
 
-    public PubNubComponent() {
-    }
+    public PubNubComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ObjectHelper.notNull(remaining, "channel");
 
-        final PubNubConfiguration config
-                = this.configuration != null ? this.configuration.copy() : new PubNubConfiguration();
+        final PubNubConfiguration config =
+                this.configuration != null ? this.configuration.copy() : new PubNubConfiguration();
 
         config.setChannel(remaining);
         PubNubEndpoint endpoint = new PubNubEndpoint(uri, this, config);

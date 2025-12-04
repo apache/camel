@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.Arrays;
@@ -33,39 +34,38 @@ import org.apache.camel.spi.TransactedPolicy;
 public class TransactedDownloader {
 
     private static final String[] TRANSACTED_POLICIES = new String[] {
-            "PROPAGATION_REQUIRED",
-            "PROPAGATION_REQUIRES_NEW",
-            "PROPAGATION_SUPPORTS",
-            "PROPAGATION_NOT_SUPPORTED",
-            "PROPAGATION_NEVER",
-            "PROPAGATION_MANDATORY",
-            "PROPAGATION_NESTED"
+        "PROPAGATION_REQUIRED",
+        "PROPAGATION_REQUIRES_NEW",
+        "PROPAGATION_SUPPORTS",
+        "PROPAGATION_NOT_SUPPORTED",
+        "PROPAGATION_NEVER",
+        "PROPAGATION_MANDATORY",
+        "PROPAGATION_NESTED"
     };
 
-    private TransactedDownloader() {
-    }
+    private TransactedDownloader() {}
 
     public static void registerDownloadReifiers(KameletMain main) {
-        ProcessorReifier.registerReifier(TransactedDefinition.class,
-                (route, processorDefinition) -> {
-                    if (processorDefinition instanceof TransactedDefinition) {
-                        DependencyDownloader downloader = route.getCamelContext().hasService(DependencyDownloader.class);
-                        if (downloader != null) {
-                            downloader.downloadDependency("org.apache.camel", "camel-jta",
-                                    route.getCamelContext().getVersion());
-                            TransactedPolicy policy = new DummyTransactedPolicy();
-                            Arrays.stream(TRANSACTED_POLICIES).forEach(p -> main.bind(p, policy));
-                        }
-                    }
-                    return ProcessReifier.coreReifier(route, processorDefinition);
-                });
+        ProcessorReifier.registerReifier(TransactedDefinition.class, (route, processorDefinition) -> {
+            if (processorDefinition instanceof TransactedDefinition) {
+                DependencyDownloader downloader = route.getCamelContext().hasService(DependencyDownloader.class);
+                if (downloader != null) {
+                    downloader.downloadDependency(
+                            "org.apache.camel",
+                            "camel-jta",
+                            route.getCamelContext().getVersion());
+                    TransactedPolicy policy = new DummyTransactedPolicy();
+                    Arrays.stream(TRANSACTED_POLICIES).forEach(p -> main.bind(p, policy));
+                }
+            }
+            return ProcessReifier.coreReifier(route, processorDefinition);
+        });
     }
 
     private static class DummyTransactedPolicy implements TransactedPolicy {
 
         @Override
-        public void beforeWrap(final Route route, final NamedNode definition) {
-        }
+        public void beforeWrap(final Route route, final NamedNode definition) {}
 
         @Override
         public Processor wrap(final Route route, final Processor processor) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactor.engine;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,8 +74,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     // ******************************************
 
     @Override
-    public void doStart() throws Exception {
-    }
+    public void doStart() throws Exception {}
 
     @Override
     public void doStop() throws Exception {
@@ -125,9 +125,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
 
     @Override
     public Publisher<Exchange> toStream(String name, Object data) {
-        return doRequest(
-                name,
-                ReactiveStreamsHelper.convertToExchange(context, data));
+        return doRequest(name, ReactiveStreamsHelper.convertToExchange(context, data));
     }
 
     @Override
@@ -180,8 +178,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("reactive-streams:" + uuid)
-                            .to(uri);
+                    from("reactive-streams:" + uuid).to(uri);
                 }
             });
 
@@ -204,14 +201,14 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
                 context.addRoutes(new RouteBuilder() {
                     @Override
                     public void configure() throws Exception {
-                        from("reactive-streams:" + uuid)
-                                .to(camelUri);
+                        from("reactive-streams:" + uuid).to(camelUri);
                     }
                 });
 
                 return uuid;
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to create requested reactive stream from direct URI: " + uri, e);
+                throw new IllegalStateException(
+                        "Unable to create requested reactive stream from direct URI: " + uri, e);
             }
         });
 
@@ -257,10 +254,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
 
     @Override
     public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
-        process(
-                uri,
-                publisher -> processor.apply(
-                        Flux.from(publisher).map(BodyConverter.forType(type))));
+        process(uri, publisher -> processor.apply(Flux.from(publisher).map(BodyConverter.forType(type))));
     }
 
     // ******************************************
@@ -314,8 +308,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
             throw new IllegalStateException("No consumers attached to the stream " + name);
         }
 
-        return Mono.<Exchange> create(
-                sink -> data.getExchangeExtension().addOnCompletion(new Synchronization() {
+        return Mono.<Exchange>create(sink -> data.getExchangeExtension().addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
                         sink.success(exchange);
@@ -330,7 +323,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
 
                         sink.error(throwable);
                     }
-                })).doOnSubscribe(
-                        subs -> consumer.process(data, ReactorStreamsConstants.EMPTY_ASYNC_CALLBACK));
+                }))
+                .doOnSubscribe(subs -> consumer.process(data, ReactorStreamsConstants.EMPTY_ASYNC_CALLBACK));
     }
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,9 +29,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Integration test for file size validation functionality.
@@ -67,8 +68,9 @@ public class SpringAiChatFileSizeIT extends OllamaTestSupport {
         String testFilesPath = getTestResourcePath("test-files");
 
         assertThatThrownBy(() -> {
-            template().requestBody("direct:file-size-small-limit", null, String.class);
-        }).isInstanceOf(CamelExecutionException.class)
+                    template().requestBody("direct:file-size-small-limit", null, String.class);
+                })
+                .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("File size")
@@ -111,8 +113,9 @@ public class SpringAiChatFileSizeIT extends OllamaTestSupport {
         String testFilesPath = getTestResourcePath("test-files");
 
         assertThatThrownBy(() -> {
-            template().requestBody("direct:wrapped-file-size-limit", null, String.class);
-        }).isInstanceOf(CamelExecutionException.class)
+                    template().requestBody("direct:wrapped-file-size-limit", null, String.class);
+                })
+                .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("File size")
@@ -130,8 +133,7 @@ public class SpringAiChatFileSizeIT extends OllamaTestSupport {
 
                 // Route 1: Default limit (1MB from configuration defaults)
                 // Uses small test-image.png (74 bytes)
-                from("direct:file-size-limit")
-                        .to("spring-ai-chat:default?chatModel=#chatModel");
+                from("direct:file-size-limit").to("spring-ai-chat:default?chatModel=#chatModel");
 
                 // Route 2: Small limit (100 bytes) configured on endpoint
                 // Uses large-file.bin (150 bytes) - should fail

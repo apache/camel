@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -25,12 +32,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class Sjms2EndpointTest extends CamelTestSupport {
 
@@ -133,8 +134,8 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     @Test
     public void testReplyToAndMEPMatch() {
         String replyTo = "reply.to.queue";
-        Endpoint endpoint = context
-                .getEndpoint("sjms2:queue:test?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
+        Endpoint endpoint = context.getEndpoint(
+                "sjms2:queue:test?replyTo=" + replyTo + "&exchangePattern=" + ExchangePattern.InOut);
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
         Sjms2Endpoint qe = (Sjms2Endpoint) endpoint;
@@ -155,8 +156,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory(service.serviceAddress());
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         Sjms2Component component = new Sjms2Component();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms2", component);

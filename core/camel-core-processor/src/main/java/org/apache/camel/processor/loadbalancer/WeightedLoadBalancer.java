@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
@@ -26,11 +27,10 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     transient int lastIndex = -1;
 
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
-        this.ratios = distributionRatios.stream()
-                .map(DistributionRatio::new)
-                .toList();
+        this.ratios = distributionRatios.stream().map(DistributionRatio::new).toList();
         this.distributionRatioSum = ratios.stream()
-                .mapToInt(DistributionRatio::getDistributionWeight).sum();
+                .mapToInt(DistributionRatio::getDistributionWeight)
+                .sum();
         this.runtimeRatioSum = distributionRatioSum;
     }
 
@@ -42,9 +42,8 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     protected void doStart() throws Exception {
         super.doStart();
         if (getProcessors().size() != ratios.size()) {
-            throw new IllegalArgumentException(
-                    "Loadbalacing with " + getProcessors().size()
-                                               + " should match number of distributions " + ratios.size());
+            throw new IllegalArgumentException("Loadbalacing with "
+                    + getProcessors().size() + " should match number of distributions " + ratios.size());
         }
     }
 
@@ -65,5 +64,4 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     public List<DistributionRatio> getRatios() {
         return ratios;
     }
-
 }

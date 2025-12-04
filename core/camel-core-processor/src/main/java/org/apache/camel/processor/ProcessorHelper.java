@@ -30,8 +30,7 @@ import org.slf4j.MDC;
 
 final class ProcessorHelper {
 
-    private ProcessorHelper() {
-    }
+    private ProcessorHelper() {}
 
     static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
         if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {

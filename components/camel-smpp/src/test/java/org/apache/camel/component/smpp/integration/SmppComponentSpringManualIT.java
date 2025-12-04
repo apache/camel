@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -27,10 +32,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Spring based integration test for the smpp component. To run this test, ensure that the SMSC is running on: host:
@@ -57,7 +58,9 @@ public class SmppComponentSpringManualIT extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+        assertEquals(
+                SmppMessageType.DeliveryReceipt.toString(),
+                resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.SUBMITTED));
@@ -81,7 +84,9 @@ public class SmppComponentSpringManualIT extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
         Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+        assertEquals(
+                SmppMessageType.DeliveryReceipt.toString(),
+                resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SmppConstants.ID));
         assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.SUBMITTED));
@@ -99,16 +104,20 @@ public class SmppComponentSpringManualIT extends CamelSpringTestSupport {
         result.expectedMessageCount(2);
 
         Exchange exchange = start.createExchange(ExchangePattern.InOnly);
-        exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
+        exchange.getIn()
+                .setBody(
+                        "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
 
         template.send(start, exchange);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(),
+        assertEquals(
+                SmppMessageType.DeliveryReceipt.toString(),
                 result.getExchanges().get(0).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(),
+        assertEquals(
+                SmppMessageType.DeliveryReceipt.toString(),
                 result.getExchanges().get(1).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
 
         assertNotNull(exchange.getIn().getHeader(SmppConstants.ID));
@@ -166,9 +175,11 @@ public class SmppComponentSpringManualIT extends CamelSpringTestSupport {
     public void sendSubmitMultiSM() {
         Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
-        exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-                                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
+        exchange.getIn()
+                .setBody(
+                        "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
 
         template.send(start, exchange);
 

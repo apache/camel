@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,7 +29,8 @@ public class MyAuditServiceProxyTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("uuid", "1234");
 
-        MyAuditService service = new ProxyBuilder(context).endpoint("direct:proxy").build(MyAuditService.class);
+        MyAuditService service =
+                new ProxyBuilder(context).endpoint("direct:proxy").build(MyAuditService.class);
 
         service.auditMessage("1234", "Hello World");
 

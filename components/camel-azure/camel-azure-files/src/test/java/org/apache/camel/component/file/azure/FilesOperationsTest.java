@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import com.azure.core.http.policy.AzureSasCredentialPolicy;
@@ -27,9 +28,8 @@ public class FilesOperationsTest extends CamelTestSupport {
 
     @Test
     void testCreateClientAzureIdentity() {
-        var endpoint = context
-                .getEndpoint("azure-files://account.file.core.windows.net/share?credentialType=AZURE_IDENTITY",
-                        FilesEndpoint.class);
+        var endpoint = context.getEndpoint(
+                "azure-files://account.file.core.windows.net/share?credentialType=AZURE_IDENTITY", FilesEndpoint.class);
 
         var filesOperations = new FilesOperations(endpoint);
         var client = filesOperations.getClient();
@@ -47,10 +47,9 @@ public class FilesOperationsTest extends CamelTestSupport {
 
     @Test
     void testCreateClientSharedAccountKey() {
-        var endpoint = context
-                .getEndpoint(
-                        "azure-files://account.file.core.windows.net/share?credentialType=SHARED_ACCOUNT_KEY&sharedKey=sharedKey",
-                        FilesEndpoint.class);
+        var endpoint = context.getEndpoint(
+                "azure-files://account.file.core.windows.net/share?credentialType=SHARED_ACCOUNT_KEY&sharedKey=sharedKey",
+                FilesEndpoint.class);
 
         var filesOperations = new FilesOperations(endpoint);
         var client = filesOperations.getClient();
@@ -68,10 +67,9 @@ public class FilesOperationsTest extends CamelTestSupport {
 
     @Test
     void testCreateClientAzureSAS() {
-        var endpoint = context
-                .getEndpoint(
-                        "azure-files://account.file.core.windows.net/share?credentialType=AZURE_SAS&sv=2022-11-02&ss=f&srt=sco&sp=rwdlc&se=2023-06-18T22:29:13Z&st=2023-06-05T14:29:13Z&spr=https&sig=MPsMh8zci0v3To7IT9SKdaFGZV8ezno63m9C8s9bdVQ%3D",
-                        FilesEndpoint.class);
+        var endpoint = context.getEndpoint(
+                "azure-files://account.file.core.windows.net/share?credentialType=AZURE_SAS&sv=2022-11-02&ss=f&srt=sco&sp=rwdlc&se=2023-06-18T22:29:13Z&st=2023-06-05T14:29:13Z&spr=https&sig=MPsMh8zci0v3To7IT9SKdaFGZV8ezno63m9C8s9bdVQ%3D",
+                FilesEndpoint.class);
 
         var filesOperations = new FilesOperations(endpoint);
         var client = filesOperations.getClient();

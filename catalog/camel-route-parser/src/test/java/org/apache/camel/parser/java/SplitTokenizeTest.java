@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -89,7 +90,8 @@ public class SplitTokenizeTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("<person name=\"Claus\"/>", "<person>James</person>", "<person>Willem</person>");
 
-        String xml = "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
+        String xml =
+                "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
         template.sendBody("direct:f", xml);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -101,33 +103,29 @@ public class SplitTokenizeTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("direct:a")
-                        .split().tokenize(",")
-                        .to("mock:split");
+                from("direct:a").split().tokenize(",").to("mock:split");
 
-                var byHeader = expression().tokenize().token(",").source("header:myHeader").end();
-                from("direct:b")
-                        .split(byHeader)
-                        .to("mock:split");
+                var byHeader = expression()
+                        .tokenize()
+                        .token(",")
+                        .source("header:myHeader")
+                        .end();
+                from("direct:b").split(byHeader).to("mock:split");
 
-                from("direct:c")
-                        .split().tokenize("(\\W+)\\s*", true).to("mock:split");
+                from("direct:c").split().tokenize("(\\W+)\\s*", true).to("mock:split");
 
-                from("direct:d")
-                        .split().tokenizePair("[", "]", true)
-                        .to("mock:split");
+                from("direct:d").split().tokenizePair("[", "]", true).to("mock:split");
 
-                from("direct:e")
-                        .split().tokenizeXML("person")
-                        .to("mock:split");
+                from("direct:e").split().tokenizeXML("person").to("mock:split");
 
                 from("direct:f")
-                        .split().xpath("//person")
+                        .split()
+                        .xpath("//person")
                         // To test the body is not empty
                         // it will call the ObjectHelper.evaluateValuePredicate()
-                        .filter().simple("${body}")
+                        .filter()
+                        .simple("${body}")
                         .to("mock:split");
-
             }
         };
     }

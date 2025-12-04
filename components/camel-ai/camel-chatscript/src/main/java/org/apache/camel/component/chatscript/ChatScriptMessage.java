@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chatscript;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,10 +22,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ChatScriptMessage {
     @JsonProperty("username")
     private String username;
+
     @JsonProperty("botname")
     private String botname;
+
     @JsonProperty("message")
     private String body;
+
     @JsonProperty("response")
     private String reply;
 
@@ -34,9 +38,7 @@ public class ChatScriptMessage {
         this.body = iBody;
     }
 
-    public ChatScriptMessage() {
-
-    }
+    public ChatScriptMessage() {}
 
     public String getUserName() {
         return username;
@@ -79,8 +81,7 @@ public class ChatScriptMessage {
 
     @Override
     public String toString() {
-        return "ChatScriptMessage [username=" + username + ", botname=" + botname + ", message=" + body + ", reply=" + reply
-               + "]";
+        return "ChatScriptMessage [username=" + username + ", botname=" + botname + ", message=" + body + ", reply="
+                + reply + "]";
     }
-
 }

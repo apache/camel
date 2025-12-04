@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,12 +39,10 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "s390x" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 @Isolated
 public class LumberjackMultiThreadIT extends CamelTestSupport {
 
@@ -88,12 +90,13 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
         // And the first map should contains valid data (we're assuming it's also valid for the other ones)
         Map first = mock.getExchanges().get(0).getIn().getBody(Map.class);
         assertEquals("log", first.get("input_type"));
-        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
+        assertEquals(
+                "/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
                 first.get("source"));
 
         List<Integer> windows = Arrays.asList(15, 10);
-        Awaitility.await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> threads.stream().forEach(thread -> assertEquals(windows, thread.responses)));
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> threads.stream()
+                .forEach(thread -> assertEquals(windows, thread.responses)));
 
         Assertions.assertFalse(interrupted, "Should not have been interrupted");
     }
@@ -111,6 +114,5 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
                 interrupted = true;
             }
         }
-
     }
 }

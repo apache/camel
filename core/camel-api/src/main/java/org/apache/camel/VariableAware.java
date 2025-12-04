@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -40,5 +41,4 @@ public interface VariableAware {
      * @param value the value of the variable
      */
     void setVariable(String name, Object value);
-
 }

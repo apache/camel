@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
 
 import org.apache.camel.AsyncCallback;
@@ -45,7 +46,8 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            MicrometerObservationSpanAdapter camelSpan = (MicrometerObservationSpanAdapter) ActiveSpanManager.getSpan(exchange);
+            MicrometerObservationSpanAdapter camelSpan =
+                    (MicrometerObservationSpanAdapter) ActiveSpanManager.getSpan(exchange);
             if (camelSpan != null) {
                 String item = expression.evaluate(exchange, String.class);
                 camelSpan.setCorrelationContextItem(baggageName, item);

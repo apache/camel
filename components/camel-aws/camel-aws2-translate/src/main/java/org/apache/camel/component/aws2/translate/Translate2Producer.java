@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
 
 import java.util.Collection;
@@ -63,7 +64,8 @@ public class Translate2Producer extends DefaultProducer {
     }
 
     private Translate2Operations determineOperation(Exchange exchange) {
-        Translate2Operations operation = exchange.getIn().getHeader(Translate2Constants.OPERATION, Translate2Operations.class);
+        Translate2Operations operation =
+                exchange.getIn().getHeader(Translate2Constants.OPERATION, Translate2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -77,7 +79,8 @@ public class Translate2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (translateProducerToString == null) {
-            translateProducerToString = "TranslateProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            translateProducerToString =
+                    "TranslateProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return translateProducerToString;
     }
@@ -95,7 +98,9 @@ public class Translate2Producer extends DefaultProducer {
                 try {
                     result = translateClient.translateText((TranslateTextRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Translate Text command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -133,9 +138,10 @@ public class Translate2Producer extends DefaultProducer {
                     request.targetLanguageCode(getConfiguration().getTargetLanguage());
                 }
             }
-            if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class))) {
-                Collection<String> terminologies
-                        = exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class);
+            if (!ObjectHelper.isEmpty(
+                    exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class))) {
+                Collection<String> terminologies =
+                        exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class);
                 request.terminologyNames(terminologies);
             }
             request.text(exchange.getMessage().getBody(String.class));
@@ -143,7 +149,9 @@ public class Translate2Producer extends DefaultProducer {
             try {
                 result = translateClient.translateText(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Translate Text command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -159,9 +167,7 @@ public class Translate2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -178,5 +184,4 @@ public class Translate2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

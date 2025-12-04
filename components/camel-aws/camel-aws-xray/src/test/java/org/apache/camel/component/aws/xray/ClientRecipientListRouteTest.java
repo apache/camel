@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,22 +27,18 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
 
     public ClientRecipientListRouteTest() {
-        super(
-              TestDataBuilder.createTrace().inRandomOrder()
-                      .withSegment(TestDataBuilder.createSegment("start")
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:a"))
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:c")))
-                      .withSegment(TestDataBuilder.createSegment("a"))
-                      .withSegment(TestDataBuilder.createSegment("b"))
-                      .withSegment(TestDataBuilder.createSegment("c")));
+        super(TestDataBuilder.createTrace()
+                .inRandomOrder()
+                .withSegment(TestDataBuilder.createSegment("start")
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:a"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:c")))
+                .withSegment(TestDataBuilder.createSegment("a"))
+                .withSegment(TestDataBuilder.createSegment("b"))
+                .withSegment(TestDataBuilder.createSegment("c")));
     }
 
     @Test
@@ -46,8 +47,7 @@ public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
 
         template.requestBody("direct:start", "Hello");
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(5, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(5, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }
@@ -57,19 +57,13 @@ public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start")
-                        .recipientList(constant("seda:a,seda:b,seda:c"));
+                from("direct:start").routeId("start").recipientList(constant("seda:a,seda:b,seda:c"));
 
-                from("seda:a").routeId("a")
-                        .log("routing at ${routeId}");
+                from("seda:a").routeId("a").log("routing at ${routeId}");
 
-                from("seda:b").routeId("b")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"));
+                from("seda:b").routeId("b").log("routing at ${routeId}").delay(simple("${random(1000,2000)}"));
 
-                from("seda:c").routeId("c")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,100)}"));
+                from("seda:c").routeId("c").log("routing at ${routeId}").delay(simple("${random(0,100)}"));
             }
         };
     }

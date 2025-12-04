@@ -14,26 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ignite.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class IgniteServiceFactory {
 
-    private IgniteServiceFactory() {
-
-    }
+    private IgniteServiceFactory() {}
 
     public static SimpleTestServiceBuilder<IgniteService> builder() {
         return new SimpleTestServiceBuilder<>("ignite");
     }
 
     public static IgniteService createService() {
-        return builder()
-                .addLocalMapping(IgniteEmbeddedService::new)
-                .build();
+        return builder().addLocalMapping(IgniteEmbeddedService::new).build();
     }
 
-    public static class IgniteEmbeddedService extends IgniteEmbeddedInfraService implements IgniteService {
-    }
+    public static class IgniteEmbeddedService extends IgniteEmbeddedInfraService implements IgniteService {}
 }

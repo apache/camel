@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
@@ -68,7 +69,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     @Override
-    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
+    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint)
+            throws Exception {
         this.endpoint = endpoint;
         LOG.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
 
@@ -76,8 +78,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // in clustered mode then another node may have processed the file so we
         // must check here again if the file exists
         File path = file.getFile();
@@ -113,15 +115,13 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         changed.releaseExclusiveReadLockOnAbort(operations, file, exchange);
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(exchange, file);
         Runnable r = () -> {
             if (removeOnRollback) {
@@ -143,7 +143,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
 
     private void delayOrScheduleLockRelease(Runnable r) throws InterruptedException {
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            LOG.debug("Scheduling read lock release task to run asynchronous delayed after {} millis",
+            LOG.debug(
+                    "Scheduling read lock release task to run asynchronous delayed after {} millis",
                     readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
@@ -157,8 +158,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(exchange, file);
         Runnable r = () -> {
             if (removeOnCommit) {
@@ -308,7 +308,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     /**
      * To use a custom and shared thread pool for asynchronous release tasks.
      */
-    public void setReadLockIdempotentReleaseExecutorService(ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
+    public void setReadLockIdempotentReleaseExecutorService(
+            ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
         this.readLockIdempotentReleaseExecutorService = readLockIdempotentReleaseExecutorService;
     }
 
@@ -329,9 +330,10 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
         if (readLockIdempotentReleaseAsync && readLockIdempotentReleaseExecutorService == null) {
-            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this,
-                    "ReadLockChangedIdempotentReleaseTask",
-                    readLockIdempotentReleaseAsyncPoolSize);
+            readLockIdempotentReleaseExecutorService = camelContext
+                    .getExecutorServiceManager()
+                    .newScheduledThreadPool(
+                            this, "ReadLockChangedIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
             shutdownExecutorService = true;
         }
     }
@@ -343,5 +345,4 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             readLockIdempotentReleaseExecutorService = null;
         }
     }
-
 }

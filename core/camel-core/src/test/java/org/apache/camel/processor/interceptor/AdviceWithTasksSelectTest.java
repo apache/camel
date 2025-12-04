@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Advice with match multiple ids test
@@ -36,7 +37,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should only match the first
-                weaveById("gold*").selectFirst().replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectFirst()
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -58,7 +64,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should only match the last
-                weaveById("gold*").selectLast().replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectLast()
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -80,7 +91,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should match the first index (0 based)
-                weaveById("gold*").selectIndex(0).replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectIndex(0)
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -102,7 +118,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should match the second index (0 based)
-                weaveById("gold*").selectIndex(1).replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectIndex(1)
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -124,7 +145,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should match the third index (0 based)
-                weaveById("gold*").selectIndex(2).replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectIndex(2)
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -147,12 +173,19 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     // should be out of bounds
-                    weaveById("gold*").selectIndex(3).replace().multicast().to("mock:a").to("mock:b");
+                    weaveById("gold*")
+                            .selectIndex(3)
+                            .replace()
+                            .multicast()
+                            .to("mock:a")
+                            .to("mock:b");
                 }
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("There are no outputs which matches: gold* in the route"), e.getMessage());
+            assertTrue(
+                    e.getMessage().startsWith("There are no outputs which matches: gold* in the route"),
+                    e.getMessage());
         }
     }
 
@@ -162,7 +195,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should match the first two (0-based)
-                weaveById("gold*").selectRange(0, 1).replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectRange(0, 1)
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -184,7 +222,12 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // should match the 2nd and 3rd (0-based)
-                weaveById("gold*").selectRange(1, 2).replace().multicast().to("mock:a").to("mock:b");
+                weaveById("gold*")
+                        .selectRange(1, 2)
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
 
@@ -205,8 +248,16 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").log("Got ${body}").id("foo").to("mock:foo").id("gold-1").to("mock:bar").id("gold-2")
-                        .to("mock:baz").id("gold-3").to("mock:result")
+                from("direct:start")
+                        .log("Got ${body}")
+                        .id("foo")
+                        .to("mock:foo")
+                        .id("gold-1")
+                        .to("mock:bar")
+                        .id("gold-2")
+                        .to("mock:baz")
+                        .id("gold-3")
+                        .to("mock:result")
                         .id("silver-1");
             }
         };

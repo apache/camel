@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Image;
 import java.nio.charset.StandardCharsets;
@@ -29,12 +33,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
-    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = MTOM_ENDPOINT_URI
-                                                                  + "&defaultOperationName=Detail";
+    protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = MTOM_ENDPOINT_URI + "&defaultOperationName=Detail";
     private static final Logger LOG = LoggerFactory.getLogger(CxfJavaMtomProducerPayloadTest.class);
 
     @Override
@@ -52,10 +52,8 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new Object[] { photo, image });
-
+                exchange.getIn().setBody(new Object[] {photo, image});
             }
-
         });
 
         AttachmentMessage out = exchange.getMessage(AttachmentMessage.class);
@@ -66,11 +64,12 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         // Get the operation name
         final Holder<byte[]> responsePhoto = (Holder<byte[]>) parameter.get(1);
         assertNotNull(responsePhoto.value, "The photo should not be null");
-        assertEquals("ResponseFromCamel",
-                new String(responsePhoto.value, StandardCharsets.UTF_8), "Should get the right response");
+        assertEquals(
+                "ResponseFromCamel",
+                new String(responsePhoto.value, StandardCharsets.UTF_8),
+                "Should get the right response");
 
         final Holder<Image> responseImage = (Holder<Image>) parameter.get(2);
         assertNotNull(responseImage.value, "We should get the image here");
     }
-
 }

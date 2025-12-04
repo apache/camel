@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -39,8 +42,6 @@ import org.snakeyaml.engine.v2.nodes.NodeType;
 import org.snakeyaml.engine.v2.parser.Parser;
 import org.snakeyaml.engine.v2.parser.ParserImpl;
 import org.snakeyaml.engine.v2.scanner.StreamReader;
-
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 
 public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderSupport {
 
@@ -70,7 +71,8 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         try (InputStream is = resourceInputStream(resource)) {
             // need a local settings because we want the label to be the resource we parse so the parser
             // can show parsing errors referring to actual resource file being parsed.
-            LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
+            LoadSettings local =
+                    LoadSettings.builder().setLabel(resource.getLocation()).build();
             final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
             final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
             final Parser parser = new ParserImpl(local, reader);
@@ -78,7 +80,8 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
 
             return composer.getSingleNode()
                     .map(node -> builder(ctx, node))
-                    .orElseThrow(() -> new YamlDeserializationException("Unable to parse resource: " + resource.getLocation()));
+                    .orElseThrow(() ->
+                            new YamlDeserializationException("Unable to parse resource: " + resource.getLocation()));
         }
     }
 
@@ -112,5 +115,4 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
         }
         return null;
     }
-
 }

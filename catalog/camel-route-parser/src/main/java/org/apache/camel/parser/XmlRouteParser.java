@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser;
+
+import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -36,8 +39,6 @@ import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.apache.camel.tooling.util.Strings;
 
-import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
-
 /**
  * A Camel XML parser that parses Camel XML routes source code.
  * <p/>
@@ -45,8 +46,7 @@ import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
  */
 public final class XmlRouteParser {
 
-    private XmlRouteParser() {
-    }
+    private XmlRouteParser() {}
 
     /**
      * Parses the XML file and build a route model (tree) of the discovered routes in the XML source file.
@@ -56,7 +56,8 @@ public final class XmlRouteParser {
      * @param  fullyQualifiedFileName the fully qualified source code file name
      * @return                        a list of route model (tree) of each discovered route
      */
-    public static List<CamelNodeDetails> parseXmlRouteTree(InputStream xml, String baseDir, String fullyQualifiedFileName) {
+    public static List<CamelNodeDetails> parseXmlRouteTree(
+            InputStream xml, String baseDir, String fullyQualifiedFileName) {
         List<CamelNodeDetails> answer = new ArrayList<>();
 
         // try parse it as dom
@@ -117,8 +118,7 @@ public final class XmlRouteParser {
      * @param endpoints              list to add discovered and parsed endpoints
      */
     public static void parseXmlRouteEndpoints(
-            InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelEndpointDetails> endpoints) {
+            InputStream xml, String baseDir, String fullyQualifiedFileName, List<CamelEndpointDetails> endpoints) {
 
         // find all the endpoints (currently only <endpoint> and within <route>)
         // try parse it as dom
@@ -132,7 +132,8 @@ public final class XmlRouteParser {
                     uri = trimEndpointUri(uri);
                 }
                 if (!Strings.isNullOrEmpty(uri)) {
-                    final CamelEndpointDetails detail = toCamelEndpointDetails(baseDir, fullyQualifiedFileName, node, uri);
+                    final CamelEndpointDetails detail =
+                            toCamelEndpointDetails(baseDir, fullyQualifiedFileName, node, uri);
                     endpoints.add(detail);
                 }
             }
@@ -157,8 +158,7 @@ public final class XmlRouteParser {
             producerOnly = true;
         }
 
-        return toEndpointDetails(node, fileName, lineNumber, lineNumberEnd, id, uri, consumerOnly,
-                producerOnly);
+        return toEndpointDetails(node, fileName, lineNumber, lineNumberEnd, id, uri, consumerOnly, producerOnly);
     }
 
     private static boolean isProducerOnly(String nodeName) {
@@ -170,7 +170,13 @@ public final class XmlRouteParser {
     }
 
     private static CamelEndpointDetails toEndpointDetails(
-            Node node, String fileName, String lineNumber, String lineNumberEnd, String id, String uri, boolean consumerOnly,
+            Node node,
+            String fileName,
+            String lineNumber,
+            String lineNumberEnd,
+            String id,
+            String uri,
+            boolean consumerOnly,
             boolean producerOnly) {
         CamelEndpointDetails detail = new CamelEndpointDetails();
         detail.setFileName(fileName);
@@ -199,7 +205,9 @@ public final class XmlRouteParser {
      * @param simpleExpressions      list to add discovered and parsed simple expressions
      */
     public static void parseXmlRouteSimpleExpressions(
-            InputStream xml, String baseDir, String fullyQualifiedFileName,
+            InputStream xml,
+            String baseDir,
+            String fullyQualifiedFileName,
             List<CamelSimpleExpressionDetails> simpleExpressions) {
 
         // find all the simple expressions
@@ -253,7 +261,9 @@ public final class XmlRouteParser {
      * @param csimpleExpressions     list to add discovered and parsed compiled simple expressions
      */
     public static void parseXmlRouteCSimpleExpressions(
-            InputStream xml, String baseDir, String fullyQualifiedFileName,
+            InputStream xml,
+            String baseDir,
+            String fullyQualifiedFileName,
             List<CamelCSimpleExpressionDetails> csimpleExpressions) {
 
         // find all the simple expressions
@@ -299,8 +309,7 @@ public final class XmlRouteParser {
      * @param routes                 list to add discovered and parsed routes
      */
     public static void parseXmlRouteRouteIds(
-            InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelRouteDetails> routes) {
+            InputStream xml, String baseDir, String fullyQualifiedFileName, List<CamelRouteDetails> routes) {
 
         // find all the endpoints (currently only <route> and within <route>)
         // try parse it as dom
@@ -378,5 +387,4 @@ public final class XmlRouteParser {
         uri = uri.replaceAll("(\\?)(\\s+)", "$1");
         return uri;
     }
-
 }

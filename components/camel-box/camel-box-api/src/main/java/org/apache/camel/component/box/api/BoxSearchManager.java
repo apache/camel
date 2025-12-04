@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,15 +33,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
-
 /**
  * Provides operations to manage Box searches.
  */
 public class BoxSearchManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxSearchManager.class);
-    //200 is maximal value used for search (see javadoc for BoxSearch.searchRange)
+    // 200 is maximal value used for search (see javadoc for BoxSearch.searchRange)
     private static final int SEARCH_MAX_LIMIT = 200;
 
     /**
@@ -70,7 +71,8 @@ public class BoxSearchManager {
             BoxHelper.notNull(query, BoxHelper.QUERY);
 
             // New box API for search requires offset and limit as parameters.
-            // To preserve api from previous functionality fro previous version, we will execute more searches if needed and merge results
+            // To preserve api from previous functionality fro previous version, we will execute more searches if needed
+            // and merge results
             BoxSearchParameters bsp = new BoxSearchParameters();
             bsp.setAncestorFolderIds(Collections.singletonList(folderId));
             bsp.setQuery(query);
@@ -87,8 +89,7 @@ public class BoxSearchManager {
 
             return result;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import java.io.InputStream;
@@ -82,10 +83,12 @@ public class LanguageProducer extends DefaultProducer {
             if (script == null) {
                 is = getEndpoint().getResourceAsInputStream();
             } else if (ResourceHelper.hasScheme(script)) {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(), script);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                        getEndpoint().getCamelContext(), script);
             } else if (EndpointHelper.isReferenceParameter(script)) {
                 String ref = "ref:" + script.substring(1);
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(), ref);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                        getEndpoint().getCamelContext(), ref);
             }
 
             if (is != null && !getEndpoint().isBinary()) {
@@ -101,7 +104,7 @@ public class LanguageProducer extends DefaultProducer {
         if (script != null) {
             // create the expression from the script
             Class<?> type = resultType != Object.class ? resultType : null;
-            exp = getEndpoint().getLanguage().createExpression(script, new Object[] { type });
+            exp = getEndpoint().getLanguage().createExpression(script, new Object[] {type});
             exp.init(getEndpoint().getCamelContext());
             // expression was resolved from resource
             getEndpoint().setContentResolvedFromResource(true);
@@ -143,8 +146,10 @@ public class LanguageProducer extends DefaultProducer {
     @Override
     protected void doBuild() throws Exception {
         if (getEndpoint().getResultType() != null) {
-            resultType = getEndpoint().getCamelContext()
-                    .getClassResolver().resolveMandatoryClass(getEndpoint().getResultType());
+            resultType = getEndpoint()
+                    .getCamelContext()
+                    .getClassResolver()
+                    .resolveMandatoryClass(getEndpoint().getResultType());
         }
     }
 }

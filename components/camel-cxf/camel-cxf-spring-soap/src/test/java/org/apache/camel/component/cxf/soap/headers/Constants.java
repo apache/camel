@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.soap.headers;
 
 public final class Constants {
@@ -34,11 +35,11 @@ public final class Constants {
         IN_OUT_REQUEST_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInOutHeader Requestor");
         IN_OUT_REQUEST_HEADER_DATA.setMessage("Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Request");
         IN_OUT_RESPONSE_HEADER_DATA.setOriginator("CxfSoapHeaderRoutePropagationTest.testInOutHeader Responser");
-        IN_OUT_RESPONSE_HEADER_DATA.setMessage("Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Responser");
+        IN_OUT_RESPONSE_HEADER_DATA.setMessage(
+                "Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Responser");
     }
 
-    private Constants() {
-    }
+    private Constants() {}
 
     public static boolean equals(SOAPHeaderData lhs, SOAPHeaderData rhs) {
         if (compare(lhs, rhs)) {

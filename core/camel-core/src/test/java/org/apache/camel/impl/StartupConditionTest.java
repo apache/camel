@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.StartupCondition;
 import org.apache.camel.spi.StartupConditionStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class StartupConditionTest extends ContextTestSupport {
 
@@ -38,7 +39,8 @@ public class StartupConditionTest extends ContextTestSupport {
             context.start();
             fail("Should throw exception");
         } catch (Exception e) {
-            assertEquals("Startup condition: MyCondition cannot continue due to: forced error from unit test",
+            assertEquals(
+                    "Startup condition: MyCondition cannot continue due to: forced error from unit test",
                     e.getCause().getMessage());
         }
     }
@@ -46,7 +48,8 @@ public class StartupConditionTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        StartupConditionStrategy scs = context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
+        StartupConditionStrategy scs =
+                context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
         scs.setEnabled(true);
         scs.setTimeout(250);
         scs.setOnTimeout("fail");

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonConversionsBufferTest extends CamelTestSupport {
 
@@ -48,7 +49,9 @@ public class JacksonConversionsBufferTest extends CamelTestSupport {
 
         ByteBuffer testByteBuffer = (ByteBuffer) template.requestBody("direct:test", pojoAsMap);
 
-        assertEquals("{\"name\":\"someName\"}", StandardCharsets.UTF_8.decode(testByteBuffer).toString());
+        assertEquals(
+                "{\"name\":\"someName\"}",
+                StandardCharsets.UTF_8.decode(testByteBuffer).toString());
     }
 
     @Override
@@ -60,5 +63,4 @@ public class JacksonConversionsBufferTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
 
 import java.io.InputStream;
@@ -33,7 +34,8 @@ public class FhirJsonDataFormat extends FhirDataFormat {
     public void marshal(Exchange exchange, Object o, OutputStream outputStream) throws Exception {
         IBaseResource iBaseResource;
         if (!(o instanceof IBaseResource)) {
-            iBaseResource = exchange.getContext().getTypeConverter().mandatoryConvertTo(IBaseResource.class, exchange, o);
+            iBaseResource =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(IBaseResource.class, exchange, o);
         } else {
             iBaseResource = (IBaseResource) o;
         }
@@ -43,7 +45,8 @@ public class FhirJsonDataFormat extends FhirDataFormat {
         parser.encodeResourceToWriter(iBaseResource, new OutputStreamWriter(outputStream));
 
         if (isContentTypeHeader()) {
-            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, parser.getEncoding().getResourceContentTypeNonLegacy());
+            exchange.getMessage()
+                    .setHeader(Exchange.CONTENT_TYPE, parser.getEncoding().getResourceContentTypeNonLegacy());
         }
     }
 

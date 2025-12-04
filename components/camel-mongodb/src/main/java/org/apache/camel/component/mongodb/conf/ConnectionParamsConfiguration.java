@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.conf;
 
 import java.util.Map;
@@ -76,5 +77,4 @@ public class ConnectionParamsConfiguration {
     public String toString() {
         return "MongoConfiguration [host(s)=" + host + ", user=" + user + ", password=***, adminDB=" + adminDB + "]";
     }
-
 }

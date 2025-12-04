@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
 
 import org.apache.camel.component.sql.DefaultSqlPrepareStatementStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultSqlPrepareStatementStrategyTest {
 
@@ -34,5 +35,4 @@ public class DefaultSqlPrepareStatementStrategyTest {
         String query = strategy.prepareQuery(sql, true, null);
         assertEquals(expected, query);
     }
-
 }

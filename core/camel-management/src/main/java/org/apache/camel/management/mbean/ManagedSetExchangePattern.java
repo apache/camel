@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,8 +26,8 @@ import org.apache.camel.processor.ExchangePatternProcessor;
 @ManagedResource(description = "Managed SetExchangePattern")
 public class ManagedSetExchangePattern extends ManagedProcessor implements ManagedSetExchangePatternMBean {
 
-    public ManagedSetExchangePattern(CamelContext context, ExchangePatternProcessor processor,
-                                     ProcessorDefinition<?> definition) {
+    public ManagedSetExchangePattern(
+            CamelContext context, ExchangePatternProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
 

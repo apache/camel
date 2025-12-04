@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,10 +32,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class XsltTemplateFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
 
     @Test
@@ -38,13 +39,15 @@ public class XsltTemplateFromHeaderOverrideEndpointUriTest extends ContextTestSu
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
-        String sheet = IOHelper.loadText(XsltTemplateFromHeaderOverrideEndpointUriTest.class
-                .getResourceAsStream("/org/apache/camel/component/xslt/transform_to_foo.xsl"));
+        String sheet = IOHelper.loadText(XsltTemplateFromHeaderOverrideEndpointUriTest.class.getResourceAsStream(
+                "/org/apache/camel/component/xslt/transform_to_foo.xsl"));
         Assertions.assertNotNull(sheet);
 
-        template.sendBodyAndHeader("direct:start",
+        template.sendBodyAndHeader(
+                "direct:start",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
-                XsltConstants.XSLT_STYLESHEET, sheet);
+                XsltConstants.XSLT_STYLESHEET,
+                sheet);
 
         assertMockEndpointsSatisfied();
 
@@ -85,5 +88,4 @@ public class XsltTemplateFromHeaderOverrideEndpointUriTest extends ContextTestSu
         context.getRegistry().bind("testBean", new TestBean());
         return context;
     }
-
 }

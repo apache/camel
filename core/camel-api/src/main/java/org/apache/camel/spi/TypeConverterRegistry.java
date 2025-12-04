@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -199,5 +200,4 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      * @param typeConverter   The type converter to associate with the type convertible pair
      */
     void addConverter(TypeConvertible<?, ?> typeConvertible, TypeConverter typeConverter);
-
 }

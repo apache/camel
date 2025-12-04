@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
-
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.junit.jupiter.api.Test;
 
 public class KeycloakTokenIntrospectorTest {
 
@@ -40,7 +41,8 @@ public class KeycloakTokenIntrospectorTest {
                 "exp", 1234567890L,
                 "iat", 1234567800L);
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         assertTrue(result.isActive());
         assertEquals("user123", result.getSubject());
@@ -55,7 +57,8 @@ public class KeycloakTokenIntrospectorTest {
     public void testIntrospectionResultInactive() {
         Map<String, Object> claims = Map.of("active", false);
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         assertFalse(result.isActive());
         assertNull(result.getSubject());
@@ -67,10 +70,10 @@ public class KeycloakTokenIntrospectorTest {
         Map<String, Object> claims = Map.of(
                 "active", true,
                 "realm_access", Map.of("roles", java.util.List.of("admin", "user")),
-                "resource_access", Map.of(
-                        "test-client", Map.of("roles", java.util.List.of("client-admin"))));
+                "resource_access", Map.of("test-client", Map.of("roles", java.util.List.of("client-admin"))));
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         Set<String> roles = KeycloakSecurityHelper.extractRolesFromIntrospection(result, "test-realm", "test-client");
 
@@ -84,11 +87,15 @@ public class KeycloakTokenIntrospectorTest {
     @Test
     public void testExtractPermissionsFromIntrospection() {
         Map<String, Object> claims = Map.of(
-                "active", true,
-                "scope", "read:documents write:documents",
-                "permissions", java.util.List.of("admin:all"));
+                "active",
+                true,
+                "scope",
+                "read:documents write:documents",
+                "permissions",
+                java.util.List.of("admin:all"));
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         Set<String> permissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(result);
 
@@ -106,7 +113,8 @@ public class KeycloakTokenIntrospectorTest {
                 "sub", "user123",
                 "custom_claim", "custom_value");
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         Map<String, Object> allClaims = result.getAllClaims();
         assertNotNull(allClaims);
@@ -116,11 +124,10 @@ public class KeycloakTokenIntrospectorTest {
 
     @Test
     public void testGetClaim() {
-        Map<String, Object> claims = Map.of(
-                "active", true,
-                "custom_claim", "custom_value");
+        Map<String, Object> claims = Map.of("active", true, "custom_claim", "custom_value");
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         assertEquals("custom_value", result.getClaim("custom_claim"));
         assertNull(result.getClaim("nonexistent_claim"));
@@ -128,11 +135,10 @@ public class KeycloakTokenIntrospectorTest {
 
     @Test
     public void testTokenType() {
-        Map<String, Object> claims = Map.of(
-                "active", true,
-                "token_type", "Bearer");
+        Map<String, Object> claims = Map.of("active", true, "token_type", "Bearer");
 
-        KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+        KeycloakTokenIntrospector.IntrospectionResult result =
+                new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
         assertEquals("Bearer", result.getTokenType());
     }

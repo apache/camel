@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.integration.eventnotifier;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_LAST_PROCESSED_TIME_INSTRUMENT;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_SENT_TIMER;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -38,16 +49,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_LAST_PROCESSED_TIME_INSTRUMENT;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_SENT_TIMER;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test auto-configuration of OpenTelemetryExchangeEventNotifier relying on OpenTelemetry global autoconfigure.
@@ -112,8 +113,7 @@ public class ExchangeEventNotifierAutoConfigIT extends CamelTestSupport {
                 MetricData metricData = (MetricData) log.getParameters()[0];
                 counts.compute(metricData.getName(), (k, v) -> v == null ? 1 : v + 1);
                 switch (metricData.getName()) {
-                    case DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER,
-                            DEFAULT_CAMEL_EXCHANGE_SENT_TIMER -> {
+                    case DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER, DEFAULT_CAMEL_EXCHANGE_SENT_TIMER -> {
                         // histogram
                         assertInstanceOf(HistogramData.class, metricData.getData());
                     }
@@ -127,13 +127,17 @@ public class ExchangeEventNotifierAutoConfigIT extends CamelTestSupport {
             }
         }
         assertEquals(4, counts.size());
-        assertTrue(counts.get(DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER) > 0,
+        assertTrue(
+                counts.get(DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER) > 0,
                 "Should have metric log for " + DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER);
-        assertTrue(counts.get(DEFAULT_CAMEL_EXCHANGE_SENT_TIMER) > 0,
+        assertTrue(
+                counts.get(DEFAULT_CAMEL_EXCHANGE_SENT_TIMER) > 0,
                 "Should have metric log for " + DEFAULT_CAMEL_EXCHANGE_SENT_TIMER);
-        assertTrue(counts.get(DEFAULT_CAMEL_EXCHANGE_LAST_PROCESSED_TIME_INSTRUMENT) > 0,
+        assertTrue(
+                counts.get(DEFAULT_CAMEL_EXCHANGE_LAST_PROCESSED_TIME_INSTRUMENT) > 0,
                 "Should have metric log for " + DEFAULT_CAMEL_EXCHANGE_LAST_PROCESSED_TIME_INSTRUMENT);
-        assertTrue(counts.get(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT) > 0,
+        assertTrue(
+                counts.get(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT) > 0,
                 "Should have metric log for " + DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT);
     }
 

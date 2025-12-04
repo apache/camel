@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.valueAsStringPretty;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -60,11 +63,11 @@ import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.valueAsStringPretty;
-
-@CommandLine.Command(name = "receive",
-                     description = "Receive and dump messages from remote endpoints", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "receive",
+        description = "Receive and dump messages from remote endpoints",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -74,8 +77,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
-        public PrefixCompletionCandidates() {
-        }
+        public PrefixCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
@@ -85,8 +87,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     public static class ActionCompletionCandidates implements Iterable<String> {
 
-        public ActionCompletionCandidates() {
-        }
+        public ActionCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
@@ -94,107 +95,155 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "To use an existing running Camel integration for receiving the message (name or pid)",
-                            arity = "0..1")
+    @CommandLine.Parameters(
+            description = "To use an existing running Camel integration for receiving the message (name or pid)",
+            arity = "0..1")
     String name;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
-                                      +
-                                      " (ex. /path/to/file.properties,/path/to/other.properties")
+    @CommandLine.Option(
+            names = {"--properties"},
+            description =
+                    "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
+                            + " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
-                        arity = "0")
+    @CommandLine.Option(
+            names = {"--prop", "--property"},
+            description =
+                    "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
+            arity = "0")
     String[] property;
 
-    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
-                        defaultValue = "status",
-                        description = "Action to start, stop, clear, status, or dump messages")
+    @CommandLine.Option(
+            names = {"--action"},
+            completionCandidates = ActionCompletionCandidates.class,
+            defaultValue = "status",
+            description = "Action to start, stop, clear, status, or dump messages")
     String action;
 
-    @CommandLine.Option(names = { "--endpoint", "--uri" },
-                        description = "Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint)")
+    @CommandLine.Option(
+            names = {"--endpoint", "--uri"},
+            description = "Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint)")
     String endpoint;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age for showing status of messages", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age for showing status of messages",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new messages (press enter to exit).")
+    @CommandLine.Option(
+            names = {"--follow"},
+            defaultValue = "true",
+            description = "Keep following and outputting new messages (press enter to exit).")
     boolean follow = true;
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto",
-                        completionCandidates = PrefixCompletionCandidates.class,
-                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    @CommandLine.Option(
+            names = {"--prefix"},
+            defaultValue = "auto",
+            completionCandidates = PrefixCompletionCandidates.class,
+            description =
+                    "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
     String prefix = "auto";
 
-    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
-                        description = "The number of messages from the end to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all messages from beginning.")
+    @CommandLine.Option(
+            names = {"--tail"},
+            defaultValue = "-1",
+            description =
+                    "The number of messages from the end to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all messages from beginning.")
     int tail = -1;
 
-    @CommandLine.Option(names = { "--since" },
-                        description = "Return messages newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
+    @CommandLine.Option(
+            names = {"--since"},
+            description =
+                    "Return messages newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
     String since;
 
-    @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    @CommandLine.Option(
+            names = {"--find"},
+            description = "Find and highlight matching text (ignore case).",
+            arity = "0..*")
     String[] find;
 
-    @CommandLine.Option(names = { "--grep" },
-                        description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
+    @CommandLine.Option(
+            names = {"--grep"},
+            description = "Filter messages to only output matching text (ignore case).",
+            arity = "0..*")
     String[] grep;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be received")
+    @CommandLine.Option(
+            names = {"--timeout"},
+            defaultValue = "20000",
+            description = "Timeout in millis waiting for message to be received")
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in received messages")
+    @CommandLine.Option(
+            names = {"--show-exchange-properties"},
+            defaultValue = "false",
+            description = "Show exchange properties in received messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
-                        description = "Show exchange variables in received messages")
+    @CommandLine.Option(
+            names = {"--show-exchange-variables"},
+            defaultValue = "false",
+            description = "Show exchange variables in received messages")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in received messages")
+    @CommandLine.Option(
+            names = {"--show-headers"},
+            defaultValue = "true",
+            description = "Show message headers in received messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in received messages")
+    @CommandLine.Option(
+            names = {"--show-body"},
+            defaultValue = "true",
+            description = "Show message body in received messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--only-body" }, defaultValue = "false",
-                        description = "Show only message body in received messages")
+    @CommandLine.Option(
+            names = {"--only-body"},
+            defaultValue = "false",
+            description = "Show only message body in received messages")
     boolean onlyBody;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(
+            names = {"--logging-color"},
+            defaultValue = "true",
+            description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
-                        description = "Compact output (no empty line separating messages)")
+    @CommandLine.Option(
+            names = {"--compact"},
+            defaultValue = "true",
+            description = "Compact output (no empty line separating messages)")
     boolean compact = true;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @CommandLine.Option(
+            names = {"--short-uri"},
+            description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @CommandLine.Option(
+            names = {"--wide-uri"},
+            description = "List endpoint URI in full details")
     boolean wideUri;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @CommandLine.Option(
+            names = {"--mask"},
+            description =
+                    "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @CommandLine.Option(
+            names = {"--pretty"},
+            description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--output" }, description = "Output format (text or json)")
+    @CommandLine.Option(
+            names = {"--output"},
+            description = "Output format (text or json)")
     private String output;
 
     private volatile long pid;
@@ -414,21 +463,42 @@ public class CamelReceiveAction extends ActionBaseCommand {
         rows.sort(this::sortStatusRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                    new Column().header("STATUS").with(this::getStatus),
-                    new Column().header("TOTAL").with(r -> r.enabled ? "" + r.counter : ""),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
-                            .with(this::getMessageAgo),
-                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getEndpointUri),
-                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.uri))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("AGE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.age),
+                                    new Column().header("STATUS").with(this::getStatus),
+                                    new Column().header("TOTAL").with(r -> r.enabled ? "" + r.counter : ""),
+                                    new Column()
+                                            .header("SINCE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getMessageAgo),
+                                    new Column()
+                                            .header("ENDPOINT")
+                                            .visible(!wideUri)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(this::getEndpointUri),
+                                    new Column()
+                                            .header("ENDPOINT")
+                                            .visible(wideUri)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.uri))));
         }
 
         return 0;
@@ -473,7 +543,12 @@ public class CamelReceiveAction extends ActionBaseCommand {
         if (!pids.isEmpty()) {
             // read existing received files (skip by tail/since)
             if (find != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                findAnsi = Ansi.ansi()
+                        .fg(Ansi.Color.BLACK)
+                        .bg(Ansi.Color.YELLOW)
+                        .a("$0")
+                        .reset()
+                        .toString();
                 for (int i = 0; i < find.length; i++) {
                     String f = find[i];
                     f = Pattern.quote(f);
@@ -481,7 +556,12 @@ public class CamelReceiveAction extends ActionBaseCommand {
                 }
             }
             if (grep != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                findAnsi = Ansi.ansi()
+                        .fg(Ansi.Color.BLACK)
+                        .bg(Ansi.Color.YELLOW)
+                        .a("$0")
+                        .reset()
+                        .toString();
                 for (int i = 0; i < grep.length; i++) {
                     String f = grep[i];
                     f = Pattern.quote(f);
@@ -509,10 +589,12 @@ public class CamelReceiveAction extends ActionBaseCommand {
         if (follow) {
             boolean waitMessage = true;
             final AtomicBoolean running = new AtomicBoolean(true);
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
+            Thread t = new Thread(
+                    () -> {
+                        waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
+                        waitUserTask.run();
+                    },
+                    "WaitForUser");
             t.start();
             boolean more = true;
             boolean init = true;
@@ -586,36 +668,34 @@ public class CamelReceiveAction extends ActionBaseCommand {
         } else {
             pids = List.of(pid);
         }
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Pid row = new Pid();
-                        row.pid = Long.toString(ph.pid());
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        int len = row.name.length();
-                        if (len < NAME_MIN_WIDTH) {
-                            len = NAME_MIN_WIDTH;
-                        }
-                        if (len > NAME_MAX_WIDTH) {
-                            len = NAME_MAX_WIDTH;
-                        }
-                        if (len > nameMaxWidth) {
-                            nameMaxWidth = len;
-                        }
-                        if (!rows.containsKey(ph.pid())) {
-                            rows.put(ph.pid(), row);
-                        }
-                    }
-                });
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                Pid row = new Pid();
+                row.pid = Long.toString(ph.pid());
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                int len = row.name.length();
+                if (len < NAME_MIN_WIDTH) {
+                    len = NAME_MIN_WIDTH;
+                }
+                if (len > NAME_MAX_WIDTH) {
+                    len = NAME_MAX_WIDTH;
+                }
+                if (len > nameMaxWidth) {
+                    nameMaxWidth = len;
+                }
+                if (!rows.containsKey(ph.pid())) {
+                    rows.put(ph.pid(), row);
+                }
+            }
+        });
 
         // remove pids that are no long active from the rows
         Set<Long> remove = new HashSet<>();
@@ -934,7 +1014,6 @@ public class CamelReceiveAction extends ActionBaseCommand {
         Row(Pid parent) {
             this.parent = parent;
         }
-
     }
 
     private static class StatusRow implements Cloneable {
@@ -956,5 +1035,4 @@ public class CamelReceiveAction extends ActionBaseCommand {
             }
         }
     }
-
 }

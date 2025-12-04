@@ -31,7 +31,8 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -51,7 +52,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: my-topic
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -63,7 +66,8 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -84,7 +88,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       namespace: my-namespace
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -92,14 +98,14 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer-source", "kafka:topic:my-topic");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.brokers=my-cluster-kafka-bootstrap:9092",
+            "source.message=Hello", "sink.brokers=my-cluster-kafka-bootstrap:9092",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -119,7 +125,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: my-topic
                     properties:
                       brokers: "my-cluster-kafka-bootstrap:9092"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -127,13 +135,14 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer-source", "kafka:topic:my-topic?brokers=my-cluster-kafka-bootstrap:9092");
 
         command.properties = new String[] {
-                "source.message=Hello",
+            "source.message=Hello",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -153,7 +162,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: my-topic
                     properties:
                       brokers: "my-cluster-kafka-bootstrap:9092"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -162,7 +173,8 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -182,7 +194,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -194,7 +208,8 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -215,7 +230,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -223,14 +240,14 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         Bind command = createCommand("kafka:topic:my-topic", "log-sink");
 
         command.properties = new String[] {
-                "source.brokers=my-cluster-kafka-bootstrap:9092",
-                "sink.showHeaders=true",
+            "source.brokers=my-cluster-kafka-bootstrap:9092", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -250,7 +267,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -258,13 +277,14 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
         Bind command = createCommand("kafka:topic:my-topic?brokers=my-cluster-kafka-bootstrap:9092", "log-sink");
 
         command.properties = new String[] {
-                "sink.showHeaders=true",
+            "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -284,7 +304,9 @@ class BindStrimziKafkaTopicTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     private Bind createCommand(String source, String sink) {

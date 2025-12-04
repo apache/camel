@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.lang.reflect.Array;
@@ -146,15 +147,12 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 // also collect argument names for all methods, and detect clashes here
                 final Class<?> previousType = tmpValidArguments.get(argName);
                 if (previousType != null && previousType != argType) {
-                    throw new IllegalArgumentException(
-                            String.format(
-                                    "Argument %s has ambiguous types (%s, %s) across methods!",
-                                    name, previousType, argType));
+                    throw new IllegalArgumentException(String.format(
+                            "Argument %s has ambiguous types (%s, %s) across methods!", name, previousType, argType));
                 } else if (previousType == null) {
                     tmpValidArguments.put(argName, argType);
                 }
             }
-
         }
 
         // validate nullableArguments
@@ -256,8 +254,10 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         } else {
             final List<ApiMethod> filteredSet = filterMethods(methods, MatchType.SUBSET, argNames);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found {} filtered methods for {}",
-                        filteredSet.size(), name + argNames.toString().replace('[', '(').replace(']', ')'));
+                LOG.debug(
+                        "Found {} filtered methods for {}",
+                        filteredSet.size(),
+                        name + argNames.toString().replace('[', '(').replace(']', ')'));
             }
             return filteredSet;
         }
@@ -288,7 +288,8 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      *                   For SUPER_SET match, if methods with exact match are found, methods that take a subset are
      *                   ignored
      */
-    public List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType, Collection<String> argNames) {
+    public List<ApiMethod> filterMethods(
+            List<? extends ApiMethod> methods, MatchType matchType, Collection<String> argNames) {
         // list of methods that have all args in the given names
         List<ApiMethod> result = new ArrayList<>();
         List<ApiMethod> extraArgs = null;
@@ -343,7 +344,8 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                         }
                     } else if (result.isEmpty() && extraArgs == null) {
                         // avoid looking for nullable args by checking for empty result and extraArgs
-                        if (withNullableArgsList != null && new HashSet<>(withNullableArgsList).containsAll(methodArgs)) {
+                        if (withNullableArgsList != null
+                                && new HashSet<>(withNullableArgsList).containsAll(methodArgs)) {
                             if (nullArgs == null) {
                                 nullArgs = new ArrayList<>();
                             }
@@ -354,11 +356,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
             }
         }
 
-        List<ApiMethod> methodList = result.isEmpty()
-                ? extraArgs == null
-                        ? nullArgs
-                        : extraArgs
-                : result;
+        List<ApiMethod> methodList = result.isEmpty() ? extraArgs == null ? nullArgs : extraArgs : result;
 
         // preference order is exact match, matches with extra args, matches with null args
         return methodList != null ? Collections.unmodifiableList(methodList) : Collections.emptyList();
@@ -393,7 +391,6 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @param  argNames   available arguments
      * @return            Set of missing argument names
      */
-
     public Set<String> getMissingProperties(String methodName, Set<String> argNames) {
         final List<Object> argsWithTypes = getArguments(methodName);
         final Set<String> missingArgs = new HashSet<>();
@@ -503,7 +500,8 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     }
                     value = array;
                 } else if (value.getClass().isArray()
-                        && type.getComponentType().isAssignableFrom(value.getClass().getComponentType())) {
+                        && type.getComponentType()
+                                .isAssignableFrom(value.getClass().getComponentType())) {
                     // convert derived array to super array if needed
                     if (type.getComponentType() != value.getClass().getComponentType()) {
                         final int size = Array.getLength(value);
@@ -543,5 +541,4 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         SUBSET,
         SUPER_SET
     }
-
 }

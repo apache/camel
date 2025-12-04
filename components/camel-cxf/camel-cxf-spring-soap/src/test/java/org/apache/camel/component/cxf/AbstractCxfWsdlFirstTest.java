@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,10 +41,6 @@ import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     static int port1 = CXFTestSupport.getPort1();
@@ -64,10 +65,11 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
-                                                                + "/PersonService/");
+        ((BindingProvider) client)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/PersonService/");
 
         Holder<String> personId = new Holder<>();
         personId.value = "hello";
@@ -90,9 +92,10 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
             fail("We expect to get the WebSerivceException here");
         } catch (WebServiceException ex) {
             // Caught expected WebServiceException here
-            assertTrue(ex.getMessage().indexOf("MyStringType") > 0
-                    || ex.getMessage().indexOf("Could not parse the XML stream") != -1
-                    || ex.getMessage().indexOf("the required maximum is 30") > 0,
+            assertTrue(
+                    ex.getMessage().indexOf("MyStringType") > 0
+                            || ex.getMessage().indexOf("Could not parse the XML stream") != -1
+                            || ex.getMessage().indexOf("the required maximum is 30") > 0,
                     "Should get the xml vaildate error! " + ex.getMessage());
         }
 

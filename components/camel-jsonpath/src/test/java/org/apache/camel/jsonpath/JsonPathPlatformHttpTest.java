@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -26,8 +29,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JsonPathPlatformHttpTest extends CamelTestSupport {
 
@@ -46,7 +47,8 @@ class JsonPathPlatformHttpTest extends CamelTestSupport {
                 .post("/getTemperature")
                 .then()
                 .statusCode(200)
-                .extract().asString();
+                .extract()
+                .asString();
 
         assertEquals(RESULT, result);
     }
@@ -68,7 +70,6 @@ class JsonPathPlatformHttpTest extends CamelTestSupport {
         context.addService(new VertxPlatformHttpServer(conf));
 
         return context;
-
     }
 
     @Override
@@ -83,10 +84,15 @@ class JsonPathPlatformHttpTest extends CamelTestSupport {
             }
 
             private ProcessorDefinition<?> addRoute(String from) {
-                return from(from).choice().when().jsonpath(JSON_PATH).setBody(simple("HOT"))
-                        .otherwise().setBody(constant("WARM")).end();
+                return from(from)
+                        .choice()
+                        .when()
+                        .jsonpath(JSON_PATH)
+                        .setBody(simple("HOT"))
+                        .otherwise()
+                        .setBody(constant("WARM"))
+                        .end();
             }
         };
     }
-
 }

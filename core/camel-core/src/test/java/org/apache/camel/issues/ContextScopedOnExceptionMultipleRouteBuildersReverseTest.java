@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,21 +24,23 @@ public class ContextScopedOnExceptionMultipleRouteBuildersReverseTest
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            @Override
-            public void configure() {
-                onException(IllegalArgumentException.class).handled(true).to("mock:handle-bar");
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException(IllegalArgumentException.class).handled(true).to("mock:handle-bar");
 
-                from("direct:bar").to("mock:bar").throwException(new IllegalArgumentException("Damn"));
-            }
-        }, new RouteBuilder() {
-            @Override
-            public void configure() {
-                onException(Exception.class).handled(true).to("mock:handle-foo");
+                    from("direct:bar").to("mock:bar").throwException(new IllegalArgumentException("Damn"));
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException(Exception.class).handled(true).to("mock:handle-foo");
 
-                from("direct:foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
+                    from("direct:foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
+                }
             }
-        } };
+        };
     }
-
 }

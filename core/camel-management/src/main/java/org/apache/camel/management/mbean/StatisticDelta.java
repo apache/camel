@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -50,5 +51,4 @@ public class StatisticDelta extends Statistic {
         value.set(0);
         lastValue.set(0);
     }
-
 }

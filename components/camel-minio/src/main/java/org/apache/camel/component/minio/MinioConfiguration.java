@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio;
 
 import java.time.ZonedDateTime;
@@ -37,94 +38,134 @@ public class MinioConfiguration implements Cloneable {
 
     @UriParam(label = "common")
     private String endpoint;
+
     @UriParam(label = "common")
     private Integer proxyPort;
+
     @UriParam(label = "common")
     private boolean secure;
+
     @UriParam(label = "common")
     private String region;
+
     @UriParam(label = "advanced")
     private OkHttpClient customHttpClient;
 
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
 
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoCreateBucket = true;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean objectLock;
+
     @UriParam(label = "common")
     private String policy;
+
     @UriParam(label = "security")
     private ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey;
+
     @UriParam(label = "security")
     private ServerSideEncryption serverSideEncryption;
+
     @UriParam(label = "common")
     @Metadata(autowired = true)
     private MinioClient minioClient;
 
     @UriParam(label = "consumer", defaultValue = "10")
     private int maxMessagesPerPoll = 10;
+
     @UriParam(label = "consumer", defaultValue = "60")
     private int maxConnections = 50 + maxMessagesPerPoll;
+
     @UriParam(label = "consumer")
     private String objectName;
+
     @UriParam(label = "consumer")
     private String delimiter;
+
     @UriParam(label = "consumer")
     private boolean includeUserMetadata;
+
     @UriParam(label = "consumer")
     private boolean includeVersions;
+
     @UriParam(label = "consumer")
     private String prefix;
+
     @UriParam(label = "consumer")
     private boolean recursive;
+
     @UriParam(label = "consumer")
     private String startAfter;
+
     @UriParam(label = "consumer")
     private boolean useVersion1;
+
     @UriParam(label = "consumer")
     private boolean includeFolders;
+
     @UriParam(label = "consumer")
     private long offset;
+
     @UriParam(label = "consumer")
     private long length;
+
     @UriParam(label = "consumer")
     private String versionId;
+
     @UriParam(label = "consumer")
     private String matchETag;
+
     @UriParam(label = "consumer")
     private String notMatchETag;
+
     @UriParam(label = "consumer")
     private ZonedDateTime modifiedSince;
+
     @UriParam(label = "consumer")
     private ZonedDateTime unModifiedSince;
+
     @UriParam(label = "consumer")
     private String destinationBucketName;
+
     @UriParam(label = "consumer")
     private String destinationObjectName;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean moveAfterRead;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean bypassGovernanceMode;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean autoCloseBody = true;
 
     @UriParam(label = "producer")
     private String keyName;
+
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
+
     @UriParam(label = "producer")
     private String storageClass;
-    @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink,createUploadLink")
+
+    @UriParam(
+            label = "producer",
+            enums =
+                    "copyObject,listObjects,deleteObject,deleteObjects,deleteBucket,listBuckets,getObject,getObjectRange,createDownloadLink,createUploadLink")
     private MinioOperations operation;
+
     @UriParam(label = "producer")
     private boolean pojoRequest;
 

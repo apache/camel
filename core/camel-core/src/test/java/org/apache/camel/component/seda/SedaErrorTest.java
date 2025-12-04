@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,7 +31,9 @@ public class SedaErrorTest extends ContextTestSupport {
         mockDLC.expectedMessageCount(1);
 
         for (int i = 0; i < 3; i++) {
-            template.send("direct:start", ExchangeBuilder.anExchange(context).withBody("msg" + i).build());
+            template.send(
+                    "direct:start",
+                    ExchangeBuilder.anExchange(context).withBody("msg" + i).build());
         }
 
         assertMockEndpointsSatisfied();
@@ -42,9 +45,11 @@ public class SedaErrorTest extends ContextTestSupport {
             @Override
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dlc"));
-                from("direct:start").log("start: ${body}").to("seda:seda1?size=2&blockWhenFull=false").log("after: ${body}");
+                from("direct:start")
+                        .log("start: ${body}")
+                        .to("seda:seda1?size=2&blockWhenFull=false")
+                        .log("after: ${body}");
             }
         };
-
     }
 }

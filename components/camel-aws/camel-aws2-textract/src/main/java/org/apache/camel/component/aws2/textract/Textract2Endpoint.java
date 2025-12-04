@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.textract;
 
 import org.apache.camel.Category;
@@ -32,8 +33,14 @@ import software.amazon.awssdk.services.textract.TextractClient;
 /**
  * Extract text and data from documents using AWS Textract and AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "4.15.0", scheme = "aws2-textract", title = "AWS Textract", syntax = "aws2-textract:label",
-             producerOnly = true, category = { Category.CLOUD, Category.DOCUMENT }, headersClass = Textract2Constants.class)
+@UriEndpoint(
+        firstVersion = "4.15.0",
+        scheme = "aws2-textract",
+        title = "AWS Textract",
+        syntax = "aws2-textract:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.DOCUMENT},
+        headersClass = Textract2Constants.class)
 public class Textract2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private TextractClient textractClient;
@@ -65,10 +72,9 @@ public class Textract2Endpoint extends ScheduledPollEndpoint implements Endpoint
     public void doStart() throws Exception {
         super.doStart();
 
-        textractClient
-                = configuration.getTextractClient() != null
-                        ? configuration.getTextractClient()
-                        : Textract2ClientFactory.getTextractClient(configuration).getTextractClient();
+        textractClient = configuration.getTextractClient() != null
+                ? configuration.getTextractClient()
+                : Textract2ClientFactory.getTextractClient(configuration).getTextractClient();
     }
 
     @Override

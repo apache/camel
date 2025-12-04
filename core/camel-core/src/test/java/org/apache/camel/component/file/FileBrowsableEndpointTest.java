@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -27,18 +32,13 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     private static final String TEST_FILE_NAME_PREFIX = UUID.randomUUID().toString();
 
     @Test
     public void testBrowsableNoFiles() {
-        BrowsableEndpoint browse
-                = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), BrowsableEndpoint.class);
+        BrowsableEndpoint browse = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), BrowsableEndpoint.class);
         assertNotNull(browse);
 
         List<Exchange> list = browse.getExchanges();
@@ -74,8 +74,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "a.txt");
         template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "b.txt");
 
-        FileEndpoint endpoint
-                = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), FileEndpoint.class);
+        FileEndpoint endpoint = context.getEndpoint(fileUri("?initialDelay=0&delay=10"), FileEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
@@ -96,13 +95,13 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
     @Test
     public void testBrowsableThreeFilesRecursive() {
         template.sendBodyAndHeader(fileUri(), "A", Exchange.FILE_NAME, TEST_FILE_NAME_PREFIX + "a.txt");
-        template.sendBodyAndHeader(fileUri(), "B", Exchange.FILE_NAME,
-                "foo" + File.separator + TEST_FILE_NAME_PREFIX + "b.txt");
-        template.sendBodyAndHeader(fileUri(), "C", Exchange.FILE_NAME,
-                "bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt");
+        template.sendBodyAndHeader(
+                fileUri(), "B", Exchange.FILE_NAME, "foo" + File.separator + TEST_FILE_NAME_PREFIX + "b.txt");
+        template.sendBodyAndHeader(
+                fileUri(), "C", Exchange.FILE_NAME, "bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt");
 
-        FileEndpoint endpoint = context.getEndpoint(
-                fileUri("?initialDelay=0&delay=10&recursive=true"), FileEndpoint.class);
+        FileEndpoint endpoint =
+                context.getEndpoint(fileUri("?initialDelay=0&delay=10&recursive=true"), FileEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
@@ -117,9 +116,11 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
 
         // and the files is still there
         assertTrue(Files.exists(testFile(TEST_FILE_NAME_PREFIX + "a.txt")), "File should exist a.txt");
-        assertTrue(Files.exists(testFile("foo" + File.separator + TEST_FILE_NAME_PREFIX + "b.txt")),
+        assertTrue(
+                Files.exists(testFile("foo" + File.separator + TEST_FILE_NAME_PREFIX + "b.txt")),
                 "File should exist foo/b.txt");
-        assertTrue(Files.exists(testFile("bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt")),
+        assertTrue(
+                Files.exists(testFile("bar" + File.separator + TEST_FILE_NAME_PREFIX + "c.txt")),
                 "File should exist bar/c.txt");
     }
 }

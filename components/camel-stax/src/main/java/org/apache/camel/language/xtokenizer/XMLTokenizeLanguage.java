@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
 
 import java.util.Iterator;
@@ -102,5 +103,4 @@ public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
         }
         return answer;
     }
-
 }

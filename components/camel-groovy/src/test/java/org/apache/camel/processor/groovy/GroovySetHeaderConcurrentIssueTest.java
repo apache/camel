@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.groovy;
 
 import java.util.concurrent.ExecutorService;
@@ -79,7 +80,8 @@ public class GroovySetHeaderConcurrentIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setHeader("mySlip").groovy("return \"${body.subOrderName}Endpoint\"")
+                        .setHeader("mySlip")
+                        .groovy("return \"${body.subOrderName}Endpoint\"")
                         .routingSlip(header("mySlip"));
             }
         };

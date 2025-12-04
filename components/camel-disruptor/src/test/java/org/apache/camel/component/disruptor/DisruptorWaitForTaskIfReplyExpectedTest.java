@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -24,8 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
 
     @Test
@@ -34,7 +35,6 @@ public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
         final String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Test
@@ -55,7 +55,6 @@ public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
         // Should return the in message as no reply is expected
         assertEquals("Hello World", out.getMessage().getBody());
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override

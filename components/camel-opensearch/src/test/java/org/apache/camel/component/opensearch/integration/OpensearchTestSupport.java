@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.integration;
 
 import java.io.IOException;
@@ -73,17 +74,17 @@ public abstract class OpensearchTestSupport implements CamelTestSupportHelper, C
 
     @BeforeEach
     public void beforeEach(TestInfo testInfo) throws URISyntaxException {
-        HttpHost host
-                = new HttpHost("http", service.getOpenSearchHost(), service.getPort());
+        HttpHost host = new HttpHost("http", service.getOpenSearchHost(), service.getPort());
         final RestClientBuilder builder = RestClient.builder(host);
         final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(new AuthScope(HttpHost.create(service.getOpenSearchHost())),
-                new UsernamePasswordCredentials(service.getUsername(), service.getPassword().toCharArray()));
-        builder.setHttpClientConfigCallback(
-                httpClientBuilder -> {
-                    httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    return httpClientBuilder;
-                });
+        credentialsProvider.setCredentials(
+                new AuthScope(HttpHost.create(service.getOpenSearchHost())),
+                new UsernamePasswordCredentials(
+                        service.getUsername(), service.getPassword().toCharArray()));
+        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            return httpClientBuilder;
+        });
         restClient = builder.build();
         client = new OpenSearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
 

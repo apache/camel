@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 
@@ -24,28 +27,25 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class KameletBasicTest extends CamelTestSupport {
 
     @Test
     public void canProduceToKamelet() {
         String body = UUID.randomUUID().toString();
 
-        assertThat(
-                fluentTemplate.toF("kamelet:setBody/test?bodyValue=%s", body).request(String.class)).isEqualTo(body);
+        assertThat(fluentTemplate.toF("kamelet:setBody/test?bodyValue=%s", body).request(String.class))
+                .isEqualTo(body);
     }
 
     @Test
     public void canConsumeFromKamelet() {
-        assertThat(
-                consumer.receiveBody("kamelet:tick", Integer.class)).isEqualTo(1);
+        assertThat(consumer.receiveBody("kamelet:tick", Integer.class)).isEqualTo(1);
     }
 
     @Test
     public void kameletCanBeCreatedWhileContextIsStarting() {
-        assertThat(
-                fluentTemplate.to("direct:templateEmbedded").request(String.class)).isEqualTo("embedded");
+        assertThat(fluentTemplate.to("direct:templateEmbedded").request(String.class))
+                .isEqualTo("embedded");
     }
 
     @Test
@@ -53,12 +53,11 @@ public class KameletBasicTest extends CamelTestSupport {
         String body = UUID.randomUUID().toString();
 
         RouteBuilder.addRoutes(context, b -> {
-            b.from("direct:templateAfter")
-                    .toF("kamelet:setBody/test?bodyValue=%s", body);
+            b.from("direct:templateAfter").toF("kamelet:setBody/test?bodyValue=%s", body);
         });
 
-        assertThat(
-                fluentTemplate.to("direct:templateAfter").request(String.class)).isEqualTo(body);
+        assertThat(fluentTemplate.to("direct:templateAfter").request(String.class))
+                .isEqualTo(body);
     }
 
     // **********************************************
@@ -75,15 +74,16 @@ public class KameletBasicTest extends CamelTestSupport {
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")
                         .from("kamelet:source")
-                        .setBody().constant("{{bodyValue}}");
+                        .setBody()
+                        .constant("{{bodyValue}}");
 
                 routeTemplate("tick")
                         .from("timer:{{routeId}}?repeatCount=1&delay=-1&includeMetadata=true")
-                        .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .exchangeProperty(Exchange.TIMER_COUNTER)
                         .to("kamelet:sink");
 
-                from("direct:templateEmbedded")
-                        .toF("kamelet:setBody/embedded?bodyValue=embedded");
+                from("direct:templateEmbedded").toF("kamelet:setBody/embedded?bodyValue=embedded");
             }
         };
     }

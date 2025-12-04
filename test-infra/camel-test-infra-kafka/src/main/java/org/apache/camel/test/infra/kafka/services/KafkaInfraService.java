@@ -32,5 +32,4 @@ public interface KafkaInfraService extends InfrastructureService {
     String getBootstrapServers();
 
     String brokers();
-
 }

@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,17 +45,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
-import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
-import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @EndpointInject("mock:test")
@@ -59,7 +60,10 @@ public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSuppor
         template.sendBodyAndHeader("direct:findOneAndReplace", replacement, CRITERIA, filter);
 
         mock.assertIsSatisfied();
-        assertEquals(0, testCollection.countDocuments(), "Upsert was set to false, no new document should have been created.");
+        assertEquals(
+                0,
+                testCollection.countDocuments(),
+                "Upsert was set to false, no new document should have been created.");
     }
 
     @Test
@@ -78,7 +82,9 @@ public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSuppor
 
         template.sendBodyAndHeaders("direct:findOneAndReplace", replacement, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Upsert was set to true, a new document should have been created.");
     }
 
@@ -100,7 +106,9 @@ public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSuppor
 
         template.sendBodyAndHeaders("direct:findOneAndReplace", replacement, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Upsert was set to true, a new document should have been created.");
     }
 
@@ -125,13 +133,21 @@ public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSuppor
 
         template.sendBodyAndHeaders("direct:findOneAndReplace", replacement, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Dirac")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Dirac")),
                 "Update should have happened, Dirac should be present.");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Serre")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Serre")),
                 "Serre should still be present as his ID is higher.");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Connes")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Connes")),
                 "Connes should have been replaced by Dirac.");
-        assertEquals(1, testCollection.countDocuments(new Document("fixedField", "fixedValue")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("fixedField", "fixedValue")),
                 "Connes should have been replaced by Dirac which has no fixedField");
     }
 
@@ -183,13 +199,21 @@ public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSuppor
 
         template.sendBodyAndHeaders("direct:findOneAndReplace", replacement, headers);
         mock.assertIsSatisfied();
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Dirac")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Dirac")),
                 "Update should have happened, Dirac should be present.");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Serre")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Serre")),
                 "Serre should still be present as his ID is higher.");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Connes")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Connes")),
                 "Connes should have been replaced by Dirac.");
-        assertEquals(1, testCollection.countDocuments(new Document("fixedField", "fixedValue")),
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("fixedField", "fixedValue")),
                 "Connes should have been replaced by Dirac which has no fixedField");
     }
 
@@ -197,7 +221,8 @@ public class MongoDbFindOneAndReplaceOperationIT extends AbstractMongoDbITSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("direct:findOneAndReplace")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneAndReplace")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneAndReplace")
                         .to(mock);
             }
         };

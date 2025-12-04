@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack.io;
 
 final class LumberjackConstants {
@@ -33,12 +34,12 @@ final class LumberjackConstants {
 
     static final int FRAME_JSON_HEADER_LENGTH = INT_LENGTH + INT_LENGTH; // sequence number(int) + payload length(int)
 
-    static final int FRAME_DATA_HEADER_LENGTH = INT_LENGTH + INT_LENGTH; // sequence number(int) + key/value pair count(int)
+    static final int FRAME_DATA_HEADER_LENGTH =
+            INT_LENGTH + INT_LENGTH; // sequence number(int) + key/value pair count(int)
 
     static final int FRAME_WINDOW_HEADER_LENGTH = INT_LENGTH; // window size(int)
 
     static final int FRAME_COMPRESS_HEADER_LENGTH = INT_LENGTH; // compressed payload length(int)
 
-    private LumberjackConstants() {
-    }
+    private LumberjackConstants() {}
 }

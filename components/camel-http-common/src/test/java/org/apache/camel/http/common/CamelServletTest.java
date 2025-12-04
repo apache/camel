@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,9 +31,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CamelServletTest {
 
@@ -62,9 +63,8 @@ public class CamelServletTest {
         HttpConsumer httpConsumer2 = new HttpConsumer(httpCommonEndpoint, null);
 
         camelServlet.connect(httpConsumer1);
-        IllegalStateException illegalStateException
-                = assertThrows(IllegalStateException.class, () -> camelServlet.connect(httpConsumer2));
-        assertEquals("Duplicate request path for rest:post://camel.apache.org",
-                illegalStateException.getMessage());
+        IllegalStateException illegalStateException =
+                assertThrows(IllegalStateException.class, () -> camelServlet.connect(httpConsumer2));
+        assertEquals("Duplicate request path for rest:post://camel.apache.org", illegalStateException.getMessage());
     }
 }

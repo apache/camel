@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.infinispan.AdvancedCache;
 import org.infinispan.Cache;
@@ -22,10 +27,6 @@ import org.infinispan.commons.api.BasicCache;
 import org.infinispan.context.Flag;
 import org.jgroups.util.UUID;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanEmbeddedConfigurationTest {
     @Test
@@ -45,7 +46,7 @@ public class InfinispanEmbeddedConfigurationTest {
             assertNull(cache.put(key, "val1"));
 
             // TODO: as we are testing a local cache,
-            //assertNull(cache.put(key, "val2"));
+            // assertNull(cache.put(key, "val2"));
         }
     }
 }

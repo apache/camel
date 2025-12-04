@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.server;
 
 import java.util.List;
@@ -30,8 +31,11 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
  */
 public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStreamObserver {
 
-    public GrpcRequestPropagationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
-                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    public GrpcRequestPropagationStreamObserver(
+            GrpcEndpoint endpoint,
+            GrpcConsumer consumer,
+            StreamObserver<Object> responseObserver,
+            Map<String, Object> headers) {
         super(endpoint, consumer, responseObserver, headers);
     }
 
@@ -58,7 +62,6 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             responseObserver.onError(e);
-
         }
     }
 

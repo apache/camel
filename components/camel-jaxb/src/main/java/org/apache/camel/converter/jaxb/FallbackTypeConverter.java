@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import java.io.Closeable;
@@ -118,8 +119,8 @@ public class FallbackTypeConverter {
                     return marshall(type, exchange, value, converter, null, prettyPrint);
                 }
                 if (objectFactory) {
-                    Method objectFactoryMethod
-                            = JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
+                    Method objectFactoryMethod =
+                            JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
                     if (objectFactoryMethod != null) {
                         return marshall(type, exchange, value, converter, objectFactoryMethod, prettyPrint);
                     }
@@ -159,7 +160,8 @@ public class FallbackTypeConverter {
 
     protected <T> boolean isJaxbType(Class<T> type, Exchange exchange, boolean objectFactory) {
         if (objectFactory) {
-            return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), type) != null;
+            return hasXmlRootElement(type)
+                    || JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), type) != null;
         } else {
             return hasXmlRootElement(type);
         }
@@ -176,7 +178,8 @@ public class FallbackTypeConverter {
     /**
      * Lets try parse via JAXB
      */
-    protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter) throws Exception {
+    protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter)
+            throws Exception {
         LOG.trace("Unmarshal to {} with value {}", type, value);
 
         if (value == null) {
@@ -202,8 +205,10 @@ public class FallbackTypeConverter {
                         Object unmarshalled = unmarshal(unmarshaller, exchange, xmlReader);
                         return castJaxbType(unmarshalled, type);
                     } catch (Exception ex) {
-                        // There is some issue on the StaxStreamReader to CXFPayload message body with different namespaces
-                        LOG.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex.getMessage(), ex);
+                        // There is some issue on the StaxStreamReader to CXFPayload message body with different
+                        // namespaces
+                        LOG.debug(
+                                "Cannot use StaxStreamReader to unmarshal the message, due to {}", ex.getMessage(), ex);
                     }
                 }
             }
@@ -236,8 +241,12 @@ public class FallbackTypeConverter {
     }
 
     protected <T> T marshall(
-            Class<T> type, Exchange exchange, Object value, TypeConverter converter,
-            Method objectFactoryMethod, boolean prettyPrint)
+            Class<T> type,
+            Exchange exchange,
+            Object value,
+            TypeConverter converter,
+            Method objectFactoryMethod,
+            boolean prettyPrint)
             throws JAXBException, FactoryConfigurationError, TypeConversionException {
         LOG.trace("Marshal from value {} to type {}", value, type);
 
@@ -253,7 +262,8 @@ public class FallbackTypeConverter {
             if (prettyPrint) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
-            String charset = exchange != null ? exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class) : null;
+            String charset =
+                    exchange != null ? exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class) : null;
             if (charset != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
             }
@@ -265,8 +275,11 @@ public class FallbackTypeConverter {
                         toMarshall = objectFactoryMethod.invoke(instance, value);
                     }
                 } catch (Exception e) {
-                    LOG.debug("Unable to create JAXBElement object for type {} due to {}", value.getClass(),
-                            e.getMessage(), e);
+                    LOG.debug(
+                            "Unable to create JAXBElement object for type {} due to {}",
+                            value.getClass(),
+                            e.getMessage(),
+                            e);
                 }
             }
             if (needFiltering(exchange)) {
@@ -349,5 +362,4 @@ public class FallbackTypeConverter {
     private static <T> boolean isNotStreamCacheType(Class<T> type) {
         return !StreamCache.class.isAssignableFrom(type);
     }
-
 }

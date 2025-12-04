@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
 import io.nats.client.Connection;
-import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
 import io.nats.client.api.ConsumerConfiguration;
@@ -39,68 +39,100 @@ public class NatsConfiguration {
     @UriPath
     @Metadata(required = true)
     private String topic;
+
     @UriParam(label = "common")
     private String servers;
+
     @UriParam(label = "advanced")
     private Connection connection;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean reconnect = true;
+
     @UriParam(label = "common", defaultValue = "2000")
     private int reconnectTimeWait = 2000;
+
     @UriParam(label = "common")
     private boolean pedantic;
+
     @UriParam
     private boolean verbose;
+
     @UriParam(defaultValue = "60")
     private int maxReconnectAttempts = Options.DEFAULT_MAX_RECONNECT;
+
     @UriParam(defaultValue = "120000")
     private int pingInterval = 120000;
+
     @UriParam(label = "common", defaultValue = "2000")
     private int connectionTimeout = 2000;
+
     @UriParam(label = "common", defaultValue = "2")
     private int maxPingsOut = Options.DEFAULT_MAX_PINGS_OUT;
+
     @UriParam(label = "common", defaultValue = "5000")
     private int requestCleanupInterval = 5000;
+
     @UriParam(label = "producer", defaultValue = "20000")
     private long requestTimeout = 20000L;
+
     @UriParam(label = "producer")
     private String replySubject;
+
     @UriParam
     private boolean noRandomizeServers;
+
     @UriParam
     private boolean noEcho;
+
     @UriParam(label = "consumer")
     private String queueName;
+
     @UriParam(label = "consumer")
     private boolean replyToDisabled;
+
     @UriParam(label = "consumer")
     private String maxMessages;
+
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean flushConnection = true;
+
     @UriParam(label = "common", defaultValue = "1000")
     private int flushTimeout = 1000;
+
     @UriParam(label = "security")
     private boolean secure;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "security")
     String credentialsFilePath;
+
     @UriParam(label = "advanced")
     private boolean traceConnection;
+
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean jetstreamEnabled = false;
+
     @UriParam(label = "common")
     private String jetstreamName;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean jetstreamAsync = true;
+
     @UriParam(label = "advanced")
     private ConsumerConfiguration consumerConfiguration;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean pullSubscription = true;
+
     @UriParam(label = "advanced")
     private String durableName;
 

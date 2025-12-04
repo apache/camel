@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import java.util.List;
@@ -23,13 +24,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Component {
 
     private String type;
+
     @JsonProperty("sub_type")
     private String subType;
+
     private List<Parameter> parameters;
     private String index;
 
-    public Component() {
-    }
+    public Component() {}
 
     public String getType() {
         return type;
@@ -62,5 +64,4 @@ public class Component {
     public void setIndex(String index) {
         this.index = index;
     }
-
 }

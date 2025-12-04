@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import java.io.File;
@@ -32,8 +33,7 @@ public final class CamelJmsTestHelper {
 
     private static AtomicInteger counter = new AtomicInteger();
 
-    private CamelJmsTestHelper() {
-    }
+    private CamelJmsTestHelper() {}
 
     public static ConnectionFactory createConnectionFactory() {
         return createConnectionFactory(null);
@@ -69,7 +69,8 @@ public final class CamelJmsTestHelper {
         // remove dir so its empty on startup
         FileUtil.removeDir(new File(dir));
 
-        String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
+        String url =
+                "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
         if (options != null) {
             url = url + "&" + options;
         }

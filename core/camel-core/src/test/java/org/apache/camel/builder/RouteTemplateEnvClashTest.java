@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,9 @@ public class RouteTemplateEnvClashTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo-service-host").templateParameter("foo-service-port", "4444")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo-service-host")
+                        .templateParameter("foo-service-port", "4444")
                         .from("direct:foo")
                         .to("mock:{{foo-service-host}}:{{foo-service-port}}");
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty12;
 
 import java.net.URI;
@@ -31,14 +32,21 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * Expose HTTP endpoints using Jetty 12.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "jetty", extendsScheme = "http", title = "Jetty", syntax = "jetty:httpUri",
-             category = { Category.HTTP }, consumerOnly = true, lenientProperties = true,
-             headersClass = JettyHttpConstants.class)
-@Metadata(excludeProperties = "authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
-                              + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain",
-          annotations = {
-                  "protocol=http"
-          })
+@UriEndpoint(
+        firstVersion = "1.2.0",
+        scheme = "jetty",
+        extendsScheme = "http",
+        title = "Jetty",
+        syntax = "jetty:httpUri",
+        category = {Category.HTTP},
+        consumerOnly = true,
+        lenientProperties = true,
+        headersClass = JettyHttpConstants.class)
+@Metadata(
+        excludeProperties =
+                "authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
+                        + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain",
+        annotations = {"protocol=http"})
 public class JettyHttpEndpoint12 extends JettyHttpEndpoint implements AsyncEndpoint {
 
     private HttpBinding binding;
@@ -72,5 +80,4 @@ public class JettyHttpEndpoint12 extends JettyHttpEndpoint implements AsyncEndpo
         super.setHttpBinding(binding);
         this.binding = binding;
     }
-
 }

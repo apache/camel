@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import jakarta.mail.Folder;
@@ -87,7 +88,8 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(jones.uriPrefix(Protocol.imap) + "&initialDelay=100&delay=100&maxMessagesPerPoll=3"
-                     + "&delete=true").to("mock:result");
+                                + "&delete=true")
+                        .to("mock:result");
             }
         };
     }

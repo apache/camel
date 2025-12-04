@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import io.netty.channel.Channel;
@@ -37,5 +38,4 @@ public abstract class ClientInitializerFactory extends ChannelInitializer<Channe
      * @return          the {@link ClientInitializerFactory} associated to the given producer.
      */
     public abstract ClientInitializerFactory createPipelineFactory(NettyProducer producer);
-
 }

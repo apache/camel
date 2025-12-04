@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 import java.net.URLStreamHandler;
@@ -150,8 +151,8 @@ public class SplunkConnectionFactory {
             // (wls i'm looking at you)
             if (isUseSunHttpsHandler()) {
                 String sunHandlerClassName = "sun.net.www.protocol.https.Handler";
-                Class<URLStreamHandler> clazz
-                        = camelContext.getClassResolver().resolveClass(sunHandlerClassName, URLStreamHandler.class);
+                Class<URLStreamHandler> clazz =
+                        camelContext.getClassResolver().resolveClass(sunHandlerClassName, URLStreamHandler.class);
                 if (clazz != null) {
                     URLStreamHandler handler = camelContext.getInjector().newInstance(clazz);
                     args.setHTTPSHandler(handler);
@@ -161,14 +162,16 @@ public class SplunkConnectionFactory {
                 }
             }
 
-            ExecutorService executor
-                    = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "DefaultSplunkConnectionFactory");
+            ExecutorService executor = camelContext
+                    .getExecutorServiceManager()
+                    .newSingleThreadExecutor(this, "DefaultSplunkConnectionFactory");
 
             Future<Service> future = executor.submit(new Callable<Service>() {
                 public Service call() throws Exception {
                     if (Service.DEFAULT_SCHEME.equals(getScheme())) {
-                        LOG.debug("Https in use. Setting SSL protocol to {} and sertificate validation to %s", getSslProtocol(),
-                                isValidateCertificates());
+                        LOG.debug(
+                                "Https in use. Setting SSL protocol to {} and sertificate validation to %s",
+                                getSslProtocol(), isValidateCertificates());
                         HttpService.setValidateCertificates(isValidateCertificates());
                         HttpService.setSslSecurityProtocol(getSslProtocol());
                     }
@@ -187,10 +190,12 @@ public class SplunkConnectionFactory {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(
-                        String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()), e);
+                        String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()),
+                        e);
             } catch (Exception e) {
                 throw new RuntimeException(
-                        String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()), e);
+                        String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()),
+                        e);
             } finally {
                 camelContext.getExecutorServiceManager().shutdownNow(executor);
             }

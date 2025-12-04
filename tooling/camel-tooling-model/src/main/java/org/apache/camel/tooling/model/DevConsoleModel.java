@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 public class DevConsoleModel extends ArtifactModel<BaseOptionModel> {
 
     protected String group;
 
-    public DevConsoleModel() {
-    }
+    public DevConsoleModel() {}
 
     public String getGroup() {
         return group;
@@ -35,5 +35,4 @@ public class DevConsoleModel extends ArtifactModel<BaseOptionModel> {
     public Kind getKind() {
         return Kind.console;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import io.vertx.core.http.HttpMethod;
@@ -25,8 +26,7 @@ import org.apache.camel.Converter;
 @Converter(generateLoader = true)
 public final class VertxHttpMethodConverter {
 
-    private VertxHttpMethodConverter() {
-    }
+    private VertxHttpMethodConverter() {}
 
     @Converter
     public static HttpMethod toHttpMethod(String string) {

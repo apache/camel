@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class EndpointDevConsole extends AbstractDevConsole {
             stats = runtimeReg.getEndpointStatistics();
         }
         EndpointRegistry reg = getCamelContext().getEndpointRegistry();
-        sb.append(
-                String.format("    Endpoints: %s (static: %s dynamic: %s)\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
+        sb.append(String.format(
+                "    Endpoints: %s (static: %s dynamic: %s)\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
         sb.append(String.format("    Maximum Cache Size: %s\n", reg.getMaximumCacheSize()));
         Collection<Endpoint> col = reg.getReadOnlyValues();
         if (!col.isEmpty()) {
@@ -63,8 +64,9 @@ public class EndpointDevConsole extends AbstractDevConsole {
                 var stat = findStats(stats, e.getEndpointUri());
                 if (stat.isPresent()) {
                     var st = stat.get();
-                    sb.append(String.format("\n    %s (remote: %s direction: %s, usage: %s)", uri, remote, st.getDirection(),
-                            st.getHits()));
+                    sb.append(String.format(
+                            "\n    %s (remote: %s direction: %s, usage: %s)",
+                            uri, remote, st.getDirection(), st.getHits()));
                 } else {
                     sb.append(String.format("\n    %s (remote: %s)", uri, remote));
                 }
@@ -119,8 +121,6 @@ public class EndpointDevConsole extends AbstractDevConsole {
         if (stats == null) {
             return Optional.empty();
         }
-        return stats.stream()
-                .filter(s -> uri.equals(s.getUri()))
-                .findFirst();
+        return stats.stream().filter(s -> uri.equals(s.getUri())).findFirst();
     }
 }

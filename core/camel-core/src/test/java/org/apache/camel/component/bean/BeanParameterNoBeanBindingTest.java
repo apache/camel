@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -35,7 +36,8 @@ public class BeanParameterNoBeanBindingTest extends ContextTestSupport {
     public void testBeanParameterInvalidValueA() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:a", "World"),
                 "Should have thrown exception");
 
@@ -82,6 +84,5 @@ public class BeanParameterNoBeanBindingTest extends ContextTestSupport {
 
             return body;
         }
-
     }
 }

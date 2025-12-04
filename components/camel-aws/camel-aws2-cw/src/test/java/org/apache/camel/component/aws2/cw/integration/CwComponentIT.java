@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw.integration;
 
 import org.apache.camel.EndpointInject;
@@ -50,7 +51,8 @@ public class CwComponentIT extends Aws2CwBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("aws2-cw://http://camel.apache.org/aws-cw")
+                from("direct:start")
+                        .to("aws2-cw://http://camel.apache.org/aws-cw")
                         .to("mock:result");
             }
         };

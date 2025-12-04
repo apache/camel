@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
 
@@ -50,7 +51,8 @@ public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
     public void testLambdaTwo() throws Exception {
         assertEquals(0, context.getRoutesSize());
 
-        EndpointRouteBuilder.addEndpointRoutes(context, rb -> rb.from(rb.direct("start")).to(rb.mock("result")));
+        EndpointRouteBuilder.addEndpointRoutes(
+                context, rb -> rb.from(rb.direct("start")).to(rb.mock("result")));
 
         context.start();
 
@@ -68,8 +70,9 @@ public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
     public void testLambdaSimple() throws Exception {
         assertEquals(0, context.getRoutesSize());
 
-        EndpointRouteBuilder.addEndpointRoutes(context,
-                rb -> rb.from(rb.direct("start")).transform(rb.simple("Hello ${body}")).to(rb.mock("result")));
+        EndpointRouteBuilder.addEndpointRoutes(context, rb -> rb.from(rb.direct("start"))
+                .transform(rb.simple("Hello ${body}"))
+                .to(rb.mock("result")));
 
         context.start();
 
@@ -82,5 +85,4 @@ public class LambdaEndpointRouteBuilderTest extends BaseEndpointDslTest {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

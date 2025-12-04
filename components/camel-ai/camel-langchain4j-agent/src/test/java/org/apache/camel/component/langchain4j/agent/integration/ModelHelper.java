@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import static java.time.Duration.ofSeconds;
+
 import java.util.Optional;
 
 import dev.langchain4j.model.chat.ChatModel;
@@ -28,8 +30,6 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
-
-import static java.time.Duration.ofSeconds;
 
 public class ModelHelper {
 
@@ -71,10 +71,8 @@ public class ModelHelper {
     }
 
     private static ChatModel createOllamaModel(String apiKey) {
-        String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL))
-                .orElse(DEFAULT_OLLAMA_BASE_URL);
-        String modelName = Optional.ofNullable(System.getenv(MODEL_NAME))
-                .orElse(DEFAULT_OLLAMA_MODEL_NAME);
+        String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL)).orElse(DEFAULT_OLLAMA_BASE_URL);
+        String modelName = Optional.ofNullable(System.getenv(MODEL_NAME)).orElse(DEFAULT_OLLAMA_MODEL_NAME);
 
         return OllamaChatModel.builder()
                 .baseUrl(baseUrl)
@@ -105,10 +103,8 @@ public class ModelHelper {
 
         // Create embeddings
         if ("ollama".equals(System.getenv(MODEL_PROVIDER))) {
-            String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL))
-                    .orElse(DEFAULT_OLLAMA_BASE_URL);
-            String modelName = Optional.ofNullable(System.getenv(MODEL_NAME))
-                    .orElse(DEFAULT_OLLAMA_MODEL_NAME);
+            String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL)).orElse(DEFAULT_OLLAMA_BASE_URL);
+            String modelName = Optional.ofNullable(System.getenv(MODEL_NAME)).orElse(DEFAULT_OLLAMA_MODEL_NAME);
 
             return OllamaEmbeddingModel.builder()
                     .baseUrl(baseUrl)
@@ -161,8 +157,10 @@ public class ModelHelper {
         var apiKey = System.getenv(API_KEY);
         var modelProvider = System.getenv(MODEL_PROVIDER);
 
-        if (apiKey != null && !apiKey.trim().isEmpty()
-                && modelProvider != null && !modelProvider.trim().isEmpty()) {
+        if (apiKey != null
+                && !apiKey.trim().isEmpty()
+                && modelProvider != null
+                && !modelProvider.trim().isEmpty()) {
             // Use environment-configured model
             return loadFromEnv();
         }
@@ -184,8 +182,10 @@ public class ModelHelper {
         var apiKey = System.getenv(API_KEY);
         var modelProvider = System.getenv(MODEL_PROVIDER);
 
-        if (apiKey != null && !apiKey.trim().isEmpty()
-                && modelProvider != null && !modelProvider.trim().isEmpty()) {
+        if (apiKey != null
+                && !apiKey.trim().isEmpty()
+                && modelProvider != null
+                && !modelProvider.trim().isEmpty()) {
             // Use environment-configured embedding model
             return createEmbeddingModel();
         }
@@ -204,7 +204,9 @@ public class ModelHelper {
     public static boolean hasEnvironmentConfiguration() {
         var apiKey = System.getenv(API_KEY);
         var modelProvider = System.getenv(MODEL_PROVIDER);
-        return apiKey != null && !apiKey.trim().isEmpty()
-                && modelProvider != null && !modelProvider.trim().isEmpty();
+        return apiKey != null
+                && !apiKey.trim().isEmpty()
+                && modelProvider != null
+                && !modelProvider.trim().isEmpty();
     }
 }

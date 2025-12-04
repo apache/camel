@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
+
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -26,8 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
-
 public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(SftpDefaultMoveExistingFileStrategy.class);
@@ -36,7 +37,8 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
+    public boolean moveExistingFile(
+            GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException {
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
@@ -45,7 +47,7 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
         // we only support relative paths for the ftp component, so we strip out
-        //any leading separator
+        // any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
         dummy.getIn().setHeader(FtpConstants.FILE_NAME, fileName);
@@ -81,9 +83,8 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
                 LOG.trace("Deleting existing file: {}", to);
                 operations.deleteFile(to);
             } else {
-                throw new GenericFileOperationFailedException(
-                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
-                                                              + to);
+                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: "
+                        + to + " as there already exists a file: " + to);
             }
         }
 
@@ -94,5 +95,4 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
 
         return true;
     }
-
 }

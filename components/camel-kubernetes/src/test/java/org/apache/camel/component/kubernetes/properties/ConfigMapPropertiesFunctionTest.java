@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.properties;
 
 import java.util.Map;
@@ -33,9 +34,12 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
@@ -47,10 +51,16 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
         builder.withOauthToken(authToken);
         builder.withMasterUrl(host);
 
-        KubernetesClient client = new KubernetesClientBuilder().withConfig(builder.build()).build();
+        KubernetesClient client =
+                new KubernetesClientBuilder().withConfig(builder.build()).build();
 
         Map<String, String> data = Map.of("foo.txt", "123", "bar.txt", "Moes Bar");
-        ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
+        ConfigMap cm = new ConfigMapBuilder()
+                .editOrNewMetadata()
+                .withName("myconfig")
+                .endMetadata()
+                .withData(data)
+                .build();
         client.resource(cm).serverSideApply();
 
         try (ConfigMapPropertiesFunction cmf = new ConfigMapPropertiesFunction()) {
@@ -76,5 +86,4 @@ public class ConfigMapPropertiesFunctionTest extends KubernetesTestSupport {
             client.resource(cm).delete();
         }
     }
-
 }

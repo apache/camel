@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.syslog;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -30,16 +33,14 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NettyManyUDPMessagesTest extends CamelTestSupport {
 
     private static int serverPort;
     private final int messageCount = 100;
-    private final String message
-            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
-              + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String message =
+            "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+                    + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+                    + "         Conveyer1=OK, Conveyer2=OK # %%";
 
     @BeforeAll
     public static void initPort() {
@@ -76,16 +77,20 @@ public class NettyManyUDPMessagesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                //context.setTracing(true);
+                // context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false").unmarshal(syslogDataFormat)
+                from("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false")
+                        .unmarshal(syslogDataFormat)
                         .process(new Processor() {
                             public void process(Exchange ex) {
                                 assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                             }
-                        }).to("mock:stop1").marshal(syslogDataFormat).to("mock:stop2");
+                        })
+                        .to("mock:stop1")
+                        .marshal(syslogDataFormat)
+                        .to("mock:stop2");
             }
         };
     }

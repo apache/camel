@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scp;
 
 import java.util.Map;
@@ -35,14 +36,14 @@ public class ScpProcessStrategyFactory implements GenericFileProcessStrategyFact
         return strategy;
     }
 
-    @SuppressWarnings({ "unchecked" })
-    private static GenericFileExclusiveReadLockStrategy<ScpFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<ScpFile> strategy
-                = (GenericFileExclusiveReadLockStrategy<ScpFile>) params.get("exclusiveReadLockStrategy");
+    @SuppressWarnings({"unchecked"})
+    private static GenericFileExclusiveReadLockStrategy<ScpFile> getExclusiveReadLockStrategy(
+            Map<String, Object> params) {
+        GenericFileExclusiveReadLockStrategy<ScpFile> strategy =
+                (GenericFileExclusiveReadLockStrategy<ScpFile>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
         return null;
     }
-
 }

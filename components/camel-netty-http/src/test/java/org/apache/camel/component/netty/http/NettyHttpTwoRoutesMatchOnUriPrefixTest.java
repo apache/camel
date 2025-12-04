@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpTwoRoutesMatchOnUriPrefixTest extends BaseNettyTest {
 
@@ -36,13 +37,17 @@ public class NettyHttpTwoRoutesMatchOnUriPrefixTest extends BaseNettyTest {
         assertEquals("Bye World", out);
 
         // the foo is not match on prefix so we cannot do /foo/beer
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo/beer", "Hello World", String.class));
-        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBody(
+                        "netty-http:http://localhost:{{port}}/foo/beer", "Hello World", String.class));
+        NettyHttpOperationFailedException cause =
+                assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(404, cause.getStatusCode());
 
         // .. and likewise baz is not a context-path we have mapped as input
-        e = assertThrows(CamelExecutionException.class,
+        e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/baz", "Hello World", String.class));
         cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(404, cause.getStatusCode());
@@ -64,13 +69,14 @@ public class NettyHttpTwoRoutesMatchOnUriPrefixTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:foo")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
                 from("netty-http:http://0.0.0.0:{{port}}/bar?matchOnUriPrefix=true")
                         .to("mock:bar")
-                        .transform().constant("Bye Camel");
+                        .transform()
+                        .constant("Bye Camel");
             }
         };
     }
-
 }

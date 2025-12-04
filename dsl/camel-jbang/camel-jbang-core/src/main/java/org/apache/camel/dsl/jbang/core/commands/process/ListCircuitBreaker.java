@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -33,15 +34,21 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "circuit-breaker",
-         description = "Get status of Circuit Breaker EIPs", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "circuit-breaker",
+        description = "Get status of Circuit Breaker EIPs",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListCircuitBreaker extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
     public ListCircuitBreaker(CamelJBangMain main) {
@@ -53,101 +60,133 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Row baseRow = row.copy();
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.age = TimeUtils.printSince(row.uptime);
+                Row baseRow = row.copy();
 
-                        JsonObject mo = (JsonObject) root.get("resilience4j");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "resilience4j";
-                                    row.id = jo.getString("id");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.bufferedCalls = jo.getInteger("bufferedCalls");
-                                    row.successfulCalls = jo.getInteger("successfulCalls");
-                                    row.failedCalls = jo.getInteger("failedCalls");
-                                    row.notPermittedCalls = jo.getLong("notPermittedCalls");
-                                    row.failureRate = jo.getDouble("failureRate");
-                                    rows.add(row);
-                                }
-                            }
-                        }
-                        mo = (JsonObject) root.get("fault-tolerance");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "fault-tolerance";
-                                    row.id = jo.getString("id");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    rows.add(row);
-                                }
-                            }
-                        }
-                        mo = (JsonObject) root.get("circuit-breaker");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "core";
-                                    row.id = jo.getString("routeId");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.successfulCalls = jo.getInteger("successfulCalls");
-                                    row.failedCalls = jo.getInteger("failedCalls");
-                                    rows.add(row);
-                                }
-                            }
+                JsonObject mo = (JsonObject) root.get("resilience4j");
+                if (mo != null) {
+                    JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.component = "resilience4j";
+                            row.id = jo.getString("id");
+                            row.routeId = jo.getString("routeId");
+                            row.state = jo.getString("state");
+                            row.bufferedCalls = jo.getInteger("bufferedCalls");
+                            row.successfulCalls = jo.getInteger("successfulCalls");
+                            row.failedCalls = jo.getInteger("failedCalls");
+                            row.notPermittedCalls = jo.getLong("notPermittedCalls");
+                            row.failureRate = jo.getDouble("failureRate");
+                            rows.add(row);
                         }
                     }
-                });
+                }
+                mo = (JsonObject) root.get("fault-tolerance");
+                if (mo != null) {
+                    JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.component = "fault-tolerance";
+                            row.id = jo.getString("id");
+                            row.routeId = jo.getString("routeId");
+                            row.state = jo.getString("state");
+                            rows.add(row);
+                        }
+                    }
+                }
+                mo = (JsonObject) root.get("circuit-breaker");
+                if (mo != null) {
+                    JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            row = baseRow.copy();
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            row.component = "core";
+                            row.id = jo.getString("routeId");
+                            row.routeId = jo.getString("routeId");
+                            row.state = jo.getString("state");
+                            row.successfulCalls = jo.getInteger("successfulCalls");
+                            row.failedCalls = jo.getInteger("failedCalls");
+                            rows.add(row);
+                        }
+                    }
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.routeId),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
-                    new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
-                    new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getPending),
-                    new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getSuccess),
-                    new Column().header("FAIL").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getFailure),
-                    new Column().header("REJECT").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getReject))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("COMPONENT")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.component),
+                                    new Column()
+                                            .header("ROUTE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.routeId),
+                                    new Column()
+                                            .header("ID")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.id),
+                                    new Column()
+                                            .header("STATE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.state),
+                                    new Column()
+                                            .header("PENDING")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getPending),
+                                    new Column()
+                                            .header("SUCCESS")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getSuccess),
+                                    new Column()
+                                            .header("FAIL")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getFailure),
+                                    new Column()
+                                            .header("REJECT")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getReject))));
         }
 
         return 0;
@@ -226,5 +265,4 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
             }
         }
     }
-
 }

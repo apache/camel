@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EnumConverterTest extends ContextTestSupport {
 
@@ -61,11 +62,15 @@ public class EnumConverterTest extends ContextTestSupport {
 
     @Test
     public void testMandatoryConvertFailed() {
-        assertThrows(TypeConversionException.class, () -> {
-            LoggingLevel level = context.getTypeConverter().convertTo(LoggingLevel.class, "XXX");
-        }, "Should have thrown an exception");
+        assertThrows(
+                TypeConversionException.class,
+                () -> {
+                    LoggingLevel level = context.getTypeConverter().convertTo(LoggingLevel.class, "XXX");
+                },
+                "Should have thrown an exception");
 
-        assertThrows(TypeConversionException.class,
+        assertThrows(
+                TypeConversionException.class,
                 () -> context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX"),
                 "Should have thrown an exception");
     }
@@ -113,10 +118,14 @@ public class EnumConverterTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE1}")).to("mock:type1")
-                        .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE2}")).to("mock:type2")
-                        .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE3}")).to("mock:type3")
-                        .otherwise().to("mock:other");
+                        .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE1}"))
+                        .to("mock:type1")
+                        .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE2}"))
+                        .to("mock:type2")
+                        .when(simple("${header.type} == ${type:org.apache.camel.converter.MyTypeEnum.TYPE3}"))
+                        .to("mock:type3")
+                        .otherwise()
+                        .to("mock:other");
             }
         });
         context.start();
@@ -138,5 +147,4 @@ public class EnumConverterTest extends ContextTestSupport {
         GET_USERS,
         GET_USERS_BY_TOPIC
     }
-
 }

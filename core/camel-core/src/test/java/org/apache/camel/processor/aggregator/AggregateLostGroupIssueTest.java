@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -74,30 +75,39 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer://foo?period=10&delay=0").id("foo").startupOrder(2).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getMessage().setBody(messageIndex++);
-                        exchange.getMessage().setHeader("aggregateGroup", "group1");
-                    }
-                }).to("direct:aggregator");
+                from("timer://foo?period=10&delay=0")
+                        .id("foo")
+                        .startupOrder(2)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getMessage().setBody(messageIndex++);
+                                exchange.getMessage().setHeader("aggregateGroup", "group1");
+                            }
+                        })
+                        .to("direct:aggregator");
 
-                from("direct:aggregator").startupOrder(1).aggregate(header("aggregateGroup"), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
+                from("direct:aggregator")
+                        .startupOrder(1)
+                        .aggregate(header("aggregateGroup"), new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
 
-                        String oldBody = oldExchange.getIn().getBody(String.class);
-                        String newBody = newExchange.getIn().getBody(String.class);
+                                String oldBody = oldExchange.getIn().getBody(String.class);
+                                String newBody = newExchange.getIn().getBody(String.class);
 
-                        oldExchange.getIn().setBody(oldBody + "," + newBody);
-                        return oldExchange;
-                    }
-                }).aggregationRepository(getAggregationRepository())
-                        .completionSize(10).completionTimeout(500).completionTimeoutCheckerInterval(100).to("log:aggregated")
+                                oldExchange.getIn().setBody(oldBody + "," + newBody);
+                                return oldExchange;
+                            }
+                        })
+                        .aggregationRepository(getAggregationRepository())
+                        .completionSize(10)
+                        .completionTimeout(500)
+                        .completionTimeoutCheckerInterval(100)
+                        .to("log:aggregated")
                         .to("mock:result");
             }
         };
     }
-
 }

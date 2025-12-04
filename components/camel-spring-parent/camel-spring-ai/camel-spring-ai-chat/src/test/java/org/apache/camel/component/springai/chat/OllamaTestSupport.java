@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
 
 import org.apache.camel.CamelContext;
@@ -52,14 +53,10 @@ public class OllamaTestSupport extends CamelTestSupport {
     }
 
     protected ChatModel createModel() {
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
+        OllamaApi ollamaApi = OllamaApi.builder().baseUrl(OLLAMA.baseUrl()).build();
 
-        OllamaChatOptions ollamaOptions = OllamaChatOptions.builder()
-                .model(modelName())
-                .temperature(0.3)
-                .build();
+        OllamaChatOptions ollamaOptions =
+                OllamaChatOptions.builder().model(modelName()).temperature(0.3).build();
 
         ChatModel chatModel = OllamaChatModel.builder()
                 .ollamaApi(ollamaApi)

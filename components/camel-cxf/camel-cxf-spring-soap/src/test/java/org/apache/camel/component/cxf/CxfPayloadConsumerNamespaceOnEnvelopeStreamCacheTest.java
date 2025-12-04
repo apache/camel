@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import org.w3c.dom.Document;
@@ -35,7 +36,9 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeStreamCacheTest extends CxfPay
                         // Use stream caching to trigger the issue
                         .streamCaching()
                         // Parse to DOM to make sure it's still valid XML
-                        .convertBodyTo(Document.class).setBody().constant(RESPONSE_PAYLOAD);
+                        .convertBodyTo(Document.class)
+                        .setBody()
+                        .constant(RESPONSE_PAYLOAD);
             }
         };
     }

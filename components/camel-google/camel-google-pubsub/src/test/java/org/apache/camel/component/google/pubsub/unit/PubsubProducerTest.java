@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.unit;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.GooglePubsubProducer;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PubsubProducerTest extends PubsubTestSupport {
 
@@ -41,8 +42,10 @@ public class PubsubProducerTest extends PubsubTestSupport {
     public void testProducerConfiguration() throws Exception {
         // :1 indicates first of a component type in Camel context
         Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s", PROJECT_ID, TEST_TOPIC_NAME));
-        assertNotNull(endpoint,
-                String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, TEST_TOPIC_NAME));
+        assertNotNull(
+                endpoint,
+                String.format(
+                        "Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, TEST_TOPIC_NAME));
 
         Producer producer = endpoint.createProducer();
         assertTrue(producer instanceof GooglePubsubProducer);

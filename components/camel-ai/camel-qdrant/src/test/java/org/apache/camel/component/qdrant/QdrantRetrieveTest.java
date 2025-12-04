@@ -17,22 +17,20 @@
 
 package org.apache.camel.component.qdrant;
 
+import static io.qdrant.client.PointIdFactory.id;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static io.qdrant.client.PointIdFactory.id;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class QdrantRetrieveTest extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to retrieve without passing the action name triggers a failure")
     @Test
     public void retrieveWithoutRequiredParameters() {
-        Exchange result = fluentTemplate.to("qdrant:retrieve")
-                .withBody(id(8))
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("qdrant:retrieve").withBody(id(8)).request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isInstanceOf(NoSuchHeaderException.class);

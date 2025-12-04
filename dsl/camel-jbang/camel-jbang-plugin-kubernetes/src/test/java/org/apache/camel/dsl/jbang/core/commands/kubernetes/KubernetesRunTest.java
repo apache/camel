@@ -46,8 +46,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Requires too much network resources")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 @EnabledIf("isDockerAvailable")
 class KubernetesRunTest extends KubernetesBaseTest {
 
@@ -71,8 +70,12 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldHandleMissingSourceFile(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(List.of("mickey-mouse.groovy"),
-                "--disable-auto=true", "--output=yaml", "--runtime=" + rt.runtime(), "--java-version=17");
+        KubernetesRun command = createCommand(
+                List.of("mickey-mouse.groovy"),
+                "--disable-auto=true",
+                "--output=yaml",
+                "--runtime=" + rt.runtime(),
+                "--java-version=17");
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);
@@ -82,11 +85,20 @@ class KubernetesRunTest extends KubernetesBaseTest {
 
     @Test
     public void verifyProperties() throws Exception {
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--gav=examples:route:1.0.0", "--runtime=quarkus", "--name=my-route-props",
-                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
-                "--property=a=b", "--property=c=d", "--property=src/test/resources/my-route-props1.properties",
-                "--property=file:src/test/resources/my-route-props2.properties", "--java-version=17");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--gav=examples:route:1.0.0",
+                "--runtime=quarkus",
+                "--name=my-route-props",
+                "--disable-auto=true",
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml",
+                "--property=a=b",
+                "--property=c=d",
+                "--property=src/test/resources/my-route-props1.properties",
+                "--property=file:src/test/resources/my-route-props2.properties",
+                "--java-version=17");
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -105,10 +117,16 @@ class KubernetesRunTest extends KubernetesBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
-                "--trait", "container.image-pull-policy=IfNotPresent",
-                "--runtime=" + rt.runtime(), "--java-version=17");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--disable-auto=true",
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml",
+                "--trait",
+                "container.image-pull-policy=IfNotPresent",
+                "--runtime=" + rt.runtime(),
+                "--java-version=17");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -131,41 +149,68 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals(
+                "quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals("IfNotPresent", containers.get(0).getImagePullPolicy());
 
         // verify the container health probes path to /observe accordingly to the camel-observability-services
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
-            Assertions.assertEquals("/observe/health/live", containers.get(0).getLivenessProbe().getHttpGet().getPath());
-            Assertions.assertEquals("/observe/health/ready", containers.get(0).getReadinessProbe().getHttpGet().getPath());
-            Assertions.assertEquals("/observe/health/started", containers.get(0).getStartupProbe().getHttpGet().getPath());
-            Assertions.assertEquals(9876, containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
-            Assertions.assertEquals(9876, containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
-            Assertions.assertEquals(9876, containers.get(0).getStartupProbe().getHttpGet().getPort().getIntVal());
+            Assertions.assertEquals(
+                    "/observe/health/live",
+                    containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals(
+                    "/observe/health/ready",
+                    containers.get(0).getReadinessProbe().getHttpGet().getPath());
+            Assertions.assertEquals(
+                    "/observe/health/started",
+                    containers.get(0).getStartupProbe().getHttpGet().getPath());
+            Assertions.assertEquals(
+                    9876,
+                    containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
+            Assertions.assertEquals(
+                    9876,
+                    containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
+            Assertions.assertEquals(
+                    9876,
+                    containers.get(0).getStartupProbe().getHttpGet().getPort().getIntVal());
         } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
             // spring-boot doesn't set the startup probe
-            Assertions.assertEquals("/observe/health/liveness", containers.get(0).getLivenessProbe().getHttpGet().getPath());
-            Assertions.assertEquals("/observe/health/readiness", containers.get(0).getReadinessProbe().getHttpGet().getPath());
-            Assertions.assertEquals(9876, containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
-            Assertions.assertEquals(9876, containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
+            Assertions.assertEquals(
+                    "/observe/health/liveness",
+                    containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals(
+                    "/observe/health/readiness",
+                    containers.get(0).getReadinessProbe().getHttpGet().getPath());
+            Assertions.assertEquals(
+                    9876,
+                    containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
+            Assertions.assertEquals(
+                    9876,
+                    containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
         }
     }
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesCronjobManifest(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
-                "--service-account=my-svc-account", "--runtime=" + rt.runtime(), "--java-version=17");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--disable-auto=true",
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml",
+                "--service-account=my-svc-account",
+                "--runtime=" + rt.runtime(),
+                "--java-version=17");
         command.traits = new String[] {
-                "cronjob.enabled=true",
-                "cronjob.schedule=\"0 22 * * 1-5\"",
-                "cronjob.timezone=Europe/Lisbon",
-                "cronjob.startingDeadlineSeconds=2",
-                "cronjob.activeDeadlineSeconds=3",
-                "cronjob.backoffLimit=4",
-                "cronjob.durationMaxIdleSeconds=5",
-                "container.imagePullPolicy=Never"
+            "cronjob.enabled=true",
+            "cronjob.schedule=\"0 22 * * 1-5\"",
+            "cronjob.timezone=Europe/Lisbon",
+            "cronjob.startingDeadlineSeconds=2",
+            "cronjob.activeDeadlineSeconds=3",
+            "cronjob.backoffLimit=4",
+            "cronjob.durationMaxIdleSeconds=5",
+            "container.imagePullPolicy=Never"
         };
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -187,27 +232,40 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals(2, cronjob.getSpec().getStartingDeadlineSeconds());
         Assertions.assertEquals(3, jobSpec.getActiveDeadlineSeconds());
         Assertions.assertEquals(4, jobSpec.getBackoffLimit());
-        Assertions.assertEquals("Never", jobSpec.getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
-        Assertions.assertEquals("my-svc-account", jobSpec.getTemplate().getSpec().getServiceAccountName());
+        Assertions.assertEquals(
+                "Never", jobSpec.getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
+        Assertions.assertEquals(
+                "my-svc-account", jobSpec.getTemplate().getSpec().getServiceAccountName());
     }
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldHandleUnsupportedOutputFormat(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--disable-auto=true", "--output=wrong", "--runtime=" + rt.runtime(), "--java-version=17");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--disable-auto=true",
+                "--output=wrong",
+                "--runtime=" + rt.runtime(),
+                "--java-version=17");
 
         Assertions.assertEquals(1, command.doCall());
-        Assertions.assertTrue(printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
+        Assertions.assertTrue(
+                printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
     }
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesNamespace(RuntimeType rt) throws Exception {
-        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
-                "--namespace", "custom",
-                "--runtime=" + rt.runtime(), "--java-version=17");
+        KubernetesRun command = createCommand(
+                List.of("classpath:route.yaml"),
+                "--disable-auto=true",
+                "--image-registry=quay.io",
+                "--image-group=camel-test",
+                "--output=yaml",
+                "--namespace",
+                "custom",
+                "--runtime=" + rt.runtime(),
+                "--java-version=17");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -231,7 +289,8 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
-        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals(
+                "quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
     }
 
     private KubernetesRun createCommand(List<String> files, String... args) {
@@ -244,5 +303,4 @@ class KubernetesRunTest extends KubernetesBaseTest {
         command.imagePush = false;
         return command;
     }
-
 }

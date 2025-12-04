@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
 
 public class ThrottlingException extends RuntimeException {
 
     private static final long serialVersionUID = 1993185881371058773L;
 
-    public ThrottlingException() {
-    }
+    public ThrottlingException() {}
 
     public ThrottlingException(String message) {
         super(message);

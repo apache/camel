@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.camel.CamelExecutionException;
@@ -24,25 +31,23 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class NettyRequestTimeoutTest extends BaseNettyTest {
 
     @Test
     public void testRequestTimeoutOK() {
-        String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=500",
-                "Hello Camel", String.class);
+        String out = template.requestBody(
+                "netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=500",
+                "Hello Camel",
+                String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testRequestTimeout() {
         try {
-            template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel",
+            template.requestBody(
+                    "netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100",
+                    "Hello Camel",
                     String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
@@ -53,13 +58,13 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
 
     @Test
     public void testKeepingTimeoutHeader() {
-        Endpoint endpoint
-                = this.resolveMandatoryEndpoint("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100");
+        Endpoint endpoint = this.resolveMandatoryEndpoint(
+                "netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100");
 
         String out = template.requestBody(endpoint, "Hello", String.class);
         assertEquals("Bye World", out);
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody(endpoint, "Hello Camel", String.class));
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class, () -> template.requestBody(endpoint, "Hello Camel", String.class));
 
         ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
         assertNotNull(cause);
@@ -68,8 +73,12 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     @Test
     public void testRequestTimeoutViaHeader() {
         try {
-            template.requestBodyAndHeader("netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello Camel",
-                    NettyConstants.NETTY_REQUEST_TIMEOUT, 100, String.class);
+            template.requestBodyAndHeader(
+                    "netty:tcp://localhost:{{port}}?textline=true&sync=true",
+                    "Hello Camel",
+                    NettyConstants.NETTY_REQUEST_TIMEOUT,
+                    100,
+                    String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
@@ -80,7 +89,9 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     @Test
     public void testRequestTimeoutAndOk() {
         try {
-            template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel",
+            template.requestBody(
+                    "netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100",
+                    "Hello Camel",
                     String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
@@ -89,8 +100,10 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
         }
 
         // now we try again but this time the is no delay on server and thus faster
-        String out = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100",
-                "Hello World", String.class);
+        String out = template.requestBody(
+                "netty:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
@@ -110,8 +123,8 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
                                 }
                             }
                         })
-                        .transform().constant("Bye World");
-
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }

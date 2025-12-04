@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
 
 import org.apache.camel.Exchange;
@@ -55,7 +56,9 @@ public class StringTemplateLetterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("string-template:org/apache/camel/component/stringtemplate/letter.tm").to("mock:result");
+                from("direct:a")
+                        .to("string-template:org/apache/camel/component/stringtemplate/letter.tm")
+                        .to("mock:result");
             }
         };
     }

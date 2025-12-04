@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.apache.camel.util.LocationHelper.locationSummary;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,8 +55,6 @@ import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.LocationHelper.locationSummary;
-
 public final class MainHelper {
     private static final Logger LOG = LoggerFactory.getLogger(MainHelper.class);
 
@@ -68,15 +69,24 @@ public final class MainHelper {
 
         try {
             InputStream is = MainHelper.class.getResourceAsStream("/org/apache/camel/main/components.properties");
-            loadLines(is, componentEnvNames, s -> "CAMEL_COMPONENT_" + s.toUpperCase(Locale.US).replace('-', '_'));
+            loadLines(
+                    is,
+                    componentEnvNames,
+                    s -> "CAMEL_COMPONENT_" + s.toUpperCase(Locale.US).replace('-', '_'));
             IOHelper.close(is);
 
             is = MainHelper.class.getResourceAsStream("/org/apache/camel/main/dataformats.properties");
-            loadLines(is, dataformatEnvNames, s -> "CAMEL_DATAFORMAT_" + s.toUpperCase(Locale.US).replace('-', '_'));
+            loadLines(
+                    is,
+                    dataformatEnvNames,
+                    s -> "CAMEL_DATAFORMAT_" + s.toUpperCase(Locale.US).replace('-', '_'));
             IOHelper.close(is);
 
             is = MainHelper.class.getResourceAsStream("/org/apache/camel/main/languages.properties");
-            loadLines(is, languageEnvNames, s -> "CAMEL_LANGUAGE_" + s.toUpperCase(Locale.US).replace('-', '_'));
+            loadLines(
+                    is,
+                    languageEnvNames,
+                    s -> "CAMEL_LANGUAGE_" + s.toUpperCase(Locale.US).replace('-', '_'));
             IOHelper.close(is);
         } catch (Exception e) {
             throw new RuntimeException("Error loading catalog information from classpath", e);
@@ -130,7 +140,9 @@ public final class MainHelper {
                 k = k.toUpperCase(Locale.US);
                 // kubernetes ENV injected services should be skipped
                 // (https://learn.microsoft.com/en-us/visualstudio/bridge/kubernetes-environment-variables#environment-variables-table)
-                boolean k8s = k.endsWith("_SERVICE_HOST") || k.endsWith("_SERVICE_PORT") || k.endsWith("_PORT")
+                boolean k8s = k.endsWith("_SERVICE_HOST")
+                        || k.endsWith("_SERVICE_PORT")
+                        || k.endsWith("_PORT")
                         || k.contains("_PORT_");
                 if (k8s) {
                     LOG.trace("Skipping Kubernetes Service OS environment variable: {}", k);
@@ -164,16 +176,20 @@ public final class MainHelper {
         env.forEach((k, v) -> {
             if (custom) {
                 toRemove.add(k);
-                String ck = "camel.component." + k.substring(16).toLowerCase(Locale.US).replace('_', '-');
+                String ck = "camel.component."
+                        + k.substring(16).toLowerCase(Locale.US).replace('_', '-');
                 ck = ck.replaceFirst("-", ".");
                 properties.put(ck, v);
             } else {
-                Optional<String> e
-                        = componentEnvNames.stream().filter(k::startsWith).findFirst();
+                Optional<String> e =
+                        componentEnvNames.stream().filter(k::startsWith).findFirst();
                 if (e.isPresent()) {
                     toRemove.add(k);
-                    String cname = "camel.component." + e.get().substring(16).toLowerCase(Locale.US).replace('_', '-');
-                    String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
+                    String cname = "camel.component."
+                            + e.get().substring(16).toLowerCase(Locale.US).replace('_', '-');
+                    String option = k.substring(cname.length() + 1)
+                            .toLowerCase(Locale.US)
+                            .replace('_', '-');
                     properties.put(cname + "." + option, v);
                 }
             }
@@ -186,16 +202,20 @@ public final class MainHelper {
         env.forEach((k, v) -> {
             if (custom) {
                 toRemove.add(k);
-                String ck = "camel.dataformat." + k.substring(17).toLowerCase(Locale.US).replace('_', '-');
+                String ck = "camel.dataformat."
+                        + k.substring(17).toLowerCase(Locale.US).replace('_', '-');
                 ck = ck.replaceFirst("-", ".");
                 properties.put(ck, v);
             } else {
-                Optional<String> e
-                        = dataformatEnvNames.stream().filter(k::startsWith).findFirst();
+                Optional<String> e =
+                        dataformatEnvNames.stream().filter(k::startsWith).findFirst();
                 if (e.isPresent()) {
                     toRemove.add(k);
-                    String cname = "camel.dataformat." + e.get().substring(17).toLowerCase(Locale.US).replace('_', '-');
-                    String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
+                    String cname = "camel.dataformat."
+                            + e.get().substring(17).toLowerCase(Locale.US).replace('_', '-');
+                    String option = k.substring(cname.length() + 1)
+                            .toLowerCase(Locale.US)
+                            .replace('_', '-');
                     properties.put(cname + "." + option, v);
                 }
             }
@@ -208,16 +228,20 @@ public final class MainHelper {
         env.forEach((k, v) -> {
             if (custom) {
                 toRemove.add(k);
-                String ck = "camel.language." + k.substring(15).toLowerCase(Locale.US).replace('_', '-');
+                String ck = "camel.language."
+                        + k.substring(15).toLowerCase(Locale.US).replace('_', '-');
                 ck = ck.replaceFirst("-", ".");
                 properties.put(ck, v);
             } else {
-                Optional<String> e
-                        = languageEnvNames.stream().filter(k::startsWith).findFirst();
+                Optional<String> e =
+                        languageEnvNames.stream().filter(k::startsWith).findFirst();
                 if (e.isPresent()) {
                     toRemove.add(k);
-                    String cname = "camel.language." + e.get().substring(15).toLowerCase(Locale.US).replace('_', '-');
-                    String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
+                    String cname = "camel.language."
+                            + e.get().substring(15).toLowerCase(Locale.US).replace('_', '-');
+                    String option = k.substring(cname.length() + 1)
+                            .toLowerCase(Locale.US)
+                            .replace('_', '-');
                     properties.put(cname + "." + option, v);
                 }
             }
@@ -294,8 +318,12 @@ public final class MainHelper {
     }
 
     public static boolean setPropertiesOnTarget(
-            CamelContext context, Object target, OrderedLocationProperties properties,
-            String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+            CamelContext context,
+            Object target,
+            OrderedLocationProperties properties,
+            String optionPrefix,
+            boolean failIfNotSet,
+            boolean ignoreCase,
             OrderedLocationProperties autoConfiguredProperties) {
 
         ObjectHelper.notNull(context, "context");
@@ -355,7 +383,12 @@ public final class MainHelper {
                         prefix = "." + prefix;
                     }
 
-                    LOG.debug("Configured property: {}{}={} on bean: {}", prefix, entry.getKey(), entry.getValue(), target);
+                    LOG.debug(
+                            "Configured property: {}{}={} on bean: {}",
+                            prefix,
+                            entry.getKey(),
+                            entry.getValue(),
+                            target);
                     String loc = backup.getLocation(entry.getKey());
                     String key = prefix + entry.getKey();
                     autoConfiguredProperties.put(loc, key, entry.getValue());
@@ -369,9 +402,7 @@ public final class MainHelper {
                     prefix = "." + prefix;
                 }
 
-                key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
-                        : e.getPropertyName();
+                key = prefix != null ? prefix + "." + e.getPropertyName() : e.getPropertyName();
             }
 
             if (failIfNotSet) {
@@ -381,13 +412,19 @@ public final class MainHelper {
             } else {
                 LOG.debug(
                         "Error configuring property ({}) with name: {}) on bean: {} with value: {}. This exception is ignored as failIfNotSet=false.",
-                        key, e.getPropertyName(), target, e.getValue(), e);
+                        key,
+                        e.getPropertyName(),
+                        target,
+                        e.getValue(),
+                        e);
             }
         } catch (Exception e) {
             if (failIfNotSet) {
                 throw e;
             } else {
-                LOG.debug("Error configuring properties on bean: {}. This exception is ignored as failIfNotSet=false.", target,
+                LOG.debug(
+                        "Error configuring properties on bean: {}. This exception is ignored as failIfNotSet=false.",
+                        target,
                         e);
             }
         }
@@ -396,7 +433,9 @@ public final class MainHelper {
     }
 
     public static void computeProperties(
-            String keyPrefix, String key, OrderedLocationProperties prop,
+            String keyPrefix,
+            String key,
+            OrderedLocationProperties prop,
             Map<PropertyOptionKey, OrderedLocationProperties> properties,
             Function<String, Iterable<Object>> supplier) {
         if (key.startsWith(keyPrefix)) {
@@ -442,7 +481,8 @@ public final class MainHelper {
             Iterable<Object> targets = supplier.apply(name);
             for (Object target : targets) {
                 PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
-                OrderedLocationProperties values = properties.computeIfAbsent(pok, k -> new OrderedLocationProperties());
+                OrderedLocationProperties values =
+                        properties.computeIfAbsent(pok, k -> new OrderedLocationProperties());
                 String loc = prop.getLocation(key);
 
                 // we ignore case for property keys (so we should store them in canonical style
@@ -485,7 +525,7 @@ public final class MainHelper {
     private static void loadLines(InputStream in, Set<String> lines, Function<String, String> func) throws IOException {
         if (in != null) {
             try (final InputStreamReader isr = new InputStreamReader(in);
-                 final BufferedReader reader = new LineNumberReader(isr)) {
+                    final BufferedReader reader = new LineNumberReader(isr)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     lines.add(func.apply(line));
@@ -501,8 +541,7 @@ public final class MainHelper {
         // try to load from maven properties first
         try {
             Properties p = new Properties();
-            is = MainHelper.class
-                    .getResourceAsStream("/META-INF/maven/org.apache.camel/camel-main/pom.properties");
+            is = MainHelper.class.getResourceAsStream("/META-INF/maven/org.apache.camel/camel-main/pom.properties");
             if (is != null) {
                 p.load(is);
                 version = p.getProperty("version", "");
@@ -534,7 +573,8 @@ public final class MainHelper {
         return version;
     }
 
-    public static OrderedLocationProperties extractProperties(OrderedLocationProperties properties, String optionPrefix) {
+    public static OrderedLocationProperties extractProperties(
+            OrderedLocationProperties properties, String optionPrefix) {
         return extractProperties(properties, optionPrefix, null, true);
     }
 
@@ -549,8 +589,11 @@ public final class MainHelper {
     }
 
     public static OrderedLocationProperties extractProperties(
-            OrderedLocationProperties properties, String optionPrefix, String optionSuffix,
-            boolean remove, Function<String, String> keyTransformer) {
+            OrderedLocationProperties properties,
+            String optionPrefix,
+            String optionSuffix,
+            boolean remove,
+            Function<String, String> keyTransformer) {
         if (properties == null) {
             return new OrderedLocationProperties();
         }
@@ -587,8 +630,10 @@ public final class MainHelper {
 
     public static void logConfigurationSummary(
             CamelContext camelContext,
-            Logger log, OrderedLocationProperties autoConfiguredProperties,
-            String title, Predicate<String> filter) {
+            Logger log,
+            OrderedLocationProperties autoConfiguredProperties,
+            String title,
+            Predicate<String> filter) {
         if (log == null) {
             log = LOG;
         }
@@ -646,5 +691,4 @@ public final class MainHelper {
             }
         }
     }
-
 }

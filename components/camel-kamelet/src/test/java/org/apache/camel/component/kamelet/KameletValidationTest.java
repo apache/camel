@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
@@ -22,8 +25,6 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class KameletValidationTest {
     @Test
@@ -35,10 +36,10 @@ public class KameletValidationTest {
                 routeTemplate("setBody")
                         .templateParameter("bodyValue")
                         .from("kamelet:source")
-                        .setBody().constant("{{bodyValue}}");
+                        .setBody()
+                        .constant("{{bodyValue}}");
 
-                from("direct:start")
-                        .to("kamelet:setBody/test");
+                from("direct:start").to("kamelet:setBody/test");
             }
         });
 

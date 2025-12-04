@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import javax.xml.xpath.XPath;
@@ -36,25 +37,21 @@ public class DomFinder {
     }
 
     public NodeList findElementsAndTypes() throws XPathExpressionException {
-        return (NodeList) xPath.compile("/xs:schema/xs:element")
-                .evaluate(document, XPathConstants.NODESET);
+        return (NodeList) xPath.compile("/xs:schema/xs:element").evaluate(document, XPathConstants.NODESET);
     }
 
     public NodeList findAttributesElements(String name) throws XPathExpressionException {
-        return (NodeList) xPath.compile(
-                "/xs:schema/xs:complexType[@name='" + name + "']//xs:attribute")
+        return (NodeList) xPath.compile("/xs:schema/xs:complexType[@name='" + name + "']//xs:attribute")
                 .evaluate(document, XPathConstants.NODESET);
     }
 
     public NodeList findElementsElements(String name) throws XPathExpressionException {
-        return (NodeList) xPath.compile(
-                "/xs:schema/xs:complexType[@name='" + name + "']//xs:element")
+        return (NodeList) xPath.compile("/xs:schema/xs:complexType[@name='" + name + "']//xs:element")
                 .evaluate(document, XPathConstants.NODESET);
     }
 
     public String findBaseType(String name) throws XPathExpressionException {
-        return (String) xPath.compile(
-                "/xs:schema/xs:complexType[@name='" + name + "']//xs:extension/@base")
+        return (String) xPath.compile("/xs:schema/xs:complexType[@name='" + name + "']//xs:extension/@base")
                 .evaluate(document, XPathConstants.STRING);
     }
 }

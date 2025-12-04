@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
 
@@ -31,10 +32,13 @@ public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -48,8 +52,9 @@ public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
     @Test
     public void notBridgeEndpointWithDefault() {
 
-        Exchange exchange = template.request("http://host/", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_URI,
-                "http://localhost:" + localServer.getLocalPort() + "/"));
+        Exchange exchange = template.request("http://host/", exchange1 -> exchange1
+                .getIn()
+                .setHeader(Exchange.HTTP_URI, "http://localhost:" + localServer.getLocalPort() + "/"));
         assertExchange(exchange);
     }
 }

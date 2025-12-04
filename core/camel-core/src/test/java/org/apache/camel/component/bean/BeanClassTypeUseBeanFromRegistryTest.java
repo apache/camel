@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanClassTypeUseBeanFromRegistryTest extends ContextTestSupport {
 
@@ -59,9 +60,8 @@ public class BeanClassTypeUseBeanFromRegistryTest extends ContextTestSupport {
             }
         });
 
-        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class,
-                () -> context.start(),
-                "Should throw exception");
+        FailedToCreateRouteException e =
+                assertThrows(FailedToCreateRouteException.class, () -> context.start(), "Should throw exception");
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }
 
@@ -74,10 +74,8 @@ public class BeanClassTypeUseBeanFromRegistryTest extends ContextTestSupport {
             }
         });
 
-        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class,
-                () -> context.start(),
-                "Should throw exception");
+        FailedToCreateRouteException e =
+                assertThrows(FailedToCreateRouteException.class, () -> context.start(), "Should throw exception");
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -24,9 +27,7 @@ import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-//CAMEL-16032
+// CAMEL-16032
 public class DataFormatRegistrationTest extends ContextTestSupport {
 
     @Test

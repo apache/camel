@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
@@ -37,11 +38,9 @@ public class DropboxDelProducer extends DropboxProducer {
         String remotePath = DropboxHelper.getRemotePath(configuration, exchange);
         DropboxConfigurationValidator.validateDelOp(remotePath);
 
-        DropboxDelResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .del(remotePath);
+        DropboxDelResult result = new DropboxAPIFacade(configuration.getClient(), exchange).del(remotePath);
 
         exchange.getIn().setHeader(DropboxConstants.DELETED_PATH, result.getEntry());
         exchange.getIn().setBody(result.getEntry());
     }
-
 }

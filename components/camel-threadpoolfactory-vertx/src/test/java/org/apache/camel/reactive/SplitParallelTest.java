@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reactive;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
@@ -24,8 +27,6 @@ import org.apache.camel.reactive.vertx.VertXThreadPoolFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SplitParallelTest extends CamelTestSupport {
 
     private final Vertx vertx = Vertx.vertx();
@@ -34,7 +35,8 @@ public class SplitParallelTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        VertXThreadPoolFactory tpf = (VertXThreadPoolFactory) context.getExecutorServiceManager().getThreadPoolFactory();
+        VertXThreadPoolFactory tpf =
+                (VertXThreadPoolFactory) context.getExecutorServiceManager().getThreadPoolFactory();
         tpf.setVertx(vertx);
 
         return context;
@@ -43,7 +45,8 @@ public class SplitParallelTest extends CamelTestSupport {
     @Test
     public void testSplit() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E,F,G,H,I,J");
-        getMockEndpoint("mock:split").expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
+        getMockEndpoint("mock:split")
+                .expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
         template.sendBody("direct:start", "A,B,C,D,E,F,G,H,I,J");
 
@@ -59,7 +62,8 @@ public class SplitParallelTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:foo")
-                        .split(body()).parallelProcessing()
+                        .split(body())
+                        .parallelProcessing()
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();

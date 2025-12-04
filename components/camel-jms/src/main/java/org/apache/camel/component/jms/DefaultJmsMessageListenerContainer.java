@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.util.concurrent.CamelThreadFactory;
@@ -130,7 +131,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
     public void stop() throws JmsException {
         if (logger.isDebugEnabled()) {
             logger.debug("Stopping listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
-                         + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
         }
         super.stop();
 
@@ -143,7 +144,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
     public void destroy() {
         if (logger.isDebugEnabled()) {
             logger.debug("Destroying listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
-                         + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
         }
         super.destroy();
 

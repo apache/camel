@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.Message;
@@ -29,7 +30,9 @@ public class TransformDataTypeProcessorTest extends TransformViaDSLTest {
             public void configure() {
                 // START SNIPPET: example
                 transformer().name("myDataType").withJava(MyDataTypeTransformer.class);
-                from("direct:start").transformDataType(new DataType("myDataType")).to("mock:result");
+                from("direct:start")
+                        .transformDataType(new DataType("myDataType"))
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

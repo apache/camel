@@ -24,9 +24,7 @@ import org.apache.camel.test.infra.azure.common.AzureConfigs;
 
 public final class AzureStorageDataLakeClientUtils {
 
-    private AzureStorageDataLakeClientUtils() {
-
-    }
+    private AzureStorageDataLakeClientUtils() {}
 
     public static DataLakeServiceClient getClient() {
         String instanceType = System.getProperty("azure.instance.type");

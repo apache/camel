@@ -72,7 +72,7 @@ class KafkaHeaderDeserializerTest {
         Assertions.assertTrue(exchange.getMessage().hasHeaders());
         Assertions.assertEquals("bar", exchange.getMessage().getHeader("foo"));
         Assertions.assertTrue(exchange.getMessage().getHeader("fooBytes") instanceof byte[]);
-        Assertions.assertEquals(Arrays.toString("barBytes".getBytes(StandardCharsets.UTF_8)),
-                Arrays.toString((byte[]) exchange.getMessage().getHeader("fooBytes")));
+        Assertions.assertEquals(Arrays.toString("barBytes".getBytes(StandardCharsets.UTF_8)), Arrays.toString((byte[])
+                exchange.getMessage().getHeader("fooBytes")));
     }
 }

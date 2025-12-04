@@ -31,7 +31,8 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -51,7 +52,9 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
                       name: my-channel
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -59,14 +62,14 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer-source", "knative:channel:my-channel");
 
         command.properties = new String[] {
-                "source.message=Hello",
-                "sink.type=my-event",
+            "source.message=Hello", "sink.type=my-event",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -86,7 +89,9 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
                       name: my-channel
                     properties:
                       type: my-event
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -94,13 +99,14 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
         Bind command = createCommand("timer-source", "knative:channel:my-channel?type=my-event&source=camel");
 
         command.properties = new String[] {
-                "source.message=Hello",
+            "source.message=Hello",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -121,7 +127,9 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
                     properties:
                       type: my-event
                       source: camel
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -130,7 +138,8 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -150,7 +159,9 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
                       name: log-sink
                     #properties:
                       #key: "value"
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -158,14 +169,14 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
         Bind command = createCommand("knative:channel:my-channel", "log-sink");
 
         command.properties = new String[] {
-                "source.type=my-event",
-                "sink.showHeaders=true",
+            "source.type=my-event", "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -185,7 +196,9 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     @Test
@@ -193,14 +206,14 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
         Bind command = createCommand("knative:channel:my-channel?type=my-event&source=camel", "log-sink");
 
         command.properties = new String[] {
-                "sink.showHeaders=true",
-
+            "sink.showHeaders=true",
         };
 
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertEquals("""
+        Assertions.assertEquals(
+                """
                 apiVersion: camel.apache.org/v1
                 kind: Pipe
                 metadata:
@@ -221,7 +234,9 @@ class BindKnativeChannelTest extends CamelCommandBaseTest {
                       name: log-sink
                     properties:
                       showHeaders: true
-                """.trim(), output);
+                """
+                        .trim(),
+                output);
     }
 
     private Bind createCommand(String source, String sink) {

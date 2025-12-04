@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.converter;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -33,9 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ConvertHeaderTest extends ContextTestSupport {
 
     @Test
@@ -44,7 +45,9 @@ public class ConvertHeaderTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     // set an invalid charset
-                    from("direct:invalid").convertHeaderTo("foo", String.class, "ASSI").to("mock:endpoint");
+                    from("direct:invalid")
+                            .convertHeaderTo("foo", String.class, "ASSI")
+                            .to("mock:endpoint");
                 }
             });
             fail("Should have thrown an exception");
@@ -57,14 +60,19 @@ public class ConvertHeaderTest extends ContextTestSupport {
     public void testConvertBodyCharset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:foo").convertHeaderTo("foo", byte[].class, "iso-8859-1").to("mock:foo");
+                from("direct:foo")
+                        .convertHeaderTo("foo", byte[].class, "iso-8859-1")
+                        .to("mock:foo");
             }
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion
         // etc
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.CHARSET_NAME)
+                .isNull();
 
         template.sendBodyAndHeader("direct:foo", null, "foo", "Hello World");
 
@@ -75,17 +83,24 @@ public class ConvertHeaderTest extends ContextTestSupport {
     public void testConvertBodyCharsetWithExistingCharsetName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:foo").convertHeaderTo("foo", byte[].class, "iso-8859-1").to("mock:foo");
+                from("direct:foo")
+                        .convertHeaderTo("foo", byte[].class, "iso-8859-1")
+                        .to("mock:foo");
             }
         });
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion
         // etc
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.CHARSET_NAME)
+                .isEqualTo("UTF-8");
 
-        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8")
-                .withHeader("foo", "Hello World").build();
+        Exchange srcExchange = ExchangeBuilder.anExchange(context)
+                .withProperty(Exchange.CHARSET_NAME, "UTF-8")
+                .withHeader("foo", "Hello World")
+                .build();
 
         template.send("direct:foo", srcExchange);
 
@@ -179,9 +194,8 @@ public class ConvertHeaderTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedHeaderReceived("foo", body);
 
-        template.sendBodyAndHeader("direct:charset3", null, "foo", new ByteArrayInputStream(
-                body.getBytes(
-                        StandardCharsets.UTF_16)));
+        template.sendBodyAndHeader(
+                "direct:charset3", null, "foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_16)));
 
         assertMockEndpointsSatisfied();
     }
@@ -210,9 +224,8 @@ public class ConvertHeaderTest extends ContextTestSupport {
         result.expectedHeaderReceived("foo", body);
         result.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:charset3", null, "foo", new ByteArrayInputStream(
-                body.getBytes(
-                        StandardCharsets.UTF_8)));
+        template.sendBodyAndHeader(
+                "direct:charset3", null, "foo", new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
 
         // should NOT be okay as we expected utf-8 but got it in utf-16
         result.assertIsNotSatisfied();
@@ -223,14 +236,21 @@ public class ConvertHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").convertHeaderTo("foo", Integer.class).to("mock:result");
-                from("direct:optional").convertHeaderTo("foo", Integer.class, false).to("mock:result");
+                from("direct:optional")
+                        .convertHeaderTo("foo", Integer.class, false)
+                        .to("mock:result");
                 from("direct:invalid").convertHeaderTo("foo", Date.class).to("mock:result");
-                from("direct:charset").convertHeaderTo("foo", byte[].class, "iso-8859-1").to("mock:result");
-                from("direct:charset2").convertHeaderTo("foo", byte[].class, "utf-16").to("mock:result");
-                from("direct:charset3").convertHeaderTo("foo", String.class, "utf-16").to("mock:result");
+                from("direct:charset")
+                        .convertHeaderTo("foo", byte[].class, "iso-8859-1")
+                        .to("mock:result");
+                from("direct:charset2")
+                        .convertHeaderTo("foo", byte[].class, "utf-16")
+                        .to("mock:result");
+                from("direct:charset3")
+                        .convertHeaderTo("foo", String.class, "utf-16")
+                        .to("mock:result");
                 from("direct:bar").convertHeaderTo("foo", "bar", Integer.class).to("mock:result");
             }
         };
     }
-
 }

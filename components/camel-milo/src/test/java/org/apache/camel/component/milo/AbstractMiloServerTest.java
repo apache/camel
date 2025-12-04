@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -33,11 +39,6 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
@@ -78,8 +79,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
     }
 
     public static <T> void testBody(
-            final AssertionClause clause, final Class<T> bodyClass,
-            final Consumer<T> valueConsumer) {
+            final AssertionClause clause, final Class<T> bodyClass, final Consumer<T> valueConsumer) {
         clause.predicate(exchange -> {
             final T body = exchange.getMessage().getBody(bodyClass);
             valueConsumer.accept(body);
@@ -136,7 +136,6 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
         } catch (final GeneralSecurityException | IOException e) {
             throw new RuntimeCamelException(e);
         }
-
     }
 
     /**
@@ -171,5 +170,4 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
             }
         };
     }
-
 }

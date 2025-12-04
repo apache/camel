@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.apache.camel.microprofile.health.CamelMicroProfileHealthTestHelper.getHealthJson;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Optional;
 
@@ -32,10 +37,6 @@ import org.apache.camel.main.SimpleMain;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.microprofile.health.CamelMicroProfileHealthTestHelper.getHealthJson;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CamelMicroProfileHealthSupervisedRoutesMainTest {
     private final SmallRyeHealthReporter reporter = new SmallRyeHealthReporter();
 
@@ -49,8 +50,7 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("my:start").routeId("healthyRoute")
-                        .setBody(constant("Hello Camel MicroProfile Health"));
+                from("my:start").routeId("healthyRoute").setBody(constant("Hello Camel MicroProfile Health"));
             }
         });
 
@@ -70,19 +70,25 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
             assertEquals(5, checks.size());
 
             Optional<JsonObject> camelRoutesCheck = findHealthCheck("camel-routes", checks);
-            camelRoutesCheck.ifPresentOrElse(check -> {
-                assertEquals(Status.UP.toString(), check.getString("status"));
-            }, () -> fail("Expected camel-routes check not found in health output"));
+            camelRoutesCheck.ifPresentOrElse(
+                    check -> {
+                        assertEquals(Status.UP.toString(), check.getString("status"));
+                    },
+                    () -> fail("Expected camel-routes check not found in health output"));
 
             Optional<JsonObject> camelConsumersCheck = findHealthCheck("camel-consumers", checks);
-            camelConsumersCheck.ifPresentOrElse(check -> {
-                assertEquals(Status.UP.toString(), check.getString("status"));
-            }, () -> fail("Expected camel-consumers check not found in health output"));
+            camelConsumersCheck.ifPresentOrElse(
+                    check -> {
+                        assertEquals(Status.UP.toString(), check.getString("status"));
+                    },
+                    () -> fail("Expected camel-consumers check not found in health output"));
 
             Optional<JsonObject> camelComponentsCheck = findHealthCheck("camel-producers", checks);
-            camelComponentsCheck.ifPresentOrElse(check -> {
-                assertEquals(Status.UP.toString(), check.getString("status"));
-            }, () -> fail("Expected camel-producers check not found in health output"));
+            camelComponentsCheck.ifPresentOrElse(
+                    check -> {
+                        assertEquals(Status.UP.toString(), check.getString("status"));
+                    },
+                    () -> fail("Expected camel-producers check not found in health output"));
         } finally {
             main.stop();
         }

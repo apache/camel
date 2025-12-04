@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.io.ByteArrayInputStream;
@@ -42,8 +43,7 @@ import org.apache.camel.util.FileUtil;
 
 public final class DefaultResourceResolvers {
 
-    private DefaultResourceResolvers() {
-    }
+    private DefaultResourceResolvers() {}
 
     /**
      * An implementation of the {@link ResourceResolver} that resolves a {@link Resource} from a file.
@@ -140,9 +140,7 @@ public final class DefaultResourceResolvers {
 
                 @Override
                 public URI getURI() {
-                    URL url = getCamelContext()
-                            .getClassResolver()
-                            .loadResourceAsURL(path);
+                    URL url = getCamelContext().getClassResolver().loadResourceAsURL(path);
                     try {
                         return url != null ? url.toURI() : null;
                     } catch (URISyntaxException e) {
@@ -152,9 +150,7 @@ public final class DefaultResourceResolvers {
 
                 @Override
                 public InputStream getInputStream() throws IOException {
-                    return getCamelContext()
-                            .getClassResolver()
-                            .loadResourceAsStream(path);
+                    return getCamelContext().getClassResolver().loadResourceAsStream(path);
                 }
             };
         }
@@ -185,7 +181,8 @@ public final class DefaultResourceResolvers {
                 @Override
                 public InputStream getInputStream() throws IOException {
                     if (!exists()) {
-                        throw new IOException("There is no bean in the registry with name " + remaining + " and type String");
+                        throw new IOException(
+                                "There is no bean in the registry with name " + remaining + " and type String");
                     }
                     return new ByteArrayInputStream(val.getBytes());
                 }
@@ -407,5 +404,4 @@ public final class DefaultResourceResolvers {
         }
         return uri;
     }
-
 }

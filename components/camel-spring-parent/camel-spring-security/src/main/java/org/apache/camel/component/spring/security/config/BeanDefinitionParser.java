@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security.config;
 
 import org.w3c.dom.Attr;
@@ -55,8 +56,10 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     }
 
     protected boolean isEligibleAttribute(String attributeName) {
-        return attributeName != null && !ID_ATTRIBUTE.equals(attributeName)
-                && !attributeName.equals("xmlns") && !attributeName.startsWith("xmlns:");
+        return attributeName != null
+                && !ID_ATTRIBUTE.equals(attributeName)
+                && !attributeName.equals("xmlns")
+                && !attributeName.startsWith("xmlns:");
     }
 
     @Override
@@ -74,7 +77,8 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
                 // assign other attributes if eligible
             } else if (!fullName.startsWith("xmlns:") && !fullName.equals("xmlns") && isEligibleAttribute(name)) {
                 String propertyName = extractPropertyName(name);
-                Assert.state(StringUtils.hasText(propertyName),
+                Assert.state(
+                        StringUtils.hasText(propertyName),
                         "Illegal property name returned from 'extractPropertyName(String)': cannot be null or empty.");
                 builder.addPropertyValue(propertyName, attribute.getValue());
             }
@@ -108,7 +112,5 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
      * @param beanDefinition the parsed (and probably totally defined) bean definition being built
      * @param element        the XML element that was the source of the bean definition's metadata
      */
-    protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
-    }
-
+    protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {}
 }

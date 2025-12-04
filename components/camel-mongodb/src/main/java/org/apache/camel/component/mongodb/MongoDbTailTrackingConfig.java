@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
 
 public class MongoDbTailTrackingConfig {
@@ -46,9 +47,13 @@ public class MongoDbTailTrackingConfig {
      */
     public final String persistentId;
 
-    public MongoDbTailTrackingConfig(boolean persistentTailTracking, String tailTrackIncreasingField, String tailTrackDb,
-                                     String tailTrackCollection, String tailTrackField,
-                                     String persistentId) {
+    public MongoDbTailTrackingConfig(
+            boolean persistentTailTracking,
+            String tailTrackIncreasingField,
+            String tailTrackDb,
+            String tailTrackCollection,
+            String tailTrackField,
+            String persistentId) {
         this.increasingField = tailTrackIncreasingField;
         this.persistent = persistentTailTracking;
         this.db = tailTrackDb;

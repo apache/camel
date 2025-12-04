@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.xml.bind.JAXBException;
 
@@ -22,8 +25,6 @@ import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlRestParseTest extends XmlTestSupport {
 
@@ -42,5 +43,4 @@ public class XmlRestParseTest extends XmlTestSupport {
         RestContainer context = assertParseRestAsJaxb(uri);
         return assertOneElement(context.getRests());
     }
-
 }

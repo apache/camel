@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.kafka.integration;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.math.BigInteger;
 import java.util.Map;
 import java.util.Properties;
@@ -26,16 +30,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public abstract class KafkaConsumerIdempotentTestSupport extends BaseKafkaTestSupport {
 
     protected void doSend(int size, String topic) {
         Properties props = getDefaultProperties();
-        try (org.apache.kafka.clients.producer.KafkaProducer<String, String> producer
-                = new org.apache.kafka.clients.producer.KafkaProducer<>(props)) {
+        try (org.apache.kafka.clients.producer.KafkaProducer<String, String> producer =
+                new org.apache.kafka.clients.producer.KafkaProducer<>(props)) {
             for (int k = 0; k < size; k++) {
                 String msg = "message-" + k;
                 ProducerRecord<String, String> data = new ProducerRecord<>(topic, String.valueOf(k), msg);
@@ -48,8 +48,9 @@ public abstract class KafkaConsumerIdempotentTestSupport extends BaseKafkaTestSu
 
     protected void doRun(MockEndpoint mockEndpoint, int size) {
 
-        await().atMost(5, TimeUnit.MINUTES).untilAsserted(
-                () -> assertEquals(size, mockEndpoint.getReceivedExchanges().size()));
+        await().atMost(5, TimeUnit.MINUTES)
+                .untilAsserted(() ->
+                        assertEquals(size, mockEndpoint.getReceivedExchanges().size()));
 
         Map<String, Object> headers = mockEndpoint.getExchanges().get(0).getIn().getHeaders();
         assertTrue(headers.containsKey("id"), "0");

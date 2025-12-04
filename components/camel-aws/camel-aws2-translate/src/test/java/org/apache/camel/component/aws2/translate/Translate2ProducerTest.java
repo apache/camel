@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Translate2ProducerTest extends CamelTestSupport {
 
@@ -53,7 +54,6 @@ public class Translate2ProducerTest extends CamelTestSupport {
 
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
-
     }
 
     @Test
@@ -64,8 +64,11 @@ public class Translate2ProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn()
-                        .setBody(TranslateTextRequest.builder().sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
-                                .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString()).text("ciao").build());
+                        .setBody(TranslateTextRequest.builder()
+                                .sourceLanguageCode(Translate2LanguageEnum.ITALIAN.toString())
+                                .targetLanguageCode(Translate2LanguageEnum.ENGLISH.toString())
+                                .text("ciao")
+                                .build());
             }
         });
 
@@ -73,7 +76,6 @@ public class Translate2ProducerTest extends CamelTestSupport {
 
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
-
     }
 
     @Test
@@ -91,7 +93,6 @@ public class Translate2ProducerTest extends CamelTestSupport {
 
         String resultGet = exchange.getIn().getBody(String.class);
         assertEquals("Hello", resultGet);
-
     }
 
     @Override
@@ -102,11 +103,13 @@ public class Translate2ProducerTest extends CamelTestSupport {
                 from("direct:translateText")
                         .to("aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText")
                         .to("mock:result");
-                from("direct:translatePojoText").to(
-                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true")
+                from("direct:translatePojoText")
+                        .to(
+                                "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&pojoRequest=true")
                         .to("mock:result");
-                from("direct:translateTextOptions").to(
-                        "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
+                from("direct:translateTextOptions")
+                        .to(
+                                "aws2-translate://test?translateClient=#amazonTranslateClient&operation=translateText&sourceLanguage=it&targetLanguage=en")
                         .to("mock:result");
             }
         };

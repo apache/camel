@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.IOException;
@@ -53,7 +54,9 @@ public class PubSubApiProcessor extends AbstractSalesforceProcessor {
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
-                    String.format("Error processing %s: [%s] \"%s\"", operationName.value(), e.getStatusCode(), e.getMessage()),
+                    String.format(
+                            "Error processing %s: [%s] \"%s\"",
+                            operationName.value(), e.getStatusCode(), e.getMessage()),
                     e));
             callback.done(true);
             return true;
@@ -84,8 +87,11 @@ public class PubSubApiProcessor extends AbstractSalesforceProcessor {
         super.doStart();
         this.pubSubClient = new PubSubApiClient(
                 endpoint.getComponent().getSession(),
-                endpoint.getComponent().getLoginConfig(), endpoint.getComponent().getPubSubHost(),
-                endpoint.getComponent().getPubSubPort(), 0, 0,
+                endpoint.getComponent().getLoginConfig(),
+                endpoint.getComponent().getPubSubHost(),
+                endpoint.getComponent().getPubSubPort(),
+                0,
+                0,
                 endpoint.getComponent().isPubsubAllowUseSystemProxy());
         ServiceHelper.startService(pubSubClient);
     }

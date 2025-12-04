@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.consumer;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 
 public class AcknowledgeSync implements GooglePubsubAcknowledge {
 
-    //Supplier cannot be used because of thrown exception (Callback used instead)
+    // Supplier cannot be used because of thrown exception (Callback used instead)
     private final Callable<SubscriberStub> subscriberStubSupplier;
     private final String subscriptionName;
 
@@ -42,7 +43,8 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
     public void ack(Exchange exchange) {
         AcknowledgeRequest ackRequest = AcknowledgeRequest.newBuilder()
                 .addAllAckIds(getAckIdList(exchange))
-                .setSubscription(subscriptionName).build();
+                .setSubscription(subscriptionName)
+                .build();
         try (SubscriberStub subscriber = subscriberStubSupplier.call()) {
             subscriber.acknowledgeCallable().call(ackRequest);
         } catch (Exception e) {
@@ -57,7 +59,8 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
         ModifyAckDeadlineRequest nackRequest = ModifyAckDeadlineRequest.newBuilder()
                 .addAllAckIds(getAckIdList(exchange))
                 .setSubscription(subscriptionName)
-                .setAckDeadlineSeconds(0).build();
+                .setAckDeadlineSeconds(0)
+                .build();
 
         try (SubscriberStub subscriber = subscriberStubSupplier.call()) {
             subscriber.modifyAckDeadlineCallable().call(nackRequest);

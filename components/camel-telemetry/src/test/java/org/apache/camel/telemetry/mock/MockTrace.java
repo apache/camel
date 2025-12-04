@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.mock;
 
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ public class MockTrace {
     public String toString() {
         return spans().toString();
     }
-
 }
 
 class SpanComparator implements java.util.Comparator<Span> {

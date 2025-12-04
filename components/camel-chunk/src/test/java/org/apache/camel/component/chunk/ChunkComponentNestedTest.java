@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
 
 import org.apache.camel.EndpointInject;
@@ -42,7 +43,8 @@ public class ChunkComponentNestedTest extends CamelTestSupport {
     void testChunkSubfolder() throws Exception {
         // Prepare
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("This the result of last call to chunk Earth to Andrew. Come in, Andrew.\n\n");
+        endSimpleMock.expectedBodiesReceived(
+                "This the result of last call to chunk Earth to Andrew. Come in, Andrew.\n\n");
         // Act
         startSimpleProducerTemplate.sendBodyAndHeader("The Body", "name", "Andrew");
         // Verify

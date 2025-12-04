@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.w3c.dom.Document;
 
@@ -24,10 +29,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanProxyNoBindingTest extends ContextTestSupport {
 
@@ -58,7 +59,8 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
 
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<order type=\"book\">Camel in action</order>");
+        Document doc =
+                context.getTypeConverter().convertTo(Document.class, "<order type=\"book\">Camel in action</order>");
 
         String reply = service.submitOrderDocumentReturnString(doc);
         assertEquals("<order id=\"123\">OK</order>", reply);
@@ -70,7 +72,8 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
 
-        Document doc = context.getTypeConverter().convertTo(Document.class, "<order type=\"book\">Camel in action</order>");
+        Document doc =
+                context.getTypeConverter().convertTo(Document.class, "<order type=\"book\">Camel in action</order>");
 
         Document reply = service.submitOrderDocumentReturnDocument(doc);
         assertNotNull(reply);
@@ -93,7 +96,8 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
 
-        assertThrows(Exception.class,
+        assertThrows(
+                Exception.class,
                 () -> service.submitOrderStringReturnString("Hello World"),
                 "Should have thrown exception");
     }
@@ -111,7 +115,8 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, false, OrderService.class);
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> service.invalidReturnType("<order type=\"beer\">Carlsberg</order>"),
                 "Should have thrown exception");
 
@@ -188,8 +193,13 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when(xpath("/order/@type = 'book'")).to("direct:book").otherwise()
-                        .to("direct:other").end();
+                from("direct:start")
+                        .choice()
+                        .when(xpath("/order/@type = 'book'"))
+                        .to("direct:book")
+                        .otherwise()
+                        .to("direct:other")
+                        .end();
 
                 from("direct:book").transform(constant("<order id=\"123\">OK</order>"));
 

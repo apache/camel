@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api;
+
+import static java.util.Objects.hash;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
-
-import static java.util.Objects.hash;
 
 /**
  * Model for the API configuration.
@@ -33,9 +34,7 @@ public final class WordpressAPIConfiguration implements Serializable {
     private String apiVersion;
     private WordpressAuthentication authentication;
 
-    public WordpressAPIConfiguration() {
-
-    }
+    public WordpressAPIConfiguration() {}
 
     public WordpressAPIConfiguration(final String apiUrl, final String apiVersion) {
         this.apiUrl = apiUrl;
@@ -68,7 +67,8 @@ public final class WordpressAPIConfiguration implements Serializable {
 
     @Override
     public String toString() {
-        return "WordpressAPIConfiguration{" + this.apiUrl + ", Version=" + this.apiVersion + ", " + this.authentication + "}";
+        return "WordpressAPIConfiguration{" + this.apiUrl + ", Version=" + this.apiVersion + ", " + this.authentication
+                + "}";
     }
 
     @Override
@@ -86,5 +86,4 @@ public final class WordpressAPIConfiguration implements Serializable {
         }
         return Objects.equals(this, obj);
     }
-
 }

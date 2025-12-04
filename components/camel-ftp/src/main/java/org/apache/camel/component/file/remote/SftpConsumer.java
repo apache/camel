@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.util.Arrays;
@@ -49,9 +50,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
     private transient String sftpConsumerToString;
 
-    public SftpConsumer(RemoteFileEndpoint<SftpRemoteFile> endpoint, Processor processor,
-                        RemoteFileOperations<SftpRemoteFile> operations,
-                        GenericFileProcessStrategy<SftpRemoteFile> processStrategy) {
+    public SftpConsumer(
+            RemoteFileEndpoint<SftpRemoteFile> endpoint,
+            Processor processor,
+            RemoteFileOperations<SftpRemoteFile> operations,
+            GenericFileProcessStrategy<SftpRemoteFile> processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
@@ -73,7 +76,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
                     LOG.warn(
-                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            "Error auto creating directory: " + dir + " due " + e.getMessage()
+                                    + ". This exception is ignored.",
                             e);
                 }
             }
@@ -86,7 +90,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     @Override
-    protected boolean pollDirectory(Exchange dynamic, String fileName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+    protected boolean pollDirectory(
+            Exchange dynamic, String fileName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         String currentDir = null;
         if (isStepwise()) {
             // must remember current dir so we stay in that directory after the
@@ -107,7 +112,10 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
     protected boolean pollSubDirectory(
             Exchange dynamic,
-            String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+            String absolutePath,
+            String dirName,
+            List<GenericFile<SftpRemoteFile>> fileList,
+            int depth) {
         boolean answer = doSafePollSubDirectory(dynamic, absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
@@ -119,7 +127,10 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     @Override
     protected boolean doPollDirectory(
             Exchange dynamic,
-            String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+            String absolutePath,
+            String dirName,
+            List<GenericFile<SftpRemoteFile>> fileList,
+            int depth) {
         LOG.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 
         depth++;
@@ -154,7 +165,10 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         for (SftpRemoteFile file : files) {
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(),
+                LOG.trace(
+                        "SftpFile[fileName={}, longName={}, dir={}]",
+                        file.getFilename(),
+                        file.getLongname(),
                         file.isDirectory());
             }
 
@@ -166,14 +180,15 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
                     String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
-                    Supplier<GenericFile<SftpRemoteFile>> remote
-                            = Suppliers.memorize(
-                                    () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+                    Supplier<GenericFile<SftpRemoteFile>> remote = Suppliers.memorize(() -> asRemoteFile(
+                            absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
                     Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
                     if (isValidFile(dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, true, files)) {
                         // recursive scan and add the sub files and folders
                         String subDirectory = file.getFilename();
-                        String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+                        String path = ObjectHelper.isNotEmpty(absolutePath)
+                                ? absolutePath + "/" + subDirectory
+                                : subDirectory;
                         boolean canPollMore = pollSubDirectory(dynamic, path, subDirectory, fileList, depth);
                         if (!canPollMore) {
                             return false;
@@ -186,11 +201,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             } else {
                 if (depth >= endpoint.getMinDepth()) {
                     String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
-                    Supplier<GenericFile<SftpRemoteFile>> remote
-                            = Suppliers.memorize(
-                                    () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+                    Supplier<GenericFile<SftpRemoteFile>> remote = Suppliers.memorize(() -> asRemoteFile(
+                            absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
                     Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
-                    if (isValidFile(dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, false, files)) {
+                    if (isValidFile(
+                            dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, false, files)) {
                         // matched file so add
                         fileList.add(remote.get());
                     }
@@ -220,7 +235,9 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
-                LOG.debug("Cannot list files in directory {} due directory does not exist or file permission error.", dir);
+                LOG.debug(
+                        "Cannot list files in directory {} due directory does not exist or file permission error.",
+                        dir);
             } else {
                 throw e;
             }
@@ -245,7 +262,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     @Override
-    protected boolean isMatched(Supplier<GenericFile<SftpRemoteFile>> file, String doneFileName, SftpRemoteFile[] files) {
+    protected boolean isMatched(
+            Supplier<GenericFile<SftpRemoteFile>> file, String doneFileName, SftpRemoteFile[] files) {
         String onlyName = FileUtil.stripPath(doneFileName);
 
         for (SftpRemoteFile f : files) {
@@ -270,7 +288,8 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     }
 
     @Override
-    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, SftpRemoteFile file) {
+    protected Supplier<String> getRelativeFilePath(
+            String endpointPath, String path, String absolutePath, SftpRemoteFile file) {
         return () -> {
             String relativePath = StringHelper.after(absolutePath, endpointPath);
             // skip trailing /
@@ -339,9 +358,9 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     @Override
     public String toString() {
         if (sftpConsumerToString == null) {
-            sftpConsumerToString = "SftpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sftpConsumerToString =
+                    "SftpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sftpConsumerToString;
     }
-
 }

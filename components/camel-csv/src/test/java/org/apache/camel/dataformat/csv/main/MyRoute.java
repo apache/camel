@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv.main;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,12 +24,15 @@ public class MyRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("timer:tick?repeatCount=1")
-                .setBody().constant("One   \r\nTwo   \r\nThree   \r\n")
-                .unmarshal().csv()
+                .setBody()
+                .constant("One   \r\nTwo   \r\nThree   \r\n")
+                .unmarshal()
+                .csv()
                 .to("mock:result");
 
         from("timer:tick2?repeatCount=1")
-                .setBody().constant("Four   #Five # Six  ")
+                .setBody()
+                .constant("Four   #Five # Six  ")
                 .unmarshal(dataFormat().csv().delimiter("#").end())
                 .to("mock:result2");
     }

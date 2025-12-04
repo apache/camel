@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import java.util.Properties;
@@ -31,8 +32,7 @@ public final class SpringWebserviceHelper {
 
     private static String defaultCharset = ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");
 
-    private SpringWebserviceHelper() {
-    }
+    private SpringWebserviceHelper() {}
 
     public static void toResult(Source source, Result result) throws TransformerException {
         if (source != null) {
@@ -51,5 +51,4 @@ public final class SpringWebserviceHelper {
             }
         }
     }
-
 }

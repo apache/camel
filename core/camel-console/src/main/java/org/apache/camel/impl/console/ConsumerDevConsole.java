@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
@@ -45,7 +46,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             for (Route route : getCamelContext().getRoutes()) {
                 String id = route.getId();
@@ -75,23 +77,29 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         sb.append(String.format("\n    Fixed Delay: %s", mpc.isUseFixedDelay()));
                         sb.append(String.format("\n    Greedy: %s", mpc.isGreedy()));
                         sb.append(String.format("\n    Running Logging Level: %s", mpc.getRunningLoggingLevel()));
-                        sb.append(String.format("\n    Send Empty Message When Idle: %s", mpc.isSendEmptyMessageWhenIdle()));
-                        sb.append(String.format("\n    Counter (total: %d success: %d error: %d)",
+                        sb.append(String.format(
+                                "\n    Send Empty Message When Idle: %s", mpc.isSendEmptyMessageWhenIdle()));
+                        sb.append(String.format(
+                                "\n    Counter (total: %d success: %d error: %d)",
                                 mpc.getCounter(), mpc.getSuccessCounter(), mpc.getErrorCounter()));
-                        sb.append(String.format("\n    Delay (initial: %d delay: %d unit: %s)",
+                        sb.append(String.format(
+                                "\n    Delay (initial: %d delay: %d unit: %s)",
                                 mpc.getInitialDelay(), mpc.getDelay(), mpc.getTimeUnit()));
                         sb.append(String.format(
                                 "\n    Backoff(counter: %d multiplier: %d errorThreshold: %d, idleThreshold: %d )",
-                                mpc.getBackoffCounter(), mpc.getBackoffMultiplier(), mpc.getBackoffErrorThreshold(),
+                                mpc.getBackoffCounter(),
+                                mpc.getBackoffMultiplier(),
+                                mpc.getBackoffErrorThreshold(),
                                 mpc.getBackoffIdleThreshold()));
                     }
                     if ("TimerConsumer".equals(mc.getServiceType())) {
                         // need to use JMX to gather details for camel-timer consumer
                         try {
                             MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
-                            ObjectName on = getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
-                                    .getObjectNameForConsumer(getCamelContext(),
-                                            route.getConsumer());
+                            ObjectName on = getCamelContext()
+                                    .getManagementStrategy()
+                                    .getManagementObjectNameStrategy()
+                                    .getObjectNameForConsumer(getCamelContext(), route.getConsumer());
                             if (ms.isRegistered(on)) {
                                 String timerName = (String) ms.getAttribute(on, "TimerName");
                                 Long counter = (Long) ms.getAttribute(on, "Counter");
@@ -116,7 +124,6 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                                 }
                                 sb.append(String.format("\n    Running Logging Level: %s", runLoggingLevel));
                                 sb.append(String.format("\n    Counter (total: %s)", counter));
-
                             }
                         } catch (Exception e) {
                             // ignore
@@ -135,7 +142,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
         final List<JsonObject> list = new ArrayList<>();
         root.put("consumers", list);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             for (Route route : getCamelContext().getRoutes()) {
                 String id = route.getId();
@@ -182,9 +190,10 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                         // need to use JMX to gather details for camel-timer consumer
                         try {
                             MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
-                            ObjectName on = getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
-                                    .getObjectNameForConsumer(getCamelContext(),
-                                            route.getConsumer());
+                            ObjectName on = getCamelContext()
+                                    .getManagementStrategy()
+                                    .getManagementObjectNameStrategy()
+                                    .getObjectNameForConsumer(getCamelContext(), route.getConsumer());
                             if (ms.isRegistered(on)) {
                                 String timerName = (String) ms.getAttribute(on, "TimerName");
                                 Long counter = (Long) ms.getAttribute(on, "Counter");
@@ -252,5 +261,4 @@ public class ConsumerDevConsole extends AbstractDevConsole {
         }
         return stats;
     }
-
 }

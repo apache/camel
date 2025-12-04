@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.AggregationStrategy;
@@ -48,9 +49,14 @@ public class SplitterParallelWithAggregationStrategyThrowingExceptionTest extend
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").split(body().tokenize("@")).aggregationStrategy(new MyAggregateBean()).parallelProcessing()
+                from("direct:start")
+                        .split(body().tokenize("@"))
+                        .aggregationStrategy(new MyAggregateBean())
+                        .parallelProcessing()
                         .shareUnitOfWork()
-                        .to("mock:a").end().to("mock:end");
+                        .to("mock:a")
+                        .end()
+                        .to("mock:end");
             }
         };
     }

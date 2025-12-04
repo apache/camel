@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry2;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.instrumentation.log4j.appender.v2_17.OpenTelemetryAppender;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
-//import io.opentelemetry.sdk.extension.incubator.trace.LeakDetectingSpanProcessor;
 import io.opentelemetry.sdk.logs.SdkLoggerProvider;
 import io.opentelemetry.sdk.logs.data.LogRecordData;
 import io.opentelemetry.sdk.logs.export.SimpleLogRecordProcessor;
@@ -59,13 +59,14 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
     static CamelOpenTelemetryExtension create() {
         InMemorySpanExporter spanExporter = InMemorySpanExporter.create();
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
-                //.addSpanProcessor(LeakDetectingSpanProcessor.create())
-                //.addSpanProcessor(new LoggingSpanProcessor())
+                // .addSpanProcessor(LeakDetectingSpanProcessor.create())
+                // .addSpanProcessor(new LoggingSpanProcessor())
                 .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
                 .build();
 
         InMemoryMetricReader metricReader = InMemoryMetricReader.create();
-        SdkMeterProvider meterProvider = SdkMeterProvider.builder().registerMetricReader(metricReader).build();
+        SdkMeterProvider meterProvider =
+                SdkMeterProvider.builder().registerMetricReader(metricReader).build();
 
         InMemoryLogRecordExporter logRecordExporter = InMemoryLogRecordExporter.create();
         SdkLoggerProvider loggerProvider = SdkLoggerProvider.builder()
@@ -87,8 +88,11 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
     private final InMemoryMetricReader metricReader;
     private final InMemoryLogRecordExporter logRecordExporter;
 
-    private CamelOpenTelemetryExtension(OpenTelemetrySdk openTelemetry, InMemorySpanExporter spanExporter,
-                                        InMemoryMetricReader metricReader, InMemoryLogRecordExporter logRecordExporter) {
+    private CamelOpenTelemetryExtension(
+            OpenTelemetrySdk openTelemetry,
+            InMemorySpanExporter spanExporter,
+            InMemoryMetricReader metricReader,
+            InMemoryLogRecordExporter logRecordExporter) {
         this.openTelemetry = openTelemetry;
         this.spanExporter = spanExporter;
         this.metricReader = metricReader;

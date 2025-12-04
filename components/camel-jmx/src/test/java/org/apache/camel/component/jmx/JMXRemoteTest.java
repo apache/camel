@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.io.File;
@@ -58,7 +59,8 @@ public class JMXRemoteTest extends SimpleBeanFixture {
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean
-        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object> emptyMap(), server);
+        connector =
+                JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object>emptyMap(), server);
         connector.start();
     }
 

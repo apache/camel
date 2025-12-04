@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
 
@@ -166,8 +167,12 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry().throwException(new IllegalArgumentException("Damn"))
-                        .doCatch(IllegalArgumentException.class).to("mock:dead").end();
+                from("direct:start")
+                        .doTry()
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(IllegalArgumentException.class)
+                        .to("mock:dead")
+                        .end();
             }
         });
         context.start();
@@ -207,5 +212,4 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         ExchangeSentEvent sent = (ExchangeSentEvent) events.get(16);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
-
 }

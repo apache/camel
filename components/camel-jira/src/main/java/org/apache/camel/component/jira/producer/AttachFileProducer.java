@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 
 import java.io.File;
 import java.io.InputStream;
@@ -28,8 +31,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
-
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 
 public class AttachFileProducer extends DefaultProducer {
     public AttachFileProducer(JiraEndpoint endpoint) {
@@ -59,7 +60,8 @@ public class AttachFileProducer extends DefaultProducer {
         }
         if (file == null) {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
-            name = exchange.getIn().getHeader(Exchange.FILE_NAME, exchange.getMessage().getMessageId(), String.class);
+            name = exchange.getIn()
+                    .getHeader(Exchange.FILE_NAME, exchange.getMessage().getMessageId(), String.class);
         }
 
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();

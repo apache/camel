@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayOutputStream;
@@ -52,8 +53,13 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
 
     private final ObjectMapper objectMapper;
 
-    public DefaultBulkApiV2Client(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                                  SalesforceLoginConfig loginConfig, SalesforceEndpoint endpoint) throws SalesforceException {
+    public DefaultBulkApiV2Client(
+            String version,
+            SalesforceSession session,
+            SalesforceHttpClient httpClient,
+            SalesforceLoginConfig loginConfig,
+            SalesforceEndpoint endpoint)
+            throws SalesforceException {
         super(version, session, httpClient, loginConfig);
         if (endpoint.getConfiguration().getObjectMapper() != null) {
             this.objectMapper = endpoint.getConfiguration().getObjectMapper();
@@ -88,8 +94,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
         request.headers(h -> h.add(HttpHeader.CONTENT_TYPE, "text/csv"));
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            public void onResponse(
-                    InputStream response, Map<String, String> headers, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 callback.onResponse(headers, ex);
             }
         });
@@ -137,8 +142,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     @Override
-    public void getSuccessfulResults(
-            String jobId, Map<String, List<String>> headers, StreamResponseCallback callback) {
+    public void getSuccessfulResults(String jobId, Map<String, List<String>> headers, StreamResponseCallback callback) {
         final Request request = getRequest(HttpMethod.GET, jobUrl(jobId) + "/successfulResults", headers);
         doRequestWithCsvResponse(callback, request);
     }
@@ -202,7 +206,10 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
 
     @Override
     public void getQueryJobResults(
-            String jobId, String locator, Integer maxRecords, Map<String, List<String>> headers,
+            String jobId,
+            String locator,
+            Integer maxRecords,
+            Map<String, List<String>> headers,
             StreamResponseCallback callback) {
         String query = null;
         if (locator != null) {
@@ -302,9 +309,8 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     protected SalesforceException createRestException(Response response, InputStream responseContent) {
         // this must be of type Error
         try {
-            final List<RestError> errors = unmarshalResponse(responseContent, response.getRequest(),
-                    new TypeReference<List<RestError>>() {
-                    });
+            final List<RestError> errors =
+                    unmarshalResponse(responseContent, response.getRequest(), new TypeReference<List<RestError>>() {});
             return new SalesforceException(errors, response.getStatus());
         } catch (SalesforceException e) {
             String msg = "Error un-marshaling Salesforce Error: " + e.getMessage();
@@ -318,13 +324,11 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     private String jobUrl(String jobId) {
-        return super.instanceUrl + "/services/data/v" + version + "/jobs/ingest" +
-               (jobId != null ? "/" + jobId : "");
+        return super.instanceUrl + "/services/data/v" + version + "/jobs/ingest" + (jobId != null ? "/" + jobId : "");
     }
 
     private String queryJobUrl(String jobId) {
-        return super.instanceUrl + "/services/data/v" + version + "/jobs/query" +
-               (jobId != null ? "/" + jobId : "");
+        return super.instanceUrl + "/services/data/v" + version + "/jobs/query" + (jobId != null ? "/" + jobId : "");
     }
 
     private void doRequestWithCsvResponse(StreamResponseCallback callback, Request request) {
@@ -342,8 +346,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
                 }
                 Job responseJob = null;
                 try {
-                    responseJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request,
-                            Job.class);
+                    responseJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request, Job.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
@@ -362,8 +365,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
                 }
                 QueryJob queryJob = null;
                 try {
-                    queryJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request,
-                            QueryJob.class);
+                    queryJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request, QueryJob.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
@@ -391,7 +393,8 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
                 result = objectMapper.readValue(response, resultClass);
             } catch (IOException e) {
                 throw new SalesforceException(
-                        String.format("Error unmarshalling response for {%s:%s} : %s",
+                        String.format(
+                                "Error unmarshalling response for {%s:%s} : %s",
                                 request.getMethod(), request.getURI(), e.getMessage()),
                         e);
             }
@@ -407,7 +410,8 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
                 result = objectMapper.readValue(response, typeRef);
             } catch (IOException e) {
                 throw new SalesforceException(
-                        String.format("Error unmarshalling response for {%s:%s} : %s",
+                        String.format(
+                                "Error unmarshalling response for {%s:%s} : %s",
                                 request.getMethod(), request.getURI(), e.getMessage()),
                         e);
             }

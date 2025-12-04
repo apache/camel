@@ -17,9 +17,9 @@
 
 package org.apache.camel.component.zeebe;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 class ZeebeComponentTest {
 

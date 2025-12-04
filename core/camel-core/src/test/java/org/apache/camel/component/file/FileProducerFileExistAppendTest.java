@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -54,17 +55,22 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri(), "Row 2\n", Exchange.FILE_NAME, TEST_FILE_NAME_2);
 
         // Append test files to the target one
-        template.sendBodyAndHeader(fileUri("?fileExist=Append"), testFile(TEST_FILE_NAME_1).toFile(),
-                Exchange.FILE_NAME, TEST_FILE_NAME_OUT);
-        template.sendBodyAndHeader(fileUri("?fileExist=Append"), testFile(TEST_FILE_NAME_2).toFile(),
-                Exchange.FILE_NAME, TEST_FILE_NAME_OUT);
+        template.sendBodyAndHeader(
+                fileUri("?fileExist=Append"),
+                testFile(TEST_FILE_NAME_1).toFile(),
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME_OUT);
+        template.sendBodyAndHeader(
+                fileUri("?fileExist=Append"),
+                testFile(TEST_FILE_NAME_2).toFile(),
+                Exchange.FILE_NAME,
+                TEST_FILE_NAME_OUT);
 
         mock.expectedFileExists(testFile(TEST_FILE_NAME_OUT), "Row 1\nRow 2\n");
 
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Override
@@ -72,7 +78,9 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?noop=true&initialDelay=0&delay=10")).autoStartup(false).convertBodyTo(String.class)
+                from(fileUri("?noop=true&initialDelay=0&delay=10"))
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };

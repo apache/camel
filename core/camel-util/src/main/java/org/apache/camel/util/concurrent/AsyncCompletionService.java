@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.PriorityQueue;
@@ -102,7 +103,7 @@ public class AsyncCompletionService<V> {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            for (;;) {
+            for (; ; ) {
                 Task t = queue.peek();
                 if (t != null && (!ordered || index.compareAndSet(t.id, t.id + 1))) {
                     queue.poll();
@@ -123,7 +124,7 @@ public class AsyncCompletionService<V> {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            for (;;) {
+            for (; ; ) {
                 Task t = queue.peek();
                 if (t != null && (!ordered || index.compareAndSet(t.id, t.id + 1))) {
                     queue.poll();

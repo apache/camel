@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 import org.apache.camel.BindToRegistry;
@@ -43,7 +44,8 @@ public class CSimpleBeanTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().csimple("${bean:foo?method=doSomething}")
+                        .transform()
+                        .csimple("${bean:foo?method=doSomething}")
                         .to("mock:result");
             }
         };

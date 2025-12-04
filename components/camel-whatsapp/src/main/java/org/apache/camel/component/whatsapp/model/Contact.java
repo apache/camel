@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,8 +28,7 @@ public class Contact {
     @JsonProperty("wa_id")
     private String waId;
 
-    public Contact() {
-    }
+    public Contact() {}
 
     public String getInput() {
         return input;

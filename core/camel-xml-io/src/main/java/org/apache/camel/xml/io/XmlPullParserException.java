@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-/* -*-             c-basic-offset: 4; indent-tabs-mode: nil; -*-  //------100-columns-wide------>|*/
-// for license please see accompanying LICENSE.txt file (available also at http://www.xmlpull.org/)
-
 package org.apache.camel.xml.io;
 
 /**
@@ -41,8 +38,11 @@ public class XmlPullParserException extends Exception {
      */
 
     public XmlPullParserException(String msg, XmlPullParser parser, Throwable cause) {
-        super((msg == null ? "" : msg + " ") + (parser == null ? "" : "(position:" + parser.getPositionDescription() + ") ")
-              + (cause == null ? "" : "caused by: " + cause), cause);
+        super(
+                (msg == null ? "" : msg + " ")
+                        + (parser == null ? "" : "(position:" + parser.getPositionDescription() + ") ")
+                        + (cause == null ? "" : "caused by: " + cause),
+                cause);
 
         if (parser != null) {
             this.row = parser.getLineNumber();
@@ -60,5 +60,4 @@ public class XmlPullParserException extends Exception {
     public int getColumnNumber() {
         return column;
     }
-
 }

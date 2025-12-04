@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.Body;
@@ -31,7 +32,9 @@ public class BeanVarargsInject5Test extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("bean:myBean?method=doSomething(*,1,2,3)").to("mock:finish");
+                from("direct:start")
+                        .to("bean:myBean?method=doSomething(*,1,2,3)")
+                        .to("mock:finish");
             }
         };
     }

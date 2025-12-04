@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
 
 import java.util.Collection;
@@ -24,11 +25,20 @@ import org.apache.camel.CamelContext;
 public interface GoogleCalendarClientFactory {
 
     Calendar makeClient(
-            String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken,
-            String accessToken, String emailAddress,
-            String p12FileName, String user);
+            String clientId,
+            String clientSecret,
+            Collection<String> scopes,
+            String applicationName,
+            String refreshToken,
+            String accessToken,
+            String emailAddress,
+            String p12FileName,
+            String user);
 
     Calendar makeClient(
-            CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
+            CamelContext camelContext,
+            String serviceAccountKey,
+            Collection<String> scopes,
+            String applicationName,
             String delegate);
 }

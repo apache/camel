@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.util.Optional;
@@ -28,8 +29,7 @@ import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 public final class ZooKeeperCuratorHelper {
-    private ZooKeeperCuratorHelper() {
-    }
+    private ZooKeeperCuratorHelper() {}
 
     public static CuratorFramework createCurator(ZooKeeperCuratorConfiguration configuration) {
         CuratorFramework curator = configuration.getCuratorFramework();
@@ -40,16 +40,21 @@ public final class ZooKeeperCuratorHelper {
             RetryPolicy retryPolicy = configuration.getRetryPolicy();
             if (retryPolicy == null) {
                 retryPolicy = new ExponentialBackoffRetry(
-                        (int) configuration.getReconnectBaseSleepTimeUnit().toMillis(configuration.getReconnectBaseSleepTime()),
+                        (int) configuration
+                                .getReconnectBaseSleepTimeUnit()
+                                .toMillis(configuration.getReconnectBaseSleepTime()),
                         configuration.getReconnectMaxRetries(),
-                        (int) configuration.getReconnectMaxSleepTimeUnit().toMillis(configuration.getReconnectMaxSleepTime()));
+                        (int) configuration
+                                .getReconnectMaxSleepTimeUnit()
+                                .toMillis(configuration.getReconnectMaxSleepTime()));
             }
 
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
                     .connectString(String.join(",", configuration.getNodes()))
-                    .sessionTimeoutMs((int) configuration.getSessionTimeoutUnit().toMillis(configuration.getSessionTimeout()))
-                    .connectionTimeoutMs(
-                            (int) configuration.getConnectionTimeoutUnit().toMillis(configuration.getConnectionTimeout()))
+                    .sessionTimeoutMs(
+                            (int) configuration.getSessionTimeoutUnit().toMillis(configuration.getSessionTimeout()))
+                    .connectionTimeoutMs((int)
+                            configuration.getConnectionTimeoutUnit().toMillis(configuration.getConnectionTimeout()))
                     .maxCloseWaitMs((int) configuration.getMaxCloseWaitUnit().toMillis(configuration.getMaxCloseWait()))
                     .retryPolicy(retryPolicy);
 

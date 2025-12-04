@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
 
 import org.apache.camel.spi.Metadata;
 
 public final class KeycloakConstants {
 
-    @Metadata(description = "The operation to perform", javaType = "org.apache.camel.component.keycloak.KeycloakOperations")
+    @Metadata(
+            description = "The operation to perform",
+            javaType = "org.apache.camel.component.keycloak.KeycloakOperations")
     public static final String OPERATION = "CamelKeycloakOperation";
 
     @Metadata(description = "The realm name", javaType = "String")
@@ -155,8 +158,9 @@ public final class KeycloakConstants {
     public static final String LIFESPAN = "CamelKeycloakLifespan";
 
     // Bulk operations constants
-    @Metadata(description = "The list of users for bulk operations",
-              javaType = "java.util.List<org.keycloak.representations.idm.UserRepresentation>")
+    @Metadata(
+            description = "The list of users for bulk operations",
+            javaType = "java.util.List<org.keycloak.representations.idm.UserRepresentation>")
     public static final String USERS = "CamelKeycloakUsers";
 
     @Metadata(description = "The list of user IDs for bulk operations", javaType = "java.util.List<String>")

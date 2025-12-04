@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import java.util.function.Function;
@@ -27,8 +28,10 @@ import org.apache.camel.util.function.ThrowingFunction;
  */
 public class ProducerServicePool extends ServicePool<AsyncProducer> {
 
-    public ProducerServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
-                               Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
+    public ProducerServicePool(
+            ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
+            Function<AsyncProducer, Endpoint> getEndpoint,
+            int capacity) {
         super(creator, getEndpoint, capacity);
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
 
 import java.util.HashSet;
@@ -46,11 +47,13 @@ public class BeanValidatorProducer extends DefaultProducer {
             Iterable<?> body = exchange.getIn().getBody(Iterable.class);
             body.forEach(b -> constraintViolations.addAll(getConstraintViolationsForSingleBean(b, this.group)));
         } else {
-            constraintViolations.addAll(getConstraintViolationsForSingleBean(exchange.getIn().getBody(), this.group));
+            constraintViolations.addAll(
+                    getConstraintViolationsForSingleBean(exchange.getIn().getBody(), this.group));
         }
 
         if (!constraintViolations.isEmpty()) {
-            throw new BeanValidationException(exchange, constraintViolations, exchange.getIn().getBody());
+            throw new BeanValidationException(
+                    exchange, constraintViolations, exchange.getIn().getBody());
         }
     }
 
@@ -81,5 +84,4 @@ public class BeanValidatorProducer extends DefaultProducer {
 
         return constraintViolations;
     }
-
 }

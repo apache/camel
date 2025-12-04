@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.concurrent.locks.Lock;
@@ -96,5 +97,4 @@ public final class LoadTriplet {
     public String toString() {
         return String.format("%.2f, %.2f, %.2f", getLoad1(), getLoad5(), getLoad15());
     }
-
 }

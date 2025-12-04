@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +25,6 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -51,26 +52,86 @@ public class SplitListListIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < 5; i++) {
-            assertEquals("number" + i,
-                    getMockEndpoint("mock:a").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
-            assertEquals("Camel",
-                    getMockEndpoint("mock:a").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
-            assertEquals("number" + i,
-                    getMockEndpoint("mock:b").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
-            assertEquals("Camel",
-                    getMockEndpoint("mock:b").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
-            assertEquals("number" + i,
-                    getMockEndpoint("mock:c").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
-            assertEquals("Camel",
-                    getMockEndpoint("mock:c").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
-            assertEquals("number" + i,
-                    getMockEndpoint("mock:d").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
-            assertEquals("Camel",
-                    getMockEndpoint("mock:d").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
-            assertEquals("number" + i,
-                    getMockEndpoint("mock:e").getReceivedExchanges().get(i).getIn().getBody(List.class).get(0));
-            assertEquals("Camel",
-                    getMockEndpoint("mock:e").getReceivedExchanges().get(i).getIn().getBody(List.class).get(1));
+            assertEquals(
+                    "number" + i,
+                    getMockEndpoint("mock:a")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(0));
+            assertEquals(
+                    "Camel",
+                    getMockEndpoint("mock:a")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(1));
+            assertEquals(
+                    "number" + i,
+                    getMockEndpoint("mock:b")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(0));
+            assertEquals(
+                    "Camel",
+                    getMockEndpoint("mock:b")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(1));
+            assertEquals(
+                    "number" + i,
+                    getMockEndpoint("mock:c")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(0));
+            assertEquals(
+                    "Camel",
+                    getMockEndpoint("mock:c")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(1));
+            assertEquals(
+                    "number" + i,
+                    getMockEndpoint("mock:d")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(0));
+            assertEquals(
+                    "Camel",
+                    getMockEndpoint("mock:d")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(1));
+            assertEquals(
+                    "number" + i,
+                    getMockEndpoint("mock:e")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(0));
+            assertEquals(
+                    "Camel",
+                    getMockEndpoint("mock:e")
+                            .getReceivedExchanges()
+                            .get(i)
+                            .getIn()
+                            .getBody(List.class)
+                            .get(1));
         }
     }
 
@@ -81,7 +142,12 @@ public class SplitListListIssueTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").split(body()).to("direct:foo").end();
 
-                from("direct:foo").to("mock:a").to("mock:b").to("mock:c").to("mock:d").to("mock:e");
+                from("direct:foo")
+                        .to("mock:a")
+                        .to("mock:b")
+                        .to("mock:c")
+                        .to("mock:d")
+                        .to("mock:e");
             }
         };
     }

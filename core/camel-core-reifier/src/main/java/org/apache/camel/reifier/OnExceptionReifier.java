@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
@@ -101,7 +102,8 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         return new CatchProcessor(getCamelContext(), classes, childProcessor, when);
     }
 
-    protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {
+    protected List<Class<? extends Throwable>> createExceptionClasses(ClassResolver resolver)
+            throws ClassNotFoundException {
         List<String> list = definition.getExceptions();
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
@@ -110,5 +112,4 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
         }
         return answer;
     }
-
 }

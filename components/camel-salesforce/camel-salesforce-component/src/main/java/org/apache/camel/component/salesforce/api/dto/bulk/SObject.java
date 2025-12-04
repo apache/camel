@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import java.util.ArrayList;
@@ -48,13 +49,17 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sObject", propOrder = { "type", "id", "any" })
+@XmlType(
+        name = "sObject",
+        propOrder = {"type", "id", "any"})
 public class SObject {
 
     @XmlElement(required = true)
     protected String type;
+
     @XmlElement(name = "Id", required = true, nillable = true)
     protected String id;
+
     @XmlAnyElement(lax = true)
     protected List<Object> any;
 
@@ -119,5 +124,4 @@ public class SObject {
         }
         return this.any;
     }
-
 }

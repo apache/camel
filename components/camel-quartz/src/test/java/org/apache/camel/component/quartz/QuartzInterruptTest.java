@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuartzInterruptTest extends BaseQuartzTest {
     protected MockEndpoint resultEndpoint;
@@ -37,7 +38,6 @@ public class QuartzInterruptTest extends BaseQuartzTest {
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
         assertDoesNotThrow(quartz::stop);
         assertTrue(quartz.isStopped());
-
     }
 
     @Override
@@ -47,7 +47,8 @@ public class QuartzInterruptTest extends BaseQuartzTest {
                 QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
                 quartz.setInterruptJobsOnShutdown(true);
 
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=100").routeId("myRoute")
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=100")
+                        .routeId("myRoute")
                         .delay(constant(1000))
                         .to("mock:result");
             }

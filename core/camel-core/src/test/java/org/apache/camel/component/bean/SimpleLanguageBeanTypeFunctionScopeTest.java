@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,28 +26,35 @@ public class SimpleLanguageBeanTypeFunctionScopeTest extends SimpleLanguageBeanF
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:single").choice().when().simple(
-                        "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Singleton}")
+                from("direct:single")
+                        .choice()
+                        .when()
+                        .simple(
+                                "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Singleton}")
                         .to("mock:result")
-                        .otherwise().to("mock:other");
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:proto").choice().when().simple(
-                        "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Prototype}")
+                from("direct:proto")
+                        .choice()
+                        .when()
+                        .simple(
+                                "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Prototype}")
                         .to("mock:result")
-                        .otherwise().to("mock:other");
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:request")
-                        .to("direct:sub")
-                        .to("direct:sub")
-                        .to("direct:sub");
+                from("direct:request").to("direct:sub").to("direct:sub").to("direct:sub");
 
-                from("direct:sub").choice().when().simple(
-                        "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Request}")
+                from("direct:sub")
+                        .choice()
+                        .when()
+                        .simple(
+                                "${bean:type:org.apache.camel.component.bean.SimpleLanguageBeanFunctionScopeTest$MyBean?scope=Request}")
                         .to("mock:result")
-                        .otherwise().to("mock:other");
-
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }
-
 }

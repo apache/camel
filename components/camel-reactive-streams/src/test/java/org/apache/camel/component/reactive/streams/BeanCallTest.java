@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
+
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,10 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.util.UnwrapStreamProcessor;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
-
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("unused")
 public class BeanCallTest extends BaseReactiveTest {
@@ -49,10 +50,7 @@ public class BeanCallTest extends BaseReactiveTest {
                         .process(new UnwrapStreamProcessor()) // Can be removed?
                         .to("mock:endpoint");
 
-                from("direct:handle")
-                        .setBody().constant("ERR")
-                        .to("mock:endpoint");
-
+                from("direct:handle").setBody().constant("ERR").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -81,9 +79,7 @@ public class BeanCallTest extends BaseReactiveTest {
                         .process(new UnwrapStreamProcessor()) // Can be removed?
                         .to("mock:endpoint");
 
-                from("direct:handle")
-                        .setBody().constant("ERR")
-                        .to("mock:endpoint");
+                from("direct:handle").setBody().constant("ERR").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -112,9 +108,7 @@ public class BeanCallTest extends BaseReactiveTest {
                         .process(new UnwrapStreamProcessor()) // Can be removed?
                         .to("mock:endpoint");
 
-                from("direct:handle")
-                        .setBody().constant("ERR")
-                        .to("mock:endpoint");
+                from("direct:handle").setBody().constant("ERR").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -143,10 +137,7 @@ public class BeanCallTest extends BaseReactiveTest {
                         .process(new UnwrapStreamProcessor()) // Can be removed?
                         .to("mock:endpoint");
 
-                from("direct:handle")
-                        .setBody().constant("ERR")
-                        .to("mock:endpoint");
-
+                from("direct:handle").setBody().constant("ERR").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -176,10 +167,7 @@ public class BeanCallTest extends BaseReactiveTest {
                         .process(new UnwrapStreamProcessor()) // Can be removed?
                         .to("mock:endpoint");
 
-                from("direct:handle")
-                        .setBody().constant("ERR")
-                        .to("mock:endpoint");
-
+                from("direct:handle").setBody().constant("ERR").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -214,10 +202,7 @@ public class BeanCallTest extends BaseReactiveTest {
                         .process(new UnwrapStreamProcessor()) // Can be removed?
                         .to("mock:endpoint");
 
-                from("direct:handle")
-                        .setBody().constant("ERR")
-                        .to("mock:endpoint");
-
+                from("direct:handle").setBody().constant("ERR").to("mock:endpoint");
             }
         }.addRoutesToCamelContext(context);
 
@@ -235,23 +220,19 @@ public class BeanCallTest extends BaseReactiveTest {
     }
 
     public Publisher<String> processBody(Publisher<Integer> data) {
-        return Flowable.fromPublisher(data)
-                .map(l -> "HelloBody " + l);
+        return Flowable.fromPublisher(data).map(l -> "HelloBody " + l);
     }
 
     public Publisher<String> processBodyWrongType(Publisher<BeanCallTest> data) {
-        return Flowable.fromPublisher(data)
-                .map(l -> "HelloBody " + l);
+        return Flowable.fromPublisher(data).map(l -> "HelloBody " + l);
     }
 
     public Publisher<String> processHeader(@Header("myheader") Publisher<Integer> data) {
-        return Flowable.fromPublisher(data)
-                .map(l -> "HelloHeader " + l);
+        return Flowable.fromPublisher(data).map(l -> "HelloHeader " + l);
     }
 
     public Publisher<String> processBodyTwoItems(Publisher<Integer> data) {
-        return Flowable.fromPublisher(data).mergeWith(data)
-                .map(l -> "HelloBody " + l);
+        return Flowable.fromPublisher(data).mergeWith(data).map(l -> "HelloBody " + l);
     }
 
     public Publisher<String> processBodyEmpty(Publisher<Integer> data) {

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,11 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiProcessorTest {
 
     @Test
@@ -39,8 +40,12 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                rest().get("/foo").description("Foo endpoint").to("mock:foo")
-                        .post("/bar").description("Bar endpoint").to("mock:foo");
+                rest().get("/foo")
+                        .description("Foo endpoint")
+                        .to("mock:foo")
+                        .post("/bar")
+                        .description("Bar endpoint")
+                        .to("mock:foo");
             }
         });
 
@@ -65,8 +70,12 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                rest().get("/foo").description("Foo endpoint").to("mock:foo")
-                        .post("/bar").description("Bar endpoint").to("mock:foo");
+                rest().get("/foo")
+                        .description("Foo endpoint")
+                        .to("mock:foo")
+                        .post("/bar")
+                        .description("Bar endpoint")
+                        .to("mock:foo");
             }
         });
 
@@ -93,8 +102,13 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                rest().get("/foo").description("Foo endpoint").deprecated().to("mock:foo")
-                        .post("/bar").description("Bar endpoint").to("mock:foo");
+                rest().get("/foo")
+                        .description("Foo endpoint")
+                        .deprecated()
+                        .to("mock:foo")
+                        .post("/bar")
+                        .description("Bar endpoint")
+                        .to("mock:foo");
             }
         });
 
@@ -116,7 +130,8 @@ public class RestOpenApiProcessorTest {
         JsonNode jsonNode = new ObjectMapper(new YAMLFactory()).readValue(yaml, JsonNode.class);
         assertNull(jsonNode.get("paths").get("/bar").get("post").get("deprecated"));
         assertNotNull(jsonNode.get("paths").get("/foo").get("get").get("deprecated"));
-        assertTrue(jsonNode.get("paths").get("/foo").get("get").get("deprecated").asBoolean());
+        assertTrue(
+                jsonNode.get("paths").get("/foo").get("get").get("deprecated").asBoolean());
     }
 
     @Test
@@ -125,8 +140,12 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                rest().get("/foo").description("Foo endpoint").to("mock:foo")
-                        .post("/bar").description("Bar endpoint").to("mock:foo");
+                rest().get("/foo")
+                        .description("Foo endpoint")
+                        .to("mock:foo")
+                        .post("/bar")
+                        .description("Bar endpoint")
+                        .to("mock:foo");
             }
         });
 
@@ -153,8 +172,12 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                rest().get("/foo").description("Foo endpoint").to("mock:foo")
-                        .post("/bar").description("Bar endpoint").to("mock:foo");
+                rest().get("/foo")
+                        .description("Foo endpoint")
+                        .to("mock:foo")
+                        .post("/bar")
+                        .description("Bar endpoint")
+                        .to("mock:foo");
             }
         });
 
@@ -182,8 +205,12 @@ public class RestOpenApiProcessorTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                rest().get("/foo").description("Foo endpoint").to("mock:foo")
-                        .post("/bar").description("Bar endpoint").to("mock:foo");
+                rest().get("/foo")
+                        .description("Foo endpoint")
+                        .to("mock:foo")
+                        .post("/bar")
+                        .description("Bar endpoint")
+                        .to("mock:foo");
             }
         });
 
@@ -204,5 +231,4 @@ public class RestOpenApiProcessorTest {
         assertTrue(yaml.contains("summary: Foo endpoint"));
         assertTrue(yaml.contains("summary: Bar endpoint"));
     }
-
 }

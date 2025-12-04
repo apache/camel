@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.bom.generator;
 
 import java.util.Collection;
@@ -31,8 +32,8 @@ import org.codehaus.plexus.util.SelectorUtils;
 public class DependencyMatcher {
 
     private static final String ARTIFACT_FORMAT = "%s:%s:%s:%s:%s";
-    private static final Pattern ARTIFACT_PATTERN = Pattern
-            .compile("(?<groupId>[^:]+):(?<artifactId>[^:]+)(:(?<version>[^:]+))?(:(?<type>[^:]+))?(:(?<classifier>[^:]+))?");
+    private static final Pattern ARTIFACT_PATTERN = Pattern.compile(
+            "(?<groupId>[^:]+):(?<artifactId>[^:]+)(:(?<version>[^:]+))?(:(?<type>[^:]+))?(:(?<classifier>[^:]+))?");
 
     private final Collection<String> selectors;
 
@@ -54,7 +55,9 @@ public class DependencyMatcher {
     }
 
     private String toCoordinates(Dependency artifact) {
-        return String.format(ARTIFACT_FORMAT, artifact.getGroupId(),
+        return String.format(
+                ARTIFACT_FORMAT,
+                artifact.getGroupId(),
                 artifact.getArtifactId(),
                 artifact.getVersion(),
                 artifact.getType(),
@@ -84,5 +87,4 @@ public class DependencyMatcher {
         }
         return result;
     }
-
 }

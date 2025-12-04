@@ -36,8 +36,7 @@ public final class MockResult {
 
     public static final String TAG_RECOGNITION_RESULT_TYPE = "test_type";
 
-    private MockResult() {
-    }
+    private MockResult() {}
 
     public static RunCelebrityRecognitionResponse getCelebrityRecognitionResponse() {
         Map<String, Integer> faceDetailMap = new HashMap<>();
@@ -46,14 +45,16 @@ public final class MockResult {
         faceDetailMap.put("x", 200);
         faceDetailMap.put("y", 100);
 
-        return new RunCelebrityRecognitionResponse().withResult(Collections
-                .singletonList(new CelebrityRecognitionResultBody().withConfidence(CELEBRITY_RECOGNITION_RESULT_CONFIDENCE)
+        return new RunCelebrityRecognitionResponse()
+                .withResult(Collections.singletonList(new CelebrityRecognitionResultBody()
+                        .withConfidence(CELEBRITY_RECOGNITION_RESULT_CONFIDENCE)
                         .withFaceDetail(faceDetailMap)
                         .withLabel(CELEBRITY_RECOGNITION_RESULT_LABEL)));
     }
 
     public static RunImageTaggingResponse getTagRecognitionResponse() {
-        ImageTaggingItemBody tag = new ImageTaggingItemBody().withConfidence(TAG_RECOGNITION_RESULT_CONFIDENCE)
+        ImageTaggingItemBody tag = new ImageTaggingItemBody()
+                .withConfidence(TAG_RECOGNITION_RESULT_CONFIDENCE)
                 .withTag(TAG_RECOGNITION_RESULT_TAG)
                 .withType(TAG_RECOGNITION_RESULT_TYPE);
 

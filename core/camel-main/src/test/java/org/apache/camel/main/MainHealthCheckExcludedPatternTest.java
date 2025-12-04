@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -33,11 +39,6 @@ import org.apache.camel.impl.health.HealthCheckRegistryRepository;
 import org.apache.camel.impl.health.RoutesHealthCheckRepository;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MainHealthCheckExcludedPatternTest {
 
     @Test
@@ -52,8 +53,8 @@ public class MainHealthCheckExcludedPatternTest {
             CamelContext camelContext = main.getCamelContext();
             assertNotNull(camelContext);
 
-            HealthCheckRegistry healthCheckRegistry
-                    = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
+            HealthCheckRegistry healthCheckRegistry =
+                    camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
             Optional<HealthCheckRepository> routes = healthCheckRegistry.getRepository("routes");
@@ -96,11 +97,12 @@ public class MainHealthCheckExcludedPatternTest {
             // register custom health check
             camelContext.getRegistry().bind("custom", healthCheck);
 
-            HealthCheckRegistry healthCheckRegistry
-                    = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
+            HealthCheckRegistry healthCheckRegistry =
+                    camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
-            Optional<HealthCheckRepository> repository = healthCheckRegistry.getRepository("registry-health-check-repository");
+            Optional<HealthCheckRepository> repository =
+                    healthCheckRegistry.getRepository("registry-health-check-repository");
             assertTrue(repository.isPresent());
 
             HealthCheckRegistryRepository registryRepository = (HealthCheckRegistryRepository) repository.get();
@@ -138,8 +140,8 @@ public class MainHealthCheckExcludedPatternTest {
                 }
             };
 
-            HealthCheckRegistry healthCheckRegistry
-                    = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
+            HealthCheckRegistry healthCheckRegistry =
+                    camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
             List<HealthCheck> healthChecks = healthCheckRegistry.stream().toList();
@@ -167,11 +169,9 @@ public class MainHealthCheckExcludedPatternTest {
 
         @Override
         public void configure() {
-            from("direct:start").routeId("mydirect")
-                    .to("log:direct");
+            from("direct:start").routeId("mydirect").to("log:direct");
 
-            from("seda:start").routeId("myseda")
-                    .to("log:seda");
+            from("seda:start").routeId("myseda").to("log:seda");
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb.address;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -43,11 +44,14 @@ import jakarta.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "address", propOrder = { "addressLine1", "addressLine2" })
+@XmlType(
+        name = "address",
+        propOrder = {"addressLine1", "addressLine2"})
 public class Address {
 
     @XmlElement(required = true)
     protected String addressLine1;
+
     protected String addressLine2;
 
     /**
@@ -99,5 +103,4 @@ public class Address {
         setAddressLine2(value);
         return this;
     }
-
 }

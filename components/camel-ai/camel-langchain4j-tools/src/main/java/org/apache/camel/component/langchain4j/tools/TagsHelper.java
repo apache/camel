@@ -18,8 +18,7 @@
 package org.apache.camel.component.langchain4j.tools;
 
 final class TagsHelper {
-    private TagsHelper() {
-    }
+    private TagsHelper() {}
 
     /**
      * Split the list of tags

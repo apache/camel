@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -37,8 +40,6 @@ import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PQCSignaturePicnicTest extends CamelTestSupport {
 
     @EndpointInject("mock:sign")
@@ -50,15 +51,17 @@ public class PQCSignaturePicnicTest extends CamelTestSupport {
     @Produce("direct:sign")
     protected ProducerTemplate templateSign;
 
-    public PQCSignaturePicnicTest() throws NoSuchAlgorithmException {
-    }
+    public PQCSignaturePicnicTest() throws NoSuchAlgorithmException {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:sign").to("pqc:sign?operation=sign").to("mock:sign").to("pqc:verify?operation=verify")
+                from("direct:sign")
+                        .to("pqc:sign?operation=sign")
+                        .to("mock:sign")
+                        .to("pqc:verify?operation=verify")
                         .to("mock:verify");
             }
         };
@@ -81,9 +84,10 @@ public class PQCSignaturePicnicTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Keypair")
-    public KeyPair setKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.PICNIC.getAlgorithm(),
-                PQCSignatureAlgorithms.PICNIC.getBcProvider());
+    public KeyPair setKeyPair()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.PICNIC.getAlgorithm(), PQCSignatureAlgorithms.PICNIC.getBcProvider());
         kpGen.initialize(PicnicParameterSpec.picnic3l5);
         KeyPair kp = kpGen.generateKeyPair();
         return kp;
@@ -91,8 +95,8 @@ public class PQCSignaturePicnicTest extends CamelTestSupport {
 
     @BindToRegistry("Signer")
     public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
-        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.PICNIC.getAlgorithm(),
-                PQCSignatureAlgorithms.PICNIC.getBcProvider());
+        Signature mlDsa = Signature.getInstance(
+                PQCSignatureAlgorithms.PICNIC.getAlgorithm(), PQCSignatureAlgorithms.PICNIC.getBcProvider());
         return mlDsa;
     }
 }

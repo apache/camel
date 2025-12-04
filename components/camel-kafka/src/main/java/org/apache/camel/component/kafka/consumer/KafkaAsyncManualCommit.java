@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer;
 
 /**
  * Can be used for forcing async manual offset commit when using Kafka consumer.
  */
-public interface KafkaAsyncManualCommit extends KafkaManualCommit {
-
-}
+public interface KafkaAsyncManualCommit extends KafkaManualCommit {}

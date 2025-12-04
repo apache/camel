@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.tensorflow.serving.services;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
@@ -26,7 +27,8 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-public class TensorFlowServingLocalContainerService implements TensorFlowServingService, ContainerService<GenericContainer<?>> {
+public class TensorFlowServingLocalContainerService
+        implements TensorFlowServingService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(TensorFlowServingLocalContainerService.class);
 
     public static final int GRPC_PORT = 8500;
@@ -41,14 +43,15 @@ public class TensorFlowServingLocalContainerService implements TensorFlowServing
     @SuppressWarnings("resource")
     protected GenericContainer<?> initContainer() {
         boolean isArm64 = System.getProperty("os.arch").equals("aarch64");
-        String imageName = LocalPropertyResolver.getProperty(TensorFlowServingLocalContainerService.class,
-                TensorFlowServingProperties.TENSORFLOW_SERVING_CONTAINER);
+        String imageName = LocalPropertyResolver.getProperty(
+                TensorFlowServingLocalContainerService.class, TensorFlowServingProperties.TENSORFLOW_SERVING_CONTAINER);
         if (isArm64) {
             // Bitnami's TF Serving image supports ARM64
             return new GenericContainer<>(DockerImageName.parse(imageName))
                     .withExposedPorts(GRPC_PORT, REST_PORT)
                     .withCopyFileToContainer(
-                            MountableFile.forClasspathResource("testdata/saved_model_half_plus_two_cpu"), "/bitnami/model-data")
+                            MountableFile.forClasspathResource("testdata/saved_model_half_plus_two_cpu"),
+                            "/bitnami/model-data")
                     .withEnv("TENSORFLOW_SERVING_MODEL_NAME", "half_plus_two")
                     .waitingFor(Wait.forListeningPorts(GRPC_PORT, REST_PORT));
         } else {

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class SmbStreamDownloadFalseIT extends SmbServerTestSupport {
 
@@ -60,8 +61,7 @@ public class SmbStreamDownloadFalseIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).streamCache("false")
-                        .to("mock:received_send");
+                from(getSmbUrl()).streamCache("false").to("mock:received_send");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import org.apache.camel.EndpointInject;
@@ -45,15 +46,16 @@ public class TelegramConsumerMultipleTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .convertBodyTo(String.class)
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .convertBodyTo(String.class)
+                            .to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
@@ -76,5 +78,4 @@ public class TelegramConsumerMultipleTest extends TelegramTestSupport {
                         TelegramTestUtil.serialize(res2),
                         TelegramTestUtil.serialize(defaultRes));
     }
-
 }

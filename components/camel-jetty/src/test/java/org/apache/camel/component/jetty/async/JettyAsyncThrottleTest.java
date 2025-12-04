@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.Exchange;
@@ -50,7 +51,8 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
         int size = getMockEndpoint("mock:result").getReceivedExchanges().size();
 
         for (int i = 0; i < size; i++) {
-            Exchange exchange = getMockEndpoint("mock:result").getReceivedExchanges().get(i);
+            Exchange exchange =
+                    getMockEndpoint("mock:result").getReceivedExchanges().get(i);
             LOG.info("Reply {}", exchange);
         }
     }
@@ -60,13 +62,26 @@ public class JettyAsyncThrottleTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myservice").removeHeaders("*").throttle(2).asyncDelayed().loadBalance()
-                        .failover().to("http://localhost:" + port2 + "/foo")
-                        .to("http://localhost:" + port3 + "/bar").end().to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice")
+                        .removeHeaders("*")
+                        .throttle(2)
+                        .asyncDelayed()
+                        .loadBalance()
+                        .failover()
+                        .to("http://localhost:" + port2 + "/foo")
+                        .to("http://localhost:" + port3 + "/bar")
+                        .end()
+                        .to("mock:result");
 
-                from("jetty:http://localhost:" + port2 + "/foo").transform().constant("foo").to("mock:foo");
+                from("jetty:http://localhost:" + port2 + "/foo")
+                        .transform()
+                        .constant("foo")
+                        .to("mock:foo");
 
-                from("jetty:http://localhost:" + port3 + "/bar").transform().constant("bar").to("mock:bar");
+                from("jetty:http://localhost:" + port3 + "/bar")
+                        .transform()
+                        .constant("bar")
+                        .to("mock:bar");
             }
         };
     }

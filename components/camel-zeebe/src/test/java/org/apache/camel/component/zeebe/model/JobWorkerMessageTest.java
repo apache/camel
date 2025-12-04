@@ -17,26 +17,26 @@
 
 package org.apache.camel.component.zeebe.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collections;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JobWorkerMessageTest {
 
-    private static final String MARSHAL_TEST_RESULT_1
-            = "{\"key\":0,\"type\":\"type\",\"customHeaders\":{},\"processInstanceKey\":1,\"bpmnProcessId\":\"bpmn\",\"processDefinitionVersion\":1,\"processDefinitionKey\":1,\"elementId\":\"eid\",\"elementInstanceKey\":1,"
-              + "\"worker\":\"worker\",\"retries\":1,\"deadline\":1,\"variablesAsMap\":{}}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"key\":0,\"type\":\"type\",\"customHeaders\":{},\"processInstanceKey\":1,\"bpmnProcessId\":\"bpmn\",\"processDefinitionVersion\":1,\"processDefinitionKey\":1,\"elementId\":\"eid\",\"elementInstanceKey\":1,"
-              + "\"worker\":\"worker\",\"retries\":1,\"deadline\":1,\"variablesAsMap\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"}}";
-    private static final String MARSHAL_TEST_RESULT_3
-            = "{\"key\":0,\"type\":\"type\",\"customHeaders\":{\"h1\":\"test1\",\"h2\":\"test2\"},\"processInstanceKey\":1,\"bpmnProcessId\":\"bpmn\",\"processDefinitionVersion\":1,\"processDefinitionKey\":1,"
-              + "\"elementId\":\"eid\",\"elementInstanceKey\":1,\"worker\":\"worker\",\"retries\":1,\"deadline\":1,\"variablesAsMap\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"}}";
+    private static final String MARSHAL_TEST_RESULT_1 =
+            "{\"key\":0,\"type\":\"type\",\"customHeaders\":{},\"processInstanceKey\":1,\"bpmnProcessId\":\"bpmn\",\"processDefinitionVersion\":1,\"processDefinitionKey\":1,\"elementId\":\"eid\",\"elementInstanceKey\":1,"
+                    + "\"worker\":\"worker\",\"retries\":1,\"deadline\":1,\"variablesAsMap\":{}}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"key\":0,\"type\":\"type\",\"customHeaders\":{},\"processInstanceKey\":1,\"bpmnProcessId\":\"bpmn\",\"processDefinitionVersion\":1,\"processDefinitionKey\":1,\"elementId\":\"eid\",\"elementInstanceKey\":1,"
+                    + "\"worker\":\"worker\",\"retries\":1,\"deadline\":1,\"variablesAsMap\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"}}";
+    private static final String MARSHAL_TEST_RESULT_3 =
+            "{\"key\":0,\"type\":\"type\",\"customHeaders\":{\"h1\":\"test1\",\"h2\":\"test2\"},\"processInstanceKey\":1,\"bpmnProcessId\":\"bpmn\",\"processDefinitionVersion\":1,\"processDefinitionKey\":1,"
+                    + "\"elementId\":\"eid\",\"elementInstanceKey\":1,\"worker\":\"worker\",\"retries\":1,\"deadline\":1,\"variablesAsMap\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"}}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -78,8 +78,8 @@ public class JobWorkerMessageTest {
 
     @Test
     public void unmarshalTest() {
-        JobWorkerMessage unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobWorkerMessage.class));
+        JobWorkerMessage unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobWorkerMessage.class));
 
         JobWorkerMessage message = new JobWorkerMessage();
         message.setWorker("worker");
@@ -95,8 +95,8 @@ public class JobWorkerMessageTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        JobWorkerMessage unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobWorkerMessage.class));
+        JobWorkerMessage unmarshalledMessage2 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobWorkerMessage.class));
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");
@@ -106,8 +106,8 @@ public class JobWorkerMessageTest {
 
         assertEquals(message, unmarshalledMessage2);
 
-        JobWorkerMessage unmarshalledMessage3
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_3, JobWorkerMessage.class));
+        JobWorkerMessage unmarshalledMessage3 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_3, JobWorkerMessage.class));
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("h1", "test1");

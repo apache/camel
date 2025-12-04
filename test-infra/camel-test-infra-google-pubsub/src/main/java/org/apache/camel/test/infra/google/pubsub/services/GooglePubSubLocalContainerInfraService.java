@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.google.pubsub.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -26,10 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.gcloud.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = GooglePubSubInfraService.class,
-              description = "Google Cloud SDK Tool",
-              serviceAlias = "google",
-              serviceImplementationAlias = "pub-sub")
+@InfraService(
+        service = GooglePubSubInfraService.class,
+        description = "Google Cloud SDK Tool",
+        serviceAlias = "google",
+        serviceImplementationAlias = "pub-sub")
 public class GooglePubSubLocalContainerInfraService
         implements GooglePubSubInfraService, ContainerService<PubSubEmulatorContainer> {
 
@@ -46,8 +48,7 @@ public class GooglePubSubLocalContainerInfraService
 
     public GooglePubSubLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                GooglePubSubLocalContainerInfraService.class,
-                GooglePubSubProperties.PUBSUB_CONTAINER));
+                GooglePubSubLocalContainerInfraService.class, GooglePubSubProperties.PUBSUB_CONTAINER));
     }
 
     public GooglePubSubLocalContainerInfraService(String imageName) {

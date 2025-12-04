@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
 
 import java.io.BufferedInputStream;
@@ -81,8 +82,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     /**
      * Create instance with default parameters.
      */
-    public BarcodeDataFormat() {
-    }
+    public BarcodeDataFormat() {}
 
     /**
      * Create instance with custom {@link BarcodeFormat}. The other values are default.
@@ -121,7 +121,8 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param type   the type (format) of the image. e.g. PNG
      * @param format the barcode format
      */
-    public BarcodeDataFormat(final int width, final int height, final BarcodeImageType type, final BarcodeFormat format) {
+    public BarcodeDataFormat(
+            final int width, final int height, final BarcodeImageType type, final BarcodeFormat format) {
         setWidth(width);
         setHeight(height);
         setImageType(type);
@@ -181,8 +182,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      * @param stream   the output stream
      */
     private void printImage(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        final String payload = ExchangeHelper
-                .convertToMandatoryType(exchange, String.class, graph);
+        final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, graph);
         final MultiFormatWriter writer = new MultiFormatWriter();
 
         // set values
@@ -190,11 +190,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
 
         // create code image
         final BitMatrix matrix = writer.encode(
-                payload,
-                this.params.getFormat(),
-                this.params.getWidth(),
-                this.params.getHeight(),
-                writerHintMap);
+                payload, this.params.getFormat(), this.params.getWidth(), this.params.getHeight(), writerHintMap);
 
         // write image back to stream
         MatrixToImageWriter.writeToStream(matrix, type, stream);
@@ -205,10 +201,10 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     private String readImage(final Exchange exchange, final InputStream stream) throws Exception {
         final MultiFormatReader reader = new MultiFormatReader();
-        final BufferedInputStream in = exchange.getContext()
-                .getTypeConverter()
-                .mandatoryConvertTo(BufferedInputStream.class, stream);
-        final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(in))));
+        final BufferedInputStream in =
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(BufferedInputStream.class, stream);
+        final BinaryBitmap bitmap =
+                new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(in))));
         final Result result = reader.decode(bitmap, readerHintMap);
 
         // write the found barcode format into the header
@@ -337,5 +333,4 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     protected void doStop() throws Exception {
         // noop
     }
-
 }

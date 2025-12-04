@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.Collections;
@@ -50,8 +51,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
     private volatile ScheduledFuture<?> task;
     private long interval = 1000L;
 
-    public TimerListenerManager() {
-    }
+    public TimerListenerManager() {}
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
@@ -98,8 +98,10 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
                 listener.onTimer();
             } catch (Exception e) {
                 // ignore
-                LOG.debug("Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
-                        listener, e);
+                LOG.debug(
+                        "Error occurred during onTimer for TimerListener: {}. This exception will be ignored.",
+                        listener,
+                        e);
             }
         }
     }
@@ -146,7 +148,8 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
         // create scheduled thread pool to trigger the task to run every interval
-        executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
+        executorService =
+                camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
         task = executorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
         LOG.debug("Started scheduled TimerListener task to run with interval {} ms", interval);
     }

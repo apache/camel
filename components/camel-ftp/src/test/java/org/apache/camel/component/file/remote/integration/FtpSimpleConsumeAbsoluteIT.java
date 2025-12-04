@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -51,7 +52,9 @@ public class FtpSimpleConsumeAbsoluteIT extends FtpServerTestSupport {
                 // - we must remember to use // slash because of the url
                 // separator
                 from("ftp://localhost:{{ftp.server.port}}//tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true")
-                        .routeId("foo").noAutoStartup().to("mock:result");
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.Phaser;
@@ -63,25 +64,42 @@ public class MulticastParallelTimeout3Test extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").multicast(new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
+                from("direct:start")
+                        .multicast(new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
 
-                        String body = oldExchange.getIn().getBody(String.class);
-                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                        return oldExchange;
-                    }
-                }).parallelProcessing().timeout(250).to("direct:a", "direct:b", "direct:c")
+                                String body = oldExchange.getIn().getBody(String.class);
+                                oldExchange
+                                        .getIn()
+                                        .setBody(body + newExchange.getIn().getBody(String.class));
+                                return oldExchange;
+                            }
+                        })
+                        .parallelProcessing()
+                        .timeout(250)
+                        .to("direct:a", "direct:b", "direct:c")
                         // use end to indicate end of multicast route
-                        .end().to("mock:result");
+                        .end()
+                        .to("mock:result");
 
-                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).to("mock:A").setBody(constant("A"));
+                from("direct:a")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .to("mock:A")
+                        .setBody(constant("A"));
 
-                from("direct:b").process(e -> phaser.arriveAndAwaitAdvance()).to("mock:B").setBody(constant("B"));
+                from("direct:b")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .to("mock:B")
+                        .setBody(constant("B"));
 
-                from("direct:c").process(e -> phaser.arriveAndAwaitAdvance()).delay(1000).to("mock:C").setBody(constant("C"));
+                from("direct:c")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .delay(1000)
+                        .to("mock:C")
+                        .setBody(constant("C"));
                 // END SNIPPET: e1
             }
         };

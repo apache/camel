@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -64,8 +65,7 @@ import org.apache.camel.support.task.TaskManagerRegistry;
  */
 public final class PluginHelper {
 
-    private PluginHelper() {
-    }
+    private PluginHelper() {}
 
     /**
      * Returns the bean post processor used to do any bean customization.
@@ -84,7 +84,8 @@ public final class PluginHelper {
     /**
      * Returns the annotation dependency injection factory.
      */
-    public static CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory(CamelContext camelContext) {
+    public static CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory(
+            CamelContext camelContext) {
         return getDependencyInjectionAnnotationFactory(camelContext.getCamelContextExtension());
     }
 
@@ -234,7 +235,8 @@ public final class PluginHelper {
     /**
      * Returns the package scanning resource resolver
      */
-    public static PackageScanResourceResolver getPackageScanResourceResolver(ExtendedCamelContext extendedCamelContext) {
+    public static PackageScanResourceResolver getPackageScanResourceResolver(
+            ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(PackageScanResourceResolver.class);
     }
 
@@ -456,7 +458,8 @@ public final class PluginHelper {
     /**
      * Gets the {@link RestBindingJacksonXmlDataFormatFactory} to be used.
      */
-    public static RestBindingJacksonXmlDataFormatFactory getRestBindingJacksonXmlDataFormatFactory(CamelContext camelContext) {
+    public static RestBindingJacksonXmlDataFormatFactory getRestBindingJacksonXmlDataFormatFactory(
+            CamelContext camelContext) {
         return getRestBindingJacksonXmlDataFormatFactory(camelContext.getCamelContextExtension());
     }
 
@@ -612,8 +615,7 @@ public final class PluginHelper {
     /**
      * Gets the {@link BackOffTimerFactory} to use.
      */
-    public static BackOffTimerFactory getBackOffTimerFactory(
-            ExtendedCamelContext extendedCamelContext) {
+    public static BackOffTimerFactory getBackOffTimerFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BackOffTimerFactory.class);
     }
 
@@ -623,5 +625,4 @@ public final class PluginHelper {
     public static TaskManagerRegistry getTaskManagerRegistry(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(TaskManagerRegistry.class);
     }
-
 }

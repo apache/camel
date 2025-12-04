@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,8 +47,12 @@ public class EditMessageMediaMessage extends OutgoingMessage {
      * @param media           The media to send.
      * @param replyMarkup     An inline keyboard that appears right next to the message it belongs to.
      */
-    public EditMessageMediaMessage(String chatId, Integer messageId, String inlineMessageId, InputMedia media,
-                                   InlineKeyboardMarkup replyMarkup) {
+    public EditMessageMediaMessage(
+            String chatId,
+            Integer messageId,
+            String inlineMessageId,
+            InputMedia media,
+            InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
@@ -82,8 +87,7 @@ public class EditMessageMediaMessage extends OutgoingMessage {
         private InputMedia media;
         private InlineKeyboardMarkup replyMarkup;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder messageId(Integer messageId) {
             this.messageId = messageId;
@@ -111,8 +115,7 @@ public class EditMessageMediaMessage extends OutgoingMessage {
         }
 
         public EditMessageMediaMessage build() {
-            return new EditMessageMediaMessage(
-                    chatId, messageId, inlineMessageId, media, replyMarkup);
+            return new EditMessageMediaMessage(chatId, messageId, inlineMessageId, media, replyMarkup);
         }
     }
 }

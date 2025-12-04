@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.io.ByteArrayOutputStream;
@@ -335,7 +336,8 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     @Override
     public String evaluateExpressionAtBreakpoint(String nodeId, String language, String expression) {
-        return evaluateExpressionAtBreakpoint(nodeId, language, expression, "java.lang.String").toString();
+        return evaluateExpressionAtBreakpoint(nodeId, language, expression, "java.lang.String")
+                .toString();
     }
 
     @Override
@@ -404,9 +406,10 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                     pred.init(camelContext);
                     result = pred.matches(suspendedExchange);
                 }
-                //Test if result is serializable
+                // Test if result is serializable
                 if (!isSerializable(result)) {
-                    String resultStr = suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class, result);
+                    String resultStr =
+                            suspendedExchange.getContext().getTypeConverter().tryConvertTo(String.class, result);
                     if (resultStr != null) {
                         result = resultStr;
                     }
@@ -436,9 +439,8 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                 String label = "";
                 if (suspendedExchange.getFromEndpoint() != null) {
                     label = "from["
-                            + URISupport
-                                    .sanitizeUri(
-                                            StringHelper.limitLength(suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
+                            + URISupport.sanitizeUri(StringHelper.limitLength(
+                                    suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
                             + "]";
                 }
 
@@ -446,11 +448,21 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
                 messageHistoryBuilder
                         .append("    <messageHistoryEntry")
-                        .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
-                        .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
-                        .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
-                        .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
-                        .append(" elapsed=\"").append(elapsed).append("\"")
+                        .append(" location=\"")
+                        .append(StringHelper.xmlEncode(loc))
+                        .append("\"")
+                        .append(" routeId=\"")
+                        .append(StringHelper.xmlEncode(routeId))
+                        .append("\"")
+                        .append(" processorId=\"")
+                        .append(StringHelper.xmlEncode(id))
+                        .append("\"")
+                        .append(" processor=\"")
+                        .append(StringHelper.xmlEncode(label))
+                        .append("\"")
+                        .append(" elapsed=\"")
+                        .append(elapsed)
+                        .append("\"")
                         .append("/>\n");
 
                 for (MessageHistory history : list) {
@@ -468,16 +480,27 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                     // give enough space for removing
                     // characters in the sanitizeUri method and will be reasonably
                     // fast
-                    label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
+                    label = URISupport.sanitizeUri(
+                            StringHelper.limitLength(history.getNode().getLabel(), 100));
                     elapsed = history.getElapsed();
 
                     messageHistoryBuilder
                             .append("    <messageHistoryEntry")
-                            .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
-                            .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
-                            .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
-                            .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
-                            .append(" elapsed=\"").append(elapsed).append("\"")
+                            .append(" location=\"")
+                            .append(StringHelper.xmlEncode(loc))
+                            .append("\"")
+                            .append(" routeId=\"")
+                            .append(StringHelper.xmlEncode(routeId))
+                            .append("\"")
+                            .append(" processorId=\"")
+                            .append(StringHelper.xmlEncode(id))
+                            .append("\"")
+                            .append(" processor=\"")
+                            .append(StringHelper.xmlEncode(label))
+                            .append("\"")
+                            .append(" elapsed=\"")
+                            .append(elapsed)
+                            .append("\"")
                             .append("/>\n");
                 }
             }
@@ -505,5 +528,4 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             return false;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
@@ -49,5 +50,4 @@ public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition
      * Gets a reference id to lookup the executor service from the registry
      */
     String getExecutorServiceRef();
-
 }

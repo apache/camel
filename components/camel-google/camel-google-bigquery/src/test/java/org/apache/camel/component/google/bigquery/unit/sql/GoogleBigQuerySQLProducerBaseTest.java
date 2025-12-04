@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.Job;
@@ -27,10 +32,6 @@ import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfigura
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLProducer;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport {
     protected GoogleBigQuerySQLEndpoint endpoint = mock(GoogleBigQuerySQLEndpoint.class);
@@ -65,7 +66,7 @@ public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport
         when(job.waitFor()).thenReturn(job);
         when(job.getQueryResults()).thenReturn(tableResult);
         when(job.getStatistics()).thenReturn(statistics);
-        when(job.<QueryJobConfiguration> getConfiguration()).thenReturn(jobConfiguration);
+        when(job.<QueryJobConfiguration>getConfiguration()).thenReturn(jobConfiguration);
         when(statistics.getNumDmlAffectedRows()).thenReturn(1L);
         when(jobConfiguration.getQuery()).thenReturn(sql);
     }

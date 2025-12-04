@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,15 +33,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Tests that a file move can occur on the server even if the remote stream was only partially read.
  */
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSupport {
 
     @Test
@@ -68,15 +71,19 @@ public class SftpSimpleConsumeStreamingPartialReadIT extends SftpServerTestSuppo
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
-                     + "&move=done&moveFailed=failed&knownHostsFile=" + service.getKnownHostsFile())
-                        .routeId("foo").noAutoStartup().process(new Processor() {
+                                + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
+                                + "&move=done&moveFailed=failed&knownHostsFile=" + service.getKnownHostsFile())
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getIn().getBody(InputStream.class).read();
                             }
-                        }).to("mock:result").process(new Processor() {
+                        })
+                        .to("mock:result")
+                        .process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import org.apache.camel.spi.Metadata;
@@ -27,16 +28,20 @@ public final class MyBatisConstants {
     public static final String SCHEME_MYBATIS_BEAN = "mybatis-bean";
     public static final String SCHEME_MYBATIS = "mybatis";
 
-    @Metadata(label = "producer", description = "The response returned from MyBatis in any of the operations." +
-                                                " Such as `INSERT` could return the auto-generated key, or number of rows etc.",
-              javaType = "Object")
+    @Metadata(
+            label = "producer",
+            description = "The response returned from MyBatis in any of the operations."
+                    + " Such as `INSERT` could return the auto-generated key, or number of rows etc.",
+            javaType = "Object")
     public static final String MYBATIS_RESULT = "CamelMyBatisResult";
-    @Metadata(description = "The statementName used (for example: insertAccount).", javaType = "String",
-              applicableFor = SCHEME_MYBATIS)
+
+    @Metadata(
+            description = "The statementName used (for example: insertAccount).",
+            javaType = "String",
+            applicableFor = SCHEME_MYBATIS)
     public static final String MYBATIS_STATEMENT_NAME = "CamelMyBatisStatementName";
 
     private MyBatisConstants() {
         // Utility class
     }
-
 }

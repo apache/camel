@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -26,8 +29,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VertxPlatformHttpSharedVertxTest {
     private static final Vertx vertx = Vertx.vertx();
@@ -50,8 +51,7 @@ class VertxPlatformHttpSharedVertxTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("platform-http:/test")
-                            .setBody().constant("Hello World");
+                    from("platform-http:/test").setBody().constant("Hello World");
                 }
             });
             context.start();

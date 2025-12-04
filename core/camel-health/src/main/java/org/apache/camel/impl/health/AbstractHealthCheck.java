@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.time.ZonedDateTime;
@@ -290,5 +291,4 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         }
         return null;
     }
-
 }

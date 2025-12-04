@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed;
 
 import java.io.InputStream;
@@ -55,8 +56,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     private BindyFixedLengthFactory headerFactory;
     private BindyFixedLengthFactory footerFactory;
 
-    public BindyFixedLengthDataFormat() {
-    }
+    public BindyFixedLengthDataFormat() {}
 
     public BindyFixedLengthDataFormat(Class<?> type) {
         super(type);
@@ -99,13 +99,15 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         }
 
         // add the header if it is in the exchange header
-        Map<String, Object> headerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER);
+        Map<String, Object> headerRow =
+                (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER);
         if (headerRow != null) {
             models.add(0, headerRow);
         }
 
         // add the footer if it is in the exchange header
-        Map<String, Object> footerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER);
+        Map<String, Object> footerRow =
+                (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER);
         if (footerRow != null) {
             models.add(models.size(), footerRow);
         }
@@ -262,7 +264,6 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             scanner.close();
             IOHelper.close(in, "in", LOG);
         }
-
     }
 
     private boolean headerExists(BindyFixedLengthFactory factory, Scanner scanner, boolean isEolSet) {
@@ -291,24 +292,24 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         }
     }
 
-    protected Map<String, Object> createModel(BindyFixedLengthFactory factory, String line, int count) throws Exception {
+    protected Map<String, Object> createModel(BindyFixedLengthFactory factory, String line, int count)
+            throws Exception {
         String myLine = line;
 
         // Check if the record length corresponds to the parameter
         // provided in the @FixedLengthRecord
         if (factory.recordLength() > 0) {
             if (isPaddingNeededAndEnable(factory, myLine)) {
-                //myLine = rightPad(myLine, factory.recordLength());
+                // myLine = rightPad(myLine, factory.recordLength());
             }
             if (isTrimmingNeededAndEnabled(factory, myLine)) {
                 myLine = myLine.substring(0, factory.recordLength());
             }
-            if (myLine.length() < factory.recordLength()
-                    && !factory.isIgnoreMissingChars() || myLine.length() > factory.recordLength()) {
-                throw new java.lang.IllegalArgumentException(
-                        "Size of the record: " + myLine.length()
-                                                             + " is not equal to the value provided in the model: "
-                                                             + factory.recordLength());
+            if (myLine.length() < factory.recordLength() && !factory.isIgnoreMissingChars()
+                    || myLine.length() > factory.recordLength()) {
+                throw new java.lang.IllegalArgumentException("Size of the record: " + myLine.length()
+                        + " is not equal to the value provided in the model: "
+                        + factory.recordLength());
             }
         }
 
@@ -358,5 +359,4 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
         return factory;
     }
-
 }

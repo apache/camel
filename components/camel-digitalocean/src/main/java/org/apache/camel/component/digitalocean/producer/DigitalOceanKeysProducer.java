@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
@@ -40,7 +41,6 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
 
         switch (determineOperation(exchange)) {
-
             case list:
                 getKeys(exchange);
                 break;
@@ -125,7 +125,6 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         key = getEndpoint().getDigitalOceanClient().createKey(key);
         LOG.trace("Key created {}", key);
         exchange.getMessage().setBody(key);
-
     }
 
     private void updateKey(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -151,5 +150,4 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         LOG.trace("Update Key [{}] ", key);
         exchange.getMessage().setBody(key);
     }
-
 }

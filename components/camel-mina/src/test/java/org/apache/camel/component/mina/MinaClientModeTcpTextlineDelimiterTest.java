@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.net.InetSocketAddress;
@@ -52,8 +53,9 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
-                        getPort())
+                fromF(
+                                "mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
+                                getPort())
                         .id("minaRoute")
                         .noAutoStartup()
                         .to("log:before?showAll=true")
@@ -73,7 +75,8 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
 
         public void startup() throws Exception {
             acceptor = new NioSocketAcceptor();
-            MinaTextLineCodecFactory codecFactory = new MinaTextLineCodecFactory(StandardCharsets.UTF_8, LineDelimiter.UNIX);
+            MinaTextLineCodecFactory codecFactory =
+                    new MinaTextLineCodecFactory(StandardCharsets.UTF_8, LineDelimiter.UNIX);
             acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
             acceptor.setHandler(new ServerHandler());
             acceptor.bind(new InetSocketAddress("127.0.0.1", port));

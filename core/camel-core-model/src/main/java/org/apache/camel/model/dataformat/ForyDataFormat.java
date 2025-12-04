@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,20 +37,33 @@ public class ForyDataFormat extends DataFormatDefinition {
 
     @XmlTransient
     private Class<?> unmarshalType;
+
     @XmlAttribute(name = "unmarshalType")
     @Metadata(description = "Class of the java type to use when unmarshalling")
     private String unmarshalTypeName;
+
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Whether to require register classes", defaultValue = "true",
-              javaType = "java.lang.Boolean")
+    @Metadata(
+            label = "advanced",
+            description = "Whether to require register classes",
+            defaultValue = "true",
+            javaType = "java.lang.Boolean")
     private String requireClassRegistration;
+
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Whether to use the threadsafe Fory", defaultValue = "true",
-              javaType = "java.lang.Boolean")
+    @Metadata(
+            label = "advanced",
+            description = "Whether to use the threadsafe Fory",
+            defaultValue = "true",
+            javaType = "java.lang.Boolean")
     private String threadSafe;
+
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Whether to auto-discover Fory from the registry", defaultValue = "true",
-              javaType = "java.lang.Boolean")
+    @Metadata(
+            label = "advanced",
+            description = "Whether to auto-discover Fory from the registry",
+            defaultValue = "true",
+            javaType = "java.lang.Boolean")
     private String allowAutoWiredFory;
 
     public ForyDataFormat() {

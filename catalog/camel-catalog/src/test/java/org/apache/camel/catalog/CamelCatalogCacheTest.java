@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -24,5 +25,4 @@ public class CamelCatalogCacheTest extends CamelCatalogTest {
     public static void createCamelCatalog() {
         catalog = new DefaultCamelCatalog(true);
     }
-
 }

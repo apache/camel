@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 import java.io.File;
 import java.sql.DriverManager;
@@ -34,8 +37,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
-
 @Isolated
 public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggregationTestSupport {
 
@@ -49,7 +50,8 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
     private static PlatformTransactionManager txManager;
     private static SpringTransactionPolicy txPolicy;
 
-    private final String xmlBody = """
+    private final String xmlBody =
+            """
             <messages>
                 <message><name>John</name></message>
                 <message><name>Jane</name></message>
@@ -93,13 +95,20 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
 
         int[] sizes = new int[total + 1];
         for (int i = 0; i < total; i++) {
-            int size = getMockEndpoint("mock:line").getReceivedExchanges().get(i).getMessage().getHeader("stackSize",
-                    int.class);
+            int size = getMockEndpoint("mock:line")
+                    .getReceivedExchanges()
+                    .get(i)
+                    .getMessage()
+                    .getHeader("stackSize", int.class);
             sizes[i] = size;
             Assertions.assertTrue(size < 180, "Stackframe should be < 180, was: " + size);
             LOG.debug("#{} size {}", i, size);
         }
-        int size = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getMessage().getHeader("stackSize", int.class);
+        int size = getMockEndpoint("mock:result")
+                .getReceivedExchanges()
+                .get(0)
+                .getMessage()
+                .getHeader("stackSize", int.class);
         sizes[total] = size;
         LOG.debug("#{} size {}", total, size);
 
@@ -128,7 +137,9 @@ public class JdbcLoopTransactedSplitterStackSizeTest extends AbstractJdbcAggrega
 
                 from("direct:subroute")
                         .transacted("txPolicy")
-                        .split(xpath("/messages/message")).streaming().stopOnException()
+                        .split(xpath("/messages/message"))
+                        .streaming()
+                        .stopOnException()
                         .setHeader("stackSize", JdbcLoopTransactedSplitterStackSizeTest::currentStackSize)
                         .log("Body === ${body}")
                         .to("mock:line")

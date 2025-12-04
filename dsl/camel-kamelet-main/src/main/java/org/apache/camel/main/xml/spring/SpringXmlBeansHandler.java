@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.xml.spring;
 
 import java.io.ByteArrayInputStream;
@@ -91,7 +92,8 @@ public class SpringXmlBeansHandler {
         final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         beanFactory.setAllowCircularReferences(true); // for now
         beanFactory.setBeanClassLoader(camelContext.getApplicationContextClassLoader());
-        beanFactory.setBeanExpressionResolver((value, beanExpressionContext) -> extractValue(camelContext, value, true));
+        beanFactory.setBeanExpressionResolver(
+                (value, beanExpressionContext) -> extractValue(camelContext, value, true));
         camelContext.getRegistry().bind("SpringBeanFactory", beanFactory);
 
         beanFactory.registerSingleton("CamelContext", camelContext);
@@ -145,8 +147,8 @@ public class SpringXmlBeansHandler {
             return;
         }
 
-        DefaultListableBeanFactory beanFactory
-                = camelContext.getRegistry().lookupByNameAndType("SpringBeanFactory", DefaultListableBeanFactory.class);
+        DefaultListableBeanFactory beanFactory =
+                camelContext.getRegistry().lookupByNameAndType("SpringBeanFactory", DefaultListableBeanFactory.class);
 
         // we have some beans with classes that we couldn't load before. now, after loading the routes
         // we may have the needed class definitions
@@ -192,7 +194,8 @@ public class SpringXmlBeansHandler {
         for (String beanName : instantiatedBeanNames) {
             Object singletonInstance = beanFactory.getSingleton(beanName);
             if (singletonInstance instanceof SmartInitializingSingleton smartSingleton) {
-                StartupStep smartInitialize = beanFactory.getApplicationStartup()
+                StartupStep smartInitialize = beanFactory
+                        .getApplicationStartup()
                         .start("spring.beans.smart-initialize")
                         .tag("beanName", beanName);
                 smartSingleton.afterSingletonsInstantiated();
@@ -228,7 +231,9 @@ public class SpringXmlBeansHandler {
                 if (res != null) {
                     String fn = res.getFilename();
                     if (fn != null) {
-                        bean.setResource(camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                        bean.setResource(camelContext
+                                .getCamelContextExtension()
+                                .getContextPlugin(ResourceLoader.class)
                                 .resolveResource("file:" + fn));
                     }
                 }
@@ -336,5 +341,4 @@ public class SpringXmlBeansHandler {
     public void stop() {
         // noop
     }
-
 }

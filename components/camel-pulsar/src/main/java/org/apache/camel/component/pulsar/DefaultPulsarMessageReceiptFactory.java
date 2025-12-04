@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import org.apache.camel.Exchange;
@@ -26,5 +27,4 @@ public class DefaultPulsarMessageReceiptFactory implements PulsarMessageReceiptF
     public PulsarMessageReceipt newInstance(Exchange exchange, Message message, Consumer consumer) {
         return new DefaultPulsarMessageReceipt(consumer, message.getMessageId());
     }
-
 }

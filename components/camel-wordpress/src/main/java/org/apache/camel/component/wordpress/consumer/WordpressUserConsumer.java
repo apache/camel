@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.consumer;
 
 import java.util.List;
@@ -35,8 +36,8 @@ public class WordpressUserConsumer extends AbstractWordpressConsumer {
         serviceUsers = WordpressServiceProvider.getInstance().getService(WordpressServiceUsers.class);
     }
 
-    public WordpressUserConsumer(WordpressEndpoint endpoint, Processor processor,
-                                 ScheduledExecutorService scheduledExecutorService) {
+    public WordpressUserConsumer(
+            WordpressEndpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor, scheduledExecutorService);
         serviceUsers = WordpressServiceProvider.getInstance().getService(WordpressServiceUsers.class);
     }
@@ -60,10 +61,10 @@ public class WordpressUserConsumer extends AbstractWordpressConsumer {
     }
 
     private int pollForList() {
-        final List<User> users = this.serviceUsers.list((UserSearchCriteria) getConfiguration().getSearchCriteria());
+        final List<User> users =
+                this.serviceUsers.list((UserSearchCriteria) getConfiguration().getSearchCriteria());
         users.stream().forEach(p -> this.process(p));
         LOG.trace("returned users is {}", users);
         return users.size();
     }
-
 }

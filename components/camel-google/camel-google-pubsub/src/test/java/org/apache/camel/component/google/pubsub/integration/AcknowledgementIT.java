@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
 
 import org.apache.camel.Endpoint;
@@ -63,14 +64,18 @@ public class AcknowledgementIT extends PubsubTestSupport {
             public void configure() {
                 from(directIn).routeId("Send_to_Fail").to(pubsubTopic);
 
-                from(pubsubSubscription).routeId("Fail_Receive").autoStartup(true).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        if (AcknowledgementIT.fail) {
-                            throw new Exception("fail");
-                        }
-                    }
-                }).to(receiveResult);
+                from(pubsubSubscription)
+                        .routeId("Fail_Receive")
+                        .autoStartup(true)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                if (AcknowledgementIT.fail) {
+                                    throw new Exception("fail");
+                                }
+                            }
+                        })
+                        .to(receiveResult);
             }
         };
     }

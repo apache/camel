@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,6 +41,7 @@ public class MinaSpringMinaEndpointUDPTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/mina/SpringMinaEndpointUDPTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/mina/SpringMinaEndpointUDPTest-context.xml");
     }
 }

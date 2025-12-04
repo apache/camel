@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,13 +34,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SaxonXsltDTDTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SaxonXsltDTDTest.class);
 
-    private static final String MESSAGE
-            = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
+    private static final String MESSAGE =
+            "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
 
     @Test
     public void testSendingStringMessage() throws Exception {
@@ -103,5 +104,4 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -29,10 +34,6 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SingleExchangeRoundAllHeadersIT extends PubsubTestSupport {
 
@@ -99,8 +100,10 @@ public class SingleExchangeRoundAllHeadersIT extends PubsubTestSupport {
 
         Exchange sentExchange = sentExchanges.get(0);
 
-        assertEquals(exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
-                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "Sent ID");
+        assertEquals(
+                exchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+                "Sent ID");
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -110,13 +113,15 @@ public class SingleExchangeRoundAllHeadersIT extends PubsubTestSupport {
 
         Exchange receivedExchange = receivedExchanges.get(0);
 
-        assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "PUBSUB Message ID Property");
+        assertNotNull(
+                receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID), "PUBSUB Message ID Property");
         assertNotNull(receivedExchange.getIn().getHeader(GooglePubsubConstants.PUBLISH_TIME), "PUBSUB Published Time");
 
         assertEquals(attributeValue, receivedExchange.getIn().getHeader(attributeKey));
         assertNull(receivedExchange.getIn().getHeader(hiddenAttributeKey));
 
-        assertEquals(sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
+        assertEquals(
+                sentExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID),
                 receivedExchange.getIn().getHeader(GooglePubsubConstants.MESSAGE_ID));
     }
 }

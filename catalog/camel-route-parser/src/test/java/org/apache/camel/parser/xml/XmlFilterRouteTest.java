@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,10 +31,6 @@ import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlFilterRouteTest {
 
@@ -53,5 +54,4 @@ public class XmlFilterRouteTest {
         assertTrue(list.get(0).isPredicate());
         assertFalse(list.get(0).isExpression());
     }
-
 }

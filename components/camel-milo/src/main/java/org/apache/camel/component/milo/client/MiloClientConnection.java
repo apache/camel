@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
+
+import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +36,6 @@ import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
 import org.eclipse.milo.opcua.stack.core.types.structured.BrowseResult;
 import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodResult;
 
-import static java.util.Objects.requireNonNull;
-
 public class MiloClientConnection implements AutoCloseable {
 
     private final MiloClientConfiguration configuration;
@@ -42,8 +43,8 @@ public class MiloClientConnection implements AutoCloseable {
     private volatile boolean initialized;
     private MonitorFilterConfiguration monitorFilterConfiguration;
 
-    public MiloClientConnection(final MiloClientConfiguration configuration,
-                                final MonitorFilterConfiguration monitorFilterConfiguration) {
+    public MiloClientConnection(
+            final MiloClientConfiguration configuration, final MonitorFilterConfiguration monitorFilterConfiguration) {
         requireNonNull(configuration);
 
         // make a copy since the configuration is mutable
@@ -93,8 +94,8 @@ public class MiloClientConnection implements AutoCloseable {
 
         checkInit();
 
-        final UInteger handle
-                = this.manager.registerItem(nodeId, samplingInterval, valueConsumer, this.monitorFilterConfiguration);
+        final UInteger handle =
+                this.manager.registerItem(nodeId, samplingInterval, valueConsumer, this.monitorFilterConfiguration);
 
         return () -> MiloClientConnection.this.manager.unregisterItem(handle);
     }
@@ -137,10 +138,10 @@ public class MiloClientConnection implements AutoCloseable {
             return (Variant[]) value;
         }
         if (value instanceof Variant) {
-            return new Variant[] { (Variant) value };
+            return new Variant[] {(Variant) value};
         }
 
-        return new Variant[] { new Variant(value) };
+        return new Variant[] {new Variant(value)};
     }
 
     /**
@@ -160,11 +161,16 @@ public class MiloClientConnection implements AutoCloseable {
     }
 
     public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
-            final List<ExpandedNodeId> expandedNodeIds, final BrowseDirection direction, final int nodeClasses,
-            final int maxDepth, String filter, boolean includeSubTypes, int maxNodesPerRequest) {
+            final List<ExpandedNodeId> expandedNodeIds,
+            final BrowseDirection direction,
+            final int nodeClasses,
+            final int maxDepth,
+            String filter,
+            boolean includeSubTypes,
+            int maxNodesPerRequest) {
         checkInit();
 
-        return this.manager.browse(expandedNodeIds, direction, nodeClasses, maxDepth, filter, includeSubTypes,
-                maxNodesPerRequest);
+        return this.manager.browse(
+                expandedNodeIds, direction, nodeClasses, maxDepth, filter, includeSubTypes, maxNodesPerRequest);
     }
 }

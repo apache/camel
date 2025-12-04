@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
@@ -33,8 +34,7 @@ import org.apache.camel.spi.annotations.CloudServiceFactory;
 public class BlacklistServiceFilterFactory implements ServiceFilterFactory {
     private List<String> servers;
 
-    public BlacklistServiceFilterFactory() {
-    }
+    public BlacklistServiceFilterFactory() {}
 
     // *************************************************************************
     // Properties

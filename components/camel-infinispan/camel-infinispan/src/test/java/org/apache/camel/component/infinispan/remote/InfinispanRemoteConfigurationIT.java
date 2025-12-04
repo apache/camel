@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,10 +33,6 @@ import org.jgroups.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InfinispanRemoteConfigurationIT {
     @RegisterExtension
     static InfinispanService service = InfinispanServiceFactory.createSingletonInfinispanService();
@@ -40,19 +41,20 @@ public class InfinispanRemoteConfigurationIT {
     public void remoteCacheWithoutProperties() throws Exception {
         final InfinispanRemoteConfiguration configuration = getBaseConfiguration();
         if (SystemUtils.IS_OS_MAC) {
-            configuration.addConfigurationProperty(
-                    "infinispan.client.hotrod.client_intelligence", "BASIC");
+            configuration.addConfigurationProperty("infinispan.client.hotrod.client_intelligence", "BASIC");
         }
 
         try (CamelContext context = new DefaultCamelContext();
-             InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
+                InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            manager.getCacheContainer().administration()
+            manager.getCacheContainer()
+                    .administration()
                     .getOrCreateCache(
                             "misc_cache",
                             new org.infinispan.configuration.cache.ConfigurationBuilder()
                                     .clustering()
-                                    .cacheMode(CacheMode.DIST_SYNC).build());
+                                    .cacheMode(CacheMode.DIST_SYNC)
+                                    .build());
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);
@@ -86,14 +88,16 @@ public class InfinispanRemoteConfigurationIT {
         }
 
         try (CamelContext context = new DefaultCamelContext();
-             InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
+                InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            manager.getCacheContainer().administration()
+            manager.getCacheContainer()
+                    .administration()
                     .getOrCreateCache(
                             "misc_cache",
                             new org.infinispan.configuration.cache.ConfigurationBuilder()
                                     .clustering()
-                                    .cacheMode(CacheMode.DIST_SYNC).build());
+                                    .cacheMode(CacheMode.DIST_SYNC)
+                                    .build());
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);

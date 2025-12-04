@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.mllp;
 
 import java.io.ByteArrayOutputStream;
@@ -38,8 +39,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Hl7AcknowledgementGenerator extends ServiceSupport implements Processor, CamelContextAware {
     public static final String DEFAULT_NACK = "MSH|^~\\&|||||||NACK||P|2.2" + MllpProtocolConstants.SEGMENT_DELIMITER
-                                              + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
-                                              + MllpProtocolConstants.MESSAGE_TERMINATOR;
+            + "MSA|AR|" + MllpProtocolConstants.SEGMENT_DELIMITER
+            + MllpProtocolConstants.MESSAGE_TERMINATOR;
 
     private static final Logger LOG = LoggerFactory.getLogger(Hl7AcknowledgementGenerator.class);
 
@@ -104,7 +105,8 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
         final byte fieldSeparator = hl7MessageBytes[3];
         final byte componentSeparator = hl7MessageBytes[4];
 
-        List<Integer> fieldSeparatorIndexes = new ArrayList<>(10);  // We need at least 10 fields to create the acknowledgment
+        List<Integer> fieldSeparatorIndexes =
+                new ArrayList<>(10); // We need at least 10 fields to create the acknowledgment
 
         // Find the end of the MSH and indexes of the fields in the MSH
         int endOfMSH = -1;
@@ -120,29 +122,41 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
         if (-1 == endOfMSH) {
             throw new Hl7AcknowledgementGenerationException(
                     hl7Util,
-                    "Failed to find the end of the MSH Segment while attempting to generate response", hl7MessageBytes);
+                    "Failed to find the end of the MSH Segment while attempting to generate response",
+                    hl7MessageBytes);
         }
 
         if (8 > fieldSeparatorIndexes.size()) {
             throw new Hl7AcknowledgementGenerationException(
                     hl7Util,
                     "Insufficient number of fields in MSH to generate a response - 8 are required but "
-                             + fieldSeparatorIndexes.size() + " " + "were found",
+                            + fieldSeparatorIndexes.size() + " " + "were found",
                     hl7MessageBytes);
         }
 
         // Build the MSH Segment
         ByteArrayOutputStream acknowledgement = new ByteArrayOutputStream(1024);
-        acknowledgement.write(hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(3),
+        acknowledgement.write(
+                hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(3),
                 fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3)); // MSH-5
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(4),
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(4),
                 fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4)); // MSH-6
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(1),
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(1),
                 fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1)); // MSH-3
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(2),
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(2),
                 fieldSeparatorIndexes.get(3) - fieldSeparatorIndexes.get(2)); // MSH-4
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(5),
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(5),
                 fieldSeparatorIndexes.get(7) - fieldSeparatorIndexes.get(5)); // MSH-7 and MSH-8
         // Need to generate the correct MSH-9
         acknowledgement.write(fieldSeparator);
@@ -161,14 +175,19 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
             acknowledgement.write(hl7MessageBytes, msh92start, fieldSeparatorIndexes.get(8) - msh92start); // MSH-9.2
         }
 
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(8), endOfMSH - fieldSeparatorIndexes.get(8)); // MSH-10 through the end of the MSH
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(8),
+                endOfMSH - fieldSeparatorIndexes.get(8)); // MSH-10 through the end of the MSH
         acknowledgement.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
         // Build the MSA Segment
         acknowledgement.write("MSA".getBytes(), 0, 3);
         acknowledgement.write(fieldSeparator);
         acknowledgement.write(acknowledgementCode.getBytes(), 0, 2);
-        acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(8),
+        acknowledgement.write(
+                hl7MessageBytes,
+                fieldSeparatorIndexes.get(8),
                 fieldSeparatorIndexes.get(9) - fieldSeparatorIndexes.get(8)); // MSH-10 end
         acknowledgement.write(MllpProtocolConstants.SEGMENT_DELIMITER);
 
@@ -178,5 +197,4 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
 
         return acknowledgement.toByteArray();
     }
-
 }

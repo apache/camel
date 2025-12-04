@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.producer;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -31,9 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
     public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
     protected static final Logger LOG = LoggerFactory.getLogger(ClosePullRequestProducerTest.class);
@@ -49,7 +50,6 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
                         .process(new ClosePullRequestProducerProcessor())
                         .to("github://closePullRequest?repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
         };
     }
 
@@ -89,5 +89,4 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
-
 }

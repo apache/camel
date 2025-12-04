@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.sql.DataSource;
 
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
@@ -82,7 +83,9 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+            assertEquals(
+                    "We don't have Donkeys, only Camels",
+                    e.getCause().getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -91,5 +94,4 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(1, count, "Number of books");
     }
-
 }

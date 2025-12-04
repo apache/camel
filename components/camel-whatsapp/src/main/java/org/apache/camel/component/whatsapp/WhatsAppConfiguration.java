@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 import org.apache.camel.spi.Metadata;
@@ -24,8 +25,10 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class WhatsAppConfiguration {
 
-    @UriParam(description = "The authorization access token taken from whatsapp-business dashboard.", label = "security",
-              secret = true)
+    @UriParam(
+            description = "The authorization access token taken from whatsapp-business dashboard.",
+            label = "security",
+            secret = true)
     @Metadata(required = true)
     private String authorizationToken;
 
@@ -33,8 +36,10 @@ public class WhatsAppConfiguration {
     @Metadata(required = true)
     private String phoneNumberId;
 
-    @UriParam(label = "advanced",
-              description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock WhatsApp API")
+    @UriParam(
+            label = "advanced",
+            description =
+                    "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock WhatsApp API")
     private String baseUri;
 
     @UriParam(description = "Facebook graph api version.", label = "advanced")
@@ -46,8 +51,7 @@ public class WhatsAppConfiguration {
     @UriParam(description = "Webhook path", label = "advanced", defaultValue = "webhook")
     private String webhookPath = "camel-whatsapp/webhook";
 
-    public WhatsAppConfiguration() {
-    }
+    public WhatsAppConfiguration() {}
 
     public String getAuthorizationToken() {
         return authorizationToken;
@@ -99,8 +103,9 @@ public class WhatsAppConfiguration {
 
     @Override
     public String toString() {
-        return "WhatsAppConfiguration{" + "authorizationToken='" + authorizationToken + '\'' + ", baseUri='" + baseUri + '\''
-               + ", apiVersion='" + apiVersion + '\''
-               + ", phoneNumberId='" + phoneNumberId + '\'' + '}';
+        return "WhatsAppConfiguration{" + "authorizationToken='" + authorizationToken + '\'' + ", baseUri='" + baseUri
+                + '\''
+                + ", apiVersion='" + apiVersion + '\''
+                + ", phoneNumberId='" + phoneNumberId + '\'' + '}';
     }
 }

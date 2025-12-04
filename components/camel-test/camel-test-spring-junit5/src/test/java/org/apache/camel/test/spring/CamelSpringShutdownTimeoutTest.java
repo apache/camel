@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.test.spring.junit5.ShutdownTimeout;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ShutdownTimeout(value = 11, timeUnit = TimeUnit.MILLISECONDS)
-public class CamelSpringShutdownTimeoutTest
-        extends CamelSpringPlainTest {
+public class CamelSpringShutdownTimeoutTest extends CamelSpringPlainTest {
 
     @Test
     @Override

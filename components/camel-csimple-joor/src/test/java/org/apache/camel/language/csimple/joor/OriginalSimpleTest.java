@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -54,16 +65,6 @@ import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OriginalSimpleTest extends LanguageTestSupport {
 
@@ -113,12 +114,23 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testResultType() {
-        assertEquals(123, context.resolveLanguage("csimple").createExpression("${header.bar}").evaluate(exchange, int.class));
-        assertEquals("123",
-                context.resolveLanguage("csimple").createExpression("${header.bar}").evaluate(exchange, String.class));
+        assertEquals(
+                123,
+                context.resolveLanguage("csimple")
+                        .createExpression("${header.bar}")
+                        .evaluate(exchange, int.class));
+        assertEquals(
+                "123",
+                context.resolveLanguage("csimple")
+                        .createExpression("${header.bar}")
+                        .evaluate(exchange, String.class));
         // should not be possible
-        assertNull(context.resolveLanguage("csimple").createExpression("${header.bar}").evaluate(exchange, Date.class));
-        assertNull(context.resolveLanguage("csimple").createExpression("${header.unknown}").evaluate(exchange, String.class));
+        assertNull(context.resolveLanguage("csimple")
+                .createExpression("${header.bar}")
+                .evaluate(exchange, Date.class));
+        assertNull(context.resolveLanguage("csimple")
+                .createExpression("${header.unknown}")
+                .evaluate(exchange, String.class));
     }
 
     @Test
@@ -138,7 +150,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testNull() {
-        assertNull(context.resolveLanguage("csimple").createExpression("${null}").evaluate(exchange, Object.class));
+        assertNull(
+                context.resolveLanguage("csimple").createExpression("${null}").evaluate(exchange, Object.class));
     }
 
     @Test
@@ -210,10 +223,14 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertNotNull(exp);
 
         Language language = context.resolveLanguage("csimple");
-        assertThrows(JoorCSimpleCompilationException.class, () -> language.createExpression("${body.xxx}"),
+        assertThrows(
+                JoorCSimpleCompilationException.class,
+                () -> language.createExpression("${body.xxx}"),
                 "Should throw exception");
 
-        assertThrows(SimpleIllegalSyntaxException.class, () -> language.createExpression("${bodyxxx}"),
+        assertThrows(
+                SimpleIllegalSyntaxException.class,
+                () -> language.createExpression("${bodyxxx}"),
                 "Should throw exception");
     }
 
@@ -620,9 +637,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             assertExpression("${exchangeProperty.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage()
-                    .startsWith(
-                            "Valid syntax: ${exchangeProperty.name[key]} was: exchangeProperty.foobar[bar at location 0"));
+            assertTrue(
+                    e.getMessage()
+                            .startsWith(
+                                    "Valid syntax: ${exchangeProperty.name[key]} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -632,9 +650,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             assertExpression("${exchangeProperty.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage()
-                    .startsWith(
-                            "Valid syntax: ${exchangeProperty.name[key]} was: exchangeProperty.foobar[bar at location 0"));
+            assertTrue(
+                    e.getMessage()
+                            .startsWith(
+                                    "Valid syntax: ${exchangeProperty.name[key]} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -675,7 +694,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${date:header.birthday+24h:yyyyMMdd}", "19740421");
 
         // long
-        assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime().getTime());
+        assertExpression(
+                "${date:exchangeProperty.birthday}", propertyCalendar.getTime().getTime());
         // date
         assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime());
         assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19760622");
@@ -685,7 +705,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             assertExpression("${date:yyyyMMdd}", "19740420");
             fail("Should thrown an exception");
         } catch (Exception e) {
-            assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getCause().getMessage());
+            assertEquals(
+                    "Command not supported for dateExpression: yyyyMMdd",
+                    e.getCause().getMessage());
         }
     }
 
@@ -708,8 +730,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         cal.set(Calendar.MILLISECOND, 123);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
-        assertExpression("${date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:47:123");
-        assertExpression("${date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T00:55:47:123");
+        assertExpression(
+                "${date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T08:55:47:123");
+        assertExpression(
+                "${date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS}", "1974-04-20T00:55:47:123");
     }
 
     @Test
@@ -720,7 +744,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testDateExchangeCreated() {
-        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}",
+        Object out = evaluateExpression(
+                "${date:exchangeCreated:hh:mm:ss a}",
                 String.valueOf(exchange.getClock().getCreated()));
         assertNotNull(out);
     }
@@ -796,8 +821,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testExceptionStacktrace() {
         exchange.setException(new IllegalArgumentException("Just testing"));
 
-        String out = context.resolveLanguage("csimple").createExpression("${exception.stacktrace}").evaluate(exchange,
-                String.class);
+        String out = context.resolveLanguage("csimple")
+                .createExpression("${exception.stacktrace}")
+                .evaluate(exchange, String.class);
         assertNotNull(out);
         assertTrue(out.startsWith("java.lang.IllegalArgumentException: Just testing"));
         assertTrue(out.contains("at org.apache.camel.language."));
@@ -807,7 +833,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testException() {
         exchange.setException(new IllegalArgumentException("Just testing"));
 
-        Exception out = context.resolveLanguage("csimple").createExpression("${exception}").evaluate(exchange, Exception.class);
+        Exception out = context.resolveLanguage("csimple")
+                .createExpression("${exception}")
+                .evaluate(exchange, Exception.class);
         assertNotNull(out);
         assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Just testing", out.getMessage());
@@ -1134,7 +1162,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     @Test
     public void testExceptionOGNLSimple() {
         exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, "myPolicy");
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT,
+        exchange.setProperty(
+                Exchange.EXCEPTION_CAUGHT,
                 new CamelAuthorizationException("The camel authorization exception", exchange));
 
         assertExpression("${exceptionAs(org.apache.camel.CamelAuthorizationException).getPolicyId}", "myPolicy");
@@ -1304,7 +1333,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
-
     public void testBodyAsIndexOGNL() {
         List<OrderLine> lines = new ArrayList<>();
         lines.add(new OrderLine(123, "Camel in Action"));
@@ -1472,7 +1500,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         } catch (RuntimeBeanExpressionException e) {
             assertEquals(
                     "Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
-                         + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance",
+                            + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance",
                     e.getMessage());
         }
     }
@@ -1500,8 +1528,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             assertExpression("${bodyAs(Animal).friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
-                         + " due last method returned null and therefore cannot continue to invoke method .name on a null instance",
+            assertEquals(
+                    "Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
+                            + " due last method returned null and therefore cannot continue to invoke method .name on a null instance",
                     e.getMessage());
         }
     }
@@ -1752,18 +1781,18 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testStringArrayLength() {
-        exchange.getIn().setBody(new String[] { "foo", "bar" });
+        exchange.getIn().setBody(new String[] {"foo", "bar"});
         assertExpression("${body[0]}", "foo");
         assertExpression("${body[1]}", "bar");
         assertExpression("${bodyAs(String[]).length}", 2);
 
-        exchange.getIn().setBody(new String[] { "foo", "bar", "beer" });
+        exchange.getIn().setBody(new String[] {"foo", "bar", "beer"});
         assertExpression("${bodyAs(String[]).length}", 3);
     }
 
     @Test
     public void testByteArrayLength() {
-        exchange.getIn().setBody(new byte[] { 65, 66, 67 });
+        exchange.getIn().setBody(new byte[] {65, 66, 67});
         assertExpression("${body[0]}", 65);
         assertExpression("${body[1]}", 66);
         assertExpression("${body[2]}", 67);
@@ -1772,7 +1801,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testIntArrayLength() {
-        exchange.getIn().setBody(new int[] { 1, 20, 300 });
+        exchange.getIn().setBody(new int[] {1, 20, 300});
         assertExpression("${body[0]}", 1);
         assertExpression("${body[1]}", 20);
         assertExpression("${body[2]}", 300);
@@ -1885,18 +1914,21 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         int i = 0;
         for (i = 0; i < iterations; i++) {
             Expression expression = context.resolveLanguage("csimple").createExpression("${random(1,10)}");
-            assertTrue(
-                    min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+            assertTrue(min <= expression.evaluate(exchange, Integer.class)
+                    && expression.evaluate(exchange, Integer.class) < max);
         }
         for (i = 0; i < iterations; i++) {
             Expression expression = context.resolveLanguage("csimple").createExpression("${random(10)}");
-            assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+            assertTrue(0 <= expression.evaluate(exchange, Integer.class)
+                    && expression.evaluate(exchange, Integer.class) < max);
         }
         Expression expression = context.resolveLanguage("csimple").createExpression("${random(1, 10)}");
-        assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        assertTrue(min <= expression.evaluate(exchange, Integer.class)
+                && expression.evaluate(exchange, Integer.class) < max);
 
         Expression expression1 = context.resolveLanguage("csimple").createExpression("${random( 10)}");
-        assertTrue(0 <= expression1.evaluate(exchange, Integer.class) && expression1.evaluate(exchange, Integer.class) < max);
+        assertTrue(0 <= expression1.evaluate(exchange, Integer.class)
+                && expression1.evaluate(exchange, Integer.class) < max);
 
         try {
             assertExpression("${random(10,21,30)}", null);
@@ -1908,7 +1940,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             assertExpression("${random()}", null);
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getCause().getMessage());
+            assertEquals(
+                    "Valid syntax: ${random(min,max)} or ${random(max)} was: random()",
+                    e.getCause().getMessage());
         }
 
         exchange.getIn().setHeader("max", 20);
@@ -2035,7 +2069,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Map<String, Object> variables = exchange.getVariables();
         assertEquals(1, variables.size());
 
-        VariableRepository global = context.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+        VariableRepository global = context.getCamelContextExtension()
+                .getContextPlugin(VariableRepositoryFactory.class)
                 .getVariableRepository("global");
         global.setVariable("foo", "123");
         global.setVariable("bar", "456");
@@ -2106,7 +2141,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             assertExpression("${variableAs(unknown String)}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${variableAs(key, type)} was: variableAs(unknown String)"));
+            assertTrue(e.getMessage()
+                    .startsWith("Valid syntax: ${variableAs(key, type)} was: variableAs(unknown String)"));
         }
 
         try {
@@ -2249,7 +2285,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Language language = assertResolveLanguage(getLanguageName());
         Expression expression = language.createExpression(expressionText);
         assertNotNull(expectedType, "Cannot assert type when no type is provided");
-        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                expression, "No Expression could be created for text: " + expressionText + " language: " + language);
         Object answer = expression.evaluate(exchange, Object.class);
         assertIsInstanceOf(expectedType, answer);
     }
@@ -2261,7 +2298,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Language language = assertResolveLanguage(getLanguageName());
 
         Expression expression = language.createExpression(expressionText);
-        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         Object value;
         if (expectedValue != null) {
@@ -2317,7 +2355,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             }
             return sb.toString();
         }
-
     }
 
     public static final class Order {
@@ -2356,8 +2393,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     public static class MyClass {
         public Object[] getMyArray() {
-            return new Object[] { "Hallo", "World", "!" };
+            return new Object[] {"Hallo", "World", "!"};
         }
     }
-
 }

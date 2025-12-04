@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client;
 
 import org.apache.camel.util.ObjectHelper;
@@ -26,8 +27,7 @@ public final class StitchClientBuilder {
     private ConnectionProvider connectionProvider;
     private StitchRegion region;
 
-    private StitchClientBuilder() {
-    }
+    private StitchClientBuilder() {}
 
     public static StitchClientBuilder builder() {
         return new StitchClientBuilder();

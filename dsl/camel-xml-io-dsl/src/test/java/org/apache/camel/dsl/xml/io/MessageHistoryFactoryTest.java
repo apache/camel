@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.DefaultConfigurationConfigurer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MessageHistoryFactoryTest {
 
@@ -35,8 +36,8 @@ public class MessageHistoryFactoryTest {
             assertFalse(context.getMessageHistoryFactory().isCopyMessage());
 
             // load route from XML and add them to the existing camel context
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/messageHistoryFactory.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/messageHistoryFactory.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
             // auto-configure context
@@ -46,5 +47,4 @@ public class MessageHistoryFactoryTest {
             assertTrue(context.getMessageHistoryFactory().isCopyMessage());
         }
     }
-
 }

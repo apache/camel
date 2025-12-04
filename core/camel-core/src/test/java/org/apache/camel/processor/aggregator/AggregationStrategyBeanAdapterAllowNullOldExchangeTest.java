@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,7 +46,10 @@ public class AggregationStrategyBeanAdapterAllowNullOldExchangeTest extends Cont
                 myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
                 myStrategy.setAllowNullOldExchange(true);
 
-                from("direct:start").aggregate(constant(true), myStrategy).completionSize(3).to("mock:result");
+                from("direct:start")
+                        .aggregate(constant(true), myStrategy)
+                        .completionSize(3)
+                        .to("mock:result");
             }
         };
     }
@@ -62,6 +66,5 @@ public class AggregationStrategyBeanAdapterAllowNullOldExchangeTest extends Cont
                 return existing;
             }
         }
-
     }
 }

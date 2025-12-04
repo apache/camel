@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.service;
 
 import org.apache.camel.StatefulService;
@@ -30,6 +31,4 @@ import org.apache.camel.StatefulService;
  * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly invoke
  * the operation in a safe manner.
  */
-public abstract class ServiceSupport extends BaseService implements StatefulService {
-
-}
+public abstract class ServiceSupport extends BaseService implements StatefulService {}

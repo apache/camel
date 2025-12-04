@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.BindToRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,11 +33,6 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands.GeoRadiusCommandArgs;
 import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings
 public class RedisGeoTest extends RedisTestSupport {
@@ -50,50 +51,82 @@ public class RedisGeoTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteGEOADD() throws Exception {
-        sendHeaders(RedisConstants.COMMAND, Command.GEOADD, RedisConstants.KEY, "Sicily", RedisConstants.LONGITUDE, 13.361389,
-                RedisConstants.LATITUDE, 38.115556,
-                RedisConstants.VALUE, "Palermo");
+        sendHeaders(
+                RedisConstants.COMMAND,
+                Command.GEOADD,
+                RedisConstants.KEY,
+                "Sicily",
+                RedisConstants.LONGITUDE,
+                13.361389,
+                RedisConstants.LATITUDE,
+                38.115556,
+                RedisConstants.VALUE,
+                "Palermo");
         verify(redisTemplate).opsForGeo();
         verify(geoOperations).add("Sicily", new Point(13.361389, 38.115556), "Palermo");
     }
 
     @Test
     public void shouldExecuteGEODIST() throws Exception {
-        Object[] members = new String[] { "Palermo", "Catania" };
-        sendHeaders(RedisConstants.COMMAND, Command.GEODIST, RedisConstants.KEY, "Sicily", RedisConstants.VALUES, members);
+        Object[] members = new String[] {"Palermo", "Catania"};
+        sendHeaders(
+                RedisConstants.COMMAND, Command.GEODIST, RedisConstants.KEY, "Sicily", RedisConstants.VALUES, members);
         verify(redisTemplate).opsForGeo();
         verify(geoOperations).distance("Sicily", "Palermo", "Catania");
     }
 
     @Test
     public void shouldExecuteGEOHASH() throws Exception {
-        sendHeaders(RedisConstants.COMMAND, Command.GEOHASH, RedisConstants.KEY, "Sicily", RedisConstants.VALUE, "Palermo");
+        sendHeaders(
+                RedisConstants.COMMAND, Command.GEOHASH, RedisConstants.KEY, "Sicily", RedisConstants.VALUE, "Palermo");
         verify(redisTemplate).opsForGeo();
         verify(geoOperations).hash("Sicily", "Palermo");
     }
 
     @Test
     public void shouldExecuteGEOPOS() throws Exception {
-        sendHeaders(RedisConstants.COMMAND, Command.GEOPOS, RedisConstants.KEY, "Sicily", RedisConstants.VALUE, "Palermo");
+        sendHeaders(
+                RedisConstants.COMMAND, Command.GEOPOS, RedisConstants.KEY, "Sicily", RedisConstants.VALUE, "Palermo");
         verify(redisTemplate).opsForGeo();
         verify(geoOperations).position("Sicily", "Palermo");
     }
 
     @Test
     public void shouldExecuteGEORADIUS() throws Exception {
-        sendHeaders(RedisConstants.COMMAND, Command.GEORADIUS, RedisConstants.KEY, "Sicily", RedisConstants.LONGITUDE,
-                13.361389, RedisConstants.LATITUDE, 38.115556,
-                RedisConstants.RADIUS, 200000, RedisConstants.COUNT, 10);
+        sendHeaders(
+                RedisConstants.COMMAND,
+                Command.GEORADIUS,
+                RedisConstants.KEY,
+                "Sicily",
+                RedisConstants.LONGITUDE,
+                13.361389,
+                RedisConstants.LATITUDE,
+                38.115556,
+                RedisConstants.RADIUS,
+                200000,
+                RedisConstants.COUNT,
+                10);
         verify(redisTemplate).opsForGeo();
-        verify(geoOperations).radius(eq("Sicily"), eq(new Circle(new Point(13.361389, 38.115556), 200000)),
-                any(GeoRadiusCommandArgs.class));
+        verify(geoOperations)
+                .radius(
+                        eq("Sicily"),
+                        eq(new Circle(new Point(13.361389, 38.115556), 200000)),
+                        any(GeoRadiusCommandArgs.class));
     }
 
     @Test
     public void shouldExecuteGEORADIUSBYMEMBER() throws Exception {
-        sendHeaders(RedisConstants.COMMAND, Command.GEORADIUSBYMEMBER, RedisConstants.KEY, "Sicily", RedisConstants.VALUE,
-                "Palermo", RedisConstants.RADIUS, 200000);
+        sendHeaders(
+                RedisConstants.COMMAND,
+                Command.GEORADIUSBYMEMBER,
+                RedisConstants.KEY,
+                "Sicily",
+                RedisConstants.VALUE,
+                "Palermo",
+                RedisConstants.RADIUS,
+                200000);
         verify(redisTemplate).opsForGeo();
-        verify(geoOperations).radius(eq("Sicily"), eq("Palermo"), eq(new Distance(200000)), any(GeoRadiusCommandArgs.class));
+        verify(geoOperations)
+                .radius(eq("Sicily"), eq("Palermo"), eq(new Distance(200000)), any(GeoRadiusCommandArgs.class));
     }
 }

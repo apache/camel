@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import java.io.BufferedReader;
@@ -76,7 +77,8 @@ public class DoclingProducer extends DefaultProducer {
                     configuration.getValidateAfterInactivity(),
                     configuration.isEvictIdleConnections(),
                     configuration.getMaxIdleTime());
-            LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {} (async mode: {})",
+            LOG.info(
+                    "DoclingProducer configured to use docling-serve API at: {}{} with authentication: {} (async mode: {})",
                     configuration.getDoclingServeUrl(),
                     configuration.getConvertEndpoint(),
                     configuration.getAuthenticationScheme(),
@@ -255,7 +257,8 @@ public class DoclingProducer extends DefaultProducer {
             if (body instanceof String) {
                 taskId = (String) body;
             } else {
-                throw new IllegalArgumentException("Task ID must be provided in header CamelDoclingTaskId or in message body");
+                throw new IllegalArgumentException(
+                        "Task ID must be provided in header CamelDoclingTaskId or in message body");
             }
         }
 
@@ -292,8 +295,8 @@ public class DoclingProducer extends DefaultProducer {
 
         if (configuration.isUseDoclingServe()) {
             // Use docling-serve API for metadata extraction
-            metadata = doclingServeClient.extractMetadata(inputPath, configuration.isExtractAllMetadata(),
-                    configuration.isIncludeRawMetadata());
+            metadata = doclingServeClient.extractMetadata(
+                    inputPath, configuration.isExtractAllMetadata(), configuration.isIncludeRawMetadata());
         } else {
             // Use CLI for metadata extraction
             metadata = extractMetadataUsingCLI(inputPath, exchange);
@@ -356,14 +359,14 @@ public class DoclingProducer extends DefaultProducer {
             if (rootNode.has(DoclingMetadataFields.PAGES)) {
                 metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).size());
             } else if (rootNode.has(DoclingMetadataFields.NUM_PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
+                metadata.setPageCount(
+                        rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
             }
 
             // Store raw metadata if configured
             if (configuration.isIncludeRawMetadata()) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> rawMap
-                        = mapper.convertValue(rootNode, java.util.Map.class);
+                Map<String, Object> rawMap = mapper.convertValue(rootNode, java.util.Map.class);
                 metadata.setRawMetadata(rawMap);
             }
 
@@ -387,16 +390,19 @@ public class DoclingProducer extends DefaultProducer {
             metadata.setCreator(metadataNode.get(DoclingMetadataFields.CREATOR).asText());
         }
         if (metadataNode.has(DoclingMetadataFields.PRODUCER)) {
-            metadata.setProducer(metadataNode.get(DoclingMetadataFields.PRODUCER).asText());
+            metadata.setProducer(
+                    metadataNode.get(DoclingMetadataFields.PRODUCER).asText());
         }
         if (metadataNode.has(DoclingMetadataFields.SUBJECT)) {
             metadata.setSubject(metadataNode.get(DoclingMetadataFields.SUBJECT).asText());
         }
         if (metadataNode.has(DoclingMetadataFields.KEYWORDS)) {
-            metadata.setKeywords(metadataNode.get(DoclingMetadataFields.KEYWORDS).asText());
+            metadata.setKeywords(
+                    metadataNode.get(DoclingMetadataFields.KEYWORDS).asText());
         }
         if (metadataNode.has(DoclingMetadataFields.LANGUAGE)) {
-            metadata.setLanguage(metadataNode.get(DoclingMetadataFields.LANGUAGE).asText());
+            metadata.setLanguage(
+                    metadataNode.get(DoclingMetadataFields.LANGUAGE).asText());
         }
 
         // Extract dates
@@ -404,7 +410,9 @@ public class DoclingProducer extends DefaultProducer {
                 || metadataNode.has(DoclingMetadataFields.CREATION_DATE_CAMEL)) {
             String dateStr = metadataNode.has(DoclingMetadataFields.CREATION_DATE)
                     ? metadataNode.get(DoclingMetadataFields.CREATION_DATE).asText()
-                    : metadataNode.get(DoclingMetadataFields.CREATION_DATE_CAMEL).asText();
+                    : metadataNode
+                            .get(DoclingMetadataFields.CREATION_DATE_CAMEL)
+                            .asText();
             try {
                 metadata.setCreationDate(java.time.Instant.parse(dateStr));
             } catch (Exception e) {
@@ -416,7 +424,9 @@ public class DoclingProducer extends DefaultProducer {
                 || metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE_CAMEL)) {
             String dateStr = metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
                     ? metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE).asText()
-                    : metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE_CAMEL).asText();
+                    : metadataNode
+                            .get(DoclingMetadataFields.MODIFICATION_DATE_CAMEL)
+                            .asText();
             try {
                 metadata.setModificationDate(java.time.Instant.parse(dateStr));
             } catch (Exception e) {
@@ -488,10 +498,12 @@ public class DoclingProducer extends DefaultProducer {
         if (metadata.getFileName() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_FILE_NAME, metadata.getFileName());
         }
-        if (metadata.getCustomMetadata() != null && !metadata.getCustomMetadata().isEmpty()) {
+        if (metadata.getCustomMetadata() != null
+                && !metadata.getCustomMetadata().isEmpty()) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_CUSTOM, metadata.getCustomMetadata());
         }
-        if (configuration.isIncludeRawMetadata() && metadata.getRawMetadata() != null
+        if (configuration.isIncludeRawMetadata()
+                && metadata.getRawMetadata() != null
                 && !metadata.getRawMetadata().isEmpty()) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_RAW, metadata.getRawMetadata());
         }
@@ -501,8 +513,7 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("DoclingProducer processing batch conversion with format: {}", outputFormat);
 
         if (!configuration.isUseDoclingServe()) {
-            throw new IllegalStateException(
-                    "Batch operations require docling-serve mode (useDoclingServe=true)");
+            throw new IllegalStateException("Batch operations require docling-serve mode (useDoclingServe=true)");
         }
 
         // Extract document list from body
@@ -515,14 +526,17 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("Processing batch of {} documents", documentPaths.size());
 
         // Get batch configuration from headers or use defaults
-        int batchSize = exchange.getIn().getHeader(DoclingHeaders.BATCH_SIZE, configuration.getBatchSize(), Integer.class);
-        int parallelism
-                = exchange.getIn().getHeader(DoclingHeaders.BATCH_PARALLELISM, configuration.getBatchParallelism(),
-                        Integer.class);
-        boolean failOnFirstError = exchange.getIn().getHeader(DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
-                configuration.isBatchFailOnFirstError(), Boolean.class);
-        long batchTimeout = exchange.getIn().getHeader(DoclingHeaders.BATCH_TIMEOUT, configuration.getBatchTimeout(),
-                Long.class);
+        int batchSize =
+                exchange.getIn().getHeader(DoclingHeaders.BATCH_SIZE, configuration.getBatchSize(), Integer.class);
+        int parallelism = exchange.getIn()
+                .getHeader(DoclingHeaders.BATCH_PARALLELISM, configuration.getBatchParallelism(), Integer.class);
+        boolean failOnFirstError = exchange.getIn()
+                .getHeader(
+                        DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
+                        configuration.isBatchFailOnFirstError(),
+                        Boolean.class);
+        long batchTimeout =
+                exchange.getIn().getHeader(DoclingHeaders.BATCH_TIMEOUT, configuration.getBatchTimeout(), Long.class);
 
         // Check if we should use async mode for individual conversions
         boolean useAsync = configuration.isUseAsyncMode();
@@ -554,12 +568,17 @@ public class DoclingProducer extends DefaultProducer {
             exchange.getIn().setBody(results.getResults());
             LOG.info(
                     "Batch conversion completed: {} documents, {} succeeded, {} failed - returning individual results for splitting",
-                    results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
+                    results.getTotalDocuments(),
+                    results.getSuccessCount(),
+                    results.getFailureCount());
         } else {
             // Return complete BatchProcessingResults object
             exchange.getIn().setBody(results);
-            LOG.info("Batch conversion completed: {} documents, {} succeeded, {} failed",
-                    results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
+            LOG.info(
+                    "Batch conversion completed: {} documents, {} succeeded, {} failed",
+                    results.getTotalDocuments(),
+                    results.getSuccessCount(),
+                    results.getFailureCount());
         }
 
         // Note: Exception is thrown in DoclingServeClient if failOnFirstError=true
@@ -583,15 +602,11 @@ public class DoclingProducer extends DefaultProducer {
 
             // Check if it's a List<File>
             if (list.get(0) instanceof File) {
-                return ((List<File>) list).stream()
-                        .map(File::getAbsolutePath)
-                        .collect(Collectors.toList());
+                return ((List<File>) list).stream().map(File::getAbsolutePath).collect(Collectors.toList());
             }
 
             // Try to convert to string
-            return list.stream()
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+            return list.stream().map(Object::toString).collect(Collectors.toList());
         }
 
         // Handle Collection
@@ -646,9 +661,9 @@ public class DoclingProducer extends DefaultProducer {
             }
         }
 
-        throw new IllegalArgumentException(
-                "Unsupported body type for batch processing: " + (body != null ? body.getClass().getName() : "null")
-                                           + ". Expected List<String>, List<File>, String[], File[], or directory path");
+        throw new IllegalArgumentException("Unsupported body type for batch processing: "
+                + (body != null ? body.getClass().getName() : "null")
+                + ". Expected List<String>, List<File>, String[], File[], or directory path");
     }
 
     private String convertUsingDoclingServe(String inputPath, String outputFormat, Exchange exchange) throws Exception {
@@ -703,7 +718,8 @@ public class DoclingProducer extends DefaultProducer {
         } else if (body instanceof byte[]) {
             byte[] content = (byte[]) body;
             if (content.length > configuration.getMaxFileSize()) {
-                throw new IllegalArgumentException("File size exceeds maximum allowed size: " + configuration.getMaxFileSize());
+                throw new IllegalArgumentException(
+                        "File size exceeds maximum allowed size: " + configuration.getMaxFileSize());
             }
             Path tempFile = Files.createTempFile("docling-", ".tmp");
             Files.write(tempFile, content);
@@ -722,8 +738,8 @@ public class DoclingProducer extends DefaultProducer {
         if (Files.exists(path)) {
             long fileSize = Files.size(path);
             if (fileSize > configuration.getMaxFileSize()) {
-                throw new IllegalArgumentException(
-                        "File size (" + fileSize + " bytes) exceeds maximum allowed size: " + configuration.getMaxFileSize());
+                throw new IllegalArgumentException("File size (" + fileSize + " bytes) exceeds maximum allowed size: "
+                        + configuration.getMaxFileSize());
             }
         }
     }
@@ -750,7 +766,7 @@ public class DoclingProducer extends DefaultProducer {
             StringBuilder error = new StringBuilder();
 
             try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
 
                 String line;
                 while ((line = outputReader.readLine()) != null) {
@@ -840,7 +856,8 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private String moveOutputFileToFinalLocation(Path tempOutputDir, String inputPath, String outputFormat) throws IOException {
+    private String moveOutputFileToFinalLocation(Path tempOutputDir, String inputPath, String outputFormat)
+            throws IOException {
         // Find the generated output file
         Path inputFilePath = Paths.get(inputPath);
         String baseName = inputFilePath.getFileName().toString();
@@ -915,7 +932,8 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private List<String> buildDoclingCommand(String inputPath, String outputFormat, Exchange exchange, String outputDirectory) {
+    private List<String> buildDoclingCommand(
+            String inputPath, String outputFormat, Exchange exchange, String outputDirectory) {
         List<String> command = new ArrayList<>();
         command.add(configuration.getDoclingCommand());
 
@@ -997,5 +1015,4 @@ public class DoclingProducer extends DefaultProducer {
                 return "md"; // Default to markdown
         }
     }
-
 }

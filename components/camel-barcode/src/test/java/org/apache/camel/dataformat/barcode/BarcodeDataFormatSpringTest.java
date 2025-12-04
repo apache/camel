@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
 
 import org.apache.camel.CamelContext;
@@ -22,8 +23,9 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.springframework.context.ApplicationContext;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
 
     @Override
@@ -33,10 +35,8 @@ public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ApplicationContext applicationContext
-                = CamelSpringTestSupport.newAppContext("barcodeDataformatSpring.xml",
-                        getClass());
+        ApplicationContext applicationContext =
+                CamelSpringTestSupport.newAppContext("barcodeDataformatSpring.xml", getClass());
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-
 }

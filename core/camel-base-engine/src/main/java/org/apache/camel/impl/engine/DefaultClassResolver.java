@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.io.InputStream;
@@ -37,8 +38,7 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     private Set<ClassLoader> classLoaders;
     private CamelContext camelContext;
 
-    public DefaultClassResolver() {
-    }
+    public DefaultClassResolver() {}
 
     public DefaultClassResolver(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -146,7 +146,8 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     }
 
     @Override
-    public <T> Class<T> resolveMandatoryClass(String name, Class<T> type, ClassLoader loader) throws ClassNotFoundException {
+    public <T> Class<T> resolveMandatoryClass(String name, Class<T> type, ClassLoader loader)
+            throws ClassNotFoundException {
         Class<T> answer = resolveClass(name, type, loader);
         if (answer == null) {
             throw new ClassNotFoundException(name);
@@ -181,5 +182,4 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     protected ClassLoader getApplicationContextClassLoader() {
         return camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
     }
-
 }

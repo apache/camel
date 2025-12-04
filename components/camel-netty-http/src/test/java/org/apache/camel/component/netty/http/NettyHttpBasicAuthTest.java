@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
@@ -52,9 +53,11 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
     @Test
     public void testBasicAuthFailed() {
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
-        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        NettyHttpOperationFailedException cause =
+                assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(401, cause.getStatusCode());
     }
 
@@ -65,8 +68,8 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization",
-                auth, String.class);
+        String out = template.requestBodyAndHeader(
+                "netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -78,10 +81,11 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
         try {
             // password is invalid so we should get a 401
             String auth = "Basic c2NvdHQ6dHlwbw==";
-            template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth,
-                    String.class);
+            template.requestBodyAndHeader(
+                    "netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
         } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            NettyHttpOperationFailedException cause =
+                    assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(401, cause.getStatusCode());
         }
     }
@@ -93,9 +97,9 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration=#mySecurityConfig")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

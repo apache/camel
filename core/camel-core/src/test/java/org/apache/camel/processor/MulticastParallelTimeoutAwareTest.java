@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Isolated("Does not play well with parallel execution")
 public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
@@ -56,10 +57,14 @@ public class MulticastParallelTimeoutAwareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").multicast(new MyAggregationStrategy()).parallelProcessing().timeout(1000)
+                from("direct:start")
+                        .multicast(new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .timeout(1000)
                         .to("direct:a", "direct:b", "direct:c")
                         // use end to indicate end of multicast route
-                        .end().to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:a").delay(2000).setBody(constant("A"));
 

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -39,10 +44,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaTransactionIT extends BaseKafkaTestSupport {
     public static final String SEQUENTIAL_TRANSACTION_URI = "direct:startTransaction";
@@ -72,10 +73,11 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(SEQUENTIAL_TRANSACTION_URI).to("kafka:" + TOPIC_TRANSACTION + "?recordMetadata=true&requestRequiredAcks=-1"
-                                                    + "&additional-properties[transactional.id]=1234"
-                                                    + "&additional-properties[enable.idempotence]=true"
-                                                    + "&additional-properties[retries]=5")
+                from(SEQUENTIAL_TRANSACTION_URI)
+                        .to("kafka:" + TOPIC_TRANSACTION + "?recordMetadata=true&requestRequiredAcks=-1"
+                                + "&additional-properties[transactional.id]=1234"
+                                + "&additional-properties[enable.idempotence]=true"
+                                + "&additional-properties[retries]=5")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -84,14 +86,15 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
                                     throw new RuntimeException("fail process message " + body);
                                 }
                             }
-                        }).to(KafkaTestUtil.MOCK_RESULT);
+                        })
+                        .to(KafkaTestUtil.MOCK_RESULT);
 
                 from(CONCURRENT_TRANSACTION_URI)
                         .to("kafka:" + TOPIC_CONCURRENCY_TRANSACTION
-                            + "?recordMetadata=true&requestRequiredAcks=-1&synchronous=true"
-                            + "&additional-properties[transactional.id]=5678"
-                            + "&additional-properties[enable.idempotence]=true"
-                            + "&additional-properties[retries]=5");
+                                + "?recordMetadata=true&requestRequiredAcks=-1&synchronous=true"
+                                + "&additional-properties[transactional.id]=5678"
+                                + "&additional-properties[enable.idempotence]=true"
+                                + "&additional-properties[retries]=5");
             }
         };
     }
@@ -109,7 +112,10 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
                 public void run() {
                     ProducerTemplate testConcurrencyTransaction = contextExtension.getProducerTemplate();
 
-                    TestProducerUtil.sendMessagesInRoute(CONCURRENT_TRANSACTION_URI, messageInTopic, testConcurrencyTransaction,
+                    TestProducerUtil.sendMessagesInRoute(
+                            CONCURRENT_TRANSACTION_URI,
+                            messageInTopic,
+                            testConcurrencyTransaction,
                             "IT test concurrency transaction message",
                             KafkaConstants.PARTITION_KEY,
                             "0");
@@ -126,7 +132,8 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
 
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
-        assertTrue(allMessagesReceived,
+        assertTrue(
+                allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
     }
 
@@ -137,13 +144,20 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic);
 
         ProducerTemplate testTransaction = contextExtension.getProducerTemplate();
-        TestProducerUtil.sendMessagesInRoute(SEQUENTIAL_TRANSACTION_URI, messageInTopic, testTransaction,
+        TestProducerUtil.sendMessagesInRoute(
+                SEQUENTIAL_TRANSACTION_URI,
+                messageInTopic,
+                testTransaction,
                 "IT test transaction message",
-                KafkaConstants.PARTITION_KEY, "0");
+                KafkaConstants.PARTITION_KEY,
+                "0");
         assertThrows(RuntimeException.class, new Executable() {
             @Override
             public void execute() {
-                TestProducerUtil.sendMessagesInRoute(SEQUENTIAL_TRANSACTION_URI, messageInTopic, testTransaction,
+                TestProducerUtil.sendMessagesInRoute(
+                        SEQUENTIAL_TRANSACTION_URI,
+                        messageInTopic,
+                        testTransaction,
                         "IT test transaction fail message",
                         KafkaConstants.PARTITION_KEY,
                         "0");
@@ -154,7 +168,8 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
 
         boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
 
-        assertTrue(allMessagesReceived,
+        assertTrue(
+                allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
         MockEndpoint mockEndpoint = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
@@ -163,26 +178,28 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
         assertEquals(10, exchangeList.size(), "Ten Exchanges are expected");
         for (Exchange exchange : exchangeList) {
             @SuppressWarnings("unchecked")
-            List<RecordMetadata> recordMetaData1
-                    = (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
+            List<RecordMetadata> recordMetaData1 =
+                    (List<RecordMetadata>) (exchange.getIn().getHeader(KafkaConstants.KAFKA_RECORD_META));
             assertEquals(1, recordMetaData1.size(), "One RecordMetadata is expected.");
             assertTrue(recordMetaData1.get(0).offset() >= 0, "Offset is positive");
             assertTrue(recordMetaData1.get(0).topic().startsWith("transaction"), "Topic Name start with 'transaction'");
         }
-
     }
 
     private static KafkaConsumer<String, String> createStringKafkaConsumer(final String groupId) {
         Properties stringsProps = new Properties();
 
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        stringsProps.put(
+                org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+        stringsProps.put(
+                org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 "org.apache.kafka.common.serialization.StringDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+        stringsProps.put(
+                org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 "org.apache.kafka.common.serialization.StringDeserializer");
         stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -205,5 +222,4 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
             }
         }
     }
-
 }

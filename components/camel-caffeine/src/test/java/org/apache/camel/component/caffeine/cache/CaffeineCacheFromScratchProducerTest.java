@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,12 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
         final String key = "1";
         final String val = "1";
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
-                .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
+        fluentTemplate()
+                .withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
+                .withHeader(CaffeineConstants.KEY, key)
+                .withBody(val)
+                .to("direct://start")
+                .send();
 
         MockEndpoint mock1 = getMockEndpoint("mock:result-get");
         mock1.expectedMinimumMessageCount(1);
@@ -38,11 +43,19 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
         mock1.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, true);
         mock1.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
-                .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://get").send();
+        fluentTemplate()
+                .withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
+                .withHeader(CaffeineConstants.KEY, key)
+                .withBody(val)
+                .to("direct://get")
+                .send();
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
-                .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start-1").send();
+        fluentTemplate()
+                .withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
+                .withHeader(CaffeineConstants.KEY, key)
+                .withBody(val)
+                .to("direct://start-1")
+                .send();
 
         MockEndpoint mock2 = getMockEndpoint("mock:result-get-1");
         mock2.expectedMinimumMessageCount(1);
@@ -50,8 +63,12 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
         mock2.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, true);
         mock2.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
-                .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://get-1").send();
+        fluentTemplate()
+                .withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
+                .withHeader(CaffeineConstants.KEY, key)
+                .withBody(val)
+                .to("direct://get-1")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -64,16 +81,20 @@ public class CaffeineCacheFromScratchProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start").toF("caffeine-cache://%s?statsEnabled=true", "test")
+                from("direct://start")
+                        .toF("caffeine-cache://%s?statsEnabled=true", "test")
                         .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
-                from("direct://get").toF("caffeine-cache://%s?statsEnabled=true", "test")
+                from("direct://get")
+                        .toF("caffeine-cache://%s?statsEnabled=true", "test")
                         .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
                         .to("mock:result-get");
-                from("direct://start-1").toF("caffeine-cache://%s?statsEnabled=true", "test")
+                from("direct://start-1")
+                        .toF("caffeine-cache://%s?statsEnabled=true", "test")
                         .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
-                from("direct://get-1").toF("caffeine-cache://%s?statsEnabled=true", "test")
+                from("direct://get-1")
+                        .toF("caffeine-cache://%s?statsEnabled=true", "test")
                         .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
                         .to("mock:result-get-1");
             }

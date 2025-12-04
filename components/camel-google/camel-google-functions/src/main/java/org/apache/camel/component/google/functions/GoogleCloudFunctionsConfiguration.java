@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions;
 
 import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
@@ -39,8 +40,10 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "The Google Cloud Location (Region) where the Function is located")
     private String location;
 
-    @UriParam(label = "producer",
-              enums = "listFunctions,getFunction,callFunction,generateDownloadUrl,generateUploadUrl,createFunction,updateFunction,deleteFunction")
+    @UriParam(
+            label = "producer",
+            enums =
+                    "listFunctions,getFunction,callFunction,generateDownloadUrl,generateUploadUrl,createFunction,updateFunction,deleteFunction")
     private GoogleCloudFunctionsOperations operation;
 
     @UriParam(defaultValue = "false", description = "Specifies if the request is a pojo request")
@@ -144,5 +147,4 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

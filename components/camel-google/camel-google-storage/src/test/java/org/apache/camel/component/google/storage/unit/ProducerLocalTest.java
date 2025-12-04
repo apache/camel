@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.unit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -31,10 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
 
@@ -59,7 +60,6 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
                 from("direct:downloadLink").to(endpoint);
                 from("direct:deleteObject").to(endpoint);
                 from("direct:deleteBucket").to(endpoint).to("mock:result");
-
             }
         };
     }
@@ -71,7 +71,7 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
 
         final String fileName = "just_a_file.txt";
 
-        //upload a file
+        // upload a file
         byte[] payload = "Hi, How are you ?".getBytes();
         ByteArrayInputStream bais = new ByteArrayInputStream(payload);
         Exchange addObjectExchange = template.request("direct:addObject", exchange -> {
@@ -85,16 +85,14 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         assertEquals(fileName, addObject.getName());
 
         Exchange listBucketsExchange = template.request("direct:listBucket", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.listBuckets);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.listBuckets);
         });
         List<Bucket> bucketsList = listBucketsExchange.getMessage().getBody(List.class);
         LOG.info("bucketsList {}", bucketsList);
         assertEquals(1, bucketsList.size());
 
         Exchange listObjectsExchange = template.request("direct:listObjects", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.listObjects);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.listObjects);
         });
         LOG.info("listObjectsExchange.body={}", listObjectsExchange.getMessage().getBody());
         List<Blob> resp = listObjectsExchange.getMessage().getBody(List.class);
@@ -102,29 +100,28 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         assertEquals(fileName, resp.get(0).getName());
 
         Exchange listObjectsExchangeWithPrefix = template.request("direct:listObjects", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.listObjects);
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.PREFIX_NAME,
-                    "just_");
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.listObjects);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.PREFIX_NAME, "just_");
         });
-        LOG.info("listObjectsExchange.body={}", listObjectsExchangeWithPrefix.getMessage().getBody());
+        LOG.info(
+                "listObjectsExchange.body={}",
+                listObjectsExchangeWithPrefix.getMessage().getBody());
         resp = listObjectsExchangeWithPrefix.getMessage().getBody(List.class);
         assertEquals(1, resp.size());
         assertEquals(fileName, resp.get(0).getName());
 
         Exchange listObjectsExchangeWithPrefixNoRes = template.request("direct:listObjects", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.listObjects);
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.PREFIX_NAME,
-                    "file_");
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.listObjects);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.PREFIX_NAME, "file_");
         });
-        LOG.info("listObjectsExchange.body={}", listObjectsExchangeWithPrefixNoRes.getMessage().getBody());
+        LOG.info(
+                "listObjectsExchange.body={}",
+                listObjectsExchangeWithPrefixNoRes.getMessage().getBody());
         resp = listObjectsExchangeWithPrefixNoRes.getMessage().getBody(List.class);
         assertEquals(0, resp.size());
 
         Exchange getObjectExchange = template.request("direct:getObject", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.getObject);
+            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.getObject);
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
         });
         String getObject = getObjectExchange.getMessage().getBody(String.class);
@@ -145,24 +142,25 @@ public class ProducerLocalTest extends GoogleCloudStorageBaseTest {
         */
 
         Exchange deleteObjectExchange = template.send("direct:deleteObject", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.deleteObject);
+            exchange.getIn()
+                    .setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteObject);
             exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, fileName);
         });
 
-        boolean deleteObject = deleteObjectExchange.getMessage().getBody(Boolean.class).booleanValue();
+        boolean deleteObject =
+                deleteObjectExchange.getMessage().getBody(Boolean.class).booleanValue();
         LOG.info("deleteObject {}", deleteObject);
         assertTrue(deleteObject);
 
         Exchange deleteBucketExchange = template.send("direct:deleteBucket", exchange -> {
-            exchange.getIn().setHeader(GoogleCloudStorageConstants.OPERATION,
-                    GoogleCloudStorageOperations.deleteBucket);
+            exchange.getIn()
+                    .setHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.deleteBucket);
         });
-        boolean deleteBucket = deleteBucketExchange.getMessage().getBody(Boolean.class).booleanValue();
+        boolean deleteBucket =
+                deleteBucketExchange.getMessage().getBody(Boolean.class).booleanValue();
         LOG.info("deleteBucket {}", deleteBucket);
         assertTrue(deleteBucket);
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

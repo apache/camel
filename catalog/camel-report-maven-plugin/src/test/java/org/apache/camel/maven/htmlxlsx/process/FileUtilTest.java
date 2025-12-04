@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.process;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,12 +33,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileUtilTest {
 
@@ -108,9 +109,7 @@ public class FileUtilTest {
 
         Path result = fileUtil.outputFile(FOOBAR, path.toString());
 
-        assertAll(
-                () -> assertTrue(result.startsWith(path.toString())),
-                () -> assertTrue(result.endsWith(FOOBAR_HTML)));
+        assertAll(() -> assertTrue(result.startsWith(path.toString())), () -> assertTrue(result.endsWith(FOOBAR_HTML)));
     }
 
     @Test

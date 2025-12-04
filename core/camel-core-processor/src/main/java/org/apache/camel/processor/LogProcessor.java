@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Set;
@@ -45,7 +46,8 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
     private final MaskingFormatter formatter;
     private final Set<LogListener> listeners;
 
-    public LogProcessor(Expression expression, CamelLogger logger, MaskingFormatter formatter, Set<LogListener> listeners) {
+    public LogProcessor(
+            Expression expression, CamelLogger logger, MaskingFormatter formatter, Set<LogListener> listeners) {
         this.expression = expression;
         this.message = null;
         this.logger = logger;
@@ -98,8 +100,11 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Exception t) {
-                LOG.warn("Ignoring an exception: {} thrown by: {} caused by: {}", t.getClass().getName(),
-                        listener.getClass().getName(), t.getMessage());
+                LOG.warn(
+                        "Ignoring an exception: {} thrown by: {} caused by: {}",
+                        t.getClass().getName(),
+                        listener.getClass().getName(),
+                        t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
                 }
@@ -116,8 +121,11 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
             try {
                 listener.afterLog(exchange, logger, message);
             } catch (Exception t) {
-                LOG.warn("Ignoring an exception: {} thrown by: {} caused by: {}", t.getClass().getName(),
-                        listener.getClass().getName(), t.getMessage());
+                LOG.warn(
+                        "Ignoring an exception: {} thrown by: {} caused by: {}",
+                        t.getClass().getName(),
+                        listener.getClass().getName(),
+                        t.getMessage());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("", t);
                 }
@@ -174,5 +182,4 @@ public class LogProcessor extends BaseProcessorSupport implements Traceable, IdA
     public MaskingFormatter getLogFormatter() {
         return formatter;
     }
-
 }

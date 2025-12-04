@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.eventbridge;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,6 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class EventbridgeProducerHealthCheckStaticCredsTest extends CamelTestSupport {
 
@@ -82,14 +82,13 @@ public class EventbridgeProducerHealthCheckStaticCredsTest extends CamelTestSupp
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAwsEventbridgeHealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-eventbridge"));
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+            boolean containsAwsEventbridgeHealthCheck =
+                    res2.stream().anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-eventbridge"));
+            boolean hasRegionMessage =
+                    res2.stream().anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAwsEventbridgeHealthCheck, "aws2-evenbridge check");
             Assertions.assertTrue(hasRegionMessage, "aws2-evenbridge check error message");
         });
-
     }
 }

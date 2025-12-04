@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Properties;
 
@@ -23,9 +27,6 @@ import org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpsBasicAuthTest extends BaseEndpointDslTest {
 
@@ -46,9 +47,11 @@ public class HttpsBasicAuthTest extends BaseEndpointDslTest {
         context.addRoutes(new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                HttpEndpointBuilderFactory.HttpEndpointBuilder builder
-                        = https("inline").authenticationPreemptive(true).authMethod("Basic")
-                                .authUsername("{{prop.username}}").authPassword("{{prop.password}}");
+                HttpEndpointBuilderFactory.HttpEndpointBuilder builder = https("inline")
+                        .authenticationPreemptive(true)
+                        .authMethod("Basic")
+                        .authUsername("{{prop.username}}")
+                        .authPassword("{{prop.password}}");
 
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
@@ -60,5 +63,4 @@ public class HttpsBasicAuthTest extends BaseEndpointDslTest {
 
         context.stop();
     }
-
 }

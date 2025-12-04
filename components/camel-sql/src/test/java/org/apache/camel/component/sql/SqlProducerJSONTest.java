@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
@@ -27,23 +30,20 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerJSONTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase2.sql").build();
+                .addScript("sql/createAndPopulateDatabase2.sql")
+                .build();
 
         jdbcTemplate = new JdbcTemplate(db);
-
     }
 
     @Override
@@ -75,7 +75,8 @@ public class SqlProducerJSONTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                        .to("sql:insert into projects (id, project, license, description) values (4, 'Food, Inc', 'ASF', #)")
+                        .to(
+                                "sql:insert into projects (id, project, license, description) values (4, 'Food, Inc', 'ASF', #)")
                         .to("mock:result");
             }
         };

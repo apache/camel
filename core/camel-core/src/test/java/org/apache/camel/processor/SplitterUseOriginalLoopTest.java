@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,12 +42,17 @@ public class SplitterUseOriginalLoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").loop(3).setHeader("looping", exchangeProperty(Exchange.LOOP_INDEX))
+                from("direct:start")
+                        .loop(3)
+                        .setHeader("looping", exchangeProperty(Exchange.LOOP_INDEX))
                         .split(body(), new UseOriginalAggregationStrategy(null, false))
-                        .setHeader("myHeader", exchangeProperty(Exchange.LOOP_INDEX)).to("mock:line").end().end()
-                        .log("${headers}").to("mock:result");
+                        .setHeader("myHeader", exchangeProperty(Exchange.LOOP_INDEX))
+                        .to("mock:line")
+                        .end()
+                        .end()
+                        .log("${headers}")
+                        .to("mock:result");
             }
         };
     }
-
 }

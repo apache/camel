@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
@@ -53,9 +54,12 @@ public class KafkaConsumerBatchSizeIT extends BaseKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kafka:%s?brokers=%s&autoOffsetReset=earliest&autoCommitEnable=false&consumersCount=1",
-                        TOPIC, service.getBootstrapServers())
-                        .routeId("foo").to(KafkaTestUtil.MOCK_RESULT).setId("First");
+                fromF(
+                                "kafka:%s?brokers=%s&autoOffsetReset=earliest&autoCommitEnable=false&consumersCount=1",
+                                TOPIC, service.getBootstrapServers())
+                        .routeId("foo")
+                        .to(KafkaTestUtil.MOCK_RESULT)
+                        .setId("First");
             }
         };
     }

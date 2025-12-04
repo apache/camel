@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.jaxrs;
 
 import java.util.HashMap;
@@ -36,8 +37,7 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
     private int loggingSizeLimit;
     private LoggingFeature loggingFeature;
 
-    public SpringJAXRSClientFactoryBean() {
-    }
+    public SpringJAXRSClientFactoryBean() {}
 
     public boolean isLoggingFeatureEnabled() {
         return loggingFeature != null;
@@ -57,7 +57,6 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
             }
             getFeatures().add(loggingFeature);
         }
-
     }
 
     public int getLoggingSizeLimit() {

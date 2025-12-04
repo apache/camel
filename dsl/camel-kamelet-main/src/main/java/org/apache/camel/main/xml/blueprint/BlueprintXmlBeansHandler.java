@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.xml.blueprint;
 
 import java.util.ArrayList;
@@ -129,7 +130,6 @@ public class BlueprintXmlBeansHandler {
             }
             delayedRegistrations.clear();
         }
-
     }
 
     private BeanFactoryDefinition<?> createBeanModel(CamelContext camelContext, String name, Node node) {
@@ -235,7 +235,9 @@ public class BlueprintXmlBeansHandler {
     }
 
     private void configureCamelContext(CamelContext camelContext, String fileName) {
-        Resource resource = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+        Resource resource = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(ResourceLoader.class)
                 .resolveResource("file:" + fileName);
         if (!resource.exists()) {
             return;
@@ -250,13 +252,14 @@ public class BlueprintXmlBeansHandler {
                 if (n.hasAttributes()) {
                     String value = XmlHelper.getAttribute(n, "id");
                     if (value != null) {
-                        camelContext.getCamelContextExtension().setName(CamelContextHelper.parseText(camelContext, value));
+                        camelContext
+                                .getCamelContextExtension()
+                                .setName(CamelContextHelper.parseText(camelContext, value));
                     }
                     value = XmlHelper.getAttribute(n, "startupSummaryLevel");
                     if (value != null) {
-                        camelContext
-                                .setStartupSummaryLevel(
-                                        CamelContextHelper.parse(camelContext, StartupSummaryLevel.class, value));
+                        camelContext.setStartupSummaryLevel(
+                                CamelContextHelper.parse(camelContext, StartupSummaryLevel.class, value));
                     }
                     value = XmlHelper.getAttribute(n, "trace");
                     if (value != null) {
@@ -340,18 +343,19 @@ public class BlueprintXmlBeansHandler {
                     }
                     value = XmlHelper.getAttribute(n, "threadNamePattern");
                     if (value != null) {
-                        camelContext.getExecutorServiceManager()
+                        camelContext
+                                .getExecutorServiceManager()
                                 .setThreadNamePattern(CamelContextHelper.parseText(camelContext, value));
                     }
                     value = XmlHelper.getAttribute(n, "shutdownRoute");
                     if (value != null) {
-                        camelContext.setShutdownRoute(CamelContextHelper.parse(camelContext, ShutdownRoute.class, value));
+                        camelContext.setShutdownRoute(
+                                CamelContextHelper.parse(camelContext, ShutdownRoute.class, value));
                     }
                     value = XmlHelper.getAttribute(n, "shutdownRunningTask");
                     if (value != null) {
-                        camelContext
-                                .setShutdownRunningTask(
-                                        CamelContextHelper.parse(camelContext, ShutdownRunningTask.class, value));
+                        camelContext.setShutdownRunningTask(
+                                CamelContextHelper.parse(camelContext, ShutdownRunningTask.class, value));
                     }
                     value = XmlHelper.getAttribute(n, "shutdownRunningTask");
                     if (value != null) {
@@ -359,7 +363,8 @@ public class BlueprintXmlBeansHandler {
                     }
                     value = XmlHelper.getAttribute(n, "typeConverterStatisticsEnabled");
                     if (value != null) {
-                        camelContext.setTypeConverterStatisticsEnabled(CamelContextHelper.parseBoolean(camelContext, value));
+                        camelContext.setTypeConverterStatisticsEnabled(
+                                CamelContextHelper.parseBoolean(camelContext, value));
                     }
                     value = XmlHelper.getAttribute(n, "loadHealthChecks");
                     if (value != null) {
@@ -367,25 +372,30 @@ public class BlueprintXmlBeansHandler {
                     }
                     value = XmlHelper.getAttribute(n, "inflightRepositoryBrowseEnabled");
                     if (value != null) {
-                        camelContext.getInflightRepository()
+                        camelContext
+                                .getInflightRepository()
                                 .setInflightBrowseEnabled(CamelContextHelper.parseBoolean(camelContext, value));
                     }
                     value = XmlHelper.getAttribute(n, "typeConverterExists");
                     if (value != null) {
-                        camelContext.getTypeConverterRegistry()
+                        camelContext
+                                .getTypeConverterRegistry()
                                 .setTypeConverterExists(
                                         CamelContextHelper.parse(camelContext, TypeConverterExists.class, value));
                     }
                     value = XmlHelper.getAttribute(n, "typeConverterExistsLoggingLevel");
                     if (value != null) {
-                        camelContext.getTypeConverterRegistry().setTypeConverterExistsLoggingLevel(
-                                CamelContextHelper.parse(camelContext, LoggingLevel.class, value));
+                        camelContext
+                                .getTypeConverterRegistry()
+                                .setTypeConverterExistsLoggingLevel(
+                                        CamelContextHelper.parse(camelContext, LoggingLevel.class, value));
                     }
                     value = XmlHelper.getAttribute(n, "errorHandlerRef");
                     if (value != null) {
-                        camelContext.getCamelContextExtension()
-                                .setErrorHandlerFactory(
-                                        new RefErrorHandlerDefinition(CamelContextHelper.parseText(camelContext, value)));
+                        camelContext
+                                .getCamelContextExtension()
+                                .setErrorHandlerFactory(new RefErrorHandlerDefinition(
+                                        CamelContextHelper.parseText(camelContext, value)));
                     }
                 }
             }
@@ -395,7 +405,9 @@ public class BlueprintXmlBeansHandler {
     }
 
     private void discoverBeans(CamelContext camelContext, String fileName, Document dom) {
-        Resource resource = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+        Resource resource = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(ResourceLoader.class)
                 .resolveResource("file:" + fileName);
 
         NodeList beans = dom.getElementsByTagName("bean");
@@ -526,8 +538,12 @@ public class BlueprintXmlBeansHandler {
             try {
                 ObjectHelper.invokeMethodSafe(destroyMethod, target);
             } catch (Exception e) {
-                LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
-                        destroyMethod, target, e.getMessage(), e);
+                LOG.warn(
+                        "Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                        destroyMethod,
+                        target,
+                        e.getMessage(),
+                        e);
             }
         }
     }
@@ -539,5 +555,4 @@ public class BlueprintXmlBeansHandler {
         }
         beansToDestroy.clear();
     }
-
 }

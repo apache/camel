@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.swift.mx;
 
 import java.io.InputStream;
@@ -63,8 +64,7 @@ public class SwiftMxDataFormat extends ServiceSupport implements DataFormat, Dat
     /**
      * Constructs a {@code SwiftMxDataFormat} with the default configuration.
      */
-    public SwiftMxDataFormat() {
-    }
+    public SwiftMxDataFormat() {}
 
     /**
      * Constructs a {@code SwiftMxDataFormat} with the given parameters.
@@ -113,8 +113,10 @@ public class SwiftMxDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         return AbstractMX.parse(
-                new String(ExchangeHelper.convertToMandatoryType(exchange, byte[].class, stream), StandardCharsets.UTF_8),
-                readMessageId, readConfig);
+                new String(
+                        ExchangeHelper.convertToMandatoryType(exchange, byte[].class, stream), StandardCharsets.UTF_8),
+                readMessageId,
+                readConfig);
     }
 
     @Override

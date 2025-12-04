@@ -14,7 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION_INDEX;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
+import static org.apache.camel.component.mongodb.MongoDbConstants.DATABASE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.LIMIT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MULTIUPDATE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.NUM_TO_SKIP;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPERATION_HEADER;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_AFFECTED;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_MATCHED;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_PAGE_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_TOTAL_SIZE;
+import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
+import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,29 +79,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.BATCH_SIZE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.COLLECTION_INDEX;
-import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
-import static org.apache.camel.component.mongodb.MongoDbConstants.DATABASE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.LIMIT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MULTIUPDATE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.NUM_TO_SKIP;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OID;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OPERATION_HEADER;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_AFFECTED;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RECORDS_MATCHED;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_PAGE_SIZE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RESULT_TOTAL_SIZE;
-import static org.apache.camel.component.mongodb.MongoDbConstants.RETURN_DOCUMENT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
-import static org.apache.camel.component.mongodb.MongoDbConstants.UPSERT;
-import static org.apache.camel.component.mongodb.MongoDbConstants.WRITERESULT;
 
 /**
  * The MongoDb producer.
@@ -137,7 +138,6 @@ public class MongoDbProducer extends DefaultProducer {
         } catch (Exception e) {
             throw MongoDbComponent.wrapInCamelMongoDbException(e);
         }
-
     }
 
     /**
@@ -240,7 +240,10 @@ public class MongoDbProducer extends DefaultProducer {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dynamic database and/or collection selected: {}->{}", endpoint.getDatabase(), endpoint.getCollection());
+            LOG.debug(
+                    "Dynamic database and/or collection selected: {}->{}",
+                    endpoint.getDatabase(),
+                    endpoint.getCollection());
         }
         return dbCol;
     }
@@ -319,8 +322,7 @@ public class MongoDbProducer extends DefaultProducer {
                     sortBy = new Document();
                 }
 
-                Document ret = dbCol
-                        .find(query)
+                Document ret = dbCol.find(query)
                         .projection(fieldFilter)
                         .sort(sortBy)
                         .allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class))
@@ -338,7 +340,9 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange -> {
             Bson query = exchange.getIn().getHeader(CRITERIA, Bson.class);
             if (query == null) {
-                query = exchange.getContext().getTypeConverter().tryConvertTo(Bson.class, exchange, exchange.getIn().getBody());
+                query = exchange.getContext()
+                        .getTypeConverter()
+                        .tryConvertTo(Bson.class, exchange, exchange.getIn().getBody());
             }
             if (query == null) {
                 query = new Document();
@@ -354,8 +358,9 @@ public class MongoDbProducer extends DefaultProducer {
 
             // get the parameters out of the Exchange Header
             String distinctFieldName = exchange.getIn().getHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, String.class);
-            Bson query
-                    = exchange.getContext().getTypeConverter().tryConvertTo(Bson.class, exchange, exchange.getIn().getBody());
+            Bson query = exchange.getContext()
+                    .getTypeConverter()
+                    .tryConvertTo(Bson.class, exchange, exchange.getIn().getBody());
             DistinctIterable<String> ret;
             if (query != null) {
                 ret = dbCol.distinct(distinctFieldName, query, String.class);
@@ -382,7 +387,9 @@ public class MongoDbProducer extends DefaultProducer {
             // do not run around looking for a type converter unless there is a
             // need for it
             if (query == null && exchange.getIn().getBody() != null) {
-                query = exchange.getContext().getTypeConverter().tryConvertTo(Bson.class, exchange, exchange.getIn().getBody());
+                query = exchange.getContext()
+                        .getTypeConverter()
+                        .tryConvertTo(Bson.class, exchange, exchange.getIn().getBody());
             }
             Bson fieldFilter = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
 
@@ -472,8 +479,9 @@ public class MongoDbProducer extends DefaultProducer {
                 List<Document> insertObjects = (List<Document>) insert;
                 dbCol.insertMany(insertObjects);
                 List<Object> objectIdentification = new ArrayList<>(insertObjects.size());
-                objectIdentification.addAll(
-                        insertObjects.stream().map(insertObject -> insertObject.get(MONGO_ID)).collect(Collectors.toList()));
+                objectIdentification.addAll(insertObjects.stream()
+                        .map(insertObject -> insertObject.get(MONGO_ID))
+                        .collect(Collectors.toList()));
                 exchange.getIn().setHeader(OID, objectIdentification);
             }
             return insert;
@@ -489,7 +497,8 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson objNew;
                 if (null == updateCriteria) {
                     @SuppressWarnings("unchecked")
-                    List<Bson> saveObj = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                    List<Bson> saveObj =
+                            exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
                     if (saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = insert, failed because body is not a List of Document objects with size = 2");
@@ -568,14 +577,16 @@ public class MongoDbProducer extends DefaultProducer {
                     aggregationResult.batchSize(batchSize);
                 }
 
-                aggregationResult.allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class));
+                aggregationResult.allowDiskUse(
+                        exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class));
 
                 Iterable<Document> result;
                 if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
                     try {
                         result = new ArrayList<>();
                         aggregationResult.iterator().forEachRemaining(((List<Document>) result)::add);
-                        exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<Document>) result).size());
+                        exchange.getMessage()
+                                .setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<Document>) result).size());
                     } finally {
                         aggregationResult.iterator().close();
                     }
@@ -618,8 +629,7 @@ public class MongoDbProducer extends DefaultProducer {
                 if (fieldFilter == null) {
                     fieldFilter = new Document();
                 }
-                ret = dbCol
-                        .find(o)
+                ret = dbCol.find(o)
                         .projection(fieldFilter)
                         .allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class))
                         .first();
@@ -646,7 +656,7 @@ public class MongoDbProducer extends DefaultProducer {
                     }
                 } else {
                     Bson mongoIdQuery = eq(MONGO_ID, saveObj.get(MONGO_ID));
-                    //You can pass sharded key query via CRITERIA header to allow update sharded collection
+                    // You can pass sharded key query via CRITERIA header to allow update sharded collection
                     Bson query = exchange.getIn().getHeader(CRITERIA, Bson.class);
                     query = query != null ? Filters.and(query, mongoIdQuery) : mongoIdQuery;
                     result = dbCol.replaceOne(query, saveObj, options);
@@ -664,12 +674,13 @@ public class MongoDbProducer extends DefaultProducer {
             try {
                 MongoCollection<Document> dbCol = calculateCollection(exchange);
 
-                Boolean ordered = exchange.getIn().getHeader(MongoDbConstants.BULK_ORDERED, Boolean.TRUE, Boolean.class);
+                Boolean ordered =
+                        exchange.getIn().getHeader(MongoDbConstants.BULK_ORDERED, Boolean.TRUE, Boolean.class);
                 BulkWriteOptions options = new BulkWriteOptions().ordered(ordered);
 
                 @SuppressWarnings("unchecked")
-                List<WriteModel<Document>> requests
-                        = exchange.getIn().getMandatoryBody((Class<List<WriteModel<Document>>>) Class.class.cast(List.class));
+                List<WriteModel<Document>> requests = exchange.getIn()
+                        .getMandatoryBody((Class<List<WriteModel<Document>>>) Class.class.cast(List.class));
 
                 return dbCol.bulkWrite(requests, options);
             } catch (InvalidPayloadException e) {
@@ -686,7 +697,8 @@ public class MongoDbProducer extends DefaultProducer {
                 Bson update;
                 if (filter == null) {
                     @SuppressWarnings("unchecked")
-                    List<Bson> saveObj = exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
+                    List<Bson> saveObj =
+                            exchange.getIn().getMandatoryBody((Class<List<Bson>>) Class.class.cast(List.class));
                     if (saveObj.size() != 2) {
                         throw new CamelMongoDbException(
                                 "MongoDB operation = findOneAndUpdate, failed because body is not a List of Document objects with size = 2");

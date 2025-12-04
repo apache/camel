@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap.name;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -60,7 +61,8 @@ public class XmlRootElementPreferringElementNameStrategy implements ElementNameS
         }
 
         if (ObjectHelper.isEmpty(localName) || isInValidNamespace(nameSpace)) {
-            throw new IllegalStateException("Unable to determine localName or namespace for type <" + type.getName() + ">");
+            throw new IllegalStateException(
+                    "Unable to determine localName or namespace for type <" + type.getName() + ">");
         }
         return new QName(nameSpace, localName);
     }
@@ -78,5 +80,4 @@ public class XmlRootElementPreferringElementNameStrategy implements ElementNameS
     public Class<? extends Exception> findExceptionForSoapActionAndFaultName(String soapAction, QName faultName) {
         throw new UnsupportedOperationException("Exception lookup is not supported");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayOutputStream;
@@ -68,12 +69,17 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     private JAXBContext context;
     private ObjectFactory objectFactory;
 
-    public DefaultBulkApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                                SalesforceLoginConfig loginConfig) throws SalesforceException {
+    public DefaultBulkApiClient(
+            String version,
+            SalesforceSession session,
+            SalesforceHttpClient httpClient,
+            SalesforceLoginConfig loginConfig)
+            throws SalesforceException {
         super(version, session, httpClient, loginConfig);
 
         try {
-            context = JAXBContext.newInstance(JobInfo.class.getPackage().getName(), getClass().getClassLoader());
+            context = JAXBContext.newInstance(
+                    JobInfo.class.getPackage().getName(), getClass().getClassLoader());
         } catch (JAXBException e) {
             String msg = "Error loading Bulk API DTOs: " + e.getMessage();
             throw new IllegalArgumentException(msg, e);
@@ -210,14 +216,16 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
     @Override
     public void createBatch(
-            InputStream batchStream, String jobId, ContentType contentTypeEnum, Map<String, List<String>> headers,
+            InputStream batchStream,
+            String jobId,
+            ContentType contentTypeEnum,
+            Map<String, List<String>> headers,
             final BatchInfoResponseCallback callback) {
         final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
         post.body(new InputStreamRequestContent(batchStream));
-        post.headers(mutable -> mutable.add(
-                new HttpField(
-                        HttpHeader.CONTENT_TYPE,
-                        getContentType(contentTypeEnum) + ";charset=" + StandardCharsets.UTF_8.name())));
+        post.headers(mutable -> mutable.add(new HttpField(
+                HttpHeader.CONTENT_TYPE,
+                getContentType(contentTypeEnum) + ";charset=" + StandardCharsets.UTF_8.name())));
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
@@ -255,7 +263,8 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     @Override
-    public void getAllBatches(String jobId, Map<String, List<String>> headers, final BatchInfoListResponseCallback callback) {
+    public void getAllBatches(
+            String jobId, Map<String, List<String>> headers, final BatchInfoListResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET, batchUrl(jobId, null), headers);
 
         // make the call and parse the result
@@ -303,22 +312,26 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
     @Override
     public void createBatchQuery(
-            String jobId, String soqlQuery, ContentType jobContentType, Map<String, List<String>> headers,
+            String jobId,
+            String soqlQuery,
+            ContentType jobContentType,
+            Map<String, List<String>> headers,
             final BatchInfoResponseCallback callback) {
         final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
         final byte[] queryBytes;
         try {
             queryBytes = soqlQuery.getBytes(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
-            callback.onResponse(null, Collections.emptyMap(),
+            callback.onResponse(
+                    null,
+                    Collections.emptyMap(),
                     new SalesforceException("Unexpected exception: " + e.getMessage(), e));
             return;
         }
         post.body(new BytesRequestContent(queryBytes));
-        post.headers(mutable -> mutable.add(
-                new HttpField(
-                        HttpHeader.CONTENT_TYPE,
-                        getContentType(jobContentType) + ";charset=" + StandardCharsets.UTF_8.name())));
+        post.headers(mutable -> mutable.add(new HttpField(
+                HttpHeader.CONTENT_TYPE,
+                getContentType(jobContentType) + ";charset=" + StandardCharsets.UTF_8.name())));
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
@@ -350,14 +363,18 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value != null ? Collections.unmodifiableList(value.getResult()) : null, headers, ex);
+                callback.onResponse(
+                        value != null ? Collections.unmodifiableList(value.getResult()) : null, headers, ex);
             }
         });
     }
 
     @Override
     public void getQueryResult(
-            String jobId, String batchId, String resultId, Map<String, List<String>> headers,
+            String jobId,
+            String batchId,
+            String resultId,
+            Map<String, List<String>> headers,
             final StreamResponseCallback callback) {
         final Request get = getRequest(HttpMethod.GET, batchResultUrl(jobId, batchId, resultId), headers);
 
@@ -437,7 +454,8 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         }
     }
 
-    private <T> T unmarshalResponse(InputStream response, Request request, Class<T> resultClass) throws SalesforceException {
+    private <T> T unmarshalResponse(InputStream response, Request request, Class<T> resultClass)
+            throws SalesforceException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
@@ -459,13 +477,15 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             return result.getValue();
         } catch (JAXBException | SAXException | ParserConfigurationException e) {
             throw new SalesforceException(
-                    String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
-                            e.getMessage()),
+                    String.format(
+                            "Error unmarshaling response {%s:%s} : %s",
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         } catch (Exception e) {
             throw new SalesforceException(
-                    String.format("Error unmarshaling response for {%s:%s} : %s", request.getMethod(), request.getURI(),
-                            e.getMessage()),
+                    String.format(
+                            "Error unmarshaling response for {%s:%s} : %s",
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         }
     }
@@ -479,8 +499,9 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             request.body(new BytesRequestContent(contentType, byteStream.toByteArray()));
         } catch (Exception e) {
             throw new SalesforceException(
-                    String.format("Error marshaling request for {%s:%s} : %s", request.getMethod(), request.getURI(),
-                            e.getMessage()),
+                    String.format(
+                            "Error marshaling request for {%s:%s} : %s",
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         }
     }

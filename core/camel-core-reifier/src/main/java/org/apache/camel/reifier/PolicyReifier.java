@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -56,5 +57,4 @@ public class PolicyReifier extends AbstractPolicyReifier<PolicyDefinition> {
     protected Policy resolvePolicy() {
         return resolvePolicy(definition.getPolicy(), definition.getRef(), definition.getType());
     }
-
 }

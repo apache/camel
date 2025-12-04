@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.consumer;
 
 import java.util.ArrayDeque;
@@ -62,8 +63,14 @@ public class GitCommitConsumer extends AbstractGitConsumer {
                 Exchange e = createExchange(true);
                 e.getMessage().setBody(commit.getFullMessage());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getId());
-                e.getMessage().setHeader(GitConstants.GIT_COMMIT_AUTHOR_NAME, commit.getAuthorIdent().getName());
-                e.getMessage().setHeader(GitConstants.GIT_COMMIT_COMMITTER_NAME, commit.getCommitterIdent().getName());
+                e.getMessage()
+                        .setHeader(
+                                GitConstants.GIT_COMMIT_AUTHOR_NAME,
+                                commit.getAuthorIdent().getName());
+                e.getMessage()
+                        .setHeader(
+                                GitConstants.GIT_COMMIT_COMMITTER_NAME,
+                                commit.getCommitterIdent().getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_TIME, commit.getCommitTime());
                 exchanges.add(e);
             }

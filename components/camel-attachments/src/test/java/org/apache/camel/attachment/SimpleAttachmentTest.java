@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
 
 import java.io.File;
@@ -35,8 +36,8 @@ public class SimpleAttachmentTest extends LanguageTestSupport {
     protected void populateExchange(Exchange exchange) {
         super.populateExchange(exchange);
 
-        DefaultAttachment da
-                = new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
+        DefaultAttachment da =
+                new DefaultAttachment(new DataHandler(new CamelFileDataSource(new File("src/test/data/message1.xml"))));
         da.addHeader("orderId", "123");
         exchange.getIn(AttachmentMessage.class).addAttachmentObject("message1.xml", da);
 

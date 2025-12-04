@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import java.util.ArrayList;
@@ -63,7 +64,8 @@ public class ZipSplitterUseOriginalMessageTest extends CamelTestSupport {
                 from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?delay=1000&noop=true")
                         .log("Start processing big file: ${header.CamelFileName}")
                         .unmarshal(multiEntryZipFormat())
-                        .split(bodyAs(Iterator.class)).streaming()
+                        .split(bodyAs(Iterator.class))
+                        .streaming()
                         .log("${body}")
                         .process(new Processor() {
                             @Override
@@ -86,7 +88,5 @@ public class ZipSplitterUseOriginalMessageTest extends CamelTestSupport {
                         .log("Done processing big file: ${header.CamelFileName}");
             }
         };
-
     }
-
 }

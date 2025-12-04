@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.spi.CamelLogger;
@@ -146,12 +147,12 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         watch.restart();
         interval.restart();
         String msg = "Downloading from host: " + host + " file: " + file + " starting "; // add
-                                                                                        // extra
-                                                                                        // space
-                                                                                        // to
-                                                                                        // align
-                                                                                        // with
-                                                                                        // completed
+        // extra
+        // space
+        // to
+        // align
+        // with
+        // completed
         if (fileSize > 0) {
             msg += " (size: " + fileSizeText + ")";
         }
@@ -165,8 +166,8 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         resumeOffset = position;
         watch.restart();
         interval.restart();
-        String msg = "Resume downloading from host: " + host + " file: " + file + " at position: " + position + " bytes/"
-                     + StringHelper.humanReadableBytes(position);
+        String msg = "Resume downloading from host: " + host + " file: " + file + " at position: " + position
+                + " bytes/" + StringHelper.humanReadableBytes(position);
         if (fileSize > 0) {
             float percent = ((float) resumeOffset / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
@@ -181,8 +182,8 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         transferredBytes = totalChunkSize;
 
         String prefix = resume ? "Resume downloading" : "Downloading";
-        String msg
-                = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
+        String msg = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize
+                + " bytes)";
         if (fileSize > 0) {
             float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
@@ -235,8 +236,8 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     public void onUpload(String host, String file, long chunkSize, long totalChunkSize, long fileSize) {
         transferredBytes = totalChunkSize;
 
-        String msg
-                = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
+        String msg = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize
+                + " bytes)";
         if (fileSize > 0) {
             float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);

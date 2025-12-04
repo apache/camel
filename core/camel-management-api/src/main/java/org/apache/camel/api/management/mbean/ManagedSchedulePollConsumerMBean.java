@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -45,16 +46,24 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Scheduled Greedy")
     void setGreedy(boolean greedy);
 
-    @ManagedAttribute(description = "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead")
+    @ManagedAttribute(
+            description =
+                    "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead")
     boolean isSendEmptyMessageWhenIdle();
 
-    @ManagedAttribute(description = "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead")
+    @ManagedAttribute(
+            description =
+                    "If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead")
     void setSendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle);
 
-    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    @ManagedAttribute(
+            description =
+                    "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     String getRunningLoggingLevel();
 
-    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    @ManagedAttribute(
+            description =
+                    "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     void setRunningLoggingLevel(String runningLoggingLevel);
 
     @ManagedAttribute(description = "Scheduled TimeUnit")
@@ -90,21 +99,26 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
     @ManagedAttribute(description = "Repeat count")
     long getRepeatCount();
 
-    @ManagedAttribute(description = "Whether a first pool attempt has been done (also if the consumer has been restarted)")
+    @ManagedAttribute(
+            description = "Whether a first pool attempt has been done (also if the consumer has been restarted)")
     boolean isFirstPollDone();
 
-    @ManagedAttribute(description = "Whether the consumer is ready to handle incoming traffic (used for readiness health-check)")
+    @ManagedAttribute(
+            description = "Whether the consumer is ready to handle incoming traffic (used for readiness health-check)")
     boolean isConsumerReady();
 
     @ManagedAttribute(description = "Total number of polls run")
     long getCounter();
 
-    @ManagedAttribute(description = "Error counter. If the counter is > 0 that means the consumer failed polling for the last N number of times."
-                                    + " When the consumer is successfully again, then the error counter resets to zero.")
+    @ManagedAttribute(
+            description =
+                    "Error counter. If the counter is > 0 that means the consumer failed polling for the last N number of times."
+                            + " When the consumer is successfully again, then the error counter resets to zero.")
     long getErrorCounter();
 
-    @ManagedAttribute(description = "Success counter. If the success is > 0 that means the consumer succeeded polling for the last N number of times."
-                                    + " When the consumer is failing again, then the success counter resets to zero.")
+    @ManagedAttribute(
+            description =
+                    "Success counter. If the success is > 0 that means the consumer succeeded polling for the last N number of times."
+                            + " When the consumer is failing again, then the success counter resets to zero.")
     long getSuccessCounter();
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.cache;
 
 import javax.cache.Cache.Entry;
@@ -60,7 +61,9 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         launchContinuousQuery();
 
-        LOG.info("Started Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(),
+        LOG.info(
+                "Started Ignite Cache Continuous Query consumer for cache {} with query: {}.",
+                cache.getName(),
                 endpoint.getQuery());
 
         maybeFireExistingQueryResults();
@@ -129,7 +132,9 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         cursor.close();
 
-        LOG.info("Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.", cache.getName(),
+        LOG.info(
+                "Stopped Ignite Cache Continuous Query consumer for cache {} with query: {}.",
+                cache.getName(),
                 endpoint.getQuery());
     }
 
@@ -153,5 +158,4 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         in.setHeader(IgniteConstants.IGNITE_CACHE_NAME, endpoint.getCacheName());
         return exchange;
     }
-
 }

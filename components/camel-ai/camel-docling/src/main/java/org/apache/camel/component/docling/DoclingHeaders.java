@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import org.apache.camel.spi.Metadata;
@@ -80,8 +81,9 @@ public final class DoclingHeaders {
     @Metadata(description = "Total processing time for the batch in milliseconds", javaType = "Long")
     public static final String BATCH_PROCESSING_TIME = "CamelDoclingBatchProcessingTime";
 
-    @Metadata(description = "Split batch results into individual exchanges instead of single BatchProcessingResults",
-              javaType = "Boolean")
+    @Metadata(
+            description = "Split batch results into individual exchanges instead of single BatchProcessingResults",
+            javaType = "Boolean")
     public static final String BATCH_SPLIT_RESULTS = "CamelDoclingBatchSplitResults";
 
     @Metadata(description = "Document title extracted from metadata", javaType = "String")
@@ -132,7 +134,5 @@ public final class DoclingHeaders {
     @Metadata(description = "Raw metadata fields as a Map", javaType = "Map<String, Object>")
     public static final String METADATA_RAW = "CamelDoclingMetadataRaw";
 
-    private DoclingHeaders() {
-    }
-
+    private DoclingHeaders() {}
 }

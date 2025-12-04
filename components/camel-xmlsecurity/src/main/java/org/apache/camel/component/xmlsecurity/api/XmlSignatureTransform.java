@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.security.spec.AlgorithmParameterSpec;
@@ -29,9 +30,7 @@ public class XmlSignatureTransform implements AlgorithmMethod {
 
     private AlgorithmParameterSpec parameterSpec;
 
-    public XmlSignatureTransform() {
-
-    }
+    public XmlSignatureTransform() {}
 
     public XmlSignatureTransform(String algorithm) {
         this.algorithm = algorithm;
@@ -54,5 +53,4 @@ public class XmlSignatureTransform implements AlgorithmMethod {
     public void setParameterSpec(AlgorithmParameterSpec parameterSpec) {
         this.parameterSpec = parameterSpec;
     }
-
 }

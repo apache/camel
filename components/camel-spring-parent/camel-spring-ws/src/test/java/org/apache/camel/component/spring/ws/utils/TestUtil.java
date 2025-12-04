@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.utils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -32,8 +35,6 @@ import org.springframework.ws.soap.addressing.version.Addressing10;
 import org.springframework.ws.soap.addressing.version.Addressing200408;
 import org.springframework.ws.soap.addressing.version.AddressingVersion;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public final class TestUtil {
 
     public static final SourceExtractor<Object> NOOP_SOURCE_EXTRACTOR = new SourceExtractor<Object>() {
@@ -42,8 +43,7 @@ public final class TestUtil {
         }
     };
 
-    private TestUtil() {
-    }
+    private TestUtil() {}
 
     /**
      * Compare the to string ignoring new lines symbol. Handy if you need to compare some text coming from 2 different
@@ -51,14 +51,13 @@ public final class TestUtil {
      */
     public static void assertEqualsIgnoreNewLinesSymbol(String expected, String actual) {
         assertEquals(StringUtils.deleteAny(expected, "\n\r"), StringUtils.deleteAny(actual, "\n\r"));
-
     }
 
     /**
      * Retrieve a WS-Addressing properties from the soapMessage
      */
     public static MessageAddressingProperties getWSAProperties(SoapMessage soapMessage) {
-        AddressingVersion[] versions = new AddressingVersion[] { new Addressing200408(), new Addressing10() };
+        AddressingVersion[] versions = new AddressingVersion[] {new Addressing200408(), new Addressing10()};
 
         for (AddressingVersion version : versions) {
             if (supports(version, soapMessage)) {
@@ -72,7 +71,7 @@ public final class TestUtil {
     private static boolean supports(AddressingVersion version, SoapMessage request) {
         SoapHeader header = request.getSoapHeader();
         if (header != null) {
-            for (Iterator<SoapHeaderElement> iterator = header.examineAllHeaderElements(); iterator.hasNext();) {
+            for (Iterator<SoapHeaderElement> iterator = header.examineAllHeaderElements(); iterator.hasNext(); ) {
                 SoapHeaderElement headerElement = iterator.next();
                 if (version.understands(headerElement)) {
                     return true;

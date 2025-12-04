@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
+
+import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -28,16 +34,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperties({
-        @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                                  disabledReason = "Apache CI nodes are too resource constrained for this test"),
-        @DisabledIfSystemProperty(named = "arangodb.tests.disable", matches = "true",
-                                  disabledReason = "Manually disabled tests")
+    @DisabledIfSystemProperty(
+            named = "ci.env.name",
+            matches = ".*",
+            disabledReason = "Apache CI nodes are too resource constrained for this test"),
+    @DisabledIfSystemProperty(
+            named = "arangodb.tests.disable",
+            matches = "true",
+            disabledReason = "Manually disabled tests")
 })
 public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
 
@@ -59,7 +64,8 @@ public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:findDocByKey")
-                        .to("arangodb://dbTest?documentCollection={{arangodb.testCollection}}&operation=FIND_DOCUMENT_BY_KEY");
+                        .to(
+                                "arangodb://dbTest?documentCollection={{arangodb.testCollection}}&operation=FIND_DOCUMENT_BY_KEY");
             }
         };
     }
@@ -67,7 +73,8 @@ public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
     @Test
     public void findDefaultSearchByKey() {
         // test without header setting type of Message expected
-        Exchange result = template.request("direct:findDocByKey", exchange -> exchange.getMessage().setBody(myObject.getKey()));
+        Exchange result = template.request(
+                "direct:findDocByKey", exchange -> exchange.getMessage().setBody(myObject.getKey()));
 
         assertTrue(result.getMessage().getBody() instanceof BaseDocument);
         BaseDocument docResult = (BaseDocument) result.getMessage().getBody();
@@ -97,7 +104,6 @@ public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
         assertTrue(result.getMessage().getBody() instanceof TestDocumentEntity);
         TestDocumentEntity docResult = (TestDocumentEntity) result.getMessage().getBody();
         assertEquals("bar", docResult.getFoo());
-
     }
 
     @Test
@@ -108,7 +114,8 @@ public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
         });
 
         assertTrue(result.getMessage().getBody() instanceof Map);
-        Map<String, Object> docResult = (Map<String, Object>) result.getMessage().getBody();
+        Map<String, Object> docResult =
+                (Map<String, Object>) result.getMessage().getBody();
         assertNotNull(docResult);
         assertNotNull(docResult.get("foo"));
         assertEquals("bar", String.valueOf(docResult.get("foo")));
@@ -127,5 +134,4 @@ public class ArangoCollectionFindByKeyIT extends BaseArangoDb {
         assertTrue(docResult.get().contains("foo"));
         assertTrue(docResult.get().contains("bar"));
     }
-
 }

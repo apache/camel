@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elytron;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -40,12 +47,6 @@ import org.wildfly.security.authz.RoleDecoder;
 import org.wildfly.security.http.HttpConstants;
 import org.wildfly.security.http.bearer.WildFlyElytronHttpBearerProvider;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ElytronBearerTokenTest extends BaseElytronTest {
     private static final Logger LOG = LoggerFactory.getLogger(ElytronBearerTokenTest.class);
 
@@ -57,8 +58,12 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     @Override
     TokenSecurityRealm createBearerRealm() {
         try {
-            return TokenSecurityRealm.builder().principalClaimName("username")
-                    .validator(JwtValidator.builder().publicKey(getKeyPair().getPublic()).build()).build();
+            return TokenSecurityRealm.builder()
+                    .principalClaimName("username")
+                    .validator(JwtValidator.builder()
+                            .publicKey(getKeyPair().getPublic())
+                            .build())
+                    .build();
         } catch (NoSuchAlgorithmException e) {
             fail("Can not prepare realm becase of " + e);
         }
@@ -72,10 +77,16 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
 
     @Test
     public void testBearerToken() throws Exception {
-        String response = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
+        String response = template.requestBodyAndHeader(
+                "undertow:http://localhost:{{port}}/myapp",
                 "empty body",
                 Headers.AUTHORIZATION.toString(),
-                "Bearer " + createToken("alice", "user", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
+                "Bearer "
+                        + createToken(
+                                "alice",
+                                "user",
+                                new Date(new Date().getTime() + 10000),
+                                getKeyPair().getPrivate()),
                 String.class);
         assertNotNull(response);
         assertEquals("Hello alice!", response);
@@ -85,11 +96,17 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
     public void testBearerTokenBadRole() throws Exception {
         Date date = new Date(new Date().getTime() + 10000);
         String authHeader = Headers.AUTHORIZATION.toString();
-        String authHeaderValue = "Bearer " + createToken("alice", "guest", date, getKeyPair().getPrivate());
+        String authHeaderValue =
+                "Bearer " + createToken("alice", "guest", date, getKeyPair().getPrivate());
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeader("undertow:http://localhost:{{port}}/myapp",
-                        "empty body", authHeader, authHeaderValue, String.class));
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(
+                        "undertow:http://localhost:{{port}}/myapp",
+                        "empty body",
+                        authHeader,
+                        authHeaderValue,
+                        String.class));
 
         HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
         assertEquals(403, he.getStatusCode());

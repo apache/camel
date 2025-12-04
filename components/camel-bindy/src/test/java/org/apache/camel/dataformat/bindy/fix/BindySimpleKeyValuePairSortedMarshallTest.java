@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.ArrayList;
@@ -42,8 +43,8 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
     @DirtiesContext
     public void testMarshallMessage() {
 
-        String message
-                = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
+        String message =
+                "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
 
         result.expectedBodiesReceived(message);
         template.sendBody(generateModel());
@@ -92,8 +93,8 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyKeyValuePairDataFormat kvpBindyDataFormat
-                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
+        BindyKeyValuePairDataFormat kvpBindyDataFormat =
+                new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
 
         @Override
         public void configure() {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
 public class JmsThrottlingInFlightRoutePolicyIT extends AbstractPersistentJMSTest {
 
@@ -53,9 +54,11 @@ public class JmsThrottlingInFlightRoutePolicyIT extends AbstractPersistentJMSTes
                 policy.setResumePercentOfMax(50);
                 policy.setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.Route);
 
-                from("activemq:queue:JmsThrottlingInFlightRoutePolicyIT?concurrentConsumers=20").routePolicy(policy)
+                from("activemq:queue:JmsThrottlingInFlightRoutePolicyIT?concurrentConsumers=20")
+                        .routePolicy(policy)
                         .delay(100)
-                        .to("log:foo?groupSize=10").to("mock:result");
+                        .to("log:foo?groupSize=10")
+                        .to("mock:result");
             }
         };
     }

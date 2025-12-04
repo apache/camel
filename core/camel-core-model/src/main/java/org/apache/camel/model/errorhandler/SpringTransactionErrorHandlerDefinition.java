@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -31,8 +32,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpringTransactionErrorHandlerDefinition extends TransactionErrorHandlerDefinition {
 
-    public SpringTransactionErrorHandlerDefinition() {
-    }
+    public SpringTransactionErrorHandlerDefinition() {}
 
     public SpringTransactionErrorHandlerDefinition(SpringTransactionErrorHandlerDefinition source) {
         super(source);
@@ -49,5 +49,4 @@ public class SpringTransactionErrorHandlerDefinition extends TransactionErrorHan
         cloneBuilder(answer);
         return answer;
     }
-
 }

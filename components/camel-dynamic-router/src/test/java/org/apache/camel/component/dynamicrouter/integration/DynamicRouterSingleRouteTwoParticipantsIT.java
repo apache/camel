@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.integration;
+
+import static org.apache.camel.builder.Builder.body;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -34,10 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.builder.Builder.body;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_SUBSCRIBE;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_CHANNEL_URI;
 
 /**
  * This test utilizes Spring XML to show the usage of the Dynamic Router, and to test basic functionality.
@@ -86,26 +87,50 @@ class DynamicRouterSingleRouteTwoParticipantsIT {
 
     @BeforeEach
     void localSetup() {
-        evenSubscriberParams = Map.of("controlAction", "subscribe",
-                "subscribeChannel", "test",
-                "subscriptionId", "evenNumberSubscription",
-                "destinationUri", mockOne.getEndpointUri(),
-                "priority", 2);
-        oddSubscriberParams = Map.of("controlAction", "subscribe",
-                "subscribeChannel", "test",
-                "subscriptionId", "oddNumberSubscription",
-                "destinationUri", mockTwo.getEndpointUri(),
-                "priority", 2);
-        allSubscriberParams = Map.of("controlAction", "subscribe",
-                "subscribeChannel", "test",
-                "subscriptionId", "allNumberSubscription",
-                "destinationUri", mockThree.getEndpointUri(),
-                "priority", 1);
-        allSubscriberParamsLowPriority = Map.of("controlAction", "subscribe",
-                "subscribeChannel", "test",
-                "subscriptionId", "allNumberSubscriptionLowPriority",
-                "destinationUri", mockFour.getEndpointUri(),
-                "priority", 10);
+        evenSubscriberParams = Map.of(
+                "controlAction",
+                "subscribe",
+                "subscribeChannel",
+                "test",
+                "subscriptionId",
+                "evenNumberSubscription",
+                "destinationUri",
+                mockOne.getEndpointUri(),
+                "priority",
+                2);
+        oddSubscriberParams = Map.of(
+                "controlAction",
+                "subscribe",
+                "subscribeChannel",
+                "test",
+                "subscriptionId",
+                "oddNumberSubscription",
+                "destinationUri",
+                mockTwo.getEndpointUri(),
+                "priority",
+                2);
+        allSubscriberParams = Map.of(
+                "controlAction",
+                "subscribe",
+                "subscribeChannel",
+                "test",
+                "subscriptionId",
+                "allNumberSubscription",
+                "destinationUri",
+                mockThree.getEndpointUri(),
+                "priority",
+                1);
+        allSubscriberParamsLowPriority = Map.of(
+                "controlAction",
+                "subscribe",
+                "subscribeChannel",
+                "test",
+                "subscriptionId",
+                "allNumberSubscriptionLowPriority",
+                "destinationUri",
+                mockFour.getEndpointUri(),
+                "priority",
+                10);
     }
 
     /**

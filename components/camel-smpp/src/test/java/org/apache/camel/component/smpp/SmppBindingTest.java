@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -41,14 +50,6 @@ import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -124,9 +125,9 @@ public class SmppBindingTest {
         assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
         assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
         // To avoid the test failure when running in different TimeZone
-        //assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppConstants.DONE_DATE));
+        // assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppConstants.DONE_DATE));
         assertEquals("xxx", smppMessage.getHeader(SmppConstants.ERROR));
-        //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppConstants.SUBMIT_DATE));
+        // assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppConstants.SUBMIT_DATE));
         assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
         assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
@@ -155,9 +156,9 @@ public class SmppBindingTest {
         assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
         assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
         // To avoid the test failure when running in different TimeZone
-        //assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppConstants.DONE_DATE));
+        // assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppConstants.DONE_DATE));
         assertEquals("xxx", smppMessage.getHeader(SmppConstants.ERROR));
-        //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppConstants.SUBMIT_DATE));
+        // assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppConstants.SUBMIT_DATE));
         assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
         assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
@@ -173,7 +174,8 @@ public class SmppBindingTest {
 
         Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         assertEquals(6, optionalParameter.size());
-        assertArrayEquals("OctetString".getBytes("UTF-8"), (byte[]) optionalParameter.get(Short.valueOf((short) 0x0202)));
+        assertArrayEquals(
+                "OctetString".getBytes("UTF-8"), (byte[]) optionalParameter.get(Short.valueOf((short) 0x0202)));
         assertEquals("COctetString", optionalParameter.get(Short.valueOf((short) 0x001D)));
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameter.get(Short.valueOf((short) 0x0005)));
         assertEquals(Short.valueOf((short) 1), optionalParameter.get(Short.valueOf((short) 0x0008)));
@@ -185,9 +187,10 @@ public class SmppBindingTest {
     public void createSmppMessageFromDeliveryReceiptWithPayloadInOptionalParameterShouldReturnASmppMessage() {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
-        deliverSm.setOptionalParameters(new OctetString(
-                OptionalParameter.Tag.MESSAGE_PAYLOAD,
-                "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"));
+        deliverSm.setOptionalParameters(
+                new OctetString(
+                        OptionalParameter.Tag.MESSAGE_PAYLOAD,
+                        "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"));
         try {
             SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
 
@@ -253,7 +256,8 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSmppMessageFromDeliverSmWithPayloadInOptionalParameterShouldReturnASmppMessage() throws Exception {
+    public void createSmppMessageFromDeliverSmWithPayloadInOptionalParameterShouldReturnASmppMessage()
+            throws Exception {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSequenceNumber(1);
         deliverSm.setCommandId(1);
@@ -362,17 +366,9 @@ public class SmppBindingTest {
     public void createSmppMessageFrom8bitDataCodingDeliverSmShouldNotModifyBody() throws Exception {
         final Set<String> encodings = Charset.availableCharsets().keySet();
 
-        final byte[] dataCodings = {
-                (byte) 0x02,
-                (byte) 0x04,
-                (byte) 0xF6,
-                (byte) 0xF4
-        };
+        final byte[] dataCodings = {(byte) 0x02, (byte) 0x04, (byte) 0xF6, (byte) 0xF4};
 
-        byte[] body = {
-                (byte) 0xFF, 'A', 'B', (byte) 0x00,
-                (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF
-        };
+        byte[] body = {(byte) 0xFF, 'A', 'B', (byte) 0x00, (byte) 0xFF, (byte) 0x7F, 'C', (byte) 0xFF};
 
         DeliverSm deliverSm = new DeliverSm();
 
@@ -386,9 +382,7 @@ public class SmppBindingTest {
                 assertArrayEquals(
                         body,
                         smppMessage.getBody(byte[].class),
-                        String.format("data coding=0x%02X; encoding=%s",
-                                dataCoding,
-                                encoding));
+                        String.format("data coding=0x%02X; encoding=%s", dataCoding, encoding));
             }
         }
     }

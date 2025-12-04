@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ValidationException;
@@ -27,12 +28,21 @@ public class ValidationWithNestedFinallyBlockPipelineTest extends ValidationTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").doTry().to("direct:embedded").doCatch(ValidationException.class).to("mock:invalid");
+                from("direct:start")
+                        .doTry()
+                        .to("direct:embedded")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid");
 
-                from("direct:embedded").errorHandler(noErrorHandler()).doTry().process(validator).to("mock:valid").doFinally()
-                        .setHeader("valid", constant(false)).end();
+                from("direct:embedded")
+                        .errorHandler(noErrorHandler())
+                        .doTry()
+                        .process(validator)
+                        .to("mock:valid")
+                        .doFinally()
+                        .setHeader("valid", constant(false))
+                        .end();
             }
         };
     }
-
 }

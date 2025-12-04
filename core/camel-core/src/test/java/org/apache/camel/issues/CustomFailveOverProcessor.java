@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,8 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on user forum request how to do failover with Camel 1.x
@@ -89,7 +90,5 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
                 }
             }
         }
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 /**
@@ -33,6 +34,5 @@ public class LangChain4jEmbeddingStore {
     /** Default maximum number of results returned by search operations */
     public static final String DEFAULT_MAX_RESULTS = "5";
 
-    private LangChain4jEmbeddingStore() {
-    }
+    private LangChain4jEmbeddingStore() {}
 }

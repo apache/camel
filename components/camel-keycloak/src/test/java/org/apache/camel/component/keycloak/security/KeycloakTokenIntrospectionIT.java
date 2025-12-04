@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,8 +62,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for Keycloak OAuth 2.0 Token Introspection (RFC 7662) using test-infra.
  *
@@ -76,14 +77,18 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
     static KeycloakService keycloakService = KeycloakServiceFactory.createService();
 
     // Test data - use unique names to avoid conflicts
-    private static final String TEST_REALM_NAME = "introspection-realm-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_CLIENT_ID = "introspection-client-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_REALM_NAME =
+            "introspection-realm-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_CLIENT_ID =
+            "introspection-client-" + UUID.randomUUID().toString().substring(0, 8);
     private static String TEST_CLIENT_SECRET = null; // Will be generated
 
     // Test users
-    private static final String ADMIN_USER = "admin-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String ADMIN_USER =
+            "admin-user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String ADMIN_PASSWORD = "admin123";
-    private static final String USER_USER = "test-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String USER_USER =
+            "test-user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String USER_PASSWORD = "user123";
 
     // Test roles
@@ -278,7 +283,8 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
                 from("direct:introspection-protected")
                         .policy(introspectionPolicy)
-                        .transform().constant("Introspection access granted")
+                        .transform()
+                        .constant("Introspection access granted")
                         .to("mock:introspection-result");
 
                 // Policy with local JWT validation (for comparison)
@@ -292,7 +298,8 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
                 from("direct:local-jwt-protected")
                         .policy(localJwtPolicy)
-                        .transform().constant("Local JWT access granted")
+                        .transform()
+                        .constant("Local JWT access granted")
                         .to("mock:local-jwt-result");
 
                 // Policy with introspection but no cache
@@ -307,7 +314,8 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
                 from("direct:introspection-no-cache")
                         .policy(noCachePolicy)
-                        .transform().constant("No cache access granted")
+                        .transform()
+                        .constant("No cache access granted")
                         .to("mock:no-cache-result");
 
                 // Policy with Caffeine cache
@@ -328,7 +336,8 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
                 from("direct:caffeine-protected")
                         .policy(caffeinePolicy)
-                        .transform().constant("Caffeine cache access granted")
+                        .transform()
+                        .constant("Caffeine cache access granted")
                         .to("mock:caffeine-result");
             }
         };
@@ -352,8 +361,7 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
         // Create introspector
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
-                true, 60);
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET, true, 60);
 
         // Introspect the token
         KeycloakTokenIntrospector.IntrospectionResult result = introspector.introspect(adminToken);
@@ -364,8 +372,11 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(result.getClientId());
         assertNotNull(result.getUsername());
 
-        LOG.info("Introspection result: active={}, subject={}, username={}",
-                result.isActive(), result.getSubject(), result.getUsername());
+        LOG.info(
+                "Introspection result: active={}, subject={}, username={}",
+                result.isActive(),
+                result.getSubject(),
+                result.getUsername());
 
         introspector.close();
     }
@@ -374,8 +385,7 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
     @Order(11)
     void testTokenIntrospectionWithInvalidToken() throws Exception {
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
-                true, 60);
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET, true, 60);
 
         // Introspect an invalid token
         KeycloakTokenIntrospector.IntrospectionResult result = introspector.introspect("invalid-token");
@@ -393,8 +403,7 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(adminToken);
 
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
-                true, 60);
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET, true, 60);
 
         // First introspection
         long start1 = System.currentTimeMillis();
@@ -423,8 +432,12 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
         assertNotNull(adminToken);
 
-        String result = template.requestBodyAndHeader("direct:introspection-protected", "test message",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:introspection-protected",
+                "test message",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                adminToken,
+                String.class);
         assertEquals("Introspection access granted", result);
     }
 
@@ -433,12 +446,15 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
     void testSecurityPolicyWithIntrospectionInvalidToken() {
         // Test that invalid tokens are rejected via introspection
         CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader("direct:introspection-protected", "test message",
-                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, "invalid-token");
+            template.sendBodyAndHeader(
+                    "direct:introspection-protected",
+                    "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                    "invalid-token");
         });
         assertTrue(ex.getCause() instanceof CamelAuthorizationException);
-        assertTrue(ex.getCause().getMessage().contains("not active") ||
-                ex.getCause().getMessage().contains("Failed to validate"));
+        assertTrue(ex.getCause().getMessage().contains("not active")
+                || ex.getCause().getMessage().contains("Failed to validate"));
     }
 
     @Test
@@ -450,14 +466,22 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
         // Test introspection-based route
         long start1 = System.currentTimeMillis();
-        String result1 = template.requestBodyAndHeader("direct:introspection-protected", "test message",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+        String result1 = template.requestBodyAndHeader(
+                "direct:introspection-protected",
+                "test message",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                adminToken,
+                String.class);
         long duration1 = System.currentTimeMillis() - start1;
 
         // Test local JWT parsing route
         long start2 = System.currentTimeMillis();
-        String result2 = template.requestBodyAndHeader("direct:local-jwt-protected", "test message",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+        String result2 = template.requestBodyAndHeader(
+                "direct:local-jwt-protected",
+                "test message",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                adminToken,
+                String.class);
         long duration2 = System.currentTimeMillis() - start2;
 
         assertEquals("Introspection access granted", result1);
@@ -473,8 +497,12 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
         assertNotNull(adminToken);
 
-        String result = template.requestBodyAndHeader("direct:introspection-no-cache", "test message",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:introspection-no-cache",
+                "test message",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                adminToken,
+                String.class);
         assertEquals("No cache access granted", result);
     }
 
@@ -486,8 +514,11 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(userToken);
 
         CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader("direct:introspection-protected", "test message",
-                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, userToken);
+            template.sendBodyAndHeader(
+                    "direct:introspection-protected",
+                    "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                    userToken);
         });
         assertTrue(ex.getCause() instanceof CamelAuthorizationException);
     }
@@ -500,18 +531,17 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(adminToken);
 
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
-                true, 60);
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET, true, 60);
 
         KeycloakTokenIntrospector.IntrospectionResult result = introspector.introspect(adminToken);
-        Set<String> roles = KeycloakSecurityHelper.extractRolesFromIntrospection(result, TEST_REALM_NAME, TEST_CLIENT_ID);
+        Set<String> roles =
+                KeycloakSecurityHelper.extractRolesFromIntrospection(result, TEST_REALM_NAME, TEST_CLIENT_ID);
 
         assertNotNull(roles);
         LOG.info("Roles extracted from introspection: {}", roles);
 
         // Verify that admin role is present
-        assertTrue(roles.contains(ADMIN_ROLE) || roles.size() > 0,
-                "Should extract roles from introspection result");
+        assertTrue(roles.contains(ADMIN_ROLE) || roles.size() > 0, "Should extract roles from introspection result");
 
         introspector.close();
     }
@@ -524,8 +554,7 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(adminToken);
 
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
-                true, 60);
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET, true, 60);
 
         KeycloakTokenIntrospector.IntrospectionResult result = introspector.introspect(adminToken);
         Set<String> permissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(result);
@@ -545,12 +574,15 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
         // Create introspector with Caffeine cache
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                keycloakService.getKeycloakServerUrl(),
+                TEST_REALM_NAME,
+                TEST_CLIENT_ID,
+                TEST_CLIENT_SECRET,
                 TokenCacheType.CAFFEINE,
-                60,    // TTL in seconds
-                100,   // max size
-                true   // record stats
-        );
+                60, // TTL in seconds
+                100, // max size
+                true // record stats
+                );
 
         // First introspection
         KeycloakTokenIntrospector.IntrospectionResult result1 = introspector.introspect(adminToken);
@@ -582,12 +614,15 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(adminToken);
 
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                keycloakService.getKeycloakServerUrl(),
+                TEST_REALM_NAME,
+                TEST_CLIENT_ID,
+                TEST_CLIENT_SECRET,
                 TokenCacheType.CAFFEINE,
-                120,   // 2 minute TTL
-                1000,  // max 1000 entries
-                true   // record stats
-        );
+                120, // 2 minute TTL
+                1000, // max 1000 entries
+                true // record stats
+                );
 
         // First introspection - will hit Keycloak
         long start1 = System.currentTimeMillis();
@@ -626,12 +661,15 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
         // Create cache with very small max size
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                keycloakService.getKeycloakServerUrl(),
+                TEST_REALM_NAME,
+                TEST_CLIENT_ID,
+                TEST_CLIENT_SECRET,
                 TokenCacheType.CAFFEINE,
-                300,   // 5 minute TTL
-                2,     // max 2 entries (small for testing eviction)
-                true   // record stats
-        );
+                300, // 5 minute TTL
+                2, // max 2 entries (small for testing eviction)
+                true // record stats
+                );
 
         // Introspect the same token multiple times
         for (int i = 0; i < 5; i++) {
@@ -661,12 +699,15 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(userToken);
 
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                keycloakService.getKeycloakServerUrl(),
+                TEST_REALM_NAME,
+                TEST_CLIENT_ID,
+                TEST_CLIENT_SECRET,
                 TokenCacheType.CAFFEINE,
-                60,    // 1 minute TTL
-                100,   // max 100 entries
-                true   // record stats
-        );
+                60, // 1 minute TTL
+                100, // max 100 entries
+                true // record stats
+                );
 
         // Introspect both tokens
         introspector.introspect(adminToken);
@@ -697,9 +738,14 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
         assertNotNull(adminToken);
 
         KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
-                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                keycloakService.getKeycloakServerUrl(),
+                TEST_REALM_NAME,
+                TEST_CLIENT_ID,
+                TEST_CLIENT_SECRET,
                 TokenCacheType.CAFFEINE,
-                60, 100, true);
+                60,
+                100,
+                true);
 
         // Introspect and cache
         introspector.introspect(adminToken);
@@ -726,7 +772,7 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
     private String getAccessToken(String username, String password) {
         try (Client client = ClientBuilder.newClient()) {
             String tokenUrl = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME
-                              + "/protocol/openid-connect/token";
+                    + "/protocol/openid-connect/token";
 
             Form form = new Form()
                     .param("grant_type", "password")

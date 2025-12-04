@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
 
 import java.util.ArrayList;
@@ -38,23 +39,34 @@ public class ZooKeeperConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String serverUrls;
+
     private List<String> servers;
+
     @UriPath
     @Metadata(required = true)
     private String path;
+
     @UriParam(defaultValue = "5000")
     private int timeout = 5000;
+
     @UriParam(label = "consumer", defaultValue = "5000")
     private long backoff = 5000;
+
     @UriParam(label = "consumer")
     private boolean repeat;
+
     @UriParam
     private boolean listChildren;
+
     @UriParam(label = "producer")
     private boolean create;
-    @UriParam(label = "producer", enums = "PERSISTENT,PERSISTENT_SEQUENTIAL,EPHEMERAL,EPHEMERAL_SEQUENTIAL",
-              defaultValue = "EPHEMERAL")
+
+    @UriParam(
+            label = "producer",
+            enums = "PERSISTENT,PERSISTENT_SEQUENTIAL,EPHEMERAL,EPHEMERAL_SEQUENTIAL",
+            defaultValue = "EPHEMERAL")
     private String createMode;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sendEmptyMessageOnDelete = true;
 
@@ -194,5 +206,4 @@ public class ZooKeeperConfiguration implements Cloneable {
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
     }
-
 }

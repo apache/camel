@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpRouteTemplatesAsXmlTest extends ManagementTestSupport {
@@ -55,18 +56,21 @@ public class ManagedCamelContextDumpRouteTemplatesAsXmlTest extends ManagementTe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateParameter("bar")
                         .from("direct:{{foo}}")
                         .log("Got ${body}")
                         .to("{{bar}}");
 
-                routeTemplate("myOtherTemplate").templateParameter("aaa")
+                routeTemplate("myOtherTemplate")
+                        .templateParameter("aaa")
                         .from("seda:bar")
-                        .filter().header("{{aaa}}")
+                        .filter()
+                        .header("{{aaa}}")
                         .to("ref:bar")
                         .end();
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
@@ -102,8 +103,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        boolean enabled
-                = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel()
+                != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
     }
 
@@ -156,10 +157,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 final String key = entry.getKey();
                 final String val = context.getTypeConverter().convertTo(String.class, entry.getValue());
 
-                CompositeData data = new CompositeDataSupport(
-                        ct,
-                        new String[] { "key", "value" },
-                        new Object[] { key, val });
+                CompositeData data =
+                        new CompositeDataSupport(ct, new String[] {"key", "value"}, new Object[] {key, val});
 
                 answer.put(data);
             }
@@ -337,7 +336,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         try {
             context.getRouteController().startRoute(getRouteId());
         } catch (Exception e) {
-            LOG.warn("Error starting route: {} due to: {}. This exception is ignored.", getRouteId(), e.getMessage(), e);
+            LOG.warn(
+                    "Error starting route: {} due to: {}. This exception is ignored.", getRouteId(), e.getMessage(), e);
             throw e;
         }
     }
@@ -350,7 +350,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         try {
             context.getRouteController().stopRoute(getRouteId());
         } catch (Exception e) {
-            LOG.warn("Error stopping route: {} due to: {}. This exception is ignored.", getRouteId(), e.getMessage(), e);
+            LOG.warn(
+                    "Error stopping route: {} due to: {}. This exception is ignored.", getRouteId(), e.getMessage(), e);
             throw e;
         }
     }
@@ -360,7 +361,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        Throwable cause = new RejectedExecutionException("Route " + getRouteId() + " is forced stopped and marked as failed");
+        Throwable cause =
+                new RejectedExecutionException("Route " + getRouteId() + " is forced stopped and marked as failed");
         context.getRouteController().stopRoute(getRouteId(), cause);
     }
 
@@ -450,16 +452,18 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
-    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation) throws Exception {
+    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation)
+            throws Exception {
         String id = route.getId();
-        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
+        RouteDefinition def =
+                context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
             // if we are debugging then ids is needed for the debugger
             if (context.isDebugging()) {
                 generatedIds = true;
             }
-            return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds,
-                    sourceLocation);
+            return PluginHelper.getModelToXMLDumper(context)
+                    .dumpModelAsXml(context, def, resolvePlaceholders, generatedIds, sourceLocation);
         }
 
         return null;
@@ -485,10 +489,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
             throws Exception {
         String id = route.getId();
-        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
+        RouteDefinition def =
+                context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
-            return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders,
-                    uriAsParameters, generatedIds, sourceLocation);
+            return PluginHelper.getModelToYAMLDumper(context)
+                    .dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters, generatedIds, sourceLocation);
         }
 
         return null;
@@ -507,17 +512,24 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         // gather all the processors for this route, which requires JMX
         if (includeProcessors) {
             sb.append("  <processorStats>\n");
-            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            MBeanServer server =
+                    getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
-                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                String prefix = getContext()
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getIncludeHostName()
+                        ? "*/"
+                        : "";
                 ObjectName query = ObjectName.getInstance(
                         jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<>();
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                            ManagedProcessorMBean.class);
+                    ManagedProcessorMBean processor = context.getManagementStrategy()
+                            .getManagementAgent()
+                            .newProxyClient(on, ManagedProcessorMBean.class);
 
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {
@@ -542,15 +554,22 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     sb.append("    <processorStat")
                             .append(String.format(
                                     " id=\"%s\" index=\"%s\" state=\"%s\" disabled=\"%s\" sourceLineNumber=\"%s\"",
-                                    processor.getProcessorId(), processor.getIndex(), processor.getState(),
-                                    processor.getDisabled(), line));
+                                    processor.getProcessorId(),
+                                    processor.getIndex(),
+                                    processor.getState(),
+                                    processor.getDisabled(),
+                                    line));
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
                     if (accTime != null) {
-                        sb.append(" accumulatedProcessingTime=\"").append(accTime).append("\"");
+                        sb.append(" accumulatedProcessingTime=\"")
+                                .append(accTime)
+                                .append("\"");
                     }
                     // use substring as we only want the attributes
-                    sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+                    sb.append(" ")
+                            .append(processor.dumpStatsAsXml(fullStats).substring(7))
+                            .append("\n");
                 }
             }
             sb.append("  </processorStats>\n");
@@ -564,7 +583,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
+        answer.append("<routeStat")
+                .append(String.format(" id=\"%s\"", route.getId()))
                 .append(String.format(" state=\"%s\"", getState()))
                 .append(String.format(" uptime=\"%s\"", getUptimeMillis()));
         if (getRouteGroup() != null) {
@@ -582,8 +602,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
+            answer.append(" oldestInflightExchangeId=\"")
+                    .append(oldest.getExchange().getExchangeId())
+                    .append("\"");
+            answer.append(" oldestInflightDuration=\"")
+                    .append(oldest.getDuration())
+                    .append("\"");
         }
         answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
@@ -626,17 +650,24 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         JsonArray arr = null;
         if (includeProcessors) {
             arr = new JsonArray();
-            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            MBeanServer server =
+                    getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
-                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                String prefix = getContext()
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getIncludeHostName()
+                        ? "*/"
+                        : "";
                 ObjectName query = ObjectName.getInstance(
                         jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<>();
                 for (ObjectName on : names) {
-                    ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                            ManagedProcessorMBean.class);
+                    ManagedProcessorMBean processor = context.getManagementStrategy()
+                            .getManagementAgent()
+                            .newProxyClient(on, ManagedProcessorMBean.class);
 
                     // the processor must belong to this route
                     if (getRouteId().equals(processor.getRouteId())) {
@@ -701,17 +732,19 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         // gather all the steps for this route, which requires JMX
         sb.append("  <stepStats>\n");
-        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer server =
+                getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
             // get all the processor mbeans and sort them accordingly to their index
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName
-                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
+            String prefix =
+                    getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName.getInstance(
+                    jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
             Set<ObjectName> names = server.queryNames(query, null);
             List<ManagedStepMBean> mps = new ArrayList<>();
             for (ObjectName on : names) {
-                ManagedStepMBean step
-                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
+                ManagedStepMBean step =
+                        context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
 
                 // the step must belong to this route
                 if (getRouteId().equals(step.getRouteId())) {
@@ -724,17 +757,20 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             for (ManagedStepMBean step : mps) {
                 int line = step.getSourceLineNumber() != null ? step.getSourceLineNumber() : -1;
                 sb.append("    <stepStat")
-                        .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
-                                step.getProcessorId(),
-                                step.getIndex(), step.getState(), line));
+                        .append(String.format(
+                                " id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
+                                step.getProcessorId(), step.getIndex(), step.getState(), line));
                 // use substring as we only want the attributes
-                sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+                sb.append(" ")
+                        .append(step.dumpStatsAsXml(fullStats).substring(7))
+                        .append("\n");
             }
         }
         sb.append("  </stepStats>\n");
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
+        answer.append("<routeStat")
+                .append(String.format(" id=\"%s\"", route.getId()))
                 .append(String.format(" state=\"%s\"", getState()))
                 .append(String.format(" uptime=\"%s\"", getUptimeMillis()));
         if (getRouteGroup() != null) {
@@ -751,8 +787,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
+            answer.append(" oldestInflightExchangeId=\"")
+                    .append(oldest.getExchange().getExchangeId())
+                    .append("\"");
+            answer.append(" oldestInflightDuration=\"")
+                    .append(oldest.getDuration())
+                    .append("\"");
         }
         answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
 
@@ -767,17 +807,20 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         StringBuilder sb = new StringBuilder();
         sb.append("<routeLocations>");
 
-        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer server =
+                getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            String prefix =
+                    getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
             List<ManagedProcessorMBean> processors = new ArrayList<>();
             // gather all the processors for this CamelContext, which requires JMX
-            ObjectName query = ObjectName
-                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+            ObjectName query = ObjectName.getInstance(
+                    jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
             Set<ObjectName> names = server.queryNames(query, null);
             for (ObjectName on : names) {
-                ManagedProcessorMBean processor
-                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
+                ManagedProcessorMBean processor = context.getManagementStrategy()
+                        .getManagementAgent()
+                        .newProxyClient(on, ManagedProcessorMBean.class);
                 // the processor must belong to this route
                 if (getRouteId().equals(processor.getRouteId())) {
                     processors.add(processor);
@@ -804,7 +847,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     sb.append("\n    <routeLocation")
                             .append(String.format(
                                     " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
-                                    route.getRouteId(), processor.getProcessorId(), processor.getIndex(), location, line));
+                                    route.getRouteId(),
+                                    processor.getProcessorId(),
+                                    processor.getIndex(),
+                                    location,
+                                    line));
                 }
             }
         }
@@ -820,10 +867,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         // and now reset all processors for this route
         if (includeProcessors) {
-            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            MBeanServer server =
+                    getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
-                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                String prefix = getContext()
+                                .getManagementStrategy()
+                                .getManagementAgent()
+                                .getIncludeHostName()
+                        ? "*/"
+                        : "";
                 ObjectName query = ObjectName.getInstance(
                         jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 QueryExp queryExp = Query.match(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
@@ -857,9 +910,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (ObjectHelper.isEmpty(def.getId())) {
             def.setId(getRouteId());
         } else if (!def.getId().equals(getRouteId())) {
-            throw new IllegalArgumentException(
-                    "Cannot update route from XML as routeIds does not match. routeId: "
-                                               + getRouteId() + ", routeId from XML: " + def.getId());
+            throw new IllegalArgumentException("Cannot update route from XML as routeIds does not match. routeId: "
+                    + getRouteId() + ", routeId from XML: " + def.getId());
         }
 
         LOG.debug("Updating route: {} from xml: {}", def.getId(), xml);
@@ -867,7 +919,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             // add will remove existing route first
             ecc.getContextPlugin(Model.class).addRouteDefinition(def);
         } catch (Exception e) {
-            // log the error as warn as the management api may be invoked remotely over JMX which does not propagate such exception
+            // log the error as warn as the management api may be invoked remotely over JMX which does not propagate
+            // such exception
             String msg = "Error updating route: " + def.getId() + " from xml: " + xml + " due: " + e.getMessage();
             LOG.warn(msg, e);
             throw e;
@@ -975,16 +1028,19 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     public Collection<String> processorIds() throws Exception {
         List<String> ids = new ArrayList<>();
 
-        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer server =
+                getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            String prefix =
+                    getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
             // gather all the processors for this CamelContext, which requires JMX
-            ObjectName query = ObjectName
-                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
+            ObjectName query = ObjectName.getInstance(
+                    jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
             Set<ObjectName> names = server.queryNames(query, null);
             for (ObjectName on : names) {
-                ManagedProcessorMBean processor
-                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedProcessorMBean.class);
+                ManagedProcessorMBean processor = context.getManagementStrategy()
+                        .getManagementAgent()
+                        .newProxyClient(on, ManagedProcessorMBean.class);
                 // the processor must belong to this route
                 if (getRouteId().equals(processor.getRouteId())) {
                     ids.add(processor.getProcessorId());

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weaviate;
 
 import java.util.HashMap;
@@ -60,11 +61,13 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final WeaviateVectorDbAction action = in.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
+        final WeaviateVectorDbAction action =
+                in.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
 
         try {
             if (action == null) {
-                throw new NoSuchHeaderException("The action is a required header", exchange, WeaviateVectorDbHeaders.ACTION);
+                throw new NoSuchHeaderException(
+                        "The action is a required header", exchange, WeaviateVectorDbHeaders.ACTION);
             }
 
             switch (action) {
@@ -113,13 +116,14 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
             collectionName = getEndpoint().getCollection();
         }
 
-        WeaviateClass collection = WeaviateClass.builder().className(collectionName).build();
+        WeaviateClass collection =
+                WeaviateClass.builder().className(collectionName).build();
 
         Result<Boolean> res = client.misc().readyChecker().run();
 
-        Result<Boolean> result = client.schema().classCreator().withClass(collection).run();
+        Result<Boolean> result =
+                client.schema().classCreator().withClass(collection).run();
         populateResponse(result, exchange);
-
     }
 
     private void create(Exchange exchange) throws Exception {
@@ -139,7 +143,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
 
-        Result<WeaviateObject> result = client.data().creator()
+        Result<WeaviateObject> result = client.data()
+                .creator()
                 .withClassName(collectionName)
                 .withVector(vectors)
                 .withProperties(props)
@@ -172,8 +177,7 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
             ou.withMerge();
         }
 
-        Result<Boolean> result = ou
-                .withID(indexId)
+        Result<Boolean> result = ou.withID(indexId)
                 .withClassName(collectionName)
                 .withVector(vectors)
                 .withProperties(props)
@@ -194,7 +198,9 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
         } else {
             collectionName = getEndpoint().getCollection();
         }
-        Result<Boolean> result = this.client.data().deleter()
+        Result<Boolean> result = this.client
+                .data()
+                .deleter()
                 .withClassName(collectionName)
                 .withID(indexId)
                 .run();
@@ -211,7 +217,9 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
             collectionName = getEndpoint().getCollection();
         }
 
-        Result<Boolean> result = this.client.schema().classDeleter()
+        Result<Boolean> result = this.client
+                .schema()
+                .classDeleter()
                 .withClassName(collectionName)
                 .run();
 
@@ -239,17 +247,17 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
 
         Float[] vectors = (Float[]) elements.toArray(new Float[0]);
 
-        NearVectorArgument nearVectorArg = NearVectorArgument.builder()
-                .vector(vectors)
-                .build();
+        NearVectorArgument nearVectorArg =
+                NearVectorArgument.builder().vector(vectors).build();
 
         Fields fields;
 
         if (in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class) != null) {
             HashMap<String, Object> fieldToSearch = in.getHeader(WeaviateVectorDbHeaders.FIELDS, HashMap.class);
 
-            Field[] fieldArray
-                    = fieldToSearch.keySet().stream().map(k -> Field.builder().name(k).build()).toArray(Field[]::new);
+            Field[] fieldArray = fieldToSearch.keySet().stream()
+                    .map(k -> Field.builder().name(k).build())
+                    .toArray(Field[]::new);
             fields = Fields.builder().fields(fieldArray).build();
 
         } else {
@@ -281,7 +289,8 @@ public class WeaviateVectorDbProducer extends DefaultProducer {
             collectionName = getEndpoint().getCollection();
         }
 
-        Result<List<WeaviateObject>> result = client.data().objectsGetter()
+        Result<List<WeaviateObject>> result = client.data()
+                .objectsGetter()
                 .withClassName(collectionName)
                 .withID(indexId)
                 .run();

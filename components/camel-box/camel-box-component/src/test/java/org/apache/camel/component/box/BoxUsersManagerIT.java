@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,22 +45,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 /**
  * Test class for {@link BoxUsersManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxUsersManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxUsersManagerApiMethod.class).getName();
+            .getApiName(BoxUsersManagerApiMethod.class)
+            .getName();
     private static final String CAMEL_TEST_USER_EMAIL_ALIAS = "camel@example.com";
     private static final String CAMEL_TEST_USER_JOB_TITLE = "Camel Tester";
     private static final String CAMEL_TEST_CREATE_APP_USER_NAME = "Wilma";
@@ -89,7 +92,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testCreateAppUser() {
-        //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
+        // This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
         assumeTrue(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         com.box.sdk.BoxUser result = null;
@@ -120,7 +123,8 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testCreateEnterpriseUser() {
-        //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
+        // This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return
+        // code 403
         assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
@@ -128,7 +132,8 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             enterpriseUser1Login = null;
         }
 
-        assertNotNull(enterpriseUser1Login,
+        assertNotNull(
+                enterpriseUser1Login,
                 "Email for enterprise user has to be defined in test-options.properties for this test to succeed.");
 
         com.box.sdk.BoxUser result = null;
@@ -161,7 +166,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testDeleteUser() throws Exception {
-        //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
+        // This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
         assumeTrue(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         BoxUser.Info info = BoxUser.createAppUser(getConnection(), CAMEL_TEST_CREATE_APP_USER_NAME);
@@ -173,7 +178,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         headers.put("CamelBox.force", Boolean.FALSE);
 
         requestBodyAndHeaders("direct://DELETEUSER", null, headers);
-        //give some time to delete task to be finished
+        // give some time to delete task to be finished
         Thread.sleep(2000);
 
         Iterable<BoxUser.Info> it = BoxUser.getAllEnterpriseUsers(getConnection(), CAMEL_TEST_CREATE_APP_USER_NAME);
@@ -248,7 +253,8 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testUpdateUserInfo() {
-        //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
+        // This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return
+        // code 403
         assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         BoxUser.Info info = testUser.getInfo();
@@ -272,7 +278,8 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
     @Test
     public void testmMoveFolderToUser() {
-        //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
+        // This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return
+        // code 403
         assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
@@ -284,18 +291,20 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             enterpriseUser2Login = null;
         }
 
-        assertNotNull(enterpriseUser1Login,
+        assertNotNull(
+                enterpriseUser1Login,
                 "Email for enterprise user has to be defined in test-options.properties for this test to succeed.");
-        assertNotNull(enterpriseUser2Login,
+        assertNotNull(
+                enterpriseUser2Login,
                 "Email for enterprise user2 has to be defined in test-options.properties for this test to succeed.");
 
         BoxUser.Info user1 = null;
         BoxUser.Info user2 = null;
         try {
-            user1 = BoxUser.createEnterpriseUser(getConnection(),
-                    enterpriseUser1Login, CAMEL_TEST_CREATE_ENTERPRISE_USER_NAME);
-            user2 = BoxUser.createEnterpriseUser(getConnection(),
-                    enterpriseUser2Login, CAMEL_TEST_CREATE_ENTERPRISE_USER2_NAME);
+            user1 = BoxUser.createEnterpriseUser(
+                    getConnection(), enterpriseUser1Login, CAMEL_TEST_CREATE_ENTERPRISE_USER_NAME);
+            user2 = BoxUser.createEnterpriseUser(
+                    getConnection(), enterpriseUser2Login, CAMEL_TEST_CREATE_ENTERPRISE_USER2_NAME);
 
             final Map<String, Object> headers = new HashMap<>();
             // parameter type is String
@@ -395,12 +404,10 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             return ((Collection<?>) it).size();
         } else {
             int i = 0;
-            for (@SuppressWarnings("unused")
-            Object obj : it) {
+            for (@SuppressWarnings("unused") Object obj : it) {
                 i++;
             }
             return i;
         }
-
     }
 }

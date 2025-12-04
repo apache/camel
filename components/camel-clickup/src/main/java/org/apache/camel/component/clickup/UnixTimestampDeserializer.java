@@ -34,7 +34,8 @@ public class UnixTimestampDeserializer extends JsonDeserializer<Instant> {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+            throws IOException {
         try {
             long unixTimestamp = Long.parseLong(jsonParser.getText());
 

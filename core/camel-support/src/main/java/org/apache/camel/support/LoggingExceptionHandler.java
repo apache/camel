@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -97,7 +98,8 @@ public class LoggingExceptionHandler implements ExceptionHandler {
 
     protected boolean isSuppressLogging() {
         if (camelContext != null) {
-            return (camelContext.getStatus().isStopping() || camelContext.getStatus().isStopped())
+            return (camelContext.getStatus().isStopping()
+                            || camelContext.getStatus().isStopped())
                     && camelContext.getShutdownStrategy().isTimeoutOccurred()
                     && camelContext.getShutdownStrategy().isSuppressLoggingOnTimeout();
         } else {

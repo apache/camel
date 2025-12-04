@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,9 +31,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class NettyHttpHeaderCaseTest extends BaseNettyTest {
 
     @Test
@@ -40,7 +41,7 @@ public class NettyHttpHeaderCaseTest extends BaseNettyTest {
         method.addHeader("OTHER", "123");
         method.addHeader("beer", "Carlsberg");
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(method)) {
+                CloseableHttpResponse response = client.execute(method)) {
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
             assertEquals("Bye World", responseString);
@@ -56,7 +57,8 @@ public class NettyHttpHeaderCaseTest extends BaseNettyTest {
                 from("netty-http:http://localhost:{{port}}/myapp/mytest").process(exchange -> {
 
                     // headers received should be in case as well
-                    Map<String, Object> map = new LinkedHashMap<>(exchange.getIn().getHeaders());
+                    Map<String, Object> map =
+                            new LinkedHashMap<>(exchange.getIn().getHeaders());
 
                     assertEquals("123", map.get("OTHER"));
                     assertNull(map.get("other"));
@@ -70,5 +72,4 @@ public class NettyHttpHeaderCaseTest extends BaseNettyTest {
             }
         };
     }
-
 }

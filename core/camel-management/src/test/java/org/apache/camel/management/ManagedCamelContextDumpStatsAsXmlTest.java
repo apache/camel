@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport {
@@ -45,15 +46,16 @@ public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport
         template.asyncSendBody("direct:bar", "Bye World");
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesStatsAsXml", new Object[] { false, true },
-                new String[] { "boolean", "boolean" });
+        String xml = (String) mbeanServer.invoke(
+                on, "dumpRoutesStatsAsXml", new Object[] {false, true}, new String[] {"boolean", "boolean"});
         log.info(xml);
 
         // should be valid XML
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
         assertNotNull(doc);
 
-        int processors = doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
+        int processors =
+                doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
         assertEquals(5, processors);
     }
 
@@ -62,16 +64,22 @@ public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .to("log:foo").id("a")
-                        .delay(100).id("b")
-                        .to("mock:foo").id("c");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("log:foo")
+                        .id("a")
+                        .delay(100)
+                        .id("b")
+                        .to("mock:foo")
+                        .id("c");
 
-                from("direct:bar").routeId("bar")
-                        .to("log:bar").id("d")
-                        .to("mock:bar").id("e");
+                from("direct:bar")
+                        .routeId("bar")
+                        .to("log:bar")
+                        .id("d")
+                        .to("mock:bar")
+                        .id("e");
             }
         };
     }
-
 }

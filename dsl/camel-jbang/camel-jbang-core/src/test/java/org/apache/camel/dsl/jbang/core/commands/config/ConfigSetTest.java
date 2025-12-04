@@ -66,10 +66,11 @@ class ConfigSetTest extends BaseConfigTest {
 
         Assertions.assertEquals("", printer.getOutput());
 
-        CommandLineHelper.loadProperties(properties -> {
-            Assertions.assertEquals(1, properties.size());
-            Assertions.assertEquals("local", properties.get("foo"));
-        }, true);
+        CommandLineHelper.loadProperties(
+                properties -> {
+                    Assertions.assertEquals(1, properties.size());
+                    Assertions.assertEquals("local", properties.get("foo"));
+                },
+                true);
     }
-
 }

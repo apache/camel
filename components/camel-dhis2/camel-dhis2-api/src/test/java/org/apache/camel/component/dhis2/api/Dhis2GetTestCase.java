@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2.api;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,11 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class Dhis2GetTestCase {
@@ -69,9 +70,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -99,9 +98,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -129,9 +126,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -159,9 +154,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -189,10 +182,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close()
-                    throws IOException {
-
-            }
+            public void close() throws IOException {}
 
             @Override
             public String getUrl() {
@@ -202,8 +192,8 @@ public class Dhis2GetTestCase {
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
-        when(getOperation.withPaging()).thenReturn(
-                new DefaultPagingCollectOperation(
+        when(getOperation.withPaging())
+                .thenReturn(new DefaultPagingCollectOperation(
                         "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
@@ -225,10 +215,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close()
-                    throws IOException {
-
-            }
+            public void close() throws IOException {}
 
             @Override
             public String getUrl() {
@@ -238,8 +225,8 @@ public class Dhis2GetTestCase {
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
-        when(getOperation.withoutPaging()).thenReturn(
-                new DefaultSimpleCollectOperation(
+        when(getOperation.withoutPaging())
+                .thenReturn(new DefaultSimpleCollectOperation(
                         "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
@@ -261,9 +248,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -272,10 +257,9 @@ public class Dhis2GetTestCase {
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
-        when(getOperation.withoutPaging()).thenReturn(
-                new DefaultSimpleCollectOperation(
-                        "https://play.dhis2.org/2.39.0.1", "", null,
-                        new JacksonConverterFactory(), getOperation));
+        when(getOperation.withoutPaging())
+                .thenReturn(new DefaultSimpleCollectOperation(
+                        "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
         dhis2Get.collection("bunnies", "bunnies", null, null, null, RootJunctionEnum.OR, null);
@@ -296,9 +280,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -307,8 +289,9 @@ public class Dhis2GetTestCase {
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
-        when(getOperation.withoutPaging()).thenReturn(new DefaultSimpleCollectOperation(
-                "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
+        when(getOperation.withoutPaging())
+                .thenReturn(new DefaultSimpleCollectOperation(
+                        "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
         dhis2Get.collection("bunnies", "bunnies", null, null, null, RootJunctionEnum.AND, null);
@@ -328,9 +311,7 @@ public class Dhis2GetTestCase {
             }
 
             @Override
-            public void close() {
-
-            }
+            public void close() {}
 
             @Override
             public String getUrl() {
@@ -339,15 +320,13 @@ public class Dhis2GetTestCase {
         };
         when(getOperation.withParameter(any(), any())).thenReturn(getOperation);
         when(getOperation.transfer()).thenReturn(dhis2Response);
-        when(getOperation.withoutPaging()).thenReturn(
-                new DefaultSimpleCollectOperation(
-                        "https://play.dhis2.org/2.39.0.1", "", null,
-                        new JacksonConverterFactory(), getOperation));
+        when(getOperation.withoutPaging())
+                .thenReturn(new DefaultSimpleCollectOperation(
+                        "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
         dhis2Get.collection("bunnies", "bunnies", null, null, List.of("id:in:[id1,id2]", "code:eq:code1"), null, null);
         verify(getOperation, times(1)).withFilter("id:in:[id1,id2]");
         verify(getOperation, times(1)).withFilter("code:eq:code1");
     }
-
 }

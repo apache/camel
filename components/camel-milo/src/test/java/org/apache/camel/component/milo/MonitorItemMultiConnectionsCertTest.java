@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,8 +37,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 /**
  * Testing monitoring items over multiple connections
  */
@@ -47,22 +48,20 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
 
     // with key
     private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&keyStoreUrl=file:src/test/resources/keystore&keyStorePassword=testtest&keyPassword=test&keyAlias=test"
-                                                        + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
+            + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+            + "&keyStoreUrl=file:src/test/resources/keystore&keyStorePassword=testtest&keyPassword=test&keyAlias=test"
+            + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
     // with wrong password
     private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:opc.tcp://foo:bar2@localhost:@@port@@?node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
+            + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+            + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
     // without key, clientId=1
-    private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?clientId=1&node="
-                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "myitem1")
-                                                        + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
+    private static final String MILO_CLIENT_ITEM_C3_1 =
+            "milo-client:opc.tcp://foo:bar@localhost:@@port@@?clientId=1&node="
+                    + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1")
+                    + "&discoveryEndpointSuffix=/discovery&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
     private static final String MOCK_TEST_2 = "mock:test2";

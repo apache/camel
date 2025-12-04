@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -31,12 +32,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.NONE)
-public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> implements OutputNode {
+public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type>
+        implements OutputNode {
 
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public OutputDefinition() {
-    }
+    public OutputDefinition() {}
 
     protected OutputDefinition(OutputDefinition<?> source) {
         super(source);
@@ -71,5 +72,4 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
     public String toString() {
         return getShortName() + " -> [" + outputs + "]";
     }
-
 }

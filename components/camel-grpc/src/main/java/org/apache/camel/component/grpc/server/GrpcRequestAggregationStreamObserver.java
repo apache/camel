@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.server;
 
 import java.util.LinkedList;
@@ -32,8 +33,11 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
 public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStreamObserver {
     private List<Object> requestList = new LinkedList<>();
 
-    public GrpcRequestAggregationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
-                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    public GrpcRequestAggregationStreamObserver(
+            GrpcEndpoint endpoint,
+            GrpcConsumer consumer,
+            StreamObserver<Object> responseObserver,
+            Map<String, Object> headers) {
         super(endpoint, consumer, responseObserver, headers);
         exchange = endpoint.createExchange();
     }

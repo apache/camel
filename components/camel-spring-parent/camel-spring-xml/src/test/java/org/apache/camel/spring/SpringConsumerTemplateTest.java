@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test using the ConsumerTemplate
@@ -61,6 +62,5 @@ public class SpringConsumerTemplateTest extends SpringRunWithTestSupport {
         // assert mock received the body
         mock.assertIsSatisfied();
     }
-
 }
 // end::e1[]

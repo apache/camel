@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.cxf.endpoint.Client;
@@ -24,8 +25,7 @@ public final class ChainedCxfConfigurer implements CxfConfigurer {
     private CxfConfigurer parent;
     private CxfConfigurer child;
 
-    private ChainedCxfConfigurer() {
-    }
+    private ChainedCxfConfigurer() {}
 
     public static ChainedCxfConfigurer create(CxfConfigurer parent, CxfConfigurer child) {
         ChainedCxfConfigurer result = new ChainedCxfConfigurer();
@@ -62,15 +62,12 @@ public final class ChainedCxfConfigurer implements CxfConfigurer {
     public static class NullCxfConfigurer implements CxfConfigurer {
 
         @Override
-        public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
-        }
+        public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {}
 
         @Override
-        public void configureClient(Client client) {
-        }
+        public void configureClient(Client client) {}
 
         @Override
-        public void configureServer(Server server) {
-        }
+        public void configureServer(Server server) {}
     }
 }

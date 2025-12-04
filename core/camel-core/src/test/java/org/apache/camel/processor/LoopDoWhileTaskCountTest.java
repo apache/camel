@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,14 +39,19 @@ public class LoopDoWhileTaskCountTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:simple").loopDoWhile(simple("${body.length} <= 5")).id("myLoop")
+                from("direct:simple")
+                        .loopDoWhile(simple("${body.length} <= 5"))
+                        .id("myLoop")
                         .process(exchange -> {
                             LoopProcessor lp = exchange.getContext().getProcessor("myLoop", LoopProcessor.class);
                             int size = lp.getPendingExchangesSize();
                             // task count should be zero as its while loop
                             Assertions.assertEquals(0, size);
-                        }).to("mock:loop").transform(body().append("A"))
-                        .end().to("mock:result");
+                        })
+                        .to("mock:loop")
+                        .transform(body().append("A"))
+                        .end()
+                        .to("mock:result");
             }
         };
     }

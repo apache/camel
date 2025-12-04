@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Map;
@@ -63,14 +64,19 @@ public class TotalRequestsThrottler extends AbstractThrottler {
     private final Expression correlationExpression;
     private final Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
-    public TotalRequestsThrottler(final CamelContext camelContext, final Expression maxRequestsExpression,
-                                  final long timePeriodMillis,
-                                  final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor,
-                                  final boolean rejectExecution, Expression correlation) {
+    public TotalRequestsThrottler(
+            final CamelContext camelContext,
+            final Expression maxRequestsExpression,
+            final long timePeriodMillis,
+            final ScheduledExecutorService asyncExecutor,
+            final boolean shutdownAsyncExecutor,
+            final boolean rejectExecution,
+            Expression correlation) {
         super(asyncExecutor, shutdownAsyncExecutor, camelContext, rejectExecution, correlation, maxRequestsExpression);
 
         if (timePeriodMillis <= 0) {
-            throw new IllegalArgumentException("TimePeriodMillis should be a positive number, was: " + timePeriodMillis);
+            throw new IllegalArgumentException(
+                    "TimePeriodMillis should be a positive number, was: " + timePeriodMillis);
         }
         this.timePeriodMillis = timePeriodMillis;
         this.cleanPeriodMillis = timePeriodMillis * 10;
@@ -104,10 +110,9 @@ public class TotalRequestsThrottler extends AbstractThrottler {
 
             if (permit == null) {
                 if (isRejectExecution()) {
-                    throw new ThrottlerRejectedExecutionException(
-                            "Exceeded the max throttle rate of "
-                                                                  + throttlingState.getThrottleRate() + " within "
-                                                                  + timePeriodMillis + "ms");
+                    throw new ThrottlerRejectedExecutionException("Exceeded the max throttle rate of "
+                            + throttlingState.getThrottleRate() + " within "
+                            + timePeriodMillis + "ms");
                 } else {
                     // delegate to async pool
                     if (isAsyncDelayed() && !exchange.isTransacted() && state == State.SYNC) {
@@ -135,7 +140,10 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                         if (LOG.isTraceEnabled()) {
                             long queuedTime = start - queuedStart;
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Queued for {}ms, Throttled for {}ms, exchangeId: {}", queuedTime, elapsed,
+                                LOG.trace(
+                                        "Queued for {}ms, Throttled for {}ms, exchangeId: {}",
+                                        queuedTime,
+                                        elapsed,
                                         exchange.getExchangeId());
                             }
                         }
@@ -151,8 +159,10 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                 if (state == State.ASYNC) {
                     if (LOG.isTraceEnabled()) {
                         long queuedTime = System.currentTimeMillis() - queuedStart;
-                        LOG.trace("Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
-                                queuedTime, exchange.getExchangeId());
+                        LOG.trace(
+                                "Queued for {}ms, No throttling applied (throttle cleared while queued), for exchangeId: {}",
+                                queuedTime,
+                                exchange.getExchangeId());
                     }
                 } else {
                     if (LOG.isTraceEnabled()) {
@@ -190,7 +200,8 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         } catch (final RejectedExecutionException e) {
             if (isCallerRunsWhenRejected()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
+                    LOG.debug(
+                            "AsyncExecutor is full, rejected exchange will run in the current thread, exchangeId: {}",
                             exchange.getExchangeId());
                 }
                 exchange.setProperty(PROPERTY_EXCHANGE_STATE, State.ASYNC_REJECTED);
@@ -274,8 +285,9 @@ public class TotalRequestsThrottler extends AbstractThrottler {
         public void calculateAndSetMaxRequestsPerPeriod(final Exchange exchange) throws Exception {
             lock.lock();
             try {
-                Integer newThrottle
-                        = TotalRequestsThrottler.this.getMaximumRequestsExpression().evaluate(exchange, Integer.class);
+                Integer newThrottle = TotalRequestsThrottler.this
+                        .getMaximumRequestsExpression()
+                        .evaluate(exchange, Integer.class);
 
                 if (newThrottle != null && newThrottle < 0) {
                     throw new IllegalStateException(
@@ -285,7 +297,7 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                 if (newThrottle == null && throttleRate == 0) {
                     throw new RuntimeExchangeException(
                             "The maxRequestsPerPeriodExpression was evaluated as null: "
-                                                       + TotalRequestsThrottler.this.getMaximumRequestsExpression(),
+                                    + TotalRequestsThrottler.this.getMaximumRequestsExpression(),
                             exchange);
                 }
 
@@ -300,13 +312,17 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                                 delayQueue.take();
                                 delta--;
                                 if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}",
+                                    LOG.trace(
+                                            "Permit discarded due to throttling rate decrease, triggered by ExchangeId: {}",
                                             exchange.getExchangeId());
                                 }
                             }
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Throttle rate decreased from {} to {}, triggered by ExchangeId: {}", throttleRate,
-                                        newThrottle, exchange.getExchangeId());
+                                LOG.debug(
+                                        "Throttle rate decreased from {} to {}, triggered by ExchangeId: {}",
+                                        throttleRate,
+                                        newThrottle,
+                                        exchange.getExchangeId());
                             }
 
                             // increase
@@ -317,13 +333,18 @@ public class TotalRequestsThrottler extends AbstractThrottler {
                             }
                             if (throttleRate == 0) {
                                 if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Initial throttle rate set to {}, triggered by ExchangeId: {}", newThrottle,
+                                    LOG.debug(
+                                            "Initial throttle rate set to {}, triggered by ExchangeId: {}",
+                                            newThrottle,
                                             exchange.getExchangeId());
                                 }
                             } else {
                                 if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Throttle rate increase from {} to {}, triggered by ExchangeId: {}", throttleRate,
-                                            newThrottle, exchange.getExchangeId());
+                                    LOG.debug(
+                                            "Throttle rate increase from {} to {}, triggered by ExchangeId: {}",
+                                            throttleRate,
+                                            newThrottle,
+                                            exchange.getExchangeId());
                                 }
                             }
                         }
@@ -372,7 +393,10 @@ public class TotalRequestsThrottler extends AbstractThrottler {
      */
     @Override
     public int getCurrentMaximumRequests() {
-        return states.values().stream().mapToInt(ThrottlingState::getThrottleRate).max().orElse(0);
+        return states.values().stream()
+                .mapToInt(ThrottlingState::getThrottleRate)
+                .max()
+                .orElse(0);
     }
 
     /**

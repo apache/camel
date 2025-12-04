@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault.vault;
 
 import java.time.Instant;
@@ -69,8 +70,7 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
     private boolean cloud;
     private String namespace;
 
-    public HashicorpVaultReloadTriggerTask() {
-    }
+    public HashicorpVaultReloadTriggerTask() {}
 
     @Override
     public CamelContext getCamelContext() {
@@ -126,7 +126,8 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
             LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
         }
         // specific secrets
-        HashicorpVaultConfiguration hashicorpVaultConfiguration = getCamelContext().getVaultConfiguration().hashicorp();
+        HashicorpVaultConfiguration hashicorpVaultConfiguration =
+                getCamelContext().getVaultConfiguration().hashicorp();
         secrets = hashicorpVaultConfiguration.getSecrets();
         if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
             throw new IllegalArgumentException("Secrets must be configured on Hashicorp vault configuration");
@@ -141,8 +142,11 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
         }
         namespace = System.getenv(CAMEL_HASHICORP_VAULT_NAMESPACE_ENV);
 
-        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
-                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme) && ObjectHelper.isEmpty(namespace)) {
+        if (ObjectHelper.isEmpty(token)
+                && ObjectHelper.isEmpty(host)
+                && ObjectHelper.isEmpty(port)
+                && ObjectHelper.isEmpty(scheme)
+                && ObjectHelper.isEmpty(namespace)) {
             if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
                 token = hashicorpVaultConfiguration.getToken();
                 host = hashicorpVaultConfiguration.getHost();
@@ -155,16 +159,16 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
             }
         }
 
-        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(host)
-                && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
+        if (ObjectHelper.isNotEmpty(token)
+                && ObjectHelper.isNotEmpty(host)
+                && ObjectHelper.isNotEmpty(port)
+                && ObjectHelper.isNotEmpty(scheme)) {
             VaultEndpoint vaultEndpoint = new VaultEndpoint();
             vaultEndpoint.setHost(host);
             vaultEndpoint.setPort(Integer.parseInt(port));
             vaultEndpoint.setScheme(scheme);
 
-            client = new VaultTemplate(
-                    vaultEndpoint,
-                    new TokenAuthentication(token));
+            client = new VaultTemplate(vaultEndpoint, new TokenAuthentication(token));
         } else {
             throw new RuntimeCamelException(
                     "Using the Hashicorp Vault Secrets Refresh Task requires setting Token, Host, port and scheme properties");
@@ -220,15 +224,19 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
                                     if (isReloadEnabled()) {
                                         LOG.info(
                                                 "Update for Hashicorp Vault secret: {} detected (version {} -> {}), triggering CamelContext reload",
-                                                secretName, lastKnownVersion, currentVersion);
+                                                secretName,
+                                                lastKnownVersion,
+                                                currentVersion);
                                         triggerReloading = true;
                                     }
                                 }
                             }
                         }
                     } catch (Exception e) {
-                        LOG.warn("Error checking secret {} for updates: {}. Will retry on next run.",
-                                secretName, e.getMessage());
+                        LOG.warn(
+                                "Error checking secret {} for updates: {}. Will retry on next run.",
+                                secretName,
+                                e.getMessage());
                         LOG.debug("Exception details:", e);
                     }
                 }
@@ -236,7 +244,8 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
         } catch (Exception e) {
             LOG.warn(
                     "Error during Hashicorp Vault Secrets Refresh Task due to {}. This exception is ignored. Will try again on next run.",
-                    e.getMessage(), e);
+                    e.getMessage(),
+                    e);
         }
 
         if (triggerReloading) {

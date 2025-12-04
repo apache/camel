@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,14 +29,13 @@ import org.apache.camel.component.jetty.rest.UserService;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
 
     @Test
     public void testJettyEmptyBody() {
-        String out = fluentTemplate.to("rest:get:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
+        String out = fluentTemplate
+                .to("rest:get:users/lives")
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .request(String.class);
 
         assertNotNull(out);
@@ -43,8 +46,11 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
     public void testJettyJSonBody() {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
 
-        String out = fluentTemplate.to("rest:post:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
-                .withBody(body).request(String.class);
+        String out = fluentTemplate
+                .to("rest:post:users/lives")
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withBody(body)
+                .request(String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
@@ -56,8 +62,11 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
         user.setId(123);
         user.setName("Donald Duck");
 
-        String out = fluentTemplate.to("rest:post:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
-                .withBody(user).request(String.class);
+        String out = fluentTemplate
+                .to("rest:post:users/lives")
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withBody(user)
+                .request(String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
@@ -71,8 +80,11 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
 
         // must provide outType parameter to tell Camel to bind the output from
         // the REST service from json to POJO
-        CountryPojo pojo = fluentTemplate.to("rest:post:users/lives?outType=org.apache.camel.component.jetty.rest.CountryPojo")
-                .withHeader(Exchange.CONTENT_TYPE, "application/json").withBody(user).request(CountryPojo.class);
+        CountryPojo pojo = fluentTemplate
+                .to("rest:post:users/lives?outType=org.apache.camel.component.jetty.rest.CountryPojo")
+                .withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withBody(user)
+                .request(CountryPojo.class);
 
         assertNotNull(pojo);
         assertEquals("EN", pojo.getIso());
@@ -86,15 +98,23 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
             public void configure() {
                 // configure to use jetty on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort())
+                restConfiguration()
+                        .component("jetty")
+                        .producerComponent("http")
+                        .host("localhost")
+                        .port(getPort())
                         .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
                         // just return the default country here
-                        .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).to("direct:lives");
-                from("direct:lives")
-                        .bean(new UserService(), "livesWhere");
+                        .get("lives")
+                        .to("direct:start")
+                        .post("lives")
+                        .type(UserPojo.class)
+                        .outType(CountryPojo.class)
+                        .to("direct:lives");
+                from("direct:lives").bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");
@@ -103,5 +123,4 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
             }
         };
     }
-
 }

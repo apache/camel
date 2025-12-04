@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,8 +51,10 @@ public class AggregateSimplePredicateEagerTest extends ContextTestSupport {
                         // which allows us to trigger completion when a certain
                         // exchange arrived which is the
                         // END message
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).eagerCheckCompletion()
-                        .completionPredicate(body().isEqualTo("END")).to("mock:aggregated");
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .eagerCheckCompletion()
+                        .completionPredicate(body().isEqualTo("END"))
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

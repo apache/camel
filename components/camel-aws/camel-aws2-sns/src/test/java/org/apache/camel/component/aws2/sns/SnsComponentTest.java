@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SnsComponentTest extends CamelTestSupport {
 
@@ -53,7 +54,8 @@ public class SnsComponentTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
+        assertEquals(
+                "dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
     }
 
     @Override
@@ -71,10 +73,12 @@ public class SnsComponentTest extends CamelTestSupport {
     public void createMultipleEndpoints() throws Exception {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
 
-        Sns2Endpoint endpoint1 = (Sns2Endpoint) component.createEndpoint("aws2-sns://Topic1?accessKey=xxx&secretKey=yyy");
+        Sns2Endpoint endpoint1 =
+                (Sns2Endpoint) component.createEndpoint("aws2-sns://Topic1?accessKey=xxx&secretKey=yyy");
         assertEquals("Topic1", endpoint1.getConfiguration().getTopicName());
 
-        Sns2Endpoint endpoint2 = (Sns2Endpoint) component.createEndpoint("aws2-sns://Topic2?accessKey=xxx&secretKey=yyy");
+        Sns2Endpoint endpoint2 =
+                (Sns2Endpoint) component.createEndpoint("aws2-sns://Topic2?accessKey=xxx&secretKey=yyy");
         assertEquals("Topic2", endpoint2.getConfiguration().getTopicName());
 
         // this now fails because endpoint1 and endpoint2 share the same config

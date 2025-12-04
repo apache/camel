@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -39,8 +42,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 /**
  * Updates the HeaderImportantHelper.java with the known important message headers
@@ -122,14 +123,15 @@ public class UpdateHeaderImportantHelper extends AbstractGeneratorMojo {
         }
 
         getLog().info("There are " + importants.size()
-                      + " distinct important options across all the Camel components/eips");
+                + " distinct important options across all the Camel components/eips");
 
         try {
             boolean updated = updateImportantHeaderKeys(camelDir, importants);
             if (updated) {
                 getLog().info("Updated camel-util/src/main/java/org/apache/camel/util/ImportantHeaderUtils.java file");
             } else {
-                getLog().debug("No changes to camel-util/src/main/java/org/apache/camel/util/ImportantHeaderUtils.java file");
+                getLog().debug(
+                                "No changes to camel-util/src/main/java/org/apache/camel/util/ImportantHeaderUtils.java file");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error updating ImportantHeaderUtils.java", e);
@@ -175,11 +177,11 @@ public class UpdateHeaderImportantHelper extends AbstractGeneratorMojo {
     }
 
     private void updateImportantHeaderJsonSchema(File camelDir, Set<String> secrets) throws Exception {
-        File target = new File(camelDir, "src/generated/resources/org/apache/camel/catalog/main/important-headers.json");
+        File target =
+                new File(camelDir, "src/generated/resources/org/apache/camel/catalog/main/important-headers.json");
         JsonArray arr = new JsonArray();
         arr.addAll(secrets);
         String json = JsonMapper.serialize(arr);
         PackageHelper.writeText(target, json);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
 
 import java.lang.annotation.Documented;
@@ -31,7 +32,7 @@ import org.apache.camel.support.language.NamespacePrefix;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "xpath", factory = XPathAnnotationExpressionFactory.class)
 public @interface XPath {
 
@@ -44,8 +45,8 @@ public @interface XPath {
      * Namespace prefix mappings
      */
     NamespacePrefix[] namespaces() default {
-            @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
-            @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
+        @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
+        @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")
     };
 
     /**
@@ -74,5 +75,4 @@ public @interface XPath {
      * factory of the built operating system, and not a JVM runtime.
      */
     boolean preCompile() default true;
-
 }

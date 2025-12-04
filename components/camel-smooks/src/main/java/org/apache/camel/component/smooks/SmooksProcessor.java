@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks;
 
 import java.io.File;
@@ -123,8 +124,8 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     public void process(final Exchange exchange) {
         ExecutionContext executionContext = null;
         if (allowExecutionContextFromHeader) {
-            executionContext
-                    = exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
+            executionContext =
+                    exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class);
         }
         if (executionContext == null) {
             executionContext = smooks.createExecutionContext();
@@ -147,8 +148,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
                 setResultOnBody(exports, sinks, exchange);
             } else {
                 final OutputStreamBuilder outputStreamBuilder = OutputStreamBuilder.withExchange(exchange);
-                smooks.filterSource(executionContext, getSource(exchange),
-                        new StreamSink<>(outputStreamBuilder));
+                smooks.filterSource(executionContext, getSource(exchange), new StreamSink<>(outputStreamBuilder));
                 exchange.getMessage().setBody(outputStreamBuilder.build());
             }
         } catch (IOException | InvalidPayloadException e) {
@@ -172,11 +172,15 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private void setUpSmooksReporting(final ExecutionContext executionContext) {
         if (reportPath != null) {
             try {
-                executionContext.getContentDeliveryRuntime().addExecutionEventListener(
-                        new HtmlReportGenerator(reportPath, executionContext.getApplicationContext()));
+                executionContext
+                        .getContentDeliveryRuntime()
+                        .addExecutionEventListener(
+                                new HtmlReportGenerator(reportPath, executionContext.getApplicationContext()));
             } catch (final IOException e) {
-                LOG.warn("Cannot generate Smooks Report. The reportPath specified was [{}]. This exception is ignored.",
-                        reportPath, e);
+                LOG.warn(
+                        "Cannot generate Smooks Report. The reportPath specified was [{}]. This exception is ignored.",
+                        reportPath,
+                        e);
             }
         }
     }
@@ -205,9 +209,9 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
         }
 
         if (payload instanceof WrappedFile) {
-            final String systemId
-                    = new javax.xml.transform.stream.StreamSource((File) exchange.getIn().getBody(WrappedFile.class).getFile())
-                            .getSystemId();
+            final String systemId = new javax.xml.transform.stream.StreamSource(
+                            (File) exchange.getIn().getBody(WrappedFile.class).getFile())
+                    .getSystemId();
             try {
                 return new URLSource(URI.create(systemId).toURL());
             } catch (MalformedURLException e) {
@@ -270,8 +274,7 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     }
 
     private void addAppender(Smooks smooks, Set<VisitorAppender> visitorAppenders) {
-        for (VisitorAppender appender : visitorAppenders)
-            smooks.addVisitors(appender);
+        for (VisitorAppender appender : visitorAppenders) smooks.addVisitors(appender);
     }
 
     private void addVisitor(Smooks smooks, Map<String, Visitor> selectorVisitorMap) {
@@ -296,8 +299,9 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
                     InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, configUri);
                     smooks.addResourceConfigs(is);
                 }
-                smooks.getApplicationContext().getRegistry().registerObject(CamelContext.class,
-                        (NotAppContextScoped.Ref<CamelContext>) () -> camelContext);
+                smooks.getApplicationContext()
+                        .getRegistry()
+                        .registerObject(CamelContext.class, (NotAppContextScoped.Ref<CamelContext>) () -> camelContext);
             }
 
             addAppender(smooks, visitorAppender);
@@ -324,5 +328,4 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     public String toString() {
         return "SmooksProcessor[configUri=" + configUri + "]";
     }
-
 }

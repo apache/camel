@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage;
 
 import java.util.Map;
@@ -45,8 +46,8 @@ public class GoogleCloudStorageComponent extends HealthCheckComponent {
         if (remaining.startsWith("arn:")) {
             remaining = remaining.substring(remaining.lastIndexOf(':') + 1);
         }
-        final GoogleCloudStorageConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new GoogleCloudStorageConfiguration();
+        final GoogleCloudStorageConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new GoogleCloudStorageConfiguration();
         configuration.setBucketName(remaining);
 
         Endpoint endpoint = new GoogleCloudStorageEndpoint(uri, this, configuration);
@@ -64,5 +65,4 @@ public class GoogleCloudStorageComponent extends HealthCheckComponent {
     public void setConfiguration(GoogleCloudStorageConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

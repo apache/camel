@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb;
 
 import org.apache.camel.RuntimeCamelException;
@@ -26,25 +27,32 @@ public class ArangoDbConfiguration implements Cloneable {
 
     @UriParam(label = "producer")
     private String host;
+
     @UriParam(label = "producer")
     private int port;
+
     @UriParam(label = "security", secret = true)
     private String user;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "producer")
     private String documentCollection;
+
     @UriParam(label = "producer")
     private ArangoDbOperation operation;
+
     @UriParam(label = "producer")
     private String graph;
+
     @UriParam(label = "producer")
     private String vertexCollection;
+
     @UriParam(label = "producer")
     private String edgeCollection;
 
-    public ArangoDbConfiguration() {
-    }
+    public ArangoDbConfiguration() {}
 
     public String getDatabase() {
         return database;

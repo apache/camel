@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BeanConfigInject;
 import org.apache.camel.BindToRegistry;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainIoCBeanConfigInjectConfigurerTest {
 
@@ -89,7 +90,8 @@ public class MainIoCBeanConfigInjectConfigurerTest {
     public static class MyBarConfigConfigurer implements GeneratedPropertyConfigurer {
 
         @Override
-        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if (target instanceof MyBarConfig config) {
                 if ("name".equals(name)) {
                     // ensure the configurer was in use by prefix

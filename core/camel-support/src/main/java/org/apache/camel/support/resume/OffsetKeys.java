@@ -31,8 +31,7 @@ public final class OffsetKeys {
     private static class AnonymousOffsetKey<T> implements OffsetKey<T> {
         private T key;
 
-        public AnonymousOffsetKey() {
-        }
+        public AnonymousOffsetKey() {}
 
         public AnonymousOffsetKey(T key) {
             this.key = key;
@@ -72,8 +71,7 @@ public final class OffsetKeys {
         }
     }
 
-    private OffsetKeys() {
-    }
+    private OffsetKeys() {}
 
     /**
      * Creates a new offset key wrapping the given object

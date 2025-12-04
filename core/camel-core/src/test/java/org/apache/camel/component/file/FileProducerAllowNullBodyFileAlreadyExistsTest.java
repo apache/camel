@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -62,11 +63,13 @@ public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestS
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:appendTypeAppend").setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
+                from("direct:appendTypeAppend")
+                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
                         .to(fileUri("?allowNullBody=true&fileExist=Append"))
                         .to("mock:appendTypeAppendResult");
 
-                from("direct:appendTypeOverride").setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
+                from("direct:appendTypeOverride")
+                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME))
                         .to(fileUri("?allowNullBody=true&fileExist=Override"))
                         .to("mock:appendTypeOverrideResult");
             }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +37,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSupport {
 
@@ -56,7 +57,9 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
-            assertTrue(exception.getCause() instanceof CamelAuthorizationException, "Expect CamelAuthorizationException here");
+            assertTrue(
+                    exception.getCause() instanceof CamelAuthorizationException,
+                    "Expect CamelAuthorizationException here");
         }
         end.assertIsSatisfied();
     }
@@ -70,7 +73,9 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
-            assertTrue(exception.getCause() instanceof CamelAuthorizationException, "Expect CamelAuthorizationException here");
+            assertTrue(
+                    exception.getCause() instanceof CamelAuthorizationException,
+                    "Expect CamelAuthorizationException here");
         }
         end.assertIsSatisfied();
     }
@@ -84,7 +89,6 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         template.sendBody("direct:start", "hello world");
         end.assertIsSatisfied();
         SecurityContextHolder.getContext().setAuthentication(null);
-
     }
 
     @Test
@@ -103,7 +107,9 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
-            assertTrue(exception.getCause() instanceof CamelAuthorizationException, "Expect CamelAuthorizationException here");
+            assertTrue(
+                    exception.getCause() instanceof CamelAuthorizationException,
+                    "Expect CamelAuthorizationException here");
         }
         end.assertIsSatisfied();
     }
@@ -116,12 +122,11 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         subject.getPrincipals().add(authToken);
 
         template.sendBodyAndHeader("direct:start", "hello world", Exchange.AUTHENTICATION, subject);
-
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/component/spring/security/SpringSecurityCamelContext.xml");
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/spring/security/SpringSecurityCamelContext.xml");
     }
-
 }

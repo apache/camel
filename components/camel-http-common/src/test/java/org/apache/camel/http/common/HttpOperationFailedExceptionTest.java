@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class HttpOperationFailedExceptionTest {
 
     @Test
     public void testUriIsSanitized() {
-        HttpOperationFailedException httpOperationFailedException
-                = new HttpOperationFailedException("http://user:password@host", 500, "", "", null, "");
+        HttpOperationFailedException httpOperationFailedException =
+                new HttpOperationFailedException("http://user:password@host", 500, "", "", null, "");
 
         assertFalse(httpOperationFailedException.getMessage().contains("password"));
         assertFalse(httpOperationFailedException.getUri().contains("password"));

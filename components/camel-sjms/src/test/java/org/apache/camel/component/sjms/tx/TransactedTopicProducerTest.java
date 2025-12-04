@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.tx;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -28,8 +31,6 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class TransactedTopicProducerTest extends JmsTestSupport {
 
     private static final String CONNECTION_ID = "TransactedTopicProducerTest-connection";
@@ -37,8 +38,7 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
     @Produce
     protected ProducerTemplate template;
 
-    public TransactedTopicProducerTest() {
-    }
+    public TransactedTopicProducerTest() {}
 
     @Test
     public void testRoute() throws Exception {
@@ -72,22 +72,20 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
 
                 from("direct:start")
                         .to("sjms:topic:test.TransactedTopicProducerTest.topic?transacted=true")
-                        .process(
-                                new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) throws Exception {
-                                        if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
-                                            log.info("We failed.  Should roll back.");
-                                            throw new RollbackExchangeException(exchange);
-                                        } else {
-                                            log.info("We passed.  Should commit.");
-                                        }
-                                    }
-                                });
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
+                                    log.info("We failed.  Should roll back.");
+                                    throw new RollbackExchangeException(exchange);
+                                } else {
+                                    log.info("We passed.  Should commit.");
+                                }
+                            }
+                        });
 
                 from("sjms:topic:test.TransactedTopicProducerTest.topic?durableSubscriptionName=bar&transacted=true")
                         .to("mock:result");
-
             }
         };
     }

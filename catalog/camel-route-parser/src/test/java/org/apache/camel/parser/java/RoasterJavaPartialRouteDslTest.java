@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -27,9 +31,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RoasterJavaPartialRouteDslTest extends CamelTestSupport {
 
@@ -54,5 +55,4 @@ class RoasterJavaPartialRouteDslTest extends CamelTestSupport {
 
         assertTrue(tree.contains("25\tfrom"));
     }
-
 }

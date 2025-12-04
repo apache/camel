@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.controlbus;
 
 import org.apache.camel.Category;
@@ -37,23 +38,37 @@ import org.apache.camel.support.DefaultEndpoint;
  * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance
  * statistics.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language",
-             remote = false, producerOnly = true, category = { Category.CORE, Category.MONITORING })
+@UriEndpoint(
+        firstVersion = "2.11.0",
+        scheme = "controlbus",
+        title = "Control Bus",
+        syntax = "controlbus:command:language",
+        remote = false,
+        producerOnly = true,
+        category = {Category.CORE, Category.MONITORING})
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language")
     @Metadata(required = true)
     private String command;
-    @UriPath(enums = "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,jsonpath,mvel,ognl,python,ref,simple,spel,tokenize,xpath,xquery,xtokenize")
+
+    @UriPath(
+            enums =
+                    "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,jsonpath,mvel,ognl,python,ref,simple,spel,tokenize,xpath,xquery,xtokenize")
     private Language language;
+
     @UriParam
     private String routeId;
+
     @UriParam(enums = "start,stop,fail,suspend,resume,restart,status,stats")
     private String action;
+
     @UriParam(defaultValue = "1000")
     private int restartDelay = 1000;
+
     @UriParam
     private boolean async;
+
     @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
 

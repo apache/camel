@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import jakarta.activation.DataHandler;
@@ -31,10 +32,9 @@ public class SoapAttachmentResponseProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         exchange.setMessage(exchange.getIn());
-        exchange.getMessage(AttachmentMessage.class).addAttachment("responseAttachment1.txt",
-                new DataHandler("responseAttachment1", "text/plain"));
-        exchange.getMessage(AttachmentMessage.class).addAttachment("responseAttachment2.xml",
-                new DataHandler("<responseAttachment2/>", "application/xml"));
+        exchange.getMessage(AttachmentMessage.class)
+                .addAttachment("responseAttachment1.txt", new DataHandler("responseAttachment1", "text/plain"));
+        exchange.getMessage(AttachmentMessage.class)
+                .addAttachment("responseAttachment2.xml", new DataHandler("<responseAttachment2/>", "application/xml"));
     }
-
 }

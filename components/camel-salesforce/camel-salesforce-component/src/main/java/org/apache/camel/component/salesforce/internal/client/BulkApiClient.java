@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.InputStream;
@@ -65,7 +66,10 @@ public interface BulkApiClient {
     void abortJob(String jobId, Map<String, List<String>> header, JobInfoResponseCallback callback);
 
     void createBatch(
-            InputStream batchStream, String jobId, ContentType contentTypeEnum, Map<String, List<String>> header,
+            InputStream batchStream,
+            String jobId,
+            ContentType contentTypeEnum,
+            Map<String, List<String>> header,
             BatchInfoResponseCallback callback);
 
     void getBatch(String jobId, String batchId, Map<String, List<String>> header, BatchInfoResponseCallback callback);
@@ -77,12 +81,19 @@ public interface BulkApiClient {
     void getResults(String jobId, String batchId, Map<String, List<String>> header, StreamResponseCallback callback);
 
     void createBatchQuery(
-            String jobId, String soqlQuery, ContentType jobContentType, Map<String, List<String>> header,
+            String jobId,
+            String soqlQuery,
+            ContentType jobContentType,
+            Map<String, List<String>> header,
             BatchInfoResponseCallback callback);
 
-    void getQueryResultIds(String jobId, String batchId, Map<String, List<String>> header, QueryResultIdsCallback callback);
+    void getQueryResultIds(
+            String jobId, String batchId, Map<String, List<String>> header, QueryResultIdsCallback callback);
 
     void getQueryResult(
-            String jobId, String batchId, String resultId, Map<String, List<String>> header, StreamResponseCallback callback);
-
+            String jobId,
+            String batchId,
+            String resultId,
+            Map<String, List<String>> header,
+            StreamResponseCallback callback);
 }

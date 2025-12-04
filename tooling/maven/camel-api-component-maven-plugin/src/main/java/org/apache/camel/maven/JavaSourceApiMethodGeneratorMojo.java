@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.InputStream;
@@ -32,8 +33,12 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 /**
  * Parses ApiMethod signatures from source.
  */
-@Mojo(name = "fromSource", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
-      defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+@Mojo(
+        name = "fromSource",
+        requiresDependencyResolution = ResolutionScope.TEST,
+        requiresProject = true,
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        threadSafe = true)
 public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     static {
@@ -73,9 +78,15 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
 
         // for proxy class and super classes not matching excluded packages or classes
         for (Class<?> aClass = getProxyType();
-             aClass != null && !packagePatterns.matcher(aClass.getPackage().getName()).matches()
-                     && (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
-             aClass = aClass.getSuperclass()) {
+                aClass != null
+                        && !packagePatterns
+                                .matcher(aClass.getPackage().getName())
+                                .matches()
+                        && (classPatterns == null
+                                || !classPatterns
+                                        .matcher(aClass.getSimpleName())
+                                        .matches());
+                aClass = aClass.getSuperclass()) {
 
             log.debug("Processing {}", aClass.getName());
             String sourcePath = aClass.getName();
@@ -111,8 +122,10 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
             // get public method signature
             for (String method : parser.getMethodSignatures()) {
                 if (!result.containsKey(method)
-                        && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
-                        && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
+                        && (includeMethodPatterns == null
+                                || includeMethodPatterns.matcher(method).find())
+                        && (excludeMethodPatterns == null
+                                || !excludeMethodPatterns.matcher(method).find())) {
 
                     String signature = method;
                     method = method.replace("public ", "");
@@ -128,7 +141,9 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                     model.setParameterTypes(parser.getParameterTypes().get(signature));
 
                     // include getter/setters
-                    if (includeSetters != null && includeSetters && !parser.getSetterMethods().isEmpty()) {
+                    if (includeSetters != null
+                            && includeSetters
+                            && !parser.getSetterMethods().isEmpty()) {
                         var m = parser.getSetterMethods().get(signature);
                         var d = parser.getSetterDocs().get(signature);
                         if (getLog().isDebugEnabled()) {
@@ -142,15 +157,12 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                     result.put(method, model);
                 }
             }
-
         }
 
         if (result.isEmpty()) {
-            throw new MojoExecutionException(
-                    "No public non-static methods found, "
-                                             + "make sure source JAR is available as project scoped=provided and optional=true dependency");
+            throw new MojoExecutionException("No public non-static methods found, "
+                    + "make sure source JAR is available as project scoped=provided and optional=true dependency");
         }
         return new ArrayList<>(result.values());
     }
-
 }

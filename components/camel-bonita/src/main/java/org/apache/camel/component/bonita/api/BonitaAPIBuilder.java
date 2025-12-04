@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
 
 import jakarta.ws.rs.client.Client;
@@ -26,9 +27,7 @@ import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 
 public class BonitaAPIBuilder {
 
-    protected BonitaAPIBuilder() {
-
-    }
+    protected BonitaAPIBuilder() {}
 
     public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig) {
         if (bonitaAPIConfig == null) {
@@ -41,5 +40,4 @@ public class BonitaAPIBuilder {
         WebTarget webTarget = client.target(bonitaAPIConfig.getBaseBonitaURI()).path("/API/bpm");
         return new BonitaAPI(bonitaAPIConfig, webTarget);
     }
-
 }

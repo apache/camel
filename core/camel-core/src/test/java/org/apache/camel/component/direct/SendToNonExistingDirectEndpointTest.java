@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
 
@@ -37,12 +38,13 @@ public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:foo", "Hello World"),
                 "Should have thrown exception");
 
-        DirectConsumerNotAvailableException cause
-                = assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
+        DirectConsumerNotAvailableException cause =
+                assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
         assertIsInstanceOf(CamelExchangeException.class, cause); // ensure
         // backwards
         // compatibility

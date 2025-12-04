@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.consumer;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,8 +39,8 @@ public abstract class AbstractWordpressConsumer extends ScheduledPollConsumer {
         this.initConsumer();
     }
 
-    public AbstractWordpressConsumer(WordpressEndpoint endpoint, Processor processor,
-                                     ScheduledExecutorService scheduledExecutorService) {
+    public AbstractWordpressConsumer(
+            WordpressEndpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor, scheduledExecutorService);
         this.configuration = endpoint.getConfiguration();
         this.initConsumer();

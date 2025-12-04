@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.util;
 
 import java.util.regex.Matcher;
@@ -93,8 +94,7 @@ public class SubnetUtils {
         /* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
         private static final long UNSIGNED_INT_MASK = 0x0FFFFFFFFL;
 
-        private SubnetInfo() {
-        }
+        private SubnetInfo() {}
 
         private int netmask() {
             return netmask;
@@ -122,13 +122,11 @@ public class SubnetUtils {
         }
 
         private int low() {
-            return isInclusiveHostCount() ? network()
-                    : broadcastLong() - networkLong() > 1 ? network() + 1 : 0;
+            return isInclusiveHostCount() ? network() : broadcastLong() - networkLong() > 1 ? network() + 1 : 0;
         }
 
         private int high() {
-            return isInclusiveHostCount() ? broadcast()
-                    : broadcastLong() - networkLong() > 1 ? broadcast() - 1 : 0;
+            return isInclusiveHostCount() ? broadcast() : broadcastLong() - networkLong() > 1 ? broadcast() - 1 : 0;
         }
 
         /**
@@ -218,9 +216,7 @@ public class SubnetUtils {
         }
 
         public String getCidrSignature() {
-            return toCidrNotation(
-                    format(toArray(address())),
-                    format(toArray(netmask())));
+            return toCidrNotation(format(toArray(address())), format(toArray(netmask())));
         }
 
         public String[] getAllAddresses() {
@@ -240,13 +236,27 @@ public class SubnetUtils {
         @Override
         public String toString() {
             final StringBuilder buf = new StringBuilder();
-            buf.append("CIDR Signature:\t[").append(getCidrSignature()).append("]")
-                    .append(" Netmask: [").append(getNetmask()).append("]\n")
-                    .append("Network:\t[").append(getNetworkAddress()).append("]\n")
-                    .append("Broadcast:\t[").append(getBroadcastAddress()).append("]\n")
-                    .append("First Address:\t[").append(getLowAddress()).append("]\n")
-                    .append("Last Address:\t[").append(getHighAddress()).append("]\n")
-                    .append("# Addresses:\t[").append(getAddressCount()).append("]\n");
+            buf.append("CIDR Signature:\t[")
+                    .append(getCidrSignature())
+                    .append("]")
+                    .append(" Netmask: [")
+                    .append(getNetmask())
+                    .append("]\n")
+                    .append("Network:\t[")
+                    .append(getNetworkAddress())
+                    .append("]\n")
+                    .append("Broadcast:\t[")
+                    .append(getBroadcastAddress())
+                    .append("]\n")
+                    .append("First Address:\t[")
+                    .append(getLowAddress())
+                    .append("]\n")
+                    .append("Last Address:\t[")
+                    .append(getHighAddress())
+                    .append("]\n")
+                    .append("# Addresses:\t[")
+                    .append(getAddressCount())
+                    .append("]\n");
             return buf.toString();
         }
     }

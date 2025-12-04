@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +34,6 @@ import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.camel.test.junit5.params.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @Parameterized
 public class ApprovalManualIT extends AbstractApprovalManualIT {
 
@@ -45,21 +46,26 @@ public class ApprovalManualIT extends AbstractApprovalManualIT {
 
     @Test
     public void shouldSubmitAndFetchApprovals() {
-        final ApprovalResult approvalResult = template.requestBody(String.format("salesforce:approval?"//
-                                                                                 + "format=%s"//
-                                                                                 + "&approvalActionType=Submit"//
-                                                                                 + "&approvalContextId=%s"//
-                                                                                 + "&approvalNextApproverIds=%s"//
-                                                                                 + "&approvalComments=Integration test"//
-                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
-                format, accountIds.get(0), userId),
-                NOT_USED, ApprovalResult.class);
+        final ApprovalResult approvalResult = template.requestBody(
+                String.format(
+                        "salesforce:approval?" //
+                                + "format=%s" //
+                                + "&approvalActionType=Submit" //
+                                + "&approvalContextId=%s" //
+                                + "&approvalNextApproverIds=%s" //
+                                + "&approvalComments=Integration test" //
+                                + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
+                        format, accountIds.get(0), userId),
+                NOT_USED,
+                ApprovalResult.class);
 
         assertNotNull(approvalResult, "Approval should have resulted in value");
 
         assertEquals(1, approvalResult.size(), "There should be one Account waiting approval");
 
-        assertEquals("Pending", approvalResult.iterator().next().getInstanceStatus(),
+        assertEquals(
+                "Pending",
+                approvalResult.iterator().next().getInstanceStatus(),
                 "Instance status of the item in approval result should be `Pending`");
 
         // as it stands on 18.11.2016. the GET method on
@@ -76,29 +82,36 @@ public class ApprovalManualIT extends AbstractApprovalManualIT {
 
     @Test
     public void shouldSubmitBulkApprovals() {
-        final List<ApprovalRequest> approvalRequests = accountIds.stream().map(id -> {
-            final ApprovalRequest request = new ApprovalRequest();
-            request.setContextId(id);
-            request.setComments("Approval for " + id);
-            request.setActionType(Action.Submit);
+        final List<ApprovalRequest> approvalRequests = accountIds.stream()
+                .map(id -> {
+                    final ApprovalRequest request = new ApprovalRequest();
+                    request.setContextId(id);
+                    request.setComments("Approval for " + id);
+                    request.setActionType(Action.Submit);
 
-            return request;
-        }).collect(Collectors.toList());
+                    return request;
+                })
+                .collect(Collectors.toList());
 
-        final ApprovalResult approvalResult = template.requestBody(String.format("salesforce:approval?"//
-                                                                                 + "format=%s"//
-                                                                                 + "&approvalActionType=Submit"//
-                                                                                 + "&approvalNextApproverIds=%s"//
-                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
-                format, userId),
-                approvalRequests, ApprovalResult.class);
+        final ApprovalResult approvalResult = template.requestBody(
+                String.format(
+                        "salesforce:approval?" //
+                                + "format=%s" //
+                                + "&approvalActionType=Submit" //
+                                + "&approvalNextApproverIds=%s" //
+                                + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
+                        format, userId),
+                approvalRequests,
+                ApprovalResult.class);
 
-        assertEquals(approvalRequests.size(), approvalResult.size(), "Should have same number of approval results as requests");
+        assertEquals(
+                approvalRequests.size(),
+                approvalResult.size(),
+                "Should have same number of approval results as requests");
     }
 
     @Parameters
     public static Iterable<String> formats() {
         return Arrays.asList("JSON", "XML");
     }
-
 }

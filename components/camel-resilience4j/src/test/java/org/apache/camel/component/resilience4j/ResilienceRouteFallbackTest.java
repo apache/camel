@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.resilience4j;
 
 import java.util.concurrent.TimeoutException;
@@ -39,7 +40,8 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
 
     private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
-        getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
+        getMockEndpoint("mock:result")
+                .expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_STATE, "CLOSED");
 
@@ -53,20 +55,35 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("log:start").circuitBreaker().throwException(new IllegalArgumentException("Forced"))
-                        .onFallback().transform().constant("Fallback message")
-                        .end().to("log:result").to("mock:result");
+                from("direct:start")
+                        .to("log:start")
+                        .circuitBreaker()
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .onFallback()
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
 
-                from("direct:start.with.timeout.enabled").to("log:start.with.timeout.enabled").circuitBreaker()
-                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                from("direct:start.with.timeout.enabled")
+                        .to("log:start.with.timeout.enabled")
+                        .circuitBreaker()
+                        .resilience4jConfiguration()
+                        .timeoutEnabled(true)
+                        .timeoutDuration(2000)
+                        .end()
                         .throwException(new TimeoutException("Forced"))
                         .onFallback()
                         .process(e -> {
                             Assertions.assertEquals("CLOSED", e.getProperty(CircuitBreakerConstants.RESPONSE_STATE));
-                        }).transform().constant("Fallback message")
-                        .end().to("log:result").to("mock:result");
+                        })
+                        .transform()
+                        .constant("Fallback message")
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

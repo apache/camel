@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar.stream;
 
 import java.util.Collection;
@@ -36,39 +37,55 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String index;
+
     @UriParam
     private String scopes = DEFAULT_SCOPES;
+
     @UriParam
     private String clientId;
+
     @UriParam
     private String applicationName;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String refreshToken;
+
     @UriParam(label = "security", secret = true)
     private String p12FileName;
+
     @UriParam(label = "security", secret = true)
     private String emailAddress;
+
     @UriParam(label = "security", secret = true)
     private String user;
+
     @UriParam
     private String query;
+
     @UriParam(defaultValue = "10")
     private int maxResults = 10;
+
     @UriParam(defaultValue = "primary")
     private String calendarId = "primary";
+
     @UriParam(defaultValue = "true")
     private boolean consumeFromNow = true;
+
     @UriParam
     private boolean considerLastUpdate;
+
     @UriParam
     private boolean syncFlow;
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
+
     @UriParam
     private String delegate;
 

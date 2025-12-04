@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Exchange;
@@ -61,10 +62,10 @@ public class KameletUoWIssueTest extends CamelTestSupport {
                                     }
                                 });
                             }
-                        }).to("mock:{{queue}}");
+                        })
+                        .to("mock:{{queue}}");
 
-                from("direct:foo")
-                        .to("kamelet:broker?queue=foo");
+                from("direct:foo").to("kamelet:broker?queue=foo");
             }
         };
     }

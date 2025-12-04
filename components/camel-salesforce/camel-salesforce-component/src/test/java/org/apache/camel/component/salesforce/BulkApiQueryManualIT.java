@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -31,14 +36,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class BulkApiQueryManualIT extends AbstractBulkApiTestBase {
 
     @ParameterizedTest
-    @EnumSource(names = { "XML", "CSV" })
+    @EnumSource(names = {"XML", "CSV"})
     public void testQueryLifecycle(ContentType contentType) throws Exception {
         log.info("Testing Query lifecycle with {} content", contentType);
 
@@ -77,8 +78,13 @@ public class BulkApiQueryManualIT extends AbstractBulkApiTestBase {
 
         // test getQueryResult
         for (String resultId : resultIds) {
-            InputStream results = template().requestBodyAndHeader("direct:getQueryResult", batchInfo,
-                    SalesforceEndpointConfig.RESULT_ID, resultId, InputStream.class);
+            InputStream results = template()
+                    .requestBodyAndHeader(
+                            "direct:getQueryResult",
+                            batchInfo,
+                            SalesforceEndpointConfig.RESULT_ID,
+                            resultId,
+                            InputStream.class);
             assertNotNull(results, "Null query result");
         }
 
@@ -96,8 +102,7 @@ public class BulkApiQueryManualIT extends AbstractBulkApiTestBase {
         Map<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.PK_CHUNKING, true);
         headers.put(SalesforceEndpointConfig.PK_CHUNKING_CHUNK_SIZE, 1000);
-        jobInfo = template().requestBodyAndHeaders(
-                "direct:createJob", jobInfo, headers, JobInfo.class);
+        jobInfo = template().requestBodyAndHeaders("direct:createJob", jobInfo, headers, JobInfo.class);
         assertNotNull(jobInfo.getId(), "Missing JobId");
 
         // test createQuery

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import java.io.Closeable;
@@ -41,8 +42,8 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
     private final AtomicBoolean closed = new AtomicBoolean();
     private int rowNum;
 
-    public ResultSetIterator(Connection connection, Statement statement, ResultSet resultSet,
-                             RowMapper<?> rowMapper) throws SQLException {
+    public ResultSetIterator(Connection connection, Statement statement, ResultSet resultSet, RowMapper<?> rowMapper)
+            throws SQLException {
         this.connection = connection;
         this.statement = statement;
         this.resultSet = resultSet;
@@ -111,5 +112,4 @@ public class ResultSetIterator implements Iterator<Object>, Closeable {
             LOG.warn("Error by closing connection: {}", e, e);
         }
     }
-
 }

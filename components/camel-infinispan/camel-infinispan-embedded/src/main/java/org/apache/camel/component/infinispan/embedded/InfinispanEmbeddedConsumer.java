@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.EnumSet;
@@ -39,11 +40,12 @@ public class InfinispanEmbeddedConsumer
 
     private Service handler;
 
-    public InfinispanEmbeddedConsumer(InfinispanEndpoint endpoint,
-                                      Processor processor,
-                                      String cacheName,
-                                      InfinispanEmbeddedManager manager,
-                                      InfinispanEmbeddedConfiguration configuration) {
+    public InfinispanEmbeddedConsumer(
+            InfinispanEndpoint endpoint,
+            Processor processor,
+            String cacheName,
+            InfinispanEmbeddedManager manager,
+            InfinispanEmbeddedConfiguration configuration) {
         super(endpoint, processor, cacheName, manager, configuration);
     }
 
@@ -94,7 +96,8 @@ public class InfinispanEmbeddedConsumer
         @Override
         public void doStart() {
             Cache<Object, Object> remoteCache = getCache(Cache.class);
-            Query<?> query = InfinispanEmbeddedUtil.buildQuery(getConfiguration().getQueryBuilder(), remoteCache);
+            Query<?> query =
+                    InfinispanEmbeddedUtil.buildQuery(getConfiguration().getQueryBuilder(), remoteCache);
 
             continuousQuery = remoteCache.continuousQuery();
             continuousQuery.addContinuousQueryListener(query, this);
@@ -151,5 +154,4 @@ public class InfinispanEmbeddedConsumer
             getCache(Cache.class).removeListener(listener);
         }
     }
-
 }

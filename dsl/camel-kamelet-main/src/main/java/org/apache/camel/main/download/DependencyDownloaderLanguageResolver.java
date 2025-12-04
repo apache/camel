@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.Arrays;
@@ -34,9 +35,8 @@ import org.apache.camel.tooling.model.LanguageModel;
  */
 public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver {
 
-    private static final String[] ACCEPTED_STUB_NAMES = new String[] {
-            "constant", "exchangeProperty", "header", "ref", "simple", "variable"
-    };
+    private static final String[] ACCEPTED_STUB_NAMES =
+            new String[] {"constant", "exchangeProperty", "header", "ref", "simple", "variable"};
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
@@ -102,5 +102,4 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
         }
         return !stubbed;
     }
-
 }

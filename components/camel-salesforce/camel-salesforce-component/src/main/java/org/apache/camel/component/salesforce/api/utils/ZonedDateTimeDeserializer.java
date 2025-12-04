@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
+
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
-
-import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 final class ZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> {
 
@@ -32,5 +33,4 @@ final class ZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime>
     private ZonedDateTimeDeserializer() {
         super(InstantDeserializer.ZONED_DATE_TIME, ISO_OFFSET_DATE_TIME);
     }
-
 }

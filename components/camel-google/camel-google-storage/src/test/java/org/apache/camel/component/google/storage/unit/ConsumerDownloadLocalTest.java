@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.unit;
 
 import java.io.File;
@@ -45,22 +46,20 @@ public class ConsumerDownloadLocalTest extends GoogleCloudStorageBaseTest {
 
                 String endpoint = "google-storage://myCamelBucket?autoCreateBucket=true";
 
-                from("direct:putObject")
-                        .startupOrder(1)
-                        .to(endpoint)
-                        .to("mock:result");
+                from("direct:putObject").startupOrder(1).to(endpoint).to("mock:result");
 
                 from("google-storage://myCamelBucket?"
-                     + "moveAfterRead=true"
-                     + "&destinationBucket=camelDestinationBucket"
-                     + "&autoCreateBucket=true"
-                     + "&deleteAfterRead=true"
-                     + "&includeBody=true"
-                     + "&downloadFileName=target")
+                                + "moveAfterRead=true"
+                                + "&destinationBucket=camelDestinationBucket"
+                                + "&autoCreateBucket=true"
+                                + "&deleteAfterRead=true"
+                                + "&includeBody=true"
+                                + "&downloadFileName=target")
                         .startupOrder(2)
-                        //.log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}, body=${body}")
+                        // .log("consuming:
+                        // ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName},
+                        // body=${body}")
                         .to("mock:consumedObjects");
-
             }
         };
     }
@@ -76,7 +75,7 @@ public class ConsumerDownloadLocalTest extends GoogleCloudStorageBaseTest {
         for (int i = 0; i < numberOfFiles; i++) {
             final String filename = String.format("file_%s.txt", i);
             final String body = String.format("body_%s", i);
-            //upload a file
+            // upload a file
             template.send("direct:putObject", exchange -> {
                 exchange.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, filename);
                 exchange.getIn().setBody(body);
@@ -92,5 +91,4 @@ public class ConsumerDownloadLocalTest extends GoogleCloudStorageBaseTest {
         Assertions.assertTrue(new File("target/file_1.txt").exists());
         Assertions.assertTrue(new File("target/file_2.txt").exists());
     }
-
 }

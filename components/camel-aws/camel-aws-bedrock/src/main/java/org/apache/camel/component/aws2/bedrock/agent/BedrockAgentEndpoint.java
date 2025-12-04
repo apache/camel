@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agent;
 
 import java.util.HashMap;
@@ -36,9 +37,13 @@ import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
 /**
  * Operate on AWS Bedrock through its Agent.
  */
-@UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent", title = "AWS Bedrock Agent",
-             syntax = "aws-bedrock-agent:label", category = { Category.AI, Category.CLOUD },
-             headersClass = BedrockAgentRuntimeConstants.class)
+@UriEndpoint(
+        firstVersion = "4.5.0",
+        scheme = "aws-bedrock-agent",
+        title = "AWS Bedrock Agent",
+        syntax = "aws-bedrock-agent:label",
+        category = {Category.AI, Category.CLOUD},
+        headersClass = BedrockAgentRuntimeConstants.class)
 public class BedrockAgentEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockAgentClient bedrockAgentClient;

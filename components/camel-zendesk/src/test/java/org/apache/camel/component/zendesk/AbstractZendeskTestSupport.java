@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zendesk;
 
 import java.util.HashMap;
@@ -56,8 +57,8 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
     public static boolean hasCredentials() {
         Properties properties = loadProperties();
 
-        return !properties.getProperty("username", "").isEmpty() &&
-                !properties.getProperty("password", "").isEmpty();
+        return !properties.getProperty("username", "").isEmpty()
+                && !properties.getProperty("password", "").isEmpty();
     }
 
     @Override
@@ -73,23 +74,33 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
 
         PropertyBindingSupport.bindProperties(context, configuration, options);
 
-        configuration.setServerUrl(System.getenv(ENV_ZENDESK_SERVER_URL) != null
-                ? System.getenv(ENV_ZENDESK_SERVER_URL) : configuration.getServerUrl());
-        configuration.setUsername(System.getenv(ENV_ZENDESK_USERNAME) != null
-                ? System.getenv(ENV_ZENDESK_USERNAME) : configuration.getUsername());
-        configuration.setPassword(System.getenv(ENV_ZENDESK_PASSWORD) != null
-                ? System.getenv(ENV_ZENDESK_PASSWORD) : configuration.getPassword());
+        configuration.setServerUrl(
+                System.getenv(ENV_ZENDESK_SERVER_URL) != null
+                        ? System.getenv(ENV_ZENDESK_SERVER_URL)
+                        : configuration.getServerUrl());
+        configuration.setUsername(
+                System.getenv(ENV_ZENDESK_USERNAME) != null
+                        ? System.getenv(ENV_ZENDESK_USERNAME)
+                        : configuration.getUsername());
+        configuration.setPassword(
+                System.getenv(ENV_ZENDESK_PASSWORD) != null
+                        ? System.getenv(ENV_ZENDESK_PASSWORD)
+                        : configuration.getPassword());
         configuration.setToken(
                 System.getenv(ENV_ZENDESK_TOKEN) != null ? System.getenv(ENV_ZENDESK_TOKEN) : configuration.getToken());
-        configuration.setOauthToken(System.getenv(ENV_ZENDESK_OAUTH_TOKEN) != null
-                ? System.getenv(ENV_ZENDESK_OAUTH_TOKEN) : configuration.getOauthToken());
+        configuration.setOauthToken(
+                System.getenv(ENV_ZENDESK_OAUTH_TOKEN) != null
+                        ? System.getenv(ENV_ZENDESK_OAUTH_TOKEN)
+                        : configuration.getOauthToken());
         configuration.setServerUrl(System.getProperty(SYSPROP_ZENDESK_SERVER_URL, configuration.getServerUrl()));
         configuration.setUsername(System.getProperty(SYSPROP_ZENDESK_USERNAME, configuration.getUsername()));
         configuration.setPassword(System.getProperty(SYSPROP_ZENDESK_PASSWORD, configuration.getPassword()));
         configuration.setToken(System.getProperty(SYSPROP_ZENDESK_TOKEN, configuration.getToken()));
         configuration.setOauthToken(System.getProperty(SYSPROP_ZENDESK_OAUTH_TOKEN, configuration.getOauthToken()));
-        if (configuration.getServerUrl() == null || configuration.getUsername() == null
-                || configuration.getPassword() == null && configuration.getToken() == null
+        if (configuration.getServerUrl() == null
+                || configuration.getUsername() == null
+                || configuration.getPassword() == null
+                        && configuration.getToken() == null
                         && configuration.getOauthToken() == null) {
             throw new IllegalArgumentException("Zendesk configuration is missing");
         }
@@ -111,5 +122,4 @@ public class AbstractZendeskTestSupport extends CamelTestSupport {
     protected <T> T requestBody(String endpointUri, Object body) {
         return (T) template.requestBody(endpointUri, body);
     }
-
 }

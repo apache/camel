@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
@@ -95,9 +96,14 @@ public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
     public synchronized RouteMetric createOrGetContextMetric(OpenTelemetryRoutePolicy policy) {
         if (contextMetric == null) {
             contextMetric = new OpenTelemetryContextMetricsStatistics(
-                    meter, camelContext, policy.getNamingStrategy(), policy.getConfiguration(),
-                    policy.isRegisterKamelets(), policy.isRegisterTemplates(),
-                    policy.getTimeUnit(), policy.getLongTaskTimeUnit());
+                    meter,
+                    camelContext,
+                    policy.getNamingStrategy(),
+                    policy.getConfiguration(),
+                    policy.isRegisterKamelets(),
+                    policy.isRegisterTemplates(),
+                    policy.getTimeUnit(),
+                    policy.getLongTaskTimeUnit());
         }
         return contextMetric;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
@@ -42,5 +43,4 @@ public class AppendingProcessor implements Processor {
         String body = in.getBody(String.class);
         in.setBody(body + suffixString);
     }
-
 }

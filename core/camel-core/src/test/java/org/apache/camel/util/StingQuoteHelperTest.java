@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -216,8 +217,8 @@ public class StingQuoteHelperTest {
 
     @Test
     public void testSpaceSeparator() {
-        String[] out = StringQuoteHelper
-                .splitSafeQuote("dependency=mvn:org.my:application:1.0 dependency=mvn:com.foo:myapp:2.1", ' ');
+        String[] out = StringQuoteHelper.splitSafeQuote(
+                "dependency=mvn:org.my:application:1.0 dependency=mvn:com.foo:myapp:2.1", ' ');
         assertEquals(2, out.length);
         assertEquals("dependency=mvn:org.my:application:1.0", out[0]);
         assertEquals("dependency=mvn:com.foo:myapp:2.1", out[1]);
@@ -226,7 +227,8 @@ public class StingQuoteHelperTest {
     @Test
     public void testSpaceSeparatorQuote() {
         String[] out = StringQuoteHelper.splitSafeQuote(
-                "dependency=mvn:org.my:application:1.0 property=hi='Hello World' dependency=mvn:com.foo:myapp:2.1", ' ');
+                "dependency=mvn:org.my:application:1.0 property=hi='Hello World' dependency=mvn:com.foo:myapp:2.1",
+                ' ');
         assertEquals(3, out.length);
         assertEquals("dependency=mvn:org.my:application:1.0", out[0]);
         assertEquals("property=hi=Hello World", out[1]);
@@ -255,5 +257,4 @@ public class StingQuoteHelperTest {
         assertEquals("\"world\"", out[1]);
         assertEquals("123", out[2]);
     }
-
 }

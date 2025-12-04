@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote.transform;
 
 import java.util.ArrayList;
@@ -34,34 +35,41 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 
-@DataTypeTransformer(name = "infinispan:embeddings",
-                     description = "Prepares the message to become an object writable by the Infinispan component")
+@DataTypeTransformer(
+        name = "infinispan:embeddings",
+        description = "Prepares the message to become an object writable by the Infinispan component")
 public class InfinispanEmbeddingsDataTypeTransformer extends Transformer {
-    private static final Set<InfinispanOperation> ALLOWED_EMBEDDING_OPERATIONS
-            = Set.of(InfinispanOperation.PUT, InfinispanOperation.PUTASYNC, InfinispanOperation.PUTIFABSENT,
-                    InfinispanOperation.PUTIFABSENTASYNC, InfinispanOperation.REPLACE, InfinispanOperation.REPLACEASYNC,
-                    InfinispanOperation.QUERY);
+    private static final Set<InfinispanOperation> ALLOWED_EMBEDDING_OPERATIONS = Set.of(
+            InfinispanOperation.PUT,
+            InfinispanOperation.PUTASYNC,
+            InfinispanOperation.PUTIFABSENT,
+            InfinispanOperation.PUTIFABSENTASYNC,
+            InfinispanOperation.REPLACE,
+            InfinispanOperation.REPLACEASYNC,
+            InfinispanOperation.QUERY);
 
     @Override
     public void transform(Message message, DataType from, DataType to) throws Exception {
-        InfinispanOperation operation
-                = message.getHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT, InfinispanOperation.class);
-        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        InfinispanOperation operation =
+                message.getHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT, InfinispanOperation.class);
+        Embedding embedding =
+                message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
 
         if (ALLOWED_EMBEDDING_OPERATIONS.contains(operation) && embedding != null) {
             if (operation.equals(InfinispanOperation.QUERY)) {
-                InfinispanQueryBuilder builder
-                        = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
+                InfinispanQueryBuilder builder =
+                        message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
                 if (builder == null) {
-                    message.setHeader(InfinispanConstants.QUERY_BUILDER, new InfinispanVectorQueryBuilder(embedding.vector()));
+                    message.setHeader(
+                            InfinispanConstants.QUERY_BUILDER, new InfinispanVectorQueryBuilder(embedding.vector()));
                 }
             } else {
                 String text = null;
                 List<String> metadataKeys = null;
                 List<String> metadataValues = null;
 
-                TextSegment textSegment
-                        = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENT, TextSegment.class);
+                TextSegment textSegment =
+                        message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENT, TextSegment.class);
                 if (textSegment != null) {
                     text = textSegment.text();
                     metadataKeys = new ArrayList<>();
@@ -74,13 +82,13 @@ public class InfinispanEmbeddingsDataTypeTransformer extends Transformer {
                     }
                 }
 
-                InfinispanRemoteEmbedding item
-                        = new InfinispanRemoteEmbedding(
-                                message.getMessageId(), embedding.vector(), text, metadataKeys, metadataValues);
+                InfinispanRemoteEmbedding item = new InfinispanRemoteEmbedding(
+                        message.getMessageId(), embedding.vector(), text, metadataKeys, metadataValues);
 
-                if (operation.equals(InfinispanOperation.REPLACE) || operation.equals(InfinispanOperation.REPLACEASYNC)) {
-                    InfinispanRemoteEmbedding oldValue
-                            = message.getHeader(InfinispanConstants.OLD_VALUE, InfinispanRemoteEmbedding.class);
+                if (operation.equals(InfinispanOperation.REPLACE)
+                        || operation.equals(InfinispanOperation.REPLACEASYNC)) {
+                    InfinispanRemoteEmbedding oldValue =
+                            message.getHeader(InfinispanConstants.OLD_VALUE, InfinispanRemoteEmbedding.class);
                     if (oldValue != null) {
                         message.setHeader(InfinispanConstants.KEY, oldValue.getId());
                     }

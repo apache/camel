@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerSyncTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerSyncTest.class);
@@ -105,12 +106,15 @@ public class ThriftConsumerSyncTest extends CamelTestSupport {
             public void configure() {
 
                 from("thrift://localhost:" + THRIFT_TEST_PORT
-                     + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
-                        .to("mock:thrift-service").choice()
+                                + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
+                        .to("mock:thrift-service")
+                        .choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
-                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2)
+                                .toString()))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo"))
-                        .setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
+                        .setBody(simple("${body[0]}"))
+                        .bean(new CalculatorMessageBuilder(), "echo");
             }
         };
     }

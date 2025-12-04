@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.process;
 
 import java.io.File;
@@ -64,7 +65,8 @@ public class CoverageResultsProcessor {
 
     private final TestResultParser testResultParser = new TestResultParser();
 
-    private final XmlToCamelRouteCoverageConverter xmlToCamelRouteCoverageConverter = new XmlToCamelRouteCoverageConverter();
+    private final XmlToCamelRouteCoverageConverter xmlToCamelRouteCoverageConverter =
+            new XmlToCamelRouteCoverageConverter();
 
     public String generateReport(MavenProject project, final File xmlPath, final File htmlPath) throws IOException {
 
@@ -129,7 +131,6 @@ public class CoverageResultsProcessor {
                 if (!key.equals(REST)) {
 
                     eipAttributes.forEach(eipAttribute -> {
-
                         EipStatistic eipStatistic = new EipStatistic();
                         eipStatistic.setId(key);
                         eipStatistic.setTested(eipAttribute.getExchangesTotal() > 0);
@@ -137,7 +138,6 @@ public class CoverageResultsProcessor {
                         eipStatistic.setProperties(eipAttribute.getProperties());
 
                         eipAttribute.getChildEipMap().forEach((childKey, childEipList) -> {
-
                             childEipList.forEach(childEip -> {
                                 ChildEipStatistic childEipStatistic = new ChildEipStatistic();
                                 childEipStatistic.setId(childEip.getId());
@@ -167,7 +167,6 @@ public class CoverageResultsProcessor {
     protected void generateChildEipStatistics(ChildEip childEip, ChildEipStatistic childEipStatistic) {
 
         childEip.getEipAttributeMap().forEach((key, value) -> {
-
             if (value instanceof EipAttribute) {
 
                 EipAttribute eipAttribute = (EipAttribute) value;
@@ -203,10 +202,9 @@ public class CoverageResultsProcessor {
 
         // get a de-duplicated list of the routes
         testResults.forEach(testResult -> {
-
-            List<Route> routeList = testResult.getCamelContextRouteCoverage().getRoutes().getRouteList();
+            List<Route> routeList =
+                    testResult.getCamelContextRouteCoverage().getRoutes().getRouteList();
             routeList.forEach(route -> {
-
                 String routeId = route.getId();
 
                 Route mappedRoute = routeMap.get(routeId);
@@ -239,7 +237,8 @@ public class CoverageResultsProcessor {
 
         // create a map using the 'from' URI as the key to eliminate duplicates
         routeMap.forEach((key, route) -> {
-            Map<String, Object> from = (Map<String, Object>) route.getComponentsMap().get(FROM);
+            Map<String, Object> from =
+                    (Map<String, Object>) route.getComponentsMap().get(FROM);
             String uri = from.get(URI).toString();
             squashMap.put(uri, key);
         });
@@ -256,7 +255,6 @@ public class CoverageResultsProcessor {
 
         // generate the statistics for each route
         routeMap.values().forEach(route -> {
-
             String routeId = route.getId();
             RouteStatistic routeStatistic = getRouteStatistic(routeId);
 

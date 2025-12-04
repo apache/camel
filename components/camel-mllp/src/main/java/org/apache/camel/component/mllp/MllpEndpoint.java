@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.io.IOException;
@@ -49,9 +50,14 @@ import org.slf4j.Logger;
  * <p/>
  */
 @ManagedResource(description = "MLLP Endpoint")
-@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port",
-             category = { Category.HEALTH }, generateConfigurer = true,
-             headersClass = MllpConstants.class)
+@UriEndpoint(
+        scheme = "mllp",
+        firstVersion = "2.17.0",
+        title = "MLLP",
+        syntax = "mllp:hostname:port",
+        category = {Category.HEALTH},
+        generateConfigurer = true,
+        headersClass = MllpConstants.class)
 public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriPath
@@ -339,19 +345,25 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         final String logMessageFormat = "Exchange property {} = {} - {} connection";
         boolean answer = true;
 
-        final boolean resetBeforeSend
-                = exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND, false, boolean.class);
+        final boolean resetBeforeSend =
+                exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND, false, boolean.class);
         if (resetBeforeSend) {
-            log.warn(logMessageFormat, MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND,
-                    exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND), "resetting");
+            log.warn(
+                    logMessageFormat,
+                    MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND,
+                    exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND),
+                    "resetting");
             doConnectionClose(socket, true, null);
             answer = false;
         } else {
-            final boolean closeBeforeSend
-                    = exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND, false, boolean.class);
+            final boolean closeBeforeSend =
+                    exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND, false, boolean.class);
             if (closeBeforeSend) {
-                log.warn(logMessageFormat, MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND,
-                        exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND), "closing");
+                log.warn(
+                        logMessageFormat,
+                        MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND,
+                        exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND),
+                        "closing");
                 doConnectionClose(socket, false, null);
                 answer = false;
             }
@@ -364,19 +376,25 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         final String logMessageFormat = "Exchange property {} = {} - {} connection";
         boolean answer = true;
 
-        final boolean resetAfterSend
-                = exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND, false, boolean.class);
+        final boolean resetAfterSend =
+                exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND, false, boolean.class);
         if (resetAfterSend) {
-            log.warn(logMessageFormat, MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND,
-                    exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND), "resetting");
+            log.warn(
+                    logMessageFormat,
+                    MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND,
+                    exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND),
+                    "resetting");
             doConnectionClose(socket, true, log);
             answer = false;
         } else {
-            final boolean closeAfterSend
-                    = exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND, false, boolean.class);
+            final boolean closeAfterSend =
+                    exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND, false, boolean.class);
             if (closeAfterSend) {
-                log.warn(logMessageFormat, MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND,
-                        exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND), "closing");
+                log.warn(
+                        logMessageFormat,
+                        MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND,
+                        exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND),
+                        "closing");
                 doConnectionClose(socket, false, log);
                 answer = false;
             }
@@ -397,29 +415,43 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
             SocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
             if (!socket.isConnected()) {
                 if (log != null) {
-                    log.debug(ignoringCallLogFormat, reset ? "Reset" : "Close", "Socket is not connected", localSocketAddress,
+                    log.debug(
+                            ignoringCallLogFormat,
+                            reset ? "Reset" : "Close",
+                            "Socket is not connected",
+                            localSocketAddress,
                             remoteSocketAddress);
                 }
             } else if (socket.isClosed()) {
                 if (log != null) {
-                    log.debug(ignoringCallLogFormat, reset ? "Reset" : "Close", "Socket is already closed", localSocketAddress,
+                    log.debug(
+                            ignoringCallLogFormat,
+                            reset ? "Reset" : "Close",
+                            "Socket is already closed",
+                            localSocketAddress,
                             remoteSocketAddress);
                 }
             } else {
                 this.updateLastConnectionTerminatedTicks();
-                final String ignoringExceptionStringFormat
-                        = "Ignoring %s encountered calling %s on Socket: localAddress=%s remoteAddress=%s";
+                final String ignoringExceptionStringFormat =
+                        "Ignoring %s encountered calling %s on Socket: localAddress=%s remoteAddress=%s";
                 if (!socket.isInputShutdown()) {
                     if (log != null) {
-                        log.trace("Shutting down input on Socket: localAddress={} remoteAddress={}", localSocketAddress,
+                        log.trace(
+                                "Shutting down input on Socket: localAddress={} remoteAddress={}",
+                                localSocketAddress,
                                 remoteSocketAddress);
                     }
                     try {
                         socket.shutdownInput();
                     } catch (Exception ioEx) {
                         if (log != null && log.isDebugEnabled()) {
-                            String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(),
-                                    "shutdownInput()", localSocketAddress, remoteSocketAddress);
+                            String logMessage = String.format(
+                                    ignoringExceptionStringFormat,
+                                    ioEx.getClass().getSimpleName(),
+                                    "shutdownInput()",
+                                    localSocketAddress,
+                                    remoteSocketAddress);
                             log.debug(logMessage, ioEx);
                         }
                     }
@@ -427,15 +459,21 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
 
                 if (!socket.isOutputShutdown()) {
                     if (log != null) {
-                        log.trace("Shutting down output on Socket: localAddress={} remoteAddress={}", localSocketAddress,
+                        log.trace(
+                                "Shutting down output on Socket: localAddress={} remoteAddress={}",
+                                localSocketAddress,
                                 remoteSocketAddress);
                     }
                     try {
                         socket.shutdownOutput();
                     } catch (IOException ioEx) {
                         if (log != null && log.isDebugEnabled()) {
-                            String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(),
-                                    "shutdownOutput()", localSocketAddress, remoteSocketAddress);
+                            String logMessage = String.format(
+                                    ignoringExceptionStringFormat,
+                                    ioEx.getClass().getSimpleName(),
+                                    "shutdownOutput()",
+                                    localSocketAddress,
+                                    remoteSocketAddress);
                             log.debug(logMessage, ioEx);
                         }
                     }
@@ -445,16 +483,23 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
                     final boolean on = true;
                     final int linger = 0;
                     if (log != null) {
-                        log.trace("Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}", linger,
-                                localSocketAddress, remoteSocketAddress);
+                        log.trace(
+                                "Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}",
+                                linger,
+                                localSocketAddress,
+                                remoteSocketAddress);
                     }
                     try {
                         socket.setSoLinger(on, linger);
                     } catch (IOException ioEx) {
                         if (log != null && log.isDebugEnabled()) {
                             String methodString = String.format("setSoLinger(%b, %d)", on, linger);
-                            String logMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(),
-                                    methodString, localSocketAddress, remoteSocketAddress);
+                            String logMessage = String.format(
+                                    ignoringExceptionStringFormat,
+                                    ioEx.getClass().getSimpleName(),
+                                    methodString,
+                                    localSocketAddress,
+                                    remoteSocketAddress);
                             log.debug(logMessage, ioEx);
                         }
                     }
@@ -462,14 +507,20 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
 
                 try {
                     if (log != null) {
-                        log.trace("Resetting Socket: localAddress={} remoteAddress={}", localSocketAddress,
+                        log.trace(
+                                "Resetting Socket: localAddress={} remoteAddress={}",
+                                localSocketAddress,
                                 remoteSocketAddress);
                     }
                     socket.close();
                 } catch (IOException ioEx) {
                     if (log != null && log.isDebugEnabled()) {
-                        String warningMessage = String.format(ignoringExceptionStringFormat, ioEx.getClass().getSimpleName(),
-                                "close()", localSocketAddress, remoteSocketAddress);
+                        String warningMessage = String.format(
+                                ignoringExceptionStringFormat,
+                                ioEx.getClass().getSimpleName(),
+                                "close()",
+                                localSocketAddress,
+                                remoteSocketAddress);
                         log.debug(warningMessage, ioEx);
                     }
                 }

@@ -17,6 +17,8 @@
 
 package org.apache.camel.support.resume;
 
+import static java.lang.String.format;
+
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
@@ -31,13 +33,10 @@ import org.apache.camel.spi.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.String.format;
-
 public final class AdapterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AdapterHelper.class);
 
-    private AdapterHelper() {
-    }
+    private AdapterHelper() {}
 
     public static ResumeAdapter eval(CamelContext context, ResumeAware<?> resumeAware, ResumeStrategy resumeStrategy) {
         assert context != null;
@@ -45,35 +44,42 @@ public final class AdapterHelper {
         assert resumeStrategy != null;
 
         LOG.debug("Using the factory finder to search for the resume adapter");
-        final FactoryFinder factoryFinder
-                = context.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+        final FactoryFinder factoryFinder =
+                context.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
 
         LOG.debug("Creating a new resume adapter");
-        Optional<ResumeAdapter> adapterOptional
-                = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
+        Optional<ResumeAdapter> adapterOptional =
+                factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
 
         if (adapterOptional.isEmpty()) {
-            throw new RuntimeCamelException("Cannot find a resume adapter class in the consumer classpath or in the registry");
+            throw new RuntimeCamelException(
+                    "Cannot find a resume adapter class in the consumer classpath or in the registry");
         }
 
         final ResumeAdapter resumeAdapter = adapterOptional.get();
-        LOG.debug("Using the acquired resume adapter: {}", resumeAdapter.getClass().getName());
+        LOG.debug(
+                "Using the acquired resume adapter: {}",
+                resumeAdapter.getClass().getName());
 
         if (resumeAdapter instanceof Cacheable cacheableAdapter) {
-            final ResumeStrategyConfiguration resumeStrategyConfiguration = resumeStrategy.getResumeStrategyConfiguration();
+            final ResumeStrategyConfiguration resumeStrategyConfiguration =
+                    resumeStrategy.getResumeStrategyConfiguration();
 
             final ResumeCache<?> resumeCache = resumeStrategyConfiguration.getResumeCache();
             if (resumeCache != null) {
                 cacheableAdapter.setCache(resumeCache);
             } else {
-                LOG.error("No cache was provided in the configuration for the cacheable resume adapter {}",
+                LOG.error(
+                        "No cache was provided in the configuration for the cacheable resume adapter {}",
                         resumeAdapter.getClass().getName());
-                throw new RuntimeCamelException(
-                        format("No cache was provided in the configuration for the cacheable resume adapter %s",
-                                resumeAdapter.getClass().getName()));
+                throw new RuntimeCamelException(format(
+                        "No cache was provided in the configuration for the cacheable resume adapter %s",
+                        resumeAdapter.getClass().getName()));
             }
         } else {
-            LOG.debug("The resume adapter {} is not cacheable", resumeAdapter.getClass().getName());
+            LOG.debug(
+                    "The resume adapter {} is not cacheable",
+                    resumeAdapter.getClass().getName());
         }
 
         return resumeAdapter;

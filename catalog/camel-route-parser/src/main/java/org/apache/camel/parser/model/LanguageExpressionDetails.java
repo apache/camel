@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.model;
 
 abstract class LanguageExpressionDetails {
@@ -105,5 +106,4 @@ abstract class LanguageExpressionDetails {
     public void setExpression(boolean expression) {
         this.expression = expression;
     }
-
 }

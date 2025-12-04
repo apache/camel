@@ -21,9 +21,10 @@ import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 
 @InfraService(
-              service = AWSInfraService.class,
-              description = "Local AWS Services with LocalStack",
-              serviceAlias = "aws", serviceImplementationAlias = "cloud-watch")
+        service = AWSInfraService.class,
+        description = "Local AWS Services with LocalStack",
+        serviceAlias = "aws",
+        serviceImplementationAlias = "cloud-watch")
 public class AWSCloudWatchLocalContainerInfraService extends AWSLocalContainerInfraService {
     public AWSCloudWatchLocalContainerInfraService() {
         super(Service.CLOUD_WATCH);

@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -53,21 +63,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public abstract class HttpsV3Test extends ManagedCamelTestSupport {
 
-    public static WireMockServer petstore = new WireMockServer(
-            wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
-                    .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-                    .keystorePassword("changeit").keyManagerPassword("changeit"));
+    public static WireMockServer petstore = new WireMockServer(wireMockConfig()
+            .httpServerFactory(new WireMockJettyServerFactory())
+            .containerThreads(13)
+            .dynamicPort()
+            .dynamicHttpsPort()
+            .keystorePath(Resources.getResource("localhost.p12").toString())
+            .keystoreType("PKCS12")
+            .keystorePassword("changeit")
+            .keyManagerPassword("changeit"));
 
     static final Object NO_BODY = null;
 
@@ -100,8 +106,8 @@ public abstract class HttpsV3Test extends ManagedCamelTestSupport {
         assertEquals(14, pet.getId());
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
-        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-                equalTo("application/xml,application/json")));
+        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14"))
+                .withHeader("Accept", equalTo("application/xml,application/json")));
     }
 
     @Override
@@ -155,21 +161,31 @@ public abstract class HttpsV3Test extends ManagedCamelTestSupport {
 
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
-        petstore.stubFor(get(urlEqualTo("/openapi-v3.json")).willReturn(aResponse().withBody(
-                Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsV3Test.class.getResource("/openapi-v3.json").toURI())))));
+        petstore.stubFor(get(urlEqualTo("/openapi-v3.json"))
+                .willReturn(aResponse()
+                        .withBody(Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsV3Test.class
+                                .getResource("/openapi-v3.json")
+                                .toURI())))));
         petstore.stubFor(
-                get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+                get(urlEqualTo("/api/v3/pet/14"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpURLConnection.HTTP_OK)
+                                        .withBody(
+                                                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
 
     static SSLContextParameters createHttpsParameters(final CamelContext camelContext) throws Exception {
         final TrustManagersParameters trustManagerParameters = new TrustManagersParameters();
         trustManagerParameters.setCamelContext(camelContext);
-        final TrustManagerFactory trustManagerFactory
-                = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        final TrustManagerFactory trustManagerFactory =
+                TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         final HttpsSettings httpsSettings = petstore.getOptions().httpsSettings();
-        final KeyStore trustStore = CertificateUtils.getKeyStore(Resource.newResource(httpsSettings.keyStorePath()),
-                httpsSettings.keyStoreType(), null, httpsSettings.keyStorePassword());
+        final KeyStore trustStore = CertificateUtils.getKeyStore(
+                Resource.newResource(httpsSettings.keyStorePath()),
+                httpsSettings.keyStoreType(),
+                null,
+                httpsSettings.keyStorePassword());
         trustManagerFactory.init(trustStore);
         final TrustManager trustManager = trustManagerFactory.getTrustManagers()[0];
         trustManagerParameters.setTrustManager(trustManager);
@@ -183,5 +199,4 @@ public abstract class HttpsV3Test extends ManagedCamelTestSupport {
         sslContextParameters.setSecureSocketProtocol("TLSv1.3");
         return sslContextParameters;
     }
-
 }

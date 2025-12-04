@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
@@ -36,11 +37,15 @@ public final class RuntimeUtil {
 
     private static final AtomicBoolean INIT_DONE = new AtomicBoolean();
 
-    private RuntimeUtil() {
-    }
+    private RuntimeUtil() {}
 
     public static void configureLog(
-            String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
+            String level,
+            boolean color,
+            boolean json,
+            boolean script,
+            boolean export,
+            String loggingConfigPath,
             List<String> loggingCategories)
             throws Exception {
         if (INIT_DONE.compareAndSet(false, true)) {
@@ -51,7 +56,8 @@ public final class RuntimeUtil {
 
             if (loggingConfigPath != null) {
                 // ust custom logging configuration as-is
-                Configurator.initialize("CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
+                Configurator.initialize(
+                        "CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
             } else if (loggingCategories != null && !loggingCategories.isEmpty()) {
                 // enrich logging file with custom logging categories
                 String name = "log4j2-no-color.properties";
@@ -88,7 +94,8 @@ public final class RuntimeUtil {
                 name = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/log4j2.properties";
                 Files.writeString(Paths.get(name), content);
 
-                Configurator.initialize("CamelJBang", Path.of(name).toAbsolutePath().toUri().toString());
+                Configurator.initialize(
+                        "CamelJBang", Path.of(name).toAbsolutePath().toUri().toString());
             } else {
                 // use out of the box logging configuration
                 if (export) {
@@ -178,7 +185,8 @@ public final class RuntimeUtil {
         return loadPropertiesLines(file.toPath());
     }
 
-    public static List<String> getCommaSeparatedPropertyAsList(Properties props, String key, List<String> defaultValue) {
+    public static List<String> getCommaSeparatedPropertyAsList(
+            Properties props, String key, List<String> defaultValue) {
         var value = props.getProperty(key);
         return Optional.ofNullable(value)
                 .map(val -> Arrays.asList(val.split(",")))
@@ -210,5 +218,4 @@ public final class RuntimeUtil {
     public static String getPid() {
         return String.valueOf(ProcessHandle.current().pid());
     }
-
 }

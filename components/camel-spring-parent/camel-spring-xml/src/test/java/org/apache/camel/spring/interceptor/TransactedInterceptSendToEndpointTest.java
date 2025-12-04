@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -56,14 +57,18 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
                 from("direct:okay")
                         .transacted()
                         .to("direct:foo")
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 from("direct:fail")
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
                         .to("direct:bar")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
 
                 from("direct:foo").to("log:okay");
 
@@ -71,5 +76,4 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
             }
         };
     }
-
 }

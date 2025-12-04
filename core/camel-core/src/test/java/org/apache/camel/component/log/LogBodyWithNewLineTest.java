@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringWriter;
 
@@ -32,8 +35,6 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LogBodyWithNewLineTest extends ContextTestSupport {
 
     private StringWriter writer;
@@ -48,9 +49,12 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
         final Configuration config = ctx.getConfiguration();
 
         Appender appender = WriterAppender.newBuilder()
-                .setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN).build())
+                .setLayout(PatternLayout.newBuilder()
+                        .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
+                        .build())
                 .setTarget(writer)
-                .setName("Writer").build();
+                .setName("Writer")
+                .build();
         appender.start();
 
         final String loggerName = "logger_name";
@@ -62,7 +66,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
                 .withLevel(Level.INFO)
                 .withAdditivity(true)
                 .withConfig(config)
-                .withRefs(new AppenderRef[] { AppenderRef.createAppenderRef("Writer", null, null) })
+                .withRefs(new AppenderRef[] {AppenderRef.createAppenderRef("Writer", null, null)})
                 .build();
 
         loggerConfig.addAppender(appender, Level.INFO, null);
@@ -102,5 +106,4 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
             }
         };
     }
-
 }

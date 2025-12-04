@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import java.lang.annotation.Annotation;
@@ -63,9 +64,8 @@ public class AggregationStrategyBeanInfo {
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] annotations = parameterAnnotations[i];
             if (annotations.length > 0) {
-                throw new IllegalArgumentException(
-                        "Method parameter annotation: " + annotations[0] + " at index: " + i + " is not supported on method: "
-                                                   + method);
+                throw new IllegalArgumentException("Method parameter annotation: " + annotations[0] + " at index: " + i
+                        + " is not supported on method: " + method);
             }
         }
 
@@ -82,7 +82,8 @@ public class AggregationStrategyBeanInfo {
         return new AggregationStrategyMethodInfo(method, oldParameters, newParameters);
     }
 
-    private static void addParameters(Class<?>[] parameterTypes, int i, List<AggregationStrategyParameterInfo> parameters) {
+    private static void addParameters(
+            Class<?>[] parameterTypes, int i, List<AggregationStrategyParameterInfo> parameters) {
         Class<?> parameterType = parameterTypes[i];
         if (parameters.isEmpty()) {
             // the first parameter is the body
@@ -92,7 +93,8 @@ public class AggregationStrategyBeanInfo {
         } else if (parameters.size() == 1) {
             // the 2nd parameter is the headers
             Expression headersExpression = ExpressionBuilder.headersExpression();
-            AggregationStrategyParameterInfo info = new AggregationStrategyParameterInfo(i, parameterType, headersExpression);
+            AggregationStrategyParameterInfo info =
+                    new AggregationStrategyParameterInfo(i, parameterType, headersExpression);
             parameters.add(info);
         } else if (parameters.size() == 2) {
             // the 3rd parameter is the properties
@@ -101,5 +103,4 @@ public class AggregationStrategyBeanInfo {
             parameters.add(info);
         }
     }
-
 }

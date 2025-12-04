@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client;
 
 import java.util.Map;
@@ -26,8 +27,7 @@ public final class JsonUtils {
 
     static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private JsonUtils() {
-    }
+    private JsonUtils() {}
 
     public static String convertMapToJson(final Map<String, Object> inputMap) {
         try {
@@ -39,8 +39,7 @@ public final class JsonUtils {
 
     public static Map<String, Object> convertJsonToMap(final String jsonString) {
         try {
-            return MAPPER.readValue(jsonString, new TypeReference<Map<String, Object>>() {
-            });
+            return MAPPER.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
         } catch (JsonProcessingException exception) {
             throw new RuntimeException("Error occurred writing JSON to Map.", exception);
         }

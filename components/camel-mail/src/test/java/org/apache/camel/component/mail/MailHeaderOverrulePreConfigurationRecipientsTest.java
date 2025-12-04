@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.util.HashMap;
@@ -52,17 +53,18 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
 
         mock.assertIsSatisfied();
         /* Bcc should be stripped by specs compliant SMTP servers */
-        Assertions.assertThat(mock.getReceivedExchanges().get(0).getMessage().getHeader("bcc")).isNull();
+        Assertions.assertThat(mock.getReceivedExchanges().get(0).getMessage().getHeader("bcc"))
+                .isNull();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(claus.uriPrefix(Protocol.pop3) + "&to=someone@outhere.com&cc=none@world.com&initialDelay=100&delay=100")
+                from(claus.uriPrefix(Protocol.pop3)
+                                + "&to=someone@outhere.com&cc=none@world.com&initialDelay=100&delay=100")
                         .to("mock:result");
             }
         };
     }
-
 }

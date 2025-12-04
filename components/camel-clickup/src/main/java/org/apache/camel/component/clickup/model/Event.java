@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,9 +23,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "event")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = TaskTimeTrackedUpdatedEvent.class, name = Events.TASK_TIME_TRACKED_UPDATED)
-})
+@JsonSubTypes({@JsonSubTypes.Type(value = TaskTimeTrackedUpdatedEvent.class, name = Events.TASK_TIME_TRACKED_UPDATED)})
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Event {
 
@@ -37,9 +36,6 @@ public abstract class Event {
 
     @Override
     public String toString() {
-        return "Event{" +
-               "webhookId='" + webhookId + '\'' +
-               '}';
+        return "Event{" + "webhookId='" + webhookId + '\'' + '}';
     }
-
 }

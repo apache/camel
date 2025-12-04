@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.produce;
 
 import java.util.Map;
@@ -24,5 +25,4 @@ import org.apache.camel.Headers;
 public interface MyListener {
 
     String greet(@Headers Map<String, Object> headers, @Body String name);
-
 }

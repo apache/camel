@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.io.File;
@@ -50,7 +51,7 @@ public class FileDataSet extends ListDataSet {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public File getSourceFile() {
         return sourceFile;
@@ -72,7 +73,7 @@ public class FileDataSet extends ListDataSet {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     private void readSourceFile() throws IOException {
         List<Object> bodies = new LinkedList<>();

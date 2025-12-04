@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SedaBlockWhenFullInvalidConfigurationTest extends ContextTestSupport {
 
@@ -42,6 +43,8 @@ public class SedaBlockWhenFullInvalidConfigurationTest extends ContextTestSuppor
 
         Exception e = assertThrows(Exception.class, () -> context.start(), "Should fail");
         ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-        assertEquals("Value [true, true] converted to java.lang.Boolean cannot be null", refe.getCause().getMessage());
+        assertEquals(
+                "Value [true, true] converted to java.lang.Boolean cannot be null",
+                refe.getCause().getMessage());
     }
 }

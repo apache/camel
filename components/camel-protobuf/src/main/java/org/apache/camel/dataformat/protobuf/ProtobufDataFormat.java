@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
 
 import java.io.InputStream;
@@ -43,11 +44,12 @@ import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
 
 @Dataformat("protobuf")
-@Metadata(excludeProperties = "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType," +
-                              "collectionTypeName,collectionType,useList,combineUnicodeSurrogates,moduleClassNames,moduleRefs,"
-                              +
-                              "enableFeatures,disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper," +
-                              "schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
+@Metadata(
+        excludeProperties =
+                "library,objectMapper,useDefaultObjectMapper,jsonViewTypeName,jsonView,include,allowJmsType,"
+                        + "collectionTypeName,collectionType,useList,combineUnicodeSurrogates,moduleClassNames,moduleRefs,"
+                        + "enableFeatures,disableFeatures,allowUnmarshallType,timezone,autoDiscoverObjectMapper,"
+                        + "schemaResolver,autoDiscoverSchemaResolver,unmarshalType,unmarshalTypeName")
 public class ProtobufDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 
@@ -63,8 +65,7 @@ public class ProtobufDataFormat extends ServiceSupport
     private boolean contentTypeHeader = true;
     private String contentTypeFormat = CONTENT_TYPE_FORMAT_NATIVE;
 
-    public ProtobufDataFormat() {
-    }
+    public ProtobufDataFormat() {}
 
     public ProtobufDataFormat(Message defaultInstance) {
         this.defaultInstance = defaultInstance;
@@ -162,8 +163,8 @@ public class ProtobufDataFormat extends ServiceSupport
             throws NoTypeConversionAvailableException {
         if (!(inputData instanceof Message)) {
             // we just need to make sure input data is not a proto type
-            final Map<?, ?> messageInMap
-                    = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, inputData);
+            final Map<?, ?> messageInMap =
+                    exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, inputData);
             if (messageInMap != null) {
                 return ProtobufConverter.toProto(messageInMap, defaultInstance);
             }
@@ -205,13 +206,12 @@ public class ProtobufDataFormat extends ServiceSupport
                 Method method = instanceClass.getMethod("getDefaultInstance");
                 return (Message) method.invoke(null);
             } catch (final Exception ex) {
-                throw new CamelException(
-                        "Can't set the defaultInstance of ProtobufferDataFormat with " + className + ", caused by " + ex);
+                throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with " + className
+                        + ", caused by " + ex);
             }
         } else {
-            throw new CamelException(
-                    "Can't set the defaultInstance of ProtobufferDataFormat with " + className
-                                     + ", as the class is not a subClass of com.google.protobuf.Message");
+            throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with " + className
+                    + ", as the class is not a subClass of com.google.protobuf.Message");
         }
     }
 
@@ -226,5 +226,4 @@ public class ProtobufDataFormat extends ServiceSupport
     protected void doStop() throws Exception {
         // noop
     }
-
 }

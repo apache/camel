@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
@@ -47,7 +48,8 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals(
-                "file://" + testDirectory() + "?backoffErrorThreshold=3&backoffIdleThreshold=2&backoffMultiplier=4&delay=4000",
+                "file://" + testDirectory()
+                        + "?backoffErrorThreshold=3&backoffIdleThreshold=2&backoffMultiplier=4&delay=4000",
                 uri);
 
         Long delay = (Long) mbeanServer.getAttribute(on, "Delay");
@@ -122,5 +124,4 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
             }
         };
     }
-
 }

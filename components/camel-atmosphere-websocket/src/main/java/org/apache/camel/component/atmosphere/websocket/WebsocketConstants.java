@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
 
 import org.apache.camel.spi.Metadata;
@@ -25,15 +26,24 @@ public final class WebsocketConstants {
 
     @Metadata(description = "The connection key.", javaType = "java.lang.String")
     public static final String CONNECTION_KEY = "websocket.connectionKey";
+
     @Metadata(description = "The list of connection keys.", javaType = "java.util.List")
     public static final String CONNECTION_KEY_LIST = "websocket.connectionKey.list";
+
     public static final String SEND_TO_ALL = "websocket.sendToAll";
-    @Metadata(label = "consumer",
-              description = "The type of event received. It can be `ONOPEN_EVENT_TYPE`, `ONERROR_EVENT_TYPE` or `ONCLOSE_EVENT_TYPE`.",
-              javaType = "int", important = true)
+
+    @Metadata(
+            label = "consumer",
+            description =
+                    "The type of event received. It can be `ONOPEN_EVENT_TYPE`, `ONERROR_EVENT_TYPE` or `ONCLOSE_EVENT_TYPE`.",
+            javaType = "int",
+            important = true)
     public static final String EVENT_TYPE = "websocket.eventType";
-    @Metadata(label = "consumer", description = "The type of error that occurred. It can be `MESSAGE_NOT_SENT_ERROR_TYPE`.",
-              javaType = "int")
+
+    @Metadata(
+            label = "consumer",
+            description = "The type of error that occurred. It can be `MESSAGE_NOT_SENT_ERROR_TYPE`.",
+            javaType = "int")
     public static final String ERROR_TYPE = "websocket.errorType";
 
     public static final int ONOPEN_EVENT_TYPE = 1;
@@ -43,6 +53,6 @@ public final class WebsocketConstants {
     public static final int MESSAGE_NOT_SENT_ERROR_TYPE = 1;
 
     private WebsocketConstants() {
-        //helper class
+        // helper class
     }
 }

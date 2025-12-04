@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.HashMap;
@@ -128,11 +129,16 @@ public class BeanParameterValueTest extends ContextTestSupport {
 
                 from("direct:echo").to("bean:foo?method=echo(*, 3)").to("mock:result");
 
-                from("direct:echo2").to("bean:foo?method=echo(*, ${in.header.times})").to("mock:result");
+                from("direct:echo2")
+                        .to("bean:foo?method=echo(*, ${in.header.times})")
+                        .to("mock:result");
 
-                from("direct:heads").to("bean:foo?method=heads(${body}, ${headers})").to("mock:result");
+                from("direct:heads")
+                        .to("bean:foo?method=heads(${body}, ${headers})")
+                        .to("mock:result");
 
-                from("direct:nobody").to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})")
+                from("direct:nobody")
+                        .to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})")
                         .to("mock:result");
             }
         };

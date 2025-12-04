@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,10 +39,14 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Process payments using Braintree Payments.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName",
-             producerOnly = true,
-             apiSyntax = "apiName/methodName",
-             category = { Category.SAAS })
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = "braintree",
+        title = "Braintree",
+        syntax = "braintree:apiName/methodName",
+        producerOnly = true,
+        apiSyntax = "apiName/methodName",
+        category = {Category.SAAS})
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam
@@ -49,12 +54,19 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     private Object apiProxy;
 
-    public BraintreeEndpoint(String uri,
-                             BraintreeComponent component,
-                             BraintreeApiName apiName,
-                             String methodName,
-                             BraintreeConfiguration configuration) {
-        super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), configuration);
+    public BraintreeEndpoint(
+            String uri,
+            BraintreeComponent component,
+            BraintreeApiName apiName,
+            String methodName,
+            BraintreeConfiguration configuration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                BraintreeApiCollection.getCollection().getHelper(apiName),
+                configuration);
         this.configuration = configuration;
     }
 

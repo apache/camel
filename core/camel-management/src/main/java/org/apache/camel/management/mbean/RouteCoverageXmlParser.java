@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
@@ -51,8 +52,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
  */
 public final class RouteCoverageXmlParser {
 
-    private RouteCoverageXmlParser() {
-    }
+    private RouteCoverageXmlParser() {}
 
     /**
      * Parses the XML.
@@ -99,7 +99,8 @@ public final class RouteCoverageXmlParser {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+            public void startElement(
+                    final String uri, final String localName, final String qName, final Attributes attributes)
                     throws SAXException {
                 addTextIfNeeded();
 
@@ -112,8 +113,10 @@ public final class RouteCoverageXmlParser {
                 String id = el.getAttribute("id");
                 try {
                     if ("route".equals(qName)) {
-                        ManagedRouteMBean route = camelContext.getCamelContextExtension()
-                                .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
+                        ManagedRouteMBean route = camelContext
+                                .getCamelContextExtension()
+                                .getContextPlugin(ManagedCamelContext.class)
+                                .getManagedRoute(id);
                         if (route != null) {
                             String loc = route.getSourceLocationShort();
                             if (loc != null) {
@@ -129,9 +132,10 @@ public final class RouteCoverageXmlParser {
                         Element parent = elementStack.peek();
                         if (parent != null) {
                             String routeId = parent.getAttribute("id");
-                            ManagedRouteMBean route
-                                    = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
-                                            .getManagedRoute(routeId);
+                            ManagedRouteMBean route = camelContext
+                                    .getCamelContextExtension()
+                                    .getContextPlugin(ManagedCamelContext.class)
+                                    .getManagedRoute(routeId);
                             if (route != null) {
                                 long total = route.getExchangesTotal();
                                 el.setAttribute("exchangesTotal", Long.toString(total));
@@ -142,9 +146,10 @@ public final class RouteCoverageXmlParser {
                             }
                         }
                     } else {
-                        ManagedProcessorMBean processor
-                                = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
-                                        .getManagedProcessor(id);
+                        ManagedProcessorMBean processor = camelContext
+                                .getCamelContextExtension()
+                                .getContextPlugin(ManagedCamelContext.class)
+                                .getManagedProcessor(id);
                         if (processor != null) {
                             long total = processor.getExchangesTotal();
                             el.setAttribute("exchangesTotal", Long.toString(total));

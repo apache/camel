@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.mongodb.configuration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
@@ -25,15 +30,12 @@ import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testIfCreatesConfig() {
-        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
+        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration =
+                new MongoDbConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setMongodbUser("test_user");
         configuration.setMaxQueueSize(1212);
@@ -43,14 +45,17 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_config", dbzConfigurations.getString(AsyncEmbeddedEngine.ENGINE_NAME));
         assertEquals("test_user", dbzConfigurations.getString(MongoDbConnectorConfig.USER));
         assertEquals(1212, dbzConfigurations.getInteger(CommonConnectorConfig.MAX_QUEUE_SIZE));
-        assertEquals(MongoDbConnector.class.getName(), dbzConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
-        assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
+        assertEquals(
+                MongoDbConnector.class.getName(), dbzConfigurations.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
+        assertEquals(
+                DebeziumConstants.DEFAULT_OFFSET_STORAGE,
                 dbzConfigurations.getString(AsyncEmbeddedEngine.OFFSET_STORAGE));
     }
 
     @Test
     void testIfValidatesConfigurationCorrectly() {
-        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
+        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration =
+                new MongoDbConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
@@ -68,7 +73,8 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
     void testValidateConfigurationsForAllRequiredFields() {
-        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
+        final MongoDbConnectorEmbeddedDebeziumConfiguration configuration =
+                new MongoDbConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
         configuration.setMongodbConnectionString("mongodb://localhost:27017/?replicaSet=rs0");
@@ -88,5 +94,4 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("/offset/file", configuration.getOffsetStorageFileName());
         assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.component.stitch.client.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StitchResponseTest {
 
@@ -36,8 +37,9 @@ class StitchResponseTest {
 
         final String responseAsJson = JsonUtils.convertMapToJson(response.toMap());
 
-        assertEquals("{\"code\":200,\"headers\":{\"test_header_1\":\"test1\",\"test_header_2\":\"test2\"},"
-                     + "\"status\":\"test\",\"message\":\"testing\"}",
+        assertEquals(
+                "{\"code\":200,\"headers\":{\"test_header_1\":\"test1\",\"test_header_2\":\"test2\"},"
+                        + "\"status\":\"test\",\"message\":\"testing\"}",
                 responseAsJson);
     }
 }

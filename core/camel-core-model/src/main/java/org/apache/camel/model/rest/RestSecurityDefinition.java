@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,11 +36,11 @@ public abstract class RestSecurityDefinition {
     @XmlAttribute(required = true)
     @Metadata(required = true)
     private String key;
+
     @XmlAttribute
     private String description;
 
-    public RestSecurityDefinition() {
-    }
+    public RestSecurityDefinition() {}
 
     public RestSecurityDefinition(RestDefinition rest) {
         this.rest = rest;
@@ -74,5 +75,4 @@ public abstract class RestSecurityDefinition {
     public void setDescription(String description) {
         this.description = description;
     }
-
 }

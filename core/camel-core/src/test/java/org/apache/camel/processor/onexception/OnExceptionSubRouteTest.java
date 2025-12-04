@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -43,7 +44,10 @@ public class OnExceptionSubRouteTest extends OnExceptionRouteTest {
                         // destination that is mock:error as defined above
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).end()
+                        .onException(MyTechnicalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .end()
 
                         // if a MyFunctionalException is thrown we do not want Camel
                         // to redelivery but handle it our self using
@@ -51,14 +55,21 @@ public class OnExceptionSubRouteTest extends OnExceptionRouteTest {
                         // the default error (mock:error)
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler")
+                        .onException(MyFunctionalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("bean:myOwnHandler")
                         .end()
 
                         // here we have the regular routing
-                        .choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
+                        .choice()
+                        .when()
+                        .xpath("//type = 'myType'")
+                        .to("bean:myServiceBean")
+                        .end()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

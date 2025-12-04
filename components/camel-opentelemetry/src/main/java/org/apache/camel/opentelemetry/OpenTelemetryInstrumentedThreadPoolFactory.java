@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import java.util.concurrent.ExecutorService;
@@ -65,5 +66,4 @@ public class OpenTelemetryInstrumentedThreadPoolFactory extends DefaultThreadPoo
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
         return Context.taskWrapping(super.newScheduledThreadPool(profile, threadFactory));
     }
-
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * An unit test based on Paddy having trouble with SFTP.
@@ -49,13 +50,15 @@ public class PaddyRouteIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNotNull(exchange.getIn().getHeader(Exchange.FILE_NAME));
-                        assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY));
-                        assertEquals("Hello World", exchange.getIn().getBody(String.class));
-                    }
-                }).to("mock:result");
+                from(getFtpUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNotNull(exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                assertEquals("hello.txt", exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY));
+                                assertEquals("Hello World", exchange.getIn().getBody(String.class));
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

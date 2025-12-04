@@ -32,9 +32,10 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = IgniteInfraService.class,
-              description = "Distributed Database Apache Ignite",
-              serviceAlias = "ignite")
+@InfraService(
+        service = IgniteInfraService.class,
+        description = "Distributed Database Apache Ignite",
+        serviceAlias = "ignite")
 public class IgniteEmbeddedInfraService implements IgniteInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEmbeddedInfraService.class);
 
@@ -47,19 +48,13 @@ public class IgniteEmbeddedInfraService implements IgniteInfraService {
     private Ignite ignite;
 
     @Override
-    public void registerProperties() {
-
-    }
+    public void registerProperties() {}
 
     @Override
-    public void initialize() {
-
-    }
+    public void initialize() {}
 
     @Override
-    public void shutdown() {
-
-    }
+    public void shutdown() {}
 
     @Override
     public IgniteConfiguration createConfiguration() {
@@ -84,5 +79,4 @@ public class IgniteEmbeddedInfraService implements IgniteInfraService {
 
         return config;
     }
-
 }

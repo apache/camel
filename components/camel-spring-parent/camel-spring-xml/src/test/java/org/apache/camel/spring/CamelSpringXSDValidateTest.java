@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.xml.sax.SAXParseException;
@@ -33,7 +34,8 @@ public class CamelSpringXSDValidateTest {
     public void testValidateXSD() throws Exception {
         Resource r = new FileSystemResource("target/classes/camel-spring.xsd");
         Resource r2 = new ClassPathResource("org/springframework/beans/factory/xml/spring-beans.xsd");
-        XmlValidator val = XmlValidatorFactory.createValidator(new Resource[] { r, r2 }, XmlValidatorFactory.SCHEMA_W3C_XML);
+        XmlValidator val =
+                XmlValidatorFactory.createValidator(new Resource[] {r, r2}, XmlValidatorFactory.SCHEMA_W3C_XML);
 
         Resource r3 = new ClassPathResource("org/apache/camel/spring/processor/choice.xml");
         SAXParseException[] err = val.validate(new BytesSource(r3.getContentAsByteArray()));

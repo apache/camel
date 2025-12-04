@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.component;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
@@ -23,10 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.timer.TimerComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComponentsBuilderFactoryTest extends CamelTestSupport {
 
@@ -76,7 +77,9 @@ public class ComponentsBuilderFactoryTest extends CamelTestSupport {
         assertTrue(kafkaComponent.getConfiguration().isAllowManualCommit());
 
         assertEquals("testGroup", kafkaComponent.getConfiguration().getGroupId());
-        assertEquals(5000, kafkaComponent.getConfiguration().getConsumerRequestTimeoutMs().intValue());
+        assertEquals(
+                5000,
+                kafkaComponent.getConfiguration().getConsumerRequestTimeoutMs().intValue());
     }
 
     @Override
@@ -86,8 +89,7 @@ public class ComponentsBuilderFactoryTest extends CamelTestSupport {
             public void configure() throws Exception {
                 ComponentsBuilderFactory.timer().register(context, "awesomeTimer");
 
-                from("awesomeTimer:foo?delay=-1&repeatCount=10")
-                        .to("mock:result");
+                from("awesomeTimer:foo?delay=-1&repeatCount=10").to("mock:result");
             }
         };
     }

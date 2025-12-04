@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
 
 import org.apache.camel.Predicate;
@@ -31,8 +32,10 @@ public class DynamicRouterControlConfiguration {
     /**
      * The control action (subscribe or unsubscribe).
      */
-    @UriPath(label = "control", enums = "subscribe,unsubscribe",
-             description = "Control channel action: subscribe or unsubscribe")
+    @UriPath(
+            label = "control",
+            enums = "subscribe,unsubscribe",
+            description = "Control channel action: subscribe or unsubscribe")
     @Metadata(required = true)
     private String controlAction;
 
@@ -45,7 +48,9 @@ public class DynamicRouterControlConfiguration {
     /**
      * The subscription ID. If one is not supplied, one will be generated and returned.
      */
-    @UriParam(label = "control", description = "The subscription ID; if unspecified, one will be assigned and returned.")
+    @UriParam(
+            label = "control",
+            description = "The subscription ID; if unspecified, one will be assigned and returned.")
     private String subscriptionId;
 
     /**
@@ -71,7 +76,10 @@ public class DynamicRouterControlConfiguration {
     /**
      * Reference to a {@link Predicate} in the registry.
      */
-    @UriParam(label = "control", description = "A Predicate instance in the registry.", javaType = "org.apache.camel.Predicate")
+    @UriParam(
+            label = "control",
+            description = "A Predicate instance in the registry.",
+            javaType = "org.apache.camel.Predicate")
     private Predicate predicateBean;
 
     /**

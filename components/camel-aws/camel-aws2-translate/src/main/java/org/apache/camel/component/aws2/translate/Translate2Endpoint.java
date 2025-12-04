@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
 
 import org.apache.camel.Category;
@@ -32,8 +33,14 @@ import software.amazon.awssdk.services.translate.TranslateClient;
 /**
  * Translate texts using AWS Translate and AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS Translate", syntax = "aws2-translate:label",
-             producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = Translate2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-translate",
+        title = "AWS Translate",
+        syntax = "aws2-translate:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = Translate2Constants.class)
 public class Translate2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private TranslateClient translateClient;
@@ -65,10 +72,9 @@ public class Translate2Endpoint extends ScheduledPollEndpoint implements Endpoin
     public void doStart() throws Exception {
         super.doStart();
 
-        translateClient
-                = configuration.getTranslateClient() != null
-                        ? configuration.getTranslateClient()
-                        : Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient();
+        translateClient = configuration.getTranslateClient() != null
+                ? configuration.getTranslateClient()
+                : Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient();
     }
 
     @Override

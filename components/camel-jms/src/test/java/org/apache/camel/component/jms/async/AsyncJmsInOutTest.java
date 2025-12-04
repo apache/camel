@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.async;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,13 +38,12 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.body;
-
 public class AsyncJmsInOutTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(AsyncJmsInOutTest.class);
     protected CamelContext context;
     protected ProducerTemplate template;

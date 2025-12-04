@@ -41,6 +41,7 @@ public class JobRequest implements ZeebeMessage {
 
     @JsonProperty("error_message")
     private String errorMessage;
+
     @JsonProperty("error_code")
     private String errorCode;
 
@@ -101,8 +102,11 @@ public class JobRequest implements ZeebeMessage {
             return false;
         }
         JobRequest that = (JobRequest) o;
-        return jobKey == that.jobKey && retries == that.retries && Objects.equals(variables, that.variables)
-                && Objects.equals(failMessage, that.failMessage) && Objects.equals(errorMessage, that.errorMessage)
+        return jobKey == that.jobKey
+                && retries == that.retries
+                && Objects.equals(variables, that.variables)
+                && Objects.equals(failMessage, that.failMessage)
+                && Objects.equals(errorMessage, that.errorMessage)
                 && Objects.equals(errorCode, that.errorCode);
     }
 
@@ -113,12 +117,11 @@ public class JobRequest implements ZeebeMessage {
 
     @Override
     public String toString() {
-        return "JobRequest{" + "jobKey=" + jobKey +
-               ", variables=" + variables +
-               ", retries=" + retries +
-               ", failMessage='" + failMessage + '\'' +
-               ", errorMessage='" + errorMessage + '\'' +
-               ", errorCode='" + errorCode + '\'' +
-               '}';
+        return "JobRequest{" + "jobKey=" + jobKey + ", variables="
+                + variables + ", retries="
+                + retries + ", failMessage='"
+                + failMessage + '\'' + ", errorMessage='"
+                + errorMessage + '\'' + ", errorCode='"
+                + errorCode + '\'' + '}';
     }
 }

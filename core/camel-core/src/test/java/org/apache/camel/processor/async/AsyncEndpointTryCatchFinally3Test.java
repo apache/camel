@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
 
@@ -62,26 +63,43 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").to("log:before").doTry().process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:bye:camel?failFirstAttempts=1").doCatch(Exception.class).to("log:catch").to("mock:catch")
+                from("direct:start")
+                        .to("mock:before")
+                        .to("log:before")
+                        .doTry()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("async:bye:camel?failFirstAttempts=1")
+                        .doCatch(Exception.class)
+                        .to("log:catch")
+                        .to("mock:catch")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 middleThreadName = Thread.currentThread().getName();
                             }
-                        }).to("async:bye:world").doFinally().process(new Processor() {
+                        })
+                        .to("async:bye:world")
+                        .doFinally()
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 afterThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:after").to("mock:after").to("async:bye:camel").end().process(new Processor() {
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("async:bye:camel")
+                        .end()
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 resultThreadName = Thread.currentThread().getName();
                             }
-                        }).to("log:result").to("mock:result");
+                        })
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }
-
 }

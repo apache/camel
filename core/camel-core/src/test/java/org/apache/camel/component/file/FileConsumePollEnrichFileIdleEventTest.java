@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.concurrent.TimeUnit;
@@ -37,19 +38,16 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
         mock.expectedFileExists(testFile("enrich/.done/Event2.txt"));
         mock.expectedFileExists(testFile("enrichdata/.done/AAA.dat"));
 
-        template.sendBodyAndHeader(fileUri("enrich"), "Event1", Exchange.FILE_NAME,
-                "Event1.txt");
+        template.sendBodyAndHeader(fileUri("enrich"), "Event1", Exchange.FILE_NAME, "Event1.txt");
 
         context.getRouteController().startAllRoutes();
 
         log.info("Sleeping for 1 sec before writing enrichdata file");
 
         Awaitility.await().pollDelay(1, TimeUnit.SECONDS).untilAsserted(() -> {
-            template.sendBodyAndHeader(fileUri("enrichdata"), "EnrichData",
-                    Exchange.FILE_NAME, "AAA.dat");
+            template.sendBodyAndHeader(fileUri("enrichdata"), "EnrichData", Exchange.FILE_NAME, "AAA.dat");
             // Trigger second event which should find the EnrichData file
-            template.sendBodyAndHeader(fileUri("enrich"), "Event2", Exchange.FILE_NAME,
-                    "Event2.txt");
+            template.sendBodyAndHeader(fileUri("enrich"), "Event2", Exchange.FILE_NAME, "Event2.txt");
             log.info("... write done");
             assertMockEndpointsSatisfied();
         });
@@ -63,8 +61,7 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Event3");
         mock.expectedFileExists(testFile("enrich/.done/Event3.txt"));
 
-        template.sendBodyAndHeader(fileUri("enrich"), "Event3", Exchange.FILE_NAME,
-                "Event3.txt");
+        template.sendBodyAndHeader(fileUri("enrich"), "Event3", Exchange.FILE_NAME, "Event3.txt");
 
         context.getRouteController().startAllRoutes();
 
@@ -76,13 +73,14 @@ public class FileConsumePollEnrichFileIdleEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("enrich?initialDelay=0&delay=10&move=.done")).autoStartup(false)
+                from(fileUri("enrich?initialDelay=0&delay=10&move=.done"))
+                        .autoStartup(false)
                         .to("mock:start")
                         .pollEnrich(
-                                fileUri("enrichdata?initialDelay=0&delay=10&move=.done&sendEmptyMessageWhenIdle=true"), 1000)
+                                fileUri("enrichdata?initialDelay=0&delay=10&move=.done&sendEmptyMessageWhenIdle=true"),
+                                1000)
                         .to("mock:result");
             }
         };
     }
-
 }

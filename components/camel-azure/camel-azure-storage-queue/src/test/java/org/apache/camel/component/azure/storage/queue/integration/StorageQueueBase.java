@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.integration;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -76,11 +77,11 @@ public class StorageQueueBase extends CamelTestSupport {
 
         configuration = new QueueConfiguration();
         configuration.setCredentials(new StorageSharedKeyCredential(
-                service.azureCredentials().accountName(), service.azureCredentials().accountKey()));
+                service.azureCredentials().accountName(),
+                service.azureCredentials().accountKey()));
         configuration.setQueueName(queueName);
 
         serviceClient = AzureStorageClientUtils.getClient();
         serviceClient.getQueueClient(queueName).create();
     }
-
 }

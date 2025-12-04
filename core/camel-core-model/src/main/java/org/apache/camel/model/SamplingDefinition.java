@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.time.Duration;
@@ -38,12 +39,12 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String samplePeriod;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String messageFrequency;
 
-    public SamplingDefinition() {
-    }
+    public SamplingDefinition() {}
 
     protected SamplingDefinition(SamplingDefinition source) {
         super(source);
@@ -179,5 +180,4 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     public void setMessageFrequency(long messageFrequency) {
         this.messageFrequency = Long.toString(messageFrequency);
     }
-
 }

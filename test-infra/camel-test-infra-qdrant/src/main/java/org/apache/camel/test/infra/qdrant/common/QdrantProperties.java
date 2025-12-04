@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.qdrant.common;
 
 public class QdrantProperties {
@@ -25,6 +26,5 @@ public class QdrantProperties {
     public static final String QDRANT_API_KEY = "qdrant.apiKey";
     public static final String QDRANT_CONTAINER = "qdrant.container";
 
-    private QdrantProperties() {
-    }
+    private QdrantProperties() {}
 }

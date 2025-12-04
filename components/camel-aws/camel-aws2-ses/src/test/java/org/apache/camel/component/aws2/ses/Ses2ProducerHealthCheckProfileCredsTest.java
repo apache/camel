@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.ses;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,6 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class Ses2ProducerHealthCheckProfileCredsTest extends CamelTestSupport {
 
@@ -81,14 +81,13 @@ public class Ses2ProducerHealthCheckProfileCredsTest extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2AthenaHealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-ses"));
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+            boolean containsAws2AthenaHealthCheck =
+                    res2.stream().anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-ses"));
+            boolean hasRegionMessage =
+                    res2.stream().anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2AthenaHealthCheck, "aws2-ses check");
             Assertions.assertTrue(hasRegionMessage, "aws2-ses check error message");
         });
-
     }
 }

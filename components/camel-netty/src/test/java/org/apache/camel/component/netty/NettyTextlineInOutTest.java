@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyTextlineInOutTest extends BaseNettyTest {
 
@@ -28,8 +29,8 @@ public class NettyTextlineInOutTest extends BaseNettyTest {
     public void testTextlineInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        String reply
-                = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello World", String.class);
+        String reply = template.requestBody(
+                "netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         MockEndpoint.assertIsSatisfied(context);

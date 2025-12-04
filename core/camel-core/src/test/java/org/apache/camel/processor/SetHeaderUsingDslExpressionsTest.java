@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -53,7 +54,6 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
             }
             return result;
         }
-
     }
 
     @Test
@@ -62,7 +62,11 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 MyValueClass insteadValue = new MyValueClass("value1", "value2");
-                from("direct:start").setHeader("foo").constant("ABC").setHeader("value").constant(insteadValue)
+                from("direct:start")
+                        .setHeader("foo")
+                        .constant("ABC")
+                        .setHeader("value")
+                        .constant(insteadValue)
                         .to("mock:result");
             }
         });
@@ -91,11 +95,14 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader("foo").expression(new ExpressionAdapter() {
-                    public Object evaluate(Exchange exchange) {
-                        return "ABC";
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .setHeader("foo")
+                        .expression(new ExpressionAdapter() {
+                            public Object evaluate(Exchange exchange) {
+                                return "ABC";
+                            }
+                        })
+                        .to("mock:result");
             }
         });
 
@@ -121,7 +128,10 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     public void testUseHeaderXpathExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader("foo").xpath("/personFile/text()").to("mock:result");
+                from("direct:start")
+                        .setHeader("foo")
+                        .xpath("/personFile/text()")
+                        .to("mock:result");
             }
         });
 

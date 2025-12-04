@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cloud;
 
 import org.apache.camel.Expression;
@@ -26,5 +27,4 @@ import org.apache.camel.Expression;
  */
 @FunctionalInterface
 @Deprecated(since = "4.8.0")
-public interface ServiceExpressionFactory extends ServiceFactory<Expression> {
-}
+public interface ServiceExpressionFactory extends ServiceFactory<Expression> {}

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
@@ -23,8 +26,6 @@ import jakarta.xml.soap.SOAPException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -191,12 +192,15 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(SOAPException.class).onException(IOException.class).to("mock:error").end()
+                from("direct:start")
+                        .onException(SOAPException.class)
+                        .onException(IOException.class)
+                        .to("mock:error")
+                        .end()
                         .to("mock:result");
             }
         });
         context.start();
         // okay
     }
-
 }

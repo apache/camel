@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
 
 import java.util.List;
@@ -153,22 +154,19 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private void doGetHistory(Exchange exchange, AsyncCallback callback) {
-        endpoint.getPubnub()
-                .history()
-                .channel(getChannel(exchange))
-                .async((Result<PNHistoryResult> result) -> {
-                    LOG.debug("Got history message [{}]", result);
-                    if (result.isFailure()) {
-                        PubNubException ex = result.exceptionOrNull();
-                        if (ex != null) {
-                            exchange.setException(ex);
-                        }
-                        callback.done(false);
-                    } else {
-                        PNHistoryResult r = result.getOrNull();
-                        processMessage(exchange, callback, r != null ? r.getMessages() : null);
-                    }
-                });
+        endpoint.getPubnub().history().channel(getChannel(exchange)).async((Result<PNHistoryResult> result) -> {
+            LOG.debug("Got history message [{}]", result);
+            if (result.isFailure()) {
+                PubNubException ex = result.exceptionOrNull();
+                if (ex != null) {
+                    exchange.setException(ex);
+                }
+                callback.done(false);
+            } else {
+                PNHistoryResult r = result.getOrNull();
+                processMessage(exchange, callback, r != null ? r.getMessages() : null);
+            }
+        });
     }
 
     private void doSetState(Exchange exchange, AsyncCallback callback) {

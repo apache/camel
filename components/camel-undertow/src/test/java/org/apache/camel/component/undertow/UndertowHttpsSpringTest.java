@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 
@@ -31,10 +34,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "/SpringTest.xml" })
+@ContextConfiguration(locations = {"/SpringTest.xml"})
 public class UndertowHttpsSpringTest {
 
     private Integer port;
@@ -60,8 +61,10 @@ public class UndertowHttpsSpringTest {
     public void testSSLConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient",
-                "Hello World", String.class);
+        String out = template.requestBody(
+                "undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
@@ -75,5 +78,4 @@ public class UndertowHttpsSpringTest {
     public void setPort(Integer port) {
         this.port = port;
     }
-
 }

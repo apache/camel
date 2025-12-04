@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import java.net.URISyntaxException;
@@ -38,8 +39,7 @@ public class WebhookComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private WebhookConfiguration configuration = new WebhookConfiguration();
 
-    public WebhookComponent() {
-    }
+    public WebhookComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -50,8 +50,8 @@ public class WebhookComponent extends DefaultComponent {
 
         WebhookConfiguration config = configuration != null ? configuration.copy() : new WebhookConfiguration();
 
-        RestConfiguration restConfig
-                = CamelContextHelper.getRestConfiguration(getCamelContext(), config.getWebhookComponentName());
+        RestConfiguration restConfig =
+                CamelContextHelper.getRestConfiguration(getCamelContext(), config.getWebhookComponentName());
         config.storeConfiguration(restConfig);
 
         WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config);
@@ -91,5 +91,4 @@ public class WebhookComponent extends DefaultComponent {
     public void setConfiguration(WebhookConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

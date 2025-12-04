@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.pinecone.services;
 
 import java.net.MalformedURLException;
@@ -31,18 +32,20 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.pinecone.PineconeLocalContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = PineconeInfraService.class,
-              description = "Pinecone Vector Database",
-              serviceAlias = { "pinecone" })
-public class PineconeLocalContainerInfraService implements PineconeInfraService, ContainerService<PineconeLocalContainer> {
+@InfraService(
+        service = PineconeInfraService.class,
+        description = "Pinecone Vector Database",
+        serviceAlias = {"pinecone"})
+public class PineconeLocalContainerInfraService
+        implements PineconeInfraService, ContainerService<PineconeLocalContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PineconeLocalContainerInfraService.class);
 
     private final PineconeLocalContainer container;
 
     public PineconeLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(PineconeLocalContainerInfraService.class,
-                PineconeProperties.PINECONE_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                PineconeLocalContainerInfraService.class, PineconeProperties.PINECONE_CONTAINER));
     }
 
     public PineconeLocalContainerInfraService(String imageName) {
@@ -56,8 +59,7 @@ public class PineconeLocalContainerInfraService implements PineconeInfraService,
     protected PineconeLocalContainer initContainer(String imageName) {
         class TestInfraPineconeLocalContainer extends PineconeLocalContainer {
             public TestInfraPineconeLocalContainer(boolean fixedPort) {
-                super(DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("pinecone-io/pinecone-local"));
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("pinecone-io/pinecone-local"));
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 

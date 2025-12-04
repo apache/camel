@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openai;
 
 import com.openai.client.OpenAIClient;
@@ -32,12 +33,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * OpenAI endpoint for chat completion.
  */
-@UriEndpoint(firstVersion = "4.17.0",
-             scheme = "openai",
-             title = "OpenAI",
-             syntax = "openai:operation",
-             category = { Category.AI },
-             producerOnly = true)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = "openai",
+        title = "OpenAI",
+        syntax = "openai:operation",
+        category = {Category.AI},
+        producerOnly = true)
 public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath

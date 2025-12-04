@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,8 +44,7 @@ public class RouteModelLifecycleTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:one")
-                        .to("mock:result");
+                from("direct:one").to("mock:result");
             }
         });
 
@@ -58,5 +58,4 @@ public class RouteModelLifecycleTest extends ContextTestSupport {
 
         context.stop();
     }
-
 }

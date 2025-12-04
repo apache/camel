@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure.strategy;
 
 import java.util.Map;
@@ -93,8 +94,8 @@ public final class FilesProcessStrategyFactory implements GenericFileProcessStra
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<ShareFileItem> getExclusiveReadLockStrategy(
             Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy<ShareFileItem> strategy
-                = (GenericFileExclusiveReadLockStrategy<ShareFileItem>) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<ShareFileItem> strategy =
+                (GenericFileExclusiveReadLockStrategy<ShareFileItem>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -105,8 +106,8 @@ public final class FilesProcessStrategyFactory implements GenericFileProcessStra
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<ShareFileItem> readLockStrategy
-                        = new GenericFileRenameExclusiveReadLockStrategy<>();
+                GenericFileRenameExclusiveReadLockStrategy<ShareFileItem> readLockStrategy =
+                        new GenericFileRenameExclusiveReadLockStrategy<>();
 
                 StrategyUtil.setup(readLockStrategy, params);
 

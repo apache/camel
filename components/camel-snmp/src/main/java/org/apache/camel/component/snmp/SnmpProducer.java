@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snmp;
 
 import java.util.ArrayList;
@@ -89,7 +90,6 @@ public class SnmpProducer extends DefaultProducer {
         } else {
             this.pdu.setType(PDU.GET);
         }
-
     }
 
     @Override
@@ -172,7 +172,8 @@ public class SnmpProducer extends DefaultProducer {
                 LOG.debug("Snmp: sended");
 
                 if (responseEvent.getResponse() != null) {
-                    exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
+                    exchange.getIn()
+                            .setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
                 } else {
                     throw new TimeoutException("SNMP Producer Timeout");
                 }
@@ -187,6 +188,5 @@ public class SnmpProducer extends DefaultProducer {
             } catch (Exception e) {
             }
         }
-    } //end process
-
+    } // end process
 }

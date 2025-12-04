@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,10 +39,6 @@ import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
@@ -62,9 +63,7 @@ public class ServiceCallConfigurationTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("default")
-                        .serviceCall("scall", "scall/api/${header.customerId}");
+                from("direct:start").routeId("default").serviceCall("scall", "scall/api/${header.customerId}");
             }
         });
 
@@ -82,7 +81,10 @@ public class ServiceCallConfigurationTest {
         assertEquals(sd, loadBalancer.getServiceDiscovery());
 
         // call the route
-        context.createFluentProducerTemplate().to("direct:start").withHeader("customerId", "123").send();
+        context.createFluentProducerTemplate()
+                .to("direct:start")
+                .withHeader("customerId", "123")
+                .send();
 
         // the service should call the mock
         mock.assertIsSatisfied();
@@ -112,8 +114,8 @@ public class ServiceCallConfigurationTest {
                 from("direct:start")
                         .routeId("default")
                         .serviceCall()
-                            .name("scall")
-                            .component("file")
+                        .name("scall")
+                        .component("file")
                         .end();
             }
         });
@@ -152,9 +154,9 @@ public class ServiceCallConfigurationTest {
             public void configure() {
                 from("direct:start")
                         .routeId("default")
-                            .serviceCall()
-                            .name("scall")
-                            .component("file")
+                        .serviceCall()
+                        .name("scall")
+                        .component("file")
                         .end();
             }
         });
@@ -195,9 +197,9 @@ public class ServiceCallConfigurationTest {
             public void configure() {
                 from("direct:start")
                         .routeId("default")
-                            .serviceCall()
-                            .name("scall")
-                            .component("file")
+                        .serviceCall()
+                        .name("scall")
+                        .component("file")
                         .end();
             }
         });
@@ -262,23 +264,23 @@ public class ServiceCallConfigurationTest {
                 from("direct:default")
                         .id("default")
                         .serviceCall()
-                            .name("default-scall")
-                            .component("file")
+                        .name("default-scall")
+                        .component("file")
                         .end();
                 from("direct:named")
                         .id("named")
                         .serviceCall()
-                            .serviceCallConfiguration("named")
-                            .name("named-scall")
-                            .component("file")
+                        .serviceCallConfiguration("named")
+                        .name("named-scall")
+                        .component("file")
                         .end();
                 from("direct:local")
                         .id("local")
                         .serviceCall()
-                            .serviceCallConfiguration("named")
-                            .name("local-scall")
-                            .component("file")
-                            .serviceDiscovery(localServiceDiscovery)
+                        .serviceCallConfiguration("named")
+                        .name("local-scall")
+                        .component("file")
+                        .serviceDiscovery(localServiceDiscovery)
                         .end();
             }
         });
@@ -351,13 +353,13 @@ public class ServiceCallConfigurationTest {
                     from("direct:start")
                             .routeId("default")
                             .serviceCall()
-                                .name("{{scall.name}}")
-                                .component("{{scall.scheme}}")
-                                .uri("direct:{{scall.name}}")
-                                .staticServiceDiscovery()
-                                    .servers("{{scall.servers1}}")
-                                    .servers("{{scall.servers2}}")
-                                .end()
+                            .name("{{scall.name}}")
+                            .component("{{scall.scheme}}")
+                            .uri("direct:{{scall.name}}")
+                            .staticServiceDiscovery()
+                            .servers("{{scall.servers1}}")
+                            .servers("{{scall.servers2}}")
+                            .end()
                             .end();
                 }
             });
@@ -415,19 +417,16 @@ public class ServiceCallConfigurationTest {
         try {
             ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();
             config.setServiceDiscovery(new StaticServiceDiscovery());
-            config.setExpressionConfiguration(
-                    new ServiceCallExpressionConfiguration().expression(
-                            new SimpleExpression(
-                                    "file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}")));
+            config.setExpressionConfiguration(new ServiceCallExpressionConfiguration()
+                    .expression(new SimpleExpression(
+                            "file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}")));
 
             context = new DefaultCamelContext();
             context.setServiceCallConfiguration(config);
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start")
-                            .routeId("default")
-                            .serviceCall("scall");
+                    from("direct:start").routeId("default").serviceCall("scall");
                 }
             });
 
@@ -436,7 +435,8 @@ public class ServiceCallConfigurationTest {
             DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
 
             assertNotNull(proc);
-            assertEquals("file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}",
+            assertEquals(
+                    "file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}",
                     proc.getExpression().toString());
 
         } finally {
@@ -466,5 +466,4 @@ public class ServiceCallConfigurationTest {
 
         throw new IllegalStateException("Unable to find a ServiceCallProcessor");
     }
-
 }

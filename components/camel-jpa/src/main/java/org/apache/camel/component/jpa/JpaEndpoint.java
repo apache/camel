@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
@@ -46,79 +47,108 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
 /**
  * Store and retrieve Java objects from databases using Java Persistence API (JPA).
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType",
-             category = { Category.DATABASE }, headersClass = JpaConstants.class)
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "jpa",
+        title = "JPA",
+        syntax = "jpa:entityType",
+        category = {Category.DATABASE},
+        headersClass = JpaConstants.class)
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private EntityManagerFactory entityManagerFactory;
+
     private TransactionStrategy transactionStrategy;
     private Expression producerExpression;
 
     @UriPath(description = "Entity class name")
     @Metadata(required = true)
     private Class<?> entityType;
+
     @UriParam(defaultValue = "camel")
     @Metadata(required = true)
     private String persistenceUnit = "camel";
+
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
+
     @UriParam(label = "advanced")
     private boolean sharedEntityManager;
+
     @UriParam(defaultValue = "-1")
     private int maximumResults = -1;
+
     @UriParam(label = "producer", defaultValue = "-1")
     private int firstResult = -1;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean consumeDelete = true;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean consumeLockEntity = true;
+
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
     @UriParam
     private String query;
+
     @UriParam
     private String namedQuery;
+
     @UriParam
     private String nativeQuery;
+
     @UriParam(label = "consumer", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
+
     @UriParam(label = "consumer,advanced", multiValue = true, prefix = "parameters.")
     private Map<String, Object> parameters;
+
     @UriParam
     private Class<?> resultClass;
+
     @UriParam(label = "consumer")
     private boolean transacted;
+
     @UriParam(label = "consumer")
     private boolean skipLockedEntity;
+
     @UriParam(label = "consumer")
     private DeleteHandler<Object> deleteHandler;
+
     @UriParam(label = "consumer")
     private DeleteHandler<Object> preDeleteHandler;
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean flushOnSend = true;
+
     @UriParam(label = "producer")
     private boolean usePersist;
+
     @UriParam(label = "producer,advanced")
     private boolean usePassedInEntityManager;
+
     @UriParam(label = "producer")
     private boolean remove;
+
     @UriParam(label = "producer")
     private Boolean useExecuteUpdate;
+
     @UriParam(label = "producer")
     private boolean findEntity;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean singleResult;
+
     @UriParam(label = "producer")
     private String outputTarget;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
 
-    public JpaEndpoint() {
-    }
+    public JpaEndpoint() {}
 
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);

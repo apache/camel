@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,10 +27,6 @@ import java.util.Set;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CamelProxyRoutePlannerTest {
 
@@ -63,7 +64,8 @@ public class CamelProxyRoutePlannerTest {
 
         assertNull(planner.determineProxy(lowercaseTarget, null), "localhost (lowercase) should bypass proxy");
         assertNull(planner.determineProxy(uppercaseTarget, null), "LOCALHOST (uppercase) should bypass proxy");
-        assertNull(planner.determineProxy(mixedCaseTarget, null), "internal.Example.Com (mixed case) should bypass proxy");
+        assertNull(
+                planner.determineProxy(mixedCaseTarget, null), "internal.Example.Com (mixed case) should bypass proxy");
     }
 
     @Test

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
 
 import org.apache.camel.RuntimeCamelException;
@@ -39,8 +40,7 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     @UriParam(description = "Tags for discovering and calling Camel route tools")
     private String tags;
 
-    public LangChain4jAgentConfiguration() {
-    }
+    public LangChain4jAgentConfiguration() {}
 
     /**
      * Tags for discovering and calling Camel route tools

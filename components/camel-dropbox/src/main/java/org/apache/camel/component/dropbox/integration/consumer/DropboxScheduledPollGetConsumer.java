@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.consumer;
 
 import java.util.Map;
@@ -28,7 +29,8 @@ import org.apache.camel.component.dropbox.util.DropboxConstants;
 
 public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsumer {
 
-    public DropboxScheduledPollGetConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
+    public DropboxScheduledPollGetConsumer(
+            DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
         super(endpoint, processor, configuration);
     }
 
@@ -41,8 +43,8 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
     protected int poll() throws Exception {
         Exchange exchange = createExchange(false);
         try {
-            DropboxFileDownloadResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                    .get(configuration.getRemotePath());
+            DropboxFileDownloadResult result =
+                    new DropboxAPIFacade(configuration.getClient(), exchange).get(configuration.getRemotePath());
 
             Map<String, Object> map = result.getEntries();
             if (map.size() == 1) {

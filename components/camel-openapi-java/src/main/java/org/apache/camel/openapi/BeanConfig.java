@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.util.Map;
@@ -191,5 +192,4 @@ public class BeanConfig {
     public boolean isOpenApi31() {
         return version.compareTo(OPENAPI_VERSION_31) >= 0;
     }
-
 }

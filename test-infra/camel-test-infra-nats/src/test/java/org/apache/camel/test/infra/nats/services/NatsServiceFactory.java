@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.nats.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class NatsServiceFactory {
-    private NatsServiceFactory() {
-
-    }
+    private NatsServiceFactory() {}
 
     public static SimpleTestServiceBuilder<NatsService> builder() {
         return new SimpleTestServiceBuilder<>("nats");
     }
 
     public static NatsService createService() {
-        return builder().addLocalMapping(NatsLocalContainerService::new)
+        return builder()
+                .addLocalMapping(NatsLocalContainerService::new)
                 .addRemoteMapping(NatsRemoteService::new)
                 .build();
     }
 
-    public static class NatsRemoteService extends NatsRemoteInfraService implements NatsService {
-    }
+    public static class NatsRemoteService extends NatsRemoteInfraService implements NatsService {}
 }

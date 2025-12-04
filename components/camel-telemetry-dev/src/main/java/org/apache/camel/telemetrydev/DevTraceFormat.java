@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
 
 import java.io.StringWriter;
@@ -32,7 +33,6 @@ import org.apache.camel.telemetry.Op;
 public interface DevTraceFormat {
 
     String format(DevTrace trace);
-
 }
 
 /*
@@ -44,7 +44,6 @@ class DevTraceFormatDefault implements DevTraceFormat {
     public String format(DevTrace trace) {
         return trace.toString();
     }
-
 }
 
 /*
@@ -99,9 +98,8 @@ class DevTraceFormatTree implements DevTraceFormat {
                 for (int i = 0; i < depth; i++) {
                     sw.append("   ");
                 }
-                if (depth == 0) {
+                if (depth == 0) {}
 
-                }
                 if (depth > 1) {
                     for (int i = 1; i < depth; i++) {
                         sw.append(" ");
@@ -128,17 +126,13 @@ class DevTraceFormatTree implements DevTraceFormat {
         } else {
             sentOrReceived = "";
         }
-        long nanos
-                = (Long.parseLong(span.getTag("endTimestamp")) - Long.parseLong(span.getTag("initTimestamp"))) / (1000 * 1000);
+        long nanos = (Long.parseLong(span.getTag("endTimestamp")) - Long.parseLong(span.getTag("initTimestamp")))
+                / (1000 * 1000);
         String component = span.getTag("component");
         String camelUri = span.getTag("camel.uri");
         return String.format(
                 "| %s (%s) [%s] [%d millis] %s",
-                camelUri == null ? "process" : camelUri,
-                component,
-                span.getSpanId(),
-                nanos,
-                sentOrReceived);
+                camelUri == null ? "process" : camelUri, component, span.getSpanId(), nanos, sentOrReceived);
     }
 
     private String getMarker(HashMap<String, Integer> depths, DevSpanAdapter span, DevSpanAdapter next) {
@@ -155,5 +149,4 @@ class DevTraceFormatTree implements DevTraceFormat {
         }
         return "└";
     }
-
 }

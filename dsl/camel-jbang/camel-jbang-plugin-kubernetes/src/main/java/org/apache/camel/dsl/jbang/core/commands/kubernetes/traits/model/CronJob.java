@@ -26,8 +26,14 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "enabled", "schedule", "timezone", "startingDeadlineSeconds", "activeDeadlineSeconds", "backoffLimit",
-        "durationMaxIdleSeconds" })
+    "enabled",
+    "schedule",
+    "timezone",
+    "startingDeadlineSeconds",
+    "activeDeadlineSeconds",
+    "backoffLimit",
+    "durationMaxIdleSeconds"
+})
 public class CronJob {
 
     @JsonProperty("enabled")
@@ -46,12 +52,14 @@ public class CronJob {
     private String timezone;
 
     @JsonProperty("startingDeadlineSeconds")
-    @JsonPropertyDescription("Optional deadline in seconds for starting the job if it misses scheduled time for any reason.")
+    @JsonPropertyDescription(
+            "Optional deadline in seconds for starting the job if it misses scheduled time for any reason.")
     @JsonSetter(nulls = Nulls.SKIP)
     private Long startingDeadlineSeconds;
 
     @JsonProperty("activeDeadlineSeconds")
-    @JsonPropertyDescription("Specifies the duration in seconds relative to the startTime that the job may be continuously active before the system tries to terminate it.")
+    @JsonPropertyDescription(
+            "Specifies the duration in seconds relative to the startTime that the job may be continuously active before the system tries to terminate it.")
     @JsonSetter(nulls = Nulls.SKIP)
     private Long activeDeadlineSeconds;
 
@@ -61,12 +69,12 @@ public class CronJob {
     private Integer backoffLimit;
 
     @JsonProperty("durationMaxIdleSeconds")
-    @JsonPropertyDescription("How long time in seconds Camel can be idle before automatic terminating the JVM, it sets the camel.main.duration-max-idle-seconds property, default to 1.")
+    @JsonPropertyDescription(
+            "How long time in seconds Camel can be idle before automatic terminating the JVM, it sets the camel.main.duration-max-idle-seconds property, default to 1.")
     @JsonSetter(nulls = Nulls.SKIP)
     private Integer durationMaxIdleSeconds = 1;
 
-    public CronJob() {
-    }
+    public CronJob() {}
 
     public Boolean getEnabled() {
         return enabled;
@@ -123,5 +131,4 @@ public class CronJob {
     public void setDurationMaxIdleSeconds(Integer durationMaxIdleSeconds) {
         this.durationMaxIdleSeconds = durationMaxIdleSeconds;
     }
-
 }

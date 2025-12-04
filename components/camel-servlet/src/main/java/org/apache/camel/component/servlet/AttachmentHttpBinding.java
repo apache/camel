@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import java.io.IOException;
@@ -46,8 +47,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
 
-    AttachmentHttpBinding() {
-    }
+    AttachmentHttpBinding() {}
 
     @Override
     protected void populateAttachments(HttpServletRequest request, Message message) {
@@ -81,7 +81,8 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                 } else {
                     LOG.debug(
                             "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                            fileName, getFileNameExtWhitelist());
+                            fileName,
+                            getFileNameExtWhitelist());
                 }
             }
         } catch (Exception e) {

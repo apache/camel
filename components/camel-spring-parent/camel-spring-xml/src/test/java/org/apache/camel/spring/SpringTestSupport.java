@@ -14,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_NAME;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_TYPE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_CONTEXT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,19 +54,6 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-
-import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_CONTEXT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_NAME;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.KEY_TYPE;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_CONTEXT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_STEP;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
@@ -119,12 +120,12 @@ public abstract class SpringTestSupport extends ContextTestSupport {
      */
     protected ApplicationContext getRouteExcludingApplicationContext() {
         GenericApplicationContext routeExcludingContext = new GenericApplicationContext();
-        routeExcludingContext.registerBeanDefinition("excludingResolver",
-                new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
+        routeExcludingContext.registerBeanDefinition(
+                "excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
         routeExcludingContext.refresh();
 
-        ExcludingPackageScanClassResolver excludingResolver
-                = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
+        ExcludingPackageScanClassResolver excludingResolver =
+                routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
         excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
@@ -138,7 +139,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
      */
     protected Class<?>[] excludeRoutes() {
         Class<?> excludedRoute = excludeRoute();
-        return excludedRoute != null ? new Class[] { excludedRoute } : new Class[0];
+        return excludedRoute != null ? new Class[] {excludedRoute} : new Class[0];
     }
 
     /**
@@ -187,9 +188,9 @@ public abstract class SpringTestSupport extends ContextTestSupport {
                 break;
         }
         String on = DEFAULT_DOMAIN + ":"
-                    + KEY_CONTEXT + "=" + context.getManagementName() + ","
-                    + KEY_TYPE + "=" + type + ","
-                    + KEY_NAME + "=" + quote + name + quote;
+                + KEY_CONTEXT + "=" + context.getManagementName() + ","
+                + KEY_TYPE + "=" + type + ","
+                + KEY_NAME + "=" + quote + name + quote;
         return ObjectName.getInstance(on);
     }
 }

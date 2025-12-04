@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.event;
 
 import org.eclipse.egit.github.core.client.PageIterator;

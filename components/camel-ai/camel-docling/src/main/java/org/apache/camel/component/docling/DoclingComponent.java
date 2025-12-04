@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import java.util.Map;
@@ -60,5 +61,4 @@ public class DoclingComponent extends DefaultComponent {
     public void setConfiguration(DoclingConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

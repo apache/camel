@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
@@ -91,12 +92,13 @@ import org.slf4j.LoggerFactory;
 public class XmlConverter {
 
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
-    public static final String DOCUMENT_BUILDER_FACTORY_FEATURE
-            = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
-    public static final String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    public static final String DOCUMENT_BUILDER_FACTORY_FEATURE =
+            "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
+    public static final String defaultCharset =
+            ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
-    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY
-            = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY =
+            "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
     private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
 
@@ -104,8 +106,7 @@ public class XmlConverter {
     private volatile TransformerFactory transformerFactory;
     private volatile XMLReaderPool xmlReaderPool;
 
-    public XmlConverter() {
-    }
+    public XmlConverter() {}
 
     public XmlConverter(DocumentBuilderFactory documentBuilderFactory) {
         this.documentBuilderFactory = documentBuilderFactory;
@@ -246,8 +247,8 @@ public class XmlConverter {
             StringWriter buffer = new StringWriter();
             if (exchange != null) {
                 // check the camelContext properties first
-                Properties properties
-                        = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
+                Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(
+                        OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
                 if (!properties.isEmpty()) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toString();
@@ -270,8 +271,8 @@ public class XmlConverter {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             if (exchange != null) {
                 // check the camelContext properties first
-                Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
-                        exchange.getContext());
+                Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(
+                        OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
                 if (!properties.isEmpty()) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toByteArray();
@@ -529,12 +530,14 @@ public class XmlConverter {
     }
 
     @Converter(order = 40)
-    public DOMSource toDOMSource(File file, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
+    public DOMSource toDOMSource(File file, Exchange exchange)
+            throws ParserConfigurationException, IOException, SAXException {
         return toDOMSource(file.toPath(), exchange);
     }
 
     @Converter(order = 41)
-    public DOMSource toDOMSource(Path file, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
+    public DOMSource toDOMSource(Path file, Exchange exchange)
+            throws ParserConfigurationException, IOException, SAXException {
         InputStream is = IOHelper.buffered(Files.newInputStream(file));
         return toDOMSource(is, exchange);
     }
@@ -577,28 +580,24 @@ public class XmlConverter {
     }
 
     @Converter(order = 45)
-    public DOMSource toDOMSourceFromSAX(SAXSource source)
-            throws TransformerException {
+    public DOMSource toDOMSourceFromSAX(SAXSource source) throws TransformerException {
         return new DOMSource(toDOMNodeFromSAX(source));
     }
 
     @Converter(order = 46)
-    public DOMSource toDOMSourceFromStAX(StAXSource source)
-            throws TransformerException {
+    public DOMSource toDOMSourceFromStAX(StAXSource source) throws TransformerException {
         return new DOMSource(toDOMNodeFromStAX(source));
     }
 
     @Converter(order = 47)
-    public Node toDOMNodeFromSAX(SAXSource source)
-            throws TransformerException {
+    public Node toDOMNodeFromSAX(SAXSource source) throws TransformerException {
         DOMResult result = new DOMResult();
         toResult(source, result);
         return result.getNode();
     }
 
     @Converter(order = 48)
-    public Node toDOMNodeFromStAX(StAXSource source)
-            throws TransformerException {
+    public Node toDOMNodeFromStAX(StAXSource source) throws TransformerException {
         DOMResult result = new DOMResult();
         toResult(source, result);
         return result.getNode();
@@ -653,7 +652,8 @@ public class XmlConverter {
      * Converts the given Source into a W3C DOM node
      */
     @Converter(order = 51, allowNull = true)
-    public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
+    public Node toDOMNode(Source source)
+            throws TransformerException, ParserConfigurationException, IOException, SAXException {
         DOMSource domSrc = toDOMSource(source, null);
         return domSrc != null ? domSrc.getNode() : null;
     }
@@ -735,7 +735,8 @@ public class XmlConverter {
      * @return          the parsed document
      */
     @Converter(order = 57)
-    public Document toDOMDocument(Reader in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+    public Document toDOMDocument(Reader in, Exchange exchange)
+            throws IOException, SAXException, ParserConfigurationException {
         return toDOMDocument(new InputSource(in), exchange);
     }
 
@@ -774,7 +775,8 @@ public class XmlConverter {
      * @return          the parsed document
      */
     @Converter(order = 60)
-    public Document toDOMDocument(File file, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+    public Document toDOMDocument(File file, Exchange exchange)
+            throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(file);
     }
@@ -787,9 +789,11 @@ public class XmlConverter {
      * @return          the parsed document
      */
     @Converter(order = 61)
-    public Document toDOMDocument(Path file, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+    public Document toDOMDocument(Path file, Exchange exchange)
+            throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
-        return documentBuilder.parse(IOHelper.buffered(Files.newInputStream(file)), file.toUri().toString());
+        return documentBuilder.parse(
+                IOHelper.buffered(Files.newInputStream(file)), file.toUri().toString());
     }
 
     /**
@@ -814,7 +818,8 @@ public class XmlConverter {
      * @return    the DOM Document
      */
     @Converter(order = 63, allowNull = true)
-    public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
+    public Document toDOMDocumentFromSingleNodeList(NodeList nl)
+            throws ParserConfigurationException, TransformerException {
         if (nl.getLength() == 1) {
             return toDOMDocument(nl.item(0));
         } else if (nl instanceof Node node) {
@@ -937,7 +942,7 @@ public class XmlConverter {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public DocumentBuilderFactory getDocumentBuilderFactory() {
         if (documentBuilderFactory == null) {
@@ -965,7 +970,7 @@ public class XmlConverter {
     }
 
     // Helper methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected void setupFeatures(DocumentBuilderFactory factory) {
         // must do defensive copy in case of concurrency
@@ -982,8 +987,12 @@ public class XmlConverter {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri,
-                            value, e.getMessage(), e);
+                    LOG.warn(
+                            "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                            uri,
+                            value,
+                            e.getMessage(),
+                            e);
                 }
             }
         }
@@ -998,15 +1007,14 @@ public class XmlConverter {
             }
             LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString);
         }
-
     }
 
     public DocumentBuilderFactory getDocumentBuilderFactory(Exchange exchange) {
         DocumentBuilderFactory answer = null;
         if (exchange != null) {
             // use custom factory is provided on the exchange
-            DocumentBuilderFactory factory
-                    = exchange.getProperty(Exchange.DOCUMENT_BUILDER_FACTORY, DocumentBuilderFactory.class);
+            DocumentBuilderFactory factory =
+                    exchange.getProperty(Exchange.DOCUMENT_BUILDER_FACTORY, DocumentBuilderFactory.class);
             if (factory != null) {
                 answer = factory;
             }
@@ -1026,22 +1034,34 @@ public class XmlConverter {
             // Set secure processing
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    XMLConstants.FEATURE_SECURE_PROCESSING, true, e.getMessage(), e);
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    XMLConstants.FEATURE_SECURE_PROCESSING,
+                    true,
+                    e.getMessage(),
+                    e);
         }
         try {
             // disable DOCTYPE declaration
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    "http://apache.org/xml/features/disallow-doctype-decl", true, e.getMessage(), e);
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    "http://apache.org/xml/features/disallow-doctype-decl",
+                    true,
+                    e.getMessage(),
+                    e);
         }
         try {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage(), e);
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    "http://xml.org/sax/features/external-general-entities",
+                    false,
+                    e.getMessage(),
+                    e);
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -1052,8 +1072,11 @@ public class XmlConverter {
                 factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
             }
         } catch (Exception e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
-                    "http://apache.org/xml/properties/security-manager", e.getMessage(), e);
+            LOG.warn(
+                    "DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
+                    "http://apache.org/xml/properties/security-manager",
+                    e.getMessage(),
+                    e);
         }
         // setup the feature from the system property
         setupFeatures(factory);
@@ -1091,7 +1114,8 @@ public class XmlConverter {
             try {
                 LOG.debug(
                         "Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}",
-                        e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                        e.getMessage(),
+                        JDK_FALLBACK_TRANSFORMER_FACTORY);
                 factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
             } catch (Exception t) {
                 // okay we cannot load fallback then throw original exception
@@ -1104,8 +1128,11 @@ public class XmlConverter {
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
-            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
+            LOG.warn(
+                    "TransformerFactory doesn't support the feature {} with value {}, due to {}.",
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING,
+                    "true",
+                    e.getMessage());
         }
         LOG.debug("Configuring TransformerFactory to not allow access to external DTD/Stylesheet");
         try {
@@ -1151,7 +1178,7 @@ public class XmlConverter {
                         messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
                     } catch (ClassNotFoundException e) {
                         LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
-                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                                + " <xsl:message> output will not be redirected to the ErrorListener!");
                     }
                 } else {
                     try {
@@ -1159,7 +1186,7 @@ public class XmlConverter {
                         messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
                     } catch (ClassNotFoundException cnfe2) {
                         LOG.warn("Error loading Saxon's net.sf.saxon.event.MessageWarner class from the classpath!"
-                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                                + " <xsl:message> output will not be redirected to the ErrorListener!");
                     }
                 }
 
@@ -1196,14 +1223,20 @@ public class XmlConverter {
         try {
             sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e) {
-            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
+            LOG.warn(
+                    "SAXParser doesn't support the feature {} with value {}, due to {}.",
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING,
+                    "true",
+                    e.getMessage());
         }
         try {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (Exception e) {
-            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
+            LOG.warn(
+                    "SAXParser doesn't support the feature {} with value {}, due to {}.",
+                    "http://xml.org/sax/features/external-general-entities",
+                    false,
+                    e.getMessage());
         }
         sfactory.setNamespaceAware(true);
         return sfactory;

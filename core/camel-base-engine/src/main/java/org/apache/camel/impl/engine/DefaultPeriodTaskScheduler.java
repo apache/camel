@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.ExecutorService;
@@ -95,8 +96,9 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
 
         @Override
         protected void doInit() throws Exception {
-            this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
-                    task.getClass().getSimpleName());
+            this.executorService = getCamelContext()
+                    .getExecutorServiceManager()
+                    .newSingleThreadExecutor(this, task.getClass().getSimpleName());
             ServiceHelper.initService(task);
         }
 
@@ -141,5 +143,4 @@ public final class DefaultPeriodTaskScheduler extends TimerListenerManager imple
             }
         }
     }
-
 }

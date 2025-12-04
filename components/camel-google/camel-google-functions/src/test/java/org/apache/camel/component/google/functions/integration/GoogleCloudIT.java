@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions.integration;
 
 import java.util.List;
@@ -27,8 +28,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-@EnabledIfEnvironmentVariable(named = "GOOGLE_APPLICATION_CREDENTIALS", matches = ".*",
-                              disabledReason = "Application credentials were not provided")
+@EnabledIfEnvironmentVariable(
+        named = "GOOGLE_APPLICATION_CREDENTIALS",
+        matches = ".*",
+        disabledReason = "Application credentials were not provided")
 public class GoogleCloudIT extends CamelTestSupport {
 
     final String functionNameReverseString = "function-reverse-string";
@@ -40,12 +43,16 @@ public class GoogleCloudIT extends CamelTestSupport {
 
     @EndpointInject("mock:functionsList1")
     private MockEndpoint mockFunctionList1;
+
     @EndpointInject("mock:getFunction")
     private MockEndpoint mockGetFunction;
+
     @EndpointInject("mock:generateDownloadUrl")
     private MockEndpoint mockGenerateDownloadUrl;
+
     @EndpointInject("mock:callFunction")
     private MockEndpoint mockCallFunction;
+
     @EndpointInject("mock:createFunction")
     private MockEndpoint mockCreateFunction;
 
@@ -58,51 +65,69 @@ public class GoogleCloudIT extends CamelTestSupport {
                 // list functions
                 from("timer:timer1?repeatCount=1")
                         .to("google-functions://" + functionNameReverseString + "?serviceAccountKey="
-                            + serviceAccountKeyFile + "&project=" + project + "&location=" + location
-                            + "&operation=listFunctions")
-                        .log("body:${body}").split(bodyAs(List.class)).process(exchange -> {
+                                + serviceAccountKeyFile + "&project=" + project + "&location=" + location
+                                + "&operation=listFunctions")
+                        .log("body:${body}")
+                        .split(bodyAs(List.class))
+                        .process(exchange -> {
                             CloudFunction cf = exchange.getIn().getBody(CloudFunction.class);
                             exchange.getIn().setBody(cf.getName());
-                        }).to("direct:directFunctionList1").to("mock:functionsList1");
+                        })
+                        .to("direct:directFunctionList1")
+                        .to("mock:functionsList1");
 
                 // get function
-                from("direct:directFunctionList1").to("google-functions://" + functionNameReverseString
-                                                      + "?serviceAccountKey=" + serviceAccountKeyFile + "&project=" + project
-                                                      + "&location="
-                                                      + location + "&operation=getFunction")
-                        .log("body:${body}").to("direct:getFunction").to("mock:getFunction");
+                from("direct:directFunctionList1")
+                        .to("google-functions://" + functionNameReverseString
+                                + "?serviceAccountKey=" + serviceAccountKeyFile + "&project=" + project
+                                + "&location="
+                                + location + "&operation=getFunction")
+                        .log("body:${body}")
+                        .to("direct:getFunction")
+                        .to("mock:getFunction");
 
                 // generate download url
-                from("timer:timer1?repeatCount=1").to("google-functions://" + functionNameReverseString
-                                                      + "?serviceAccountKey=" + serviceAccountKeyFile + "&project=" + project
-                                                      + "&location="
-                                                      + location + "&operation=generateDownloadUrl")
-                        .log("body:${body}").to("mock:generateDownloadUrl");
+                from("timer:timer1?repeatCount=1")
+                        .to("google-functions://" + functionNameReverseString
+                                + "?serviceAccountKey=" + serviceAccountKeyFile + "&project=" + project
+                                + "&location="
+                                + location + "&operation=generateDownloadUrl")
+                        .log("body:${body}")
+                        .to("mock:generateDownloadUrl");
 
                 // call function
-                from("timer:timer1?repeatCount=1").process(exchange -> {
-                    exchange.getIn().setBody("just a message");
-                }).to("google-functions://" + functionNameReverseString + "?serviceAccountKey=" + serviceAccountKeyFile
-                      + "&project=" + project + "&location=" + location + "&operation=callFunction")
-                        .log("body:${body}").to("mock:callFunction");
+                from("timer:timer1?repeatCount=1")
+                        .process(exchange -> {
+                            exchange.getIn().setBody("just a message");
+                        })
+                        .to("google-functions://" + functionNameReverseString + "?serviceAccountKey="
+                                + serviceAccountKeyFile + "&project=" + project + "&location=" + location
+                                + "&operation=callFunction")
+                        .log("body:${body}")
+                        .to("mock:callFunction");
 
                 // create function
                 final String randomFunctionName = createRandomFunctionName();
-                from("timer:timer1?repeatCount=1").process(exchange -> {
-                    exchange.getIn().setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, functionCreationEntryPoint);
-                    exchange.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
-                    exchange.getIn().setHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL,
-                            functionCreationSourceCode);
-                }).to("google-functions://" + randomFunctionName + "?serviceAccountKey=" + serviceAccountKeyFile
-                      + "&project=" + project + "&location=" + location + "&operation=createFunction")
-                        .log("body:${body}").to("mock:createFunction");
+                from("timer:timer1?repeatCount=1")
+                        .process(exchange -> {
+                            exchange.getIn()
+                                    .setHeader(GoogleCloudFunctionsConstants.ENTRY_POINT, functionCreationEntryPoint);
+                            exchange.getIn().setHeader(GoogleCloudFunctionsConstants.RUNTIME, "java11");
+                            exchange.getIn()
+                                    .setHeader(
+                                            GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL,
+                                            functionCreationSourceCode);
+                        })
+                        .to("google-functions://" + randomFunctionName + "?serviceAccountKey=" + serviceAccountKeyFile
+                                + "&project=" + project + "&location=" + location + "&operation=createFunction")
+                        .log("body:${body}")
+                        .to("mock:createFunction");
 
                 // delete function
                 from("timer:timer1?repeatCount=1")
                         .to("google-functions://" + "randomFunction_0" + "?serviceAccountKey=" + serviceAccountKeyFile
-                            + "&project=" + project + "&location=" + location + "&operation=deleteFunction")
+                                + "&project=" + project + "&location=" + location + "&operation=deleteFunction")
                         .log("body:${body}");
-
             }
         };
     }
@@ -125,5 +150,4 @@ public class GoogleCloudIT extends CamelTestSupport {
         int r = (int) (Math.random() * 10000);
         return "randomFunction_" + r;
     }
-
 }

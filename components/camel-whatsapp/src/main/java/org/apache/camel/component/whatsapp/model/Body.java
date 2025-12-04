@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class Body {
@@ -21,8 +22,7 @@ public class Body {
     private String type;
     private String text;
 
-    public Body() {
-    }
+    public Body() {}
 
     public String getType() {
         return type;

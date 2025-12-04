@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
@@ -73,7 +74,8 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "HeadersMapFactory class name")
     String getHeadersMapFactoryClassName();
 
-    @ManagedAttribute(description = "Additional sensitive keywords (such as passwords) that should be masked when logging")
+    @ManagedAttribute(
+            description = "Additional sensitive keywords (such as passwords) that should be masked when logging")
     String getAdditionalSensitiveKeywords();
 
     /**
@@ -250,10 +252,12 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters) throws Exception;
 
     @ManagedOperation(description = "Dumps the routes as YAML")
-    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds) throws Exception;
+    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds)
+            throws Exception;
 
     @ManagedOperation(description = "Dumps the routes as YAML")
-    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
+    String dumpRoutesAsYaml(
+            boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
             throws Exception;
 
     /**
@@ -307,7 +311,8 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Current ids of all the routes")
     Set<String> routeIds();
 
-    @ManagedOperation(description = "Current route group names of all the routes (is empty if there are no route groups assigned)")
+    @ManagedOperation(
+            description =
+                    "Current route group names of all the routes (is empty if there are no route groups assigned)")
     Set<String> routeGroups();
-
 }

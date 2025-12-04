@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.converter;
 
 import org.apache.camel.Converter;
@@ -23,8 +24,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 
 @Converter(generateLoader = true)
 public final class ValueConverter implements TypeConverters {
-    private ValueConverter() {
-    }
+    private ValueConverter() {}
 
     @Converter
     public static Variant toVariant(final DataValue value) {

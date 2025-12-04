@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.number;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -32,8 +35,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -112,11 +113,10 @@ public class BindyNumberTest {
             bindy.setLocale("en");
             bindy.type(BindyType.Fixed);
 
-            from(URI_DIRECT_MARSHALL)
-                    .marshal(bindy)
-                    .to(URI_MOCK_MARSHALL_RESULT);
+            from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
-                    .unmarshal().bindy(BindyType.Fixed, DataModel.class)
+                    .unmarshal()
+                    .bindy(BindyType.Fixed, DataModel.class)
                     .to(URI_MOCK_UNMARSHALL_RESULT);
         }
     }
@@ -129,12 +129,16 @@ public class BindyNumberTest {
     public static class DataModel {
         @DataField(pos = 1, length = 5, precision = 2, impliedDecimalSeparator = true)
         public BigDecimal field1;
+
         @DataField(pos = 6, length = 5, precision = 2)
         public BigDecimal field2;
+
         @DataField(pos = 11, length = 5)
         public BigDecimal field3;
+
         @DataField(pos = 16, length = 5, precision = 2)
         public Double field4;
+
         @DataField(pos = 21, length = 5)
         public Double field5;
     }

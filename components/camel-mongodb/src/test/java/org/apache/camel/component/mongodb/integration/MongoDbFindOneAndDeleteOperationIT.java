@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
+import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,15 +41,6 @@ import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.MongoDbConstants.FIELDS_PROJECTION;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.apache.camel.component.mongodb.MongoDbConstants.OPTIONS;
-import static org.apache.camel.component.mongodb.MongoDbConstants.SORT_BY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbFindOneAndDeleteOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
@@ -72,9 +73,11 @@ public class MongoDbFindOneAndDeleteOperationIT extends AbstractMongoDbITSupport
         Document doc = template.requestBody("direct:findOneAndDelete", filter, Document.class);
 
         assertEquals("2", doc.getString(MONGO_ID), "ID does not match");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Serre")),
-                "Serre should have been deleted");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Connes")),
+        assertEquals(
+                0, testCollection.countDocuments(new Document("scientist", "Serre")), "Serre should have been deleted");
+        assertEquals(
+                1,
+                testCollection.countDocuments(new Document("scientist", "Connes")),
                 "Connes should not have been deleted");
         mock.assertIsSatisfied();
     }
@@ -91,15 +94,14 @@ public class MongoDbFindOneAndDeleteOperationIT extends AbstractMongoDbITSupport
         testCollection.insertOne(Document.parse(serre));
 
         Bson filter = eq("fixedField", "fixedValue");
-        Document doc = template.requestBodyAndHeader("direct:findOneAndDelete",
-                filter, SORT_BY, Sorts.descending("_id"), Document.class);
+        Document doc = template.requestBodyAndHeader(
+                "direct:findOneAndDelete", filter, SORT_BY, Sorts.descending("_id"), Document.class);
 
         mock.assertIsSatisfied();
         assertEquals("2", doc.getString(MONGO_ID), "ID does not match");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Connes")),
-                "Connes should be present.");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Serre")),
-                "Serre should be deleted.");
+        assertEquals(
+                1, testCollection.countDocuments(new Document("scientist", "Connes")), "Connes should be present.");
+        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Serre")), "Serre should be deleted.");
     }
 
     @Test
@@ -111,8 +113,8 @@ public class MongoDbFindOneAndDeleteOperationIT extends AbstractMongoDbITSupport
         testCollection.insertOne(Document.parse(connes));
 
         Bson filter = eq("scientist", "Connes");
-        Document doc = template.requestBodyAndHeader("direct:findOneAndDelete",
-                filter, FIELDS_PROJECTION, Projections.include("scientist"), Document.class);
+        Document doc = template.requestBodyAndHeader(
+                "direct:findOneAndDelete", filter, FIELDS_PROJECTION, Projections.include("scientist"), Document.class);
 
         mock.assertIsSatisfied();
         assertTrue(doc.containsKey("scientist"), "Projection is set to include scientist field");
@@ -142,17 +144,17 @@ public class MongoDbFindOneAndDeleteOperationIT extends AbstractMongoDbITSupport
 
         mock.assertIsSatisfied();
         assertEquals("2", doc.getString(MONGO_ID), "ID does not match");
-        assertEquals(1, testCollection.countDocuments(new Document("scientist", "Connes")),
-                "Connes should be present.");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Serre")),
-                "Serre should be deleted.");
+        assertEquals(
+                1, testCollection.countDocuments(new Document("scientist", "Connes")), "Connes should be present.");
+        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Serre")), "Serre should be deleted.");
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:findOneAndDelete")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneAndDelete")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneAndDelete")
                         .to(mock);
             }
         };

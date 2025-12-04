@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -26,8 +29,6 @@ import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelContextFactoryBeanTest {
 
@@ -68,8 +69,7 @@ public class CamelContextFactoryBeanTest {
         factory.setApplicationContext(applicationContext);
         factory.afterPropertiesSet();
 
-        ModelJAXBContextFactory modelJAXBContextFactory
-                = PluginHelper.getModelJAXBContextFactory(factory.getContext());
+        ModelJAXBContextFactory modelJAXBContextFactory = PluginHelper.getModelJAXBContextFactory(factory.getContext());
 
         assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
     }

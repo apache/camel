@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import io.netty.channel.ChannelHandler;
@@ -35,10 +36,10 @@ public class NettyCustomCodecTest extends BaseNettyTest {
     private ChannelHandler customEnc = MyCustomCodec.createMyCustomEncoder();
 
     private String uri = "netty:tcp://localhost:{{port}}?disconnect=true&sync=false"
-                         + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoders=#myCustomEncoder";
+            + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoders=#myCustomEncoder";
 
     // use reaadble bytes
-    private byte[] data = new byte[] { 65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0 };
+    private byte[] data = new byte[] {65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0};
 
     @Test
     public void testCustomCodec() throws Exception {
@@ -48,7 +49,11 @@ public class NettyCustomCodecTest extends BaseNettyTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        byte[] mockData = getMockEndpoint("mock:input").getReceivedExchanges().get(0).getIn().getBody(byte[].class);
+        byte[] mockData = getMockEndpoint("mock:input")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(byte[].class);
         ObjectHelper.equalByteArray(data, mockData);
     }
 

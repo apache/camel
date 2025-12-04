@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.common;
 
 import java.io.ByteArrayInputStream;
@@ -34,8 +35,7 @@ import org.apache.camel.util.IOHelper;
 @Converter(generateBulkLoader = true)
 public final class VertxJsonArrayConverter {
 
-    private VertxJsonArrayConverter() {
-    }
+    private VertxJsonArrayConverter() {}
 
     @Converter
     public static JsonArray toJsonArray(Buffer buffer) {

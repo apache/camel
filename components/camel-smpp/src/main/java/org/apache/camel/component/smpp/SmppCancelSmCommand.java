@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
@@ -35,8 +36,10 @@ public class SmppCancelSmCommand extends AbstractSmppCommand {
         CancelSm cancelSm = createCancelSm(exchange);
 
         if (log.isDebugEnabled()) {
-            log.debug("Canceling a short message for exchange id '{}' and message id '{}'",
-                    exchange.getExchangeId(), cancelSm.getMessageId());
+            log.debug(
+                    "Canceling a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(),
+                    cancelSm.getMessageId());
         }
 
         try {
@@ -54,8 +57,10 @@ public class SmppCancelSmCommand extends AbstractSmppCommand {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Cancel a short message for exchange id '{}' and message id '{}'",
-                    exchange.getExchangeId(), cancelSm.getMessageId());
+            log.debug(
+                    "Cancel a short message for exchange id '{}' and message id '{}'",
+                    exchange.getExchangeId(),
+                    cancelSm.getMessageId());
         }
 
         Message message = ExchangeHelper.getResultMessage(exchange);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.stress;
 
 import java.util.Random;
@@ -64,7 +65,10 @@ public class FileAsyncStressManualTest extends ContextTestSupport {
                 // this will result in polling again and potentially picking up
                 // files
                 // that already are in progress
-                from(fileUri("?maxMessagesPerPoll=50")).routeId("foo").autoStartup(false).threads(10)
+                from(fileUri("?maxMessagesPerPoll=50"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .threads(10)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // simulate some work with random time to complete
@@ -72,9 +76,9 @@ public class FileAsyncStressManualTest extends ContextTestSupport {
                                 int delay = ran.nextInt(50) + 10;
                                 Thread.sleep(delay);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

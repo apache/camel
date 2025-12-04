@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -38,12 +39,9 @@ public class OutgoingTextMessage extends OutgoingMessage {
     @JsonProperty("reply_markup")
     private ReplyMarkup replyMarkup;
 
-    public OutgoingTextMessage() {
+    public OutgoingTextMessage() {}
 
-    }
-
-    public OutgoingTextMessage(String text, String parseMode, Boolean disableWebPagePreview,
-                               ReplyMarkup replyMarkup) {
+    public OutgoingTextMessage(String text, String parseMode, Boolean disableWebPagePreview, ReplyMarkup replyMarkup) {
 
         this.text = text;
         this.parseMode = parseMode;

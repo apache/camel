@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
 
 import java.util.Map;
@@ -46,13 +47,15 @@ public class PQCComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        PQCConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new PQCConfiguration();
+        PQCConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new PQCConfiguration();
         PQCEndpoint endpoint = new PQCEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
-        if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())
-                && ObjectHelper.isEmpty(configuration.getKeyStore()) && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
+        if (ObjectHelper.isEmpty(configuration.getSigner())
+                && ObjectHelper.isEmpty(configuration.getKeyPair())
+                && ObjectHelper.isEmpty(configuration.getKeyStore())
+                && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
             if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
                 switch (configuration.getSignatureAlgorithm()) {
                     case "MLDSA":
@@ -101,8 +104,10 @@ public class PQCComponent extends HealthCheckComponent {
             }
         }
 
-        if (ObjectHelper.isEmpty(configuration.getKeyGenerator()) && ObjectHelper.isEmpty(configuration.getKeyPair())
-                && ObjectHelper.isEmpty(configuration.getKeyStore()) && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
+        if (ObjectHelper.isEmpty(configuration.getKeyGenerator())
+                && ObjectHelper.isEmpty(configuration.getKeyPair())
+                && ObjectHelper.isEmpty(configuration.getKeyStore())
+                && ObjectHelper.isEmpty(configuration.getKeyPairAlias())) {
             if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
                 switch (configuration.getKeyEncapsulationAlgorithm()) {
                     case "MLKEM":

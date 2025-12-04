@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.io.Closeable;
@@ -70,10 +71,16 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
     private static final Logger LOG = LoggerFactory.getLogger(RouteReifier.class);
 
     private static final String[] RESERVED_PROPERTIES = new String[] {
-            Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
-            Route.DESCRIPTION_PROPERTY, Route.NOTE_PROPERTY,
-            Route.GROUP_PROPERTY, Route.NODE_PREFIX_ID_PROPERTY,
-            Route.REST_PROPERTY, Route.CONFIGURATION_ID_PROPERTY };
+        Route.ID_PROPERTY,
+        Route.CUSTOM_ID_PROPERTY,
+        Route.PARENT_PROPERTY,
+        Route.DESCRIPTION_PROPERTY,
+        Route.NOTE_PROPERTY,
+        Route.GROUP_PROPERTY,
+        Route.NODE_PREFIX_ID_PROPERTY,
+        Route.REST_PROPERTY,
+        Route.CONFIGURATION_ID_PROPERTY
+    };
 
     public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
         super(camelContext, (RouteDefinition) definition);
@@ -112,12 +119,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // create route
-        String id = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        String id =
+                definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         String desc = definition.getDescriptionText();
         String note = definition.getNote();
 
-        Route route = PluginHelper.getRouteFactory(camelContext).createRoute(camelContext, definition, id,
-                desc, note, endpoint, definition.getResource());
+        Route route = PluginHelper.getRouteFactory(camelContext)
+                .createRoute(camelContext, definition, id, desc, note, endpoint, definition.getResource());
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
@@ -200,7 +208,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             route.setShutdownRoute(parse(ShutdownRoute.class, definition.getShutdownRoute()));
         }
         if (definition.getShutdownRunningTask() != null) {
-            LOG.debug("Using ShutdownRunningTask {} on route: {}", definition.getShutdownRunningTask(), definition.getId());
+            LOG.debug(
+                    "Using ShutdownRunningTask {} on route: {}",
+                    definition.getShutdownRunningTask(),
+                    definition.getId());
             route.setShutdownRunningTask(parse(ShutdownRunningTask.class, definition.getShutdownRunningTask()));
         }
 
@@ -215,14 +226,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // validate route has output processors
         if (!hasOutputs(definition.getOutputs(), true)) {
             String at = definition.getInput().toString();
-            Exception cause = new IllegalArgumentException(
-                    "Route " + definition.getId() + " has no output processors."
-                                                           + " You need to add outputs to the route such as to(\"log:foo\").");
+            Exception cause = new IllegalArgumentException("Route " + definition.getId() + " has no output processors."
+                    + " You need to add outputs to the route such as to(\"log:foo\").");
             // location on route is stored on input
             ProcessorDefinitionHelper.prepareSourceLocation(definition.getResource(), definition.getInput());
             String source = LoggerHelper.getSourceLocationOnly(definition.getInput());
-            throw new FailedToCreateRouteException(
-                    definition.getRouteId(), source, definition.toString(), at, cause);
+            throw new FailedToCreateRouteException(definition.getRouteId(), source, definition.toString(), at, cause);
         }
 
         List<ProcessorDefinition<?>> list = new ArrayList<>(definition.getOutputs());
@@ -231,10 +240,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 ProcessorReifier<?> reifier = ProcessorReifier.reifier(route, output);
 
                 // ensure node has id assigned
-                String outputId
-                        = output.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+                String outputId = output.idOrCreate(
+                        camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
                 String eip = reifier.getClass().getSimpleName().replace("Reifier", "");
-                StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder()
+                StartupStep step = camelContext
+                        .getCamelContextExtension()
+                        .getStartupStepRecorder()
                         .beginStep(ProcessorReifier.class, outputId, "Create " + eip + " Processor");
 
                 reifier.addRoutes();
@@ -242,8 +253,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
             } catch (Exception e) {
                 // location on route is stored on input
-                String source = LoggerHelper
-                        .getLineNumberLoggerName(definition.getInput() != null ? definition.getInput().getLocation() : null);
+                String source = LoggerHelper.getLineNumberLoggerName(
+                        definition.getInput() != null ? definition.getInput().getLocation() : null);
                 throw new FailedToCreateRouteException(
                         definition.getRouteId(), source, definition.toString(), output.toString(), e);
             }
@@ -268,7 +279,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
         // configure route policy
-        if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
+        if (definition.getRoutePolicies() != null
+                && !definition.getRoutePolicies().isEmpty()) {
             for (RoutePolicy policy : definition.getRoutePolicies()) {
                 LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
                 route.getRoutePolicyList().add(policy);
@@ -296,7 +308,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         List<RoutePolicy> routePolicyList = route.getRoutePolicyList();
         if (routePolicyList != null && !routePolicyList.isEmpty()) {
             for (RoutePolicy policy : routePolicyList) {
-                // add policy as service if we have not already done that (eg possible if two routes have the same service)
+                // add policy as service if we have not already done that (eg possible if two routes have the same
+                // service)
                 // this ensures Camel can control the lifecycle of the policy
                 if (!camelContext.hasService(policy)) {
                     try {
@@ -330,11 +343,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         if (definition.getRestBindingDefinition() != null) {
             try {
                 // when disabling bean or processor we should also disable rest-dsl binding advice
-                boolean disabled
-                        = "true".equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
+                boolean disabled = "true"
+                        .equalsIgnoreCase(route.getCamelContext().getGlobalOption(DISABLE_BEAN_OR_PROCESS_PROCESSORS));
                 if (!disabled) {
-                    internal.addAdvice(
-                            new RestBindingReifier(route, definition.getRestBindingDefinition()).createRestBindingAdvice());
+                    internal.addAdvice(new RestBindingReifier(route, definition.getRestBindingDefinition())
+                            .createRestBindingAdvice());
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -350,7 +363,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
             if (definition.getOutputType() != null) {
                 contract.setOutputType(parseString(definition.getOutputType().getUrn()));
-                contract.setValidateOutput(parseBoolean(definition.getOutputType().getValidate(), false));
+                contract.setValidateOutput(
+                        parseBoolean(definition.getOutputType().getValidate(), false));
             }
             internal.addAdvice(new ContractAdvice(contract));
             // make sure to enable data type as its in use when using
@@ -383,11 +397,13 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // inject the route error handler for processors that are error handler aware
-        // this needs to be done here at the end because the route may be transactional and have a transaction error handler
-        // automatic be configured which some EIPs like Multicast/RecipientList needs to be using for special fine-grained error handling
+        // this needs to be done here at the end because the route may be transactional and have a transaction error
+        // handler
+        // automatic be configured which some EIPs like Multicast/RecipientList needs to be using for special
+        // fine-grained error handling
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
-        Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
-                builder, null);
+        Processor errorHandler =
+                ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route, builder, null);
         prepareErrorHandlerAware(route, errorHandler);
 
         // only during startup phase
@@ -448,8 +464,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         String kamelet = Boolean.toString(definition.isKamelet() != null && definition.isKamelet());
         routeProperties.put(Route.KAMELET_PROPERTY, kamelet);
         if (definition.getAppliedRouteConfigurationIds() != null) {
-            routeProperties.put(Route.CONFIGURATION_ID_PROPERTY,
-                    String.join(",", definition.getAppliedRouteConfigurationIds()));
+            routeProperties.put(
+                    Route.CONFIGURATION_ID_PROPERTY, String.join(",", definition.getAppliedRouteConfigurationIds()));
         }
 
         List<PropertyDefinition> properties = definition.getRouteProperties();
@@ -501,7 +517,5 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 exchange.getMessage().setBody(data);
             }
         }
-
     }
-
 }

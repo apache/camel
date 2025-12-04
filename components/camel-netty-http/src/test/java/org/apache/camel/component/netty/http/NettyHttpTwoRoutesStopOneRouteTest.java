@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
 
@@ -49,9 +50,11 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Camel");
 
         // the foo route is stopped so this service is no longer there
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class));
-        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        NettyHttpOperationFailedException cause =
+                assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
         assertEquals(404, cause.getStatusCode());
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
@@ -65,15 +68,18 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/foo").routeId("foo")
+                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                        .routeId("foo")
                         .to("mock:foo")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
-                from("netty-http:http://0.0.0.0:{{port}}/bar").routeId("bar")
+                from("netty-http:http://0.0.0.0:{{port}}/bar")
+                        .routeId("bar")
                         .to("mock:bar")
-                        .transform().constant("Bye Camel");
+                        .transform()
+                        .constant("Bye Camel");
             }
         };
     }
-
 }

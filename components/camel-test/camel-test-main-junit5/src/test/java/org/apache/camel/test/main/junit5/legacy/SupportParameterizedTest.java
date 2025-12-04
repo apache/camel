@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.legacy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyMainClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The test class ensuring that a parameterized test is supported.
@@ -35,7 +36,7 @@ class SupportParameterizedTest extends CamelMainTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "hello", "parameterized", "test" })
+    @ValueSource(strings = {"hello", "parameterized", "test"})
     void shouldSupportMultipleCalls(String value) throws Exception {
         MockEndpoint mock = context.getEndpoint("mock:echo", MockEndpoint.class);
         mock.expectedBodiesReceived(value);

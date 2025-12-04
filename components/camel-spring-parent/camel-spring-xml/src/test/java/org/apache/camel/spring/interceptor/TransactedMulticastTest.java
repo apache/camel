@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactedMulticastTest extends TransactionClientDataSourceSupport {
 
@@ -42,14 +43,16 @@ public class TransactedMulticastTest extends TransactionClientDataSourceSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("route1")
+                from("direct:start")
+                        .routeId("route1")
                         .transacted()
                         .to("direct:route2")
                         .log("will never get here")
                         .to("mock:result")
                         .setBody(constant("Hi !!!"));
 
-                from("direct:route2").routeId("route2")
+                from("direct:route2")
+                        .routeId("route2")
                         .multicast()
                         .to("mock:test1")
                         .to("mock:test2");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
@@ -34,16 +35,22 @@ class UndertowStreamingClientCallback extends UndertowClientCallback {
 
     private final InputStream bodyStream;
 
-    UndertowStreamingClientCallback(Exchange exchange, AsyncCallback callback,
-                                    UndertowEndpoint endpoint, ClientRequest request,
-                                    ByteBuffer body) {
+    UndertowStreamingClientCallback(
+            Exchange exchange,
+            AsyncCallback callback,
+            UndertowEndpoint endpoint,
+            ClientRequest request,
+            ByteBuffer body) {
         super(exchange, callback, endpoint, request, body);
         this.bodyStream = null;
     }
 
-    UndertowStreamingClientCallback(Exchange exchange, AsyncCallback callback,
-                                    UndertowEndpoint endpoint, ClientRequest request,
-                                    InputStream body) {
+    UndertowStreamingClientCallback(
+            Exchange exchange,
+            AsyncCallback callback,
+            UndertowEndpoint endpoint,
+            ClientRequest request,
+            InputStream body) {
         super(exchange, callback, endpoint, request, null);
         this.bodyStream = body;
     }

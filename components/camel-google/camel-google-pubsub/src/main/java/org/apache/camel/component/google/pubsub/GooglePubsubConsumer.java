@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
@@ -80,7 +81,8 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        localLog.info("Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+        localLog.info(
+                "Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
         executor = endpoint.createExecutor(this);
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper());
@@ -89,7 +91,8 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        localLog.info("Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+        localLog.info(
+                "Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
 
         synchronized (subscribers) {
             if (!subscribers.isEmpty()) {
@@ -160,9 +163,11 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
         private void asynchronousPull(String subscriptionName) throws IOException {
             while (isRunAllowed() && !isSuspendingOrSuspended()) {
-                MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
+                MessageReceiver messageReceiver =
+                        new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
-                Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
+                Subscriber subscriber =
+                        endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
                 try {
                     subscribers.add(subscriber);
                     subscriber.startAsync().awaitRunning();
@@ -207,8 +212,8 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         // Deprecated:  replaced by headerFilterStrategy
                         exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());
 
-                        //existing subscriber can not be propagated, because it will be closed at the end of this block
-                        //subscriber will be created at the moment of use
+                        // existing subscriber can not be propagated, because it will be closed at the end of this block
+                        // subscriber will be created at the moment of use
                         // (see  https://issues.apache.org/jira/browse/CAMEL-18447)
                         GooglePubsubAcknowledge acknowledge = new AcknowledgeSync(
                                 () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName);
@@ -219,10 +224,12 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         }
 
                         // Inherit the rest of headers
-                        for (String pubSubHeader : pubsubMessage.getAttributesMap().keySet()) {
+                        for (String pubSubHeader :
+                                pubsubMessage.getAttributesMap().keySet()) {
                             String value = pubsubMessage.getAttributesMap().get(pubSubHeader);
                             if (headerFilterStrategy != null
-                                    && headerFilterStrategy.applyFilterToExternalHeaders(pubSubHeader, value, exchange)) {
+                                    && headerFilterStrategy.applyFilterToExternalHeaders(
+                                            pubSubHeader, value, exchange)) {
                                 continue;
                             }
                             exchange.getIn().setHeader(pubSubHeader, value);

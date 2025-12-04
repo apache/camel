@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
 
 import java.util.HashMap;
@@ -37,8 +38,7 @@ public class DockerComponent extends DefaultComponent {
     @Metadata
     private DockerConfiguration configuration = new DockerConfiguration();
 
-    public DockerComponent() {
-    }
+    public DockerComponent() {}
 
     public DockerComponent(DockerConfiguration configuration) {
         this.configuration = configuration;

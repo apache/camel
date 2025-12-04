@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
+
+import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHEME;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,8 +30,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
-
-import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHEME;
 
 @Component(SCHEME)
 public class LangChain4jToolsComponent extends DefaultComponent {
@@ -43,7 +44,6 @@ public class LangChain4jToolsComponent extends DefaultComponent {
     public LangChain4jToolsComponent(CamelContext context) {
         super(context);
         this.configuration = new LangChain4jToolsConfiguration();
-
     }
 
     public LangChain4jToolsConfiguration getConfiguration() {
@@ -74,8 +74,8 @@ public class LangChain4jToolsComponent extends DefaultComponent {
         LangChain4jToolsConfiguration langchain4jChatConfiguration = this.configuration.copy();
 
         Map<String, Object> toolParameters = PropertiesHelper.extractProperties(parameters, "parameter.");
-        LangChain4jToolsEndpoint endpoint
-                = new LangChain4jToolsEndpoint(uri, this, toolId, tagList, langchain4jChatConfiguration);
+        LangChain4jToolsEndpoint endpoint =
+                new LangChain4jToolsEndpoint(uri, this, toolId, tagList, langchain4jChatConfiguration);
         endpoint.setParameters(toolParameters.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> (String) e.getValue())));
 

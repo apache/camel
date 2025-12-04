@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium.configuration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
@@ -22,10 +27,6 @@ import io.debezium.config.Configuration;
 import io.debezium.embedded.async.AsyncEmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EmbeddedDebeziumConfigurationTest {
 
@@ -38,11 +39,14 @@ public class EmbeddedDebeziumConfigurationTest {
 
         final Configuration dbzEmbeddedConfiguration = configuration.createDebeziumConfiguration();
 
-        assertEquals("test_config", dbzEmbeddedConfiguration.getString(AsyncEmbeddedEngine.ENGINE_NAME),
+        assertEquals(
+                "test_config",
+                dbzEmbeddedConfiguration.getString(AsyncEmbeddedEngine.ENGINE_NAME),
                 "Expect the same name");
-        assertEquals(2, dbzEmbeddedConfiguration
-                .getInteger(AsyncEmbeddedEngine.OFFSET_STORAGE_KAFKA_REPLICATION_FACTOR));
-        assertEquals(DebeziumConstants.DEFAULT_OFFSET_STORAGE,
+        assertEquals(
+                2, dbzEmbeddedConfiguration.getInteger(AsyncEmbeddedEngine.OFFSET_STORAGE_KAFKA_REPLICATION_FACTOR));
+        assertEquals(
+                DebeziumConstants.DEFAULT_OFFSET_STORAGE,
                 dbzEmbeddedConfiguration.getString(AsyncEmbeddedEngine.OFFSET_STORAGE));
         assertEquals("test_field", configuration.getTestField());
         assertEquals(Class.class.getName(), dbzEmbeddedConfiguration.getString(AsyncEmbeddedEngine.CONNECTOR_CLASS));
@@ -76,5 +80,4 @@ public class EmbeddedDebeziumConfigurationTest {
         assertEquals("test_config", dbzEmbeddedConfiguration.getString("name"));
         assertEquals("test_additional", dbzEmbeddedConfiguration.getString("test.additional"));
     }
-
 }

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 public final class AnimalFactory {
 
-    private AnimalFactory() {
-    }
+    private AnimalFactory() {}
 
     public static Animal createAnimal(String name, boolean dangerous) {
         return new Animal(name, dangerous);
@@ -28,5 +28,4 @@ public final class AnimalFactory {
     public static Animal createAnimal(String name) {
         return new Animal(name, true);
     }
-
 }

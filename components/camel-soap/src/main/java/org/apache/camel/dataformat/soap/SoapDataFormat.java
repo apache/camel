@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.apache.camel.dataformat.soap.SoapConstants.SOAP_METHOD_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,8 +43,6 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.dataformat.soap.SoapConstants.SOAP_METHOD_NAME;
-
 /**
  * Data format supporting SOAP 1.1 and 1.2.
  */
@@ -49,7 +50,8 @@ import static org.apache.camel.dataformat.soap.SoapConstants.SOAP_METHOD_NAME;
 @Metadata(excludeProperties = "library,instanceClass,contentTypeFormat,defaultInstance")
 public class SoapDataFormat extends JaxbDataFormat {
 
-    public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
+    public static final String SOAP_UNMARSHALLED_HEADER_LIST =
+            "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
 
     private static final Logger LOG = LoggerFactory.getLogger(SoapDataFormat.class);
 
@@ -61,8 +63,7 @@ public class SoapDataFormat extends JaxbDataFormat {
     /**
      * Remember to set the context path when using this constructor
      */
-    public SoapDataFormat() {
-    }
+    public SoapDataFormat() {}
 
     /**
      * Initialize with JAXB context path
@@ -122,8 +123,7 @@ public class SoapDataFormat extends JaxbDataFormat {
      * @param  soapAction  for name resolution
      * @return             JAXBElement for the body content
      */
-    protected List<Object> createContentFromObject(
-            final Object inputObject, String soapAction) {
+    protected List<Object> createContentFromObject(final Object inputObject, String soapAction) {
         List<Object> bodyParts = new ArrayList<>();
         bodyParts.add(inputObject);
 
@@ -140,7 +140,7 @@ public class SoapDataFormat extends JaxbDataFormat {
         return bodyElements;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private JAXBElement<?> getElement(Object fromObj, QName name) {
         Object value;
 
@@ -182,7 +182,8 @@ public class SoapDataFormat extends JaxbDataFormat {
         Object unmarshalledObject = super.unmarshal(exchange, body);
         Object rootObject = JAXBIntrospector.getValue(unmarshalledObject);
 
-        InputStream stream = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+        InputStream stream =
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
         return adapter.doUnmarshal(exchange, stream, rootObject);
     }
 
@@ -236,5 +237,4 @@ public class SoapDataFormat extends JaxbDataFormat {
     public void setVersion(String version) {
         this.version = version;
     }
-
 }

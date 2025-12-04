@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import java.math.BigInteger;
@@ -37,8 +38,11 @@ abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
     private final Function<Consul, C> clientSupplier;
     private Runnable watcher;
 
-    protected AbstractConsulConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor,
-                                     Function<Consul, C> clientSupplier) {
+    protected AbstractConsulConsumer(
+            ConsulEndpoint endpoint,
+            ConsulConfiguration configuration,
+            Processor processor,
+            Function<Consul, C> clientSupplier) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;

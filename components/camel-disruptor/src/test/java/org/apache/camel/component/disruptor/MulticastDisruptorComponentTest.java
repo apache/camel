@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import java.util.concurrent.TimeUnit;
@@ -112,12 +113,11 @@ public class MulticastDisruptorComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:test?multipleConsumers=true").to("mock:result1")
-                        .shutdownRoute(ShutdownRoute.Defer);
-                from("disruptor:test?multipleConsumers=true").to("mock:result2")
-                        .shutdownRoute(ShutdownRoute.Defer);
+                from("disruptor:test?multipleConsumers=true").to("mock:result1").shutdownRoute(ShutdownRoute.Defer);
+                from("disruptor:test?multipleConsumers=true").to("mock:result2").shutdownRoute(ShutdownRoute.Defer);
                 //                from("disruptor:testAsynchronous").process(threadCounter).to("mock:result");
-                //                from("disruptor:testMultipleConsumers?concurrentConsumers=4").process(threadCounter).to("mock:result");
+                //
+                // from("disruptor:testMultipleConsumers?concurrentConsumers=4").process(threadCounter).to("mock:result");
             }
         };
     }

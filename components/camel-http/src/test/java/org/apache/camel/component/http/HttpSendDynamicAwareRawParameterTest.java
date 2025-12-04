@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -23,8 +26,6 @@ import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
 
@@ -58,7 +59,7 @@ public class HttpSendDynamicAwareRawParameterTest extends BaseHttpTest {
             public void configure() {
                 from("direct:dynamicAwareWithRaw")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/dynamicAware?par1=RAW(${headers.par1})&par2=RAW{${headers.par2}}");
+                                + "/dynamicAware?par1=RAW(${headers.par1})&par2=RAW{${headers.par2}}");
             }
         };
     }

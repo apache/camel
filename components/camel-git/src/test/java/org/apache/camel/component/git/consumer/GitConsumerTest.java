@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.consumer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -27,10 +32,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Ref;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitConsumerTest extends GitTestSupport {
 
@@ -133,10 +134,12 @@ public class GitConsumerTest extends GitTestSupport {
     public void injectConfigFileTest() throws Exception {
         GitBranchConsumer consumer;
 
-        consumer = (GitBranchConsumer) context.getRoute("injectConfigFileFromClasspath").getConsumer();
+        consumer = (GitBranchConsumer)
+                context.getRoute("injectConfigFileFromClasspath").getConsumer();
         assertEquals("fromClasspath", consumer.getRepository().getConfig().getString("init", null, "defaultBranch"));
 
-        consumer = (GitBranchConsumer) context.getRoute("injectConfigFileFromHttp").getConsumer();
+        consumer =
+                (GitBranchConsumer) context.getRoute("injectConfigFileFromHttp").getConsumer();
         assertEquals("fromHttp", consumer.getRepository().getConfig().getString("init", null, "defaultBranch"));
 
         consumer = (GitBranchConsumer) context.getRoute("defaultBranchTest").getConsumer();
@@ -158,12 +161,11 @@ public class GitConsumerTest extends GitTestSupport {
                         .id("injectConfigFileFromClasspath")
                         .to("mock:result-branch-configfile");
                 from("git://" + dir
-                     + "?type=branch&gitConfigFile=https://gist.githubusercontent.com/gilvansfilho/a61f6ab811a5e8e9d46c4fba1235abc1/raw/a1f614c90e29f1cdd83534aa913f5d276beace2c/gitconfig")
+                                + "?type=branch&gitConfigFile=https://gist.githubusercontent.com/gilvansfilho/a61f6ab811a5e8e9d46c4fba1235abc1/raw/a1f614c90e29f1cdd83534aa913f5d276beace2c/gitconfig")
                         .id("injectConfigFileFromHttp")
                         .to("mock:result-branch-configfile");
                 from("git://" + dir + "?type=branch").id("defaultBranchTest").to("mock:result-branch");
             }
         };
     }
-
 }

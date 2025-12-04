@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,9 +32,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ApplicationEntityTest {
 
     @Test
@@ -40,8 +41,7 @@ public class ApplicationEntityTest {
         ContentType contentType = ContentType.create("text/plain", StandardCharsets.UTF_8);
         ApplicationEntity applicationEntity = new ApplicationEntity(messageBytes, contentType, "binary", true, null) {
             @Override
-            public void close() throws IOException {
-            }
+            public void close() throws IOException {}
         };
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         applicationEntity.writeTo(outputStream);
@@ -49,7 +49,9 @@ public class ApplicationEntityTest {
         byte[] actualBytes = outputStream.toByteArray();
 
         assertArrayEquals(messageBytes, actualBytes, "The output bytes should match the expected UTF-8 encoded bytes.");
-        assertEquals(messageBytes.length, actualBytes.length,
+        assertEquals(
+                messageBytes.length,
+                actualBytes.length,
                 "The byte length should match the length of the UTF-8 encoded message.");
     }
 
@@ -58,20 +60,17 @@ public class ApplicationEntityTest {
     void test_write_carriage_return(String content, String description) throws IOException {
 
         ContentType contentType = ContentType.create("text/plain", StandardCharsets.UTF_8);
-        ApplicationEntity applicationEntity = new ApplicationEntity(content.getBytes(), contentType, "binary", true, null) {
-            @Override
-            public void close() throws IOException {
-            }
-        };
+        ApplicationEntity applicationEntity =
+                new ApplicationEntity(content.getBytes(), contentType, "binary", true, null) {
+                    @Override
+                    public void close() throws IOException {}
+                };
         OutputStream outputStream = new ByteArrayOutputStream();
         applicationEntity.writeTo(outputStream);
         assertArrayEquals(outputStream.toString().getBytes(), content.getBytes());
     }
 
     private static Stream<Arguments> test_write_line_endings() {
-        return Stream.of(
-                Arguments.of("\r", "CR"),
-                Arguments.of("\n", "LF"),
-                Arguments.of("\r\n", "CRLF"));
+        return Stream.of(Arguments.of("\r", "CR"), Arguments.of("\n", "LF"), Arguments.of("\r\n", "CRLF"));
     }
 }

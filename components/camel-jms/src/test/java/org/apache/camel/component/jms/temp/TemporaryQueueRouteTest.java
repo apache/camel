@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.temp;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +36,7 @@ public class TemporaryQueueRouteTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected final String endpointUri = "activemq:temp-queue:TemporaryQueueRouteTest";
     protected CamelContext context;
     protected ProducerTemplate template;

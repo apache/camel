@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.Ordered;
@@ -25,14 +26,12 @@ public interface RouteBuilderLifecycleStrategy extends Ordered {
     /**
      * This method is invoked before the {@link RouteBuilder#configure()} method is invoked.
      */
-    default void beforeConfigure(RouteBuilder builder) {
-    }
+    default void beforeConfigure(RouteBuilder builder) {}
 
     /**
      * This method is invoked after the {@link RouteBuilder#configure()} method is invoked.
      */
-    default void afterConfigure(RouteBuilder builder) {
-    }
+    default void afterConfigure(RouteBuilder builder) {}
 
     /**
      * Gets the order.

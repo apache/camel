@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite;
 
 import java.io.IOException;
@@ -54,30 +55,43 @@ import org.slf4j.LoggerFactory;
 public class GooglePubsubLiteComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubLiteComponent.class);
 
-    @Metadata(label = "security",
-              description = "The Service account key that can be used as credentials for the PubSub Lite publisher/subscriber. It can be loaded by default from "
+    @Metadata(
+            label = "security",
+            description =
+                    "The Service account key that can be used as credentials for the PubSub Lite publisher/subscriber. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
 
-    @Metadata(label = "producer,advanced", defaultValue = "100",
-              description = "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "100",
+            description =
+                    "Maximum number of producers to cache. This could be increased if you have producers for lots of different topics.")
     private int publisherCacheSize = 100;
 
-    @Metadata(label = "producer,advanced", defaultValue = "180000",
-              description = "How many milliseconds should each producer stay alive in the cache.")
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "180000",
+            description = "How many milliseconds should each producer stay alive in the cache.")
     private int publisherCacheTimeout = 180000;
 
-    @Metadata(label = "consumer,advanced", defaultValue = "10485760",
-              description = "The number of quota bytes that may be outstanding to the client. " +
-                            "Must be greater than the allowed size of the largest message (1 MiB).")
+    @Metadata(
+            label = "consumer,advanced",
+            defaultValue = "10485760",
+            description = "The number of quota bytes that may be outstanding to the client. "
+                    + "Must be greater than the allowed size of the largest message (1 MiB).")
     private long consumerBytesOutstanding = 10 * 1024 * 1024L;
 
-    @Metadata(label = "consumer,advanced", defaultValue = "1000",
-              description = "The number of messages that may be outstanding to the client. Must be >0.")
+    @Metadata(
+            label = "consumer,advanced",
+            defaultValue = "1000",
+            description = "The number of messages that may be outstanding to the client. Must be >0.")
     private long consumerMessagesOutstanding = 1000;
 
-    @Metadata(label = "producer,advanced", defaultValue = "60000",
-              description = "How many milliseconds should a producer be allowed to terminate.")
+    @Metadata(
+            label = "producer,advanced",
+            defaultValue = "60000",
+            description = "How many milliseconds should a producer be allowed to terminate.")
     private int publisherTerminationTimeout = 60000;
 
     private RemovalListener<String, Publisher> removalListener = removal -> {
@@ -99,8 +113,7 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
             .removalListener(removalListener)
             .build();
 
-    public GooglePubsubLiteComponent() {
-    }
+    public GooglePubsubLiteComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -110,7 +123,6 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
         if (parts.length < 3) {
             throw new IllegalArgumentException(
                     "Google PubSub Lite Endpoint format \"projectId:location:destinationName[:subscriptionName]\"");
-
         }
 
         GooglePubsubLiteEndpoint pubsubEndpoint = new GooglePubsubLiteEndpoint(uri, this);
@@ -140,16 +152,16 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
         return cachedPublishers.get(topicName, () -> buildPublisher(googlePubsubEndpoint));
     }
 
-    private Publisher buildPublisher(GooglePubsubLiteEndpoint googlePubsubLiteEndpoint)
-            throws IOException {
+    private Publisher buildPublisher(GooglePubsubLiteEndpoint googlePubsubLiteEndpoint) throws IOException {
 
-        TopicPath topicPath = TopicPath.parse(
-                String.format("projects/%s/locations/%s/topics/%s",
-                        googlePubsubLiteEndpoint.getProjectId(),
-                        googlePubsubLiteEndpoint.getLocation(),
-                        googlePubsubLiteEndpoint.getDestinationName()));
+        TopicPath topicPath = TopicPath.parse(String.format(
+                "projects/%s/locations/%s/topics/%s",
+                googlePubsubLiteEndpoint.getProjectId(),
+                googlePubsubLiteEndpoint.getLocation(),
+                googlePubsubLiteEndpoint.getDestinationName()));
 
-        PublisherSettings publisherSettings = PublisherSettings.newBuilder().setTopicPath(topicPath)
+        PublisherSettings publisherSettings = PublisherSettings.newBuilder()
+                .setTopicPath(topicPath)
                 .setCredentialsProvider(getCredentialsProvider(googlePubsubLiteEndpoint))
                 .build();
         Publisher publisher = Publisher.create(publisherSettings);
@@ -160,11 +172,11 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
     public Subscriber getSubscriber(MessageReceiver messageReceiver, GooglePubsubLiteEndpoint googlePubsubLiteEndpoint)
             throws IOException {
 
-        SubscriptionPath subscriptionPath = SubscriptionPath
-                .parse(String.format("projects/%s/locations/%s/subscriptions/%s",
-                        googlePubsubLiteEndpoint.getProjectId(),
-                        googlePubsubLiteEndpoint.getLocation(),
-                        googlePubsubLiteEndpoint.getDestinationName()));
+        SubscriptionPath subscriptionPath = SubscriptionPath.parse(String.format(
+                "projects/%s/locations/%s/subscriptions/%s",
+                googlePubsubLiteEndpoint.getProjectId(),
+                googlePubsubLiteEndpoint.getLocation(),
+                googlePubsubLiteEndpoint.getDestinationName()));
 
         LOG.debug("ConsumerBytesOutstanding {}", consumerBytesOutstanding);
         LOG.debug("ConsumerMessagesOutstanding {}", consumerMessagesOutstanding);
@@ -188,10 +200,12 @@ public class GooglePubsubLiteComponent extends DefaultComponent {
     }
 
     private CredentialsProvider getCredentialsProvider(GooglePubsubLiteEndpoint endpoint) throws IOException {
-        return FixedCredentialsProvider.create(ObjectHelper.isEmpty(endpoint.getServiceAccountKey())
-                ? GoogleCredentials.getApplicationDefault() : ServiceAccountCredentials.fromStream(ResourceHelper
-                        .resolveMandatoryResourceAsInputStream(getCamelContext(), endpoint.getServiceAccountKey()))
-                        .createScoped(PublisherStubSettings.getDefaultServiceScopes()));
+        return FixedCredentialsProvider.create(
+                ObjectHelper.isEmpty(endpoint.getServiceAccountKey())
+                        ? GoogleCredentials.getApplicationDefault()
+                        : ServiceAccountCredentials.fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        getCamelContext(), endpoint.getServiceAccountKey()))
+                                .createScoped(PublisherStubSettings.getDefaultServiceScopes()));
     }
 
     public int getPublisherCacheSize() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
 
 import java.io.Serializable;
@@ -97,14 +98,13 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                errorHandler(
-                        deadLetterChannel(mockRejectEndpoint)
-                                .useOriginalMessage()
-                                .maximumRedeliveries(0)
-                                .retryAttemptedLogLevel(LoggingLevel.WARN)
-                                .logExhausted(true)
-                                .logStackTrace(true)
-                                .logRetryStackTrace(true));
+                errorHandler(deadLetterChannel(mockRejectEndpoint)
+                        .useOriginalMessage()
+                        .maximumRedeliveries(0)
+                        .retryAttemptedLogLevel(LoggingLevel.WARN)
+                        .logExhausted(true)
+                        .logStackTrace(true)
+                        .logRetryStackTrace(true));
 
                 from("direct:error")
                         .convertBodyTo(String.class, "UTF-8")
@@ -121,7 +121,9 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                                 exchange.getIn().setBody(twits);
                             }
                         })
-                        .split().xpath("//twits/twit").streaming()
+                        .split()
+                        .xpath("//twits/twit")
+                        .streaming()
                         .to(mockOutput);
 
                 from("direct:error2")
@@ -143,7 +145,9 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                                 exchange.getIn().setBody(twits.toString());
                             }
                         })
-                        .split().xpath("//twits/twit").streaming()
+                        .split()
+                        .xpath("//twits/twit")
+                        .streaming()
                         .to(mockOutput);
             }
         };
@@ -151,7 +155,9 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "twits" })
+@XmlType(
+        name = "",
+        propOrder = {"twits"})
 @XmlRootElement(name = "twits")
 class Twits implements Serializable {
 
@@ -177,7 +183,9 @@ class Twits implements Serializable {
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Twit", propOrder = { "text" })
+@XmlType(
+        name = "Twit",
+        propOrder = {"text"})
 @XmlRootElement(name = "twit")
 class Twit implements Serializable {
 

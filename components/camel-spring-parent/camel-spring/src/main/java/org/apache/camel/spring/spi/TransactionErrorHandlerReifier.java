@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
+
+import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
 
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,8 +42,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.apache.camel.model.TransactedDefinition.PROPAGATION_REQUIRED;
-
 public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTransactionErrorHandlerDefinition> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerReifier.class);
@@ -61,7 +62,9 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
         LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition);
 
         TransactionErrorHandler answer = new TransactionErrorHandler(
-                camelContext, processor, logger,
+                camelContext,
+                processor,
+                logger,
                 getProcessor(definition.getOnRedeliveryProcessor(), definition.getOnRedeliveryRef()),
                 redeliveryPolicy,
                 transactionTemplate,
@@ -74,8 +77,7 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
         return answer;
     }
 
-    private TransactionTemplate resolveTransactionTemplate(
-            TransactionErrorHandlerDefinition definition) {
+    private TransactionTemplate resolveTransactionTemplate(TransactionErrorHandlerDefinition definition) {
 
         TransactionTemplate answer = null;
 
@@ -111,8 +113,9 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
             } else if (mapTemplate.size() == 1) {
                 answer = mapTemplate.values().iterator().next();
             } else {
-                LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
-                          + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                LOG.debug(
+                        "Found {} TransactionTemplate in registry. Cannot determine which one to use. "
+                                + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
                         mapTemplate.size());
             }
         }
@@ -126,7 +129,7 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
             } else {
                 LOG.debug(
                         "Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
-                          + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
+                                + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder",
                         mapManager.size());
             }
         }
@@ -159,7 +162,8 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
         return answer;
     }
 
-    private RedeliveryPolicy resolveRedeliveryPolicy(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+    private RedeliveryPolicy resolveRedeliveryPolicy(
+            TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
         RedeliveryPolicy answer = null;
         RedeliveryPolicyDefinition def = definition.getRedeliveryPolicy();
         if (def == null && definition.getRedeliveryPolicyRef() != null) {
@@ -206,7 +210,8 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
                         executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
                     }
                     if (executorService == null) {
-                        throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");
+                        throw new IllegalArgumentException(
+                                "ExecutorService " + executorServiceRef + " not found in registry.");
                     }
                 } else {
                     // no explicit configured thread pool, so leave it up to the
@@ -220,5 +225,4 @@ public class TransactionErrorHandlerReifier extends ErrorHandlerReifier<SpringTr
             lock.unlock();
         }
     }
-
 }

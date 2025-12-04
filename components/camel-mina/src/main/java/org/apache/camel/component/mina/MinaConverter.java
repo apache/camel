@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.io.IOException;
@@ -33,7 +34,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 public final class MinaConverter {
 
     private MinaConverter() {
-        //Utility Class
+        // Utility Class
     }
 
     @Converter

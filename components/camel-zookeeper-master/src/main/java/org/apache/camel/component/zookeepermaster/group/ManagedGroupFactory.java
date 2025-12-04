@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -27,5 +28,4 @@ public interface ManagedGroupFactory extends GroupFactory {
     default void setClassLoader(ClassLoader classLoader) {
         // noop
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,12 +37,12 @@ public class JoorExpression extends TypedExpressionDefinition {
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String preCompile;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String singleQuotes;
 
-    public JoorExpression() {
-    }
+    public JoorExpression() {}
 
     protected JoorExpression(JoorExpression source) {
         super(source);

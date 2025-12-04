@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.ssl;
 
 import java.security.KeyManagementException;
@@ -35,5 +36,4 @@ public class NoImplSslConfig implements SSLConfig {
             throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         return null;
     }
-
 }

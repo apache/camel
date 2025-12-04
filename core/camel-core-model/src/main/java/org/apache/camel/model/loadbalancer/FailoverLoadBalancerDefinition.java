@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.loadbalancer;
 
 import java.util.ArrayList;
@@ -42,19 +43,22 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
+
     @XmlAttribute
     private String roundRobin;
+
     @XmlAttribute
     private String sticky;
+
     @XmlAttribute
     @Metadata(defaultValue = "-1")
     private String maximumFailoverAttempts;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private Boolean inheritErrorHandler;
 
-    public FailoverLoadBalancerDefinition() {
-    }
+    public FailoverLoadBalancerDefinition() {}
 
     protected FailoverLoadBalancerDefinition(FailoverLoadBalancerDefinition source) {
         super(source);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,8 +39,8 @@ public class PQCDefaultXMSSMTMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
-                    PQCSignatureAlgorithms.XMSSMT.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.XMSSMT.getAlgorithm(), PQCSignatureAlgorithms.XMSSMT.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +48,8 @@ public class PQCDefaultXMSSMTMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
-                PQCSignatureAlgorithms.XMSSMT.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.XMSSMT.getAlgorithm(), PQCSignatureAlgorithms.XMSSMT.getBcProvider());
         kpGen.initialize(XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256, new SecureRandom());
         return kpGen;
     }

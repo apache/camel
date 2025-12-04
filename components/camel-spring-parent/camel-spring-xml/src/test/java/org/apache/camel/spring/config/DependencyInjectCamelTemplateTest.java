@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -23,8 +26,6 @@ import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class DependencyInjectCamelTemplateTest extends SpringRunWithTestSupport {
@@ -48,5 +49,4 @@ public class DependencyInjectCamelTemplateTest extends SpringRunWithTestSupport 
 
         endpoint.assertIsSatisfied();
     }
-
 }

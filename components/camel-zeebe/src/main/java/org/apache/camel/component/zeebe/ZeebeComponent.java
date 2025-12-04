@@ -30,12 +30,16 @@ public class ZeebeComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "" + ZeebeConstants.DEFAULT_GATEWAY_HOST, label = "security")
     String gatewayHost = ZeebeConstants.DEFAULT_GATEWAY_HOST;
+
     @Metadata(defaultValue = "" + ZeebeConstants.DEFAULT_GATEWAY_PORT, label = "security")
     int gatewayPort = ZeebeConstants.DEFAULT_GATEWAY_PORT;
+
     @Metadata(label = "security", secret = true)
     String clientId;
+
     @Metadata(label = "security", secret = true)
     String clientSecret;
+
     @Metadata
     String oAuthAPI;
 

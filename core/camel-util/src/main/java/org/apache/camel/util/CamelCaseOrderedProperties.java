@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.Properties;
@@ -63,5 +64,4 @@ public final class CamelCaseOrderedProperties extends BaseOrderedProperties {
         }
         return answer;
     }
-
 }

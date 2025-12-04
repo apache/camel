@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("bonita")
 public class BonitaComponent extends DefaultComponent {
 
-    public BonitaComponent() {
-    }
+    public BonitaComponent() {}
 
     public BonitaComponent(CamelContext context) {
         super(context);

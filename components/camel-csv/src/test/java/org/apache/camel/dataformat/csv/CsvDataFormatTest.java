@@ -14,12 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.csv;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.dataformat.csv;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.QuoteMode;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class tests the creation of the proper {@link org.apache.commons.csv.CSVFormat} based on the properties of
@@ -84,9 +85,8 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldDisableCommentMarker() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setCommentMarkerDisabled(true)
-                .setCommentMarker('c');
+        CsvDataFormat dataFormat =
+                new CsvDataFormat().setCommentMarkerDisabled(true).setCommentMarker('c');
         dataFormat.start();
 
         // Properly saved
@@ -100,8 +100,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideCommentMarker() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setCommentMarker('c');
+        CsvDataFormat dataFormat = new CsvDataFormat().setCommentMarker('c');
         dataFormat.start();
 
         // Properly saved
@@ -114,8 +113,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideDelimiter() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setDelimiter('d');
+        CsvDataFormat dataFormat = new CsvDataFormat().setDelimiter('d');
         dataFormat.start();
 
         // Properly saved
@@ -128,9 +126,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldDisableEscape() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setEscapeDisabled(true)
-                .setEscape('e');
+        CsvDataFormat dataFormat = new CsvDataFormat().setEscapeDisabled(true).setEscape('e');
         dataFormat.start();
 
         // Properly saved
@@ -144,8 +140,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideEscape() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setEscape('e');
+        CsvDataFormat dataFormat = new CsvDataFormat().setEscape('e');
         dataFormat.start();
 
         // Properly saved
@@ -158,9 +153,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldDisableHeader() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setHeaderDisabled(true)
-                .setHeader(new String[] { "a", "b", "c" });
+        CsvDataFormat dataFormat = new CsvDataFormat().setHeaderDisabled(true).setHeader(new String[] {"a", "b", "c"});
         dataFormat.start();
 
         // Properly saved
@@ -174,8 +167,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideHeader() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setHeader("a,b,c");
+        CsvDataFormat dataFormat = new CsvDataFormat().setHeader("a,b,c");
         dataFormat.start();
 
         // Properly saved
@@ -183,13 +175,13 @@ public class CsvDataFormatTest {
         assertEquals("a,b,c", dataFormat.getHeader());
 
         // Properly used
-        assertArrayEquals(new String[] { "a", "b", "c" }, dataFormat.getActiveFormat().getHeader());
+        assertArrayEquals(
+                new String[] {"a", "b", "c"}, dataFormat.getActiveFormat().getHeader());
     }
 
     @Test
     void shouldAllowMissingColumnNames() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setAllowMissingColumnNames(true);
+        CsvDataFormat dataFormat = new CsvDataFormat().setAllowMissingColumnNames(true);
         dataFormat.start();
 
         // Properly saved
@@ -202,8 +194,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldNotAllowMissingColumnNames() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setAllowMissingColumnNames(false);
+        CsvDataFormat dataFormat = new CsvDataFormat().setAllowMissingColumnNames(false);
         dataFormat.start();
 
         // Properly saved
@@ -216,8 +207,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldIgnoreEmptyLines() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setIgnoreEmptyLines(true);
+        CsvDataFormat dataFormat = new CsvDataFormat().setIgnoreEmptyLines(true);
         dataFormat.start();
 
         // Properly saved
@@ -230,8 +220,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldNotIgnoreEmptyLines() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setIgnoreEmptyLines(false);
+        CsvDataFormat dataFormat = new CsvDataFormat().setIgnoreEmptyLines(false);
         dataFormat.start();
 
         // Properly saved
@@ -244,8 +233,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldIgnoreSurroundingSpaces() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setIgnoreSurroundingSpaces(true);
+        CsvDataFormat dataFormat = new CsvDataFormat().setIgnoreSurroundingSpaces(true);
         dataFormat.start();
 
         // Properly saved
@@ -258,8 +246,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldNotIgnoreSurroundingSpaces() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setIgnoreSurroundingSpaces(false);
+        CsvDataFormat dataFormat = new CsvDataFormat().setIgnoreSurroundingSpaces(false);
         dataFormat.start();
 
         // Properly saved
@@ -272,9 +259,8 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldDisableNullString() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setNullStringDisabled(true)
-                .setNullString("****");
+        CsvDataFormat dataFormat =
+                new CsvDataFormat().setNullStringDisabled(true).setNullString("****");
         dataFormat.start();
 
         // Properly saved
@@ -288,8 +274,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideNullString() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setNullString("****");
+        CsvDataFormat dataFormat = new CsvDataFormat().setNullString("****");
         dataFormat.start();
 
         // Properly saved
@@ -302,9 +287,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldDisableQuote() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setQuoteDisabled(true)
-                .setQuote('q');
+        CsvDataFormat dataFormat = new CsvDataFormat().setQuoteDisabled(true).setQuote('q');
         dataFormat.start();
 
         // Properly saved
@@ -318,8 +301,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideQuote() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setQuote('q');
+        CsvDataFormat dataFormat = new CsvDataFormat().setQuote('q');
         dataFormat.start();
 
         // Properly saved
@@ -332,8 +314,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideQuoteMode() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setQuoteMode(QuoteMode.ALL);
+        CsvDataFormat dataFormat = new CsvDataFormat().setQuoteMode(QuoteMode.ALL);
         dataFormat.start();
 
         // Properly saved
@@ -346,9 +327,8 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldDisableRecordSeparator() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setRecordSeparatorDisabled(true)
-                .setRecordSeparator("separator");
+        CsvDataFormat dataFormat =
+                new CsvDataFormat().setRecordSeparatorDisabled(true).setRecordSeparator("separator");
         dataFormat.start();
 
         // Properly saved
@@ -362,8 +342,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldOverrideRecordSeparator() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setRecordSeparator("separator");
+        CsvDataFormat dataFormat = new CsvDataFormat().setRecordSeparator("separator");
         dataFormat.start();
 
         // Properly saved
@@ -376,8 +355,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldSkipHeaderRecord() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setSkipHeaderRecord(true);
+        CsvDataFormat dataFormat = new CsvDataFormat().setSkipHeaderRecord(true);
         dataFormat.start();
 
         // Properly saved
@@ -390,8 +368,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldNotSkipHeaderRecord() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setSkipHeaderRecord(false);
+        CsvDataFormat dataFormat = new CsvDataFormat().setSkipHeaderRecord(false);
         dataFormat.start();
 
         // Properly saved
@@ -404,8 +381,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldHandleLazyLoad() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setLazyLoad(true);
+        CsvDataFormat dataFormat = new CsvDataFormat().setLazyLoad(true);
         dataFormat.start();
 
         // Properly saved
@@ -418,8 +394,7 @@ public class CsvDataFormatTest {
 
     @Test
     void shouldHandleUseMaps() {
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setUseMaps(true);
+        CsvDataFormat dataFormat = new CsvDataFormat().setUseMaps(true);
         dataFormat.start();
 
         // Properly saved
@@ -439,8 +414,7 @@ public class CsvDataFormatTest {
             }
         };
 
-        CsvDataFormat dataFormat = new CsvDataFormat()
-                .setRecordConverter(converter);
+        CsvDataFormat dataFormat = new CsvDataFormat().setRecordConverter(converter);
         dataFormat.start();
 
         // Properly saved
@@ -479,7 +453,6 @@ public class CsvDataFormatTest {
         assertEquals(Boolean.FALSE, dataFormat.getTrim());
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrim());
-
     }
 
     @Test
@@ -541,5 +514,4 @@ public class CsvDataFormatTest {
         // Properly used
         assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
     }
-
 }

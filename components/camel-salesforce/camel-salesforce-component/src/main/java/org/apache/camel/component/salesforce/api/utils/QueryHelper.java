@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.util.List;
@@ -67,7 +68,8 @@ public final class QueryHelper {
         final SObjectDescription description = object.description();
         final List<SObjectField> fields = description.getFields();
 
-        return fields.stream().map(SObjectField::getName)
+        return fields.stream()
+                .map(SObjectField::getName)
                 .collect(Collectors.joining(", ", "SELECT ", " FROM " + description.getName()));
     }
 
@@ -84,7 +86,9 @@ public final class QueryHelper {
         final SObjectDescription description = object.description();
         final List<SObjectField> fields = description.getFields();
 
-        return fields.stream().filter(filter).map(SObjectField::getName)
+        return fields.stream()
+                .filter(filter)
+                .map(SObjectField::getName)
                 .collect(Collectors.joining(", ", "SELECT ", " FROM " + description.getName()));
     }
 }

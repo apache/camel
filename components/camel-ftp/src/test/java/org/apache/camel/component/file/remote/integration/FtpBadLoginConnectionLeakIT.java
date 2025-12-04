@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -31,10 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FtpBadLoginConnectionLeakIT extends FtpServerTestSupport {
 
     /**
@@ -47,7 +48,7 @@ public class FtpBadLoginConnectionLeakIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremeber"
-               + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
+                + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
     @Test
@@ -101,7 +102,7 @@ public class FtpBadLoginConnectionLeakIT extends FtpServerTestSupport {
         @Override
         public Socket createSocket() {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
+            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
             return socket;
         }
 
@@ -130,5 +131,4 @@ public class FtpBadLoginConnectionLeakIT extends FtpServerTestSupport {
             value[1] = true;
         }
     }
-
 }

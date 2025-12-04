@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.validator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -37,8 +40,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A ValidatorRouteTest demonstrates contract based declarative validation via Java DSL.
@@ -90,18 +91,23 @@ public class ValidatorRouteTest extends ContextTestSupport {
             public void configure() {
 
                 validator().type("json").withExpression(bodyAs(String.class).contains("{name:XOrder}"));
-                from("direct:predicate").inputTypeWithValidate("json:JsonXOrder").outputType("json:JsonXOrderResponse")
+                from("direct:predicate")
+                        .inputTypeWithValidate("json:JsonXOrder")
+                        .outputType("json:JsonXOrderResponse")
                         .setBody(simple("{name:XOrderResponse}"));
 
                 context.addComponent("myxml", new MyXmlComponent());
                 validator().type("xml:XmlXOrderResponse").withUri("myxml:endpoint");
-                from("direct:endpoint").inputType("xml:XmlXOrder").outputTypeWithValidate("xml:XmlXOrderResponse")
+                from("direct:endpoint")
+                        .inputType("xml:XmlXOrder")
+                        .outputTypeWithValidate("xml:XmlXOrderResponse")
                         .validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
                         .setBody(simple("<XOrderResponse/>"));
 
                 validator().type("other:OtherXOrder").withJava(OtherXOrderValidator.class);
                 validator().type("other:OtherXOrderResponse").withJava(OtherXOrderResponseValidator.class);
-                from("direct:custom").inputTypeWithValidate("other:OtherXOrder")
+                from("direct:custom")
+                        .inputTypeWithValidate("other:OtherXOrder")
                         .outputTypeWithValidate("other:OtherXOrderResponse")
                         .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class))
                         .setBody(simple("name=XOrderResponse"));
@@ -114,7 +120,6 @@ public class ValidatorRouteTest extends ContextTestSupport {
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new MyXmlEndpoint();
         }
-
     }
 
     public static class MyXmlEndpoint extends DefaultEndpoint {
@@ -164,5 +169,4 @@ public class ValidatorRouteTest extends ContextTestSupport {
             LOG.info("Java validation: other XOrderResponse");
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import org.apache.camel.spi.Metadata;
@@ -21,21 +22,34 @@ import org.apache.camel.spi.Metadata;
 public interface JCacheConstants {
     @Metadata(label = "producer", description = "The cache operation to perform", javaType = "String")
     String ACTION = "CamelJCacheAction";
+
     @Metadata(label = "producer", description = "The result of the cache operation", javaType = "boolean")
     String RESULT = "CamelJCacheResult";
+
     @Metadata(label = "consumer", description = "The type of event received", javaType = "String")
     String EVENT_TYPE = "CamelJCacheEventType";
+
     @Metadata(description = "The key of the cache entry", javaType = "Object")
     String KEY = "CamelJCacheKey";
-    @Metadata(label = "producer", description = "The collection of keys against which the action should be performed",
-              javaType = "Set<Object>")
+
+    @Metadata(
+            label = "producer",
+            description = "The collection of keys against which the action should be performed",
+            javaType = "Set<Object>")
     String KEYS = "CamelJCacheKeys";
+
     @Metadata(label = "consumer", description = "The old value of the cache entry", javaType = "Object")
     String OLD_VALUE = "CamelJCacheOldValue";
-    @Metadata(label = "producer", description = "The EntryProcessor to invoke",
-              javaType = "EntryProcessor<Object, Object, Object>")
+
+    @Metadata(
+            label = "producer",
+            description = "The EntryProcessor to invoke",
+            javaType = "EntryProcessor<Object, Object, Object>")
     String ENTRY_PROCESSOR = "CamelJCacheEntryProcessor";
-    @Metadata(label = "producer", description = "The additional arguments to pass to the EntryProcessor",
-              javaType = "Collection<Object>")
+
+    @Metadata(
+            label = "producer",
+            description = "The additional arguments to pass to the EntryProcessor",
+            javaType = "Collection<Object>")
     String ARGUMENTS = "CamelJCacheEntryArgs";
 }

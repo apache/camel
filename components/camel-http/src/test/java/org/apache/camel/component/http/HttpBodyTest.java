@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.IMAGE_JPEG;
+import static org.apache.camel.component.http.HttpMethods.POST;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,10 +32,6 @@ import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.IMAGE_JPEG;
-import static org.apache.camel.component.http.HttpMethods.POST;
-import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
 
 public class HttpBodyTest extends BaseHttpTest {
     private String protocolString = "http://";
@@ -45,11 +46,14 @@ public class HttpBodyTest extends BaseHttpTest {
         expectedHeaders.put(CONTENT_TYPE, IMAGE_JPEG.getMimeType());
 
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
-                .register("/post1",
+                .register(
+                        "/post1",
                         new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders))
                 .create();
         localServer.start();
@@ -87,16 +91,18 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithByteArrayBody() {
-        Exchange exchange
-                = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
+        Exchange exchange = template.request(
+                endpointUrl + "/post",
+                exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpPostWithInputStreamBody() {
-        Exchange exchange = template.request(endpointUrl + "/post",
-                exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
+        Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> exchange1
+                .getIn()
+                .setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
 
         assertExchange(exchange);
     }

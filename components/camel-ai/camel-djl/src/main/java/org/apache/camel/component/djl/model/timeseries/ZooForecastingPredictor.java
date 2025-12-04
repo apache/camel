@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.timeseries;
 
 import java.io.IOException;
@@ -39,7 +40,8 @@ public class ZooForecastingPredictor extends AbstractPredictor {
 
     private final ZooModel<TimeSeriesData, Forecast> model;
 
-    public ZooForecastingPredictor(DJLEndpoint endpoint) throws ModelNotFoundException, MalformedModelException, IOException {
+    public ZooForecastingPredictor(DJLEndpoint endpoint)
+            throws ModelNotFoundException, MalformedModelException, IOException {
         super(endpoint);
 
         Criteria.Builder<TimeSeriesData, Forecast> builder = Criteria.builder()
@@ -50,8 +52,7 @@ public class ZooForecastingPredictor extends AbstractPredictor {
             builder.optProgress(new ProgressBar());
         }
 
-        Criteria<TimeSeriesData, Forecast> criteria = builder
-                .build();
+        Criteria<TimeSeriesData, Forecast> criteria = builder.build();
         this.model = ModelZoo.loadModel(criteria);
     }
 

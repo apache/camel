@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class AggregateForceCompletionOnStopParallelTest extends AggregateForceCompletionOnStopTest {
 
     @Override
@@ -29,12 +31,21 @@ public class AggregateForceCompletionOnStopParallelTest extends AggregateForceCo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:forceCompletionTrue").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .forceCompletionOnStop().completionSize(10)
-                        .parallelProcessing().delay(100).process("myCompletionProcessor");
+                from("direct:forceCompletionTrue")
+                        .routeId("foo")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .forceCompletionOnStop()
+                        .completionSize(10)
+                        .parallelProcessing()
+                        .delay(100)
+                        .process("myCompletionProcessor");
 
-                from("direct:forceCompletionFalse").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(10).parallelProcessing().delay(100)
+                from("direct:forceCompletionFalse")
+                        .routeId("bar")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(10)
+                        .parallelProcessing()
+                        .delay(100)
                         .process("myCompletionProcessor");
             }
         };

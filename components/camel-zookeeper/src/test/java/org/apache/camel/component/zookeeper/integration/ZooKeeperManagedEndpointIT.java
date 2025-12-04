@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.zookeeper.ZooKeeperEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jmx.support.JmxUtils;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class ZooKeeperManagedEndpointIT extends ZooKeeperITSupport {
@@ -42,7 +43,8 @@ public class ZooKeeperManagedEndpointIT extends ZooKeeperITSupport {
 
     @Test
     public void testEnpointConfigurationCanBeSetViaJMX() throws Exception {
-        Set s = getMBeanServer().queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"zookeeper:*\",*"), null);
+        Set s = getMBeanServer()
+                .queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"zookeeper:*\",*"), null);
         assertEquals(1, s.size(), "Could not find zookeper endpoint: " + s);
         ObjectName zepName = new ArrayList<ObjectName>(s).get(0);
 
@@ -53,27 +55,38 @@ public class ZooKeeperManagedEndpointIT extends ZooKeeperITSupport {
         verifyManagedAttribute(zepName, "Timeout", 1000);
         verifyManagedAttribute(zepName, "Backoff", 2000L);
 
-        getMBeanServer().invoke(zepName, "clearServers",
-                null,
-                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
-        getMBeanServer().invoke(zepName, "addServer",
-                new Object[] { "someserver:12345" },
-                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[] { String.class })));
+        getMBeanServer()
+                .invoke(
+                        zepName,
+                        "clearServers",
+                        null,
+                        JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
+        getMBeanServer()
+                .invoke(
+                        zepName,
+                        "addServer",
+                        new Object[] {"someserver:12345"},
+                        JmxUtils.getMethodSignature(
+                                ZooKeeperEndpoint.class.getMethod("addServer", new Class[] {String.class})));
     }
 
-    private void verifyManagedAttribute(ObjectName zepName, String attributeName, String attributeValue) throws Exception {
+    private void verifyManagedAttribute(ObjectName zepName, String attributeName, String attributeValue)
+            throws Exception {
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
-    private void verifyManagedAttribute(ObjectName zepName, String attributeName, Integer attributeValue) throws Exception {
+    private void verifyManagedAttribute(ObjectName zepName, String attributeName, Integer attributeValue)
+            throws Exception {
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
-    private void verifyManagedAttribute(ObjectName zepName, String attributeName, Boolean attributeValue) throws Exception {
+    private void verifyManagedAttribute(ObjectName zepName, String attributeName, Boolean attributeValue)
+            throws Exception {
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 
-    private void verifyManagedAttribute(ObjectName zepName, String attributeName, Long attributeValue) throws Exception {
+    private void verifyManagedAttribute(ObjectName zepName, String attributeName, Long attributeValue)
+            throws Exception {
         assertEquals(attributeValue, getMBeanServer().getAttribute(zepName, attributeName));
     }
 

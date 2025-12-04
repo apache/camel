@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pgevent;
 
 import org.apache.camel.spi.Metadata;
@@ -23,7 +24,5 @@ public final class PgEventConstants {
     @Metadata(label = "consumer", description = "The name of the channel.", javaType = "String")
     public static final String HEADER_CHANNEL = "channel";
 
-    private PgEventConstants() {
-
-    }
+    private PgEventConstants() {}
 }

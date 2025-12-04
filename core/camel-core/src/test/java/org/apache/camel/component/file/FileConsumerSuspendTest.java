@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerSuspendTest extends ContextTestSupport {
 
@@ -57,7 +58,9 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
             public void configure() {
                 MyPolicy myPolicy = new MyPolicy();
                 from(fileUri("?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10"))
-                        .routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
+                        .routePolicy(myPolicy)
+                        .id("myRoute")
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -79,5 +82,4 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
             }
         }
     }
-
 }

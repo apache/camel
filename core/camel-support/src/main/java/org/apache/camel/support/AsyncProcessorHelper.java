@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.AsyncProcessor;
@@ -42,9 +43,8 @@ public final class AsyncProcessorHelper {
      * @throws Exception can be thrown if waiting is interrupted
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
-        final AsyncProcessorAwaitManager awaitManager
-                = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
+        final AsyncProcessorAwaitManager awaitManager =
+                PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
         awaitManager.process(processor, exchange);
     }
-
 }

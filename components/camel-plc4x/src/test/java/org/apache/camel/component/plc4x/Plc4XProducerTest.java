@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
+
+import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.mockito.Mockito.*;
 
 public class Plc4XProducerTest {
 
@@ -45,8 +46,7 @@ public class Plc4XProducerTest {
         tags.put("test1", Collections.singletonMap("testAddress1", 0));
         tags.put("test1", Collections.singletonMap("testAddress2", true));
         tags.put("test1", Collections.singletonMap("testAddress3", "TestString"));
-        when(testExchange.getIn().getBody())
-                .thenReturn(tags);
+        when(testExchange.getIn().getBody()).thenReturn(tags);
     }
 
     @Test
@@ -56,19 +56,15 @@ public class Plc4XProducerTest {
         when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         sut.process(testExchange);
         when(testExchange.getIn().getBody()).thenReturn(2);
-
     }
 
     @Test
     public void processAsync() {
-        sut.process(testExchange, doneSync -> {
-        });
+        sut.process(testExchange, doneSync -> {});
         when(testExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
-        sut.process(testExchange, doneSync -> {
-        });
+        sut.process(testExchange, doneSync -> {});
         when(testExchange.getPattern()).thenReturn(ExchangePattern.InOut);
-        sut.process(testExchange, doneSync -> {
-        });
+        sut.process(testExchange, doneSync -> {});
     }
 
     @Test

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Map;
@@ -92,5 +93,4 @@ public class StartupRecorderDevConsole extends AbstractDevConsole {
         }
         return String.format("%s : %s - %s", out2, out, out3);
     }
-
 }

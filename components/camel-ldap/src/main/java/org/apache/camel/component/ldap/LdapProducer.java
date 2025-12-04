@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldap;
 
 import java.util.ArrayList;
@@ -48,8 +49,13 @@ public class LdapProducer extends DefaultProducer {
     private final String searchBase;
     private final Integer pageSize;
 
-    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
-                        String returnedAttributes) {
+    public LdapProducer(
+            LdapEndpoint endpoint,
+            String remaining,
+            String base,
+            int scope,
+            Integer pageSize,
+            String returnedAttributes) {
         super(endpoint);
 
         this.remaining = remaining;
@@ -113,8 +119,8 @@ public class LdapProducer extends DefaultProducer {
         } else if (context instanceof DirContext) {
             answer = (DirContext) context;
         } else if (context != null) {
-            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName()
-                         + " expected type was: " + DirContext.class.getName();
+            String msg = "Found bean: " + remaining + " in Registry of type: "
+                    + context.getClass().getName() + " expected type was: " + DirContext.class.getName();
             throw new NoSuchBeanException(msg);
         }
         return answer;
@@ -122,7 +128,8 @@ public class LdapProducer extends DefaultProducer {
 
     private List<SearchResult> simpleSearch(DirContext ldapContext, String searchFilter) throws NamingException {
         List<SearchResult> data = new ArrayList<>();
-        NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, searchFilter, searchControls);
+        NamingEnumeration<SearchResult> namingEnumeration =
+                ldapContext.search(searchBase, searchFilter, searchControls);
         while (namingEnumeration != null && namingEnumeration.hasMore()) {
             data.add(namingEnumeration.next());
         }
@@ -134,7 +141,7 @@ public class LdapProducer extends DefaultProducer {
 
         LOG.trace("Using paged ldap search, pageSize={}", pageSize);
 
-        Control[] requestControls = new Control[] { new PagedResultsControl(pageSize, Control.CRITICAL) };
+        Control[] requestControls = new Control[] {new PagedResultsControl(pageSize, Control.CRITICAL)};
         ldapContext.setRequestControls(requestControls);
         do {
             List<SearchResult> pageResult = simpleSearch(ldapContext, searchFilter);
@@ -165,9 +172,8 @@ public class LdapProducer extends DefaultProducer {
         if (cookie == null) {
             return false;
         } else {
-            ldapContext.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
+            ldapContext.setRequestControls(new Control[] {new PagedResultsControl(pageSize, cookie, Control.CRITICAL)});
             return true;
         }
     }
-
 }

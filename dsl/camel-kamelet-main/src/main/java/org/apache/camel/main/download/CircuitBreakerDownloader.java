@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -26,42 +27,47 @@ import org.apache.camel.reifier.ProcessorReifier;
  */
 public final class CircuitBreakerDownloader {
 
-    private CircuitBreakerDownloader() {
-    }
+    private CircuitBreakerDownloader() {}
 
     public static void registerDownloadReifiers() {
-        ProcessorReifier.registerReifier(CircuitBreakerDefinition.class,
-                (route, processorDefinition) -> {
-                    if (processorDefinition instanceof CircuitBreakerDefinition) {
-                        CircuitBreakerDefinition cb = (CircuitBreakerDefinition) processorDefinition;
-                        DependencyDownloader downloader = route.getCamelContext().hasService(DependencyDownloader.class);
-                        if (downloader != null) {
-                            if (cb.getResilience4jConfiguration() != null) {
-                                downloader.downloadDependency("org.apache.camel", "camel-resilience4j",
-                                        route.getCamelContext().getVersion());
-                            }
-                            if (cb.getFaultToleranceConfiguration() != null) {
-                                downloader.downloadDependency("org.apache.camel", "camel-microprofile-fault-tolerance",
-                                        route.getCamelContext().getVersion());
-                            }
-                            if (cb.getConfiguration() != null) {
-                                String id = cb.getConfiguration();
-                                Object cfg = ((ModelCamelContext) route.getCamelContext()).getResilience4jConfiguration(id);
-                                if (cfg != null) {
-                                    downloader.downloadDependency("org.apache.camel", "camel-resilience4j",
-                                            route.getCamelContext().getVersion());
-                                }
-                                cfg = ((ModelCamelContext) route.getCamelContext()).getFaultToleranceConfiguration(id);
-                                if (cfg != null) {
-                                    downloader.downloadDependency("org.apache.camel", "camel-microprofile-fault-tolerance",
-                                            route.getCamelContext().getVersion());
-                                }
-                            }
+        ProcessorReifier.registerReifier(CircuitBreakerDefinition.class, (route, processorDefinition) -> {
+            if (processorDefinition instanceof CircuitBreakerDefinition) {
+                CircuitBreakerDefinition cb = (CircuitBreakerDefinition) processorDefinition;
+                DependencyDownloader downloader = route.getCamelContext().hasService(DependencyDownloader.class);
+                if (downloader != null) {
+                    if (cb.getResilience4jConfiguration() != null) {
+                        downloader.downloadDependency(
+                                "org.apache.camel",
+                                "camel-resilience4j",
+                                route.getCamelContext().getVersion());
+                    }
+                    if (cb.getFaultToleranceConfiguration() != null) {
+                        downloader.downloadDependency(
+                                "org.apache.camel",
+                                "camel-microprofile-fault-tolerance",
+                                route.getCamelContext().getVersion());
+                    }
+                    if (cb.getConfiguration() != null) {
+                        String id = cb.getConfiguration();
+                        Object cfg = ((ModelCamelContext) route.getCamelContext()).getResilience4jConfiguration(id);
+                        if (cfg != null) {
+                            downloader.downloadDependency(
+                                    "org.apache.camel",
+                                    "camel-resilience4j",
+                                    route.getCamelContext().getVersion());
+                        }
+                        cfg = ((ModelCamelContext) route.getCamelContext()).getFaultToleranceConfiguration(id);
+                        if (cfg != null) {
+                            downloader.downloadDependency(
+                                    "org.apache.camel",
+                                    "camel-microprofile-fault-tolerance",
+                                    route.getCamelContext().getVersion());
                         }
                     }
-                    // use core reifier now we have downloaded JARs if needed
-                    return ProcessReifier.coreReifier(route, processorDefinition);
-                });
+                }
+            }
+            // use core reifier now we have downloaded JARs if needed
+            return ProcessReifier.coreReifier(route, processorDefinition);
+        });
     }
-
 }

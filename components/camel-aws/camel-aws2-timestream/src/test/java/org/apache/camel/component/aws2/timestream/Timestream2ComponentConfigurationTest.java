@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.timestream.query.Timestream2QueryEndpoint;
 import org.apache.camel.component.aws2.timestream.write.Timestream2WriteEndpoint;
@@ -23,9 +27,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class Timestream2ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
@@ -33,10 +34,10 @@ public class Timestream2ComponentConfigurationTest extends CamelTestSupport {
         Timestream2Component component = context.getComponent("aws2-timestream", Timestream2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        Timestream2WriteEndpoint writeEndpoint
-                = (Timestream2WriteEndpoint) component.createEndpoint("aws2-timestream://write:label");
-        Timestream2QueryEndpoint queryEndpoint
-                = (Timestream2QueryEndpoint) component.createEndpoint("aws2-timestream://query:label");
+        Timestream2WriteEndpoint writeEndpoint =
+                (Timestream2WriteEndpoint) component.createEndpoint("aws2-timestream://write:label");
+        Timestream2QueryEndpoint queryEndpoint =
+                (Timestream2QueryEndpoint) component.createEndpoint("aws2-timestream://query:label");
 
         assertEquals("XXX", writeEndpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", writeEndpoint.getConfiguration().getSecretKey());
@@ -50,13 +51,11 @@ public class Timestream2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Timestream2WriteEndpoint writeEndpoint
-                = (Timestream2WriteEndpoint) component
-                        .createEndpoint("aws2-timestream://write:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Timestream2WriteEndpoint writeEndpoint = (Timestream2WriteEndpoint) component.createEndpoint(
+                "aws2-timestream://write:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
-        Timestream2QueryEndpoint queryEndpoint
-                = (Timestream2QueryEndpoint) component
-                        .createEndpoint("aws2-timestream://query:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Timestream2QueryEndpoint queryEndpoint = (Timestream2QueryEndpoint) component.createEndpoint(
+                "aws2-timestream://query:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", writeEndpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", writeEndpoint.getConfiguration().getSecretKey());
@@ -73,12 +72,12 @@ public class Timestream2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Timestream2WriteEndpoint writeEndpoint = (Timestream2WriteEndpoint) component
-                .createEndpoint(
+        Timestream2WriteEndpoint writeEndpoint = (Timestream2WriteEndpoint)
+                component.createEndpoint(
                         "aws2-timestream://write:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
-        Timestream2QueryEndpoint queryEndpoint = (Timestream2QueryEndpoint) component
-                .createEndpoint(
+        Timestream2QueryEndpoint queryEndpoint = (Timestream2QueryEndpoint)
+                component.createEndpoint(
                         "aws2-timestream://query:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", writeEndpoint.getConfiguration().getAccessKey());
@@ -102,12 +101,12 @@ public class Timestream2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Timestream2WriteEndpoint writeEndpoint
-                = (Timestream2WriteEndpoint) component.createEndpoint(
+        Timestream2WriteEndpoint writeEndpoint = (Timestream2WriteEndpoint)
+                component.createEndpoint(
                         "aws2-timestream://write:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
-        Timestream2QueryEndpoint queryEndpoint
-                = (Timestream2QueryEndpoint) component.createEndpoint(
+        Timestream2QueryEndpoint queryEndpoint = (Timestream2QueryEndpoint)
+                component.createEndpoint(
                         "aws2-timestream://query:label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", writeEndpoint.getConfiguration().getAccessKey());
@@ -121,6 +120,5 @@ public class Timestream2ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("US_EAST_1", queryEndpoint.getConfiguration().getRegion());
         assertTrue(writeEndpoint.getConfiguration().isOverrideEndpoint());
         assertEquals("http://localhost:9090", queryEndpoint.getConfiguration().getUriEndpointOverride());
-
     }
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static java.util.UUID.randomUUID;
+import static org.apache.camel.support.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -23,10 +28,6 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static java.util.UUID.randomUUID;
-import static org.apache.camel.support.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileIdempotentConsumerCreateRepoTest extends TestSupport {
 

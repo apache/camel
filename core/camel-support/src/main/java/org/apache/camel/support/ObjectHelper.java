@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.ByteArrayOutputStream;
@@ -71,8 +72,7 @@ public final class ObjectHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ObjectHelper() {
-    }
+    private ObjectHelper() {}
 
     /**
      * A helper method for comparing objects for equality in which it uses type coercion to coerce types between the
@@ -88,7 +88,8 @@ public final class ObjectHelper {
      * left and right values. This allows you test for equality for example with a String and Integer type as Camel will
      * be able to coerce the types.
      */
-    public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
+    public static boolean typeCoerceEquals(
+            TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         // sanity check
         if (leftValue == null || rightValue == null) {
             return evalNulls(leftValue, rightValue);
@@ -97,8 +98,9 @@ public final class ObjectHelper {
         // optimize for common combinations of comparing numbers
         if (leftValue instanceof String) {
             return typeCoerceString(converter, leftValue, rightValue, ignoreCase);
-        } else if (rightValue instanceof String str &&
-                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber(str)) {
+        } else if (rightValue instanceof String str
+                && (leftValue instanceof Integer || leftValue instanceof Long)
+                && isNumber(str)) {
             return typeCoerceIntLong(leftValue, str);
         } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
             return integerPairComparison(leftValue, rightValue);
@@ -114,11 +116,11 @@ public final class ObjectHelper {
         return tryConverters(converter, leftValue, rightValue, ignoreCase);
     }
 
-    private static boolean typeCoerceString(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
+    private static boolean typeCoerceString(
+            TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         if (rightValue instanceof String string) {
             return typeCoerceStringPair((String) leftValue, string, ignoreCase);
-        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
-                isNumber((String) leftValue)) {
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long) && isNumber((String) leftValue)) {
             return typeCoerceILString((String) leftValue, rightValue);
         } else if (rightValue instanceof Double doubleValue && isFloatingNumber((String) leftValue)) {
             return stringDoubleComparison((String) leftValue, doubleValue);
@@ -138,7 +140,8 @@ public final class ObjectHelper {
         return false;
     }
 
-    private static boolean tryConverters(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
+    private static boolean tryConverters(
+            TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         final boolean isEqual = org.apache.camel.util.ObjectHelper.equal(leftValue, rightValue, ignoreCase);
         if (isEqual) {
             return true;
@@ -258,7 +261,7 @@ public final class ObjectHelper {
      * and right values. This allows you test for ordering for example with a String and Integer type as Camel will be
      * able to coerce the types.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // optimize for common combinations of comparing numbers
@@ -272,8 +275,9 @@ public final class ObjectHelper {
             return leftNum.compareTo(rightNum);
         } else if (leftValue instanceof Float leftNum && rightValue instanceof Float rightNum) {
             return leftNum.compareTo(rightNum);
-        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
-                leftValue instanceof String leftStr && isNumber(leftStr)) {
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long)
+                && leftValue instanceof String leftStr
+                && isNumber(leftStr)) {
             if (rightValue instanceof Integer rightNum) {
                 Integer leftNum = Integer.valueOf(leftStr);
                 return leftNum.compareTo(rightNum);
@@ -282,8 +286,9 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum);
             }
-        } else if (rightValue instanceof String &&
-                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
+        } else if (rightValue instanceof String
+                && (leftValue instanceof Integer || leftValue instanceof Long)
+                && isNumber((String) rightValue)) {
             if (leftValue instanceof Integer leftNum) {
                 Integer rightNum = Integer.valueOf((String) rightValue);
                 return leftNum.compareTo(rightNum);
@@ -292,11 +297,13 @@ public final class ObjectHelper {
                 Long rightNum = Long.valueOf((String) rightValue);
                 return leftNum.compareTo(rightNum);
             }
-        } else if (rightValue instanceof Double rightNum && leftValue instanceof String
+        } else if (rightValue instanceof Double rightNum
+                && leftValue instanceof String
                 && isFloatingNumber((String) leftValue)) {
             Double leftNum = Double.valueOf((String) leftValue);
             return leftNum.compareTo(rightNum);
-        } else if (rightValue instanceof Float rightNum && leftValue instanceof String
+        } else if (rightValue instanceof Float rightNum
+                && leftValue instanceof String
                 && isFloatingNumber((String) leftValue)) {
             Float leftNum = Float.valueOf((String) leftValue);
             return leftNum.compareTo(rightNum);
@@ -567,7 +574,7 @@ public final class ObjectHelper {
      * @param b          the second object
      * @param ignoreCase ignore case for string comparison
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static int compare(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return 0;
@@ -669,7 +676,8 @@ public final class ObjectHelper {
         return createIterable(value, delimiter, allowEmptyValues, false);
     }
 
-    public static Iterable<String> createIterable(String value, String delimiter, boolean allowEmptyValues, boolean pattern) {
+    public static Iterable<String> createIterable(
+            String value, String delimiter, boolean allowEmptyValues, boolean pattern) {
         if (value == null) {
             return Collections.emptyList();
         } else if (delimiter != null && (pattern || value.contains(delimiter))) {
@@ -771,8 +779,7 @@ public final class ObjectHelper {
      * @return                  the iterator
      */
     public static Iterator<?> createIterator(
-            Object value, String delimiter,
-            boolean allowEmptyValues, boolean pattern) {
+            Object value, String delimiter, boolean allowEmptyValues, boolean pattern) {
         if (value instanceof Stream stream) {
             return stream.iterator();
         }
@@ -795,9 +802,7 @@ public final class ObjectHelper {
      * @return                  the iterable
      * @see                     Iterable
      */
-    public static Iterable<?> createIterable(
-            Object value, String delimiter,
-            final boolean allowEmptyValues) {
+    public static Iterable<?> createIterable(Object value, String delimiter, final boolean allowEmptyValues) {
         return createIterable(value, delimiter, allowEmptyValues, false);
     }
 
@@ -818,8 +823,7 @@ public final class ObjectHelper {
      * @see                     Iterable
      */
     public static Iterable<?> createIterable(
-            Object value, String delimiter,
-            final boolean allowEmptyValues, final boolean pattern) {
+            Object value, String delimiter, final boolean allowEmptyValues, final boolean pattern) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message message) {
@@ -874,7 +878,6 @@ public final class ObjectHelper {
                 || obj.getClass() == LinkedHashMap.class
                 || obj.getClass() == TreeMap.class
                 || obj.getClass() == WeakHashMap.class;
-
     }
 
     private static Iterable<Object> createArrayIterator(Object value) {
@@ -886,7 +889,8 @@ public final class ObjectHelper {
         }
     }
 
-    private static Iterable<?> createStringIterator(String value, String delimiter, boolean allowEmptyValues, boolean pattern) {
+    private static Iterable<?> createStringIterator(
+            String value, String delimiter, boolean allowEmptyValues, boolean pattern) {
         final String s = value;
 
         // this code is optimized to only use a Scanner if needed, eg there is a delimiter
@@ -920,8 +924,7 @@ public final class ObjectHelper {
         } else {
             // optimized split string on default delimiter
             int count = StringHelper.countChar(s, DEFAULT_DELIMITER_CHAR) + 1;
-            return () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR,
-                    count);
+            return () -> StringHelper.splitOnCharacterAsIterator(s, DEFAULT_DELIMITER_CHAR, count);
         }
     }
 
@@ -936,8 +939,7 @@ public final class ObjectHelper {
 
             public Object next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException(
-                            "no more element available for '" + s + "' at the index " + idx);
+                    throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
                 }
 
                 idx++;
@@ -1034,7 +1036,8 @@ public final class ObjectHelper {
             Collection<?> collection = (Collection<?>) collectionOrArray;
             if (ignoreCase) {
                 String lower = value.toString().toLowerCase(Locale.ENGLISH);
-                return collection.stream().anyMatch(c -> c.toString().toLowerCase(Locale.ENGLISH).contains(lower));
+                return collection.stream()
+                        .anyMatch(c -> c.toString().toLowerCase(Locale.ENGLISH).contains(lower));
             } else {
                 return collection.contains(value);
             }
@@ -1205,7 +1208,7 @@ public final class ObjectHelper {
 
         @Override
         public boolean hasNext() {
-            for (;;) {
+            for (; ; ) {
                 if (computed) {
                     return to != -1;
                 } else if (to == -1) {

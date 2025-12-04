@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
 
 import java.util.ArrayList;
@@ -101,7 +102,8 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
             // polling response
             //
             if (result[0] == null
-                    || result[0] instanceof ClientEntitySet && (((ClientEntitySet) result[0]).getEntities().isEmpty())) {
+                    || result[0] instanceof ClientEntitySet
+                            && (((ClientEntitySet) result[0]).getEntities().isEmpty())) {
                 return 0;
             } else {
                 return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());

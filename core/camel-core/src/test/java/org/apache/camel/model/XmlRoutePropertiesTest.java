@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Objects;
 
 import jakarta.xml.bind.JAXBException;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlRoutePropertiesTest extends XmlTestSupport {
 

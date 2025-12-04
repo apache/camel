@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,8 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSupport {
 
@@ -53,9 +54,8 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
     public void testUnMarshallMessage() throws Exception {
 
         mockEndPointMarshal1.expectedMessageCount(1);
-        mockEndPointMarshal1
-                .expectedBodiesReceived(
-                        "\"12\"\",3\",\"abc,d\"\"foo\"\",abc\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mockEndPointMarshal1.expectedBodiesReceived(
+                "\"12\"\",3\",\"abc,d\"\"foo\"\",abc\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         BindyCsvRowFormat7621 body = new BindyCsvRowFormat7621();
         body.setFirstField("12\",3");
@@ -65,8 +65,8 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
 
         MockEndpoint.assertIsSatisfied(context);
 
-        BindyCsvRowFormat7621 model
-                = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
+        BindyCsvRowFormat7621 model =
+                mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
 
         assertEquals("12\",3", model.getFirstField());
         assertEquals("abc,d\"bar\",abc", model.getSecondField());
@@ -85,9 +85,7 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
                         .to("mock:resultMarshal1")
                         .to("direct:middle1");
 
-                from("direct:middle1")
-                        .unmarshal(camelDataFormat1)
-                        .to("mock:resultUnMarshal1");
+                from("direct:middle1").unmarshal(camelDataFormat1).to("mock:resultUnMarshal1");
             }
         };
     }
@@ -99,8 +97,10 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
         @DataField(pos = 1)
         private String firstField;
 
-        @DataField(pos = 2,
-                   method = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar")
+        @DataField(
+                pos = 2,
+                method =
+                        "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar")
         private String secondField;
 
         @DataField(pos = 3, pattern = "########.##")

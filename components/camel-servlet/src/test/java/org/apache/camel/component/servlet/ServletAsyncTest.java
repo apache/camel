@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.MessageFormat;
 
@@ -22,8 +25,6 @@ import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.context.ContextLoaderListener;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletAsyncTest extends ServletCamelRouterTestSupport {
 
@@ -36,7 +37,9 @@ public class ServletAsyncTest extends ServletCamelRouterTestSupport {
         WebResponse response = query(req);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals(MessageFormat.format("Hello {0} how are you?", name), response.getText(),
+        assertEquals(
+                MessageFormat.format("Hello {0} how are you?", name),
+                response.getText(),
                 "The response message is wrong");
     }
 
@@ -46,7 +49,8 @@ public class ServletAsyncTest extends ServletCamelRouterTestSupport {
                 .setClassLoader(getClass().getClassLoader())
                 .setContextPath(CONTEXT)
                 .setDeploymentName(getClass().getName())
-                .addInitParameter("contextConfigLocation",
+                .addInitParameter(
+                        "contextConfigLocation",
                         "classpath:org/apache/camel/component/servlet/example-camelContext.xml")
                 .addListener(Servlets.listener(ContextLoaderListener.class))
                 .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
@@ -55,5 +59,4 @@ public class ServletAsyncTest extends ServletCamelRouterTestSupport {
                         .setAsyncSupported(true)
                         .addMapping("/services/*"));
     }
-
 }

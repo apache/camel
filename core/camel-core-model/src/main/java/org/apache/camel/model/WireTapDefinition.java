@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
@@ -41,24 +42,27 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
 
     @XmlTransient
     private ExecutorService executorServiceBean;
+
     @XmlTransient
     private Processor onPrepareProcessor;
 
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String copy;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String dynamicUri;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.Processor")
     private String onPrepare;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
 
-    public WireTapDefinition() {
-    }
+    public WireTapDefinition() {}
 
     public WireTapDefinition(WireTapDefinition<?> source) {
         super(source);

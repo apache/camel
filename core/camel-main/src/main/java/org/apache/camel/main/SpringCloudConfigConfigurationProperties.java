@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -21,7 +22,8 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.vault.SpringCloudConfigConfiguration;
 
 @Configurer(extended = true)
-public class SpringCloudConfigConfigurationProperties extends SpringCloudConfigConfiguration implements BootstrapCloseable {
+public class SpringCloudConfigConfigurationProperties extends SpringCloudConfigConfiguration
+        implements BootstrapCloseable {
 
     private MainConfigurationProperties parent;
 

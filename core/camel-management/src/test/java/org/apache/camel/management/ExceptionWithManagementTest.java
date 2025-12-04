@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,8 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         MockEndpoint out = this.resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
         out.expectedMessageCount(0);
 
-        template.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("hello"));
+        template.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn()
+                .setBody("hello"));
 
         error.assertIsSatisfied();
         out.assertIsSatisfied();
@@ -55,11 +57,16 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(1).to("mock:error");
+                onException(IllegalArgumentException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(1)
+                        .to("mock:error");
 
-                from("direct:start").process(exchange -> {
-                    throw new IllegalArgumentException("intentional error");
-                }).to("mock:out");
+                from("direct:start")
+                        .process(exchange -> {
+                            throw new IllegalArgumentException("intentional error");
+                        })
+                        .to("mock:out");
             }
         };
     }

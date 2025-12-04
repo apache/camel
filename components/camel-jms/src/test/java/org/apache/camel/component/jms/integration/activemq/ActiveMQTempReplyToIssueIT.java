@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.activemq;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.jms.Destination;
 
@@ -34,10 +39,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for CAMEL-2470
  */
@@ -46,6 +47,7 @@ public class ActiveMQTempReplyToIssueIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -60,7 +62,8 @@ public class ActiveMQTempReplyToIssueIT extends AbstractJMSTest {
     public String handleMessage(
             @Header("JMSReplyTo") final Destination jmsReplyTo,
             @Header("JMSCorrelationID") final String id,
-            @Body String body, Exchange exchange)
+            @Body String body,
+            Exchange exchange)
             throws Exception {
         assertNotNull(jmsReplyTo);
         assertTrue(jmsReplyTo.toString().startsWith("ActiveMQTemporaryQueue"), "Should be a temp queue");

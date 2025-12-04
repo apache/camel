@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.channel.FixedRecvByteBufAllocator;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTest {
 
@@ -62,7 +63,8 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:udp://localhost:{{port}}?option.RCVBUF_ALLOCATOR=#myAllocator").to("mock:result");
+                from("netty:udp://localhost:{{port}}?option.RCVBUF_ALLOCATOR=#myAllocator")
+                        .to("mock:result");
             }
         };
     }

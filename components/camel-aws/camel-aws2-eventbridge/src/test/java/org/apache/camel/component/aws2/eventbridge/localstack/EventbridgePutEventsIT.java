@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
 import org.apache.camel.CamelContext;
@@ -50,7 +51,8 @@ public class EventbridgePutEventsIT extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        EventbridgeComponent eventbridgeComponent = context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
+        EventbridgeComponent eventbridgeComponent =
+                context.getComponent("aws2-eventbridge", EventbridgeComponent.class);
         eventbridgeComponent.getConfiguration().setEventbridgeClient(AWSSDKClientUtils.newEventBridgeClient());
         return context;
     }
@@ -63,19 +65,36 @@ public class EventbridgePutEventsIT extends CamelTestSupport {
 
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(EventbridgeConstants.EVENT_RESOURCES_ARN,
-                        "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
+                exchange.getIn()
+                        .setHeader(
+                                EventbridgeConstants.EVENT_RESOURCES_ARN,
+                                "arn:aws:sqs:eu-west-1:780410022472:camel-connector-test");
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_SOURCE, "com.pippo");
                 exchange.getIn().setHeader(EventbridgeConstants.EVENT_DETAIL_TYPE, "peppe");
                 exchange.getIn().setBody("Test Event");
             }
         });
         MockEndpoint.assertIsSatisfied(context);
-        Assertions.assertTrue(result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).hasEntries());
-        Assertions.assertEquals(1, result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().size());
-        Assertions.assertNotNull(
-                result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().get(0).eventId());
-
+        Assertions.assertTrue(result.getExchanges()
+                .get(0)
+                .getMessage()
+                .getBody(PutEventsResponse.class)
+                .hasEntries());
+        Assertions.assertEquals(
+                1,
+                result.getExchanges()
+                        .get(0)
+                        .getMessage()
+                        .getBody(PutEventsResponse.class)
+                        .entries()
+                        .size());
+        Assertions.assertNotNull(result.getExchanges()
+                .get(0)
+                .getMessage()
+                .getBody(PutEventsResponse.class)
+                .entries()
+                .get(0)
+                .eventId());
     }
 
     @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,10 @@ public class MinaTcpTextlineDelimiterTest extends BaseMinaTest {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBodyAndHeader(
-                String.format("mina:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort()), body,
-                "cheese", 123);
+                String.format("mina:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort()),
+                body,
+                "cheese",
+                123);
 
         MockEndpoint.assertIsSatisfied(context);
     }

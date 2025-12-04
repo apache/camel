@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.time.Duration;
@@ -45,30 +46,42 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     @XmlTransient
     private CamelSagaService sagaServiceBean;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.saga.CamelSagaService")
     private String sagaService;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaPropagation", defaultValue = "REQUIRED",
-              enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.model.SagaPropagation",
+            defaultValue = "REQUIRED",
+            enums = "REQUIRED,REQUIRES_NEW,MANDATORY,SUPPORTS,NOT_SUPPORTED,NEVER")
     private String propagation;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.model.SagaCompletionMode", defaultValue = "AUTO",
-              enums = "AUTO,MANUAL")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.model.SagaCompletionMode",
+            defaultValue = "AUTO",
+            enums = "AUTO,MANUAL")
     private String completionMode;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String timeout;
+
     @XmlElement
     private SagaActionUriDefinition compensation;
+
     @XmlElement
     private SagaActionUriDefinition completion;
+
     @XmlElement(name = "option")
     @Metadata(label = "advanced")
     private List<PropertyExpressionDefinition> options;
 
-    public SagaDefinition() {
-    }
+    public SagaDefinition() {}
 
     protected SagaDefinition(SagaDefinition source) {
         super(source);
@@ -312,5 +325,4 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         }
         builder.append(key).append(':').append(value);
     }
-
 }

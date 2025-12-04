@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
@@ -43,17 +44,21 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").enrich("direct:enrich", new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
-                        // should always be in
-                        String body = newExchange.getIn().getBody(String.class);
-                        assertNotNull(body);
-                        return newExchange;
-                    }
-                }).to("mock:foo").end().to("mock:result");
+                from("direct:start")
+                        .enrich("direct:enrich", new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
+                                // should always be in
+                                String body = newExchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                return newExchange;
+                            }
+                        })
+                        .to("mock:foo")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:enrich").process(new Processor() {
                     public void process(Exchange exchange) {
@@ -84,17 +89,21 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").enrich("direct:enrich", new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        if (oldExchange == null) {
-                            return newExchange;
-                        }
-                        // should always be in
-                        String body = newExchange.getIn().getBody(String.class);
-                        assertNotNull(body);
-                        return newExchange;
-                    }
-                }).to("mock:foo").end().to("mock:result");
+                from("direct:start")
+                        .enrich("direct:enrich", new AggregationStrategy() {
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                if (oldExchange == null) {
+                                    return newExchange;
+                                }
+                                // should always be in
+                                String body = newExchange.getIn().getBody(String.class);
+                                assertNotNull(body);
+                                return newExchange;
+                            }
+                        })
+                        .to("mock:foo")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:enrich").pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
                     public void process(Exchange exchange) {
@@ -117,5 +126,4 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

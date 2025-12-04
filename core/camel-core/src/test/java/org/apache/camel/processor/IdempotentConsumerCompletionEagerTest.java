@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,10 +50,16 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(true).to("log:a", "mock:a")
-                        .to("log:b", "mock:b").end()
-                        .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced"))
-                        .end().to("log:result", "mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), repo)
+                        .completionEager(true)
+                        .to("log:a", "mock:a")
+                        .to("log:b", "mock:b")
+                        .end()
+                        .filter(simple("${header.messageId} == '2'"))
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .end()
+                        .to("log:result", "mock:result");
             }
         });
         context.start();
@@ -83,10 +90,16 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").idempotentConsumer(header("messageId"), repo).completionEager(false).to("log:a", "mock:a")
-                        .to("log:b", "mock:b").end()
-                        .filter(simple("${header.messageId} == '2'")).throwException(new IllegalArgumentException("Forced"))
-                        .end().to("log:result", "mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), repo)
+                        .completionEager(false)
+                        .to("log:a", "mock:a")
+                        .to("log:b", "mock:b")
+                        .end()
+                        .filter(simple("${header.messageId} == '2'"))
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .end()
+                        .to("log:result", "mock:result");
             }
         });
         context.start();
@@ -130,5 +143,4 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
         b = getMockEndpoint("mock:b");
         dead = getMockEndpoint("mock:dead");
     }
-
 }

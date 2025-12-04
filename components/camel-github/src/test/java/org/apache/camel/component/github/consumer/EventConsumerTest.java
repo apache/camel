@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.RoutesBuilder;
@@ -56,8 +57,7 @@ public class EventConsumerTest extends GitHubComponentTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("github:event?repoOwner=anotherguy&repoName=somerepo")
-                        .to(mockResultEndpoint);
+                from("github:event?repoOwner=anotherguy&repoName=somerepo").to(mockResultEndpoint);
             }
         };
     }

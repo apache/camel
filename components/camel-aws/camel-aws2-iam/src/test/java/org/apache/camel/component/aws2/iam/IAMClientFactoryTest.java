@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.iam.client.IAM2ClientFactory;
 import org.apache.camel.component.aws2.iam.client.IAM2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientOptimizedImpl;
 import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IAMClientFactoryTest {
 

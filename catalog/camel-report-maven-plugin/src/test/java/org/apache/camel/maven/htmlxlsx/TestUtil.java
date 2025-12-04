@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx;
 
 import java.util.Collections;
@@ -132,7 +133,6 @@ public class TestUtil {
         ChildEipStatistic result = new ChildEipStatistic();
 
         return result;
-
     }
 
     public static Components components() {
@@ -171,5 +171,4 @@ public class TestUtil {
 
         return result;
     }
-
 }

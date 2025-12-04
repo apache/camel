@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
 
 import java.util.ArrayList;
@@ -36,8 +37,11 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
     @Override
     public void doPostSetup() {
         // create a tm file in the classpath as this is the tricky reloading stuff
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate",
-                "Hello <headers.name>", Exchange.FILE_NAME, "hello.tm");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/stringtemplate",
+                "Hello <headers.name>",
+                Exchange.FILE_NAME,
+                "hello.tm");
     }
 
     @Override
@@ -54,8 +58,11 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate", "Bye <headers.name>",
-                Exchange.FILE_NAME, "hello.tm");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/stringtemplate",
+                "Bye <headers.name>",
+                Exchange.FILE_NAME,
+                "hello.tm");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye Paris");
@@ -73,8 +80,11 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate", "Bye <headers.name>",
-                Exchange.FILE_NAME, "hello.tm");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/stringtemplate",
+                "Bye <headers.name>",
+                Exchange.FILE_NAME,
+                "hello.tm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
@@ -93,8 +103,11 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate", "Bye <headers.name>",
-                Exchange.FILE_NAME, "hello.tm");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/stringtemplate",
+                "Bye <headers.name>",
+                Exchange.FILE_NAME,
+                "hello.tm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
@@ -104,7 +117,8 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // clear the cache using jmx
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(
                 new ObjectName("org.apache.camel:type=endpoints,name=\"string-template:*contentCache=true*\",*"), null);
         ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
@@ -113,16 +127,23 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         mock.reset();
         // we expect that the new resource will be set as the cached value, since the cache has been cleared
         mock.expectedBodiesReceived("Bye Paris");
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate", "Bye <headers.name>",
-                Exchange.FILE_NAME, "hello.tm");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/stringtemplate",
+                "Bye <headers.name>",
+                Exchange.FILE_NAME,
+                "hello.tm");
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
 
         mock.reset();
-        // we expect that the cached value will not be replaced by a different resource since the cache is now re-established
+        // we expect that the cached value will not be replaced by a different resource since the cache is now
+        // re-established
         mock.expectedBodiesReceived("Bye Paris");
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate",
-                "Hello <headers.name>", Exchange.FILE_NAME, "hello.tm");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/stringtemplate",
+                "Hello <headers.name>",
+                Exchange.FILE_NAME,
+                "hello.tm");
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
     }
@@ -131,10 +152,12 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").to("string-template://org/apache/camel/component/stringtemplate/hello.tm?contentCache=false")
+                from("direct:a")
+                        .to("string-template://org/apache/camel/component/stringtemplate/hello.tm?contentCache=false")
                         .to("mock:result");
 
-                from("direct:b").to("string-template://org/apache/camel/component/stringtemplate/hello.tm?contentCache=true")
+                from("direct:b")
+                        .to("string-template://org/apache/camel/component/stringtemplate/hello.tm?contentCache=true")
                         .to("mock:result");
             }
         };

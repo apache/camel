@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.io.IOException;
@@ -54,8 +55,8 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
     protected int poll() throws Exception {
         final String fileSystemName = getEndpoint().getConfiguration().getFileSystemName();
         final String fileName = getEndpoint().getConfiguration().getFileName();
-        final DataLakeFileSystemClient dataLakeFileSystemClient
-                = getEndpoint().getDataLakeServiceClient().getFileSystemClient(fileSystemName);
+        final DataLakeFileSystemClient dataLakeFileSystemClient =
+                getEndpoint().getDataLakeServiceClient().getFileSystemClient(fileSystemName);
         int result;
 
         try {
@@ -81,12 +82,13 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
     @SuppressWarnings("unchecked")
     private Queue<Exchange> createBatchExchangesFromPath(final DataLakeFileSystemClient dataLakeFileSystemClient)
             throws IOException {
-        final DataLakeFileSystemClientWrapper fileSystemClientWrapper
-                = new DataLakeFileSystemClientWrapper(dataLakeFileSystemClient);
-        final DataLakeFileSystemOperations fileSystemOperations
-                = new DataLakeFileSystemOperations(getEndpoint().getConfiguration(), fileSystemClientWrapper);
+        final DataLakeFileSystemClientWrapper fileSystemClientWrapper =
+                new DataLakeFileSystemClientWrapper(dataLakeFileSystemClient);
+        final DataLakeFileSystemOperations fileSystemOperations =
+                new DataLakeFileSystemOperations(getEndpoint().getConfiguration(), fileSystemClientWrapper);
 
-        final List<PathItem> items = (List<PathItem>) fileSystemOperations.listPaths(null).getBody();
+        final List<PathItem> items =
+                (List<PathItem>) fileSystemOperations.listPaths(null).getBody();
 
         // okay we have some response from azure so lets mark the consumer as ready
         forceConsumerAsReady();
@@ -100,11 +102,12 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
         return exchanges;
     }
 
-    private Exchange createExchangeFromFile(final String fileName, final DataLakeFileSystemClient dataLakeFileSystemClient)
-            throws IOException {
-        final DataLakeFileClientWrapper clientWrapper
-                = new DataLakeFileClientWrapper(dataLakeFileSystemClient.getFileClient(fileName));
-        final DataLakeFileOperations operations = new DataLakeFileOperations(getEndpoint().getConfiguration(), clientWrapper);
+    private Exchange createExchangeFromFile(
+            final String fileName, final DataLakeFileSystemClient dataLakeFileSystemClient) throws IOException {
+        final DataLakeFileClientWrapper clientWrapper =
+                new DataLakeFileClientWrapper(dataLakeFileSystemClient.getFileClient(fileName));
+        final DataLakeFileOperations operations =
+                new DataLakeFileOperations(getEndpoint().getConfiguration(), clientWrapper);
         final Exchange exchange = createExchange(true);
 
         DataLakeOperationResponse response;
@@ -161,8 +164,11 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         final Exception cause = exchange.getException();
         if (cause != null) {
-            getExceptionHandler().handleException(
-                    "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
+            getExceptionHandler()
+                    .handleException(
+                            "Error during processing exchange. Will attempt to process the message on next poll.",
+                            exchange,
+                            cause);
         }
     }
 }

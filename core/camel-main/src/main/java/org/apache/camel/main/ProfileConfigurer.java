@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
@@ -61,7 +62,8 @@ public class ProfileConfigurer {
      * @param profile      the profile
      * @param config       the core configuration
      */
-    public static void configureCommon(CamelContext camelContext, String profile, DefaultConfigurationProperties<?> config) {
+    public static void configureCommon(
+            CamelContext camelContext, String profile, DefaultConfigurationProperties<?> config) {
         camelContext.getCamelContextExtension().setProfile(profile);
 
         if (profile == null || profile.isBlank()) {
@@ -96,5 +98,4 @@ public class ProfileConfigurer {
 
         LOG.info("The application is starting with profile: {}", profile);
     }
-
 }

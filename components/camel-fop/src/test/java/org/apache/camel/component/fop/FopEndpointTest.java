@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fop;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +33,6 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FopEndpointTest extends CamelTestSupport {
 
@@ -70,9 +71,8 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        FopEndpoint customConfiguredEndpoint = context()
-                .getEndpoint("fop:pdf?userConfigURL=file:src/test/data/conf/testcfg.xml",
-                        FopEndpoint.class);
+        FopEndpoint customConfiguredEndpoint =
+                context().getEndpoint("fop:pdf?userConfigURL=file:src/test/data/conf/testcfg.xml", FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
         assertEquals(96.0, customSourceResolution, 0.1);
     }
@@ -84,9 +84,8 @@ public class FopEndpointTest extends CamelTestSupport {
             return;
         }
 
-        FopEndpoint customConfiguredEndpoint = context()
-                .getEndpoint("fop:pdf?userConfigURL=myconf/testcfg.xml",
-                        FopEndpoint.class);
+        FopEndpoint customConfiguredEndpoint =
+                context().getEndpoint("fop:pdf?userConfigURL=myconf/testcfg.xml", FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
         assertEquals(96.0, customSourceResolution, 0.1);
     }

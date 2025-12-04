@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model.audio;
 
 import ai.djl.Model;
@@ -54,8 +55,8 @@ public class CustomAudioPredictor extends AbstractPredictor {
     protected String predict(Exchange exchange, Audio audio) {
         Model model = exchange.getContext().getRegistry().lookupByNameAndType(modelName, Model.class);
         @SuppressWarnings("unchecked")
-        Translator<Audio, String> translator
-                = exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
+        Translator<Audio, String> translator =
+                exchange.getContext().getRegistry().lookupByNameAndType(translatorName, Translator.class);
 
         exchange.getIn().setHeader(DJLConstants.INPUT, audio);
         try (Predictor<Audio, String> predictor = model.newPredictor(translator)) {

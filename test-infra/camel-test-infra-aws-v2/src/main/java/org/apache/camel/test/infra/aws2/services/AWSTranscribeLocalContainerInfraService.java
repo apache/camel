@@ -20,9 +20,11 @@ package org.apache.camel.test.infra.aws2.services;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 
-@InfraService(service = AWSInfraService.class,
-              description = "Local AWS Services with LocalStack",
-              serviceAlias = "aws", serviceImplementationAlias = "transcribe")
+@InfraService(
+        service = AWSInfraService.class,
+        description = "Local AWS Services with LocalStack",
+        serviceAlias = "aws",
+        serviceImplementationAlias = "transcribe")
 public class AWSTranscribeLocalContainerInfraService extends AWSLocalContainerInfraService {
     public AWSTranscribeLocalContainerInfraService() {
         super(Service.TRANSCRIBE);

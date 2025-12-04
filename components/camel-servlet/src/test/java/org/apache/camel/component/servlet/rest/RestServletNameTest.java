@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
@@ -24,8 +27,6 @@ import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestServletNameTest extends ServletCamelRouterTestSupport {
 
@@ -58,7 +59,10 @@ public class RestServletNameTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use servlet on localhost
-                restConfiguration().component("servlet").host("localhost").componentProperty("servletName", "myServlet");
+                restConfiguration()
+                        .component("servlet")
+                        .host("localhost")
+                        .componentProperty("servletName", "myServlet");
 
                 // use the rest DSL to define the rest services
                 rest("/users/").get("{id}/basic").to("direct:basic");
@@ -67,9 +71,7 @@ public class RestServletNameTest extends ServletCamelRouterTestSupport {
                     String id = exchange.getIn().getHeader("id", String.class);
                     exchange.getMessage().setBody(id + ";Donald Duck");
                 });
-
             }
         };
     }
-
 }

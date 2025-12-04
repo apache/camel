@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersApiMethod;
@@ -24,18 +27,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
-           disabledReason = "Google Mail credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+        disabledReason = "Google Mail credentials were not provided")
 public class GmailUsersIT extends AbstractGoogleMailTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersIT.class);
-    private static final String PATH_PREFIX
-            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection()
+            .getApiName(GmailUsersApiMethod.class)
+            .getName();
 
     @Test
     public void testGetProfile() {
@@ -54,7 +57,6 @@ public class GmailUsersIT extends AbstractGoogleMailTestSupport {
             public void configure() {
                 // test route for getProfile
                 from("direct://GETPROFILE").to("google-mail://" + PATH_PREFIX + "/getProfile?inBody=userId");
-
             }
         };
     }

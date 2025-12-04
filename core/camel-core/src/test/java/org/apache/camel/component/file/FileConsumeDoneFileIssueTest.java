@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,14 +33,12 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * CAMEL-5848
  */
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
     private static final String TEST_DIR_NAME = "done" + UUID.randomUUID().toString();
     private static final String TEST_DIR_NAME_2 = "done2" + UUID.randomUUID().toString();
@@ -62,8 +64,10 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertTrue(notify.matchesWaitTime());
 
         // the done file should be deleted
-        Awaitility.await().atLeast(50, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertFalse(Files.exists(testFile(TEST_DIR_NAME + File.separator + "foo.done")),
+        Awaitility.await()
+                .atLeast(50, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFalse(
+                        Files.exists(testFile(TEST_DIR_NAME + File.separator + "foo.done")),
                         "Done file should be deleted"));
     }
 
@@ -90,14 +94,17 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertTrue(notify.matchesWaitTime());
 
         // the done file should be deleted
-        Awaitility.await().atLeast(50, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertFalse(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "a.txt.done")),
+        Awaitility.await()
+                .atLeast(50, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFalse(
+                        Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "a.txt.done")),
                         "Done file should be deleted"));
 
         // the done file should be deleted
-        assertFalse(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "b.txt.done")), "Done file should be deleted");
-        assertFalse(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "c.txt.done")), "Done file should be deleted");
-
+        assertFalse(
+                Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "b.txt.done")), "Done file should be deleted");
+        assertFalse(
+                Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "c.txt.done")), "Done file should be deleted");
     }
 
     @Test
@@ -107,11 +114,15 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUri() + File.separator + TEST_DIR_NAME_2, "A", Exchange.FILE_NAME, "$a$.txt");
         template.sendBodyAndHeader(fileUri() + File.separator + TEST_DIR_NAME_2, "B", Exchange.FILE_NAME, "$b.txt");
         template.sendBodyAndHeader(fileUri() + File.separator + TEST_DIR_NAME_2, "C", Exchange.FILE_NAME, "c$.txt");
-        template.sendBodyAndHeader(fileUri() + File.separator + TEST_DIR_NAME_2, "a", Exchange.FILE_NAME, "$a$.txt.done");
-        template.sendBodyAndHeader(fileUri() + File.separator + TEST_DIR_NAME_2, "b", Exchange.FILE_NAME, "$b.txt.done");
-        template.sendBodyAndHeader(fileUri() + File.separator + TEST_DIR_NAME_2, "c", Exchange.FILE_NAME, "c$.txt.done");
+        template.sendBodyAndHeader(
+                fileUri() + File.separator + TEST_DIR_NAME_2, "a", Exchange.FILE_NAME, "$a$.txt.done");
+        template.sendBodyAndHeader(
+                fileUri() + File.separator + TEST_DIR_NAME_2, "b", Exchange.FILE_NAME, "$b.txt.done");
+        template.sendBodyAndHeader(
+                fileUri() + File.separator + TEST_DIR_NAME_2, "c", Exchange.FILE_NAME, "c$.txt.done");
 
-        assertTrue(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$a$.txt.done")), "Done file should exists");
+        assertTrue(
+                Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$a$.txt.done")), "Done file should exists");
         assertTrue(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$b.txt.done")), "Done file should exists");
         assertTrue(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "c$.txt.done")), "Done file should exists");
 
@@ -123,12 +134,18 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertTrue(notify.matchesWaitTime());
 
         // the done file should be deleted
-        Awaitility.await().atLeast(50, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertFalse(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$a$.txt.done")),
+        Awaitility.await()
+                .atLeast(50, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> assertFalse(
+                        Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$a$.txt.done")),
                         "Done file should be deleted"));
 
-        assertFalse(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$b.txt.done")), "Done file should be deleted");
-        assertFalse(Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "c$.txt.done")), "Done file should be deleted");
+        assertFalse(
+                Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "$b.txt.done")),
+                "Done file should be deleted");
+        assertFalse(
+                Files.exists(testFile(TEST_DIR_NAME_2 + File.separator + "c$.txt.done")),
+                "Done file should be deleted");
     }
 
     @Override
@@ -136,12 +153,17 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri(TEST_DIR_NAME + "?doneFileName=foo.done&initialDelay=0&delay=10")).routeId("foo")
+                from(fileUri(TEST_DIR_NAME + "?doneFileName=foo.done&initialDelay=0&delay=10"))
+                        .routeId("foo")
                         .autoStartup(false)
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
 
-                from(fileUri(TEST_DIR_NAME_2 + "?doneFileName=${file:name}.done&initialDelay=0&delay=10")).routeId("bar")
-                        .autoStartup(false).convertBodyTo(String.class).to("mock:result");
+                from(fileUri(TEST_DIR_NAME_2 + "?doneFileName=${file:name}.done&initialDelay=0&delay=10"))
+                        .routeId("bar")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

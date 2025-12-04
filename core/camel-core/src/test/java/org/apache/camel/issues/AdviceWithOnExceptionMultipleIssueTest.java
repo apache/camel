@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -56,16 +57,14 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
             public void configure() {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
                     @Override
-                    public void process(Exchange exchange) {
-                    }
+                    public void process(Exchange exchange) {}
                 });
             }
         });
 
         AdviceWith.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() {
-            }
+            public void configure() {}
         });
 
         context.start();
@@ -116,8 +115,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
 
         AdviceWith.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() {
-            }
+            public void configure() {}
         });
 
         context.start();
@@ -126,5 +124,4 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         template.sendBody("direct:startA", "a trigger");
         assertMockEndpointsSatisfied();
     }
-
 }

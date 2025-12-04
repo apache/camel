@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.api;
 
 import dev.langchain4j.service.MemoryId;
@@ -46,5 +47,4 @@ public interface AiAgentWithMemoryService {
      */
     @SystemMessage("{{prompt}}")
     String chat(@MemoryId Object memoryId, @UserMessage String message, @V("prompt") String prompt);
-
 }

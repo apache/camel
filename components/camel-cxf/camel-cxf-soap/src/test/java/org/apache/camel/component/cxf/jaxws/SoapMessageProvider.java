@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import jakarta.xml.soap.SOAPMessage;
@@ -22,17 +23,17 @@ import jakarta.xml.ws.Service;
 import jakarta.xml.ws.ServiceMode;
 import jakarta.xml.ws.WebServiceProvider;
 
-@WebServiceProvider(portName = "SoapProviderPort", serviceName = "SOAPProviderService",
-                    targetNamespace = "http://apache.org/hello_world_soap_http",
-                    wsdlLocation = "/wsdl/hello_world.wsdl")
-
+@WebServiceProvider(
+        portName = "SoapProviderPort",
+        serviceName = "SOAPProviderService",
+        targetNamespace = "http://apache.org/hello_world_soap_http",
+        wsdlLocation = "/wsdl/hello_world.wsdl")
 @ServiceMode(value = Service.Mode.MESSAGE)
 public class SoapMessageProvider implements Provider<SOAPMessage> {
 
     @Override
     public SOAPMessage invoke(SOAPMessage request) {
-        //request should not come here as camel route would intercept the call before this is invoked.
+        // request should not come here as camel route would intercept the call before this is invoked.
         throw new UnsupportedOperationException("Placeholder method");
     }
-
 }

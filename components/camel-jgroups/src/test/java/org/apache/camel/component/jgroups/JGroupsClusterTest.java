@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
+import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,11 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static java.lang.String.format;
-import static java.util.UUID.randomUUID;
-import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsClusterTest {
 
@@ -127,5 +128,4 @@ public class JGroupsClusterTest {
         assertEquals(firstCamelContext.getName(), finalMaster);
         assertEquals(3, nominationCount);
     }
-
 }

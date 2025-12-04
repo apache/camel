@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +55,8 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
-                        .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
+                        .to(
+                                "xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
                         .to("mock:resultURIResolverDirect");
             }
         };

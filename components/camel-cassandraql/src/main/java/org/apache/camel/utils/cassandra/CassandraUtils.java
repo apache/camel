@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.utils.cassandra;
+
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.insertInto;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.selectFrom;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
@@ -28,14 +33,9 @@ import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.api.querybuilder.truncate.Truncate;
 
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.insertInto;
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.selectFrom;
-
 public final class CassandraUtils {
 
-    private CassandraUtils() {
-    }
+    private CassandraUtils() {}
 
     /**
      * Test if the array is null or empty.
@@ -134,7 +134,8 @@ public final class CassandraUtils {
     /**
      * Generate select where columns = ? CQL.
      */
-    public static Select generateSelect(String table, String[] selectColumns, String[] whereColumns, int whereColumnsMaxIndex) {
+    public static Select generateSelect(
+            String table, String[] selectColumns, String[] whereColumns, int whereColumnsMaxIndex) {
         SelectFrom from = selectFrom(table);
         Select select = null;
         for (String column : selectColumns) {
@@ -161,20 +162,22 @@ public final class CassandraUtils {
     /**
      * Generate delete where columns = ? CQL.
      */
-    public static Delete generateDelete(String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
+    public static Delete generateDelete(
+            String table, String[] whereColumns, int whereColumnsMaxIndex, boolean ifExists) {
         DeleteSelection deleteSelection = QueryBuilder.deleteFrom(table);
         Delete delete = null;
 
         if (isWhereClause(whereColumns, whereColumnsMaxIndex)) {
             for (int i = 0; i < whereColumns.length && i < whereColumnsMaxIndex; i++) {
-                delete = (delete != null ? delete : deleteSelection).whereColumn(whereColumns[i]).isEqualTo(bindMarker());
+                delete = (delete != null ? delete : deleteSelection)
+                        .whereColumn(whereColumns[i])
+                        .isEqualTo(bindMarker());
             }
         } else {
             // Once there is at least one relation, the statement can be built
-            //(see https://docs.datastax.com/en/developer/java-driver/4.6/manual/query_builder/delete/#relations)
-            throw new IllegalArgumentException(
-                    "Invalid delete statement. There has to be at least one relation. "
-                                               + "To delete all records, use Truncate");
+            // (see https://docs.datastax.com/en/developer/java-driver/4.6/manual/query_builder/delete/#relations)
+            throw new IllegalArgumentException("Invalid delete statement. There has to be at least one relation. "
+                    + "To delete all records, use Truncate");
         }
 
         if (ifExists && delete != null) {

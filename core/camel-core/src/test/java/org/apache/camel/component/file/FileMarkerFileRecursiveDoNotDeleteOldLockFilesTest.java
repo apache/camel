@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -34,10 +35,13 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("New World");
 
-        template.sendBodyAndHeader(fileUri(), "locked", Exchange.FILE_NAME,
-                TEST_FILE_NAME_1 + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader(
+                fileUri(), "locked", Exchange.FILE_NAME, TEST_FILE_NAME_1 + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
-        template.sendBodyAndHeader(fileUri("foo"), "locked", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                fileUri("foo"),
+                "locked",
+                Exchange.FILE_NAME,
                 TEST_FILE_NAME_2 + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         template.sendBodyAndHeader(fileUri("foo"), "Goodday World", Exchange.FILE_NAME, TEST_FILE_NAME_2);
         // and a new file that has no lock
@@ -54,9 +58,12 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&readLock=markerFile&readLockDeleteOrphanLockFiles=false&recursive=true"))
-                        .routeId("foo").autoStartup(false)
-                        .convertBodyTo(String.class).to("log:result", "mock:result");
+                from(fileUri(
+                                "?initialDelay=0&delay=10&readLock=markerFile&readLockDeleteOrphanLockFiles=false&recursive=true"))
+                        .routeId("foo")
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
+                        .to("log:result", "mock:result");
             }
         };
     }

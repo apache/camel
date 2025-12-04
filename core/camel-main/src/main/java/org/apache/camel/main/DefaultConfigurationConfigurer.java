@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.Comparator;
@@ -117,8 +118,7 @@ public final class DefaultConfigurationConfigurer {
 
     public static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationConfigurer.class);
 
-    private DefaultConfigurationConfigurer() {
-    }
+    private DefaultConfigurationConfigurer() {}
 
     /**
      * Configures the {@link CamelContext} with the configuration.
@@ -196,13 +196,16 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getShutdownStrategy().setSuppressLoggingOnTimeout(config.isShutdownSuppressLoggingOnTimeout());
         camelContext.getShutdownStrategy().setShutdownNowOnTimeout(config.isShutdownNowOnTimeout());
         camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
-        camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
+        camelContext
+                .getShutdownStrategy()
+                .setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
 
         camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
 
         if (config.getLogDebugMaxChars() != 0) {
-            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,
-                    Integer.toString(config.getLogDebugMaxChars()));
+            camelContext
+                    .getGlobalOptions()
+                    .put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, Integer.toString(config.getLogDebugMaxChars()));
         }
 
         // stream caching
@@ -212,7 +215,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getStreamCachingStrategy().setSpoolEnabled(config.isStreamCachingSpoolEnabled());
         camelContext.getStreamCachingStrategy().setAnySpoolRules(config.isStreamCachingAnySpoolRules());
         camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
-        camelContext.getStreamCachingStrategy()
+        camelContext
+                .getStreamCachingStrategy()
                 .setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
         camelContext.getStreamCachingStrategy().setSpoolCipher(config.getStreamCachingSpoolCipher());
         if (config.getStreamCachingSpoolDirectory() != null) {
@@ -228,14 +232,14 @@ public final class DefaultConfigurationConfigurer {
             } else if ("Max".equalsIgnoreCase(config.getStreamCachingSpoolUsedHeapMemoryLimit())) {
                 limit = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
             } else {
-                throw new IllegalArgumentException(
-                        "Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit()
-                                                   + " must either be Committed or Max");
+                throw new IllegalArgumentException("Invalid option " + config.getStreamCachingSpoolUsedHeapMemoryLimit()
+                        + " must either be Committed or Max");
             }
             camelContext.getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(limit);
         }
         if (config.getStreamCachingSpoolUsedHeapMemoryThreshold() != 0) {
-            camelContext.getStreamCachingStrategy()
+            camelContext
+                    .getStreamCachingStrategy()
                     .setSpoolUsedHeapMemoryThreshold(config.getStreamCachingSpoolUsedHeapMemoryThreshold());
         }
 
@@ -297,21 +301,37 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setLoadStatisticsEnabled(config.isLoadStatisticsEnabled());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setStatisticsLevel(config.getJmxManagementStatisticsLevel());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setMBeansLevel(config.getJmxManagementMBeansLevel());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setManagementNamePattern(config.getJmxManagementNamePattern());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setUpdateRouteEnabled(config.isJmxUpdateRouteEnabled());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setRegisterRoutesCreateByKamelet(config.isJmxManagementRegisterRoutesCreateByKamelet());
-            camelContext.getManagementStrategy().getManagementAgent()
+            camelContext
+                    .getManagementStrategy()
+                    .getManagementAgent()
                     .setRegisterRoutesCreateByTemplate(config.isJmxManagementRegisterRoutesCreateByTemplate());
         }
         if (config.isCamelEventsTimestampEnabled()) {
@@ -359,10 +379,12 @@ public final class DefaultConfigurationConfigurer {
             cs.setWorkDir(config.getCompileWorkDir());
         }
         if (config.getGroovyScriptPattern() != null) {
-            // check if there is any groovy sources before demanding the GroovyScriptCompiler plugin (which is in camel-groovy JAR)
+            // check if there is any groovy sources before demanding the GroovyScriptCompiler plugin (which is in
+            // camel-groovy JAR)
             boolean exists = GroovyScriptCompiler.existsSourceFiles(camelContext, config.getGroovyScriptPattern());
             if (exists || camelContext.getCamelContextExtension().isContextPluginInUse(GroovyScriptCompiler.class)) {
-                GroovyScriptCompiler gsc = camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
+                GroovyScriptCompiler gsc =
+                        camelContext.getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
                 if (gsc != null) {
                     gsc.setScriptPattern(config.getGroovyScriptPattern());
                     gsc.setPreloadCompiled(config.isGroovyPreloadCompiled());
@@ -374,9 +396,11 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
-            camelContext.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(
-                    config.getRouteFilterIncludePattern(),
-                    config.getRouteFilterExcludePattern());
+            camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(Model.class)
+                    .setRouteFilterPattern(
+                            config.getRouteFilterIncludePattern(), config.getRouteFilterExcludePattern());
         }
 
         // check startup conditions before we can continue
@@ -530,26 +554,39 @@ public final class DefaultConfigurationConfigurer {
         }
 
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(),
-                managementStrategy::addEventNotifier);
-        final Predicate<InterceptStrategy> containsInterceptStrategy
-                = camelContext.getCamelContextExtension().getInterceptStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(),
+        registerPropertiesForBeanTypesWithCondition(
+                registry, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
+        final Predicate<InterceptStrategy> containsInterceptStrategy =
+                camelContext.getCamelContextExtension().getInterceptStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(
+                registry,
+                InterceptStrategy.class,
+                containsInterceptStrategy.negate(),
                 camelContext.getCamelContextExtension()::addInterceptStrategy);
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(),
+        registerPropertiesForBeanTypesWithCondition(
+                registry,
+                LifecycleStrategy.class,
+                containsLifecycleStrategy.negate(),
                 camelContext::addLifecycleStrategy);
         ModelCamelContext mcc = (ModelCamelContext) camelContext;
-        final Predicate<ModelLifecycleStrategy> containsModelLifecycleStrategy = mcc.getModelLifecycleStrategies()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, ModelLifecycleStrategy.class,
-                containsModelLifecycleStrategy.negate(), mcc::addModelLifecycleStrategy);
+        final Predicate<ModelLifecycleStrategy> containsModelLifecycleStrategy =
+                mcc.getModelLifecycleStrategies()::contains;
+        registerPropertiesForBeanTypesWithCondition(
+                registry,
+                ModelLifecycleStrategy.class,
+                containsModelLifecycleStrategy.negate(),
+                mcc::addModelLifecycleStrategy);
 
         // log listeners
         Map<String, LogListener> logListeners = registry.findByTypeWithName(LogListener.class);
         if (logListeners != null && !logListeners.isEmpty()) {
             for (LogListener logListener : logListeners.values()) {
                 boolean contains = camelContext.getCamelContextExtension().getLogListeners() != null
-                        && camelContext.getCamelContextExtension().getLogListeners().contains(logListener);
+                        && camelContext
+                                .getCamelContextExtension()
+                                .getLogListeners()
+                                .contains(logListener);
                 if (!contains) {
                     camelContext.getCamelContextExtension().addLogListener(logListener);
                 }
@@ -564,14 +601,17 @@ public final class DefaultConfigurationConfigurer {
                 if (service.getId() == null) {
                     service.setGeneratedId(camelContext.getUuidGenerator().generateUuid());
                 }
-                LOG.info("Adding Camel Cloud ServiceRegistry with id: {} and implementation: {}", service.getId(), service);
+                LOG.info(
+                        "Adding Camel Cloud ServiceRegistry with id: {} and implementation: {}",
+                        service.getId(),
+                        service);
                 camelContext.addService(service);
             }
         }
 
         // SSL context parameters
-        GlobalSSLContextParametersSupplier sslContextParametersSupplier
-                = getSingleBeanOfType(registry, GlobalSSLContextParametersSupplier.class);
+        GlobalSSLContextParametersSupplier sslContextParametersSupplier =
+                getSingleBeanOfType(registry, GlobalSSLContextParametersSupplier.class);
         if (sslContextParametersSupplier != null) {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
@@ -646,15 +686,15 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setKubernetesVaultConfiguration(kubernetes);
         }
-        KubernetesConfigMapVaultConfiguration kubernetesConfigmaps
-                = getSingleBeanOfType(registry, KubernetesConfigMapVaultConfiguration.class);
+        KubernetesConfigMapVaultConfiguration kubernetesConfigmaps =
+                getSingleBeanOfType(registry, KubernetesConfigMapVaultConfiguration.class);
         if (kubernetesConfigmaps != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setKubernetesConfigMapVaultConfiguration(kubernetesConfigmaps);
         }
 
-        IBMSecretsManagerVaultConfiguration ibmSecretsManager
-                = getSingleBeanOfType(registry, IBMSecretsManagerVaultConfiguration.class);
+        IBMSecretsManagerVaultConfiguration ibmSecretsManager =
+                getSingleBeanOfType(registry, IBMSecretsManagerVaultConfiguration.class);
         if (ibmSecretsManager != null) {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setIBMSecretsManagerVaultConfiguration(ibmSecretsManager);
@@ -752,8 +792,8 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (vc.aws().isRefreshEnabled()) {
-            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                    .newInstance("aws-secret-refresh", Runnable.class);
+            Optional<Runnable> task =
+                    PluginHelper.getPeriodTaskResolver(camelContext).newInstance("aws-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.aws().getRefreshPeriod();
                 Runnable r = task.get();
@@ -771,8 +811,8 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (vc.gcp().isRefreshEnabled()) {
-            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                    .newInstance("gcp-secret-refresh", Runnable.class);
+            Optional<Runnable> task =
+                    PluginHelper.getPeriodTaskResolver(camelContext).newInstance("gcp-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.gcp().getRefreshPeriod();
                 Runnable r = task.get();
@@ -845,8 +885,8 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (vc.ibmSecretsManager().isRefreshEnabled()) {
-            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
-                    .newInstance("ibm-secret-refresh", Runnable.class);
+            Optional<Runnable> task =
+                    PluginHelper.getPeriodTaskResolver(camelContext).newInstance("ibm-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 Runnable r = task.get();
                 if (LOG.isDebugEnabled()) {
@@ -915,7 +955,9 @@ public final class DefaultConfigurationConfigurer {
     }
 
     private static <T> void registerPropertiesForBeanTypesWithCondition(
-            final Registry registry, final Class<T> beanType, final Predicate<T> condition,
+            final Registry registry,
+            final Class<T> beanType,
+            final Predicate<T> condition,
             final Consumer<T> propertySetter) {
         final Map<String, T> beans = registry.findByTypeWithName(beanType);
         if (!ObjectHelper.isNotEmpty(beans)) {
@@ -941,7 +983,9 @@ public final class DefaultConfigurationConfigurer {
                 ThreadPoolProfile profile = entry.getValue();
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (profile.isDefaultProfile()) {
-                    LOG.info("Using custom default ThreadPoolProfile with id: {} and implementation: {}", entry.getKey(),
+                    LOG.info(
+                            "Using custom default ThreadPoolProfile with id: {} and implementation: {}",
+                            entry.getKey(),
                             profile);
                     camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
                     defaultIds.add(entry.getKey());
@@ -953,9 +997,8 @@ public final class DefaultConfigurationConfigurer {
 
         // validate at most one is defined
         if (defaultIds.size() > 1) {
-            throw new IllegalArgumentException(
-                    "Only exactly one default ThreadPoolProfile is allowed, was " + defaultIds.size() + " ids: " + defaultIds);
+            throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was "
+                    + defaultIds.size() + " ids: " + defaultIds);
         }
     }
-
 }

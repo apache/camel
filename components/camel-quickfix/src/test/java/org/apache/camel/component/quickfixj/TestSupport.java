@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import java.io.File;
@@ -76,9 +77,7 @@ public final class TestSupport {
         Mockito.when(mockMessageStoreFactory.create(sessionID)).thenReturn(mockMessageStore);
 
         DefaultSessionFactory factory = new DefaultSessionFactory(
-                Mockito.mock(Application.class),
-                mockMessageStoreFactory,
-                Mockito.mock(LogFactory.class));
+                Mockito.mock(Application.class), mockMessageStoreFactory, Mockito.mock(LogFactory.class));
 
         SessionSettings settings = new SessionSettings();
         settings.setLong(Session.SETTING_HEARTBTINT, 10);
@@ -112,9 +111,11 @@ public final class TestSupport {
         settings.setBool(sessionID, Session.SETTING_USE_DATA_DICTIONARY, false);
 
         return new QuickfixjEngine(
-                "", settings,
+                "",
+                settings,
                 mockMessageStoreFactory,
                 Mockito.mock(LogFactory.class),
-                Mockito.mock(MessageFactory.class), lazy);
+                Mockito.mock(MessageFactory.class),
+                lazy);
     }
 }

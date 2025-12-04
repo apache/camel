@@ -34,37 +34,45 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Maps a LangChain4j Embeddings to a Weaviate Create/UpdateByID to write an embeddings vector on a Weaviate Database.
  */
-@DataTypeTransformer(name = "weaviate:embeddings",
-                     description = "Prepares the message to become an object writable by Weaviate component")
+@DataTypeTransformer(
+        name = "weaviate:embeddings",
+        description = "Prepares the message to become an object writable by Weaviate component")
 public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        Embedding embedding =
+                message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         String textFieldName = message.getHeader(WeaviateVectorDbHeaders.TEXT_FIELD_NAME, () -> "text", String.class);
-        String vectorFieldName = message.getHeader(WeaviateVectorDbHeaders.VECTOR_FIELD_NAME, () -> "vector", String.class);
-        String collectionName = message.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
+        String vectorFieldName =
+                message.getHeader(WeaviateVectorDbHeaders.VECTOR_FIELD_NAME, () -> "vector", String.class);
+        String collectionName =
+                message.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
         String keyName = message.getHeader(WeaviateVectorDbHeaders.KEY_NAME, () -> "id", String.class);
         Object keyValue = message.getHeader(WeaviateVectorDbHeaders.KEY_VALUE, () -> null);
         TextSegment text = message.getBody(TextSegment.class);
-        final WeaviateVectorDbAction action = message.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
+        final WeaviateVectorDbAction action =
+                message.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
         switch (action) {
-            case CREATE ->
-                createEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
-                        keyName);
-            case UPDATE_BY_ID ->
-                updateEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
-                        keyName);
-            case QUERY ->
-                queryEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
-                        keyName);
+            case CREATE -> createEmbeddingOperation(
+                    message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue, keyName);
+            case UPDATE_BY_ID -> updateEmbeddingOperation(
+                    message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue, keyName);
+            case QUERY -> queryEmbeddingOperation(
+                    message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue, keyName);
             default -> throw new IllegalStateException("The only operations supported are create and updatebyid");
         }
     }
 
     private static void createEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
-            String collectionName, Object keyValue, String keyName) {
+            Message message,
+            Embedding embedding,
+            String vectorFieldName,
+            String textFieldName,
+            TextSegment text,
+            String collectionName,
+            Object keyValue,
+            String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
 
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
@@ -75,8 +83,14 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     }
 
     private static void updateEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
-            String collectionName, Object keyValue, String keyName) {
+            Message message,
+            Embedding embedding,
+            String vectorFieldName,
+            String textFieldName,
+            TextSegment text,
+            String collectionName,
+            Object keyValue,
+            String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
 
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
@@ -87,8 +101,14 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     }
 
     private static void queryEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
-            String collectionName, Object keyValue, String keyName) {
+            Message message,
+            Embedding embedding,
+            String vectorFieldName,
+            String textFieldName,
+            TextSegment text,
+            String collectionName,
+            Object keyValue,
+            String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
 
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {

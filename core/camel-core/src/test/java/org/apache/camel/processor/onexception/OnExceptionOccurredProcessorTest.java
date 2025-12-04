@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
 
@@ -54,10 +55,16 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
             public void configure() {
                 MyProcessor myProcessor = context.getRegistry().lookupByNameAndType("myProcessor", MyProcessor.class);
 
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0)
+                errorHandler(deadLetterChannel("mock:dead")
+                        .maximumRedeliveries(3)
+                        .redeliveryDelay(0)
                         .onExceptionOccurred(myProcessor));
 
-                from("direct:start").routeId("start").to("log:a").to("direct:foo").to("log:b");
+                from("direct:start")
+                        .routeId("start")
+                        .to("log:a")
+                        .to("direct:foo")
+                        .to("log:b");
 
                 from("direct:foo").routeId("foo").throwException(new IllegalArgumentException("Forced"));
             }
@@ -79,5 +86,4 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
             return invoked;
         }
     }
-
 }

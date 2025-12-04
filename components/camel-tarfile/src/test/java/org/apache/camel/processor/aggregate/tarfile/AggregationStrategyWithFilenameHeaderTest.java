@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.tarfile;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,11 +38,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
 
@@ -69,9 +70,9 @@ class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
         File[] files = new File("target/out").listFiles();
         File resultFile = files[0];
 
-        final TarArchiveInputStream tis
-                = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
-                        new BufferedInputStream(new FileInputStream(resultFile)));
+        final TarArchiveInputStream tis = new ArchiveStreamFactory()
+                .createArchiveInputStream(
+                        ArchiveStreamFactory.TAR, new BufferedInputStream(new FileInputStream(resultFile)));
         try {
             int fileCount = 0;
             for (TarArchiveEntry entry = tis.getNextEntry(); entry != null; entry = tis.getNextEntry()) {
@@ -98,6 +99,5 @@ class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
                         .log("Done processing tar file: ${header.CamelFileName}");
             }
         };
-
     }
 }

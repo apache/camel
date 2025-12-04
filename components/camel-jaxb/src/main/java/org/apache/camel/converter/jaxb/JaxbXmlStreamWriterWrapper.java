@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -24,5 +25,4 @@ import javax.xml.stream.XMLStreamWriter;
 public interface JaxbXmlStreamWriterWrapper {
 
     XMLStreamWriter wrapWriter(XMLStreamWriter writer);
-
 }

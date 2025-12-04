@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.security.KeyPair;
@@ -49,11 +55,6 @@ import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
 
     protected static final String TARGET_HOST = "localhost";
@@ -72,31 +73,31 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     protected static final String DISPOSITION_NOTIFICATION_TO = "mrAS@example.org";
     protected static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     protected static final String EDI_MESSAGE = "UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'\n"
-                                                + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
-                                                + "BGM+380+342459+9'\n"
-                                                + "DTM+3:20060515:102'\n"
-                                                + "RFF+ON:521052'\n"
-                                                + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
-                                                + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
-                                                + "CUX+1:USD'\n"
-                                                + "LIN+1++157870:IN'\n"
-                                                + "IMD+F++:::WIDGET'\n"
-                                                + "QTY+47:1020:EA'\n"
-                                                + "ALI+US'\n"
-                                                + "MOA+203:1202.58'\n"
-                                                + "PRI+INV:1.179'\n"
-                                                + "LIN+2++157871:IN'\n"
-                                                + "IMD+F++:::DIFFERENT WIDGET'\n"
-                                                + "QTY+47:20:EA'\n"
-                                                + "ALI+JP'\n"
-                                                + "MOA+203:410'\n"
-                                                + "PRI+INV:20.5'\n"
-                                                + "UNS+S'\n"
-                                                + "MOA+39:2137.58'\n"
-                                                + "ALC+C+ABG'\n"
-                                                + "MOA+8:525'\n"
-                                                + "UNT+23+00000000000117'\n"
-                                                + "UNZ+1+00000000000778'";
+            + "UNH+00000000000117+INVOIC:D:97B:UN'\n"
+            + "BGM+380+342459+9'\n"
+            + "DTM+3:20060515:102'\n"
+            + "RFF+ON:521052'\n"
+            + "NAD+BY+792820524::16++CUMMINS MID-RANGE ENGINE PLANT'\n"
+            + "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\n"
+            + "CUX+1:USD'\n"
+            + "LIN+1++157870:IN'\n"
+            + "IMD+F++:::WIDGET'\n"
+            + "QTY+47:1020:EA'\n"
+            + "ALI+US'\n"
+            + "MOA+203:1202.58'\n"
+            + "PRI+INV:1.179'\n"
+            + "LIN+2++157871:IN'\n"
+            + "IMD+F++:::DIFFERENT WIDGET'\n"
+            + "QTY+47:20:EA'\n"
+            + "ALI+JP'\n"
+            + "MOA+203:410'\n"
+            + "PRI+INV:20.5'\n"
+            + "UNS+S'\n"
+            + "MOA+39:2137.58'\n"
+            + "ALC+C+ABG'\n"
+            + "MOA+8:525'\n"
+            + "UNT+23+00000000000117'\n"
+            + "UNZ+1+00000000000778'";
     protected static KeyPair issueKP;
     protected static KeyPair signingKP;
     protected static X509Certificate signingCert;
@@ -113,8 +114,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for listen
-                from("as2://server/listen?requestUriPattern=/")
-                        .to("mock:as2RcvMsgs");
+                from("as2://server/listen?requestUriPattern=/").to("mock:as2RcvMsgs");
             }
         };
     }
@@ -164,21 +164,22 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
         HttpEntity entity = classicHttpResponse.getEntity();
 
         assert (entity instanceof DispositionNotificationMultipartReportEntity);
-        DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity) entity;
+        DispositionNotificationMultipartReportEntity reportEntity =
+                (DispositionNotificationMultipartReportEntity) entity;
 
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                (AS2MessageDispositionNotificationEntity) reportEntity.getPart(1);
         return messageDispositionNotificationEntity;
     }
 
     protected HttpCoreContext sendWithInvalidSignature(AS2MessageStructure structure) throws Exception {
-        return generateInvalidCrypto((Certificate sc, KeyPair skp, Certificate ec) -> send(structure, new Certificate[] { sc },
-                skp.getPrivate(), null));
+        return generateInvalidCrypto((Certificate sc, KeyPair skp, Certificate ec) ->
+                send(structure, new Certificate[] {sc}, skp.getPrivate(), null));
     }
 
     protected HttpCoreContext sendWithInvalidEncryption(AS2MessageStructure structure) throws Exception {
         return generateInvalidCrypto(
-                (Certificate sc, KeyPair skp, Certificate ec) -> send(structure, null, null, new Certificate[] { ec }));
+                (Certificate sc, KeyPair skp, Certificate ec) -> send(structure, null, null, new Certificate[] {ec}));
     }
 
     private HttpCoreContext generateInvalidCrypto(TriFunction<Certificate, KeyPair, Certificate, HttpCoreContext> fn)
@@ -199,13 +200,12 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
         return send(structure, null, null, null);
     }
 
-    protected HttpCoreContext send(
-            AS2MessageStructure structure, Certificate[] sc, PrivateKey spk, Certificate[] ec)
+    protected HttpCoreContext send(AS2MessageStructure structure, Certificate[] sc, PrivateKey spk, Certificate[] ec)
             throws Exception {
 
-        Certificate[] signingCertificate = sc == null ? new Certificate[] { this.signingCert } : sc;
+        Certificate[] signingCertificate = sc == null ? new Certificate[] {this.signingCert} : sc;
         PrivateKey signingPrivateKey = spk == null ? this.signingKP.getPrivate() : spk;
-        Certificate[] encryptingCertificate = ec == null ? new Certificate[] { this.signingCert } : ec;
+        Certificate[] encryptingCertificate = ec == null ? new Certificate[] {this.signingCert} : ec;
 
         AS2SignatureAlgorithm signingAlgorithm = structure.isSigned() ? AS2SignatureAlgorithm.SHA256WITHRSA : null;
         signingCertificate = structure.isSigned() ? signingCertificate : null;
@@ -214,20 +214,46 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
         encryptingCertificate = structure.isEncrypted() ? encryptingCertificate : null;
         AS2CompressionAlgorithm compressionAlgorithm = structure.isCompressed() ? AS2CompressionAlgorithm.ZLIB : null;
 
-        return clientConnection().send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
-                structure,
-                AS2MediaType.APPLICATION_EDIFACT, null, null,
-                signingAlgorithm, signingCertificate, signingPrivateKey, compressionAlgorithm,
-                DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
-                encryptingCertificate, null, null, null, null, null);
+        return clientConnection()
+                .send(
+                        EDI_MESSAGE,
+                        REQUEST_URI,
+                        SUBJECT,
+                        FROM,
+                        AS2_NAME,
+                        AS2_NAME,
+                        structure,
+                        AS2MediaType.APPLICATION_EDIFACT,
+                        null,
+                        null,
+                        signingAlgorithm,
+                        signingCertificate,
+                        signingPrivateKey,
+                        compressionAlgorithm,
+                        DISPOSITION_NOTIFICATION_TO,
+                        SIGNED_RECEIPT_MIC_ALGORITHMS,
+                        encryptionAlgorithm,
+                        encryptingCertificate,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
     }
 
     protected AS2ClientManager clientConnection() throws IOException {
-        AS2ClientConnection clientConnection
-                = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
-                        HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, null,
-                        null);
+        AS2ClientConnection clientConnection = new AS2ClientConnection(
+                AS2_VERSION,
+                USER_AGENT,
+                CLIENT_FQDN,
+                TARGET_HOST,
+                TARGET_PORT,
+                HTTP_SOCKET_TIMEOUT,
+                HTTP_CONNECTION_TIMEOUT,
+                HTTP_CONNECTION_POOL_SIZE,
+                HTTP_CONNECTION_POOL_TTL,
+                null,
+                null);
         return new AS2ClientManager(clientConnection);
     }
 

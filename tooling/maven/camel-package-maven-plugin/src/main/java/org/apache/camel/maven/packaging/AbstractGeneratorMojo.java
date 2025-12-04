@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -129,7 +130,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     private static RuntimeInstance createVelocityRuntime() {
         Properties props = new Properties();
         props.setProperty("resource.loaders", "class");
-        props.setProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        props.setProperty(
+                "resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         RuntimeInstance velocity = new RuntimeInstance();
         velocity.init(props);
         return velocity;
@@ -157,7 +159,10 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         properties.append("version=").append(project.getVersion()).append(NL);
         properties.append("projectName=").append(project.getName()).append(NL);
         if (project.getDescription() != null) {
-            properties.append("projectDescription=").append(project.getDescription()).append(NL);
+            properties
+                    .append("projectDescription=")
+                    .append(project.getDescription())
+                    .append(NL);
         }
 
         String annotations = project.getProperties().getProperty("annotations");
@@ -186,7 +191,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         return false;
     }
 
-    public static boolean haveResourcesChanged(Log log, MavenProject project, BuildContext buildContext, String suffix) {
+    public static boolean haveResourcesChanged(
+            Log log, MavenProject project, BuildContext buildContext, String suffix) {
         String baseDir = project.getBasedir().getAbsolutePath();
         for (Resource r : project.getBuild().getResources()) {
             File file = new File(r.getDirectory());

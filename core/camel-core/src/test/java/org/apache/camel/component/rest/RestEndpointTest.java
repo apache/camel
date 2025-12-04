@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,22 +31,27 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RestEndpointTest {
 
     public static class MockRest extends DefaultComponent implements RestProducerFactory {
         @Override
         public Producer createProducer(
-                final CamelContext camelContext, final String host, final String verb, final String basePath,
+                final CamelContext camelContext,
+                final String host,
+                final String verb,
+                final String basePath,
                 final String uriTemplate,
-                final String queryParameters, final String consumes, final String produces, RestConfiguration configuration,
+                final String queryParameters,
+                final String consumes,
+                final String produces,
+                RestConfiguration configuration,
                 final Map<String, Object> parameters) {
             return null;
         }
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) {
+        protected Endpoint createEndpoint(
+                final String uri, final String remaining, final Map<String, Object> parameters) {
             return null;
         }
     }
@@ -81,8 +89,8 @@ public class RestEndpointTest {
         parameters.put("bindingMode", "json");
         parameters.put("foo", "bar");
 
-        final RestEndpoint endpoint = (RestEndpoint) restComponent
-                .createEndpoint("rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar", "GET:/path", parameters);
+        final RestEndpoint endpoint = (RestEndpoint) restComponent.createEndpoint(
+                "rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar", "GET:/path", parameters);
 
         assertEquals("http://localhost", endpoint.getHost());
         assertEquals("json", endpoint.getBindingMode().name());
@@ -93,9 +101,10 @@ public class RestEndpointTest {
 
     @Test
     public void shouldSupportQueryParametersSetViaEndpointUri() throws Exception {
-        RestEndpoint endpoint = (RestEndpoint) context.getComponent("rest")
-                .createEndpoint(
-                        "rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar&queryParameters=RAW(a%3Db%26c%3Dd)");
+        RestEndpoint endpoint = (RestEndpoint)
+                context.getComponent("rest")
+                        .createEndpoint(
+                                "rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar&queryParameters=RAW(a%3Db%26c%3Dd)");
 
         assertEquals("http://localhost", endpoint.getHost());
         assertEquals("json", endpoint.getBindingMode().name());

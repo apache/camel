@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
 
 import java.util.HashMap;
@@ -60,8 +61,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using message publishing service");
                     }
-                    performPublishMessageServiceOperations((SimpleNotificationEndpoint) super.getEndpoint(), exchange,
-                            clientConfigurations);
+                    performPublishMessageServiceOperations(
+                            (SimpleNotificationEndpoint) super.getEndpoint(), exchange, clientConfigurations);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Completed publishing message");
                     }
@@ -70,7 +71,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Unsupported service name {}", service);
                     }
-                    throw new UnsupportedOperationException(String.format("service %s is not a supported service", service));
+                    throw new UnsupportedOperationException(
+                            String.format("service %s is not a supported service", service));
             }
         } else {
             if (LOG.isErrorEnabled()) {
@@ -88,9 +90,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void performPublishMessageServiceOperations(
-            SimpleNotificationEndpoint endpoint,
-            Exchange exchange,
-            ClientConfigurations clientConfigurations) {
+            SimpleNotificationEndpoint endpoint, Exchange exchange, ClientConfigurations clientConfigurations) {
         PublishMessageResponse response;
 
         PublishMessageRequestBody apiBody;
@@ -100,7 +100,6 @@ public class SimpleNotificationProducer extends DefaultProducer {
             LOG.debug("Checking operation name");
         }
         switch (clientConfigurations.getOperation()) {
-
             case SmnOperations.PUBLISH_AS_TEXT_MESSAGE:
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Publishing as text message");
@@ -110,9 +109,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
                         .withSubject(clientConfigurations.getSubject())
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()));
 
-                response = smnClient.publishMessage(new PublishMessageRequest()
-                        .withBody(apiBody)
-                        .withTopicUrn(clientConfigurations.getTopicUrn()));
+                response = smnClient.publishMessage(
+                        new PublishMessageRequest().withBody(apiBody).withTopicUrn(clientConfigurations.getTopicUrn()));
                 break;
 
             case SmnOperations.PUBLISH_AS_TEMPLATED_MESSAGE:
@@ -127,15 +125,13 @@ public class SimpleNotificationProducer extends DefaultProducer {
                         .withTags((HashMap<String, String>) exchange.getProperty(SmnProperties.TEMPLATE_TAGS))
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()));
 
-                response = smnClient.publishMessage(new PublishMessageRequest()
-                        .withBody(apiBody)
-                        .withTopicUrn(clientConfigurations.getTopicUrn()));
+                response = smnClient.publishMessage(
+                        new PublishMessageRequest().withBody(apiBody).withTopicUrn(clientConfigurations.getTopicUrn()));
                 break;
 
             default:
-                throw new UnsupportedOperationException(
-                        String.format("operation %s not supported in publishMessage service",
-                                clientConfigurations.getOperation()));
+                throw new UnsupportedOperationException(String.format(
+                        "operation %s not supported in publishMessage service", clientConfigurations.getOperation()));
         }
         setResponseParameters(exchange, response);
     }
@@ -165,8 +161,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void validateAndInitializeSmnClient(
-            SimpleNotificationEndpoint simpleNotificationEndpoint,
-            ClientConfigurations clientConfigurations) {
+            SimpleNotificationEndpoint simpleNotificationEndpoint, ClientConfigurations clientConfigurations) {
         if (simpleNotificationEndpoint.getSmnClient() != null) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn(
@@ -176,32 +171,35 @@ public class SimpleNotificationProducer extends DefaultProducer {
             return;
         }
 
-        //checking for cloud SK (secret key)
-        if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getSecretKey()) &&
-                ObjectHelper.isEmpty(simpleNotificationEndpoint.getServiceKeys())) {
+        // checking for cloud SK (secret key)
+        if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getSecretKey())
+                && ObjectHelper.isEmpty(simpleNotificationEndpoint.getServiceKeys())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("secret key (SK) not found");
             }
             throw new IllegalArgumentException("authentication parameter 'secret key (SK)' not found");
         } else {
-            clientConfigurations.setSecretKey(simpleNotificationEndpoint.getSecretKey() != null
-                    ? simpleNotificationEndpoint.getSecretKey() : simpleNotificationEndpoint.getServiceKeys().getSecretKey());
+            clientConfigurations.setSecretKey(
+                    simpleNotificationEndpoint.getSecretKey() != null
+                            ? simpleNotificationEndpoint.getSecretKey()
+                            : simpleNotificationEndpoint.getServiceKeys().getSecretKey());
         }
 
-        //checking for cloud AK (auth key)
-        if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getAccessKey()) &&
-                ObjectHelper.isEmpty(simpleNotificationEndpoint.getServiceKeys())) {
+        // checking for cloud AK (auth key)
+        if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getAccessKey())
+                && ObjectHelper.isEmpty(simpleNotificationEndpoint.getServiceKeys())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("access key (AK) not found");
             }
             throw new IllegalArgumentException("authentication parameter 'access key (AK)' not found");
         } else {
-            clientConfigurations.setAccessKey(simpleNotificationEndpoint.getAccessKey() != null
-                    ? simpleNotificationEndpoint.getAccessKey()
-                    : simpleNotificationEndpoint.getServiceKeys().getAccessKey());
+            clientConfigurations.setAccessKey(
+                    simpleNotificationEndpoint.getAccessKey() != null
+                            ? simpleNotificationEndpoint.getAccessKey()
+                            : simpleNotificationEndpoint.getServiceKeys().getAccessKey());
         }
 
-        //checking for project ID
+        // checking for project ID
         if (ObjectHelper.isEmpty(simpleNotificationEndpoint.getProjectId())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Project ID not found");
@@ -211,12 +209,13 @@ public class SimpleNotificationProducer extends DefaultProducer {
             clientConfigurations.setProjectId(simpleNotificationEndpoint.getProjectId());
         }
 
-        //checking for endpoint
+        // checking for endpoint
         if (StringUtils.isNotEmpty(simpleNotificationEndpoint.getEndpoint())) {
             clientConfigurations.setServiceEndpoint(simpleNotificationEndpoint.getEndpoint());
         } else {
-            //checking for region
-            String endpointUrl = SimpleNotificationUtils.resolveSmnServiceEndpoint(simpleNotificationEndpoint.getRegion());
+            // checking for region
+            String endpointUrl =
+                    SimpleNotificationUtils.resolveSmnServiceEndpoint(simpleNotificationEndpoint.getRegion());
             if (endpointUrl == null) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Valid region not found");
@@ -227,7 +226,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
             }
         }
 
-        //checking for ignore ssl verification
+        // checking for ignore ssl verification
         boolean ignoreSslVerification = simpleNotificationEndpoint.isIgnoreSslVerification();
         if (ignoreSslVerification) {
             if (LOG.isWarnEnabled()) {
@@ -236,7 +235,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
             clientConfigurations.setIgnoreSslVerification(ignoreSslVerification);
         }
 
-        //checking if http proxy authentication is used
+        // checking if http proxy authentication is used
         if (simpleNotificationEndpoint.getProxyHost() != null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reading http proxy configurations");
@@ -260,8 +259,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Initializing Smn client");
         }
-        HttpConfig httpConfig
-                = HttpConfig.getDefaultHttpConfig().withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
+        HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig()
+                .withIgnoreSSLVerification(clientConfigurations.isIgnoreSslVerification());
         if (!StringUtils.isEmpty(clientConfigurations.getProxyHost())) {
             httpConfig.setProxyHost(clientConfigurations.getProxyHost());
             httpConfig.setProxyPort(clientConfigurations.getProxyPort());
@@ -301,7 +300,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
      * @param clientConfigurations
      */
     private void validateServiceConfigurations(
-            SimpleNotificationEndpoint simpleNotificationEndpoint, Exchange exchange,
+            SimpleNotificationEndpoint simpleNotificationEndpoint,
+            Exchange exchange,
             ClientConfigurations clientConfigurations) {
 
         if (LOG.isDebugEnabled()) {
@@ -328,8 +328,10 @@ public class SimpleNotificationProducer extends DefaultProducer {
             }
             throw new IllegalArgumentException("operation name not found");
         } else {
-            clientConfigurations.setOperation(exchange.getProperty(SmnProperties.SMN_OPERATION) != null
-                    ? (String) exchange.getProperty(SmnProperties.SMN_OPERATION) : simpleNotificationEndpoint.getOperation());
+            clientConfigurations.setOperation(
+                    exchange.getProperty(SmnProperties.SMN_OPERATION) != null
+                            ? (String) exchange.getProperty(SmnProperties.SMN_OPERATION)
+                            : simpleNotificationEndpoint.getOperation());
         }
 
         // checking for mandatory field 'topic name'
@@ -342,8 +344,10 @@ public class SimpleNotificationProducer extends DefaultProducer {
             }
             throw new IllegalArgumentException("topic name not found");
         } else {
-            clientConfigurations.setTopicUrn(String.format(SmnConstants.TOPIC_URN_FORMAT,
-                    simpleNotificationEndpoint.getRegion(), simpleNotificationEndpoint.getProjectId(),
+            clientConfigurations.setTopicUrn(String.format(
+                    SmnConstants.TOPIC_URN_FORMAT,
+                    simpleNotificationEndpoint.getRegion(),
+                    simpleNotificationEndpoint.getProjectId(),
                     exchange.getProperty(SmnProperties.NOTIFICATION_TOPIC_NAME)));
         }
 

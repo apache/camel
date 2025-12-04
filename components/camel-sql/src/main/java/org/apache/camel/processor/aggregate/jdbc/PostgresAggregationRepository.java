@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import javax.sql.DataSource;
@@ -32,14 +33,13 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
     /**
      * Creates an aggregation repository
      */
-    public PostgresAggregationRepository() {
-    }
+    public PostgresAggregationRepository() {}
 
     /**
      * Creates an aggregation repository with the three mandatory parameters
      */
-    public PostgresAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName,
-                                         DataSource dataSource) {
+    public PostgresAggregationRepository(
+            PlatformTransactionManager transactionManager, String repositoryName, DataSource dataSource) {
         super(transactionManager, repositoryName, dataSource);
     }
 
@@ -53,15 +53,20 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
      */
     @Override
     protected void insert(
-            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName,
+            final CamelContext camelContext,
+            final String correlationId,
+            final Exchange exchange,
+            String repositoryName,
             final Long version)
             throws Exception {
         // The default totalParameterIndex is 2 for ID and Exchange. Depending on logic this will be increased
         int totalParameterIndex = 2;
         StringBuilder queryBuilder = new StringBuilder(256)
-                .append("INSERT INTO ").append(repositoryName)
+                .append("INSERT INTO ")
+                .append(repositoryName)
                 .append('(')
-                .append(EXCHANGE).append(", ")
+                .append(EXCHANGE)
+                .append(", ")
                 .append(ID);
 
         if (isStoreBodyAsText()) {
@@ -90,5 +95,4 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
             throw new DataIntegrityViolationException("No row was inserted due to data violation");
         }
     }
-
 }

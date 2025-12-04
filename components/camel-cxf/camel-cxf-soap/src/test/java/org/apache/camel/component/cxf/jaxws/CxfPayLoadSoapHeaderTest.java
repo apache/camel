@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 import java.util.List;
@@ -42,9 +46,6 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.headers.Header;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CxfPayLoadSoapHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
 
     private final QName serviceName = new QName("http://camel.apache.org/pizza", "PizzaService");
@@ -54,34 +55,40 @@ public class CxfPayLoadSoapHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: payload
-                from(getRouterEndpointURI()).process(new Processor() {
-                    @SuppressWarnings("unchecked")
-                    public void process(Exchange exchange) throws Exception {
-                        CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Source> elements = payload.getBodySources();
-                        assertNotNull(elements, "We should get the elements here");
-                        assertEquals(1, elements.size(), "Get the wrong elements size");
+                from(getRouterEndpointURI())
+                        .process(new Processor() {
+                            @SuppressWarnings("unchecked")
+                            public void process(Exchange exchange) throws Exception {
+                                CxfPayload<SoapHeader> payload =
+                                        exchange.getIn().getBody(CxfPayload.class);
+                                List<Source> elements = payload.getBodySources();
+                                assertNotNull(elements, "We should get the elements here");
+                                assertEquals(1, elements.size(), "Get the wrong elements size");
 
-                        Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        elements.set(0, new DOMSource(el));
-                        assertEquals("http://camel.apache.org/pizza/types",
-                                el.getNamespaceURI(), "Get the wrong namespace URI");
+                                Element el = new XmlConverter().toDOMElement(elements.get(0));
+                                elements.set(0, new DOMSource(el));
+                                assertEquals(
+                                        "http://camel.apache.org/pizza/types",
+                                        el.getNamespaceURI(),
+                                        "Get the wrong namespace URI");
 
-                        List<SoapHeader> headers = payload.getHeaders();
-                        assertNotNull(headers, "We should get the headers here");
-                        assertEquals(1, headers.size(), "Get the wrong headers size");
-                        assertEquals("http://camel.apache.org/pizza/types",
-                                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
-                        // alternatively you can also get the SOAP header via the camel header:
-                        headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
-                        assertNotNull(headers, "We should get the headers here");
-                        assertEquals(1, headers.size(), "Get the wrong headers size");
-                        assertEquals("http://camel.apache.org/pizza/types",
-                                ((Element) (headers.get(0).getObject())).getNamespaceURI(), "Get the wrong namespace URI");
-
-                    }
-
-                })
+                                List<SoapHeader> headers = payload.getHeaders();
+                                assertNotNull(headers, "We should get the headers here");
+                                assertEquals(1, headers.size(), "Get the wrong headers size");
+                                assertEquals(
+                                        "http://camel.apache.org/pizza/types",
+                                        ((Element) (headers.get(0).getObject())).getNamespaceURI(),
+                                        "Get the wrong namespace URI");
+                                // alternatively you can also get the SOAP header via the camel header:
+                                headers = exchange.getIn().getHeader(Header.HEADER_LIST, List.class);
+                                assertNotNull(headers, "We should get the headers here");
+                                assertEquals(1, headers.size(), "Get the wrong headers size");
+                                assertEquals(
+                                        "http://camel.apache.org/pizza/types",
+                                        ((Element) (headers.get(0).getObject())).getNamespaceURI(),
+                                        "Get the wrong namespace URI");
+                            }
+                        })
                         .to(getServiceEndpointURI());
                 // END SNIPPET: payload
             }
@@ -114,11 +121,12 @@ public class CxfPayLoadSoapHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
         assertNotNull(service, "Service is null");
 
         Pizza pizza = service.getPizzaPort();
-        ((BindingProvider) pizza).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) pizza)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port1 + "/" + getClass().getSimpleName()
-                                                                + "/pizza_service/services/PizzaService");
+                                + "/pizza_service/services/PizzaService");
         return pizza;
     }
-
 }

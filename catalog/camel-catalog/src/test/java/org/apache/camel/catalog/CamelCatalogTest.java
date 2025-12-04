@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
+
+import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,13 +52,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CamelCatalogTest {
 
     static CamelCatalog catalog;
@@ -59,10 +60,18 @@ public class CamelCatalogTest {
 
     private static Stream<Arguments> properties() {
         return Stream.of(
-                Arguments.of("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false", "localhost", "8080"),
-                Arguments.of("netty-http:http://{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false", "{{myhost}}",
+                Arguments.of(
+                        "netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false",
+                        "localhost",
+                        "8080"),
+                Arguments.of(
+                        "netty-http:http://{{myhost}}:{{myport}}/foo/bar?disconnect=true&keepAlive=false",
+                        "{{myhost}}",
                         "{{myport}}"),
-                Arguments.of("netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false", "localhost", "8080"));
+                Arguments.of(
+                        "netty-http:http://localhost:8080/foo/bar?disconnect=true&keepAlive=false",
+                        "localhost",
+                        "8080"));
     }
 
     @BeforeAll
@@ -416,8 +425,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointLenientProperties() throws Exception {
-        Map<String, String> map
-                = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456");
+        Map<String, String> map =
+                catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456");
         assertNotNull(map);
         assertEquals(2, map.size());
 
@@ -456,8 +465,7 @@ public class CamelCatalogTest {
     @ParameterizedTest
     @MethodSource("properties")
     public void testEndpointPropertiesNettyHttp(String endpoint, String host, String port) throws Exception {
-        Map<String, String> map
-                = catalog.endpointProperties(endpoint);
+        Map<String, String> map = catalog.endpointProperties(endpoint);
         assertNotNull(map);
         assertEquals(6, map.size());
 
@@ -471,8 +479,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesNettyHttpDefaultPort() throws Exception {
-        Map<String, String> map
-                = catalog.endpointProperties("netty-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
+        Map<String, String> map =
+                catalog.endpointProperties("netty-http:http:localhost/foo/bar?disconnect=true&keepAlive=false");
         assertNotNull(map);
         assertEquals(5, map.size());
 
@@ -495,7 +503,8 @@ public class CamelCatalogTest {
         map.put("showExchangePattern", "false");
         map.put("style", "Tab");
 
-        assertEquals("log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
+        assertEquals(
+                "log:foo?loggerLevel=WARN&multiline=true&showAll=true&style=Tab",
                 catalog.asEndpointUri("log", map, false));
     }
 
@@ -518,7 +527,8 @@ public class CamelCatalogTest {
         assertEquals("sql:{{insert}}?useMessageBodyForSql=true", catalog.asEndpointUri("sql", map, false));
 
         map.put("parametersCount", "{{count}}");
-        assertEquals("sql:{{insert}}?parametersCount={{count}}&useMessageBodyForSql=true",
+        assertEquals(
+                "sql:{{insert}}?parametersCount={{count}}&useMessageBodyForSql=true",
                 catalog.asEndpointUri("sql", map, false));
     }
 
@@ -598,8 +608,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testEndpointPropertiesMultiValued() throws Exception {
-        Map<String, String> map
-                = catalog.endpointProperties("http:helloworld?httpClientOptions=httpClient.foo=123&httpClient.bar=456");
+        Map<String, String> map =
+                catalog.endpointProperties("http:helloworld?httpClientOptions=httpClient.foo=123&httpClient.bar=456");
         assertNotNull(map);
         assertEquals(2, map.size());
 
@@ -632,13 +642,16 @@ public class CamelCatalogTest {
         catalog.addComponent("activemq", "org.apache.camel.component.activemq.ActiveMQComponent");
 
         // activemq
-        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
+        EndpointValidationResult result =
+                catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, true, false);
+        result = catalog.validateEndpointProperties(
+                "activemq:temp-queue:cheese?jmsMessageType=Bytes", false, true, false);
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
+        result = catalog.validateEndpointProperties(
+                "activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
         assertTrue(result.isSuccess());
 
         // connection factory
@@ -650,7 +663,8 @@ public class CamelCatalogTest {
     @Test
     public void validateJmsProperties() {
         // jms
-        EndpointValidationResult result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes");
+        EndpointValidationResult result =
+                catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
@@ -777,7 +791,9 @@ public class CamelCatalogTest {
 
         // lenient on rss consumer only
         result = catalog.validateEndpointProperties(
-                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true,
+                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar",
+                false,
+                true,
                 false);
         assertTrue(result.isSuccess());
         assertEquals("foo", result.getLenient().iterator().next());
@@ -819,8 +835,7 @@ public class CamelCatalogTest {
 
     @Test
     public void validatePropertiesSummary() {
-        EndpointValidationResult result = catalog.validateEndpointProperties(
-                "file:foo?blah=yada");
+        EndpointValidationResult result = catalog.validateEndpointProperties("file:foo?blah=yada");
         assertFalse(result.isSuccess());
         String reason = result.summaryErrorMessage(true);
         LOG.info(reason);
@@ -1094,7 +1109,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testPredicatePlaceholder() {
-        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} contains '{{danger}}'");
+        LanguageValidationResult result =
+                catalog.validateLanguagePredicate(null, "simple", "${body} contains '{{danger}}'");
         assertTrue(result.isSuccess());
         assertEquals("${body} contains '{{danger}}'", result.getText());
 
@@ -1137,7 +1153,8 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateJSonPathLanguage() {
-        LanguageValidationResult result = catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price < 10)]");
+        LanguageValidationResult result =
+                catalog.validateLanguageExpression(null, "jsonpath", "$.store.book[?(@.price < 10)]");
         assertTrue(result.isSuccess());
         assertEquals("$.store.book[?(@.price < 10)]", result.getText());
 
@@ -1584,8 +1601,8 @@ public class CamelCatalogTest {
 
     @Test
     public void validateEnvVariableInSyntax() {
-        EndpointValidationResult result
-                = catalog.validateEndpointProperties("netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
+        EndpointValidationResult result = catalog.validateEndpointProperties(
+                "netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
         assertTrue(result.isSuccess());
 
         result = catalog.validateEndpointProperties("netty-http:http://foo-bar/?requestTimeout={{env:TIMEOUT}}");
@@ -1604,7 +1621,8 @@ public class CamelCatalogTest {
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-bindy", catalog.getCatalogVersion());
         Assertions.assertInstanceOf(DataFormatModel.class, am);
-        Assertions.assertEquals("Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy",
+        Assertions.assertEquals(
+                "Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy",
                 am.getDescription());
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-unknown", catalog.getCatalogVersion());
@@ -1635,7 +1653,10 @@ public class CamelCatalogTest {
         List<ReleaseModel> list = catalog.camelReleases();
         Assertions.assertTrue(list.size() > 100);
 
-        ReleaseModel rel = list.stream().filter(r -> r.getVersion().equals("3.20.1")).findFirst().orElse(null);
+        ReleaseModel rel = list.stream()
+                .filter(r -> r.getVersion().equals("3.20.1"))
+                .findFirst()
+                .orElse(null);
         Assertions.assertNotNull(rel);
         Assertions.assertEquals("3.20.1", rel.getVersion());
         Assertions.assertEquals("2023-01-07", rel.getDate());
@@ -1648,7 +1669,10 @@ public class CamelCatalogTest {
         List<ReleaseModel> list = catalog.camelQuarkusReleases();
         Assertions.assertTrue(list.size() > 20);
 
-        ReleaseModel rel = list.stream().filter(r -> r.getVersion().equals("2.13.2")).findFirst().orElse(null);
+        ReleaseModel rel = list.stream()
+                .filter(r -> r.getVersion().equals("2.13.2"))
+                .findFirst()
+                .orElse(null);
         Assertions.assertNotNull(rel);
         Assertions.assertEquals("2.13.2", rel.getVersion());
         Assertions.assertEquals("2022-12-16", rel.getDate());
@@ -1695,5 +1719,4 @@ public class CamelCatalogTest {
                 "Converts the expression to a String, and attempts to pretty print if JSon or XML, otherwise the expression is returned as the String value.",
                 model.getFunctions().get(36).getDescription());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import java.time.Duration;
@@ -40,6 +41,7 @@ public class AzureServiceBusSpanDecorator extends AbstractMessagingSpanDecorator
      * Constants copied from {@link org.apache.camel.component.azure.servicebus.ServiceBusConstants}
      */
     static final String CONTENT_TYPE = "CamelAzureServiceBusContentType";
+
     static final String CORRELATION_ID = "CamelAzureServiceBusCorrelationId";
     static final String DELIVERY_COUNT = "CamelAzureServiceBusDeliveryCount";
     static final String ENQUEUED_SEQUENCE_NUMBER = "CamelAzureServiceBusEnqueuedSequenceNumber";
@@ -120,5 +122,4 @@ public class AzureServiceBusSpanDecorator extends AbstractMessagingSpanDecorator
     protected String getMessageId(Exchange exchange) {
         return exchange.getIn().getHeader(MESSAGE_ID, String.class);
     }
-
 }

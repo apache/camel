@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.apache.camel.component.aws.xray.XRayTracer.sanitizeName;
 
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
@@ -34,18 +37,15 @@ import org.apache.camel.support.processor.DelegateSyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.aws.xray.XRayTracer.sanitizeName;
-
 @Deprecated
 public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOG =
+            LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
     public Processor wrapProcessorInInterceptors(
-            CamelContext camelContext,
-            NamedNode processorDefinition,
-            Processor target, Processor nextTarget)
+            CamelContext camelContext, NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
 
         Class<?> processorClass = processorDefinition.getClass();
@@ -67,13 +67,16 @@ public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
             LOG.trace("Could not identify processor class on target processor {}", target);
             return new DelegateAsyncProcessor(target);
         } else if (!processorClass.isAnnotationPresent(XRayTrace.class)) {
-            LOG.trace("{} does not contain an @XRayTrace annotation. Skipping interception",
+            LOG.trace(
+                    "{} does not contain an @XRayTrace annotation. Skipping interception",
                     processorClass.getSimpleName());
             return new DelegateAsyncProcessor(target);
         }
 
-        LOG.trace("Wrapping process definition {} of target {} in order for recording its trace",
-                processorDefinition, processorClass);
+        LOG.trace(
+                "Wrapping process definition {} of target {} in order for recording its trace",
+                processorDefinition,
+                processorClass);
 
         Annotation annotation = processorClass.getAnnotation(XRayTrace.class);
         XRayTrace trace = (XRayTrace) annotation;

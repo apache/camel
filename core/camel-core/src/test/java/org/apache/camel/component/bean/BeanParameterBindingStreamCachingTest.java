@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.io.ByteArrayInputStream;
@@ -51,5 +52,4 @@ public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
             return body.toLowerCase() + body2.toUpperCase();
         }
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Map;
@@ -32,10 +37,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MultiPartFormTest extends BaseUndertowTest {
 
     private HttpEntity createMultipartRequestEntity() {
@@ -51,7 +52,7 @@ public class MultiPartFormTest extends BaseUndertowTest {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/test");
         post.setEntity(createMultipartRequestEntity());
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(post)) {
+                CloseableHttpResponse response = httpClient.execute(post)) {
             int status = response.getCode();
 
             assertEquals(200, status, "Get a wrong response status");
@@ -63,8 +64,8 @@ public class MultiPartFormTest extends BaseUndertowTest {
 
     @Test
     public void testSendMultiPartFormFromCamelHttpComponent() {
-        String result
-                = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
+        String result = template.requestBody(
+                "http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
@@ -81,7 +82,8 @@ public class MultiPartFormTest extends BaseUndertowTest {
                     assertNotNull(data, "Should get the DataHandler log4j2.properties");
                     assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                    assertTrue(data.getDataSource().getInputStream().available() > 0,
+                    assertTrue(
+                            data.getDataSource().getInputStream().available() > 0,
                             "We should get the data from the DataHandler");
 
                     // form data should also be available as a body
@@ -94,5 +96,4 @@ public class MultiPartFormTest extends BaseUndertowTest {
             }
         };
     }
-
 }

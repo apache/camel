@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ContextHealthCheckTest {
 
@@ -58,5 +59,4 @@ public class ContextHealthCheckTest {
         assertFalse(result.getDetails().containsKey(AbstractHealthCheck.CHECK_ENABLED));
         assertEquals(ServiceStatus.Suspended, result.getDetails().get("context.status"));
     }
-
 }

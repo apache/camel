@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarkRollbackOnlyTest extends ContextTestSupport {
 
@@ -40,7 +41,10 @@ public class MarkRollbackOnlyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:start").transform(constant("We cannot do this")).markRollbackOnly()
+                from("direct:start")
+                        .to("mock:start")
+                        .transform(constant("We cannot do this"))
+                        .markRollbackOnly()
                         .to("mock:result");
             }
         };

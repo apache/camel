@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test with InOut however we want sometimes to not send a response.
@@ -41,7 +42,8 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
 
     @Test
     public void testNoResponseDisconnectOnNoReplyFalse() {
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.requestBody("mina:tcp://localhost:" + port2 + "?sync=true&timeout=100", "London"),
                 "Should throw an exception");
         assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -62,9 +64,11 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
                         .otherwise()
                         .transform(constant(null));
 
-                fromF("mina:tcp://localhost:%d?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF", port2).choice()
+                fromF("mina:tcp://localhost:%d?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF", port2)
+                        .choice()
                         .when(body().isEqualTo("Woodbine"))
-                        .transform(constant("Hello Chad")).otherwise()
+                        .transform(constant("Hello Chad"))
+                        .otherwise()
                         .transform(constant(null));
             }
         };

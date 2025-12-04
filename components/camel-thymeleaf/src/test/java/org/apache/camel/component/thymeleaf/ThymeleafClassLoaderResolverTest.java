@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,13 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThymeleafClassLoaderResolverTest extends ThymeleafAbstractBaseTest {
 
@@ -52,7 +53,8 @@ public class ThymeleafClassLoaderResolverTest extends ThymeleafAbstractBaseTest 
                 "thymeleaf:org/apache/camel/component/thymeleaf/letter.html?allowContextMapAll=true&resolver=CLASS_LOADER",
                 ThymeleafEndpoint.class);
 
-        assertAll("properties",
+        assertAll(
+                "properties",
                 () -> assertNotNull(thymeleafEndpoint),
                 () -> assertTrue(thymeleafEndpoint.isAllowContextMapAll()),
                 () -> assertNull(thymeleafEndpoint.getCacheable()),
@@ -67,12 +69,16 @@ public class ThymeleafClassLoaderResolverTest extends ThymeleafAbstractBaseTest 
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
-        assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
-        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
+        assertEquals(
+                1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
+        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream()
+                .findFirst()
+                .get();
         assertTrue(resolver instanceof ClassLoaderTemplateResolver);
 
         ClassLoaderTemplateResolver templateResolver = (ClassLoaderTemplateResolver) resolver;
-        assertAll("templateResolver",
+        assertAll(
+                "templateResolver",
                 () -> assertTrue(templateResolver.isCacheable()),
                 () -> assertNull(templateResolver.getCacheTTLMs()),
                 () -> assertNull(templateResolver.getCharacterEncoding()),
@@ -92,10 +98,10 @@ public class ThymeleafClassLoaderResolverTest extends ThymeleafAbstractBaseTest 
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:org/apache/camel/component/thymeleaf/letter.html?allowContextMapAll=true&resolver=CLASS_LOADER")
+                        .to(
+                                "thymeleaf:org/apache/camel/component/thymeleaf/letter.html?allowContextMapAll=true&resolver=CLASS_LOADER")
                         .to(MOCK_RESULT);
             }
         };
     }
-
 }

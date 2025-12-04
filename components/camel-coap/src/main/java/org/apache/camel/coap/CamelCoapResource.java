@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.coap;
 
 import java.util.LinkedList;
@@ -127,7 +128,8 @@ final class CamelCoapResource extends CoapResource {
             int res = 0;
             while (!resources.isEmpty() && res < path.size()) {
                 r = resources.removeFirst();
-                if (r.getName().charAt(0) == '{' && r.getName().charAt(r.getName().length() - 1) == '}') {
+                if (r.getName().charAt(0) == '{'
+                        && r.getName().charAt(r.getName().length() - 1) == '}') {
                     String n = r.getName().substring(1, r.getName().length() - 1);
                     camelExchange.getIn().setHeader(n, path.get(res));
                 }

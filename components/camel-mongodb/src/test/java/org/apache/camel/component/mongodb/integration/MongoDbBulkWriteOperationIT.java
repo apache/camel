@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,10 +41,6 @@ import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @Test
@@ -47,17 +48,16 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport implem
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
-        List<WriteModel<Document>> bulkOperations = Arrays
-                .asList(new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
-                        new UpdateOneModel<>(
-                                new Document("_id", "2"),
-                                new Document("$set", new Document("scientist", "Charles Darwin"))),
-                        new UpdateManyModel<>(
-                                new Document("scientist", "Curie"),
-                                new Document("$set", new Document("scientist", "Marie Curie"))),
-                        new ReplaceOneModel<>(new Document("_id", "1"), new Document("scientist", "Albert Einstein")),
-                        new DeleteOneModel<>(new Document("_id", "3")),
-                        new DeleteManyModel<>(new Document("scientist", "Bohr")));
+        List<WriteModel<Document>> bulkOperations = Arrays.asList(
+                new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
+                new UpdateOneModel<>(
+                        new Document("_id", "2"), new Document("$set", new Document("scientist", "Charles Darwin"))),
+                new UpdateManyModel<>(
+                        new Document("scientist", "Curie"),
+                        new Document("$set", new Document("scientist", "Marie Curie"))),
+                new ReplaceOneModel<>(new Document("_id", "1"), new Document("scientist", "Albert Einstein")),
+                new DeleteOneModel<>(new Document("_id", "3")),
+                new DeleteManyModel<>(new Document("scientist", "Bohr")));
 
         BulkWriteResult result = template.requestBody("direct:bulkWrite", bulkOperations, BulkWriteResult.class);
 
@@ -77,14 +77,14 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport implem
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
-        List<WriteModel<Document>> bulkOperations = Arrays
-                .asList(new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
-                        // this insert failed and bulk stop
-                        new InsertOneModel<>(new Document("_id", "1")),
-                        new InsertOneModel<>(new Document("scientist", "Descartes")),
-                        new UpdateOneModel<>(
-                                new Document("_id", "5"), new Document("$set", new Document("scientist", "Marie Curie"))),
-                        new DeleteOneModel<>(new Document("_id", "2")));
+        List<WriteModel<Document>> bulkOperations = Arrays.asList(
+                new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
+                // this insert failed and bulk stop
+                new InsertOneModel<>(new Document("_id", "1")),
+                new InsertOneModel<>(new Document("scientist", "Descartes")),
+                new UpdateOneModel<>(
+                        new Document("_id", "5"), new Document("$set", new Document("scientist", "Marie Curie"))),
+                new DeleteOneModel<>(new Document("_id", "2")));
 
         try {
             template.requestBody("direct:bulkWrite", bulkOperations, BulkWriteResult.class);
@@ -102,14 +102,14 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport implem
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
-        List<WriteModel<Document>> bulkOperations = Arrays
-                .asList(new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
-                        // this insert failed and bulk continue
-                        new InsertOneModel<>(new Document("_id", "1")),
-                        new InsertOneModel<>(new Document("scientist", "Descartes")),
-                        new UpdateOneModel<>(
-                                new Document("_id", "5"), new Document("$set", new Document("scientist", "Marie Curie"))),
-                        new DeleteOneModel<>(new Document("_id", "2")));
+        List<WriteModel<Document>> bulkOperations = Arrays.asList(
+                new InsertOneModel<>(new Document("scientist", "Pierre Curie")),
+                // this insert failed and bulk continue
+                new InsertOneModel<>(new Document("_id", "1")),
+                new InsertOneModel<>(new Document("scientist", "Descartes")),
+                new UpdateOneModel<>(
+                        new Document("_id", "5"), new Document("$set", new Document("scientist", "Marie Curie"))),
+                new DeleteOneModel<>(new Document("_id", "2")));
         try {
             template.requestBody("direct:unorderedBulkWrite", bulkOperations, BulkWriteResult.class);
             fail("Bulk operation should throw Exception");
@@ -123,10 +123,14 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport implem
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:bulkWrite").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=bulkWrite");
-                from("direct:unorderedBulkWrite").setHeader(MongoDbConstants.BULK_ORDERED).constant(false)
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=bulkWrite");
+                from("direct:bulkWrite")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=bulkWrite");
+                from("direct:unorderedBulkWrite")
+                        .setHeader(MongoDbConstants.BULK_ORDERED)
+                        .constant(false)
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=bulkWrite");
             }
         };
     }

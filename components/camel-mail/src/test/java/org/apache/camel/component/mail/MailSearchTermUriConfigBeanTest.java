@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import org.apache.camel.BindToRegistry;
@@ -36,9 +37,9 @@ public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(bill.uriPrefix(Protocol.pop3) + "&searchTerm=#mySearchTerm").to("mock:result");
+                from(bill.uriPrefix(Protocol.pop3) + "&searchTerm=#mySearchTerm")
+                        .to("mock:result");
             }
         };
     }
-
 }

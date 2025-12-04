@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirSearch} APIs. The class source won't be generated again
  * if the generator MOJO finds it under src/test/java.
@@ -40,7 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FhirSearchIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirSearchIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirSearchApiMethod.class).getName();
+    private static final String PATH_PREFIX = FhirApiCollection.getCollection()
+            .getApiName(FhirSearchApiMethod.class)
+            .getName();
 
     @Test
     public void testSearchByUrl() {
@@ -52,7 +55,8 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
         Patient patient = (Patient) result.getEntry().get(0).getResource();
         assertNotNull(patient);
         assertEquals("Freeman", patient.getName().get(0).getFamily());
-        assertTrue(result.getLinkFirstRep().getUrl().endsWith("/fhir/Patient?_format=json&family=Freeman&given=Vincent"));
+        assertTrue(
+                result.getLinkFirstRep().getUrl().endsWith("/fhir/Patient?_format=json&family=Freeman&given=Vincent"));
     }
 
     @Test
@@ -76,15 +80,12 @@ public class FhirSearchIT extends AbstractFhirTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for searchByUrl
-                from("direct://SEARCH_BY_URL")
-                        .to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
+                from("direct://SEARCH_BY_URL").to("fhir://" + PATH_PREFIX + "/searchByUrl?inBody=url");
 
                 // test route for searchByResource
                 from("direct://SEARCH_BY_RESOURCE")
-                        .to("fhir://" + PATH_PREFIX
-                            + "/searchByResource?inBody=resourceName");
+                        .to("fhir://" + PATH_PREFIX + "/searchByResource?inBody=resourceName");
             }
-
         };
     }
 }

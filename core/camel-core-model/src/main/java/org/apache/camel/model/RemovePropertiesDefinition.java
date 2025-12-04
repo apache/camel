@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -39,12 +40,12 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
 
     @XmlAttribute(required = true)
     private String pattern;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String excludePattern;
 
-    public RemovePropertiesDefinition() {
-    }
+    public RemovePropertiesDefinition() {}
 
     protected RemovePropertiesDefinition(RemovePropertiesDefinition source) {
         super(source);

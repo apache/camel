@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -25,10 +30,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-
 public class AWSS3NamingStrategyTest extends CamelTestSupport {
 
     @Test
@@ -36,11 +37,17 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
         AWS2S3StreamUploadProducer producer = createProducer();
 
         Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "fileNameToUpload", String.class, AWSS3NamingStrategyEnum.class, String.class, int.class, UUID.class,
+                "fileNameToUpload",
+                String.class,
+                AWSS3NamingStrategyEnum.class,
+                String.class,
+                int.class,
+                UUID.class,
                 long.class);
         method.setAccessible(true);
 
-        String result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.progressive, ".txt", 0, null, 0L);
+        String result =
+                (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.progressive, ".txt", 0, null, 0L);
         assertEquals("testFile.txt", result);
 
         result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.progressive, ".txt", 1, null, 0L);
@@ -55,13 +62,19 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
         AWS2S3StreamUploadProducer producer = createProducer();
 
         Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "fileNameToUpload", String.class, AWSS3NamingStrategyEnum.class, String.class, int.class, UUID.class,
+                "fileNameToUpload",
+                String.class,
+                AWSS3NamingStrategyEnum.class,
+                String.class,
+                int.class,
+                UUID.class,
                 long.class);
         method.setAccessible(true);
 
         UUID testUuid = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
-        String result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.random, ".txt", 0, testUuid, 0L);
+        String result =
+                (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.random, ".txt", 0, testUuid, 0L);
         assertEquals("testFile.txt", result);
 
         result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.random, ".txt", 1, testUuid, 0L);
@@ -76,21 +89,27 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
         AWS2S3StreamUploadProducer producer = createProducer();
 
         Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "fileNameToUpload", String.class, AWSS3NamingStrategyEnum.class, String.class, int.class, UUID.class,
+                "fileNameToUpload",
+                String.class,
+                AWSS3NamingStrategyEnum.class,
+                String.class,
+                int.class,
+                UUID.class,
                 long.class);
         method.setAccessible(true);
 
         long testTimestamp = 1632468273000L; // September 24, 2021 1:04:33 PM GMT
 
-        String result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 0, null,
-                testTimestamp);
+        String result = (String)
+                method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 0, null, testTimestamp);
         assertEquals("testFile.txt", result);
 
-        result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 1, null,
-                testTimestamp);
+        result = (String)
+                method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 1, null, testTimestamp);
         assertEquals("testFile-1632468273000.txt", result);
 
-        result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, null, 1, null, testTimestamp);
+        result = (String)
+                method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, null, 1, null, testTimestamp);
         assertEquals("testFile-1632468273000", result);
     }
 
@@ -99,14 +118,19 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
         AWS2S3StreamUploadProducer producer = createProducer();
 
         Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "fileNameToUpload", String.class, AWSS3NamingStrategyEnum.class, String.class, int.class, UUID.class,
+                "fileNameToUpload",
+                String.class,
+                AWSS3NamingStrategyEnum.class,
+                String.class,
+                int.class,
+                UUID.class,
                 long.class);
         method.setAccessible(true);
 
         long currentTime = System.currentTimeMillis();
 
-        String result
-                = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 1, null, currentTime);
+        String result = (String)
+                method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 1, null, currentTime);
 
         assertTrue(result.startsWith("testFile-"));
         assertTrue(result.endsWith(".txt"));
@@ -115,8 +139,8 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
         long parsedTimestamp = Long.parseLong(timestampPart);
 
         // Allow for small time difference during test execution
-        assertTrue(Math.abs(parsedTimestamp - currentTime) < 1000,
-                "Timestamp should be within 1 second of current time");
+        assertTrue(
+                Math.abs(parsedTimestamp - currentTime) < 1000, "Timestamp should be within 1 second of current time");
     }
 
     private AWS2S3StreamUploadProducer createProducer() {

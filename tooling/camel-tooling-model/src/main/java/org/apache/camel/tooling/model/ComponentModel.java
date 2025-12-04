@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
@@ -43,8 +44,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     // lets sort apis A..Z so they are always in the same order
     protected final Collection<ApiModel> apiOptions = new TreeSet<>(Comparators.apiModelComparator());
 
-    public ComponentModel() {
-    }
+    public ComponentModel() {}
 
     @Override
     public Kind getKind() {
@@ -194,9 +194,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     }
 
     public List<EndpointOptionModel> getEndpointPathOptions() {
-        return endpointOptions.stream()
-                .filter(o -> "path".equals(o.getKind()))
-                .collect(Collectors.toList());
+        return endpointOptions.stream().filter(o -> "path".equals(o.getKind())).collect(Collectors.toList());
     }
 
     public Collection<ApiModel> getApiOptions() {
@@ -219,13 +217,9 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
         }
     }
 
-    public static class ComponentOptionModel extends BaseOptionModel {
+    public static class ComponentOptionModel extends BaseOptionModel {}
 
-    }
-
-    public static class EndpointOptionModel extends BaseOptionModel {
-
-    }
+    public static class EndpointOptionModel extends BaseOptionModel {}
 
     public static class ApiOptionModel extends BaseOptionModel implements Cloneable {
 

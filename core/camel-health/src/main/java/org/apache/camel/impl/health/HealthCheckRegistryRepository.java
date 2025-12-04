@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.Set;
@@ -66,8 +67,7 @@ public class HealthCheckRegistryRepository extends ServiceSupport
     public Stream<HealthCheck> stream() {
         if (context != null && enabled) {
             Set<HealthCheck> set = this.context.getRegistry().findByType(HealthCheck.class);
-            return set.stream()
-                    .map(this::toHealthCheck);
+            return set.stream().map(this::toHealthCheck);
         } else {
             return Stream.empty();
         }
@@ -76,5 +76,4 @@ public class HealthCheckRegistryRepository extends ServiceSupport
     private HealthCheck toHealthCheck(HealthCheck hc) {
         return hc;
     }
-
 }

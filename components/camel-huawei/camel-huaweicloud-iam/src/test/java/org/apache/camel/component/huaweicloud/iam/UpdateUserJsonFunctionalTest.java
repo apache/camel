@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateUserJsonFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateUserJsonFunctionalTest.class.getName());
@@ -40,12 +41,11 @@ public class UpdateUserJsonFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:update_user")
-                        .to("hwcloud-iam:updateUser?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&region=" + REGION +
-                            "&userId=" + USER_ID +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-iam:updateUser?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&region="
+                                + REGION + "&userId="
+                                + USER_ID + "&ignoreSslVerification=true")
                         .log("Update user successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:update_user_result");

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.client;
+
+import static java.lang.String.format;
+import static java.util.Locale.ROOT;
+import static java.util.Optional.ofNullable;
+import static java.util.Set.of;
+import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 import com.azure.core.credential.AzureSasCredential;
 import com.azure.identity.ClientSecretCredential;
@@ -25,23 +33,15 @@ import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 
-import static java.lang.String.format;
-import static java.util.Locale.ROOT;
-import static java.util.Optional.ofNullable;
-import static java.util.Set.of;
-import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-
 public final class BlobClientFactory {
 
     private static final String SERVICE_URI_SEGMENT = ".blob.core.windows.net";
 
-    private BlobClientFactory() {
-    }
+    private BlobClientFactory() {}
 
     public static BlobServiceClient createBlobServiceClient(final BlobConfiguration configuration) {
-        BlobServiceClientBuilder blobServiceClientBuilder
-                = new BlobServiceClientBuilder().endpoint(buildAzureEndpointUri(configuration));
+        BlobServiceClientBuilder blobServiceClientBuilder =
+                new BlobServiceClientBuilder().endpoint(buildAzureEndpointUri(configuration));
 
         if (of(SHARED_KEY_CREDENTIAL, SHARED_ACCOUNT_KEY).contains(configuration.getCredentialType())) {
             blobServiceClientBuilder.credential(getSharedKeyCredential(configuration));
@@ -67,12 +67,14 @@ public final class BlobClientFactory {
 
     private static StorageSharedKeyCredential getSharedKeyCredential(final BlobConfiguration configuration) {
         return ofNullable(configuration.getCredentials())
-                .orElseGet(() -> new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey()));
+                .orElseGet(() ->
+                        new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccessKey()));
     }
 
     private static String getAccountName(final BlobConfiguration configuration) {
         return !isEmpty(configuration.getCredentials())
-                ? configuration.getCredentials().getAccountName() : configuration.getAccountName();
+                ? configuration.getCredentials().getAccountName()
+                : configuration.getAccountName();
     }
 
     private static AzureSasCredential getAzureSasCredential(final BlobConfiguration configuration) {
@@ -80,9 +82,9 @@ public final class BlobClientFactory {
     }
 
     private static boolean hasClientSecretCredentials(final BlobConfiguration configuration) {
-        return !isEmpty(configuration.getAzureClientId()) &&
-                !isEmpty(configuration.getAzureClientSecret()) &&
-                !isEmpty(configuration.getAzureTenantId());
+        return !isEmpty(configuration.getAzureClientId())
+                && !isEmpty(configuration.getAzureClientSecret())
+                && !isEmpty(configuration.getAzureTenantId());
     }
 
     private static ClientSecretCredential getClientSecretCredential(final BlobConfiguration configuration) {

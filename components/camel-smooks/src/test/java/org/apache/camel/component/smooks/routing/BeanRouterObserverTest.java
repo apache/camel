@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smooks.routing;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -24,9 +28,6 @@ import org.smooks.api.bean.lifecycle.BeanContextLifecycleEvent;
 import org.smooks.api.bean.lifecycle.BeanLifecycle;
 import org.smooks.engine.bean.repository.DefaultBeanId;
 import org.smooks.testkit.MockExecutionContext;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link BeanRouterObserver}
@@ -65,5 +66,4 @@ public class BeanRouterObserverTest extends CamelTestSupport {
         endpoint.assertIsSatisfied();
         endpoint.expectedBodiesReceived(sampleBean);
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
@@ -31,16 +37,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RequestReplyCorrelatedWithCustomHeaderTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -48,7 +50,8 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends AbstractJMSTest 
     public static void processRequest(
             @Body final String body,
             @Header("CustomCorrelation") final String customCorrelation,
-            @Header("JMSCorrelationId") final String jmsCorrelationId, final Exchange exchange) {
+            @Header("JMSCorrelationId") final String jmsCorrelationId,
+            final Exchange exchange) {
         assertNotNull(customCorrelation);
         assertNull(jmsCorrelationId);
         exchange.getIn().setBody("Hi, " + body + ", " + customCorrelation);
@@ -56,8 +59,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends AbstractJMSTest 
 
     @Test
     public void shouldCorrelateRepliesWithCustomCorrelationProperty() {
-        final String reply = template.requestBody("activemq:queue:request",
-                "Bobby", String.class);
+        final String reply = template.requestBody("activemq:queue:request", "Bobby", String.class);
 
         assertTrue(reply.matches("Hi, Bobby, Camel-.*"));
     }
@@ -65,8 +67,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends AbstractJMSTest 
     @Test
     public void shouldCorrelateRepliesWithCustomCorrelationPropertyAndValue() {
         final String reply = template.requestBodyAndHeader(
-                "activemq:queue:request", "Bobby", "CustomCorrelation",
-                "custom-id", String.class);
+                "activemq:queue:request", "Bobby", "CustomCorrelation", "custom-id", String.class);
 
         assertEquals("Hi, Bobby, custom-id", reply);
     }

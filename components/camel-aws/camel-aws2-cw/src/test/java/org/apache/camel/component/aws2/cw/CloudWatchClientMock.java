@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw;
 
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
@@ -29,8 +30,7 @@ public class CloudWatchClientMock implements CloudWatchClient {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
     public PutMetricDataResponse putMetricData(PutMetricDataRequest request) {
@@ -42,5 +42,4 @@ public class CloudWatchClientMock implements CloudWatchClient {
     public CloudWatchServiceClientConfiguration serviceClientConfiguration() {
         return null;
     }
-
 }

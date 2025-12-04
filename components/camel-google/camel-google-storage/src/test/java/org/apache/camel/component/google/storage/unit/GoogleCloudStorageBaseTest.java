@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.unit;
 
 import com.google.cloud.storage.Storage;
@@ -27,7 +28,8 @@ public abstract class GoogleCloudStorageBaseTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        GoogleCloudStorageComponent component = context.getComponent("google-storage", GoogleCloudStorageComponent.class);
+        GoogleCloudStorageComponent component =
+                context.getComponent("google-storage", GoogleCloudStorageComponent.class);
 
         Storage storage = createStorage();
         initStorage(storage);
@@ -40,6 +42,6 @@ public abstract class GoogleCloudStorageBaseTest extends CamelTestSupport {
     }
 
     private void initStorage(Storage storage) {
-        //override if you want to inizialite the storage
+        // override if you want to inizialite the storage
     }
 }

@@ -25,16 +25,12 @@ import com.google.gson.*;
 public class JavaTimeInstantTypeAdapter implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
 
     @Override
-    public JsonElement serialize(
-            final Instant time, final Type typeOfSrc,
-            final JsonSerializationContext context) {
+    public JsonElement serialize(final Instant time, final Type typeOfSrc, final JsonSerializationContext context) {
         return new JsonPrimitive(time.getEpochSecond() * 1000);
     }
 
     @Override
-    public Instant deserialize(
-            final JsonElement json, final Type typeOfT,
-            final JsonDeserializationContext context)
+    public Instant deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
             throws JsonParseException {
         return Instant.ofEpochMilli(json.getAsLong());
     }

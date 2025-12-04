@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache.processor.aggregate;
 
 import java.util.Collections;
@@ -36,9 +37,10 @@ import org.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Metadata(label = "bean",
-          description = "Aggregation repository that uses Caffeine Cache to store exchanges.",
-          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Metadata(
+        label = "bean",
+        description = "Aggregation repository that uses Caffeine Cache to store exchanges.",
+        annotations = {"interfaceName=org.apache.camel.spi.AggregationRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "EHCache based aggregation repository")
 public class EhcacheAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
@@ -47,22 +49,33 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     private CamelContext camelContext;
     private CacheManager cacheManager;
+
     @Metadata(description = "Name of cache", required = true)
     private String cacheName;
+
     private Cache<String, DefaultExchangeHolder> cache;
 
-    @Metadata(label = "advanced",
-              description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
+
     @Metadata(description = "Whether or not recovery is enabled", defaultValue = "true")
     private boolean useRecovery = true;
-    @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
+
+    @Metadata(
+            description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
+
     @Metadata(description = "Sets the interval between recovery scans", defaultValue = "5000")
     private long recoveryInterval = 5000;
-    @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
+
+    @Metadata(
+            description =
+                    "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
-              defaultValue = "3")
+            defaultValue = "3")
     private int maximumRedeliveries = 3;
 
     public CamelContext getCamelContext() {

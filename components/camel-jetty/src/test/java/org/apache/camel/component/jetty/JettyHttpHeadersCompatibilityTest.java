@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
@@ -24,7 +25,8 @@ import org.junit.jupiter.api.Test;
 
 public class JettyHttpHeadersCompatibilityTest extends CamelTestSupport {
 
-    private String targetProducerUri = "http://localhost:8542/someservice?bridgeEndpoint=true&throwExceptionOnFailure=false";
+    private String targetProducerUri =
+            "http://localhost:8542/someservice?bridgeEndpoint=true&throwExceptionOnFailure=false";
     private String targetConsumerUri = "jetty:http://localhost:8542/someservice?matchOnUriPrefix=true";
     private String sourceUri = "jetty:http://localhost:6323/myservice?matchOnUriPrefix=true";
     private String sourceProducerUri = "http://localhost:6323/myservice";
@@ -53,22 +55,16 @@ public class JettyHttpHeadersCompatibilityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(targetConsumerUri)
-                        .process(exchange -> {
-                            String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                            exchange.getMessage().setBody("Hi! " + path);
-                        });
+                from(targetConsumerUri).process(exchange -> {
+                    String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                    exchange.getMessage().setBody("Hi! " + path);
+                });
 
-                from(sourceUri)
-                        .to(targetProducerUri);
+                from(sourceUri).to(targetProducerUri);
 
-                from("direct:root")
-                        .to(sourceProducerUri)
-                        .to("mock:result");
+                from("direct:root").to(sourceProducerUri).to("mock:result");
 
-                from("direct:relative")
-                        .to(sourceProducerUri + "/relative")
-                        .to("mock:result");
+                from("direct:relative").to(sourceProducerUri + "/relative").to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.common;
 
 import java.io.ByteArrayInputStream;
@@ -29,13 +30,11 @@ import org.dizitart.no2.tool.Importer;
  * Import full database from JSON in body
  */
 public class ImportDatabaseOperation extends AbstractNitriteOperation implements CommonOperation {
-    public ImportDatabaseOperation() {
-    }
+    public ImportDatabaseOperation() {}
 
     @Override
     protected void execute(Exchange exchange, NitriteEndpoint endpoint) throws Exception {
         InputStream stream = new ByteArrayInputStream(exchange.getMessage().getBody(byte[].class));
-        Importer.of(endpoint.getNitriteDatabase())
-                .importFrom(stream);
+        Importer.of(endpoint.getNitriteDatabase()).importFrom(stream);
     }
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
@@ -41,8 +42,8 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertNotEquals(beforeThreadId, afterThreadId,
-                "Should use different threads " + beforeThreadId + ":" + afterThreadId);
+        assertNotEquals(
+                beforeThreadId, afterThreadId, "Should use different threads " + beforeThreadId + ":" + afterThreadId);
     }
 
     @Override
@@ -52,20 +53,27 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadId = Thread.currentThread().getId();
-                    }
-                }).recipientList(constant("async:hi:camel,async:hi:world,direct:foo"));
+                from("direct:start")
+                        .to("mock:before")
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadId = Thread.currentThread().getId();
+                            }
+                        })
+                        .recipientList(constant("async:hi:camel,async:hi:world,direct:foo"));
 
-                from("direct:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadId = Thread.currentThread().getId();
-                        exchange.getMessage().setBody("Bye Camel");
-                    }
-                }).to("log:after").to("mock:after").to("mock:result");
+                from("direct:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadId = Thread.currentThread().getId();
+                                exchange.getMessage().setBody("Bye Camel");
+                            }
+                        })
+                        .to("log:after")
+                        .to("mock:after")
+                        .to("mock:result");
             }
         };
     }
-
 }

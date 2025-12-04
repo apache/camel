@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
@@ -41,10 +42,28 @@ public class WordpressServiceCommentsAdapter
     @Override
     public List<Comment> list(CommentSearchCriteria c) {
         Objects.requireNonNull(c, "The search criteria must be defined");
-        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(),
-                c.getAuthor(), c.getAuthorExclude(), c.getAuthorEmail(), c.getBefore(),
-                c.getExclude(), c.getInclude(), c.getKarma(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(),
-                c.getParentExclude(), c.getPost(), c.getStatus(), c.getType());
+        return getSpi().list(
+                        this.getApiVersion(),
+                        c.getContext(),
+                        c.getPage(),
+                        c.getPerPage(),
+                        c.getSearch(),
+                        c.getAfter(),
+                        c.getAuthor(),
+                        c.getAuthorExclude(),
+                        c.getAuthorEmail(),
+                        c.getBefore(),
+                        c.getExclude(),
+                        c.getInclude(),
+                        c.getKarma(),
+                        c.getOffset(),
+                        c.getOrder(),
+                        c.getOrderBy(),
+                        c.getParent(),
+                        c.getParentExclude(),
+                        c.getPost(),
+                        c.getStatus(),
+                        c.getType());
     }
 
     @Override
@@ -66,5 +85,4 @@ public class WordpressServiceCommentsAdapter
     protected Comment doRetrieve(Integer entityID, Context context) {
         return getSpi().retrieve(getApiVersion(), entityID, context);
     }
-
 }

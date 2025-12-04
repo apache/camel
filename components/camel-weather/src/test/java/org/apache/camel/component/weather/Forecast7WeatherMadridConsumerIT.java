@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
-                         disabledReason = "Disabled to avoid hitting API limits")
+@EnabledIfSystemProperty(
+        named = "enable.weather.tests",
+        matches = "true",
+        disabledReason = "Disabled to avoid hitting API limits")
 public class Forecast7WeatherMadridConsumerIT extends BaseWeatherConsumerIT {
 
     @Override
@@ -33,5 +36,4 @@ public class Forecast7WeatherMadridConsumerIT extends BaseWeatherConsumerIT {
             }
         };
     }
-
 }

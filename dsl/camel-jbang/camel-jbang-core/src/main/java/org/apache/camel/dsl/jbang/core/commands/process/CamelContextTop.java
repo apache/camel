@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,30 +37,31 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
-
-@Command(name = "context",
-         description = "Top status of Camel integrations",
-         sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "context",
+        description = "Top status of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelContextTop extends ProcessWatchCommand {
 
     public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {
 
-        public PidNameMemAgeCompletionCandidates() {
-        }
+        public PidNameMemAgeCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("pid", "name", "mem", "age").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameMemAgeCompletionCandidates.class,
-                        description = "Sort by pid, name, mem, or age", defaultValue = "mem")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameMemAgeCompletionCandidates.class,
+            description = "Sort by pid, name, mem, or age",
+            defaultValue = "mem")
     String sort;
 
     public CamelContextTop(CamelJBangMain main) {
@@ -69,97 +73,134 @@ public class CamelContextTop extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        rows.add(row);
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
-                        JsonObject runtime = (JsonObject) root.get("runtime");
-                        row.platform = extractPlatform(ph, runtime);
-                        row.platformVersion = extractPlatformVersion(row.platform,
-                                runtime != null ? runtime.getString("platformVersion") : null);
-                        row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
-                        row.state = context.getInteger("phase");
-                        row.camelVersion = context.getString("version");
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            Object thp = stats.get("exchangesThroughput");
-                            if (thp != null) {
-                                row.throughput = thp.toString();
-                            }
-                            Object load = stats.get("load01");
-                            if (load != null) {
-                                row.load01 = load.toString();
-                            }
-                            load = stats.get("load05");
-                            if (load != null) {
-                                row.load05 = load.toString();
-                            }
-                            load = stats.get("load15");
-                            if (load != null) {
-                                row.load15 = load.toString();
-                            }
-                        }
-                        JsonObject mem = (JsonObject) root.get("memory");
-                        if (mem != null) {
-                            row.heapMemUsed = mem.getLong("heapMemoryUsed");
-                            row.heapMemCommitted = mem.getLong("heapMemoryCommitted");
-                            row.heapMemMax = mem.getLong("heapMemoryMax");
-                            row.nonHeapMemUsed = mem.getLong("nonHeapMemoryUsed");
-                            row.nonHeapMemCommitted = mem.getLong("nonHeapMemoryCommitted");
-                        }
-                        JsonObject threads = (JsonObject) root.get("threads");
-                        if (threads != null) {
-                            row.threadCount = threads.getInteger("threadCount");
-                            row.peakThreadCount = threads.getInteger("peakThreadCount");
-                        }
-                        JsonObject cl = (JsonObject) root.get("classLoading");
-                        if (cl != null) {
-                            row.loadedClassCount = cl.getInteger("loadedClassCount");
-                            row.totalLoadedClassCount = cl.getLong("totalLoadedClassCount");
-                        }
-                        JsonObject gc = (JsonObject) root.get("gc");
-                        if (gc != null) {
-                            row.gcCount = gc.getLong("collectionCount");
-                            row.gcTime = gc.getLong("collectionTime");
-                        }
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                rows.add(row);
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.ago = TimeUtils.printSince(row.uptime);
+                JsonObject runtime = (JsonObject) root.get("runtime");
+                row.platform = extractPlatform(ph, runtime);
+                row.platformVersion = extractPlatformVersion(
+                        row.platform, runtime != null ? runtime.getString("platformVersion") : null);
+                row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
+                row.state = context.getInteger("phase");
+                row.camelVersion = context.getString("version");
+                Map<String, ?> stats = context.getMap("statistics");
+                if (stats != null) {
+                    Object thp = stats.get("exchangesThroughput");
+                    if (thp != null) {
+                        row.throughput = thp.toString();
                     }
-                });
+                    Object load = stats.get("load01");
+                    if (load != null) {
+                        row.load01 = load.toString();
+                    }
+                    load = stats.get("load05");
+                    if (load != null) {
+                        row.load05 = load.toString();
+                    }
+                    load = stats.get("load15");
+                    if (load != null) {
+                        row.load15 = load.toString();
+                    }
+                }
+                JsonObject mem = (JsonObject) root.get("memory");
+                if (mem != null) {
+                    row.heapMemUsed = mem.getLong("heapMemoryUsed");
+                    row.heapMemCommitted = mem.getLong("heapMemoryCommitted");
+                    row.heapMemMax = mem.getLong("heapMemoryMax");
+                    row.nonHeapMemUsed = mem.getLong("nonHeapMemoryUsed");
+                    row.nonHeapMemCommitted = mem.getLong("nonHeapMemoryCommitted");
+                }
+                JsonObject threads = (JsonObject) root.get("threads");
+                if (threads != null) {
+                    row.threadCount = threads.getInteger("threadCount");
+                    row.peakThreadCount = threads.getInteger("peakThreadCount");
+                }
+                JsonObject cl = (JsonObject) root.get("classLoading");
+                if (cl != null) {
+                    row.loadedClassCount = cl.getInteger("loadedClassCount");
+                    row.totalLoadedClassCount = cl.getLong("totalLoadedClassCount");
+                }
+                JsonObject gc = (JsonObject) root.get("gc");
+                if (gc != null) {
+                    row.gcCount = gc.getLong("collectionCount");
+                    row.gcTime = gc.getLong("collectionTime");
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("JAVA").dataAlign(HorizontalAlign.LEFT).with(this::getJavaVersion),
-                    new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
-                    new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> extractState(r.state)),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                    new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                            .with(this::getLoad),
-                    new Column().header("HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getHeapMemory),
-                    new Column().header("NON-HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getNonHeapMemory),
-                    new Column().header("GC").headerAlign(HorizontalAlign.CENTER).with(this::getGC),
-                    new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).with(this::getThreads))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("JAVA")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getJavaVersion),
+                                    new Column()
+                                            .header("CAMEL")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.camelVersion),
+                                    new Column()
+                                            .header("PLATFORM")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(this::getPlatform),
+                                    new Column()
+                                            .header("STATUS")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> extractState(r.state)),
+                                    new Column()
+                                            .header("AGE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.ago),
+                                    new Column()
+                                            .header("LOAD")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.CENTER)
+                                            .with(this::getLoad),
+                                    new Column()
+                                            .header("HEAP")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getHeapMemory),
+                                    new Column()
+                                            .header("NON-HEAP")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getNonHeapMemory),
+                                    new Column()
+                                            .header("GC")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getGC),
+                                    new Column()
+                                            .header("THREADS")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(this::getThreads))));
         }
 
         return 0;
@@ -225,7 +266,7 @@ public class CamelContextTop extends ProcessWatchCommand {
 
     private String getHeapMemory(Row r) {
         return asMegaBytesOneDigit(r.heapMemUsed) + "/" + asMegaBytesOneDigit(r.heapMemCommitted) + "/"
-               + asMegaBytesOneDigit(r.heapMemMax) + " MB";
+                + asMegaBytesOneDigit(r.heapMemMax) + " MB";
     }
 
     private String getNonHeapMemory(Row r) {
@@ -308,5 +349,4 @@ public class CamelContextTop extends ProcessWatchCommand {
         long gcCount;
         long gcTime;
     }
-
 }

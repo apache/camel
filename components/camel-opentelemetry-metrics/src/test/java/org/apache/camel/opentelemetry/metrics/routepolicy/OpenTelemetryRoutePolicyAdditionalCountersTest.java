@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.metrics.routepolicy;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.opentelemetry.metrics.routepolicy;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verifies 'additionalCounters' metrics.
@@ -47,7 +48,10 @@ public class OpenTelemetryRoutePolicyAdditionalCountersTest extends AbstractOpen
         template.sendBody("direct:foo", "Hello");
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(1, getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, "foo").getValue());
+        assertEquals(
+                1,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME, "foo")
+                        .getValue());
     }
 
     // verify 'total' counter
@@ -58,22 +62,30 @@ public class OpenTelemetryRoutePolicyAdditionalCountersTest extends AbstractOpen
         template.sendBody("direct:foo", "Hello");
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(1, getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "foo").getValue());
+        assertEquals(
+                1,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME, "foo")
+                        .getValue());
     }
 
     // verify 'failed' counter
     @Test
     public void testFailuresMeter() {
         template.send("direct:failure", e -> e.getMessage().setBody("Hello World"));
-        assertEquals(1, getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME, "failure").getValue());
+        assertEquals(
+                1,
+                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME, "failure")
+                        .getValue());
     }
 
     // verify 'handled failures' counter
     @Test
     public void testHandledFailuresMeter() {
         template.send("direct:failureHandled", e -> e.getMessage().setBody("Hello World"));
-        assertEquals(1,
-                getSingleLongPointData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME, "failureHandled")
+        assertEquals(
+                1,
+                getSingleLongPointData(
+                                DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME, "failureHandled")
                         .getValue());
     }
 
@@ -82,15 +94,15 @@ public class OpenTelemetryRoutePolicyAdditionalCountersTest extends AbstractOpen
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalStateException.class)
-                        .handled(true);
+                onException(IllegalStateException.class).handled(true);
 
-                from("direct:foo").routeId("foo")
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").to("mock:result");
 
                 from("direct:failure").routeId("failure").throwException(new Exception("forced"));
 
-                from("direct:failureHandled").routeId("failureHandled").throwException(new IllegalStateException("forced"));
+                from("direct:failureHandled")
+                        .routeId("failureHandled")
+                        .throwException(new IllegalStateException("forced"));
             }
         };
     }

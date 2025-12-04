@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
@@ -25,12 +30,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @CamelSpringTest
-@ContextConfiguration(classes = { ValidatorConfiguration.class })
+@ContextConfiguration(classes = {ValidatorConfiguration.class})
 public class CMMessageTest {
 
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
@@ -311,5 +312,4 @@ public class CMMessageTest {
         assertEquals(8, cmMessage.getMultiparts(), "Call to getMultiparts() should have returned 8");
         assertTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
-
 }

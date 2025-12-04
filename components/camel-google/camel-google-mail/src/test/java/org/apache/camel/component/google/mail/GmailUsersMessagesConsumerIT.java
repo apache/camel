@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,20 +29,20 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Messages} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
-           disabledReason = "Google Mail credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.mail.AbstractGoogleMailTestSupport#hasCredentials",
+        disabledReason = "Google Mail credentials were not provided")
 public class GmailUsersMessagesConsumerIT extends AbstractGoogleMailTestSupport {
 
     // userid of the currently authenticated user
     public static final String CURRENT_USERID = "me";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersMessagesConsumerIT.class);
-    private static final String PATH_PREFIX
-            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersMessagesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection()
+            .getApiName(GmailUsersMessagesApiMethod.class)
+            .getName();
 
     @Test
     public void testConsumer() throws Exception {
@@ -58,7 +61,6 @@ public class GmailUsersMessagesConsumerIT extends AbstractGoogleMailTestSupport 
             public void configure() {
 
                 from("google-mail://" + PATH_PREFIX + "/list?userId=me").to("mock:result");
-
             }
         };
     }

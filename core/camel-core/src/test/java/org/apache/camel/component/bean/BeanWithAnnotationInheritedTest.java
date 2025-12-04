@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.InvocationHandler;
@@ -77,16 +78,17 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         Registry answer = super.createCamelRegistry();
 
         answer.bind("b", new B());
-        answer.bind("p", Proxy.newProxyInstance(I1.class.getClassLoader(), new Class[] { I1.class }, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) {
-                if (method.getName().equals("m1")) {
-                    return args[0].toString() + args[1].toString();
-                } else {
-                    return null;
-                }
-            }
-        }));
+        answer.bind(
+                "p", Proxy.newProxyInstance(I1.class.getClassLoader(), new Class[] {I1.class}, new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) {
+                        if (method.getName().equals("m1")) {
+                            return args[0].toString() + args[1].toString();
+                        } else {
+                            return null;
+                        }
+                    }
+                }));
         return answer;
     }
 
@@ -94,15 +96,30 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in1").setHeader("foo", constant("x1")).setHeader("bar", constant("y1")).to("bean:b?method=m1")
+                from("direct:in1")
+                        .setHeader("foo", constant("x1"))
+                        .setHeader("bar", constant("y1"))
+                        .to("bean:b?method=m1")
                         .to("mock:result");
-                from("direct:in2").setHeader("foo", constant("x2")).setHeader("bar", constant("y2")).to("bean:b?method=m2")
+                from("direct:in2")
+                        .setHeader("foo", constant("x2"))
+                        .setHeader("bar", constant("y2"))
+                        .to("bean:b?method=m2")
                         .to("mock:result");
-                from("direct:in3").setHeader("foo", constant("x3")).setHeader("bar", constant("y3")).to("bean:b?method=m3")
+                from("direct:in3")
+                        .setHeader("foo", constant("x3"))
+                        .setHeader("bar", constant("y3"))
+                        .to("bean:b?method=m3")
                         .to("mock:result");
-                from("direct:in4").setHeader("foo", constant("x4")).setHeader("bar", constant("y4")).to("bean:b?method=m4")
+                from("direct:in4")
+                        .setHeader("foo", constant("x4"))
+                        .setHeader("bar", constant("y4"))
+                        .to("bean:b?method=m4")
                         .to("mock:result");
-                from("direct:in5").setHeader("foo", constant("x5")).setHeader("bar", constant("y5")).to("bean:p?method=m1")
+                from("direct:in5")
+                        .setHeader("foo", constant("x5"))
+                        .setHeader("bar", constant("y5"))
+                        .to("bean:p?method=m1")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hashicorp.vault.integration;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
 
@@ -34,8 +37,6 @@ import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultMount;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
 
     @RegisterExtension
@@ -53,32 +54,29 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         vaultEndpoint.setPort(service.port());
         vaultEndpoint.setScheme("http");
 
-        VaultTemplate client = new VaultTemplate(
-                vaultEndpoint,
-                new TokenAuthentication(service.token()));
+        VaultTemplate client = new VaultTemplate(vaultEndpoint, new TokenAuthentication(service.token()));
 
-        VaultKeyValueOperations vaultKeyValueOperations
-                = client.opsForKeyValue("secret", VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+        VaultKeyValueOperations vaultKeyValueOperations =
+                client.opsForKeyValue("secret", VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
 
-        vaultKeyValueOperations.put("hello", Map.of(
-                "id", "21",
-                "password", "password",
-                "username", "admin"));
-        vaultKeyValueOperations.put("production/secrets/hello", Map.of(
-                "id", "21"));
+        vaultKeyValueOperations.put(
+                "hello",
+                Map.of(
+                        "id", "21",
+                        "password", "password",
+                        "username", "admin"));
+        vaultKeyValueOperations.put("production/secrets/hello", Map.of("id", "21"));
 
         client.opsForSys().mount("secretengine1", VaultMount.create("kv"));
         client.opsForSys().mount("secretengine2", VaultMount.create("kv"));
 
-        vaultKeyValueOperations
-                = client.opsForKeyValue("secretengine1", VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
-        vaultKeyValueOperations.put("hello", Map.of(
-                "id", "21"));
+        vaultKeyValueOperations =
+                client.opsForKeyValue("secretengine1", VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+        vaultKeyValueOperations.put("hello", Map.of("id", "21"));
 
-        vaultKeyValueOperations
-                = client.opsForKeyValue("secretengine2", VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
-        vaultKeyValueOperations.put("hello", Map.of(
-                "id", "21"));
+        vaultKeyValueOperations =
+                client.opsForKeyValue("secretengine2", VaultKeyValueOperationsSupport.KeyValueBackend.versioned());
+        vaultKeyValueOperations.put("hello", Map.of("id", "21"));
     }
 
     @Test
@@ -90,7 +88,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{hashicorp:secret:hello}}")).to("mock:bar");
+                from("direct:start")
+                        .setBody(simple("{{hashicorp:secret:hello}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -111,7 +111,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setBody(simple("{{hashicorp:secret:hello#id}}")).to("mock:bar");
+                from("direct:start")
+                        .setBody(simple("{{hashicorp:secret:hello#id}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -132,8 +134,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:hello#username}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:secret:hello#password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:hello#username}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{hashicorp:secret:hello#password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -155,7 +161,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").setBody(simple("{{hashicorp:secret:testExample}}")).to("mock:bar");
+                    from("direct:start")
+                            .setBody(simple("{{hashicorp:secret:testExample}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -178,7 +186,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:secret:database_sample/not_existent}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{hashicorp:secret:database_sample/not_existent}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -199,8 +209,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:hello/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:secret:hello/additional2:secret}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:hello/additional1:admin}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{hashicorp:secret:hello/additional2:secret}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -221,8 +235,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:test-3/additional1:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:secret:test-3/additional2:secret}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:test-3/additional1:admin}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{hashicorp:secret:test-3/additional2:secret}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -244,8 +262,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:secret:test-3/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{hashicorp:secret:test-3/additional2}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{hashicorp:secret:test-3/additional1}}"))
+                            .to("mock:bar");
+                    from("direct:password")
+                            .setBody(simple("{{hashicorp:secret:test-3/additional2}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -267,8 +289,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:hello-2:admin}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:secret:hello-1:secret}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:hello-2:admin}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{hashicorp:secret:hello-1:secret}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -290,7 +316,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:secret:secretsuper}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{hashicorp:secret:secretsuper}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -312,8 +340,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:username").setBody(simple("{{hashicorp:secret:postgresql/additional1}}")).to("mock:bar");
-                    from("direct:password").setBody(simple("{{hashicorp:secret:postgresql/additional2}}")).to("mock:bar");
+                    from("direct:username")
+                            .setBody(simple("{{hashicorp:secret:postgresql/additional1}}"))
+                            .to("mock:bar");
+                    from("direct:password")
+                            .setBody(simple("{{hashicorp:secret:postgresql/additional2}}"))
+                            .to("mock:bar");
                 }
             });
             context.start();
@@ -335,7 +367,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:newsecret/additional1:admin}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:newsecret/additional1:admin}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -355,7 +389,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:newsecret/additional1:admin}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:newsecret/additional1:admin}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -375,8 +411,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:postgresql/username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:secret:postgresql/password:password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:postgresql/username:oscerd}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{hashicorp:secret:postgresql/password:password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -397,8 +437,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:username").setBody(simple("{{hashicorp:secret:db_sample/username:oscerd}}")).to("mock:bar");
-                from("direct:password").setBody(simple("{{hashicorp:secret:db_sample/password:password}}")).to("mock:bar");
+                from("direct:username")
+                        .setBody(simple("{{hashicorp:secret:db_sample/username:oscerd}}"))
+                        .to("mock:bar");
+                from("direct:password")
+                        .setBody(simple("{{hashicorp:secret:db_sample/password:password}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -419,7 +463,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello#id@1}}")).to("mock:bar");
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello#id@1}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -439,7 +485,9 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello@1}}")).to("mock:bar");
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello@1}}"))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -459,7 +507,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello:pippo@1}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello:pippo@1}}"))
                         .to("mock:bar");
             }
         });
@@ -480,7 +529,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello-3:pippo@4}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello-3:pippo@4}}"))
                         .to("mock:bar");
             }
         });
@@ -501,7 +551,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello:pippo@4}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello:pippo@4}}"))
                         .to("mock:bar");
             }
         });
@@ -522,7 +573,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello#id:pippo@1}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello#id:pippo@1}}"))
                         .to("mock:bar");
             }
         });
@@ -543,7 +595,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:hello#id:pippo@2}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:hello#id:pippo@2}}"))
                         .to("mock:bar");
             }
         });
@@ -564,7 +617,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:production/secrets/hello#id:pippo@1}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:production/secrets/hello#id:pippo@1}}"))
                         .to("mock:bar");
             }
         });
@@ -585,10 +639,12 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:engine1").setBody(simple("{{hashicorp:secretengine1:hello}}"))
+                from("direct:engine1")
+                        .setBody(simple("{{hashicorp:secretengine1:hello}}"))
                         .to("mock:bar");
 
-                from("direct:engine2").setBody(simple("{{hashicorp:secretengine2:hello}}"))
+                from("direct:engine2")
+                        .setBody(simple("{{hashicorp:secretengine2:hello}}"))
                         .to("mock:bar");
             }
         });
@@ -610,7 +666,8 @@ public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:version").setBody(simple("{{hashicorp:secret:production/secrets/hello@1}}"))
+                from("direct:version")
+                        .setBody(simple("{{hashicorp:secret:production/secrets/hello@1}}"))
                         .to("mock:bar");
             }
         });

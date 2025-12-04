@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.dataformat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -37,8 +40,6 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests PQCDataFormat with different KEM and symmetric algorithms
@@ -87,7 +88,8 @@ public class PQCDataFormatMultipleAlgorithmsTest extends CamelTestSupport {
 
         resultKyberCamellia.assertIsSatisfied();
 
-        String decrypted = resultKyberCamellia.getExchanges().get(0).getMessage().getBody(String.class);
+        String decrypted =
+                resultKyberCamellia.getExchanges().get(0).getMessage().getBody(String.class);
         assertEquals(ORIGINAL_MESSAGE, decrypted);
     }
 

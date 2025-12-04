@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.list;
 
 import java.util.Collection;
@@ -36,7 +37,8 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
 
     private final IList<Object> list;
 
-    public HazelcastListProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String listName) {
+    public HazelcastListProducer(
+            HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String listName) {
         super(endpoint);
         this.list = hazelcastInstance.getList(listName);
     }
@@ -59,7 +61,6 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
         final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-
             case ADD:
                 this.add(pos, exchange);
                 break;
@@ -97,9 +98,9 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the LIST cache.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

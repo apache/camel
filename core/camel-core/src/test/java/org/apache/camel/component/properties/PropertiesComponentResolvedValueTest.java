@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
@@ -84,10 +85,10 @@ public class PropertiesComponentResolvedValueTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         context.getPropertiesComponent().addInitialProperty("greeting", "Hello World");
         context.getPropertiesComponent().addInitialProperty("myserver", "{{env:MY_SERVER:127.0.0.1}}");
         return context;
     }
-
 }

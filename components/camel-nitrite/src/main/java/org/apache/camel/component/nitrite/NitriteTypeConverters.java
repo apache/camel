@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
 
 import java.util.List;
@@ -25,8 +26,7 @@ import org.dizitart.no2.Document;
 
 @Converter(generateLoader = true)
 public final class NitriteTypeConverters {
-    private NitriteTypeConverters() {
-    }
+    private NitriteTypeConverters() {}
 
     @Converter
     public static Document fromMapToDocument(Map<String, Object> map) {
@@ -37,5 +37,4 @@ public final class NitriteTypeConverters {
     public static List fromCursorToList(Cursor cursor) {
         return cursor.toList();
     }
-
 }

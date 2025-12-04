@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rss;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.rss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     public void testRssHttpNoCamelParameters() {
         RssEndpoint rss = context.getEndpoint(
-                "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", RssEndpoint.class);
+                "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true",
+                RssEndpoint.class);
         assertNotNull(rss);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml", rss.getFeedUri());
@@ -46,5 +48,4 @@ public class RssHttpNoCamelParametersTest extends CamelTestSupport {
         assertEquals(true, rss.isFeedHeader());
         assertEquals(true, rss.isSortEntries());
     }
-
 }

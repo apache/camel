@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests that MDC works as a stack remembering old values when routing between routes.
@@ -60,26 +61,36 @@ public class MDCResetTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                    }
-                }).to("log:foo").to("direct:b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-a", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                    }
-                }).to("log:result").to("mock:result");
+                from("direct:a")
+                        .routeId("route-a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                            }
+                        })
+                        .to("log:foo")
+                        .to("direct:b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-a", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                            }
+                        })
+                        .to("log:result")
+                        .to("mock:result");
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("route-b", MDC.get("camel.routeId"));
-                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("route-b", MDC.get("camel.routeId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
 
-                        exchange.getMessage().setBody("Good Afternoon World");
-                    }
-                }).to("log:bar");
+                                exchange.getMessage().setBody("Good Afternoon World");
+                            }
+                        })
+                        .to("log:bar");
             }
         };
     }

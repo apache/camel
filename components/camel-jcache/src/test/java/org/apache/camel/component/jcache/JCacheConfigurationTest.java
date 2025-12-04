@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -38,20 +41,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JCacheConfigurationTest extends JCacheComponentTestSupport {
 
     @BindToRegistry("myExpiryPolicyFactory")
-    public static final Factory<ExpiryPolicy> EXPIRY_POLICY_FACTORY = AccessedExpiryPolicy.factoryOf(Duration.ONE_MINUTE);
+    public static final Factory<ExpiryPolicy> EXPIRY_POLICY_FACTORY =
+            AccessedExpiryPolicy.factoryOf(Duration.ONE_MINUTE);
+
     @BindToRegistry("myCacheWriterFactory")
     public static final Factory<CacheWriter<Object, Object>> CACHE_WRITER_FACTORY = MyCacheWriter.factory();
+
     @BindToRegistry("myCacheLoaderFactory")
     public static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
 
-    @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory"
-                            + "&cacheWriterFactory=#myCacheWriterFactory"
-                            + "&cacheLoaderFactory=#myCacheLoaderFactory")
+    @EndpointInject(
+            value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory"
+                    + "&cacheWriterFactory=#myCacheWriterFactory"
+                    + "&cacheLoaderFactory=#myCacheLoaderFactory")
     JCacheEndpoint from;
 
     @EndpointInject("mock:to")
@@ -94,20 +99,16 @@ public class JCacheConfigurationTest extends JCacheComponentTestSupport {
 
     private static final class MyCacheWriter implements CacheWriter<Object, Object>, Serializable {
         @Override
-        public void write(Cache.Entry<?, ?> entry) throws CacheWriterException {
-        }
+        public void write(Cache.Entry<?, ?> entry) throws CacheWriterException {}
 
         @Override
-        public void writeAll(Collection<Cache.Entry<?, ?>> entries) throws CacheWriterException {
-        }
+        public void writeAll(Collection<Cache.Entry<?, ?>> entries) throws CacheWriterException {}
 
         @Override
-        public void delete(Object key) throws CacheWriterException {
-        }
+        public void delete(Object key) throws CacheWriterException {}
 
         @Override
-        public void deleteAll(Collection<?> keys) throws CacheWriterException {
-        }
+        public void deleteAll(Collection<?> keys) throws CacheWriterException {}
 
         public static Factory<CacheWriter<Object, Object>> factory() {
             return new FactoryBuilder.SingletonFactory(new MyCacheWriter());

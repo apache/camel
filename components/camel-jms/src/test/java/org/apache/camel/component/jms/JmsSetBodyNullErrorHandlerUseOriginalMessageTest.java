@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends AbstractPersistentJMSTest {
 
@@ -34,8 +35,8 @@ public class JmsSetBodyNullErrorHandlerUseOriginalMessageTest extends AbstractPe
 
         MockEndpoint.assertIsSatisfied(context);
 
-        String body = consumer.receiveBody("activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest.dead", 5000,
-                String.class);
+        String body = consumer.receiveBody(
+                "activemq:queue:JmsSetBodyNullErrorHandlerUseOriginalMessageTest.dead", 5000, String.class);
         assertEquals("Hello World", body);
     }
 

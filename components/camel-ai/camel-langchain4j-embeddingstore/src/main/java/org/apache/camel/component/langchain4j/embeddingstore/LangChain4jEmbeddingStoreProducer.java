@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import java.util.List;
@@ -75,8 +76,8 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
 
-        final LangChain4jEmbeddingStoreAction action
-                = in.getHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.class);
+        final LangChain4jEmbeddingStoreAction action =
+                in.getHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.class);
 
         try {
             if (action == null) {
@@ -131,7 +132,8 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
 
         if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
-            text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, dev.langchain4j.data.segment.TextSegment.class);
+            text = in.getHeader(
+                    LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, dev.langchain4j.data.segment.TextSegment.class);
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding, text);
         } else {
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding);
@@ -192,9 +194,8 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
             maxResults = in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class);
         }
 
-        EmbeddingSearchRequestBuilder esrb = EmbeddingSearchRequest.builder()
-                .queryEmbedding(embedding)
-                .maxResults(maxResults);
+        EmbeddingSearchRequestBuilder esrb =
+                EmbeddingSearchRequest.builder().queryEmbedding(embedding).maxResults(maxResults);
 
         if (in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Integer.class) != null) {
             Double minScore = in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Double.class);
@@ -207,8 +208,11 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
         EmbeddingSearchRequest embeddingSearchRequest = esrb.build();
 
-        List<EmbeddingMatch<TextSegment>> result
-                = getEndpoint().getConfiguration().getEmbeddingStore().search(embeddingSearchRequest).matches();
+        List<EmbeddingMatch<TextSegment>> result = getEndpoint()
+                .getConfiguration()
+                .getEmbeddingStore()
+                .search(embeddingSearchRequest)
+                .matches();
         Message out = exchange.getMessage();
         out.setBody(result);
     }

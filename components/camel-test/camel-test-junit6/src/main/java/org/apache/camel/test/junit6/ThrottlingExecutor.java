@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
 
 import java.util.ArrayList;
@@ -30,8 +31,7 @@ public final class ThrottlingExecutor {
     private long awaiting;
     private TimeUnit timeUnit;
 
-    private ThrottlingExecutor() {
-    }
+    private ThrottlingExecutor() {}
 
     public static ThrottlingExecutor slowly() {
         return new ThrottlingExecutor();
@@ -76,5 +76,4 @@ public final class ThrottlingExecutor {
             runTasks(afterTasks, i);
         }
     }
-
 }

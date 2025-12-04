@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets.stream;
 
 import java.util.Map;
@@ -33,8 +34,10 @@ public class GoogleSheetsStreamComponent extends HealthCheckComponent {
 
     @Metadata
     private GoogleSheetsStreamConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Sheets client;
+
     @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
 
@@ -50,12 +53,22 @@ public class GoogleSheetsStreamComponent extends HealthCheckComponent {
     public Sheets getClient(GoogleSheetsStreamConfiguration config) {
         if (client == null) {
             if (config.getClientId() != null && config.getClientSecret() != null) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+                client = getClientFactory()
+                        .makeClient(
+                                config.getClientId(),
+                                config.getClientSecret(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getRefreshToken(),
+                                config.getAccessToken());
             } else if (config.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                config.getServiceAccountKey(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");

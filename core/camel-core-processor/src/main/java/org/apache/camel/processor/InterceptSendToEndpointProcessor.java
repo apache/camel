@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -33,8 +36,6 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-
 /**
  * {@link org.apache.camel.Processor} used to interceptor and detour the routing when using the
  * {@link DefaultInterceptSendToEndpoint} functionality.
@@ -51,8 +52,12 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private AsyncProcessor pipeline;
     private AsyncProcessor after;
 
-    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
-                                            boolean skip, Predicate onWhen) {
+    public InterceptSendToEndpointProcessor(
+            InterceptSendToEndpoint endpoint,
+            Endpoint delegate,
+            AsyncProducer producer,
+            boolean skip,
+            Predicate onWhen) {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
@@ -70,8 +75,11 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // process the detour so we do the detour routing
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(),
-                    endpoint.getBefore(), exchange);
+            LOG.debug(
+                    "Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}",
+                    getEndpoint(),
+                    endpoint.getBefore(),
+                    exchange);
         }
         exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
         return pipeline.process(exchange, doneSync -> callback(exchange, callback, doneSync));
@@ -89,7 +97,8 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         boolean shouldSkip = skip;
 
         // if then interceptor has predicate, then we should only skip if matched
-        Boolean whenMatches = (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        Boolean whenMatches =
+                (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
         if (whenMatches != null) {
             shouldSkip = skip && whenMatches;
         }
@@ -112,8 +121,10 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             return doneSync && s;
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Skip sending exchange to original intended destination: {} for exchange: {}",
-                        getEndpoint(), exchange);
+                LOG.debug(
+                        "Skip sending exchange to original intended destination: {} for exchange: {}",
+                        getEndpoint(),
+                        exchange);
             }
             callback.done(doneSync);
             return doneSync;

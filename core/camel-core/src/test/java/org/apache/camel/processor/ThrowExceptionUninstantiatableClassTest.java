@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThrowExceptionUninstantiatableClassTest extends ContextTestSupport {
 
@@ -45,7 +46,10 @@ public class ThrowExceptionUninstantiatableClassTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:start").throwException(BadException.class, "Forced").to("mock:result");
+                from("direct:start")
+                        .to("mock:start")
+                        .throwException(BadException.class, "Forced")
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     protected MockEndpoint a;
@@ -98,7 +99,10 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(2).to("mock:a");
+                onException(IllegalArgumentException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(2)
+                        .to("mock:a");
                 onException(NullPointerException.class).to("mock:b");
 
                 from("direct:start").process(processor);

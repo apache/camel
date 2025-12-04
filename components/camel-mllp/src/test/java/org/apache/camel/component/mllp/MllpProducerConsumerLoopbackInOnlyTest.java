@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,8 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
 
@@ -56,25 +57,24 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
         int mllpPort = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder[] {
-                new RouteBuilder() {
+            new RouteBuilder() {
 
-                    @Override
-                    public void configure() {
-                        fromF("mllp://%s:%d?autoAck=false&exchangePattern=InOnly", mllpHost, mllpPort)
-                                .convertBodyTo(String.class)
-                                .to(receivedAndProcessed);
-                    }
-                },
-
-                new RouteBuilder() {
-
-                    @Override
-                    public void configure() {
-                        from(source.getDefaultEndpoint())
-                                .toF("mllp://%s:%d?exchangePattern=InOnly", mllpHost, mllpPort)
-                                .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
-                    }
+                @Override
+                public void configure() {
+                    fromF("mllp://%s:%d?autoAck=false&exchangePattern=InOnly", mllpHost, mllpPort)
+                            .convertBodyTo(String.class)
+                            .to(receivedAndProcessed);
                 }
+            },
+            new RouteBuilder() {
+
+                @Override
+                public void configure() {
+                    from(source.getDefaultEndpoint())
+                            .toF("mllp://%s:%d?exchangePattern=InOnly", mllpHost, mllpPort)
+                            .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
+                }
+            }
         };
     }
 

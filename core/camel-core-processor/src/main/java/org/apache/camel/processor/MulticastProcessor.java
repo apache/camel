@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -79,9 +83,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import static org.apache.camel.processor.ProcessorHelper.prepareMDCParallelTask;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 /**
  * Implements the Multicast pattern to send a message exchange to a number of endpoints, each endpoint receiving a copy
  * of the message exchange.
@@ -139,7 +140,6 @@ public class MulticastProcessor extends BaseProcessorSupport
         public void done() {
             // noop
         }
-
     }
 
     private final class Scheduler implements Executor {
@@ -191,19 +191,43 @@ public class MulticastProcessor extends BaseProcessorSupport
         this(camelContext, route, processors, null);
     }
 
-    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
-                              AggregationStrategy aggregationStrategy) {
-        this(camelContext, route, processors, aggregationStrategy, false, null,
-             false, false, false, 0, null,
-             false, false, 0);
+    public MulticastProcessor(
+            CamelContext camelContext,
+            Route route,
+            Collection<Processor> processors,
+            AggregationStrategy aggregationStrategy) {
+        this(
+                camelContext,
+                route,
+                processors,
+                aggregationStrategy,
+                false,
+                null,
+                false,
+                false,
+                false,
+                0,
+                null,
+                false,
+                false,
+                0);
     }
 
-    public MulticastProcessor(CamelContext camelContext, Route route, Collection<Processor> processors,
-                              AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                              boolean streaming,
-                              boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate, int cacheSize) {
+    public MulticastProcessor(
+            CamelContext camelContext,
+            Route route,
+            Collection<Processor> processors,
+            AggregationStrategy aggregationStrategy,
+            boolean parallelProcessing,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            boolean streaming,
+            boolean stopOnException,
+            long timeout,
+            Processor onPrepare,
+            boolean shareUnitOfWork,
+            boolean parallelAggregate,
+            int cacheSize) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.internalProcessorFactory = PluginHelper.getInternalProcessorFactory(camelContext);
@@ -222,8 +246,10 @@ public class MulticastProcessor extends BaseProcessorSupport
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
-        this.processorExchangeFactory = camelContext.getCamelContextExtension()
-                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory = camelContext
+                .getCamelContextExtension()
+                .getProcessorExchangeFactory()
+                .newProcessorExchangeFactory(this);
         this.cacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
         if (this.cacheSize > 0) {
             this.errorHandlers = LRUCacheFactory.newLRUCache(this.cacheSize);
@@ -310,13 +336,15 @@ public class MulticastProcessor extends BaseProcessorSupport
         if (synchronous) {
             try {
                 // force synchronous processing using await manager
-                awaitManager.process(new AsyncProcessorSupport() {
-                    @Override
-                    public boolean process(Exchange exchange, AsyncCallback callback) {
-                        // must invoke doProcess directly here to avoid calling recursive
-                        return doProcess(exchange, callback);
-                    }
-                }, exchange);
+                awaitManager.process(
+                        new AsyncProcessorSupport() {
+                            @Override
+                            public boolean process(Exchange exchange, AsyncCallback callback) {
+                                // must invoke doProcess directly here to avoid calling recursive
+                                return doProcess(exchange, callback);
+                            }
+                        },
+                        exchange);
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
@@ -350,9 +378,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         // when we run in transacted mode, then we synchronous processing on the current thread
         // this can lead to a long execution which can lead to deep stackframes, and therefore we
         // must handle this specially in a while loop structure to ensure the strackframe does not grow deeper
-        // the reactive mode will execute each sub task in its own runnable task which is scheduled on the reactive executor
+        // the reactive mode will execute each sub task in its own runnable task which is scheduled on the reactive
+        // executor
         // which is how the routing engine normally operates
-        // if we have parallel processing enabled then we cannot run in transacted mode (requires synchronous processing via same thread)
+        // if we have parallel processing enabled then we cannot run in transacted mode (requires synchronous processing
+        // via same thread)
         MulticastTask state = !isParallelProcessing() && exchange.isTransacted()
                 ? new MulticastTransactedTask(exchange, pairs, callback, size)
                 : new MulticastReactiveTask(exchange, pairs, callback, size);
@@ -413,8 +443,12 @@ public class MulticastProcessor extends BaseProcessorSupport
         final Map<String, String> mdc;
         final ScheduledFuture<?> timeoutTask;
 
-        MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity,
-                      boolean transacted) {
+        MulticastTask(
+                Exchange original,
+                Iterable<ProcessorExchangePair> pairs,
+                AsyncCallback callback,
+                int capacity,
+                boolean transacted) {
             this.original = original;
             this.pairs = pairs;
             this.callback = callback;
@@ -433,10 +467,11 @@ public class MulticastProcessor extends BaseProcessorSupport
                 this.mdc = null;
             }
             if (capacity > 0) {
-                this.completion
-                        = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock, capacity);
+                this.completion = new AsyncCompletionService<>(
+                        transacted ? txScheduler : scheduler, !isStreaming(), lock, capacity);
             } else {
-                this.completion = new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock);
+                this.completion =
+                        new AsyncCompletionService<>(transacted ? txScheduler : scheduler, !isStreaming(), lock);
             }
         }
 
@@ -484,8 +519,11 @@ public class MulticastProcessor extends BaseProcessorSupport
                             int idx = nbAggregated.getAndIncrement();
                             AggregationStrategy strategy = getAggregationStrategy(null);
                             if (strategy != null) {
-                                strategy.timeout(result.get() != null ? result.get() : original,
-                                        idx, nbExchangeSent.get(), timeout);
+                                strategy.timeout(
+                                        result.get() != null ? result.get() : original,
+                                        idx,
+                                        nbExchangeSent.get(),
+                                        timeout);
                             }
                         }
                         if (exchange != null) {
@@ -538,8 +576,8 @@ public class MulticastProcessor extends BaseProcessorSupport
      */
     protected class MulticastReactiveTask extends MulticastTask {
 
-        public MulticastReactiveTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
-                                     int size) {
+        public MulticastReactiveTask(
+                Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int size) {
             super(original, pairs, callback, size, false);
         }
 
@@ -586,10 +624,13 @@ public class MulticastProcessor extends BaseProcessorSupport
                             if (exchange.getException() != null) {
                                 // wrap in exception to explain where it failed
                                 exchange.setException(new CamelExchangeException(
-                                        "Multicast processing failed for number " + index, exchange, exchange.getException()));
+                                        "Multicast processing failed for number " + index,
+                                        exchange,
+                                        exchange.getException()));
                             } else {
                                 // we want to stop on exception, and the exception was handled by the error handler
-                                // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                                // this is similar to what the pipeline does, so we should do the same to not surprise
+                                // end users
                                 // so we should set the failed exchange as the result and be done
                                 result.set(exchange);
                             }
@@ -648,8 +689,8 @@ public class MulticastProcessor extends BaseProcessorSupport
      */
     protected class MulticastTransactedTask extends MulticastTask {
 
-        public MulticastTransactedTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback,
-                                       int size) {
+        public MulticastTransactedTask(
+                Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int size) {
             super(original, pairs, callback, size, true);
         }
 
@@ -821,8 +862,12 @@ public class MulticastProcessor extends BaseProcessorSupport
      * @param forceExhaust whether error handling is exhausted
      */
     protected void doDone(
-            Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
-            AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
+            Exchange original,
+            Exchange subExchange,
+            final Iterable<ProcessorExchangePair> pairs,
+            AsyncCallback callback,
+            boolean doneSync,
+            boolean forceExhaust) {
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
         // invoke the on completion callback
@@ -837,8 +882,10 @@ public class MulticastProcessor extends BaseProcessorSupport
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
-        boolean exhaust = forceExhaust || subExchange != null
-                && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
+        boolean exhaust = forceExhaust
+                || subExchange != null
+                        && (subExchange.getException() != null
+                                || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
             stoppedOnException = isStopOnException();
@@ -944,7 +991,8 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
     }
 
-    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
+    protected void updateNewExchange(
+            Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
         exchange.setProperty(ExchangePropertyKey.MULTICAST_INDEX, index);
         if (hasNext) {
             exchange.setProperty(ExchangePropertyKey.MULTICAST_COMPLETE, Boolean.FALSE);
@@ -957,8 +1005,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         return exchange.getProperty(ExchangePropertyKey.MULTICAST_INDEX, Integer.class);
     }
 
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
-            throws Exception {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<>(processors.size());
         Map<String, Object> txData = null;
 
@@ -1033,8 +1080,7 @@ public class MulticastProcessor extends BaseProcessorSupport
      * @return           prepared for use
      */
     protected ProcessorExchangePair createProcessorExchangePair(
-            int index, Processor processor, Exchange exchange,
-            Route route) {
+            int index, Processor processor, Exchange exchange, Route route) {
         Processor prepared = processor;
 
         // set property which endpoint we send to
@@ -1145,7 +1191,8 @@ public class MulticastProcessor extends BaseProcessorSupport
         if (timeout > 0 && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
             // and run the tasks when the task is submitted. If not then the aggregate task may not be able to run
-            // and signal completion during processing, which would lead to what would appear as a dead-lock or a slow processing
+            // and signal completion during processing, which would lead to what would appear as a dead-lock or a slow
+            // processing
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
             shutdownAggregateExecutorService = true;
@@ -1164,7 +1211,8 @@ public class MulticastProcessor extends BaseProcessorSupport
     protected ExecutorService createAggregateExecutorService(String name) {
         lock.lock();
         try {
-            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+            // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they
+            // come in
             return camelContext.getExecutorServiceManager().newScheduledThreadPool(this, name, 0);
         } finally {
             lock.unlock();
@@ -1194,7 +1242,8 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     protected static void setToEndpoint(Exchange exchange, Processor processor) {
         if (processor instanceof Producer producer) {
-            exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+            exchange.setProperty(
+                    ExchangePropertyKey.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
         }
     }
 

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSupport {
 
@@ -39,8 +40,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
             Exchange newOne = new DefaultExchange(context);
             final String key = "abrakadabra";
 
-            assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context, key, oldOne, newOne));
+            assertThrows(UnsupportedOperationException.class, () -> repo.add(context, key, oldOne, newOne));
         } finally {
             repo.doStop();
         }
@@ -56,8 +56,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
             final CamelContext context = context();
             Exchange ex = new DefaultExchange(context);
             final String key = "abrakadabra";
-            assertThrows(UnsupportedOperationException.class,
-                    () -> repo.add(context, key, ex));
+            assertThrows(UnsupportedOperationException.class, () -> repo.add(context, key, ex));
         } finally {
             repo.doStop();
         }

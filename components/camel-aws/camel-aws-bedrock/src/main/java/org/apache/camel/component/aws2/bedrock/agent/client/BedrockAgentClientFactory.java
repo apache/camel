@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agent.client;
 
 import org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.bedrock.agent.client.impl.BedrockAgentCli
  */
 public final class BedrockAgentClientFactory {
 
-    private BedrockAgentClientFactory() {
-    }
+    private BedrockAgentClientFactory() {}
 
     /**
      * Return the correct AWS Bedrock Agent client (based on remote vs local).
@@ -36,8 +36,7 @@ public final class BedrockAgentClientFactory {
      * @param  configuration configuration
      * @return               BedrockAgentInternalClient
      */
-    public static BedrockAgentInternalClient getBedrockAgentClient(
-            BedrockAgentConfiguration configuration) {
+    public static BedrockAgentInternalClient getBedrockAgentClient(BedrockAgentConfiguration configuration) {
         if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
             return new BedrockAgentClientIAMOptimizedImpl(configuration);
         } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
 
 import org.apache.camel.RoutesBuilder;
@@ -49,26 +50,22 @@ class AsyncCxfTest extends CamelOpenTelemetryTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute")
-                        .to("direct:send")
-                        .end();
+                from("direct:start").routeId("myRoute").to("direct:send").end();
 
                 from("direct:send")
                         .log("message")
                         .to("cxfrs:http://localhost:" + port1
-                            + "/rest/helloservice/sayHello?synchronous=false"); // setting to 'true' resolves the issue
+                                + "/rest/helloservice/sayHello?synchronous=false"); // setting to 'true'
+                // resolves the issue
 
-                restConfiguration()
-                        .port(port1);
+                restConfiguration().port(port1);
 
                 rest("/rest/helloservice")
-                        .post("/sayHello").routeId("rest-GET-say-hi")
+                        .post("/sayHello")
+                        .routeId("rest-GET-say-hi")
                         .to("direct:sayHi");
 
-                from("direct:sayHi")
-                        .routeId("mock-GET-say-hi")
-                        .log("example")
-                        .to("mock:end");
+                from("direct:sayHi").routeId("mock-GET-say-hi").log("example").to("mock:end");
             }
         };
     }

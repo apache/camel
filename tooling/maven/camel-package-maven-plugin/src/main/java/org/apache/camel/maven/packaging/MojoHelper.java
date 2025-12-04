@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -32,21 +33,30 @@ import org.jboss.jandex.AnnotationValue;
 
 public final class MojoHelper {
 
-    private MojoHelper() {
-    }
+    private MojoHelper() {}
 
     public static List<Path> getComponentPath(Path dir) {
         switch (dir.getFileName().toString()) {
             case "camel-ai":
-                return Arrays.asList(dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
-                        dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
-                        dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
-                        dir.resolve("camel-langchain4j-tokenizer"), dir.resolve("camel-langchain4j-tools"),
+                return Arrays.asList(
+                        dir.resolve("camel-chatscript"),
+                        dir.resolve("camel-djl"),
+                        dir.resolve("camel-langchain4j-agent"),
+                        dir.resolve("camel-langchain4j-chat"),
+                        dir.resolve("camel-langchain4j-embeddings"),
+                        dir.resolve("camel-langchain4j-embeddingstore"),
+                        dir.resolve("camel-langchain4j-tokenizer"),
+                        dir.resolve("camel-langchain4j-tools"),
                         dir.resolve("camel-langchain4j-web-search"),
-                        dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
-                        dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
-                        dir.resolve("camel-torchserve"), dir.resolve("camel-tensorflow-serving"),
-                        dir.resolve("camel-weaviate"), dir.resolve("camel-docling"));
+                        dir.resolve("camel-qdrant"),
+                        dir.resolve("camel-milvus"),
+                        dir.resolve("camel-neo4j"),
+                        dir.resolve("camel-pinecone"),
+                        dir.resolve("camel-kserve"),
+                        dir.resolve("camel-torchserve"),
+                        dir.resolve("camel-tensorflow-serving"),
+                        dir.resolve("camel-weaviate"),
+                        dir.resolve("camel-docling"));
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
             case "camel-avro-rpc":
@@ -70,64 +80,104 @@ public final class MojoHelper {
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
             case "camel-azure":
-                return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"),
-                        dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
-                        dir.resolve("camel-azure-storage-queue"), dir.resolve("camel-azure-servicebus"),
-                        dir.resolve("camel-azure-key-vault"), dir.resolve("camel-azure-files"),
+                return Arrays.asList(
+                        dir.resolve("camel-azure-eventhubs"),
+                        dir.resolve("camel-azure-storage-blob"),
+                        dir.resolve("camel-azure-storage-datalake"),
+                        dir.resolve("camel-azure-cosmosdb"),
+                        dir.resolve("camel-azure-storage-queue"),
+                        dir.resolve("camel-azure-servicebus"),
+                        dir.resolve("camel-azure-key-vault"),
+                        dir.resolve("camel-azure-files"),
                         dir.resolve("camel-azure-schema-registry"));
             case "camel-google":
-                return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
-                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
-                        dir.resolve("camel-google-pubsub-lite"), dir.resolve("camel-google-sheets"),
-                        dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"),
+                return Arrays.asList(
+                        dir.resolve("camel-google-bigquery"),
+                        dir.resolve("camel-google-calendar"),
+                        dir.resolve("camel-google-drive"),
+                        dir.resolve("camel-google-mail"),
+                        dir.resolve("camel-google-pubsub"),
+                        dir.resolve("camel-google-pubsub-lite"),
+                        dir.resolve("camel-google-sheets"),
+                        dir.resolve("camel-google-storage"),
+                        dir.resolve("camel-google-functions"),
                         dir.resolve("camel-google-secret-manager"));
             case "camel-debezium":
-                return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
-                        dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"),
-                        dir.resolve("camel-debezium-oracle"), dir.resolve("camel-debezium-db2"));
+                return Arrays.asList(
+                        dir.resolve("camel-debezium-mongodb"),
+                        dir.resolve("camel-debezium-mysql"),
+                        dir.resolve("camel-debezium-postgres"),
+                        dir.resolve("camel-debezium-sqlserver"),
+                        dir.resolve("camel-debezium-oracle"),
+                        dir.resolve("camel-debezium-db2"));
             case "camel-microprofile":
-                return Arrays.asList(dir.resolve("camel-microprofile-config"),
+                return Arrays.asList(
+                        dir.resolve("camel-microprofile-config"),
                         dir.resolve("camel-microprofile-fault-tolerance"),
                         dir.resolve("camel-microprofile-health"));
             case "camel-spring-parent":
-                return Arrays.asList(dir.resolve("camel-spring"),
-                        dir.resolve("camel-spring-batch"), dir.resolve("camel-spring-cloud-config"),
-                        dir.resolve("camel-spring-jdbc"), dir.resolve("camel-spring-ldap"),
-                        dir.resolve("camel-spring-main"), dir.resolve("camel-spring-rabbitmq"),
-                        dir.resolve("camel-spring-redis"), dir.resolve("camel-spring-security"),
-                        dir.resolve("camel-spring-ws"), dir.resolve("camel-spring-xml"),
+                return Arrays.asList(
+                        dir.resolve("camel-spring"),
+                        dir.resolve("camel-spring-batch"),
+                        dir.resolve("camel-spring-cloud-config"),
+                        dir.resolve("camel-spring-jdbc"),
+                        dir.resolve("camel-spring-ldap"),
+                        dir.resolve("camel-spring-main"),
+                        dir.resolve("camel-spring-rabbitmq"),
+                        dir.resolve("camel-spring-redis"),
+                        dir.resolve("camel-spring-security"),
+                        dir.resolve("camel-spring-ws"),
+                        dir.resolve("camel-spring-xml"),
                         dir.resolve("camel-undertow-spring-security"),
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-chat"),
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-embeddings"),
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-tools"),
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-vector-store"));
             case "camel-test":
-                return Arrays.asList(dir.resolve("camel-test-junit5"),
+                return Arrays.asList(
+                        dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-junit6"),
                         dir.resolve("camel-test-spring-junit5"),
                         dir.resolve("camel-test-main-junit5"));
             case "camel-aws":
-                return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
-                        dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
-                        dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"), dir.resolve("camel-aws2-eventbridge"),
+                return Arrays.asList(
+                        dir.resolve("camel-aws2-athena"),
+                        dir.resolve("camel-aws2-cw"),
+                        dir.resolve("camel-aws2-ddb"),
+                        dir.resolve("camel-aws2-ec2"),
+                        dir.resolve("camel-aws2-ecs"),
+                        dir.resolve("camel-aws2-eks"),
+                        dir.resolve("camel-aws2-eventbridge"),
                         dir.resolve("camel-aws2-iam"),
-                        dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
+                        dir.resolve("camel-aws2-kinesis"),
+                        dir.resolve("camel-aws2-kms"),
+                        dir.resolve("camel-aws2-lambda"),
                         dir.resolve("camel-aws2-mq"),
-                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-redshift"),
-                        dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
+                        dir.resolve("camel-aws2-msk"),
+                        dir.resolve("camel-aws2-redshift"),
+                        dir.resolve("camel-aws2-s3"),
+                        dir.resolve("camel-aws2-ses"),
                         dir.resolve("camel-aws2-sns"),
-                        dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
+                        dir.resolve("camel-aws2-sqs"),
+                        dir.resolve("camel-aws2-step-functions"),
                         dir.resolve("camel-aws2-sts"),
-                        dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
-                        dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
-                        dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"), dir.resolve("camel-aws-bedrock"),
-                        dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"));
+                        dir.resolve("camel-aws2-timestream"),
+                        dir.resolve("camel-aws2-translate"),
+                        dir.resolve("camel-aws-xray"),
+                        dir.resolve("camel-aws-secrets-manager"),
+                        dir.resolve("camel-aws-cloudtrail"),
+                        dir.resolve("camel-aws-config"),
+                        dir.resolve("camel-aws-bedrock"),
+                        dir.resolve("camel-aws2-textract"),
+                        dir.resolve("camel-aws2-transcribe"));
             case "camel-vertx":
-                return Arrays.asList(dir.resolve("camel-vertx"),
+                return Arrays.asList(
+                        dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),
                         dir.resolve("camel-vertx-websocket"));
             case "camel-huawei":
-                return Arrays.asList(dir.resolve("camel-huaweicloud-frs"),
+                return Arrays.asList(
+                        dir.resolve("camel-huaweicloud-frs"),
                         dir.resolve("camel-huaweicloud-dms"),
                         dir.resolve("camel-huaweicloud-functiongraph"),
                         dir.resolve("camel-huaweicloud-iam"),
@@ -135,7 +185,8 @@ public final class MojoHelper {
                         dir.resolve("camel-huaweicloud-obs"),
                         dir.resolve("camel-huaweicloud-smn"));
             case "camel-ibm":
-                return Arrays.asList(dir.resolve("camel-ibm-cos"),
+                return Arrays.asList(
+                        dir.resolve("camel-ibm-cos"),
                         dir.resolve("camel-ibm-secrets-manager"),
                         dir.resolve("camel-ibm-watson-language"),
                         dir.resolve("camel-ibm-watson-discovery"),

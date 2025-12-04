@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class Org {
@@ -22,8 +23,7 @@ public class Org {
     private String department;
     private String title;
 
-    public Org() {
-    }
+    public Org() {}
 
     public String getCompany() {
         return company;

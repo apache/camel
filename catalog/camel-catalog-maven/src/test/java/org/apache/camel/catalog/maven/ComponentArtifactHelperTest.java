@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Properties;
 
@@ -23,16 +26,14 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class ComponentArtifactHelperTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentArtifactHelperTest.class);
 
     @Test
     public void testLoadComponentProperties() {
-        Properties props = ComponentArtifactHelper.loadComponentProperties(this.getClass().getClassLoader(), LOG);
+        Properties props =
+                ComponentArtifactHelper.loadComponentProperties(this.getClass().getClassLoader(), LOG);
 
         assertNotNull(props);
 
@@ -46,8 +47,8 @@ public class ComponentArtifactHelperTest {
 
     @Test
     public void testExtractComponentJavaType() {
-        String javaType = ComponentArtifactHelper.extractComponentJavaType(this.getClass().getClassLoader(), "https", LOG);
+        String javaType =
+                ComponentArtifactHelper.extractComponentJavaType(this.getClass().getClassLoader(), "https", LOG);
         assertEquals("foobar", javaType);
-
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.unit;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.google.pubsub.GooglePubsubHeaderFilterStrategy;
@@ -23,15 +26,14 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PubsubHeaderFilterTest extends PubsubTestSupport {
     @ParameterizedTest
-    @ValueSource(strings = { "google-header", "X-GOOGLE-HEADER", "x-google-header" })
+    @ValueSource(strings = {"google-header", "X-GOOGLE-HEADER", "x-google-header"})
     public void testPubsubHeaderFilter(String headerName) {
         GooglePubsubHeaderFilterStrategy googlePubsubHeaderFilterStrategy = new GooglePubsubHeaderFilterStrategy(false);
         Exchange exchange = new DefaultExchange(context);
-        assertTrue(googlePubsubHeaderFilterStrategy.applyFilterToExternalHeaders(headerName, "value", exchange),
+        assertTrue(
+                googlePubsubHeaderFilterStrategy.applyFilterToExternalHeaders(headerName, "value", exchange),
                 headerName + " not filtered");
     }
 }

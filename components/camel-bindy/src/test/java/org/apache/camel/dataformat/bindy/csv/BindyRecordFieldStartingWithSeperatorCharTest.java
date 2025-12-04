@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -27,8 +30,6 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyRecordFieldStartingWithSeperatorCharTest extends CamelTestSupport {
 
@@ -79,7 +80,7 @@ public class BindyRecordFieldStartingWithSeperatorCharTest extends CamelTestSupp
         };
     }
 
-    //from https://issues.apache.org/jira/browse/CAMEL-11065
+    // from https://issues.apache.org/jira/browse/CAMEL-11065
     @SuppressWarnings("serial")
     @CsvRecord(separator = ",", quote = "'")
     public static class BindyCsvRowFormat implements Serializable {
@@ -117,5 +118,4 @@ public class BindyRecordFieldStartingWithSeperatorCharTest extends CamelTestSupp
             this.number = number;
         }
     }
-
 }

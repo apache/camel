@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq.client;
 
 import org.apache.camel.component.aws2.mq.MQ2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientStandardImpl;
  */
 public final class MQ2ClientFactory {
 
-    private MQ2ClientFactory() {
-    }
+    private MQ2ClientFactory() {}
 
     /**
      * Return the correct AWS Mq client (based on remote vs local).

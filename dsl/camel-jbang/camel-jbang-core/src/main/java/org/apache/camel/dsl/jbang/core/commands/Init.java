@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
+import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
+import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,38 +46,41 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
-import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
-import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
-
-@Command(name = "init", description = "Creates a new Camel integration",
-         sortOptions = false, showDefaultValues = true)
+@Command(name = "init", description = "Creates a new Camel integration", sortOptions = false, showDefaultValues = true)
 public class Init extends CamelCommand {
 
-    @Parameters(description = "Name of integration file (or a github link)", arity = "1",
-                paramLabel = "<file>", parameterConsumer = FileConsumer.class)
+    @Parameters(
+            description = "Name of integration file (or a github link)",
+            arity = "1",
+            paramLabel = "<file>",
+            parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
+
     private String file;
 
-    @Option(names = {
-            "--dir",
-            "--directory" }, description = "Directory relative path where the new Camel integration will be saved",
+    @Option(
+            names = {"--dir", "--directory"},
+            description = "Directory relative path where the new Camel integration will be saved",
             defaultValue = ".")
     private String directory;
 
-    @Option(names = { "--clean-dir", "--clean-directory" },
+    @Option(
+            names = {"--clean-dir", "--clean-directory"},
             description = "Whether to clean directory first (deletes all files in directory)")
     private boolean cleanDirectory;
 
-    @Option(names = { "--from-kamelet" },
+    @Option(
+            names = {"--from-kamelet"},
             description = "To be used when extending an existing Kamelet")
     private String fromKamelet;
 
-    @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    @Option(
+            names = {"--kamelets-version"},
+            description = "Apache Camel Kamelets version")
     private String kameletsVersion;
 
-    @Option(names = { "--pipe" },
+    @Option(
+            names = {"--pipe"},
             description = "When creating a yaml file should it be created as a Pipe CR")
     private boolean pipe;
 
@@ -160,7 +168,8 @@ public class Init extends CamelCommand {
         content = content.replaceFirst("\\{\\{ \\.Name }}", name);
         if (fromKamelet != null) {
             content = content.replaceFirst("\\s\\sname:\\s" + fromKamelet, "  name: " + name);
-            content = content.replaceFirst("camel.apache.org/provider: \"Apache Software Foundation\"",
+            content = content.replaceFirst(
+                    "camel.apache.org/provider: \"Apache Software Foundation\"",
                     "camel.apache.org/provider: \"Custom\"");
 
             StringBuilder sb = new StringBuilder();
@@ -311,5 +320,4 @@ public class Init extends CamelCommand {
             cmd.file = args.pop();
         }
     }
-
 }

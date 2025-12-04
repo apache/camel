@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.List;
@@ -76,7 +77,6 @@ public class TahuHostConsumer extends DefaultConsumer {
 
             return thah;
         });
-
     }
 
     @Override
@@ -93,8 +93,13 @@ public class TahuHostConsumer extends DefaultConsumer {
         tahuHostApplication.shutdown();
     }
 
-    private static final List<MessageType> HANDLED_MESSAGE_TYPES = List.of(MessageType.NBIRTH, MessageType.NDATA,
-            MessageType.NDEATH, MessageType.DBIRTH, MessageType.DDATA, MessageType.DDEATH);
+    private static final List<MessageType> HANDLED_MESSAGE_TYPES = List.of(
+            MessageType.NBIRTH,
+            MessageType.NDATA,
+            MessageType.NDEATH,
+            MessageType.DBIRTH,
+            MessageType.DDATA,
+            MessageType.DDEATH);
 
     void onMessageConsumer(EdgeNodeDescriptor edgeNodeDescriptor, org.eclipse.tahu.message.model.Message tahuMessage) {
         Exchange exchange = null;
@@ -106,13 +111,17 @@ public class TahuHostConsumer extends DefaultConsumer {
                 exchange = createExchange(true);
                 final CamelContext context = exchange.getContext();
 
-                Message camelMessage = ObjectHelper.supplyIfEmpty(exchange.getMessage(), () -> new DefaultMessage(context));
+                Message camelMessage =
+                        ObjectHelper.supplyIfEmpty(exchange.getMessage(), () -> new DefaultMessage(context));
                 exchange.setMessage(camelMessage);
-                camelMessage.setHeader(TahuConstants.MESSAGE_TYPE, topic.getType().name());
+                camelMessage.setHeader(
+                        TahuConstants.MESSAGE_TYPE, topic.getType().name());
                 camelMessage.setHeader(TahuConstants.EDGE_NODE_DESCRIPTOR, edgeNodeDescriptor.getDescriptorString());
 
                 if (payload.getTimestamp() != null) {
-                    camelMessage.setHeader(TahuConstants.MESSAGE_TIMESTAMP, payload.getTimestamp().getTime());
+                    camelMessage.setHeader(
+                            TahuConstants.MESSAGE_TIMESTAMP,
+                            payload.getTimestamp().getTime());
                 }
 
                 if (payload.getSeq() != null) {
@@ -123,7 +132,9 @@ public class TahuHostConsumer extends DefaultConsumer {
                     try {
                         camelMessage.setHeader(TahuConstants.MESSAGE_UUID, UUID.fromString(payload.getUuid()));
                     } catch (IllegalArgumentException iae) {
-                        LOG.warn(loggingMarker, "Exception caught parsing Sparkplug message UUID {} - skipping",
+                        LOG.warn(
+                                loggingMarker,
+                                "Exception caught parsing Sparkplug message UUID {} - skipping",
                                 payload.getUuid());
                     }
                 }
@@ -133,7 +144,7 @@ public class TahuHostConsumer extends DefaultConsumer {
                 }
 
                 Map<String, Object> payloadMetrics = payload.getMetrics().stream()
-                        .map(m -> new Object[] { TahuConstants.METRIC_HEADER_PREFIX + m.getName(), m })
+                        .map(m -> new Object[] {TahuConstants.METRIC_HEADER_PREFIX + m.getName(), m})
                         .collect(Collectors.toMap(arr -> (String) arr[0], arr -> arr[1]));
 
                 if (!payloadMetrics.isEmpty()) {
@@ -143,9 +154,11 @@ public class TahuHostConsumer extends DefaultConsumer {
                 getProcessor().process(exchange);
 
             } else {
-                LOG.warn(loggingMarker,
+                LOG.warn(
+                        loggingMarker,
                         "TahuHostAppConsumer onMessageConsumer: Unknown Message Type {} from {} - ignoring",
-                        topic.getType(), edgeNodeDescriptor);
+                        topic.getType(),
+                        edgeNodeDescriptor);
             }
 
         } catch (Exception e) {
@@ -158,8 +171,11 @@ public class TahuHostConsumer extends DefaultConsumer {
             }
         } finally {
             if (exchange != null && exchange.getException() != null) {
-                getExceptionHandler().handleException("Exception caught processing exchange from Sparkplug Message",
-                        exchange, exchange.getException());
+                getExceptionHandler()
+                        .handleException(
+                                "Exception caught processing exchange from Sparkplug Message",
+                                exchange,
+                                exchange.getException());
             }
         }
     }
@@ -188,8 +204,11 @@ public class TahuHostConsumer extends DefaultConsumer {
             }
         } finally {
             if (exchange != null && exchange.getException() != null) {
-                getExceptionHandler().handleException("Exception caught processing exchange from Sparkplug Metric",
-                        exchange, exchange.getException());
+                getExceptionHandler()
+                        .handleException(
+                                "Exception caught processing exchange from Sparkplug Metric",
+                                exchange,
+                                exchange.getException());
             }
         }
     }

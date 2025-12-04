@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -104,5 +105,4 @@ public class GcpVaultConfigurationProperties extends GcpVaultConfiguration imple
         setSecrets(secrets);
         return this;
     }
-
 }

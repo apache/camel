@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.HashMap;
@@ -54,7 +55,8 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
         this(null, serviceRegistrySelector);
     }
 
-    public ServiceRegistrationRoutePolicy(ServiceRegistry serviceRegistry, ServiceRegistry.Selector serviceRegistrySelector) {
+    public ServiceRegistrationRoutePolicy(
+            ServiceRegistry serviceRegistry, ServiceRegistry.Selector serviceRegistrySelector) {
         this.serviceRegistry = serviceRegistry;
         this.serviceRegistrySelector = serviceRegistrySelector;
     }
@@ -76,11 +78,12 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
     @Override
     public void doStart() throws Exception {
         if (serviceRegistry == null) {
-            serviceRegistry = ServiceRegistryHelper.lookupService(camelContext, serviceRegistrySelector).orElseThrow(
-                    () -> new IllegalStateException("ServiceRegistry service not found"));
+            serviceRegistry = ServiceRegistryHelper.lookupService(camelContext, serviceRegistrySelector)
+                    .orElseThrow(() -> new IllegalStateException("ServiceRegistry service not found"));
         }
 
-        LOGGER.debug("ServiceRegistrationRoutePolicy {} is using ServiceRegistry instance {} (id={}, type={})",
+        LOGGER.debug(
+                "ServiceRegistrationRoutePolicy {} is using ServiceRegistry instance {} (id={}, type={})",
                 this,
                 serviceRegistry,
                 serviceRegistry.getId(),
@@ -185,12 +188,7 @@ public class ServiceRegistrationRoutePolicy extends RoutePolicySupport implement
 
         // Build the final resource definition from bits collected from the
         // endpoint and the route.
-        return Optional.of(
-                new DefaultServiceDefinition(
-                        serviceId,
-                        serviceName,
-                        serviceHost,
-                        Integer.parseInt(servicePort),
-                        properties));
+        return Optional.of(new DefaultServiceDefinition(
+                serviceId, serviceName, serviceHost, Integer.parseInt(servicePort), properties));
     }
 }

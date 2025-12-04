@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.ws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,16 +27,12 @@ import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
     @Test
     public void testWSHttpCallEcho() throws Exception {
 
         // We call the route WebSocket BAR
         {
-
             WebsocketTestClient testClient = new WebsocketTestClient("ws://localhost:" + getPort() + "/bar");
             testClient.connect();
 
@@ -58,7 +58,6 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
 
             testClient.close();
         }
-
     }
 
     @Override
@@ -69,12 +68,14 @@ public class UndertowWsTwoRoutesTest extends BaseUndertowTest {
                 int port = getPort();
                 from("undertow:ws://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
-                        .transform().simple("The bar has ${body}")
+                        .transform()
+                        .simple("The bar has ${body}")
                         .to("undertow:ws://localhost:" + port + "/bar");
 
                 from("undertow:ws://localhost:" + port + "/pub")
                         .log(">>> Message received from PUB WebSocket Client : ${body}")
-                        .transform().simple("The pub has ${body}")
+                        .transform()
+                        .simple("The pub has ${body}")
                         .to("undertow:ws://localhost:" + port + "/pub");
             }
         };

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
@@ -26,10 +31,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestServletBindingModeOffWithContractTest extends ServletCamelRouterTestSupport {
 
     @Test
@@ -40,8 +41,7 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/users/new",
-                new ByteArrayInputStream(body.getBytes()), "application/json");
+                contextUrl + "/services/users/new", new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
         assertEquals(200, response.getResponseCode());
         String answer = response.getText();
@@ -69,18 +69,13 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
                 jsondf.setLibrary(JsonLibrary.Jackson);
                 jsondf.setAllowUnmarshallType(Boolean.toString(true));
                 jsondf.setUnmarshalType(UserPojoEx.class);
-                transformer()
-                        .fromType("json")
-                        .toType(UserPojoEx.class)
-                        .withDataFormat(jsondf);
-                transformer()
-                        .fromType(UserPojoEx.class)
-                        .toType("json")
-                        .withDataFormat(jsondf);
+                transformer().fromType("json").toType(UserPojoEx.class).withDataFormat(jsondf);
+                transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
 
                 rest("/users/")
                         // REST binding does nothing
-                        .post("new").to("direct:new");
+                        .post("new")
+                        .to("direct:new");
                 from("direct:new")
                         // contract advice converts between JSON and UserPojoEx directly
                         .inputType(UserPojoEx.class)
@@ -90,5 +85,4 @@ public class RestServletBindingModeOffWithContractTest extends ServletCamelRoute
             }
         };
     }
-
 }

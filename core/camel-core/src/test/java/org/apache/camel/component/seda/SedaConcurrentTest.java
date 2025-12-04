@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaConcurrentTest extends ContextTestSupport {
 
@@ -130,9 +131,15 @@ public class SedaConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=10").to("mock:before").delay(500).to("mock:result");
+                from("seda:foo?concurrentConsumers=10")
+                        .to("mock:before")
+                        .delay(500)
+                        .to("mock:result");
 
-                from("seda:bar?concurrentConsumers=10").to("mock:before").delay(500).transform(body().prepend("Bye "))
+                from("seda:bar?concurrentConsumers=10")
+                        .to("mock:before")
+                        .delay(500)
+                        .transform(body().prepend("Bye "))
                         .to("mock:result");
             }
         };

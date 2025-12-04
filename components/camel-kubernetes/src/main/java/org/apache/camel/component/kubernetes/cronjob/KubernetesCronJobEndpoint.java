@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cronjob;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CRON_JOB;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,14 +28,17 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_CRON_JOB;
-
 /**
  * Perform operations on Kubernetes CronJob.
  */
-@UriEndpoint(firstVersion = "4.3.0", scheme = SCHEME_CRON_JOB, title = "Kubernetes Cronjob",
-             syntax = "kubernetes-cronjob:masterUrl", producerOnly = true,
-             category = { Category.CONTAINER, Category.CLOUD }, headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "4.3.0",
+        scheme = SCHEME_CRON_JOB,
+        title = "Kubernetes Cronjob",
+        syntax = "kubernetes-cronjob:masterUrl",
+        producerOnly = true,
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesCronJobEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesCronJobEndpoint(String uri, KubernetesCronJobComponent component, KubernetesConfiguration config) {
@@ -48,5 +54,4 @@ public class KubernetesCronJobEndpoint extends AbstractKubernetesEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new IllegalArgumentException("The kubernetes-cronjob doesn't support consumer");
     }
-
 }

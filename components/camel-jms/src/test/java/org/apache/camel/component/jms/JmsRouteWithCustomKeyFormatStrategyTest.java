@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.BindToRegistry;
@@ -38,8 +39,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
 
         @Override
         public String encodeKey(String key) {
-            key = key.replace("-", "_HYPHEN_")
-                    .replace(".", "_DOT_");
+            key = key.replace("-", "_HYPHEN_").replace(".", "_DOT_");
 
             return "FOO" + key + "BAR";
         }
@@ -47,8 +47,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
         @Override
         public String decodeKey(String key) {
             if (key.startsWith("FOO") && key.endsWith("BAR")) {
-                key = key.replace("_HYPHEN_", "-")
-                        .replace("_DOT_", ".");
+                key = key.replace("_HYPHEN_", "-").replace("_DOT_", ".");
 
                 return StringHelper.between(key, "FOO", "BAR");
             } else {

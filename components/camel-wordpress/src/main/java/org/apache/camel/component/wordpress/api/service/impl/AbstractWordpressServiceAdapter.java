@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.Collections;
@@ -43,8 +44,8 @@ abstract class AbstractWordpressServiceAdapter<A> implements WordpressService {
         this.apiVersion = ObjectHelper.notNullOrEmpty(apiVersion, "apiVersion");
 
         // @formatter:off
-        this.spi = JAXRSClientFactory.create(wordpressUrl, this.getSpiType(),
-                Collections.singletonList(new JacksonJsonProvider()));
+        this.spi = JAXRSClientFactory.create(
+                wordpressUrl, this.getSpiType(), Collections.singletonList(new JacksonJsonProvider()));
         // @formatter:on
         WebClient.client(spi).type(MediaType.APPLICATION_JSON_TYPE);
         WebClient.client(spi).accept(MediaType.APPLICATION_JSON_TYPE);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.model;
 
 import java.util.Map;
@@ -30,12 +31,16 @@ public class VersionListDTO {
     private String releaseDate;
     private String eolDate;
 
-    public VersionListDTO() {
-    }
+    public VersionListDTO() {}
 
-    public VersionListDTO(String camelVersion, String runtime, String runtimeVersion, String jdkVersion, String kind,
-                          String releaseDate,
-                          String eolDate) {
+    public VersionListDTO(
+            String camelVersion,
+            String runtime,
+            String runtimeVersion,
+            String jdkVersion,
+            String kind,
+            String releaseDate,
+            String eolDate) {
         this.camelVersion = camelVersion;
         this.runtime = runtime;
         this.runtimeVersion = runtimeVersion;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing;
 
 import java.util.Map;
@@ -41,7 +42,6 @@ public interface SpanDecorator {
         public String getComponentClassName() {
             return null;
         }
-
     };
 
     /**
@@ -126,5 +126,4 @@ public interface SpanDecorator {
      * @return          The injection map
      */
     InjectAdapter getInjectAdapter(Map<String, Object> map, boolean encoding);
-
 }

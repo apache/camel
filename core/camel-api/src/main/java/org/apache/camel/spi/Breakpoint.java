@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.EventObject;
@@ -93,5 +94,4 @@ public interface Breakpoint {
      * @see              ExchangeEvent
      */
     void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition);
-
 }

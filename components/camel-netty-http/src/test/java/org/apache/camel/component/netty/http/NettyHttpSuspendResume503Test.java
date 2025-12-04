@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,12 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.WINDOWS)
 public class NettyHttpSuspendResume503Test extends BaseNettyTest {
@@ -52,17 +53,17 @@ public class NettyHttpSuspendResume503Test extends BaseNettyTest {
             template.requestBody(serverUri, "Moon", String.class);
             fail("Should throw exception");
         } catch (Exception e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            NettyHttpOperationFailedException cause =
+                    assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(503, cause.getStatusCode());
         }
 
         // resume
         consumer.resume();
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    String nextReply = template.requestBody(serverUri, "Moon", String.class);
-                    assertEquals("Bye Moon", nextReply);
-                });
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            String nextReply = template.requestBody(serverUri, "Moon", String.class);
+            assertEquals("Bye Moon", nextReply);
+        });
     }
 
     @Override
@@ -70,10 +71,8 @@ public class NettyHttpSuspendResume503Test extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(serverUri).routeId("foo")
-                        .transform(body().prepend("Bye "));
+                from(serverUri).routeId("foo").transform(body().prepend("Bye "));
             }
         };
     }
-
 }

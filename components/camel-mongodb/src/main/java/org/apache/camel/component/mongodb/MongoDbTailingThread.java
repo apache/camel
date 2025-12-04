@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb;
+
+import static com.mongodb.client.model.Filters.gt;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 
 import com.mongodb.CursorType;
 import com.mongodb.MongoCursorNotFoundException;
@@ -23,16 +27,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.bson.Document;
 
-import static com.mongodb.client.model.Filters.gt;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-
 class MongoDbTailingThread extends MongoAbstractConsumerThread {
 
     private static final String CAPPED_KEY = "capped";
     private MongoDbTailTrackingManager tailTracking;
 
-    MongoDbTailingThread(MongoDbEndpoint endpoint, MongoDbTailableCursorConsumer consumer,
-                         MongoDbTailTrackingManager tailTrack) {
+    MongoDbTailingThread(
+            MongoDbEndpoint endpoint, MongoDbTailableCursorConsumer consumer, MongoDbTailTrackingManager tailTrack) {
         super(endpoint, consumer);
         this.tailTracking = tailTrack;
     }
@@ -45,15 +46,15 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     @Override
     protected void init() {
         if (log.isInfoEnabled()) {
-            log.info("Starting MongoDB Tailable Cursor consumer, binding to collection: {}",
+            log.info(
+                    "Starting MongoDB Tailable Cursor consumer, binding to collection: {}",
                     String.format("db: %s, col: %s", endpoint.getMongoDatabase(), endpoint.getCollection()));
         }
 
         if (Boolean.FALSE.equals(isCollectionCapped())) {
-            throw new CamelMongoDbException(
-                    String.format(
-                            "Tailable cursors are only compatible with capped collections, and collection %s is not capped",
-                            endpoint.getCollection()));
+            throw new CamelMongoDbException(String.format(
+                    "Tailable cursors are only compatible with capped collections, and collection %s is not capped",
+                    endpoint.getCollection()));
         }
         try {
             // recover the last value from the store if it exists
@@ -64,7 +65,8 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         }
 
         if (cursor == null) {
-            throw new CamelMongoDbException("Tailable cursor was not initialized, or cursor returned is dead on arrival");
+            throw new CamelMongoDbException(
+                    "Tailable cursor was not initialized, or cursor returned is dead on arrival");
         }
     }
 
@@ -95,7 +97,9 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     @Override
     protected void regeneratingCursor() {
         if (log.isDebugEnabled()) {
-            log.debug("Regenerating cursor with lastVal: {}, waiting {} ms first", tailTracking.lastVal,
+            log.debug(
+                    "Regenerating cursor with lastVal: {}, waiting {} ms first",
+                    tailTracking.lastVal,
                     cursorRegenerationDelay);
         }
     }
@@ -155,5 +159,4 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         message.setBody(dbObj);
         return exchange;
     }
-
 }

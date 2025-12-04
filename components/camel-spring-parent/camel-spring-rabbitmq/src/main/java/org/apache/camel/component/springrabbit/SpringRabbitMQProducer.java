@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import java.util.Map;
@@ -140,8 +141,10 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         // header take precedence over endpoint
         final String exchangeName = getExchangeName(exchange);
 
-        final String routingKey
-                = getValue(exchange, SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY, getEndpoint().getRoutingKey());
+        final String routingKey = getValue(
+                exchange,
+                SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY,
+                getEndpoint().getRoutingKey());
 
         final Message msg = getMessage(exchange);
 
@@ -155,9 +158,9 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
                     } else {
                         Object body1 = getEndpoint().getMessageConverter().fromMessage(message);
                         exchange.getMessage().setBody(body1);
-                        Map<String, Object> headers
-                                = getEndpoint().getMessagePropertiesConverter()
-                                        .fromMessageProperties(message.getMessageProperties(), exchange);
+                        Map<String, Object> headers = getEndpoint()
+                                .getMessagePropertiesConverter()
+                                .fromMessageProperties(message.getMessageProperties(), exchange);
                         if (!headers.isEmpty()) {
                             exchange.getMessage().getHeaders().putAll(headers);
                         }
@@ -195,8 +198,10 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         // header take precedence over endpoint
         final String exchangeName = getExchangeName(exchange);
 
-        final String routingKey
-                = getValue(exchange, SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY, getEndpoint().getRoutingKey());
+        final String routingKey = getValue(
+                exchange,
+                SpringRabbitMQConstants.ROUTING_OVERRIDE_KEY,
+                getEndpoint().getRoutingKey());
 
         final Message msg = getMessage(exchange);
 
@@ -210,7 +215,9 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
         } else {
             confirm = false;
         }
-        final long timeout = getEndpoint().getConfirmTimeout() <= 0 ? Long.MAX_VALUE : getEndpoint().getConfirmTimeout();
+        final long timeout = getEndpoint().getConfirmTimeout() <= 0
+                ? Long.MAX_VALUE
+                : getEndpoint().getConfirmTimeout();
         try {
             boolean sent;
             if (confirm) {
@@ -243,8 +250,10 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
     }
 
     private String getExchangeName(Exchange exchange) {
-        String exchangeName
-                = getValue(exchange, SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME, getEndpoint().getExchangeName());
+        String exchangeName = getValue(
+                exchange,
+                SpringRabbitMQConstants.EXCHANGE_OVERRIDE_NAME,
+                getEndpoint().getExchangeName());
         return SpringRabbitMQHelper.isDefaultExchange(exchangeName) ? "" : exchangeName;
     }
 
@@ -261,11 +270,14 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
             RabbitTemplate template = getInOnlyTemplate();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Testing RabbitMQ Connection on startup for: {}", getEndpoint().getConnectionFactory().getHost());
+                LOG.debug(
+                        "Testing RabbitMQ Connection on startup for: {}",
+                        getEndpoint().getConnectionFactory().getHost());
             }
             conn = template.getConnectionFactory().createConnection();
 
-            LOG.debug("Successfully tested RabbitMQ Connection on startup for: {}",
+            LOG.debug(
+                    "Successfully tested RabbitMQ Connection on startup for: {}",
                     getEndpoint().getConnectionFactory().getHost());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(getEndpoint(), e);
@@ -273,5 +285,4 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
             RabbitUtils.closeConnection(conn);
         }
     }
-
 }

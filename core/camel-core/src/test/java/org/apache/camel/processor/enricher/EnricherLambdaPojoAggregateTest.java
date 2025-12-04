@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,5 +50,4 @@ public class EnricherLambdaPojoAggregateTest extends ContextTestSupport {
     public String merge(String a, String b) {
         return a + "+" + b;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat;
 
 import dev.langchain4j.model.chat.ChatModel;
@@ -35,8 +36,7 @@ public class LangChain4jChatConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private ChatModel chatModel;
 
-    public LangChain4jChatConfiguration() {
-    }
+    public LangChain4jChatConfiguration() {}
 
     /**
      * Operation in case of Endpoint of type CHAT. The value is one of the values of

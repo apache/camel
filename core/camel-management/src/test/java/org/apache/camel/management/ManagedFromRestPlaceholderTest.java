@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
@@ -29,10 +34,6 @@ import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
@@ -51,7 +52,7 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
         ObjectName on = getContextObjectName();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", new Object[] { true }, new String[] { "boolean" });
+        String xml = (String) mbeanServer.invoke(on, "dumpRestsAsXml", new Object[] {true}, new String[] {"boolean"});
         assertNotNull(xml);
         log.info(xml);
 
@@ -65,14 +66,17 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains(
-                "<param defaultValue=\"1\" dataType=\"integer\" name=\"header_count\" description=\"header param description1\" type=\"header\""));
-        assertTrue(xml.contains(
-                "<param defaultValue=\"b\" name=\"header_letter\" description=\"header param description2\" type=\"query\" collectionFormat=\"multi\" required=\"false\""));
+        assertTrue(
+                xml.contains(
+                        "<param defaultValue=\"1\" dataType=\"integer\" name=\"header_count\" description=\"header param description1\" type=\"header\""));
+        assertTrue(
+                xml.contains(
+                        "<param defaultValue=\"b\" name=\"header_letter\" description=\"header param description2\" type=\"query\" collectionFormat=\"multi\" required=\"false\""));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
-        assertTrue(xml.contains("<responseMessage code=\"300\" responseModel=\"java.lang.Integer\" message=\"test msg\"/>"));
+        assertTrue(xml.contains(
+                "<responseMessage code=\"300\" responseModel=\"java.lang.Integer\" message=\"test msg\"/>"));
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
@@ -89,27 +93,42 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 restConfiguration().host("localhost");
-                rest("{{foo}}")
-                        .get().to("direct:hello");
+                rest("{{foo}}").get().to("direct:hello");
 
                 rest("{{bar}}")
-                        .get().consumes("application/json")
-                        .param().type(RestParamType.header).description("header param description1").dataType("integer")
+                        .get()
+                        .consumes("application/json")
+                        .param()
+                        .type(RestParamType.header)
+                        .description("header param description1")
+                        .dataType("integer")
                         .allowableValues(Arrays.asList("1", "2", "3", "4"))
-                        .defaultValue("1").name("header_count").required(true)
-                        .endParam().param().type(RestParamType.query).description("header param description2")
-                        .dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
+                        .defaultValue("1")
+                        .name("header_count")
+                        .required(true)
                         .endParam()
-                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .param()
+                        .type(RestParamType.query)
+                        .description("header param description2")
+                        .dataType("string")
+                        .allowableValues(Arrays.asList("a", "b", "c", "d"))
+                        .defaultValue("b")
+                        .collectionFormat(CollectionFormat.multi)
+                        .name("header_letter")
+                        .required(false)
+                        .endParam()
+                        .responseMessage()
+                        .code(300)
+                        .message("test msg")
+                        .responseModel(Integer.class)
+                        .endResponseMessage()
                         .to("direct:bye")
-                        .post().to("mock:update");
+                        .post()
+                        .to("mock:update");
 
-                from("direct:hello")
-                        .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
 
-                from("direct:bye")
-                        .transform().constant("Bye World");
+                from("direct:bye").transform().constant("Bye World");
             }
         };
     }

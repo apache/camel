@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_HEALTH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Map;
@@ -32,11 +38,6 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_HEALTH;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedHealthCheckTest extends ManagementTestSupport {
@@ -75,7 +76,7 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "details", null, null);
         assertEquals(1, data.size());
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> ids = (Collection) mbeanServer.invoke(on, "getHealthChecksIDs", null, null);
         assertEquals(1, ids.size());
 
@@ -88,7 +89,8 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class)
+        context.getCamelContextExtension()
+                .getContextPlugin(HealthCheckRegistry.class)
                 .register(new AbstractHealthCheck("custom", "myCheck") {
                     @Override
                     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
@@ -104,16 +106,16 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         Boolean up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertFalse(up);
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> ids = (Collection) mbeanServer.invoke(on, "getHealthChecksIDs", null, null);
         assertEquals(2, ids.size());
 
-        mbeanServer.invoke(on, "disableById", new Object[] { "myCheck" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "disableById", new Object[] {"myCheck"}, new String[] {"java.lang.String"});
 
         up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertTrue(up);
 
-        mbeanServer.invoke(on, "enableById", new Object[] { "myCheck" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "enableById", new Object[] {"myCheck"}, new String[] {"java.lang.String"});
 
         up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertFalse(up);
@@ -128,5 +130,4 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
             }
         };
     }
-
 }

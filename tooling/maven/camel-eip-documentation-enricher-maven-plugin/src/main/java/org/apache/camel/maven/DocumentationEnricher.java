@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
 
 import java.io.File;
 import java.util.Map;
@@ -32,8 +35,6 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.commons.text.WordUtils;
 import org.apache.maven.plugin.logging.Log;
-
-import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
 
 /**
  * Enriches xml document with documentation from json files.
@@ -78,22 +79,26 @@ public class DocumentationEnricher {
         }
 
         BaseModel<?> model = JsonMapper.generateModel(jsonFile.toPath());
-        BaseOptionModel option = Stream.concat(model.getOptions().stream(),
-                model instanceof ComponentModel ? ((ComponentModel) model).getEndpointOptions().stream() : Stream.empty())
+        BaseOptionModel option = Stream.concat(
+                        model.getOptions().stream(),
+                        model instanceof ComponentModel
+                                ? ((ComponentModel) model).getEndpointOptions().stream()
+                                : Stream.empty())
                 .filter(o -> name.equals(o.getName()))
-                .findAny().orElse(null);
+                .findAny()
+                .orElse(null);
 
         String descriptionText = option != null ? option.getDescription() : null;
         Object defaultValueText = option != null ? option.getDefaultValue() : null;
 
         // special for this option
         if ("binding".equals(name)) {
-            descriptionText
-                    = "In binding mode we bind the passed in arguments (args) to the created exchange using the existing Camel"
-                      + " @Body, @Header, @Headers, @ExchangeProperty annotations if no annotation then its bound as the message body";
+            descriptionText =
+                    "In binding mode we bind the passed in arguments (args) to the created exchange using the existing Camel"
+                            + " @Body, @Header, @Headers, @ExchangeProperty annotations if no annotation then its bound as the message body";
         } else if ("serviceRef".equals(name) && jsonFile.getName().endsWith("proxy.json")) {
-            descriptionText
-                    = "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
+            descriptionText =
+                    "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
         } else if ("dataFormats".equals(name) && jsonFile.getName().endsWith("beans.json")) {
             descriptionText = "List of data formats";
         }
@@ -117,7 +122,8 @@ public class DocumentationEnricher {
             addDocumentation(item, text);
         } else {
             // we should skip warning about these if no documentation as they are special
-            boolean skip = "customId".equals(name) || "inheritErrorHandler".equals(name)
+            boolean skip = "customId".equals(name)
+                    || "inheritErrorHandler".equals(name)
                     || ("rest".equals(name) && jsonFile.getName().endsWith("route.json"))
                     || ("template".equals(name) && jsonFile.getName().endsWith("route.json"))
                     || ("kamelet".equals(name) && jsonFile.getName().endsWith("route.json"))
@@ -144,7 +150,8 @@ public class DocumentationEnricher {
 
     private String formatTextContent(Element item, String textContent) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("\n")
+        stringBuilder
+                .append("\n")
                 .append(WordUtils.wrap(textContent, Constants.WRAP_LENGTH))
                 .append("\n");
         // Fix closing tag intention.
@@ -154,5 +161,4 @@ public class DocumentationEnricher {
         }
         return stringBuilder.toString();
     }
-
 }

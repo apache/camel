@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.transformer;
 
 import org.apache.camel.AsyncCallback;
@@ -41,8 +42,7 @@ public class DataTypeProcessor extends BaseProcessorSupport implements CamelCont
     private DataType fromDataType;
     private DataType toDataType;
 
-    public DataTypeProcessor() {
-    }
+    public DataTypeProcessor() {}
 
     public DataTypeProcessor(String fromType, String toType) {
         this.fromType = fromType;
@@ -69,8 +69,9 @@ public class DataTypeProcessor extends BaseProcessorSupport implements CamelCont
             fromDataType = new DataType(fromType);
         }
 
-        transformer
-                = getCamelContext().getTransformerRegistry().resolveTransformer(new TransformerKey(fromDataType, toDataType));
+        transformer = getCamelContext()
+                .getTransformerRegistry()
+                .resolveTransformer(new TransformerKey(fromDataType, toDataType));
         if (transformer == null) {
             throw new IllegalArgumentException("No transformer from: " + fromType + " to:" + toType);
         }
@@ -85,7 +86,8 @@ public class DataTypeProcessor extends BaseProcessorSupport implements CamelCont
             Transformer target = transformer;
             if (fromType == null && message instanceof DataTypeAware dta && dta.hasDataType()) {
                 fromDT = dta.getDataType();
-                target = getCamelContext().getTransformerRegistry()
+                target = getCamelContext()
+                        .getTransformerRegistry()
                         .resolveTransformer(new TransformerKey(fromDT, toDataType));
                 if (target == null) {
                     exchange.setException(new IllegalArgumentException(
@@ -115,5 +117,4 @@ public class DataTypeProcessor extends BaseProcessorSupport implements CamelCont
     public void setTransformer(Transformer transformer) {
         this.transformer = transformer;
     }
-
 }

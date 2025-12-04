@@ -58,20 +58,25 @@ class ExportMainJkubeTest {
     }
 
     private static Stream<Arguments> runtimeProvider() {
-        return Stream.of(
-                Arguments.of(RuntimeType.main));
+        return Stream.of(Arguments.of(RuntimeType.main));
     }
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProjectWithJib(RuntimeType rt) throws Exception {
         // prepare as we need application.properties that contains jkube settings
-        Files.copy(new File("src/test/resources/application-jkube.properties").toPath(), profile.toPath(),
+        Files.copy(
+                new File("src/test/resources/application-jkube.properties").toPath(),
+                profile.toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 
         Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
-                "--runtime=%s".formatted(rt.runtime()), "target/test-classes/route.yaml");
+        CommandLine.populateCommand(
+                command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()),
+                "target/test-classes/route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -81,7 +86,8 @@ class ExportMainJkubeTest {
         Assertions.assertEquals("1.0.0", model.getVersion());
         Assertions.assertEquals("21", model.getProperties().getProperty("java.version"));
         Assertions.assertEquals("abc", model.getProperties().getProperty("jib.label"));
-        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21-jre",
+        Assertions.assertEquals(
+                "mirror.gcr.io/library/eclipse-temurin:21-jre",
                 model.getProperties().getProperty("jib.from.image"));
 
         // should contain jib and jkube plugin
@@ -105,5 +111,4 @@ class ExportMainJkubeTest {
         model.setPomFile(f);
         return model;
     }
-
 }

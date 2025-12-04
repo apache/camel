@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,14 +34,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JmsSelectorOptionTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -75,7 +77,8 @@ public class JmsSelectorOptionTest extends AbstractJMSTest {
         // process every exchange which is ready. If no exchange is left break
         // the loop
         while (true) {
-            Exchange ex = consumer.receiveNoWait("activemq:queue:JmsSelectorOptionTest.consumer?selector=SIZE_NUMBER<1500");
+            Exchange ex =
+                    consumer.receiveNoWait("activemq:queue:JmsSelectorOptionTest.consumer?selector=SIZE_NUMBER<1500");
             if (ex != null) {
                 Message message = ex.getIn();
                 int size = message.getHeader("SIZE_NUMBER", int.class);
@@ -96,9 +99,12 @@ public class JmsSelectorOptionTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsSelectorOptionTest.hello?selector=color='blue'").to("mock:a");
-                from("activemq:queue:JmsSelectorOptionTest.hello?selector=color='red'").to("mock:b");
-                from("activemq:queue:JmsSelectorOptionTest.hello?selector=SIZE_NUMBER>1500").to("mock:c");
+                from("activemq:queue:JmsSelectorOptionTest.hello?selector=color='blue'")
+                        .to("mock:a");
+                from("activemq:queue:JmsSelectorOptionTest.hello?selector=color='red'")
+                        .to("mock:b");
+                from("activemq:queue:JmsSelectorOptionTest.hello?selector=SIZE_NUMBER>1500")
+                        .to("mock:c");
             }
         };
     }

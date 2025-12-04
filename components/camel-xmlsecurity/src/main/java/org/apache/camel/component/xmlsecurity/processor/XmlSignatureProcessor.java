@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.io.IOException;
@@ -117,12 +118,11 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (schemaResourceUri == null || schemaResourceUri.isEmpty()) {
             return null;
         }
-        InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext(),
-                schemaResourceUri);
+        InputStream is = ResourceHelper.resolveResourceAsInputStream(getCamelContext(), schemaResourceUri);
         if (is == null) {
             throw new XmlSignatureException(
                     "XML Signature component is wrongly configured: No XML schema found for specified schema resource URI "
-                                            + schemaResourceUri);
+                            + schemaResourceUri);
         }
         byte[] bytes;
         try {
@@ -138,8 +138,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         schemaFactory.setResourceResolver(new DefaultLSResourceResolver(
-                getCamelContext(), getConfiguration()
-                        .getSchemaResourceUri()));
+                getCamelContext(), getConfiguration().getSchemaResourceUri()));
         LOG.debug("Instantiating schema for validation");
         return schemaFactory.newSchema(new BytesSource(bytes));
     }
@@ -152,5 +151,4 @@ public abstract class XmlSignatureProcessor implements Processor {
         LOG.debug("schema resource URI: {}", getConfiguration().getSchemaResourceUri());
         return schemaResourceUri;
     }
-
 }

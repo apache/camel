@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,16 +35,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JCacheProducerInvokeTest extends JCacheComponentTestSupport {
-    private static final EntryProcessor<Object, Object, Object> ENTRY_PROCESSOR = new EntryProcessor<Object, Object, Object>() {
-        @Override
-        public Object process(MutableEntry<Object, Object> entry, Object... arguments) throws EntryProcessorException {
-            return "processor-" + entry.getValue();
-        }
-    };
+    private static final EntryProcessor<Object, Object, Object> ENTRY_PROCESSOR =
+            new EntryProcessor<Object, Object, Object>() {
+                @Override
+                public Object process(MutableEntry<Object, Object> entry, Object... arguments)
+                        throws EntryProcessorException {
+                    return "processor-" + entry.getValue();
+                }
+            };
 
     @Test
     public void testInvoke() throws Exception {
@@ -102,7 +105,9 @@ public class JCacheProducerInvokeTest extends JCacheComponentTestSupport {
                 Map<Object, EntryProcessorResult<Object>> map = exchange.getIn().getBody(Map.class);
                 for (Map.Entry<Object, Object> entry : values2.entrySet()) {
                     assertTrue(map.containsKey(entry.getKey()));
-                    assertEquals("processor-" + entry.getValue(), map.get(entry.getKey()).get());
+                    assertEquals(
+                            "processor-" + entry.getValue(),
+                            map.get(entry.getKey()).get());
                 }
 
                 return true;
@@ -126,12 +131,8 @@ public class JCacheProducerInvokeTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:invoke")
-                        .to("jcache://test-cache")
-                        .to("mock:invoke");
-                from("direct:invoke-all")
-                        .to("jcache://test-cache")
-                        .to("mock:invoke-all");
+                from("direct:invoke").to("jcache://test-cache").to("mock:invoke");
+                from("direct:invoke-all").to("jcache://test-cache").to("mock:invoke-all");
             }
         };
     }

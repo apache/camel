@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ValidationException;
@@ -31,10 +32,14 @@ public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest
 
                 onException(ValidationException.class).to("mock:outer");
 
-                from("direct:start").doTry().process(validator).to("mock:valid").doCatch(ValidationException.class)
-                        .to("mock:invalid").process(validator);
+                from("direct:start")
+                        .doTry()
+                        .process(validator)
+                        .to("mock:valid")
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .process(validator);
             }
         };
     }
-
 }

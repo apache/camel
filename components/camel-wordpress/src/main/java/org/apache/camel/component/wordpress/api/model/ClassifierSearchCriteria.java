@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 public abstract class ClassifierSearchCriteria extends SearchCriteria {
@@ -25,9 +26,7 @@ public abstract class ClassifierSearchCriteria extends SearchCriteria {
     private String slug;
     private Context context;
 
-    public ClassifierSearchCriteria() {
-
-    }
+    public ClassifierSearchCriteria() {}
 
     public boolean isHideEmpty() {
         return hideEmpty;
@@ -60,5 +59,4 @@ public abstract class ClassifierSearchCriteria extends SearchCriteria {
     public void setContext(Context context) {
         this.context = context;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
@@ -22,13 +25,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CamelSpringPackageTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/spring/config/routeBuilderPackage.xml" });
+        return new ClassPathXmlApplicationContext(
+                new String[] {"org/apache/camel/spring/config/routeBuilderPackage.xml"});
     }
 
     @Test
@@ -40,5 +42,4 @@ public class CamelSpringPackageTest extends SpringTestSupport {
 
         mock.assertIsSatisfied();
     }
-
 }

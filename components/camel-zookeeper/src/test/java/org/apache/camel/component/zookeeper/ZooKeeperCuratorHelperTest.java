@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ZooKeeperCuratorHelperTest {
 
@@ -38,13 +39,15 @@ public class ZooKeeperCuratorHelperTest {
         CuratorFramework curatorFramework = ZooKeeperCuratorHelper.createCurator(configuration);
 
         assertNotNull(curatorFramework);
-        ExponentialBackoffRetry retryPolicy = (ExponentialBackoffRetry) curatorFramework.getZookeeperClient().getRetryPolicy();
+        ExponentialBackoffRetry retryPolicy =
+                (ExponentialBackoffRetry) curatorFramework.getZookeeperClient().getRetryPolicy();
 
-        assertEquals(configuration.getReconnectBaseSleepTime(), retryPolicy.getBaseSleepTimeMs(),
+        assertEquals(
+                configuration.getReconnectBaseSleepTime(),
+                retryPolicy.getBaseSleepTimeMs(),
                 "retryPolicy.reconnectBaseSleepTime");
         assertEquals(configuration.getReconnectMaxRetries(), retryPolicy.getN(), "retryPolicy.reconnectMaxRetries");
         // retryPolicy.maxSleepMs not visible here
 
     }
-
 }

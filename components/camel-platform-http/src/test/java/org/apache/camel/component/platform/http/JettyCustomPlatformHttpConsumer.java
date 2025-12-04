@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import java.io.BufferedReader;
@@ -63,9 +64,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
         final String path = endpoint.getPath();
 
         JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
-                getEndpoint().getCamelContext(),
-                JettyServerTest.JETTY_SERVER_NAME,
-                JettyServerTest.class);
+                getEndpoint().getCamelContext(), JettyServerTest.JETTY_SERVER_NAME, JettyServerTest.class);
 
         ContextHandler contextHandler = createHandler(endpoint, path);
         // add handler after starting server.
@@ -100,7 +99,9 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
                     if (getEndpoint().isHttpProxy()) {
                         exchange.getMessage().removeHeader("Proxy-Connection");
                     }
-                    exchange.getMessage().setHeader(Exchange.HTTP_SCHEME, request.getHttpURI().getScheme());
+                    exchange.getMessage()
+                            .setHeader(
+                                    Exchange.HTTP_SCHEME, request.getHttpURI().getScheme());
                     exchange.getMessage().setHeader(Exchange.HTTP_HOST, Request.getServerName(request));
                     exchange.getMessage().setHeader(Exchange.HTTP_PORT, Request.getServerPort(request));
                     exchange.getMessage().setHeader(Exchange.HTTP_PATH, Request.getPathInContext(request));
@@ -117,14 +118,16 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
                         exchange.getMessage().setBody(body);
                     }
 
-                    copyMessageHeadersToResponse(response, exchange.getMessage(), getEndpoint().getHeaderFilterStrategy(),
-                            exchange);
-                    response.write(true,
-                            ByteBuffer.wrap(exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8)),
+                    copyMessageHeadersToResponse(
+                            response, exchange.getMessage(), getEndpoint().getHeaderFilterStrategy(), exchange);
+                    response.write(
+                            true,
+                            ByteBuffer.wrap(
+                                    exchange.getMessage().getBody(String.class).getBytes(StandardCharsets.UTF_8)),
                             callback);
                 } catch (Exception e) {
-                    getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg,
-                            e);
+                    getExceptionHandler()
+                            .handleException("Failed handling platform-http endpoint " + endpoint.getPath(), exchg, e);
 
                     callback.failed(e);
                     return false;
@@ -142,10 +145,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
     }
 
     private void copyMessageHeadersToResponse(
-            Response response,
-            Message message,
-            HeaderFilterStrategy headerFilterStrategy,
-            Exchange exchange) {
+            Response response, Message message, HeaderFilterStrategy headerFilterStrategy, Exchange exchange) {
         final TypeConverter tc = exchange.getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             final String key = entry.getKey();
@@ -157,10 +157,14 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
                 continue;
             }
 
-            HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key,
+            HttpUtil.applyHeader(
+                    headerFilterStrategy,
+                    exchange,
+                    it,
+                    tc,
+                    key,
                     (values, firstValue) -> applyHeader(response, key, values, firstValue));
         }
-
     }
 
     private void applyHeader(Response response, String key, List<String> values, String firstValue) {
@@ -184,7 +188,9 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
         for (HttpField header : request.getHeaders()) {
             String headerName = header.getName();
             String headerValue = header.getValue();
-            if (getEndpoint().getHeaderFilterStrategy().applyFilterToExternalHeaders(headerName, headerValue, exchange)) {
+            if (getEndpoint()
+                    .getHeaderFilterStrategy()
+                    .applyFilterToExternalHeaders(headerName, headerValue, exchange)) {
                 continue;
             }
             message.setHeader(header.getName(), header.getValue());
@@ -211,5 +217,4 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
             builder.add(line);
         }
     }
-
 }

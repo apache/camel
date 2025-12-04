@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400ConnectionPool;
@@ -30,8 +31,7 @@ public abstract class Jt400TestSupport extends CamelTestSupport {
     @BindToRegistry("mockPool")
     private AS400ConnectionPool connectionPool;
 
-    protected Jt400TestSupport() {
-    }
+    protected Jt400TestSupport() {}
 
     @Override
     @BeforeEach
@@ -54,5 +54,4 @@ public abstract class Jt400TestSupport extends CamelTestSupport {
     public AS400ConnectionPool getConnectionPool() {
         return connectionPool;
     }
-
 }

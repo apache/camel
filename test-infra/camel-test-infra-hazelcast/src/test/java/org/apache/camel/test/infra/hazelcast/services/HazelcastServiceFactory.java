@@ -14,26 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hazelcast.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class HazelcastServiceFactory {
 
-    private HazelcastServiceFactory() {
-
-    }
+    private HazelcastServiceFactory() {}
 
     public static SimpleTestServiceBuilder<HazelcastService> builder() {
         return new SimpleTestServiceBuilder<>("hazelcast");
     }
 
     public static HazelcastService createService() {
-        return builder()
-                .addLocalMapping(HazelcastEmbeddedService::new)
-                .build();
+        return builder().addLocalMapping(HazelcastEmbeddedService::new).build();
     }
 
-    public static class HazelcastEmbeddedService extends HazelcastEmbeddedInfraService implements HazelcastService {
-    }
+    public static class HazelcastEmbeddedService extends HazelcastEmbeddedInfraService implements HazelcastService {}
 }

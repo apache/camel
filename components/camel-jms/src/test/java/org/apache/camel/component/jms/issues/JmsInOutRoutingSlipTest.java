@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +36,7 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -48,7 +50,10 @@ public class JmsInOutRoutingSlipTest extends AbstractJMSTest {
 
     @RepeatedTest(5)
     public void testJmsInOutRoutingSlip() throws Exception {
-        template.sendBodyAndHeader("activemq:queue:JmsInOutRoutingSlipTest.start", "World", "slip",
+        template.sendBodyAndHeader(
+                "activemq:queue:JmsInOutRoutingSlipTest.start",
+                "World",
+                "slip",
                 "activemq:queue:JmsInOutRoutingSlipTest.foo,activemq:queue:JmsInOutRoutingSlipTest.result");
 
         MockEndpoint.assertIsSatisfied(context);

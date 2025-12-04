@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
 
 import java.nio.file.Path;
@@ -39,7 +40,8 @@ public class SpringXMLTokenSplitTest extends CamelSpringTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -59,5 +61,4 @@ public class SpringXMLTokenSplitTest extends CamelSpringTestSupport {
         sb.append("</orders>");
         return sb.toString();
     }
-
 }

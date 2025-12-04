@@ -67,5 +67,4 @@ public class MQ2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

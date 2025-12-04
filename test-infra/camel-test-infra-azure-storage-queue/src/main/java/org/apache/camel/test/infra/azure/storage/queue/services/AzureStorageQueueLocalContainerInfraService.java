@@ -24,16 +24,19 @@ import org.apache.camel.test.infra.azure.common.services.AzureInfraService;
 import org.apache.camel.test.infra.azure.common.services.AzureServices;
 import org.apache.camel.test.infra.azure.common.services.AzureStorageInfraService;
 
-@InfraService(service = AzureInfraService.class,
-              description = "Local Azure services with Azurite",
-              serviceAlias = "azure", serviceImplementationAlias = "storage-queue")
+@InfraService(
+        service = AzureInfraService.class,
+        description = "Local Azure services with Azurite",
+        serviceAlias = "azure",
+        serviceImplementationAlias = "storage-queue")
 public class AzureStorageQueueLocalContainerInfraService extends AzureStorageInfraService {
 
     @Override
     public void registerProperties() {
         super.registerProperties();
 
-        System.setProperty(AzureConfigs.PORT, String.valueOf(getContainer().getMappedPort(AzureServices.QUEUE_SERVICE)));
+        System.setProperty(
+                AzureConfigs.PORT, String.valueOf(getContainer().getMappedPort(AzureServices.QUEUE_SERVICE)));
     }
 
     @Override

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -33,10 +38,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Class to test a mix match between all those different concepts : memory / tool / RAG / guardrails
  */
@@ -45,7 +46,8 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
     private static final int MEMORY_ID_SESSION = 42;
 
-    private static final String USER_DATABASE = """
+    private static final String USER_DATABASE =
+            """
             {"id": "123", "name": "John Smith", "membership": "Gold", "rentals": 15, "preferredVehicle": "SUV"}
             """;
 
@@ -87,41 +89,30 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
         mockEndpoint.expectedMessageCount(2);
 
         AiAgentBody<?> firstRequest = new AiAgentBody<>(
-                "Hi! Can you look up user 123 and tell me about our rental policies?",
-                null,
-                MEMORY_ID_SESSION);
+                "Hi! Can you look up user 123 and tell me about our rental policies?", null, MEMORY_ID_SESSION);
 
-        String firstResponse = template.requestBody(
-                "direct:complete-agent",
-                firstRequest,
-                String.class);
+        String firstResponse = template.requestBody("direct:complete-agent", firstRequest, String.class);
 
         assertNotNull(firstResponse, "First response should not be null");
-        assertTrue(firstResponse.contains("John Smith") || firstResponse.contains("Gold"),
+        assertTrue(
+                firstResponse.contains("John Smith") || firstResponse.contains("Gold"),
                 "Response should contain user information from tools but was: " + firstResponse);
-        assertTrue(firstResponse.contains("21") || firstResponse.contains("age") || firstResponse.contains("rental"),
+        assertTrue(
+                firstResponse.contains("21") || firstResponse.contains("age") || firstResponse.contains("rental"),
                 "Response should contain rental policy information from RAG");
 
         // Second interaction: Follow-up question
-        AiAgentBody<?> secondRequest = new AiAgentBody<>(
-                "What's his preferred vehicle type?",
-                null,
-                MEMORY_ID_SESSION);
+        AiAgentBody<?> secondRequest = new AiAgentBody<>("What's his preferred vehicle type?", null, MEMORY_ID_SESSION);
 
-        String secondResponse = template.requestBody(
-                "direct:complete-agent",
-                secondRequest,
-                String.class);
+        String secondResponse = template.requestBody("direct:complete-agent", secondRequest, String.class);
 
         assertNotNull(secondResponse, "Second response should not be null");
-        assertTrue(secondResponse.contains("SUV"),
-                "Response should remember user context and mention SUV preference");
+        assertTrue(secondResponse.contains("SUV"), "Response should remember user context and mention SUV preference");
 
         mockEndpoint.assertIsSatisfied();
 
         // Verify guardrails were called
-        assertTrue(TestSuccessInputGuardrail.wasValidated(),
-                "Input guardrail should have been called");
+        assertTrue(TestSuccessInputGuardrail.wasValidated(), "Input guardrail should have been called");
 
         // Verify memory persistence
         assertTrue(store.getMemoryCount() > 0, "Memory should be persisted");
@@ -146,21 +137,18 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                 null,
                 MEMORY_ID_SESSION);
 
-        String response = template.requestBody(
-                "direct:complete-agent-json",
-                request,
-                String.class);
+        String response = template.requestBody("direct:complete-agent-json", request, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
 
         // Verify JSON output guardrail
-        assertTrue(TestJsonOutputGuardrail.wasValidated(),
-                "JSON output guardrail should have been called");
+        assertTrue(TestJsonOutputGuardrail.wasValidated(), "JSON output guardrail should have been called");
 
         // Verify JSON structure
         assertTrue(response.trim().startsWith("{"), "Response should be JSON");
-        assertTrue(response.contains("123") && response.contains("John Smith"),
+        assertTrue(
+                response.contains("123") && response.contains("John Smith"),
                 "Response should contain user data from tools");
     }
 
@@ -169,19 +157,15 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        AiAgentBody<?> request = new AiAgentBody<>(
-                "What are your business hours on weekends?",
-                null,
-                MEMORY_ID_SESSION);
+        AiAgentBody<?> request =
+                new AiAgentBody<>("What are your business hours on weekends?", null, MEMORY_ID_SESSION);
 
-        String response = template.requestBody(
-                "direct:rag-only-agent",
-                request,
-                String.class);
+        String response = template.requestBody("direct:rag-only-agent", request, String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains("Saturday") || response.contains("9:00") || response.contains("Sunday"),
+        assertTrue(
+                response.contains("Saturday") || response.contains("9:00") || response.contains("Sunday"),
                 "Response should contain weekend hours from RAG knowledge base");
     }
 
@@ -192,7 +176,8 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                 .withChatModel(chatModel)
                 .withChatMemoryProvider(chatMemoryProvider)
                 .withRetrievalAugmentor(retrievalAugmentor)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
                 .withOutputGuardrailClasses(List.of());
         Agent completeAgent = new AgentWithMemory(completeConfig);
 
@@ -201,8 +186,10 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                 .withChatModel(chatModel)
                 .withChatMemoryProvider(chatMemoryProvider)
                 .withRetrievalAugmentor(retrievalAugmentor)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
-                .withOutputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withOutputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestJsonOutputGuardrail");
         Agent completeJsonAgent = new AgentWithMemory(completeJsonConfig);
 
         // Create RAG-only agent (no tools, just RAG + Memory + Input Guardrails)
@@ -210,7 +197,8 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                 .withChatModel(chatModel)
                 .withChatMemoryProvider(chatMemoryProvider)
                 .withRetrievalAugmentor(retrievalAugmentor)
-                .withInputGuardrailClassesList("org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
+                .withInputGuardrailClassesList(
+                        "org.apache.camel.component.langchain4j.agent.pojos.TestSuccessInputGuardrail")
                 .withOutputGuardrailClasses(List.of());
         Agent ragOnlyAgent = new AgentWithMemory(ragOnlyConfig);
 
@@ -241,9 +229,9 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
                         .setBody(constant(USER_DATABASE));
 
                 from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
-                        .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
+                        .setBody(constant(
+                                "{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };
     }
-
 }

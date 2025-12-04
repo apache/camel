@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.eventnotifier;
+
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_SENT_TIMER;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ENDPOINT_NAME_ATTRIBUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Map;
 
@@ -34,12 +41,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
-
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_SENT_TIMER;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ENDPOINT_NAME_ATTRIBUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * Test OpenTelemetryExchangeEventNotifier with dynamic endpoint URIs.
@@ -78,7 +79,8 @@ public class OpenTelemetryExchangeEventNotifierDynamicTest extends AbstractOpenT
         int nameCount = 0;
         for (PointData pd : getAllPointDataForRouteId(DEFAULT_CAMEL_EXCHANGE_SENT_TIMER, "test")) {
             String name = pd.getAttributes().get(stringKey(ENDPOINT_NAME_ATTRIBUTE));
-            // should have recorded metrics for each dynamic endpoint name, e.g. mc://component?clear=val-0&password=xxxxxx
+            // should have recorded metrics for each dynamic endpoint name, e.g.
+            // mc://component?clear=val-0&password=xxxxxx
             if (name != null && name.startsWith("mc://component")) {
                 nameCount++;
                 assertInstanceOf(HistogramPointData.class, pd);

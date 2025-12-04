@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus.integration.operations;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -34,12 +38,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
-                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
+@EnabledIfSystemProperty(
+        named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME,
+        matches = ".*",
+        disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
+                + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
     private static ServiceBusSenderClient client;
@@ -49,14 +52,26 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
     @BeforeAll
     static void prepare() {
-        client = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
-                .sender().topicName(TOPIC_NAME).buildClient();
-        sessionClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
-                .sender().topicName(TOPIC_WITH_SESSIONS_NAME).buildClient();
-        batchClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
-                .sender().queueName(QUEUE_NAME).buildClient();
-        batchSessionClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
-                .sender().queueName(QUEUE_WITH_SESSIONS_NAME).buildClient();
+        client = new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .sender()
+                .topicName(TOPIC_NAME)
+                .buildClient();
+        sessionClient = new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .sender()
+                .topicName(TOPIC_WITH_SESSIONS_NAME)
+                .buildClient();
+        batchClient = new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .sender()
+                .queueName(QUEUE_NAME)
+                .buildClient();
+        batchSessionClient = new ServiceBusClientBuilder()
+                .connectionString(CONNECTION_STRING)
+                .sender()
+                .queueName(QUEUE_WITH_SESSIONS_NAME)
+                .buildClient();
     }
 
     @AfterAll
@@ -77,18 +92,20 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
         try (ServiceBusProcessorClient processorClient = createTopicProcessorClient()) {
             processorClient.start();
             operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null, null);
-            //test bytes
+            // test bytes
             byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
             operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null, null);
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
             final boolean exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test data"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test data"));
             assertTrue(exists, "test message body");
 
             final boolean exists2 = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
             assertTrue(exists2, "test byte body");
         }
 
@@ -106,18 +123,20 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
         try (ServiceBusProcessorClient processorClient = createTopicSessionProcessorClient()) {
             processorClient.start();
             operations.sendMessages("test data", null, Map.of("customKey", "customValue"), null, "session-1");
-            //test bytes
+            // test bytes
             byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
             operations.sendMessages(testByteBody, null, Map.of("customKey", "customValue"), null, "session-1");
 
             assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS));
 
             final boolean exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test data"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test data"));
             assertTrue(exists, "test message body");
 
             final boolean exists2 = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
             assertTrue(exists2, "test byte body");
         }
 
@@ -141,7 +160,7 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             inputBatch.add("test batch 3");
 
             operations.sendMessages(inputBatch, null, null, null, null);
-            //test bytes
+            // test bytes
             final List<byte[]> inputBatch2 = new LinkedList<>();
             byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
             byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
@@ -152,20 +171,25 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
 
             final boolean batch1Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 1"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test batch 1"));
             final boolean batch2Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 2"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test batch 2"));
             final boolean batch3Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 3"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test batch 3"));
 
             assertTrue(batch1Exists, "test message body 1");
             assertTrue(batch2Exists, "test message body 2");
             assertTrue(batch3Exists, "test message body 3");
 
             final boolean byteBody1Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
             final boolean byteBody2Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
 
             assertTrue(byteBody1Exists, "test byte body 1");
             assertTrue(byteBody2Exists, "test byte body 2");
@@ -186,7 +210,7 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             inputBatch.add("test batch 3");
 
             operations.sendMessages(inputBatch, null, null, null, "session-1");
-            //test bytes
+            // test bytes
             final List<byte[]> inputBatch2 = new LinkedList<>();
             byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
             byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
@@ -197,20 +221,25 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
 
             final boolean batch1Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 1"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test batch 1"));
             final boolean batch2Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 2"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test batch 2"));
             final boolean batch3Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("test batch 3"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("test batch 3"));
 
             assertTrue(batch1Exists, "test message body 1");
             assertTrue(batch2Exists, "test message body 2");
             assertTrue(batch3Exists, "test message body 3");
 
             final boolean byteBody1Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
             final boolean byteBody2Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
 
             assertTrue(byteBody1Exists, "test byte body 1");
             assertTrue(byteBody2Exists, "test byte body 2");
@@ -226,16 +255,18 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             processorClient.start();
 
             operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null, null);
-            //test bytes
+            // test bytes
             byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
             operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null, null);
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
             final boolean exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("testScheduleMessage"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testScheduleMessage"));
             final boolean exists2 = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
 
             assertTrue(exists, "test message body");
             assertTrue(exists2, "test byte body");
@@ -255,16 +286,18 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             processorClient.start();
 
             operations.scheduleMessages("testScheduleMessage", OffsetDateTime.now(), null, null, null, "session-1");
-            //test bytes
+            // test bytes
             byte[] testByteBody = "test data".getBytes(StandardCharsets.UTF_8);
             operations.scheduleMessages(testByteBody, OffsetDateTime.now(), null, null, null, "session-1");
 
             assertTrue(messageLatch.await(3000, TimeUnit.MILLISECONDS));
 
             final boolean exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> messageContext.getMessage().getBody().toString().equals("testScheduleMessage"));
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testScheduleMessage"));
             final boolean exists2 = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), testByteBody));
 
             assertTrue(exists, "test message body");
             assertTrue(exists2, "test byte body");
@@ -288,7 +321,7 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             inputBatch.add("testSchedulingBatchMessages 2");
             inputBatch.add("testSchedulingBatchMessages 3");
             operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null, null);
-            //test bytes
+            // test bytes
             final List<byte[]> inputBatch2 = new LinkedList<>();
             byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
             byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
@@ -298,21 +331,26 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
             assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS));
 
-            final boolean batch1Exists = receivedMessageContexts.stream().anyMatch(
-                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 1"));
-            final boolean batch2Exists = receivedMessageContexts.stream().anyMatch(
-                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 2"));
-            final boolean batch3Exists = receivedMessageContexts.stream().anyMatch(
-                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 3"));
+            final boolean batch1Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 1"));
+            final boolean batch2Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 2"));
+            final boolean batch3Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 3"));
 
             assertTrue(batch1Exists, "test message body 1");
             assertTrue(batch2Exists, "test message body 2");
             assertTrue(batch3Exists, "test message body 3");
 
             final boolean byteBody1Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
             final boolean byteBody2Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
 
             assertTrue(byteBody1Exists, "test byte body 1");
             assertTrue(byteBody2Exists, "test byte body 2");
@@ -332,7 +370,7 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
             inputBatch.add("testSchedulingBatchMessages 2");
             inputBatch.add("testSchedulingBatchMessages 3");
             operations.scheduleMessages(inputBatch, OffsetDateTime.now(), null, null, null, "session-2");
-            //test bytes
+            // test bytes
             final List<byte[]> inputBatch2 = new LinkedList<>();
             byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
             byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
@@ -342,21 +380,26 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
             assertTrue(messageLatch.await(8000, TimeUnit.MILLISECONDS));
 
-            final boolean batch1Exists = receivedMessageContexts.stream().anyMatch(
-                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 1"));
-            final boolean batch2Exists = receivedMessageContexts.stream().anyMatch(
-                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 2"));
-            final boolean batch3Exists = receivedMessageContexts.stream().anyMatch(
-                    messageContext -> messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 3"));
+            final boolean batch1Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 1"));
+            final boolean batch2Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 2"));
+            final boolean batch3Exists = receivedMessageContexts.stream()
+                    .anyMatch(messageContext ->
+                            messageContext.getMessage().getBody().toString().equals("testSchedulingBatchMessages 3"));
 
             assertTrue(batch1Exists, "test message body 1");
             assertTrue(batch2Exists, "test message body 2");
             assertTrue(batch3Exists, "test message body 3");
 
             final boolean byteBody1Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody1));
             final boolean byteBody2Exists = receivedMessageContexts.stream()
-                    .anyMatch(messageContext -> Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
+                    .anyMatch(messageContext ->
+                            Arrays.equals(messageContext.getMessage().getBody().toBytes(), byteBody2));
 
             assertTrue(byteBody1Exists, "test byte body 1");
             assertTrue(byteBody2Exists, "test byte body 2");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
@@ -60,5 +61,4 @@ public class DownloadEndpointStrategy implements EndpointStrategy {
         name = FileUtil.stripLeadingSeparator(name);
         return name;
     }
-
 }

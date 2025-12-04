@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.influxdb;
 
 import java.util.concurrent.TimeUnit;
@@ -41,10 +42,8 @@ public class InfluxDbProducerBatchTest extends AbstractInfluxDbTest {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
 
-                //test route
-                from("direct:test")
-                        .to("influxdb:influxDbBean?batch=true")
-                        .to("mock:test");
+                // test route
+                from("direct:test").to("influxdb:influxDbBean?batch=true").to("mock:test");
             }
         };
     }
@@ -66,7 +65,6 @@ public class InfluxDbProducerBatchTest extends AbstractInfluxDbTest {
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
-
     }
 
     private BatchPoints createBatchPoints() {
@@ -86,5 +84,4 @@ public class InfluxDbProducerBatchTest extends AbstractInfluxDbTest {
         batchPoints.point(point2);
         return batchPoints;
     }
-
 }

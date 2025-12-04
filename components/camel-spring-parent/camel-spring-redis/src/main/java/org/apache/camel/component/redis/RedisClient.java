@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import java.util.Collection;
@@ -50,39 +51,39 @@ public class RedisClient {
     }
 
     public Collection<Object> hmget(String key, Collection<String> fields) {
-        return redisTemplate.<String, Object> opsForHash().multiGet(key, fields);
+        return redisTemplate.<String, Object>opsForHash().multiGet(key, fields);
     }
 
     public Set<String> hkeys(String key) {
-        return redisTemplate.<String, Object> opsForHash().keys(key);
+        return redisTemplate.<String, Object>opsForHash().keys(key);
     }
 
     public Long hlen(String key) {
-        return redisTemplate.<String, Object> opsForHash().size(key);
+        return redisTemplate.<String, Object>opsForHash().size(key);
     }
 
     public Long hincrBy(String key, String field, Long value) {
-        return redisTemplate.<String, Object> opsForHash().increment(key, field, value);
+        return redisTemplate.<String, Object>opsForHash().increment(key, field, value);
     }
 
     public Map<String, Object> hgetAll(String key) {
-        return redisTemplate.<String, Object> opsForHash().entries(key);
+        return redisTemplate.<String, Object>opsForHash().entries(key);
     }
 
     public Boolean hexists(String key, String field) {
-        return redisTemplate.<String, Object> opsForHash().hasKey(key, field);
+        return redisTemplate.<String, Object>opsForHash().hasKey(key, field);
     }
 
     public Object hget(String key, String field) {
-        return redisTemplate.<String, Object> opsForHash().get(key, field);
+        return redisTemplate.<String, Object>opsForHash().get(key, field);
     }
 
     public void hdel(String key, String field) {
-        redisTemplate.<String, Object> opsForHash().delete(key, field);
+        redisTemplate.<String, Object>opsForHash().delete(key, field);
     }
 
     public void hset(String key, String field, Object value) {
-        redisTemplate.<String, Object> opsForHash().put(key, field, value);
+        redisTemplate.<String, Object>opsForHash().put(key, field, value);
     }
 
     public void quit() {
@@ -97,11 +98,11 @@ public class RedisClient {
     }
 
     public Collection<Object> hvals(String key) {
-        return redisTemplate.<String, Object> opsForHash().values(key);
+        return redisTemplate.<String, Object>opsForHash().values(key);
     }
 
     public Boolean hsetnx(String key, String field, Object value) {
-        return redisTemplate.<String, Object> opsForHash().putIfAbsent(key, field, value);
+        return redisTemplate.<String, Object>opsForHash().putIfAbsent(key, field, value);
     }
 
     public Long decr(String key) {
@@ -484,11 +485,14 @@ public class RedisClient {
         return redisTemplate.opsForGeo().position(key, member);
     }
 
-    public GeoResults<GeoLocation<Object>> georadius(String key, double latitude, double longitude, double radius, Long limit) {
+    public GeoResults<GeoLocation<Object>> georadius(
+            String key, double latitude, double longitude, double radius, Long limit) {
         Point point = new Point(latitude, longitude);
         Circle within = new Circle(point, radius);
-        GeoRadiusCommandArgs args
-                = GeoRadiusCommandArgs.newGeoRadiusArgs().includeCoordinates().includeDistance().sortAscending();
+        GeoRadiusCommandArgs args = GeoRadiusCommandArgs.newGeoRadiusArgs()
+                .includeCoordinates()
+                .includeDistance()
+                .sortAscending();
         if (limit != null) {
             args.limit(limit);
         }
@@ -497,8 +501,10 @@ public class RedisClient {
 
     public GeoResults<GeoLocation<Object>> georadius(String key, Object member, double radius, Long limit) {
         Distance distance = new Distance(radius);
-        GeoRadiusCommandArgs args
-                = GeoRadiusCommandArgs.newGeoRadiusArgs().includeCoordinates().includeDistance().sortAscending();
+        GeoRadiusCommandArgs args = GeoRadiusCommandArgs.newGeoRadiusArgs()
+                .includeCoordinates()
+                .includeDistance()
+                .sortAscending();
         if (limit != null) {
             args.limit(limit);
         }

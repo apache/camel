@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -21,16 +22,21 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
+public interface ManagedWireTapMBean
+        extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
-    @ManagedAttribute(description = "The uri of the endpoint to wiretap to. The uri can be dynamic computed using the expressions.",
-                      mask = true)
+    @ManagedAttribute(
+            description =
+                    "The uri of the endpoint to wiretap to. The uri can be dynamic computed using the expressions.",
+            mask = true)
     String getUri();
 
-    @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
+    @ManagedAttribute(
+            description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 
-    @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
+    @ManagedAttribute(
+            description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoint();
 
     @ManagedAttribute(description = "Uses a copy of the original exchange")
@@ -45,5 +51,4 @@ public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExten
     @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
-
 }

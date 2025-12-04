@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.util.Objects;
@@ -40,9 +41,7 @@ public class JsonPathExpressionPojoTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .transform().jsonpath(".book", Book.class)
-                        .to("mock:result");
+                from("direct:start").transform().jsonpath(".book", Book.class).to("mock:result");
             }
         };
     }
@@ -60,8 +59,7 @@ public class JsonPathExpressionPojoTest extends CamelTestSupport {
         String author;
         String title;
 
-        public Book() {
-        }
+        public Book() {}
 
         public Book(String author, String title) {
             this.author = author;
@@ -101,5 +99,4 @@ public class JsonPathExpressionPojoTest extends CamelTestSupport {
             return Objects.hash(getAuthor(), getTitle());
         }
     }
-
 }

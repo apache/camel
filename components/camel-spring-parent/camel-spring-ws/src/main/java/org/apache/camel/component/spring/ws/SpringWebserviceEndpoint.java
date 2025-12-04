@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
 
 import org.apache.camel.Category;
@@ -30,12 +31,17 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Access external web services as a client or expose your own web services.
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
-             syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
-             category = { Category.WEBSERVICE }, headersClass = SpringWebserviceConstants.class)
-@Metadata(annotations = {
-        "protocol=http",
-})
+@UriEndpoint(
+        firstVersion = "2.6.0",
+        scheme = "spring-ws",
+        title = "Spring WebService",
+        syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
+        category = {Category.WEBSERVICE},
+        headersClass = SpringWebserviceConstants.class)
+@Metadata(
+        annotations = {
+            "protocol=http",
+        })
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -65,5 +71,4 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
     public SpringWebserviceConfiguration getConfiguration() {
         return configuration;
     }
-
 }

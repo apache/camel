@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.ArrayList;
@@ -42,54 +43,72 @@ import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To use a different Camel version than the default version")
+    @CommandLine.Option(
+            names = {"--camel-version"},
+            description = "To use a different Camel version than the default version")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--runtime"},
+            completionCandidates = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @CommandLine.Option(
+            names = {"--download"},
+            defaultValue = "true",
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
+    @CommandLine.Option(
+            names = {"--quarkus-version"},
+            description = "Quarkus Platform version",
+            defaultValue = RuntimeType.QUARKUS_VERSION)
     String quarkusVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @CommandLine.Option(
+            names = {"--quarkus-group-id"},
+            description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description =
+                    "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by name, support-level, or description", defaultValue = "name")
+    @CommandLine.Option(
+            names = {"--sort"},
+            description = "Sort by name, support-level, or description",
+            defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--display-gav" },
-                        description = "Display Maven GAV instead of name", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--display-gav"},
+            description = "Display Maven GAV instead of name",
+            defaultValue = "false")
     boolean displayGav;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter by name or description")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter by name or description")
     String filterName;
 
-    @CommandLine.Option(names = { "--since-before" },
-                        description = "Filter by version older (inclusive)")
+    @CommandLine.Option(
+            names = {"--since-before"},
+            description = "Filter by version older (inclusive)")
     String sinceBefore;
 
-    @CommandLine.Option(names = { "--since-after" },
-                        description = "Filter by version more recent (inclusive)")
+    @CommandLine.Option(
+            names = {"--since-after"},
+            description = "Filter by version more recent (inclusive)")
     String sinceAfter;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @CommandLine.Option(
+            names = {"--json"},
+            description = "Output in JSON Format")
     boolean jsonOutput;
 
     CamelCatalog catalog;
@@ -125,10 +144,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         if (filterName != null) {
             filterName = filterName.toLowerCase(Locale.ROOT);
             rows = rows.stream()
-                    .filter(
-                            r -> r.name.equalsIgnoreCase(filterName)
-                                    || r.description.toLowerCase(Locale.ROOT).contains(filterName)
-                                    || r.label.toLowerCase(Locale.ROOT).contains(filterName))
+                    .filter(r -> r.name.equalsIgnoreCase(filterName)
+                            || r.description.toLowerCase(Locale.ROOT).contains(filterName)
+                            || r.label.toLowerCase(Locale.ROOT).contains(filterName))
                     .collect(Collectors.toList());
         }
         if (sinceBefore != null) {
@@ -147,25 +165,54 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
         if (!rows.isEmpty()) {
             if (jsonOutput) {
-                printer().println(
-                        Jsoner.serialize(
-                                rows.stream()
-                                        .map(row -> new CatalogBaseDTO(
-                                                row.name, row.title, row.level, row.since, row.nativeSupported, row.description,
-                                                row.label, row.gav, row.deprecated))
-                                        .map(CatalogBaseDTO::toMap)
-                                        .collect(Collectors.toList())));
+                printer()
+                        .println(Jsoner.serialize(rows.stream()
+                                .map(row -> new CatalogBaseDTO(
+                                        row.name,
+                                        row.title,
+                                        row.level,
+                                        row.since,
+                                        row.nativeSupported,
+                                        row.description,
+                                        row.label,
+                                        row.gav,
+                                        row.deprecated))
+                                .map(CatalogBaseDTO::toMap)
+                                .collect(Collectors.toList())));
             } else {
-                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("NAME").visible(!displayGav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
-                                .with(r -> r.name),
-                        new Column().header("ARTIFACT-ID").visible(displayGav).dataAlign(HorizontalAlign.LEFT)
-                                .with(this::shortGav),
-                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
-                        new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
-                                .visible(RuntimeType.quarkus == runtime).with(this::nativeSupported),
-                        new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
-                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
+                printer()
+                        .println(AsciiTable.getTable(
+                                AsciiTable.NO_BORDERS,
+                                rows,
+                                Arrays.asList(
+                                        new Column()
+                                                .header("NAME")
+                                                .visible(!displayGav)
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .maxWidth(nameWidth())
+                                                .with(r -> r.name),
+                                        new Column()
+                                                .header("ARTIFACT-ID")
+                                                .visible(displayGav)
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .with(this::shortGav),
+                                        new Column()
+                                                .header("LEVEL")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .with(r -> r.level),
+                                        new Column()
+                                                .header("NATIVE")
+                                                .dataAlign(HorizontalAlign.CENTER)
+                                                .visible(RuntimeType.quarkus == runtime)
+                                                .with(this::nativeSupported),
+                                        new Column()
+                                                .header("SINCE")
+                                                .dataAlign(HorizontalAlign.RIGHT)
+                                                .with(r -> r.since),
+                                        new Column()
+                                                .header("DESCRIPTION")
+                                                .dataAlign(HorizontalAlign.LEFT)
+                                                .with(this::shortDescription))));
             }
         }
 
@@ -240,5 +287,4 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         String gav;
         boolean deprecated;
     }
-
 }

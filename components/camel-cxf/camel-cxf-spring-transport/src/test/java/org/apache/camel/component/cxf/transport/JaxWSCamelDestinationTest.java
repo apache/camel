@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.xml.ws.Endpoint;
 
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // Test the CamelDestination with whole CXF context
 public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
@@ -45,7 +46,6 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:start").to("direct:endpoint");
-
             }
         };
     }
@@ -60,7 +60,6 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(REQUEST);
             }
-
         });
         assertEquals("text/xml; charset=UTF-8", exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class));
         assertTrue(exchange.getMessage().getBody(String.class).indexOf("something!") > 0);
@@ -77,7 +76,6 @@ public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
                 exchange.getIn().setBody(REQUEST);
                 exchange.getIn().setHeader("Accept-Encoding", "gzip");
             }
-
         });
         assertEquals("gzip", exchange.getMessage().getHeader(Exchange.CONTENT_ENCODING, String.class));
     }

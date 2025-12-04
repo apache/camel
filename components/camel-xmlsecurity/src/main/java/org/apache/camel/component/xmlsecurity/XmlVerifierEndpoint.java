@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity;
+
+import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_VERIFIER;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -29,24 +32,28 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants.SCHEME_VERIFIER;
-
 /**
  * Verify XML payloads using the XML signature specification.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = SCHEME_VERIFIER, title = "XML Security Verify",
-             syntax = "xmlsecurity-verify:name", producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION },
-             remote = false, headersClass = XmlSignatureConstants.class)
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = SCHEME_VERIFIER,
+        title = "XML Security Verify",
+        syntax = "xmlsecurity-verify:name",
+        producerOnly = true,
+        category = {Category.SECURITY, Category.TRANSFORMATION},
+        remote = false,
+        headersClass = XmlSignatureConstants.class)
 public class XmlVerifierEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String name;
+
     @UriParam
     private XmlVerifierConfiguration configuration;
 
-    public XmlVerifierEndpoint(String uri, XmlVerifierComponent component,
-                               XmlVerifierConfiguration configuration) {
+    public XmlVerifierEndpoint(String uri, XmlVerifierComponent component, XmlVerifierConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -99,6 +106,5 @@ public class XmlVerifierEndpoint extends DefaultEndpoint {
             // its a reference lookup
 
         }
-
     }
 }

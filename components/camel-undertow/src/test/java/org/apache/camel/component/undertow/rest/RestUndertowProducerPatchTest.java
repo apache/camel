@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.rest;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -45,13 +46,10 @@ public class RestUndertowProducerPatchTest extends BaseUndertowTest {
                 // configure to use localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
-                from("direct:start")
-                        .to("rest:patch:users/{id}");
+                from("direct:start").to("rest:patch:users/{id}");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .patch("{id}")
-                        .to("mock:input");
+                rest("/users/").patch("{id}").to("mock:input");
             }
         };
     }

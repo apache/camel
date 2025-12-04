@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.nats.services;
 
 import org.testcontainers.containers.BindMode;
@@ -29,7 +30,8 @@ public class NatsLocalContainerTLSAuthService extends NatsLocalContainerService 
         container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
                 .withClasspathResourceMapping("org/apache/camel/test/infra/nats/services", "/nats", BindMode.READ_ONLY)
-                .withCommand("--tls",
+                .withCommand(
+                        "--tls",
                         "--tlscert=/nats/server.pem",
                         "--tlskey=/nats/key.pem",
                         "--tlsverify",

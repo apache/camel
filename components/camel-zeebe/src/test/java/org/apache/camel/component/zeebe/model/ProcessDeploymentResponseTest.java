@@ -17,18 +17,18 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+
 public class ProcessDeploymentResponseTest {
 
-    private static final String MARSHAL_TEST_RESULT_1
-            = "{\"success\":true,\"version\":2,\"bpmn_process_id\":\"testProcess\",\"process_definition_key\":111,\"resource_name\":\"testProcess.bpmn\"}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"success\":false,\"version\":2,\"error_message\":\"Test Error\",\"error_code\":\"TestCode\",\"bpmn_process_id\":\"testProcess\",\"process_definition_key\":111,\"resource_name\":\"testProcess.bpmn\"}";
+    private static final String MARSHAL_TEST_RESULT_1 =
+            "{\"success\":true,\"version\":2,\"bpmn_process_id\":\"testProcess\",\"process_definition_key\":111,\"resource_name\":\"testProcess.bpmn\"}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"success\":false,\"version\":2,\"error_message\":\"Test Error\",\"error_code\":\"TestCode\",\"bpmn_process_id\":\"testProcess\",\"process_definition_key\":111,\"resource_name\":\"testProcess.bpmn\"}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,8 +54,8 @@ public class ProcessDeploymentResponseTest {
 
     @Test
     public void unmarshalTest() {
-        ProcessDeploymentResponse unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessDeploymentResponse.class));
+        ProcessDeploymentResponse unmarshalledMessage1 = assertDoesNotThrow(
+                () -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessDeploymentResponse.class));
 
         ProcessDeploymentResponse message = new ProcessDeploymentResponse();
         message.setBpmnProcessId("testProcess");
@@ -66,8 +66,8 @@ public class ProcessDeploymentResponseTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        ProcessDeploymentResponse unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessDeploymentResponse.class));
+        ProcessDeploymentResponse unmarshalledMessage2 = assertDoesNotThrow(
+                () -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessDeploymentResponse.class));
 
         message.setSuccess(false);
         message.setErrorMessage("Test Error");

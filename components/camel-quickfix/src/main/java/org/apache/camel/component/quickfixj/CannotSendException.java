@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quickfixj;
 
 import org.quickfixj.QFJException;
@@ -29,5 +30,4 @@ public class CannotSendException extends QFJException {
     public CannotSendException(final String message, final Throwable cause) {
         super(message, cause);
     }
-
 }

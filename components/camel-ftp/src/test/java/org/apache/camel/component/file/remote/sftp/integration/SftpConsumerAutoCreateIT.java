@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -26,14 +30,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpConsumerAutoCreateIT extends SftpServerTestSupport {
     protected String getFtpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/foo/bar/baz/xxx?password=admin&knownHostsFile="
-               + service.getKnownHostsFile();
+                + service.getKnownHostsFile();
     }
 
     @AfterEach
@@ -62,8 +65,9 @@ public class SftpConsumerAutoCreateIT extends SftpServerTestSupport {
         SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
         endpoint.start();
 
-        assertThrows(GenericFileOperationFailedException.class, () -> endpoint.getExchanges(),
+        assertThrows(
+                GenericFileOperationFailedException.class,
+                () -> endpoint.getExchanges(),
                 "Should fail with 550 No such directory.");
     }
-
 }

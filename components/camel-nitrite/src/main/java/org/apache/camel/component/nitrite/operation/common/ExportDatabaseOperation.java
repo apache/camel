@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite.operation.common;
 
 import java.io.ByteArrayOutputStream;
@@ -31,8 +32,7 @@ import org.dizitart.no2.tool.Exporter;
 public class ExportDatabaseOperation extends AbstractNitriteOperation implements CommonOperation {
     private ExportOptions options;
 
-    public ExportDatabaseOperation() {
-    }
+    public ExportDatabaseOperation() {}
 
     public ExportDatabaseOperation(ExportOptions options) {
         this.options = options;

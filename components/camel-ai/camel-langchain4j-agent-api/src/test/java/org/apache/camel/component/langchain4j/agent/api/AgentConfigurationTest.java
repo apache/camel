@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.api;
-
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 public class AgentConfigurationTest {
 
@@ -143,7 +144,7 @@ public class AgentConfigurationTest {
 
     @Test
     public void testParseGuardrailClasses_WithValidClassesArray() {
-        String[] classNames = { "java.lang.String", "java.util.List", "java.io.Serializable" };
+        String[] classNames = {"java.lang.String", "java.util.List", "java.io.Serializable"};
 
         List<Class<?>> result = AgentConfiguration.parseGuardrailClasses(classNames);
 
@@ -156,7 +157,7 @@ public class AgentConfigurationTest {
 
     @Test
     public void testParseGuardrailClasses_WithMixedValidAndInvalidClassesArray() {
-        String[] classNames = { "java.lang.String", "com.nonexistent.InvalidClass", "java.util.List" };
+        String[] classNames = {"java.lang.String", "com.nonexistent.InvalidClass", "java.util.List"};
 
         List<Class<?>> result = AgentConfiguration.parseGuardrailClasses(classNames);
 
@@ -188,7 +189,7 @@ public class AgentConfigurationTest {
 
     @Test
     public void testParseGuardrailClasses_WithArrayContainingEmptyStrings() {
-        String[] classNames = { "java.lang.String", "", "java.util.List", "   ", "java.io.Serializable" };
+        String[] classNames = {"java.lang.String", "", "java.util.List", "   ", "java.io.Serializable"};
 
         List<Class<?>> result = AgentConfiguration.parseGuardrailClasses(classNames);
 
@@ -203,10 +204,9 @@ public class AgentConfigurationTest {
 
     @Test
     public void testWithInputGuardrailClassesArray() {
-        String[] classNames = { "java.lang.String", "java.util.List" };
+        String[] classNames = {"java.lang.String", "java.util.List"};
 
-        AgentConfiguration config = new AgentConfiguration()
-                .withInputGuardrailClassesArray(classNames);
+        AgentConfiguration config = new AgentConfiguration().withInputGuardrailClassesArray(classNames);
 
         assertNotNull(config.getInputGuardrailClasses());
         assertEquals(2, config.getInputGuardrailClasses().size());
@@ -216,10 +216,9 @@ public class AgentConfigurationTest {
 
     @Test
     public void testWithOutputGuardrailClassesArray() {
-        String[] classNames = { "java.lang.String", "java.util.List" };
+        String[] classNames = {"java.lang.String", "java.util.List"};
 
-        AgentConfiguration config = new AgentConfiguration()
-                .withOutputGuardrailClassesArray(classNames);
+        AgentConfiguration config = new AgentConfiguration().withOutputGuardrailClassesArray(classNames);
 
         assertNotNull(config.getOutputGuardrailClasses());
         assertEquals(2, config.getOutputGuardrailClasses().size());
@@ -231,8 +230,7 @@ public class AgentConfigurationTest {
     public void testWithInputGuardrailClassesArray_WithNullArray() {
         String[] classNames = null;
 
-        AgentConfiguration config = new AgentConfiguration()
-                .withInputGuardrailClassesArray(classNames);
+        AgentConfiguration config = new AgentConfiguration().withInputGuardrailClassesArray(classNames);
 
         assertNotNull(config.getInputGuardrailClasses());
         assertTrue(config.getInputGuardrailClasses().isEmpty());
@@ -240,10 +238,9 @@ public class AgentConfigurationTest {
 
     @Test
     public void testWithOutputGuardrailClassesArray_WithInvalidClasses() {
-        String[] classNames = { "com.nonexistent.InvalidClass1", "com.nonexistent.InvalidClass2" };
+        String[] classNames = {"com.nonexistent.InvalidClass1", "com.nonexistent.InvalidClass2"};
 
-        AgentConfiguration config = new AgentConfiguration()
-                .withOutputGuardrailClassesArray(classNames);
+        AgentConfiguration config = new AgentConfiguration().withOutputGuardrailClassesArray(classNames);
 
         assertNotNull(config.getOutputGuardrailClasses());
         assertTrue(config.getOutputGuardrailClasses().isEmpty());

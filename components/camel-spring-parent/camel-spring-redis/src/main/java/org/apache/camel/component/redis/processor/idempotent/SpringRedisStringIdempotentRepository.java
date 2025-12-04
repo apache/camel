@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.processor.idempotent;
 
 import java.time.Duration;
@@ -72,7 +73,9 @@ public class SpringRedisStringIdempotentRepository extends SpringRedisIdempotent
             @Override
             public List<byte[]> doInRedis(RedisConnection connection) throws DataAccessException {
                 List<byte[]> binaryKeys = new ArrayList<>();
-                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match("*" + createRedisKey("*")).build());
+                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions()
+                        .match("*" + createRedisKey("*"))
+                        .build());
 
                 while (cursor.hasNext()) {
                     byte[] key = cursor.next();

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
 
@@ -42,12 +43,13 @@ public class MyBatisPollingDelayRouteTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                // run this timer every 2nd second, that will select data from the database and send it to the mock endpoint
-                from("timer://pollTheDatabase?delay=2000").to("mybatis:selectAllAccounts?statementType=SelectList")
+                // run this timer every 2nd second, that will select data from the database and send it to the mock
+                // endpoint
+                from("timer://pollTheDatabase?delay=2000")
+                        .to("mybatis:selectAllAccounts?statementType=SelectList")
                         .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

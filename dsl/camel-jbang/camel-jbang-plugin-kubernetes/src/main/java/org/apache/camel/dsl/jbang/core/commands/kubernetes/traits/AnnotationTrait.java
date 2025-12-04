@@ -32,17 +32,11 @@ public class AnnotationTrait extends BaseTrait {
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
-        context.doWithDeployments(
-                d -> d.editOrNewMetadata()
-                        .addToAnnotations(context.getAnnotations())
-                        .endMetadata());
-        context.doWithServices(
-                s -> s.editOrNewMetadata()
-                        .addToAnnotations(context.getAnnotations())
-                        .endMetadata());
-        context.doWithKnativeServices(
-                s -> s.editOrNewMetadata()
-                        .addToAnnotations(context.getAnnotations())
-                        .endMetadata());
+        context.doWithDeployments(d ->
+                d.editOrNewMetadata().addToAnnotations(context.getAnnotations()).endMetadata());
+        context.doWithServices(s ->
+                s.editOrNewMetadata().addToAnnotations(context.getAnnotations()).endMetadata());
+        context.doWithKnativeServices(s ->
+                s.editOrNewMetadata().addToAnnotations(context.getAnnotations()).endMetadata());
     }
 }

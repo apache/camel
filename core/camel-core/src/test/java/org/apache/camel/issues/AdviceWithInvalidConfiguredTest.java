@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -32,33 +33,40 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
 
     @Test
     public void testNoErrorHandler() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-            AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
-                @Override
-                public void configure() {
-                    errorHandler(defaultErrorHandler());
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+                        @Override
+                        public void configure() {
+                            errorHandler(defaultErrorHandler());
 
-                    interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
-                            .throwException(new IllegalArgumentException("Forced"));
-                }
-            });
-        }, "Should have thrown an exception");
+                            interceptSendToEndpoint("direct:bar")
+                                    .skipSendToOriginalEndpoint()
+                                    .throwException(new IllegalArgumentException("Forced"));
+                        }
+                    });
+                },
+                "Should have thrown an exception");
 
-        assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
+        assertEquals(
+                "You can not advice with error handlers. Remove the error handlers from the route builder.",
                 e.getMessage());
     }
 
     @Test
     public void testNoExtraRoutes() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-            AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:foo").to("mock:foo");
-
-                }
-            });
-        }, "Should have thrown an exception");
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+                        @Override
+                        public void configure() {
+                            from("direct:foo").to("mock:foo");
+                        }
+                    });
+                },
+                "Should have thrown an exception");
 
         assertEquals(
                 "You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.",

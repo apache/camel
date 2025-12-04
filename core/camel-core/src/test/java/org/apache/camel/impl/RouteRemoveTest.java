@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteRemoveTest extends ContextTestSupport {
 
@@ -47,7 +48,8 @@ public class RouteRemoveTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
         assertEquals(1, context.getRoutes().size());
 
         // must be stopped so we cant remove
@@ -55,7 +57,8 @@ public class RouteRemoveTest extends ContextTestSupport {
         assertFalse(removed);
 
         assertEquals(1, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
 
         // remove route then
         context.getRouteController().stopRoute("foo");

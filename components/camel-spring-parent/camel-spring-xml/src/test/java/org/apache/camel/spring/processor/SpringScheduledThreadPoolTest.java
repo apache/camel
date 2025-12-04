@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
@@ -22,25 +27,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringScheduledThreadPoolTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringScheduledThreadPoolTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringScheduledThreadPoolTest.xml");
     }
 
     @Test
     public void testScheduledThreadPool() throws Exception {
-        SizedScheduledExecutorService pool
-                = context.getRegistry().lookupByNameAndType("myPool", SizedScheduledExecutorService.class);
+        SizedScheduledExecutorService pool =
+                context.getRegistry().lookupByNameAndType("myPool", SizedScheduledExecutorService.class);
         assertNotNull(pool);
 
         assertFalse(pool.isShutdown(), "Should be started");
         assertEquals(5, pool.getCorePoolSize());
     }
-
 }

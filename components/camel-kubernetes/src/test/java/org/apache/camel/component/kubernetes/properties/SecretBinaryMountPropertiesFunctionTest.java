@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.properties;
 
 import java.io.File;
@@ -41,7 +42,8 @@ public class SecretBinaryMountPropertiesFunctionTest extends KubernetesTestSuppo
 
             String out = cmf.apply("binary-example/binary.bin");
             Assertions.assertTrue(new File(out).exists());
-            Assertions.assertArrayEquals(getClass().getResourceAsStream("/binary-example/binary.bin").readAllBytes(),
+            Assertions.assertArrayEquals(
+                    getClass().getResourceAsStream("/binary-example/binary.bin").readAllBytes(),
                     Files.readAllBytes(Path.of(out)));
         }
     }

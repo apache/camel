@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Demonstrates how you can use a custom id factory to assign ids to Camel Java routes and then attach your own debugger
@@ -66,8 +67,14 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
                 // a little content based router so we got 2 paths to route at
                 // runtime
-                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").otherwise().log("Hey")
-                        .to("mock:other").end();
+                from("direct:start")
+                        .choice()
+                        .when(body().contains("Hello"))
+                        .to("mock:hello")
+                        .otherwise()
+                        .log("Hey")
+                        .to("mock:other")
+                        .end();
             }
         };
     }
@@ -115,7 +122,8 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             return new DelegateProcessor(target) {
                 @Override
                 protected void processNext(Exchange exchange) throws Exception {
-                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
+                    LOG.debug(
+                            "Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
 
                     // record the path taken at runtime
                     ids += definition.getId();
@@ -125,6 +133,5 @@ public class CustomIdFactoryTest extends ContextTestSupport {
                 }
             };
         }
-
     }
 }

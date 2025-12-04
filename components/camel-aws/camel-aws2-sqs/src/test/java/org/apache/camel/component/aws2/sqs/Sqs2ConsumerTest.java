@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static java.util.Collections.emptyMap;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.Mockito.doReturn;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.ALL;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.MESSAGE_GROUP_ID;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SENT_TIMESTAMP;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SEQUENCE_NUMBER;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,21 +53,14 @@ import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
-import static java.util.Collections.emptyMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.Mockito.doReturn;
-import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.ALL;
-import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.MESSAGE_GROUP_ID;
-import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SENT_TIMESTAMP;
-import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SEQUENCE_NUMBER;
-
 @ExtendWith(MockitoExtension.class)
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 class Sqs2ConsumerTest extends CamelTestSupport {
     private AmazonSQSClientMock sqsClientMock;
     private Sqs2Configuration configuration;
+
     @Mock
     private EventClock<ContextEvents> clock;
 
@@ -223,22 +226,24 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             Thread.sleep(2000L);
             throw new OutOfMemoryError();
         })) {
-            //when
+            // when
             try {
                 tested.poll();
             } catch (Error e) {
             }
-            //simulate some time pass after error
+            // simulate some time pass after error
             Thread.sleep(2000L);
             // then
-            assertThat(sqsClientMock.getChangeMessageVisibilityBatchRequests().size()).isEqualTo(2);
+            assertThat(sqsClientMock.getChangeMessageVisibilityBatchRequests().size())
+                    .isEqualTo(2);
         }
     }
 
     @Test
     void shouldRequest10MessagesWithSingleReceiveRequest() throws Exception {
         // given
-        var expectedMessages = IntStream.range(0, 10).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 10).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(10)) {
@@ -257,7 +262,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     @Test
     void shouldRequest11MessagesWithTwoReceiveRequest() throws Exception {
         // given
-        var expectedMessages = IntStream.range(0, 11).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 11).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(11)) {
@@ -268,9 +274,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isEqualTo(11);
             assertThat(receiveMessageBodies()).isEqualTo(expectedMessages);
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(1));
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(expectedReceiveRequest(10), expectedReceiveRequest(1));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -278,7 +283,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     @Test
     void shouldRequest20MessagesWithTwoReceiveRequest() throws Exception {
         // given
-        var expectedMessages = IntStream.range(0, 20).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 20).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(20)) {
@@ -289,9 +295,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isEqualTo(20);
             assertThat(receiveMessageBodies()).isEqualTo(expectedMessages);
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10));
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(expectedReceiveRequest(10), expectedReceiveRequest(10));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -299,7 +304,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     @Test
     void shouldRequest33MessagesWithFourReceiveRequest() throws Exception {
         // given
-        var expectedMessages = IntStream.range(0, 33).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 33).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(33)) {
@@ -310,11 +316,12 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isEqualTo(33);
             assertThat(receiveMessageBodies()).isEqualTo(expectedMessages);
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(3));
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(3));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -322,7 +329,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     @Test
     void shouldRequest3001MessagesWithThreehoundredAndOneReceiveRequest() throws Exception {
         // given
-        var expectedMessages = IntStream.range(0, 3001).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 3001).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(3001)) {
@@ -343,7 +351,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     void shouldRequest10MessagesWithSingleReceiveRequestAndIgnoredSequenceNumberSorting() throws Exception {
         // given
         generateSequenceNumber = false;
-        var expectedMessages = IntStream.range(0, 10).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 10).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(10)) {
@@ -363,7 +372,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     void shouldRequest18MessagesWithTwoReceiveRequestWithoutSorting() throws Exception {
         // given
         generateSequenceNumber = false;
-        var expectedMessages = IntStream.range(0, 18).mapToObj(Integer::toString).toList();
+        var expectedMessages =
+                IntStream.range(0, 18).mapToObj(Integer::toString).toList();
         expectedMessages.stream().map(this::message).forEach(sqsClientMock::addMessage);
 
         try (var tested = createConsumer(18)) {
@@ -374,9 +384,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isEqualTo(18);
             assertThat(receiveMessageBodies()).containsExactlyInAnyOrderElementsOf(expectedMessages);
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(8));
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(expectedReceiveRequest(10), expectedReceiveRequest(8));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -400,15 +409,18 @@ class Sqs2ConsumerTest extends CamelTestSupport {
 
             // then
             assertThat(polledMessagesCount).isEqualTo(66);
-            assertThat(receiveMessageBodies()).containsExactly(expectedMessages.stream().map(Message::body).toArray());
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(6));
+            assertThat(receiveMessageBodies())
+                    .containsExactly(
+                            expectedMessages.stream().map(Message::body).toArray());
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(10),
+                            expectedReceiveRequest(6));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -449,13 +461,15 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             assertThat(polledMessagesCount).isZero();
             assertThat(receivedExchanges).isEmpty();
             assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(expectedReceiveRequest(5));
-            assertThat(sqsClientMock.getQueueUrlRequests()).containsExactly(GetQueueUrlRequest.builder()
-                    .queueName(configuration.getQueueName())
-                    .build());
-            assertThat(sqsClientMock.getCreateQueueRequets()).containsExactly(CreateQueueRequest.builder()
-                    .queueName(configuration.getQueueName())
-                    .attributes(emptyMap())
-                    .build());
+            assertThat(sqsClientMock.getQueueUrlRequests())
+                    .containsExactly(GetQueueUrlRequest.builder()
+                            .queueName(configuration.getQueueName())
+                            .build());
+            assertThat(sqsClientMock.getCreateQueueRequets())
+                    .containsExactly(CreateQueueRequest.builder()
+                            .queueName(configuration.getQueueName())
+                            .attributes(emptyMap())
+                            .build());
         }
     }
 
@@ -475,9 +489,10 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             assertThat(polledMessagesCount).isZero();
             assertThat(receivedExchanges).isEmpty();
             assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(expectedReceiveRequest(5));
-            assertThat(sqsClientMock.getQueueUrlRequests()).containsExactly(GetQueueUrlRequest.builder()
-                    .queueName(configuration.getQueueName())
-                    .build());
+            assertThat(sqsClientMock.getQueueUrlRequests())
+                    .containsExactly(GetQueueUrlRequest.builder()
+                            .queueName(configuration.getQueueName())
+                            .build());
             assertThat(sqsClientMock.getCreateQueueRequets()).isEmpty();
         }
     }
@@ -500,13 +515,15 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             assertThat(receivedExchanges).isEmpty();
             // the request execution will be ignored once non-existing queue is detected
             assertThat(sqsClientMock.getReceiveRequests()).hasSizeLessThanOrEqualTo(156);
-            assertThat(sqsClientMock.getQueueUrlRequests()).containsExactly(GetQueueUrlRequest.builder()
-                    .queueName(configuration.getQueueName())
-                    .build());
-            assertThat(sqsClientMock.getCreateQueueRequets()).containsExactly(CreateQueueRequest.builder()
-                    .queueName(configuration.getQueueName())
-                    .attributes(emptyMap())
-                    .build());
+            assertThat(sqsClientMock.getQueueUrlRequests())
+                    .containsExactly(GetQueueUrlRequest.builder()
+                            .queueName(configuration.getQueueName())
+                            .build());
+            assertThat(sqsClientMock.getCreateQueueRequets())
+                    .containsExactly(CreateQueueRequest.builder()
+                            .queueName(configuration.getQueueName())
+                            .attributes(emptyMap())
+                            .build());
         }
     }
 
@@ -563,7 +580,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         sqsClientMock.addMessage(message("B"));
         sqsClientMock.addMessage(message("C"));
         sqsClientMock.setReceiveRequestHandler(request -> {
-            if (request.maxNumberOfMessages() != null && request.maxNumberOfMessages().intValue() == 10) {
+            if (request.maxNumberOfMessages() != null
+                    && request.maxNumberOfMessages().intValue() == 10) {
                 throw SqsException.builder().build();
             }
         });
@@ -576,10 +594,9 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isEqualTo(3);
             assertThat(receiveMessageBodies()).containsExactly("A", "B", "C");
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(5));
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(
+                            expectedReceiveRequest(10), expectedReceiveRequest(10), expectedReceiveRequest(5));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -603,10 +620,9 @@ class Sqs2ConsumerTest extends CamelTestSupport {
                     .hasMessage(
                             "Error while polling - all 3 requests resulted in an error, please check the logs for more details");
             assertThat(receivedExchanges).isEmpty();
-            assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(5));
+            assertThat(sqsClientMock.getReceiveRequests())
+                    .containsExactlyInAnyOrder(
+                            expectedReceiveRequest(10), expectedReceiveRequest(10), expectedReceiveRequest(5));
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
@@ -638,8 +654,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         var component = new Sqs2Component(context());
         component.setConfiguration(configuration);
 
-        var endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://%s?maxMessagesPerPoll=%s"
-                .formatted(configuration.getQueueName(), maxNumberOfMessages));
+        var endpoint = (Sqs2Endpoint) component.createEndpoint(
+                "aws2-sqs://%s?maxMessagesPerPoll=%s".formatted(configuration.getQueueName(), maxNumberOfMessages));
         endpoint.setClient(sqsClientMock);
         endpoint.setClock(clock);
 
@@ -653,8 +669,8 @@ class Sqs2ConsumerTest extends CamelTestSupport {
         var component = new Sqs2Component(context());
         component.setConfiguration(configuration);
 
-        var endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://%s?maxMessagesPerPoll=%s"
-                .formatted(configuration.getQueueName(), maxNumberOfMessages));
+        var endpoint = (Sqs2Endpoint) component.createEndpoint(
+                "aws2-sqs://%s?maxMessagesPerPoll=%s".formatted(configuration.getQueueName(), maxNumberOfMessages));
         endpoint.setClient(sqsClientMock);
         endpoint.setClock(clock);
 
@@ -686,11 +702,9 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     private Message message(String body) {
         final var builder = Message.builder();
         if (generateSequenceNumber) {
-            builder.attributes(Map.of(MessageSystemAttributeName.SEQUENCE_NUMBER,
-                    "%05d".formatted(sequenceNumber.incrementAndGet())));
+            builder.attributes(Map.of(
+                    MessageSystemAttributeName.SEQUENCE_NUMBER, "%05d".formatted(sequenceNumber.incrementAndGet())));
         }
-        return builder
-                .body(body)
-                .build();
+        return builder.body(body).build();
     }
 }

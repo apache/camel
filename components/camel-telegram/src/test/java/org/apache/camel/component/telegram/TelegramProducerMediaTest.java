@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,11 +44,6 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests a producer that sends media information.
@@ -83,7 +84,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Photo");
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.PHOTO_JPG); // without using
-                                                                                                 // .name()
+        // .name()
         byte[] image = TelegramTestUtil.createSampleImage("JPG");
         ex.getIn().setBody(image);
 
@@ -150,8 +151,10 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         mockProcessor.clearRecordedMessages();
 
         InlineKeyboardMarkup ik = InlineKeyboardMarkup.builder()
-                .addRow(Collections.singletonList(InlineKeyboardButton.builder().text("test")
-                        .url("https://camel.apache.org").build()))
+                .addRow(Collections.singletonList(InlineKeyboardButton.builder()
+                        .text("test")
+                        .url("https://camel.apache.org")
+                        .build()))
                 .build();
 
         Exchange ex = endpoint.createExchange();
@@ -272,7 +275,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         template.send(endpoint, ex);
 
-        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingTextMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
         assertNull(message.getParseMode());
@@ -286,17 +290,21 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         Exchange ex = endpoint.createExchange();
 
-        OutgoingTextMessage msg = new OutgoingTextMessage.Builder().text("Hello").build();
+        OutgoingTextMessage msg =
+                new OutgoingTextMessage.Builder().text("Hello").build();
         withInlineKeyboardContainingTwoRows(msg);
 
         ex.getIn().setBody(msg);
 
         template.send(endpoint, ex);
 
-        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingTextMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
-        assertEquals(2, ((ReplyKeyboardMarkup) message.getReplyMarkup()).getKeyboard().size());
+        assertEquals(
+                2,
+                ((ReplyKeyboardMarkup) message.getReplyMarkup()).getKeyboard().size());
         assertEquals(true, ((ReplyKeyboardMarkup) message.getReplyMarkup()).getOneTimeKeyboard());
         assertNull(message.getParseMode());
     }
@@ -313,7 +321,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         template.send(endpoint, ex);
 
-        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingTextMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
         assertEquals("HTML", message.getParseMode());
@@ -331,7 +340,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         template.send(endpoint, ex);
 
-        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingTextMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertEquals("my-id", message.getChatId());
         assertEquals("Hello", message.getText());
         assertEquals("Markdown", message.getParseMode());
@@ -351,7 +361,8 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         template.send(endpoint, ex);
 
-        final OutgoingGameMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        final OutgoingGameMessage message =
+                mockProcessor.awaitRecordedMessages(1, 5000).get(0);
         assertNotNull("my-id", message.getChatId());
         assertNotNull("shortName", message.getGameShortName());
     }
@@ -359,33 +370,25 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
+                }
+            }
+        };
     }
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
         return new TelegramMockRoutes(port)
                 .addEndpoint(
-                        "sendPhoto",
-                        "POST",
-                        byte[].class,
-                        TelegramTestUtil.stringResource("messages/send-photo.json"))
+                        "sendPhoto", "POST", byte[].class, TelegramTestUtil.stringResource("messages/send-photo.json"))
                 .addEndpoint(
-                        "sendAudio",
-                        "POST",
-                        byte[].class,
-                        TelegramTestUtil.stringResource("messages/send-audio.json"))
+                        "sendAudio", "POST", byte[].class, TelegramTestUtil.stringResource("messages/send-audio.json"))
                 .addEndpoint(
-                        "sendVideo",
-                        "POST",
-                        byte[].class,
-                        TelegramTestUtil.stringResource("messages/send-video.json"))
+                        "sendVideo", "POST", byte[].class, TelegramTestUtil.stringResource("messages/send-video.json"))
                 .addEndpoint(
                         "sendDocument",
                         "POST",
@@ -404,20 +407,23 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
     }
 
     static void assertMultipartFilename(byte[] message, String name, String filename) {
-        assertTrue(
-                contains(message, ("name=\"" + name + "\"; filename=\"" + filename + "\"").getBytes(StandardCharsets.UTF_8)));
+        assertTrue(contains(
+                message, ("name=\"" + name + "\"; filename=\"" + filename + "\"").getBytes(StandardCharsets.UTF_8)));
     }
 
     static void assertMultipartText(byte[] message, String key, String value) {
-        assertTrue(contains(message, ("name=\"" + key + "\"\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" + value)
-                .getBytes(StandardCharsets.UTF_8)));
+        assertTrue(contains(
+                message,
+                ("name=\"" + key + "\"\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" + value)
+                        .getBytes(StandardCharsets.UTF_8)));
     }
 
     static boolean contains(byte[] array, byte[] target) {
         if (target.length == 0) {
             return true;
         }
-        OUTER_FOR: for (int i = 0; i < array.length - target.length + 1; i++) {
+        OUTER_FOR:
+        for (int i = 0; i < array.length - target.length + 1; i++) {
             for (int j = 0; j < target.length; j++) {
                 if (array[i + j] != target[j]) {
                     continue OUTER_FOR;

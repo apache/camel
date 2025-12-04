@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.consumer;
 
 import java.util.LinkedHashSet;
@@ -70,7 +71,9 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
                     int code = rcr.getStatusCode().get();
                     // if auth or server error then cause a re-connect
                     if (code >= 400) {
-                        LOG.warn("RestClientException error code: {} caused by {}. Will re-connect on next poll.", code,
+                        LOG.warn(
+                                "RestClientException error code: {} caused by {}. Will re-connect on next poll.",
+                                code,
                                 rcr.getMessage());
                         getEndpoint().disconnect();
                     }
@@ -127,7 +130,9 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
         while (true) {
             SearchRestClient searchRestClient = endpoint.getClient().getSearchClient();
             // *navigable should be the default value, but it does not seem to be true with 6.0.2 client
-            SearchResult searchResult = searchRestClient.searchJql(jql, maxPerQuery, start, Set.of("*navigable")).claim();
+            SearchResult searchResult = searchRestClient
+                    .searchJql(jql, maxPerQuery, start, Set.of("*navigable"))
+                    .claim();
 
             for (Issue issue : searchResult.getIssues()) {
                 issues.add(issue);
@@ -140,7 +145,8 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
             if (searchRestClient instanceof AsynchronousCloudSearchRestClient) {
                 // calling searchResult.getTotal() on AsynchronousCloudSearchRestClient throws an exception:
                 // Total is not available in the Cloud version of the new Search API response.
-                // Please use `SearchRestClient.totalCount` instead to fetch the estimated count of the issues for a given JQL
+                // Please use `SearchRestClient.totalCount` instead to fetch the estimated count of the issues for a
+                // given JQL
                 total = searchRestClient.totalCount(jql).claim().getCount();
             } else {
                 total = searchResult.getTotal();
@@ -158,5 +164,4 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
     protected JiraRestClient client() {
         return endpoint.getClient();
     }
-
 }

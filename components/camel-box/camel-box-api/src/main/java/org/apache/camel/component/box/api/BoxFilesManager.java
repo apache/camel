@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
 
 import java.io.InputStream;
@@ -103,8 +104,7 @@ public class BoxFilesManager {
             file.updateInfo(info);
             return file;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    BoxHelper.buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -122,8 +122,14 @@ public class BoxFilesManager {
      * @return                The uploaded file.
      */
     public BoxFile uploadFile(
-            String parentFolderId, InputStream content, String fileName, Date created, Date modified,
-            Long size, Boolean check, ProgressListener listener) {
+            String parentFolderId,
+            InputStream content,
+            String fileName,
+            Date created,
+            Date modified,
+            Long size,
+            Boolean check,
+            ProgressListener listener) {
         try {
             LOG.debug("Uploading file with name '{}}' to parent_folder(id={}})", fileName, parentFolderId);
             BoxHelper.notNull(parentFolderId, BoxHelper.PARENT_FOLDER_ID);
@@ -144,9 +150,11 @@ public class BoxFilesManager {
                     if (409 == boxException.getResponseCode()) {
                         // the box search api relies on a folder index to search for items, however our tests
                         // noticed the folder (box service) can take 11 minutes to reindex
-                        // for a recently uploaded file, the folder search will return empty as the file was not indexed yet.
+                        // for a recently uploaded file, the folder search will return empty as the file was not indexed
+                        // yet.
                         // see https://community.box.com/t5/Platform-and-Development-Forum/Box-Search-Delay/m-p/40072
-                        // this check operation uses the folder list item as fallback mechanism to check if the file really exists
+                        // this check operation uses the folder list item as fallback mechanism to check if the file
+                        // really exists
                         // it is slower than the search api, but reliable
                         // for faster results, we recommend the folder to contain no more than 500 items
                         // otherwise it can take more time to iterate over all items to check if the filename exists
@@ -158,8 +166,8 @@ public class BoxFilesManager {
                         BoxItem.Info existingFile = null;
                         if (folder != null) {
                             // returns only the name and type fields of each folder item
-                            for (BoxItem.Info itemInfo : folder.getChildren("name", BoxFolder.SortDirection.ASC, "name",
-                                    "type")) {
+                            for (BoxItem.Info itemInfo :
+                                    folder.getChildren("name", BoxFolder.SortDirection.ASC, "name", "type")) {
                                 // check if the filename exists
                                 exists = "file".equals(itemInfo.getType()) && fileName.equals(itemInfo.getName());
                                 if (exists) {
@@ -172,7 +180,7 @@ public class BoxFilesManager {
                         if (elapsed > delayLimit) {
                             LOG.warn(
                                     "The upload operation, checks if the file exists by using the Box list folder, however it took {}"
-                                     + " seconds to verify, try to reduce the size of the folder items for faster results.",
+                                            + " seconds to verify, try to reduce the size of the folder items for faster results.",
                                     elapsed);
                         }
                         if (exists) {
@@ -207,8 +215,7 @@ public class BoxFilesManager {
             }
             return boxFile;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    BoxHelper.buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -223,8 +230,7 @@ public class BoxFilesManager {
      * @return             The uploaded file.
      */
     public BoxFile uploadNewFileVersion(
-            String fileId, InputStream fileContent, Date modified, Long fileSize,
-            ProgressListener listener) {
+            String fileId, InputStream fileContent, Date modified, Long fileSize, ProgressListener listener) {
         try {
             LOG.debug("Uploading new version of file(id={})", fileId);
             BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
@@ -264,8 +270,7 @@ public class BoxFilesManager {
             return file.getVersions();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    BoxHelper.buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -283,8 +288,7 @@ public class BoxFilesManager {
      * @return            The stream containing the contents of the downloaded file.
      */
     public OutputStream downloadFile(
-            String fileId, OutputStream output, Long rangeStart, Long rangeEnd,
-            ProgressListener listener) {
+            String fileId, OutputStream output, Long rangeStart, Long rangeEnd, ProgressListener listener) {
         try {
             LOG.debug("Downloading file(id={})", fileId);
             BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
@@ -322,8 +326,7 @@ public class BoxFilesManager {
      * @return          The stream containing the contents of the downloaded file version.
      */
     public OutputStream downloadPreviousFileVersion(
-            String fileId, Integer version, OutputStream output,
-            ProgressListener listener) {
+            String fileId, Integer version, OutputStream output, ProgressListener listener) {
         try {
             LOG.debug("Downloading file(id={}, version={})", fileId, version);
             BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
@@ -381,8 +384,10 @@ public class BoxFilesManager {
      */
     public BoxFile copyFile(String fileId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Copying file(id={}) to destination_folder(id={}) {}",
-                    fileId, destinationFolderId,
+            LOG.debug(
+                    "Copying file(id={}) to destination_folder(id={}) {}",
+                    fileId,
+                    destinationFolderId,
                     newName == null ? "" : " with new name '" + newName + "'");
             BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
             BoxHelper.notNull(destinationFolderId, BoxHelper.VERSION);
@@ -409,8 +414,10 @@ public class BoxFilesManager {
      */
     public BoxFile moveFile(String fileId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Moving file(id={}) to destination_folder(id={}) {}",
-                    fileId, destinationFolderId,
+            LOG.debug(
+                    "Moving file(id={}) to destination_folder(id={}) {}",
+                    fileId,
+                    destinationFolderId,
                     newName == null ? "" : " with new name '" + newName + "'");
             BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
             BoxHelper.notNull(destinationFolderId, BoxHelper.VERSION);
@@ -497,21 +504,25 @@ public class BoxFilesManager {
      * @return             The created shared link.
      */
     public BoxSharedLink createFileSharedLink(
-            String fileId, BoxSharedLink.Access access, Date unshareDate,
-            BoxSharedLink.Permissions permissions) {
+            String fileId, BoxSharedLink.Access access, Date unshareDate, BoxSharedLink.Permissions permissions) {
         try {
-            LOG.debug("Creating shared link for file(id={}) with access={} {}",
-                    fileId, access, unshareDate == null
+            LOG.debug(
+                    "Creating shared link for file(id={}) with access={} {}",
+                    fileId,
+                    access,
+                    unshareDate == null
                             ? ""
-                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
-                              + " permissions=" + permissions);
+                            : " unsharedDate="
+                                    + DateFormat.getDateTimeInstance().format(unshareDate) + " permissions="
+                                    + permissions);
 
             BoxHelper.notNull(fileId, BoxHelper.FILE_ID);
             BoxHelper.notNull(access, "access");
 
             BoxFile file = new BoxFile(boxConnection, fileId);
             BoxSharedLinkRequest request = new BoxSharedLinkRequest();
-            request.access(access).unsharedDate(unshareDate)
+            request.access(access)
+                    .unsharedDate(unshareDate)
                     .permissions(permissions.getCanDownload(), permissions.getCanPreview(), permissions.getCanEdit());
             return file.createSharedLink(request);
         } catch (BoxAPIException e) {
@@ -612,7 +623,6 @@ public class BoxFilesManager {
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(BoxHelper.buildBoxApiErrorMessage(e), e);
         }
-
     }
 
     /**

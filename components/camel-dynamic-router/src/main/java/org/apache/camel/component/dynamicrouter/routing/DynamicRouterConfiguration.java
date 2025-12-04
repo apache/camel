@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_ALL_MATCH;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
 
 import java.util.concurrent.ExecutorService;
 
@@ -24,9 +28,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_ALL_MATCH;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
 
 /**
  * This class encapsulates all configuration items for the Dynamic Router EIP component.
@@ -50,8 +51,11 @@ public class DynamicRouterConfiguration {
      * predicate. If the mode is "allMatch", then the exchange is routed to all participants that have a matching
      * predicate.
      */
-    @UriParam(label = "common", defaultValue = MODE_FIRST_MATCH, enums = MODE_FIRST_MATCH + "," + MODE_ALL_MATCH,
-              description = "Recipient mode: firstMatch or allMatch")
+    @UriParam(
+            label = "common",
+            defaultValue = MODE_FIRST_MATCH,
+            enums = MODE_FIRST_MATCH + "," + MODE_ALL_MATCH,
+            description = "Recipient mode: firstMatch or allMatch")
     private String recipientMode = MODE_FIRST_MATCH;
 
     /**

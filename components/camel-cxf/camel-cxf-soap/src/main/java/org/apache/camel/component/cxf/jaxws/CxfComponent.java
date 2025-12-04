@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.util.HashMap;
@@ -41,16 +42,19 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
     @Metadata(label = "advanced")
     private Boolean allowStreaming;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata(defaultValue = "false", label = "producer,advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @Metadata(
+            defaultValue = "false",
+            label = "producer,advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     private final Map<String, BeanCacheEntry> beanCache = new HashMap<>();
 
-    public CxfComponent() {
-    }
+    public CxfComponent() {}
 
     public CxfComponent(CamelContext context) {
         super(context);
@@ -152,17 +156,15 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         result.setBeanId(beanId);
         if (beanCache.containsKey(beanId)) {
             BeanCacheEntry entry = beanCache.get(beanId);
-            if (entry.cxfEndpoint == result
-                    && !entry.parameters.equals(parameters)) {
+            if (entry.cxfEndpoint == result && !entry.parameters.equals(parameters)) {
                 /*different URI refer to the same CxfEndpoint Bean instance
-                  but with different parameters. This can make stateful bean's
-                  behavior uncertainty. This can be addressed by using proper
-                  bean scope, such as "prototype" in Spring or "Session" in CDI
-                  */
-                throw new RuntimeException(
-                        "Different URI refer to the same CxfEndpoint Bean instance"
-                                           + " with ID : " + beanId
-                                           + " but with different parameters. Please use the proper Bean scope ");
+                but with different parameters. This can make stateful bean's
+                behavior uncertainty. This can be addressed by using proper
+                bean scope, such as "prototype" in Spring or "Session" in CDI
+                */
+                throw new RuntimeException("Different URI refer to the same CxfEndpoint Bean instance"
+                        + " with ID : " + beanId
+                        + " but with different parameters. Please use the proper Bean scope ");
             }
         } else {
             beanCache.put(beanId, new BeanCacheEntry(result, new HashMap<>(parameters)));
@@ -186,7 +188,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     class BeanCacheEntry {
-        //A snapshot of a CxfEndpoint Bean URI
+        // A snapshot of a CxfEndpoint Bean URI
         CxfEndpoint cxfEndpoint;
         Map<String, Object> parameters;
 

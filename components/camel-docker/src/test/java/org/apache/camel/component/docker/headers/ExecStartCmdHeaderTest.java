@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -28,10 +33,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Exec Start Request headers are parsed properly
@@ -59,7 +60,6 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
 
         Mockito.verify(dockerClient, Mockito.times(1)).execStartCmd(eq(id));
         Mockito.verify(mockObject, Mockito.times(1)).withTty(eq(tty));
-
     }
 
     @Override
@@ -77,5 +77,4 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     protected DockerOperation getOperation() {
         return DockerOperation.EXEC_START;
     }
-
 }

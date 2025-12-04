@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milvus;
 
 import java.util.Map;
@@ -55,11 +56,7 @@ public class MilvusComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(
-            String uri,
-            String remaining,
-            Map<String, Object> parameters)
-            throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         MilvusConfiguration configuration = this.configuration.copy();
 

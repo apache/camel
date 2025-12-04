@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -25,19 +26,13 @@ public class NoSuchVariableException extends CamelExchangeException {
     private final transient Class<?> type;
 
     public NoSuchVariableException(Exchange exchange, String variableName) {
-        super(String.format(
-                "No '%s' variable available", variableName),
-              exchange);
+        super(String.format("No '%s' variable available", variableName), exchange);
         this.variableName = variableName;
         this.type = null;
     }
 
     public NoSuchVariableException(Exchange exchange, String variableName, Class<?> type) {
-        super(String.format(
-                "No '%s' variable available of type: %s",
-                variableName,
-                type.getName()),
-              exchange);
+        super(String.format("No '%s' variable available of type: %s", variableName, type.getName()), exchange);
         this.variableName = variableName;
         this.type = type;
     }
@@ -49,5 +44,4 @@ public class NoSuchVariableException extends CamelExchangeException {
     public Class<?> getType() {
         return type;
     }
-
 }

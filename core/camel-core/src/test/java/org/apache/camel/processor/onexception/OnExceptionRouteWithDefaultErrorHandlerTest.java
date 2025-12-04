@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test inspired by user forum.
@@ -108,12 +109,19 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);
-                onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
+                onException(MyFunctionalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("bean:myOwnHandler");
 
-                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("//type = 'myType'")
+                        .to("bean:myServiceBean")
+                        .end()
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -42,10 +47,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * A file based {@link org.apache.camel.spi.ResourceReloadStrategy} which watches a file folder for modified files and
@@ -163,8 +164,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             // if its mac OSX then attempt to apply workaround or warn its slower
             String os = ObjectHelper.getSystemProperty("os.name", "");
             if (os.toLowerCase(Locale.US).startsWith("mac")) {
-                // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification integration)
-                Class<WatchEvent.Modifier> clazz = getCamelContext().getClassResolver()
+                // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification
+                // integration)
+                Class<WatchEvent.Modifier> clazz = getCamelContext()
+                        .getClassResolver()
                         .resolveClass("com.sun.nio.file.SensitivityWatchEventModifier", WatchEvent.Modifier.class);
                 if (clazz != null) {
                     WatchEvent.Modifier[] modifiers = clazz.getEnumConstants();
@@ -197,8 +200,9 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
 
                 task = new WatchFileChangesTask(watcher, path);
 
-                executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
-                        "FileWatcherReloadStrategy");
+                executorService = getCamelContext()
+                        .getExecutorServiceManager()
+                        .newSingleThreadExecutor(this, "FileWatcherReloadStrategy");
                 executorService.submit(task);
             } catch (IOException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -210,10 +214,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         return "Starting ReloadStrategy to watch directory: " + dir;
     }
 
-    private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher) throws IOException {
+    private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher)
+            throws IOException {
         WatchKey key;
         if (modifier != null) {
-            key = path.register(watcher, new WatchEvent.Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE }, modifier);
+            key = path.register(watcher, new WatchEvent.Kind<?>[] {ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE}, modifier);
         } else {
             key = path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
         }
@@ -307,8 +312,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                             try {
                                 setLastError(null);
                                 // must use file resource loader as we cannot load from classpath
-                                Resource resource
-                                        = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+                                Resource resource = PluginHelper.getResourceLoader(getCamelContext())
+                                        .resolveResource("file:" + name);
                                 getResourceReload().onReload(name, resource);
                                 incSucceededCounter();
                             } catch (Exception e) {
@@ -318,8 +323,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                                 if (msg.endsWith(".")) {
                                     msg = msg.substring(0, msg.length() - 1);
                                 }
-                                LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name,
-                                        msg, e);
+                                LOG.warn(
+                                        "Error reloading routes from file: {} due to: {}. This exception is ignored.",
+                                        name,
+                                        msg,
+                                        e);
                             }
                         }
                     }
@@ -337,5 +345,4 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             LOG.debug("FileReloadStrategy is stopping watching folder: {}", folder);
         }
     }
-
 }

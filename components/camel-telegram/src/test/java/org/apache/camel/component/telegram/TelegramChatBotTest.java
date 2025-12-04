@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,9 +34,6 @@ import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Tests a chain made of a consumer and a producer to create a direct chat-bot.
  */
@@ -41,8 +42,10 @@ public class TelegramChatBotTest extends TelegramTestSupport {
     @Test
     public void testChatBotResult() {
 
-        List<OutgoingTextMessage> msgs = Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
+        List<OutgoingTextMessage> msgs = Awaitility.await()
+                .atMost(5, TimeUnit.SECONDS)
+                .until(
+                        () -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
                         rawMessages -> rawMessages.size() >= 2)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
@@ -78,17 +81,18 @@ public class TelegramChatBotTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
 
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .bean(TelegramChatBotTest.this, "chatBotProcess1")
-                                .bean(TelegramChatBotTest.this, "chatBotProcess2")
-                                .to("telegram:bots?authorizationToken=mock-token");
-                    }
-                } };
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .bean(TelegramChatBotTest.this, "chatBotProcess1")
+                            .bean(TelegramChatBotTest.this, "chatBotProcess2")
+                            .to("telegram:bots?authorizationToken=mock-token");
+                }
+            }
+        };
     }
 
     @Override
@@ -117,5 +121,4 @@ public class TelegramChatBotTest extends TelegramTestSupport {
                         TelegramTestUtil.stringResource("messages/send-message.json"),
                         TelegramTestUtil.stringResource("messages/send-message.json"));
     }
-
 }

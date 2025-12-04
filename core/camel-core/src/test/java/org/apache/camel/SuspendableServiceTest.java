@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class SuspendableServiceTest {
 
@@ -28,12 +29,10 @@ public class SuspendableServiceTest {
         private boolean suspended;
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
 
         @Override
         public void suspend() {
@@ -62,5 +61,4 @@ public class SuspendableServiceTest {
         my.resume();
         assertFalse(my.isSuspended());
     }
-
 }

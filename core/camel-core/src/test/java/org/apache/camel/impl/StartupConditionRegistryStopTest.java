@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -42,7 +43,8 @@ public class StartupConditionRegistryStopTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        StartupConditionStrategy scs = context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
+        StartupConditionStrategy scs =
+                context.getCamelContextExtension().getContextPlugin(StartupConditionStrategy.class);
         scs.setEnabled(true);
         scs.setTimeout(250);
         scs.setOnTimeout("stop");

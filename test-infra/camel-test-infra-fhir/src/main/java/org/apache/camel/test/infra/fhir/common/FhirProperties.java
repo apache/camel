@@ -25,7 +25,5 @@ public final class FhirProperties {
 
     public static final int DEFAULT_SERVICE_PORT = 8080;
 
-    private FhirProperties() {
-
-    }
+    private FhirProperties() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.io.IOException;
@@ -55,11 +56,17 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 /**
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName",
-             apiSyntax = "apiName/methodName",
-             category = { Category.FILE })
-@Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
-                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
+@UriEndpoint(
+        scheme = "as2",
+        firstVersion = "2.22.0",
+        title = "AS2",
+        syntax = "as2:apiName/methodName",
+        apiSyntax = "apiName/methodName",
+        category = {Category.FILE})
+@Metadata(
+        excludeProperties =
+                "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
+                        + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriParam
@@ -73,9 +80,19 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     private AS2ServerConnection as2ServerConnection;
 
-    public AS2Endpoint(String uri, AS2Component component,
-                       AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
-        super(uri, component, apiName, methodName, AS2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+    public AS2Endpoint(
+            String uri,
+            AS2Component component,
+            AS2ApiName apiName,
+            String methodName,
+            AS2Configuration endpointConfiguration) {
+        super(
+                uri,
+                component,
+                apiName,
+                methodName,
+                AS2ApiCollection.getCollection().getHelper(apiName),
+                endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -326,9 +343,8 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         try {
             as2ClientConnection = AS2ConnectionHelper.createAS2ClientConnection(configuration);
         } catch (UnknownHostException e) {
-            throw new RuntimeCamelException(
-                    String.format("Client HTTP connection failed: Unknown target host '%s'",
-                            configuration.getTargetHostname()));
+            throw new RuntimeCamelException(String.format(
+                    "Client HTTP connection failed: Unknown target host '%s'", configuration.getTargetHostname()));
         } catch (IOException e) {
             throw new RuntimeCamelException("Client HTTP connection failed", e);
         }

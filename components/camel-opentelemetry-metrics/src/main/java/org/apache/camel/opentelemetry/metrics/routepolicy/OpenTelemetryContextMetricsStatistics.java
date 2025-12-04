@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
@@ -28,11 +29,15 @@ final class OpenTelemetryContextMetricsStatistics extends OpenTelemetryRoutePoli
     private final boolean registerKamelets;
     private final boolean registerTemplates;
 
-    OpenTelemetryContextMetricsStatistics(Meter meter, CamelContext camelContext,
-                                          OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
-                                          OpenTelemetryRoutePolicyConfiguration configuration,
-                                          boolean registerKamelets, boolean registerTemplates,
-                                          TimeUnit timeUnit, TimeUnit longTaskTimeUnit) {
+    OpenTelemetryContextMetricsStatistics(
+            Meter meter,
+            CamelContext camelContext,
+            OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
+            OpenTelemetryRoutePolicyConfiguration configuration,
+            boolean registerKamelets,
+            boolean registerTemplates,
+            TimeUnit timeUnit,
+            TimeUnit longTaskTimeUnit) {
         super(meter, camelContext, null, namingStrategy, configuration, timeUnit, longTaskTimeUnit);
         this.registerKamelets = registerKamelets;
         this.registerTemplates = registerTemplates;

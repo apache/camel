@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,38 +31,52 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean enabled;
+
     @Metadata(defaultValue = "0.0.0.0")
     private String host = "0.0.0.0";
+
     @Metadata(defaultValue = "8080")
     private int port = 8080;
+
     @Metadata(defaultValue = "/")
     private String path = "/";
 
     private boolean staticEnabled;
     private String staticSourceDir;
+
     @Metadata(defaultValue = "/")
     private String staticContextPath = "/";
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean fileUploadEnabled = true;
+
     @Metadata(label = "advanced")
     private String fileUploadDirectory;
+
     @Metadata(label = "advanced")
     private Long maxBodySize;
 
     @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
+
     @Metadata(label = "security")
     private boolean authenticationEnabled;
+
     @Metadata(label = "security")
     private String authenticationPath;
+
     @Metadata(label = "security")
     private String authenticationRealm;
+
     @Metadata(label = "security")
     private String basicPropertiesFile;
+
     @Metadata(label = "security")
     private String jwtKeystoreType;
+
     @Metadata(label = "security")
     private String jwtKeystorePath;
+
     @Metadata(label = "security", secret = true)
     private String jwtKeystorePassword;
 
@@ -433,5 +448,4 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.jwtKeystorePassword = jwtKeystorePassword;
         return this;
     }
-
 }

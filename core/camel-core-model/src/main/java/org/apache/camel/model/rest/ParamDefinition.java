@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -46,36 +47,45 @@ public class ParamDefinition {
 
     @XmlAttribute(required = true)
     private String name;
+
     @XmlAttribute(required = true)
     @Metadata(defaultValue = "path")
     private RestParamType type;
+
     @XmlAttribute
     private String description;
+
     @XmlAttribute
     private String defaultValue;
+
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean required;
+
     @XmlAttribute
     @Metadata(defaultValue = "csv")
     private CollectionFormat collectionFormat;
+
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String arrayType;
+
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String dataType;
+
     @XmlAttribute
     private String dataFormat;
+
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
     private List<ValueDefinition> allowableValues;
+
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 
-    public ParamDefinition() {
-    }
+    public ParamDefinition() {}
 
     public ParamDefinition(VerbDefinition verb) {
         this.verb = verb;
@@ -361,5 +371,4 @@ public class ParamDefinition {
     public String getAllowableValuesAsCommaString() {
         return String.join(",", getAllowableValuesAsStringList());
     }
-
 }

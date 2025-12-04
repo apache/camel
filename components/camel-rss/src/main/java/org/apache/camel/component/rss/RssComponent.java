@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
 import java.util.LinkedHashMap;
@@ -33,11 +34,11 @@ import org.apache.camel.util.URISupport;
 @Component("rss")
 public class RssComponent extends FeedComponent {
 
-    public RssComponent() {
-    }
+    public RssComponent() {}
 
     @Override
-    protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         return new RssEndpoint(uri, this, null);
     }
 

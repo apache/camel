@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.contextscan.reverseorder;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,12 +25,8 @@ public class AFooRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        onException(Exception.class)
-                .handled(true)
-                .to("mock:handle-foo");
+        onException(Exception.class).handled(true).to("mock:handle-foo");
 
-        from("direct:foo").routeId("foo")
-                .to("mock:foo")
-                .throwException(new IllegalArgumentException("Damn"));
+        from("direct:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
     }
 }

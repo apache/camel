@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio.integration;
 
 import java.io.BufferedReader;
@@ -50,8 +51,7 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioObjectRangeOperationIT() {
-    }
+    MinioObjectRangeOperationIT() {}
 
     @Test
     void sendIn() throws Exception {
@@ -60,9 +60,10 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
         template.send("direct:putObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "element.txt");
             exchange.getIn()
-                    .setBody("MinIO is a cloud storage server compatible with Amazon S3, released under Apache License v2. "
-                             + "As an object store, MinIO can store unstructured data such as photos, videos, log files, backups and container images. "
-                             + "The maximum size of an object is 5TB.");
+                    .setBody(
+                            "MinIO is a cloud storage server compatible with Amazon S3, released under Apache License v2. "
+                                    + "As an object store, MinIO can store unstructured data such as photos, videos, log files, backups and container images. "
+                                    + "The maximum size of an object is 5TB.");
         });
 
         template.send("direct:getPartialObject", exchange -> {
@@ -71,7 +72,6 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
             exchange.getIn().setHeader(MinioConstants.LENGTH, 9);
         });
         MockEndpoint.assertIsSatisfied(context);
-
     }
 
     @Override
@@ -84,20 +84,20 @@ class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
 
                 from("direct:putObject").to(minioEndpoint);
 
-                from("direct:getPartialObject").to(minioEndpoint1).process(exchange -> {
-                    InputStream minioPartialObject = exchange.getIn().getBody(InputStream.class);
-                    LOG.info(readInputStream(minioPartialObject));
-
-                }).to("mock:result");
-
+                from("direct:getPartialObject")
+                        .to(minioEndpoint1)
+                        .process(exchange -> {
+                            InputStream minioPartialObject = exchange.getIn().getBody(InputStream.class);
+                            LOG.info(readInputStream(minioPartialObject));
+                        })
+                        .to("mock:result");
             }
         };
     }
 
     private String readInputStream(InputStream minioObject) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader
-                = new BufferedReader(new InputStreamReader(minioObject, StandardCharsets.UTF_8))) {
+        try (Reader reader = new BufferedReader(new InputStreamReader(minioObject, StandardCharsets.UTF_8))) {
             int c;
             while ((c = reader.read()) != -1) {
                 textBuilder.append((char) c);

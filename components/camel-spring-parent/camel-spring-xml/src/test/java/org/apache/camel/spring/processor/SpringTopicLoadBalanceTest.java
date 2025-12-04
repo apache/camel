@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.TopicLoadBalanceTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringTopicLoadBalanceTest extends TopicLoadBalanceTest {
 
@@ -27,5 +28,4 @@ public class SpringTopicLoadBalanceTest extends TopicLoadBalanceTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/topicLoadBalance.xml");
     }
-
 }

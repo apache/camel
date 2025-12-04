@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.io.File;
@@ -32,7 +33,8 @@ public class JMXMonitorTypeGaugeTest extends SimpleBeanFixture {
         simpleBean.setMonitorNumber(75);
         simpleBean.setMonitorNumber(110);
         getMockFixture().waitForMessages();
-        getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/gaugeNotification-high.xml"));
+        getMockFixture()
+                .assertMessageReceived(new File("src/test/resources/monitor-consumer/gaugeNotification-high.xml"));
 
         getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setMonitorNumber(90);
@@ -41,12 +43,14 @@ public class JMXMonitorTypeGaugeTest extends SimpleBeanFixture {
         Thread.sleep(600);
         simpleBean.setMonitorNumber(40);
         getMockFixture().waitForMessages();
-        getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/gaugeNotification-low.xml"));
+        getMockFixture()
+                .assertMessageReceived(new File("src/test/resources/monitor-consumer/gaugeNotification-low.xml"));
     }
 
     @Override
     protected JMXUriBuilder buildFromURI() {
-        return super.buildFromURI().withMonitorType("gauge")
+        return super.buildFromURI()
+                .withMonitorType("gauge")
                 .withGranularityPeriod(500)
                 .withObservedAttribute("MonitorNumber")
                 .withNotifyHigh(true)

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Exchange;
@@ -36,5 +37,4 @@ public class NatsSpanDecorator extends AbstractMessagingSpanDecorator {
     protected String getMessageId(Exchange exchange) {
         return exchange.getIn().getHeader(NATS_SID, String.class);
     }
-
 }

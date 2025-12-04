@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -93,16 +94,18 @@ public class JettyLongestContextPathMatchTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myapp/aaa/?matchOnUriPrefix=true").to("mock:aaa");
+                from("jetty:http://localhost:{{port}}/myapp/aaa/?matchOnUriPrefix=true")
+                        .to("mock:aaa");
 
-                from("jetty:http://localhost:{{port}}/myapp/aaa/bbb/ccc/?matchOnUriPrefix=true").to("mock:ccc");
+                from("jetty:http://localhost:{{port}}/myapp/aaa/bbb/ccc/?matchOnUriPrefix=true")
+                        .to("mock:ccc");
 
-                from("jetty:http://localhost:{{port}}/myapp/aaa/ddd/eee/fff/?matchOnUriPrefix=true").to("mock:ddd");
+                from("jetty:http://localhost:{{port}}/myapp/aaa/ddd/eee/fff/?matchOnUriPrefix=true")
+                        .to("mock:ddd");
 
-                from("jetty:http://localhost:{{port}}/myapp/aaa/bbb/?matchOnUriPrefix=true").to("mock:bbb");
-
+                from("jetty:http://localhost:{{port}}/myapp/aaa/bbb/?matchOnUriPrefix=true")
+                        .to("mock:bbb");
             }
         };
     }
-
 }

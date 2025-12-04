@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.service;
 
 import java.util.concurrent.locks.Lock;
@@ -129,8 +130,10 @@ public abstract class BaseService {
                     stop();
                 } catch (Exception e2) {
                     // ignore
-                    logger().trace("Error while stopping service after it failed to start: {}. This exception is ignored",
-                            this, e);
+                    logger().trace(
+                                    "Error while stopping service after it failed to start: {}. This exception is ignored",
+                                    this,
+                                    e);
                 }
                 logger().trace("Error while starting service: {}", this, e);
                 fail(e);

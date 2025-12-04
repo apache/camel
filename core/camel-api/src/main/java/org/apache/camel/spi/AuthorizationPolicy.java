@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
  * A marker for defining the policy to be used for applying authorization to routes.
  */
-public interface AuthorizationPolicy extends Policy {
-
-}
+public interface AuthorizationPolicy extends Policy {}

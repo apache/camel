@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.spi;
 
 import java.io.File;
@@ -34,5 +35,4 @@ public interface UploadAttacher {
      * @param message   the {@link Message} to attach the upload to
      */
     void attachUpload(File localFile, String fileName, Message message);
-
 }

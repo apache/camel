@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -47,14 +48,21 @@ public class PahoProducer extends DefaultAsyncProducer {
             exchange.setException(new RejectedExecutionException());
         } else {
             try {
-                String topic
-                        = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, getEndpoint().getTopic(),
+                String topic = exchange.getIn()
+                        .getHeader(
+                                PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC,
+                                getEndpoint().getTopic(),
                                 String.class);
-                int qos = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS,
-                        getEndpoint().getConfiguration().getQos(),
-                        Integer.class);
-                boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED,
-                        getEndpoint().getConfiguration().isRetained(), Boolean.class);
+                int qos = exchange.getIn()
+                        .getHeader(
+                                PahoConstants.CAMEL_PAHO_MSG_QOS,
+                                getEndpoint().getConfiguration().getQos(),
+                                Integer.class);
+                boolean retained = exchange.getIn()
+                        .getHeader(
+                                PahoConstants.CAMEL_PAHO_MSG_RETAINED,
+                                getEndpoint().getConfiguration().isRetained(),
+                                Boolean.class);
                 byte[] payload = exchange.getIn().getBody(byte[].class);
 
                 MqttMessage message = new MqttMessage(payload);
@@ -101,7 +109,10 @@ public class PahoProducer extends DefaultAsyncProducer {
                     getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoEndpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Connecting client: {} to broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             client.connect(connectOptions);
         }
     }
@@ -111,10 +122,12 @@ public class PahoProducer extends DefaultAsyncProducer {
         super.doStop();
 
         if (stopClient && client != null && client.isConnected()) {
-            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug(
+                    "Disconnecting client: {} from broker: {}",
+                    clientId,
+                    getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
         }
         client = null;
     }
-
 }

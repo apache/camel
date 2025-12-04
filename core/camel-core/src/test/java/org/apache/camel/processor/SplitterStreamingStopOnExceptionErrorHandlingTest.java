@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTestSupport {
 
@@ -61,7 +62,11 @@ public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(",")).streaming().stopOnException().to("mock:a")
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .streaming()
+                        .stopOnException()
+                        .to("mock:a")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -69,7 +74,10 @@ public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTe
                                     throw new IllegalArgumentException("Cannot do this");
                                 }
                             }
-                        }).to("mock:b").end().to("mock:result");
+                        })
+                        .to("mock:b")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

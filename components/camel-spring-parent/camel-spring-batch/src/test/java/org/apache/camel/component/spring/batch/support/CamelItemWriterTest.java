@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch.support;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.Chunk;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelItemWriterTest extends CamelTestSupport {
 
@@ -47,5 +48,4 @@ public class CamelItemWriterTest extends CamelTestSupport {
         // Then
         assertEquals(message, consumer().receiveBody("seda:queue"));
     }
-
 }

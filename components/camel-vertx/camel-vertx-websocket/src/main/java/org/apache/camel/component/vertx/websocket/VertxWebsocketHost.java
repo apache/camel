@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
@@ -57,8 +58,10 @@ public class VertxWebsocketHost {
     private HttpServer server;
     private int port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
 
-    public VertxWebsocketHost(CamelContext camelContext, VertxWebsocketHostConfiguration websocketHostConfiguration,
-                              VertxWebsocketHostKey key) {
+    public VertxWebsocketHost(
+            CamelContext camelContext,
+            VertxWebsocketHostConfiguration websocketHostConfiguration,
+            VertxWebsocketHostKey key) {
         this.camelContext = camelContext;
         this.hostConfiguration = websocketHostConfiguration;
         this.hostKey = key;
@@ -115,22 +118,25 @@ public class VertxWebsocketHost {
 
                         if (LOG.isDebugEnabled()) {
                             if (socketAddress != null) {
-                                LOG.debug("WebSocket peer {} connected from {}", peer.getConnectionKey(), socketAddress.host());
+                                LOG.debug(
+                                        "WebSocket peer {} connected from {}",
+                                        peer.getConnectionKey(),
+                                        socketAddress.host());
                             }
                         }
 
-                        webSocket.textMessageHandler(
-                                message -> consumer.onMessage(peer.getConnectionKey(), message, remote, routingContext));
-                        webSocket
-                                .binaryMessageHandler(
-                                        message -> consumer.onMessage(peer.getConnectionKey(), message.getBytes(), remote,
-                                                routingContext));
-                        webSocket.exceptionHandler(
-                                exception -> consumer.onException(peer.getConnectionKey(), exception, remote, routingContext));
+                        webSocket.textMessageHandler(message ->
+                                consumer.onMessage(peer.getConnectionKey(), message, remote, routingContext));
+                        webSocket.binaryMessageHandler(message -> consumer.onMessage(
+                                peer.getConnectionKey(), message.getBytes(), remote, routingContext));
+                        webSocket.exceptionHandler(exception ->
+                                consumer.onException(peer.getConnectionKey(), exception, remote, routingContext));
                         webSocket.closeHandler(closeEvent -> {
                             if (LOG.isDebugEnabled()) {
                                 if (socketAddress != null) {
-                                    LOG.debug("WebSocket peer {} disconnected from {}", peer.getConnectionKey(),
+                                    LOG.debug(
+                                            "WebSocket peer {} disconnected from {}",
+                                            peer.getConnectionKey(),
                                             socketAddress.host());
                                 }
                             }

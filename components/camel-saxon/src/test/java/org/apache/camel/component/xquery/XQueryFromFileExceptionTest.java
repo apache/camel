@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 
 import java.nio.file.Path;
 
@@ -25,9 +29,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 
 /**
  *
@@ -42,7 +43,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         String body = "<person user='James'><firstName>James</firstName>"
-                      + "<lastName>Strachan</lastName><city>London</city></person>";
+                + "<lastName>Strachan</lastName><city>London</city></person>";
         template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "hello.xml");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -60,7 +61,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
 
         // the last tag is not ended properly
         String body = "<person user='James'><firstName>James</firstName>"
-                      + "<lastName>Strachan</lastName><city>London</city></person";
+                + "<lastName>Strachan</lastName><city>London</city></person";
         template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "hello2.xml");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -85,5 +86,4 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
             }
         };
     }
-
 }

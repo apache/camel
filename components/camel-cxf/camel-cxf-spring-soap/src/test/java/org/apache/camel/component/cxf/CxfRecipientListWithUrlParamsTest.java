@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,15 +31,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
 
     private static int port1 = AvailablePortFinder.getNextAvailable();
     private static int port2 = AvailablePortFinder.getNextAvailable();
+
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("CxfRecipientListWithUrlParams.port1", Integer.toString(port1));
         System.setProperty("CxfRecipientListWithUrlParams.port2", Integer.toString(port2));
     }
@@ -52,7 +54,8 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfRecipientListWithUrlParamsBeans.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/CxfRecipientListWithUrlParamsBeans.xml");
     }
 
     @Test
@@ -78,8 +81,10 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
         assertEquals("Bye Claus", out2);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort"
-                           + ",cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort");
+        headers.put(
+                "foo",
+                "cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort"
+                        + ",cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
@@ -87,8 +92,10 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
         assertEquals("Bye Jonathan", out3);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort"
-                           + ",cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort");
+        headers.put(
+                "foo",
+                "cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort"
+                        + ",cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list

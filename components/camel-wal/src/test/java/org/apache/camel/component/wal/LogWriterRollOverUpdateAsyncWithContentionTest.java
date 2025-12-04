@@ -31,15 +31,17 @@ public class LogWriterRollOverUpdateAsyncWithContentionTest extends LogWriterRol
     protected void asyncGenerate() {
         try {
             LOG.trace("Generating ...");
-            generateDataFilePredictable(e -> {
-                try {
-                    LOG.debug("Putting into the queue: {}", e);
-                    entryInfos.put(e);
-                } catch (InterruptedException ex) {
-                    LOG.error("Interrupted while putting record into the queue: {}", ex.getMessage(), ex);
-                    throw new RuntimeException(ex);
-                }
-            }, logWriter);
+            generateDataFilePredictable(
+                    e -> {
+                        try {
+                            LOG.debug("Putting into the queue: {}", e);
+                            entryInfos.put(e);
+                        } catch (InterruptedException ex) {
+                            LOG.error("Interrupted while putting record into the queue: {}", ex.getMessage(), ex);
+                            throw new RuntimeException(ex);
+                        }
+                    },
+                    logWriter);
             LOG.trace("Done generating records");
         } catch (IOException e) {
             LOG.error("Failed to generate records: {}", e.getMessage(), e);
@@ -51,9 +53,8 @@ public class LogWriterRollOverUpdateAsyncWithContentionTest extends LogWriterRol
 
     @DisplayName("Test the async update process with different levels of contention")
     @ParameterizedTest
-    @ValueSource(ints = { 1, 2, 5, 10, 200, 500, 3000, 4000 })
+    @ValueSource(ints = {1, 2, 5, 10, 200, 500, 3000, 4000})
     void testReadWriteUpdateRecordsWithRollOver(int queueCapacity) throws IOException, InterruptedException {
         runTest(queueCapacity);
     }
-
 }

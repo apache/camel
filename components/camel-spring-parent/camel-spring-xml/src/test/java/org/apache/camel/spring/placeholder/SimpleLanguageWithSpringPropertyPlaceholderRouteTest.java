@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.placeholder;
+
+import static org.awaitility.Awaitility.await;
 
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -32,8 +35,6 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.awaitility.Awaitility.await;
 
 @ContextConfiguration(initializers = TestDirectoryContextInitializer.class)
 public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
@@ -74,12 +75,10 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
     }
 
     static class TestDirectoryContextInitializer
-            implements
-            ApplicationContextInitializer<ConfigurableApplicationContext> {
+            implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext context) {
             context.getEnvironment().getSystemProperties().put("testDirectory", tempDir.toString());
         }
     }
-
 }

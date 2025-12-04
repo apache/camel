@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.lang.ref.SoftReference;
@@ -53,7 +54,8 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int maximumCacheSize, Consumer<V> onEvict) {
-        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, with onEvict", 16, maximumCacheSize);
+        LOG.trace(
+                "Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, with onEvict", 16, maximumCacheSize);
         return new SimpleLRUCache<>(16, maximumCacheSize, onEvict);
     }
 
@@ -81,10 +83,14 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
      */
     @Override
     public <K, V> Map<K, V> createLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
-                maximumCacheSize, stopOnEviction);
+        LOG.trace(
+                "Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}",
+                initialCapacity,
+                maximumCacheSize,
+                stopOnEviction);
         return new SimpleLRUCache<K, V>(
-                initialCapacity, maximumCacheSize,
+                initialCapacity,
+                maximumCacheSize,
                 stopOnEviction ? DefaultLRUCacheFactory.this::doStop : DefaultLRUCacheFactory.this::doNothing);
     }
 
@@ -107,13 +113,18 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
 
     @Override
     public <K, V> Map<K, V> createLRUSoftCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUSoftCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
-                maximumCacheSize, stopOnEviction);
-        return new SimpleSoftCache<>(
-                new SimpleLRUCache<K, SoftReference<V>>(
-                        initialCapacity, maximumCacheSize,
-                        asSoftReferenceConsumer(stopOnEviction
-                                ? DefaultLRUCacheFactory.this::doStop : DefaultLRUCacheFactory.this::doNothing)));
+        LOG.trace(
+                "Creating LRUSoftCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}",
+                initialCapacity,
+                maximumCacheSize,
+                stopOnEviction);
+        return new SimpleSoftCache<>(new SimpleLRUCache<K, SoftReference<V>>(
+                initialCapacity,
+                maximumCacheSize,
+                asSoftReferenceConsumer(
+                        stopOnEviction
+                                ? DefaultLRUCacheFactory.this::doStop
+                                : DefaultLRUCacheFactory.this::doNothing)));
     }
 
     /**
@@ -151,17 +162,21 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
     @Override
     @Deprecated(since = "4.2.0")
     public <K, V> Map<K, V> createLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        LOG.trace("Creating LRUWeakCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity,
-                maximumCacheSize, stopOnEviction);
-        return new SimpleSoftCache<>(
-                new SimpleLRUCache<K, SoftReference<V>>(
-                        initialCapacity, maximumCacheSize,
-                        asSoftReferenceConsumer(stopOnEviction
-                                ? DefaultLRUCacheFactory.this::doStop : DefaultLRUCacheFactory.this::doNothing)));
+        LOG.trace(
+                "Creating LRUWeakCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}",
+                initialCapacity,
+                maximumCacheSize,
+                stopOnEviction);
+        return new SimpleSoftCache<>(new SimpleLRUCache<K, SoftReference<V>>(
+                initialCapacity,
+                maximumCacheSize,
+                asSoftReferenceConsumer(
+                        stopOnEviction
+                                ? DefaultLRUCacheFactory.this::doStop
+                                : DefaultLRUCacheFactory.this::doNothing)));
     }
 
-    <V> void doNothing(V value) {
-    }
+    <V> void doNothing(V value) {}
 
     <V> void doStop(V value) {
         try {

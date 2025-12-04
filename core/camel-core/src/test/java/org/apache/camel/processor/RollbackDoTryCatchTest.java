@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RollbackDoTryCatchTest extends ContextTestSupport {
 
@@ -82,19 +83,20 @@ public class RollbackDoTryCatchTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .doTry()
+                        .doTry()
                         .to("mock:doTry")
                         .to("direct:rollback")
-                    .doCatch(Throwable.class)
+                        .doCatch(Throwable.class)
                         .log("doCatch")
                         .to("mock:doCatch")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from("direct:rollback")
-                        .choice().when(body().isNotEqualTo("ok")).to("mock:rollback")
+                        .choice()
+                        .when(body().isNotEqualTo("ok"))
+                        .to("mock:rollback")
                         .rollback("That do not work");
-
             }
         };
     }

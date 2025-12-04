@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,10 +47,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
+@EnabledIfSystemProperty(
+        named = "connectionString",
+        matches = ".*",
+        disabledReason =
+                "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EventProcessorIT {
 
@@ -80,8 +84,8 @@ public class EventProcessorIT {
     @Test
     public void testEventProcessingWithBlobCheckpointStore() {
         final AtomicBoolean doneAsync = new AtomicBoolean();
-        final EventHubProducerAsyncClient producerAsyncClient
-                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient =
+                EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
         final Consumer<EventContext> onEvent = eventContext -> {
             final String body = eventContext.getEventData().getBodyAsString();
             if (eventContext.getPartitionContext().getPartitionId().equals("0")
@@ -90,19 +94,19 @@ public class EventProcessorIT {
                 doneAsync.set(true);
             }
         };
-        final Consumer<ErrorContext> onError = errorContext -> {
-        };
-        final EventProcessorClient processorClient
-                = EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError);
+        final Consumer<ErrorContext> onError = errorContext -> {};
+        final EventProcessorClient processorClient =
+                EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError);
 
         processorClient.start();
 
-        producerAsyncClient.send(Collections.singletonList(new EventData("Testing Event Consumer With BlobStore")),
-                new SendOptions().setPartitionId("0")).block();
+        producerAsyncClient
+                .send(
+                        Collections.singletonList(new EventData("Testing Event Consumer With BlobStore")),
+                        new SendOptions().setPartitionId("0"))
+                .block();
 
-        Awaitility.await()
-                .timeout(30, TimeUnit.SECONDS)
-                .untilTrue(doneAsync);
+        Awaitility.await().timeout(30, TimeUnit.SECONDS).untilTrue(doneAsync);
 
         processorClient.stop();
         producerAsyncClient.close();

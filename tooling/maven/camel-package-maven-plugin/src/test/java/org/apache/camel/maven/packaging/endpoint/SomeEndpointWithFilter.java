@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
@@ -24,11 +25,12 @@ public final class SomeEndpointWithFilter {
 
     @Metadata(description = "some description")
     public static final String KEEP_1 = "keep-1";
+
     @Metadata(description = "some description", applicableFor = "some")
     public static final String KEEP_2 = "keep-2";
+
     @Metadata(description = "some description", applicableFor = "other")
     public static final String IGNORE = "ignore";
 
-    private SomeEndpointWithFilter() {
-    }
+    private SomeEndpointWithFilter() {}
 }

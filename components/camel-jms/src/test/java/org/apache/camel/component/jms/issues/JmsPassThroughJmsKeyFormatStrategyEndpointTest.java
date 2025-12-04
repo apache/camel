@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -31,18 +34,17 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JmsPassThroughJmsKeyFormatStrategyEndpointTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
-    private final String uri
-            = "activemq:queue:JmsPassThroughJmsKeyFormatStrategyEndpointTest?jmsKeyFormatStrategy=passthrough";
+    private final String uri =
+            "activemq:queue:JmsPassThroughJmsKeyFormatStrategyEndpointTest?jmsKeyFormatStrategy=passthrough";
 
     @Test
     public void testSendWithHeaders() throws Exception {
@@ -59,8 +61,12 @@ public class JmsPassThroughJmsKeyFormatStrategyEndpointTest extends AbstractJMST
         assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_1"));
         assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_2"));
 
-        assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_1"));
-        assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_2"));
+        assertEquals(
+                "VALUE_1",
+                mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_1"));
+        assertEquals(
+                "VALUE_2",
+                mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_2"));
     }
 
     @Override

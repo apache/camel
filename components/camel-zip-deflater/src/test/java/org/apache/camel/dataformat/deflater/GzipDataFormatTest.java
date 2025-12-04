@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.deflater;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -27,18 +30,16 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test of the gzip data format.
  */
 public class GzipDataFormatTest extends CamelTestSupport {
     private static final String TEXT = "Hamlet by William Shakespeare\n"
-                                       + "To be, or not to be: that is the question:\n"
-                                       + "Whether 'tis nobler in the mind to suffer\n"
-                                       + "The slings and arrows of outrageous fortune,\n"
-                                       + "Or to take arms against a sea of troubles,\n"
-                                       + "And by opposing end them? To die: to sleep;";
+            + "To be, or not to be: that is the question:\n"
+            + "Whether 'tis nobler in the mind to suffer\n"
+            + "The slings and arrows of outrageous fortune,\n"
+            + "Or to take arms against a sea of troubles,\n"
+            + "And by opposing end them? To die: to sleep;";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -69,7 +70,12 @@ public class GzipDataFormatTest extends CamelTestSupport {
     public void testUnMarshalTextToGzip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().gzipDeflater().unmarshal().gzipDeflater().to("mock:result");
+                from("direct:start")
+                        .marshal()
+                        .gzipDeflater()
+                        .unmarshal()
+                        .gzipDeflater()
+                        .to("mock:result");
             }
         });
         context.start();
@@ -90,9 +96,7 @@ public class GzipDataFormatTest extends CamelTestSupport {
     public void testUnmarshalConcatenatedCompressedFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .unmarshal().gzipDeflater()
-                        .to("mock:result");
+                from("direct:start").unmarshal().gzipDeflater().to("mock:result");
             }
         });
         context.start();

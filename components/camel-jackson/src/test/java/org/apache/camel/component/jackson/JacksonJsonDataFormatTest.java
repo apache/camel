@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -34,11 +35,13 @@ public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
                 from("direct:backPretty").unmarshal().json().to("mock:reverse");
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Jackson);
-                from("direct:backPojo").unmarshal().json(JsonLibrary.Jackson, TestPojo.class).to("mock:reversePojo");
+                from("direct:backPojo")
+                        .unmarshal()
+                        .json(JsonLibrary.Jackson, TestPojo.class)
+                        .to("mock:reversePojo");
 
                 from("direct:nullBody").unmarshal().allowNullBody().json().to("mock:nullBody");
             }
         };
     }
-
 }

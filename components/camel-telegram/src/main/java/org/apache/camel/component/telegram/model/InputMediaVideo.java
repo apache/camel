@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -49,8 +50,14 @@ public class InputMediaVideo extends InputMedia {
      * @param duration          Optional. Video duration
      * @param supportsStreaming Optional. Pass True, if the uploaded video is suitable for streaming
      */
-    public InputMediaVideo(String media, String caption, String parseMode, Integer width,
-                           Integer height, Integer duration, String supportsStreaming) {
+    public InputMediaVideo(
+            String media,
+            String caption,
+            String parseMode,
+            Integer width,
+            Integer height,
+            Integer duration,
+            String supportsStreaming) {
         super(TYPE, media, caption, parseMode);
         this.width = width;
         this.height = height;

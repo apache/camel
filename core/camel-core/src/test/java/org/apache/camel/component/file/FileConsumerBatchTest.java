@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,7 +32,9 @@ public class FileConsumerBatchTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).autoStartup(false).convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .autoStartup(false)
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -55,5 +58,4 @@ public class FileConsumerBatchTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

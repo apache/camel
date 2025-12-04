@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Exchange;
@@ -66,7 +67,8 @@ public class JGroupsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         if (body != null) {
-            Address destinationAddress = exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_DEST, Address.class);
+            Address destinationAddress =
+                    exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_DEST, Address.class);
             Address sourceAddress = exchange.getIn().getHeader(JGroupsConstants.HEADER_JGROUPS_SRC, Address.class);
 
             LOG.debug("Posting: {} to cluster: {}", body, clusterName);
@@ -83,5 +85,4 @@ public class JGroupsProducer extends DefaultProducer {
             LOG.debug("Body is null, cannot post to channel.");
         }
     }
-
 }

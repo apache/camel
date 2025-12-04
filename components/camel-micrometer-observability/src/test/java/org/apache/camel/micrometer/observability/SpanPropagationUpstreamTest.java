@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.
  */
@@ -36,8 +37,11 @@ public class SpanPropagationUpstreamTest extends MicrometerObservabilityTracerPr
 
     @Test
     void testPropagateUpstreamTraceRequest() throws IOException {
-        template.requestBodyAndHeader("direct:start", "sample body",
-                "traceparent", "00-0af044aea5c127fd5ab5f839de2b8ae2-d362a8a943c2b289-01");
+        template.requestBodyAndHeader(
+                "direct:start",
+                "sample body",
+                "traceparent",
+                "00-0af044aea5c127fd5ab5f839de2b8ae2-d362a8a943c2b289-01");
         Map<String, OtelTrace> traces = otelExtension.getTraces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
@@ -71,12 +75,8 @@ public class SpanPropagationUpstreamTest extends MicrometerObservabilityTracerPr
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.client;
 
 import io.grpc.stub.StreamObserver;
@@ -35,7 +36,6 @@ class GrpcSimpleExchangeForwarder implements GrpcExchangeForwarder {
     public GrpcSimpleExchangeForwarder(GrpcConfiguration configuration, Object grpcStub) {
         this.configuration = configuration;
         this.grpcStub = grpcStub;
-
     }
 
     @Override
@@ -60,6 +60,5 @@ class GrpcSimpleExchangeForwarder implements GrpcExchangeForwarder {
     }
 
     @Override
-    public void shutdown() {
-    }
+    public void shutdown() {}
 }

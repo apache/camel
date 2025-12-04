@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -22,9 +26,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XsltResultHandlerTest extends TestSupport {
 
@@ -55,9 +56,9 @@ public class XsltResultHandlerTest extends TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes&resultHandlerFactory=#factory");
+                        .to(
+                                "xslt:org/apache/camel/component/xslt/example.xsl?output=bytes&resultHandlerFactory=#factory");
             }
         };
     }
-
 }

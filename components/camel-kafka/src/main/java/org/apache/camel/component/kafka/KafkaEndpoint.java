@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.Map;
@@ -46,8 +47,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Send and receive messages to/from an Apache Kafka broker.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic",
-             category = { Category.MESSAGING }, headersClass = KafkaConstants.class)
+@UriEndpoint(
+        firstVersion = "2.13.0",
+        scheme = "kafka",
+        title = "Kafka",
+        syntax = "kafka:topic",
+        category = {Category.MESSAGING},
+        headersClass = KafkaConstants.class)
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
@@ -56,13 +62,14 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
+
     @UriParam(label = "advanced")
     private KafkaClientFactory kafkaClientFactory;
+
     @UriParam(label = "consumer,advanced")
     private KafkaManualCommitFactory kafkaManualCommitFactory;
 
-    public KafkaEndpoint() {
-    }
+    public KafkaEndpoint() {}
 
     public KafkaEndpoint(String endpointUri, KafkaComponent component) {
         super(endpointUri, component);
@@ -169,7 +176,8 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
             c = resolver.resolveClass(name, type, getClass().getClassLoader());
         }
         if (c == null) {
-            c = resolver.resolveClass(name, type, org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
+            c = resolver.resolveClass(
+                    name, type, org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
         }
         return c;
     }
@@ -202,19 +210,21 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     public ExecutorService createExecutor(Object source) {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(source,
-                "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumersCount());
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(
+                        source, "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumersCount());
     }
 
     public ExecutorService createProducerExecutor(Object source) {
         int core = getConfiguration().getWorkerPoolCoreSize();
         int max = getConfiguration().getWorkerPoolMaxSize();
-        return getCamelContext().getExecutorServiceManager().newThreadPool(source,
-                "KafkaProducer[" + configuration.getTopic() + "]", core, max);
+        return getCamelContext()
+                .getExecutorServiceManager()
+                .newThreadPool(source, "KafkaProducer[" + configuration.getTopic() + "]", core, max);
     }
 
     protected KafkaProducer createProducer(KafkaEndpoint endpoint) {
         return new KafkaProducer(endpoint);
     }
-
 }

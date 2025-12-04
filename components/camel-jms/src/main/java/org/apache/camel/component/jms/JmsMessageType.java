@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 /**
  * Enum for different {@link jakarta.jms.Message} types.
  */
 public enum JmsMessageType {
-
     Bytes,
     Map,
     Object,
@@ -31,5 +31,4 @@ public enum JmsMessageType {
      * BlobMessage which is not supported by all JMS implementations
      */
     Blob
-
 }

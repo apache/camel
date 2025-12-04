@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
@@ -43,7 +44,8 @@ import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BindyAbstractDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+public abstract class BindyAbstractDataFormat extends ServiceSupport
+        implements DataFormat, DataFormatName, CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(BindyAbstractDataFormat.class);
     private String locale;
     private BindyAbstractFactory modelFactory;
@@ -52,8 +54,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
     private boolean unwrapSingleInstance = true;
     private boolean allowEmptyStream;
 
-    protected BindyAbstractDataFormat() {
-    }
+    protected BindyAbstractDataFormat() {}
 
     protected BindyAbstractDataFormat(Class<?> classType) {
         this.classType = classType;
@@ -104,15 +105,14 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
     private void registerAdditionalConverter(FormatFactory formatFactory)
             throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Function<Class<?>, FormatFactories> g = aClass -> aClass.getAnnotation(FormatFactories.class);
-        Function<FormatFactories, List<Class<? extends FormatFactoryInterface>>> h
-                = formatFactories -> Arrays.asList(formatFactories.value());
-        List<Class<? extends FormatFactoryInterface>> array = Optional
-                .ofNullable(classType)
-                .map(g)
-                .map(h)
-                .orElse(Collections.emptyList());
+        Function<FormatFactories, List<Class<? extends FormatFactoryInterface>>> h =
+                formatFactories -> Arrays.asList(formatFactories.value());
+        List<Class<? extends FormatFactoryInterface>> array =
+                Optional.ofNullable(classType).map(g).map(h).orElse(Collections.emptyList());
         for (Class<? extends FormatFactoryInterface> l : array) {
-            formatFactory.getFactoryRegistry().register(l.getDeclaredConstructor().newInstance());
+            formatFactory
+                    .getFactoryRegistry()
+                    .register(l.getDeclaredConstructor().newInstance());
         }
     }
 
@@ -132,7 +132,8 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
         Function<Registry, Set<FactoryRegistry>> g = r -> r.findByType(FactoryRegistry.class);
         Function<Set<FactoryRegistry>, FactoryRegistry> h = factoryRegistries -> {
             if (factoryRegistries.size() > 1) {
-                LOGGER.warn("Number of registered {}: {}",
+                LOGGER.warn(
+                        "Number of registered {}: {}",
                         FactoryRegistry.class.getCanonicalName(),
                         factoryRegistries.size());
             }
@@ -143,11 +144,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
             }
         };
 
-        return Optional.ofNullable(camelContext)
-                .map(f)
-                .map(g)
-                .map(h)
-                .orElse(new DefaultFactoryRegistry());
+        return Optional.ofNullable(camelContext).map(f).map(g).map(h).orElse(new DefaultFactoryRegistry());
     }
 
     public void setModelFactory(BindyAbstractFactory modelFactory) {
@@ -164,8 +161,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
         for (Field field : model.getClass().getDeclaredFields()) {
             Link linkField = field.getAnnotation(Link.class);
             if (linkField != null) {
-                row.putIfAbsent(field.getType().getName(),
-                        ReflectionHelper.getField(field, model));
+                row.putIfAbsent(field.getType().getName(), ReflectionHelper.getField(field, model));
             }
         }
     }

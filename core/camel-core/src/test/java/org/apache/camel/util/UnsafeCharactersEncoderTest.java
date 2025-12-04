@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class UnsafeCharactersEncoderTest {
 
@@ -63,14 +64,16 @@ public class UnsafeCharactersEncoderTest {
     @Test
     public void testPercentEncodeDanishChar() {
         String beforeEncoding = "http://localhost:{{port}}/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
-        String afterEncoding = "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
+        String afterEncoding =
+                "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
     @Test
     public void testPercentEncodeDanishCharEncoded() {
         String beforeEncoding = "http://localhost:{{port}}/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
-        String afterEncoding = "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
+        String afterEncoding =
+                "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
@@ -110,5 +113,4 @@ public class UnsafeCharactersEncoderTest {
 
         assertEquals(result, expected, "Get the wrong encoding result");
     }
-
 }

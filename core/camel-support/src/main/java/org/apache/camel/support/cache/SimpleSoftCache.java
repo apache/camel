@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import java.lang.ref.Reference;
@@ -140,7 +141,10 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
 
     @Override
     public Collection<V> values() {
-        return delegate.values().stream().map(Reference::get).filter(Objects::nonNull).collect(Collectors.toList());
+        return delegate.values().stream()
+                .map(Reference::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -182,7 +186,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || value == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             V prev = null;
             if (ref == null) {
@@ -209,7 +213,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || value == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             if (ref != null) {
                 V v = ref.get();
@@ -230,7 +234,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || oldValue == null || newValue == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             if (ref != null) {
                 V v = ref.get();
@@ -256,7 +260,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || value == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             if (ref != null) {
                 V v = ref.get();
@@ -280,7 +284,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || mappingFunction == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             if (ref == null) {
                 V newValue = mappingFunction.apply(key);
@@ -306,7 +310,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || remappingFunction == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             if (ref != null) {
                 V v = ref.get();
@@ -338,7 +342,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || remappingFunction == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             V oldValue = ref == null ? null : ref.get();
             V newValue = remappingFunction.apply(key, oldValue);
@@ -366,7 +370,7 @@ public class SimpleSoftCache<K, V> implements Map<K, V> {
         if (key == null || value == null || remappingFunction == null) {
             throw new NullPointerException();
         }
-        for (;;) {
+        for (; ; ) {
             SoftReference<V> ref = delegate.get(key);
             V oldValue = ref == null ? null : ref.get();
             V newValue = oldValue == null ? value : remappingFunction.apply(oldValue, value);

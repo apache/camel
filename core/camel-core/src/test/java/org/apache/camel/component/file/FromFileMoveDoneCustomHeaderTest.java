@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,7 +46,8 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from(fileUri("inbox?initialDelay=0&delay=10&move=${header.bar}"))
-                        .setHeader("bar", constant("dones/mydone.txt")).transform(constant("Bye World"))
+                        .setHeader("bar", constant("dones/mydone.txt"))
+                        .transform(constant("Bye World"))
                         .to("mock:result", fileUri("outbox"));
             }
         };

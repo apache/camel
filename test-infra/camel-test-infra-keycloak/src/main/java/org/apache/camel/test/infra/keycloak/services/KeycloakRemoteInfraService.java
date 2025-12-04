@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.keycloak.services;
 
 import org.apache.camel.test.infra.keycloak.common.KeycloakProperties;
@@ -34,14 +35,15 @@ public class KeycloakRemoteInfraService implements KeycloakInfraService {
     private final String keycloakPassword;
 
     public KeycloakRemoteInfraService() {
-        this(System.getProperty(KeycloakProperties.KEYCLOAK_SERVER_URL),
-             System.getProperty(KeycloakProperties.KEYCLOAK_REALM, "master"),
-             System.getProperty(KeycloakProperties.KEYCLOAK_USERNAME),
-             System.getProperty(KeycloakProperties.KEYCLOAK_PASSWORD));
+        this(
+                System.getProperty(KeycloakProperties.KEYCLOAK_SERVER_URL),
+                System.getProperty(KeycloakProperties.KEYCLOAK_REALM, "master"),
+                System.getProperty(KeycloakProperties.KEYCLOAK_USERNAME),
+                System.getProperty(KeycloakProperties.KEYCLOAK_PASSWORD));
     }
 
-    public KeycloakRemoteInfraService(String keycloakServerUrl, String keycloakRealm, String keycloakUsername,
-                                      String keycloakPassword) {
+    public KeycloakRemoteInfraService(
+            String keycloakServerUrl, String keycloakRealm, String keycloakUsername, String keycloakPassword) {
         this.keycloakServerUrl = keycloakServerUrl;
         this.keycloakRealm = keycloakRealm;
         this.keycloakUsername = keycloakUsername;
@@ -90,10 +92,6 @@ public class KeycloakRemoteInfraService implements KeycloakInfraService {
     @Override
     public Keycloak getKeycloakAdminClient() {
         return Keycloak.getInstance(
-                getKeycloakServerUrl(),
-                getKeycloakRealm(),
-                getKeycloakUsername(),
-                getKeycloakPassword(),
-                "admin-cli");
+                getKeycloakServerUrl(), getKeycloakRealm(), getKeycloakUsername(), getKeycloakPassword(), "admin-cli");
     }
 }

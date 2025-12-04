@@ -47,15 +47,12 @@ class LogTestBase {
             values.add(now);
         }
 
-        LogEntry entry = new LogEntry(
-                LogEntry.EntryState.NEW, 0,
-                keyData.getBytes(), 0, value.array());
+        LogEntry entry = new LogEntry(LogEntry.EntryState.NEW, 0, keyData.getBytes(), 0, value.array());
         return entry;
     }
 
     protected List<Instant> generateDataFilePredictable(
-            Consumer<EntryInfo.CachedEntryInfo> offsetConsumer, LogWriter logWriter, long total)
-            throws IOException {
+            Consumer<EntryInfo.CachedEntryInfo> offsetConsumer, LogWriter logWriter, long total) throws IOException {
         List<Instant> values = new ArrayList<>();
 
         LOG.debug("Number of records to write: {}", total);
@@ -71,12 +68,13 @@ class LogTestBase {
         return values;
     }
 
-    protected List<Instant> generateDataFilePredictable(Consumer<EntryInfo.CachedEntryInfo> offsetConsumer, LogWriter logWriter)
-            throws IOException {
+    protected List<Instant> generateDataFilePredictable(
+            Consumer<EntryInfo.CachedEntryInfo> offsetConsumer, LogWriter logWriter) throws IOException {
         return generateDataFilePredictable(offsetConsumer, logWriter, RECORD_COUNT);
     }
 
-    protected List<Instant> generateDataFilePredictable(Consumer<EntryInfo.CachedEntryInfo> offsetConsumer) throws IOException {
+    protected List<Instant> generateDataFilePredictable(Consumer<EntryInfo.CachedEntryInfo> offsetConsumer)
+            throws IOException {
         File reportFile = new File(testDir, "test.data");
         final DefaultLogSupervisor scheduledFlushPolicy = new DefaultLogSupervisor(100);
         try (LogWriter logWriter = new LogWriter(reportFile, scheduledFlushPolicy)) {
@@ -87,5 +85,4 @@ class LogTestBase {
     protected List<Instant> generateDataFilePredictable() throws IOException {
         return generateDataFilePredictable(null);
     }
-
 }

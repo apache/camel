@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
@@ -88,20 +89,23 @@ public class AS2AsynchronousMDNManager {
 
     @SuppressWarnings("unused")
     private Certificate[] signingCertificateChain;
+
     @SuppressWarnings("unused")
     private PrivateKey signingPrivateKey;
+
     private String userName;
     private String password;
     private String accessToken;
 
-    public AS2AsynchronousMDNManager(String as2Version,
-                                     String userAgent,
-                                     String senderFQDN,
-                                     Certificate[] signingCertificateChain,
-                                     PrivateKey signingPrivateKey,
-                                     String userName,
-                                     String password,
-                                     String accessToken) {
+    public AS2AsynchronousMDNManager(
+            String as2Version,
+            String userAgent,
+            String senderFQDN,
+            Certificate[] signingCertificateChain,
+            PrivateKey signingPrivateKey,
+            String userName,
+            String password,
+            String accessToken) {
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
         this.userName = userName;
@@ -109,17 +113,20 @@ public class AS2AsynchronousMDNManager {
         this.accessToken = accessToken;
 
         // Build Processor
-        httpProcessor = HttpProcessorBuilder.create().add(new RequestAsynchronousMDN(as2Version, senderFQDN))
-                .add(new RequestTargetHost()).add(new RequestUserAgent(userAgent)).add(new RequestDate())
-                .add(new RequestContent(true)).add(new RequestConnControl()).add(new RequestExpectContinue())
+        httpProcessor = HttpProcessorBuilder.create()
+                .add(new RequestAsynchronousMDN(as2Version, senderFQDN))
+                .add(new RequestTargetHost())
+                .add(new RequestUserAgent(userAgent))
+                .add(new RequestDate())
+                .add(new RequestContent(true))
+                .add(new RequestConnControl())
+                .add(new RequestExpectContinue())
                 .build();
     }
 
     // Sends the signed or unsigned AS2-MDN to the URI requested by the sender of the AS2 message.
     public HttpCoreContext send(
-            MultipartMimeEntity multipartMimeEntity,
-            String contentType,
-            String recipientDeliveryAddress)
+            MultipartMimeEntity multipartMimeEntity, String contentType, String recipientDeliveryAddress)
             throws HttpException {
         ObjectHelper.notNull(multipartMimeEntity, "multipartMimeEntity");
         ObjectHelper.notNull(contentType, "contentType");
@@ -130,10 +137,12 @@ public class AS2AsynchronousMDNManager {
         int buffSize = 8 * 1024;
 
         Http1Config h1Config = Http1Config.custom().setBufferSize(buffSize).build();
-        HttpConnectionFactory<ManagedHttpClientConnection> connFactory
-                = ManagedHttpClientConnectionFactory.builder().http1Config(h1Config).build();
+        HttpConnectionFactory<ManagedHttpClientConnection> connFactory = ManagedHttpClientConnectionFactory.builder()
+                .http1Config(h1Config)
+                .build();
 
-        try (HttpClientConnection httpConnection = connFactory.createConnection(new Socket(uri.getHost(), uri.getPort()))) {
+        try (HttpClientConnection httpConnection =
+                connFactory.createConnection(new Socket(uri.getHost(), uri.getPort()))) {
 
             // Add Context attributes
             HttpCoreContext httpContext = HttpCoreContext.create();
@@ -161,7 +170,8 @@ public class AS2AsynchronousMDNManager {
         }
     }
 
-    private HttpResponse send(HttpClientConnection httpConnection, ClassicHttpRequest request, HttpCoreContext httpContext)
+    private HttpResponse send(
+            HttpClientConnection httpConnection, ClassicHttpRequest request, HttpCoreContext httpContext)
             throws HttpException, IOException {
 
         // Execute Request
@@ -172,5 +182,4 @@ public class AS2AsynchronousMDNManager {
 
         return response;
     }
-
 }

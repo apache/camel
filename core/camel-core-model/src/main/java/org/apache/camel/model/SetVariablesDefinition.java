@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +44,7 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
     @XmlElementRef(name = "variables")
     private List<SetVariableDefinition> variables = new java.util.ArrayList<>();
 
-    public SetVariablesDefinition() {
-    }
+    public SetVariablesDefinition() {}
 
     protected SetVariablesDefinition(SetVariablesDefinition source) {
         super(source);
@@ -123,5 +122,4 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
     }
-
 }

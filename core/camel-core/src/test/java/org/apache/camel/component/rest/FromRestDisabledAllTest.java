@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,12 +49,14 @@ public class FromRestDisabledAllTest extends ContextTestSupport {
             public void configure() {
                 restConfiguration().host("localhost");
 
-                rest("/say").disabled(true)
-                    .post("/hi").to("mock:hi")
-                    .get("/bye").to("mock:bye");
+                rest("/say")
+                        .disabled(true)
+                        .post("/hi")
+                        .to("mock:hi")
+                        .get("/bye")
+                        .to("mock:bye");
 
-                rest("/translate")
-                    .get().to("mock:translate");
+                rest("/translate").get().to("mock:translate");
             }
         };
     }

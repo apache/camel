@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -25,10 +30,6 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
 
@@ -52,8 +53,10 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
 
         assertEquals(1 + 3, myPoll.getCounter());
 
-        Exception caught
-                = getMockEndpoint("mock:dead").getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        Exception caught = getMockEndpoint("mock:dead")
+                .getExchanges()
+                .get(0)
+                .getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertNotNull(caught);
         assertTrue(caught.getMessage().startsWith("Error during poll"));
         assertEquals("Something went wrong", caught.getCause().getCause().getMessage());
@@ -65,13 +68,16 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // try at most 3 times and if still failing move to DLQ
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("seda:start")
                         // bridge the error handler when doing a polling so we can
                         // let Camel's error handler decide what to do
-                        .pollEnrich(fileUri("?initialDelay=0&delay=10&pollStrategy=#myPoll&bridgeErrorHandler=true"),
-                                10000, new UseLatestAggregationStrategy())
+                        .pollEnrich(
+                                fileUri("?initialDelay=0&delay=10&pollStrategy=#myPoll&bridgeErrorHandler=true"),
+                                10000,
+                                new UseLatestAggregationStrategy())
                         .to("mock:result");
             }
         };
@@ -101,5 +107,4 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
             return counter;
         }
     }
-
 }

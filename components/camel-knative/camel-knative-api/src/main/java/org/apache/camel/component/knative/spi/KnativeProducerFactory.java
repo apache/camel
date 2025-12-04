@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.spi;
 
 import org.apache.camel.Endpoint;
@@ -29,8 +30,5 @@ public interface KnativeProducerFactory extends Service {
      * @param  service       the service definition containing information about how make reach the target service.
      * @return
      */
-    Producer createProducer(
-            Endpoint endpoint,
-            KnativeTransportConfiguration configuration,
-            KnativeResource service);
+    Producer createProducer(Endpoint endpoint, KnativeTransportConfiguration configuration, KnativeResource service);
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,14 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class TimerReferenceConfigurationTest extends ContextTestSupport {
 
     /**
      * reference params
      */
     final String refExpectedTimeString = "1972-12-11 19:55:00";
+
     final String refExpectedPattern = "yyyy-MM-dd HH:mm:ss";
     final long refExpectedPeriod = 500;
     final long refExpectedDelay = 100;
@@ -44,6 +46,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
      * value params
      */
     final String valExpectedTimeString = "1970-04-17T18:07:41";
+
     final String valExpectedPattern = "yyyy-MM-dd'T'HH:mm:ss";
     final long valExpectedPeriod = 350;
     final long valExpectedDelay = 123;
@@ -51,15 +54,16 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     final boolean valExpectedDaemon = true;
     final long valExpectedRepeatCount = 13;
 
-    final String refTimerUri = "timer://passByRefTimer?" + "time=#refExpectedTimeString" + "&pattern=#refExpectedPattern"
-                               + "&period=#refExpectedPeriod"
-                               + "&delay=#refExpectedDelay" + "&fixedRate=#refExpectedFixedRate" + "&daemon=#refExpectedDaemon"
-                               + "&repeatCount=#refExpectedRepeatCount";
+    final String refTimerUri =
+            "timer://passByRefTimer?" + "time=#refExpectedTimeString" + "&pattern=#refExpectedPattern"
+                    + "&period=#refExpectedPeriod"
+                    + "&delay=#refExpectedDelay" + "&fixedRate=#refExpectedFixedRate" + "&daemon=#refExpectedDaemon"
+                    + "&repeatCount=#refExpectedRepeatCount";
 
     final String valueTimerUri = "timer://passByValueTimer?" + "time=" + valExpectedTimeString + "&pattern="
-                                 + valExpectedPattern + "&period=" + valExpectedPeriod + "&delay="
-                                 + valExpectedDelay + "&fixedRate=" + valExpectedFixedRate + "&daemon=" + valExpectedDaemon
-                                 + "&repeatCount=" + valExpectedRepeatCount;
+            + valExpectedPattern + "&period=" + valExpectedPeriod + "&delay="
+            + valExpectedDelay + "&fixedRate=" + valExpectedFixedRate + "&daemon=" + valExpectedDaemon
+            + "&repeatCount=" + valExpectedRepeatCount;
 
     final String mockEndpointUri = "mock:result";
 
@@ -133,5 +137,4 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
         assertEquals(valExpectedDaemon, daemon);
         assertEquals(valExpectedRepeatCount, repeatCount);
     }
-
 }

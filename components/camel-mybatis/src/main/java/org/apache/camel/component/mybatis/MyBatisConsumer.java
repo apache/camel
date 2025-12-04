@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import java.util.LinkedList;
@@ -42,8 +43,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         Exchange exchange;
         Object data;
 
-        DataHolder() {
-        }
+        DataHolder() {}
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
@@ -113,8 +113,10 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
-                    maxMessagesPerPoll, total);
+            LOG.debug(
+                    "Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    maxMessagesPerPoll,
+                    total);
             total = maxMessagesPerPoll;
         }
 

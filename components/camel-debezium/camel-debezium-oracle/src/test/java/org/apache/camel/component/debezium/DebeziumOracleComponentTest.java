@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.debezium;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +28,6 @@ import org.apache.camel.component.debezium.oracle.DebeziumOracleComponent;
 import org.apache.camel.component.debezium.oracle.configuration.OracleConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DebeziumOracleComponentTest {
 
@@ -44,8 +44,8 @@ public class DebeziumOracleComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
-                           + "topicPrefix=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                           + "databaseServerName=test&schemaHistoryInternalFileFilename=/test";
+                + "topicPrefix=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                + "databaseServerName=test&schemaHistoryInternalFileFilename=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumOracleComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -54,8 +54,8 @@ public class DebeziumOracleComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final OracleConnectorEmbeddedDebeziumConfiguration configuration
-                    = (OracleConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
+            final OracleConnectorEmbeddedDebeziumConfiguration configuration =
+                    (OracleConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getDatabaseHostname());
@@ -68,8 +68,8 @@ public class DebeziumOracleComponentTest {
 
     @Test
     void testIfCreatesComponentWithExternalConfiguration() throws Exception {
-        final OracleConnectorEmbeddedDebeziumConfiguration configuration
-                = new OracleConnectorEmbeddedDebeziumConfiguration();
+        final OracleConnectorEmbeddedDebeziumConfiguration configuration =
+                new OracleConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabasePassword("pwd");
@@ -83,18 +83,18 @@ public class DebeziumOracleComponentTest {
             // set configurations
             debeziumComponent.setConfiguration(configuration);
 
-            final DebeziumEndpoint debeziumEndpoint = debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
+            final DebeziumEndpoint debeziumEndpoint =
+                    debeziumComponent.createEndpoint(uri, null, Collections.emptyMap());
 
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final OracleConnectorEmbeddedDebeziumConfiguration actualConfigurations
-                    = (OracleConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
+            final OracleConnectorEmbeddedDebeziumConfiguration actualConfigurations =
+                    (OracleConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getDatabaseUser(), actualConfigurations.getDatabaseUser());
             assertEquals(configuration.getConnectorClass(), actualConfigurations.getConnectorClass());
         }
     }
-
 }

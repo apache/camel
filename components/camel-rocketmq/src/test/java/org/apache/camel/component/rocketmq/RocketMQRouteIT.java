@@ -30,13 +30,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "These tests are flaky and unreliable - see CAMEL-19832")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "These tests are flaky and unreliable - see CAMEL-19832")
 public class RocketMQRouteIT extends RocketMQTestSupport {
 
     public static final String EXPECTED_MESSAGE = "hello, RocketMQ.";
 
-    private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1&sendTag=startTag";
+    private static final String START_ENDPOINT_URI =
+            "rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1&sendTag=startTag";
 
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
@@ -65,9 +68,7 @@ public class RocketMQRouteIT extends RocketMQTestSupport {
 
             @Override
             public void configure() {
-                from(START_ENDPOINT_URI)
-                        .process(e -> latch.countDown())
-                        .to(RESULT_ENDPOINT_URI);
+                from(START_ENDPOINT_URI).process(e -> latch.countDown()).to(RESULT_ENDPOINT_URI);
             }
         };
     }

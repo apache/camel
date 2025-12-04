@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,9 +37,6 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DynamicRouterMBeansIT {
 
@@ -90,12 +91,11 @@ public class DynamicRouterMBeansIT {
         boolean result = Arrays.stream(mBeanInfo.getOperations())
                 .map(MBeanFeatureInfo::getName)
                 .toList()
-                .containsAll(
-                        List.of(
-                                "subscribeWithPredicateExpression",
-                                "subscribeWithPredicateBean",
-                                "subscribeWithPredicateInstance",
-                                "removeSubscription"));
+                .containsAll(List.of(
+                        "subscribeWithPredicateExpression",
+                        "subscribeWithPredicateBean",
+                        "subscribeWithPredicateInstance",
+                        "removeSubscription"));
         assertTrue(result);
     }
 
@@ -107,10 +107,7 @@ public class DynamicRouterMBeansIT {
         boolean result = Arrays.stream(mBeanInfo.getAttributes())
                 .map(MBeanFeatureInfo::getName)
                 .toList()
-                .containsAll(
-                        List.of(
-                                "SubscriptionsMap",
-                                "SubscriptionsStatisticsMap"));
+                .containsAll(List.of("SubscriptionsMap", "SubscriptionsStatisticsMap"));
         assertTrue(result);
     }
 }

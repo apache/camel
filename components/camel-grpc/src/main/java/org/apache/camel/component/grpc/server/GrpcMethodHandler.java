@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.server;
 
 import java.util.HashMap;
@@ -96,20 +97,24 @@ public class GrpcMethodHandler {
      * @param  methodName       The name of the method invoked using the stub.
      * @return                  Request stream observer
      */
-    public StreamObserver<Object> handleForConsumerStrategy(StreamObserver<Object> responseObserver, String methodName) {
+    public StreamObserver<Object> handleForConsumerStrategy(
+            StreamObserver<Object> responseObserver, String methodName) {
         Map<String, Object> grcpHeaders = populateGrpcHeaders(methodName);
         GrpcEndpoint endpoint = (GrpcEndpoint) consumer.getEndpoint();
         StreamObserver<Object> requestObserver;
 
         if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
-            requestObserver = new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+            requestObserver =
+                    new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
         } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.PROPAGATION) {
-            requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+            requestObserver =
+                    new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
         } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.DELEGATION) {
-            requestObserver = new GrpcRequestDelegationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+            requestObserver =
+                    new GrpcRequestDelegationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
         } else {
-            throw new IllegalArgumentException(
-                    "gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
+            throw new IllegalArgumentException("gRPC processing strategy not implemented "
+                    + consumer.getConfiguration().getConsumerStrategy());
         }
 
         return requestObserver;
@@ -117,9 +122,11 @@ public class GrpcMethodHandler {
 
     private Map<String, Object> populateGrpcHeaders(String methodName) {
         Map<String, Object> grpcHeaders = new HashMap<>();
-        grpcHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(),
+        grpcHeaders.put(
+                GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(),
                 GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
-        grpcHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(),
+        grpcHeaders.put(
+                GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(),
                 GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
         grpcHeaders.put(GrpcConstants.GRPC_METHOD_NAME_HEADER, methodName);
         return grpcHeaders;

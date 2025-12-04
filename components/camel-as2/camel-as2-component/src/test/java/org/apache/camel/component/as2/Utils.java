@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.io.IOException;
@@ -43,8 +44,7 @@ public final class Utils {
     //
     static int serialNo = 1;
 
-    private Utils() {
-    }
+    private Utils() {}
 
     public static AuthorityKeyIdentifier createAuthorityKeyId(PublicKey pub) throws IOException {
         SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(pub.getEncoded());
@@ -70,15 +70,20 @@ public final class Utils {
 
         X509v3CertificateBuilder v3CertGen = new JcaX509v3CertificateBuilder(
                 new X500Name(issDN),
-                BigInteger.valueOf(serialNo++), new Date(System.currentTimeMillis()),
-                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)), new X500Name(subDN), subPub);
+                BigInteger.valueOf(serialNo++),
+                new Date(System.currentTimeMillis()),
+                new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)),
+                new X500Name(subDN),
+                subPub);
 
         v3CertGen.addExtension(Extension.subjectKeyIdentifier, false, createSubjectKeyId(subPub));
 
         v3CertGen.addExtension(Extension.authorityKeyIdentifier, false, createAuthorityKeyId(issPub));
 
-        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(
-                v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(issPriv)));
+        return new JcaX509CertificateConverter()
+                .setProvider("BC")
+                .getCertificate(v3CertGen.build(new JcaContentSignerBuilder("MD5withRSA")
+                        .setProvider("BC")
+                        .build(issPriv)));
     }
-
 }

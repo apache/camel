@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cron;
 
 import java.util.HashMap;
@@ -58,5 +59,4 @@ public class CamelSpringCronService implements CamelCronService, CamelContextAwa
     public CamelContext getCamelContext() {
         return this.context;
     }
-
 }

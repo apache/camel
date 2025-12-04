@@ -22,7 +22,5 @@ public final class TokenizerTypes {
     public static final String AZURE = "AZURE";
     public static final String QWEN = "QWEN";
 
-    private TokenizerTypes() {
-
-    }
+    private TokenizerTypes() {}
 }

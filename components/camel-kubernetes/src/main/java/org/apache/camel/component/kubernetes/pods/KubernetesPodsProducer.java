@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.pods;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -36,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesPodsProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesPodsProducer.class);
@@ -56,7 +57,6 @@ public class KubernetesPodsProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_PODS_OPERATION:
                 doList(exchange);
                 break;
@@ -91,9 +91,14 @@ public class KubernetesPodsProducer extends DefaultProducer {
         PodList podList;
 
         if (ObjectHelper.isEmpty(namespace)) {
-            podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
+            podList =
+                    getEndpoint().getKubernetesClient().pods().inAnyNamespace().list();
         } else {
-            podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespace).list();
+            podList = getEndpoint()
+                    .getKubernetesClient()
+                    .pods()
+                    .inNamespace(namespace)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, podList.getItems());
@@ -110,9 +115,19 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            podList = getEndpoint().getKubernetesClient().pods().inAnyNamespace().withLabels(labels).list();
+            podList = getEndpoint()
+                    .getKubernetesClient()
+                    .pods()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            podList = getEndpoint().getKubernetesClient().pods().inNamespace(namespace).withLabels(labels).list();
+            podList = getEndpoint()
+                    .getKubernetesClient()
+                    .pods()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, podList.getItems());
@@ -129,7 +144,12 @@ public class KubernetesPodsProducer extends DefaultProducer {
             LOG.error("Get a specific pod require specify a namespace name");
             throw new IllegalArgumentException("Get a specific pod require specify a namespace name");
         }
-        Pod pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).get();
+        Pod pod = getEndpoint()
+                .getKubernetesClient()
+                .pods()
+                .inNamespace(namespaceName)
+                .withName(podName)
+                .get();
 
         prepareOutboundMessage(exchange, pod);
     }
@@ -148,7 +168,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         PodSpec podSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_POD_SPEC, PodSpec.class);
         if (ObjectHelper.isEmpty(podName)) {
             LOG.error("{} a specific pod require specify a pod name", operationName);
-            throw new IllegalArgumentException(String.format("%s a specific pod require specify a pod name", operationName));
+            throw new IllegalArgumentException(
+                    String.format("%s a specific pod require specify a pod name", operationName));
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("{} a specific pod require specify a namespace name", operationName);
@@ -161,9 +182,18 @@ public class KubernetesPodsProducer extends DefaultProducer {
                     String.format("%s a specific pod require specify a pod spec bean", operationName));
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata()
-                .withSpec(podSpec).build();
-        Pod pod = operation.apply(getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).resource(podCreating));
+        Pod podCreating = new PodBuilder()
+                .withNewMetadata()
+                .withName(podName)
+                .withLabels(labels)
+                .endMetadata()
+                .withSpec(podSpec)
+                .build();
+        Pod pod = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .pods()
+                .inNamespace(namespaceName)
+                .resource(podCreating));
 
         prepareOutboundMessage(exchange, pod);
     }
@@ -180,8 +210,12 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific pod require specify a namespace name");
         }
 
-        List<StatusDetails> statusDetails
-                = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).withName(podName).delete();
+        List<StatusDetails> statusDetails = getEndpoint()
+                .getKubernetesClient()
+                .pods()
+                .inNamespace(namespaceName)
+                .withName(podName)
+                .delete();
         boolean podDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, podDeleted);

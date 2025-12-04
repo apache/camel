@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -30,12 +37,6 @@ import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {
@@ -103,7 +104,8 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
                 MyPolicy myPolicy = new MyPolicy();
 
                 from(fileUri("?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true"))
-                        .routePolicy(myPolicy).id("myRoute")
+                        .routePolicy(myPolicy)
+                        .id("myRoute")
                         .to("mock:result");
             }
         };
@@ -124,7 +126,5 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
                 }
             }
         }
-
     }
-
 }

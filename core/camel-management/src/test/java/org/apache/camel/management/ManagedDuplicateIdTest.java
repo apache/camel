@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDuplicateIdTest extends ManagementTestSupport {
@@ -32,17 +33,21 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
+                from("direct:foo")
+                        .routeId("foo")
                         .to("log:foo")
                         .split(body())
-                        .to("log:line").id("clash")
+                        .to("log:line")
+                        .id("clash")
                         .end()
                         .to("mock:foo");
 
-                from("direct:bar").routeId("bar")
+                from("direct:bar")
+                        .routeId("bar")
                         .to("log:bar")
                         .split(body())
-                        .to("log:line").id("clash")
+                        .to("log:line")
+                        .id("clash")
                         .end()
                         .to("mock:bar");
             }
@@ -62,11 +67,16 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .to("log:line").id("clash")
-                        .to("log:foo").id("cheese")
-                        .split(body()).id("mysplit")
-                        .to("log:line").id("clash")
+                from("direct:foo")
+                        .routeId("foo")
+                        .to("log:line")
+                        .id("clash")
+                        .to("log:foo")
+                        .id("cheese")
+                        .split(body())
+                        .id("mysplit")
+                        .to("log:line")
+                        .id("clash")
                         .end()
                         .to("mock:foo");
             }
@@ -85,5 +95,4 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

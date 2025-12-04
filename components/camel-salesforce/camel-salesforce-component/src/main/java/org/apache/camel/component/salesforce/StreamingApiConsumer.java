@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.io.IOException;
@@ -84,7 +85,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
     private final SubscriptionHelper subscriptionHelper;
     private final String topicName;
 
-    public StreamingApiConsumer(final SalesforceEndpoint endpoint, final Processor processor, final SubscriptionHelper helper) {
+    public StreamingApiConsumer(
+            final SalesforceEndpoint endpoint, final Processor processor, final SubscriptionHelper helper) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         final ObjectMapper configuredObjectMapper = endpoint.getConfiguration().getObjectMapper();
@@ -170,7 +172,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
         }
 
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA, data.get(SCHEMA_PROPERTY));
-        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
+        in.setHeader(
+                SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
 
         final Map<String, Object> payload = (Map<String, Object>) data.get(PAYLOAD_PROPERTY);
         final Map<String, Object> changeEventHeader = (Map<String, Object>) payload.get("ChangeEventHeader");
@@ -178,7 +181,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANGE_ORIGIN, changeEventHeader.get("changeOrigin"));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_TRANSACTION_KEY, changeEventHeader.get("transactionKey"));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_SEQUENCE_NUMBER, changeEventHeader.get("sequenceNumber"));
-        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_IS_TRANSACTION_END, changeEventHeader.get("isTransactionEnd"));
+        in.setHeader(
+                SalesforceConstants.HEADER_SALESFORCE_IS_TRANSACTION_END, changeEventHeader.get("isTransactionEnd"));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_COMMIT_TIMESTAMP, changeEventHeader.get("commitTimestamp"));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_COMMIT_USER, changeEventHeader.get("commitUser"));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_COMMIT_NUMBER, changeEventHeader.get("commitNumber"));
@@ -209,7 +213,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
         }
 
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_PLATFORM_EVENT_SCHEMA, data.get(SCHEMA_PROPERTY));
-        in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
+        in.setHeader(
+                SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
 
         final Object payload = data.get(PAYLOAD_PROPERTY);
 
@@ -223,7 +228,6 @@ public class StreamingApiConsumer extends DefaultConsumer {
         } else {
             in.setBody(platformEvent);
         }
-
     }
 
     void createPushTopicMessage(final Message message, final org.apache.camel.Message in) {
@@ -263,8 +267,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
                 in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
             }
         } catch (final IOException e) {
-            final String msg
-                    = String.format("Error parsing message [%s] from Topic %s: %s", message, topicName, e.getMessage());
+            final String msg =
+                    String.format("Error parsing message [%s] from Topic %s: %s", message, topicName, e.getMessage());
             handleException(msg, new SalesforceException(msg, e));
         }
     }
@@ -367,7 +371,10 @@ public class StreamingApiConsumer extends DefaultConsumer {
             } else {
                 final String className = endpoint.getConfiguration().getSObjectClass();
                 if (className != null) {
-                    sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveClass(className);
+                    sObjectClass = endpoint.getComponent()
+                            .getCamelContext()
+                            .getClassResolver()
+                            .resolveClass(className);
                     if (sObjectClass == null) {
                         throw new IllegalArgumentException(String.format("SObject Class not found %s", className));
                     }

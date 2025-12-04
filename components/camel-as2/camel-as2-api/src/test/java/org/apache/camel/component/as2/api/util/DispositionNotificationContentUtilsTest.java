@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.util;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,45 +38,40 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DispositionNotificationContentUtilsTest {
 
     public static final String DISPOSITION_NOTIFICATION_CONTENT = "Reporting-UA: AS2 Server\r\n"
-                                                                  + "MDN-Gateway: dns; example.com\r\n"
-                                                                  + "Original-Recipient: rfc822; 0123456780000\r\n"
-                                                                  + "Final-Recipient: rfc822; 0123456780000\r\n"
-                                                                  + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                  + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
-                                                                  + "  processed/warning: you're awesome\r\n"
-                                                                  + "Failure: oops-a-failure\r\n"
-                                                                  + "Error: oops-an-error\r\n" + "Warning: oops-a-warning\r\n"
-                                                                  + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
-                                                                  + "\r\n";
+            + "MDN-Gateway: dns; example.com\r\n"
+            + "Original-Recipient: rfc822; 0123456780000\r\n"
+            + "Final-Recipient: rfc822; 0123456780000\r\n"
+            + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
+            + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
+            + "  processed/warning: you're awesome\r\n"
+            + "Failure: oops-a-failure\r\n"
+            + "Error: oops-an-error\r\n" + "Warning: oops-a-warning\r\n"
+            + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
+            + "\r\n";
 
     public static final String EXPECTED_REPORTING_UA = "AS2 Server";
     public static final String EXPECTED_MTN_NAME = "example.com";
     public static final String EXPECTED_ORIGINAL_RECIPIENT = "rfc822; 0123456780000";
     public static final String EXPECTED_FINAL_RECIPIENT = "0123456780000";
     public static final String EXPECTED_ORIGINAL_MESSAGE_ID = "<200207310834482A70BF63@\\\"~~foo~~\\\">";
-    public static final DispositionMode EXPECTED_DISPOSITION_MODE = DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY;
+    public static final DispositionMode EXPECTED_DISPOSITION_MODE =
+            DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY;
     public static final String EXPECTED_DISPOSITION_MODIFIER = "warning: you're awesome";
     public static final AS2DispositionType EXPECTED_DISPOSITION_TYPE = AS2DispositionType.PROCESSED;
-    public static final String[] EXPECTED_FAILURE = { "oops-a-failure" };
-    public static final String[] EXPECTED_ERROR = { "oops-an-error" };
-    public static final String[] EXPECTED_WARNING = { "oops-a-warning" };
+    public static final String[] EXPECTED_FAILURE = {"oops-a-failure"};
+    public static final String[] EXPECTED_ERROR = {"oops-an-error"};
+    public static final String[] EXPECTED_WARNING = {"oops-a-warning"};
     public static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "7v7F++fQaNB1sVLFtMRp+dF+eG4=";
     public static final String EXPECTED_DIGEST_ALGORITHM_ID = "sha1";
 
     @BeforeEach
-    public void setUp() throws Exception {
-    }
+    public void setUp() throws Exception {}
 
     @AfterEach
-    public void tearDown() throws Exception {
-    }
+    public void tearDown() throws Exception {}
 
     @Test
     public void test() throws Exception {
@@ -80,40 +80,60 @@ public class DispositionNotificationContentUtilsTest {
 
         AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new BasicHttpTransportMetrics(), 8 * 1024);
 
-        List<CharArrayBuffer> dispositionNotificationFields
-                = EntityParser.parseBodyPartFields(inbuffer, is, null, BasicLineParser.INSTANCE,
-                        new ArrayList<CharArrayBuffer>());
-        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
-                = DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
+        List<CharArrayBuffer> dispositionNotificationFields = EntityParser.parseBodyPartFields(
+                inbuffer, is, null, BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity =
+                DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
 
-        assertEquals(EXPECTED_REPORTING_UA, messageDispositionNotificationEntity.getReportingUA(),
+        assertEquals(
+                EXPECTED_REPORTING_UA,
+                messageDispositionNotificationEntity.getReportingUA(),
                 "Unexpected Reporting UA value");
         assertEquals(EXPECTED_MTN_NAME, messageDispositionNotificationEntity.getMtnName(), "Unexpected MTN Name");
-        assertEquals(EXPECTED_ORIGINAL_RECIPIENT,
+        assertEquals(
+                EXPECTED_ORIGINAL_RECIPIENT,
                 messageDispositionNotificationEntity.getExtensionFields().get("Original-Recipient"),
                 "Unexpected Original Recipient");
-        assertEquals(EXPECTED_FINAL_RECIPIENT, messageDispositionNotificationEntity.getFinalRecipient(),
+        assertEquals(
+                EXPECTED_FINAL_RECIPIENT,
+                messageDispositionNotificationEntity.getFinalRecipient(),
                 "Unexpected Final Reciptient");
-        assertEquals(EXPECTED_ORIGINAL_MESSAGE_ID, messageDispositionNotificationEntity.getOriginalMessageId(),
+        assertEquals(
+                EXPECTED_ORIGINAL_MESSAGE_ID,
+                messageDispositionNotificationEntity.getOriginalMessageId(),
                 "Unexpected Original Message ID");
-        assertEquals(EXPECTED_DISPOSITION_MODE, messageDispositionNotificationEntity.getDispositionMode(),
+        assertEquals(
+                EXPECTED_DISPOSITION_MODE,
+                messageDispositionNotificationEntity.getDispositionMode(),
                 "Unexpected Disposition Mode");
-        assertNotNull(messageDispositionNotificationEntity.getDispositionModifier(), "Unexpected Null Disposition Modifier");
-        assertEquals(EXPECTED_DISPOSITION_MODIFIER, messageDispositionNotificationEntity.getDispositionModifier().getModifier(),
+        assertNotNull(
+                messageDispositionNotificationEntity.getDispositionModifier(), "Unexpected Null Disposition Modifier");
+        assertEquals(
+                EXPECTED_DISPOSITION_MODIFIER,
+                messageDispositionNotificationEntity.getDispositionModifier().getModifier(),
                 "Unexpected Disposition Modifier");
-        assertEquals(EXPECTED_DISPOSITION_TYPE, messageDispositionNotificationEntity.getDispositionType(),
+        assertEquals(
+                EXPECTED_DISPOSITION_TYPE,
+                messageDispositionNotificationEntity.getDispositionType(),
                 "Unexpected Disposition Type");
-        assertArrayEquals(EXPECTED_FAILURE, messageDispositionNotificationEntity.getFailureFields(),
+        assertArrayEquals(
+                EXPECTED_FAILURE,
+                messageDispositionNotificationEntity.getFailureFields(),
                 "Unexpected Failure Array value");
-        assertArrayEquals(EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields(),
-                "Unexpected Error Array value");
-        assertArrayEquals(EXPECTED_WARNING, messageDispositionNotificationEntity.getWarningFields(),
+        assertArrayEquals(
+                EXPECTED_ERROR, messageDispositionNotificationEntity.getErrorFields(), "Unexpected Error Array value");
+        assertArrayEquals(
+                EXPECTED_WARNING,
+                messageDispositionNotificationEntity.getWarningFields(),
                 "Unexpected Warning Array value");
-        assertNotNull(messageDispositionNotificationEntity.getReceivedContentMic(), "Unexpected Null Received Content MIC");
-        assertEquals(EXPECTED_ENCODED_MESSAGE_DIGEST,
+        assertNotNull(
+                messageDispositionNotificationEntity.getReceivedContentMic(), "Unexpected Null Received Content MIC");
+        assertEquals(
+                EXPECTED_ENCODED_MESSAGE_DIGEST,
                 messageDispositionNotificationEntity.getReceivedContentMic().getEncodedMessageDigest(),
                 "Unexpected Encoded Message Digest");
-        assertEquals(EXPECTED_DIGEST_ALGORITHM_ID,
+        assertEquals(
+                EXPECTED_DIGEST_ALGORITHM_ID,
                 messageDispositionNotificationEntity.getReceivedContentMic().getDigestAlgorithmId(),
                 "Unexpected Digest Algorithm ID");
     }
@@ -126,10 +146,13 @@ public class DispositionNotificationContentUtilsTest {
         DispositionMode resultMixedCase = DispositionMode.parseDispositionMode(dispoistionTypeMixedCase);
         DispositionMode resultLowerCase = DispositionMode.parseDispositionMode(dispoistionTypeLowerCase);
 
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, resultMixedCase,
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                resultMixedCase,
                 "DispositionMode should be case insensitive");
-        assertEquals(DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, resultLowerCase,
+        assertEquals(
+                DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                resultLowerCase,
                 "DispositionMode should be case insensitive");
     }
-
 }

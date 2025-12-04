@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
 
 import java.sql.Connection;
@@ -47,8 +48,12 @@ public class JdbcProducer extends DefaultProducer {
     private final int readSize;
     private final Map<String, Object> parameters;
 
-    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, ConnectionStrategy connectionStrategy,
-                        int readSize, Map<String, Object> parameters) {
+    public JdbcProducer(
+            JdbcEndpoint endpoint,
+            DataSource dataSource,
+            ConnectionStrategy connectionStrategy,
+            int readSize,
+            Map<String, Object> parameters) {
         super(endpoint);
         this.dataSource = dataSource;
         this.connectionStrategy = connectionStrategy;
@@ -157,17 +162,19 @@ public class JdbcProducer extends DefaultProducer {
         }
     }
 
-    private boolean doCreateAndExecuteSqlStatementWithHeaders(Exchange exchange, String sql, Connection conn) throws Exception {
+    private boolean doCreateAndExecuteSqlStatementWithHeaders(Exchange exchange, String sql, Connection conn)
+            throws Exception {
         PreparedStatement ps = null;
         ResultSet rs = null;
         boolean shouldCloseResources = true;
 
         try {
-            final String preparedQuery
-                    = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
+            final String preparedQuery = getEndpoint()
+                    .getPrepareStatementStrategy()
+                    .prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
-            boolean shouldRetrieveGeneratedKeys
-                    = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+            boolean shouldRetrieveGeneratedKeys =
+                    exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             if (shouldRetrieveGeneratedKeys) {
                 Object expectedGeneratedColumns = exchange.getIn().getHeader(JdbcConstants.JDBC_GENERATED_COLUMNS);
@@ -180,7 +187,7 @@ public class JdbcProducer extends DefaultProducer {
                 } else {
                     throw new IllegalArgumentException(
                             "Header specifying expected returning columns isn't an instance of String[] or int[] but "
-                                                       + expectedGeneratedColumns.getClass());
+                                    + expectedGeneratedColumns.getClass());
                 }
             } else {
                 ps = conn.prepareStatement(preparedQuery);
@@ -191,8 +198,14 @@ public class JdbcProducer extends DefaultProducer {
             int expectedCount = ps.getParameterMetaData().getParameterCount();
 
             if (expectedCount > 0) {
-                Iterator<?> it = getEndpoint().getPrepareStatementStrategy()
-                        .createPopulateIterator(sql, preparedQuery, expectedCount, exchange, exchange.getIn().getBody());
+                Iterator<?> it = getEndpoint()
+                        .getPrepareStatementStrategy()
+                        .createPopulateIterator(
+                                sql,
+                                preparedQuery,
+                                expectedCount,
+                                exchange,
+                                exchange.getIn().getBody());
                 getEndpoint().getPrepareStatementStrategy().populateStatement(ps, it, expectedCount);
             }
 
@@ -248,8 +261,8 @@ public class JdbcProducer extends DefaultProducer {
 
             LOG.debug("Executing JDBC Statement: {}", sql);
 
-            boolean shouldRetrieveGeneratedKeys
-                    = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+            boolean shouldRetrieveGeneratedKeys =
+                    exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             boolean stmtExecutionResult;
             if (shouldRetrieveGeneratedKeys) {
@@ -263,7 +276,7 @@ public class JdbcProducer extends DefaultProducer {
                 } else {
                     throw new IllegalArgumentException(
                             "Header specifying expected returning columns isn't an instance of String[] or int[] but "
-                                                       + expectedGeneratedColumns.getClass());
+                                    + expectedGeneratedColumns.getClass());
                 }
             } else {
                 stmtExecutionResult = stmt.execute(sql);
@@ -370,7 +383,9 @@ public class JdbcProducer extends DefaultProducer {
     protected void setGeneratedKeys(Exchange exchange, Connection conn, ResultSet generatedKeys) throws SQLException {
         if (generatedKeys != null) {
             ResultSetIterator iterator = new ResultSetIterator(
-                    conn, generatedKeys, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(),
+                    conn,
+                    generatedKeys,
+                    getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(),
                     getEndpoint().isUseGetBytesForBlob());
             List<Map<String, Object>> data = extractRows(iterator);
 
@@ -388,7 +403,10 @@ public class JdbcProducer extends DefaultProducer {
         boolean answer = true;
 
         ResultSetIterator iterator = new ResultSetIterator(
-                conn, rs, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(), getEndpoint().isUseGetBytesForBlob());
+                conn,
+                rs,
+                getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(),
+                getEndpoint().isUseGetBytesForBlob());
 
         JdbcOutputType outputType = getEndpoint().getOutputType();
         exchange.getMessage().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, iterator.getColumnNames());
@@ -397,8 +415,7 @@ public class JdbcProducer extends DefaultProducer {
                     getEndpoint().getCamelContext(),
                     getEndpoint().getOutputClass(),
                     getEndpoint().getBeanRowMapper());
-            exchange.getMessage()
-                    .setBody(new StreamListIterator<>(beanMapper, iterator));
+            exchange.getMessage().setBody(new StreamListIterator<>(beanMapper, iterator));
             // do not close resources as we are in streaming mode
             answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {
@@ -420,8 +437,11 @@ public class JdbcProducer extends DefaultProducer {
             Map<String, Object> row = iterator.next();
             Object value;
             if (getEndpoint().getOutputClass() != null) {
-                value = JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(),
-                        getEndpoint().getBeanRowMapper(), row);
+                value = JdbcHelper.newBeanInstance(
+                        getEndpoint().getCamelContext(),
+                        getEndpoint().getOutputClass(),
+                        getEndpoint().getBeanRowMapper(),
+                        row);
             } else {
                 value = row;
             }
@@ -439,8 +459,11 @@ public class JdbcProducer extends DefaultProducer {
         if (iterator.hasNext()) {
             throw new SQLDataException("Query result not unique for outputType=SelectOne.");
         } else if (getEndpoint().getOutputClass() != null) {
-            return JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(),
-                    getEndpoint().getBeanRowMapper(), row);
+            return JdbcHelper.newBeanInstance(
+                    getEndpoint().getCamelContext(),
+                    getEndpoint().getOutputClass(),
+                    getEndpoint().getBeanRowMapper(),
+                    row);
         } else if (row.size() == 1) {
             return row.values().iterator().next();
         } else {

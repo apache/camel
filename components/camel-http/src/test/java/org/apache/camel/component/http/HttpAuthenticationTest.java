@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +43,6 @@ import org.apache.hc.core5.http.protocol.RequestValidateHost;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class HttpAuthenticationTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -52,11 +53,15 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/search",
-                        new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password))
+                .register(
+                        "/search",
+                        new AuthenticationValidationHandler(
+                                GET.name(), null, null, getExpectedContent(), user, password))
                 .create();
         localServer.start();
     }
@@ -71,44 +76,41 @@ public class HttpAuthenticationTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldSuccess() {
-        Exchange exchange = template.request("http://localhost:"
-                                             + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
-                                             + password,
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://localhost:"
+                        + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
+                        + password,
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
 
     @Test
     public void basicAuthenticationPreemptiveShouldSuccess() {
-        Exchange exchange = template.request("http://localhost:"
-                                             + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
-                                             + password + "&authenticationPreemptive=true",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://localhost:"
+                        + localServer.getLocalPort() + "/search?authUsername=" + user + "&authPassword="
+                        + password + "&authenticationPreemptive=true",
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
 
     @Test
     public void basicAuthenticationShouldFailWithoutCreds() {
-        Exchange exchange
-                = template.request("http://localhost:" + localServer.getLocalPort()
-                                   + "/search?throwExceptionOnFailure=false",
-                        exchange1 -> {
-                        });
+        Exchange exchange = template.request(
+                "http://localhost:" + localServer.getLocalPort() + "/search?throwExceptionOnFailure=false",
+                exchange1 -> {});
 
         assertExchangeFailed(exchange);
     }
 
     @Test
     public void basicAuthenticationShouldFailWithWrongCreds() {
-        Exchange exchange = template
-                .request("http://localhost:" + localServer.getLocalPort()
-                         + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong",
-                        exchange1 -> {
-                        });
+        Exchange exchange = template.request(
+                "http://localhost:" + localServer.getLocalPort()
+                        + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong",
+                exchange1 -> {});
 
         assertExchangeFailed(exchange);
     }

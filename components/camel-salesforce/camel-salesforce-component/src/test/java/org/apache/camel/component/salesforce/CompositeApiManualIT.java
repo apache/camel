@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,15 +46,13 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 @Parameterized
 public class CompositeApiManualIT extends AbstractSalesforceTestBase {
 
-    public static class Accounts extends AbstractQueryRecordsBase<Account> {
-    }
+    public static class Accounts extends AbstractQueryRecordsBase<Account> {}
 
-    private static final Set<String> VERSIONS = new HashSet<>(Arrays.asList("38.0", SalesforceEndpointConfig.DEFAULT_VERSION));
+    private static final Set<String> VERSIONS =
+            new HashSet<>(Arrays.asList("38.0", SalesforceEndpointConfig.DEFAULT_VERSION));
 
     @Parameter
     private String format;
@@ -81,7 +82,8 @@ public class CompositeApiManualIT extends AbstractSalesforceTestBase {
         final Account account = new Account();
         account.setName("Composite API Batch");
 
-        final CreateSObjectResult result = template.requestBody("salesforce:createSObject", account, CreateSObjectResult.class);
+        final CreateSObjectResult result =
+                template.requestBody("salesforce:createSObject", account, CreateSObjectResult.class);
 
         accountId = result.getId();
     }
@@ -163,26 +165,24 @@ public class CompositeApiManualIT extends AbstractSalesforceTestBase {
         final SObjectComposite composite = new SObjectComposite(version, true);
 
         final Line_Item__c li = new Line_Item__c();
-        composite.addUpsertByExternalId("Line_Item__c", "Name", "AC12345", li,
-                "UpsertLineItemReferenceId");
+        composite.addUpsertByExternalId("Line_Item__c", "Name", "AC12345", li, "UpsertLineItemReferenceId");
         testComposite(composite);
     }
 
     @Test
     public void shouldSupportRaw() throws Exception {
-        final String rawComposite = "{\n" +
-                                    "   \"allOrNone\" : true,\n" +
-                                    "   \"compositeRequest\" : [{\n" +
-                                    "      \"method\": \"GET\",\n" +
-                                    "      \"url\": \"/services/data/v" + version
-                                    + "/query/?q=SELECT+Id+FROM+Contact+LIMIT+1\",\n" +
-                                    "      \"referenceId\": \"contacts\"\n" +
-                                    "    }]\n" +
-                                    "}\n";
+        final String rawComposite = "{\n" + "   \"allOrNone\" : true,\n"
+                + "   \"compositeRequest\" : [{\n"
+                + "      \"method\": \"GET\",\n"
+                + "      \"url\": \"/services/data/v"
+                + version
+                + "/query/?q=SELECT+Id+FROM+Contact+LIMIT+1\",\n" + "      \"referenceId\": \"contacts\"\n"
+                + "    }]\n"
+                + "}\n";
         final String response = testRawComposite(rawComposite);
         ObjectMapper objectMapper = new ObjectMapper();
-        SObjectCompositeResponse sObjectCompositeResponse = objectMapper.readValue(
-                response, SObjectCompositeResponse.class);
+        SObjectCompositeResponse sObjectCompositeResponse =
+                objectMapper.readValue(response, SObjectCompositeResponse.class);
         assertResponseContains(sObjectCompositeResponse, "done");
     }
 
@@ -208,7 +208,8 @@ public class CompositeApiManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldSupportRelatedObjectRetrieval() {
-        assumeFalse(Version.create(version).compareTo(Version.create("36.0")) < 0,
+        assumeFalse(
+                Version.create(version).compareTo(Version.create("36.0")) < 0,
                 "Version must be greater than or equal to 36.0");
 
         final SObjectComposite composite = new SObjectComposite("36.0", true);
@@ -220,11 +221,13 @@ public class CompositeApiManualIT extends AbstractSalesforceTestBase {
     }
 
     SObjectCompositeResponse testComposite(final SObjectComposite batch) {
-        final SObjectCompositeResponse response = template.requestBody(compositeUri, batch, SObjectCompositeResponse.class);
+        final SObjectCompositeResponse response =
+                template.requestBody(compositeUri, batch, SObjectCompositeResponse.class);
 
         Assertions.assertThat(response).as("Response should be provided").isNotNull();
 
-        Assertions.assertThat(response.getCompositeResponse()).as("Received errors in: " + response)
+        Assertions.assertThat(response.getCompositeResponse())
+                .as("Received errors in: " + response)
                 .allMatch(val -> val.getHttpStatusCode() >= 200 && val.getHttpStatusCode() <= 299);
 
         return response;
@@ -245,17 +248,20 @@ public class CompositeApiManualIT extends AbstractSalesforceTestBase {
             @Override
             public void configure() throws Exception {
                 from("direct:deleteBatchAccounts")
-                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
-                            + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
-                        .split(simple("${body.records}")).setHeader("sObjectId", simple("${body.id}"))
-                        .to("salesforce:deleteSObject?sObjectName=Account").end();
+                        .to(
+                                "salesforce:query?sObjectClass=" + Accounts.class.getName()
+                                        + "&sObjectQuery=SELECT Id FROM Account WHERE Name = 'Account created from Composite batch API'")
+                        .split(simple("${body.records}"))
+                        .setHeader("sObjectId", simple("${body.id}"))
+                        .to("salesforce:deleteSObject?sObjectName=Account")
+                        .end();
             }
         };
     }
 
     @Parameters(name = "format = {0}, version = {1}")
     public static Iterable<Object[]> formats() {
-        return VERSIONS.stream().map(v -> new Object[] { "JSON", v }).collect(Collectors.toList());
+        return VERSIONS.stream().map(v -> new Object[] {"JSON", v}).collect(Collectors.toList());
     }
 
     static void assertResponseContains(final SObjectCompositeResponse response, final String key) {

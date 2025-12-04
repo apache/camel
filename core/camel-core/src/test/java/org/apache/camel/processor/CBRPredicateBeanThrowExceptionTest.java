@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,9 +28,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
 
@@ -83,9 +84,17 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").choice().when().method("cbrBean", "checkHeader").to("mock:foo").when()
-                        .method("cbrBean", "checkHeader2").to("mock:foo2").otherwise()
-                        .to("mock:bar").end();
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .method("cbrBean", "checkHeader")
+                        .to("mock:foo")
+                        .when()
+                        .method("cbrBean", "checkHeader2")
+                        .to("mock:foo2")
+                        .otherwise()
+                        .to("mock:bar")
+                        .end();
             }
         };
     }

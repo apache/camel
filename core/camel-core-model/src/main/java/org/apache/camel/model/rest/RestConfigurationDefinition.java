@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -43,90 +44,120 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     @Metadata(enums = "platform-http,servlet,jetty,undertow,netty-http,coap")
     private String component;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", enums = "openapi,swagger")
     private String apiComponent;
+
     @XmlAttribute
     @Metadata(label = "producer,advanced", enums = "vertx-http,http,undertow,netty-http")
     private String producerComponent;
+
     @XmlAttribute
     private String scheme;
+
     @XmlAttribute
     private String host;
+
     @XmlAttribute
     private String port;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced")
     private String apiHost;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean")
     private String useXForwardHeaders;
+
     @XmlAttribute
     @Metadata(label = "producer,advanced")
     private String producerApiDoc;
+
     @XmlAttribute
     @Metadata(label = "consumer")
     private String contextPath;
+
     @XmlAttribute
     @Metadata(label = "consumer")
     private String apiContextPath;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced")
     private String apiContextRouteId;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String apiVendorExtension;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", defaultValue = "allLocalIp")
     private RestHostNameResolver hostNameResolver;
+
     @XmlAttribute
     @Metadata(defaultValue = "off", enums = "off,auto,json,xml,json_xml")
     private RestBindingMode bindingMode;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced")
     private String bindingPackageScan;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String skipBindingOnErrorCode;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientRequestValidation;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String clientResponseValidation;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableCORS;
+
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
     private String enableNoContentResponse;
+
     @XmlAttribute
     @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "true")
     private String inlineRoutes;
+
     @XmlAttribute
     @Metadata(label = "advanced", enums = "jackson,jsonb,fastjson,gson", defaultValue = "jackson")
     private String jsonDataFormat;
+
     @XmlAttribute
     @Metadata(label = "advanced", enums = "jaxb,jacksonXml", defaultValue = "jaxb")
     private String xmlDataFormat;
+
     @XmlElement(name = "componentProperty")
     @Metadata(label = "advanced")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<>();
+
     @XmlElement(name = "endpointProperty")
     @Metadata(label = "advanced")
     private List<RestPropertyDefinition> endpointProperties = new ArrayList<>();
+
     @XmlElement(name = "consumerProperty")
     @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<>();
+
     @XmlElement(name = "dataFormatProperty")
     @Metadata(label = "advanced")
     private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<>();
+
     @XmlElement(name = "apiProperty")
     @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> apiProperties = new ArrayList<>();
+
     @XmlElement(name = "corsHeaders")
     @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> corsHeaders = new ArrayList<>();
+
     @XmlElement(name = "validationLevels")
     @Metadata(label = "consumer,advanced")
     private List<RestPropertyDefinition> validationLevels = new ArrayList<>();
@@ -1141,5 +1172,4 @@ public class RestConfigurationDefinition {
         }
         return target;
     }
-
 }

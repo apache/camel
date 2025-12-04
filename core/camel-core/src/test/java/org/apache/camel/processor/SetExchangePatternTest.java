@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SetExchangePatternTest extends ContextTestSupport {
 
@@ -151,20 +152,25 @@ public class SetExchangePatternTest extends ContextTestSupport {
 
                 // Set the exchange pattern to InOut, then send it from
                 // direct:inOnly to mock:result endpoint
-                from("direct:testSetToInOnlyThenTo").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
-                from("direct:testSetToInOutThenTo").setExchangePattern(ExchangePattern.InOut).to("mock:result");
+                from("direct:testSetToInOnlyThenTo")
+                        .setExchangePattern(ExchangePattern.InOnly)
+                        .to("mock:result");
+                from("direct:testSetToInOutThenTo")
+                        .setExchangePattern(ExchangePattern.InOut)
+                        .to("mock:result");
 
                 // Or we can pass the pattern as a parameter to the to() method
                 from("direct:testToWithInOnlyParam").to(ExchangePattern.InOnly, "mock:result");
                 from("direct:testToWithInOutParam").to(ExchangePattern.InOut, "mock:result");
 
                 // Set the exchange pattern to InOut, then send it on
-                from("direct:testSetExchangePatternInOnly").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
+                from("direct:testSetExchangePatternInOnly")
+                        .setExchangePattern(ExchangePattern.InOnly)
+                        .to("mock:result");
                 // END SNIPPET: example
 
                 from("direct:asString").setExchangePattern("InOut").to("mock:result");
             }
         };
     }
-
 }

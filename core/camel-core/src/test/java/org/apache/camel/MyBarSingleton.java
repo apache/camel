@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 public class MyBarSingleton implements IsSingleton {
 
     private String name;
 
-    public MyBarSingleton() {
-    }
+    public MyBarSingleton() {}
 
     public MyBarSingleton(String name) {
         this.name = name;
@@ -39,5 +39,4 @@ public class MyBarSingleton implements IsSingleton {
     public boolean isSingleton() {
         return true;
     }
-
 }

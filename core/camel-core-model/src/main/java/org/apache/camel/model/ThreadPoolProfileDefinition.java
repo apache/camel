@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.concurrent.TimeUnit;
@@ -37,32 +38,42 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String defaultProfile;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String poolSize;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maxPoolSize;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String keepAliveTime;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.concurrent.TimeUnit",
-              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    @Metadata(
+            label = "advanced",
+            javaType = "java.util.concurrent.TimeUnit",
+            enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String timeUnit;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String maxQueueSize;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String allowCoreThreadTimeOut;
+
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+            enums = "Abort,CallerRuns")
     private String rejectedPolicy;
 
-    public ThreadPoolProfileDefinition() {
-    }
+    public ThreadPoolProfileDefinition() {}
 
     @Override
     public String getShortName() {
@@ -229,5 +240,4 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     public void setRejectedPolicy(String rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
-
 }

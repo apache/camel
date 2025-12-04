@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -34,8 +35,8 @@ public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
-                     + "  <username>davsclaus</username>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "user xmlns=\"http://foo.com/bar\">"
+                + "  <id>1</id>" + "  <username>davsclaus</username>";
 
         try {
             template.sendBody("direct:start", xml);
@@ -46,5 +47,4 @@ public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
 
         assertMockEndpointsSatisfied();
     }
-
 }

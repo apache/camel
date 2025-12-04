@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.ArrayList;
@@ -44,8 +45,15 @@ import org.slf4j.LoggerFactory;
  * as files. This will then set up a properly configured Mock endpoint, which is only valid if the received messages
  * match the number of expected messages and their message payloads are equal.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset-test", title = "DataSet Test", syntax = "dataset-test:name",
-             remote = false, producerOnly = true, category = { Category.CORE, Category.TESTING }, lenientProperties = true)
+@UriEndpoint(
+        firstVersion = "1.3.0",
+        scheme = "dataset-test",
+        title = "DataSet Test",
+        syntax = "dataset-test:name",
+        remote = false,
+        producerOnly = true,
+        category = {Category.CORE, Category.TESTING},
+        lenientProperties = true)
 public class DataSetTestEndpoint extends MockEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSetTestEndpoint.class);
@@ -55,12 +63,16 @@ public class DataSetTestEndpoint extends MockEndpoint {
     @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing")
     @Metadata(required = true)
     private String name;
+
     @UriParam
     private boolean anyOrder;
+
     @UriParam(defaultValue = "2000", javaType = "java.time.Duration")
     private long timeout = 2000L;
+
     @UriParam
     private boolean split;
+
     @UriParam
     private String delimiter = "\\n|\\r";
 
@@ -82,26 +94,30 @@ public class DataSetTestEndpoint extends MockEndpoint {
         LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
 
         final List<Object> expectedBodies = new ArrayList<>();
-        EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // if file based we need to load the file into memory as the file may be deleted/moved afterwards
-                Object body = getInBody(exchange);
-                if (body instanceof WrappedFile) {
-                    body = exchange.getIn().getBody(String.class);
-                }
-                if (split) {
-                    // use new lines in both styles
-                    Iterator<?> it = ObjectHelper.createIterator(body, delimiter, false, true);
-                    while (it.hasNext()) {
-                        Object line = it.next();
-                        LOG.trace("Received message body {}", line);
-                        expectedBodies.add(line);
+        EndpointHelper.pollEndpoint(
+                expectedMessageEndpoint,
+                new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // if file based we need to load the file into memory as the file may be deleted/moved
+                        // afterwards
+                        Object body = getInBody(exchange);
+                        if (body instanceof WrappedFile) {
+                            body = exchange.getIn().getBody(String.class);
+                        }
+                        if (split) {
+                            // use new lines in both styles
+                            Iterator<?> it = ObjectHelper.createIterator(body, delimiter, false, true);
+                            while (it.hasNext()) {
+                                Object line = it.next();
+                                LOG.trace("Received message body {}", line);
+                                expectedBodies.add(line);
+                            }
+                        } else {
+                            expectedBodies.add(body);
+                        }
                     }
-                } else {
-                    expectedBodies.add(body);
-                }
-            }
-        }, timeout);
+                },
+                timeout);
 
         LOG.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
         if (anyOrder) {

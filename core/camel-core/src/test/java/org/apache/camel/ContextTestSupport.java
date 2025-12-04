@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
@@ -63,8 +66,6 @@ import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * A useful base class which creates a {@link CamelContext} with some routes along with a {@link ProducerTemplate} for
  * use in core test cases
@@ -77,7 +78,8 @@ public abstract class ContextTestSupport extends TestSupport
     private static final ThreadLocal<FluentProducerTemplate> THREAD_FLUENT_TEMPLATE = new ThreadLocal<>();
     private static final ThreadLocal<ConsumerTemplate> THREAD_CONSUMER = new ThreadLocal<>();
     private static final ThreadLocal<Service> THREAD_SERVICE = new ThreadLocal<>();
-    public static final String SEPARATOR = "********************************************************************************";
+    public static final String SEPARATOR =
+            "********************************************************************************";
     protected Properties extra;
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
@@ -239,7 +241,8 @@ public abstract class ContextTestSupport extends TestSupport
 
     protected List<Processor> getProcessors(String pattern) {
         return context.getRoutes().stream()
-                .flatMap(r -> r.filter(pattern).stream()).collect(Collectors.toList());
+                .flatMap(r -> r.filter(pattern).stream())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -367,8 +370,8 @@ public abstract class ContextTestSupport extends TestSupport
      * Camel onQuarkus.
      */
     protected void doQuarkusCheck() {
-        boolean quarkus = hasClassAnnotation("io.quarkus.test.junit.QuarkusTest") ||
-                hasClassAnnotation("org.apache.camel.quarkus.test.CamelQuarkusTest");
+        boolean quarkus = hasClassAnnotation("io.quarkus.test.junit.QuarkusTest")
+                || hasClassAnnotation("org.apache.camel.quarkus.test.CamelQuarkusTest");
         if (quarkus) {
             throw new RuntimeException(
                     "Quarkus detected: The ContextTestSupport/CamelSpringTestSupport class is not intended for Camel testing with Quarkus.");
@@ -486,7 +489,8 @@ public abstract class ContextTestSupport extends TestSupport
             replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
             if (skip) {
-                log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+                log.info(
+                        "Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
             } else if (isUseAdviceWith()) {
                 log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
             } else {
@@ -542,8 +546,7 @@ public abstract class ContextTestSupport extends TestSupport
     /**
      * Strategy to perform resources setup, before {@link CamelContext} is created
      */
-    protected void setupResources() {
-    }
+    protected void setupResources() {}
 
     /**
      * Strategy to perform resources cleanup, after {@link CamelContext} is stopped
@@ -620,13 +623,14 @@ public abstract class ContextTestSupport extends TestSupport
     protected void applyCamelPostProcessor() throws Exception {
         // use the bean post processor if the test class is not dependency
         // injected already by Spring Framework
-        boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest",
+        boolean spring = hasClassAnnotation(
+                "org.springframework.boot.test.context.SpringBootTest",
                 "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
-            PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(this,
-                    getClass().getName());
-            PluginHelper.getBeanPostProcessor(context).postProcessAfterInitialization(this,
-                    getClass().getName());
+            PluginHelper.getBeanPostProcessor(context)
+                    .postProcessBeforeInitialization(this, getClass().getName());
+            PluginHelper.getBeanPostProcessor(context)
+                    .postProcessAfterInitialization(this, getClass().getName());
         }
     }
 
@@ -756,7 +760,7 @@ public abstract class ContextTestSupport extends TestSupport
      * @see #createRouteBuilder()
      */
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
-        return new RoutesBuilder[] { createRouteBuilder() };
+        return new RoutesBuilder[] {createRouteBuilder()};
     }
 
     /**
@@ -816,7 +820,8 @@ public abstract class ContextTestSupport extends TestSupport
 
         // lookup endpoints in registry and try to find it
         MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
-                .filter(e -> e instanceof MockEndpoint).filter(e -> {
+                .filter(e -> e instanceof MockEndpoint)
+                .filter(e -> {
                     String t = e.getEndpointUri();
                     // strip query
                     int idx2 = t.indexOf('?');
@@ -824,7 +829,9 @@ public abstract class ContextTestSupport extends TestSupport
                         t = t.substring(0, idx2);
                     }
                     return t.equals(target);
-                }).findFirst().orElse(null);
+                })
+                .findFirst()
+                .orElse(null);
 
         if (found != null) {
             return found;
@@ -913,11 +920,13 @@ public abstract class ContextTestSupport extends TestSupport
     /**
      * Asserts that the given language name and expression evaluates to the given value on a specific exchange
      */
-    protected void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
+    protected void assertExpression(
+            Exchange exchange, String languageName, String expressionText, Object expectedValue) {
         Language language = assertResolveLanguage(languageName);
 
         Expression expression = language.createExpression(expressionText);
-        assertNotNull(expression, "No Expression could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                expression, "No Expression could be created for text: " + expressionText + " language: " + language);
 
         TestSupport.assertExpression(expression, exchange, expectedValue);
     }
@@ -930,7 +939,8 @@ public abstract class ContextTestSupport extends TestSupport
         Language language = assertResolveLanguage(languageName);
 
         Predicate predicate = language.createPredicate(expressionText);
-        assertNotNull(predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
+        assertNotNull(
+                predicate, "No Predicate could be created for text: " + expressionText + " language: " + language);
 
         TestSupport.assertPredicate(predicate, exchange, expected);
     }
@@ -978,16 +988,18 @@ public abstract class ContextTestSupport extends TestSupport
      * Single step debugs and Camel invokes this method before entering the given processor
      */
     protected void debugBefore(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
-    }
+            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {}
 
     /**
      * Single step debugs and Camel invokes this method after processing the given processor
      */
     protected void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
-            long timeTaken) {
-    }
+            Exchange exchange,
+            Processor processor,
+            ProcessorDefinition<?> definition,
+            String id,
+            String label,
+            long timeTaken) {}
 
     /**
      * To easily debug by overriding the <tt>debugBefore</tt> and <tt>debugAfter</tt> methods.
@@ -996,14 +1008,23 @@ public abstract class ContextTestSupport extends TestSupport
 
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
-            debugBefore(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
+            debugBefore(
+                    exchange,
+                    processor,
+                    (ProcessorDefinition<?>) definition,
+                    definition.getId(),
                     definition.getLabel());
         }
 
         @Override
         public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-            debugAfter(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
-                    definition.getLabel(), timeTaken);
+            debugAfter(
+                    exchange,
+                    processor,
+                    (ProcessorDefinition<?>) definition,
+                    definition.getId(),
+                    definition.getLabel(),
+                    timeTaken);
         }
     }
 
@@ -1013,5 +1034,4 @@ public abstract class ContextTestSupport extends TestSupport
     protected NotifyBuilder event() {
         return new NotifyBuilder(context);
     }
-
 }

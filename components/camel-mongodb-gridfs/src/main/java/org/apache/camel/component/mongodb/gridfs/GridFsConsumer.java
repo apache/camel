@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_DONE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_PROCESSING;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.PERSISTENT_TIMESTAMP_KEY;
 
 import java.io.InputStream;
 import java.time.Duration;
@@ -40,13 +48,6 @@ import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_DONE;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_PROCESSING;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE;
-import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.PERSISTENT_TIMESTAMP_KEY;
-
 public class GridFsConsumer extends DefaultConsumer implements Runnable {
     private final GridFsEndpoint endpoint;
     private volatile ExecutorService executor;
@@ -68,8 +69,9 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
-                1);
+        executor = endpoint.getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
         executor.execute(this);
     }
 
@@ -95,7 +97,9 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 ptsCollection.createIndex(new BasicDBObject("id", 1));
             }
 
-            persistentTimestamp = ptsCollection.find(eq("id", endpoint.getPersistentTSObject())).first();
+            persistentTimestamp = ptsCollection
+                    .find(eq("id", endpoint.getPersistentTSObject()))
+                    .first();
             if (persistentTimestamp == null) {
                 persistentTimestamp = new Document("id", endpoint.getPersistentTSObject());
                 fromDate = new Date();
@@ -118,14 +122,24 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         MongoCollection<Document> finalPtsCollection = ptsCollection;
         Date finalFromDate = fromDate;
         Document finalPersistentTimestamp = persistentTimestamp;
-        task.run(endpoint.getCamelContext(),
-                () -> processCollection(finalFromDate, usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
+        task.run(
+                endpoint.getCamelContext(),
+                () -> processCollection(
+                        finalFromDate,
+                        usesTimestamp,
+                        persistsTimestamp,
+                        usesAttribute,
+                        finalPtsCollection,
                         finalPersistentTimestamp));
     }
 
     private boolean processCollection(
-            Date fromDate, boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute,
-            final MongoCollection<Document> ptsCollection, final Document persistentTimestamp) {
+            Date fromDate,
+            boolean usesTimestamp,
+            boolean persistsTimestamp,
+            boolean usesAttribute,
+            final MongoCollection<Document> ptsCollection,
+            final Document persistentTimestamp) {
 
         if (!isStarted()) {
             return false;
@@ -146,7 +160,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 }
                 if (fOrig != null) {
                     Exchange exchange = createExchange(true);
-                    GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
+                    GridFSDownloadStream downloadStream =
+                            endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
                     file = downloadStream.getGridFSFile();
 
                     Document metadata = file.getMetadata();
@@ -186,7 +201,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         return false;
     }
 
-    private MongoCursor<GridFSFile> getGridFSFileMongoCursor(Date fromDate, boolean usesTimestamp, boolean usesAttribute) {
+    private MongoCursor<GridFSFile> getGridFSFileMongoCursor(
+            Date fromDate, boolean usesTimestamp, boolean usesAttribute) {
         String queryString = endpoint.getQuery();
         Bson query = getBsonDocument(fromDate, usesTimestamp, usesAttribute, queryString);
         return endpoint.getGridFsBucket().find(query).cursor();

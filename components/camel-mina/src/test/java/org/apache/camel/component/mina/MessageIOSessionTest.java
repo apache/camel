@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.SocketAddress;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test to check if the message of an exchange send from the MinaConsumer is a MinaMessage.
@@ -41,7 +42,6 @@ public class MessageIOSessionTest extends BaseMinaTest {
         Exchange exchange = mock.getExchanges().get(0);
         Message message = exchange.getIn();
         assertNotNull(message.getHeader(MinaConstants.MINA_IOSESSION));
-
     }
 
     @Test

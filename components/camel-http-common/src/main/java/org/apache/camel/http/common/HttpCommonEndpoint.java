@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.net.URI;
@@ -42,178 +43,290 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriPath(label = "common", description = "The url of the HTTP endpoint to call.")
     @Metadata(required = true)
     URI httpUri;
-    @UriParam(label = "common,advanced",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+
+    @UriParam(
+            label = "common,advanced",
+            description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new org.apache.camel.http.base.HttpHeaderFilterStrategy();
-    @UriParam(label = "common,advanced",
-              description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
+
+    @UriParam(
+            label = "common,advanced",
+            description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     HttpBinding httpBinding;
-    @UriParam(label = "producer", defaultValue = "true",
-              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "true",
+            description =
+                    "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
                             + " This allows you to get all responses regardless of the HTTP status code.")
     boolean throwExceptionOnFailure = true;
-    @UriParam(label = "producer",
-              description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
+
+    @UriParam(
+            label = "producer",
+            description =
+                    "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
                             + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     boolean bridgeEndpoint;
-    @UriParam(label = "producer,advanced",
-              description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
                             + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
                             + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
     boolean preserveHostHeader;
-    @UriParam(label = "consumer",
-              description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
     boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true",
-              description = "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response")
+
+    @UriParam(
+            defaultValue = "true",
+            description =
+                    "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response")
     boolean chunked = true;
-    @UriParam(label = "common", description = "Determines whether or not the raw input stream is cached or not."
-                                              + " The Camel consumer (camel-servlet, camel-jetty etc.) will by default cache the input stream to support reading it multiple times to ensure it Camel"
-                                              + " can retrieve all data from the stream. However you can set this option to true when you for example need"
-                                              + " to access the raw stream, such as streaming it directly to a file or other persistent store."
-                                              + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
-                                              + " if this option is false to support reading the stream multiple times."
-                                              + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
-                                              + " in case you do not need to read the message payload multiple times."
-                                              + " The producer (camel-http) will by default cache the response body stream. If setting this option to true,"
-                                              + " then the producers will not cache the response body stream but use the response stream as-is (the stream can only be read once) as the message body.")
+
+    @UriParam(
+            label = "common",
+            description =
+                    "Determines whether or not the raw input stream is cached or not."
+                            + " The Camel consumer (camel-servlet, camel-jetty etc.) will by default cache the input stream to support reading it multiple times to ensure it Camel"
+                            + " can retrieve all data from the stream. However you can set this option to true when you for example need"
+                            + " to access the raw stream, such as streaming it directly to a file or other persistent store."
+                            + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
+                            + " if this option is false to support reading the stream multiple times."
+                            + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
+                            + " in case you do not need to read the message payload multiple times."
+                            + " The producer (camel-http) will by default cache the response body stream. If setting this option to true,"
+                            + " then the producers will not cache the response body stream but use the response stream as-is (the stream can only be read once) as the message body.")
     boolean disableStreamCache;
-    @UriParam(label = "common",
-              description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
+
+    @UriParam(
+            label = "common",
+            description =
+                    "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
                             + " in the response as a application/x-java-serialized-object content type."
                             + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
                             + " The caused exception is required to be serialized."
                             + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
                             + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
-    @UriParam(label = "consumer",
-              description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     boolean muteException;
-    @UriParam(label = "consumer",
-              description = "If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged"
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged"
                             + " when the exception stack trace is not sent in the response's body.")
     boolean logException;
-    @UriParam(label = "producer", defaultValue = "false",
-              description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
+
+    @UriParam(
+            label = "producer",
+            defaultValue = "false",
+            description =
+                    "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
-    @UriParam(label = "consumer,advanced",
-              description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
     boolean traceEnabled;
-    @UriParam(label = "consumer,advanced",
-              description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
     boolean optionsEnabled;
-    @UriParam(label = "consumer",
-              description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     String httpMethodRestrict;
+
     @UriParam(label = "consumer", description = "To use a custom buffer size on the jakarta.servlet.ServletResponse.")
     Integer responseBufferSize;
-    @UriParam(label = "producer,advanced",
-              description = "If this option is true, The http producer won't read response body and cache the input stream")
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "If this option is true, The http producer won't read response body and cache the input stream")
     boolean ignoreResponseBody;
-    @UriParam(label = "producer,advanced", defaultValue = "true",
-              description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "true",
+            description =
+                    "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                             + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     boolean copyHeaders = true;
-    @UriParam(label = "consumer,advanced",
-              description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                             + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
-    @UriParam(label = "consumer,advanced", defaultValue = "true",
-              description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body."
-                            + " Setting this to false will avoid the HTTP mapping.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = "true",
+            description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body."
+                    + " Setting this to false will avoid the HTTP mapping.")
     boolean mapHttpMessageBody = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "true",
-              description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = "true",
+            description =
+                    "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
                             + " Setting this to false will avoid the HTTP Headers mapping.")
     boolean mapHttpMessageHeaders = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "true",
-              description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
+
+    @UriParam(
+            label = "consumer,advanced",
+            defaultValue = "true",
+            description =
+                    "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
                             + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
     boolean mapHttpMessageFormUrlEncodedBody = true;
-    @UriParam(label = "producer,advanced", defaultValue = "200-299",
-              description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
+
+    @UriParam(
+            label = "producer,advanced",
+            defaultValue = "200-299",
+            description =
+                    "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
                             + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
+
     @UriParam(label = "consumer", defaultValue = "false", description = "Configure the consumer to work in async mode")
     private boolean async;
+
     @UriParam(label = "producer,advanced", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
-    @UriParam(label = "producer",
-              description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
+
+    @UriParam(
+            label = "producer",
+            description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
     private HttpMethods httpMethod;
 
-    @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
+    @UriParam(
+            label = "producer,security",
+            enums = "Basic,Bearer,NTLM",
+            description =
+                    "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethod;
+
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
+
     @UriParam(label = "producer,security", secret = true, description = "Authentication bearer token")
     private String authBearerToken;
+
     @UriParam(label = "producer,security", secret = true, description = "Authentication password")
     private String authPassword;
+
     @UriParam(label = "producer,security", secret = true, description = "OAuth2 client id")
     private String oauth2ClientId;
+
     @UriParam(label = "producer,security", secret = true, description = "OAuth2 client secret")
     private String oauth2ClientSecret;
+
     @UriParam(label = "producer,security", description = "OAuth2 Token endpoint")
     private String oauth2ResourceIndicator;
+
     @UriParam(label = "producer,security", description = "OAuth2 Resource Indicator")
     private String oauth2TokenEndpoint;
+
     @UriParam(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
+
     @UriParam(label = "producer,security", description = "Whether to cache OAuth2 client tokens.")
     private boolean oauth2CacheTokens;
-    @UriParam(label = "producer,security", defaultValue = "3600",
-              description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
+
+    @UriParam(
+            label = "producer,security",
+            defaultValue = "3600",
+            description =
+                    "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
     private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
-    @UriParam(label = "producer,security", defaultValue = "5",
-              description = "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
-                            +
-                            "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
-                            +
-                            "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
+
+    @UriParam(
+            label = "producer,security",
+            defaultValue = "5",
+            description =
+                    "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
+                            + "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
+                            + "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5;
-    @UriParam(label = "producer,security",
-              description = "Whether to use OAuth2 body authentication.")
+
+    @UriParam(label = "producer,security", description = "Whether to use OAuth2 body authentication.")
     private boolean oauth2BodyAuthentication;
+
     @Deprecated
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTLM")
     private String authDomain;
+
     @Deprecated
     @UriParam(label = "producer,security", description = "Authentication host to use with NTLM")
     private String authHost;
+
     @UriParam(label = "producer,proxy", description = "Proxy server host")
     private String proxyHost;
+
     @UriParam(label = "producer,proxy", description = "Proxy server port")
     private int proxyPort;
-    @UriParam(label = "producer,proxy", enums = "http,https",
-              description = "Proxy server authentication protocol scheme to use")
+
+    @UriParam(
+            label = "producer,proxy",
+            enums = "http,https",
+            description = "Proxy server authentication protocol scheme to use")
     private String proxyAuthScheme;
-    @UriParam(label = "producer,proxy", enums = "Basic,Bearer,NTLM",
-              description = "Proxy authentication method to use (NTLM is deprecated)")
+
+    @UriParam(
+            label = "producer,proxy",
+            enums = "Basic,Bearer,NTLM",
+            description = "Proxy authentication method to use (NTLM is deprecated)")
     private String proxyAuthMethod;
+
     @UriParam(label = "producer,proxy", secret = true, description = "Proxy server username")
     private String proxyAuthUsername;
+
     @UriParam(label = "producer,proxy", secret = true, description = "Proxy server password")
     private String proxyAuthPassword;
+
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy server host")
     private String proxyAuthHost;
+
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy server port")
     private int proxyAuthPort;
+
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTLM")
     private String proxyAuthDomain;
+
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTLM")
     private String proxyAuthNtHost;
-    @UriParam(label = "producer,proxy", description = "Comma-separated list of hosts that should bypass the proxy. "
-                                                      + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
+
+    @UriParam(
+            label = "producer,proxy",
+            description = "Comma-separated list of hosts that should bypass the proxy. "
+                    + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
     private String nonProxyHosts;
 
-    protected HttpCommonEndpoint() {
-    }
+    protected HttpCommonEndpoint() {}
 
     protected HttpCommonEndpoint(String endPointURI, HttpCommonComponent component, URI httpURI) {
         super(endPointURI, component);

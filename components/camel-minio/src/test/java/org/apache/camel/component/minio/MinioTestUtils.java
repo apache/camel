@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio;
 
 import java.io.IOException;
@@ -26,8 +27,7 @@ import org.apache.camel.test.junit5.TestSupport;
 
 public final class MinioTestUtils {
 
-    private MinioTestUtils() {
-    }
+    private MinioTestUtils() {}
 
     public static Properties loadMinioPropertiesFile() throws IOException {
         final String fileName = "minio_key.properties";
@@ -42,7 +42,8 @@ public final class MinioTestUtils {
      * @return        objects count of the specified bucket
      */
     public static int countObjectsInBucket(MinioClient client, String bucket) {
-        Iterable result = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
+        Iterable result =
+                client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
         ArrayList arrayList = new ArrayList<>();
         result.forEach(arrayList::add);
         return arrayList.size();

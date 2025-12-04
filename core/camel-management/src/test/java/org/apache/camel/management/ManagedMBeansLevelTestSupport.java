@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.Set;
@@ -44,7 +45,7 @@ public abstract class ManagedMBeansLevelTestSupport extends ManagementTestSuppor
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        //set level if provided
+        // set level if provided
         if (level != null) {
             context.getManagementStrategy().getManagementAgent().setMBeansLevel(level);
         }

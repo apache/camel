@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud.integration;
 
 import org.apache.camel.CamelContext;
@@ -80,29 +81,26 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
         curator.start();
         discovery.start();
 
-        discovery.registerService(
-                ServiceInstance.<MetaData> builder()
-                        .address("127.0.0.1")
-                        .port(Integer.parseInt(function.apply("service-1")))
-                        .name(SERVICE_NAME)
-                        .id("service-1")
-                        .build());
+        discovery.registerService(ServiceInstance.<MetaData>builder()
+                .address("127.0.0.1")
+                .port(Integer.parseInt(function.apply("service-1")))
+                .name(SERVICE_NAME)
+                .id("service-1")
+                .build());
 
-        discovery.registerService(
-                ServiceInstance.<MetaData> builder()
-                        .address("127.0.0.1")
-                        .port(Integer.parseInt(function.apply("service-2")))
-                        .name(SERVICE_NAME)
-                        .id("service-2")
-                        .build());
+        discovery.registerService(ServiceInstance.<MetaData>builder()
+                .address("127.0.0.1")
+                .port(Integer.parseInt(function.apply("service-2")))
+                .name(SERVICE_NAME)
+                .id("service-2")
+                .build());
 
-        discovery.registerService(
-                ServiceInstance.<MetaData> builder()
-                        .address("127.0.0.1")
-                        .port(Integer.parseInt(function.apply("service-3")))
-                        .name(SERVICE_NAME)
-                        .id("service-3")
-                        .build());
+        discovery.registerService(ServiceInstance.<MetaData>builder()
+                .address("127.0.0.1")
+                .port(Integer.parseInt(function.apply("service-3")))
+                .name(SERVICE_NAME)
+                .id("service-3")
+                .build());
     }
 
     @Override

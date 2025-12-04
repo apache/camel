@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_COMPONENTS;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_ID;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +42,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE_ID;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_COMPONENTS;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_ID;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_ID;
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
 
 public class UpdateIssueProducer extends DefaultProducer {
 
@@ -65,7 +66,8 @@ public class UpdateIssueProducer extends DefaultProducer {
         Long priorityId = exchange.getIn().getHeader(ISSUE_PRIORITY_ID, Long.class);
         String components = exchange.getIn().getHeader(ISSUE_COMPONENTS, String.class);
         if (issueTypeId == null && issueTypeName != null) {
-            Iterable<IssueType> issueTypes = client.getMetadataClient().getIssueTypes().claim();
+            Iterable<IssueType> issueTypes =
+                    client.getMetadataClient().getIssueTypes().claim();
             for (IssueType type : issueTypes) {
                 if (issueTypeName.equals(type.getName())) {
                     issueTypeId = type.getId();
@@ -74,7 +76,8 @@ public class UpdateIssueProducer extends DefaultProducer {
             }
         }
         if (priorityId == null && priorityName != null) {
-            Iterable<Priority> priorities = client.getMetadataClient().getPriorities().claim();
+            Iterable<Priority> priorities =
+                    client.getMetadataClient().getPriorities().claim();
             for (Priority pri : priorities) {
                 if (priorityName.equals(pri.getName())) {
                     priorityId = pri.getId();
@@ -113,5 +116,4 @@ public class UpdateIssueProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         issueClient.updateIssue(issueKey, builder.build()).claim();
     }
-
 }

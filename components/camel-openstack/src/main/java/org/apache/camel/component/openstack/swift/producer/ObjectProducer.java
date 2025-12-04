@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.swift.producer;
 
 import java.util.List;
@@ -91,8 +92,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
 
     private void doGetAll(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class),
-                String.class);
+        final String name = msg.getHeader(
+                SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class), String.class);
         StringHelper.notEmpty(name, "Container name");
         final String path = msg.getHeader(SwiftConstants.PATH, String.class);
 
@@ -135,8 +136,9 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
         StringHelper.notEmpty(containerName, "Container name");
         StringHelper.notEmpty(objectName, "Object name");
-        final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName),
-                msg.getBody(Map.class));
+        final boolean success = os.objectStorage()
+                .objects()
+                .updateMetadata(ObjectLocation.create(containerName, objectName), msg.getBody(Map.class));
         if (!success) {
             exchange.setException(new OpenstackException("Updating metadata was not successful"));
         }

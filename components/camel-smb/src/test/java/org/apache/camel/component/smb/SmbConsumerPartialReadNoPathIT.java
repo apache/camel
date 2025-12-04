@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,13 +30,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
-    private final String uuid = new DefaultUuidGenerator().generateUuid() + ".txt";;
+    private final String uuid = new DefaultUuidGenerator().generateUuid() + ".txt";
+    ;
 
     @Override
     public void doPostSetup() throws Exception {
@@ -56,11 +58,10 @@ public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
         assertTrue(nb.matchesWaitTime());
 
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    byte[] arr = copyFileContentFromContainer("/data/rw/failed/" + uuid);
-                    assertEquals("Hello Uuid", new String(arr));
-                });
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            byte[] arr = copyFileContentFromContainer("/data/rw/failed/" + uuid);
+            assertEquals("Hello Uuid", new String(arr));
+        });
     }
 
     @Override

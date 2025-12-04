@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ChoiceWhenNoOutputTest extends ContextTestSupport {
 
@@ -49,16 +50,15 @@ public class ChoiceWhenNoOutputTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when(header("test").isEqualTo("1"))
                         .when(header("test").isEqualTo("2"))
-                            .to("mock:2")
+                        .to("mock:2")
                         .otherwise()
-                            .throwException(new IllegalArgumentException("Validation error!"))
+                        .throwException(new IllegalArgumentException("Validation error!"))
                         .end()
                         .to("mock:result");
             }
         };
     }
-
 }

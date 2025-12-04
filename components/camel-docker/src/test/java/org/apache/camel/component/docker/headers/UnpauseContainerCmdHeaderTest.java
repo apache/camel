@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Unpause Container Request headers are applied properly
@@ -46,7 +47,6 @@ public class UnpauseContainerCmdHeaderTest extends BaseDockerHeaderTest<UnpauseC
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).unpauseContainerCmd(containerId);
-
     }
 
     @Override
@@ -58,5 +58,4 @@ public class UnpauseContainerCmdHeaderTest extends BaseDockerHeaderTest<UnpauseC
     protected DockerOperation getOperation() {
         return DockerOperation.UNPAUSE_CONTAINER;
     }
-
 }

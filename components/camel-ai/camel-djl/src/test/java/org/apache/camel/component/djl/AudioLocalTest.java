@@ -63,7 +63,8 @@ public class AudioLocalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("timer:testDJL?repeatCount=1")
-                        .routeId("audio").autoStartup(false)
+                        .routeId("audio")
+                        .autoStartup(false)
                         .process(exchange -> {
                             var wave = "https://resources.djl.ai/audios/speech.wav";
                             var audio = AudioFactory.newInstance().fromUrl(wave);

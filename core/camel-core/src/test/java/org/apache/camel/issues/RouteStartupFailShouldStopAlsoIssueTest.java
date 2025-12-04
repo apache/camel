@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport {
 
@@ -125,5 +126,4 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
             EVENTS.add("doStop");
         }
     }
-
 }

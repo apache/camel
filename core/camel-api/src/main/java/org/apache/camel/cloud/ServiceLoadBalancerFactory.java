@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cloud;
 
 /**
@@ -24,5 +25,4 @@ package org.apache.camel.cloud;
  */
 @FunctionalInterface
 @Deprecated(since = "4.8.0")
-public interface ServiceLoadBalancerFactory extends ServiceFactory<ServiceLoadBalancer> {
-}
+public interface ServiceLoadBalancerFactory extends ServiceFactory<ServiceLoadBalancer> {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Map;
@@ -43,12 +44,13 @@ public class Kinesis2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Kinesis2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Kinesis2Configuration();
+        Kinesis2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Kinesis2Configuration();
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && !configuration.isUseProfileCredentialsProvider()
+        if (!configuration.isUseDefaultCredentialsProvider()
+                && !configuration.isUseProfileCredentialsProvider()
                 && !configuration.isUseSessionCredentials()
                 && configuration.getAmazonKinesisClient() == null
                 && configuration.getAmazonKinesisAsyncClient() == null

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +33,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class BonitaAuthFilterTest {
 
     @Mock
@@ -42,23 +43,19 @@ public class BonitaAuthFilterTest {
         MockitoAnnotations.initMocks(this);
         Map<String, Cookie> resultCookies = new HashMap<>();
         Mockito.when(requestContext.getCookies()).thenReturn(resultCookies);
-
     }
 
     @Test
     public void testBonitaAuthFilterUsernameEmpty() {
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", "port", "", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
-        assertThrows(IllegalArgumentException.class,
-                () -> bonitaAuthFilter.filter(requestContext));
+        assertThrows(IllegalArgumentException.class, () -> bonitaAuthFilter.filter(requestContext));
     }
 
     @Test
     public void testBonitaAuthFilterPasswordEmpty() {
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", "port", "username", "");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
-        assertThrows(IllegalArgumentException.class,
-                () -> bonitaAuthFilter.filter(requestContext));
+        assertThrows(IllegalArgumentException.class, () -> bonitaAuthFilter.filter(requestContext));
     }
-
 }

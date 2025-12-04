@@ -31,8 +31,10 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts Azure Service bus receive messages response to CloudEvent v1_0 data format. The data
  * type sets Camel specific CloudEvent headers with values extracted from Azure Service bus receive messages response.
  */
-@DataTypeTransformer(name = "azure-servicebus:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with Azure Service bus receive messages response details")
+@DataTypeTransformer(
+        name = "azure-servicebus:application-cloudevents",
+        description =
+                "Adds CloudEvent headers to the Camel message with Azure Service bus receive messages response details")
 public class ServicebusCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,19 +42,23 @@ public class ServicebusCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.azure.servicebus.receiveMessages");
 
         if (message.getHeaders().containsKey(ServiceBusConstants.PARTITION_KEY)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "azure.servicebus.partition." + message.getHeader(ServiceBusConstants.PARTITION_KEY, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(ServiceBusConstants.MESSAGE_ID, String.class));
+        headers.put(
+                CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(ServiceBusConstants.MESSAGE_ID, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         if (message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE,
                     message.getHeaders().containsKey(ServiceBusConstants.CONTENT_TYPE));
         } else {
             headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);

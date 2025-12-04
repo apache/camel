@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,9 +41,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Doing request/reply over Netty with async processing.
  */
@@ -53,10 +54,12 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
 
     @Test
     void testNetty() {
-        String out = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true", "World", String.class);
+        String out = template.requestBody(
+                "netty:tcp://localhost:" + port + "?textline=true&sync=true", "World", String.class);
         assertEquals("Bye World", out);
 
-        String out2 = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true", "Camel", String.class);
+        String out2 = template.requestBody(
+                "netty:tcp://localhost:" + port + "?textline=true&sync=true", "Camel", String.class);
         assertEquals("Bye Camel", out2);
     }
 
@@ -72,8 +75,8 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
         for (int i = 0; i < size; i++) {
             final int index = i;
             Future<String> out = executor.submit(() -> {
-                String reply = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true", index,
-                        String.class);
+                String reply = template.requestBody(
+                        "netty:tcp://localhost:" + port + "?textline=true&sync=true", index, String.class);
                 LOG.info("Sent {} received {}", index, reply);
                 assertEquals("Bye " + index, reply);
                 return reply;
@@ -105,8 +108,7 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
                         .to("activemq:queue:NettyAsyncRequestReplyTest")
                         .log("Writing reply ${body}");
 
-                from("activemq:queue:NettyAsyncRequestReplyTest")
-                        .transform(simple("Bye ${body}"));
+                from("activemq:queue:NettyAsyncRequestReplyTest").transform(simple("Bye ${body}"));
             }
         };
     }
@@ -120,5 +122,4 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
 
         registry.bind("activemq", amq);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
@@ -70,9 +71,7 @@ class RouteTemplateChoiceInPreconditionModeTest extends ContextTestSupport {
 
     @Test
     void testNotProvided() throws Exception {
-        TemplatedRouteBuilder.builder(context, "myTemplate")
-                .routeId("myRoute")
-                .add();
+        TemplatedRouteBuilder.builder(context, "myTemplate").routeId("myRoute").add();
 
         getMockEndpoint("mock:end").expectedMessageCount(1);
         getMockEndpoint("mock:red").expectedMessageCount(0);
@@ -92,9 +91,12 @@ class RouteTemplateChoiceInPreconditionModeTest extends ContextTestSupport {
                         .templateOptionalParameter("red")
                         .templateOptionalParameter("blue")
                         .from("direct:start")
-                        .choice().precondition()
-                            .when(simple("{{?red}}")).to("mock:red")
-                            .when(simple("{{?blue}}")).to("mock:blue")
+                        .choice()
+                        .precondition()
+                        .when(simple("{{?red}}"))
+                        .to("mock:red")
+                        .when(simple("{{?blue}}"))
+                        .to("mock:blue")
                         .end()
                         .to("mock:end");
             }

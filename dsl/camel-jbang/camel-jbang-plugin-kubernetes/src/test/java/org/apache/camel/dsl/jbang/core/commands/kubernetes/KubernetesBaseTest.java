@@ -52,8 +52,7 @@ public class KubernetesBaseTest {
     @BeforeAll
     public void setupFixtures() {
         k8sServer = new KubernetesMockServer(
-                new Context(), new MockWebServer(),
-                new HashMap<>(), new KubernetesCrudDispatcher(), false);
+                new Context(), new MockWebServer(), new HashMap<>(), new KubernetesCrudDispatcher(), false);
 
         kubernetesClient = k8sServer.createClient();
 
@@ -80,7 +79,8 @@ public class KubernetesBaseTest {
         if (output.equals("yaml")) {
             String manifest = StringHelper.after(printerOutput, "---");
             if (manifest == null) {
-                throw new RuntimeException("Failed to find Kubernetes manifest in output: %n%s%n".formatted(printerOutput));
+                throw new RuntimeException(
+                        "Failed to find Kubernetes manifest in output: %n%s%n".formatted(printerOutput));
             }
             return new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8));
         }

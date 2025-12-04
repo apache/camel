@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.RestoreSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SecretsManagerRestoreSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
@@ -57,7 +58,8 @@ public class SecretsManagerRestoreSecretProducerLocalstackIT extends AwsSecretsM
             }
         });
 
-        DeleteSecretResponse resultDelete = (DeleteSecretResponse) exchange.getIn().getBody();
+        DeleteSecretResponse resultDelete =
+                (DeleteSecretResponse) exchange.getIn().getBody();
         assertTrue(resultDelete.sdkHttpResponse().isSuccessful());
 
         exchange = template.request("direct:restoreSecret", new Processor() {
@@ -67,9 +69,9 @@ public class SecretsManagerRestoreSecretProducerLocalstackIT extends AwsSecretsM
             }
         });
 
-        RestoreSecretResponse resultRestore = (RestoreSecretResponse) exchange.getIn().getBody();
+        RestoreSecretResponse resultRestore =
+                (RestoreSecretResponse) exchange.getIn().getBody();
         assertTrue(resultRestore.sdkHttpResponse().isSuccessful());
-
     }
 
     @Override
@@ -77,11 +79,9 @@ public class SecretsManagerRestoreSecretProducerLocalstackIT extends AwsSecretsM
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:deleteSecret")
-                        .to("aws-secrets-manager://test?operation=deleteSecret");
+                from("direct:deleteSecret").to("aws-secrets-manager://test?operation=deleteSecret");
 
                 from("direct:restoreSecret")
                         .to("aws-secrets-manager://test?operation=restoreSecret")

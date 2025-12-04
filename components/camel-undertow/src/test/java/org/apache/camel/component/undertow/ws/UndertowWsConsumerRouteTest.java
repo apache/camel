@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.ws;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -46,11 +52,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowWsConsumerRouteTest.class);
@@ -255,8 +256,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             final WebSocketChannel channel = in.getHeader(UndertowConstants.CHANNEL, WebSocketChannel.class);
             assertNotNull(channel);
             if (in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class) == EventType.ONOPEN) {
-                final WebSocketHttpExchange transportExchange
-                        = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
+                final WebSocketHttpExchange transportExchange =
+                        in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
                 assertNotNull(transportExchange);
             }
             List<String> messages = connections.get(key);
@@ -268,7 +269,8 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             if (body != null) {
                 messages.add(body);
             } else {
-                messages.add(in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class).name());
+                messages.add(in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class)
+                        .name());
             }
         }
 
@@ -281,7 +283,6 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         assertTrue(actual1.equals(expected1) || actual1.equals(expected2), "actual " + actual1);
         final List<String> actual2 = it.next();
         assertTrue(actual2.equals(expected1) || actual2.equals(expected2), "actual " + actual2);
-
     }
 
     @Test
@@ -319,7 +320,6 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.close();
         wsclient2.close();
         wsclient3.close();
-
     }
 
     private String assertConnected(WebsocketTestClient wsclient1) {
@@ -334,9 +334,11 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             public void configure() {
                 final int port = getPort();
                 from("undertow:ws://localhost:" + port + "/app1")
-                        .log(">>> Message received from WebSocket Client : ${body}").to("mock:result1");
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .to("mock:result1");
 
-                from("undertow:ws://localhost:" + port + "/app2?useStreaming=true").to("mock:result2");
+                from("undertow:ws://localhost:" + port + "/app2?useStreaming=true")
+                        .to("mock:result2");
 
                 /* echo */
                 from("undertow:ws://localhost:" + port + "/app3").to("undertow:ws://localhost:" + port + "/app3");
@@ -357,10 +359,10 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                             public void process(final Exchange exchange) {
                                 final Message in = exchange.getIn();
-                                final String connectionKey = in.getHeader(UndertowConstants.CONNECTION_KEY,
-                                        String.class);
-                                final EventType eventType = in.getHeader(UndertowConstants.EVENT_TYPE_ENUM,
-                                        EventType.class);
+                                final String connectionKey =
+                                        in.getHeader(UndertowConstants.CONNECTION_KEY, String.class);
+                                final EventType eventType =
+                                        in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class);
                                 final String body = in.getBody(String.class);
                                 if (eventType == EventType.ONOPEN) {
                                     connectionKeys.add(connectionKey);
@@ -369,16 +371,16 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
                                     connectionKeys.remove(connectionKey);
                                 } else if (body != null) {
                                     if (body.startsWith(BROADCAST_MESSAGE_PREFIX)) {
-                                        List<String> keys = Arrays
-                                                .asList(body.substring(BROADCAST_MESSAGE_PREFIX.length()).split(" "));
+                                        List<String> keys =
+                                                Arrays.asList(body.substring(BROADCAST_MESSAGE_PREFIX.length())
+                                                        .split(" "));
                                         in.setHeader(UndertowConstants.CONNECTION_KEY_LIST, keys);
                                     }
                                 }
                             }
-                        })//
+                        }) //
                         .to("undertow:ws://localhost:" + port + "/app6");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import org.apache.camel.spi.Metadata;
@@ -23,7 +24,5 @@ public final class JMXConstants {
     @Metadata(label = "consumer", description = "The handback.", javaType = "Object")
     public static final String JMX_HANDBACK = "jmx.handback";
 
-    private JMXConstants() {
-
-    }
+    private JMXConstants() {}
 }

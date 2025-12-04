@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.integration;
 
 import java.util.HashMap;
@@ -29,7 +30,7 @@ class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
 
     @Test
     void testSize() {
-        //put 4
+        // put 4
         template.requestBody("direct:index", getContent("content"), String.class);
         template.requestBody("direct:index", getContent("content1"), String.class);
         template.requestBody("direct:index", getContent("content2"), String.class);
@@ -39,7 +40,8 @@ class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
 
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> {
-            HitsMetadata<?> searchWithSizeTwo = template.requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
+            HitsMetadata<?> searchWithSizeTwo =
+                    template.requestBody("direct:searchWithSizeTwo", query, HitsMetadata.class);
             HitsMetadata<?> searchFrom3 = template.requestBody("direct:searchFrom3", query, HitsMetadata.class);
             return searchWithSizeTwo.hits().size() == 2 && searchFrom3.hits().size() == 1;
         });
@@ -50,8 +52,7 @@ class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:index")
-                        .to("elasticsearch://elasticsearch?operation=Index&indexName=size-limit");
+                from("direct:index").to("elasticsearch://elasticsearch?operation=Index&indexName=size-limit");
                 from("direct:searchWithSizeTwo")
                         .to("elasticsearch://elasticsearch?operation=Search&indexName=size-limit&size=2");
                 from("direct:searchFrom3")

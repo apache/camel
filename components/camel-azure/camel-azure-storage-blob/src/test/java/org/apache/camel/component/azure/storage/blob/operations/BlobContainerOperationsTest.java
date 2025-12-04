@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,12 +37,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -140,8 +141,10 @@ class BlobContainerOperationsTest {
     private List<BlobItem> listBlobsMock() {
         final List<BlobItem> items = new LinkedList<>();
 
-        final BlobItem blobItem1 = new BlobItem().setName("item-1").setVersionId("1").setDeleted(false);
-        final BlobItem blobItem2 = new BlobItem().setName("item-2").setVersionId("2").setDeleted(true);
+        final BlobItem blobItem1 =
+                new BlobItem().setName("item-1").setVersionId("1").setDeleted(false);
+        final BlobItem blobItem2 =
+                new BlobItem().setName("item-2").setVersionId("2").setDeleted(true);
 
         items.add(blobItem1);
         items.add(blobItem2);
@@ -152,13 +155,19 @@ class BlobContainerOperationsTest {
     private List<BlobItem> listBlobsMockWithRegex() {
         final List<BlobItem> items = listBlobsMock();
 
-        final BlobItem blobItemPdf1 = new BlobItem().setName("invoice1.pdf").setVersionId("1").setDeleted(false);
-        final BlobItem blobItemPdf2 = new BlobItem().setName("invoice2.pdf").setVersionId("2").setDeleted(true);
-        final BlobItem blobItemPdf3 = new BlobItem().setName("invoice5.pdf").setVersionId("2").setDeleted(true);
+        final BlobItem blobItemPdf1 =
+                new BlobItem().setName("invoice1.pdf").setVersionId("1").setDeleted(false);
+        final BlobItem blobItemPdf2 =
+                new BlobItem().setName("invoice2.pdf").setVersionId("2").setDeleted(true);
+        final BlobItem blobItemPdf3 =
+                new BlobItem().setName("invoice5.pdf").setVersionId("2").setDeleted(true);
 
-        final BlobItem blobItemExe1 = new BlobItem().setName("office.exe").setVersionId("1").setDeleted(false);
-        final BlobItem blobItemExe2 = new BlobItem().setName("autorun.exe").setVersionId("2").setDeleted(false);
-        final BlobItem blobItemExe3 = new BlobItem().setName("start.exe").setVersionId("2").setDeleted(true);
+        final BlobItem blobItemExe1 =
+                new BlobItem().setName("office.exe").setVersionId("1").setDeleted(false);
+        final BlobItem blobItemExe2 =
+                new BlobItem().setName("autorun.exe").setVersionId("2").setDeleted(false);
+        final BlobItem blobItemExe3 =
+                new BlobItem().setName("start.exe").setVersionId("2").setDeleted(true);
 
         items.add(blobItemPdf1);
         items.add(blobItemPdf2);
@@ -170,5 +179,4 @@ class BlobContainerOperationsTest {
 
         return items;
     }
-
 }

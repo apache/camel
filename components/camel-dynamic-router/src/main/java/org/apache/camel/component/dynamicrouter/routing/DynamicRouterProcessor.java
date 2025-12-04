@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
+import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_HEADER;
 
 import java.util.function.BiFunction;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.dynamicrouter.filter.DynamicRouterFilterServic
 import org.apache.camel.component.dynamicrouter.filter.PrioritizedFilter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.support.AsyncProcessorSupport;
-
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.MODE_FIRST_MATCH;
-import static org.apache.camel.component.dynamicrouter.routing.DynamicRouterConstants.RECIPIENT_LIST_HEADER;
 
 /**
  * The {@link DynamicRouterProcessor} is responsible for routing an exchange to the appropriate recipients. It uses the
@@ -78,8 +79,12 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport {
      * @param recipientList      the recipient list processor
      * @param filterService      service that manages {@link PrioritizedFilter}s for dynamic router channels
      */
-    public DynamicRouterProcessor(String recipientMode, boolean warnDroppedMessage, String channel,
-                                  RecipientList recipientList, DynamicRouterFilterService filterService) {
+    public DynamicRouterProcessor(
+            String recipientMode,
+            boolean warnDroppedMessage,
+            String channel,
+            RecipientList recipientList,
+            DynamicRouterFilterService filterService) {
         this.recipientMode = recipientMode;
         this.warnDroppedMessage = warnDroppedMessage;
         this.channel = channel;
@@ -153,14 +158,18 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport {
          * @return                       the {@link DynamicRouterProcessor} instance
          */
         public DynamicRouterProcessor getInstance(
-                CamelContext camelContext, DynamicRouterConfiguration configuration,
+                CamelContext camelContext,
+                DynamicRouterConfiguration configuration,
                 DynamicRouterFilterService filterService,
                 BiFunction<CamelContext, Expression, RecipientList> recipientListSupplier) {
-            RecipientList recipientList = (RecipientList) DynamicRouterRecipientListHelper
-                    .createProcessor(camelContext, configuration, recipientListSupplier);
+            RecipientList recipientList = (RecipientList) DynamicRouterRecipientListHelper.createProcessor(
+                    camelContext, configuration, recipientListSupplier);
             return new DynamicRouterProcessor(
-                    configuration.getRecipientMode(), configuration.isWarnDroppedMessage(),
-                    configuration.getChannel(), recipientList, filterService);
+                    configuration.getRecipientMode(),
+                    configuration.isWarnDroppedMessage(),
+                    configuration.getChannel(),
+                    recipientList,
+                    filterService);
         }
     }
 }

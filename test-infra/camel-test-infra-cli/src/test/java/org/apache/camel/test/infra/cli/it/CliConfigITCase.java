@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cli.it;
 
 import java.io.IOException;
@@ -79,8 +80,10 @@ public class CliConfigITCase extends AbstractTestSupport {
 
     @Test
     @ReadsSystemProperty
-    @EnabledIfSystemProperty(named = "currentProjectVersion", matches = "^(?!\\s*$).+",
-                             disabledReason = "currentProjectVersion system property must be set")
+    @EnabledIfSystemProperty(
+            named = "currentProjectVersion",
+            matches = "^(?!\\s*$).+",
+            disabledReason = "currentProjectVersion system property must be set")
     public void setCurrentProjectVersionTest() {
         String currentCamelVersion = System.getProperty("currentProjectVersion");
         System.setProperty("cli.service.version", currentCamelVersion);
@@ -99,8 +102,8 @@ public class CliConfigITCase extends AbstractTestSupport {
             cliService.version();
             Assertions.assertTrue(dir.toFile().exists(), "Check the local maven repository is created");
             try {
-                Assertions.assertTrue(Files.list(dir).findFirst().isPresent(),
-                        "Check the local maven repository is not empty");
+                Assertions.assertTrue(
+                        Files.list(dir).findFirst().isPresent(), "Check the local maven repository is not empty");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

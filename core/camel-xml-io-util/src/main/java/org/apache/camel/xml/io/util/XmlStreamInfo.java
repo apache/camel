@@ -82,5 +82,4 @@ public class XmlStreamInfo {
     public List<String> getModelines() {
         return modelines;
     }
-
 }

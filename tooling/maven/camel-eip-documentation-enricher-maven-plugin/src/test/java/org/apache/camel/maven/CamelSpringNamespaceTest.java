@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.maven;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 public class CamelSpringNamespaceTest {
 
@@ -28,7 +29,8 @@ public class CamelSpringNamespaceTest {
 
     @Test
     public void testSchemaNamespace() {
-        assertEquals(Constants.XML_SCHEMA_NAMESPACE_URI,
+        assertEquals(
+                Constants.XML_SCHEMA_NAMESPACE_URI,
                 camelSpringNamespace.getNamespaceURI(Constants.XML_SCHEMA_NAMESPACE_PREFIX));
         assertNull(camelSpringNamespace.getNamespaceURI("unregisterdPrefix"));
     }

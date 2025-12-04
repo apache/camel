@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util;
 
 import java.io.File;
@@ -34,8 +35,7 @@ public final class PackageHelper {
 
     public static final String JSON_SUFIX = ".json";
 
-    private PackageHelper() {
-    }
+    private PackageHelper() {}
 
     /**
      * Loads the entire stream into memory as a String and returns it.
@@ -103,8 +103,7 @@ public final class PackageHelper {
     }
 
     public static Stream<Path> findJsonFiles(Path rootDir) {
-        return walk(rootDir)
-                .filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
+        return walk(rootDir).filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
     }
 
     public static Stream<Path> walk(Path rootDir) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import java.io.InputStream;
@@ -47,8 +48,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Perform operations against Apache Lucene Solr.
  */
-@UriEndpoint(firstVersion = "4.8.0", scheme = "solr", title = "Solr", syntax = "solr:host:port/basePath", producerOnly = true,
-             category = { Category.SEARCH, Category.MONITORING }, headersClass = SolrConstants.class)
+@UriEndpoint(
+        firstVersion = "4.8.0",
+        scheme = "solr",
+        title = "Solr",
+        syntax = "solr:host:port/basePath",
+        producerOnly = true,
+        category = {Category.SEARCH, Category.MONITORING},
+        headersClass = SolrConstants.class)
 public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrEndpoint.class);
@@ -95,8 +102,10 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         if (solrClient == null && configuration.getSolrClient() == null) {
             // create solr client from config
             solrClient = createSolrClient();
-            LOG.info("Starting SolrClient: {}",
-                    getSolrClientInfoString(solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
+            LOG.info(
+                    "Starting SolrClient: {}",
+                    getSolrClientInfoString(
+                            solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
         }
     }
 
@@ -104,8 +113,10 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     protected void doShutdown() throws Exception {
         // stop solr client when created (not pre-configured)
         if (solrClient != null) {
-            LOG.info("Stopping SolrClient: {}",
-                    getSolrClientInfoString(solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
+            LOG.info(
+                    "Stopping SolrClient: {}",
+                    getSolrClientInfoString(
+                            solrClient, isProcessAsync(solrClient, configuration), this.getEndpointUri()));
             IOHelper.close(solrClient);
             solrClient = null;
         }
@@ -122,9 +133,7 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         return String.format(
                 "%s %s (async=%s; endpoint=%s)",
                 solrClient.getClass().getSimpleName(),
-                solrClient instanceof HttpJdkSolrClient httpJdkSolrClient
-                        ? "@ " + httpJdkSolrClient.getBaseURL()
-                        : "",
+                solrClient instanceof HttpJdkSolrClient httpJdkSolrClient ? "@ " + httpJdkSolrClient.getBaseURL() : "",
                 async,
                 URISupport.sanitizeUri(endpointUri));
     }
@@ -133,7 +142,8 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         final HttpJdkSolrClient.Builder builder = new HttpJdkSolrClient.Builder(configuration.getSolrBaseUrl());
         builder.withConnectionTimeout(configuration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
         builder.withRequestTimeout(configuration.getRequestTimeout(), TimeUnit.MILLISECONDS);
-        if (ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
+        if (ObjectHelper.isNotEmpty(configuration.getUsername())
+                && ObjectHelper.isNotEmpty(configuration.getPassword())) {
             builder.withBasicAuthCredentials(configuration.getUsername(), configuration.getPassword());
         }
         if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
@@ -160,16 +170,15 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private static SSLContext createSslContextFromCa(CamelContext camelContext, String certificatePath) {
         try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(
-                            camelContext, certificatePath);
+            InputStream resolveMandatoryResourceAsInputStream =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, certificatePath);
             Certificate trustedCa = factory.generateCertificate(resolveMandatoryResourceAsInputStream);
             KeyStore trustStore = KeyStore.getInstance("pkcs12");
             trustStore.load(null, null);
             trustStore.setCertificateEntry("ca", trustedCa);
             final SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-            TrustManagerFactory trustManagerFactory
-                    = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustManagerFactory =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
             sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
             return sslContext;
@@ -177,5 +186,4 @@ public class SolrEndpoint extends DefaultEndpoint implements EndpointServiceLoca
             throw new RuntimeException(e);
         }
     }
-
 }

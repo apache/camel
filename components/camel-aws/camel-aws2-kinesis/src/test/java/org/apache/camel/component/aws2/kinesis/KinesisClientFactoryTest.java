@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.kinesis.client.KinesisAsyncInternalClient;
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
 import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
 import org.apache.camel.component.aws2.kinesis.client.impl.*;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KinesisClientFactoryTest {
 

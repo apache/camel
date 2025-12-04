@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -28,9 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -91,10 +92,7 @@ public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(uri)
-                        .log("${body}")
-                        .transform(body().prepend("Bye "))
-                        .to("mock:result");
+                from(uri).log("${body}").transform(body().prepend("Bye ")).to("mock:result");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
+
+import static org.apache.camel.util.StringHelper.between;
 
 import java.lang.reflect.Array;
 import java.security.MessageDigest;
@@ -56,8 +59,6 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
-import static org.apache.camel.util.StringHelper.between;
-
 /**
  * A set of helper as static imports for the Camel compiled simple language.
  */
@@ -70,8 +71,7 @@ public final class CSimpleHelper {
 
     private static ExchangeFormatter exchangeFormatter;
 
-    private CSimpleHelper() {
-    }
+    private CSimpleHelper() {}
 
     public static <T> T convertTo(Exchange exchange, Class<T> type, Object value) {
         return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
@@ -111,7 +111,8 @@ public final class CSimpleHelper {
         return out;
     }
 
-    public static <T> T mandatoryBodyAsIndex(Message message, Class<T> type, String key) throws InvalidPayloadException {
+    public static <T> T mandatoryBodyAsIndex(Message message, Class<T> type, String key)
+            throws InvalidPayloadException {
         T out = bodyAsIndex(message, type, key);
         if (out == null) {
             throw new InvalidPayloadException(message.getExchange(), type, message);
@@ -224,9 +225,9 @@ public final class CSimpleHelper {
         if (body == null) {
             return null;
         } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
-            body = Jsoner.prettyPrint(body.trim()); //json
+            body = Jsoner.prettyPrint(body.trim()); // json
         } else if (body.startsWith("<") && body.endsWith(">")) {
-            return CSimpleHelper.prettyXml(body.trim()); //xml
+            return CSimpleHelper.prettyXml(body.trim()); // xml
         }
 
         return body;
@@ -391,8 +392,8 @@ public final class CSimpleHelper {
         } else if (command.startsWith("header.")) {
             date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> failDueToMissingObjectAtCommand(command));
         } else if (command.startsWith("exchangeProperty.")) {
-            date = LanguageHelper.dateFromExchangeProperty(exchange, command,
-                    (e, o) -> failDueToMissingObjectAtCommand(command));
+            date = LanguageHelper.dateFromExchangeProperty(
+                    exchange, command, (e, o) -> failDueToMissingObjectAtCommand(command));
         } else if ("file".equals(command)) {
             date = LanguageHelper.dateFromFileLastModified(exchange, command);
         } else {
@@ -551,13 +552,15 @@ public final class CSimpleHelper {
 
     public static SkipIterator skip(Exchange exchange, Object skip) {
         int num = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, skip);
-        Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(exchange.getMessage().getBody());
+        Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(
+                exchange.getMessage().getBody());
         return new SkipIterator(it, num);
     }
 
     public static GroupIterator collate(Exchange exchange, Object group) {
         int num = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, group);
-        Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(exchange.getMessage().getBody());
+        Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(
+                exchange.getMessage().getBody());
         return new GroupIterator(it, num);
     }
 
@@ -579,42 +582,42 @@ public final class CSimpleHelper {
     }
 
     public static boolean isEqualTo(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue);
+        return org.apache.camel.support.ObjectHelper.typeCoerceEquals(
+                exchange.getContext().getTypeConverter(), leftValue, rightValue);
     }
 
     public static boolean isEqualToIgnoreCase(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue, true);
+        return org.apache.camel.support.ObjectHelper.typeCoerceEquals(
+                exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
     }
 
     public static boolean isNotEqualTo(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue);
+        return org.apache.camel.support.ObjectHelper.typeCoerceNotEquals(
+                exchange.getContext().getTypeConverter(), leftValue, rightValue);
     }
 
     public static boolean isGreaterThan(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue)
-               > 0;
+        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                > 0;
     }
 
     public static boolean isGreaterThanOrEqualTo(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue)
-               >= 0;
+        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                >= 0;
     }
 
     public static boolean isLessThan(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue)
-               < 0;
+        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                < 0;
     }
 
     public static boolean isLessThanOrEqualTo(Exchange exchange, Object leftValue, Object rightValue) {
-        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue)
-               <= 0;
+        return org.apache.camel.support.ObjectHelper.typeCoerceCompare(
+                        exchange.getContext().getTypeConverter(), leftValue, rightValue)
+                <= 0;
     }
 
     public static boolean contains(Exchange exchange, Object leftValue, Object rightValue) {
@@ -625,8 +628,8 @@ public final class CSimpleHelper {
             // only one of them is null so they are not equal
             return false;
         }
-        return org.apache.camel.support.ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue, false);
+        return org.apache.camel.support.ObjectHelper.typeCoerceContains(
+                exchange.getContext().getTypeConverter(), leftValue, rightValue, false);
     }
 
     public static boolean containsIgnoreCase(Exchange exchange, Object leftValue, Object rightValue) {
@@ -637,8 +640,8 @@ public final class CSimpleHelper {
             // only one of them is null, so they are not equal
             return false;
         }
-        return org.apache.camel.support.ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue,
-                rightValue, true);
+        return org.apache.camel.support.ObjectHelper.typeCoerceContains(
+                exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
     }
 
     public static boolean regexp(Exchange exchange, Object leftValue, Object rightValue) {
@@ -721,8 +724,7 @@ public final class CSimpleHelper {
             // maybe it's an expression to subtract a number after last
             String after = StringHelper.after(key, "-");
             if (after != null) {
-                Integer redux
-                        = context.getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                Integer redux = context.getTypeConverter().tryConvertTo(Integer.class, after.trim());
                 if (redux != null) {
                     num -= redux;
                 } else {

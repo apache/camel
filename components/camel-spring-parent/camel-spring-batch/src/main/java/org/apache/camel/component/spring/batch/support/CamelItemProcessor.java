@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.ProducerTemplate;
@@ -46,5 +47,4 @@ public class CamelItemProcessor<I, O> implements ItemProcessor<I, O> {
         LOG.debug("processed item");
         return result;
     }
-
 }

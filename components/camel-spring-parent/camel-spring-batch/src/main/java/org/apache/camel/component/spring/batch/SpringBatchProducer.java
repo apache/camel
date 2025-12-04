@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch;
 
 import java.util.Date;
@@ -43,7 +44,8 @@ public class SpringBatchProducer extends DefaultProducer {
     private final Job job;
     private final JobRegistry jobRegistry;
 
-    public SpringBatchProducer(SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job, JobRegistry jobRegistry) {
+    public SpringBatchProducer(
+            SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job, JobRegistry jobRegistry) {
         super(endpoint);
         this.job = job;
         this.jobLauncher = jobLauncher;
@@ -62,15 +64,16 @@ public class SpringBatchProducer extends DefaultProducer {
                 job2run = jobRegistry.getJob(messageJobName);
             }
             if (job2run == null) {
-                job2run = CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
+                job2run =
+                        CamelContextHelper.mandatoryLookup(getEndpoint().getCamelContext(), messageJobName, Job.class);
             }
         }
 
         if (job2run == null) {
             exchange.setException(new CamelExchangeException(
                     "jobName was not specified in the endpoint construction "
-                                                             + " and header " + SpringBatchConstants.JOB_NAME
-                                                             + " could not be found",
+                            + " and header " + SpringBatchConstants.JOB_NAME
+                            + " could not be found",
                     exchange));
             return;
         }
@@ -110,5 +113,4 @@ public class SpringBatchProducer extends DefaultProducer {
         LOG.debug("Prepared parameters for Spring Batch job: {}", jobParameters);
         return jobParameters;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -22,8 +25,6 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteIdRestDefinitionTest extends ContextTestSupport {
 
@@ -42,8 +43,13 @@ public class RouteIdRestDefinitionTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start1?timeout=30000").to("mock:result");
                 from("direct:start2").to("mock:result");
-                rest("/say/hello").get("/bar").id("getSayHelloBar").to("mock:result").get("/bar/{user}")
-                        .id("getSayHelloBarWithUser").to("mock:result");
+                rest("/say/hello")
+                        .get("/bar")
+                        .id("getSayHelloBar")
+                        .to("mock:result")
+                        .get("/bar/{user}")
+                        .id("getSayHelloBarWithUser")
+                        .to("mock:result");
             }
         };
     }
@@ -51,7 +57,7 @@ public class RouteIdRestDefinitionTest extends ContextTestSupport {
     @Test
     public void testSayHelloBar() {
         assertEquals("getSayHelloBar", context.getRouteDefinitions().get(2).getId());
-        assertEquals("getSayHelloBarWithUser", context.getRouteDefinitions().get(3).getId());
+        assertEquals(
+                "getSayHelloBarWithUser", context.getRouteDefinitions().get(3).getId());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,28 +50,50 @@ public class StringAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("direct:aggregateBody", "direct:aggregateBodyComma", "direct:aggregateBodyLines",
-                        "direct:aggregateHeader", "direct:aggregateHeaderComma",
-                        "direct:aggregateHeaderLines");
+                from("direct:start")
+                        .to(
+                                "direct:aggregateBody",
+                                "direct:aggregateBodyComma",
+                                "direct:aggregateBodyLines",
+                                "direct:aggregateHeader",
+                                "direct:aggregateHeaderComma",
+                                "direct:aggregateHeaderLines");
 
-                from("direct:aggregateBody").aggregate(constant(true), AggregationStrategies.string()).completionSize(3)
+                from("direct:aggregateBody")
+                        .aggregate(constant(true), AggregationStrategies.string())
+                        .completionSize(3)
                         .to("mock:aggregatedBody");
 
-                from("direct:aggregateBodyComma").aggregate(constant(true), AggregationStrategies.string().delimiter(", "))
-                        .completionSize(3).to("mock:aggregatedBodyComma");
+                from("direct:aggregateBodyComma")
+                        .aggregate(
+                                constant(true), AggregationStrategies.string().delimiter(", "))
+                        .completionSize(3)
+                        .to("mock:aggregatedBodyComma");
 
-                from("direct:aggregateBodyLines").aggregate(constant(true), AggregationStrategies.string("\n"))
-                        .completionSize(3).to("mock:aggregatedBodyLines");
+                from("direct:aggregateBodyLines")
+                        .aggregate(constant(true), AggregationStrategies.string("\n"))
+                        .completionSize(3)
+                        .to("mock:aggregatedBodyLines");
 
-                from("direct:aggregateHeader").aggregate(constant(true), AggregationStrategies.string().pick(header("header")))
-                        .completionSize(3).to("mock:aggregatedHeader");
+                from("direct:aggregateHeader")
+                        .aggregate(
+                                constant(true), AggregationStrategies.string().pick(header("header")))
+                        .completionSize(3)
+                        .to("mock:aggregatedHeader");
 
                 from("direct:aggregateHeaderComma")
-                        .aggregate(constant(true), AggregationStrategies.string(", ").pick(header("header"))).completionSize(3)
+                        .aggregate(
+                                constant(true),
+                                AggregationStrategies.string(", ").pick(header("header")))
+                        .completionSize(3)
                         .to("mock:aggregatedHeaderComma");
 
                 from("direct:aggregateHeaderLines")
-                        .aggregate(constant(true), AggregationStrategies.string().pick(header("header")).delimiter("\n"))
+                        .aggregate(
+                                constant(true),
+                                AggregationStrategies.string()
+                                        .pick(header("header"))
+                                        .delimiter("\n"))
                         .completionSize(3)
                         .to("mock:aggregatedHeaderLines");
             }

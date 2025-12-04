@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,16 +31,11 @@ import org.junit.jupiter.api.Test;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.Project;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenstackKeystoneProjectTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + KeystoneConstants.PROJECTS;
+    private static final String URI_FORMAT =
+            "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + KeystoneConstants.PROJECTS;
 
     private static final String PROJECT_NAME = "ProjectX";
     private static final String PROJECT_ID = "3337151a1c38496c8bffcb280b19c346";
@@ -49,9 +50,14 @@ public class OpenstackKeystoneProjectTest extends OpenstackWiremockTestSupport {
 
     @Test
     void createShouldSucceed() {
-        Project in = Builders.project().name(PROJECT_NAME).description(PROJECT_DESCRIPTION).domainId(PROJECT_DOMAIN_ID)
+        Project in = Builders.project()
+                .name(PROJECT_NAME)
+                .description(PROJECT_DESCRIPTION)
+                .domainId(PROJECT_DOMAIN_ID)
                 .setExtra(PROJECT_EXTRA_KEY_1, PROJECT_EXTRA_VALUE_1)
-                .enabled(true).setTags(TAGS).build();
+                .enabled(true)
+                .setTags(TAGS)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Project out = template.requestBody(uri, in, Project.class);
@@ -94,8 +100,11 @@ public class OpenstackKeystoneProjectTest extends OpenstackWiremockTestSupport {
 
     @Test
     void updateShouldSucceed() {
-        Project in = Builders.project().id(PROJECT_ID).description(PROJECT_DESCRIPTION_UPDATED)
-                .setExtra(PROJECT_EXTRA_KEY_2, PROJECT_EXTRA_VALUE_2).build();
+        Project in = Builders.project()
+                .id(PROJECT_ID)
+                .description(PROJECT_DESCRIPTION_UPDATED)
+                .setExtra(PROJECT_EXTRA_KEY_2, PROJECT_EXTRA_VALUE_2)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.UPDATE);
         Project out = template.requestBody(uri, in, Project.class);
@@ -114,5 +123,4 @@ public class OpenstackKeystoneProjectTest extends OpenstackWiremockTestSupport {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.DELETE);
         assertDoesNotThrow(() -> template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, PROJECT_ID));
     }
-
 }

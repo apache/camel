@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +42,6 @@ import org.junit.platform.commons.function.Try;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This IT is based on {@link KafkaConsumerFullIT}
@@ -77,12 +78,14 @@ public class KafkaConsumerStopIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 from("kafka:" + TOPIC
-                     + "?groupId=KafkaConsumerFullIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-                     + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-                        .process(exchange -> LOG.trace("Captured on the processor: {}",
+                                + "?groupId=KafkaConsumerFullIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                                + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                        .process(exchange -> LOG.trace(
+                                "Captured on the processor: {}",
                                 exchange.getMessage().getBody()))
-                        .routeId("full-it").to(KafkaTestUtil.MOCK_RESULT);
+                        .routeId("full-it")
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -105,27 +108,27 @@ public class KafkaConsumerStopIT extends BaseKafkaTestSupport {
 
         // then: org.apache.kafka.clients.consumer.KafkaConsumer closed
         await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertTrue(kafkaClientConsumerClosed(kafkaClientConsumer),
+                .untilAsserted(() -> assertTrue(
+                        kafkaClientConsumerClosed(kafkaClientConsumer),
                         "org.apache.kafka.clients.consumer.KafkaConsumer should be closed"));
     }
 
     private org.apache.kafka.clients.consumer.KafkaConsumer getKafkaClientConsumer() throws Exception {
-        KafkaConsumer kafkaConsumer = (KafkaConsumer) contextExtension.getContext().getRoute("full-it").getConsumer();
+        KafkaConsumer kafkaConsumer = (KafkaConsumer)
+                contextExtension.getContext().getRoute("full-it").getConsumer();
         Try<Object> tasksTry = ReflectionUtils.tryToReadFieldValue(KafkaConsumer.class, "tasks", kafkaConsumer);
         KafkaFetchRecords kafkaFetchRecords = ((List<KafkaFetchRecords>) tasksTry.get()).get(0);
-        Try<Object> kafkaClientConsumerTry
-                = ReflectionUtils.tryToReadFieldValue(KafkaFetchRecords.class, "consumer", kafkaFetchRecords);
+        Try<Object> kafkaClientConsumerTry =
+                ReflectionUtils.tryToReadFieldValue(KafkaFetchRecords.class, "consumer", kafkaFetchRecords);
         return (org.apache.kafka.clients.consumer.KafkaConsumer) kafkaClientConsumerTry.get();
     }
 
-    private static boolean kafkaClientConsumerClosed(org.apache.kafka.clients.consumer.KafkaConsumer kafkaClientConsumer)
-            throws Exception {
-        Try<Object> delegate = ReflectionUtils.tryToReadFieldValue(org.apache.kafka.clients.consumer.KafkaConsumer.class,
-                "delegate", kafkaClientConsumer);
+    private static boolean kafkaClientConsumerClosed(
+            org.apache.kafka.clients.consumer.KafkaConsumer kafkaClientConsumer) throws Exception {
+        Try<Object> delegate = ReflectionUtils.tryToReadFieldValue(
+                org.apache.kafka.clients.consumer.KafkaConsumer.class, "delegate", kafkaClientConsumer);
         ClassicKafkaConsumer cd = (ClassicKafkaConsumer) delegate.get();
-        Try<Object> closedTry = ReflectionUtils.tryToReadFieldValue(ClassicKafkaConsumer.class,
-                "closed", cd);
+        Try<Object> closedTry = ReflectionUtils.tryToReadFieldValue(ClassicKafkaConsumer.class, "closed", cd);
         return (boolean) closedTry.get();
     }
-
 }

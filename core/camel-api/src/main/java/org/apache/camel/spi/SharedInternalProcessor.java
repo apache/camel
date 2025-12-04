@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.AsyncCallback;
@@ -50,11 +51,11 @@ public interface SharedInternalProcessor extends Processor {
     /**
      * Asynchronous API
      */
-    boolean process(Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor);
+    boolean process(
+            Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor);
 
     /**
      * Synchronous API
      */
     void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor);
-
 }

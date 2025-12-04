@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -50,35 +51,45 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         implements ExecutorServiceAwareDefinition<AggregateDefinition>,
-        AggregationStrategyAwareDefinition<AggregateDefinition> {
+                AggregationStrategyAwareDefinition<AggregateDefinition> {
 
     @XmlTransient
     private ExpressionDefinition expression;
+
     @XmlTransient
     private AggregationStrategy aggregationStrategyBean;
+
     @XmlTransient
     private AggregationRepository aggregationRepositoryBean;
+
     @XmlTransient
     private AggregateController aggregateControllerBean;
+
     @XmlTransient
     private ExecutorService executorServiceBean;
+
     @XmlTransient
     private ScheduledExecutorService timeoutCheckerExecutorServiceBean;
+
     @XmlTransient
     private OptimisticLockRetryPolicy optimisticLockRetryPolicy;
 
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
+
     @XmlElement(name = "completionPredicate")
     @AsPredicate
     @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionPredicate;
+
     @XmlElement(name = "completionTimeoutExpression")
     @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionTimeoutExpression;
+
     @XmlElement(name = "completionSizeExpression")
     @Metadata(label = "advanced")
     private ExpressionSubElementDefinition completionSizeExpression;
+
     @XmlElement(name = "optimisticLockRetryPolicy")
     @Metadata(label = "advanced")
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
@@ -86,72 +97,92 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String optimisticLocking;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ScheduledExecutorService")
     private String timeoutCheckerExecutorService;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.processor.aggregate.AggregateController")
     private String aggregateController;
+
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.spi.AggregationRepository")
     private String aggregationRepository;
+
     @XmlAttribute(required = true)
     @Metadata(javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String aggregationStrategyMethodAllowNull;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")
     private String completionSize;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String completionInterval;
+
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String completionTimeout;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "1000", javaType = "java.time.Duration")
     private String completionTimeoutCheckerInterval;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completionFromBatchConsumer;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completionOnNewCorrelationGroup;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String eagerCheckCompletion;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String ignoreInvalidCorrelationKeys;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String closeCorrelationKeyOnCompletion;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String discardOnCompletionTimeout;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String discardOnAggregationFailure;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String forceCompletionOnStop;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String completeAllOnStop;
 
-    public AggregateDefinition() {
-    }
+    public AggregateDefinition() {}
 
     protected AggregateDefinition(AggregateDefinition source) {
         super(source);
@@ -162,15 +193,17 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.executorServiceBean = source.executorServiceBean;
         this.timeoutCheckerExecutorServiceBean = source.timeoutCheckerExecutorServiceBean;
         this.optimisticLockRetryPolicy = source.optimisticLockRetryPolicy;
-        this.correlationExpression
-                = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
-        this.completionPredicate = source.completionPredicate != null ? source.completionPredicate.copyDefinition() : null;
-        this.completionTimeoutExpression
-                = source.completionTimeoutExpression != null ? source.completionTimeoutExpression.copyDefinition() : null;
-        this.completionSizeExpression
-                = source.completionSizeExpression != null ? source.completionSizeExpression.copyDefinition() : null;
+        this.correlationExpression =
+                source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
+        this.completionPredicate =
+                source.completionPredicate != null ? source.completionPredicate.copyDefinition() : null;
+        this.completionTimeoutExpression =
+                source.completionTimeoutExpression != null ? source.completionTimeoutExpression.copyDefinition() : null;
+        this.completionSizeExpression =
+                source.completionSizeExpression != null ? source.completionSizeExpression.copyDefinition() : null;
         this.optimisticLockRetryPolicyDefinition = source.optimisticLockRetryPolicyDefinition != null
-                ? source.optimisticLockRetryPolicyDefinition.copyDefinition() : null;
+                ? source.optimisticLockRetryPolicyDefinition.copyDefinition()
+                : null;
         this.parallelProcessing = source.parallelProcessing;
         this.optimisticLocking = source.optimisticLocking;
         this.executorService = source.executorService;
@@ -1092,7 +1125,8 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     protected void checkNoCompletedPredicate() {
         if (getCompletionPredicate() != null) {
-            throw new IllegalArgumentException("There is already a completionPredicate defined for this aggregator: " + this);
+            throw new IllegalArgumentException(
+                    "There is already a completionPredicate defined for this aggregator: " + this);
         }
     }
 
@@ -1106,5 +1140,4 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         super.setOutputs(outputs);
     }
-
 }

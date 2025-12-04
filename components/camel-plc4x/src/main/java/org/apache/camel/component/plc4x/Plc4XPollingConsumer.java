@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import java.util.HashMap;
@@ -91,9 +92,8 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
             }
 
             PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
-            CompletableFuture<? extends PlcReadResponse> future
-                    = request.execute().whenComplete((plcReadResponse, throwable) -> {
-                    });
+            CompletableFuture<? extends PlcReadResponse> future =
+                    request.execute().whenComplete((plcReadResponse, throwable) -> {});
             PlcReadResponse response;
             if (timeout >= 0) {
                 response = future.get(timeout, TimeUnit.MILLISECONDS);
@@ -122,5 +122,4 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         }
         return exchange;
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.xml.io.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,11 +29,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlStreamDetectorTest {
 
@@ -56,8 +57,8 @@ public class XmlStreamDetectorTest {
     @Test
     public void simplestDocument() throws IOException {
         String xml = "<root />";
-        XmlStreamDetector detector
-                = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        XmlStreamDetector detector =
+                new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
         assertTrue(info.isValid());
         assertEquals("root", info.getRootElementName());
@@ -68,8 +69,8 @@ public class XmlStreamDetectorTest {
     public void documentFullOfNamespaces() throws IOException {
         String xml = readAllFromFile("documentFullOfNamespaces.xml");
 
-        XmlStreamDetector detector
-                = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        XmlStreamDetector detector =
+                new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
         assertTrue(info.isValid());
         assertEquals("root", info.getRootElementName());
@@ -93,8 +94,8 @@ public class XmlStreamDetectorTest {
     public void documentWithModeline() throws IOException {
         String xml = readAllFromFile("documentWithModeline.xml");
 
-        XmlStreamDetector detector
-                = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        XmlStreamDetector detector =
+                new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
         assertTrue(info.isValid());
         assertEquals("routes", info.getRootElementName());
@@ -103,10 +104,13 @@ public class XmlStreamDetectorTest {
         assertEquals(0, info.getAttributes().size());
 
         assertEquals(1, info.getNamespaces().size());
-        assertEquals("http://camel.apache.org/schema/spring", info.getNamespaces().get(""));
+        assertEquals(
+                "http://camel.apache.org/schema/spring", info.getNamespaces().get(""));
 
         assertEquals(3, info.getModelines().size());
-        assertEquals("camel-k: dependency=mvn:com.i-heart-camel:best-routes-ever:1.0.0", info.getModelines().get(0));
+        assertEquals(
+                "camel-k: dependency=mvn:com.i-heart-camel:best-routes-ever:1.0.0",
+                info.getModelines().get(0));
         assertEquals("camel-k: env=HELLO=world", info.getModelines().get(1));
         assertEquals("camel-k: name=MyApplication", info.getModelines().get(2));
     }
@@ -115,22 +119,26 @@ public class XmlStreamDetectorTest {
     public void simpleRoute() throws IOException {
         String xml = readAllFromFile("simpleRoute.xml");
 
-        XmlStreamDetector detector
-                = new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        XmlStreamDetector detector =
+                new XmlStreamDetector(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         XmlStreamInfo info = detector.information();
         assertTrue(info.isValid());
         assertEquals("routes", info.getRootElementName());
         assertEquals("http://camel.apache.org/schema/spring", info.getRootElementNamespace());
 
         assertEquals(2, info.getAttributes().size());
-        assertTrue(info.getAttributes().get("xsi:schemaLocation")
+        assertTrue(info.getAttributes()
+                .get("xsi:schemaLocation")
                 .contains("https://camel.apache.org/schema/spring/camel-spring.xsd"));
-        assertTrue(info.getAttributes().get("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation")
+        assertTrue(info.getAttributes()
+                .get("{http://www.w3.org/2001/XMLSchema-instance}schemaLocation")
                 .contains("https://camel.apache.org/schema/spring/camel-spring.xsd"));
 
         assertEquals(2, info.getNamespaces().size());
-        assertEquals("http://camel.apache.org/schema/spring", info.getNamespaces().get(""));
-        assertEquals("http://www.w3.org/2001/XMLSchema-instance", info.getNamespaces().get("xsi"));
+        assertEquals(
+                "http://camel.apache.org/schema/spring", info.getNamespaces().get(""));
+        assertEquals(
+                "http://www.w3.org/2001/XMLSchema-instance",
+                info.getNamespaces().get("xsi"));
     }
-
 }

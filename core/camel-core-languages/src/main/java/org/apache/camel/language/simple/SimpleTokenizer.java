@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -32,7 +33,7 @@ public final class SimpleTokenizer {
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
     // optimise to be able to quick check for start functions
-    private static final String[] FUNCTION_START = new String[] { "${", "$simple{" };
+    private static final String[] FUNCTION_START = new String[] {"${", "$simple{"};
     // optimise to be able to quick check for end function
     private static final String FUNCTION_END = "}";
 
@@ -91,7 +92,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.logicalOperator, "&&");
         KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
-        //binary operator
+        // binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
         KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.minusValue, "-");
@@ -122,7 +123,9 @@ public final class SimpleTokenizer {
      */
     public static boolean hasEscapeToken(String expression) {
         if (expression != null) {
-            return expression.contains("\\n") || expression.contains("\\t") || expression.contains("\\r")
+            return expression.contains("\\n")
+                    || expression.contains("\\t")
+                    || expression.contains("\\r")
                     || expression.contains("\\}");
         }
         return false;
@@ -177,8 +180,7 @@ public final class SimpleTokenizer {
         String text = expression.substring(index);
         for (int i = 0; i < NUMBER_OF_TOKENS; i++) {
             SimpleTokenType token = KNOWN_TOKENS[i];
-            if (acceptType(token.getType(), filters)
-                    && acceptToken(token, text, expression, index)) {
+            if (acceptType(token.getType(), filters) && acceptToken(token, text, expression, index)) {
                 return new SimpleToken(token, index);
             }
         }
@@ -271,7 +273,9 @@ public final class SimpleTokenizer {
         }
         String previousOne = expression.substring(index - 1, index);
         String afterOne = text.substring(len, len + 1);
-        return " ".equals(previousOne) && " ".equals(afterOne) && text.substring(0, len).equals(token.getValue());
+        return " ".equals(previousOne)
+                && " ".equals(afterOne)
+                && text.substring(0, len).equals(token.getValue());
     }
 
     private static boolean evalUnary(SimpleTokenType token, String text, String expression, int index) {
@@ -290,5 +294,4 @@ public final class SimpleTokenizer {
         boolean functionEnd = previous.equals("}");
         return functionEnd && whiteSpace;
     }
-
 }

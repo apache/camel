@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyAsyncTest extends BaseJettyTest {
 
@@ -42,7 +43,9 @@ public class JettyAsyncTest extends BaseJettyTest {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice").to("async:bye:world").to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice")
+                        .to("async:bye:world")
+                        .to("mock:result");
             }
         };
     }

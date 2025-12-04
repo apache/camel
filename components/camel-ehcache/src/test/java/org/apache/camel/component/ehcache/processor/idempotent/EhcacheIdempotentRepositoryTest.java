@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache.processor.idempotent;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.ehcache.Cache;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
 
@@ -77,7 +78,6 @@ public class EhcacheIdempotentRepositoryTest extends EhcacheTestSupport {
         // add key and check again
         assertTrue(repo.add(key01));
         assertTrue(repo.contains(key01));
-
     }
 
     @Test

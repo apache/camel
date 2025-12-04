@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.metadata;
 
 import java.util.Collections;
@@ -47,10 +48,7 @@ public final class MetaDataBuilder {
     }
 
     public MetaDataExtension.MetaData build() {
-        return new DefaultMetaData(
-                camelContext,
-                attributes == null ? Collections.emptyMap() : attributes,
-                payload);
+        return new DefaultMetaData(camelContext, attributes == null ? Collections.emptyMap() : attributes, payload);
     }
 
     // *****************************

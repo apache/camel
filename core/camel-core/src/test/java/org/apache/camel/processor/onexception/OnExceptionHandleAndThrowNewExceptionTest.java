@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
@@ -25,8 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -51,15 +52,18 @@ public class OnExceptionHandleAndThrowNewExceptionTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).handled(true).to("log:onException").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                        assertNotNull(cause);
+                onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("log:onException")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                                assertNotNull(cause);
 
-                        throw new IOException("First failure message is: " + cause.getMessage());
-                    }
-                });
+                                throw new IOException("First failure message is: " + cause.getMessage());
+                            }
+                        });
 
                 from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }

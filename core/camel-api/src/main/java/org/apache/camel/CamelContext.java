@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.time.Duration;
@@ -177,7 +178,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     EventClock<ContextEvents> getClock();
 
     // Service Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Adds a service to this CamelContext, which allows this CamelContext to control the lifecycle, ensuring the
@@ -311,7 +312,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void addStartupListener(StartupListener listener) throws Exception;
 
     // Component Management Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Adds a component to the context.
@@ -391,7 +392,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     Component removeComponent(String componentName);
 
     // Endpoint Management Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Gets the {@link org.apache.camel.spi.EndpointRegistry}
@@ -485,7 +486,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     GlobalEndpointConfiguration getGlobalEndpointConfiguration();
 
     // Route Management Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Sets a custom {@link RouteController} to use
@@ -640,7 +641,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
      */
-    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception;
 
     /**
      * Adds a new route from a given route template.
@@ -656,9 +658,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception       is thrown if error creating and adding the new route
      */
     @Deprecated(since = "4.14.0")
-    String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId,
-            Map<String, Object> parameters)
+    String addRouteFromTemplate(String routeId, String routeTemplateId, String prefixId, Map<String, Object> parameters)
             throws Exception;
 
     /**
@@ -676,8 +676,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception       is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group,
-            Map<String, Object> parameters)
+            String routeId, String routeTemplateId, String prefixId, String group, Map<String, Object> parameters)
             throws Exception;
 
     /**
@@ -713,7 +712,11 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception            is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group, RouteTemplateContext routeTemplateContext)
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String group,
+            RouteTemplateContext routeTemplateContext)
             throws Exception;
 
     /**
@@ -730,8 +733,11 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId,
-            String parentRouteId, String parentProcessorId,
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String parentRouteId,
+            String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception;
 
@@ -749,8 +755,12 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception         is thrown if error creating and adding the new route
      */
     String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId, String group,
-            String parentRouteId, String parentProcessorId,
+            String routeId,
+            String routeTemplateId,
+            String prefixId,
+            String group,
+            String parentRouteId,
+            String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception;
 
@@ -777,7 +787,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     List<RoutePolicyFactory> getRoutePolicyFactories();
 
     // Rest Methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
@@ -818,7 +828,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     void setRestRegistry(RestRegistry restRegistry);
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Returns the type converter used to coerce types from one type to another.
@@ -1669,5 +1679,4 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
      */
     StartupSummaryLevel getStartupSummaryLevel();
-
 }

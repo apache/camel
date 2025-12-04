@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.Message;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
 
@@ -69,7 +70,8 @@ public class SqsConsumerExtendMessageVisibilityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&visibilityTimeout=" + TIMEOUT_IN_SECONDS
-                     + "&extendMessageVisibility=true").to("mock:result");
+                                + "&extendMessageVisibility=true")
+                        .to("mock:result");
             }
         };
     }

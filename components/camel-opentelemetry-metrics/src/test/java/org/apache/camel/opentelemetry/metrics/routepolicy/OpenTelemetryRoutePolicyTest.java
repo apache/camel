@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.routepolicy;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verifies the 'camel.route.policy' metric.
@@ -70,13 +71,9 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .delay(DELAY_FOO)
-                        .to("mock:result");
+                from("direct:foo").routeId("foo").delay(DELAY_FOO).to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                        .delay(DELAY_BAR)
-                        .to("mock:result");
+                from("direct:bar").routeId("bar").delay(DELAY_BAR).to("mock:result");
             }
         };
     }

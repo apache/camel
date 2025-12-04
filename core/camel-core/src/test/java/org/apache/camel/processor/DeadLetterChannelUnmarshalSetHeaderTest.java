@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.InputStream;
@@ -51,9 +52,14 @@ public class DeadLetterChannelUnmarshalSetHeaderTest extends ContextTestSupport 
             public void configure() {
                 MyDataFormat df = new MyDataFormat();
 
-                from("direct:start").errorHandler(deadLetterChannel("direct:error")).unmarshal(df);
+                from("direct:start")
+                        .errorHandler(deadLetterChannel("direct:error"))
+                        .unmarshal(df);
 
-                from("direct:error").setHeader("foo", constant("123")).setHeader("bar", constant("456")).to("mock:error");
+                from("direct:error")
+                        .setHeader("foo", constant("123"))
+                        .setHeader("bar", constant("456"))
+                        .to("mock:error");
             }
         };
     }

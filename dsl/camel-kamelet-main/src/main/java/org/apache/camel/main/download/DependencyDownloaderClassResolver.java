@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.io.InputStream;
@@ -37,9 +38,8 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
     private final DependencyDownloader downloader;
     private final boolean silent;
 
-    public DependencyDownloaderClassResolver(CamelContext camelContext,
-                                             KnownDependenciesResolver knownDependenciesResolver,
-                                             boolean silent) {
+    public DependencyDownloaderClassResolver(
+            CamelContext camelContext, KnownDependenciesResolver knownDependenciesResolver, boolean silent) {
         super(camelContext);
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.knownDependenciesResolver = knownDependenciesResolver;
@@ -67,14 +67,13 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
                 String last = StringHelper.afterLast(uri, ".", uri);
                 PojoBeanModel model = catalog.pojoBeanModel(last);
                 if (model != null && uri.equals(model.getJavaType())) {
-                    gav = MavenGav.fromCoordinates(model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
+                    gav = MavenGav.fromCoordinates(
+                            model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
                 }
             }
             if (gav != null) {
-                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
-                        gav.getVersion())) {
-                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
-                            gav.getVersion());
+                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
                 }
                 try {
                     answer = super.loadResourceAsStream(uri);
@@ -105,14 +104,13 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
                 String last = StringHelper.afterLast(name, ".", name);
                 PojoBeanModel model = catalog.pojoBeanModel(last);
                 if (model != null && name.equals(model.getJavaType())) {
-                    gav = MavenGav.fromCoordinates(model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
+                    gav = MavenGav.fromCoordinates(
+                            model.getGroupId(), model.getArtifactId(), model.getVersion(), null, null);
                 }
             }
             if (gav != null) {
-                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(),
-                        gav.getVersion())) {
-                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(),
-                            gav.getVersion());
+                if (!downloader.alreadyOnClasspath(gav.getGroupId(), gav.getArtifactId(), gav.getVersion())) {
+                    downloader.downloadDependency(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
                 }
                 try {
                     answer = ObjectHelper.loadClass(name, loader);
@@ -138,5 +136,4 @@ public final class DependencyDownloaderClassResolver extends DefaultClassResolve
             }
         }
     }
-
 }

@@ -36,5 +36,4 @@ public interface ImageRecognitionConstants {
     float DEFAULT_TAG_RECOGNITION_THRESHOLD = 60;
 
     float DEFAULT_CELEBRITY_RECOGNITION_THRESHOLD = 0.48f;
-
 }

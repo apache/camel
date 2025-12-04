@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
@@ -45,6 +46,7 @@ public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -63,7 +65,8 @@ public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> objectNames = mbeanServer.queryNames(
-                new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://topic:start\""), null);
+                new ObjectName("org.apache.camel:context=camel-*,type=endpoints,name=\"activemq://topic:start\""),
+                null);
         assertEquals(1, objectNames.size());
         ObjectName name = objectNames.iterator().next();
 
@@ -78,8 +81,9 @@ public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        Awaitility.await().until(() -> context.getRoute("foo").getUptimeMillis() > 100 &&
-                context.getRoute("bar").getUptimeMillis() > 100);
+        Awaitility.await()
+                .until(() -> context.getRoute("foo").getUptimeMillis() > 100
+                        && context.getRoute("bar").getUptimeMillis() > 100);
 
         template.sendBody("activemq:topic:start", "Hello World");
 

@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +46,7 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
     @XmlElementRef(name = "headers")
     private List<SetHeaderDefinition> headers = new java.util.ArrayList<>();
 
-    public SetHeadersDefinition() {
-    }
+    public SetHeadersDefinition() {}
 
     protected SetHeadersDefinition(SetHeadersDefinition source) {
         super(source);
@@ -125,5 +124,4 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
     }
-
 }

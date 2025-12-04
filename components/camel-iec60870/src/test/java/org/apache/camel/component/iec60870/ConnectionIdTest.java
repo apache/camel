@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.iec60870;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.iec60870;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 public class ConnectionIdTest {
     @Test
@@ -46,8 +47,7 @@ public class ConnectionIdTest {
 
     @Test
     public void testIllegal1() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new ConnectionId("host", -1, "id"));
+        assertThrows(IllegalArgumentException.class, () -> new ConnectionId("host", -1, "id"));
     }
 
     @Test

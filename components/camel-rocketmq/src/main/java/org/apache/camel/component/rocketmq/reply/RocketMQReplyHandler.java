@@ -33,8 +33,8 @@ public class RocketMQReplyHandler implements ReplyHandler {
     protected final String messageKey;
     protected final long timeout;
 
-    public RocketMQReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String messageKey,
-                                long timeout) {
+    public RocketMQReplyHandler(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String messageKey, long timeout) {
         this.replyManager = replyManager;
         this.exchange = exchange;
         this.callback = callback;

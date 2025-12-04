@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +37,8 @@ class DropboxConsumerGetSingleIT extends DropboxTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(content);
-        mock.expectedHeaderReceived(DropboxResultHeader.DOWNLOADED_FILE.name(), String.format("%s/%s", workdir, FILE_NAME));
+        mock.expectedHeaderReceived(
+                DropboxResultHeader.DOWNLOADED_FILE.name(), String.format("%s/%s", workdir, FILE_NAME));
 
         context.getRouteController().startRoute("consumer");
         mock.assertIsSatisfied();
@@ -46,13 +48,14 @@ class DropboxConsumerGetSingleIT extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("dropbox://get?accessToken={{accessToken}}" +
-                      "&expireIn={{expireIn}}" +
-                      "&refreshToken={{refreshToken}}" +
-                      "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
-                      "&remotePath=%s/%s",
-                        workdir, FILE_NAME)
-                        .autoStartup(false).id("consumer")
+                fromF(
+                                "dropbox://get?accessToken={{accessToken}}" + "&expireIn={{expireIn}}"
+                                        + "&refreshToken={{refreshToken}}"
+                                        + "&apiKey={{apiKey}}&apiSecret={{apiSecret}}"
+                                        + "&remotePath=%s/%s",
+                                workdir, FILE_NAME)
+                        .autoStartup(false)
+                        .id("consumer")
                         .to("mock:result");
             }
         };

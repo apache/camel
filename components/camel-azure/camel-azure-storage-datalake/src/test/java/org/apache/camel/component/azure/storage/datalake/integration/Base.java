@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.integration;
 
 import java.nio.file.OpenOption;
@@ -37,7 +38,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-//@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
+// @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Base extends CamelTestSupport {
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Processor;
@@ -53,7 +54,6 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
         // We need to apply the bus setting from the CxfRsEndpoint which does not use the default bus
         if (bus != null) {
             svrBean.setBus(bus);
-
         }
 
         svrBean.setInvoker(cxfRsInvoker);
@@ -67,7 +67,7 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
         Server server = svrBean.create();
 
         final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
-        //proxy OutFaultObserver so we can close org.apache.camel.spi.UnitOfWork in case of error
+        // proxy OutFaultObserver so we can close org.apache.camel.spi.UnitOfWork in case of error
         server.getEndpoint().setOutFaultObserver(message -> {
             CxfUtils.closeCamelUnitOfWork(message);
             originalOutFaultObserver.onMessage(message);
@@ -98,5 +98,4 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
     public Server getServer() {
         return server;
     }
-
 }

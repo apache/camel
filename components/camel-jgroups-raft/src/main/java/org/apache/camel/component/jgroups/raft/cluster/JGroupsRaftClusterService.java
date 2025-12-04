@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft.cluster;
 
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
@@ -34,7 +35,8 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
         this.jgroupsClusterName = DEFAULT_JGROUPS_CLUSTERNAME;
     }
 
-    public JGroupsRaftClusterService(String jgroupsConfig, String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
+    public JGroupsRaftClusterService(
+            String jgroupsConfig, String jgroupsClusterName, RaftHandle raftHandle, String raftId) {
         this.jgroupsConfig = jgroupsConfig;
         this.jgroupsClusterName = jgroupsClusterName;
         this.raftHandle = raftHandle;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft.cluster;
 
 import org.apache.camel.cluster.CamelClusterMember;
@@ -41,8 +42,7 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
             case Leader:
                 if (!jgroupsRaftClusterView.isMaster()) {
                     jgroupsRaftClusterView.setMaster(true);
-                    jgroupsRaftClusterView
-                            .fireLeadershipChangedEvent(jgroupsRaftClusterView.getLocalMember());
+                    jgroupsRaftClusterView.fireLeadershipChangedEvent(jgroupsRaftClusterView.getLocalMember());
                 }
                 break;
             case Follower:

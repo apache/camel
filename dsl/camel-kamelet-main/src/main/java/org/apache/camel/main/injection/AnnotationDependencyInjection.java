@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.injection;
 
 import java.lang.reflect.Field;
@@ -91,7 +92,8 @@ public final class AnnotationDependencyInjection {
     private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+        public void postCompile(
+                CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
                 throws Exception {
             if (clazz.isAnnotationPresent(Converter.class)) {
                 TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
@@ -115,7 +117,8 @@ public final class AnnotationDependencyInjection {
         private final Map<String, EventNotifier> notifiers = new HashMap<>();
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+        public void postCompile(
+                CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
                 throws Exception {
             if (instance == null) {
                 return;
@@ -142,7 +145,8 @@ public final class AnnotationDependencyInjection {
     private class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+        public void postCompile(
+                CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
                 throws Exception {
 
             BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
@@ -166,8 +170,8 @@ public final class AnnotationDependencyInjection {
                 camelContext.getRegistry().unbind(beanName);
                 // use dependency injection factory to perform the task of binding the bean to registry
                 Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                        .createBindToRegistryFactory(name, instance, clazz, beanName, false, bir.initMethod(),
-                                bir.destroyMethod());
+                        .createBindToRegistryFactory(
+                                name, instance, clazz, beanName, false, bir.initMethod(), bir.destroyMethod());
                 task.run();
             } else {
                 if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
@@ -198,7 +202,8 @@ public final class AnnotationDependencyInjection {
     private class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+        public void postCompile(
+                CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
                 throws Exception {
             if (instance == null) {
                 return;
@@ -237,18 +242,15 @@ public final class AnnotationDependencyInjection {
             boolean autowired = AnnotationHelper.hasAnnotation(field, SPRING_AUTOWIRED);
             if (autowired) {
                 String name = null;
-                String named
-                        = AnnotationHelper.getAnnotationValue(field, SPRING_QUALIFIER);
+                String named = AnnotationHelper.getAnnotationValue(field, SPRING_QUALIFIER);
                 if (ObjectHelper.isNotEmpty(named)) {
                     name = named;
                 }
 
                 try {
-                    ReflectionHelper.setField(field, bean,
-                            helper.getInjectionBeanValue(field.getType(), name));
+                    ReflectionHelper.setField(field, bean, helper.getInjectionBeanValue(field.getType(), name));
                 } catch (NoSuchBeanException e) {
-                    Object required = AnnotationHelper.getAnnotationValue(field,
-                            SPRING_AUTOWIRED, "required");
+                    Object required = AnnotationHelper.getAnnotationValue(field, SPRING_AUTOWIRED, "required");
                     if (Boolean.TRUE == required) {
                         throw e;
                     }
@@ -257,7 +259,9 @@ public final class AnnotationDependencyInjection {
             }
             String value = AnnotationHelper.getAnnotationValue(field, SPRING_VALUE);
             if (value != null) {
-                ReflectionHelper.setField(field, bean,
+                ReflectionHelper.setField(
+                        field,
+                        bean,
                         helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), value, null, null));
             }
         }
@@ -268,18 +272,16 @@ public final class AnnotationDependencyInjection {
             if (bi) {
                 Object instance;
                 if (lazyBean) {
-                    instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
-                            "Bean");
+                    instance = (Supplier<Object>)
+                            () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Bean");
                 } else {
                     instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, "Bean");
                 }
                 if (instance != null) {
                     String name = method.getName();
-                    String[] names = (String[]) AnnotationHelper.getAnnotationValue(method,
-                            SPRING_BEAN, "name");
+                    String[] names = (String[]) AnnotationHelper.getAnnotationValue(method, SPRING_BEAN, "name");
                     if (names == null) {
-                        names = (String[]) AnnotationHelper.getAnnotationValue(method,
-                                SPRING_BEAN, "value");
+                        names = (String[]) AnnotationHelper.getAnnotationValue(method, SPRING_BEAN, "value");
                     }
                     if (names != null && names.length > 0) {
                         name = names[0];
@@ -293,7 +295,8 @@ public final class AnnotationDependencyInjection {
     private class QuarkusAnnotationCompilePostProcessor implements CompilePostProcessor {
 
         @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
+        public void postCompile(
+                CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
                 throws Exception {
             if (instance == null) {
                 return;
@@ -336,18 +339,18 @@ public final class AnnotationDependencyInjection {
                     name = named;
                 }
 
-                ReflectionHelper.setField(field, bean,
-                        helper.getInjectionBeanValue(field.getType(), name));
+                ReflectionHelper.setField(field, bean, helper.getInjectionBeanValue(field.getType(), name));
             }
             if (AnnotationHelper.hasAnnotation(field, QUARKUS_CONFIG_PROPERTY)) {
-                String name = (String) AnnotationHelper.getAnnotationValue(field,
-                        QUARKUS_CONFIG_PROPERTY, "name");
-                String df = (String) AnnotationHelper.getAnnotationValue(field,
-                        QUARKUS_CONFIG_PROPERTY, "defaultValue");
+                String name = (String) AnnotationHelper.getAnnotationValue(field, QUARKUS_CONFIG_PROPERTY, "name");
+                String df =
+                        (String) AnnotationHelper.getAnnotationValue(field, QUARKUS_CONFIG_PROPERTY, "defaultValue");
                 if ("org.eclipse.microprofile.config.configproperty.unconfigureddvalue".equals(df)) {
                     df = null;
                 }
-                ReflectionHelper.setField(field, bean,
+                ReflectionHelper.setField(
+                        field,
+                        bean,
                         helper.getInjectionPropertyValue(field.getType(), field.getGenericType(), name, df, null));
             }
         }
@@ -361,8 +364,8 @@ public final class AnnotationDependencyInjection {
                 String an = produces ? "Produces" : "Inject";
                 Object instance;
                 if (lazyBean) {
-                    instance = (Supplier<Object>) () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName,
-                            an);
+                    instance = (Supplier<Object>)
+                            () -> helper.getInjectionBeanMethodValue(context, method, bean, beanName, an);
                 } else {
                     instance = helper.getInjectionBeanMethodValue(context, method, bean, beanName, an);
                 }
@@ -378,7 +381,8 @@ public final class AnnotationDependencyInjection {
         }
     }
 
-    private static void bindBean(CamelContext context, String name, Object instance, Class<?> type, boolean postProcess) {
+    private static void bindBean(
+            CamelContext context, String name, Object instance, Class<?> type, boolean postProcess) {
         // to support hot reloading of beans then we need to enable unbind mode in bean post processor
         Registry registry = context.getRegistry();
         CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(context);
@@ -401,5 +405,4 @@ public final class AnnotationDependencyInjection {
             bpp.setUnbindEnabled(false);
         }
     }
-
 }

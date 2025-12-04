@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jasypt;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import org.junit.jupiter.api.Test;
 
 public class MainTest {
 
@@ -56,5 +57,4 @@ public class MainTest {
         Main main = new Main();
         assertDoesNotThrow(() -> main.run("-c encrypt -p secret".split(" ")));
     }
-
 }

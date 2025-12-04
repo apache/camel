@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.addressing;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -35,9 +39,6 @@ import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 import org.springframework.ws.soap.addressing.version.Addressing10;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Provides abstract test for WS-Addressing
@@ -99,7 +100,8 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
      */
     protected final ActionCallback toAndReplyTo(String to, String replyTo) throws URISyntaxException {
         requestInputAction = "http://doesn-not-matter.com";
-        ActionCallback requestCallback = new ActionCallback(new URI(requestInputAction), new Addressing10(), new URI(to));
+        ActionCallback requestCallback =
+                new ActionCallback(new URI(requestInputAction), new Addressing10(), new URI(to));
         if (replyTo != null) {
             requestCallback.setReplyTo(new EndpointReference(new URI(replyTo)));
         }
@@ -165,5 +167,4 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
      * bind together tighly.
      */
     abstract MessageAddressingProperties channelOut();
-
 }

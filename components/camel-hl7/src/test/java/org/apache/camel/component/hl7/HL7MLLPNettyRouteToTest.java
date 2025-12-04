@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADR_A19;
@@ -27,8 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the HL7MLLPNetty Codec.
@@ -58,10 +59,12 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
+                        .to("netty:tcp://127.0.0.1:" + getPort()
+                                + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
                         // because HL7 message contains a bunch of control chars
                         // then the logger do not log all of the data
-                        .log("HL7 message: ${body}").to("mock:result");
+                        .log("HL7 message: ${body}")
+                        .to("mock:result");
 
                 from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
                         .process(new Processor() {
@@ -70,7 +73,9 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
 
                                 assertEquals("2.4", input.getVersion());
                                 QRD qrd = (QRD) input.get("QRD");
-                                assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                                assertEquals(
+                                        "0101701234",
+                                        qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
                                 Message response = createHL7AsMessage();
                                 exchange.getOut().setBody(response);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -46,8 +47,11 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 /**
  * Prepares camel-jbang by generating Camel JBang configuration metadata for tooling support.
  */
-@Mojo(name = "prepare-jbang", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "prepare-jbang",
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
@@ -84,7 +88,8 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
                 String label = as.getStringValue("label");
                 boolean secret = "true".equals(as.getStringValue("secret"));
                 boolean required = "true".equals(as.getStringValue("required"));
-                boolean deprecated = clazz.getAnnotation(Deprecated.class) != null || f.getAnnotation(Deprecated.class) != null;
+                boolean deprecated =
+                        clazz.getAnnotation(Deprecated.class) != null || f.getAnnotation(Deprecated.class) != null;
                 JBangModel.JBangOptionModel model = new JBangModel.JBangOptionModel();
                 model.setName(name);
                 model.setJavaType(javaType);
@@ -157,12 +162,10 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
         if (!data.isEmpty()) {
             JBangModel model = new JBangModel();
             model.getOptions().addAll(data);
-            model.getGroups().add(new JBangModel.JBangGroupModel(
-                    "camel.jbang", "Camel JBang configurations", null));
+            model.getGroups().add(new JBangModel.JBangGroupModel("camel.jbang", "Camel JBang configurations", null));
             String json = JsonMapper.createJsonSchema(model);
 
             updateResource(outFolder.toPath(), "META-INF/camel-jbang-configuration-metadata.json", json);
         }
     }
-
 }

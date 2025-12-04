@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.idempotent;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import java.util.UUID;
 
@@ -23,13 +26,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 public class SpringCacheIdempotentTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/SpringCacheIdempotentTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/idempotent/SpringCacheIdempotentTest.xml");
     }
 
     @Test

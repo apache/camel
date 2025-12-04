@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import io.undertow.servlet.Servlets;
@@ -27,7 +28,8 @@ public class CustomThreadsServletAsyncTest extends ServletAsyncTest {
                 .setClassLoader(getClass().getClassLoader())
                 .setContextPath(CONTEXT)
                 .setDeploymentName(getClass().getName())
-                .addInitParameter("contextConfigLocation",
+                .addInitParameter(
+                        "contextConfigLocation",
                         "classpath:org/apache/camel/component/servlet/example-camelContext-pool.xml")
                 .addListener(Servlets.listener(ContextLoaderListener.class))
                 .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
@@ -37,5 +39,4 @@ public class CustomThreadsServletAsyncTest extends ServletAsyncTest {
                         .setAsyncSupported(true)
                         .addMapping("/services/*"));
     }
-
 }

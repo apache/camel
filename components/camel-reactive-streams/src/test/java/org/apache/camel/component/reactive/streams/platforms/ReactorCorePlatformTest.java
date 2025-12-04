@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.platforms;
 
 import java.util.function.Consumer;
@@ -26,16 +27,11 @@ public class ReactorCorePlatformTest extends AbstractPlatformTestSupport {
 
     @Override
     protected void changeSign(Publisher<Integer> data, Consumer<Integer> consume) {
-        Flux.from(data)
-                .map(i -> -i)
-                .doOnNext(consume)
-                .subscribe();
+        Flux.from(data).map(i -> -i).doOnNext(consume).subscribe();
     }
 
     @Override
     protected void changeSign(Iterable<Integer> data, Subscriber<Integer> camel) {
-        Flux.fromIterable(data)
-                .map(i -> -i)
-                .subscribe(camel);
+        Flux.fromIterable(data).map(i -> -i).subscribe(camel);
     }
 }

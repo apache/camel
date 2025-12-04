@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.CamelContext;
@@ -29,8 +30,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ReactiveStreamsHelper {
-    private ReactiveStreamsHelper() {
-    }
+    private ReactiveStreamsHelper() {}
 
     public static DispatchCallback<Exchange> getCallback(Exchange exchange) {
         return exchange.getIn().getHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_CALLBACK, DispatchCallback.class);
@@ -90,8 +90,8 @@ public final class ReactiveStreamsHelper {
     public static CamelReactiveStreamsService resolveReactiveStreamsService(
             CamelContext context, String serviceType, ReactiveStreamsEngineConfiguration configuration) {
         // First try to find out if a service has already been bound to the registry
-        CamelReactiveStreamsService service
-                = ReactiveStreamsHelper.findInstance(context, serviceType, CamelReactiveStreamsService.class);
+        CamelReactiveStreamsService service =
+                ReactiveStreamsHelper.findInstance(context, serviceType, CamelReactiveStreamsService.class);
 
         if (service != null) {
             // If the service is bound to the registry we assume it is already
@@ -99,14 +99,14 @@ public final class ReactiveStreamsHelper {
             return service;
         } else {
             // Then try to find out if a service factory is bound to the registry
-            CamelReactiveStreamsServiceFactory factory
-                    = ReactiveStreamsHelper.findInstance(context, serviceType, CamelReactiveStreamsServiceFactory.class);
+            CamelReactiveStreamsServiceFactory factory =
+                    ReactiveStreamsHelper.findInstance(context, serviceType, CamelReactiveStreamsServiceFactory.class);
 
             if (factory == null) {
                 // Try to find out a service factory with service loader style
                 // using the provided service with fallback to default one
-                factory = resolveServiceFactory(context,
-                        serviceType != null ? serviceType : ReactiveStreamsConstants.DEFAULT_SERVICE_NAME);
+                factory = resolveServiceFactory(
+                        context, serviceType != null ? serviceType : ReactiveStreamsConstants.DEFAULT_SERVICE_NAME);
             }
 
             return factory.newInstance(context, configuration);
@@ -115,11 +115,12 @@ public final class ReactiveStreamsHelper {
 
     public static CamelReactiveStreamsServiceFactory resolveServiceFactory(CamelContext context, String serviceType) {
         try {
-            FactoryFinder finder
-                    = context.getCamelContextExtension().getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);
+            FactoryFinder finder =
+                    context.getCamelContextExtension().getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);
             Class<?> serviceClass = finder.findClass(serviceType).orElse(null);
             if (serviceClass != null) {
-                return (CamelReactiveStreamsServiceFactory) context.getInjector().newInstance(serviceClass);
+                return (CamelReactiveStreamsServiceFactory)
+                        context.getInjector().newInstance(serviceClass);
             } else {
                 throw new IllegalStateException(
                         "Class referenced in '" + ReactiveStreamsConstants.SERVICE_PATH + serviceType + "' not found");
@@ -127,7 +128,7 @@ public final class ReactiveStreamsHelper {
         } catch (Exception e) {
             throw new IllegalStateException(
                     "Unable to create the reactive stream service defined in '" + ReactiveStreamsConstants.SERVICE_PATH
-                                            + serviceType + "'",
+                            + serviceType + "'",
                     e);
         }
     }

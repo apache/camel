@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import java.text.SimpleDateFormat;
@@ -88,7 +89,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?delay=0&period=10&fixedRate=true&time=%s", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=10&fixedRate=true&time=%s", time)
+                        .to("mock:result");
             }
         });
 
@@ -156,7 +158,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?delay=0&period=10&time=%s&pattern=dd-MM-yyyy HH:mm:ss.SSS", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=10&time=%s&pattern=dd-MM-yyyy HH:mm:ss.SSS", time)
+                        .to("mock:result");
             }
         });
 
@@ -179,7 +182,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?delay=0&period=0&time=%s&pattern=dd-MM-yyyy HH:mm:ss.SSS", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=0&time=%s&pattern=dd-MM-yyyy HH:mm:ss.SSS", time)
+                        .to("mock:result");
             }
         });
 
@@ -202,5 +206,4 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
 
         Assertions.assertThrows(FailedToCreateRouteException.class, () -> context.start(), "Should throw an exception");
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
+
+import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 import java.io.File;
 import java.io.InputStream;
@@ -35,8 +38,6 @@ import org.beanio.BeanReader;
 import org.beanio.BeanReaderErrorHandler;
 import org.beanio.StreamFactory;
 
-import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
-
 /**
  * You can use {@link BeanIOSplitter} with the Camel Splitter EIP to split big payloads using a stream mode to avoid
  * reading the entire content into memory.
@@ -46,8 +47,7 @@ public class BeanIOSplitter implements Expression {
     private BeanIOConfiguration configuration = new BeanIOConfiguration();
     private StreamFactory factory;
 
-    public BeanIOSplitter() throws Exception {
-    }
+    public BeanIOSplitter() throws Exception {}
 
     public BeanIOSplitter(BeanIOConfiguration configuration) {
         this.configuration = configuration;
@@ -101,7 +101,8 @@ public class BeanIOSplitter implements Expression {
 
         BeanIOIterator iterator = new BeanIOIterator(beanReader);
 
-        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, null, iterator);
+        BeanReaderErrorHandler errorHandler =
+                getOrCreateBeanReaderErrorHandler(configuration, exchange, null, iterator);
         beanReader.setErrorHandler(errorHandler);
 
         return iterator;

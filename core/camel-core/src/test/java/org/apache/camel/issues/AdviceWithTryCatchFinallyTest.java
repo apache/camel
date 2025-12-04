@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.apache.camel.builder.AdviceWith.adviceWith;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.builder.AdviceWith.adviceWith;
 
 public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
 
@@ -33,8 +34,7 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
     public void testAdviceTryCatchFinally() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        adviceWith(context, "my-route", a -> a.weaveById("replace-me")
-                .replace().to("mock:replaced"));
+        adviceWith(context, "my-route", a -> a.weaveById("replace-me").replace().to("mock:replaced"));
 
         context.start();
     }
@@ -44,15 +44,17 @@ public class AdviceWithTryCatchFinallyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("my-route")
-                    .doTry()
+                from("direct:start")
+                        .routeId("my-route")
+                        .doTry()
                         .log("try")
-                        .to("mock:replace-me").id("replace-me")
-                    .doCatch(Exception.class)
+                        .to("mock:replace-me")
+                        .id("replace-me")
+                        .doCatch(Exception.class)
                         .log("catch")
-                    .doFinally()
+                        .doFinally()
                         .log("finally")
-                    .end();
+                        .end();
             }
         };
     }

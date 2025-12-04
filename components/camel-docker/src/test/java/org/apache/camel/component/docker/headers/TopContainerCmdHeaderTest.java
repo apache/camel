@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Top Container Request headers are applied properly
@@ -50,7 +51,6 @@ public class TopContainerCmdHeaderTest extends BaseDockerHeaderTest<TopContainer
 
         Mockito.verify(dockerClient, Mockito.times(1)).topContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withPsArgs(eq(psArgs));
-
     }
 
     @Override
@@ -62,5 +62,4 @@ public class TopContainerCmdHeaderTest extends BaseDockerHeaderTest<TopContainer
     protected DockerOperation getOperation() {
         return DockerOperation.TOP_CONTAINER;
     }
-
 }

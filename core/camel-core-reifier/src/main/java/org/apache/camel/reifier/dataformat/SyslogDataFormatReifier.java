@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -28,7 +29,5 @@ public class SyslogDataFormatReifier extends DataFormatReifier<SyslogDataFormat>
         super(camelContext, (SyslogDataFormat) definition);
     }
 
-    protected void prepareDataFormatConfig(Map<String, Object> properties) {
-    }
-
+    protected void prepareDataFormatConfig(Map<String, Object> properties) {}
 }

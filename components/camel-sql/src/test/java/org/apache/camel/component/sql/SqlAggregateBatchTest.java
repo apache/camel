@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -27,9 +31,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqlAggregateBatchTest extends CamelTestSupport {
 
@@ -47,8 +48,8 @@ public class SqlAggregateBatchTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        Number received = assertIsInstanceOf(Number.class,
-                mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
+        Number received = assertIsInstanceOf(
+                Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
 
         assertEquals(3, received.intValue());
 
@@ -65,7 +66,8 @@ public class SqlAggregateBatchTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
 
         jdbcTemplate = new JdbcTemplate(db);
     }
@@ -87,7 +89,9 @@ public class SqlAggregateBatchTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from("direct:start")
-                        .aggregate(constant(true)).completionSize(3).aggregationStrategy(AggregationStrategies.groupedBody())
+                        .aggregate(constant(true))
+                        .completionSize(3)
+                        .aggregationStrategy(AggregationStrategies.groupedBody())
                         .to("direct:batch");
 
                 from("direct:batch")
@@ -96,5 +100,4 @@ public class SqlAggregateBatchTest extends CamelTestSupport {
             }
         };
     }
-
 }

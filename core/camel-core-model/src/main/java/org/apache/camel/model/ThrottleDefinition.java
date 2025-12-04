@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
@@ -37,30 +38,38 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "expression", "correlationExpression" })
+@XmlType(propOrder = {"expression", "correlationExpression"})
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlTransient
     private ExecutorService executorServiceBean;
 
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.model.ThrottlingMode", defaultValue = "TotalRequests",
-              enums = "TotalRequests,ConcurrentRequests")
+    @Metadata(
+            javaType = "org.apache.camel.model.ThrottlingMode",
+            defaultValue = "TotalRequests",
+            enums = "TotalRequests,ConcurrentRequests")
     private String mode;
+
     @XmlElement(name = "correlationExpression")
     private ExpressionSubElementDefinition correlationExpression;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String asyncDelayed;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String callerRunsWhenRejected;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String rejectExecution;
+
     @XmlAttribute
     @Metadata(defaultValue = "1000", javaType = "java.time.Duration")
     private String timePeriodMillis;
@@ -73,8 +82,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         super(source);
         this.executorServiceBean = source.executorServiceBean;
         this.mode = source.mode;
-        this.correlationExpression
-                = source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
+        this.correlationExpression =
+                source.correlationExpression != null ? source.correlationExpression.copyDefinition() : null;
         this.executorService = source.executorService;
         this.asyncDelayed = source.asyncDelayed;
         this.callerRunsWhenRejected = source.callerRunsWhenRejected;
@@ -171,8 +180,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return                           the builder
      */
     public ThrottleDefinition maximumRequests(long maximumConcurrentRequests) {
-        setExpression(
-                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
+        setExpression(ExpressionNodeHelper.toExpressionDefinition(
+                ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
     }
 
@@ -184,8 +193,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @return                           the builder
      */
     public ThrottleDefinition maximumRequests(String maximumConcurrentRequests) {
-        setExpression(
-                ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
+        setExpression(ExpressionNodeHelper.toExpressionDefinition(
+                ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
     }
 
@@ -199,12 +208,12 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @Deprecated(since = "4.4.0")
     public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
         if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
-            setExpression(
-                    ExpressionNodeHelper.toExpressionDefinition(
-                            ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(
+                    ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
             return this;
         } else {
-            throw new IllegalArgumentException("Maximum requests per period can only be set when using total requests mode");
+            throw new IllegalArgumentException(
+                    "Maximum requests per period can only be set when using total requests mode");
         }
     }
 
@@ -218,11 +227,12 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @Deprecated(since = "4.4.0")
     public ThrottleDefinition maximumRequestsPerPeriod(String maximumRequestsPerPeriod) {
         if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
-            setExpression(
-                    ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumRequestsPerPeriod)));
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(
+                    ExpressionBuilder.simpleExpression(maximumRequestsPerPeriod)));
             return this;
         } else {
-            throw new IllegalArgumentException("Maximum requests per period can only be set when using total requests mode");
+            throw new IllegalArgumentException(
+                    "Maximum requests per period can only be set when using total requests mode");
         }
     }
 

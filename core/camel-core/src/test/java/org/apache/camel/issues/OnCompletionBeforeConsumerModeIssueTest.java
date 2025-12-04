@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,18 +34,17 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from("direct:start")
-                    .onCompletion().modeBeforeConsumer()
+                        .onCompletion()
+                        .modeBeforeConsumer()
                         .to("mock:end")
-                    .end()
-                    .transform(constant("a"))
-                    .to("mock:a")
-                    .to("direct:sub")
-                    .transform(constant("c"))
-                    .to("mock:c");
+                        .end()
+                        .transform(constant("a"))
+                        .to("mock:a")
+                        .to("direct:sub")
+                        .transform(constant("c"))
+                        .to("mock:c");
 
-                from("direct:sub")
-                        .transform(constant("b"))
-                        .to("mock:b");
+                from("direct:sub").transform(constant("b")).to("mock:b");
             }
         });
         context.start();
@@ -65,18 +65,17 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from("direct:start")
-                    .transform(constant("a"))
-                    .to("mock:a")
-                    .to("direct:sub")
-                    .transform(constant("c"))
-                    .to("mock:c")
-                    .onCompletion().modeBeforeConsumer()
+                        .transform(constant("a"))
+                        .to("mock:a")
+                        .to("direct:sub")
+                        .transform(constant("c"))
+                        .to("mock:c")
+                        .onCompletion()
+                        .modeBeforeConsumer()
                         .to("mock:end")
-                    .end();
+                        .end();
 
-                from("direct:sub")
-                        .transform(constant("b"))
-                        .to("mock:b");
+                from("direct:sub").transform(constant("b")).to("mock:b");
             }
         });
         context.start();
@@ -97,18 +96,16 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from("direct:start")
-                    .onCompletion()
+                        .onCompletion()
                         .to("mock:end")
-                    .end()
-                    .transform(constant("a"))
-                    .to("mock:a")
-                    .to("direct:sub")
-                    .transform(constant("c"))
-                    .to("mock:c");
+                        .end()
+                        .transform(constant("a"))
+                        .to("mock:a")
+                        .to("direct:sub")
+                        .transform(constant("c"))
+                        .to("mock:c");
 
-                from("direct:sub")
-                        .transform(constant("b"))
-                        .to("mock:b");
+                from("direct:sub").transform(constant("b")).to("mock:b");
             }
         });
         context.start();
@@ -129,18 +126,16 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from("direct:start")
-                    .transform(constant("a"))
-                    .to("mock:a")
-                    .to("direct:sub")
-                    .transform(constant("c"))
-                    .to("mock:c")
-                    .onCompletion()
+                        .transform(constant("a"))
+                        .to("mock:a")
+                        .to("direct:sub")
+                        .transform(constant("c"))
+                        .to("mock:c")
+                        .onCompletion()
                         .to("mock:end")
-                    .end();
+                        .end();
 
-                from("direct:sub")
-                        .transform(constant("b"))
-                        .to("mock:b");
+                from("direct:sub").transform(constant("b")).to("mock:b");
             }
         });
         context.start();
@@ -169,9 +164,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
                         .transform(constant("c"))
                         .to("mock:c");
 
-                from("direct:sub")
-                        .transform(constant("b"))
-                        .to("mock:b");
+                from("direct:sub").transform(constant("b")).to("mock:b");
             }
         });
         context.start();
@@ -200,9 +193,7 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
                         .transform(constant("c"))
                         .to("mock:c");
 
-                from("direct:sub")
-                        .transform(constant("b"))
-                        .to("mock:b");
+                from("direct:sub").transform(constant("b")).to("mock:b");
             }
         });
         context.start();
@@ -216,5 +207,4 @@ public class OnCompletionBeforeConsumerModeIssueTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
     }
-
 }

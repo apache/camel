@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import java.util.concurrent.ExecutorService;
@@ -56,14 +57,13 @@ public class DebeziumConsumer extends DefaultConsumer {
         dbzEngine = createDbzEngine();
 
         // submit task to the thread pool
-        executorService.submit(
-                () -> {
-                    try {
-                        dbzEngine.run();
-                    } catch (Throwable e) {
-                        LOG.error("Debezium engine has failed: {}", e.getMessage(), e);
-                    }
-                });
+        executorService.submit(() -> {
+            try {
+                dbzEngine.run();
+            } catch (Throwable e) {
+                LOG.error("Debezium engine has failed: {}", e.getMessage(), e);
+            }
+        });
     }
 
     @Override
@@ -97,8 +97,7 @@ public class DebeziumConsumer extends DefaultConsumer {
         } finally {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange,
-                        exchange.getException());
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
             releaseExchange(exchange, false);
         }

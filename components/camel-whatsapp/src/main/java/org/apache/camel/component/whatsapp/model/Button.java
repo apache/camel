@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class Button {
@@ -21,8 +22,7 @@ public class Button {
     private String type = "reply";
     private Reply reply;
 
-    public Button() {
-    }
+    public Button() {}
 
     public String getType() {
         return type;

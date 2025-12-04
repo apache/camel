@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage.localstorage;
 
 import java.io.ByteArrayInputStream;
@@ -60,8 +61,8 @@ import com.google.cloud.storage.testing.StorageRpcTestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//this class has been extended from
-//https://github.com/googleapis/java-storage-nio/blob/master/google-cloud-nio/src/main/java/com/google/cloud/storage/contrib/nio/testing/FakeStorageRpc.java
+// this class has been extended from
+// https://github.com/googleapis/java-storage-nio/blob/master/google-cloud-nio/src/main/java/com/google/cloud/storage/contrib/nio/testing/FakeStorageRpc.java
 /**
  * A bare-bones in-memory implementation of StorageRpc, meant for testing.
  *
@@ -112,7 +113,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     // fullname -> future contents that will be visible on close.
     Map<String, byte[]> futureContents = new HashMap<>();
 
-    //Bucketname -> bucket
+    // Bucketname -> bucket
     Map<String, Bucket> buckets = new HashMap<>();
 
     private final boolean throwIfOption;
@@ -157,8 +158,8 @@ class FakeStorageRpc extends StorageRpcTestBase {
     public Tuple<String, Iterable<Bucket>> list(Map<Option, ?> options) {
         String pageToken = null;
         String preprefix = "";
-        //String delimiter = null;
-        //long maxResults = Long.MAX_VALUE;
+        // String delimiter = null;
+        // long maxResults = Long.MAX_VALUE;
         for (Map.Entry<Option, ?> e : options.entrySet()) {
             switch (e.getKey()) {
                 case PAGE_TOKEN:
@@ -167,13 +168,13 @@ class FakeStorageRpc extends StorageRpcTestBase {
                 case PREFIX:
                     break;
                 case DELIMITER:
-                    //delimiter = (String) e.getValue();
+                    // delimiter = (String) e.getValue();
                     break;
                 case FIELDS:
                     // ignore and return all the fields
                     break;
                 case MAX_RESULTS:
-                    //maxResults = (Long) e.getValue();
+                    // maxResults = (Long) e.getValue();
                     break;
                 case USER_PROJECT:
                     // prevent unsupported operation
@@ -189,8 +190,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     @Override
-    public Tuple<String, Iterable<StorageObject>> list(String bucket, Map<Option, ?> options)
-            throws StorageException {
+    public Tuple<String, Iterable<StorageObject>> list(String bucket, Map<Option, ?> options) throws StorageException {
         String delimiter = null;
         String preprefix = "";
         String pageToken = null;
@@ -290,8 +290,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     @Override
-    public StorageObject patch(StorageObject storageObject, Map<Option, ?> options)
-            throws StorageException {
+    public StorageObject patch(StorageObject storageObject, Map<Option, ?> options) throws StorageException {
         potentiallyThrow(options);
         return null;
     }
@@ -316,8 +315,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     @Override
-    public StorageObject compose(
-            Iterable<StorageObject> sources, StorageObject target, Map<Option, ?> targetOptions)
+    public StorageObject compose(Iterable<StorageObject> sources, StorageObject target, Map<Option, ?> targetOptions)
             throws StorageException {
         return null;
     }
@@ -332,8 +330,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     @Override
-    public Tuple<String, byte[]> read(
-            StorageObject from, Map<Option, ?> options, long zposition, int zbytes)
+    public Tuple<String, byte[]> read(StorageObject from, Map<Option, ?> options, long zposition, int zbytes)
             throws StorageException {
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
@@ -368,8 +365,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     @Override
-    public long read(
-            StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
+    public long read(StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
         for (Option op : options.keySet()) {
@@ -424,20 +420,14 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     @Override
-    public void write(
-            String uploadId, byte[] toWrite, int toWriteOffset, long destOffset, int length, boolean last)
+    public void write(String uploadId, byte[] toWrite, int toWriteOffset, long destOffset, int length, boolean last)
             throws StorageException {
         writeWithResponse(uploadId, toWrite, toWriteOffset, destOffset, length, last);
     }
 
     @Override
     public StorageObject writeWithResponse(
-            String uploadId,
-            byte[] toWrite,
-            int toWriteOffset,
-            long destOffset,
-            int length,
-            boolean last) {
+            String uploadId, byte[] toWrite, int toWriteOffset, long destOffset, int length, boolean last) {
         // this may have a lot more allocations than ideal, but it'll work.
         byte[] bytes;
         if (futureContents.containsKey(uploadId)) {
@@ -513,12 +503,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
 
         contents.put(destKey, Arrays.copyOf(data, data.length));
         return new RewriteResponse(
-                rewriteRequest,
-                rewriteRequest.target,
-                data.length,
-                true,
-                "rewriteToken goes here",
-                data.length);
+                rewriteRequest, rewriteRequest.target, data.length, true, "rewriteToken goes here", data.length);
     }
 
     private static DateTime now() {
@@ -563,18 +548,14 @@ class FakeStorageRpc extends StorageRpcTestBase {
             Long generation = metadata.get(key).getGeneration();
             if (!generationMatch.equals(generation)) {
                 throw new StorageException(
-                        NOT_FOUND,
-                        "Generation mismatch. Requested " + generationMatch + " but got " + generation);
+                        NOT_FOUND, "Generation mismatch. Requested " + generationMatch + " but got " + generation);
             }
         }
     }
 
     // Returns true if this is a folder. Adds it to folders if it isn't already there.
     private static boolean processedAsFolder(
-            StorageObject so,
-            String delimiter,
-            String prefix, /* inout */
-            Map<String, StorageObject> folders) {
+            StorageObject so, String delimiter, String prefix, /* inout */ Map<String, StorageObject> folders) {
         if (delimiter == null) {
             return false;
         }
@@ -604,10 +585,8 @@ class FakeStorageRpc extends StorageRpcTestBase {
     @Override
     public com.google.api.services.storage.Storage getStorage() {
         HttpTransport transport = new FakeStorageRpcHttpTransport();
-        HttpRequestInitializer httpRequestInitializer = request -> {
-        };
-        return new com.google.api.services.storage.Storage(
-                transport, new GsonFactory(), httpRequestInitializer);
+        HttpRequestInitializer httpRequestInitializer = request -> {};
+        return new com.google.api.services.storage.Storage(transport, new GsonFactory(), httpRequestInitializer);
     }
 
     private static String fullname(String bucket, String object) {
@@ -620,10 +599,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     MyMockLowLevelHttpRequest create(String method, String url) {
         Matcher m = KEY_PATTERN.matcher(url);
         Preconditions.checkArgument(
-                m.matches(),
-                "Provided url '%s' does not match expected pattern '%s'",
-                url,
-                KEY_PATTERN_DEFINITION);
+                m.matches(), "Provided url '%s' does not match expected pattern '%s'", url, KEY_PATTERN_DEFINITION);
 
         String bucket = m.group(1);
         String object = m.group(2);
@@ -748,8 +724,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
                         int newLength = endInclusive - begin + 1;
                         resp.addHeader("Content-Length", String.valueOf(newLength));
                         // Content-Range: bytes 4-9/512
-                        resp.addHeader(
-                                "Content-Range", String.format("bytes %d-%d/%d", begin, endInclusive, length));
+                        resp.addHeader("Content-Range", String.format("bytes %d-%d/%d", begin, endInclusive, length));
                         byte[] content = Arrays.copyOfRange(bytes, begin, endInclusive + 1);
                         resp.setContent(content);
                         resp.setContent(new ByteArrayInputStream(content));
@@ -766,7 +741,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     private static byte[] concat(byte[]... arrays) {
-        int total = Arrays.stream(arrays).filter(Objects::nonNull).mapToInt(a -> a.length).sum();
+        int total = Arrays.stream(arrays)
+                .filter(Objects::nonNull)
+                .mapToInt(a -> a.length)
+                .sum();
         byte[] retVal = new byte[total];
 
         ByteBuffer wrap = ByteBuffer.wrap(retVal);

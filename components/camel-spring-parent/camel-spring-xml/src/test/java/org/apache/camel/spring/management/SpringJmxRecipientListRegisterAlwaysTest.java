@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,10 +31,6 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_COMPONENT;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledOnOs(OS.AIX)
 public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport {
@@ -83,5 +84,4 @@ public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport 
         name = getCamelObjectName(TYPE_COMPONENT, "mock");
         assertTrue(mbeanServer.isRegistered(name), "Should be registered");
     }
-
 }

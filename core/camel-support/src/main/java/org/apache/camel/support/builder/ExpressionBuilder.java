@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder;
+
+import static org.apache.camel.util.StringHelper.between;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,8 +66,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
-
-import static org.apache.camel.util.StringHelper.between;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -128,7 +129,8 @@ public class ExpressionBuilder {
                     answer = exchange.getProperty(key);
                 }
                 if (mandatory && answer == null) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(new NoSuchHeaderException(exchange, key, null));
+                    throw RuntimeCamelException.wrapRuntimeCamelException(
+                            new NoSuchHeaderException(exchange, key, null));
                 }
                 return answer;
             }
@@ -848,9 +850,7 @@ public class ExpressionBuilder {
      * @param  defaultValue default value to return if no system property exists
      * @return              an expression object which will return the system property value
      */
-    public static Expression systemPropertyExpression(
-            final String propertyName,
-            final String defaultValue) {
+    public static Expression systemPropertyExpression(final String propertyName, final String defaultValue) {
         Expression exprName = simpleExpression(propertyName);
         Expression exprDefault = simpleExpression(defaultValue);
         return systemPropertyExpression(exprName, exprDefault);
@@ -863,9 +863,7 @@ public class ExpressionBuilder {
      * @param  defaultValue default value to return if no system property exists
      * @return              an expression object which will return the system property value
      */
-    public static Expression systemPropertyExpression(
-            final Expression exprName,
-            final Expression defaultValue) {
+    public static Expression systemPropertyExpression(final Expression exprName, final Expression defaultValue) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
@@ -905,9 +903,7 @@ public class ExpressionBuilder {
      * @param  defaultValue default value to return if no system environment exists
      * @return              an expression object which will return the system environment value
      */
-    public static Expression systemEnvironmentExpression(
-            final String propertyName,
-            final String defaultValue) {
+    public static Expression systemEnvironmentExpression(final String propertyName, final String defaultValue) {
         Expression exprName = simpleExpression(propertyName);
         Expression expDefault = simpleExpression(defaultValue);
         return systemEnvironmentExpression(exprName, expDefault);
@@ -920,9 +916,7 @@ public class ExpressionBuilder {
      * @param  defaultValue default value to return if no system environment exists
      * @return              an expression object which will return the system environment value
      */
-    public static Expression systemEnvironmentExpression(
-            final Expression propertyName,
-            final Expression defaultValue) {
+    public static Expression systemEnvironmentExpression(final Expression propertyName, final Expression defaultValue) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
@@ -983,7 +977,8 @@ public class ExpressionBuilder {
      * @param  expression   the expression or predicate
      * @return              an expression object which will evaluate the expression/predicate using the given language
      */
-    public static Expression languageExpression(final String languageName, final Language language, final String expression) {
+    public static Expression languageExpression(
+            final String languageName, final Language language, final String expression) {
         return new ExpressionAdapter() {
             private Expression exp;
 
@@ -1219,8 +1214,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(
-                        exchange.getIn().getBody());
+                return function.apply(exchange.getIn().getBody());
             }
 
             @Override
@@ -1238,8 +1232,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getIn().getBody(),
-                        exchange.getIn().getHeaders());
+                        exchange.getIn().getBody(), exchange.getIn().getHeaders());
             }
 
             @Override
@@ -1256,8 +1249,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(
-                        exchange.getIn().getBody(bodyType));
+                return function.apply(exchange.getIn().getBody(bodyType));
             }
 
             @Override
@@ -1270,14 +1262,13 @@ public class ExpressionBuilder {
     /**
      * Returns a functional expression for the exchanges inbound message body converted to a desired type and headers
      */
-    public static <
-            T> Expression bodyExpression(final Class<T> bodyType, final BiFunction<T, Map<String, Object>, Object> function) {
+    public static <T> Expression bodyExpression(
+            final Class<T> bodyType, final BiFunction<T, Map<String, Object>, Object> function) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getIn().getBody(bodyType),
-                        exchange.getIn().getHeaders());
+                        exchange.getIn().getBody(bodyType), exchange.getIn().getHeaders());
             }
 
             @Override
@@ -1714,18 +1705,14 @@ public class ExpressionBuilder {
     /**
      * Returns a tokenize expression which will tokenize the string with the given token
      */
-    public static Expression tokenizeExpression(
-            final Expression expression,
-            final String token) {
+    public static Expression tokenizeExpression(final Expression expression, final String token) {
         return tokenizeExpression(expression, simpleExpression(token));
     }
 
     /**
      * Returns a tokenize expression which will tokenize the string with the given token
      */
-    public static Expression tokenizeExpression(
-            final Expression expression,
-            final Expression token) {
+    public static Expression tokenizeExpression(final Expression expression, final Expression token) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
@@ -1785,9 +1772,7 @@ public class ExpressionBuilder {
     /**
      * Returns a tokenize expression which will tokenize the string with the given regex
      */
-    public static Expression regexTokenizeExpression(
-            final Expression expression,
-            final String regexTokenizer) {
+    public static Expression regexTokenizeExpression(final Expression expression, final String regexTokenizer) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
@@ -1816,14 +1801,17 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
-                ObjectHelper.notNull(it,
-                        "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                ObjectHelper.notNull(
+                        it,
+                        "expression: " + expression + " evaluated on " + exchange
+                                + " must return an java.util.Iterator");
                 // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
                 // the group can be a simple expression so evaluate it as a number
                 Integer parts = groupExp.evaluate(exchange, Integer.class);
                 if (parts == null) {
                     throw new RuntimeExchangeException(
-                            "Group evaluated as null, must be evaluated as a positive Integer value from expression: " + group,
+                            "Group evaluated as null, must be evaluated as a positive Integer value from expression: "
+                                    + group,
                             exchange);
                 } else if (parts <= 0) {
                     throw new RuntimeExchangeException("Group must be a positive number, was: " + parts, exchange);
@@ -1855,13 +1843,16 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
-                ObjectHelper.notNull(it,
-                        "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                ObjectHelper.notNull(
+                        it,
+                        "expression: " + expression + " evaluated on " + exchange
+                                + " must return an java.util.Iterator");
                 // the group can be a simple expression so evaluate it as a number
                 Integer parts = groupExp.evaluate(exchange, Integer.class);
                 if (parts == null) {
                     throw new RuntimeExchangeException(
-                            "Group evaluated as null, must be evaluated as a positive Integer value from expression: " + group,
+                            "Group evaluated as null, must be evaluated as a positive Integer value from expression: "
+                                    + group,
                             exchange);
                 } else if (parts <= 0) {
                     throw new RuntimeExchangeException("Group must be a positive number, was: " + parts, exchange);
@@ -1896,8 +1887,10 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
-                ObjectHelper.notNull(it,
-                        "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                ObjectHelper.notNull(
+                        it,
+                        "expression: " + expression + " evaluated on " + exchange
+                                + " must return an java.util.Iterator");
 
                 StringBuilder sb = new StringBuilder(128);
                 while (it.hasNext()) {
@@ -1942,7 +1935,7 @@ public class ExpressionBuilder {
      * <p/>
      * The expression is evaluated as a {@link List} object to allow sorting.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Expression sortExpression(final Expression expression, final Comparator comparator) {
         return new ExpressionAdapter() {
             @Override
@@ -1968,9 +1961,7 @@ public class ExpressionBuilder {
     /**
      * Substring string values in the given expression.
      */
-    public static Expression substring(
-            final Expression expression,
-            final int head, final int tail) {
+    public static Expression substring(final Expression expression, final int head, final int tail) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
@@ -1997,9 +1988,7 @@ public class ExpressionBuilder {
     /**
      * Replaces string values in the given expression.
      */
-    public static Expression replaceAll(
-            final Expression expression,
-            final String from, final String to) {
+    public static Expression replaceAll(final Expression expression, final String from, final String to) {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
@@ -2028,8 +2017,7 @@ public class ExpressionBuilder {
      * result
      */
     public static Expression regexReplaceAll(
-            final Expression expression,
-            final String regex, final String replacement) {
+            final Expression expression, final String regex, final String replacement) {
         final Pattern pattern = Pattern.compile(regex);
         return new ExpressionAdapter() {
             @Override
@@ -2059,8 +2047,7 @@ public class ExpressionBuilder {
      * result
      */
     public static Expression regexReplaceAll(
-            final Expression expression,
-            final String regex, final Expression replacementExpression) {
+            final Expression expression, final String regex, final Expression replacementExpression) {
 
         final Pattern pattern = Pattern.compile(regex);
         return new ExpressionAdapter() {
@@ -2169,7 +2156,8 @@ public class ExpressionBuilder {
      * @param  description the text description of the expression
      * @return             an expression which when evaluated will return the concatenated values
      */
-    private static Expression concatExpressionUnoptimized(final Collection<Expression> expressions, final String description) {
+    private static Expression concatExpressionUnoptimized(
+            final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
 
             @Override
@@ -2210,7 +2198,8 @@ public class ExpressionBuilder {
      * @param  description the text description of the expression
      * @return             an expression which when evaluated will return the concatenated values
      */
-    private static Expression concatExpressionOptimized(final Collection<Expression> expressions, final String description) {
+    private static Expression concatExpressionOptimized(
+            final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
             private Collection<Object> optimized;
             private String optimizedValue;
@@ -2447,7 +2436,7 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 final Language language = context.resolveLanguage("bean");
-                this.exp = language.createExpression(null, new Object[] { null, bean, method });
+                this.exp = language.createExpression(null, new Object[] {null, bean, method});
                 this.exp.init(context);
             }
 
@@ -2464,7 +2453,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object bean = expression.evaluate(exchange, Object.class);
-                Expression exp = language.createExpression(null, new Object[] { null, bean, method });
+                Expression exp = language.createExpression(null, new Object[] {null, bean, method});
                 exp.init(exchange.getContext());
                 return exp.evaluate(exchange, Object.class);
             }
@@ -2487,7 +2476,7 @@ public class ExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Expression exp = language.createExpression(null, new Object[] { null, null, method, bean });
+                Expression exp = language.createExpression(null, new Object[] {null, null, method, bean});
                 exp.init(exchange.getContext());
                 return exp.evaluate(exchange, Object.class);
             }
@@ -2614,8 +2603,7 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 final Language language = context.resolveLanguage("xtokenize");
-                this.exp = language.createExpression(path,
-                        new Object[] { null, null, mode, group, namespaces });
+                this.exp = language.createExpression(path, new Object[] {null, null, mode, group, namespaces});
                 this.exp.init(context);
             }
 
@@ -2674,9 +2662,9 @@ public class ExpressionBuilder {
                 if (body == null) {
                     return null;
                 } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
-                    return Jsoner.prettyPrint(body); //json
+                    return Jsoner.prettyPrint(body); // json
                 } else if (body.startsWith("<") && body.endsWith(">")) {
-                    return ExpressionBuilder.prettyXml(body); //xml
+                    return ExpressionBuilder.prettyXml(body); // xml
                 }
 
                 return body;
@@ -2701,9 +2689,9 @@ public class ExpressionBuilder {
                 if (body == null) {
                     return null;
                 } else if (body.startsWith("{") && body.endsWith("}") || body.startsWith("[") && body.endsWith("]")) {
-                    return Jsoner.prettyPrint(body); //json
+                    return Jsoner.prettyPrint(body); // json
                 } else if (body.startsWith("<") && body.endsWith(">")) {
-                    return ExpressionBuilder.prettyXml(body); //xml
+                    return ExpressionBuilder.prettyXml(body); // xml
                 }
 
                 return body;
@@ -2724,5 +2712,4 @@ public class ExpressionBuilder {
             return rawXml;
         }
     }
-
 }

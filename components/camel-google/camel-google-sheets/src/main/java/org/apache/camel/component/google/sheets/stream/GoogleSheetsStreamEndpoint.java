@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.sheets.stream;
 
 import com.google.api.services.sheets.v4.Sheets;
@@ -31,19 +32,21 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Poll for changes in Google Sheets.
  */
-@UriEndpoint(firstVersion = "2.23.0",
-             scheme = "google-sheets-stream",
-             title = "Google Sheets Stream",
-             syntax = "google-sheets-stream:spreadsheetId",
-             consumerOnly = true,
-             category = { Category.CLOUD, Category.DOCUMENT }, headersClass = GoogleSheetsStreamConstants.class)
+@UriEndpoint(
+        firstVersion = "2.23.0",
+        scheme = "google-sheets-stream",
+        title = "Google Sheets Stream",
+        syntax = "google-sheets-stream:spreadsheetId",
+        consumerOnly = true,
+        category = {Category.CLOUD, Category.DOCUMENT},
+        headersClass = GoogleSheetsStreamConstants.class)
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private GoogleSheetsStreamConfiguration configuration;
 
-    public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component,
-                                      GoogleSheetsStreamConfiguration endpointConfiguration) {
+    public GoogleSheetsStreamEndpoint(
+            String uri, GoogleSheetsStreamComponent component, GoogleSheetsStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -80,7 +83,8 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements
     public String getServiceUrl() {
         if (ObjectHelper.isNotEmpty(ObjectHelper.isNotEmpty(configuration.getApplicationName())
                 && ObjectHelper.isNotEmpty(configuration.getSpreadsheetId()))) {
-            return getServiceProtocol() + ":" + configuration.getApplicationName() + ":" + configuration.getSpreadsheetId();
+            return getServiceProtocol() + ":" + configuration.getApplicationName() + ":"
+                    + configuration.getSpreadsheetId();
         }
         return null;
     }
@@ -89,5 +93,4 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint implements
     public String getServiceProtocol() {
         return "sheets-stream";
     }
-
 }

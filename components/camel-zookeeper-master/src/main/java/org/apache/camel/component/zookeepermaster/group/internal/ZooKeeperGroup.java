@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group.internal;
 
 import java.io.ByteArrayOutputStream;
@@ -116,8 +117,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         }
     };
 
-    private final ConnectionStateListener connectionStateListener
-            = (CuratorFramework client, ConnectionState newState) -> handleStateChange(newState);
+    private final ConnectionStateListener connectionStateListener =
+            (CuratorFramework client, ConnectionState newState) -> handleStateChange(newState);
 
     /**
      * @param client the client
@@ -275,7 +276,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private String createEphemeralNode(T state) throws Exception {
         state.uuid = uuid;
         creating.set(true);
-        String pathId = client.create().creatingParentsIfNeeded()
+        String pathId = client.create()
+                .creatingParentsIfNeeded()
                 .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
                 .forPath(path + "/0", encode(state));
         creating.set(false);
@@ -301,7 +303,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             clearAndRefresh(true, true);
             List<ChildData<T>> children = new ArrayList<>(currentData.values());
             for (ChildData<T> child : children) {
-                if (ourState.uuid.equals(child.getNode().uuid) && !child.getPath().equals(pathId)) {
+                if (ourState.uuid.equals(child.getNode().uuid)
+                        && !child.getPath().equals(pathId)) {
                     LOG.debug("Deleting partially created znode: {}", child.getPath());
                     client.delete().guaranteed().forPath(child.getPath());
                 }
@@ -452,7 +455,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     void refresh(final RefreshMode mode) throws Exception {
         try {
             ensurePath.ensure(client.getZookeeperClient());
-            List<String> children = client.getChildren().usingWatcher(childrenWatcher).forPath(path);
+            List<String> children =
+                    client.getChildren().usingWatcher(childrenWatcher).forPath(path);
             children.sort((String left, String right) -> left.compareTo(right));
             processChildren(children, mode);
         } catch (Exception e) {
@@ -472,7 +476,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
 
     void getDataAndStat(final String fullPath) throws Exception {
         Stat stat = new Stat();
-        byte[] data = client.getData().storingStatIn(stat).usingWatcher(dataWatcher).forPath(fullPath);
+        byte[] data =
+                client.getData().storingStatIn(stat).usingWatcher(dataWatcher).forPath(fullPath);
         applyNewData(fullPath, KeeperException.Code.OK.intValue(), stat, data);
     }
 
@@ -522,7 +527,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     }
 
     private void processChildren(List<String> children, RefreshMode mode) throws Exception {
-        List<String> fullPaths = children.stream().map(c -> ZKPaths.makePath(path, c)).toList();
+        List<String> fullPaths =
+                children.stream().map(c -> ZKPaths.makePath(path, c)).toList();
 
         Set<String> removedNodes = new HashSet<>(currentData.keySet());
         fullPaths.forEach(removedNodes::remove);
@@ -620,5 +626,4 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     public boolean isUnstable() {
         return unstable.get();
     }
-
 }

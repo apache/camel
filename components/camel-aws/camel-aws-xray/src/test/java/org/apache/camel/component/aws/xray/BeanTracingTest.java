@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,23 +35,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class BeanTracingTest extends CamelAwsXRayTestSupport {
 
     public BeanTracingTest() {
-        super(
-              TestDataBuilder.createTrace()
-                      .withSegment(TestDataBuilder.createSegment("start")
-                              .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:otherRoute"))
-                              .withSubsegment(TestDataBuilder.createSubsegment("mock:end"))
-                              .withAnnotation("body", "HELLO")
-                              .withMetadata("originBody", "Hello"))
-                      .withSegment(TestDataBuilder.createSegment("otherRoute")
-                              .withSubsegment(TestDataBuilder.createSubsegment("process:processor"))));
+        super(TestDataBuilder.createTrace()
+                .withSegment(TestDataBuilder.createSegment("start")
+                        .withSubsegment(TestDataBuilder.createSubsegment("bean:TraceBean"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:otherRoute"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("mock:end"))
+                        .withAnnotation("body", "HELLO")
+                        .withMetadata("originBody", "Hello"))
+                .withSegment(TestDataBuilder.createSegment("otherRoute")
+                        .withSubsegment(TestDataBuilder.createSubsegment("process:processor"))));
     }
 
     @Override
@@ -65,8 +65,7 @@ public class BeanTracingTest extends CamelAwsXRayTestSupport {
 
         template.requestBody("direct:start", "Hello");
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(10, TimeUnit.SECONDS), is(equalTo(true)));
 
         mockEndpoint.assertIsSatisfied();
 
@@ -78,14 +77,16 @@ public class BeanTracingTest extends CamelAwsXRayTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start")
+                from("direct:start")
+                        .routeId("start")
                         .log("start has been called")
                         .bean(TraceBean.class)
                         .delay(simple("${random(1000,2000)}"))
                         .to("seda:otherRoute")
                         .to("mock:end");
 
-                from("seda:otherRoute").routeId("otherRoute")
+                from("seda:otherRoute")
+                        .routeId("otherRoute")
                         .log("otherRoute has been called")
                         .process(new CustomProcessor())
                         .delay(simple("${random(0,500)}"));

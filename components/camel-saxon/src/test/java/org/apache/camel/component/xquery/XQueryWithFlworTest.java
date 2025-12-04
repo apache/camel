@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class XQueryWithFlworTest extends CamelTestSupport {
 
     @Test
     public void testWithFlworExpression() {
-        String xml
-                = "<items><item><id>3</id><name>third</name></item><item><id>1</id><name>first</name></item><item><id>2</id><name>second</name></item></items>";
+        String xml =
+                "<items><item><id>3</id><name>third</name></item><item><id>1</id><name>first</name></item><item><id>2</id><name>second</name></item></items>";
         String expectedOrderedIds = "<base><id>1</id><id>3</id></base>";
         String orderedIds = template.requestBody("direct:flwor-expression", xml, String.class);
         assertEquals(expectedOrderedIds, orderedIds);
@@ -42,5 +43,4 @@ public class XQueryWithFlworTest extends CamelTestSupport {
             }
         };
     }
-
 }

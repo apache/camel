@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,13 +37,11 @@ public class NettyFileTcpTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() {
                 // lets setup a server
-                from("netty:tcp://localhost:{{port}}?sync=false&textline=true")
-                        .to("mock:results");
+                from("netty:tcp://localhost:{{port}}?sync=false&textline=true").to("mock:results");
 
                 from("file:src/test/data?noop=true&fileName=message1.txt")
                         .to("netty:tcp://localhost:{{port}}?sync=false&textline=true");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.handlers;
 
 import io.undertow.websockets.core.WebSocketCallback;
@@ -29,5 +30,4 @@ public interface ExtendedWebSocketCallback extends WebSocketCallback<Void> {
      * @param channel the channel that was closed before any messages could be sent to it
      */
     void closedBeforeSent(WebSocketChannel channel);
-
 }

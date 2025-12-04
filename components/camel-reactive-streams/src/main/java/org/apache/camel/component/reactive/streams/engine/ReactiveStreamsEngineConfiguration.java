@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.engine;
 
 /**
@@ -25,8 +26,7 @@ public class ReactiveStreamsEngineConfiguration {
     private int threadPoolMinSize;
     private int threadPoolMaxSize = 10;
 
-    public ReactiveStreamsEngineConfiguration() {
-    }
+    public ReactiveStreamsEngineConfiguration() {}
 
     public String getThreadPoolName() {
         return threadPoolName;

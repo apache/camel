@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +34,6 @@ import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /*
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange, for example,
@@ -72,7 +73,6 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
         for (MockTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(MockTrace trace, String expectedBody) {
@@ -124,7 +124,9 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
 
         // Validate message logging
         assertEquals("A direct message", direct.logEntries().get(0).fields().get("message"));
-        assertEquals("A tapped message", wiretapDirectFrom.logEntries().get(0).fields().get("message"));
+        assertEquals(
+                "A tapped message",
+                wiretapDirectFrom.logEntries().get(0).fields().get("message"));
         if (expectedBody == null) {
             assertEquals(
                     "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",

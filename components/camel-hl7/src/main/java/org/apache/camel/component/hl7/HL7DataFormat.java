@@ -14,7 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
+
+import static org.apache.camel.component.hl7.HL7Constants.HL7_CHARSET;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_CONTEXT;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_CONTROL;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_TYPE;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_PROCESSING_ID;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_RECEIVING_APPLICATION;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_RECEIVING_FACILITY;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_SECURITY;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_APPLICATION;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_FACILITY;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_TIMESTAMP;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_TRIGGER_EVENT;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,20 +52,6 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
-
-import static org.apache.camel.component.hl7.HL7Constants.HL7_CHARSET;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_CONTEXT;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_CONTROL;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_TYPE;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_PROCESSING_ID;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_RECEIVING_APPLICATION;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_RECEIVING_FACILITY;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_SECURITY;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_APPLICATION;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_FACILITY;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_TIMESTAMP;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_TRIGGER_EVENT;
-import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
 
 /**
  * HL7 DataFormat (supports v2.x of the HL7 protocol).
@@ -184,7 +185,8 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
                 parserConfiguration = parser.getParserConfiguration();
             }
 
-            hapiContext = new DefaultHapiContext(parserConfiguration, validationContext, new DefaultModelClassFactory());
+            hapiContext =
+                    new DefaultHapiContext(parserConfiguration, validationContext, new DefaultModelClassFactory());
         }
 
         if (parser == null) {
@@ -215,5 +217,4 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
     protected String guessCharsetName(byte[] b, Exchange exchange) {
         return ExchangeHelper.getCharsetName(exchange);
     }
-
 }

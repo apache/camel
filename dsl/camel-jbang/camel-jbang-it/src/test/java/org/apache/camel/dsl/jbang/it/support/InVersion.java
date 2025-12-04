@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it.support;
+
+import static org.apache.camel.util.StringHelper.sanitize;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.StringHelper.sanitize;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -51,39 +52,51 @@ public @interface InVersion {
             if (context.getTestInstance().isEmpty()) {
                 return ConditionEvaluationResult.enabled("unable to verify version");
             }
-            final JBangTestSupport currTestClass = (JBangTestSupport) context.getTestInstance().get();
+            final JBangTestSupport currTestClass =
+                    (JBangTestSupport) context.getTestInstance().get();
             return context.getTestMethod()
-                    .filter(method -> method.isAnnotationPresent(InVersion.class))
-                    .map(method -> method.getAnnotation(InVersion.class))
-                    .map(annotation -> {
-                        if (!annotation.includeSnapshot() && currTestClass.version().contains("SNAPSHOT")) {
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("snapshot version {} is skipped", currTestClass.version());
-                                return Boolean.FALSE;
-                            }
-                        }
-                        if (ObjectHelper.isNotEmpty(annotation.from()) && ObjectHelper.isNotEmpty(annotation.to())) {
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("from={},to={},{}", sanitize(annotation.from()), annotation.to(),
-                                        VersionHelper.isBetween(currTestClass.version(), annotation.from(), annotation.to()));
-                            }
-                            return VersionHelper.isBetween(currTestClass.version(), annotation.from(), annotation.to());
-                        } else if (ObjectHelper.isNotEmpty(annotation.from())) {
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("from={},{}", annotation.from(),
-                                        VersionHelper.isGE(currTestClass.version(), annotation.from()));
-                            }
-                            return VersionHelper.isGE(currTestClass.version(), annotation.from());
-                        }
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("to={},{}", annotation.to(),
-                                    VersionHelper.isLE(currTestClass.version(), annotation.to()));
-                        }
-                        return VersionHelper.isLE(currTestClass.version(), annotation.to());
-                    })
-                    .orElse(Boolean.TRUE)
-                            ? ConditionEvaluationResult.enabled("the version is in range")
-                            : ConditionEvaluationResult.disabled("the version is not in range");
+                            .filter(method -> method.isAnnotationPresent(InVersion.class))
+                            .map(method -> method.getAnnotation(InVersion.class))
+                            .map(annotation -> {
+                                if (!annotation.includeSnapshot()
+                                        && currTestClass.version().contains("SNAPSHOT")) {
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.debug("snapshot version {} is skipped", currTestClass.version());
+                                        return Boolean.FALSE;
+                                    }
+                                }
+                                if (ObjectHelper.isNotEmpty(annotation.from())
+                                        && ObjectHelper.isNotEmpty(annotation.to())) {
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.debug(
+                                                "from={},to={},{}",
+                                                sanitize(annotation.from()),
+                                                annotation.to(),
+                                                VersionHelper.isBetween(
+                                                        currTestClass.version(), annotation.from(), annotation.to()));
+                                    }
+                                    return VersionHelper.isBetween(
+                                            currTestClass.version(), annotation.from(), annotation.to());
+                                } else if (ObjectHelper.isNotEmpty(annotation.from())) {
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.debug(
+                                                "from={},{}",
+                                                annotation.from(),
+                                                VersionHelper.isGE(currTestClass.version(), annotation.from()));
+                                    }
+                                    return VersionHelper.isGE(currTestClass.version(), annotation.from());
+                                }
+                                if (LOGGER.isDebugEnabled()) {
+                                    LOGGER.debug(
+                                            "to={},{}",
+                                            annotation.to(),
+                                            VersionHelper.isLE(currTestClass.version(), annotation.to()));
+                                }
+                                return VersionHelper.isLE(currTestClass.version(), annotation.to());
+                            })
+                            .orElse(Boolean.TRUE)
+                    ? ConditionEvaluationResult.enabled("the version is in range")
+                    : ConditionEvaluationResult.disabled("the version is not in range");
         }
     }
 }

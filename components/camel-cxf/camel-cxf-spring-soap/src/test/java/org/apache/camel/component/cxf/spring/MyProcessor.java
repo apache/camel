@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
@@ -39,5 +40,4 @@ public class MyProcessor implements Processor {
         Object result = operation + " " + (String) parameter.get(0);
         exchange.getMessage().setBody(result);
     }
-
 }

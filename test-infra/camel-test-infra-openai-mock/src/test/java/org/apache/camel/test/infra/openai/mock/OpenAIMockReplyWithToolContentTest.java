@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openai.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -26,13 +30,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenAIMockReplyWithToolContentTest {
 
     @RegisterExtension
-    public OpenAIMock openAIMock = new OpenAIMock().builder()
+    public OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("Get location coordinates")
             .invokeTool("GetCoordinates")
             .withParam("location", "Paris")
@@ -48,8 +50,8 @@ public class OpenAIMockReplyWithToolContentTest {
         HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create(openAIMock.getBaseUrl() + "/v1/chat/completions"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString("{\"messages\": [{\"role\": \"user\", \"content\": \"Get location coordinates\"}]}"))
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"messages\": [{\"role\": \"user\", \"content\": \"Get location coordinates\"}]}"))
                 .build();
 
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
@@ -71,7 +73,9 @@ public class OpenAIMockReplyWithToolContentTest {
         String toolCallId = toolCall.path("id").asText();
         assertEquals("function", toolCall.path("type").asText());
         assertEquals("GetCoordinates", toolCall.path("function").path("name").asText());
-        assertEquals("{\"location\":\"Paris\"}", toolCall.path("function").path("arguments").asText());
+        assertEquals(
+                "{\"location\":\"Paris\"}",
+                toolCall.path("function").path("arguments").asText());
 
         // Second request with tool result - should return tool content + custom message
         String secondRequestBody = String.format(
@@ -97,6 +101,7 @@ public class OpenAIMockReplyWithToolContentTest {
         // Should contain both the tool content and the custom message
         assertTrue(content.contains("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"}"));
         assertTrue(content.contains("- This is the location data I found."));
-        assertEquals("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"} - This is the location data I found.", content);
+        assertEquals(
+                "{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"} - This is the location data I found.", content);
     }
 }

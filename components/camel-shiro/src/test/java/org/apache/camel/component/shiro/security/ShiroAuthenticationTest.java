@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.shiro.security;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +35,6 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ShiroAuthenticationTest extends CamelTestSupport {
 
     @EndpointInject("mock:success")
@@ -43,17 +44,18 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     protected MockEndpoint failureEndpoint;
 
     private byte[] passPhrase = {
-            (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-            (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-            (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-            (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17 };
+        (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
+        (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
+        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
+        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17
+    };
 
     @Test
     public void testShiroAuthenticationFailure() throws Exception {
-        //Incorrect password
+        // Incorrect password
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "stirr");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector
-                = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector =
+                new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
 
         successEndpoint.expectedMessageCount(0);
         failureEndpoint.expectedMessageCount(1);
@@ -67,8 +69,8 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     @Test
     public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector
-                = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector =
+                new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
 
         successEndpoint.expectedMessageCount(1);
         failureEndpoint.expectedMessageCount(0);
@@ -86,7 +88,10 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         successEndpoint.expectedMessageCount(1);
         failureEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:secureEndpoint", "Beatle Mania", ShiroSecurityConstants.SHIRO_SECURITY_TOKEN,
+        template.sendBodyAndHeader(
+                "direct:secureEndpoint",
+                "Beatle Mania",
+                ShiroSecurityConstants.SHIRO_SECURITY_TOKEN,
                 shiroSecurityToken);
 
         successEndpoint.assertIsSatisfied();
@@ -123,26 +128,44 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
+        final ShiroSecurityPolicy securityPolicy =
+                new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
         final ShiroSecurityPolicy securityPolicy2 = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini");
 
-        return new RouteBuilder[] { new RouteBuilder() {
-            @SuppressWarnings("unchecked")
-            public void configure() {
-                onException(UnknownAccountException.class, IncorrectCredentialsException.class,
-                        LockedAccountException.class, AuthenticationException.class).to("mock:authenticationException");
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                @SuppressWarnings("unchecked")
+                public void configure() {
+                    onException(
+                                    UnknownAccountException.class,
+                                    IncorrectCredentialsException.class,
+                                    LockedAccountException.class,
+                                    AuthenticationException.class)
+                            .to("mock:authenticationException");
 
-                from("direct:secureEndpoint").policy(securityPolicy).to("log:incoming payload").to("mock:success");
-            }
-        }, new RouteBuilder() {
-            @SuppressWarnings("unchecked")
-            public void configure() {
-                onException(UnknownAccountException.class, IncorrectCredentialsException.class,
-                        LockedAccountException.class, AuthenticationException.class).to("mock:authenticationException");
+                    from("direct:secureEndpoint")
+                            .policy(securityPolicy)
+                            .to("log:incoming payload")
+                            .to("mock:success");
+                }
+            },
+            new RouteBuilder() {
+                @SuppressWarnings("unchecked")
+                public void configure() {
+                    onException(
+                                    UnknownAccountException.class,
+                                    IncorrectCredentialsException.class,
+                                    LockedAccountException.class,
+                                    AuthenticationException.class)
+                            .to("mock:authenticationException");
 
-                from("direct:secureEndpointMissingKey").policy(securityPolicy2).to("log:incoming payload").to("mock:success");
+                    from("direct:secureEndpointMissingKey")
+                            .policy(securityPolicy2)
+                            .to("log:incoming payload")
+                            .to("mock:success");
+                }
             }
-        } };
+        };
     }
 
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
@@ -157,5 +180,4 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
             exchange.getIn().setBody("Beatle Mania");
         }
     }
-
 }

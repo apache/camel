@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http.handler;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -22,7 +23,8 @@ public class DrinkQueryValidationHandler extends BasicValidationHandler {
 
     private final String name;
 
-    public DrinkQueryValidationHandler(String expectedMethod, String expectedQuery, Object expectedContent, String name) {
+    public DrinkQueryValidationHandler(
+            String expectedMethod, String expectedQuery, Object expectedContent, String name) {
         super(expectedMethod, expectedQuery, expectedContent, null);
         this.name = name;
     }

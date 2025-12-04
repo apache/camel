@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -76,7 +77,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             return "";
         }
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         final StringBuilder sb = new StringBuilder();
         final AtomicInteger counter = new AtomicInteger();
         for (Route r : getCamelContext().getRoutes()) {
@@ -88,8 +90,10 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    private void includeProcessorsText(ManagedRouteMBean mrb, StringBuilder sb, String filter, int max, AtomicInteger counter) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+    private void includeProcessorsText(
+            ManagedRouteMBean mrb, StringBuilder sb, String filter, int max, AtomicInteger counter) {
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -115,7 +119,10 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
     public static void includeProcessorsText(
             CamelContext camelContext,
-            StringBuilder sb, int max, AtomicInteger counter, List<ManagedProcessorMBean> mps) {
+            StringBuilder sb,
+            int max,
+            AtomicInteger counter,
+            List<ManagedProcessorMBean> mps) {
         for (ManagedProcessorMBean mp : mps) {
             if (counter != null && counter.incrementAndGet() > max) {
                 return;
@@ -162,13 +169,17 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             } else {
                 sb.append(String.format("\n        Idle Since: %s", ""));
             }
-            sb.append(String.format("\n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
-            sb.append(String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
-            sb.append(String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
+            sb.append(String.format(
+                    "\n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
+            sb.append(
+                    String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
+            sb.append(
+                    String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
             if (mp.getExchangesTotal() > 0) {
-                sb.append(String.format("\n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
-                sb.append(
-                        String.format("\n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
+                sb.append(String.format(
+                        "\n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
             }
             Date last = mp.getLastExchangeCompletedTimestamp();
             if (last != null) {
@@ -196,7 +207,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
             includeProcessorsJson(mrb, arr, filter, max);
@@ -207,7 +219,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     }
 
     private void includeProcessorsJson(ManagedRouteMBean mrb, JsonArray arr, String filter, int max) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -279,8 +292,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             }
 
             JsonArray ca = new JsonArray();
-            List<String> lines
-                    = ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
+            List<String> lines =
+                    ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
             Integer pos = mp.getSourceLineNumber();
             for (String line : lines) {
                 JsonObject c = new JsonObject();
@@ -314,9 +327,15 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     private static String getDestination(CamelContext camelContext, ManagedProcessorMBean mp) {
         // processors which can send to a destination (such as to/toD/poll etc)
         String kind = mp.getProcessorName();
-        if ("dynamicRouter".equals(kind) || "enrich".equals(kind) || "pollEnrich".equals(kind) || "poll".equals(kind)
-                || "toD".equals(kind) || "to".equals(kind) || "wireTap".equals(kind)) {
-            ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        if ("dynamicRouter".equals(kind)
+                || "enrich".equals(kind)
+                || "pollEnrich".equals(kind)
+                || "poll".equals(kind)
+                || "toD".equals(kind)
+                || "to".equals(kind)
+                || "wireTap".equals(kind)) {
+            ManagedCamelContext mcc =
+                    camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
             ManagedDestinationAware mda = mcc.getManagedProcessor(mp.getProcessorId(), ManagedDestinationAware.class);
             if (mda != null) {
                 return mda.getDestination();
@@ -372,7 +391,8 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         String[] patterns = filter.split(",");
 
         List<ManagedProcessorMBean> mps = new ArrayList<>();
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
             try {
@@ -409,10 +429,13 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                     mp.enable();
                 }
             } catch (Exception e) {
-                LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
-                        e.getMessage(), e);
+                LOG.warn(
+                        "Error {} processor: {} due to: {}. This exception is ignored.",
+                        command,
+                        mp.getProcessorId(),
+                        e.getMessage(),
+                        e);
             }
         }
     }
-
 }

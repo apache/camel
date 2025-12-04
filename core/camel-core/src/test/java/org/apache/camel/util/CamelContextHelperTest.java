@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.Callable;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.CamelContextHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelContextHelperTest extends ContextTestSupport {
 
@@ -122,8 +123,5 @@ public class CamelContextHelperTest extends ContextTestSupport {
         assertEquals(0, CamelContextHelper.getRouteStartupOrder(context, "zzz"));
     }
 
-    public static class MyFooBean {
-
-    }
-
+    public static class MyFooBean {}
 }

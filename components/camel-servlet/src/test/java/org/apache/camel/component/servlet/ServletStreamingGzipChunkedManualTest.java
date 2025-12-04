@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
 
 import java.io.File;
@@ -49,40 +50,42 @@ public class ServletStreamingGzipChunkedManualTest extends ServletCamelRouterTes
         Thread.sleep(10000);
 
         // use background thread to write to stream that camel-servlet uses as response
-        context.getExecutorServiceManager().newSingleThreadExecutor(this, "writer").execute(() -> {
-            try {
-                File file = new File("src/test/data/big-payload.json");
-                FileInputStream fis = new FileInputStream(file);
+        context.getExecutorServiceManager()
+                .newSingleThreadExecutor(this, "writer")
+                .execute(() -> {
+                    try {
+                        File file = new File("src/test/data/big-payload.json");
+                        FileInputStream fis = new FileInputStream(file);
 
-                LOG.info(">>>> sleeping <<<<");
-                Thread.sleep(1000);
-                LOG.info(">>>> writing <<<<");
-
-                int ch = 0;
-                int len = 0;
-                while (ch != -1) {
-                    ch = fis.read();
-                    pos.write(ch);
-                    len++;
-                    if (len % 1000 == 0) {
                         LOG.info(">>>> sleeping <<<<");
-                        pos.flush();
-                        Thread.sleep(250);
+                        Thread.sleep(1000);
                         LOG.info(">>>> writing <<<<");
+
+                        int ch = 0;
+                        int len = 0;
+                        while (ch != -1) {
+                            ch = fis.read();
+                            pos.write(ch);
+                            len++;
+                            if (len % 1000 == 0) {
+                                LOG.info(">>>> sleeping <<<<");
+                                pos.flush();
+                                Thread.sleep(250);
+                                LOG.info(">>>> writing <<<<");
+                            }
+                        }
+
+                        LOG.info(">>>> Payload size: {}", len);
+                        LOG.info(">>>> writing EOL <<<<");
+                        pos.flush();
+
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        LOG.info(">>>> closing <<<<");
+                        IOHelper.close(pos);
                     }
-                }
-
-                LOG.info(">>>> Payload size: {}", len);
-                LOG.info(">>>> writing EOL <<<<");
-                pos.flush();
-
-            } catch (Exception e) {
-                // ignore
-            } finally {
-                LOG.info(">>>> closing <<<<");
-                IOHelper.close(pos);
-            }
-        });
+                });
 
         LOG.info("Sleeping 60 sec");
         Thread.sleep(60000);
@@ -97,9 +100,9 @@ public class ServletStreamingGzipChunkedManualTest extends ServletCamelRouterTes
 
                 from("servlet:/hello")
                         .setHeader(Exchange.CONTENT_ENCODING, constant("gzip"))
-                        .setBody().constant(pis);
+                        .setBody()
+                        .constant(pis);
             }
         };
     }
-
 }

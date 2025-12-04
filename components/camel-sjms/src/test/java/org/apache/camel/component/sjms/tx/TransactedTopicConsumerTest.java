@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.tx;
 
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -39,8 +40,14 @@ public class TransactedTopicConsumerTest extends TransactedConsumerSupport {
         int maxAttemptsCount = 10;
         int totalRedeliverdFalse = 20;
         int totalRedeliveredTrue = 1;
-        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue,
-                concurrentConsumers, maxAttemptsCount);
+        runTest(
+                destinationName,
+                routeCount,
+                messageCount,
+                totalRedeliverdFalse,
+                totalRedeliveredTrue,
+                concurrentConsumers,
+                maxAttemptsCount);
     }
 
     @Override

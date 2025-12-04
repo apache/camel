@@ -25,7 +25,5 @@ public final class MicroprofileLRAProperties {
     public static final String CALLBACK_HOST = "microprofile.lra.callback.host";
     public static final int DEFAULT_PORT = 8080;
 
-    private MicroprofileLRAProperties() {
-
-    }
+    private MicroprofileLRAProperties() {}
 }

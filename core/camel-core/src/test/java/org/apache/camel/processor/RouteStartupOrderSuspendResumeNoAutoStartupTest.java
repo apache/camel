@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTestSupport {
 
@@ -97,7 +98,11 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
 
                 from("direct:bar").routeId("D").startupOrder(9).to("direct:baz");
 
-                from("direct:baz").routeId("C").autoStartup(false).startupOrder(5).to("mock:other");
+                from("direct:baz")
+                        .routeId("C")
+                        .autoStartup(false)
+                        .startupOrder(5)
+                        .to("mock:other");
             }
         };
     }

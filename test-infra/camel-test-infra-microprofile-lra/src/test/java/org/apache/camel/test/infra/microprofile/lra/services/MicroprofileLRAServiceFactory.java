@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class MicroprofileLRAServiceFactory {
-    private MicroprofileLRAServiceFactory() {
-
-    }
+    private MicroprofileLRAServiceFactory() {}
 
     public static SimpleTestServiceBuilder<MicroprofileLRAService> builder() {
         return new SimpleTestServiceBuilder<>("microprofile-lra");
@@ -35,10 +34,8 @@ public final class MicroprofileLRAServiceFactory {
     }
 
     public static class MicroprofileLRALocalContainerService extends MicroprofileLRALocalContainerInfraService
-            implements MicroprofileLRAService {
-    }
+            implements MicroprofileLRAService {}
 
     public static class MicroprofileLRARemoteService extends MicroprofileLRARemoteInfraService
-            implements MicroprofileLRAService {
-    }
+            implements MicroprofileLRAService {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jndi;
 
 import java.util.Hashtable;
@@ -69,14 +70,18 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:simple").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // calling this should get us the existing context
-                        Context context = new InitialContext(env);
-                        exchange.getIn().setBody(context.lookup("jdbc/myDataSource").toString());
-                    }
-                }).to("mock:result");
+                from("direct:simple")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // calling this should get us the existing context
+                                Context context = new InitialContext(env);
+                                exchange.getIn()
+                                        .setBody(context.lookup("jdbc/myDataSource")
+                                                .toString());
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

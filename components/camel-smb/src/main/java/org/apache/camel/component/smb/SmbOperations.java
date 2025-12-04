@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -54,8 +57,6 @@ import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 public class SmbOperations implements SmbFileOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbOperations.class);
@@ -71,11 +72,13 @@ public class SmbOperations implements SmbFileOperations {
     public SmbOperations(SmbConfiguration configuration) {
         this.configuration = configuration;
         this.smbClient = configuration == null || configuration.getSmbConfig() == null
-                ? new SMBClient() : new SMBClient(configuration.getSmbConfig());
+                ? new SMBClient()
+                : new SMBClient(configuration.getSmbConfig());
     }
 
     @Override
-    public boolean connect(SmbConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean connect(SmbConfiguration configuration, Exchange exchange)
+            throws GenericFileOperationFailedException {
         connectIfNecessary();
         return true;
     }
@@ -83,7 +86,9 @@ public class SmbOperations implements SmbFileOperations {
     protected void connectIfNecessary() {
         try {
             if (!isConnected()) {
-                LOG.debug("Not already connected/logged in. Connecting to: {}:{}", configuration.getHostname(),
+                LOG.debug(
+                        "Not already connected/logged in. Connecting to: {}:{}",
+                        configuration.getHostname(),
                         configuration.getPort());
 
                 // Clean up any existing partial connections
@@ -106,17 +111,19 @@ public class SmbOperations implements SmbFileOperations {
             disconnect();
             throw new GenericFileOperationFailedException(
                     "Cannot connect to: " + configuration.getHostname() + ":" + configuration.getPort() + " due to: "
-                                                          + e.getMessage(),
+                            + e.getMessage(),
                     e);
         }
     }
 
     @Override
     public boolean isConnected() throws GenericFileOperationFailedException {
-        return loggedIn &&
-                connection != null && connection.isConnected() &&
-                session != null &&
-                share != null && share.isConnected();
+        return loggedIn
+                && connection != null
+                && connection.isConnected()
+                && session != null
+                && share != null
+                && share.isConnected();
     }
 
     @Override
@@ -177,9 +184,13 @@ public class SmbOperations implements SmbFileOperations {
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         connectIfNecessary();
         if (share.fileExists(name)) {
-            try (File f = share.openFile(name, EnumSet.of(AccessMask.DELETE), null,
+            try (File f = share.openFile(
+                    name,
+                    EnumSet.of(AccessMask.DELETE),
+                    null,
                     SMB2ShareAccess.ALL,
-                    SMB2CreateDisposition.FILE_OPEN, null)) {
+                    SMB2CreateDisposition.FILE_OPEN,
+                    null)) {
                 f.deleteOnClose();
             }
         }
@@ -194,8 +205,13 @@ public class SmbOperations implements SmbFileOperations {
     @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         connectIfNecessary();
-        try (File src = share.openFile(from, EnumSet.of(AccessMask.GENERIC_READ, AccessMask.DELETE), null,
-                SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
+        try (File src = share.openFile(
+                from,
+                EnumSet.of(AccessMask.GENERIC_READ, AccessMask.DELETE),
+                null,
+                SMB2ShareAccess.ALL,
+                SMB2CreateDisposition.FILE_OPEN,
+                null)) {
             if (configuration.isRenameUsingCopy()) {
                 return copyAndDeleteRenameStrategy(src, to);
             } else {
@@ -206,7 +222,9 @@ public class SmbOperations implements SmbFileOperations {
                         // Atomic rename failed, fallback to copy/delete strategy
                         LOG.warn(
                                 "Failed to rename file: {} to: {} using atomic rename. Will fallback to copy+delete strategy. Reason: {}",
-                                src.getUncPath(), to, e.getMessage());
+                                src.getUncPath(),
+                                to,
+                                e.getMessage());
                         LOG.debug(e.getMessage(), e);
                         return copyAndDeleteRenameStrategy(src, to);
                     } else {
@@ -221,8 +239,7 @@ public class SmbOperations implements SmbFileOperations {
         }
     }
 
-    public boolean atomicRenameFile(File src, String to)
-            throws GenericFileOperationFailedException {
+    public boolean atomicRenameFile(File src, String to) throws GenericFileOperationFailedException {
         try {
             src.rename(to);
             LOG.debug("Renamed file: {} to: {} using atomic rename", src.getUncPath(), to);
@@ -234,10 +251,13 @@ public class SmbOperations implements SmbFileOperations {
     }
 
     public boolean copyAndDeleteRenameStrategy(File src, String to) throws SMBApiException {
-        try (File dst
-                = share.openFile(to, EnumSet.of(AccessMask.GENERIC_WRITE), EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                        SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE,
-                        EnumSet.of(SMB2CreateOptions.FILE_NON_DIRECTORY_FILE))) {
+        try (File dst = share.openFile(
+                to,
+                EnumSet.of(AccessMask.GENERIC_WRITE),
+                EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
+                SMB2ShareAccess.ALL,
+                SMB2CreateDisposition.FILE_CREATE,
+                EnumSet.of(SMB2CreateOptions.FILE_NON_DIRECTORY_FILE))) {
 
             src.remoteCopyTo(dst);
             src.deleteOnClose();
@@ -284,15 +304,21 @@ public class SmbOperations implements SmbFileOperations {
         }
     }
 
-    private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToStreamInBody(String name, Exchange exchange)
+            throws GenericFileOperationFailedException {
         SmbFile target = (SmbFile) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
         connectIfNecessary();
 
         // read the entire file into memory in the byte array
-        try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.GENERIC_READ), null,
-                SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
+        try (File shareFile = share.openFile(
+                name,
+                EnumSet.of(AccessMask.GENERIC_READ),
+                null,
+                SMB2ShareAccess.ALL,
+                SMB2CreateDisposition.FILE_OPEN,
+                null)) {
 
             if (configuration.isStreamDownload()) {
                 InputStream is = shareFile.getInputStream();
@@ -355,8 +381,13 @@ public class SmbOperations implements SmbFileOperations {
         }
         try {
             file.setBody(local);
-            try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.GENERIC_READ), null,
-                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
+            try (File shareFile = share.openFile(
+                    name,
+                    EnumSet.of(AccessMask.GENERIC_READ),
+                    null,
+                    SMB2ShareAccess.ALL,
+                    SMB2CreateDisposition.FILE_OPEN,
+                    null)) {
 
                 try (InputStream is = shareFile.getInputStream()) {
                     // store content as a file in the local work directory in the temp handle
@@ -367,12 +398,17 @@ public class SmbOperations implements SmbFileOperations {
             }
         } catch (IOException e) {
 
-            LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
+            LOG.trace(
+                    "Error occurred during retrieving file: {} to local directory. Deleting local work file: {}",
+                    name,
+                    temp);
             // failed to retrieve the file so we need to close streams and delete in progress file
             boolean deleted = FileUtil.deleteFile(temp);
             if (!deleted) {
-                LOG.warn("Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
-                        name, temp);
+                LOG.warn(
+                        "Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
+                        name,
+                        temp);
             }
             disconnect();
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
@@ -382,10 +418,12 @@ public class SmbOperations implements SmbFileOperations {
         LOG.trace("Renaming local in progress file from: {} to: {}", temp, local);
         try {
             if (!FileUtil.renameFile(temp, local, false)) {
-                throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+                throw new GenericFileOperationFailedException(
+                        "Cannot rename local work file from: " + temp + " to: " + local);
             }
         } catch (IOException e) {
-            throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local, e);
+            throw new GenericFileOperationFailedException(
+                    "Cannot rename local work file from: " + temp + " to: " + local, e);
         }
 
         return true;
@@ -420,8 +458,10 @@ public class SmbOperations implements SmbFileOperations {
 
         boolean existFile = false;
         // if an existing file already exists what should we do?
-        if (gfe == GenericFileExist.Ignore || gfe == GenericFileExist.Fail
-                || gfe == GenericFileExist.Move || gfe == GenericFileExist.Append
+        if (gfe == GenericFileExist.Ignore
+                || gfe == GenericFileExist.Fail
+                || gfe == GenericFileExist.Move
+                || gfe == GenericFileExist.Append
                 || gfe == GenericFileExist.Override) {
             existFile = share.fileExists(name);
             if (existFile && gfe == GenericFileExist.Ignore) {
@@ -429,7 +469,8 @@ public class SmbOperations implements SmbFileOperations {
                 LOG.trace("An existing file already exists: {}. Ignore and do not override it.", name);
                 return true;
             } else if (existFile && gfe == GenericFileExist.Fail) {
-                throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
+                throw new GenericFileOperationFailedException(
+                        "File already exist: " + name + ". Cannot write new file.");
             } else if (existFile && gfe == GenericFileExist.Move) {
                 // move any existing file first
                 this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, this, name);
@@ -453,7 +494,8 @@ public class SmbOperations implements SmbFileOperations {
                 if (charset != null) {
                     // charset configured so we must convert to the desired
                     // charset so we can write with encoding
-                    is = new ByteArrayInputStream(exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
+                    is = new ByteArrayInputStream(
+                            exchange.getIn().getMandatoryBody(String.class).getBytes(charset));
                     LOG.trace("Using InputStream {} with charset {}.", is, charset);
                 } else {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -464,34 +506,42 @@ public class SmbOperations implements SmbFileOperations {
             LOG.debug("About to store file: {} using stream: {}", name, is);
             if (existFile && gfe == GenericFileExist.Append) {
                 LOG.trace("Client appendFile: {}", name);
-                try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
+                try (File shareFile = share.openFile(
+                        name,
+                        EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                        SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN_IF,
+                        SMB2ShareAccess.ALL,
+                        SMB2CreateDisposition.FILE_OPEN_IF,
                         EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
                     writeToFile(name, shareFile, is);
                 }
             } else if (existFile && gfe == GenericFileExist.Override) {
                 LOG.trace("Client overrideFile: {}", name);
-                try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
+                try (File shareFile = share.openFile(
+                        name,
+                        EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                        SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OVERWRITE_IF,
+                        SMB2ShareAccess.ALL,
+                        SMB2CreateDisposition.FILE_OVERWRITE_IF,
                         EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
                     writeToFile(name, shareFile, is);
                 }
             } else {
                 LOG.trace("Client createFile: {}", name);
                 createDirectory(share, name);
-                try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
+                try (File shareFile = share.openFile(
+                        name,
+                        EnumSet.of(AccessMask.FILE_WRITE_DATA),
                         EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                        SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE,
+                        SMB2ShareAccess.ALL,
+                        SMB2CreateDisposition.FILE_CREATE,
                         EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
                     writeToFile(name, shareFile, is);
                 }
             }
             if (LOG.isDebugEnabled()) {
                 long time = watch.taken();
-                LOG.debug("Took {} ({} millis) to store file: {}",
-                        TimeUtils.printDuration(time, true), time, name);
+                LOG.debug("Took {} ({} millis) to store file: {}", TimeUtils.printDuration(time, true), time, name);
             }
             return true;
         } catch (IOException e) {
@@ -525,8 +575,8 @@ public class SmbOperations implements SmbFileOperations {
         byte[] byteBuffer = new byte[buffer];
         int length;
         while ((length = is.read(byteBuffer)) > 0) {
-            fileOffset = share.getFileInformation(fileName)
-                    .getStandardInformation().getEndOfFile();
+            fileOffset =
+                    share.getFileInformation(fileName).getStandardInformation().getEndOfFile();
             shareFile.write(byteBuffer, fileOffset, 0, length);
         }
     }
@@ -569,8 +619,13 @@ public class SmbOperations implements SmbFileOperations {
 
     public byte[] getBody(String path) {
         connectIfNecessary();
-        try (File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
-                SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
+        try (File shareFile = share.openFile(
+                path,
+                EnumSet.of(AccessMask.GENERIC_READ),
+                null,
+                SMB2ShareAccess.ALL,
+                SMB2CreateDisposition.FILE_OPEN,
+                null)) {
 
             try (InputStream is = shareFile.getInputStream()) {
                 return is.readAllBytes();
@@ -589,8 +644,13 @@ public class SmbOperations implements SmbFileOperations {
         InputStream is;
         try {
             // NOTE: the streams opened must be closed byt the client.
-            File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null, // NOSONAR
-                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
+            File shareFile = share.openFile(
+                    path,
+                    EnumSet.of(AccessMask.GENERIC_READ),
+                    null, // NOSONAR
+                    SMB2ShareAccess.ALL,
+                    SMB2CreateDisposition.FILE_OPEN,
+                    null);
             is = shareFile.getInputStream();
             exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
             exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());

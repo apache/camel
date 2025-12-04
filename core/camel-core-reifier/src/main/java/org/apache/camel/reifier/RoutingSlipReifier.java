@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
+
+import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Expression;
@@ -23,8 +26,6 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.processor.RoutingSlip;
-
-import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
 
 public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<?>> {
 
@@ -57,5 +58,4 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
 
         return routingSlip;
     }
-
 }

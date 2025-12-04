@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.consumer.integration.configmaps;
 
 import java.util.Map;
@@ -25,16 +26,17 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
-        @EnabledIfSystemProperty(named = "kubernetes.test.host.k8s", matches = "true", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.auth", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(named = "kubernetes.test.host", matches = ".*", disabledReason = "Requires kubernetes"),
+    @EnabledIfSystemProperty(
+            named = "kubernetes.test.host.k8s",
+            matches = "true",
+            disabledReason = "Requires kubernetes"),
 })
 public class KubernetesConfigMapsConsumerClusterwideLabelsIT extends KubernetesConsumerTestSupport {
     @Test
     public void clusterWideLabelsTest() throws Exception {
-        result.expectedBodiesReceivedInAnyOrder(
-                "ConfigMap cm1 " + ns1 + " ADDED",
-                "ConfigMap cm2 " + ns2 + " ADDED");
+        result.expectedBodiesReceivedInAnyOrder("ConfigMap cm1 " + ns1 + " ADDED", "ConfigMap cm2 " + ns2 + " ADDED");
 
         createConfigMap(ns1, "cm1", LABELS);
         createConfigMap(ns2, "cm2", LABELS);
@@ -48,12 +50,12 @@ public class KubernetesConfigMapsConsumerClusterwideLabelsIT extends KubernetesC
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("kubernetes-config-maps://%s?oauthToken=%s&labelKey=%s&labelValue=%s",
-                        host, authToken, "testkey", "testvalue")
+                fromF(
+                                "kubernetes-config-maps://%s?oauthToken=%s&labelKey=%s&labelValue=%s",
+                                host, authToken, "testkey", "testvalue")
                         .process(new KubernetesProcessor())
                         .to(result);
             }
         };
-
     }
 }

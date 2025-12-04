@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.util.List;
@@ -43,11 +44,20 @@ public class ExceptionPolicy {
     private final Map<RedeliveryOption, String> redeliveryPolicy;
     private final List<String> exceptions;
 
-    public ExceptionPolicy(String id, String routeId, boolean useOriginalInMessage, boolean useOriginalInBody,
-                           boolean hasOutputs, Predicate handledPolicy, Predicate continuedPolicy,
-                           Predicate retryWhilePolicy, Processor onRedelivery, Processor onExceptionOccurred,
-                           String redeliveryPolicyRef, Map<RedeliveryOption, String> redeliveryPolicy,
-                           List<String> exceptions) {
+    public ExceptionPolicy(
+            String id,
+            String routeId,
+            boolean useOriginalInMessage,
+            boolean useOriginalInBody,
+            boolean hasOutputs,
+            Predicate handledPolicy,
+            Predicate continuedPolicy,
+            Predicate retryWhilePolicy,
+            Processor onRedelivery,
+            Processor onExceptionOccurred,
+            String redeliveryPolicyRef,
+            Map<RedeliveryOption, String> redeliveryPolicy,
+            List<String> exceptions) {
         this.id = id;
         this.routeId = routeId;
         this.useOriginalInMessage = useOriginalInMessage;
@@ -131,15 +141,15 @@ public class ExceptionPolicy {
     public boolean determineIfRedeliveryIsEnabled(CamelContext camelContext) throws Exception {
         if (redeliveryPolicyRef != null) {
             // lookup in registry if ref provided
-            RedeliveryPolicy policy
-                    = CamelContextHelper.mandatoryLookup(camelContext, redeliveryPolicyRef, RedeliveryPolicy.class);
+            RedeliveryPolicy policy =
+                    CamelContextHelper.mandatoryLookup(camelContext, redeliveryPolicyRef, RedeliveryPolicy.class);
             if (policy.getMaximumRedeliveries() != 0) {
                 // must check for != 0 as (-1 means redeliver forever)
                 return true;
             }
         } else if (redeliveryPolicy != null) {
-            Integer max
-                    = CamelContextHelper.parseInteger(camelContext, redeliveryPolicy.get(RedeliveryOption.maximumRedeliveries));
+            Integer max = CamelContextHelper.parseInteger(
+                    camelContext, redeliveryPolicy.get(RedeliveryOption.maximumRedeliveries));
             if (max != null && max != 0) {
                 // must check for != 0 as (-1 means redeliver forever)
                 return true;
@@ -198,36 +208,36 @@ public class ExceptionPolicy {
                         CamelContextHelper.parseLong(context, definition.get(RedeliveryOption.redeliveryDelay)));
             }
             if (definition.get(RedeliveryOption.asyncDelayedRedelivery) != null) {
-                answer.setAsyncDelayedRedelivery(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.asyncDelayedRedelivery)));
+                answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.asyncDelayedRedelivery)));
             }
             if (definition.get(RedeliveryOption.retriesExhaustedLogLevel) != null) {
-                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class,
-                        definition.get(RedeliveryOption.retriesExhaustedLogLevel)));
+                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(
+                        context, LoggingLevel.class, definition.get(RedeliveryOption.retriesExhaustedLogLevel)));
             }
             if (definition.get(RedeliveryOption.retryAttemptedLogLevel) != null) {
-                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class,
-                        definition.get(RedeliveryOption.retryAttemptedLogLevel)));
+                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(
+                        context, LoggingLevel.class, definition.get(RedeliveryOption.retryAttemptedLogLevel)));
             }
             if (definition.get(RedeliveryOption.retryAttemptedLogInterval) != null) {
-                answer.setRetryAttemptedLogInterval(
-                        CamelContextHelper.parseInteger(context, definition.get(RedeliveryOption.retryAttemptedLogInterval)));
+                answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(
+                        context, definition.get(RedeliveryOption.retryAttemptedLogInterval)));
             }
             if (definition.get(RedeliveryOption.backOffMultiplier) != null) {
                 answer.setBackOffMultiplier(
                         CamelContextHelper.parseDouble(context, definition.get(RedeliveryOption.backOffMultiplier)));
             }
             if (definition.get(RedeliveryOption.useExponentialBackOff) != null) {
-                answer.setUseExponentialBackOff(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.useExponentialBackOff)));
+                answer.setUseExponentialBackOff(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.useExponentialBackOff)));
             }
             if (definition.get(RedeliveryOption.collisionAvoidanceFactor) != null) {
-                answer.setCollisionAvoidanceFactor(
-                        CamelContextHelper.parseDouble(context, definition.get(RedeliveryOption.collisionAvoidanceFactor)));
+                answer.setCollisionAvoidanceFactor(CamelContextHelper.parseDouble(
+                        context, definition.get(RedeliveryOption.collisionAvoidanceFactor)));
             }
             if (definition.get(RedeliveryOption.useCollisionAvoidance) != null) {
-                answer.setUseCollisionAvoidance(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.useCollisionAvoidance)));
+                answer.setUseCollisionAvoidance(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.useCollisionAvoidance)));
             }
             if (definition.get(RedeliveryOption.maximumRedeliveryDelay) != null) {
                 answer.setMaximumRedeliveryDelay(
@@ -242,29 +252,32 @@ public class ExceptionPolicy {
                         CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logRetryStackTrace)));
             }
             if (definition.get(RedeliveryOption.logHandled) != null) {
-                answer.setLogHandled(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logHandled)));
+                answer.setLogHandled(
+                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logHandled)));
             }
             if (definition.get(RedeliveryOption.logNewException) != null) {
                 answer.setLogNewException(
                         CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logNewException)));
             }
             if (definition.get(RedeliveryOption.logContinued) != null) {
-                answer.setLogContinued(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logContinued)));
+                answer.setLogContinued(
+                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logContinued)));
             }
             if (definition.get(RedeliveryOption.logRetryAttempted) != null) {
                 answer.setLogRetryAttempted(
                         CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logRetryAttempted)));
             }
             if (definition.get(RedeliveryOption.logExhausted) != null) {
-                answer.setLogExhausted(CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhausted)));
+                answer.setLogExhausted(
+                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhausted)));
             }
             if (definition.get(RedeliveryOption.logExhaustedMessageHistory) != null) {
-                answer.setLogExhaustedMessageHistory(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhaustedMessageHistory)));
+                answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.logExhaustedMessageHistory)));
             }
             if (definition.get(RedeliveryOption.logExhaustedMessageBody) != null) {
-                answer.setLogExhaustedMessageBody(
-                        CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.logExhaustedMessageBody)));
+                answer.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.logExhaustedMessageBody)));
             }
             if (definition.get(RedeliveryOption.disableRedelivery) != null) {
                 if (CamelContextHelper.parseBoolean(context, definition.get(RedeliveryOption.disableRedelivery))) {
@@ -272,11 +285,12 @@ public class ExceptionPolicy {
                 }
             }
             if (definition.get(RedeliveryOption.delayPattern) != null) {
-                answer.setDelayPattern(CamelContextHelper.parseText(context, definition.get(RedeliveryOption.delayPattern)));
+                answer.setDelayPattern(
+                        CamelContextHelper.parseText(context, definition.get(RedeliveryOption.delayPattern)));
             }
             if (definition.get(RedeliveryOption.allowRedeliveryWhileStopping) != null) {
-                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context,
-                        definition.get(RedeliveryOption.allowRedeliveryWhileStopping)));
+                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(
+                        context, definition.get(RedeliveryOption.allowRedeliveryWhileStopping)));
             }
             if (definition.get(RedeliveryOption.exchangeFormatterRef) != null) {
                 answer.setExchangeFormatterRef(
@@ -288,5 +302,4 @@ public class ExceptionPolicy {
 
         return answer;
     }
-
 }

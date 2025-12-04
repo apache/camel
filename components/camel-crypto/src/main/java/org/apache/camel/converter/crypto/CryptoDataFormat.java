@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
+
+import static javax.crypto.Cipher.DECRYPT_MODE;
+import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -39,9 +43,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static javax.crypto.Cipher.DECRYPT_MODE;
-import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 /**
  * <code>CryptoDataFormat</code> uses a specified key and algorithm to encrypt, decrypt and verify exchange payloads.
@@ -82,8 +83,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
     private boolean shouldAppendHMAC = true;
     private AlgorithmParameterSpec algorithmParameterSpec;
 
-    public CryptoDataFormat() {
-    }
+    public CryptoDataFormat() {}
 
     public CryptoDataFormat(String algorithm, Key key) {
         this(algorithm, key, null);
@@ -101,12 +101,12 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
     }
 
     private Cipher initializeCipher(int mode, Key key, byte[] iv) throws Exception {
-        Cipher cipher = cryptoProvider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, cryptoProvider);
+        Cipher cipher =
+                cryptoProvider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, cryptoProvider);
 
         if (key == null) {
-            throw new IllegalStateException(
-                    "A valid encryption key is required. Either configure the CryptoDataFormat "
-                                            + "with a key or provide one in a header using the header name 'CamelCryptoKey'");
+            throw new IllegalStateException("A valid encryption key is required. Either configure the CryptoDataFormat "
+                    + "with a key or provide one in a header using the header name 'CamelCryptoKey'");
         }
 
         if (mode == ENCRYPT_MODE || mode == DECRYPT_MODE) {
@@ -192,7 +192,8 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
     private void inlineInitVector(OutputStream outputStream, byte[] iv) throws IOException {
         if (inline) {
             if (iv == null) {
-                throw new IllegalStateException("Inlining cannot be performed, as no initialization vector was specified");
+                throw new IllegalStateException(
+                        "Inlining cannot be performed, as no initialization vector was specified");
             }
 
             DataOutputStream dout = new DataOutputStream(outputStream);
@@ -210,10 +211,10 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
                 iv = new byte[ivLength];
                 int read = encryptedStream.read(iv);
                 if (read != ivLength) {
-                    throw new IOException(
-                            String.format("Attempted to read a '%d' byte initialization vector from inputStream but only"
-                                          + " '%d' bytes were retrieved",
-                                    ivLength, read));
+                    throw new IOException(String.format(
+                            "Attempted to read a '%d' byte initialization vector from inputStream but only"
+                                    + " '%d' bytes were retrieved",
+                            ivLength, read));
                 }
             } catch (IOException e) {
                 throw new IOException("Error reading initialization vector from encrypted stream", e);
@@ -224,27 +225,27 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
 
     private HMACAccumulator getMessageAuthenticationCode(Key key) throws Exception {
         // return an actual Hmac Calculator or a 'Null' noop version.
-        return shouldAppendHMAC ? new HMACAccumulator(key, macAlgorithm, cryptoProvider, bufferSize) : new HMACAccumulator() {
-            byte[] empty = new byte[0];
+        return shouldAppendHMAC
+                ? new HMACAccumulator(key, macAlgorithm, cryptoProvider, bufferSize)
+                : new HMACAccumulator() {
+                    byte[] empty = new byte[0];
 
-            @Override
-            public void encryptUpdate(byte[] buffer, int read) {
-            }
+                    @Override
+                    public void encryptUpdate(byte[] buffer, int read) {}
 
-            @Override
-            public void decryptUpdate(byte[] buffer, int read) throws IOException {
-                outputStream.write(buffer, 0, read);
-            }
+                    @Override
+                    public void decryptUpdate(byte[] buffer, int read) throws IOException {
+                        outputStream.write(buffer, 0, read);
+                    }
 
-            @Override
-            public void validate() {
-            }
+                    @Override
+                    public void validate() {}
 
-            @Override
-            public byte[] getCalculatedMac() {
-                return empty;
-            }
-        };
+                    @Override
+                    public byte[] getCalculatedMac() {
+                        return empty;
+                    }
+                };
     }
 
     private byte[] getInitializationVector(Exchange exchange) {

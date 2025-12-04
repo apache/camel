@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 import java.io.ByteArrayInputStream;
@@ -38,8 +39,7 @@ public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
     public DefaultPGPPublicKeyAccessor(byte[] publicKeyRing) throws IOException, PGPException {
         ObjectHelper.notNull(publicKeyRing, "publicKeyRing");
         pgpPublicKeyRing = new PGPPublicKeyRingCollection(
-                PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)),
-                new BcKeyFingerprintCalculator());
+                PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)), new BcKeyFingerprintCalculator());
     }
 
     @Override
@@ -51,5 +51,4 @@ public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
     public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {
         return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, pgpPublicKeyRing);
     }
-
 }

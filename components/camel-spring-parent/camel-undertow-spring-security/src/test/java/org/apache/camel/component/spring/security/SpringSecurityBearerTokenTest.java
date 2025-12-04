@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.undertow.util.StatusCodes;
 import org.apache.camel.CamelExecutionException;
@@ -22,34 +28,25 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class SpringSecurityBearerTokenTest extends AbstractSpringSecurityBearerTokenTest {
 
     @Test
     public void testBearerTokenAccess() {
-        //configure token in mockFilter
+        // configure token in mockFilter
         getMockFilter().setJwt(createToken("Alice", "user"));
 
-        String response = template.requestBody("undertow:http://localhost:{{port}}/myapp",
-                "empty body",
-                String.class);
+        String response = template.requestBody("undertow:http://localhost:{{port}}/myapp", "empty body", String.class);
         assertNotNull(response);
         assertEquals("Hello Alice!", response);
     }
 
     @Test
     public void testBearerTokenForbidden() {
-        //configure token in mockFilter
+        // configure token in mockFilter
         getMockFilter().setJwt(createToken("Tom", "wrongUser"));
 
         try {
-            template.requestBody("undertow:http://localhost:{{port}}/myapp",
-                    "empty body",
-                    String.class);
+            template.requestBody("undertow:http://localhost:{{port}}/myapp", "empty body", String.class);
             fail("Access is denied");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

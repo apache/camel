@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.test;
 
 import java.io.IOException;
@@ -63,8 +64,8 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
             response.setEntity(new StringEntity("Forbidden", ContentType.TEXT_PLAIN));
             return;
         }
-        final String responseBody = IOUtils
-                .toString(this.getClass().getResourceAsStream(mockResourceJsonResponse.get(requestWrapper.getMethod())));
+        final String responseBody = IOUtils.toString(
+                this.getClass().getResourceAsStream(mockResourceJsonResponse.get(requestWrapper.getMethod())));
         response.setCode(HttpStatus.SC_OK);
         response.setEntity(new StringEntity(responseBody, ContentType.APPLICATION_JSON));
     }
@@ -76,7 +77,8 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
         }
         for (Header authorizationHeader : request.getHeaders("Authorization")) {
             // Authorization: Basic base64credentials
-            String base64Credentials = authorizationHeader.getValue().substring("Basic".length()).trim();
+            String base64Credentials =
+                    authorizationHeader.getValue().substring("Basic".length()).trim();
             String credentials = new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8);
             // credentials = username:password
             final String[] values = credentials.split(":", 2);

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.kafka.clients.producer;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -35,16 +39,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class KafkaProducerTest {
 
     private final MockProducer kafkaProducer = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
     private KafkaProducer camelProducer;
+
     @Spy
     private Exchange exchange;
+
     @Spy
     private Message message;
 
@@ -75,5 +78,4 @@ public class KafkaProducerTest {
         assertThat(records.get(0).topic(), Is.is("overridden-topic"));
         assertThat(records.get(1).topic(), Is.is("overridden-topic-jackson"));
     }
-
 }

@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.UnrecoverableExceptions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * To test timeout and disconnect
  */
 public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
 
-    private static final String ENDPOINT = "mina:tcp://localhost:%s?textline=true&sync=true&timeout=250&disconnectOnNoReply=%s";
+    private static final String ENDPOINT =
+            "mina:tcp://localhost:%s?textline=true&sync=true&timeout=250&disconnectOnNoReply=%s";
     private static final String RESPONSE = "Slept %s ms";
 
     @Test
@@ -51,7 +53,8 @@ public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
         int tooLong = 350;
         int fastEnough = 150;
         assertThrowable(ExchangeTimedOutException.class, () -> requestWithDelay(tooLong, false));
-        // YIKES! The response from the first query is returned for the second query. Better leave disconnectOnNoReply on true!
+        // YIKES! The response from the first query is returned for the second query. Better leave disconnectOnNoReply
+        // on true!
         assertEquals(response(tooLong), requestWithDelay(fastEnough, false));
     }
 

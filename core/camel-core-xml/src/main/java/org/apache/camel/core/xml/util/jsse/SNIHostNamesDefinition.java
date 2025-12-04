@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml.util.jsse;
 
 import java.util.List;
@@ -24,7 +25,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sniHostNames", propOrder = { "sniHostName" })
+@XmlType(
+        name = "sniHostNames",
+        propOrder = {"sniHostName"})
 public class SNIHostNamesDefinition {
 
     @XmlElement(name = "sniHostName")

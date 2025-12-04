@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.util.UUID;
@@ -24,9 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -47,7 +48,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10&delete=true")
                         // remove all headers
-                        .removeHeaders("*").to("mock:result");
+                        .removeHeaders("*")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -75,7 +77,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10&delete=true")
                         // change file header
-                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_BYE)).to("mock:result");
+                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_BYE))
+                        .to("mock:result");
             }
         });
         context.start();
@@ -102,7 +105,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10")
                         // remove all headers
-                        .removeHeaders("*").to("mock:result");
+                        .removeHeaders("*")
+                        .to("mock:result");
             }
         });
         context.start();
@@ -130,7 +134,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             public void configure() {
                 from(fileUri() + "?initialDelay=0&delay=10")
                         // change file header
-                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_BYE)).to("mock:result");
+                        .setHeader(Exchange.FILE_NAME, constant(TEST_FILE_NAME_BYE))
+                        .to("mock:result");
             }
         });
         context.start();
@@ -149,5 +154,4 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         // end users changing headers
         assertTrue(Files.exists(testFile(".camel/" + TEST_FILE_NAME)), "File should been moved");
     }
-
 }

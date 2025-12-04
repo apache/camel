@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser;
+
+import static org.apache.camel.parser.RouteBuilderParser.findAllConfigureMethods;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,8 +29,6 @@ import org.apache.camel.parser.model.RestServiceDetails;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
-import static org.apache.camel.parser.RouteBuilderParser.findAllConfigureMethods;
-
 /**
  * A Camel parser that parses Camel Java Rest DSL source code.
  * <p/>
@@ -35,8 +36,7 @@ import static org.apache.camel.parser.RouteBuilderParser.findAllConfigureMethods
  */
 public final class RestDslParser {
 
-    private RestDslParser() {
-    }
+    private RestDslParser() {}
 
     /**
      * Parses the java source class and build a rest configuration model of the discovered rest configurations in the
@@ -47,8 +47,7 @@ public final class RestDslParser {
      * @return                        a list of rest configurations (often there is only one)
      */
     public static List<RestConfigurationDetails> parseRestConfiguration(
-            JavaClassSource clazz, String fullyQualifiedFileName,
-            boolean includeInlinedRouteBuilders) {
+            JavaClassSource clazz, String fullyQualifiedFileName, boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = findAllConfigureMethods(clazz, includeInlinedRouteBuilders);
 
@@ -56,8 +55,8 @@ public final class RestDslParser {
         List<RestConfigurationDetails> list = new ArrayList<>();
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // there may be multiple route builder configure methods
-            List<RestConfigurationDetails> details
-                    = parser.parseRestConfiguration(clazz, fullyQualifiedFileName, configureMethod);
+            List<RestConfigurationDetails> details =
+                    parser.parseRestConfiguration(clazz, fullyQualifiedFileName, configureMethod);
             list.addAll(details);
         }
         // we end up parsing bottom->up so reverse list
@@ -75,8 +74,7 @@ public final class RestDslParser {
      * @return                        a list of rest services
      */
     public static List<RestServiceDetails> parseRestService(
-            JavaClassSource clazz, String fullyQualifiedFileName,
-            boolean includeInlinedRouteBuilders) {
+            JavaClassSource clazz, String fullyQualifiedFileName, boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = findAllConfigureMethods(clazz, includeInlinedRouteBuilders);
 
@@ -92,5 +90,4 @@ public final class RestDslParser {
 
         return list;
     }
-
 }

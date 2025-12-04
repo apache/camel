@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +31,12 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                           + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                           + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
-                                           + "</ns1:echoResponse></soap:Body></soap:Envelope>";
+            + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+            + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
+            + "</ns1:echoResponse></soap:Body></soap:Envelope>";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -46,11 +47,13 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
 
                             public void process(Exchange exchange) throws Exception {
                                 assertNull(exchange.getIn().getHeader("CamelCxfTest"), "We should not get this header");
-                                assertNull(exchange.getIn().getHeader("Transfer-Encoding"), "We should not get this header");
-                                //check the headers
+                                assertNull(
+                                        exchange.getIn().getHeader("Transfer-Encoding"),
+                                        "We should not get this header");
+                                // check the headers
                                 exchange.getMessage().setHeader("Content-Type", "text/xml");
                                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
-                                //send the response back
+                                // send the response back
                                 exchange.getMessage().setBody(RESPONSE);
                             }
                         });
@@ -72,17 +75,15 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
             }
         });
         return exchange;
-
     }
 
     @Test
     public void testSendMessage() {
         Exchange exchange = sendSimpleMessage("cxf://http://localhost:" + port
-                                              + "/CxfProducerProtocalHeaderTest/user"
-                                              + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService");
+                + "/CxfProducerProtocalHeaderTest/user"
+                + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService");
         org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         assertEquals("echo " + "Hello World!", result, "reply body on Camel");
     }
-
 }

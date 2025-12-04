@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.ArrayList;
@@ -67,7 +68,8 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
         this.methodMap = new LinkedHashMap<>();
         for (Map.Entry<String, Map<String, List<NameReplacement>>> method : regexMap.entrySet()) {
             Map<Pattern, List<NameReplacement>> argMap = new LinkedHashMap<>();
-            for (Map.Entry<String, List<NameReplacement>> arg : method.getValue().entrySet()) {
+            for (Map.Entry<String, List<NameReplacement>> arg :
+                    method.getValue().entrySet()) {
                 argMap.put(Pattern.compile(arg.getKey()), arg.getValue());
             }
             methodMap.put(Pattern.compile(method.getKey()), argMap);
@@ -111,13 +113,14 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                                         if (typeMatcher.find()) {
                                             if (!adapter.replaceWithType) {
                                                 // replace argument name
-                                                final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
+                                                final String newName =
+                                                        getJavaArgName(matcher.replaceAll(adapter.replacement));
                                                 argument = new ApiMethodArg(
                                                         newName, argType, typeArgs, rawTypeArgs, typeDesc);
                                             } else {
                                                 // replace name with argument type name
-                                                final String newName
-                                                        = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
+                                                final String newName =
+                                                        getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
                                                 argument = new ApiMethodArg(
                                                         newName, argType, typeArgs, rawTypeArgs, typeDesc);
                                             }
@@ -130,8 +133,13 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                     }
 
                     model = new ApiMethodModel(
-                            model.getUniqueName(), model.getName(), model.getResultType(),
-                            updatedArguments, model.getProperties(), model.getMethod(), model.getDescription(),
+                            model.getUniqueName(),
+                            model.getName(),
+                            model.getResultType(),
+                            updatedArguments,
+                            model.getProperties(),
+                            model.getMethod(),
+                            model.getDescription(),
                             model.getSignature());
                 }
             }
@@ -190,7 +198,8 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
         /**
          * Create a substitution for a specific argument type and flag to indicate whether the replacement uses
          */
-        public Substitution(String method, String argName, String argType, String replacement, boolean replaceWithType) {
+        public Substitution(
+                String method, String argName, String argType, String replacement, boolean replaceWithType) {
             this(method, argName, argType, replacement);
             this.replaceWithType = replaceWithType;
         }

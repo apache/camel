@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -27,8 +28,7 @@ public final class TempDirHelper {
 
     public static final String DEFAULT_PATTERN = "${java.io.tmpdir}/camel/camel-tmp-#uuid#";
 
-    private TempDirHelper() {
-    }
+    private TempDirHelper() {}
 
     /**
      * Resolves a temp dir using the default pattern.
@@ -57,13 +57,16 @@ public final class TempDirHelper {
             path = pattern;
         }
         if (camelContext.getManagementNameStrategy() != null) {
-            String name = camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
+            String name =
+                    camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
             if (name != null) {
                 name = customResolveManagementName(camelContext, name);
             }
             // and then check again with invalid check to ensure all ## is resolved
             if (name != null) {
-                name = camelContext.getManagementNameStrategy().resolveManagementName(name, camelContext.getName(), true);
+                name = camelContext
+                        .getManagementNameStrategy()
+                        .resolveManagementName(name, camelContext.getName(), true);
             }
             answer = name;
         } else {
@@ -94,5 +97,4 @@ public final class TempDirHelper {
         }
         return FilePathResolver.resolvePath(pattern);
     }
-
 }

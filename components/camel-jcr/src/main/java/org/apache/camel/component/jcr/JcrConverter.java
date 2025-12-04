@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
 
 import java.io.InputStream;
@@ -34,8 +35,7 @@ import org.apache.jackrabbit.value.StringValue;
 @Converter(generateLoader = true)
 public final class JcrConverter {
 
-    private JcrConverter() {
-    }
+    private JcrConverter() {}
 
     @Converter
     public static Value toValue(Boolean bool) {
@@ -76,5 +76,4 @@ public final class JcrConverter {
     public static String toString(Value value) throws RepositoryException {
         return value.getString();
     }
-
 }

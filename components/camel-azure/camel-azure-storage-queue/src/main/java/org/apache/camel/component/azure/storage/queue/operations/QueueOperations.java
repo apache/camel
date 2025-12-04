@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.queue.operations;
 
 import java.time.Duration;
@@ -101,17 +102,15 @@ public class QueueOperations {
         final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         if (ObjectHelper.isEmpty(messageId)) {
-            throw new IllegalArgumentException(
-                    String.format("Message ID must be specified in camel headers '%s' for deleteMessage "
-                                  + "operation.",
-                            QueueConstants.MESSAGE_ID));
+            throw new IllegalArgumentException(String.format(
+                    "Message ID must be specified in camel headers '%s' for deleteMessage " + "operation.",
+                    QueueConstants.MESSAGE_ID));
         }
 
         if (ObjectHelper.isEmpty(popReceipt)) {
-            throw new IllegalArgumentException(
-                    String.format("Message Pop Receipt must be specified in camel headers '%s' for deleteMessage "
-                                  + "operation.",
-                            QueueConstants.POP_RECEIPT));
+            throw new IllegalArgumentException(String.format(
+                    "Message Pop Receipt must be specified in camel headers '%s' for deleteMessage " + "operation.",
+                    QueueConstants.POP_RECEIPT));
         }
 
         return buildResponseWithEmptyBody(client.deleteMessage(messageId, popReceipt, timeout));
@@ -119,10 +118,10 @@ public class QueueOperations {
 
     public QueueOperationResponse receiveMessages(final Exchange exchange) {
         if (exchange == null) {
-            return QueueOperationResponse.create(
-                    client.receiveMessages(configurationOptionsProxy.getMaxMessages(null),
-                            configurationOptionsProxy.getVisibilityTimeout(null),
-                            configurationOptionsProxy.getTimeout(null)));
+            return QueueOperationResponse.create(client.receiveMessages(
+                    configurationOptionsProxy.getMaxMessages(null),
+                    configurationOptionsProxy.getVisibilityTimeout(null),
+                    configurationOptionsProxy.getTimeout(null)));
         }
 
         final Integer maxMessages = configurationOptionsProxy.getMaxMessages(exchange);
@@ -134,9 +133,8 @@ public class QueueOperations {
 
     public QueueOperationResponse peekMessages(final Exchange exchange) {
         if (exchange == null) {
-            return QueueOperationResponse.create(
-                    client.peekMessages(configurationOptionsProxy.getMaxMessages(null),
-                            configurationOptionsProxy.getTimeout(null)));
+            return QueueOperationResponse.create(client.peekMessages(
+                    configurationOptionsProxy.getMaxMessages(null), configurationOptionsProxy.getTimeout(null)));
         }
 
         final Integer maxMessages = configurationOptionsProxy.getMaxMessages(exchange);
@@ -155,28 +153,25 @@ public class QueueOperations {
         final Duration timeout = configurationOptionsProxy.getTimeout(exchange);
 
         if (ObjectHelper.isEmpty(messageId)) {
-            throw new IllegalArgumentException(
-                    String.format("Message ID must be specified in camel headers '%s' for updateMessage "
-                                  + "operation.",
-                            QueueConstants.MESSAGE_ID));
+            throw new IllegalArgumentException(String.format(
+                    "Message ID must be specified in camel headers '%s' for updateMessage " + "operation.",
+                    QueueConstants.MESSAGE_ID));
         }
 
         if (ObjectHelper.isEmpty(popReceipt)) {
-            throw new IllegalArgumentException(
-                    String.format("Message Pop Receipt must be specified in camel headers '%s' for updateMessage "
-                                  + "operation.",
-                            QueueConstants.POP_RECEIPT));
+            throw new IllegalArgumentException(String.format(
+                    "Message Pop Receipt must be specified in camel headers '%s' for updateMessage " + "operation.",
+                    QueueConstants.POP_RECEIPT));
         }
 
         if (ObjectHelper.isEmpty(visibilityTimeout)) {
-            throw new IllegalArgumentException(
-                    String.format("Visibility Timeout must be specified in camel headers '%s' for updateMessage "
-                                  + "operation.",
-                            QueueConstants.VISIBILITY_TIMEOUT));
+            throw new IllegalArgumentException(String.format(
+                    "Visibility Timeout must be specified in camel headers '%s' for updateMessage " + "operation.",
+                    QueueConstants.VISIBILITY_TIMEOUT));
         }
 
-        final Response<UpdateMessageResult> response
-                = client.updateMessage(messageId, popReceipt, updatedText, visibilityTimeout, timeout);
+        final Response<UpdateMessageResult> response =
+                client.updateMessage(messageId, popReceipt, updatedText, visibilityTimeout, timeout);
         final QueueExchangeHeaders headers = new QueueExchangeHeaders()
                 .timeNextVisible(response.getValue().getTimeNextVisible())
                 .popReceipt(response.getValue().getPopReceipt())

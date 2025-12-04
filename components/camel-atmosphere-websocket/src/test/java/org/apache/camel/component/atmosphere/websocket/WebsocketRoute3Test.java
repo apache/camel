@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,12 +34,9 @@ import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class WebsocketRoute3Test extends WebsocketCamelRouterTestSupport {
     private static final String RESPONSE_GREETING = "Hola ";
-    private static final byte[] RESPONSE_GREETING_BYTES = { 0x48, 0x6f, 0x6c, 0x61, 0x20 };
+    private static final byte[] RESPONSE_GREETING_BYTES = {0x48, 0x6f, 0x6c, 0x61, 0x20};
 
     @Test
     void testWebsocketSingleClientForReader() throws Exception {
@@ -71,11 +72,14 @@ public class WebsocketRoute3Test extends WebsocketCamelRouterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // route for a single stream line
-                from("atmosphere-websocket:///hola3?useStreaming=true").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        createResponse(exchange, true);
-                    }
-                }).to("atmosphere-websocket:///hola3");
+                from("atmosphere-websocket:///hola3?useStreaming=true")
+                        .to("log:info")
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                createResponse(exchange, true);
+                            }
+                        })
+                        .to("atmosphere-websocket:///hola3");
             }
         };
     }

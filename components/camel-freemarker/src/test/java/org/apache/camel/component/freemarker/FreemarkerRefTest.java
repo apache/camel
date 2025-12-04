@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.freemarker;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,11 +25,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class FreemarkerRefTest extends CamelTestSupport {
 
-    private static final String TEMP = "Hello ${headers.name}. You ordered item ${exchange.properties.item} on ${body}.";
+    private static final String TEMP =
+            "Hello ${headers.name}. You ordered item ${exchange.properties.item} on ${body}.";
 
     @Test
     public void testRef() {
@@ -39,7 +41,9 @@ public class FreemarkerRefTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Hello Christian. You ordered item 8 on Tuesday.", exchange.getMessage().getBody());
+        assertEquals(
+                "Hello Christian. You ordered item 8 on Tuesday.",
+                exchange.getMessage().getBody());
         assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
@@ -49,8 +53,7 @@ public class FreemarkerRefTest extends CamelTestSupport {
             public void configure() {
                 context.getRegistry().bind("mytemp", TEMP);
 
-                from("direct:a").to(
-                        "freemarker:ref:mytemp?allowContextMapAll=true");
+                from("direct:a").to("freemarker:ref:mytemp?allowContextMapAll=true");
             }
         };
     }

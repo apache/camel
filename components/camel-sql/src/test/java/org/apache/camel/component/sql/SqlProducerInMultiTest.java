@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,20 +32,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SqlProducerInMultiTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase6.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase6.sql")
+                .build();
     }
 
     @Override
@@ -59,8 +59,8 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put("names", new String[] { "Camel", "AMQ" });
-        headers.put("licenses", new String[] { "ASF", "XXX", "YYY" });
+        headers.put("names", new String[] {"Camel", "AMQ"});
+        headers.put("licenses", new String[] {"ASF", "XXX", "YYY"});
         template.requestBodyAndHeaders("direct:query", "Hi there!", headers);
 
         MockEndpoint.assertIsSatisfied(context);

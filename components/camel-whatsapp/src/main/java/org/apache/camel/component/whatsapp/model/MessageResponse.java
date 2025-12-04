@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import java.util.List;
@@ -33,8 +34,7 @@ public class MessageResponse {
 
     private String id;
 
-    public MessageResponse() {
-    }
+    public MessageResponse() {}
 
     public String getMessagingProduct() {
         return messagingProduct;

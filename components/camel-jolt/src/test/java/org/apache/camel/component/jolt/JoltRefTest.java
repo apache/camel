@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jolt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JoltRefTest extends CamelTestSupport {
 
-    private static final String TEMP = """
+    private static final String TEMP =
+            """
             {
               "a": "aa",
               "b": "bb"
@@ -54,10 +56,8 @@ public class JoltRefTest extends CamelTestSupport {
             public void configure() {
                 context.getRegistry().bind("mytemp", TEMP);
 
-                from("direct:a").to(
-                        "jolt:ref:mytemp?transformDsl=Defaultr");
+                from("direct:a").to("jolt:ref:mytemp?transformDsl=Defaultr");
             }
         };
     }
-
 }

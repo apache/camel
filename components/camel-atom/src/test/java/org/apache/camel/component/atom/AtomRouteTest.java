@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class AtomRouteTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AtomRouteTest.class);
@@ -45,13 +46,14 @@ public class AtomRouteTest extends CamelTestSupport {
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         String[] expectedTitles = {
-                "Speaking at the Irish Java Technology Conference on Thursday and Friday",
-                "a great presentation on REST, JAX-WS and JSR 311",
-                "my slides on ActiveMQ and Camel from last weeks Dublin Conference",
-                "webcast today on Apache ActiveMQ",
-                "Feedback on my Camel talk at the IJTC conference",
-                "More thoughts on RESTful Message Queues",
-                "ActiveMQ webinar archive available" };
+            "Speaking at the Irish Java Technology Conference on Thursday and Friday",
+            "a great presentation on REST, JAX-WS and JSR 311",
+            "my slides on ActiveMQ and Camel from last weeks Dublin Conference",
+            "webcast today on Apache ActiveMQ",
+            "Feedback on my Camel talk at the IJTC conference",
+            "More thoughts on RESTful Message Queues",
+            "ActiveMQ webinar archive available"
+        };
         int counter = 0;
         for (Exchange exchange : list) {
             Item entry = exchange.getIn().getBody(Item.class);

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry.metrics.integration.messagehistory;
+
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
@@ -26,11 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
 import org.apache.camel.opentelemetry.metrics.messagehistory.OpenTelemetryMessageHistoryFactory;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MessageHistoryPatternIT extends AbstractOpenTelemetryTest {
 
@@ -61,17 +62,18 @@ public class MessageHistoryPatternIT extends AbstractOpenTelemetryTest {
         MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
-        assertEquals(3, getAllPointData(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).size());
+        assertEquals(
+                3, getAllPointData(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).size());
         assertEquals(count, getPointData("route1", "a").getCount());
         assertEquals(count, getPointData("route1", "b").getCount());
         assertEquals(count, getPointData("route2", "bar").getCount());
     }
 
     private HistogramPointData getPointData(String routeId, String nodeId) {
-        PointData pd = getAllPointDataForRouteId(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME, routeId)
-                .stream()
+        PointData pd = getAllPointDataForRouteId(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME, routeId).stream()
                 .filter(point -> nodeId.equals(point.getAttributes().get(AttributeKey.stringKey("nodeId"))))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
         assertNotNull(pd);
         assertInstanceOf(HistogramPointData.class, pd);
         return (HistogramPointData) pd;
@@ -82,8 +84,18 @@ public class MessageHistoryPatternIT extends AbstractOpenTelemetryTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").step("a").transform().constant("Bye World").to("mock:a").end().step("b").transform()
-                        .constant("Hi World").to("direct:bar").to("mock:b").end();
+                from("direct:start")
+                        .step("a")
+                        .transform()
+                        .constant("Bye World")
+                        .to("mock:a")
+                        .end()
+                        .step("b")
+                        .transform()
+                        .constant("Hi World")
+                        .to("direct:bar")
+                        .to("mock:b")
+                        .end();
 
                 from("direct:bar").step("bar").to("log:bar").to("mock:bar").end();
             }

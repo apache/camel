@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Arrays;
@@ -29,7 +30,8 @@ public class ManagedRemoveHeaders extends ManagedProcessor implements ManagedRem
 
     private final String exclude;
 
-    public ManagedRemoveHeaders(CamelContext context, RemoveHeadersProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedRemoveHeaders(
+            CamelContext context, RemoveHeadersProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         if (processor.getExcludePattern() != null) {
             exclude = Arrays.toString(processor.getExcludePattern());

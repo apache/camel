@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,14 +33,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Timeout(10)
 public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -45,7 +47,8 @@ public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
     @Test
     public void testAsyncJmsConsumer() {
         String out = template.requestBody(
-                "activemq:queue:AsyncConsumerInOutTwoTest.start?replyTo=AsyncConsumerInOutTwoTest.bar", "Hello World",
+                "activemq:queue:AsyncConsumerInOutTwoTest.start?replyTo=AsyncConsumerInOutTwoTest.bar",
+                "Hello World",
                 String.class);
         assertEquals("Bye World", out);
     }

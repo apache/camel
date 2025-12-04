@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
@@ -42,10 +43,20 @@ public class WordpressServiceCategoriesAdapter
     @Override
     public List<Category> list(CategorySearchCriteria criteria) {
         Objects.requireNonNull(criteria, "The search criteria must be defined");
-        return getSpi().list(this.getApiVersion(), criteria.getContext(), criteria.getPage(), criteria.getPerPage(),
-                criteria.getSearch(), criteria.getExclude(), criteria.getInclude(),
-                criteria.getOrder(), criteria.getOrderBy(), criteria.isHideEmpty(), criteria.getParent(), criteria.getPostId(),
-                criteria.getSlug());
+        return getSpi().list(
+                        this.getApiVersion(),
+                        criteria.getContext(),
+                        criteria.getPage(),
+                        criteria.getPerPage(),
+                        criteria.getSearch(),
+                        criteria.getExclude(),
+                        criteria.getInclude(),
+                        criteria.getOrder(),
+                        criteria.getOrderBy(),
+                        criteria.isHideEmpty(),
+                        criteria.getParent(),
+                        criteria.getPostId(),
+                        criteria.getSlug());
     }
     // @formatter:on
 
@@ -68,5 +79,4 @@ public class WordpressServiceCategoriesAdapter
     protected Category doRetrieve(Integer entityID, Context context) {
         return getSpi().retrieve(getApiVersion(), entityID, context);
     }
-
 }

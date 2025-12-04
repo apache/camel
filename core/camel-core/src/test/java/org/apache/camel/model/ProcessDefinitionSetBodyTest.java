@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,7 +44,9 @@ public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
+                        .setBody(exchange -> FUNCTION_MESSAGE)
+                        .to("mock:functionOutput")
+                        .to("mock:output");
             }
         };
     }

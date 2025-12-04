@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpLoopErrorTest extends BaseNettyTest {
 
@@ -50,9 +51,7 @@ public class NettyHttpLoopErrorTest extends BaseNettyTest {
                         .maximumRedeliveryDelay(1000)
                         .handled(false);
 
-                from("direct:input")
-                        .routeId("test-route")
-                        .toD("${body}");
+                from("direct:input").routeId("test-route").toD("${body}");
             }
         };
     }
@@ -67,7 +66,6 @@ public class NettyHttpLoopErrorTest extends BaseNettyTest {
         }
 
         assertTrue(isException);
-
     }
 
     @Test
@@ -81,7 +79,5 @@ public class NettyHttpLoopErrorTest extends BaseNettyTest {
         }
 
         assertTrue(isException);
-
     }
-
 }

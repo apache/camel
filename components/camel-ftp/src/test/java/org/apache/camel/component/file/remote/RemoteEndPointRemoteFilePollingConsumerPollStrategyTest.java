@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class RemoteEndPointRemoteFilePollingConsumerPollStrategyTest extends CamelTestSupport {
 
@@ -28,5 +29,4 @@ public class RemoteEndPointRemoteFilePollingConsumerPollStrategyTest extends Cam
         RemoteFileEndpoint<?> endpoint = context.getEndpoint("ftp://hostname", RemoteFileEndpoint.class);
         assertInstanceOf(RemoteFilePollingConsumerPollStrategy.class, endpoint.getPollStrategy());
     }
-
 }

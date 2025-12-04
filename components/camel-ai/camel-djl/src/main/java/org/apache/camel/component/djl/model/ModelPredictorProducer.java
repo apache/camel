@@ -14,7 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl.model;
+
+import static ai.djl.Application.CV.ACTION_RECOGNITION;
+import static ai.djl.Application.CV.IMAGE_CLASSIFICATION;
+import static ai.djl.Application.CV.IMAGE_ENHANCEMENT;
+import static ai.djl.Application.CV.IMAGE_GENERATION;
+import static ai.djl.Application.CV.INSTANCE_SEGMENTATION;
+import static ai.djl.Application.CV.OBJECT_DETECTION;
+import static ai.djl.Application.CV.POSE_ESTIMATION;
+import static ai.djl.Application.CV.SEMANTIC_SEGMENTATION;
+import static ai.djl.Application.CV.WORD_RECOGNITION;
+import static ai.djl.Application.NLP.FILL_MASK;
+import static ai.djl.Application.NLP.MACHINE_TRANSLATION;
+import static ai.djl.Application.NLP.MULTIPLE_CHOICE;
+import static ai.djl.Application.NLP.QUESTION_ANSWER;
+import static ai.djl.Application.NLP.SENTIMENT_ANALYSIS;
+import static ai.djl.Application.NLP.TEXT_CLASSIFICATION;
+import static ai.djl.Application.NLP.TEXT_EMBEDDING;
+import static ai.djl.Application.NLP.TEXT_GENERATION;
+import static ai.djl.Application.NLP.TOKEN_CLASSIFICATION;
+import static ai.djl.Application.NLP.WORD_EMBEDDING;
+import static ai.djl.Application.Tabular.LINEAR_REGRESSION;
+import static ai.djl.Application.Tabular.SOFTMAX_REGRESSION;
+import static ai.djl.Application.TimeSeries.FORECASTING;
 
 import java.io.IOException;
 
@@ -60,29 +84,6 @@ import org.apache.camel.component.djl.model.tabular.ZooLinearRegressionPredictor
 import org.apache.camel.component.djl.model.tabular.ZooSoftmaxRegressionPredictor;
 import org.apache.camel.component.djl.model.timeseries.CustomForecastingPredictor;
 import org.apache.camel.component.djl.model.timeseries.ZooForecastingPredictor;
-
-import static ai.djl.Application.CV.ACTION_RECOGNITION;
-import static ai.djl.Application.CV.IMAGE_CLASSIFICATION;
-import static ai.djl.Application.CV.IMAGE_ENHANCEMENT;
-import static ai.djl.Application.CV.IMAGE_GENERATION;
-import static ai.djl.Application.CV.INSTANCE_SEGMENTATION;
-import static ai.djl.Application.CV.OBJECT_DETECTION;
-import static ai.djl.Application.CV.POSE_ESTIMATION;
-import static ai.djl.Application.CV.SEMANTIC_SEGMENTATION;
-import static ai.djl.Application.CV.WORD_RECOGNITION;
-import static ai.djl.Application.NLP.FILL_MASK;
-import static ai.djl.Application.NLP.MACHINE_TRANSLATION;
-import static ai.djl.Application.NLP.MULTIPLE_CHOICE;
-import static ai.djl.Application.NLP.QUESTION_ANSWER;
-import static ai.djl.Application.NLP.SENTIMENT_ANALYSIS;
-import static ai.djl.Application.NLP.TEXT_CLASSIFICATION;
-import static ai.djl.Application.NLP.TEXT_EMBEDDING;
-import static ai.djl.Application.NLP.TEXT_GENERATION;
-import static ai.djl.Application.NLP.TOKEN_CLASSIFICATION;
-import static ai.djl.Application.NLP.WORD_EMBEDDING;
-import static ai.djl.Application.Tabular.LINEAR_REGRESSION;
-import static ai.djl.Application.Tabular.SOFTMAX_REGRESSION;
-import static ai.djl.Application.TimeSeries.FORECASTING;
 
 public final class ModelPredictorProducer {
 

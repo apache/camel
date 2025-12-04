@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.List;
@@ -46,8 +47,12 @@ public class RoutingSlipThrowExceptionFromExpressionTest extends ContextTestSupp
             public void configure() {
                 onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start").to("log:foo").routingSlip()
-                        .method(RoutingSlipThrowExceptionFromExpressionTest.class, "slipTo").to("mock://result").end();
+                from("direct://start")
+                        .to("log:foo")
+                        .routingSlip()
+                        .method(RoutingSlipThrowExceptionFromExpressionTest.class, "slipTo")
+                        .to("mock://result")
+                        .end();
             }
         };
     }
@@ -55,5 +60,4 @@ public class RoutingSlipThrowExceptionFromExpressionTest extends ContextTestSupp
     public List<String> slipTo(Exchange exchange) throws ExpressionEvaluationException {
         throw new ExpressionEvaluationException(null, exchange, null);
     }
-
 }

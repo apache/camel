@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -48,19 +49,17 @@ public class TransactedSplitAggregateThreadStuckTwoTest extends TransactionClien
                         .setBody(simple("Done ${body}"))
                         .to("mock:result", "mock:end");
 
-                from("direct:split")
-                        .split(body())
-                        .to("direct:aggregate");
+                from("direct:split").split(body()).to("direct:aggregate");
 
                 from("direct:aggregate")
-                    .aggregate(constant("true"))
-                    .completionSize(2).aggregationStrategy(new StringAggregationStrategy())
+                        .aggregate(constant("true"))
+                        .completionSize(2)
+                        .aggregationStrategy(new StringAggregationStrategy())
                         .log("Aggregated ${threadName}")
                         .setBody(simple("Aggregated ${body}"))
                         .to("mock:result", "mock:aggregated")
-                    .end();
+                        .end();
             }
         };
     }
-
 }

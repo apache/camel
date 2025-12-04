@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,9 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
@@ -108,5 +109,4 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
             }
         };
     }
-
 }

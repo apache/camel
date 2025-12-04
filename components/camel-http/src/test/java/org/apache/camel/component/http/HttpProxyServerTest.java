@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,9 +40,6 @@ import org.apache.hc.core5.http.protocol.RequestValidateHost;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.http.HttpMethods.GET;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpProxyServerTest extends BaseHttpTest {
 
     private HttpServer proxy;
@@ -50,11 +51,13 @@ public class HttpProxyServerTest extends BaseHttpTest {
         // https://issues.apache.org/jira/browse/HTTPCLIENT-1957
         //        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
         proxy = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("127.0.0.1").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("127.0.0.1")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("*",
-                        new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
+                .register(
+                        "*", new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
                 .create();
         proxy.start();
     }
@@ -80,17 +83,23 @@ public class HttpProxyServerTest extends BaseHttpTest {
 
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyHost=www.myproxy.com&proxyAuthPort=1234",
-                HttpEndpoint.class);
+        HttpEndpoint http1 = context.getEndpoint(
+                "http://www.google.com?proxyHost=www.myproxy.com&proxyAuthPort=1234", HttpEndpoint.class);
         HttpEndpoint http2 = context.getEndpoint(
-                "http://www.google.com?test=parameter&proxyHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
+                "http://www.google.com?test=parameter&proxyHost=www.otherproxy.com&proxyAuthPort=2345",
+                HttpEndpoint.class);
         // HttpClientBuilder doesn't support get the configuration here
 
-        //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
-        assertEquals("http://www.google.com?proxyAuthPort=1234&proxyHost=www.myproxy.com",
-                URISupport.normalizeUri(http1.getEndpointUri()), "Get a wrong endpoint uri of http1");
-        assertEquals("http://www.google.com?proxyAuthPort=2345&proxyHost=www.otherproxy.com&test=parameter",
-                URISupport.normalizeUri(http2.getEndpointUri()), "Get a wrong endpoint uri of http2");
+        // As the endpointUri is recreated, so the parameter could be in different place, so we use the
+        // URISupport.normalizeUri
+        assertEquals(
+                "http://www.google.com?proxyAuthPort=1234&proxyHost=www.myproxy.com",
+                URISupport.normalizeUri(http1.getEndpointUri()),
+                "Get a wrong endpoint uri of http1");
+        assertEquals(
+                "http://www.google.com?proxyAuthPort=2345&proxyHost=www.otherproxy.com&test=parameter",
+                URISupport.normalizeUri(http2.getEndpointUri()),
+                "Get a wrong endpoint uri of http2");
 
         assertEquals(http1.getEndpointKey(), http2.getEndpointKey(), "Should get the same EndpointKey");
     }
@@ -98,10 +107,10 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyAndWithoutUser() {
 
-        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyHost="
-                                             + getProxyHost() + "&proxyPort=" + getProxyPort(),
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://" + getHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost() + "&proxyPort="
+                        + getProxyPort(),
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
@@ -109,10 +118,10 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetDeprecatedNames() {
 
-        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyAuthHost="
-                                             + getProxyHost() + "&proxyAuthPort=" + getProxyPort(),
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://" + getHost() + ":" + getProxyPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort="
+                        + getProxyPort(),
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
@@ -120,10 +129,10 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyAndWithoutUserTwo() {
 
-        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost()
-                                             + "&proxyPort=" + getProxyPort(),
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "http://" + getHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost() + "&proxyPort="
+                        + getProxyPort(),
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
@@ -134,8 +143,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         http.setProxyHost(getProxyHost());
         http.setProxyPort(Integer.parseInt(getProxyPort()));
 
-        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort(), exchange1 -> {
-        });
+        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort(), exchange1 -> {});
 
         http.setProxyHost(null);
         http.setProxyPort(null);
@@ -154,5 +162,4 @@ public class HttpProxyServerTest extends BaseHttpTest {
     private String getProxyPort() {
         return Integer.toString(proxy.getLocalPort());
     }
-
 }

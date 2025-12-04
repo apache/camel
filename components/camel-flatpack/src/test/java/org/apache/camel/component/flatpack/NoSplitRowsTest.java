@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flatpack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test to verify that splitRows=false option.
  */
@@ -42,7 +43,7 @@ public class NoSplitRowsTest {
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
+    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
 
     @Test
     public void testHeaderAndTrailer() throws Exception {
@@ -52,7 +53,8 @@ public class NoSplitRowsTest {
 
         results.assertIsSatisfied();
 
-        List<Map<String, String>> data = CastUtils.cast(results.getExchanges().get(0).getIn().getBody(List.class));
+        List<Map<String, String>> data =
+                CastUtils.cast(results.getExchanges().get(0).getIn().getBody(List.class));
 
         // assert header
         Map<String, String> header = data.get(0);
@@ -72,5 +74,4 @@ public class NoSplitRowsTest {
         assertEquals("FBT", trailer.get("INDICATOR"));
         assertEquals("SUCCESS", trailer.get("STATUS"));
     }
-
 }

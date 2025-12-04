@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -35,20 +39,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for additional IBM COS operations: deleteObjects, getObjectRange, headBucket, createBucket,
  * deleteBucket.
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.apiKey", matches = ".*",
-                                 disabledReason = "IBM COS API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.serviceInstanceId", matches = ".*",
-                                 disabledReason = "IBM COS Service Instance ID not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.cos.endpointUrl", matches = ".*",
-                                 disabledReason = "IBM COS Endpoint URL not provided")
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.apiKey",
+            matches = ".*",
+            disabledReason = "IBM COS API Key not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.serviceInstanceId",
+            matches = ".*",
+            disabledReason = "IBM COS Service Instance ID not provided"),
+    @EnabledIfSystemProperty(
+            named = "camel.ibm.cos.endpointUrl",
+            matches = ".*",
+            disabledReason = "IBM COS Endpoint URL not provided")
 })
 public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
 
@@ -71,7 +78,7 @@ public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
         final String key3 = "batch-delete-3.txt";
 
         // Upload test objects
-        for (String key : new String[] { key1, key2, key3 }) {
+        for (String key : new String[] {key1, key2, key3}) {
             template.send("direct:putObject", new Processor() {
                 @Override
                 public void process(Exchange exchange) {
@@ -100,12 +107,11 @@ public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
         });
 
         // Verify objects are deleted
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    assertFalse(cosClient.doesObjectExist(bucketName, key1), "Object 1 should be deleted");
-                    assertFalse(cosClient.doesObjectExist(bucketName, key2), "Object 2 should be deleted");
-                    assertFalse(cosClient.doesObjectExist(bucketName, key3), "Object 3 should be deleted");
-                });
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertFalse(cosClient.doesObjectExist(bucketName, key1), "Object 1 should be deleted");
+            assertFalse(cosClient.doesObjectExist(bucketName, key2), "Object 2 should be deleted");
+            assertFalse(cosClient.doesObjectExist(bucketName, key3), "Object 3 should be deleted");
+        });
     }
 
     @Test
@@ -200,9 +206,7 @@ public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:putObject")
-                        .to(buildEndpointUri("putObject"))
-                        .to("mock:result");
+                from("direct:putObject").to(buildEndpointUri("putObject")).to("mock:result");
 
                 from("direct:deleteObjects")
                         .to(buildEndpointUri("deleteObjects"))
@@ -212,17 +216,11 @@ public class IBMCOSProducerAdditionalOperationsIT extends IBMCOSTestSupport {
                         .to(buildEndpointUri("getObjectRange"))
                         .to("mock:result");
 
-                from("direct:headBucket")
-                        .to(buildEndpointUri("headBucket"))
-                        .to("mock:result");
+                from("direct:headBucket").to(buildEndpointUri("headBucket")).to("mock:result");
 
-                from("direct:createBucket")
-                        .to(buildEndpointUri("createBucket"))
-                        .to("mock:result");
+                from("direct:createBucket").to(buildEndpointUri("createBucket")).to("mock:result");
 
-                from("direct:deleteBucket")
-                        .to(buildEndpointUri("deleteBucket"))
-                        .to("mock:result");
+                from("direct:deleteBucket").to(buildEndpointUri("deleteBucket")).to("mock:result");
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
@@ -22,19 +25,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class DefaultStreamCachingTest {
 
     @Test
     public void testStreamCaching() throws Exception {
-        AbstractApplicationContext appContext
-                = new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/spring/streamCaching.xml" });
+        AbstractApplicationContext appContext =
+                new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/streamCaching.xml"});
         CamelContext camelContext = appContext.getBean("camelContext", CamelContext.class);
         assertTrue(camelContext.isStreamCaching(), "StreamCaching should be enabled by default");
 
         // we're done so let's properly close the application context
         IOHelper.close(appContext);
     }
-
 }

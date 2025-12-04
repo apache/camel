@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.apache.camel.component.jdbc.JdbcHelper.newBeanInstance;
 
 import java.sql.SQLException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.RowMapper;
-
-import static org.apache.camel.component.jdbc.JdbcHelper.newBeanInstance;
 
 public class JdbcBeanMapper implements RowMapper<Map<String, Object>, Object> {
     private final CamelContext camelContext;

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.control;
+
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_PROPERTY;
 
 import java.net.URI;
 import java.util.Map;
@@ -27,9 +31,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.annotations.SendDynamic;
 import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.URISupport;
-
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
-import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_PROPERTY;
 
 /**
  * A {@link SendDynamicAwareSupport} implementation to process control channel messages for the Dynamic Router.
@@ -130,7 +131,9 @@ public class DynamicRouterControlChannelSendDynamicAware extends SendDynamicAwar
         if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.test(entry.getUri())) {
             postProcessor = ex -> {
                 Message message = exchange.getMessage();
-                DynamicRouterControlConstants.URI_PARAMS_TO_HEADER_NAMES.values().forEach(message::removeHeader);
+                DynamicRouterControlConstants.URI_PARAMS_TO_HEADER_NAMES
+                        .values()
+                        .forEach(message::removeHeader);
             };
         }
         return postProcessor;

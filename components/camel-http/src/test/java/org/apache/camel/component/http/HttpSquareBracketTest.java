@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpSquareBracketTest extends BaseHttpTest {
 
@@ -33,12 +34,17 @@ public class HttpSquareBracketTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/",
+                .register(
+                        "/",
                         new BasicValidationHandler(
-                                GET.name(), "country=dk&filter[end-date]=2022-12-31&filter[start-date]=2022-01-01", null,
+                                GET.name(),
+                                "country=dk&filter[end-date]=2022-12-31&filter[start-date]=2022-01-01",
+                                null,
                                 getExpectedContent()))
                 .create();
         localServer.start();
@@ -56,11 +62,9 @@ public class HttpSquareBracketTest extends BaseHttpTest {
 
     @Test
     public void httpSquare() {
-        Exchange exchange = template.request(baseUrl + "/?country=dk&filter[start-date]=2022-01-01&filter[end-date]=2022-12-31",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                baseUrl + "/?country=dk&filter[start-date]=2022-01-01&filter[end-date]=2022-12-31", exchange1 -> {});
 
         assertExchange(exchange);
     }
-
 }

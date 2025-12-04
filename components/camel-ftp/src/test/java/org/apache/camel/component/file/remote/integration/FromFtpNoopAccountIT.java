@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 /**
@@ -25,5 +26,4 @@ public class FromFtpNoopAccountIT extends FromFtpNoopIT {
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/noop?password=admin&account=me&binary=false&noop=true";
     }
-
 }

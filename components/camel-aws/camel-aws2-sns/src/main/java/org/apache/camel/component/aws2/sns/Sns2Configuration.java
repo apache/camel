@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
 
 import org.apache.camel.RuntimeCamelException;
@@ -31,61 +32,92 @@ public class Sns2Configuration implements Cloneable {
 
     // Common properties
     private String topicName;
+
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private SnsClient amazonSNSClient;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
+
     @UriParam(label = "security", secret = true)
     private String secretKey;
+
     @UriParam(label = "security", secret = true)
     private String sessionToken;
+
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam
     private String queueArn;
+
     @UriParam
     private boolean subscribeSNStoSQS;
+
     @UriParam
     private String kmsMasterKeyId;
+
     @UriParam
     private boolean serverSideEncryptionEnabled;
+
     @UriParam
     private boolean autoCreateTopic;
+
     @UriParam
     private boolean overrideEndpoint;
+
     @UriParam
     private String uriEndpointOverride;
 
     // Producer-only properties
     @UriParam
     private String subject;
+
     @UriParam
     @Metadata(supportFileReference = true)
     private String policy;
+
     @UriParam
     private String messageStructure;
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
+
+    @UriParam(
+            enums =
+                    "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
     private String region;
+
     @UriParam(label = "security")
     private boolean trustAllCertificates;
+
     @UriParam(label = "security")
     private boolean useDefaultCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useProfileCredentialsProvider;
+
     @UriParam(label = "security")
     private boolean useSessionCredentials;
+
     @UriParam(label = "security")
     private String profileCredentialsName;
+
     @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
-    @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
-              enums = "useExchangeId,useContentBasedDeduplication")
-    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+
+    @UriParam(
+            label = "producer",
+            javaType = "java.lang.String",
+            defaultValue = "useExchangeId",
+            enums = "useExchangeId,useContentBasedDeduplication")
+    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy =
+            new ExchangeIdMessageDeduplicationIdStrategy();
+
     @UriParam
     private boolean batchEnabled;
 

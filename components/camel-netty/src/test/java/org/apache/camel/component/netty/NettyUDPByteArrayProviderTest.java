@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -33,13 +37,10 @@ import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
-    private static final String SEND_STRING
-            = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
-              + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
+    private static final String SEND_STRING =
+            "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
+                    + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
     private static final int SEND_COUNT = 10;
     private volatile int receivedCount;
     private EventLoopGroup group;
@@ -48,7 +49,8 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
     public void createNettyUdpReceiver() {
         group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
-        bootstrap.group(group)
+        bootstrap
+                .group(group)
                 .channel(NioDatagramChannel.class)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
@@ -57,7 +59,8 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
                         channel.pipeline().addLast(new ByteArrayDecoder());
                         channel.pipeline().addLast(new ContentHandler());
                     }
-                }).localAddress(new InetSocketAddress(getPort()));
+                })
+                .localAddress(new InetSocketAddress(getPort()));
     }
 
     public void bind() {
@@ -85,7 +88,8 @@ public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
             @Override
             public void configure() {
                 from("direct:in")
-                        .to("netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true&udpConnectionlessSending=true");
+                        .to(
+                                "netty:udp://localhost:{{port}}?sync=false&udpByteArrayCodec=true&udpConnectionlessSending=true");
             }
         };
     }

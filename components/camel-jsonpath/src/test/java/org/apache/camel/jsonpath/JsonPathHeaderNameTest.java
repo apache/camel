@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -30,12 +31,14 @@ public class JsonPathHeaderNameTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                var jp = expression().jsonpath().expression("$..store.book.length()").resultType(int.class)
-                        .source("header:myHeader").end();
+                var jp = expression()
+                        .jsonpath()
+                        .expression("$..store.book.length()")
+                        .resultType(int.class)
+                        .source("header:myHeader")
+                        .end();
 
-                from("direct:start")
-                        .setHeader("number", jp)
-                        .to("mock:result");
+                from("direct:start").setHeader("number", jp).to("mock:result");
             }
         };
     }
@@ -50,5 +53,4 @@ public class JsonPathHeaderNameTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

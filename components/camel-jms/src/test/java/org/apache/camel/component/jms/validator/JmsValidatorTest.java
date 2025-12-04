@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.validator;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ public class JmsValidatorTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
 
@@ -69,7 +71,8 @@ public class JmsValidatorTest extends AbstractJMSTest {
                 from("jms:queue:inbox")
                         .convertBodyTo(String.class)
                         .doTry()
-                        .to("validator:file:src/test/resources/org/apache/camel/component/jms/validator/JmsValidatorTestSchema.xsd")
+                        .to(
+                                "validator:file:src/test/resources/org/apache/camel/component/jms/validator/JmsValidatorTestSchema.xsd")
                         .to("jms:queue:valid")
                         .doCatch(ValidationException.class)
                         .to("jms:queue:invalid")
@@ -99,5 +102,4 @@ public class JmsValidatorTest extends AbstractJMSTest {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
     }
-
 }

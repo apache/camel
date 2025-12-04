@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
+
+import static com.dashjoin.jsonata.Jsonata.jsonata;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -35,33 +38,42 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static com.dashjoin.jsonata.Jsonata.jsonata;
-
 /**
  * Transforms JSON payload using JSONata transformation.
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "jsonata", title = "JSONata", syntax = "jsonata:resourceUri",
-             producerOnly = true, remote = false,
-             category = { Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "jsonata",
+        title = "JSONata",
+        syntax = "jsonata:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION})
 public class JsonataEndpoint extends ResourceEndpoint {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType outputType;
+
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType inputType;
-    @UriParam(label = "advanced", description = "To configure the Jsonata frame binding. Allows custom functions to be added.")
+
+    @UriParam(
+            label = "advanced",
+            description = "To configure the Jsonata frame binding. Allows custom functions to be added.")
     private JsonataFrameBinding frameBinding;
+
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam
     private boolean prettyPrint;
 
-    public JsonataEndpoint() {
-    }
+    public JsonataEndpoint() {}
 
-    public JsonataEndpoint(String uri, JsonataComponent component, String resourceUri, JsonataFrameBinding frameBinding) {
+    public JsonataEndpoint(
+            String uri, JsonataComponent component, String resourceUri, JsonataFrameBinding frameBinding) {
         super(uri, component, resourceUri);
         this.frameBinding = frameBinding;
     }
@@ -165,12 +177,9 @@ public class JsonataEndpoint extends ResourceEndpoint {
             }
         }
         Jsonata expression;
-        try (InputStreamReader inputStreamReader
-                = new InputStreamReader(is, StandardCharsets.UTF_8);
-             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {
-            String spec = bufferedReader
-                    .lines()
-                    .collect(Collectors.joining("\n"));
+        try (InputStreamReader inputStreamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader); ) {
+            String spec = bufferedReader.lines().collect(Collectors.joining("\n"));
             expression = jsonata(spec);
         }
 
@@ -180,7 +189,8 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
         Object outputLib = expression.evaluate(input, frame);
         String bodyAsString = prettyPrint
-                ? mapper.writerWithDefaultPrettyPrinter().writeValueAsString(outputLib) : mapper.writeValueAsString(outputLib);
+                ? mapper.writerWithDefaultPrettyPrinter().writeValueAsString(outputLib)
+                : mapper.writeValueAsString(outputLib);
 
         // now lets output the results to the exchange
         final Object output;
@@ -191,5 +201,4 @@ public class JsonataEndpoint extends ResourceEndpoint {
         }
         ExchangeHelper.setInOutBodyPatternAware(exchange, output);
     }
-
 }

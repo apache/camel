@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
-import org.junit.jupiter.api.Test;
-import org.slf4j.MDC;
+package org.apache.camel.tracing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 
 class ActiveSpanManagerTest extends ExchangeTestSupport {
 

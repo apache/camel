@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -24,17 +30,12 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class HealthCheckRegistryTest {
 
     @Test
     public void testHealthCheckRoutes() throws Exception {
-        ClassPathXmlApplicationContext appContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
+        ClassPathXmlApplicationContext appContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
         CamelContext context = appContext.getBean(CamelContext.class);
         assertNotNull(context, "No Camel Context in file: org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
 
@@ -71,5 +72,4 @@ public class HealthCheckRegistryTest {
         context.close();
         appContext.close();
     }
-
 }

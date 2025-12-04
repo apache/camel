@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Endpoint;
@@ -49,8 +50,8 @@ public class FromFtpPollFileOnlyIT extends FtpServerTestSupport {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint
-                = context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/fileonly/?password=admin&binary=false");
+        Endpoint endpoint =
+                context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/fileonly/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");

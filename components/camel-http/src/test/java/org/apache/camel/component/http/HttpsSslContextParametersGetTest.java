@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpsSslContextParametersGetTest extends HttpsGetTest {
 
@@ -31,10 +32,13 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     @Override
     public final void doPreSetup() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .register("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
         localServer.start();
     }
 
@@ -49,12 +53,11 @@ public class HttpsSslContextParametersGetTest extends HttpsGetTest {
     @Test
     public void httpsGet() {
 
-        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
-                                             + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters",
-                exchange1 -> {
-                });
+        Exchange exchange = template.request(
+                "https://localhost:" + localServer.getLocalPort()
+                        + "/mail/?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters",
+                exchange1 -> {});
 
         assertExchange(exchange);
     }
-
 }

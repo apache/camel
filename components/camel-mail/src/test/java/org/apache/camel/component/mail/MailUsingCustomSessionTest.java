@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class MailUsingCustomSessionTest extends CamelTestSupport {
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
 
@@ -50,7 +51,8 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
     public void testEndpointConfigurationWithCustomSession() {
         // Verify that the mail session bound to the bean registry is identical
         // to the session tied to the endpoint configuration
-        assertSame(mailSession, getEndpointMailSession(james.uriPrefix(Protocol.smtp) + "&session=#myCustomMailSession"));
+        assertSame(
+                mailSession, getEndpointMailSession(james.uriPrefix(Protocol.smtp) + "&session=#myCustomMailSession"));
     }
 
     @Test
@@ -60,7 +62,8 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("subject", "Hello Camel");
-        template.sendBodyAndHeaders(james.uriPrefix(Protocol.smtp) + "&session=#myCustomMailSession", "hello camel!", headers);
+        template.sendBodyAndHeaders(
+                james.uriPrefix(Protocol.smtp) + "&session=#myCustomMailSession", "hello camel!", headers);
 
         mockEndpoint.assertIsSatisfied();
 

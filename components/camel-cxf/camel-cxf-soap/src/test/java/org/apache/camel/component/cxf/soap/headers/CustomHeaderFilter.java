@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.soap.headers;
 
 import java.util.Arrays;
@@ -34,7 +35,5 @@ public class CustomHeaderFilter implements MessageHeaderFilter {
     }
 
     @Override
-    public void filter(Direction direction, List<Header> headers) {
-    }
-
+    public void filter(Direction direction, List<Header> headers) {}
 }

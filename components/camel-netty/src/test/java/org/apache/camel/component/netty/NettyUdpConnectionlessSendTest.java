@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -33,9 +37,6 @@ import io.netty.util.CharsetUtil;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 20;
@@ -46,7 +47,8 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
     public void createNettyUdpReceiver() {
         group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
-        bootstrap.group(group)
+        bootstrap
+                .group(group)
                 .channel(NioDatagramChannel.class)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
@@ -54,7 +56,8 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
                         channel.pipeline().addLast(new UdpHandler());
                         channel.pipeline().addLast(new ContentHandler());
                     }
-                }).localAddress(new InetSocketAddress(getPort()));
+                })
+                .localAddress(new InetSocketAddress(getPort()));
     }
 
     public void bind() {
@@ -74,7 +77,6 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
         }
         stop();
         assertTrue(receivedCount > 0, "We should have received some datagrams");
-
     }
 
     @Test
@@ -95,7 +97,8 @@ public class NettyUdpConnectionlessSendTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in").to("netty:udp://localhost:{{port}}?sync=false&textline=true&udpConnectionlessSending=true");
+                from("direct:in")
+                        .to("netty:udp://localhost:{{port}}?sync=false&textline=true&udpConnectionlessSending=true");
             }
         };
     }

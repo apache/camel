@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -34,8 +37,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
 /**
  *
  */
@@ -44,6 +45,7 @@ public class FileRouteJmsPreMoveIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -58,10 +60,11 @@ public class FileRouteJmsPreMoveIT extends AbstractJMSTest {
     @Test
     public void testPreMove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedFileExists("target/FileRouteJmsPreMoveIT/outbox/hello.txt", "Hello World");
+        getMockEndpoint("mock:result")
+                .expectedFileExists("target/FileRouteJmsPreMoveIT/outbox/hello.txt", "Hello World");
 
-        template.sendBodyAndHeader("file://target/FileRouteJmsPreMoveIT/inbox", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                "file://target/FileRouteJmsPreMoveIT/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,10 +37,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for moveTo.
@@ -55,7 +56,8 @@ public class MailMoveToTest extends CamelTestSupport {
         mock.expectedMessageCount(5);
         MockEndpoint.assertIsSatisfied(context);
 
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(0, jones.getInbox().getMessageCount()));
         assertEquals(0, jones.getInbox().getNewMessageCount());
 
@@ -76,7 +78,8 @@ public class MailMoveToTest extends CamelTestSupport {
         mock.expectedMessageCount(5);
         MockEndpoint.assertIsSatisfied(context);
 
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(0, jones2.getInbox().getMessageCount()));
         assertEquals(0, jones2.getInbox().getNewMessageCount());
         assertEquals(5, jones2.getFolder("moveToFolder").getNewMessageCount());
@@ -90,7 +93,7 @@ public class MailMoveToTest extends CamelTestSupport {
 
     private void prepareMailbox() throws Exception {
         Mailbox.clearAll();
-        MailboxUser[] mailUser = new MailboxUser[] { jones, jones2 };
+        MailboxUser[] mailUser = new MailboxUser[] {jones, jones2};
         for (MailboxUser user : mailUser) {
             JavaMailSender sender = new DefaultJavaMailSender();
             Store store = sender.getSession().getStore("imap");
@@ -113,16 +116,21 @@ public class MailMoveToTest extends CamelTestSupport {
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
-        return new RoutesBuilder[] { new RouteBuilder() {
-            public void configure() {
-                from(jones.uriPrefix(Protocol.imap) + "&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100")
-                        .to("mock:result");
+        return new RoutesBuilder[] {
+            new RouteBuilder() {
+                public void configure() {
+                    from(jones.uriPrefix(Protocol.imap)
+                                    + "&delete=false&moveTo=moveToFolder&initialDelay=100&delay=100")
+                            .to("mock:result");
+                }
+            },
+            new RouteBuilder() {
+                public void configure() {
+                    from(jones2.uriPrefix(Protocol.imap)
+                                    + "&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100")
+                            .to("mock:result2");
+                }
             }
-        }, new RouteBuilder() {
-            public void configure() {
-                from(jones2.uriPrefix(Protocol.imap) + "&delete=true&moveTo=moveToFolder&initialDelay=100&delay=100")
-                        .to("mock:result2");
-            }
-        } };
+        };
     }
 }

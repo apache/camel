@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -26,8 +29,6 @@ import org.apache.camel.tracing.MockSpanAdapter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class AzureStorageQueueSpanDecoratorTest {
 
     @Test
@@ -37,7 +38,8 @@ public class AzureStorageQueueSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.MESSAGE_ID, String.class)).thenReturn(messageId);
+        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.MESSAGE_ID, String.class))
+                .thenReturn(messageId);
 
         AbstractMessagingSpanDecorator decorator = new AzureStorageQueueSpanDecorator();
 
@@ -66,11 +68,14 @@ public class AzureStorageQueueSpanDecoratorTest {
                 .thenReturn(expirationTime);
         Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.TIME_NEXT_VISIBLE, OffsetDateTime.class))
                 .thenReturn(timeNextVisible);
-        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.DEQUEUE_COUNT, Long.class)).thenReturn(dequeueCount);
-        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.NAME, String.class)).thenReturn(name);
+        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.DEQUEUE_COUNT, Long.class))
+                .thenReturn(dequeueCount);
+        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.NAME, String.class))
+                .thenReturn(name);
         Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.VISIBILITY_TIMEOUT, Duration.class))
                 .thenReturn(visibilityTimeout);
-        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.TIME_TO_LIVE, Duration.class)).thenReturn(timeToLive);
+        Mockito.when(message.getHeader(AzureStorageQueueSpanDecorator.TIME_TO_LIVE, Duration.class))
+                .thenReturn(timeToLive);
 
         AbstractMessagingSpanDecorator decorator = new AzureStorageQueueSpanDecorator();
 
@@ -78,13 +83,18 @@ public class AzureStorageQueueSpanDecoratorTest {
 
         decorator.pre(span, exchange, endpoint);
 
-        assertEquals(insertionTime.toString(), span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_INSERTION_TIME));
-        assertEquals(expirationTime.toString(), span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_EXPIRATION_TIME));
-        assertEquals(timeNextVisible.toString(),
+        assertEquals(
+                insertionTime.toString(), span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_INSERTION_TIME));
+        assertEquals(
+                expirationTime.toString(),
+                span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_EXPIRATION_TIME));
+        assertEquals(
+                timeNextVisible.toString(),
                 span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_TIME_NEXT_VISIBLE));
         assertEquals(dequeueCount, span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_DEQUEUE_COUNT));
         assertEquals(name, span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_NAME));
-        assertEquals(visibilityTimeout.toString(),
+        assertEquals(
+                visibilityTimeout.toString(),
                 span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_VISIBILITY_TIMEOUT));
         assertEquals(timeToLive.toString(), span.tags().get(AzureStorageQueueSpanDecorator.STORAGE_QUEUE_TIME_TO_LIVE));
     }

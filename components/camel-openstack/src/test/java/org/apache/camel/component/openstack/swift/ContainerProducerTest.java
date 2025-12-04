@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.swift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,15 +45,6 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.object.SwiftContainer;
 import org.openstack4j.model.storage.object.options.ContainerListOptions;
 import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ContainerProducerTest extends SwiftProducerTestSupport {
@@ -96,7 +97,8 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         when(containerService.create(anyString(), any())).thenReturn(ActionResponse.actionSuccess());
         msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-        final CreateUpdateContainerOptions options = CreateUpdateContainerOptions.create().accessAnybodyRead();
+        final CreateUpdateContainerOptions options =
+                CreateUpdateContainerOptions.create().accessAnybodyRead();
         msg.setBody(options);
         producer.process(exchange);
 

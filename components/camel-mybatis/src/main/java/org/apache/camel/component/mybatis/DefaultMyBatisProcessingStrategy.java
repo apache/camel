@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import java.util.List;
@@ -24,7 +25,8 @@ import org.apache.ibatis.session.SqlSession;
 public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrategy {
 
     @Override
-    public void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {
+    public void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements)
+            throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
         String[] statements = consumeStatements.split(",");
         try {

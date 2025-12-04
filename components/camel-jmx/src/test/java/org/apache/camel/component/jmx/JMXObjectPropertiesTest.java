@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -23,8 +26,6 @@ import javax.management.MalformedObjectNameException;
 
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Tests that the objectName is created with the hashtable of objectProperties
@@ -53,5 +54,4 @@ public class JMXObjectPropertiesTest extends SimpleBeanFixture {
         ht.put("name", "simpleBean");
         getRegistry().bind("myTable", ht);
     }
-
 }

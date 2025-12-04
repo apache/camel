@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -24,17 +30,11 @@ import org.apache.hc.client5.http.routing.HttpRoutePlanner;
 import org.apache.hc.core5.http.HttpHost;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testBasicProxyConfiguration() throws Exception {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http");
+        ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http");
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -48,22 +48,23 @@ public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testProxyConfigurationWithNonProxyHosts() throws Exception {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", "localhost,127.0.0.1");
+        ProxyHttpClientConfigurer configurer =
+                new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", "localhost,127.0.0.1");
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
 
         HttpRoutePlanner routePlanner = getRoutePlannerFromBuilder(builder);
         assertNotNull(routePlanner, "Route planner should be configured");
-        assertInstanceOf(CamelProxyRoutePlanner.class, routePlanner,
+        assertInstanceOf(
+                CamelProxyRoutePlanner.class,
+                routePlanner,
                 "Should use CamelProxyRoutePlanner when nonProxyHosts is configured");
     }
 
     @Test
     public void testProxyConfigurationWithEmptyNonProxyHosts() throws Exception {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", "");
+        ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", "");
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -74,8 +75,8 @@ public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testProxyConfigurationWithNullNonProxyHosts() throws Exception {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", (String) null);
+        ProxyHttpClientConfigurer configurer =
+                new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", (String) null);
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -86,10 +87,8 @@ public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testNonProxyHostsParsing() {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer(
-                        "proxy.example.com", 8080, "http",
-                        "localhost,127.0.0.1,*.internal.com");
+        ProxyHttpClientConfigurer configurer =
+                new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http", "localhost,127.0.0.1,*.internal.com");
 
         Set<String> nonProxyHosts = getNonProxyHostsFromConfigurer(configurer);
         assertNotNull(nonProxyHosts);
@@ -101,10 +100,8 @@ public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testNonProxyHostsParsingWithSpaces() {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer(
-                        "proxy.example.com", 8080, "http",
-                        " localhost , 127.0.0.1 , *.internal.com ");
+        ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
+                "proxy.example.com", 8080, "http", " localhost , 127.0.0.1 , *.internal.com ");
 
         Set<String> nonProxyHosts = getNonProxyHostsFromConfigurer(configurer);
         assertNotNull(nonProxyHosts);
@@ -116,10 +113,8 @@ public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testNonProxyHostsParsingWithEmptyElements() {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer(
-                        "proxy.example.com", 8080, "http",
-                        "localhost,,127.0.0.1,  ,*.internal.com");
+        ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
+                "proxy.example.com", 8080, "http", "localhost,,127.0.0.1,  ,*.internal.com");
 
         Set<String> nonProxyHosts = getNonProxyHostsFromConfigurer(configurer);
         assertNotNull(nonProxyHosts);
@@ -133,8 +128,7 @@ public class ProxyHttpClientConfigurerTest {
     public void testProxyConfigurationWithCredentials() throws Exception {
         HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
         ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
-                "proxy.example.com", 8080, "http", "testuser", "testpass", null, null,
-                credentialsHelper, null);
+                "proxy.example.com", 8080, "http", "testuser", "testpass", null, null, credentialsHelper, null);
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -143,7 +137,8 @@ public class ProxyHttpClientConfigurerTest {
         assertNotNull(proxy, "Proxy should be configured");
         assertEquals("proxy.example.com", proxy.getHostName());
 
-        assertNotNull(getCredentialsProviderFromBuilder(builder),
+        assertNotNull(
+                getCredentialsProviderFromBuilder(builder),
                 "Credentials provider should be set when username and password are provided");
     }
 
@@ -151,8 +146,15 @@ public class ProxyHttpClientConfigurerTest {
     public void testProxyConfigurationWithNTCredentials() throws Exception {
         HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
         ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
-                "proxy.example.com", 8080, "http", "testuser", "testpass", "DOMAIN", "WORKSTATION",
-                credentialsHelper, null);
+                "proxy.example.com",
+                8080,
+                "http",
+                "testuser",
+                "testpass",
+                "DOMAIN",
+                "WORKSTATION",
+                credentialsHelper,
+                null);
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -160,14 +162,13 @@ public class ProxyHttpClientConfigurerTest {
         HttpHost proxy = getProxyFromBuilder(builder);
         assertNotNull(proxy, "Proxy should be configured");
 
-        assertNotNull(getCredentialsProviderFromBuilder(builder),
-                "Credentials provider should be set for NT credentials");
+        assertNotNull(
+                getCredentialsProviderFromBuilder(builder), "Credentials provider should be set for NT credentials");
     }
 
     @Test
     public void testProxyConfigurationWithoutCredentials() throws Exception {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http");
+        ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer("proxy.example.com", 8080, "http");
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -180,8 +181,7 @@ public class ProxyHttpClientConfigurerTest {
     public void testProxyConfigurationWithNullPassword() throws Exception {
         HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
         ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
-                "proxy.example.com", 8080, "http", "testuser", null, null, null,
-                credentialsHelper, null);
+                "proxy.example.com", 8080, "http", "testuser", null, null, null, credentialsHelper, null);
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -192,8 +192,7 @@ public class ProxyHttpClientConfigurerTest {
 
     @Test
     public void testProxyConfigurationWithHttpsScheme() throws Exception {
-        ProxyHttpClientConfigurer configurer
-                = new ProxyHttpClientConfigurer("proxy.example.com", 8443, "https");
+        ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer("proxy.example.com", 8443, "https");
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -208,8 +207,15 @@ public class ProxyHttpClientConfigurerTest {
     public void testCompleteProxyConfiguration() throws Exception {
         HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
         ProxyHttpClientConfigurer configurer = new ProxyHttpClientConfigurer(
-                "proxy.example.com", 8080, "http", "testuser", "testpass", null, null,
-                credentialsHelper, "localhost,*.internal.com");
+                "proxy.example.com",
+                8080,
+                "http",
+                "testuser",
+                "testpass",
+                null,
+                null,
+                credentialsHelper,
+                "localhost,*.internal.com");
 
         HttpClientBuilder builder = HttpClientBuilder.create();
         configurer.configureHttpClient(builder);
@@ -218,8 +224,7 @@ public class ProxyHttpClientConfigurerTest {
         assertNotNull(routePlanner, "Route planner should be configured");
         assertInstanceOf(CamelProxyRoutePlanner.class, routePlanner);
 
-        assertNotNull(getCredentialsProviderFromBuilder(builder),
-                "Credentials provider should be set");
+        assertNotNull(getCredentialsProviderFromBuilder(builder), "Credentials provider should be set");
 
         Set<String> nonProxyHosts = getNonProxyHostsFromConfigurer(configurer);
         assertEquals(2, nonProxyHosts.size());

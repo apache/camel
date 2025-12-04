@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 import org.slf4j.Logger;
@@ -64,7 +65,8 @@ public class SmppNLSTSplitter extends SmppSplitter {
      * <p/>
      * Each letter will be represented as 7 bit (like GSM8)
      */
-    public static final int MAX_MSG_CHAR_SIZE = (MAX_MSG_BYTE_LENGTH * 8 / 7) - (UDHIE_NLI_SINGLE_MSG_HEADER_REAL_LENGTH + 1);
+    public static final int MAX_MSG_CHAR_SIZE =
+            (MAX_MSG_BYTE_LENGTH * 8 / 7) - (UDHIE_NLI_SINGLE_MSG_HEADER_REAL_LENGTH + 1);
 
     public static final int MAX_SEG_BYTE_SIZE = (MAX_MSG_BYTE_LENGTH - UDHIE_NLI_MULTI_MSG_HEADER_REAL_LENGTH) * 8 / 7;
 
@@ -72,6 +74,7 @@ public class SmppNLSTSplitter extends SmppSplitter {
      * Locking shift table indicator for the Language, single byte
      */
     private byte languageIdentifier;
+
     private final Logger logger = LoggerFactory.getLogger(SmppNLSTSplitter.class);
 
     public SmppNLSTSplitter(int currentLength, byte languageIdentifier) {
@@ -88,7 +91,7 @@ public class SmppNLSTSplitter extends SmppSplitter {
             nliMessage[2] = (byte) UDHIE_NLI_HEADER_LENGTH;
             nliMessage[3] = this.languageIdentifier;
             System.arraycopy(message, 0, nliMessage, 4, message.length);
-            return new byte[][] { nliMessage };
+            return new byte[][] {nliMessage};
         }
 
         int segmentLength = getSegmentLength();
@@ -139,7 +142,8 @@ public class SmppNLSTSplitter extends SmppSplitter {
             segments[i][8] = this.languageIdentifier;
 
             // now copy the data
-            System.arraycopy(message, i * segmentLength, segments[i], UDHIE_NLI_MULTI_MSG_HEADER_REAL_LENGTH, lengthOfData);
+            System.arraycopy(
+                    message, i * segmentLength, segments[i], UDHIE_NLI_MULTI_MSG_HEADER_REAL_LENGTH, lengthOfData);
         }
         return segments;
     }

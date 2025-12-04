@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.HashMap;
@@ -72,7 +73,14 @@ public class RoutePerformanceTest extends ContextTestSupport {
                 from("dataset:foo").to("direct:start");
 
                 from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
-                from("direct:c").choice().when().header("foo").to(uri, "dataset:foo").otherwise().to(uri, "dataset:foo").end();
+                from("direct:c")
+                        .choice()
+                        .when()
+                        .header("foo")
+                        .to(uri, "dataset:foo")
+                        .otherwise()
+                        .to(uri, "dataset:foo")
+                        .end();
             }
         };
     }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat;
+
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.PROMPT_TEMPLATE;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,17 +43,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.AUGMENTED_DATA;
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChatHeaders.PROMPT_TEMPLATE;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jChatIT extends OllamaTestSupport {
 
-    final static String AUGMENTEG_DATA_FOR_RAG
-            = "Sweden's Armand Duplantis set a new world record of 6.25m after winning gold in the men's pole vault at Paris 2024 Olympics.";
-    final static String QUESTION_FOR_RAG = "Who got the gold medal in pole vault at Paris 2024?";
+    static final String AUGMENTEG_DATA_FOR_RAG =
+            "Sweden's Armand Duplantis set a new world record of 6.25m after winning gold in the men's pole vault at Paris 2024 Olympics.";
+    static final String QUESTION_FOR_RAG = "Who got the gold medal in pole vault at Paris 2024?";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -59,28 +60,28 @@ public class LangChain4jChatIT extends OllamaTestSupport {
                 from("direct:send-simple-message")
                         .to("langchain4j-chat:test1?chatModel=#chatModel&chatOperation=CHAT_SINGLE_MESSAGE")
                         .onException(InvalidPayloadException.class) // Handle InvalidPayloadException
-                            .handled(true)
-                            .to("mock:invalid-payload")
+                        .handled(true)
+                        .to("mock:invalid-payload")
                         .end()
                         .to("mock:response");
 
                 from("direct:send-message-prompt")
                         .to("langchain4j-chat:test2?chatModel=#chatModel&chatOperation=CHAT_SINGLE_MESSAGE_WITH_PROMPT")
                         .onException(InvalidPayloadException.class) // Handle InvalidPayloadException
-                            .handled(true)
-                            .to("mock:invalid-payload")
+                        .handled(true)
+                        .to("mock:invalid-payload")
                         .end()
                         .onException(NoSuchHeaderException.class) // Handle NoSuchHeaderException
-                            .handled(true)
-                            .to("mock:invalid-header")
+                        .handled(true)
+                        .to("mock:invalid-header")
                         .end()
                         .to("mock:response");
 
                 from("direct:send-multiple")
                         .to("langchain4j-chat:test2?chatModel=#chatModel&chatOperation=CHAT_MULTIPLE_MESSAGES")
                         .onException(InvalidPayloadException.class) // Handle InvalidPayloadException
-                            .handled(true)
-                            .to("mock:invalid-payload")
+                        .handled(true)
+                        .to("mock:invalid-payload")
                         .end()
                         .to("mock:response");
 
@@ -96,13 +97,10 @@ public class LangChain4jChatIT extends OllamaTestSupport {
                         .enrich("direct:add-augmented-data", aggregatorStrategy)
                         .to("direct:send-multiple");
 
-                from("direct:add-augmented-data")
-                        .process(exchange -> {
-                            List<String> augmentedData = List.of(
-                                    AUGMENTEG_DATA_FOR_RAG);
-                            exchange.getIn().setBody(augmentedData);
-                        });
-
+                from("direct:add-augmented-data").process(exchange -> {
+                    List<String> augmentedData = List.of(AUGMENTEG_DATA_FOR_RAG);
+                    exchange.getIn().setBody(augmentedData);
+                });
             }
         };
     }
@@ -112,7 +110,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:send-simple-message", "Hello my name is Darth Vader!", String.class);
+        String response =
+                template.requestBody("direct:send-simple-message", "Hello my name is Darth Vader!", String.class);
         mockEndpoint.assertIsSatisfied();
     }
 
@@ -123,8 +122,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
 
         ChatMessage userMessage = new UserMessage("Hello my name is Darth Vader!");
 
-        String response = template.requestBody("direct:send-simple-message", userMessage,
-                String.class);
+        String response = template.requestBody("direct:send-simple-message", userMessage, String.class);
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response);
     }
@@ -151,8 +149,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         variables.put("dishType", "oven dish");
         variables.put("ingredients", "potato, tomato, feta, olive oil");
 
-        String response = template.requestBodyAndHeader("direct:send-message-prompt", variables,
-                PROMPT_TEMPLATE, promptTemplate, String.class);
+        String response = template.requestBodyAndHeader(
+                "direct:send-message-prompt", variables, PROMPT_TEMPLATE, promptTemplate, String.class);
         mockEndpoint.assertIsSatisfied();
 
         assertTrue(response.contains("potato"));
@@ -172,7 +170,6 @@ public class LangChain4jChatIT extends OllamaTestSupport {
 
         template.sendBody("direct:send-message-prompt", variables);
         mockEndpoint.assertIsSatisfied();
-
     }
 
     @Test
@@ -183,8 +180,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         // Example copied from Langchain4j examples
         var promptTemplate = "Create a recipe for a {{dishType}} with the following ingredients: {{ingredients}}";
 
-        template.sendBodyAndHeader("direct:send-message-prompt", null,
-                PROMPT_TEMPLATE, promptTemplate);
+        template.sendBodyAndHeader("direct:send-message-prompt", null, PROMPT_TEMPLATE, promptTemplate);
         mockEndpoint.assertIsSatisfied();
     }
 
@@ -194,7 +190,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage("You are asked to provide recommendations for a restaurant based on user reviews."));
+        messages.add(
+                new SystemMessage("You are asked to provide recommendations for a restaurant based on user reviews."));
         messages.add(new UserMessage("Hello, my name is Karen."));
         messages.add(new AiMessage("Hello Karen, how can I help you?"));
         messages.add(new UserMessage("I'd like you to recommend a restaurant for me."));
@@ -224,8 +221,7 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        var response = template.requestBody("direct:send-with-rag", QUESTION_FOR_RAG,
-                String.class);
+        var response = template.requestBody("direct:send-with-rag", QUESTION_FOR_RAG, String.class);
 
         // this test could change if using an LLM updated after results of Olympics 2024
         assertTrue(response.toLowerCase().contains("armand duplantis"));
@@ -242,8 +238,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
 
         List<Content> contents = List.of(augmentedContent);
 
-        var response = template.requestBodyAndHeader("direct:send-simple-message", QUESTION_FOR_RAG,
-                AUGMENTED_DATA, contents, String.class);
+        var response = template.requestBodyAndHeader(
+                "direct:send-simple-message", QUESTION_FOR_RAG, AUGMENTED_DATA, contents, String.class);
 
         // this test could change if using an LLM updated after results of Olympics 2024
         assertTrue(response.toLowerCase().contains("armand duplantis"));
@@ -261,8 +257,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         variables.put("field", "pole vault");
         variables.put("competition", "Paris 2024");
 
-        String response = template.requestBodyAndHeader("direct:send-message-prompt-enrich", variables,
-                PROMPT_TEMPLATE, promptTemplate, String.class);
+        String response = template.requestBodyAndHeader(
+                "direct:send-message-prompt-enrich", variables, PROMPT_TEMPLATE, promptTemplate, String.class);
         mockEndpoint.assertIsSatisfied();
 
         // this test could change if using an LLM updated after results of Olympics 2024
@@ -288,8 +284,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         headerValues.put(PROMPT_TEMPLATE, promptTemplate);
         headerValues.put(AUGMENTED_DATA, contents);
 
-        String response = template.requestBodyAndHeaders("direct:send-message-prompt", variables,
-                headerValues, String.class);
+        String response =
+                template.requestBodyAndHeaders("direct:send-message-prompt", variables, headerValues, String.class);
         mockEndpoint.assertIsSatisfied();
 
         // this test could change if using an LLM updated after results of Olympics 2024
@@ -302,7 +298,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage("You are asked to provide names for athletes that won medals at Paris 2024 Olympics."));
+        messages.add(new SystemMessage(
+                "You are asked to provide names for athletes that won medals at Paris 2024 Olympics."));
         messages.add(new UserMessage("Hello, my name is Karen."));
         messages.add(new AiMessage("Hello Karen, how can I help you?"));
         messages.add(new UserMessage(QUESTION_FOR_RAG));
@@ -320,7 +317,8 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage("You are asked to provide names for athletes that won medals at Paris 2024 Olympics."));
+        messages.add(new SystemMessage(
+                "You are asked to provide names for athletes that won medals at Paris 2024 Olympics."));
         messages.add(new UserMessage("Hello, my name is Karen."));
         messages.add(new AiMessage("Hello Karen, how can I help you?"));
         messages.add(new UserMessage(QUESTION_FOR_RAG));
@@ -328,13 +326,11 @@ public class LangChain4jChatIT extends OllamaTestSupport {
         Content augmentedContent = new DefaultContent(AUGMENTEG_DATA_FOR_RAG);
         List<Content> contents = List.of(augmentedContent);
 
-        String response
-                = template.requestBodyAndHeader("direct:send-multiple", messages, AUGMENTED_DATA, contents, String.class);
+        String response =
+                template.requestBodyAndHeader("direct:send-multiple", messages, AUGMENTED_DATA, contents, String.class);
         mockEndpoint.assertIsSatisfied();
 
         // this test could change if using an LLM updated after results of Olympics 2024
         assertTrue(response.toLowerCase().contains("armand duplantis"));
-
     }
-
 }

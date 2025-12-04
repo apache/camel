@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.namespaces;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NAMESPACES;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,17 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NAMESPACES;
-
 /**
  * Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NAMESPACES, title = "Kubernetes Namespaces",
-             syntax = "kubernetes-namespaces:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_NAMESPACES,
+        title = "Kubernetes Namespaces",
+        syntax = "kubernetes-namespaces:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {
+    public KubernetesNamespacesEndpoint(
+            String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -49,7 +55,5 @@ public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
         Consumer consumer = new KubernetesNamespacesConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-
     }
-
 }

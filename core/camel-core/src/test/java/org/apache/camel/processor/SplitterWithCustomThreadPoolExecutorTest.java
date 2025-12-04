@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,24 +31,25 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
-    protected final ThreadPoolExecutor customThreadPoolExecutor
-            = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+    protected final ThreadPoolExecutor customThreadPoolExecutor =
+            new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
     @Test
     public void testSplitterWithCustomThreadPoolExecutor() {
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorServiceBean();
+        ThreadPoolExecutor threadPoolExecutor =
+                (ThreadPoolExecutor) getSplitter().getExecutorServiceBean();
         if (threadPoolExecutor == null) {
-            threadPoolExecutor = context.getRegistry().lookupByNameAndType(getSplitter().getExecutorService(),
-                    ThreadPoolExecutor.class);
+            threadPoolExecutor = context.getRegistry()
+                    .lookupByNameAndType(getSplitter().getExecutorService(), ThreadPoolExecutor.class);
         }
         // this should be sufficient as core pool size is the only thing I
         // changed from the default
-        assertEquals(threadPoolExecutor.getCorePoolSize(), getThreadPoolExecutor().getCorePoolSize());
-        assertEquals(threadPoolExecutor.getMaximumPoolSize(), getThreadPoolExecutor().getMaximumPoolSize());
+        assertEquals(
+                threadPoolExecutor.getCorePoolSize(), getThreadPoolExecutor().getCorePoolSize());
+        assertEquals(
+                threadPoolExecutor.getMaximumPoolSize(), getThreadPoolExecutor().getMaximumPoolSize());
     }
 
     protected ThreadPoolExecutor getThreadPoolExecutor() {
@@ -84,8 +88,11 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:parallel-custom-pool").split(body().tokenize(",")).parallelProcessing()
-                        .executorService(customThreadPoolExecutor).to("mock:result");
+                from("direct:parallel-custom-pool")
+                        .split(body().tokenize(","))
+                        .parallelProcessing()
+                        .executorService(customThreadPoolExecutor)
+                        .to("mock:result");
             }
         };
     }

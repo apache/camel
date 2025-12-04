@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson;
 
 public final class GsonConstants {
 
     public static final String UNMARSHAL_TYPE = "CamelGsonUnmarshalType";
 
-    private GsonConstants() {
-    }
+    private GsonConstants() {}
 }

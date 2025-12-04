@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.util;
 
 import org.apache.camel.CamelContext;
@@ -35,5 +36,4 @@ public final class CamelContextResolverHelper {
             throw new IllegalArgumentException("Cannot find the CamelContext with id " + contextId, e);
         }
     }
-
 }

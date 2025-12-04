@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,9 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @Disabled("https://github.com/wiremock/wiremock/issues/3133")
 public class Olingo4ComponentProducerBatchTest extends AbstractOlingo4TestSupport {
 
@@ -58,45 +59,65 @@ public class Olingo4ComponentProducerBatchTest extends AbstractOlingo4TestSuppor
         final List<Olingo4BatchRequest> batchParts = new ArrayList<>();
         String resourceUri = ODATA_API_BASE_URL;
         // 1. Edm query
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(Constants.METADATA).resourceUri(resourceUri)
-                .headers(Map.of("Content-Disposition", "test")).headers(Map.of("Content-Disposition", "test")).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(Constants.METADATA)
+                .resourceUri(resourceUri)
+                .headers(Map.of("Content-Disposition", "test"))
+                .headers(Map.of("Content-Disposition", "test"))
+                .build());
 
         // 2. Read entities
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE).resourceUri(resourceUri)
-                .headers(Map.of("Content-Disposition", "test")).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE)
+                .resourceUri(resourceUri)
+                .headers(Map.of("Content-Disposition", "test"))
+                .build());
 
         // 3. Read entity
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE).resourceUri(resourceUri)
-                .headers(Map.of("Content-Disposition", "test")).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_PEOPLE)
+                .resourceUri(resourceUri)
+                .headers(Map.of("Content-Disposition", "test"))
+                .build());
 
         // 4. Read with $top
         final HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put(SystemQueryOptionKind.TOP.toString(), "5");
-        batchParts
-                .add(Olingo4BatchQueryRequest.resourcePath(PEOPLE).resourceUri(resourceUri)
-                        .headers(Map.of("Content-Disposition", "test")).queryParams(queryParams)
-                        .build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE)
+                .resourceUri(resourceUri)
+                .headers(Map.of("Content-Disposition", "test"))
+                .queryParams(queryParams)
+                .build());
 
         // 5. Create entity
         ClientEntity clientEntity = createEntity();
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(PEOPLE).resourceUri(resourceUri)
-                .contentId(TEST_CREATE_RESOURCE_CONTENT_ID).operation(Operation.CREATE)
-                .body(clientEntity).build());
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(PEOPLE)
+                .resourceUri(resourceUri)
+                .contentId(TEST_CREATE_RESOURCE_CONTENT_ID)
+                .operation(Operation.CREATE)
+                .body(clientEntity)
+                .build());
 
         // 6. Update middle name in created entry
-        clientEntity.getProperties()
-                .add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(resourceUri)
+        clientEntity
+                .getProperties()
+                .add(objFactory.newPrimitiveProperty(
+                        "MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE)
+                .resourceUri(resourceUri)
                 .contentId(TEST_UPDATE_RESOURCE_CONTENT_ID)
-                .operation(Operation.UPDATE).body(clientEntity).build());
+                .operation(Operation.UPDATE)
+                .body(clientEntity)
+                .build());
 
         // 7. Delete entity
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(resourceUri)
-                .operation(Operation.DELETE).build());
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE)
+                .resourceUri(resourceUri)
+                .operation(Operation.DELETE)
+                .build());
 
         // 8. Read deleted entity to verify delete
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(resourceUri)
-                .headers(Map.of("Content-Disposition", "test")).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_CREATE_PEOPLE)
+                .resourceUri(resourceUri)
+                .headers(Map.of("Content-Disposition", "test"))
+                .build());
 
         // execute batch request
         final List<Olingo4BatchResponse> responseParts = requestBody("direct:batch", batchParts);
@@ -115,7 +136,8 @@ public class Olingo4ComponentProducerBatchTest extends AbstractOlingo4TestSuppor
         assertNotNull(clientEntity);
         LOG.info("Read entiry properties: {}", clientEntity.getProperties());
 
-        ClientEntitySet entitySetWithTop = (ClientEntitySet) responseParts.get(3).getBody();
+        ClientEntitySet entitySetWithTop =
+                (ClientEntitySet) responseParts.get(3).getBody();
         assertNotNull(entitySetWithTop);
         assertEquals(5, entitySetWithTop.getEntities().size());
         LOG.info("Read entities with $top=5: {}", entitySet.getEntities());
@@ -132,7 +154,8 @@ public class Olingo4ComponentProducerBatchTest extends AbstractOlingo4TestSuppor
         assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), statusCode);
         LOG.info("Delete entity status: {}", statusCode);
 
-        assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
+        assertEquals(
+                HttpStatusCode.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
         final ODataError error = (ODataError) responseParts.get(7).getBody();
         assertNotNull(error);
         LOG.info("Read deleted entity error: {}", error.getMessage());

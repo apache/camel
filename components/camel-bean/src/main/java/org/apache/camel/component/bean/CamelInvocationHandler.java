@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.InvocationHandler;
@@ -30,7 +31,8 @@ public class CamelInvocationHandler extends AbstractCamelInvocationHandler imple
     private final MethodInfoCache methodInfoCache;
     private final boolean binding;
 
-    public CamelInvocationHandler(Endpoint endpoint, boolean binding, Producer producer, MethodInfoCache methodInfoCache) {
+    public CamelInvocationHandler(
+            Endpoint endpoint, boolean binding, Producer producer, MethodInfoCache methodInfoCache) {
         super(endpoint, producer);
         this.binding = binding;
         this.methodInfoCache = methodInfoCache;
@@ -42,5 +44,4 @@ public class CamelInvocationHandler extends AbstractCamelInvocationHandler imple
         final ExchangePattern pattern = methodInfo != null ? methodInfo.getPattern() : ExchangePattern.InOut;
         return invokeProxy(method, pattern, args, binding);
     }
-
 }

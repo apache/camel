@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.mqseries;
+
+import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +39,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
-
 /**
  * Let us test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
  * one destination to another
@@ -47,6 +48,7 @@ public class MQSeriesHeaderIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(MQSeriesHeaderIT.class);
     protected CamelContext context;
     protected ProducerTemplate template;

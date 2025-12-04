@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
 
 import java.io.CharArrayWriter;
@@ -45,14 +46,12 @@ class XMLStreamReaderReader extends Reader {
         try {
             this.writer = outfactory.createXMLStreamWriter(chunk);
         } catch (XMLStreamException e) {
-            //ignore
+            // ignore
         }
     }
 
     @Override
-    public void close() throws IOException {
-
-    }
+    public void close() throws IOException {}
 
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
@@ -96,7 +95,8 @@ class XMLStreamReaderReader extends Reader {
                             writer.writeStartElement(qname.getPrefix(), qname.getLocalPart(), qname.getNamespaceURI());
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
                                 writer.writeAttribute(
-                                        reader.getAttributePrefix(i), reader.getAttributeNamespace(i),
+                                        reader.getAttributePrefix(i),
+                                        reader.getAttributeNamespace(i),
                                         reader.getAttributeLocalName(i),
                                         reader.getAttributeValue(i));
                             }

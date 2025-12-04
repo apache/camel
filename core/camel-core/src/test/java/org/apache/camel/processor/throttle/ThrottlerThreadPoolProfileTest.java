@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,7 +36,6 @@ public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Override
@@ -43,11 +43,17 @@ public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // create thread pool profile and register to camel
-                ThreadPoolProfile profile
-                        = new ThreadPoolProfileBuilder("myPool").poolSize(2).maxPoolSize(5).maxQueueSize(10).build();
+                ThreadPoolProfile profile = new ThreadPoolProfileBuilder("myPool")
+                        .poolSize(2)
+                        .maxPoolSize(5)
+                        .maxQueueSize(10)
+                        .build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").throttle(constant(2)).executorService("myPool").to("mock:result");
+                from("direct:start")
+                        .throttle(constant(2))
+                        .executorService("myPool")
+                        .to("mock:result");
             }
         };
     }

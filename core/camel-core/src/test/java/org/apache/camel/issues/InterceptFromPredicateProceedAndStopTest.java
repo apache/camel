@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -135,7 +136,10 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
     public void testInterceptorWithPredicateAndStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                interceptFrom().onWhen(header("user").isEqualTo("test")).to("mock:test").stop();
+                interceptFrom()
+                        .onWhen(header("user").isEqualTo("test"))
+                        .to("mock:test")
+                        .stop();
                 from("seda:order").to("mock:ok");
             }
         });
@@ -151,5 +155,4 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
         mockTest.assertIsSatisfied();
         mockOk.assertIsSatisfied();
     }
-
 }

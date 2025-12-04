@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.neo4j.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class Neo4jServiceFactory {
-    private Neo4jServiceFactory() {
-
-    }
+    private Neo4jServiceFactory() {}
 
     public static class SingletonNeo4jService extends SingletonService<Neo4jService> implements Neo4jService {
 
@@ -63,9 +62,7 @@ public final class Neo4jServiceFactory {
                 .build();
     }
 
-    public static class Neo4jLocalContainerService extends Neo4jLocalContainerInfraService implements Neo4jService {
-    }
+    public static class Neo4jLocalContainerService extends Neo4jLocalContainerInfraService implements Neo4jService {}
 
-    public static class Neo4jRemoteService extends Neo4jRemoteInfraService implements Neo4jService {
-    }
+    public static class Neo4jRemoteService extends Neo4jRemoteInfraService implements Neo4jService {}
 }

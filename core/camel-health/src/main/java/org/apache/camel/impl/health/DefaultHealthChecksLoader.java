@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.ArrayList;
@@ -70,7 +71,8 @@ public class DefaultHealthChecksLoader {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error during scanning for custom health-checks on classpath due to: {}. This exception is ignored.",
+            LOG.warn(
+                    "Error during scanning for custom health-checks on classpath due to: {}. This exception is ignored.",
                     e.getMessage());
         }
 
@@ -100,5 +102,4 @@ public class DefaultHealthChecksLoader {
         }
         return loc;
     }
-
 }

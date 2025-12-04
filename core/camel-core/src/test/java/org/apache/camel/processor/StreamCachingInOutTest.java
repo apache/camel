@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 
@@ -24,9 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StreamCachingInOutTest extends ContextTestSupport {
     private static final String TEST_FILE = "org/apache/camel/processor/simple.txt";
@@ -40,7 +41,9 @@ public class StreamCachingInOutTest extends ContextTestSupport {
         template.sendBody("direct:c", message);
 
         assertMockEndpointsSatisfied();
-        assertEquals("James,Guillaume,Hiram,Rob,Roman", c.assertExchangeReceived(0).getIn().getBody(String.class));
+        assertEquals(
+                "James,Guillaume,Hiram,Rob,Roman",
+                c.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
     @Test
@@ -52,7 +55,9 @@ public class StreamCachingInOutTest extends ContextTestSupport {
         template.sendBody("direct:e", message);
 
         assertMockEndpointsSatisfied();
-        assertEquals("James,Guillaume,Hiram,Rob,Roman", e.assertExchangeReceived(0).getIn().getBody(String.class));
+        assertEquals(
+                "James,Guillaume,Hiram,Rob,Roman",
+                e.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
     @Override
@@ -61,9 +66,17 @@ public class StreamCachingInOutTest extends ContextTestSupport {
             @Override
             public void configure() {
                 context.getStreamCachingStrategy().setSpoolThreshold(1);
-                from("direct:c").noStreamCaching().to("direct:d").convertBodyTo(String.class).to("mock:c");
+                from("direct:c")
+                        .noStreamCaching()
+                        .to("direct:d")
+                        .convertBodyTo(String.class)
+                        .to("mock:c");
                 from("direct:d").streamCaching().process(new TestProcessor());
-                from("direct:e").noStreamCaching().to("direct:f").convertBodyTo(String.class).to("mock:e");
+                from("direct:e")
+                        .noStreamCaching()
+                        .to("direct:f")
+                        .convertBodyTo(String.class)
+                        .to("mock:e");
                 from("direct:f").streamCaching().process(new TestProcessor());
             }
         };

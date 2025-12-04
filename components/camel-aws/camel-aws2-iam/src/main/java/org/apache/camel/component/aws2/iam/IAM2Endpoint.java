@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import software.amazon.awssdk.services.iam.IamClient;
 /**
  * Manage AWS IAM instances.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-iam", title = "AWS Identity and Access Management (IAM)",
-             syntax = "aws2-iam:label", producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT },
-             headersClass = IAM2Constants.class)
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-iam",
+        title = "AWS Identity and Access Management (IAM)",
+        syntax = "aws2-iam:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.MANAGEMENT},
+        headersClass = IAM2Constants.class)
 public class IAM2Endpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private IamClient iamClient;

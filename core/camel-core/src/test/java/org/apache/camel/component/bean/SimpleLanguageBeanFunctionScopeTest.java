@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -79,20 +80,31 @@ public class SimpleLanguageBeanFunctionScopeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:single").choice().when().simple("${bean:foo?scope=Singleton}").to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:single")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?scope=Singleton}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:proto").choice().when().simple("${bean:foo?scope=Prototype}").to("mock:result")
-                        .otherwise().to("mock:other");
+                from("direct:proto")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?scope=Prototype}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
 
-                from("direct:request")
-                        .to("direct:sub")
-                        .to("direct:sub")
-                        .to("direct:sub");
+                from("direct:request").to("direct:sub").to("direct:sub").to("direct:sub");
 
-                from("direct:sub").choice().when().simple("${bean:foo?scope=Request}").to("mock:result")
-                        .otherwise().to("mock:other");
-
+                from("direct:sub")
+                        .choice()
+                        .when()
+                        .simple("${bean:foo?scope=Request}")
+                        .to("mock:result")
+                        .otherwise()
+                        .to("mock:other");
             }
         };
     }
@@ -105,5 +117,4 @@ public class SimpleLanguageBeanFunctionScopeTest extends ContextTestSupport {
             return ++counter < 3;
         }
     }
-
 }

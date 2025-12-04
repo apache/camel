@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.util.function.Function;
@@ -35,22 +36,36 @@ public enum ServiceNowParams implements ServiceNowParam {
     SYSPARM_TYPE("sysparm_type", ServiceNowConstants.SYSPARM_TYPE, String.class),
     SYSPARM_CATALOG("sysparm_catalog", ServiceNowConstants.SYSPARM_CATALOG, String.class),
     SYSPARM_QUERY("sysparm_query", ServiceNowConstants.SYSPARM_QUERY, String.class),
-    SYSPARM_DISPLAY_VALUE("sysparm_display_value", ServiceNowConstants.SYSPARM_DISPLAY_VALUE, String.class,
-                          ServiceNowConfiguration::getDisplayValue),
-    SYSPARM_INPUT_DISPLAY_VALUE("sysparm_input_display_value", ServiceNowConstants.SYSPARM_INPUT_DISPLAY_VALUE, Boolean.class,
-                                ServiceNowConfiguration::getInputDisplayValue),
-    SYSPARM_EXCLUDE_REFERENCE_LINK("sysparm_exclude_reference_link", ServiceNowConstants.SYSPARM_EXCLUDE_REFERENCE_LINK,
-                                   Boolean.class, ServiceNowConfiguration::getExcludeReferenceLink),
+    SYSPARM_DISPLAY_VALUE(
+            "sysparm_display_value",
+            ServiceNowConstants.SYSPARM_DISPLAY_VALUE,
+            String.class,
+            ServiceNowConfiguration::getDisplayValue),
+    SYSPARM_INPUT_DISPLAY_VALUE(
+            "sysparm_input_display_value",
+            ServiceNowConstants.SYSPARM_INPUT_DISPLAY_VALUE,
+            Boolean.class,
+            ServiceNowConfiguration::getInputDisplayValue),
+    SYSPARM_EXCLUDE_REFERENCE_LINK(
+            "sysparm_exclude_reference_link",
+            ServiceNowConstants.SYSPARM_EXCLUDE_REFERENCE_LINK,
+            Boolean.class,
+            ServiceNowConfiguration::getExcludeReferenceLink),
     SYSPARM_FIELDS("sysparm_fields", ServiceNowConstants.SYSPARM_FIELDS, String.class),
     SYSPARM_LIMIT("sysparm_limit", ServiceNowConstants.SYSPARM_LIMIT, Integer.class),
     SYSPARM_TEXT("sysparm_text", ServiceNowConstants.SYSPARM_TEXT, String.class),
     SYSPARM_OFFSET("sysparm_offset", ServiceNowConstants.SYSPARM_OFFSET, Integer.class),
     SYSPARM_VIEW("sysparm_view", ServiceNowConstants.SYSPARM_VIEW, String.class),
-    SYSPARM_SUPPRESS_AUTO_SYS_FIELD("sysparm_suppress_auto_sys_field", ServiceNowConstants.SYSPARM_SUPPRESS_AUTO_SYS_FIELD,
-                                    Boolean.class, ServiceNowConfiguration::getSuppressAutoSysField),
-    SYSPARM_SUPPRESS_PAGINATION_HEADER("sysparm_suppress_pagination_header",
-                                       ServiceNowConstants.SYSPARM_SUPPRESS_PAGINATION_HEADER, Boolean.class,
-                                       ServiceNowConfiguration::getSuppressPaginationHeader),
+    SYSPARM_SUPPRESS_AUTO_SYS_FIELD(
+            "sysparm_suppress_auto_sys_field",
+            ServiceNowConstants.SYSPARM_SUPPRESS_AUTO_SYS_FIELD,
+            Boolean.class,
+            ServiceNowConfiguration::getSuppressAutoSysField),
+    SYSPARM_SUPPRESS_PAGINATION_HEADER(
+            "sysparm_suppress_pagination_header",
+            ServiceNowConstants.SYSPARM_SUPPRESS_PAGINATION_HEADER,
+            Boolean.class,
+            ServiceNowConfiguration::getSuppressPaginationHeader),
     SYSPARM_MIN_FIELDS("sysparm_min_fields", ServiceNowConstants.SYSPARM_MIN_FIELDS, String.class),
     SYSPARM_MAX_FIELDS("sysparm_max_fields", ServiceNowConstants.SYSPARM_MAX_FIELDS, String.class),
     SYSPARM_SUM_FIELDS("sysparm_sum_fields", ServiceNowConstants.SYSPARM_SUM_FIELDS, String.class),
@@ -61,36 +76,62 @@ public enum ServiceNowParams implements ServiceNowParam {
     SYSPARM_HAVING("sysparm_having", ServiceNowConstants.SYSPARM_HAVING, String.class),
     SYSPARM_UUID("sysparm_uuid", ServiceNowConstants.SYSPARM_UUID, String.class),
     SYSPARM_BREAKDOWN("sysparm_breakdown", ServiceNowConstants.SYSPARM_BREAKDOWN, String.class),
-    SYSPARM_INCLUDE_SCORES("sysparm_include_scores", ServiceNowConstants.SYSPARM_INCLUDE_SCORES, Boolean.class,
-                           ServiceNowConfiguration::getIncludeScores),
-    SYSPARM_INCLUDE_SCORE_NOTES("sysparm_include_score_notes", ServiceNowConstants.SYSPARM_INCLUDE_SCORE_NOTES, Boolean.class,
-                                ServiceNowConfiguration::getIncludeScoreNotes),
-    SYSPARM_INCLUDE_AGGREGATES("sysparm_include_aggregates", ServiceNowConstants.SYSPARM_INCLUDE_AGGREGATES, Boolean.class,
-                               ServiceNowConfiguration::getIncludeAggregates),
-    SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS("sysparm_include_available_breakdowns",
-                                         ServiceNowConstants.SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS, Boolean.class,
-                                         ServiceNowConfiguration::getIncludeAvailableBreakdowns),
-    SYSPARM_INCLUDE_AVAILABLE_AGGREGATES("sysparm_include_available_aggregates",
-                                         ServiceNowConstants.SYSPARM_INCLUDE_AVAILABLE_AGGREGATES, Boolean.class,
-                                         ServiceNowConfiguration::getIncludeAvailableAggregates),
-    SYSPARM_FAVORITES("sysparm_favorites", ServiceNowConstants.SYSPARM_FAVORITES, Boolean.class,
-                      ServiceNowConfiguration::getFavorites),
+    SYSPARM_INCLUDE_SCORES(
+            "sysparm_include_scores",
+            ServiceNowConstants.SYSPARM_INCLUDE_SCORES,
+            Boolean.class,
+            ServiceNowConfiguration::getIncludeScores),
+    SYSPARM_INCLUDE_SCORE_NOTES(
+            "sysparm_include_score_notes",
+            ServiceNowConstants.SYSPARM_INCLUDE_SCORE_NOTES,
+            Boolean.class,
+            ServiceNowConfiguration::getIncludeScoreNotes),
+    SYSPARM_INCLUDE_AGGREGATES(
+            "sysparm_include_aggregates",
+            ServiceNowConstants.SYSPARM_INCLUDE_AGGREGATES,
+            Boolean.class,
+            ServiceNowConfiguration::getIncludeAggregates),
+    SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS(
+            "sysparm_include_available_breakdowns",
+            ServiceNowConstants.SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS,
+            Boolean.class,
+            ServiceNowConfiguration::getIncludeAvailableBreakdowns),
+    SYSPARM_INCLUDE_AVAILABLE_AGGREGATES(
+            "sysparm_include_available_aggregates",
+            ServiceNowConstants.SYSPARM_INCLUDE_AVAILABLE_AGGREGATES,
+            Boolean.class,
+            ServiceNowConfiguration::getIncludeAvailableAggregates),
+    SYSPARM_FAVORITES(
+            "sysparm_favorites",
+            ServiceNowConstants.SYSPARM_FAVORITES,
+            Boolean.class,
+            ServiceNowConfiguration::getFavorites),
     SYSPARM_KEY("sysparm_key", ServiceNowConstants.SYSPARM_KEY, Boolean.class, ServiceNowConfiguration::getKey),
-    SYSPARM_TARGET("sysparm_target", ServiceNowConstants.SYSPARM_TARGET, Boolean.class, ServiceNowConfiguration::getTarget),
-    SYSPARM_DISPLAY("sysparm_display", ServiceNowConstants.SYSPARM_DISPLAY, String.class, ServiceNowConfiguration::getDisplay),
-    SYSPARM_PER_PAGE("sysparm_per_page", ServiceNowConstants.SYSPARM_PER_PAGE, Integer.class,
-                     ServiceNowConfiguration::getPerPage),
-    SYSPARM_SORT_BY("sysparm_sortby", ServiceNowConstants.SYSPARM_SORT_BY, String.class, ServiceNowConfiguration::getSortBy),
-    SYSPARM_SORT_DIR("sysparm_sortdir", ServiceNowConstants.SYSPARM_SORT_DIR, String.class,
-                     ServiceNowConfiguration::getSortDir),
+    SYSPARM_TARGET(
+            "sysparm_target", ServiceNowConstants.SYSPARM_TARGET, Boolean.class, ServiceNowConfiguration::getTarget),
+    SYSPARM_DISPLAY(
+            "sysparm_display", ServiceNowConstants.SYSPARM_DISPLAY, String.class, ServiceNowConfiguration::getDisplay),
+    SYSPARM_PER_PAGE(
+            "sysparm_per_page",
+            ServiceNowConstants.SYSPARM_PER_PAGE,
+            Integer.class,
+            ServiceNowConfiguration::getPerPage),
+    SYSPARM_SORT_BY(
+            "sysparm_sortby", ServiceNowConstants.SYSPARM_SORT_BY, String.class, ServiceNowConfiguration::getSortBy),
+    SYSPARM_SORT_DIR(
+            "sysparm_sortdir", ServiceNowConstants.SYSPARM_SORT_DIR, String.class, ServiceNowConfiguration::getSortDir),
     SYSPARM_CONTAINS("sysparm_contains", ServiceNowConstants.SYSPARM_CONTAINS, String.class),
     SYSPARM_TAGS("sysparm_tags", ServiceNowConstants.SYSPARM_TAGS, String.class),
     SYSPARM_PAGE("sysparm_page", ServiceNowConstants.SYSPARM_PAGE, String.class),
     SYSPARM_ELEMENTS_FILTER("sysparm_elements_filter", ServiceNowConstants.SYSPARM_ELEMENTS_FILTER, String.class),
-    SYSPARM_BREAKDOWN_RELATION("sysparm_breakdown_relation", ServiceNowConstants.SYSPARM_BREAKDOWN_RELATION, String.class),
+    SYSPARM_BREAKDOWN_RELATION(
+            "sysparm_breakdown_relation", ServiceNowConstants.SYSPARM_BREAKDOWN_RELATION, String.class),
     SYSPARM_DATA_SOURCE("sysparm_data_source", ServiceNowConstants.SYSPARM_DATA_SOURCE, String.class),
-    SYSPARM_TOP_LEVEL_ONLY("sysparm_top_level_only", ServiceNowConstants.SYSPARM_TOP_LEVEL_ONLY, Boolean.class,
-                           ServiceNowConfiguration::getTopLevelOnly);
+    SYSPARM_TOP_LEVEL_ONLY(
+            "sysparm_top_level_only",
+            ServiceNowConstants.SYSPARM_TOP_LEVEL_ONLY,
+            Boolean.class,
+            ServiceNowConfiguration::getTopLevelOnly);
 
     private final String id;
     private final String header;
@@ -101,7 +142,8 @@ public enum ServiceNowParams implements ServiceNowParam {
         this(id, header, type, null);
     }
 
-    ServiceNowParams(String id, String header, Class<?> type, Function<ServiceNowConfiguration, ?> defaultValueSupplier) {
+    ServiceNowParams(
+            String id, String header, Class<?> type, Function<ServiceNowConfiguration, ?> defaultValueSupplier) {
         ObjectHelper.notNull(id, "ServiceNowSysParam (id)");
         ObjectHelper.notNull(header, "ServiceNowSysParam (header)");
         ObjectHelper.notNull(type, "ServiceNowSysParam (type)");

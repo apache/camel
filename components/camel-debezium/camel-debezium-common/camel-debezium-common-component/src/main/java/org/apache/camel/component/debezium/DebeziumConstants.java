@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import org.apache.camel.spi.Metadata;
@@ -25,29 +26,43 @@ public final class DebeziumConstants {
 
     // header names
     private static final String HEADER_PREFIX = "CamelDebezium";
-    @Metadata(description = "The metadata about the source event, for example `table` name, database `name`, log position, etc, "
-                            +
-                            "please refer to the Debezium documentation for more info.",
-              javaType = "Map<String, Object>")
+
+    @Metadata(
+            description =
+                    "The metadata about the source event, for example `table` name, database `name`, log position, etc, "
+                            + "please refer to the Debezium documentation for more info.",
+            javaType = "Map<String, Object>")
     public static final String HEADER_SOURCE_METADATA = HEADER_PREFIX + "SourceMetadata";
-    @Metadata(description = "The identifier of the connector, normally is this format \"+++{server-name}.{database-name}.{table-name}+++\".",
-              javaType = "String")
+
+    @Metadata(
+            description =
+                    "The identifier of the connector, normally is this format \"+++{server-name}.{database-name}.{table-name}+++\".",
+            javaType = "String")
     public static final String HEADER_IDENTIFIER = HEADER_PREFIX + "Identifier";
+
     @Metadata(description = "The key of the event, normally is the table Primary Key.", javaType = "Struct")
     public static final String HEADER_KEY = HEADER_PREFIX + "Key";
-    @Metadata(description = "If presents, the type of event operation. Values for the connector are `c` for create (or insert), "
-                            +
-                            "`u` for update, `d` for delete or `r` for read (in the case of a initial sync) or in case of a snapshot event.",
-              javaType = "String")
+
+    @Metadata(
+            description =
+                    "If presents, the type of event operation. Values for the connector are `c` for create (or insert), "
+                            + "`u` for update, `d` for delete or `r` for read (in the case of a initial sync) or in case of a snapshot event.",
+            javaType = "String")
     public static final String HEADER_OPERATION = HEADER_PREFIX + "Operation";
-    @Metadata(description = "If presents, the time (using the system clock in the JVM) at which the connector processed the event.",
-              javaType = "Long")
+
+    @Metadata(
+            description =
+                    "If presents, the time (using the system clock in the JVM) at which the connector processed the event.",
+            javaType = "Long")
     public static final String HEADER_TIMESTAMP = HEADER_PREFIX + "Timestamp";
-    @Metadata(description = "If presents, contains the state of the row before the event occurred.", javaType = "Struct")
+
+    @Metadata(
+            description = "If presents, contains the state of the row before the event occurred.",
+            javaType = "Struct")
     public static final String HEADER_BEFORE = HEADER_PREFIX + "Before";
+
     @Metadata(description = "If presents, the ddl sql text of the event.", javaType = "String")
     public static final String HEADER_DDL_SQL = HEADER_PREFIX + "DdlSQL";
 
-    private DebeziumConstants() {
-    }
+    private DebeziumConstants() {}
 }

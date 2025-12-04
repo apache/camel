@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
@@ -27,8 +28,10 @@ class PropertiesComponentEscapedTest extends ContextTestSupport {
     void testEscaped() throws Exception {
         getMockEndpoint("mock:result")
                 .expectedBodiesReceived("{{before}}mock:{{cool.result}}{\"query\":{\"match_all\":{}}}{{after}}");
-        getMockEndpoint("mock:result").expectedHeaderReceived("foo",
-                "Hello mock:{{cool.result}}{\"query\":{\"match_all\":{}}} and {{before}}Cheese{{after}}/\\Cheese how are you?");
+        getMockEndpoint("mock:result")
+                .expectedHeaderReceived(
+                        "foo",
+                        "Hello mock:{{cool.result}}{\"query\":{\"match_all\":{}}} and {{before}}Cheese{{after}}/\\Cheese how are you?");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -41,7 +44,8 @@ class PropertiesComponentEscapedTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .setBody().constant("\\{{before\\}}{{cool.concat.escaped}}\\{{after\\}}")
+                        .setBody()
+                        .constant("\\{{before\\}}{{cool.concat.escaped}}\\{{after\\}}")
                         .setHeader("foo")
                         .constant(
                                 "Hello {{cool.concat.escaped}} and \\{{before\\}}{{cool.other.name}}\\{{after\\}}/\\\\{{cool.other.name}} how are you?")
@@ -53,8 +57,8 @@ class PropertiesComponentEscapedTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

@@ -27,9 +27,7 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 public final class JavadocUtil {
-    private JavadocUtil() {
-
-    }
+    private JavadocUtil() {}
 
     /**
      * @param  model the model from which the information are extracted.
@@ -48,11 +46,17 @@ public final class JavadocUtil {
     public static String getMainDescription(ComponentModel model, boolean withPathParameterDetails) {
         StringBuilder descSb = new StringBuilder(512);
 
-        descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
+        descSb.append(model.getTitle())
+                .append(" (")
+                .append(model.getArtifactId())
+                .append(")");
         descSb.append("\n").append(model.getDescription());
         descSb.append("\n\nCategory: ").append(model.getLabel());
         descSb.append("\nSince: ").append(model.getFirstVersionShort());
-        descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
+        descSb.append("\nMaven coordinates: ")
+                .append(model.getGroupId())
+                .append(":")
+                .append(model.getArtifactId());
 
         if (withPathParameterDetails) {
             // include javadoc for all path parameters and mark which are required
@@ -76,7 +80,8 @@ public final class JavadocUtil {
                     }
                     // TODO: default value note ?
                     if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                        descSb.append("\nThere are ").append(option.getEnums().size())
+                        descSb.append("\nThere are ")
+                                .append(option.getEnums().size())
                                 .append(" enums and the value can be one of: ")
                                 .append(wrapEnumValues(option.getEnums()));
                     }

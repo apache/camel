@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import java.util.Collection;
@@ -36,10 +37,7 @@ public class RedisProducer extends HeaderSelectorProducer {
     private final ExchangeConverter exchangeConverter = new ExchangeConverter();
     private final RedisClient client;
 
-    public RedisProducer(Endpoint endpoint,
-                         String header,
-                         String defaultHeaderValue,
-                         RedisClient redisClient) {
+    public RedisProducer(Endpoint endpoint, String header, String defaultHeaderValue, RedisClient redisClient) {
         super(endpoint, header, defaultHeaderValue);
         this.client = redisClient;
     }
@@ -81,7 +79,9 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("HINCRBY")
     public Long invokeHincrBy(Exchange exchange) {
-        return client.hincrBy(exchangeConverter.getKey(exchange), exchangeConverter.getField(exchange),
+        return client.hincrBy(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getField(exchange),
                 exchangeConverter.getValueAsLong(exchange));
     }
 
@@ -107,13 +107,17 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("HSET")
     public void invokeHset(Exchange exchange) {
-        client.hset(exchangeConverter.getKey(exchange), exchangeConverter.getField(exchange),
+        client.hset(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getField(exchange),
                 exchangeConverter.getValue(exchange));
     }
 
     @InvokeOnHeader("HSETNX")
     public Boolean invokeHsetnx(Exchange exchange) {
-        return client.hsetnx(exchangeConverter.getKey(exchange), exchangeConverter.getField(exchange),
+        return client.hsetnx(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getField(exchange),
                 exchangeConverter.getValue(exchange));
     }
 
@@ -209,7 +213,9 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("BRPOPLPUSH")
     public Object invokeBrpoplpush(Exchange exchange) {
-        return client.brpoplpush(exchangeConverter.getKey(exchange), exchangeConverter.getDestination(exchange),
+        return client.brpoplpush(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getDestination(exchange),
                 exchangeConverter.getTimeout(exchange));
     }
 
@@ -220,7 +226,9 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("LINSERT")
     public Object invokeLinsert(Exchange exchange) {
-        return client.linsert(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        return client.linsert(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getPivot(exchange),
                 exchangeConverter.getPosition(exchange));
     }
@@ -247,25 +255,33 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("LRANGE")
     public List<Object> invokeLrange(Exchange exchange) {
-        return client.lrange(exchangeConverter.getKey(exchange), exchangeConverter.getStart(exchange),
+        return client.lrange(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
                 exchangeConverter.getEnd(exchange));
     }
 
     @InvokeOnHeader("LREM")
     public Long invokeLrem(Exchange exchange) {
-        return client.lrem(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        return client.lrem(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getCount(exchange));
     }
 
     @InvokeOnHeader("LSET")
     public void invokeLset(Exchange exchange) {
-        client.lset(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        client.lset(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getIndex(exchange));
     }
 
     @InvokeOnHeader("LTRIM")
     public void invokeLtrim(Exchange exchange) {
-        client.ltrim(exchangeConverter.getKey(exchange), exchangeConverter.getStart(exchange),
+        client.ltrim(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
                 exchangeConverter.getEnd(exchange));
     }
 
@@ -311,7 +327,9 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("SDIFFSTORE")
     public void invokeSdiffstore(Exchange exchange) {
-        client.sdiffstore(exchangeConverter.getKey(exchange), exchangeConverter.getKeys(exchange),
+        client.sdiffstore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getKeys(exchange),
                 exchangeConverter.getDestination(exchange));
     }
 
@@ -322,7 +340,9 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("SINTERSTORE")
     public void invokeSinterstore(Exchange exchange) {
-        client.sinterstore(exchangeConverter.getKey(exchange), exchangeConverter.getKeys(exchange),
+        client.sinterstore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getKeys(exchange),
                 exchangeConverter.getDestination(exchange));
     }
 
@@ -338,7 +358,9 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("SMOVE")
     public Boolean invokeSmove(Exchange exchange) {
-        return client.smove(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        return client.smove(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getDestination(exchange));
     }
 
@@ -364,13 +386,17 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("SUNIONSTORE")
     public void invokeSunionstore(Exchange exchange) {
-        client.sunionstore(exchangeConverter.getKey(exchange), exchangeConverter.getKeys(exchange),
+        client.sunionstore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getKeys(exchange),
                 exchangeConverter.getDestination(exchange));
     }
 
     @InvokeOnHeader("ZADD")
     public Boolean invokeZadd(Exchange exchange) {
-        return client.zadd(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        return client.zadd(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getScore(exchange));
     }
 
@@ -381,83 +407,99 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("ZCOUNT")
     public Long invokeZcount(Exchange exchange) {
-        return client.zcount(exchangeConverter.getKey(exchange), exchangeConverter.getMin(exchange),
+        return client.zcount(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getMin(exchange),
                 exchangeConverter.getMax(exchange));
     }
 
     @InvokeOnHeader("ZINCRBY")
     public Double invokeZincrby(Exchange exchange) {
-        return client.zincrby(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        return client.zincrby(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getIncrement(exchange));
     }
 
     @InvokeOnHeader("ZINTERSTORE")
     public void invokeZinterstore(Exchange exchange) {
-        client.zinterstore(exchangeConverter.getKey(exchange), exchangeConverter.getKeys(exchange),
+        client.zinterstore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getKeys(exchange),
                 exchangeConverter.getDestination(exchange));
     }
 
     @InvokeOnHeader("ZRANGE")
     public Object invokeZrange(Exchange exchange) {
-        return client.zrange(exchangeConverter.getKey(exchange), exchangeConverter.getStart(exchange),
+        return client.zrange(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
                 exchangeConverter.getEnd(exchange),
                 exchangeConverter.getWithScore(exchange));
     }
 
     @InvokeOnHeader("ZRANGEBYSCORE")
     public Set<Object> invokeZrangebyscore(Exchange exchange) {
-        return client.zrangebyscore(exchangeConverter.getKey(exchange),
+        return client.zrangebyscore(
+                exchangeConverter.getKey(exchange),
                 exchangeConverter.getMin(exchange),
                 exchangeConverter.getMax(exchange));
     }
 
     @InvokeOnHeader("ZRANK")
     public Long invokeZrank(Exchange exchange) {
-        return client.zrank(exchangeConverter.getKey(exchange),
-                exchangeConverter.getValue(exchange));
+        return client.zrank(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange));
     }
 
     @InvokeOnHeader("ZREM")
     public Long invokeZrem(Exchange exchange) {
-        return client.zrem(exchangeConverter.getKey(exchange),
-                exchangeConverter.getValue(exchange));
+        return client.zrem(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange));
     }
 
     @InvokeOnHeader("ZREMRANGEBYRANK")
     public void invokeZremrangebyrank(Exchange exchange) {
-        client.zremrangebyrank(exchangeConverter.getKey(exchange),
-                exchangeConverter.getStart(exchange), exchangeConverter.getEnd(exchange));
+        client.zremrangebyrank(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
+                exchangeConverter.getEnd(exchange));
     }
 
     @InvokeOnHeader("ZREMRANGEBYSCORE")
     public void invokeZremrangebyscore(Exchange exchange) {
-        client.zremrangebyscore(exchangeConverter.getKey(exchange),
-                exchangeConverter.getStart(exchange), exchangeConverter.getEnd(exchange));
+        client.zremrangebyscore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
+                exchangeConverter.getEnd(exchange));
     }
 
     @InvokeOnHeader("ZREVRANGE")
     public Object invokeZrevrange(Exchange exchange) {
-        return client.zrevrange(exchangeConverter.getKey(exchange),
-                exchangeConverter.getStart(exchange), exchangeConverter.getEnd(exchange),
+        return client.zrevrange(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
+                exchangeConverter.getEnd(exchange),
                 exchangeConverter.getWithScore(exchange));
     }
 
     @InvokeOnHeader("ZREVRANGEBYSCORE")
     public Set<Object> invokeZrevrangebyscore(Exchange exchange) {
-        return client.zrevrangebyscore(exchangeConverter.getKey(exchange),
-                exchangeConverter.getMin(exchange), exchangeConverter.getMax(exchange));
+        return client.zrevrangebyscore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getMin(exchange),
+                exchangeConverter.getMax(exchange));
     }
 
     @InvokeOnHeader("ZREVRANK")
     public Long invokeZrevrank(Exchange exchange) {
-        return client.zrevrank(exchangeConverter.getKey(exchange),
-                exchangeConverter.getValue(exchange));
+        return client.zrevrank(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange));
     }
 
     @InvokeOnHeader("ZUNIONSTORE")
     public void invokeZunionstore(Exchange exchange) {
-        client.zunionstore(exchangeConverter.getKey(exchange),
-                exchangeConverter.getKeys(exchange), exchangeConverter.getDestination(exchange));
+        client.zunionstore(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getKeys(exchange),
+                exchangeConverter.getDestination(exchange));
     }
 
     @InvokeOnHeader("APPEND")
@@ -487,13 +529,17 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("GETRANGE")
     public String invokeGetrange(Exchange exchange) {
-        return client.getrange(exchangeConverter.getKey(exchange), exchangeConverter.getStart(exchange),
+        return client.getrange(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getStart(exchange),
                 exchangeConverter.getEnd(exchange));
     }
 
     @InvokeOnHeader("SETRANGE")
     public void invokeSetrange(Exchange exchange) {
-        client.setex(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
+        client.setex(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
                 exchangeConverter.getOffset(exchange));
     }
 
@@ -534,14 +580,19 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("SETBIT")
     public void invokeSetbit(Exchange exchange) {
-        client.setbit(exchangeConverter.getKey(exchange), exchangeConverter.getOffset(exchange),
+        client.setbit(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getOffset(exchange),
                 exchangeConverter.getBooleanValue(exchange));
     }
 
     @InvokeOnHeader("SETEX")
     public void invokeSetex(Exchange exchange) {
-        client.setex(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
-                exchangeConverter.getTimeout(exchange), TimeUnit.SECONDS);
+        client.setex(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
+                exchangeConverter.getTimeout(exchange),
+                TimeUnit.SECONDS);
     }
 
     @InvokeOnHeader("SETNX")
@@ -581,13 +632,17 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("GEOADD")
     public Long invokeGeoadd(Exchange exchange) {
-        return client.geoadd(exchangeConverter.getKey(exchange), exchangeConverter.getLongitude(exchange),
-                exchangeConverter.getLatitude(exchange), exchangeConverter.getValue(exchange));
+        return client.geoadd(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getLongitude(exchange),
+                exchangeConverter.getLatitude(exchange),
+                exchangeConverter.getValue(exchange));
     }
 
     @InvokeOnHeader("GEODIST")
     public Distance invokeGeodist(Exchange exchange) {
-        return client.geodist(exchangeConverter.getKey(exchange),
+        return client.geodist(
+                exchangeConverter.getKey(exchange),
                 exchangeConverter.getValuesAsCollection(exchange).toArray()[0],
                 exchangeConverter.getValuesAsCollection(exchange).toArray()[1]);
     }
@@ -604,15 +659,20 @@ public class RedisProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader("GEORADIUS")
     public GeoResults<RedisGeoCommands.GeoLocation<Object>> invokeGeoradius(Exchange exchange) {
-        return client.georadius(exchangeConverter.getKey(exchange), exchangeConverter.getLongitude(exchange),
+        return client.georadius(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getLongitude(exchange),
                 exchangeConverter.getLatitude(exchange),
-                exchangeConverter.getRadius(exchange), exchangeConverter.getCount(exchange));
+                exchangeConverter.getRadius(exchange),
+                exchangeConverter.getCount(exchange));
     }
 
     @InvokeOnHeader("GEORADIUSBYMEMBER")
     public GeoResults<RedisGeoCommands.GeoLocation<Object>> invokeGeoradiusbymember(Exchange exchange) {
-        return client.georadius(exchangeConverter.getKey(exchange), exchangeConverter.getValue(exchange),
-                exchangeConverter.getRadius(exchange), exchangeConverter.getCount(exchange));
+        return client.georadius(
+                exchangeConverter.getKey(exchange),
+                exchangeConverter.getValue(exchange),
+                exchangeConverter.getRadius(exchange),
+                exchangeConverter.getCount(exchange));
     }
-
 }

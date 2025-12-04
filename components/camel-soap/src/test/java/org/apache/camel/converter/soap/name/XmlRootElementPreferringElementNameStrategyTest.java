@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.soap.name;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serializable;
 
@@ -26,9 +30,6 @@ import javax.xml.namespace.QName;
 import org.apache.camel.converter.soap.name.testpackage.RequestWithDefaultNs;
 import org.apache.camel.dataformat.soap.name.XmlRootElementPreferringElementNameStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XmlRootElementPreferringElementNameStrategyTest {
 
@@ -59,16 +60,15 @@ public class XmlRootElementPreferringElementNameStrategyTest {
     public void testFindExceptionForFaultName() throws Exception {
         final QName faultName = new QName(LOCAL_NAME, CUSTOM_NS);
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> ens.findExceptionForFaultName(faultName));
+        assertThrows(UnsupportedOperationException.class, () -> ens.findExceptionForFaultName(faultName));
     }
 
-    @XmlType(name = "", propOrder = { LOCAL_NAME })
+    @XmlType(
+            name = "",
+            propOrder = {LOCAL_NAME})
     @XmlRootElement(name = LOCAL_NAME, namespace = CUSTOM_NS)
     public class Request implements Serializable {
 
         private static final long serialVersionUID = 1L;
-
     }
-
 }

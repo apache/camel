@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.netty.channel.Channel;
 import org.apache.camel.Exchange;
@@ -23,10 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpPostDataTest extends BaseNettyTest {
     @Test
@@ -45,7 +46,8 @@ public class NettyHttpPostDataTest extends BaseNettyTest {
         assertEquals("1", result.getIn().getHeader("x", String.class), "expect the x is 1");
         assertEquals("2", result.getIn().getHeader("y", String.class), "expect the y is 2");
         MockEndpoint.assertIsSatisfied(context);
-        assertTrue(result.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class).isActive());
+        assertTrue(
+                result.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class).isActive());
     }
 
     @Override
@@ -53,8 +55,7 @@ public class NettyHttpPostDataTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
-                        .to("mock:input");
+                from("netty-http:http://0.0.0.0:{{port}}/foo").to("mock:input");
             }
         };
     }

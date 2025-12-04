@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.util.regex.Matcher;
@@ -34,7 +35,8 @@ public final class Version implements Comparable<Version> {
     public static Version create(final String version) {
         final Matcher matcher = VERSION_PATTERN.matcher(version);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("API version needs to be in <number>.<number> format, given: " + version);
+            throw new IllegalArgumentException(
+                    "API version needs to be in <number>.<number> format, given: " + version);
         }
 
         final int major = Integer.parseInt(matcher.group(1));
@@ -93,8 +95,8 @@ public final class Version implements Comparable<Version> {
         if (this.compareTo(required) < 0) {
             throw new UnsupportedOperationException(
                     "This operation requires API version at least " + requiredMajor + "." + requiredMinor
-                                                    + ", currently configured for " + major
-                                                    + "." + minor);
+                            + ", currently configured for " + major
+                            + "." + minor);
         }
     }
 }

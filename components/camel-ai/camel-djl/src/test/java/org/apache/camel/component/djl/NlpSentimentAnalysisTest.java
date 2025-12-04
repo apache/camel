@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import java.util.List;
@@ -43,10 +44,8 @@ public class NlpSentimentAnalysisTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("timer:testDJL?repeatCount=1")
-                        .setBody(constant(List.of(
-                                "Camel AI is cool!",
-                                "Donkey AI is awful...",
-                                "Camel DJL is awesome!")))
+                        .setBody(constant(
+                                List.of("Camel AI is cool!", "Donkey AI is awful...", "Camel DJL is awesome!")))
                         .split(body())
                         .to("djl:nlp/sentiment_analysis?artifactId=ai.djl.pytorch:distilbert:0.0.1")
                         .log("\"${header.CamelDjlInput}\" => ${body.best.className}")
@@ -54,5 +53,4 @@ public class NlpSentimentAnalysisTest extends CamelTestSupport {
             }
         };
     }
-
 }

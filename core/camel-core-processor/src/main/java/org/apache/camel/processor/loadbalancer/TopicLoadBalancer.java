@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.loadbalancer;
 
 import org.apache.camel.AsyncCallback;
@@ -32,7 +33,9 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        exchange.getContext().getCamelContextExtension().getReactiveExecutor()
+        exchange.getContext()
+                .getCamelContextExtension()
+                .getReactiveExecutor()
                 .schedule(new State(exchange, callback, processors)::run);
         return false;
     }
@@ -64,7 +67,10 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
                 exchange.setException(current.getException());
                 callback.done(false);
             } else {
-                exchange.getContext().getCamelContextExtension().getReactiveExecutor().schedule(this::run);
+                exchange.getContext()
+                        .getCamelContextExtension()
+                        .getReactiveExecutor()
+                        .schedule(this::run);
             }
         }
     }
@@ -81,5 +87,4 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
     protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
         return exchange.copy();
     }
-
 }

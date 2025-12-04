@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms;
 
 public enum KMS2Operations {
-
     listKeys,
     createKey,
     disableKey,

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +38,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class CouchDbCrudIT extends CouchDbTestSupport {
 
     @EndpointInject("mock:deleteNotifications")
@@ -50,8 +51,7 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final String couchDbUrlFormat
-                = "couchdb:http://{{couchdb.service.address}}/camelcouchdb?createDatabase=true%s";
+        final String couchDbUrlFormat = "couchdb:http://{{couchdb.service.address}}/camelcouchdb?createDatabase=true%s";
 
         return new RouteBuilder() {
             @Override
@@ -113,15 +113,18 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
             Map<String, Object> retrieveExchangeHeaders = new HashMap<>();
             retrieveExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, getDocumentId(createExchange));
             retrieveExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-            retrievedDocumentString
-                    = template.requestBodyAndHeaders(couchDbIn, testDocument, retrieveExchangeHeaders, String.class);
+            retrievedDocumentString =
+                    template.requestBodyAndHeaders(couchDbIn, testDocument, retrieveExchangeHeaders, String.class);
             assertNotNull(retrievedDocumentString);
 
             JsonObject retrievedDocument = newJsonObject(retrievedDocumentString);
             final String randomString = "36e8807f-0810-4b80-9ca9-b20859433034";
             assertEquals(randomString, retrievedDocument.get("randomString").getAsString());
-            assertEquals(getDocumentId(createExchange), retrievedDocument.get("_id").getAsString());
-            assertEquals(getDocumentRevision(createExchange), retrievedDocument.get("_rev").getAsString());
+            assertEquals(
+                    getDocumentId(createExchange), retrievedDocument.get("_id").getAsString());
+            assertEquals(
+                    getDocumentRevision(createExchange),
+                    retrievedDocument.get("_rev").getAsString());
         }
 
         @DisplayName("tests whether can update a document")
@@ -153,13 +156,19 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
             Map<String, Object> retrieveUpdatedExchangeHeaders = new HashMap<>();
             retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, getDocumentId(updateExchange));
             retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-            retrievedUpdatedDocumentString = template.requestBodyAndHeaders(couchDbIn, retrievedDocument,
-                    retrieveUpdatedExchangeHeaders, String.class);
+            retrievedUpdatedDocumentString = template.requestBodyAndHeaders(
+                    couchDbIn, retrievedDocument, retrieveUpdatedExchangeHeaders, String.class);
             assertNotNull(retrievedUpdatedDocumentString);
             JsonObject retrievedUpdatedDocument = newJsonObject(retrievedUpdatedDocumentString);
-            assertEquals("36e8807f-0810-4b80-9ca9-b20859433035", retrievedUpdatedDocument.get("randomString").getAsString());
-            assertEquals(getDocumentId(updateExchange), retrievedUpdatedDocument.get("_id").getAsString());
-            assertEquals(getDocumentRevision(updateExchange), retrievedUpdatedDocument.get("_rev").getAsString());
+            assertEquals(
+                    "36e8807f-0810-4b80-9ca9-b20859433035",
+                    retrievedUpdatedDocument.get("randomString").getAsString());
+            assertEquals(
+                    getDocumentId(updateExchange),
+                    retrievedUpdatedDocument.get("_id").getAsString());
+            assertEquals(
+                    getDocumentRevision(updateExchange),
+                    retrievedUpdatedDocument.get("_rev").getAsString());
         }
 
         @DisplayName("tests whether can delete the document")
@@ -216,12 +225,18 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
             Map<String, Object> retrieveExchangeHeaders = new HashMap<>();
             retrieveExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, getDocumentId(createExchange));
             retrieveExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-            retrievedDocumentString = template.requestBodyAndHeaders(couchDbIn, "", retrieveExchangeHeaders, String.class);
+            retrievedDocumentString =
+                    template.requestBodyAndHeaders(couchDbIn, "", retrieveExchangeHeaders, String.class);
             assertNotNull(retrievedDocumentString);
             JsonObject retrievedDocument = newJsonObject(retrievedDocumentString);
-            assertEquals("36e8807f-0810-4b80-9ca9-b20859433044", retrievedDocument.get("randomString").getAsString());
-            assertEquals(getDocumentId(createExchange), retrievedDocument.get("_id").getAsString());
-            assertEquals(getDocumentRevision(createExchange), retrievedDocument.get("_rev").getAsString());
+            assertEquals(
+                    "36e8807f-0810-4b80-9ca9-b20859433044",
+                    retrievedDocument.get("randomString").getAsString());
+            assertEquals(
+                    getDocumentId(createExchange), retrievedDocument.get("_id").getAsString());
+            assertEquals(
+                    getDocumentRevision(createExchange),
+                    retrievedDocument.get("_rev").getAsString());
         }
 
         @DisplayName("tests whether can update a document")
@@ -251,13 +266,19 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
             Map<String, Object> retrieveUpdatedExchangeHeaders = new HashMap<>();
             retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_DOC_ID, getDocumentId(updateExchange));
             retrieveUpdatedExchangeHeaders.put(CouchDbConstants.HEADER_METHOD, CouchDbOperations.GET);
-            retrievedUpdatedDocumentString
-                    = template.requestBodyAndHeaders(couchDbIn, "", retrieveUpdatedExchangeHeaders, String.class);
+            retrievedUpdatedDocumentString =
+                    template.requestBodyAndHeaders(couchDbIn, "", retrieveUpdatedExchangeHeaders, String.class);
             assertNotNull(retrievedUpdatedDocumentString);
             JsonObject retrievedUpdatedDocument = newJsonObject(retrievedUpdatedDocumentString);
-            assertEquals("36e8807f-0810-4b80-9ca9-b20859433045", retrievedUpdatedDocument.get("randomString").getAsString());
-            assertEquals(getDocumentId(updateExchange), retrievedUpdatedDocument.get("_id").getAsString());
-            assertEquals(getDocumentRevision(updateExchange), retrievedUpdatedDocument.get("_rev").getAsString());
+            assertEquals(
+                    "36e8807f-0810-4b80-9ca9-b20859433045",
+                    retrievedUpdatedDocument.get("randomString").getAsString());
+            assertEquals(
+                    getDocumentId(updateExchange),
+                    retrievedUpdatedDocument.get("_id").getAsString());
+            assertEquals(
+                    getDocumentRevision(updateExchange),
+                    retrievedUpdatedDocument.get("_rev").getAsString());
         }
 
         @DisplayName("tests whether can delete the document")
@@ -284,21 +305,21 @@ public class CouchDbCrudIT extends CouchDbTestSupport {
     @TestInstance(Lifecycle.PER_CLASS)
     class UpdateNotifications {
 
-        @DisplayName("Tests whether creating a given number of documents results in the same number of update notifications")
+        @DisplayName(
+                "Tests whether creating a given number of documents results in the same number of update notifications")
         @ParameterizedTest
-        @ValueSource(ints = { 10, 50, 100 })
+        @ValueSource(ints = {10, 50, 100})
         void testUpdateNotifications(int messageCount) throws InterruptedException {
             mockUpdateNotifications.reset();
             mockUpdateNotifications.expectedMessageCount(messageCount);
 
             for (int messageNumber = 0; messageNumber < messageCount; messageNumber++) {
-                JsonObject document
-                        = new Gson().fromJson("{ \"randomString\" : \"" + UUID.randomUUID() + "\" }", JsonObject.class);
+                JsonObject document =
+                        new Gson().fromJson("{ \"randomString\" : \"" + UUID.randomUUID() + "\" }", JsonObject.class);
                 template.requestBody(couchDbIn, document);
             }
 
             mockUpdateNotifications.assertIsSatisfied();
         }
     }
-
 }

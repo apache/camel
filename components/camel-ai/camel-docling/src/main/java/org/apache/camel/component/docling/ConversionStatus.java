@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 /**
@@ -81,11 +82,10 @@ public class ConversionStatus {
 
     @Override
     public String toString() {
-        return "ConversionStatus{" +
-               "taskId='" + taskId + '\'' +
-               ", status=" + status +
-               ", progress=" + progress +
-               ", errorMessage='" + errorMessage + '\'' +
-               '}';
+        return "ConversionStatus{" + "taskId='"
+                + taskId + '\'' + ", status="
+                + status + ", progress="
+                + progress + ", errorMessage='"
+                + errorMessage + '\'' + '}';
     }
 }

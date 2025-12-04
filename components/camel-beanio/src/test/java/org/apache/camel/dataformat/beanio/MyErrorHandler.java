@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 import org.beanio.InvalidRecordException;
 
 public class MyErrorHandler extends BeanIOErrorHandler {
 
-    public MyErrorHandler() {
-    }
+    public MyErrorHandler() {}
 
     @Override
     public void invalidRecord(InvalidRecordException ex) throws Exception {
         String id = getExchange().getExchangeId();
-        String line
-                = "ExchangeId: " + id + " Invalid record: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+        String line = "ExchangeId: " + id + " Invalid record: " + ex.getMessage() + ": "
+                + ex.getRecordContext().getRecordText();
         LOG.warn(line);
 
         // lets handle the error and store to the results a dummy error DTO
         MyErrorDto dto = new MyErrorDto(ex.getRecordName(), ex.getMessage());
         handleErrorAndAddAsResult(dto);
     }
-
 }

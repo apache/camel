@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.jmx;
+
+import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -33,8 +36,6 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.xml.in.ModelParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.openapi.RestDefinitionsResolver.JMX_REST_DEFINITION_RESOLVER;
 
 /**
  * Resolves from JMX.
@@ -61,13 +62,13 @@ public class JmxRestDefinitionsResolver implements RestDefinitionsResolver {
         }
 
         if (found != null) {
-            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[] { true },
-                    new String[] { "boolean" });
+            String xml = (String) server.invoke(found, "dumpRestsAsXml", new Object[] {true}, new String[] {"boolean"});
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
 
                 Resource resource = PluginHelper.getResourceLoader(camelContext).resolveResource("mem:" + xml);
-                RestsDefinition rests = new ModelParser(resource).parseRestsDefinition().orElse(null);
+                RestsDefinition rests =
+                        new ModelParser(resource).parseRestsDefinition().orElse(null);
                 if (rests != null) {
                     return rests.getRests();
                 }
@@ -76,5 +77,4 @@ public class JmxRestDefinitionsResolver implements RestDefinitionsResolver {
 
         return null;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +30,6 @@ import org.eclipse.jetty.http2.client.transport.HttpClientTransportOverHTTP2;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowHttp2Test extends BaseUndertowTest {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowHttp2Test.class);
@@ -70,8 +71,7 @@ public class UndertowHttp2Test extends BaseUndertowTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("undertow:http://localhost:{{port}}/myapp")
-                        .setBody().constant(RESPONSE);
+                from("undertow:http://localhost:{{port}}/myapp").setBody().constant(RESPONSE);
             }
         };
     }

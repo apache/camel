@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.Map;
@@ -42,7 +43,8 @@ public interface NettyHttpBinding {
      * @return               the message to store on the given exchange
      * @throws Exception     is thrown if error during binding
      */
-    Message toCamelMessage(FullHttpRequest request, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
+    Message toCamelMessage(FullHttpRequest request, Exchange exchange, NettyHttpConfiguration configuration)
+            throws Exception;
 
     /**
      * Binds from Netty {@link InboundStreamHttpRequest} to Camel {@link Message}.
@@ -82,7 +84,8 @@ public interface NettyHttpBinding {
      * @return               the message to store on the given exchange
      * @throws Exception     is thrown if error during binding
      */
-    Message toCamelMessage(FullHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
+    Message toCamelMessage(FullHttpResponse response, Exchange exchange, NettyHttpConfiguration configuration)
+            throws Exception;
 
     /**
      * Binds from Netty {@link InboundStreamHttpResponse} to Camel {@link Message}.
@@ -145,5 +148,4 @@ public interface NettyHttpBinding {
      * @param headerFilterStrategy the custom strategy
      */
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
-
 }

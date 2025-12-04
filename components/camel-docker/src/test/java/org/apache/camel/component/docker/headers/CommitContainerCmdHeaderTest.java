@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -28,8 +31,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Commit Container Request headers are parsed properly
@@ -116,7 +117,6 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
         Mockito.verify(mockObject, Mockito.times(1)).withOpenStdin(openStdIn);
         Mockito.verify(mockObject, Mockito.times(1)).withStdinOnce(stdInOnce);
         Mockito.verify(mockObject, Mockito.times(1)).withPortSpecs(portSpecs);
-
     }
 
     @Override
@@ -128,5 +128,4 @@ public class CommitContainerCmdHeaderTest extends BaseDockerHeaderTest<CommitCmd
     protected DockerOperation getOperation() {
         return DockerOperation.COMMIT_CONTAINER;
     }
-
 }

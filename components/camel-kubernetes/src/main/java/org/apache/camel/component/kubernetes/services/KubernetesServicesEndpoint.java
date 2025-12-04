@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.services;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICES;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,17 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_SERVICES;
-
 /**
  * Perform operations on Kubernetes Services and get notified on Service changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_SERVICES, title = "Kubernetes Services",
-             syntax = "kubernetes-services:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_SERVICES,
+        title = "Kubernetes Services",
+        syntax = "kubernetes-services:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
-    public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {
+    public KubernetesServicesEndpoint(
+            String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -49,7 +55,5 @@ public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
         Consumer consumer = new KubernetesServicesConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -31,10 +32,12 @@ public class SftpPublicKeyAcceptedAlgorithmsIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/publicKeyAcceptedAlgorithms" +
-                                   "?password=admin" +
-                                   "&publicKeyAcceptedAlgorithms=rsa-sha2-512",
-                "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/publicKeyAcceptedAlgorithms"
+                        + "?password=admin"
+                        + "&publicKeyAcceptedAlgorithms=rsa-sha2-512",
+                "a",
+                Exchange.FILE_NAME,
                 "a.txt");
 
         mock.assertIsSatisfied();
@@ -45,10 +48,12 @@ public class SftpPublicKeyAcceptedAlgorithmsIT extends SftpServerTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/publicKeyAcceptedAlgorithms" +
-                                   "?password=admin" +
-                                   "&publicKeyAcceptedAlgorithms=rsa-sha2-512,not-supported-key",
-                "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader(
+                "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/publicKeyAcceptedAlgorithms"
+                        + "?password=admin"
+                        + "&publicKeyAcceptedAlgorithms=rsa-sha2-512,not-supported-key",
+                "a",
+                Exchange.FILE_NAME,
                 "a.txt");
 
         mock.assertIsSatisfied();
@@ -66,6 +71,6 @@ public class SftpPublicKeyAcceptedAlgorithmsIT extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
         return "sftp://admin@localhost:{{ftp.server.port}}/{{ftp.root.dir}}/publicKeyAcceptedAlgorithms/?password=admin"
-               + "&noop=true";
+                + "&noop=true";
     }
 }

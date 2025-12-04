@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
@@ -28,8 +29,7 @@ public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
 
     public static final String REMOTE_FILE_INPUT_STREAM = "CamelRemoteFileInputStream";
 
-    protected RemoteFileComponent() {
-    }
+    protected RemoteFileComponent() {}
 
     protected RemoteFileComponent(CamelContext context) {
         super(context);

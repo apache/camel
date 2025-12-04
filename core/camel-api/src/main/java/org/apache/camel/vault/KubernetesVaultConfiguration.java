@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
@@ -25,6 +26,7 @@ public class KubernetesVaultConfiguration extends VaultConfiguration {
 
     @Metadata
     private boolean refreshEnabled;
+
     @Metadata
     private String secrets;
 

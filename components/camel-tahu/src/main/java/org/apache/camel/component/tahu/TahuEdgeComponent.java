@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class TahuEdgeComponent extends TahuDefaultComponent {
         super(configuration);
     }
 
-    protected TahuEdgeEndpoint doCreateEndpoint(String uri, List<String> descriptorSegments, TahuConfiguration tahuConfig)
-            throws Exception {
+    protected TahuEdgeEndpoint doCreateEndpoint(
+            String uri, List<String> descriptorSegments, TahuConfiguration tahuConfig) throws Exception {
 
         String groupId = descriptorSegments.get(0);
         String edgeNode = descriptorSegments.get(1);

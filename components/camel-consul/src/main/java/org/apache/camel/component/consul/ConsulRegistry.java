@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.io.ByteArrayInputStream;
@@ -62,14 +63,18 @@ public class ConsulRegistry implements Registry {
     public ConsulRegistry(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
-        this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
+        this.consul = Consul.builder()
+                .withUrl("http://" + this.hostname + ":" + this.port)
+                .build();
     }
 
     /* builder pattern */
     private ConsulRegistry(Builder builder) {
         this.hostname = builder.hostname;
         this.port = builder.port;
-        this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
+        this.consul = Consul.builder()
+                .withUrl("http://" + this.hostname + ":" + this.port)
+                .build();
     }
 
     @Override
@@ -78,10 +83,12 @@ public class ConsulRegistry implements Registry {
         key = key.replace('$', '/');
         kvClient = consul.keyValueClient();
 
-        return kvClient.getValueAsString(key).map(result -> {
-            byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result);
-            return ConsulRegistryUtils.deserialize(postDecodedValue);
-        }).orElse(null);
+        return kvClient.getValueAsString(key)
+                .map(result -> {
+                    byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result);
+                    return ConsulRegistryUtils.deserialize(postDecodedValue);
+                })
+                .orElse(null);
     }
 
     @Override
@@ -93,8 +100,8 @@ public class ConsulRegistry implements Registry {
         try {
             return type.cast(object);
         } catch (Exception e) {
-            String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: " + object.getClass().getName()
-                         + "expected type was: " + type;
+            String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: "
+                    + object.getClass().getName() + "expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }
@@ -187,7 +194,8 @@ public class ConsulRegistry implements Registry {
         SessionClient sessionClient = consul.sessionClient();
         String sessionName = "session_" + UUID.randomUUID();
 
-        SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
+        SessionCreatedResponse response = sessionClient.createSession(
+                ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
         kvClient = consul.keyValueClient();
         String lockKey = "lock_" + key;
@@ -209,7 +217,8 @@ public class ConsulRegistry implements Registry {
         // (not sure if that is safe enough, again)
         SessionClient sessionClient = consul.sessionClient();
         String sessionName = "session_" + UUID.randomUUID();
-        SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
+        SessionCreatedResponse response = sessionClient.createSession(
+                ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
         kvClient = consul.keyValueClient();
         String lockKey = "lock_" + key;
@@ -272,9 +281,7 @@ public class ConsulRegistry implements Registry {
 
     static final class ConsulRegistryUtils {
 
-        private ConsulRegistryUtils() {
-
-        }
+        private ConsulRegistryUtils() {}
 
         /**
          * Decodes using Base64.
@@ -328,7 +335,7 @@ public class ConsulRegistry implements Registry {
          */
         static byte[] serialize(Serializable serializable) {
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
-                 ObjectOutputStream out = new ObjectOutputStream(baos)) {
+                    ObjectOutputStream out = new ObjectOutputStream(baos)) {
                 out.writeObject(serializable);
                 return baos.toByteArray();
             } catch (IOException e) {
@@ -336,5 +343,4 @@ public class ConsulRegistry implements Registry {
             }
         }
     }
-
 }

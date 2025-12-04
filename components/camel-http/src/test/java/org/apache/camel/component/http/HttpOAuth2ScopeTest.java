@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpOAuth2ScopeTest extends BaseHttpTest {
 
     private static final String FAKE_TOKEN = "xxx.yyy.zzz";
@@ -36,27 +37,23 @@ public class HttpOAuth2ScopeTest extends BaseHttpTest {
     private static final String clientSecret = "test-secret";
     private static final String scope = "test-scope";
 
-    private final OAuth2ScopeRequestHandler handler = new OAuth2ScopeRequestHandler(FAKE_TOKEN, clientId, clientSecret, scope);
+    private final OAuth2ScopeRequestHandler handler =
+            new OAuth2ScopeRequestHandler(FAKE_TOKEN, clientId, clientSecret, scope);
 
     @Override
-    public void setupResources() throws Exception {
-    }
+    public void setupResources() throws Exception {}
 
     @Test
     public void scopeIsAddedToRequestBody() throws Exception {
         try (var localServer = createLocalServer()) {
             String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
-            String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
-                                + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
-                                + "&oauth2Scope=" + scope;
+            String requestUrl =
+                    "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                            + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                            + "&oauth2Scope=" + scope;
 
-            template.request(requestUrl,
-                    exchange1 -> {
-                    });
-            Exchange exchange
-                    = template.request(requestUrl,
-                            exchange1 -> {
-                            });
+            template.request(requestUrl, exchange1 -> {});
+            Exchange exchange = template.request(requestUrl, exchange1 -> {});
 
             localServer.close();
 
@@ -77,17 +74,13 @@ public class HttpOAuth2ScopeTest extends BaseHttpTest {
         expectedHeaders.put("Authorization", "Bearer " + FAKE_TOKEN);
 
         var localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/token", handler)
-                .register("/post",
-                        new HeaderValidationHandler(
-                                "POST",
-                                null,
-                                null,
-                                null,
-                                expectedHeaders))
+                .register("/post", new HeaderValidationHandler("POST", null, null, null, expectedHeaders))
                 .create();
 
         localServer.start();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -37,13 +38,17 @@ public class Iso8583DataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(description = "The j8583 configuration file to load from classpath", defaultValue = "j8583-config.xml")
     private String configFile;
+
     @XmlAttribute
     @Metadata(description = "The default ISO-Type to use")
     private String isoType;
+
     @XmlAttribute
-    @Metadata(label = "advanced", description = "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry",
-              defaultValue = "true",
-              javaType = "java.lang.Boolean")
+    @Metadata(
+            label = "advanced",
+            description = "Whether to auto-discover com.solab.iso8583.MessageFactory from the registry",
+            defaultValue = "true",
+            javaType = "java.lang.Boolean")
     private String allowAutoWiredMessageFormat;
 
     public Iso8583DataFormat() {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,8 +40,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerDeadLetterPolicyIT.class);
@@ -76,7 +77,11 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
         String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
 
         topicUri = PulsarConsumerDeadLetterPolicyIT.TOPIC_URI + ++topicId;
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
+        producer = givenPulsarClient()
+                .newProducer(Schema.STRING)
+                .producerName(producerName)
+                .topic(topicUri)
+                .create();
     }
 
     @AfterEach
@@ -103,9 +108,8 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
             throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint from = (PulsarEndpoint) component
-                .createEndpoint("pulsar:" + topicUri
-                                + "?maxRedeliverCount=5&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
+        PulsarEndpoint from = (PulsarEndpoint) component.createEndpoint("pulsar:" + topicUri
+                + "?maxRedeliverCount=5&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
         PulsarEndpoint deadLetterFrom = (PulsarEndpoint) component.createEndpoint("pulsar:" + topicUri + "-subs-DLQ");
 
         to.expectedMessageCount(6);
@@ -124,15 +128,17 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     }
 
     @Test
-    public void givenMaxRedeliverCountAndDeadLetterTopicVerifyMessageGetsSentToSpecifiedDeadLetterTopicAfterCountExceeded()
-            throws Exception {
+    public void
+            givenMaxRedeliverCountAndDeadLetterTopicVerifyMessageGetsSentToSpecifiedDeadLetterTopicAfterCountExceeded()
+                    throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint from = (PulsarEndpoint) component
-                .createEndpoint("pulsar:" + topicUri
+        PulsarEndpoint from = (PulsarEndpoint)
+                component.createEndpoint(
+                        "pulsar:" + topicUri
                                 + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
-        PulsarEndpoint deadLetterFrom
-                = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
+        PulsarEndpoint deadLetterFrom =
+                (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
 
         to.expectedMessageCount(6);
         deadLetter.expectedMessageCount(1);
@@ -153,11 +159,12 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     public void givenOnlyDeadLetterTopicVerifyMessageDoesNotGetSentToSpecifiedTopic() throws Exception {
         PulsarComponent component = context.getComponent("pulsar", PulsarComponent.class);
 
-        PulsarEndpoint from = (PulsarEndpoint) component
-                .createEndpoint("pulsar:" + topicUri
+        PulsarEndpoint from = (PulsarEndpoint)
+                component.createEndpoint(
+                        "pulsar:" + topicUri
                                 + "?maxRedeliverCount=5&deadLetterTopic=customTopic&subscriptionType=Shared&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
-        PulsarEndpoint deadLetterFrom
-                = (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
+        PulsarEndpoint deadLetterFrom =
+                (PulsarEndpoint) component.createEndpoint("pulsar:persistent://public/default/customTopic");
 
         to.expectedMessageCount(6);
         deadLetter.expectedMessageCount(0);
@@ -167,8 +174,8 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
                 from(from).routeId("myRoute").to(to).process(exchange -> {
                     Integer tries = exchange.getProperty("retryCount", 1, Integer.class);
                     if (tries >= 6) {
-                        PulsarMessageReceipt receipt
-                                = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
+                        PulsarMessageReceipt receipt =
+                                (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                         receipt.acknowledge();
                     }
                     exchange.setProperty("retryCount", tries + 1);
@@ -183,6 +190,10 @@ public class PulsarConsumerDeadLetterPolicyIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 }

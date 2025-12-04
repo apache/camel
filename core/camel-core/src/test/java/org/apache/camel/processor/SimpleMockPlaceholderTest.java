@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Properties;
@@ -65,7 +66,10 @@ public class SimpleMockPlaceholderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start?block=true").to("{{foo}}?showAll=true").to("log:bar?groupSize=3").to("mock:{{end}}");
+                from("direct:start?block=true")
+                        .to("{{foo}}?showAll=true")
+                        .to("log:bar?groupSize=3")
+                        .to("mock:{{end}}");
             }
         };
     }

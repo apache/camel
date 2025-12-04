@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.nio.charset.Charset;
@@ -25,12 +26,12 @@ import java.util.Map;
  * Constants for the MLLP Protocol and the Camel MLLP component.
  */
 public final class MllpProtocolConstants {
-    public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
-    public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034
-    public static final char END_OF_DATA = 0x0d;         // CR (carriage return)     - decimal 13, octal 015
-    public static final int END_OF_STREAM = -1;          //
-    public static final char SEGMENT_DELIMITER = 0x0d;   // CR (carriage return)     - decimal 13, octal 015
-    public static final char MESSAGE_TERMINATOR = 0x0a;  // LF (line feed, new line) - decimal 10, octal 012
+    public static final char START_OF_BLOCK = 0x0b; // VT (vertical tab)        - decimal 11, octal 013
+    public static final char END_OF_BLOCK = 0x1c; // FS (file separator)      - decimal 28, octal 034
+    public static final char END_OF_DATA = 0x0d; // CR (carriage return)     - decimal 13, octal 015
+    public static final int END_OF_STREAM = -1; //
+    public static final char SEGMENT_DELIMITER = 0x0d; // CR (carriage return)     - decimal 13, octal 015
+    public static final char MESSAGE_TERMINATOR = 0x0a; // LF (line feed, new line) - decimal 10, octal 012
 
     public static final byte[] PAYLOAD_TERMINATOR;
 
@@ -77,6 +78,6 @@ public final class MllpProtocolConstants {
     }
 
     private MllpProtocolConstants() {
-        //utility class, never constructed
+        // utility class, never constructed
     }
 }

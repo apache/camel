@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.syslog.netty;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements Channel
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (currentFramelength == null) {
             // find index of the first space, it should be after the length field
-            int index = indexOf(in, Unpooled.wrappedBuffer(new byte[] { ' ' }));
+            int index = indexOf(in, Unpooled.wrappedBuffer(new byte[] {' '}));
 
             // Read part until the first space, if we have found one
             StringBuilder lengthbuffer = new StringBuilder();

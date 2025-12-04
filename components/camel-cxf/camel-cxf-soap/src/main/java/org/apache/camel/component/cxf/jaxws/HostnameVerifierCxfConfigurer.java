@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import javax.net.ssl.HostnameVerifier;
@@ -24,7 +25,8 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.transport.http.HTTPConduit;
 
-public final class HostnameVerifierCxfConfigurer extends AbstractHostnameVerifierEndpointConfigurer implements CxfConfigurer {
+public final class HostnameVerifierCxfConfigurer extends AbstractHostnameVerifierEndpointConfigurer
+        implements CxfConfigurer {
 
     private HostnameVerifierCxfConfigurer(HostnameVerifier hostnameVerifier) {
         super(hostnameVerifier);
@@ -39,8 +41,7 @@ public final class HostnameVerifierCxfConfigurer extends AbstractHostnameVerifie
     }
 
     @Override
-    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
-    }
+    public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {}
 
     @Override
     public void configureClient(Client client) {
@@ -49,6 +50,5 @@ public final class HostnameVerifierCxfConfigurer extends AbstractHostnameVerifie
     }
 
     @Override
-    public void configureServer(Server server) {
-    }
+    public void configureServer(Server server) {}
 }

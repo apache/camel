@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsublite;
 
 import java.util.Collections;
@@ -57,7 +58,10 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        localLog.info("Starting Google PubSub Lite consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+        localLog.info(
+                "Starting Google PubSub Lite consumer for {}/{}",
+                endpoint.getProjectId(),
+                endpoint.getDestinationName());
         executor = endpoint.createExecutor(this);
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper());
@@ -67,7 +71,10 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        localLog.info("Stopping Google PubSub Lite consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+        localLog.info(
+                "Stopping Google PubSub Lite consumer for {}/{}",
+                endpoint.getProjectId(),
+                endpoint.getDestinationName());
 
         synchronized (subscribers) {
             if (!subscribers.isEmpty()) {
@@ -91,8 +98,8 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
         private final String subscriptionName;
 
         SubscriberWrapper() {
-            subscriptionName
-                    = ProjectSubscriptionName.format(endpoint.getProjectId().toString(), endpoint.getDestinationName());
+            subscriptionName =
+                    ProjectSubscriptionName.format(endpoint.getProjectId().toString(), endpoint.getDestinationName());
         }
 
         @Override
@@ -103,8 +110,8 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
                 }
 
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
-                    MessageReceiver messageReceiver
-                            = new CamelMessageReceiver(GooglePubsubLiteConsumer.this, endpoint, processor);
+                    MessageReceiver messageReceiver =
+                            new CamelMessageReceiver(GooglePubsubLiteConsumer.this, endpoint, processor);
 
                     Subscriber subscriber = endpoint.getComponent().getSubscriber(messageReceiver, endpoint);
                     try {

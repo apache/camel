@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.optaplanner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,11 +32,6 @@ import org.optaplanner.core.config.solver.SolverManagerConfig;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OptaplannerSolverManagerSyncTest extends CamelTestSupport {
 
     private static SolverManager solverManager;
@@ -38,8 +39,8 @@ public class OptaplannerSolverManagerSyncTest extends CamelTestSupport {
     @BeforeEach
     public void beforeEach() {
         ClassLoader classLoader = this.context().getApplicationContextClassLoader();
-        SolverConfig solverConfig
-                = SolverConfig.createFromXmlResource("org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
+        SolverConfig solverConfig = SolverConfig.createFromXmlResource(
+                "org/apache/camel/component/optaplanner/solverConfig.xml", classLoader);
         SolverFactory solverFactory = SolverFactory.create(solverConfig);
         solverManager = SolverManager.create(solverFactory, new SolverManagerConfig());
     }
@@ -49,8 +50,12 @@ public class OptaplannerSolverManagerSyncTest extends CamelTestSupport {
 
         final CloudBalance planningProblem = getCloudBalance();
 
-        CloudBalance bestSolution = template.requestBodyAndHeader("optaplanner:doesntmatter", planningProblem,
-                OptaPlannerConstants.SOLVER_MANAGER, solverManager, CloudBalance.class);
+        CloudBalance bestSolution = template.requestBodyAndHeader(
+                "optaplanner:doesntmatter",
+                planningProblem,
+                OptaPlannerConstants.SOLVER_MANAGER,
+                solverManager,
+                CloudBalance.class);
 
         assertResults(bestSolution);
     }
@@ -61,9 +66,8 @@ public class OptaplannerSolverManagerSyncTest extends CamelTestSupport {
 
         this.context.getRegistry().bind("mySolverManager", solverManager);
 
-        CloudBalance bestSolution
-                = template.requestBody("optaplanner:doesntmatter?solverManager=#mySolverManager", planningProblem,
-                        CloudBalance.class);
+        CloudBalance bestSolution = template.requestBody(
+                "optaplanner:doesntmatter?solverManager=#mySolverManager", planningProblem, CloudBalance.class);
 
         assertResults(bestSolution);
     }
@@ -83,5 +87,4 @@ public class OptaplannerSolverManagerSyncTest extends CamelTestSupport {
         assertTrue(bestSolution.getScore().isFeasible());
         assertNotNull(bestSolution.getProcessList().get(0).getComputer());
     }
-
 }

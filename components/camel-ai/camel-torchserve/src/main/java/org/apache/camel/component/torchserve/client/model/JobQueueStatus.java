@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.model;
 
 import org.apache.camel.component.torchserve.client.management.model.DescribeModel200ResponseInnerJobQueueStatus;
@@ -23,8 +24,7 @@ public class JobQueueStatus {
     private Integer remainingCapacity = null;
     private Integer pendingRequests = null;
 
-    public JobQueueStatus() {
-    }
+    public JobQueueStatus() {}
 
     public static JobQueueStatus from(DescribeModel200ResponseInnerJobQueueStatus src) {
         if (src == null) {
@@ -55,9 +55,8 @@ public class JobQueueStatus {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {" +
-               " remainingCapacity: " + remainingCapacity + "," +
-               " pendingRequests: " + pendingRequests + " " +
-               "}";
+        return getClass().getSimpleName() + " {" + " remainingCapacity: "
+                + remainingCapacity + "," + " pendingRequests: "
+                + pendingRequests + " " + "}";
     }
 }

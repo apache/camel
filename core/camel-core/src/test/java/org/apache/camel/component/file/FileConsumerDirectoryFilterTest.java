@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the file filter option using directories
@@ -51,11 +52,11 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri("skipDir/"), "This is a file to be filtered",
-                Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader(
+                fileUri("skipDir/"), "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader(fileUri("skipDir2/"), "This is a file to be filtered",
-                Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader(
+                fileUri("skipDir2/"), "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
 
         template.sendBodyAndHeader(fileUri("okDir/"), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -102,7 +103,6 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
             return true;
         }
-
     }
     // END SNIPPET: e1
 

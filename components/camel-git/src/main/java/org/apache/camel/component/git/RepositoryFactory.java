@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git;
 
 import java.io.File;
@@ -44,8 +45,7 @@ public abstract class RepositoryFactory {
         DEFAULT_INSTANCE = SystemReader.getInstance();
     }
 
-    private RepositoryFactory() {
-    }
+    private RepositoryFactory() {}
 
     public static Repository of(GitEndpoint endpoint) {
         if (ObjectHelper.isNotEmpty(endpoint.getGitConfigFile())) {
@@ -69,20 +69,20 @@ public abstract class RepositoryFactory {
 
         File gitConfigFile;
         if (ResourceHelper.isClasspathUri(uri)) {
-            gitConfigFile = new File(endpoint.getClass().getClassLoader().getResource(path).getFile());
+            gitConfigFile = new File(
+                    endpoint.getClass().getClassLoader().getResource(path).getFile());
         } else if (ResourceHelper.isHttpUri(uri)) {
             try {
                 gitConfigFile = getTempFileFromHttp(uri);
             } catch (IOException e) {
                 throw new RuntimeCamelException(String.format("Something went wrong when loading: %s", uri), e);
             }
-        } else { //load from system
+        } else { // load from system
             gitConfigFile = new File(path);
             if (Files.isDirectory(gitConfigFile.toPath()) || !Files.isReadable(gitConfigFile.toPath())) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "The configuration file at %s is unreadable (either missing, lacking proper access permission or is not a regular file)",
-                                path));
+                throw new IllegalArgumentException(String.format(
+                        "The configuration file at %s is unreadable (either missing, lacking proper access permission or is not a regular file)",
+                        path));
             }
         }
 
@@ -94,7 +94,8 @@ public abstract class RepositoryFactory {
         try {
             SystemReader.setInstance(instance);
             // scan environment GIT_* variables
-            return builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment()
+            return builder.setGitDir(new File(endpoint.getLocalPath(), ".git"))
+                    .readEnvironment()
                     .findGitDir() // scan up the file system tree
                     .build();
         } catch (IOException e) {
@@ -107,12 +108,12 @@ public abstract class RepositoryFactory {
         Path tempFile = Files.createTempFile(null, null);
         FileOutputStream outputStream = new FileOutputStream(tempFile.toString());
         try {
-            ReadableByteChannel byteChannel = Channels.newChannel(URI.create(url).toURL().openStream());
+            ReadableByteChannel byteChannel =
+                    Channels.newChannel(URI.create(url).toURL().openStream());
             outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
         } finally {
             IOHelper.close(outputStream);
         }
         return tempFile.toFile();
     }
-
 }

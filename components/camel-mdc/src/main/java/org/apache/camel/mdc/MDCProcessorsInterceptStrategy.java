@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.mdc;
 
 import java.util.concurrent.CompletableFuture;
@@ -41,10 +42,7 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(
-            final CamelContext context,
-            final NamedNode definition,
-            final Processor target,
-            final Processor nextTarget)
+            final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
             throws Exception {
 
         final AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(target);
@@ -87,5 +85,4 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
             }
         };
     }
-
 }

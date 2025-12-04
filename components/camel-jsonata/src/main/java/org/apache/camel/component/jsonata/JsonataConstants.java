@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonata;
 
 import org.apache.camel.spi.Metadata;
@@ -23,8 +24,9 @@ import org.apache.camel.spi.Metadata;
  */
 public final class JsonataConstants {
 
-    @Metadata(description = "A URI for the template resource to load and use instead of the endpoint configured.",
-              javaType = "String")
+    @Metadata(
+            description = "A URI for the template resource to load and use instead of the endpoint configured.",
+            javaType = "String")
     public static final String JSONATA_RESOURCE_URI = "CamelJsonataResourceUri";
 
     public static final String JSONATA_CONTEXT = "CamelJsonataContext";

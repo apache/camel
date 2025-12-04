@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.io.File;
@@ -34,8 +35,11 @@ import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListener;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "log", description = "Displays external service logs", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "log",
+        description = "Displays external service logs",
+        sortOptions = false,
+        showDefaultValues = true)
 public class InfraLog extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "0..2")
@@ -56,9 +60,9 @@ public class InfraLog extends InfraBaseCommand {
             // Log everything
             try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
                 List<Path> logFiles = files.filter(p -> {
-                    String name = p.getFileName().toString();
-                    return name.startsWith("infra-") && name.endsWith(".log");
-                })
+                            String name = p.getFileName().toString();
+                            return name.startsWith("infra-") && name.endsWith(".log");
+                        })
                         .toList();
 
                 for (Path logFile : logFiles) {
@@ -79,9 +83,9 @@ public class InfraLog extends InfraBaseCommand {
             Path logFile = null;
             try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
                 logFile = files.filter(p -> {
-                    String name = p.getFileName().toString();
-                    return name.startsWith("infra-" + alias + "-") && name.endsWith(".log");
-                })
+                            String name = p.getFileName().toString();
+                            return name.startsWith("infra-" + alias + "-") && name.endsWith(".log");
+                        })
                         .findFirst()
                         .orElse(null);
             } catch (IOException e) {
@@ -127,12 +131,10 @@ public class InfraLog extends InfraBaseCommand {
         }
 
         @Override
-        public void fileNotFound() {
-        }
+        public void fileNotFound() {}
 
         @Override
-        public void fileRotated() {
-        }
+        public void fileRotated() {}
 
         @Override
         public void handle(Exception ex) {

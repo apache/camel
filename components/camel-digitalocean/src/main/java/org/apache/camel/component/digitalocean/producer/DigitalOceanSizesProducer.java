@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import com.myjeeva.digitalocean.pojo.Sizes;
@@ -36,5 +37,4 @@ public class DigitalOceanSizesProducer extends DigitalOceanProducer {
         LOG.trace("All Sizes : page {} [{}] ", sizes.getSizes(), configuration.getPage());
         exchange.getMessage().setBody(sizes.getSizes());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Iterator;
@@ -44,7 +45,6 @@ class CompoundIterator<T> implements Iterator<T> {
             } else {
                 current = it.hasNext() ? it.next() : null;
             }
-
         }
         return false;
     }

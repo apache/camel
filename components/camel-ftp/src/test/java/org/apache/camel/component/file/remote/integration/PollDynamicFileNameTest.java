@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PollDynamicFileNameTest extends FtpServerTestSupport {
 
@@ -52,7 +53,9 @@ public class PollDynamicFileNameTest extends FtpServerTestSupport {
 
         // there should only be 1 file endpoint
         long c = context.getEndpoints().stream()
-                .filter(e -> e.getEndpointKey().startsWith("ftp") && e.getEndpointUri().contains("&fileName=")).count();
+                .filter(e -> e.getEndpointKey().startsWith("ftp")
+                        && e.getEndpointUri().contains("&fileName="))
+                .count();
         Assertions.assertEquals(1, c, "There should only be 1 ftp endpoint");
     }
 
@@ -69,7 +72,9 @@ public class PollDynamicFileNameTest extends FtpServerTestSupport {
 
         // there should only be 1 file endpoint
         long c = context.getEndpoints().stream()
-                .filter(e -> e.getEndpointKey().startsWith("ftp") && e.getEndpointUri().contains("&fileName=")).count();
+                .filter(e -> e.getEndpointKey().startsWith("ftp")
+                        && e.getEndpointUri().contains("&fileName="))
+                .count();
         Assertions.assertEquals(1, c, "There should only be 1 ftp endpoint");
     }
 

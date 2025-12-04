@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
+
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
 
 import java.io.IOException;
 
@@ -29,8 +32,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
-
 public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FtpDefaultMoveExistingFileStrategy.class);
@@ -39,7 +40,8 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
      * Moves any existing file due fileExists=Move is in use.
      */
     @Override
-    public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
+    public boolean moveExistingFile(
+            GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)
             throws GenericFileOperationFailedException {
         // need to evaluate using a dummy and simulate the file first, to have
         // access to all the file attributes
@@ -48,7 +50,7 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
         // we only support relative paths for the ftp component, so we strip out
-        //any leading separator
+        // any leading separator
         String parent = FileUtil.stripLeadingSeparator(FileUtil.onlyPath(fileName));
         String onlyName = FileUtil.stripPath(fileName);
         dummy.getIn().setHeader(FtpConstants.FILE_NAME, fileName);
@@ -92,12 +94,12 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
                     throw new GenericFileOperationFailedException(
                             ((FtpOperations) operations).getClient().getReplyCode(),
                             ((FtpOperations) operations).getClient().getReplyString(),
-                            "Cannot delete file: " + to, e);
+                            "Cannot delete file: " + to,
+                            e);
                 }
             } else {
-                throw new GenericFileOperationFailedException(
-                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
-                                                              + to);
+                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: "
+                        + to + " as there already exists a file: " + to);
             }
         }
 
@@ -107,5 +109,4 @@ public class FtpDefaultMoveExistingFileStrategy implements FileMoveExistingStrat
         }
         return true;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.LoggingLevel;
@@ -32,8 +33,8 @@ public class LegacyTransactionErrorHandlerBuilder extends LegacyDefaultErrorHand
 
     static {
         // legacy camel-spring-xml error-handling using its own model and parsers
-        ErrorHandlerReifier.registerReifier(LegacyTransactionErrorHandlerBuilder.class,
-                LegacyTransactionErrorHandlerReifier::new);
+        ErrorHandlerReifier.registerReifier(
+                LegacyTransactionErrorHandlerBuilder.class, LegacyTransactionErrorHandlerReifier::new);
     }
 
     private TransactionTemplate transactionTemplate;
@@ -106,5 +107,4 @@ public class LegacyTransactionErrorHandlerBuilder extends LegacyDefaultErrorHand
     public String toString() {
         return "LegacyTransactionErrorHandlerBuilder";
     }
-
 }

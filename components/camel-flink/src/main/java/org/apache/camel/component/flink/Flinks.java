@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -21,9 +22,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public final class Flinks {
 
-    private Flinks() {
-
-    }
+    private Flinks() {}
 
     public static ExecutionEnvironment createExecutionEnvironment() {
         return ExecutionEnvironment.getExecutionEnvironment();

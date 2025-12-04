@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
@@ -22,16 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.Region;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class OpenstackKeystoneRegionTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + KeystoneConstants.REGIONS;
+    private static final String URI_FORMAT =
+            "openstack-keystone://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + KeystoneConstants.REGIONS;
 
     private static final String REGION_ID = "Region_CRUD";
     private static final String REGION_PARENTREGIONID = "RegionOne";
@@ -40,8 +41,11 @@ public class OpenstackKeystoneRegionTest extends OpenstackWiremockTestSupport {
 
     @Test
     void createShouldSucceed() {
-        Region in
-                = Builders.region().id(REGION_ID).description(REGION_DESCRIPTION).parentRegionId(REGION_PARENTREGIONID).build();
+        Region in = Builders.region()
+                .id(REGION_ID)
+                .description(REGION_DESCRIPTION)
+                .parentRegionId(REGION_PARENTREGIONID)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.CREATE);
         Region out = template.requestBody(uri, in, Region.class);
@@ -77,7 +81,10 @@ public class OpenstackKeystoneRegionTest extends OpenstackWiremockTestSupport {
 
     @Test
     void updateShouldSucceed() {
-        Region in = Builders.region().id(REGION_ID).description(REGION_DESCRIPTION_UPDATED).build();
+        Region in = Builders.region()
+                .id(REGION_ID)
+                .description(REGION_DESCRIPTION_UPDATED)
+                .build();
 
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.UPDATE);
         Region out = template.requestBody(uri, in, Region.class);
@@ -97,7 +104,8 @@ public class OpenstackKeystoneRegionTest extends OpenstackWiremockTestSupport {
     @Test
     void getUnknownRegionShouldReturnNull() {
         String uri = String.format(URI_FORMAT, url(), OpenstackConstants.GET);
-        Region out = template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, "nonExistentRegionId", Region.class);
+        Region out =
+                template.requestBodyAndHeader(uri, null, OpenstackConstants.ID, "nonExistentRegionId", Region.class);
 
         assertNull(out);
     }

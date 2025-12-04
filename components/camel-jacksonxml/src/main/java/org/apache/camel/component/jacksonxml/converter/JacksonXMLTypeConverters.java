@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml.converter;
 
 import java.util.Map;
@@ -34,8 +35,7 @@ public final class JacksonXMLTypeConverters {
     private boolean init;
     private Boolean enabled;
 
-    public JacksonXMLTypeConverters() {
-    }
+    public JacksonXMLTypeConverters() {}
 
     @Converter(fallback = true)
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
@@ -70,9 +70,12 @@ public final class JacksonXMLTypeConverters {
     private static boolean isNotPojoType(Class<?> type) {
         boolean isString = String.class.isAssignableFrom(type);
         boolean isNumber = Number.class.isAssignableFrom(type)
-                || int.class.isAssignableFrom(type) || long.class.isAssignableFrom(type)
-                || short.class.isAssignableFrom(type) || char.class.isAssignableFrom(type)
-                || float.class.isAssignableFrom(type) || double.class.isAssignableFrom(type);
+                || int.class.isAssignableFrom(type)
+                || long.class.isAssignableFrom(type)
+                || short.class.isAssignableFrom(type)
+                || char.class.isAssignableFrom(type)
+                || float.class.isAssignableFrom(type)
+                || double.class.isAssignableFrom(type);
         return isString || isNumber;
     }
 
@@ -83,5 +86,4 @@ public final class JacksonXMLTypeConverters {
         }
         return defaultMapper;
     }
-
 }

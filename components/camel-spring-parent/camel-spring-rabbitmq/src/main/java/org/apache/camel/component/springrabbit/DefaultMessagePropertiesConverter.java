@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import java.util.Date;
@@ -31,15 +32,15 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
 
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public DefaultMessagePropertiesConverter() {
-    }
+    public DefaultMessagePropertiesConverter() {}
 
     @Override
     public MessageProperties toMessageProperties(Exchange exchange) {
         MessageProperties answer = new MessageProperties();
         Message message = exchange.getMessage();
 
-        MessageDeliveryMode deliveryMode = message.getHeader(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.class);
+        MessageDeliveryMode deliveryMode =
+                message.getHeader(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.class);
         if (deliveryMode != null) {
             answer.setDeliveryMode(deliveryMode);
         }
@@ -111,7 +112,8 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
         Map<String, Object> answer = new HashMap<>();
 
         if (messageProperties != null) {
-            Set<Map.Entry<String, Object>> entries = messageProperties.getHeaders().entrySet();
+            Set<Map.Entry<String, Object>> entries =
+                    messageProperties.getHeaders().entrySet();
             for (Map.Entry<String, Object> entry : entries) {
                 String headerName = entry.getKey();
                 Object headerValue = entry.getValue();

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -27,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test to verify exclusive read option using *none*
@@ -82,5 +83,4 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
             LOG.info("... done creating slowfile");
         }
     }
-
 }

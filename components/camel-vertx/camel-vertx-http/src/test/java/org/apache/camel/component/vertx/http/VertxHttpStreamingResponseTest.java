@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -26,8 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxHttpStreamingResponseTest extends VertxHttpTestSupport {
 
@@ -43,7 +44,8 @@ public class VertxHttpStreamingResponseTest extends VertxHttpTestSupport {
 
         VertxHttpBinding binding = new DefaultVertxHttpBinding() {
             @Override
-            public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) throws Exception {
+            public HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange)
+                    throws Exception {
                 HttpRequest<Buffer> request = super.prepareHttpRequest(endpoint, exchange);
                 request.as(BodyCodec.pipe(file));
                 return request;
@@ -66,8 +68,7 @@ public class VertxHttpStreamingResponseTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri())
-                        .setBody().constant(MESSAGE);
+                from(getTestServerUri()).setBody().constant(MESSAGE);
             }
         };
     }

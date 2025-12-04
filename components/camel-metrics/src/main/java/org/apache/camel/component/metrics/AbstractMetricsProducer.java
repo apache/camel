@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
 
 import com.codahale.metrics.MetricRegistry;
@@ -51,8 +52,8 @@ public abstract class AbstractMetricsProducer extends DefaultProducer {
         }
     }
 
-    protected abstract void doProcess(Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName)
-            throws Exception;
+    protected abstract void doProcess(
+            Exchange exchange, MetricsEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception;
 
     public String getMetricsName(Message in, String defaultValue) {
         return getStringHeader(in, MetricsConstants.HEADER_METRIC_NAME, defaultValue);

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -35,10 +40,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Checks for interoperability between a CXF client that is attached using the Camel transport for CXF and the SOAP data
@@ -98,7 +99,6 @@ public class SoapCxfClientTest extends RouteBuilder {
             NoSuchCustomer info = e.getFaultInfo();
             assertEquals("none", info.getCustomerId());
         }
-
     }
 
     @Override
@@ -110,10 +110,12 @@ public class SoapCxfClientTest extends RouteBuilder {
         SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
         getContext().setTracing(true);
         from("direct:cxfclient") //
-                .onException(Exception.class).handled(true).marshal(soapDataFormat).end() //
+                .onException(Exception.class)
+                .handled(true)
+                .marshal(soapDataFormat)
+                .end() //
                 .unmarshal(soapDataFormat) //
                 .toD("bean:myServerBean?method=${header.CamelSoapMethodName}")
                 .marshal(soapDataFormat);
     }
-
 }

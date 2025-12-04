@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.awaitility.Awaitility.await;
 
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.awaitility.Awaitility.await;
 
 public class SmbConsumerLocalWorkDirectoryIT extends SmbServerTestSupport {
 
@@ -45,7 +46,11 @@ public class SmbConsumerLocalWorkDirectoryIT extends SmbServerTestSupport {
     protected String getSmbUrl() {
         return String.format(
                 "smb:%s/%s/localwork?username=%s&password=%s&noop=true&localWorkDirectory=%s",
-                service.address(), service.shareName(), service.userName(), service.password(), testDirectory.toAbsolutePath());
+                service.address(),
+                service.shareName(),
+                service.userName(),
+                service.password(),
+                testDirectory.toAbsolutePath());
     }
 
     @Test
@@ -84,8 +89,7 @@ public class SmbConsumerLocalWorkDirectoryIT extends SmbServerTestSupport {
         return new RouteBuilder() {
 
             public void configure() {
-                from(getSmbUrl())
-                        .to("mock:result", TestSupport.fileUri(testDirectory, "out"));
+                from(getSmbUrl()).to("mock:result", TestSupport.fileUri(testDirectory, "out"));
             }
         };
     }

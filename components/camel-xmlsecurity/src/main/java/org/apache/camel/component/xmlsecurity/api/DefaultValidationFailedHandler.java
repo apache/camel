@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.security.InvalidKeyException;
@@ -54,17 +55,17 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
 
     @Override
     public void referenceValidationFailed(Reference ref) throws Exception {
-        error.append(String
-                .format("The calculated digest value of the document  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
-                        getReferenceUriOrId(ref)));
+        error.append(String.format(
+                "The calculated digest value of the document  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
+                getReferenceUriOrId(ref)));
         throw new XmlSignatureInvalidContentHashException(error.toString());
     }
 
     @Override
     public void manifestReferenceValidationFailed(Reference ref) throws Exception {
-        error.append(String
-                .format("The calculated digest value of the manifest  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
-                        getReferenceUriOrId(ref)));
+        error.append(String.format(
+                "The calculated digest value of the manifest  %s is not equal to the value specified in the XML signature. The document may have been tampered with.",
+                getReferenceUriOrId(ref)));
         throw new XmlSignatureInvalidContentHashException(error.toString());
     }
 
@@ -85,5 +86,4 @@ public class DefaultValidationFailedHandler implements ValidationFailedHandler {
     public boolean ignoreCoreValidationFailure() throws Exception {
         return false;
     }
-
 }

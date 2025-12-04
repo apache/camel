@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
         ChannelHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            //TODO must close on SSL exception
+            // TODO must close on SSL exception
             // sslHandler.setCloseOnSSLException(true);
 
             if (sslHandler instanceof ChannelHandlerFactory) {
@@ -91,12 +92,18 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
                 sslHandler = ((ChannelHandlerFactory) sslHandler).newChannelHandler();
             }
 
-            LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
+            LOG.debug(
+                    "Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}",
+                    sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder(
-                configuration.getMaxInitialLineLength(), configuration.getMaxHeaderSize(), configuration.getMaxChunkSize()));
+        pipeline.addLast(
+                "decoder",
+                new HttpRequestDecoder(
+                        configuration.getMaxInitialLineLength(),
+                        configuration.getMaxHeaderSize(),
+                        configuration.getMaxChunkSize()));
         List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
@@ -126,10 +133,14 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         }
 
         int port = consumer.getConfiguration().getPort();
-        ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port).getChannelHandler();
+        ChannelHandler handler = consumer.getEndpoint()
+                .getComponent()
+                .getMultiplexChannelHandler(port)
+                .getChannelHandler();
 
         if (consumer.getConfiguration().isUsingExecutorService()) {
-            EventExecutorGroup applicationExecutor = consumer.getEndpoint().getComponent().getExecutorService();
+            EventExecutorGroup applicationExecutor =
+                    consumer.getEndpoint().getComponent().getExecutorService();
             pipeline.addLast(applicationExecutor, "handler", handler);
         } else {
             pipeline.addLast("handler", handler);
@@ -148,10 +159,13 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         if (configuration.getSslContextParameters() != null) {
             answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
-            char[] pw = configuration.getPassphrase() != null ? configuration.getPassphrase().toCharArray() : null;
+            char[] pw = configuration.getPassphrase() != null
+                    ? configuration.getPassphrase().toCharArray()
+                    : null;
 
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory();
-            answer = sslEngineFactory.createSSLContext(camelContext,
+            answer = sslEngineFactory.createSSLContext(
+                    camelContext,
                     configuration.getKeyStoreFormat(),
                     configuration.getSecurityProvider(),
                     configuration.getKeyStoreResource(),
@@ -180,7 +194,8 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             }
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
-                engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));
+                engine.setEnabledProtocols(
+                        consumer.getConfiguration().getEnabledProtocols().split(","));
             }
             return new SslHandler(engine);
         }
@@ -191,5 +206,4 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
     private boolean supportCompressed() {
         return consumer.getEndpoint().getConfiguration().isCompression();
     }
-
 }

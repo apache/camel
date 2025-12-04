@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class SqlProducerInMultiQueryEndpointTest extends SqlProducerInMultiTest 
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                        .to("sql:select * from projects where project in (:#in:names) and license in (:#in:licenses) order by id")
+                        .to(
+                                "sql:select * from projects where project in (:#in:names) and license in (:#in:licenses) order by id")
                         .to("log:query")
                         .to("mock:query");
             }

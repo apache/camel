@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar.stream;
 
 import java.util.ArrayList;
@@ -71,7 +72,8 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected int poll() throws Exception {
-        Calendar.Events.List request = getClient().events().list(getConfiguration().getCalendarId());
+        Calendar.Events.List request =
+                getClient().events().list(getConfiguration().getCalendarId());
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
         }
@@ -185,5 +187,4 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
         }
         return total;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.process;
 
 import java.util.Map;
@@ -26,7 +27,8 @@ import org.apache.camel.maven.htmlxlsx.model.TestResult;
 
 public class XmlToCamelRouteCoverageConverter {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+    private final ObjectMapper objectMapper =
+            new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
     private final XmlMapper xmlMapper = new XmlMapper();
 

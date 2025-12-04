@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,10 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.UpdateSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
@@ -63,7 +64,8 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
         });
         Assertions.assertNotNull(exchange);
 
-        UpdateSecretResponse resultUpdate = (UpdateSecretResponse) exchange.getIn().getBody();
+        UpdateSecretResponse resultUpdate =
+                (UpdateSecretResponse) exchange.getIn().getBody();
         assertTrue(resultUpdate.sdkHttpResponse().isSuccessful());
         assertEquals("TestSecret4", resultUpdate.name());
 
@@ -83,11 +85,9 @@ public class SecretsManagerUpdateSecretProducerLocalstackIT extends AwsSecretsMa
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
-                from("direct:updateSecret")
-                        .to("aws-secrets-manager://test?operation=updateSecret");
+                from("direct:updateSecret").to("aws-secrets-manager://test?operation=updateSecret");
 
                 from("direct:getSecret")
                         .to("aws-secrets-manager://test?operation=getSecret")

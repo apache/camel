@@ -47,15 +47,19 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
 
     static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
 
-    @CommandLine.Option(names = { "--kube-config" },
-                        description = "Path to the kube config file to initialize Kubernetes client")
+    @CommandLine.Option(
+            names = {"--kube-config"},
+            description = "Path to the kube config file to initialize Kubernetes client")
     String kubeConfig;
 
-    @CommandLine.Option(names = { "--namespace", "-n" }, description = "Namespace to use for all operations")
+    @CommandLine.Option(
+            names = {"--namespace", "-n"},
+            description = "Namespace to use for all operations")
     String namespace;
 
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    @CommandLine.Option(
+            names = {"--name"},
+            description = "The integration name. Use this when the name should not get derived otherwise.")
     String name;
 
     List<Supplier<String>> projectNameSuppliers = new ArrayList<>();
@@ -66,7 +70,10 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
     }
 
     protected String getProjectName() {
-        return projectNameSuppliers.stream().map(Supplier::get).filter(Objects::nonNull).findFirst()
+        return projectNameSuppliers.stream()
+                .map(Supplier::get)
+                .filter(Objects::nonNull)
+                .findFirst()
                 .orElseThrow(() -> new RuntimeCamelException("Failed to resolve project name"));
     }
 

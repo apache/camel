@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.FileInputStream;
@@ -188,7 +189,6 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
-
     }
 
     protected abstract AbstractSalesforceExecution getSalesforceExecution();
@@ -224,25 +224,24 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
             throw new MojoExecutionException(
                     "Either property: clientSecret or property: keystoreResource must be provided.");
         } else if (clientSecret != null && keystoreResource != null) {
-            throw new MojoExecutionException(
-                    "Property: clientSecret or property: keystoreResource must be provided.");
+            throw new MojoExecutionException("Property: clientSecret or property: keystoreResource must be provided.");
         }
 
         if (clientSecret != null) {
             if (password == null) {
-                throw new MojoExecutionException(
-                        // NOTE: a text error message to clarify the problem
-                        "Property 'password' must be provided when property 'clientSecret' was provided."); // NOSONAR
+                throw new MojoExecutionException(generateRequiredErrorMessage("password", "clientSecret"));
             }
         }
 
         if (keystoreResource != null) {
             if (keystorePassword == null) {
-                throw new MojoExecutionException(
-                        // NOTE: a text error message to clarify the problem
-                        "Property 'keystorePassword' must be provided when property 'keystoreResource' was provided."); // NOSONAR
+                throw new MojoExecutionException(generateRequiredErrorMessage("keystorePassword", "keystoreResource"));
             }
         }
+    }
+
+    private String generateRequiredErrorMessage(String parameter1, String parameter2) {
+        return String.format("Property: %s must be provided when property: %s was provided.", parameter1, parameter2);
     }
 
     private KeyStoreParameters generateKeyStoreParameters() {

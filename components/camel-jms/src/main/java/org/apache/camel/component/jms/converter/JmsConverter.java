@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.converter;
 
 import jakarta.jms.Message;
@@ -34,5 +35,4 @@ public class JmsConverter {
     public static Message toMessage(JmsMessage jmsMessage) throws CamelException {
         return jmsMessage.getJmsMessage();
     }
-
 }

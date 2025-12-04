@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.mq;
 
 public enum MQ2Operations {
-
     listBrokers,
     createBroker,
     deleteBroker,

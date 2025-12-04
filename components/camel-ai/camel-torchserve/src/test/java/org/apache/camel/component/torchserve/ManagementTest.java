@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,13 +31,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.torchserve.client.model.ModelList;
 import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 class ManagementTest extends TorchServeTestSupport {
 
@@ -50,8 +51,7 @@ class ManagementTest extends TorchServeTestSupport {
 
     @Test
     void testRegister() throws Exception {
-        mockServer.stubFor(post(urlPathEqualTo("/models"))
-                .willReturn(okJson("{ \"status\": \"registered\" }")));
+        mockServer.stubFor(post(urlPathEqualTo("/models")).willReturn(okJson("{ \"status\": \"registered\" }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("registered");
 
@@ -63,8 +63,8 @@ class ManagementTest extends TorchServeTestSupport {
 
     @Test
     void testScaleWorker() throws Exception {
-        mockServer.stubFor(put(urlPathEqualTo("/models/" + ADDED_MODEL))
-                .willReturn(okJson("{ \"status\": \"processing\" }")));
+        mockServer.stubFor(
+                put(urlPathEqualTo("/models/" + ADDED_MODEL)).willReturn(okJson("{ \"status\": \"processing\" }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("processing");
 
@@ -76,8 +76,8 @@ class ManagementTest extends TorchServeTestSupport {
 
     @Test
     void testScaleWorker_headers() throws Exception {
-        mockServer.stubFor(put(urlPathEqualTo("/models/" + ADDED_MODEL))
-                .willReturn(okJson("{ \"status\": \"processing\" }")));
+        mockServer.stubFor(
+                put(urlPathEqualTo("/models/" + ADDED_MODEL)).willReturn(okJson("{ \"status\": \"processing\" }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("processing");
 
@@ -113,8 +113,7 @@ class ManagementTest extends TorchServeTestSupport {
 
     @Test
     void testUnregister() throws Exception {
-        mockServer.stubFor(delete("/models/" + ADDED_MODEL)
-                .willReturn(okJson("{ \"status\": \"unregistered\" }")));
+        mockServer.stubFor(delete("/models/" + ADDED_MODEL).willReturn(okJson("{ \"status\": \"unregistered\" }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("unregistered");
 
@@ -126,8 +125,7 @@ class ManagementTest extends TorchServeTestSupport {
 
     @Test
     void testUnregister_headers() throws Exception {
-        mockServer.stubFor(delete("/models/" + ADDED_MODEL)
-                .willReturn(okJson("{ \"status\": \"unregistered\" }")));
+        mockServer.stubFor(delete("/models/" + ADDED_MODEL).willReturn(okJson("{ \"status\": \"unregistered\" }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().constant("unregistered");
 
@@ -170,9 +168,11 @@ class ManagementTest extends TorchServeTestSupport {
 
     @Test
     void testList() throws Exception {
-        mockServer.stubFor(get(urlPathEqualTo("/models"))
-                .willReturn(okJson(
-                        "{ \"models\": [ { \"modelName\": \"squeezenet1_1\", \"modelUrl\": \"squeezenet1_1.mar\" } ] }")));
+        mockServer.stubFor(
+                get(urlPathEqualTo("/models"))
+                        .willReturn(
+                                okJson(
+                                        "{ \"models\": [ { \"modelName\": \"squeezenet1_1\", \"modelUrl\": \"squeezenet1_1.mar\" } ] }")));
         var mock = getMockEndpoint("mock:result");
         mock.expectedBodyReceived().body(ModelList.class);
 
@@ -225,23 +225,23 @@ class ManagementTest extends TorchServeTestSupport {
                 from("direct:scale-worker_headers")
                         .to("torchserve:management/scale-worker")
                         .to("mock:result");
-                from("direct:describe")
-                        .to("torchserve:management/describe")
-                        .to("mock:result");
+                from("direct:describe").to("torchserve:management/describe").to("mock:result");
                 from("direct:unregister")
                         .toF("torchserve:management/unregister?modelName=%s", ADDED_MODEL)
                         .to("mock:result");
                 from("direct:unregister_version")
-                        .toF("torchserve:management/unregister?modelName=%s&modelVersion=%s", ADDED_MODEL, ADDED_MODEL_VERSION)
+                        .toF(
+                                "torchserve:management/unregister?modelName=%s&modelVersion=%s",
+                                ADDED_MODEL, ADDED_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:unregister_headers")
                         .to("torchserve:management/unregister")
                         .to("mock:result");
-                from("direct:list")
-                        .to("torchserve:management/list")
-                        .to("mock:result");
+                from("direct:list").to("torchserve:management/list").to("mock:result");
                 from("direct:set-default")
-                        .toF("torchserve:management/set-default?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
+                        .toF(
+                                "torchserve:management/set-default?modelName=%s&modelVersion=%s",
+                                TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:set-default_headers")
                         .to("torchserve:management/set-default")

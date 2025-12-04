@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.util.function.Function;
@@ -30,8 +31,8 @@ public class RouteDumpEventNotifier extends EventNotifierSupport {
     private final Function<RouteDumpEventNotifier, String> testMethodName;
     private final String format;
 
-    public RouteDumpEventNotifier(String testClassName, Function<RouteDumpEventNotifier, String> testMethodName,
-                                  String format) {
+    public RouteDumpEventNotifier(
+            String testClassName, Function<RouteDumpEventNotifier, String> testMethodName, String format) {
         this.testClassName = testClassName;
         this.testMethodName = testMethodName;
         this.format = format;
@@ -61,5 +62,4 @@ public class RouteDumpEventNotifier extends EventNotifierSupport {
         drs.setUriAsParameters(true);
         drs.dumpRoutes(format);
     }
-
 }

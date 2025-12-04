@@ -31,8 +31,7 @@ public class MessagingServiceBuilder<T extends GenericContainer<T>> {
     private Supplier<T> containerSupplier;
     private Function<T, String> endpointFunction;
 
-    protected MessagingServiceBuilder() {
-    }
+    protected MessagingServiceBuilder() {}
 
     public static <T extends GenericContainer<T>> MessagingServiceBuilder<T> newBuilder(Supplier<T> containerSupplier) {
         MessagingServiceBuilder<T> messagingServiceBuilder = new MessagingServiceBuilder<>();

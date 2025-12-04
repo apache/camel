@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.io.IOException;
@@ -82,7 +83,10 @@ class StubServer {
             final StubResponse stub = stubFor(request, body.toString());
 
             if (stub == null) {
-                LOG.error("Stub not found for {} {}", request.getMethod(), request.getHttpURI().getPath());
+                LOG.error(
+                        "Stub not found for {} {}",
+                        request.getMethod(),
+                        request.getHttpURI().getPath());
                 Response.writeError(request, response, callback, HttpServletResponse.SC_NOT_IMPLEMENTED);
                 callback.succeeded();
                 return false;
@@ -114,9 +118,12 @@ class StubServer {
 
         private String responseString;
 
-        public StubResponse(final String requestMethod, final String requestPath, final int responseStatus,
-                            final Predicate<String> requestCondition,
-                            final BlockingQueue<String> responseMessages) {
+        public StubResponse(
+                final String requestMethod,
+                final String requestPath,
+                final int responseStatus,
+                final Predicate<String> requestCondition,
+                final BlockingQueue<String> responseMessages) {
             this(requestMethod, requestPath, responseStatus, requestCondition);
 
             this.responseMessages = responseMessages;
@@ -128,30 +135,42 @@ class StubServer {
             this.requestPath = Objects.requireNonNull(requestPath, "requestPath");
         }
 
-        private StubResponse(final String requestMethod, final String requestPath, final int responseStatus,
-                             final BlockingQueue<String> responseMessages) {
+        private StubResponse(
+                final String requestMethod,
+                final String requestPath,
+                final int responseStatus,
+                final BlockingQueue<String> responseMessages) {
             this(requestMethod, requestPath, responseStatus);
 
             this.responseMessages = responseMessages;
         }
 
-        private StubResponse(final String requestMethod, final String requestPath, final int responseStatus,
-                             final Predicate<String> requestCondition) {
+        private StubResponse(
+                final String requestMethod,
+                final String requestPath,
+                final int responseStatus,
+                final Predicate<String> requestCondition) {
             this(requestMethod, requestPath, responseStatus);
 
             this.requestCondition = requestCondition;
         }
 
-        private StubResponse(final String requestMethod, final String requestPath, final int responseStatus,
-                             final Predicate<String> requestCondition,
-                             final String responseString) {
+        private StubResponse(
+                final String requestMethod,
+                final String requestPath,
+                final int responseStatus,
+                final Predicate<String> requestCondition,
+                final String responseString) {
             this(requestMethod, requestPath, responseStatus, requestCondition);
 
             this.responseString = responseString;
         }
 
-        private StubResponse(final String requestMethod, final String requestPath, final int responseStatus,
-                             final String responseString) {
+        private StubResponse(
+                final String requestMethod,
+                final String requestPath,
+                final int responseStatus,
+                final String responseString) {
             this(requestMethod, requestPath, responseStatus);
             this.responseString = responseString;
         }
@@ -178,7 +197,8 @@ class StubServer {
 
         private void writeTo(final String messageId, final Response out, final Callback callback) throws IOException {
             if (responseString != null) {
-                out.write(true,
+                out.write(
+                        true,
                         ByteBuffer.wrap(responseString.replace("$id", messageId).getBytes(StandardCharsets.UTF_8)),
                         callback);
                 return;
@@ -189,8 +209,10 @@ class StubServer {
                     try {
                         final String message = responseMessages.poll(25, TimeUnit.MILLISECONDS);
                         if (message != null) {
-                            out.write(true,
-                                    ByteBuffer.wrap(message.replace("$id", messageId).getBytes(StandardCharsets.UTF_8)),
+                            out.write(
+                                    true,
+                                    ByteBuffer.wrap(
+                                            message.replace("$id", messageId).getBytes(StandardCharsets.UTF_8)),
                                     callback);
                             return;
                         }
@@ -246,7 +268,9 @@ class StubServer {
     }
 
     public void replyTo(
-            final String method, final String path, final Predicate<String> requestCondition,
+            final String method,
+            final String path,
+            final Predicate<String> requestCondition,
             final BlockingQueue<String> messages) {
         stubs.add(new StubResponse(method, path, 200, requestCondition, messages));
     }
@@ -299,5 +323,4 @@ class StubServer {
         }
         return id;
     }
-
 }

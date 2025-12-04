@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import java.net.URL;
@@ -36,13 +37,14 @@ public class XQueryComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
+
     @Metadata(label = "advanced")
     private Configuration configuration;
+
     @Metadata(label = "advanced")
     private Map<String, Object> configurationProperties = new HashMap<>();
 
-    public XQueryComponent() {
-    }
+    public XQueryComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

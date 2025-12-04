@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
@@ -55,7 +56,9 @@ public class RouteTemplateOptionalValueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                routeTemplate("myTemplate").templateParameter("foo").templateOptionalParameter("myRetain")
+                routeTemplate("myTemplate")
+                        .templateParameter("foo")
+                        .templateOptionalParameter("myRetain")
                         .from("direct:{{foo}}")
                         .to("mock:result?retainFirst={{?myRetain}}");
             }

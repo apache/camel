@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,8 +33,7 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedFileExists(testFile("renameissue/.camel/hello.txt"));
 
-        template.sendBodyAndHeader(fileUri("renameissue"), "World",
-                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(fileUri("renameissue"), "World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -45,12 +45,17 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
             public void configure() {
                 from(fileUri("renameissue?noop=false&initialDelay=0&delay=10"))
                         .setProperty("PartitionID")
-                        .simple("${file:name}").convertBodyTo(String.class)
-                        .to(ExchangePattern.InOut, "direct:source").process(new Processor() {
+                        .simple("${file:name}")
+                        .convertBodyTo(String.class)
+                        .to(ExchangePattern.InOut, "direct:source")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
-                                log.info("The exchange's IN body as String is {}", exchange.getIn().getBody(String.class));
+                                log.info(
+                                        "The exchange's IN body as String is {}",
+                                        exchange.getIn().getBody(String.class));
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
 
                 from("direct:source").transform(body().prepend("Hello "));
             }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
+
+import static org.apache.camel.test.junit6.TestSupport.isCamelDebugPresent;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -36,8 +39,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit6.TestSupport.isCamelDebugPresent;
-
 public class TransientCamelContextManager implements CamelContextManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransientCamelContextManager.class);
@@ -53,8 +54,8 @@ public class TransientCamelContextManager implements CamelContextManager {
     private Properties extra;
     private ExtensionContext.Store globalStore;
 
-    public TransientCamelContextManager(TestExecutionConfiguration testConfigurationBuilder,
-                                        CamelContextConfiguration camelContextConfiguration) {
+    public TransientCamelContextManager(
+            TestExecutionConfiguration testConfigurationBuilder, CamelContextConfiguration camelContextConfiguration) {
         this.testConfigurationBuilder = testConfigurationBuilder;
         this.camelContextConfiguration = camelContextConfiguration;
 
@@ -77,14 +78,16 @@ public class TransientCamelContextManager implements CamelContextManager {
 
         // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX) or if
         // the component camel-debug is in the classpath
-        if (testConfigurationBuilder.isJmxEnabled() || testConfigurationBuilder.isRouteCoverageEnabled()
+        if (testConfigurationBuilder.isJmxEnabled()
+                || testConfigurationBuilder.isRouteCoverageEnabled()
                 || isCamelDebugPresent()) {
             enableJMX();
         } else {
             disableJMX();
         }
 
-        context = (ModelCamelContext) camelContextConfiguration.camelContextSupplier().createCamelContext();
+        context = (ModelCamelContext)
+                camelContextConfiguration.camelContextSupplier().createCamelContext();
         assert context != null : "No context found!";
 
         // TODO: fixme (some tests try to access the context before it's set on the test)
@@ -158,7 +161,8 @@ public class TransientCamelContextManager implements CamelContextManager {
         }
 
         Boolean ignore = camelContextConfiguration.ignoreMissingLocationWithPropertiesComponent();
-        CamelContextTestHelper.configurePropertiesComponent(context, extra, new JunitPropertiesSource(globalStore), ignore);
+        CamelContextTestHelper.configurePropertiesComponent(
+                context, extra, new JunitPropertiesSource(globalStore), ignore);
     }
 
     private void setupRoutes() throws Exception {
@@ -237,9 +241,7 @@ public class TransientCamelContextManager implements CamelContextManager {
     }
 
     @Override
-    public void stopTemplates() {
-
-    }
+    public void stopTemplates() {}
 
     @Override
     public void close() {
@@ -272,13 +274,13 @@ public class TransientCamelContextManager implements CamelContextManager {
     protected void applyCamelPostProcessor(Object test) throws Exception {
         // use the bean post processor if the test class is not dependency
         // injected already by Spring Framework
-        boolean spring
-                = ExtensionHelper.hasClassAnnotation(test.getClass(), "org.springframework.context.annotation.ComponentScan");
+        boolean spring = ExtensionHelper.hasClassAnnotation(
+                test.getClass(), "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
-            PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(test,
-                    test.getClass().getName());
-            PluginHelper.getBeanPostProcessor(context).postProcessAfterInitialization(test,
-                    test.getClass().getName());
+            PluginHelper.getBeanPostProcessor(context)
+                    .postProcessBeforeInitialization(test, test.getClass().getName());
+            PluginHelper.getBeanPostProcessor(context)
+                    .postProcessAfterInitialization(test, test.getClass().getName());
         }
     }
 

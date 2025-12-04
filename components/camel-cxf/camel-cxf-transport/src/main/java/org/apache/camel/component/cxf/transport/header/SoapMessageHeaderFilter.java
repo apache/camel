@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport.header;
 
 import java.util.Arrays;
@@ -36,7 +37,8 @@ import org.slf4j.LoggerFactory;
 public class SoapMessageHeaderFilter implements MessageHeaderFilter {
     private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHeaderFilter.class);
 
-    private static final List<String> ACTIVATION_NS = Arrays.asList(SoapBindingConstants.SOAP11_BINDING_ID,
+    private static final List<String> ACTIVATION_NS = Arrays.asList(
+            SoapBindingConstants.SOAP11_BINDING_ID,
             SoapBindingFactory.SOAP_11_BINDING,
             SoapBindingFactory.SOAP_12_BINDING);
 
@@ -63,11 +65,10 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
             }
 
             SoapHeader soapHeader = SoapHeader.class.cast(header);
-            for (Iterator<SoapVersion> itv = SoapVersionFactory.getInstance().getVersions(); itv.hasNext();) {
+            for (Iterator<SoapVersion> itv = SoapVersionFactory.getInstance().getVersions(); itv.hasNext(); ) {
                 SoapVersion version = itv.next();
 
-                if (soapHeader.getActor() != null
-                        && soapHeader.getActor().equals(version.getNextRole())) {
+                if (soapHeader.getActor() != null && soapHeader.getActor().equals(version.getNextRole())) {
                     // dropping headers if actor/role equals to {ns}/role|actor/next
                     // cxf SoapHeader needs to have soap:header@relay attribute,
                     // then we can check for it here as well
@@ -78,5 +79,4 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
             }
         }
     }
-
 }

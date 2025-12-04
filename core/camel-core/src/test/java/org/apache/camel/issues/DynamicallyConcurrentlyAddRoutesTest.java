@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,8 +40,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
 
@@ -72,7 +73,8 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
             return addRouteTask;
         };
 
-        List<Callable<Boolean>> tasks = Stream.generate(addRouteSupplier).limit(4).toList();
+        List<Callable<Boolean>> tasks =
+                Stream.generate(addRouteSupplier).limit(4).toList();
 
         ExecutorService ex = Executors.newFixedThreadPool(4);
 
@@ -81,21 +83,25 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
 
             ex.awaitTermination(10, TimeUnit.SECONDS);
 
-            long failed = result.stream().filter(p -> {
-                try {
-                    return Boolean.FALSE.equals(p.get());
-                } catch (Exception e) {
-                    return false;
-                }
-            }).count();
+            long failed = result.stream()
+                    .filter(p -> {
+                        try {
+                            return Boolean.FALSE.equals(p.get());
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .count();
 
-            long successful = result.stream().filter(p -> {
-                try {
-                    return Boolean.TRUE.equals(p.get());
-                } catch (Exception e) {
-                    return false;
-                }
-            }).count();
+            long successful = result.stream()
+                    .filter(p -> {
+                        try {
+                            return Boolean.TRUE.equals(p.get());
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .count();
 
             log.info("Success/Failed: {}/{}", successful, failed);
             assertEquals(4L, successful);
@@ -105,7 +111,6 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
             ex.shutdown();
             context.stop();
         }
-
     }
 
     private static class MySlowEndpoint extends DefaultEndpoint {
@@ -136,5 +141,4 @@ public class DynamicallyConcurrentlyAddRoutesTest extends ContextTestSupport {
             return null;
         }
     }
-
 }

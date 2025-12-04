@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,9 +49,11 @@ public class RecipientListInterceptSendToEndpointException extends ContextTestSu
 
                 interceptSendToEndpoint("(ftp|http):.*").to("log:intercept").to("mock:intercept");
 
-                from("direct:start").recipientList(header("foo")).parallelProcessing().to("mock:end");
+                from("direct:start")
+                        .recipientList(header("foo"))
+                        .parallelProcessing()
+                        .to("mock:end");
             }
         };
     }
-
 }

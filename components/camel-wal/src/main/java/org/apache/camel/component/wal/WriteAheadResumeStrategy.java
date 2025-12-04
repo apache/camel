@@ -80,9 +80,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
     /**
      * Creates a new write-ahead resume strategy
      */
-    public WriteAheadResumeStrategy() {
-
-    }
+    public WriteAheadResumeStrategy() {}
 
     /**
      * Creates a new write-ahead resume strategy
@@ -179,14 +177,12 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
 
         EntryInfo.CachedEntryInfo entryInfo;
         try {
-            LogEntry entry = new LogEntry(
-                    LogEntry.EntryState.NEW, 0,
-                    keyBuffer.array(), 0, valueBuffer.array());
+            LogEntry entry = new LogEntry(LogEntry.EntryState.NEW, 0, keyBuffer.array(), 0, valueBuffer.array());
 
             entryInfo = logWriter.append(entry);
         } catch (IOException e) {
-            LOG.error("Unable to append a new record to the transaction log. The system will try to update the record " +
-                      "on the delegate strategy before forcing the failure");
+            LOG.error("Unable to append a new record to the transaction log. The system will try to update the record "
+                    + "on the delegate strategy before forcing the failure");
 
             tryUpdateDelegate(offsetKey, offsetValue, (EntryInfo.CachedEntryInfo) null, updateCallBack);
             throw e;
@@ -206,7 +202,10 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
      * @throws Exception
      */
     private void tryUpdateDelegate(
-            OffsetKey<?> offsetKey, Offset<?> offsetValue, EntryInfo.CachedEntryInfo entryInfo, UpdateCallBack updateCallBack)
+            OffsetKey<?> offsetKey,
+            Offset<?> offsetValue,
+            EntryInfo.CachedEntryInfo entryInfo,
+            UpdateCallBack updateCallBack)
             throws Exception {
         try {
             UpdateCallBack delegateCallback = resolveUpdateCallBack(entryInfo, updateCallBack);
@@ -216,8 +215,9 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
             if (entryInfo != null) {
                 logWriter.updateState(entryInfo, LogEntry.EntryState.FAILED);
             } else {
-                LOG.warn("Not updating the state on the transaction log before there's no entry information: it's likely " +
-                         "that a previous attempt to append the record has failed and the system is now in error");
+                LOG.warn(
+                        "Not updating the state on the transaction log before there's no entry information: it's likely "
+                                + "that a previous attempt to append the record has failed and the system is now in error");
             }
 
             throw throwable;
@@ -309,12 +309,12 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
             this.logFile = resumeStrategyConfiguration.getLogFile();
             this.resumeStrategy = resumeStrategyConfiguration.getDelegateResumeStrategy();
 
-            final ScheduledExecutorService executorService = camelContext.getExecutorServiceManager()
+            final ScheduledExecutorService executorService = camelContext
+                    .getExecutorServiceManager()
                     .newScheduledThreadPool(this, "SingleNodeKafkaResumeStrategy", 1);
 
-            DefaultLogSupervisor flushPolicy = new DefaultLogSupervisor(
-                    resumeStrategyConfiguration.getSupervisorInterval(),
-                    executorService);
+            DefaultLogSupervisor flushPolicy =
+                    new DefaultLogSupervisor(resumeStrategyConfiguration.getSupervisorInterval(), executorService);
             logWriter = new LogWriter(logFile, flushPolicy);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);

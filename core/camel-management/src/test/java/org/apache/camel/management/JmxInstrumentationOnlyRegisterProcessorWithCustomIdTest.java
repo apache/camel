@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.management.ManagementFactory;
 import java.util.Set;
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ManagementTestSupport {
@@ -85,14 +86,12 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Man
             public void configure() {
                 from("direct:start")
                         // sets the id of the previous node, that is the mock:foo
-                        .to("mock:foo").id("myfoo")
+                        .to("mock:foo")
+                        .id("myfoo")
                         .delay(10)
                         .to("mock:result");
 
-                from("direct:other")
-                        .to("mock:bar")
-                        .delay(10)
-                        .to("mock:other");
+                from("direct:other").to("mock:bar").delay(10).to("mock:other");
             }
         };
     }

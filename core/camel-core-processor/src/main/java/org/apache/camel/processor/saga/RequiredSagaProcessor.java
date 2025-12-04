@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,8 +32,12 @@ import org.apache.camel.saga.CamelSagaStep;
  */
 public class RequiredSagaProcessor extends SagaProcessor {
 
-    public RequiredSagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
-                                 SagaCompletionMode completionMode, CamelSagaStep step) {
+    public RequiredSagaProcessor(
+            CamelContext camelContext,
+            Processor childProcessor,
+            CamelSagaService sagaService,
+            SagaCompletionMode completionMode,
+            CamelSagaStep step) {
         super(camelContext, childProcessor, sagaService, completionMode, step);
     }
 
@@ -50,20 +55,28 @@ public class RequiredSagaProcessor extends SagaProcessor {
                         inheritedCoordinator = false;
                     }
 
-                    coordinatorFuture.whenComplete((coordinator, ex2) -> ifNotException(ex2, exchange, !inheritedCoordinator,
-                            coordinator, existingCoordinator, callback, () -> {
+                    coordinatorFuture.whenComplete((coordinator, ex2) -> ifNotException(
+                            ex2, exchange, !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
                                 setCurrentSagaCoordinator(exchange, coordinator);
-                                coordinator.beginStep(exchange, step).whenComplete((done, ex3) -> ifNotException(ex3, exchange,
-                                        !inheritedCoordinator, coordinator, existingCoordinator, callback, () -> {
-                                            super.process(exchange, doneSync -> {
-                                                if (!inheritedCoordinator) {
-                                                    // Saga starts and ends here
-                                                    handleSagaCompletion(exchange, coordinator, null, callback);
-                                                } else {
-                                                    callback.done(false);
-                                                }
-                                            });
-                                        }));
+                                coordinator
+                                        .beginStep(exchange, step)
+                                        .whenComplete((done, ex3) -> ifNotException(
+                                                ex3,
+                                                exchange,
+                                                !inheritedCoordinator,
+                                                coordinator,
+                                                existingCoordinator,
+                                                callback,
+                                                () -> {
+                                                    super.process(exchange, doneSync -> {
+                                                        if (!inheritedCoordinator) {
+                                                            // Saga starts and ends here
+                                                            handleSagaCompletion(exchange, coordinator, null, callback);
+                                                        } else {
+                                                            callback.done(false);
+                                                        }
+                                                    });
+                                                }));
                             }));
                 }));
 

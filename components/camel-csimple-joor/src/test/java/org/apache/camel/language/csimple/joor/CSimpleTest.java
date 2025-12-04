@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple.joor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -46,9 +47,12 @@ public class CSimpleTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when(csimple("${bodyAs(int)} > 10")).to("mock:high")
-                        .when(csimple("${bodyAs(int)} > 5")).to("mock:med")
-                        .otherwise().to("mock:low");
+                        .when(csimple("${bodyAs(int)} > 10"))
+                        .to("mock:high")
+                        .when(csimple("${bodyAs(int)} > 5"))
+                        .to("mock:med")
+                        .otherwise()
+                        .to("mock:low");
             }
         };
     }

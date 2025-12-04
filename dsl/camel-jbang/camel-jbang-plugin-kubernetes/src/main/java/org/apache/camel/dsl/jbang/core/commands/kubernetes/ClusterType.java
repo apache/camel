@@ -32,7 +32,8 @@ public enum ClusterType {
     public static ClusterType fromName(String name) {
         return Arrays.stream(values())
                 .filter(ct -> ct.name().equalsIgnoreCase(name))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown cluster type: %s".formatted(name)));
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown cluster type: %s".formatted(name)));
     }
 
     public boolean isEqualTo(String clusterType) {

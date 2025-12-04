@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +27,10 @@ public class ListJacksonUnmarshalDTest extends JacksonMarshalUnmarshalListTest {
 
             @Override
             public void configure() {
-                from("direct:backPojo").unmarshal(new ListJacksonDataFormat(TestPojo.class)).to("mock:reversePojo");
+                from("direct:backPojo")
+                        .unmarshal(new ListJacksonDataFormat(TestPojo.class))
+                        .to("mock:reversePojo");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.HashMap;
@@ -42,5 +43,4 @@ public class PropertiesRouteTemplateParametersSource implements RouteTemplatePar
         Map<String, Object> map = parameters.computeIfAbsent(routeId, k -> new HashMap<>());
         map.put(name, value);
     }
-
 }

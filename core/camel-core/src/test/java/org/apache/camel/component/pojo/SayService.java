@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pojo;
 
 public class SayService implements ISay {
     String message = "Hello";
 
-    public SayService() {
-    }
+    public SayService() {}
 
     public SayService(String message) {
         this.message = message;
@@ -38,5 +38,4 @@ public class SayService implements ISay {
     public void setMessage(String message) {
         this.message = message;
     }
-
 }

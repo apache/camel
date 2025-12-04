@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
 
 import java.util.Collections;
@@ -56,7 +57,10 @@ public abstract class BaseMinaTest extends CamelTestSupport {
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
+        ksp.setResource(this.getClass()
+                .getClassLoader()
+                .getResource("jsse/localhost.p12")
+                .toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -75,8 +79,8 @@ public abstract class BaseMinaTest extends CamelTestSupport {
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
-        //with tls 1.3 there are random failures, 1.2 is used instead
-        //(see https://issues.apache.org/jira/browse/DIRMINA-1132)
+        // with tls 1.3 there are random failures, 1.2 is used instead
+        // (see https://issues.apache.org/jira/browse/DIRMINA-1132)
         SecureSocketProtocolsParameters secureSocketProtocols = new SecureSocketProtocolsParameters();
         secureSocketProtocols.setSecureSocketProtocol(Collections.singletonList("TLSv1.2"));
         sslContextParameters.setSecureSocketProtocols(secureSocketProtocols);

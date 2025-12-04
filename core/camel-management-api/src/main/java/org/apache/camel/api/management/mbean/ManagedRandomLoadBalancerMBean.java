@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -25,5 +26,4 @@ public interface ManagedRandomLoadBalancerMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Processor id of the last chosen processor")
     String getLastChosenProcessorId();
-
 }

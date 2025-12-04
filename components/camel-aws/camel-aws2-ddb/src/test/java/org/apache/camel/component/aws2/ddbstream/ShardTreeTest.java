@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
+
+import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.Shard;
-
-import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ShardTreeTest {
 
@@ -52,7 +53,8 @@ class ShardTreeTest {
 
     @Test
     void shouldThrowIfNoUnparentedShardsCanBeFound() {
-        Shard selfParentingShard = Shard.builder().shardId("SHARD_X").parentShardId("SHARD_X").build();
+        Shard selfParentingShard =
+                Shard.builder().shardId("SHARD_X").parentShardId("SHARD_X").build();
         underTest.populate(Arrays.asList(selfParentingShard));
 
         assertThrows(IllegalStateException.class, () -> underTest.getRoots());
@@ -71,5 +73,4 @@ class ShardTreeTest {
 
         assertEquals(Arrays.asList(), underTest.getChildren("SHARD_6"));
     }
-
 }

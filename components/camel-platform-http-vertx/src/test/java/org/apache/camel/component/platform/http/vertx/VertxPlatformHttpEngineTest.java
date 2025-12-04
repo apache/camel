@@ -14,7 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -66,21 +82,6 @@ import org.apache.hc.client5.http.utils.Base64;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
     public static SSLContextParameters clientSSLParameters;
@@ -127,11 +128,13 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
+            assertThat(VertxPlatformHttpRouter.lookup(
+                            context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port)))
                     .isNotNull();
-            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
-                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
-            });
+            assertThat(context.getComponent("platform-http"))
+                    .isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
+                        assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
+                    });
 
         } finally {
             context.stop();
@@ -147,31 +150,16 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/get")
-                            .routeId("get")
-                            .setBody().constant("get");
-                    from("platform-http:/post")
-                            .routeId("post")
-                            .transform().body(String.class, b -> b.toUpperCase());
+                    from("platform-http:/get").routeId("get").setBody().constant("get");
+                    from("platform-http:/post").routeId("post").transform().body(String.class, b -> b.toUpperCase());
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("get"));
+            given().when().get("/get").then().statusCode(200).body(equalTo("get"));
 
-            given()
-                    .body("post")
-                    .when()
-                    .post("/post")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("POST"));
+            given().body("post").when().post("/post").then().statusCode(200).body(equalTo("POST"));
 
             PlatformHttpComponent phc = context.getComponent("platform-http", PlatformHttpComponent.class);
             assertEquals(2, phc.getHttpEndpoints().size());
@@ -200,11 +188,12 @@ public class VertxPlatformHttpEngineTest {
         final CamelContext context = createCamelContext();
 
         try {
-            context.getRegistry().bind(
-                    "vertx-options",
-                    new VertxOptions()
-                            .setMaxEventLoopExecuteTime(2)
-                            .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
+            context.getRegistry()
+                    .bind(
+                            "vertx-options",
+                            new VertxOptions()
+                                    .setMaxEventLoopExecuteTime(2)
+                                    .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
 
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -212,18 +201,14 @@ public class VertxPlatformHttpEngineTest {
                     from("platform-http:/get")
                             .routeId("get")
                             .process(e -> Thread.sleep(TimeUnit.SECONDS.toMillis(3)))
-                            .setBody().constant("get");
+                            .setBody()
+                            .constant("get");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("get"));
+            given().when().get("/get").then().statusCode(200).body(equalTo("get"));
 
         } finally {
             context.stop();
@@ -235,11 +220,12 @@ public class VertxPlatformHttpEngineTest {
         final CamelContext context = createCamelContext();
 
         try {
-            context.getRegistry().bind(
-                    "vertx-options",
-                    new VertxOptions()
-                            .setMaxEventLoopExecuteTime(2)
-                            .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
+            context.getRegistry()
+                    .bind(
+                            "vertx-options",
+                            new VertxOptions()
+                                    .setMaxEventLoopExecuteTime(2)
+                                    .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
 
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -247,17 +233,14 @@ public class VertxPlatformHttpEngineTest {
                     from("platform-http:/get?requestTimeout=500")
                             .routeId("get")
                             .delay(1000)
-                            .setBody().constant("get");
+                            .setBody()
+                            .constant("get");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(503);
+            given().when().get("/get").then().statusCode(503);
 
         } finally {
             context.stop();
@@ -275,18 +258,14 @@ public class VertxPlatformHttpEngineTest {
                 public void configure() {
                     from("platform-http:/get?requestTimeout=500")
                             .routeId("get")
-                            .setBody().constant(response);
+                            .setBody()
+                            .constant(response);
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo(response));
+            given().when().get("/get").then().statusCode(200).body(equalTo(response));
 
         } finally {
             context.stop();
@@ -301,21 +280,15 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/get")
-                            .routeId("get")
-                            .process(exchange -> {
-                                throw new RuntimeException();
-                            });
+                    from("platform-http:/get").routeId("get").process(exchange -> {
+                        throw new RuntimeException();
+                    });
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(500);
+            given().when().get("/get").then().statusCode(500);
 
         } finally {
             context.stop();
@@ -324,16 +297,15 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngineSSL() throws Exception {
-        final CamelContext context
-                = createCamelContext(configuration -> configuration.setSslContextParameters(serverSSLParameters));
+        final CamelContext context =
+                createCamelContext(configuration -> configuration.setSslContextParameters(serverSSLParameters));
 
         try {
             context.getRegistry().bind("clientSSLContextParameters", clientSSLParameters);
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/")
-                            .transform().body(String.class, b -> b.toUpperCase());
+                    from("platform-http:/").transform().body(String.class, b -> b.toUpperCase());
                 }
             });
 
@@ -352,7 +324,8 @@ public class VertxPlatformHttpEngineTest {
 
     @Test
     public void testEngineGlobalSSL() throws Exception {
-        final CamelContext context = createCamelContext(configuration -> configuration.setUseGlobalSslContextParameters(true));
+        final CamelContext context =
+                createCamelContext(configuration -> configuration.setUseGlobalSslContextParameters(true));
 
         try {
             context.setSSLContextParameters(serverSSLParameters);
@@ -361,8 +334,7 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/")
-                            .transform().body(String.class, b -> b.toUpperCase());
+                    from("platform-http:/").transform().body(String.class, b -> b.toUpperCase());
                 }
             });
 
@@ -390,8 +362,7 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/")
-                            .transform().constant("cors");
+                    from("platform-http:/").transform().constant("cors");
                 }
             });
 
@@ -401,8 +372,7 @@ public class VertxPlatformHttpEngineTest {
             final String methods = "GET,POST";
             final String headers = "X-Custom";
 
-            given()
-                    .header("Origin", origin)
+            given().header("Origin", origin)
                     .header("Access-Control-Request-Method", methods)
                     .header("Access-Control-Request-Headers", headers)
                     .when()
@@ -426,27 +396,18 @@ public class VertxPlatformHttpEngineTest {
                 @Override
                 public void configure() {
                     from("platform-http:/greeting/{name}?matchOnUriPrefix=true")
-                            .transform().simple("Hello ${header.name}");
+                            .transform()
+                            .simple("Hello ${header.name}");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/greeting")
-                    .then()
-                    .statusCode(404);
+            given().when().get("/greeting").then().statusCode(404);
 
-            given()
-                    .when()
-                    .get("/greeting/Camel")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo(greeting));
+            given().when().get("/greeting/Camel").then().statusCode(200).body(equalTo(greeting));
 
-            given()
-                    .when()
+            given().when()
                     .get("/greeting/Camel/other/path/")
                     .then()
                     .statusCode(200)
@@ -477,8 +438,8 @@ public class VertxPlatformHttpEngineTest {
         }
 
         final CamelContext context = createCamelContext(configuration -> {
-            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
-                    = new VertxPlatformHttpServerConfiguration.BodyHandler();
+            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler =
+                    new VertxPlatformHttpServerConfiguration.BodyHandler();
             // turn on file uploads
             bodyHandler.setHandleFileUploads(true);
             bodyHandler.setUploadsDirectory(tempFiles.get(0).getParent());
@@ -507,8 +468,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            given()
-                    .multiPart(attachmentIds.get(0), tempFiles.get(0))
+            given().multiPart(attachmentIds.get(0), tempFiles.get(0))
                     .multiPart(attachmentIds.get(1), tempFiles.get(1))
                     .when()
                     .post("/upload")
@@ -516,8 +476,10 @@ public class VertxPlatformHttpEngineTest {
                     .statusCode(204)
                     .body(emptyOrNullString())
                     .header("UploadedAttachments", is(String.valueOf(attachmentIds.size())))
-                    .header("ConcatFileContent",
-                            is("Test multipart upload content myFirstTestFileTest multipart upload content mySecondTestFile"));
+                    .header(
+                            "ConcatFileContent",
+                            is(
+                                    "Test multipart upload content myFirstTestFileTest multipart upload content mySecondTestFile"));
         } finally {
             context.stop();
         }
@@ -529,8 +491,8 @@ public class VertxPlatformHttpEngineTest {
         final String fileContent = "Test multipart upload content";
         final File tempFile = File.createTempFile("platform-http", ".txt");
         final CamelContext context = createCamelContext(configuration -> {
-            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
-                    = new VertxPlatformHttpServerConfiguration.BodyHandler();
+            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler =
+                    new VertxPlatformHttpServerConfiguration.BodyHandler();
             // turn on file uploads
             bodyHandler.setHandleFileUploads(true);
             bodyHandler.setUploadsDirectory(tempFile.getParent());
@@ -556,8 +518,7 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            given()
-                    .multiPart(attachmentId, tempFile)
+            given().multiPart(attachmentId, tempFile)
                     .when()
                     .post("/upload")
                     .then()
@@ -579,15 +540,13 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/form/post")
-                            .convertBodyTo(String.class);
+                    from("platform-http:/form/post").convertBodyTo(String.class);
                 }
             });
 
             context.start();
 
-            given()
-                    .formParam("foo", "bar")
+            given().formParam("foo", "bar")
                     .formParam("cheese", "wine")
                     .when()
                     .post("/form/post")
@@ -607,16 +566,14 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/text/post")
-                            .log("POST:/test/post has body ${body}");
+                    from("platform-http:/text/post").log("POST:/test/post has body ${body}");
                 }
             });
 
             context.start();
 
             String payload = "Hello World";
-            given()
-                    .contentType(ContentType.TEXT)
+            given().contentType(ContentType.TEXT)
                     .body(payload)
                     .when()
                     .post("/text/post")
@@ -639,13 +596,9 @@ public class VertxPlatformHttpEngineTest {
                 public void configure() {
                     restConfiguration().component("platform-http").enableCORS(true);
 
-                    rest("/rest")
-                            .post()
-                            .consumes("application/json")
-                            .to("direct:rest");
+                    rest("/rest").post().consumes("application/json").to("direct:rest");
 
-                    from("direct:rest")
-                            .setBody(simple("Hello ${body}"));
+                    from("direct:rest").setBody(simple("Hello ${body}"));
                 }
             });
 
@@ -653,8 +606,7 @@ public class VertxPlatformHttpEngineTest {
 
             final String origin = "http://custom.origin.quarkus";
 
-            given()
-                    .header("Origin", origin)
+            given().header("Origin", origin)
                     .when()
                     .options("/rest")
                     .then()
@@ -681,32 +633,28 @@ public class VertxPlatformHttpEngineTest {
                     rest("/rest")
                             .post("/validate/body")
                             .clientRequestValidation(true)
-                            .param().name("body").type(RestParamType.body).required(true).endParam()
+                            .param()
+                            .name("body")
+                            .type(RestParamType.body)
+                            .required(true)
+                            .endParam()
                             .to("direct:rest");
-                    from("direct:rest")
-                            .setBody(simple("Hello ${body}"));
+                    from("direct:rest").setBody(simple("Hello ${body}"));
                 }
             });
 
             context.start();
 
-            given()
+            given().when().post("/rest/validate/body").then().statusCode(400).body(is("The request body is missing."));
+
+            given().body(" ")
                     .when()
                     .post("/rest/validate/body")
                     .then()
                     .statusCode(400)
                     .body(is("The request body is missing."));
 
-            given()
-                    .body(" ")
-                    .when()
-                    .post("/rest/validate/body")
-                    .then()
-                    .statusCode(400)
-                    .body(is("The request body is missing."));
-
-            given()
-                    .body("Camel Platform HTTP Vert.x")
+            given().body("Camel Platform HTTP Vert.x")
                     .when()
                     .post("/rest/validate/body")
                     .then()
@@ -720,26 +668,26 @@ public class VertxPlatformHttpEngineTest {
     @Test
     public void testUserAuthentication() throws Exception {
         Vertx vertx = Vertx.vertx();
-        AuthenticationProvider authProvider = PropertyFileAuthentication.create(vertx, "authentication/auth.properties");
+        AuthenticationProvider authProvider =
+                PropertyFileAuthentication.create(vertx, "authentication/auth.properties");
         BasicAuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
 
         CamelContext context = createCamelContext();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/secure")
-                        .process(exchange -> {
-                            Message message = exchange.getMessage();
-                            message.setBody("Received message with the Authorization="
-                                            + exchange.getMessage().getHeader("Authorization"));
+                from("platform-http:/secure").process(exchange -> {
+                    Message message = exchange.getMessage();
+                    message.setBody("Received message with the Authorization="
+                            + exchange.getMessage().getHeader("Authorization"));
 
-                            User user = message.getHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, User.class);
-                            assertThat(user).isNotNull();
+                    User user = message.getHeader(VertxPlatformHttpConstants.AUTHENTICATED_USER, User.class);
+                    assertThat(user).isNotNull();
 
-                            JsonObject principal = user.principal();
-                            assertThat(principal).isNotNull();
-                            assertThat(principal.getString("username")).isEqualTo("camel");
-                        });
+                    JsonObject principal = user.principal();
+                    assertThat(principal).isNotNull();
+                    assertThat(principal.getString("username")).isEqualTo("camel");
+                });
             }
         });
 
@@ -748,13 +696,11 @@ public class VertxPlatformHttpEngineTest {
         try {
             context.start();
 
-            VertxPlatformHttpRouter router
-                    = VertxPlatformHttpRouter.lookup(context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port));
+            VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(
+                    context, VertxPlatformHttpRouter.getRouterNameFromPort(RestAssured.port));
             router.route().order(0).handler(basicAuthHandler);
 
-            RestAssured.get("/secure")
-                    .then()
-                    .statusCode(401);
+            RestAssured.get("/secure").then().statusCode(401);
 
             RestAssured.given()
                     .auth()
@@ -763,7 +709,7 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(is("Received message with the Authorization=Basic "
-                             + Base64.encodeBase64String("camel:s3cr3t".getBytes())));
+                            + Base64.encodeBase64String("camel:s3cr3t".getBytes())));
         } finally {
             context.stop();
             vertx.close();
@@ -778,16 +724,14 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/echo")
-                            .setBody().simple("${body}");
+                    from("platform-http:/echo").setBody().simple("${body}");
                 }
             });
 
             context.start();
 
             for (Method method : Method.values()) {
-                ValidatableResponse validatableResponse = given()
-                        .contentType(ContentType.JSON)
+                ValidatableResponse validatableResponse = given().contentType(ContentType.JSON)
                         .when()
                         .body("{\"method\": \"" + method + "\"}")
                         .request(method.name(), "/echo")
@@ -816,16 +760,13 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/test")
-                            .setBody().simple("Hello ${body[method]}");
+                    from("platform-http:/test").setBody().simple("Hello ${body[method]}");
                 }
             });
 
             context.start();
 
-            RequestSpecification request = given()
-                    .when()
-                    .contentType(ContentType.URLENC);
+            RequestSpecification request = given().when().contentType(ContentType.URLENC);
 
             for (Method method : Method.values()) {
                 if (methodsWithBodyAllowed.contains(method)) {
@@ -835,10 +776,7 @@ public class VertxPlatformHttpEngineTest {
                             .statusCode(200)
                             .body(equalTo("Hello " + method));
                 } else {
-                    request.body(method)
-                            .request(method.name(), "/test")
-                            .then()
-                            .statusCode(500);
+                    request.body(method).request(method.name(), "/test").then().statusCode(500);
                 }
             }
         } finally {
@@ -857,7 +795,8 @@ public class VertxPlatformHttpEngineTest {
                     from("platform-http:/test")
                             .setHeader("nonEmptyFromRoute", constant("nonEmptyFromRouteValue"))
                             .setHeader("emptyFromRoute", constant(""))
-                            .setBody().simple("Hello World");
+                            .setBody()
+                            .simple("Hello World");
                 }
             });
 
@@ -889,7 +828,8 @@ public class VertxPlatformHttpEngineTest {
                 public void configure() {
                     from("platform-http:/test")
                             .setHeader("nonEmptyFromRoute", constant("nonEmptyFromRouteValue"))
-                            .setBody().simple("Hello World");
+                            .setBody()
+                            .simple("Hello World");
                 }
             });
 
@@ -917,28 +857,17 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/get")
-                            .routeId("get")
-                            .setBody().constant("get");
+                    from("platform-http:/get").routeId("get").setBody().constant("get");
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("get"));
+            given().when().get("/get").then().statusCode(200).body(equalTo("get"));
 
             context.getRouteController().suspendRoute("get");
 
-            given()
-                    .when()
-                    .get("/get")
-                    .then()
-                    .statusCode(503);
+            given().when().get("/get").then().statusCode(503);
 
         } finally {
             context.stop();
@@ -959,17 +888,17 @@ public class VertxPlatformHttpEngineTest {
                             .clientRequestValidation(true);
 
                     rest("/rest")
-                            .post("/validate/body").consumes("text/plain").produces("application/json")
+                            .post("/validate/body")
+                            .consumes("text/plain")
+                            .produces("application/json")
                             .to("direct:rest");
-                    from("direct:rest")
-                            .setBody(simple("Hello ${body}"));
+                    from("direct:rest").setBody(simple("Hello ${body}"));
                 }
             });
 
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .body("{\"name\": \"Donald\"}")
                     .contentType("application/json")
                     .post("/rest/validate/body")
@@ -988,22 +917,18 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/local/address")
-                            .process(exchange -> {
-                                Message message = exchange.getMessage();
-                                SocketAddress address
-                                        = message.getHeader(VertxPlatformHttpConstants.LOCAL_ADDRESS, SocketAddress.class);
-                                message.setBody(address.hostAddress());
-                            });
+                    from("platform-http:/local/address").process(exchange -> {
+                        Message message = exchange.getMessage();
+                        SocketAddress address =
+                                message.getHeader(VertxPlatformHttpConstants.LOCAL_ADDRESS, SocketAddress.class);
+                        message.setBody(address.hostAddress());
+                    });
                 }
             });
 
             context.start();
 
-            get("/local/address")
-                    .then()
-                    .statusCode(200)
-                    .body(notNullValue());
+            get("/local/address").then().statusCode(200).body(notNullValue());
         } finally {
             context.stop();
         }
@@ -1017,22 +942,18 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/remote/address")
-                            .process(exchange -> {
-                                Message message = exchange.getMessage();
-                                SocketAddress address
-                                        = message.getHeader(VertxPlatformHttpConstants.REMOTE_ADDRESS, SocketAddress.class);
-                                message.setBody(address.hostAddress());
-                            });
+                    from("platform-http:/remote/address").process(exchange -> {
+                        Message message = exchange.getMessage();
+                        SocketAddress address =
+                                message.getHeader(VertxPlatformHttpConstants.REMOTE_ADDRESS, SocketAddress.class);
+                        message.setBody(address.hostAddress());
+                    });
                 }
             });
 
             context.start();
 
-            get("/remote/address")
-                    .then()
-                    .statusCode(200)
-                    .body(notNullValue());
+            get("/remote/address").then().statusCode(200).body(notNullValue());
         } finally {
             context.stop();
         }
@@ -1046,13 +967,12 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/vertx/objects")
-                            .process(exchange -> {
-                                HttpMessage message = exchange.getMessage(HttpMessage.class);
-                                String p = message.getRequest().path();
-                                message.getResponse().putHeader("beer", "Heineken");
-                                message.setBody("request path: " + p);
-                            });
+                    from("platform-http:/vertx/objects").process(exchange -> {
+                        HttpMessage message = exchange.getMessage(HttpMessage.class);
+                        String p = message.getRequest().path();
+                        message.getResponse().putHeader("beer", "Heineken");
+                        message.setBody("request path: " + p);
+                    });
                 }
             });
 
@@ -1081,14 +1001,14 @@ public class VertxPlatformHttpEngineTest {
                                 HttpMessage message = (HttpMessage) exchange.getMessage();
                                 message.getRequest().response().addCookie(Cookie.cookie("foo", "bar"));
                             })
-                            .setBody().constant("add");
+                            .setBody()
+                            .constant("add");
                 }
             });
 
             context.start();
 
-            given()
-                    .header("cookie", "foo=bar")
+            given().header("cookie", "foo=bar")
                     .when()
                     .get("/add")
                     .then()
@@ -1117,14 +1037,14 @@ public class VertxPlatformHttpEngineTest {
                                 assertEquals("foo", removed.getName());
                                 assertEquals("", removed.getValue());
                             })
-                            .setBody().constant("remove");
+                            .setBody()
+                            .constant("remove");
                 }
             });
 
             context.start();
 
-            given()
-                    .header("cookie", "foo=bar")
+            given().header("cookie", "foo=bar")
                     .when()
                     .get("/remove")
                     .then()
@@ -1149,20 +1069,24 @@ public class VertxPlatformHttpEngineTest {
                             .process(exchange -> {
                                 HttpMessage message = (HttpMessage) exchange.getMessage();
                                 assertEquals(1, message.getRequest().cookieCount());
-                                message.getRequest().response()
-                                        .addCookie(Cookie.cookie("XSRF-TOKEN", "88533580000c314").setPath("/"));
-                                Map<String, Cookie> deprecatedMap = message.getRequest().cookieMap();
+                                message.getRequest()
+                                        .response()
+                                        .addCookie(Cookie.cookie("XSRF-TOKEN", "88533580000c314")
+                                                .setPath("/"));
+                                Map<String, Cookie> deprecatedMap =
+                                        message.getRequest().cookieMap();
                                 assertFalse(((ServerCookie) deprecatedMap.get("XSRF-TOKEN")).isFromUserAgent());
-                                assertEquals("/", deprecatedMap.get("XSRF-TOKEN").getPath());
+                                assertEquals(
+                                        "/", deprecatedMap.get("XSRF-TOKEN").getPath());
                             })
-                            .setBody().constant("replace");
+                            .setBody()
+                            .constant("replace");
                 }
             });
 
             context.start();
 
-            given()
-                    .header("cookie", "XSRF-TOKEN=c359b44aef83415")
+            given().header("cookie", "XSRF-TOKEN=c359b44aef83415")
                     .when()
                     .get("/replace")
                     .then()
@@ -1185,15 +1109,14 @@ public class VertxPlatformHttpEngineTest {
                 public void configure() {
                     from("platform-http:/error/response")
                             // Set the response to something that can't be type converted
-                            .setBody().constant(Collections.EMPTY_SET);
+                            .setBody()
+                            .constant(Collections.EMPTY_SET);
                 }
             });
 
             context.start();
 
-            get("/error/response")
-                    .then()
-                    .statusCode(500);
+            get("/error/response").then().statusCode(500);
         } finally {
             context.stop();
         }
@@ -1207,17 +1130,14 @@ public class VertxPlatformHttpEngineTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/error/response")
-                            .setBody().constant("Error");
+                    from("platform-http:/error/response").setBody().constant("Error");
                 }
             });
 
             context.start();
 
             // Add a query param that Vert.x cannot handle
-            get("/error/response?::")
-                    .then()
-                    .statusCode(500);
+            get("/error/response?::").then().statusCode(500);
         } finally {
             context.stop();
         }

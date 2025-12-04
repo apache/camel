@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsSpanDecoratorTest {
 
@@ -33,7 +34,8 @@ public class JmsSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(JmsSpanDecorator.JMS_MESSAGE_ID, String.class)).thenReturn(messageId);
+        Mockito.when(message.getHeader(JmsSpanDecorator.JMS_MESSAGE_ID, String.class))
+                .thenReturn(messageId);
 
         AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
 
@@ -62,11 +64,11 @@ public class JmsSpanDecoratorTest {
 
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(exchange.getMessage()).thenReturn(message);
-        Mockito.when(exchange.getMessage().getHeader("CamelJmsDestinationName", String.class)).thenReturn("gauda");
+        Mockito.when(exchange.getMessage().getHeader("CamelJmsDestinationName", String.class))
+                .thenReturn("gauda");
         Mockito.when(endpoint.getEndpointUri()).thenReturn("jms:${header.foo}?clientId=123");
 
         AbstractMessagingSpanDecorator decorator = new JmsSpanDecorator();
         assertEquals("gauda", decorator.getDestination(exchange, endpoint));
     }
-
 }

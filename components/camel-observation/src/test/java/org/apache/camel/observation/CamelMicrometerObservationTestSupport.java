@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -60,9 +64,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
@@ -89,7 +90,9 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
     @AfterEach
     void noLeakingContext() {
-        Assertions.assertThat(Context.current()).as("There must be no leaking span after test").isSameAs(Context.root());
+        Assertions.assertThat(Context.current())
+                .as("There must be no leaking span after test")
+                .isSameAs(Context.root());
     }
 
     @Override
@@ -99,7 +102,8 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
         tracerFactory = SdkTracerProvider.builder()
                 .addSpanProcessor(new LoggingSpanProcessor())
-                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter)).build();
+                .addSpanProcessor(SimpleSpanProcessor.create(inMemorySpanExporter))
+                .build();
 
         tracer = tracerFactory.get("tracerTest");
 
@@ -107,13 +111,13 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
         observationRegistry.observationConfig().observationHandler(new DefaultMeterObservationHandler(meterRegistry));
 
         io.micrometer.tracing.Tracer otelTracer = otelTracer();
-        OtelPropagator otelPropagator
-                = new OtelPropagator(
-                        ContextPropagators.create(TextMapPropagator.composite(W3CTraceContextPropagator.getInstance(),
-                                W3CBaggagePropagator.getInstance())),
-                        tracer);
-        observationRegistry.observationConfig().observationHandler(
-                new ObservationHandler.FirstMatchingCompositeObservationHandler(
+        OtelPropagator otelPropagator = new OtelPropagator(
+                ContextPropagators.create(TextMapPropagator.composite(
+                        W3CTraceContextPropagator.getInstance(), W3CBaggagePropagator.getInstance())),
+                tracer);
+        observationRegistry
+                .observationConfig()
+                .observationHandler(new ObservationHandler.FirstMatchingCompositeObservationHandler(
                         new PropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator),
                         new PropagatingReceiverTracingObservationHandler<>(otelTracer, otelPropagator),
                         new DefaultTracingObservationHandler(otelTracer)));
@@ -129,11 +133,9 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
     private OtelTracer otelTracer() {
         OtelCurrentTraceContext otelCurrentTraceContext = new OtelCurrentTraceContext();
-        OtelBaggageManager otelBaggageManager
-                = new OtelBaggageManager(otelCurrentTraceContext, Collections.emptyList(), Collections.emptyList());
-        return new OtelTracer(tracer, otelCurrentTraceContext, o -> {
-
-        }, otelBaggageManager);
+        OtelBaggageManager otelBaggageManager =
+                new OtelBaggageManager(otelCurrentTraceContext, Collections.emptyList(), Collections.emptyList());
+        return new OtelTracer(tracer, otelCurrentTraceContext, o -> {}, otelBaggageManager);
     }
 
     protected String getExcludePatterns() {
@@ -155,7 +157,6 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
             LOG.info("\tComponent: {}", mockSpan.getAttributes().get(COMPONENT_KEY));
             LOG.info("\tTags: {}", mockSpan.getAttributes());
             LOG.info("\tLogs: ");
-
         });
         assertEquals(expected.length, spans.size(), "Incorrect number of spans");
         verifySameTrace();
@@ -163,7 +164,9 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
         if (async) {
             final List<SpanData> unsortedSpans = spans;
             spans = Arrays.stream(expected)
-                    .map(td -> findSpan(td, unsortedSpans)).distinct().collect(Collectors.toList());
+                    .map(td -> findSpan(td, unsortedSpans))
+                    .distinct()
+                    .collect(Collectors.toList());
             assertEquals(expected.length, spans.size(), "Incorrect number of spans after sorting");
         }
 
@@ -175,14 +178,18 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
     }
 
     protected SpanData findSpan(SpanTestData testdata, List<SpanData> spans) {
-        return spans.stream().filter(s -> {
-            boolean matched = s.getName().equals(testdata.getOperation());
-            if (s.getAttributes().get(CAMEL_URI_KEY) != null) {
-                matched = matched && s.getAttributes().get(CAMEL_URI_KEY).equals(testdata.getUri());
-            }
-            matched = matched && s.getKind().equals(testdata.getKind());
-            return matched;
-        }).findFirst().orElse(null);
+        return spans.stream()
+                .filter(s -> {
+                    boolean matched = s.getName().equals(testdata.getOperation());
+                    if (s.getAttributes().get(CAMEL_URI_KEY) != null) {
+                        matched =
+                                matched && s.getAttributes().get(CAMEL_URI_KEY).equals(testdata.getUri());
+                    }
+                    matched = matched && s.getKind().equals(testdata.getKind());
+                    return matched;
+                })
+                .findFirst()
+                .orElse(null);
     }
 
     protected Tracer getTracer() {
@@ -239,7 +246,12 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
         if (!td.getLogMessages().isEmpty()) {
             assertEquals(td.getLogMessages().size(), span.getEvents().size(), td.getLabel());
             for (int i = 0; i < td.getLogMessages().size(); i++) {
-                assertEquals(td.getLogMessages().get(i), span.getEvents().get(i).getName()); // The difference between OTel directly and Observation is that we log with a name
+                assertEquals(
+                        td.getLogMessages().get(i),
+                        span.getEvents()
+                                .get(i)
+                                .getName()); // The difference between OTel directly and Observation is that we log with
+                // a name
             }
         }
 
@@ -251,11 +263,15 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
                 assertEquals(entry.getValue(), span.getAttributes().get(AttributeKey.stringKey(entry.getKey())));
             }
         }
-
     }
 
     protected void verifySameTrace() {
-        assertEquals(1, inMemorySpanExporter.getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
+        assertEquals(
+                1,
+                inMemorySpanExporter.getFinishedSpanItems().stream()
+                        .map(s -> s.getTraceId())
+                        .distinct()
+                        .count());
     }
 
     private static class LoggingSpanProcessor implements SpanProcessor {
@@ -263,8 +279,12 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
         @Override
         public void onStart(Context context, ReadWriteSpan readWriteSpan) {
-            LOG.debug("Span started: name - '{}', kind - '{}', id - '{}-{}", readWriteSpan.getName(), readWriteSpan.getKind(),
-                    readWriteSpan.getSpanContext().getTraceId(), readWriteSpan.getSpanContext().getSpanId());
+            LOG.debug(
+                    "Span started: name - '{}', kind - '{}', id - '{}-{}",
+                    readWriteSpan.getName(),
+                    readWriteSpan.getKind(),
+                    readWriteSpan.getSpanContext().getTraceId(),
+                    readWriteSpan.getSpanContext().getSpanId());
         }
 
         @Override
@@ -274,8 +294,12 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
         @Override
         public void onEnd(ReadableSpan readableSpan) {
-            LOG.debug("Span ended: name - '{}', kind - '{}', id - '{}-{}", readableSpan.getName(), readableSpan.getKind(),
-                    readableSpan.getSpanContext().getTraceId(), readableSpan.getSpanContext().getSpanId());
+            LOG.debug(
+                    "Span ended: name - '{}', kind - '{}', id - '{}-{}",
+                    readableSpan.getName(),
+                    readableSpan.getKind(),
+                    readableSpan.getSpanContext().getTraceId(),
+                    readableSpan.getSpanContext().getSpanId());
         }
 
         @Override

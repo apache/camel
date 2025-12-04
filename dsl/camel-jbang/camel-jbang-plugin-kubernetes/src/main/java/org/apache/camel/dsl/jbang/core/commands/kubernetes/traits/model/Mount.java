@@ -28,47 +28,55 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "configs", "emptyDirs", "enabled", "hotReload", "resources", "scanKameletsImplicitLabelSecrets",
-        "volumes" })
+    "configs",
+    "emptyDirs",
+    "enabled",
+    "hotReload",
+    "resources",
+    "scanKameletsImplicitLabelSecrets",
+    "volumes"
+})
 public class Mount {
     @JsonProperty("configs")
-    @JsonPropertyDescription("A list of configuration pointing to configmap/secret. The configuration are expected to be UTF-8 resources as they are processed by runtime Camel Context and tried to be parsed as property files. They are also made available on the classpath in order to ease their usage directly from the Route. Syntax: [configmap|secret]:name[/key], where name represents the resource name and key optionally represents the resource key to be filtered")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "A list of configuration pointing to configmap/secret. The configuration are expected to be UTF-8 resources as they are processed by runtime Camel Context and tried to be parsed as property files. They are also made available on the classpath in order to ease their usage directly from the Route. Syntax: [configmap|secret]:name[/key], where name represents the resource name and key optionally represents the resource key to be filtered")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> configs;
+
     @JsonProperty("emptyDirs")
     @JsonPropertyDescription("A list of EmptyDir volumes to be mounted. Syntax: [name:/container/path]")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> emptyDirs;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
+
     @JsonProperty("hotReload")
-    @JsonPropertyDescription("Enable \"hot reload\" when a secret/configmap mounted is edited (default `false`). The configmap/secret must be marked with `camel.apache.org/integration` label to be taken in account. The resource will be watched for any kind change, also for changes in metadata.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Enable \"hot reload\" when a secret/configmap mounted is edited (default `false`). The configmap/secret must be marked with `camel.apache.org/integration` label to be taken in account. The resource will be watched for any kind change, also for changes in metadata.")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean hotReload;
+
     @JsonProperty("resources")
-    @JsonPropertyDescription("A list of resources (text or binary content) pointing to configmap/secret. The resources are expected to be any resource type (text or binary content). The destination path can be either a default location or any path specified by the user. Syntax: [configmap|secret]:name[/key][@path], where name represents the resource name, key optionally represents the resource key to be filtered and path represents the destination path")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "A list of resources (text or binary content) pointing to configmap/secret. The resources are expected to be any resource type (text or binary content). The destination path can be either a default location or any path specified by the user. Syntax: [configmap|secret]:name[/key][@path], where name represents the resource name, key optionally represents the resource key to be filtered and path represents the destination path")
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> resources;
+
     @JsonProperty("scanKameletsImplicitLabelSecrets")
-    @JsonPropertyDescription("Deprecated: include your properties in an explicit property file backed by a secret. Let the operator to scan for secret labeled with `camel.apache.org/kamelet` and `camel.apache.org/kamelet.configuration`. These secrets are mounted to the application and treated as plain properties file with their key/value list (ie .spec.data[\"camel.my-property\"] = my-value) (default `true`).")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonPropertyDescription(
+            "Deprecated: include your properties in an explicit property file backed by a secret. Let the operator to scan for secret labeled with `camel.apache.org/kamelet` and `camel.apache.org/kamelet.configuration`. These secrets are mounted to the application and treated as plain properties file with their key/value list (ie .spec.data[\"camel.my-property\"] = my-value) (default `true`).")
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean scanKameletsImplicitLabelSecrets;
+
     @JsonProperty("volumes")
     @JsonPropertyDescription("A list of Persistent Volume Claims to be mounted. Syntax: [pvcname:/container/path]")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> volumes;
 
-    public Mount() {
-    }
+    public Mount() {}
 
     public List<String> getConfigs() {
         return this.configs;

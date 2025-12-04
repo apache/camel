@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.lang.annotation.Annotation;
@@ -32,9 +33,7 @@ public final class AnnotationHelper {
      * @param  annotationType the annotation type
      * @return                a list of the methods found
      */
-    public static List<Method> findMethodsWithAnnotation(
-            Class<?> type,
-            Class<? extends Annotation> annotationType) {
+    public static List<Method> findMethodsWithAnnotation(Class<?> type, Class<? extends Annotation> annotationType) {
         return findMethodsWithAnnotation(type, annotationType, false);
     }
 
@@ -47,9 +46,7 @@ public final class AnnotationHelper {
      * @return                      a list of the methods found
      */
     public static List<Method> findMethodsWithAnnotation(
-            Class<?> type,
-            Class<? extends Annotation> annotationType,
-            boolean checkMetaAnnotations) {
+            Class<?> type, Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
         List<Method> answer = new ArrayList<>();
         do {
             Method[] methods = type.getDeclaredMethods();
@@ -72,8 +69,7 @@ public final class AnnotationHelper {
      * @return                      true if annotations is present
      */
     public static boolean hasAnnotation(
-            AnnotatedElement elem, Class<? extends Annotation> annotationType,
-            boolean checkMetaAnnotations) {
+            AnnotatedElement elem, Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
         if (elem.isAnnotationPresent(annotationType)) {
             return true;
         }
@@ -229,5 +225,4 @@ public final class AnnotationHelper {
         }
         return null;
     }
-
 }

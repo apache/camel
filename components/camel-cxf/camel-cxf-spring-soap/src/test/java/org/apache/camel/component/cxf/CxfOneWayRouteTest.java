@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
@@ -37,10 +42,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input back to the oneway cxf
  * EP.
@@ -48,7 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     private static final QName SERVICE_NAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
     private static final QName PORT_NAME = new QName("http://apache.org/hello_world_soap_http", "SoapPort");
-    private static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfOneWayRouteTest/router";
+    private static final String ROUTER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfOneWayRouteTest/router";
 
     private static Exception bindingException;
     private static boolean bindingDone;
@@ -95,7 +97,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     }
 
     public static class TestProcessor implements Processor {
-        static final byte[] MAGIC = { (byte) 0xca, 0x3e, 0x1e };
+        static final byte[] MAGIC = {(byte) 0xca, 0x3e, 0x1e};
 
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -125,7 +127,8 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     public static class TestCxfBinding extends DefaultCxfBinding {
 
         @Override
-        public void populateCxfResponseFromExchange(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
+        public void populateCxfResponseFromExchange(
+                Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
             try {
                 super.populateCxfResponseFromExchange(camelExchange, cxfExchange);
             } catch (RuntimeException e) {
@@ -135,6 +138,5 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
                 bindingDone = true;
             }
         }
-
     }
 }

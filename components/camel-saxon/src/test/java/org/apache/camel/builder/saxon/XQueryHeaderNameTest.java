@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,11 +31,14 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
     public void testChoiceWithHeaderNamePremium() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:premium");
         mock.expectedBodiesReceived("<response>OK</response>");
-        mock.expectedHeaderReceived("invoiceDetails",
-                "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
-
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>",
+        mock.expectedHeaderReceived(
                 "invoiceDetails", "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
+
+        template.sendBodyAndHeader(
+                "direct:in",
+                "<response>OK</response>",
+                "invoiceDetails",
+                "<invoice orderType='premium'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
@@ -43,11 +47,14 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
     public void testChoiceWithHeaderNameStandard() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:standard");
         mock.expectedBodiesReceived("<response>OK</response>");
-        mock.expectedHeaderReceived("invoiceDetails",
-                "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
-
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>",
+        mock.expectedHeaderReceived(
                 "invoiceDetails", "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
+
+        template.sendBodyAndHeader(
+                "direct:in",
+                "<response>OK</response>",
+                "invoiceDetails",
+                "<invoice orderType='standard'><person><name>Alan</name></person></invoice>");
 
         mock.assertIsSatisfied();
     }
@@ -58,8 +65,7 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
         mock.expectedBodiesReceived("<response>OK</response>");
         mock.expectedHeaderReceived("invoiceDetails", "<invoice />");
 
-        template.sendBodyAndHeader("direct:in", "<response>OK</response>",
-                "invoiceDetails", "<invoice />");
+        template.sendBodyAndHeader("direct:in", "<response>OK</response>", "invoiceDetails", "<invoice />");
 
         mock.assertIsSatisfied();
     }
@@ -68,19 +74,25 @@ public class XQueryHeaderNameTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                var premium = expression().xquery().expression("/invoice/@orderType = 'premium'")
-                        .source("header:invoiceDetails").end();
-                var standard = expression().xquery().expression("/invoice/@orderType = 'standard'")
-                        .source("header:invoiceDetails").end();
+                var premium = expression()
+                        .xquery()
+                        .expression("/invoice/@orderType = 'premium'")
+                        .source("header:invoiceDetails")
+                        .end();
+                var standard = expression()
+                        .xquery()
+                        .expression("/invoice/@orderType = 'standard'")
+                        .source("header:invoiceDetails")
+                        .end();
 
                 from("direct:in")
-                    .choice()
+                        .choice()
                         .when(premium)
-                            .to("mock:premium")
+                        .to("mock:premium")
                         .when(standard)
-                            .to("mock:standard")
+                        .to("mock:standard")
                         .otherwise()
-                            .to("mock:unknown")
+                        .to("mock:unknown")
                         .end();
             }
         };

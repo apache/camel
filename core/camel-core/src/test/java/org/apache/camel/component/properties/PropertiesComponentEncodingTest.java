@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
@@ -48,8 +49,8 @@ public class PropertiesComponentEncodingTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent().setEncoding("UTF-8");
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myutf8.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myutf8.properties");
         return context;
     }
-
 }

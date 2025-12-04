@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring.junit5;
 
 import java.lang.annotation.Documented;
@@ -29,7 +30,5 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-public @interface UseOverridePropertiesWithPropertiesComponent {
-
-}
+@Target({ElementType.METHOD})
+public @interface UseOverridePropertiesWithPropertiesComponent {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.spel;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,8 @@ public class SpelResourceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .transform().spel("resource:classpath:myspel.txt")
+                        .transform()
+                        .spel("resource:classpath:myspel.txt")
                         .to("mock:result");
             }
         };

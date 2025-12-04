@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.wordpress.api.model;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.wordpress.api.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 public class PublishableStatusTest {
 
@@ -37,16 +38,13 @@ public class PublishableStatusTest {
     public void testFromStringEmpty() {
         final String input3 = "";
 
-        assertThrows(IllegalArgumentException.class,
-                () -> PublishableStatus.fromString(input3));
+        assertThrows(IllegalArgumentException.class, () -> PublishableStatus.fromString(input3));
     }
 
     @Test
     public void testFromStringNull() {
         final String input4 = null;
 
-        assertThrows(NullPointerException.class,
-                () -> PublishableStatus.fromString(input4));
+        assertThrows(NullPointerException.class, () -> PublishableStatus.fromString(input4));
     }
-
 }

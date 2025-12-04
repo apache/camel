@@ -44,5 +44,4 @@ public class MyModel2 {
     public void setB(String b) {
         this.b = b;
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,8 +30,6 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class ErrorHandlerOnRedeliveryStopTest extends ContextTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger(5);
@@ -37,9 +38,8 @@ public class ErrorHandlerOnRedeliveryStopTest extends ContextTestSupport {
     public void testRetryWhile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class,
-                () -> template.sendBody("direct:start", "Hello World"),
-                "Should throw an exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "Hello World"), "Should throw an exception");
 
         RejectedExecutionException ree = assertIsInstanceOf(RejectedExecutionException.class, e.getCause());
         Assertions.assertEquals("I do not want to do this anymore", ree.getMessage());

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,23 +29,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 @Disabled
 public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringManagedThreadsThreadPoolTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringManagedThreadsThreadPoolTest.xml");
     }
 
     @Test
     public void testManagedThreadPool() throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName
-                .getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=threadpools,name=\"myPool\"");
+        ObjectName on = ObjectName.getInstance(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=threadpools,name=\"myPool\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(2, corePoolSize.intValue());
@@ -63,5 +66,4 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertNull(routeId);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
 
 import software.amazon.awssdk.services.translate.TranslateClient;
@@ -25,7 +26,8 @@ public class AmazonAWSTranslateMock implements TranslateClient {
 
     @Override
     public TranslateTextResponse translateText(TranslateTextRequest request) {
-        TranslateTextResponse result = TranslateTextResponse.builder().translatedText("Hello").build();
+        TranslateTextResponse result =
+                TranslateTextResponse.builder().translatedText("Hello").build();
         return result;
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -43,5 +44,4 @@ public interface ManagedValidatorRegistryMBean extends ManagedServiceMBean {
 
     @ManagedOperation(description = "Lists all the validators in the registry")
     TabularData listValidators();
-
 }

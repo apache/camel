@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -32,11 +35,11 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
-                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
+@EnabledIfSystemProperty(
+        named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME,
+        matches = ".*",
+        disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
+                + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
     private final ServiceBusSenderClient queueSenderClient = new ServiceBusClientBuilder()
@@ -61,8 +64,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("azure-servicebus:" + QUEUE_NAME)
-                        .to(MOCK_RESULT);
+                from("azure-servicebus:" + QUEUE_NAME).to(MOCK_RESULT);
 
                 from("azure-servicebus:" + QUEUE_WITH_SESSIONS_NAME + "?sessionEnabled=true")
                         .to(MOCK_RESULT);
@@ -71,7 +73,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
                         .to(MOCK_RESULT);
 
                 from("azure-servicebus:" + TOPIC_WITH_SESSIONS_NAME + "?serviceBusType=topic&subscriptionName="
-                     + SUBSCRIPTION_WITH_SESSIONS_NAME + "?sessionEnabled=true")
+                                + SUBSCRIPTION_WITH_SESSIONS_NAME + "?sessionEnabled=true")
                         .to(MOCK_RESULT);
             }
         };
@@ -189,30 +191,44 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
     }
 
     private void assertBrokerPropertyHeadersPropagated(Map<String, Object> headers) {
-        assertInstanceOf(Map.class, headers.get(ServiceBusConstants.APPLICATION_PROPERTIES),
+        assertInstanceOf(
+                Map.class,
+                headers.get(ServiceBusConstants.APPLICATION_PROPERTIES),
                 "Should receive application properties");
         assertTrue(headers.containsKey(ServiceBusConstants.CONTENT_TYPE), "Should receive content type");
         assertInstanceOf(String.class, headers.get(ServiceBusConstants.MESSAGE_ID), "Should receive message ID");
         assertTrue(headers.containsKey(ServiceBusConstants.CORRELATION_ID), "Should receive correlation ID");
-        assertTrue(headers.containsKey(ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION),
+        assertTrue(
+                headers.containsKey(ServiceBusConstants.DEAD_LETTER_ERROR_DESCRIPTION),
                 "Should receive dead letter error description");
         assertTrue(headers.containsKey(ServiceBusConstants.DEAD_LETTER_REASON), "Should receive dead letter reason");
         assertTrue(headers.containsKey(ServiceBusConstants.DEAD_LETTER_SOURCE), "Should receive dead letter source");
         assertInstanceOf(Long.class, headers.get(ServiceBusConstants.DELIVERY_COUNT), "Should receive delivery count");
-        assertTrue(headers.containsKey(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME), "Should receive scheduled enqueue time");
-        assertInstanceOf(Long.class, headers.get(ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER),
+        assertTrue(
+                headers.containsKey(ServiceBusConstants.SCHEDULED_ENQUEUE_TIME),
+                "Should receive scheduled enqueue time");
+        assertInstanceOf(
+                Long.class,
+                headers.get(ServiceBusConstants.ENQUEUED_SEQUENCE_NUMBER),
                 "Should receive enqueued sequence number");
-        assertInstanceOf(OffsetDateTime.class, headers.get(ServiceBusConstants.ENQUEUED_TIME), "Should receive enqueued time");
-        assertInstanceOf(OffsetDateTime.class, headers.get(ServiceBusConstants.EXPIRES_AT), "Should receive expiry time");
+        assertInstanceOf(
+                OffsetDateTime.class, headers.get(ServiceBusConstants.ENQUEUED_TIME), "Should receive enqueued time");
+        assertInstanceOf(
+                OffsetDateTime.class, headers.get(ServiceBusConstants.EXPIRES_AT), "Should receive expiry time");
         assertInstanceOf(String.class, headers.get(ServiceBusConstants.LOCK_TOKEN), "Should receive lock token");
-        assertInstanceOf(OffsetDateTime.class, headers.get(ServiceBusConstants.LOCKED_UNTIL),
+        assertInstanceOf(
+                OffsetDateTime.class,
+                headers.get(ServiceBusConstants.LOCKED_UNTIL),
                 "Should receive locked until time");
         assertTrue(headers.containsKey(ServiceBusConstants.PARTITION_KEY), "Should receive partition key");
-        assertInstanceOf(AmqpAnnotatedMessage.class, headers.get(ServiceBusConstants.RAW_AMQP_MESSAGE),
+        assertInstanceOf(
+                AmqpAnnotatedMessage.class,
+                headers.get(ServiceBusConstants.RAW_AMQP_MESSAGE),
                 "Should receive raw AMQP message");
         assertTrue(headers.containsKey(ServiceBusConstants.REPLY_TO), "Should receive reply to property");
         assertTrue(headers.containsKey(ServiceBusConstants.REPLY_TO_SESSION_ID), "Should receive reply to session ID");
-        assertInstanceOf(Long.class, headers.get(ServiceBusConstants.SEQUENCE_NUMBER), "Should receive sequence number");
+        assertInstanceOf(
+                Long.class, headers.get(ServiceBusConstants.SEQUENCE_NUMBER), "Should receive sequence number");
         assertTrue(headers.containsKey(ServiceBusConstants.SESSION_ID), "Should receive session ID");
         assertTrue(headers.containsKey(ServiceBusConstants.SUBJECT), "Should receive subject");
         assertInstanceOf(Duration.class, headers.get(ServiceBusConstants.TIME_TO_LIVE), "Should receive time to live");

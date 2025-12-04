@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import java.util.Properties;
@@ -53,7 +54,8 @@ public class PropertiesComponentOverridePropertiesTest extends ContextTestSuppor
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
 
         Properties extra = new Properties();
         extra.put("cool.result", "extra");
@@ -62,5 +64,4 @@ public class PropertiesComponentOverridePropertiesTest extends ContextTestSuppor
 
         return context;
     }
-
 }

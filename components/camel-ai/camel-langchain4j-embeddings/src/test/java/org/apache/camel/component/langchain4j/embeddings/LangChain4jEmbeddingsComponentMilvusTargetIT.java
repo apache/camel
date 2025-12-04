@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +52,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSupport {
@@ -60,7 +61,6 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
     static MilvusService MILVUS = MilvusServiceFactory.createSingletonService();
 
     @Override
-
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
@@ -106,10 +106,10 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .addFieldType(fieldType3)
                 .build();
 
-        Exchange result = fluentTemplate.to(MILVUS_URI)
+        Exchange result = fluentTemplate
+                .to(MILVUS_URI)
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_COLLECTION)
-                .withBody(
-                        createCollectionReq)
+                .withBody(createCollectionReq)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -125,10 +125,10 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .withSyncMode(Boolean.TRUE)
                 .build();
 
-        result = fluentTemplate.to(MILVUS_URI)
+        result = fluentTemplate
+                .to(MILVUS_URI)
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.CREATE_INDEX)
-                .withBody(
-                        createVectorIndexParam)
+                .withBody(createVectorIndexParam)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
@@ -139,9 +139,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
     @Order(2)
     public void insert() {
 
-        Exchange result = fluentTemplate.to("direct:in")
-                .withBody("hi")
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("direct:in").withBody("hi").request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
@@ -159,7 +157,8 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .withOutputFields(Lists.newArrayList("userID"))
                 .withConsistencyLevel(ConsistencyLevelEnum.STRONG)
                 .build();
-        Exchange result = fluentTemplate.to(MILVUS_URI)
+        Exchange result = fluentTemplate
+                .to(MILVUS_URI)
                 .withHeader(MilvusHeaders.ACTION, MilvusAction.SEARCH)
                 .withBody(searchSimpleParam)
                 .request(Exchange.class);
@@ -167,17 +166,16 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
 
-        assertThat(result.getIn().getBody()).isInstanceOfSatisfying(SearchResponse.class,
-                c -> assertThat(c.getRowRecords().size() == 1));
+        assertThat(result.getIn().getBody())
+                .isInstanceOfSatisfying(
+                        SearchResponse.class, c -> assertThat(c.getRowRecords().size() == 1));
     }
 
     @Test
     @Order(4)
     public void upsert() {
 
-        Exchange result = fluentTemplate.to("direct:up")
-                .withBody("hello")
-                .request(Exchange.class);
+        Exchange result = fluentTemplate.to("direct:up").withBody("hello").request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
@@ -189,17 +187,23 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(MilvusHeaders.ACTION).constant(MilvusAction.INSERT)
-                        .setHeader(MilvusHeaders.KEY_NAME).constant("userID")
-                        .setHeader(MilvusHeaders.KEY_VALUE).constant(Long.valueOf("3"))
+                        .setHeader(MilvusHeaders.ACTION)
+                        .constant(MilvusAction.INSERT)
+                        .setHeader(MilvusHeaders.KEY_NAME)
+                        .constant("userID")
+                        .setHeader(MilvusHeaders.KEY_VALUE)
+                        .constant(Long.valueOf("3"))
                         .transformDataType(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
 
                 from("direct:up")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(MilvusHeaders.ACTION).constant(MilvusAction.UPSERT)
-                        .setHeader(MilvusHeaders.KEY_NAME).constant("userID")
-                        .setHeader(MilvusHeaders.KEY_VALUE).constant(Long.valueOf("3"))
+                        .setHeader(MilvusHeaders.ACTION)
+                        .constant(MilvusAction.UPSERT)
+                        .setHeader(MilvusHeaders.KEY_NAME)
+                        .constant("userID")
+                        .setHeader(MilvusHeaders.KEY_VALUE)
+                        .constant(Long.valueOf("3"))
                         .transformDataType(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
             }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SpanStorageManagerExchangeTest extends ExchangeTestSupport {
 
@@ -66,5 +67,4 @@ public class SpanStorageManagerExchangeTest extends ExchangeTestSupport {
         assertEquals(span1, ssm.pull(exchange));
         assertNull(ssm.pull(exchange));
     }
-
 }

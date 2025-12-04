@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
@@ -140,5 +141,4 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     T[] listFiles(String path) throws GenericFileOperationFailedException;
-
 }

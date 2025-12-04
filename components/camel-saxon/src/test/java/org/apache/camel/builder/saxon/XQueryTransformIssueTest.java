@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
 
 import java.io.FileInputStream;
@@ -44,7 +45,8 @@ public class XQueryTransformIssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
+                        .transform()
+                        .xquery("concat(/Envelope/Body/getEmployee/EmpId/text(),\"TestConcat\")", String.class)
                         .to("log:info")
                         .to("mock:result");
             }

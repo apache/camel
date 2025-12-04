@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +35,6 @@ import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JpaProducerConcurrentTest extends AbstractJpaTest {
 
@@ -63,8 +64,8 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
             final int index = i;
             Future<SendEmail> out = executor.submit(new Callable<SendEmail>() {
                 public SendEmail call() {
-                    return template.requestBody("direct:start", new SendEmail("user" + index + "@somewhere.org"),
-                            SendEmail.class);
+                    return template.requestBody(
+                            "direct:start", new SendEmail("user" + index + "@somewhere.org"), SendEmail.class);
                 }
             });
             responses.put(index, out);
@@ -78,7 +79,9 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         for (Future<SendEmail> future : responses.values()) {
             SendEmail sendEmail = future.get();
             assertNotNull(sendEmail);
-            LOGGER.info("Persisted the SendEmail entity with the id {} and the address {}", sendEmail.getId(),
+            LOGGER.info(
+                    "Persisted the SendEmail entity with the id {} and the address {}",
+                    sendEmail.getId(),
                     sendEmail.getAddress());
         }
 
@@ -91,7 +94,9 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("jpa://" + SendEmail.class.getName() + "?usePersist=true").to("mock:result");
+                from("direct:start")
+                        .to("jpa://" + SendEmail.class.getName() + "?usePersist=true")
+                        .to("mock:result");
             }
         };
     }

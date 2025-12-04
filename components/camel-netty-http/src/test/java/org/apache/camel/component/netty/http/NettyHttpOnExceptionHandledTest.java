@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class NettyHttpOnExceptionHandledTest extends BaseNettyTest {
 
     @Test
     public void testOnExceptionHandled() {
-        Exchange reply = template.request("netty-http:http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", null);
+        Exchange reply =
+                template.request("netty-http:http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", null);
 
         assertNotNull(reply);
         assertEquals("Dude something went wrong", reply.getMessage().getBody(String.class));

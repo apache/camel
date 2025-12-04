@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
 
 import java.io.StringReader;
@@ -57,9 +58,9 @@ import org.apache.camel.xml.LwModelToXMLDumper;
 
 public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator> {
 
-    private static final String[] VERBS = new String[] { "delete", "get", "head", "patch", "post", "put" };
-    private static final String[] FIELD_ORDER
-            = new String[] { "id", "path", "description", "consumes", "produces", "type", "outType", "param" };
+    private static final String[] VERBS = new String[] {"delete", "get", "head", "patch", "post", "put"};
+    private static final String[] FIELD_ORDER =
+            new String[] {"id", "path", "description", "consumes", "produces", "type", "outType", "param"};
 
     RestDslYamlGenerator(final OpenAPI document) {
         super(document);
@@ -72,10 +73,8 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     public String generate(final CamelContext context, boolean generateRoutes) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter();
         final String basePath = RestDslGenerator.determineBasePathFrom(this.basePath, document);
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(
-                basePath, emitter, filter,
-                destinationGenerator(),
-                dtoPackageName);
+        final PathVisitor<RestsDefinition> restDslStatement =
+                new PathVisitor<>(basePath, emitter, filter, destinationGenerator(), dtoPackageName);
 
         if (document.getPaths() != null) {
             for (String name : document.getPaths().keySet()) {
@@ -344,5 +343,4 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         }
         return Integer.MAX_VALUE - 1;
     }
-
 }

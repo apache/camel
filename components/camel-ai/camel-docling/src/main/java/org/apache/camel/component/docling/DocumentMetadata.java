@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import java.time.Instant;
@@ -324,13 +325,17 @@ public class DocumentMetadata {
 
     @Override
     public String toString() {
-        return "DocumentMetadata{" + "title='" + title + '\'' + ", author='" + author + '\'' + ", creator='" + creator + '\''
-               + ", producer='" + producer + '\'' + ", subject='" + subject + '\'' + ", keywords='" + keywords + '\''
-               + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", pageCount=" + pageCount
-               + ", language='" + language + '\'' + ", documentType='" + documentType + '\'' + ", format='" + format + '\''
-               + ", fileSizeBytes=" + fileSizeBytes + ", fileName='" + fileName + '\'' + ", filePath='" + filePath + '\''
-               + ", customMetadataFields=" + (customMetadata != null ? customMetadata.size() : 0) + ", rawMetadataFields="
-               + (rawMetadata != null ? rawMetadata.size() : 0) + '}';
+        return "DocumentMetadata{" + "title='" + title + '\'' + ", author='" + author + '\'' + ", creator='" + creator
+                + '\''
+                + ", producer='" + producer + '\'' + ", subject='" + subject + '\'' + ", keywords='" + keywords + '\''
+                + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", pageCount="
+                + pageCount
+                + ", language='" + language + '\'' + ", documentType='" + documentType + '\'' + ", format='" + format
+                + '\''
+                + ", fileSizeBytes=" + fileSizeBytes + ", fileName='" + fileName + '\'' + ", filePath='" + filePath
+                + '\''
+                + ", customMetadataFields=" + (customMetadata != null ? customMetadata.size() : 0)
+                + ", rawMetadataFields="
+                + (rawMetadata != null ? rawMetadata.size() : 0) + '}';
     }
-
 }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHeaderTest extends BaseUndertowTest {
 
@@ -30,7 +31,8 @@ public class UndertowHeaderTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedMessageCount(1);
         getMockEndpoint("mock:input").expectedHeaderReceived("param", "true");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "param=true");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
@@ -45,7 +47,8 @@ public class UndertowHeaderTest extends BaseUndertowTest {
     public void testHttpHeadersPost() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
@@ -74,13 +77,14 @@ public class UndertowHeaderTest extends BaseUndertowTest {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/headers")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
                 from("undertow:http://localhost:{{port}}/hello?matchOnUriPrefix=true")
                         .to("mock:input")
-                        .transform().constant("Hello World");
+                        .transform()
+                        .constant("Hello World");
             }
         };
     }
-
 }

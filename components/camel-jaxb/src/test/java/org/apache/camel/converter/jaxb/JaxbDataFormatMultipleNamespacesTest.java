@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import jakarta.xml.bind.JAXBContext;
 
@@ -27,9 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
 
@@ -80,10 +81,10 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
     public void testUnarshallMultipleNamespaces() throws Exception {
         mockUnmarshall.expectedMessageCount(1);
 
-        String payload
-                = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns1:order xmlns:ns2=\"http://www.camel.apache.org/jaxb/example/address/1\""
-                  + " xmlns:ns1=\"http://www.camel.apache.org/jaxb/example/order/1\"><ns1:id>1</ns1:id><ns2:address><ns2:street>Main Street</ns2:street>"
-                  + "<ns2:streetNumber>3a</ns2:streetNumber><ns2:zip>65843</ns2:zip><ns2:city>Sulzbach</ns2:city></ns2:address></ns1:order>";
+        String payload =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns1:order xmlns:ns2=\"http://www.camel.apache.org/jaxb/example/address/1\""
+                        + " xmlns:ns1=\"http://www.camel.apache.org/jaxb/example/order/1\"><ns1:id>1</ns1:id><ns2:address><ns2:street>Main Street</ns2:street>"
+                        + "<ns2:streetNumber>3a</ns2:streetNumber><ns2:zip>65843</ns2:zip><ns2:city>Sulzbach</ns2:city></ns2:address></ns1:order>";
         template.sendBody("direct:unmarshall", payload);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -104,13 +105,9 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat(JAXBContext.newInstance(Order.class, Address.class));
 
-                from("direct:marshall")
-                        .marshal(jaxbDataFormat)
-                        .to("mock:marshall");
+                from("direct:marshall").marshal(jaxbDataFormat).to("mock:marshall");
 
-                from("direct:unmarshall")
-                        .unmarshal(jaxbDataFormat)
-                        .to("mock:unmarshall");
+                from("direct:unmarshall").unmarshal(jaxbDataFormat).to("mock:unmarshall");
             }
         };
     }

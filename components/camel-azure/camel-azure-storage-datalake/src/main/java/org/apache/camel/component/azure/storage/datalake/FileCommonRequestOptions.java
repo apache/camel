@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.time.Duration;
@@ -31,8 +32,13 @@ public class FileCommonRequestOptions {
     private final byte[] contentMD5;
     private final Duration timeout;
 
-    public FileCommonRequestOptions(PathHttpHeaders pathHttpHeaders, Map<String, String> metadata, AccessTier accessTier,
-                                    DataLakeRequestConditions requestConditions, byte[] contentMD5, Duration timeout) {
+    public FileCommonRequestOptions(
+            PathHttpHeaders pathHttpHeaders,
+            Map<String, String> metadata,
+            AccessTier accessTier,
+            DataLakeRequestConditions requestConditions,
+            byte[] contentMD5,
+            Duration timeout) {
         this.pathHttpHeaders = pathHttpHeaders;
         this.metadata = metadata;
         this.accessTier = accessTier;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -36,7 +37,8 @@ public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityD
         properties.put("xmlCipherAlgorithm", definition.getXmlCipherAlgorithm());
         properties.put("keyCipherAlgorithm", definition.getKeyCipherAlgorithm());
         properties.put("recipientKeyAlias", definition.getRecipientKeyAlias());
-        properties.put("keyOrTrustStoreParameters",
+        properties.put(
+                "keyOrTrustStoreParameters",
                 or(definition.getKeyStoreParameters(), asRef(definition.getKeyOrTrustStoreParameters())));
         properties.put("namespaces", or(definition.getNamespaces(), asRef(definition.getNamespaceRef())));
         properties.put("keyPassword", definition.getKeyPassword());
@@ -44,5 +46,4 @@ public class XMLSecurityDataFormatReifier extends DataFormatReifier<XMLSecurityD
         properties.put("mgfAlgorithm", definition.getMgfAlgorithm());
         properties.put("addKeyValueForEncryptedKey", definition.getAddKeyValueForEncryptedKey());
     }
-
 }

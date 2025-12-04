@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -51,7 +52,8 @@ public class DefaultModelReifierFactory implements ModelReifierFactory {
 
     @Override
     public DataFormat createDataFormat(CamelContext camelContext, Object dataFormatDefinition) {
-        return DataFormatReifier.reifier(camelContext, (DataFormatDefinition) dataFormatDefinition).createDataFormat();
+        return DataFormatReifier.reifier(camelContext, (DataFormatDefinition) dataFormatDefinition)
+                .createDataFormat();
     }
 
     @Override
@@ -72,21 +74,25 @@ public class DefaultModelReifierFactory implements ModelReifierFactory {
 
     @Override
     public Expression createExpression(CamelContext camelContext, Object expressionDefinition) {
-        return ExpressionReifier.reifier(camelContext, (ExpressionDefinition) expressionDefinition).createExpression();
+        return ExpressionReifier.reifier(camelContext, (ExpressionDefinition) expressionDefinition)
+                .createExpression();
     }
 
     @Override
     public Predicate createPredicate(CamelContext camelContext, Object expressionDefinition) {
-        return ExpressionReifier.reifier(camelContext, (ExpressionDefinition) expressionDefinition).createPredicate();
+        return ExpressionReifier.reifier(camelContext, (ExpressionDefinition) expressionDefinition)
+                .createPredicate();
     }
 
     @Override
     public Transformer createTransformer(CamelContext camelContext, Object transformerDefinition) {
-        return TransformerReifier.reifier(camelContext, (TransformerDefinition) transformerDefinition).createTransformer();
+        return TransformerReifier.reifier(camelContext, (TransformerDefinition) transformerDefinition)
+                .createTransformer();
     }
 
     @Override
     public Validator createValidator(CamelContext camelContext, Object transformerDefinition) {
-        return ValidatorReifier.reifier(camelContext, (ValidatorDefinition) transformerDefinition).createValidator();
+        return ValidatorReifier.reifier(camelContext, (ValidatorDefinition) transformerDefinition)
+                .createValidator();
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Ordered;
@@ -49,5 +50,4 @@ public interface PropertiesSource {
     default String getProperty(String name, String defaultValue) {
         return getProperty(name);
     }
-
 }

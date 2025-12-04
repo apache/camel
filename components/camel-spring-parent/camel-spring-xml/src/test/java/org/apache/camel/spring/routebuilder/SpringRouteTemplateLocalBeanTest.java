@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.routebuilder;
 
 import java.util.HashMap;
@@ -29,7 +30,8 @@ public class SpringRouteTemplateLocalBeanTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/routebuilder/SpringRouteTemplateLocalBeanTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/routebuilder/SpringRouteTemplateLocalBeanTest.xml");
     }
 
     @Test
@@ -48,5 +50,4 @@ public class SpringRouteTemplateLocalBeanTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

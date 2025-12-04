@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -24,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for aggregate grouped exchanges completed by size
@@ -70,8 +71,12 @@ public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSuppor
                 from("direct:start")
                         // must use eagerCheckCompletion so we can check the
                         // groupSize header on the incoming exchange
-                        .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).eagerCheckCompletion()
-                        .completionSize(header("groupSize")).to("mock:result").end();
+                        .aggregate(new GroupedExchangeAggregationStrategy())
+                        .constant(true)
+                        .eagerCheckCompletion()
+                        .completionSize(header("groupSize"))
+                        .to("mock:result")
+                        .end();
             }
         };
     }

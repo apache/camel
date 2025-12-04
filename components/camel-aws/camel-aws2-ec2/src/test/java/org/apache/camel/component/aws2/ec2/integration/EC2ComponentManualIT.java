@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2.integration;
 
 import java.util.ArrayList;
@@ -30,10 +31,17 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
-// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
+// Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and
+// -Daws.manual.secret.key
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "aws.manual.access.key", matches = ".*", disabledReason = "Access key not provided"),
-        @EnabledIfSystemProperty(named = "aws.manual.secret.key", matches = ".*", disabledReason = "Secret key not provided")
+    @EnabledIfSystemProperty(
+            named = "aws.manual.access.key",
+            matches = ".*",
+            disabledReason = "Access key not provided"),
+    @EnabledIfSystemProperty(
+            named = "aws.manual.secret.key",
+            matches = ".*",
+            disabledReason = "Secret key not provided")
 })
 public class EC2ComponentManualIT extends CamelTestSupport {
 
@@ -125,9 +133,7 @@ public class EC2ComponentManualIT extends CamelTestSupport {
         template.request("direct:describe", new Processor() {
 
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
     }
 
@@ -151,9 +157,7 @@ public class EC2ComponentManualIT extends CamelTestSupport {
         template.request("direct:describeStatus", new Processor() {
 
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
     }
 
@@ -219,23 +223,32 @@ public class EC2ComponentManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:createAndRun")
-                        .to("aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=createAndRunInstances");
-                from("direct:stop").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=stopInstances");
-                from("direct:start").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=startInstances");
-                from("direct:terminate").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=terminateInstances");
-                from("direct:describe").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=describeInstances");
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=createAndRunInstances");
+                from("direct:stop")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=stopInstances");
+                from("direct:start")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=startInstances");
+                from("direct:terminate")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=terminateInstances");
+                from("direct:describe")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=describeInstances");
                 from("direct:describeStatus")
-                        .to("aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=describeInstancesStatus");
-                from("direct:reboot").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=rebootInstances");
-                from("direct:monitor").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=monitorInstances");
-                from("direct:unmonitor").to(
-                        "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=unmonitorInstances");
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=describeInstancesStatus");
+                from("direct:reboot")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=rebootInstances");
+                from("direct:monitor")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=monitorInstances");
+                from("direct:unmonitor")
+                        .to(
+                                "aws2-ec2://TestDomain?accessKey={{aws.manual.access.key}}&secretKey={{aws.manual.secret.key}}&operation=unmonitorInstances");
             }
         };
     }

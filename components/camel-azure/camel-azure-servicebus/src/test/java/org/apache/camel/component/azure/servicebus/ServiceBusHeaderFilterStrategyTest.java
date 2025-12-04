@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Date;
 import java.util.UUID;
@@ -27,20 +30,20 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class ServiceBusHeaderFilterStrategyTest {
     private final ServiceBusHeaderFilterStrategy headerFilterStrategy = new ServiceBusHeaderFilterStrategy();
 
     @ParameterizedTest
     @ArgumentsSource(HeaderArgumentsProvider.class)
     void testApplyFilterToCamelHeadersPassesKnownTypes(String headerName, Object headerValue) {
-        assertThat(headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, null)).isFalse();
+        assertThat(headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, null))
+                .isFalse();
     }
 
     @Test
     void testApplyFilterToCamelHeadersFiltersUnknownType() {
-        assertThat(headerFilterStrategy.applyFilterToCamelHeaders("objectHeader", new Object(), null)).isTrue();
+        assertThat(headerFilterStrategy.applyFilterToCamelHeaders("objectHeader", new Object(), null))
+                .isTrue();
     }
 
     static class HeaderArgumentsProvider implements ArgumentsProvider {

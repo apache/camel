@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty12;
 
 import java.net.URI;
@@ -91,11 +92,12 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
             ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
             ServerConnector result = new org.eclipse.jetty.server.ServerConnector(server);
             if (sslcf != null) {
-                httpConfig.addCustomizer(secureRequestCustomizer != null
-                        ? secureRequestCustomizer : new org.eclipse.jetty.server.SecureRequestCustomizer());
-                SslConnectionFactory scf = new org.eclipse.jetty.server.SslConnectionFactory(
-                        sslcf,
-                        httpFactory.getProtocol());
+                httpConfig.addCustomizer(
+                        secureRequestCustomizer != null
+                                ? secureRequestCustomizer
+                                : new org.eclipse.jetty.server.SecureRequestCustomizer());
+                SslConnectionFactory scf =
+                        new org.eclipse.jetty.server.SslConnectionFactory(sslcf, httpFactory.getProtocol());
                 connectionFactories.add(scf);
                 // The protocol name can be "SSL" or "SSL-HTTP/1.1" depending on
                 // the version of Jetty
@@ -115,17 +117,19 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
                     Map<String, Object> properties = new HashMap<>(getSslSocketConnectorProperties());
                     PropertyBindingSupport.bindProperties(getCamelContext(), sslcf, properties);
                     if (!properties.isEmpty()) {
-                        throw new IllegalArgumentException(
-                                "There are " + properties.size() + " parameters that couldn't be set on the SocketConnector."
-                                                           + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                                                           + " Unknown parameters=[" + properties + "]");
+                        throw new IllegalArgumentException("There are " + properties.size()
+                                + " parameters that couldn't be set on the SocketConnector."
+                                + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
+                                + " Unknown parameters=[" + properties + "]");
                     }
                 }
 
                 LOG.info(
                         "Connector on port: {} is using includeCipherSuites: {} excludeCipherSuites: {} includeProtocols: {} excludeProtocols: {}",
                         port,
-                        sslcf.getIncludeCipherSuites(), sslcf.getExcludeCipherSuites(), sslcf.getIncludeProtocols(),
+                        sslcf.getIncludeCipherSuites(),
+                        sslcf.getExcludeCipherSuites(),
+                        sslcf.getIncludeProtocols(),
                         sslcf.getExcludeProtocols());
             }
 
@@ -148,5 +152,4 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
     public RequestLog getRequestLog() {
         return requestLog;
     }
-
 }

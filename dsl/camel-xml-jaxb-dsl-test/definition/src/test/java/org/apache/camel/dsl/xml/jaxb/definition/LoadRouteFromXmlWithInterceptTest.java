@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb.definition;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
 
@@ -33,9 +34,8 @@ public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteFromXmlWithIntercept() throws Exception {
-        Resource resource
-                = PluginHelper.getResourceLoader(context)
-                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barInterceptorRoute.xml");
+        Resource resource = PluginHelper.getResourceLoader(context)
+                .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barInterceptorRoute.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 

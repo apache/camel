@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery;
 
 import org.apache.camel.RuntimeCamelException;
@@ -25,7 +26,9 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleBigQueryConfiguration implements Cloneable {
 
-    @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
+    @UriParam(
+            description =
+                    "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
     @Metadata(autowired = true)
     private GoogleBigQueryConnectionFactory connectionFactory;
 
@@ -44,8 +47,10 @@ public class GoogleBigQueryConfiguration implements Cloneable {
     @Metadata(required = false)
     private String tableId;
 
-    @UriParam(label = "security",
-              description = "Service account key in json format to authenticate an application as a service account to google cloud platform")
+    @UriParam(
+            label = "security",
+            description =
+                    "Service account key in json format to authenticate an application as a service account to google cloud platform")
     @Metadata(required = false)
     private String serviceAccountKey;
 
@@ -126,5 +131,4 @@ public class GoogleBigQueryConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

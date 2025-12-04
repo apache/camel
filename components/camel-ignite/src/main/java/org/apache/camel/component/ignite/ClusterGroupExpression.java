@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
 
 import org.apache.ignite.Ignite;
@@ -26,5 +27,4 @@ import org.apache.ignite.cluster.ClusterGroup;
 public interface ClusterGroupExpression {
 
     ClusterGroup getClusterGroup(Ignite ignite);
-
 }

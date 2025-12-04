@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.util.Locale;
@@ -32,15 +33,12 @@ public class DoublePatternFormatFactory extends AbstractFormatFactory {
 
     @Override
     public boolean canBuild(FormattingOptions formattingOptions) {
-        return super.canBuild(formattingOptions)
-                && ObjectHelper.isNotEmpty(formattingOptions.getPattern());
+        return super.canBuild(formattingOptions) && ObjectHelper.isNotEmpty(formattingOptions.getPattern());
     }
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new DoublePatternFormat(
-                formattingOptions.getPattern(),
-                formattingOptions.getLocale());
+        return new DoublePatternFormat(formattingOptions.getPattern(), formattingOptions.getLocale());
     }
 
     private static class DoublePatternFormat extends NumberPatternFormat<Double> {
@@ -57,7 +55,5 @@ public class DoublePatternFormatFactory extends AbstractFormatFactory {
                 return Double.valueOf(string);
             }
         }
-
     }
-
 }

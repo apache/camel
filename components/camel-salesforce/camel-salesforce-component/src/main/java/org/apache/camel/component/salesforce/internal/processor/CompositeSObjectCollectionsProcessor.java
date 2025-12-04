@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.util.List;
@@ -41,7 +42,6 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
 
     public CompositeSObjectCollectionsProcessor(final SalesforceEndpoint endpoint) {
         super(endpoint);
-
     }
 
     @Override
@@ -94,48 +94,59 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
     private boolean processRetrieveSObjectCollections(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         List<String> ids = getListParameter(SalesforceEndpointConfig.SOBJECT_IDS, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        List<String> fields = getListParameter(SalesforceEndpointConfig.SOBJECT_FIELDS, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        List<String> fields =
+                getListParameter(SalesforceEndpointConfig.SOBJECT_FIELDS, exchange, IGNORE_BODY, NOT_OPTIONAL);
         String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL);
 
         // gets class by sObjectName if not null, otherwise tries the SOBJECT_CLASS option
         Class<?> sObjectClass = getSObjectClass(exchange);
 
         RetrieveSObjectCollectionsDto request = new RetrieveSObjectCollectionsDto(ids, fields);
-        compositeClient.submitRetrieveCompositeCollections(request, determineHeaders(exchange),
-                (response, responseHeaders, exception) -> processResponse(exchange, response,
-                        responseHeaders, exception, callback),
-                sObjectName, sObjectClass);
+        compositeClient.submitRetrieveCompositeCollections(
+                request,
+                determineHeaders(exchange),
+                (response, responseHeaders, exception) ->
+                        processResponse(exchange, response, responseHeaders, exception, callback),
+                sObjectName,
+                sObjectClass);
         return false;
     }
 
     private boolean processCreateSObjectCollections(final Exchange exchange, final AsyncCallback callback)
             throws SalesforceException {
         SObjectCollection collection = buildSObjectCollection(exchange);
-        compositeClient.createCompositeCollections(collection, determineHeaders(exchange),
-                (response, responseHeaders, exception) -> processResponse(exchange, response, responseHeaders,
-                        exception, callback));
+        compositeClient.createCompositeCollections(
+                collection,
+                determineHeaders(exchange),
+                (response, responseHeaders, exception) ->
+                        processResponse(exchange, response, responseHeaders, exception, callback));
         return false;
     }
 
     private boolean processUpdateSObjectCollections(final Exchange exchange, final AsyncCallback callback)
             throws SalesforceException {
         final SObjectCollection collection = buildSObjectCollection(exchange);
-        compositeClient.updateCompositeCollections(collection, determineHeaders(exchange),
-                (response, responseHeaders, exception) -> processResponse(exchange, response, responseHeaders,
-                        exception, callback));
+        compositeClient.updateCompositeCollections(
+                collection,
+                determineHeaders(exchange),
+                (response, responseHeaders, exception) ->
+                        processResponse(exchange, response, responseHeaders, exception, callback));
         return false;
     }
 
     private boolean processUpsertSObjectCollections(final Exchange exchange, final AsyncCallback callback)
             throws SalesforceException {
         final SObjectCollection collection = buildSObjectCollection(exchange);
-        String externalIdFieldName
-                = getParameter(SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
+        String externalIdFieldName =
+                getParameter(SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
         String sObjectName = getParameter(SalesforceEndpointConfig.SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        compositeClient.upsertCompositeCollections(collection, determineHeaders(exchange),
-                (response, responseHeaders, exception) -> processResponse(exchange, response, responseHeaders,
-                        exception, callback),
-                sObjectName, externalIdFieldName);
+        compositeClient.upsertCompositeCollections(
+                collection,
+                determineHeaders(exchange),
+                (response, responseHeaders, exception) ->
+                        processResponse(exchange, response, responseHeaders, exception, callback),
+                sObjectName,
+                externalIdFieldName);
 
         return false;
     }
@@ -145,9 +156,12 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
         List<String> ids = getListParameter(SalesforceEndpointConfig.SOBJECT_IDS, exchange, USE_BODY, NOT_OPTIONAL);
         boolean allOrNone = Boolean.parseBoolean(
                 getParameter(SalesforceEndpointConfig.ALL_OR_NONE, exchange, IGNORE_BODY, IS_OPTIONAL));
-        compositeClient.submitDeleteCompositeCollections(ids, allOrNone, determineHeaders(exchange),
-                (response, responseHeaders, exception) -> processResponse(exchange, response,
-                        responseHeaders, exception, callback));
+        compositeClient.submitDeleteCompositeCollections(
+                ids,
+                allOrNone,
+                determineHeaders(exchange),
+                (response, responseHeaders, exception) ->
+                        processResponse(exchange, response, responseHeaders, exception, callback));
         return false;
     }
 
@@ -169,8 +183,11 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
     }
 
     private void processResponse(
-            final Exchange exchange, final Optional<? extends List<?>> responseBody, final Map<String, String> headers,
-            final SalesforceException exception, final AsyncCallback callback) {
+            final Exchange exchange,
+            final Optional<? extends List<?>> responseBody,
+            final Map<String, String> headers,
+            final SalesforceException exception,
+            final AsyncCallback callback) {
         try {
             if (exception != null) {
                 exchange.setException(exception);

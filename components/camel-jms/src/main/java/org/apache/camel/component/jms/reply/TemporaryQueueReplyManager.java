@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,14 +61,22 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     @Override
     protected ReplyHandler createReplyHandler(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout) {
-        return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long requestTimeout) {
+        return new TemporaryQueueReplyHandler(
+                this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
     @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
+        log.trace(
+                "Updated provisional correlationId [{}] to expected correlationId [{}]",
+                correlationId,
+                newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler != null) {
@@ -88,12 +97,16 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
             // log warn and then ignore the message
-            log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
+            log.warn(
+                    "Reply received for unknown correlationID [{}]. The message will be ignored: {}",
+                    correlationID,
+                    message);
         }
     }
 
     @Override
-    public void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException {
+    public void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage)
+            throws JMSException {
         // noop
     }
 
@@ -110,8 +123,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     protected AbstractMessageListenerContainer createDefaultListenerContainer() throws Exception {
         // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
-        DefaultMessageListenerContainer answer
-                = new DefaultJmsMessageListenerContainer(endpoint, endpoint.isAllowReplyManagerQuickStop());
+        DefaultMessageListenerContainer answer =
+                new DefaultJmsMessageListenerContainer(endpoint, endpoint.isAllowReplyManagerQuickStop());
 
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(destinationResolver);
@@ -156,8 +169,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             answer.setErrorHandler(endpoint.getErrorHandler());
         } else {
             answer.setErrorHandler(new DefaultSpringErrorHandler(
-                    endpoint.getCamelContext(), TemporaryQueueReplyManager.class,
-                    endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+                    endpoint.getCamelContext(),
+                    TemporaryQueueReplyManager.class,
+                    endpoint.getErrorHandlerLoggingLevel(),
+                    endpoint.isErrorHandlerLogStackTrace()));
         }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
@@ -167,7 +182,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
         if (endpoint.getTaskExecutor() != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+                log.debug(
+                        "Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
             }
             answer.setTaskExecutor(endpoint.getTaskExecutor());
         }
@@ -179,8 +195,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         if (answer.getConcurrentConsumers() > 1) {
             // log that we are using concurrent consumers
-            log.info("Using {}-{} concurrent consumers on {}",
-                    answer.getConcurrentConsumers(), answer.getMaxConcurrentConsumers(), name);
+            log.info(
+                    "Using {}-{} concurrent consumers on {}",
+                    answer.getConcurrentConsumers(),
+                    answer.getMaxConcurrentConsumers(),
+                    name);
         }
         return answer;
     }
@@ -212,12 +231,15 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             answer.setErrorHandler(endpoint.getErrorHandler());
         } else {
             answer.setErrorHandler(new DefaultSpringErrorHandler(
-                    endpoint.getCamelContext(), TemporaryQueueReplyManager.class,
-                    endpoint.getErrorHandlerLoggingLevel(), endpoint.isErrorHandlerLogStackTrace()));
+                    endpoint.getCamelContext(),
+                    TemporaryQueueReplyManager.class,
+                    endpoint.getErrorHandlerLoggingLevel(),
+                    endpoint.isErrorHandlerLogStackTrace()));
         }
         if (endpoint.getTaskExecutor() != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
+                log.debug(
+                        "Using custom TaskExecutor: {} on listener container: {}", endpoint.getTaskExecutor(), answer);
             }
             answer.setTaskExecutor(endpoint.getTaskExecutor());
         }
@@ -229,8 +251,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         if (endpoint.getReplyToConcurrentConsumers() > 1) {
             // log that we are using concurrent consumers
-            log.info("Using {} concurrent consumers on {}",
-                    endpoint.getReplyToConcurrentConsumers(), name);
+            log.info("Using {} concurrent consumers on {}", endpoint.getReplyToConcurrentConsumers(), name);
         }
         return answer;
     }
@@ -239,8 +260,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private final TemporaryReplyQueueDestinationResolver destResolver;
         private final ExceptionListener delegate;
 
-        private TemporaryReplyQueueExceptionListener(TemporaryReplyQueueDestinationResolver destResolver,
-                                                     ExceptionListener delegate) {
+        private TemporaryReplyQueueExceptionListener(
+                TemporaryReplyQueueDestinationResolver destResolver, ExceptionListener delegate) {
             this.destResolver = destResolver;
             this.delegate = delegate;
         }
@@ -248,9 +269,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         @Override
         public void onException(JMSException exception) {
             // capture exceptions, and schedule a refresh of the ReplyTo destination
-            String msg
-                    = "Exception inside the DMLC for Temporary ReplyTo Queue for destination " + endpoint.getDestinationName()
-                      + ", refreshing ReplyTo destination (stacktrace in DEBUG logging level).";
+            String msg = "Exception inside the DMLC for Temporary ReplyTo Queue for destination "
+                    + endpoint.getDestinationName()
+                    + ", refreshing ReplyTo destination (stacktrace in DEBUG logging level).";
             boolean stopped = camelContext.isStopped();
             if (stopped) {
                 // if camel is stopped then an exception can happen during stopping connection to broker
@@ -269,7 +290,6 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
                 }
             }
         }
-
     }
 
     private final class TemporaryReplyQueueDestinationResolver extends ServiceSupport
@@ -330,5 +350,4 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             }
         }
     }
-
 }

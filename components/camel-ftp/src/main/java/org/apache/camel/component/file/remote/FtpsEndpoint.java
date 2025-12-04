@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
@@ -44,29 +45,38 @@ import org.slf4j.LoggerFactory;
 /**
  * Upload and download files to/from FTP servers supporting the FTPS protocol.
  */
-@UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
-             syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
-             category = { Category.FILE }, headersClass = FtpConstants.class)
-@Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
-                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
-                              + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
-                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous")
+@UriEndpoint(
+        firstVersion = "2.2.0",
+        scheme = "ftps",
+        extendsScheme = "file",
+        title = "FTPS",
+        syntax = "ftps:host:port/directoryName",
+        alternativeSyntax = "ftps:username:password@host:port/directoryName",
+        category = {Category.FILE},
+        headersClass = FtpConstants.class)
+@Metadata(
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
+                + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
+                + "renameUsingCopy,synchronous")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
 
     @UriParam
     protected FtpsConfiguration configuration;
+
     @UriParam(label = "security")
     protected SSLContextParameters sslContextParameters;
+
     @UriParam(label = "security", prefix = "ftpClient.keyStore.", multiValue = true)
     protected Map<String, Object> ftpClientKeyStoreParameters;
+
     @UriParam(label = "security", prefix = "ftpClient.trustStore.", multiValue = true)
     protected Map<String, Object> ftpClientTrustStoreParameters;
 
-    public FtpsEndpoint() {
-    }
+    public FtpsEndpoint() {}
 
     public FtpsEndpoint(String uri, RemoteFileComponent<FTPFile> remoteFileComponent, FtpsConfiguration configuration) {
         super(uri, remoteFileComponent, configuration);
@@ -115,15 +125,19 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
                 client.setEnabledSessionCreation(socket.getEnableSessionCreation());
             }
         } else {
-            client = new FTPSClient(getFtpsConfiguration().getSecurityProtocol(), getFtpsConfiguration().isImplicit());
+            client = new FTPSClient(
+                    getFtpsConfiguration().getSecurityProtocol(),
+                    getFtpsConfiguration().isImplicit());
 
             if (ftpClientKeyStoreParameters != null) {
                 String type = (ftpClientKeyStoreParameters.containsKey("type"))
-                        ? (String) ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
+                        ? (String) ftpClientKeyStoreParameters.get("type")
+                        : KeyStore.getDefaultType();
                 String file = (String) ftpClientKeyStoreParameters.get("file");
                 String password = (String) ftpClientKeyStoreParameters.get("password");
                 String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm"))
-                        ? (String) ftpClientKeyStoreParameters.get("algorithm") : KeyManagerFactory.getDefaultAlgorithm();
+                        ? (String) ftpClientKeyStoreParameters.get("algorithm")
+                        : KeyManagerFactory.getDefaultAlgorithm();
                 String keyPassword = (String) ftpClientKeyStoreParameters.get("keyPassword");
 
                 KeyStore keyStore = KeyStore.getInstance(type);
@@ -142,11 +156,13 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
 
             if (ftpClientTrustStoreParameters != null) {
                 String type = (ftpClientTrustStoreParameters.containsKey("type"))
-                        ? (String) ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
+                        ? (String) ftpClientTrustStoreParameters.get("type")
+                        : KeyStore.getDefaultType();
                 String file = (String) ftpClientTrustStoreParameters.get("file");
                 String password = (String) ftpClientTrustStoreParameters.get("password");
                 String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
-                        ? (String) ftpClientTrustStoreParameters.get("algorithm") : TrustManagerFactory.getDefaultAlgorithm();
+                        ? (String) ftpClientTrustStoreParameters.get("algorithm")
+                        : TrustManagerFactory.getDefaultAlgorithm();
 
                 KeyStore trustStore = KeyStore.getInstance(type);
                 FileInputStream trustStoreFileInputStream = new FileInputStream(new File(file));
@@ -222,10 +238,16 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created FTPSClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
-                      + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
-                    client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
-                    client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
+            LOG.debug(
+                    "Created FTPSClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+                            + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
+                    client.getConnectTimeout(),
+                    getSoTimeout(),
+                    dataTimeout,
+                    client.getBufferSize(),
+                    client.getReceiveDataSocketBufferSize(),
+                    client.getSendDataSocketBufferSize(),
+                    client);
         }
 
         FtpsOperations operations = new FtpsOperations(client, getFtpClientConfig());
@@ -284,5 +306,4 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
-
 }

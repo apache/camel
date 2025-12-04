@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -22,12 +23,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
  */
-public class SpringTransactionalClientDataSourceUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
+public class SpringTransactionalClientDataSourceUsingTransactedTest
+        extends SpringTransactionalClientDataSourceTransactedTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceUsingTransacted.xml");
     }
-
 }

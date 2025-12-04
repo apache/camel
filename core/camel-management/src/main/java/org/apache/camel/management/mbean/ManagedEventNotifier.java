@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.ArrayList;
@@ -165,25 +166,42 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
     public MBeanNotificationInfo[] getNotificationInfo() {
         // all the class names in the event package
         String[] names = {
-                "CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent",
-                "CamelContextStopFailureEvent", "CamelContextStoppedEvent", "CamelContextStoppingEvent",
-                "CamelContextSuspendingEvent", "CamelContextSuspendedEvent", "CamelContextResumingEvent",
-                "CamelContextResumedEvent",
-                "CamelContextResumeFailureEvent", "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent",
-                "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSendingEvent", "ExchangeSentEvent",
-                "RouteStartedEvent",
-                "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent",
-                "StepStartedEvent", "StepCompletedEvent", "StepFailedEvent" };
+            "CamelContextStartedEvent",
+            "CamelContextStartingEvent",
+            "CamelContextStartupFailureEvent",
+            "CamelContextStopFailureEvent",
+            "CamelContextStoppedEvent",
+            "CamelContextStoppingEvent",
+            "CamelContextSuspendingEvent",
+            "CamelContextSuspendedEvent",
+            "CamelContextResumingEvent",
+            "CamelContextResumedEvent",
+            "CamelContextResumeFailureEvent",
+            "ExchangeCompletedEvent",
+            "ExchangeCreatedEvent",
+            "ExchangeFailedEvent",
+            "ExchangeFailureHandledEvent",
+            "ExchangeRedeliveryEvents",
+            "ExchangeSendingEvent",
+            "ExchangeSentEvent",
+            "RouteStartedEvent",
+            "RouteStoppedEvent",
+            "ServiceStartupFailureEvent",
+            "ServiceStopFailureEvent",
+            "StepStartedEvent",
+            "StepCompletedEvent",
+            "StepFailedEvent"
+        };
 
         List<MBeanNotificationInfo> infos = new ArrayList<>();
         for (String name : names) {
             MBeanNotificationInfo info = new MBeanNotificationInfo(
-                    new String[] { "org.apache.camel.management.event" },
-                    "org.apache.camel.management.event." + name, "The event " + name + " occurred");
+                    new String[] {"org.apache.camel.management.event"},
+                    "org.apache.camel.management.event." + name,
+                    "The event " + name + " occurred");
             infos.add(info);
         }
 
         return infos.toArray(new MBeanNotificationInfo[0]);
     }
-
 }

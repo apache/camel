@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that the redelivery error handler will break out if CamelContext is shutting down.
@@ -59,11 +60,14 @@ public class RedeliveryErrorHandlerBreakoutDuringShutdownTest extends ContextTes
                 // just keep on redelivering
                 errorHandler(defaultErrorHandler().maximumRedeliveries(-1).redeliveryDelay(1000));
 
-                from("seda:start").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        throw new IllegalArgumentException("Forced");
-                    }
-                }).to("mock:after");
+                from("seda:start")
+                        .to("mock:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                throw new IllegalArgumentException("Forced");
+                            }
+                        })
+                        .to("mock:after");
             }
         };
     }

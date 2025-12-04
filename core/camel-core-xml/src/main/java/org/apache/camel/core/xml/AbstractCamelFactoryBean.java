@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.core.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,8 +34,10 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     @XmlAttribute
     @Metadata(description = "Id of CamelContext to use if there are multiple CamelContexts in the same JVM")
     private String camelContextId;
+
     @XmlTransient
     private CamelContext camelContext;
+
     @XmlTransient
     private Boolean customId;
 
@@ -63,8 +66,7 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
         }
     }
 
-    public void destroy() throws Exception {
-    }
+    public void destroy() throws Exception {}
 
     @Override
     public CamelContext getCamelContext() {
@@ -101,5 +103,4 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
     }
 
     public abstract Class<? extends T> getObjectType();
-
 }

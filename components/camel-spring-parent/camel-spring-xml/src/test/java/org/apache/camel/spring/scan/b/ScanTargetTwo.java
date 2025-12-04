@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.scan.b;
 
 import org.apache.camel.spring.scan.ScannableOne;
@@ -23,7 +24,5 @@ import org.apache.camel.spring.scan.a.ScanTargetOne;
 @SuppressWarnings("all")
 public class ScanTargetTwo extends ScanTargetOne {
 
-    public void someMethod() {
-    }
-
+    public void someMethod() {}
 }

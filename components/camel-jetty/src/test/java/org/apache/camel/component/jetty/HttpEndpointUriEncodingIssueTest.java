@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -47,7 +48,8 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
     @Test
     public void testEndpointHeaderUriEncodingIssue() {
         String uri = "http://localhost:{{port}}/myapp/mytest?columns=totalsens,upsens&username=apiuser";
-        String out = template.requestBodyAndHeader("http://localhost/dummy", null, Exchange.HTTP_URI, uri, String.class);
+        String out =
+                template.requestBodyAndHeader("http://localhost/dummy", null, Exchange.HTTP_URI, uri, String.class);
 
         assertEquals("We got totalsens,upsens columns", out);
     }
@@ -66,5 +68,4 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
             }
         };
     }
-
 }

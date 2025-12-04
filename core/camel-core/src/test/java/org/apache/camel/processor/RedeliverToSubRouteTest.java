@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -51,14 +52,18 @@ public class RedeliverToSubRouteTest extends ContextTestSupport {
                 // (do not use any delay due faster unit testing)
                 onException(IOException.class).maximumRedeliveries(2).redeliveryDelay(0);
 
-                from("direct:start").to("mock:a")
+                from("direct:start")
+                        .to("mock:a")
                         // call sub route (using direct)
-                        .to("direct:sub").to("mock:c");
+                        .to("direct:sub")
+                        .to("mock:c");
 
                 from("direct:sub")
                         // disable error handler, so the entire route can be retried
                         // in case of redelivery
-                        .errorHandler(noErrorHandler()).to("mock:b").process(new MyProcessor());
+                        .errorHandler(noErrorHandler())
+                        .to("mock:b")
+                        .process(new MyProcessor());
                 // END SNIPPET: e1
             }
         };

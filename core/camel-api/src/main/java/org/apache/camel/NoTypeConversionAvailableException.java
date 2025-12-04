@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -66,8 +67,8 @@ public class NoTypeConversionAvailableException extends CamelException {
      */
     public static String createMessage(Object value, Class<?> type) {
         return "No type converter available to convert from type: "
-               + (value != null ? value.getClass().getCanonicalName() : null)
-               + " to the required type: " + type.getCanonicalName();
+                + (value != null ? value.getClass().getCanonicalName() : null)
+                + " to the required type: " + type.getCanonicalName();
     }
 
     /**
@@ -75,7 +76,7 @@ public class NoTypeConversionAvailableException extends CamelException {
      */
     public static String createMessage(Object value, Class<?> type, Throwable cause) {
         return "Converting Exception when converting from type: "
-               + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
-               + type.getCanonicalName() + ", which is caused by " + cause;
+                + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
+                + type.getCanonicalName() + ", which is caused by " + cause;
     }
 }

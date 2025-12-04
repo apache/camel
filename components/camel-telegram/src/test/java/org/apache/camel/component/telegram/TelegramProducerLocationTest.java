@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +31,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests a producer that sends location information.
@@ -66,7 +67,8 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
         EditMessageLiveLocationMessage msg = new EditMessageLiveLocationMessage(latitude, longitude);
         template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        final MockProcessor<EditMessageLiveLocationMessage> mockProcessor = getMockRoutes().getMock("editMessageLiveLocation");
+        final MockProcessor<EditMessageLiveLocationMessage> mockProcessor =
+                getMockRoutes().getMock("editMessageLiveLocation");
         assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
                 .usingRecursiveComparison()
                 .isEqualTo(msg);
@@ -77,7 +79,8 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
         StopMessageLiveLocationMessage msg = new StopMessageLiveLocationMessage();
         template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        final MockProcessor<StopMessageLiveLocationMessage> mockProcessor = getMockRoutes().getMock("stopMessageLiveLocation");
+        final MockProcessor<StopMessageLiveLocationMessage> mockProcessor =
+                getMockRoutes().getMock("stopMessageLiveLocation");
         assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
                 .usingRecursiveComparison()
                 .isEqualTo(msg);
@@ -86,13 +89,14 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=" + chatId);
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:telegram").to("telegram:bots?authorizationToken=mock-token&chatId=" + chatId);
+                }
+            }
+        };
     }
 
     @Override
@@ -119,5 +123,4 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
                         StopMessageLiveLocationMessage.class,
                         TelegramTestUtil.stringResource("messages/stop-message-live-location.json"));
     }
-
 }

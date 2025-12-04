@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -37,8 +40,6 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
-
 /**
  * Used for configuring that requires access to the model.
  */
@@ -46,8 +47,7 @@ public final class MainSupportModelConfigurer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainSupportModelConfigurer.class);
 
-    private MainSupportModelConfigurer() {
-    }
+    private MainSupportModelConfigurer() {}
 
     static void configureModelCamelContext(
             CamelContext camelContext,
@@ -61,10 +61,17 @@ public final class MainSupportModelConfigurer {
 
         if (!resilience4jProperties.isEmpty() || mainConfigurationProperties.hasResilience4jConfiguration()) {
             Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();
-            LOG.debug("Auto-configuring Resilience4j Circuit Breaker EIP from loaded properties: {}",
+            LOG.debug(
+                    "Auto-configuring Resilience4j Circuit Breaker EIP from loaded properties: {}",
                     resilience4jProperties.size());
-            setPropertiesOnTarget(camelContext, resilience4j, resilience4jProperties, "camel.resilience4j.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            setPropertiesOnTarget(
+                    camelContext,
+                    resilience4j,
+                    resilience4jProperties,
+                    "camel.resilience4j.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    true,
+                    autoConfiguredProperties);
             Resilience4jConfigurationDefinition resilience4jModel = model.getResilience4jConfiguration(null);
             if (resilience4jModel == null) {
                 resilience4jModel = new Resilience4jConfigurationDefinition();
@@ -75,10 +82,17 @@ public final class MainSupportModelConfigurer {
 
         if (!faultToleranceProperties.isEmpty() || mainConfigurationProperties.hasFaultToleranceConfiguration()) {
             FaultToleranceConfigurationProperties faultTolerance = mainConfigurationProperties.faultTolerance();
-            LOG.debug("Auto-configuring MicroProfile Fault Tolerance Circuit Breaker EIP from loaded properties: {}",
+            LOG.debug(
+                    "Auto-configuring MicroProfile Fault Tolerance Circuit Breaker EIP from loaded properties: {}",
                     faultToleranceProperties.size());
-            setPropertiesOnTarget(camelContext, faultTolerance, faultToleranceProperties, "camel.faulttolerance.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+            setPropertiesOnTarget(
+                    camelContext,
+                    faultTolerance,
+                    faultToleranceProperties,
+                    "camel.faulttolerance.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    true,
+                    autoConfiguredProperties);
             FaultToleranceConfigurationDefinition faultToleranceModel = model.getFaultToleranceConfiguration(null);
             if (faultToleranceModel == null) {
                 faultToleranceModel = new FaultToleranceConfigurationDefinition();
@@ -106,7 +120,9 @@ public final class MainSupportModelConfigurer {
                 key = key.substring(7);
                 key = StringHelper.replaceFirst(key, ".", ":");
             }
-            VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
+            VariableRepository repo = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(VariableRepositoryFactory.class)
                     .getVariableRepository(id);
             // it may be a resource to load from disk then
             if (ResourceHelper.hasScheme(value)) {
@@ -146,7 +162,8 @@ public final class MainSupportModelConfigurer {
         ThreadPoolConfigurationProperties tp = mainConfigurationProperties.threadPool();
 
         // extract all config to know their parent ids so we can set the values afterwards
-        Map<String, Object> hcConfig = PropertiesHelper.extractProperties(threadPoolProperties.asMap(), "config", false);
+        Map<String, Object> hcConfig =
+                PropertiesHelper.extractProperties(threadPoolProperties.asMap(), "config", false);
         Map<String, ThreadPoolProfileConfigurationProperties> tpConfigs = new HashMap<>();
         // build set of configuration objects
         for (Map.Entry<String, Object> entry : hcConfig.entrySet()) {
@@ -166,17 +183,25 @@ public final class MainSupportModelConfigurer {
             tp.setConfig(tpConfigs);
         }
 
-        setPropertiesOnTarget(camelContext, tp, threadPoolProperties, "camel.threadpool.",
-                mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
+        setPropertiesOnTarget(
+                camelContext,
+                tp,
+                threadPoolProperties,
+                "camel.threadpool.",
+                mainConfigurationProperties.isAutoConfigurationFailFast(),
+                true,
+                autoConfiguredProperties);
 
-        // okay we have all properties set so we should be able to create thread pool profiles and register them on camel
+        // okay we have all properties set so we should be able to create thread pool profiles and register them on
+        // camel
         final ThreadPoolProfile dp = new ThreadPoolProfileBuilder("default")
                 .poolSize(tp.getPoolSize())
                 .maxPoolSize(tp.getMaxPoolSize())
                 .keepAliveTime(tp.getKeepAliveTime(), tp.getTimeUnit())
                 .maxQueueSize(tp.getMaxQueueSize())
                 .allowCoreThreadTimeOut(tp.getAllowCoreThreadTimeOut())
-                .rejectedPolicy(tp.getRejectedPolicy()).build();
+                .rejectedPolicy(tp.getRejectedPolicy())
+                .build();
 
         for (ThreadPoolProfileConfigurationProperties config : tp.getConfig().values()) {
             ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder(config.getId(), dp);
@@ -185,7 +210,8 @@ public final class MainSupportModelConfigurer {
                     .keepAliveTime(config.getKeepAliveTime(), config.getTimeUnit())
                     .maxQueueSize(config.getMaxQueueSize())
                     .allowCoreThreadTimeOut(config.getAllowCoreThreadTimeOut())
-                    .rejectedPolicy(config.getRejectedPolicy()).build();
+                    .rejectedPolicy(config.getRejectedPolicy())
+                    .build();
             if (!tpp.isEmpty()) {
                 camelContext.getExecutorServiceManager().registerThreadPoolProfile(tpp);
             }
@@ -196,5 +222,4 @@ public final class MainSupportModelConfigurer {
             camelContext.getExecutorServiceManager().setDefaultThreadPoolProfile(dp);
         }
     }
-
 }

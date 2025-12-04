@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapBindingFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[] { "org/apache/camel/component/cxf/spring/SpringBusFactoryBeans.xml" };
+        return new String[] {"org/apache/camel/component/cxf/spring/SpringBusFactoryBeans.xml"};
     }
 
     @Test
@@ -40,5 +41,4 @@ public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
         SoapBindingFactory soapBindingFactory = bus.getExtension(SoapBindingFactory.class);
         assertNotNull(soapBindingFactory, "You should find the factory here");
     }
-
 }

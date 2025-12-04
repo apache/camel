@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.concurrent.ForkJoinPool;
@@ -38,8 +39,7 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     @XmlTransient
     private CircuitBreakerDefinition parent;
 
-    public Resilience4jConfigurationDefinition() {
-    }
+    public Resilience4jConfigurationDefinition() {}
 
     public Resilience4jConfigurationDefinition(Resilience4jConfigurationDefinition source) {
         super(source);
@@ -326,5 +326,4 @@ public class Resilience4jConfigurationDefinition extends Resilience4jConfigurati
     public CircuitBreakerDefinition end() {
         return parent;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.lang.annotation.Documented;
@@ -28,6 +29,5 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.METHOD })
-public @interface PreConsumed {
-}
+@Target({ElementType.METHOD})
+public @interface PreConsumed {}

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -41,7 +42,9 @@ public class ManagedSetHeaders extends ManagedProcessor implements ManagedSetHea
 
     @Override
     public String[] getHeaderNames() {
-        return getProcessor().getHeaderNames()
-                .stream().map(Object::toString).distinct().toArray(String[]::new);
+        return getProcessor().getHeaderNames().stream()
+                .map(Object::toString)
+                .distinct()
+                .toArray(String[]::new);
     }
 }

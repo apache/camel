@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
 
 import java.util.concurrent.TimeUnit;
@@ -43,8 +44,8 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
 
         // enabling consumers health check is a bit cumbersome via low-level Java code
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
-        HealthCheckRepository repo
-                = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
+        HealthCheckRepository repo =
+                hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
         repo.setEnabled(true);
         hcr.register(repo);
 
@@ -57,19 +58,18 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
         HealthCheckRepository repo = hcr.getRepository("consumers").get();
 
         // wait until HC is DOWN
-        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
-                () -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.DOWN)));
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS)
+                .until(() -> repo.stream().anyMatch(h -> h.call().getState().equals(HealthCheck.State.DOWN)));
 
         // if we grab the health check by id, we can also check it afterwards
         HealthCheck hc = hcr.getCheck("consumer:telegram").get();
 
         // wait until we have the error
-        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(
-                () -> {
-                    HealthCheck.Result rc = hc.call();
-                    Long count = (Long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
-                    return count != null && count > 0;
-                });
+        Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> {
+            HealthCheck.Result rc = hc.call();
+            Long count = (Long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
+            return count != null && count > 0;
+        });
 
         HealthCheck.Result rc = hc.call();
 
@@ -79,8 +79,8 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
         long count = (long) rc.getDetails().get(HealthCheck.FAILURE_ERROR_COUNT);
         Assertions.assertEquals("Consumer failed polling " + count + " times route: telegram (telegram://bots)", msg);
         // test that the uri is masked
-        Assertions.assertEquals("telegram://bots?authorizationToken=xxxxxx",
-                rc.getDetails().get(HealthCheck.ENDPOINT_URI));
+        Assertions.assertEquals(
+                "telegram://bots?authorizationToken=xxxxxx", rc.getDetails().get(HealthCheck.ENDPOINT_URI));
 
         Throwable e = rc.getError().get();
         Assertions.assertTrue(e.getMessage().contains("401"));
@@ -90,23 +90,21 @@ public class TelegramConsumerHealthCheckErrorTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token").routeId("telegram")
-                                .convertBodyTo(String.class)
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .routeId("telegram")
+                            .convertBodyTo(String.class)
+                            .to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port)
-                .addErrorEndpoint(
-                        "getUpdates",
-                        "GET",
-                        401);
+        return new TelegramMockRoutes(port).addErrorEndpoint("getUpdates", "GET", 401);
     }
 }

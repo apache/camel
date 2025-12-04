@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for Spring AI Chat component SafeGuard advisor.
@@ -31,8 +32,8 @@ public class SpringAiChatSafeguardIT extends OllamaTestSupport {
     @Test
     public void testSafeguardBlocksSensitiveWords() {
         // Request that would normally return something containing "password"
-        String response = template.requestBody("direct:safeguard",
-                "Tell me a story about a user who forgot their password", String.class);
+        String response = template.requestBody(
+                "direct:safeguard", "Tell me a story about a user who forgot their password", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response).isNotEmpty();
@@ -44,8 +45,8 @@ public class SpringAiChatSafeguardIT extends OllamaTestSupport {
     @Test
     public void testSafeguardAllowsNonSensitiveContent() {
         // Request that doesn't contain sensitive words
-        String response = template.requestBody("direct:safeguard",
-                "What is the capital of France? Answer in one word.", String.class);
+        String response = template.requestBody(
+                "direct:safeguard", "What is the capital of France? Answer in one word.", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response).isNotEmpty();
@@ -61,8 +62,10 @@ public class SpringAiChatSafeguardIT extends OllamaTestSupport {
         var exchange = template.request("direct:safeguardWithoutConfig", e -> {
             e.getIn().setBody("Tell me about API keys and secrets");
             e.getIn().setHeader(SpringAiChatConstants.SAFEGUARD_SENSITIVE_WORDS, "secret,api,key");
-            e.getIn().setHeader(SpringAiChatConstants.SAFEGUARD_FAILURE_RESPONSE,
-                    "Custom blocked message: This topic is restricted");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SAFEGUARD_FAILURE_RESPONSE,
+                            "Custom blocked message: This topic is restricted");
         });
 
         String response = exchange.getMessage().getBody(String.class);
@@ -72,8 +75,7 @@ public class SpringAiChatSafeguardIT extends OllamaTestSupport {
 
     @Test
     public void testSafeguardWithCustomFailureResponse() {
-        String response = template.requestBody("direct:safeguardCustom",
-                "How do I reset my password?", String.class);
+        String response = template.requestBody("direct:safeguardCustom", "How do I reset my password?", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response).contains("Security policy violation detected");
@@ -82,15 +84,13 @@ public class SpringAiChatSafeguardIT extends OllamaTestSupport {
     @Test
     public void testMultipleSensitiveWords() {
         // Test with one of multiple configured sensitive words
-        String response1 = template.requestBody("direct:safeguard",
-                "Tell me about confidential data", String.class);
+        String response1 = template.requestBody("direct:safeguard", "Tell me about confidential data", String.class);
 
         assertThat(response1).isNotNull();
         assertThat(response1).contains("I cannot provide information containing sensitive words");
 
         // Test with another sensitive word
-        String response2 = template.requestBody("direct:safeguard",
-                "What are the secret codes?", String.class);
+        String response2 = template.requestBody("direct:safeguard", "What are the secret codes?", String.class);
 
         assertThat(response2).isNotNull();
         assertThat(response2).contains("I cannot provide information containing sensitive words");
@@ -108,16 +108,15 @@ public class SpringAiChatSafeguardIT extends OllamaTestSupport {
                 // Route with safeguard configured on endpoint
                 from("direct:safeguard")
                         .to("spring-ai-chat:test?safeguardSensitiveWords=password,secret,confidential"
-                            + "&safeguardFailureResponse=I cannot provide information containing sensitive words");
+                                + "&safeguardFailureResponse=I cannot provide information containing sensitive words");
 
                 // Route without safeguard config - will use headers
-                from("direct:safeguardWithoutConfig")
-                        .to("spring-ai-chat:test");
+                from("direct:safeguardWithoutConfig").to("spring-ai-chat:test");
 
                 // Route with custom failure response
                 from("direct:safeguardCustom")
                         .to("spring-ai-chat:test?safeguardSensitiveWords=password,secret"
-                            + "&safeguardFailureResponse=Security policy violation detected");
+                                + "&safeguardFailureResponse=Security policy violation detected");
             }
         };
     }

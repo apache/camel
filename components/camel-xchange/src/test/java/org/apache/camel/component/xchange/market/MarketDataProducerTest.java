@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange.market;
+
+import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeTestSupport;
@@ -22,9 +26,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
-
-import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("See CAMEL-19751 before enabling")
 public class MarketDataProducerTest extends XChangeTestSupport {
@@ -35,8 +36,7 @@ public class MarketDataProducerTest extends XChangeTestSupport {
             @Override
             public void configure() {
 
-                from("direct:ticker")
-                        .to("xchange:binance?service=marketdata&method=ticker");
+                from("direct:ticker").to("xchange:binance?service=marketdata&method=ticker");
 
                 from("direct:tickerBTCUSDT")
                         .to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
@@ -50,7 +50,8 @@ public class MarketDataProducerTest extends XChangeTestSupport {
         Ticker ticker = template.requestBody("direct:ticker", CurrencyPair.EOS_ETH, Ticker.class);
         assertNotNull(ticker, "Ticker not null");
 
-        ticker = template.requestBodyAndHeader("direct:ticker", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, Ticker.class);
+        ticker = template.requestBodyAndHeader(
+                "direct:ticker", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, Ticker.class);
         assertNotNull(ticker, "Ticker not null");
     }
 

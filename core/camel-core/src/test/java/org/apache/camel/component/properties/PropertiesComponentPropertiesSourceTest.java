@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Map;
 import java.util.Properties;
@@ -26,9 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PropertiesComponentPropertiesSourceTest {
     @Test
@@ -44,10 +45,14 @@ public class PropertiesComponentPropertiesSourceTest {
     @Test
     public void testOrderedPropertiesSources() {
         CamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("my-ps-1",
-                new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
-        context.getRegistry().bind("my-ps-2",
-                new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
+        context.getRegistry()
+                .bind(
+                        "my-ps-1",
+                        new PropertiesPropertiesSource(Ordered.HIGHEST, "ps1", "shared", "v1", "my-key-1", "my-val-1"));
+        context.getRegistry()
+                .bind(
+                        "my-ps-2",
+                        new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
 
         {
             Properties properties = context.getPropertiesComponent().loadProperties();
@@ -88,7 +93,8 @@ public class PropertiesComponentPropertiesSourceTest {
         }
 
         {
-            Map<String, Object> properties = context.getPropertiesComponent().loadPropertiesAsMap(k -> k.endsWith("-2"));
+            Map<String, Object> properties =
+                    context.getPropertiesComponent().loadPropertiesAsMap(k -> k.endsWith("-2"));
 
             assertThat(properties).hasSize(2);
             assertThat(properties.get("initial-2")).isEqualTo("initial-val-2");
@@ -115,7 +121,8 @@ public class PropertiesComponentPropertiesSourceTest {
                 .hasMessage("Property with key [my-key-2] not found in properties from text: {{my-key-2}}");
     }
 
-    private static final class PropertiesPropertiesSource extends Properties implements LoadablePropertiesSource, Ordered {
+    private static final class PropertiesPropertiesSource extends Properties
+            implements LoadablePropertiesSource, Ordered {
         private final String name;
         private final int order;
 

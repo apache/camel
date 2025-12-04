@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,8 +37,7 @@ public class OutgoingPhotoMessage extends OutgoingMessage {
     @JsonProperty("reply_markup")
     private ReplyMarkup replyMarkup;
 
-    public OutgoingPhotoMessage() {
-    }
+    public OutgoingPhotoMessage() {}
 
     public byte[] getPhoto() {
         return photo;

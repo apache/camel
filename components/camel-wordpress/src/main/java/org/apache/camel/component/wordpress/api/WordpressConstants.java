@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api;
 
 public final class WordpressConstants {
 
     public static final String API_VERSION = "2";
 
-    private WordpressConstants() {
-    }
-
+    private WordpressConstants() {}
 }

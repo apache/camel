@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import org.apache.camel.Exchange;
@@ -39,9 +40,12 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         final Exchange exchange = PulsarMessageUtils.updateExchange(message, pulsarConsumer.createExchange(false));
 
         if (endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
-            exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_RECEIPT,
-                    endpoint.getComponent().getPulsarMessageReceiptFactory()
-                            .newInstance(exchange, message, consumer));
+            exchange.getIn()
+                    .setHeader(
+                            PulsarMessageHeaders.MESSAGE_RECEIPT,
+                            endpoint.getComponent()
+                                    .getPulsarMessageReceiptFactory()
+                                    .newInstance(exchange, message, consumer));
         }
         processAsync(exchange, consumer, message);
     }
@@ -50,14 +54,16 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         pulsarConsumer.getAsyncProcessor().process(exchange, doneSync -> {
             try {
                 if (exchange.getException() != null) {
-                    pulsarConsumer.getExceptionHandler().handleException("Error processing exchange", exchange,
-                            exchange.getException());
+                    pulsarConsumer
+                            .getExceptionHandler()
+                            .handleException("Error processing exchange", exchange, exchange.getException());
                 } else {
                     try {
                         acknowledge(consumer, message);
                     } catch (Exception e) {
-                        pulsarConsumer.getExceptionHandler().handleException("Error processing exchange", exchange,
-                                exchange.getException());
+                        pulsarConsumer
+                                .getExceptionHandler()
+                                .handleException("Error processing exchange", exchange, exchange.getException());
                     }
                 }
             } finally {
@@ -72,5 +78,4 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
             consumer.acknowledge(message.getMessageId());
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 import java.util.Map;
@@ -28,8 +31,6 @@ import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettyHttpSSLTest extends BaseNettyTest {
@@ -83,7 +84,8 @@ public class NettyHttpSSLTest extends BaseNettyTest {
                 from("netty-http:https://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.p12&trustStoreResource=jsse/localhost.p12")
                         .to("mock:input")
                         .process(exchange -> {
-                            SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                            SSLSession session =
+                                    exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
                             if (session != null) {
                                 exchange.getMessage().setBody("Bye World");
                             } else {
@@ -98,5 +100,4 @@ public class NettyHttpSSLTest extends BaseNettyTest {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

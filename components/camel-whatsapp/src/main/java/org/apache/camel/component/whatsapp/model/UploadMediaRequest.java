@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 public class UploadMediaRequest extends BaseMessage {
     private UploadMedia uploadMedia;
 
-    public UploadMediaRequest() {
-    }
+    public UploadMediaRequest() {}
 
     public UploadMedia getUploadMedia() {
         return uploadMedia;

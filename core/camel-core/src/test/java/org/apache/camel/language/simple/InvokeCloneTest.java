@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 import org.apache.camel.ContextTestSupport;
@@ -61,11 +62,16 @@ public class InvokeCloneTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:startClone").to("language://simple:${body.clone()}").to("mock:result").end();
+                from("direct:startClone")
+                        .to("language://simple:${body.clone()}")
+                        .to("mock:result")
+                        .end();
 
-                from("direct:startDeepCopy").to("language://simple:${body.deepCopy()}").to("mock:result").end();
+                from("direct:startDeepCopy")
+                        .to("language://simple:${body.deepCopy()}")
+                        .to("mock:result")
+                        .end();
             }
         };
     }
-
 }

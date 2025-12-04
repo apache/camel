@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs.integration;
 
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ public class SqsProducerAutoCreateQueueLocalstackIT extends Aws2SQSBaseTest {
     void setup() {
         SqsClient client = AWSSDKClientUtils.newSQSClient();
         for (int i = 0; i < 2000; i++) {
-            client.createQueue(CreateQueueRequest.builder().queueName("queue-" + String.valueOf(i)).build());
+            client.createQueue(CreateQueueRequest.builder()
+                    .queueName("queue-" + String.valueOf(i))
+                    .build());
         }
     }
 
@@ -74,11 +77,15 @@ public class SqsProducerAutoCreateQueueLocalstackIT extends Aws2SQSBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
+                from("direct:start")
+                        .startupOrder(2)
+                        .setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .toF("aws2-sqs://%s?autoCreateQueue=true", "queue-2001");
 
                 fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", "queue-2001")
-                        .startupOrder(1).log("${body}").to("mock:result");
+                        .startupOrder(1)
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

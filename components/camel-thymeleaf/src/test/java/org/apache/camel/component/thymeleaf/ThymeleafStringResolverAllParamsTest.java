@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,12 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThymeleafStringResolverAllParamsTest extends ThymeleafAbstractBaseTest {
 
@@ -51,7 +52,8 @@ public class ThymeleafStringResolverAllParamsTest extends ThymeleafAbstractBaseT
                 "thymeleaf:dontcare?allowTemplateFromHeader=true&cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING",
                 ThymeleafEndpoint.class);
 
-        assertAll("properties",
+        assertAll(
+                "properties",
                 () -> assertNotNull(thymeleafEndpoint),
                 () -> assertTrue(thymeleafEndpoint.isAllowContextMapAll()),
                 () -> assertTrue(thymeleafEndpoint.getCacheable()),
@@ -66,12 +68,16 @@ public class ThymeleafStringResolverAllParamsTest extends ThymeleafAbstractBaseT
                 () -> assertNotNull(thymeleafEndpoint.getTemplateEngine()),
                 () -> assertNull(thymeleafEndpoint.getTemplateMode()));
 
-        assertEquals(1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
-        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream().findFirst().get();
+        assertEquals(
+                1, thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().size());
+        ITemplateResolver resolver = thymeleafEndpoint.getTemplateEngine().getTemplateResolvers().stream()
+                .findFirst()
+                .get();
         assertTrue(resolver instanceof StringTemplateResolver);
 
         StringTemplateResolver templateResolver = (StringTemplateResolver) resolver;
-        assertAll("templateResolver",
+        assertAll(
+                "templateResolver",
                 () -> assertTrue(templateResolver.isCacheable()),
                 () -> assertEquals(CACHE_TIME_TO_LIVE, templateResolver.getCacheTTLMs()),
                 () -> assertTrue(templateResolver.getCheckExistence()),
@@ -88,10 +94,10 @@ public class ThymeleafStringResolverAllParamsTest extends ThymeleafAbstractBaseT
 
                 from(DIRECT_START)
                         .setBody(simple(SPAZZ_TESTING_SERVICE))
-                        .to("thymeleaf:dontcare?allowTemplateFromHeader=true&cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING")
+                        .to(
+                                "thymeleaf:dontcare?allowTemplateFromHeader=true&cacheable=true&cacheTimeToLive=500&checkExistence=true&order=1&allowContextMapAll=true&resolver=STRING")
                         .to(MOCK_RESULT);
             }
         };
     }
-
 }

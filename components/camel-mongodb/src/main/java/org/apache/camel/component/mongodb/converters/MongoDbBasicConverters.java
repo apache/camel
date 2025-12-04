@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.converters;
 
 import java.io.File;
@@ -51,10 +52,10 @@ public final class MongoDbBasicConverters {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
     private static final DocumentCodec DOCUMENT_CODEC = new DocumentCodec();
-    private static final DecoderContext DECODER_CONTEXT = DecoderContext.builder().build();
+    private static final DecoderContext DECODER_CONTEXT =
+            DecoderContext.builder().build();
 
-    private MongoDbBasicConverters() {
-    }
+    private MongoDbBasicConverters() {}
 
     @Converter
     public static Document fromMapToDocument(Map<String, Object> map) {
@@ -168,8 +169,10 @@ public final class MongoDbBasicConverters {
     }
 
     private static boolean isArrayNotation(String value) {
-        return value != null && !value.isEmpty() && value.length() > 1 && value.charAt(0) == '['
+        return value != null
+                && !value.isEmpty()
+                && value.length() > 1
+                && value.charAt(0) == '['
                 && value.charAt(value.length() - 1) == ']';
     }
-
 }

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -51,7 +52,9 @@ public class TransactionalClientDataSourceTest extends TransactionClientDataSour
             // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
+            assertEquals(
+                    "We don't have Donkeys, only Camels",
+                    e.getCause().getCause().getMessage());
         }
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
@@ -85,15 +88,22 @@ public class TransactionalClientDataSourceTest extends TransactionClientDataSour
 
                 // START SNIPPET: e2
                 // set the required policy for this route
-                from("direct:okay").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                from("direct:okay")
+                        .policy(required)
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 // set the required policy for this route
-                from("direct:fail").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                from("direct:fail")
+                        .policy(required)
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
                 // END SNIPPET: e2
             }
         };
     }
-
 }

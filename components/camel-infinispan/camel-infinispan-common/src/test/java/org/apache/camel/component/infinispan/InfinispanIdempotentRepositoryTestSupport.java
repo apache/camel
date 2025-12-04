@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -24,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public interface InfinispanIdempotentRepositoryTestSupport {
     IdempotentRepository getIdempotentRepository();
@@ -91,8 +92,8 @@ public interface InfinispanIdempotentRepositoryTestSupport {
         mock.expectedMessageCount(1);
 
         final String messageId = UUID.randomUUID().toString();
-        IntStream.range(0, 10).forEach(
-                i -> template().sendBodyAndHeader("direct:start", "message-" + i, "MessageID", messageId));
+        IntStream.range(0, 10)
+                .forEach(i -> template().sendBodyAndHeader("direct:start", "message-" + i, "MessageID", messageId));
 
         mock.assertIsSatisfied();
     }

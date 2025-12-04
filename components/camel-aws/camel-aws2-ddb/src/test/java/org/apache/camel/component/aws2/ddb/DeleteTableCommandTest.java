@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,8 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeleteTableCommandTest {
 
@@ -48,7 +49,8 @@ public class DeleteTableCommandTest {
         command.execute();
 
         assertEquals("DOMAIN1", ddbClient.deleteTableRequest.tableName());
-        assertEquals(ProvisionedThroughputDescription.builder().build(),
+        assertEquals(
+                ProvisionedThroughputDescription.builder().build(),
                 exchange.getIn().getHeader(Ddb2Constants.PROVISIONED_THROUGHPUT));
         assertEquals(Long.valueOf(10L), exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT, Long.class));
         assertEquals(Long.valueOf(20L), exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE, Long.class));

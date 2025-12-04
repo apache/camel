@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,8 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqsProducerBatchTest extends CamelTestSupport {
 
@@ -70,10 +71,10 @@ public class SqsProducerBatchTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage")
+                from("direct:start")
+                        .to("aws2-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage")
                         .to("mock:result");
             }
         };
     }
-
 }

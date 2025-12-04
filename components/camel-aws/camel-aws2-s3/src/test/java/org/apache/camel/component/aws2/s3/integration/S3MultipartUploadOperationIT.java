@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
@@ -32,8 +35,6 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3MultipartUploadOperationIT extends Aws2S3Base {
 
@@ -74,8 +75,10 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
         });
 
         S3Client s = AWSSDKClientUtils.newS3Client();
-        ResponseInputStream<GetObjectResponse> response
-                = s.getObject(GetObjectRequest.builder().bucket(name.get()).key("camel-content-type.txt").build());
+        ResponseInputStream<GetObjectResponse> response = s.getObject(GetObjectRequest.builder()
+                .bucket(name.get())
+                .key("camel-content-type.txt")
+                .build());
         assertEquals("application/text", response.response().contentType());
 
         MockEndpoint.assertIsSatisfied(context);
@@ -108,7 +111,6 @@ public class S3MultipartUploadOperationIT extends Aws2S3Base {
                 String awsEndpoint = "aws2-s3://" + name.get() + "?multiPartUpload=true&autoCreateBucket=true";
 
                 from("direct:putObject").to(awsEndpoint).to("mock:result");
-
             }
         };
     }

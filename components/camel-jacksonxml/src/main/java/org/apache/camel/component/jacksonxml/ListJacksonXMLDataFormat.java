@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -51,5 +52,4 @@ public class ListJacksonXMLDataFormat extends JacksonXMLDataFormat {
         super(mapper, unmarshalType, jsonView);
         useList();
     }
-
 }

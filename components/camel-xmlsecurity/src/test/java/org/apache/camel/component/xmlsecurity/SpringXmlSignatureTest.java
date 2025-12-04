@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.security.Key;
@@ -69,9 +73,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringXmlSignatureTest extends CamelTestSupport {
 
     protected static String payload;
@@ -81,8 +82,8 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
 
     static {
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                  + (includeNewLine ? "\n" : "")
-                  + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+                + (includeNewLine ? "\n" : "")
+                + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
 
     @Override
@@ -99,12 +100,13 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
         registry.bind("keySelectorDefault", getDefaultKeySelector());
         registry.bind("envelopingSignatureChecker", getEnvelopingXmlSignatureChecker());
         registry.bind("xmlSignature2MessageWithTimestampProperty", getXmlSignature2MessageWithTimestampdProperty());
-        registry.bind("validationFailedHandlerIgnoreManifestFailures", getValidationFailedHandlerIgnoreManifestFailures());
+        registry.bind(
+                "validationFailedHandlerIgnoreManifestFailures", getValidationFailedHandlerIgnoreManifestFailures());
         registry.bind("signatureProperties", getSignatureProperties());
         registry.bind("nodesearchxpath", getNodeSerachXPath());
         Map<String, String> namespaceMap = Collections.singletonMap("ns", "http://test");
-        List<XPathFilterParameterSpec> xpaths = Collections
-                .singletonList(XmlSignatureHelper.getXpathFilter("/ns:root/a/@ID", namespaceMap));
+        List<XPathFilterParameterSpec> xpaths =
+                Collections.singletonList(XmlSignatureHelper.getXpathFilter("/ns:root/a/@ID", namespaceMap));
         registry.bind("xpathsToIdAttributes", xpaths);
 
         registry.bind("parentXpathBean", getParentXPathBean());
@@ -150,7 +152,8 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
     }
 
     public static String getBaseUri() {
-        String uri = "file:/" + System.getProperty("user.dir") + "/src/test/resources/org/apache/camel/component/xmlsecurity/";
+        String uri = "file:/" + System.getProperty("user.dir")
+                + "/src/test/resources/org/apache/camel/component/xmlsecurity/";
         return uri.replace('\\', '/');
     }
 
@@ -266,7 +269,8 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA", 1024);
         return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("/org/apache/camel/component/xmlsecurity/SpringXmlSignatureTests.xml"),
+                new ClassPathXmlApplicationContext(
+                        "/org/apache/camel/component/xmlsecurity/SpringXmlSignatureTests.xml"),
                 true);
     }
 
@@ -287,16 +291,18 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
     }
 
     XmlSignerEndpoint getDetachedSignerEndpoint() {
-        XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context()
-                .getEndpoint(
-                        "xmlsecurity-sign:detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
-                             + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
+        XmlSignerEndpoint endpoint = (XmlSignerEndpoint)
+                context()
+                        .getEndpoint(
+                                "xmlsecurity-sign:detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&" //
+                                        + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
         return endpoint;
     }
 
     XmlSignerEndpoint getSignatureEncpointForSignException() {
-        XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context().getEndpoint(//
-                "xmlsecurity-sign:signexceptioninvalidkey?keyAccessor=#accessorRsa");
+        XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context()
+                .getEndpoint( //
+                        "xmlsecurity-sign:signexceptioninvalidkey?keyAccessor=#accessorRsa");
         return endpoint;
     }
 
@@ -328,11 +334,10 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
         Document doc = XmlSignatureHelper.newDocumentBuilder(true).parse(new ByteArrayInputStream(body));
         Map<String, String> prefix2Ns = XAdESSignaturePropertiesTest.getPrefix2NamespaceMap();
         prefix2Ns.put("t", "http://test.com/");
-        XAdESSignaturePropertiesTest
-                .checkXpath(
-                        doc,
-                        "/ds:Signature/ds:Object/etsi:QualifyingProperties/etsi:SignedProperties/etsi:SignedSignatureProperties/etsi:SignerRole/etsi:ClaimedRoles/etsi:ClaimedRole/t:test",
-                        prefix2Ns, "test");
+        XAdESSignaturePropertiesTest.checkXpath(
+                doc,
+                "/ds:Signature/ds:Object/etsi:QualifyingProperties/etsi:SignedProperties/etsi:SignedSignatureProperties/etsi:SignerRole/etsi:ClaimedRoles/etsi:ClaimedRole/t:test",
+                prefix2Ns,
+                "test");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -27,7 +28,8 @@ import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 @ManagedResource(description = "Managed Weighted LoadBalancer")
 public class ManagedWeightedLoadBalancer extends ManagedProcessor implements ManagedWeightedBalancerMBean {
 
-    public ManagedWeightedLoadBalancer(CamelContext context, WeightedLoadBalancer processor, LoadBalanceDefinition definition) {
+    public ManagedWeightedLoadBalancer(
+            CamelContext context, WeightedLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -48,7 +50,8 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
 
     @Override
     public String getRoundRobin() {
-        WeightedLoadBalancerDefinition weighted = (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
+        WeightedLoadBalancerDefinition weighted =
+                (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
         if (weighted != null) {
             return weighted.getRoundRobin();
         } else {
@@ -58,7 +61,8 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
 
     @Override
     public String getDistributionRatio() {
-        WeightedLoadBalancerDefinition weighted = (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
+        WeightedLoadBalancerDefinition weighted =
+                (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
         if (weighted != null) {
             return weighted.getDistributionRatio();
         } else {
@@ -68,7 +72,8 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
 
     @Override
     public String getDistributionRatioDelimiter() {
-        WeightedLoadBalancerDefinition weighted = (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
+        WeightedLoadBalancerDefinition weighted =
+                (WeightedLoadBalancerDefinition) getDefinition().getLoadBalancerType();
         if (weighted != null) {
             return weighted.getDistributionRatioDelimiter();
         } else {
@@ -88,5 +93,4 @@ public class ManagedWeightedLoadBalancer extends ManagedProcessor implements Man
         }
         return null;
     }
-
 }

@@ -14,21 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cbor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CBORUseDefaultMapperWithNonCBORMapperInRegistryTest extends CamelTestSupport {
 
     // The bytes obtained when marshaling an Author with the fallback object mapper created in CBORDataFormat.doInit()
     private static final byte[] AUTHOR_CBOR_BYTES = new byte[] {
-            -65, 100, 110, 97, 109, 101, 99, 68, 111, 110, 103, 115, 117, 114, 110, 97, 109, 101, 103, 87, 105, 110, 115, 108,
-            111, 119, -1 };
+        -65, 100, 110, 97, 109, 101, 99, 68, 111, 110, 103, 115, 117, 114, 110, 97, 109, 101, 103, 87, 105, 110, 115,
+        108, 111, 119, -1
+    };
 
     @Test
     void unmarshalShouldIgnoreTheNonCBORMapperFromRegistry() {
@@ -53,5 +55,4 @@ public class CBORUseDefaultMapperWithNonCBORMapperInRegistryTest extends CamelTe
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,8 +43,8 @@ public class NlpQuestionAnswerTest extends CamelTestSupport {
             public void configure() {
                 from("timer:testDJL?repeatCount=1")
                         .setBody(constant((Object) new String[] {
-                                "When did BBC Japan start broadcasting?",
-                                "BBC Japan was a general entertainment channel, which operated between December 2004 and April 2006. It ceased operations after its Japanese distributor folded."
+                            "When did BBC Japan start broadcasting?",
+                            "BBC Japan was a general entertainment channel, which operated between December 2004 and April 2006. It ceased operations after its Japanese distributor folded."
                         }))
                         .to("djl:nlp/question_answer?artifactId=ai.djl.pytorch:bertqa:0.0.1")
                         .log("Answer: ${body}")
@@ -51,5 +52,4 @@ public class NlpQuestionAnswerTest extends CamelTestSupport {
             }
         };
     }
-
 }

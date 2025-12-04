@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,7 +49,10 @@ public class OnExceptionContinueTest extends ContextTestSupport {
                 // thrown
                 onException(IllegalArgumentException.class).continued(true);
 
-                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:result");
+                from("direct:start")
+                        .to("mock:start")
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:result");
             }
             // END SNIPPET: e1
         };

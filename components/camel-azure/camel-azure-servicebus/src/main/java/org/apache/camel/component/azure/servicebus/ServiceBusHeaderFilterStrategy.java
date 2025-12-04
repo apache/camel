@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.Date;
@@ -46,7 +47,8 @@ public class ServiceBusHeaderFilterStrategy extends DefaultHeaderFilterStrategy 
 
     @Override
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
-        return headerValue == null || !SUPPORTED_TYPES.contains(headerValue.getClass())
+        return headerValue == null
+                || !SUPPORTED_TYPES.contains(headerValue.getClass())
                 || super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
     }
 }

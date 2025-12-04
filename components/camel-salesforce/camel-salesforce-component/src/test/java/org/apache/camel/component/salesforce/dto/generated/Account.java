@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.dto.generated;
 
 import java.util.ArrayList;
@@ -567,7 +568,8 @@ public class Account extends AbstractDescribedSObjectBase {
     }
 
     @JsonProperty("Shipping_Location__c")
-    public void setShipping_Location__c(org.apache.camel.component.salesforce.api.dto.GeoLocation Shipping_Location__c) {
+    public void setShipping_Location__c(
+            org.apache.camel.component.salesforce.api.dto.GeoLocation Shipping_Location__c) {
         this.Shipping_Location__c = Shipping_Location__c;
     }
 
@@ -618,137 +620,711 @@ public class Account extends AbstractDescribedSObjectBase {
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
 
-        final SObjectField sObjectField1 = createField("Id", "Account ID", "id", "tns:ID", 18, false, false, false, false, false, false, true);
+        final SObjectField sObjectField1 =
+                createField("Id", "Account ID", "id", "tns:ID", 18, false, false, false, false, false, false, true);
         fields1.add(sObjectField1);
-        final SObjectField sObjectField2 = createField("IsDeleted", "Deleted", "boolean", "xsd:boolean", 0, false, false, false, false, false, false, false);
+        final SObjectField sObjectField2 = createField(
+                "IsDeleted", "Deleted", "boolean", "xsd:boolean", 0, false, false, false, false, false, false, false);
         fields1.add(sObjectField2);
-        final SObjectField sObjectField3 = createField("MasterRecordId", "Master Record ID", "reference", "tns:ID", 18, false, true, false, false, false, false, false);
+        final SObjectField sObjectField3 = createField(
+                "MasterRecordId",
+                "Master Record ID",
+                "reference",
+                "tns:ID",
+                18,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField3);
-        final SObjectField sObjectField4 = createField("Name", "Account Name", "string", "xsd:string", 255, false, false, true, false, false, false, false);
+        final SObjectField sObjectField4 = createField(
+                "Name", "Account Name", "string", "xsd:string", 255, false, false, true, false, false, false, false);
         fields1.add(sObjectField4);
-        final SObjectField sObjectField5 = createField("Type", "Account Type", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField5 = createField(
+                "Type", "Account Type", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
         fields1.add(sObjectField5);
-        final SObjectField sObjectField6 = createField("ParentId", "Parent Account ID", "reference", "tns:ID", 18, false, true, false, false, false, false, false);
+        final SObjectField sObjectField6 = createField(
+                "ParentId",
+                "Parent Account ID",
+                "reference",
+                "tns:ID",
+                18,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField6);
-        final SObjectField sObjectField7 = createField("BillingStreet", "Billing Street", "textarea", "xsd:string", 255, false, true, false, false, false, false, false);
+        final SObjectField sObjectField7 = createField(
+                "BillingStreet",
+                "Billing Street",
+                "textarea",
+                "xsd:string",
+                255,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField7);
-        final SObjectField sObjectField8 = createField("BillingCity", "Billing City", "string", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField8 = createField(
+                "BillingCity",
+                "Billing City",
+                "string",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField8);
-        final SObjectField sObjectField9 = createField("BillingState", "Billing State/Province", "string", "xsd:string", 80, false, true, false, false, false, false, false);
+        final SObjectField sObjectField9 = createField(
+                "BillingState",
+                "Billing State/Province",
+                "string",
+                "xsd:string",
+                80,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField9);
-        final SObjectField sObjectField10 = createField("BillingPostalCode", "Billing Zip/Postal Code", "string", "xsd:string", 20, false, true, false, false, false, false, false);
+        final SObjectField sObjectField10 = createField(
+                "BillingPostalCode",
+                "Billing Zip/Postal Code",
+                "string",
+                "xsd:string",
+                20,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField10);
-        final SObjectField sObjectField11 = createField("BillingCountry", "Billing Country", "string", "xsd:string", 80, false, true, false, false, false, false, false);
+        final SObjectField sObjectField11 = createField(
+                "BillingCountry",
+                "Billing Country",
+                "string",
+                "xsd:string",
+                80,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField11);
-        final SObjectField sObjectField12 = createField("BillingLatitude", "Billing Latitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField12 = createField(
+                "BillingLatitude",
+                "Billing Latitude",
+                "double",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField12);
-        final SObjectField sObjectField13 = createField("BillingLongitude", "Billing Longitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField13 = createField(
+                "BillingLongitude",
+                "Billing Longitude",
+                "double",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField13);
-        final SObjectField sObjectField14 = createField("BillingGeocodeAccuracy", "Billing Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false, false,
-                                                        false);
+        final SObjectField sObjectField14 = createField(
+                "BillingGeocodeAccuracy",
+                "Billing Geocode Accuracy",
+                "picklist",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField14);
-        final SObjectField sObjectField15 = createField("BillingAddress", "Billing Address", "address", "urn:address", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField15 = createField(
+                "BillingAddress",
+                "Billing Address",
+                "address",
+                "urn:address",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField15);
-        final SObjectField sObjectField16 = createField("ShippingStreet", "Shipping Street", "textarea", "xsd:string", 255, false, true, false, false, false, false, false);
+        final SObjectField sObjectField16 = createField(
+                "ShippingStreet",
+                "Shipping Street",
+                "textarea",
+                "xsd:string",
+                255,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField16);
-        final SObjectField sObjectField17 = createField("ShippingCity", "Shipping City", "string", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField17 = createField(
+                "ShippingCity",
+                "Shipping City",
+                "string",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField17);
-        final SObjectField sObjectField18 = createField("ShippingState", "Shipping State/Province", "string", "xsd:string", 80, false, true, false, false, false, false, false);
+        final SObjectField sObjectField18 = createField(
+                "ShippingState",
+                "Shipping State/Province",
+                "string",
+                "xsd:string",
+                80,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField18);
-        final SObjectField sObjectField19 = createField("ShippingPostalCode", "Shipping Zip/Postal Code", "string", "xsd:string", 20, false, true, false, false, false, false,
-                                                        false);
+        final SObjectField sObjectField19 = createField(
+                "ShippingPostalCode",
+                "Shipping Zip/Postal Code",
+                "string",
+                "xsd:string",
+                20,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField19);
-        final SObjectField sObjectField20 = createField("ShippingCountry", "Shipping Country", "string", "xsd:string", 80, false, true, false, false, false, false, false);
+        final SObjectField sObjectField20 = createField(
+                "ShippingCountry",
+                "Shipping Country",
+                "string",
+                "xsd:string",
+                80,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField20);
-        final SObjectField sObjectField21 = createField("ShippingLatitude", "Shipping Latitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField21 = createField(
+                "ShippingLatitude",
+                "Shipping Latitude",
+                "double",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField21);
-        final SObjectField sObjectField22 = createField("ShippingLongitude", "Shipping Longitude", "double", "xsd:double", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField22 = createField(
+                "ShippingLongitude",
+                "Shipping Longitude",
+                "double",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField22);
-        final SObjectField sObjectField23 = createField("ShippingGeocodeAccuracy", "Shipping Geocode Accuracy", "picklist", "xsd:string", 40, false, true, false, false, false,
-                                                        false, false);
+        final SObjectField sObjectField23 = createField(
+                "ShippingGeocodeAccuracy",
+                "Shipping Geocode Accuracy",
+                "picklist",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField23);
-        final SObjectField sObjectField24 = createField("ShippingAddress", "Shipping Address", "address", "urn:address", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField24 = createField(
+                "ShippingAddress",
+                "Shipping Address",
+                "address",
+                "urn:address",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField24);
-        final SObjectField sObjectField25 = createField("Phone", "Account Phone", "phone", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField25 = createField(
+                "Phone", "Account Phone", "phone", "xsd:string", 40, false, true, false, false, false, false, false);
         fields1.add(sObjectField25);
-        final SObjectField sObjectField26 = createField("Fax", "Account Fax", "phone", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField26 = createField(
+                "Fax", "Account Fax", "phone", "xsd:string", 40, false, true, false, false, false, false, false);
         fields1.add(sObjectField26);
-        final SObjectField sObjectField27 = createField("AccountNumber", "Account Number", "string", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField27 = createField(
+                "AccountNumber",
+                "Account Number",
+                "string",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField27);
-        final SObjectField sObjectField28 = createField("Website", "Website", "url", "xsd:string", 255, false, true, false, false, false, false, false);
+        final SObjectField sObjectField28 = createField(
+                "Website", "Website", "url", "xsd:string", 255, false, true, false, false, false, false, false);
         fields1.add(sObjectField28);
-        final SObjectField sObjectField29 = createField("PhotoUrl", "Photo URL", "url", "xsd:string", 255, false, true, false, false, false, false, false);
+        final SObjectField sObjectField29 = createField(
+                "PhotoUrl", "Photo URL", "url", "xsd:string", 255, false, true, false, false, false, false, false);
         fields1.add(sObjectField29);
-        final SObjectField sObjectField30 = createField("Sic", "SIC Code", "string", "xsd:string", 20, false, true, false, false, false, false, false);
+        final SObjectField sObjectField30 = createField(
+                "Sic", "SIC Code", "string", "xsd:string", 20, false, true, false, false, false, false, false);
         fields1.add(sObjectField30);
-        final SObjectField sObjectField31 = createField("Industry", "Industry", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField31 = createField(
+                "Industry", "Industry", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
         fields1.add(sObjectField31);
-        final SObjectField sObjectField32 = createField("AnnualRevenue", "Annual Revenue", "currency", "xsd:double", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField32 = createField(
+                "AnnualRevenue",
+                "Annual Revenue",
+                "currency",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField32);
-        final SObjectField sObjectField33 = createField("NumberOfEmployees", "Employees", "int", "xsd:int", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField33 = createField(
+                "NumberOfEmployees", "Employees", "int", "xsd:int", 0, false, true, false, false, false, false, false);
         fields1.add(sObjectField33);
-        final SObjectField sObjectField34 = createField("Ownership", "Ownership", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField34 = createField(
+                "Ownership", "Ownership", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
         fields1.add(sObjectField34);
-        final SObjectField sObjectField35 = createField("TickerSymbol", "Ticker Symbol", "string", "xsd:string", 20, false, true, false, false, false, false, false);
+        final SObjectField sObjectField35 = createField(
+                "TickerSymbol",
+                "Ticker Symbol",
+                "string",
+                "xsd:string",
+                20,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField35);
-        final SObjectField sObjectField36 = createField("Description", "Account Description", "textarea", "xsd:string", 32000, false, true, false, false, false, false, false);
+        final SObjectField sObjectField36 = createField(
+                "Description",
+                "Account Description",
+                "textarea",
+                "xsd:string",
+                32000,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField36);
-        final SObjectField sObjectField37 = createField("Rating", "Account Rating", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField37 = createField(
+                "Rating",
+                "Account Rating",
+                "picklist",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField37);
-        final SObjectField sObjectField38 = createField("Site", "Account Site", "string", "xsd:string", 80, false, true, false, false, false, false, false);
+        final SObjectField sObjectField38 = createField(
+                "Site", "Account Site", "string", "xsd:string", 80, false, true, false, false, false, false, false);
         fields1.add(sObjectField38);
-        final SObjectField sObjectField39 = createField("OwnerId", "Owner ID", "reference", "tns:ID", 18, false, false, false, false, false, false, false);
+        final SObjectField sObjectField39 = createField(
+                "OwnerId", "Owner ID", "reference", "tns:ID", 18, false, false, false, false, false, false, false);
         fields1.add(sObjectField39);
-        final SObjectField sObjectField40 = createField("CreatedDate", "Created Date", "datetime", "xsd:dateTime", 0, false, false, false, false, false, false, false);
+        final SObjectField sObjectField40 = createField(
+                "CreatedDate",
+                "Created Date",
+                "datetime",
+                "xsd:dateTime",
+                0,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField40);
-        final SObjectField sObjectField41 = createField("CreatedById", "Created By ID", "reference", "tns:ID", 18, false, false, false, false, false, false, false);
+        final SObjectField sObjectField41 = createField(
+                "CreatedById",
+                "Created By ID",
+                "reference",
+                "tns:ID",
+                18,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField41);
-        final SObjectField sObjectField42 = createField("LastModifiedDate", "Last Modified Date", "datetime", "xsd:dateTime", 0, false, false, false, false, false, false, false);
+        final SObjectField sObjectField42 = createField(
+                "LastModifiedDate",
+                "Last Modified Date",
+                "datetime",
+                "xsd:dateTime",
+                0,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField42);
-        final SObjectField sObjectField43 = createField("LastModifiedById", "Last Modified By ID", "reference", "tns:ID", 18, false, false, false, false, false, false, false);
+        final SObjectField sObjectField43 = createField(
+                "LastModifiedById",
+                "Last Modified By ID",
+                "reference",
+                "tns:ID",
+                18,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField43);
-        final SObjectField sObjectField44 = createField("SystemModstamp", "System Modstamp", "datetime", "xsd:dateTime", 0, false, false, false, false, false, false, false);
+        final SObjectField sObjectField44 = createField(
+                "SystemModstamp",
+                "System Modstamp",
+                "datetime",
+                "xsd:dateTime",
+                0,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField44);
-        final SObjectField sObjectField45 = createField("LastActivityDate", "Last Activity", "date", "xsd:date", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField45 = createField(
+                "LastActivityDate",
+                "Last Activity",
+                "date",
+                "xsd:date",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField45);
-        final SObjectField sObjectField46 = createField("LastViewedDate", "Last Viewed Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false, false);
+        final SObjectField sObjectField46 = createField(
+                "LastViewedDate",
+                "Last Viewed Date",
+                "datetime",
+                "xsd:dateTime",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField46);
-        final SObjectField sObjectField47 = createField("LastReferencedDate", "Last Referenced Date", "datetime", "xsd:dateTime", 0, false, true, false, false, false, false,
-                                                        false);
+        final SObjectField sObjectField47 = createField(
+                "LastReferencedDate",
+                "Last Referenced Date",
+                "datetime",
+                "xsd:dateTime",
+                0,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField47);
-        final SObjectField sObjectField48 = createField("Jigsaw", "Data.com Key", "string", "xsd:string", 20, false, true, false, false, false, false, false);
+        final SObjectField sObjectField48 = createField(
+                "Jigsaw", "Data.com Key", "string", "xsd:string", 20, false, true, false, false, false, false, false);
         fields1.add(sObjectField48);
-        final SObjectField sObjectField49 = createField("JigsawCompanyId", "Jigsaw Company ID", "string", "xsd:string", 20, false, true, false, false, false, false, false);
+        final SObjectField sObjectField49 = createField(
+                "JigsawCompanyId",
+                "Jigsaw Company ID",
+                "string",
+                "xsd:string",
+                20,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField49);
-        final SObjectField sObjectField50 = createField("CleanStatus", "Clean Status", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField50 = createField(
+                "CleanStatus",
+                "Clean Status",
+                "picklist",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField50);
-        final SObjectField sObjectField51 = createField("AccountSource", "Account Source", "picklist", "xsd:string", 40, false, true, false, false, false, false, false);
+        final SObjectField sObjectField51 = createField(
+                "AccountSource",
+                "Account Source",
+                "picklist",
+                "xsd:string",
+                40,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField51);
-        final SObjectField sObjectField52 = createField("DunsNumber", "D-U-N-S Number", "string", "xsd:string", 9, false, true, false, false, false, false, false);
+        final SObjectField sObjectField52 = createField(
+                "DunsNumber",
+                "D-U-N-S Number",
+                "string",
+                "xsd:string",
+                9,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField52);
-        final SObjectField sObjectField53 = createField("Tradestyle", "Tradestyle", "string", "xsd:string", 255, false, true, false, false, false, false, false);
+        final SObjectField sObjectField53 = createField(
+                "Tradestyle",
+                "Tradestyle",
+                "string",
+                "xsd:string",
+                255,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField53);
-        final SObjectField sObjectField54 = createField("NaicsCode", "NAICS Code", "string", "xsd:string", 8, false, true, false, false, false, false, false);
+        final SObjectField sObjectField54 = createField(
+                "NaicsCode", "NAICS Code", "string", "xsd:string", 8, false, true, false, false, false, false, false);
         fields1.add(sObjectField54);
-        final SObjectField sObjectField55 = createField("NaicsDesc", "NAICS Description", "string", "xsd:string", 120, false, true, false, false, false, false, false);
+        final SObjectField sObjectField55 = createField(
+                "NaicsDesc",
+                "NAICS Description",
+                "string",
+                "xsd:string",
+                120,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField55);
-        final SObjectField sObjectField56 = createField("YearStarted", "Year Started", "string", "xsd:string", 4, false, true, false, false, false, false, false);
+        final SObjectField sObjectField56 = createField(
+                "YearStarted",
+                "Year Started",
+                "string",
+                "xsd:string",
+                4,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField56);
-        final SObjectField sObjectField57 = createField("SicDesc", "SIC Description", "string", "xsd:string", 80, false, true, false, false, false, false, false);
+        final SObjectField sObjectField57 = createField(
+                "SicDesc",
+                "SIC Description",
+                "string",
+                "xsd:string",
+                80,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField57);
-        final SObjectField sObjectField58 = createField("DandbCompanyId", "D&B Company ID", "reference", "tns:ID", 18, false, true, false, false, false, false, false);
+        final SObjectField sObjectField58 = createField(
+                "DandbCompanyId",
+                "D&B Company ID",
+                "reference",
+                "tns:ID",
+                18,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField58);
-        final SObjectField sObjectField59 = createField("OperatingHoursId", "Operating Hour ID", "reference", "tns:ID", 18, false, true, false, false, false, false, false);
+        final SObjectField sObjectField59 = createField(
+                "OperatingHoursId",
+                "Operating Hour ID",
+                "reference",
+                "tns:ID",
+                18,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false);
         fields1.add(sObjectField59);
-        final SObjectField sObjectField60 = createField("Shipping_Location__Latitude__s", "Shipping_Location (Latitude)", "double", "xsd:double", 0, false, true, false, false,
-                                                        true, false, false);
+        final SObjectField sObjectField60 = createField(
+                "Shipping_Location__Latitude__s",
+                "Shipping_Location (Latitude)",
+                "double",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false);
         fields1.add(sObjectField60);
-        final SObjectField sObjectField61 = createField("Shipping_Location__Longitude__s", "Shipping_Location (Longitude)", "double", "xsd:double", 0, false, true, false, false,
-                                                        true, false, false);
+        final SObjectField sObjectField61 = createField(
+                "Shipping_Location__Longitude__s",
+                "Shipping_Location (Longitude)",
+                "double",
+                "xsd:double",
+                0,
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false);
         fields1.add(sObjectField61);
-        final SObjectField sObjectField62 = createField("Shipping_Location__c", "Shipping_Location", "location", "urn:location", 0, false, true, false, false, true, false, false);
+        final SObjectField sObjectField62 = createField(
+                "Shipping_Location__c",
+                "Shipping_Location",
+                "location",
+                "urn:location",
+                0,
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false);
         fields1.add(sObjectField62);
-        final SObjectField sObjectField63 = createField("External_Id__c", "External Id", "string", "xsd:string", 255, true, true, false, true, true, false, true);
+        final SObjectField sObjectField63 = createField(
+                "External_Id__c",
+                "External Id",
+                "string",
+                "xsd:string",
+                255,
+                true,
+                true,
+                false,
+                true,
+                true,
+                false,
+                true);
         fields1.add(sObjectField63);
 
         description.setLabel("Account");
@@ -758,7 +1334,8 @@ public class Account extends AbstractDescribedSObjectBase {
         final SObjectDescriptionUrls sObjectDescriptionUrls1 = new SObjectDescriptionUrls();
         sObjectDescriptionUrls1.setApprovalLayouts("/services/data/v45.0/sobjects/Account/describe/approvalLayouts");
         sObjectDescriptionUrls1.setCompactLayouts("/services/data/v45.0/sobjects/Account/describe/compactLayouts");
-        sObjectDescriptionUrls1.setDefaultValues("/services/data/v45.0/sobjects/Account/defaultValues?recordTypeId&fields");
+        sObjectDescriptionUrls1.setDefaultValues(
+                "/services/data/v45.0/sobjects/Account/defaultValues?recordTypeId&fields");
         sObjectDescriptionUrls1.setDescribe("/services/data/v45.0/sobjects/Account/describe");
         sObjectDescriptionUrls1.setLayouts("/services/data/v45.0/sobjects/Account/describe/layouts");
         sObjectDescriptionUrls1.setListviews("/services/data/v45.0/sobjects/Account/listviews");

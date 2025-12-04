@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.io.IOException;
@@ -143,9 +144,8 @@ public final class XmlSignatureHelper {
 
     public static XPathFilterParameterSpec getXpathFilter(String xpath, Map<String, String> namespaceMap) {
         XPathFilterParameterSpec params = namespaceMap == null
-                ? new XPathFilterParameterSpec(xpath) : new XPathFilterParameterSpec(
-                        xpath,
-                        namespaceMap);
+                ? new XPathFilterParameterSpec(xpath)
+                : new XPathFilterParameterSpec(xpath, namespaceMap);
         return params;
     }
 
@@ -154,7 +154,8 @@ public final class XmlSignatureHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static XPathExpression getXPathExpression(XPathFilterParameterSpec xpathFilter) throws XPathExpressionException {
+    public static XPathExpression getXPathExpression(XPathFilterParameterSpec xpathFilter)
+            throws XPathExpressionException {
 
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
@@ -199,7 +200,6 @@ public final class XmlSignatureHelper {
         public Iterator getPrefixes(String uri) {
             throw new UnsupportedOperationException();
         }
-
     }
 
     /**
@@ -257,7 +257,8 @@ public final class XmlSignatureHelper {
         return transformXPath;
     }
 
-    private static List<XPathType> getXPathTypeList(List<XPathAndFilter> xpathAndFilterList, Map<String, String> namespaceMap) {
+    private static List<XPathType> getXPathTypeList(
+            List<XPathAndFilter> xpathAndFilterList, Map<String, String> namespaceMap) {
         List<XPathType> list = new ArrayList<>(xpathAndFilterList.size());
         for (XPathAndFilter xpathAndFilter : xpathAndFilterList) {
             XPathType.Filter xpathFilter;
@@ -268,14 +269,14 @@ public final class XmlSignatureHelper {
             } else if (XPathType.Filter.UNION.toString().equals(xpathAndFilter.getFilter())) {
                 xpathFilter = XPathType.Filter.UNION;
             } else {
-                throw new IllegalStateException(
-                        String.format("XPATH %s has a filter %s not supported", xpathAndFilter.getXpath(),
-                                xpathAndFilter.getFilter()));
+                throw new IllegalStateException(String.format(
+                        "XPATH %s has a filter %s not supported",
+                        xpathAndFilter.getXpath(), xpathAndFilter.getFilter()));
             }
 
             XPathType xpathtype = namespaceMap == null
-                    ? new XPathType(xpathAndFilter.getXpath(), xpathFilter) : new XPathType(
-                            xpathAndFilter.getXpath(), xpathFilter, namespaceMap);
+                    ? new XPathType(xpathAndFilter.getXpath(), xpathFilter)
+                    : new XPathType(xpathAndFilter.getXpath(), xpathFilter, namespaceMap);
             list.add(xpathtype);
         }
         return list;
@@ -408,7 +409,8 @@ public final class XmlSignatureHelper {
      * Use {@link #transformToOutputStream(Node, OutputStream, boolean, String)} instead.
      */
     @Deprecated
-    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception {
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
+            throws Exception {
 
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node);
@@ -438,15 +440,16 @@ public final class XmlSignatureHelper {
      * @throws Exception
      */
     public static void transformNonTextNodeToOutputStream(
-            Node node, OutputStream os, boolean omitXmlDeclaration, String encoding)
-            throws Exception {
-        // previously we used javax.xml.transform.Transformer, however the JDK xalan implementation did not work correctly with a specified encoding
+            Node node, OutputStream os, boolean omitXmlDeclaration, String encoding) throws Exception {
+        // previously we used javax.xml.transform.Transformer, however the JDK xalan implementation did not work
+        // correctly with a specified encoding
         // therefore we switched to DOMImplementationLS
         if (encoding == null) {
             encoding = "UTF-8";
         }
         DOMImplementationRegistry domImplementationRegistry = DOMImplementationRegistry.newInstance();
-        DOMImplementationLS domImplementationLS = (DOMImplementationLS) domImplementationRegistry.getDOMImplementation("LS");
+        DOMImplementationLS domImplementationLS =
+                (DOMImplementationLS) domImplementationRegistry.getDOMImplementation("LS");
         LSOutput lsOutput = domImplementationLS.createLSOutput();
         lsOutput.setEncoding(encoding);
         lsOutput.setByteStream(os);
@@ -504,9 +507,7 @@ public final class XmlSignatureHelper {
             this.filter = filter;
         }
 
-        public XPathAndFilter() {
-
-        }
+        public XPathAndFilter() {}
 
         public String getXpath() {
             return xpath;
@@ -523,7 +524,5 @@ public final class XmlSignatureHelper {
         public void setFilter(String filter) {
             this.filter = filter;
         }
-
     }
-
 }

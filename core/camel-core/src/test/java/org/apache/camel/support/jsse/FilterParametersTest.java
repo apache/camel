@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -23,8 +26,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated("This test is regularly flaky")
 public class FilterParametersTest extends AbstractJsseParametersTest {
@@ -118,6 +119,5 @@ public class FilterParametersTest extends AbstractJsseParametersTest {
 
         Matcher excludeMatcher = excludes.get(0).matcher("aa");
         assertTrue(excludeMatcher.matches());
-
     }
 }

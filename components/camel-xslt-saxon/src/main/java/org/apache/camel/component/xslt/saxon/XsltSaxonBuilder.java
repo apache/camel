@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import java.io.Writer;
@@ -82,7 +83,8 @@ public class XsltSaxonBuilder extends XsltBuilder {
     }
 
     @Override
-    protected Templates createTemplates(TransformerFactory factory, Source source) throws TransformerConfigurationException {
+    protected Templates createTemplates(TransformerFactory factory, Source source)
+            throws TransformerConfigurationException {
         final Templates templates = super.createTemplates(factory, source);
         if (templates instanceof TemplatesImpl && getXsltMessageLogger() != null) {
             return new MessageDelegatingTemplates((TemplatesImpl) templates, getXsltMessageLogger());
@@ -106,8 +108,7 @@ public class XsltSaxonBuilder extends XsltBuilder {
         }
 
         @Override
-        public void flush() {
-        }
+        public void flush() {}
 
         @Override
         public void close() {
@@ -129,7 +130,8 @@ public class XsltSaxonBuilder extends XsltBuilder {
         @Override
         public Transformer newTransformer() throws TransformerConfigurationException {
             final TransformerImpl transformer = (TransformerImpl) delegated.newTransformer();
-            final StandardMessageHandler standardMessageHandler = new StandardMessageHandler(transformer.getConfiguration());
+            final StandardMessageHandler standardMessageHandler =
+                    new StandardMessageHandler(transformer.getConfiguration());
             final UnicodeWriter writer = new UnicodeWriterToWriter(new MessageConsumerWriter(xsltMessageLogger));
             standardMessageHandler.setUnicodeWriter(writer);
             transformer.getUnderlyingXsltTransformer().setMessageHandler(standardMessageHandler);

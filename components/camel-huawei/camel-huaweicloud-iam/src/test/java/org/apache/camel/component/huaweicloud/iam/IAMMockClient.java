@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
 
 import java.util.ArrayList;
@@ -48,27 +49,24 @@ public class IAMMockClient extends IamClient {
 
     @Override
     public KeystoneListUsersResponse keystoneListUsers(KeystoneListUsersRequest request) {
-        Links links = new Links()
-                .withSelf("sample_link");
+        Links links = new Links().withSelf("sample_link");
         List<KeystoneListUsersResult> users = new ArrayList<>();
-        KeystoneListUsersResult user1 = new KeystoneListUsersResult().withName("User 1").withDomainId("123");
-        KeystoneListUsersResult user2 = new KeystoneListUsersResult().withName("User 2").withDomainId("456");
+        KeystoneListUsersResult user1 =
+                new KeystoneListUsersResult().withName("User 1").withDomainId("123");
+        KeystoneListUsersResult user2 =
+                new KeystoneListUsersResult().withName("User 2").withDomainId("456");
         users.add(user1);
         users.add(user2);
-        KeystoneListUsersResponse response = new KeystoneListUsersResponse()
-                .withLinks(links)
-                .withUsers(users);
+        KeystoneListUsersResponse response =
+                new KeystoneListUsersResponse().withLinks(links).withUsers(users);
         return response;
     }
 
     @Override
     public ShowUserResponse showUser(ShowUserRequest request) {
-        ShowUserResult user = new ShowUserResult()
-                .withName("User 15")
-                .withDomainId("138")
-                .withEmail("user15@email.com");
-        ShowUserResponse response = new ShowUserResponse()
-                .withUser(user);
+        ShowUserResult user =
+                new ShowUserResult().withName("User 15").withDomainId("138").withEmail("user15@email.com");
+        ShowUserResponse response = new ShowUserResponse().withUser(user);
         return response;
     }
 
@@ -77,33 +75,36 @@ public class IAMMockClient extends IamClient {
             KeystoneListUsersForGroupByAdminRequest request) {
         List<KeystoneUserResult> users = new ArrayList<>();
         KeystoneUserResult user9 = new KeystoneUserResult().withName("User 9").withId("abc");
-        KeystoneUserResult user10 = new KeystoneUserResult().withName("User 10").withId("def").withDescription("Employee");
+        KeystoneUserResult user10 =
+                new KeystoneUserResult().withName("User 10").withId("def").withDescription("Employee");
         users.add(user9);
         users.add(user10);
-        KeystoneListUsersForGroupByAdminResponse response = new KeystoneListUsersForGroupByAdminResponse()
-                .withUsers(users);
+        KeystoneListUsersForGroupByAdminResponse response =
+                new KeystoneListUsersForGroupByAdminResponse().withUsers(users);
         return response;
     }
 
     @Override
     public KeystoneListGroupsResponse keystoneListGroups(KeystoneListGroupsRequest request) {
         List<KeystoneGroupResult> groups = new ArrayList<>();
-        KeystoneGroupResult group1
-                = new KeystoneGroupResult().withName("Group 1").withId("group1_id").withDescription("First group");
-        KeystoneGroupResult group2
-                = new KeystoneGroupResult().withName("Group 2").withId("group2_id").withDescription("Second group");
+        KeystoneGroupResult group1 = new KeystoneGroupResult()
+                .withName("Group 1")
+                .withId("group1_id")
+                .withDescription("First group");
+        KeystoneGroupResult group2 = new KeystoneGroupResult()
+                .withName("Group 2")
+                .withId("group2_id")
+                .withDescription("Second group");
         groups.add(group1);
         groups.add(group2);
-        KeystoneListGroupsResponse response = new KeystoneListGroupsResponse()
-                .withGroups(groups);
+        KeystoneListGroupsResponse response = new KeystoneListGroupsResponse().withGroups(groups);
         return response;
     }
 
     @Override
     public UpdateUserResponse updateUser(UpdateUserRequest request) {
         UpdateUserResult user = new UpdateUserResult().withName("User 19").withDescription("First");
-        UpdateUserResponse response = new UpdateUserResponse()
-                .withUser(user);
+        UpdateUserResponse response = new UpdateUserResponse().withUser(user);
         return response;
     }
 
@@ -113,8 +114,7 @@ public class IAMMockClient extends IamClient {
                 .withDescription("Group description")
                 .withDomainId("123")
                 .withName("Group 43");
-        KeystoneUpdateGroupResponse response = new KeystoneUpdateGroupResponse()
-                .withGroup(group);
+        KeystoneUpdateGroupResponse response = new KeystoneUpdateGroupResponse().withGroup(group);
         return response;
     }
 }

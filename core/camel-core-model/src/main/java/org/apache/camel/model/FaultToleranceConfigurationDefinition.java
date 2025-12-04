@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,8 +37,7 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     @XmlTransient
     private CircuitBreakerDefinition parent;
 
-    public FaultToleranceConfigurationDefinition() {
-    }
+    public FaultToleranceConfigurationDefinition() {}
 
     protected FaultToleranceConfigurationDefinition(FaultToleranceConfigurationDefinition source) {
         super(source);
@@ -177,5 +177,4 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     public CircuitBreakerDefinition end() {
         return parent;
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
@@ -35,24 +43,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class DaprConfigurationTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+
     @Mock
     private DaprEndpoint endpoint;
 
     @Test
     void testInvokeBinding() throws Exception {
-        final Map<String, ConfigurationItem> mockResponse = Map.of("myKey", new ConfigurationItem("myKey", "myVal", "myVer"));
+        final Map<String, ConfigurationItem> mockResponse =
+                Map.of("myKey", new ConfigurationItem("myKey", "myVal", "myVer"));
         final Map<String, String> mockBody = Map.of("myKey", "myVal");
 
         when(endpoint.getClient()).thenReturn(client);

@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.weather;
 
 /**
  * The possible output modes of the weather information
  */
 public enum WeatherMode {
-
     HTML,
     JSON,
     XML
-
 }

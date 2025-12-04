@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j;
+
+import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -28,10 +33,6 @@ import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.quorum.Quorum;
 import org.web3j.quorum.methods.response.PrivatePayload;
-
-import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 
 public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
 
@@ -62,7 +63,8 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         Mockito.when(request.send()).thenReturn(response);
         Mockito.when(response.getPrivatePayload()).thenReturn("secret");
 
-        Exchange exchange = createExchangeWithBodyAndHeader("foo", OPERATION, Web3jConstants.QUORUM_GET_PRIVATE_PAYLOAD);
+        Exchange exchange =
+                createExchangeWithBodyAndHeader("foo", OPERATION, Web3jConstants.QUORUM_GET_PRIVATE_PAYLOAD);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
         assertEquals("secret", body);
@@ -75,7 +77,8 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
         Mockito.when(request.send()).thenReturn(response);
         Mockito.when(response.getTransactionHash()).thenReturn("test");
 
-        Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_ETH_SEND_TRANSACTION);
+        Exchange exchange =
+                createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.QUORUM_ETH_SEND_TRANSACTION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
         assertEquals("test", body);
@@ -85,8 +88,7 @@ public class Web3jQuorumProducerTest extends Web3jMockTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to(getUrl() + OPERATION.toLowerCase() + "=" + Web3jConstants.WEB3_CLIENT_VERSION);
+                from("direct:start").to(getUrl() + OPERATION.toLowerCase() + "=" + Web3jConstants.WEB3_CLIENT_VERSION);
             }
         };
     }

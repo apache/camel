@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
@@ -32,13 +38,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
 @DisabledOnOs(OS.AIX)
 public class ManagedThreadPoolTest extends ManagementTestSupport {
 
@@ -71,8 +74,7 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a bit to ensure JMX have updated values
-        Awaitility.await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> assertPoolSize(mbeanServer, on));
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertPoolSize(mbeanServer, on));
 
         Integer largest = (Integer) mbeanServer.getAttribute(on, "LargestPoolSize");
         assertEquals(1, largest.intValue());
@@ -102,9 +104,12 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").threads(15, 30).id("mythreads").maxQueueSize(200).to("mock:result");
+                from("direct:start")
+                        .threads(15, 30)
+                        .id("mythreads")
+                        .maxQueueSize(200)
+                        .to("mock:result");
             }
         };
     }
-
 }

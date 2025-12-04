@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bar;
 
 import java.util.Map;
@@ -67,7 +68,8 @@ public class BarSendDynamicAware extends SendDynamicAwareSupport {
         if (entry.getProperties().containsKey("drink")) {
             Object value = entry.getProperties().get("drink");
             return new SetHeaderProcessor(
-                    ExpressionBuilder.constantExpression(BarConstants.DRINK), ExpressionBuilder.constantExpression(value));
+                    ExpressionBuilder.constantExpression(BarConstants.DRINK),
+                    ExpressionBuilder.constantExpression(value));
         } else {
             return null;
         }

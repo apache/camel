@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -32,9 +36,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * A simple request / reply test
  */
@@ -45,6 +46,7 @@ public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -88,10 +90,12 @@ public class JmsSimpleRequestReplyTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsSimpleRequestReplyTest").process(exchange -> {
-                    exchange.getIn().setBody("Bye World");
-                    assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                }).to("mock:result");
+                from("activemq:queue:JmsSimpleRequestReplyTest")
+                        .process(exchange -> {
+                            exchange.getIn().setBody("Bye World");
+                            assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
+                        })
+                        .to("mock:result");
             }
         };
     }

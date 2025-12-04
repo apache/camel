@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.IOException;
@@ -41,8 +42,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 public final class RunHelper {
 
-    private RunHelper() {
-    }
+    private RunHelper() {}
 
     public static String mavenArtifactId(Path pomPath) {
         if (Files.exists(pomPath) && Files.isRegularFile(pomPath)) {
@@ -81,8 +81,8 @@ public final class RunHelper {
         return Collections.EMPTY_LIST;
     }
 
-    public static List<String> scanMavenDependenciesFromModel(Path pomPath, Model model, boolean includeDependencyManagement)
-            throws Exception {
+    public static List<String> scanMavenDependenciesFromModel(
+            Path pomPath, Model model, boolean includeDependencyManagement) throws Exception {
         String camelVersion = null;
         String camelSpringBootVersion = null;
         String springBootVersion = null;
@@ -110,8 +110,7 @@ public final class RunHelper {
                         camelVersion = v;
                     } else if ("camel-spring-boot-bom".equals(a)) {
                         camelSpringBootVersion = v;
-                    } else if ("org.springframework.boot".equals(g)
-                            && "spring-boot-dependencies".equals(a)) {
+                    } else if ("org.springframework.boot".equals(g) && "spring-boot-dependencies".equals(a)) {
                         springBootVersion = v;
                     } else if ("quarkus-bom".equals(a)) {
                         quarkusVersion = v;
@@ -154,7 +153,8 @@ public final class RunHelper {
         return answer;
     }
 
-    private static String resolveDependencyPlaceholder(String value, Path pomPath, MavenDependencyDownloader downloader) {
+    private static String resolveDependencyPlaceholder(
+            String value, Path pomPath, MavenDependencyDownloader downloader) {
         if (value != null && value.startsWith("${") && value.endsWith("}")) {
             // version uses placeholder, so try to find them
             value = value.substring(2, value.length() - 1);
@@ -167,11 +167,10 @@ public final class RunHelper {
         List<String> answer = new ArrayList<>();
 
         // scan as maven based project
-        Stream<Path> s = Stream.concat(walk(Path.of(parentPath.toFile().getAbsolutePath(), "src/main/java")),
+        Stream<Path> s = Stream.concat(
+                walk(Path.of(parentPath.toFile().getAbsolutePath(), "src/main/java")),
                 walk(Path.of(parentPath.toFile().getAbsolutePath(), "src/main/resources")));
-        s.filter(Files::isRegularFile)
-                .map(Path::toString)
-                .forEach(answer::add);
+        s.filter(Files::isRegularFile).map(Path::toString).forEach(answer::add);
         return answer;
     }
 
@@ -206,8 +205,10 @@ public final class RunHelper {
                             return findMavenProperty(pomPath, placeholder, downloader);
                         } else if (downloader != null) {
                             // download dependency as it's not in local path
-                            MavenArtifact ma = downloader.downloadArtifact(model.getParent().getGroupId(),
-                                    model.getParent().getArtifactId() + ":pom", model.getParent().getVersion());
+                            MavenArtifact ma = downloader.downloadArtifact(
+                                    model.getParent().getGroupId(),
+                                    model.getParent().getArtifactId() + ":pom",
+                                    model.getParent().getVersion());
                             if (ma != null) {
                                 return findMavenProperty(ma.getFile(), placeholder, downloader);
                             }
@@ -289,12 +290,12 @@ public final class RunHelper {
         files.clear();
         try (Stream<Path> paths = Files.list(Paths.get(dir))) {
             paths.filter(p -> {
-                try {
-                    return Files.isRegularFile(p) && !Files.isHidden(p);
-                } catch (IOException e) {
-                    return false;
-                }
-            })
+                        try {
+                            return Files.isRegularFile(p) && !Files.isHidden(p);
+                        } catch (IOException e) {
+                            return false;
+                        }
+                    })
                     .forEach(f -> files.add(dir + "/" + f.getFileName()));
         } catch (IOException e) {
             // Ignore

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import java.util.Collections;
@@ -35,8 +36,13 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(firstVersion = "3.8.0", scheme = "kamelet", syntax = "kamelet:templateId/routeId", title = "Kamelet",
-             lenientProperties = true, category = Category.CORE)
+@UriEndpoint(
+        firstVersion = "3.8.0",
+        scheme = "kamelet",
+        syntax = "kamelet:templateId/routeId",
+        title = "Kamelet",
+        lenientProperties = true,
+        category = Category.CORE)
 public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesConfigured {
     private final String key;
     private final Map<String, Object> kameletProperties;
@@ -44,27 +50,31 @@ public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesC
     @Metadata(required = true)
     @UriPath(description = "The Route Template ID")
     private final String templateId;
+
     @Metadata(label = "advanced")
     @UriPath(description = "The Route ID", defaultValueNote = "The ID will be auto-generated if not provided")
     private final String routeId;
+
     @Metadata(label = "advanced")
-    @UriParam(description = "Location of the Kamelet to use which can be specified as a resource from file system, classpath etc."
+    @UriParam(
+            description =
+                    "Location of the Kamelet to use which can be specified as a resource from file system, classpath etc."
                             + " The location cannot use wildcards, and must refer to a file including extension, for example file:/etc/foo-kamelet.xml")
     private String location;
 
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean block = true;
+
     @UriParam(label = "producer,advanced", defaultValue = "30000")
     private long timeout = 30000L;
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean failIfNoConsumers = true;
+
     @UriParam(label = "advanced")
     private boolean noErrorHandler;
 
-    public KameletEndpoint(String uri,
-                           KameletComponent component,
-                           String templateId,
-                           String routeId) {
+    public KameletEndpoint(String uri, KameletComponent component, String templateId, String routeId) {
 
         super(uri, component);
 
@@ -203,9 +213,13 @@ public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesC
         if (bean instanceof KameletEndpoint) {
             configurer = getComponent().getEndpointPropertyConfigurer();
         }
-        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true)
+        PropertyBindingSupport.build()
+                .withConfigurer(configurer)
+                .withIgnoreCase(true)
                 .withOptional(isLenientProperties())
-                .withReflection(false) // avoid reflection as additional parameters are for the actual kamelet and not this endpoint
+                .withReflection(
+                        false) // avoid reflection as additional parameters are for the actual kamelet and not this
+                // endpoint
                 .bind(getCamelContext(), bean, parameters);
     }
 }

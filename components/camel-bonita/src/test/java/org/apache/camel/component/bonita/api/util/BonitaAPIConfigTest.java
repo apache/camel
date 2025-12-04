@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.util;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class BonitaAPIConfigTest {
 
@@ -27,5 +28,4 @@ public class BonitaAPIConfigTest {
         BonitaAPIConfig config = new BonitaAPIConfig("host", "port", "username", "password");
         assertEquals("http://host:port/bonita", config.getBaseBonitaURI());
     }
-
 }

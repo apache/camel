@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import java.util.HashMap;
@@ -25,8 +26,7 @@ import org.apache.kafka.connect.data.Struct;
 @Converter(generateLoader = true)
 public final class DebeziumTypeConverter {
 
-    private DebeziumTypeConverter() {
-    }
+    private DebeziumTypeConverter() {}
 
     /**
      * Convert {@link Struct} to {@link HashMap}, this only works with flat fields and it doesn't handle nested

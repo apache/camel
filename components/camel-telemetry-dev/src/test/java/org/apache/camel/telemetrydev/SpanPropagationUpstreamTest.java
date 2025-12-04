@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpanPropagationUpstreamTest extends TelemetryDevTracerTestSupport {
 
@@ -42,8 +43,7 @@ public class SpanPropagationUpstreamTest extends TelemetryDevTracerTestSupport {
 
     @Test
     void testPropagateUpstreamTraceRequest() throws IOException {
-        template.requestBodyAndHeader("direct:start", "sample body",
-                "traceparent", "123456789-123456");
+        template.requestBodyAndHeader("direct:start", "sample body", "traceparent", "123456789-123456");
         Map<String, DevTrace> traces = tracesFromLog();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
@@ -77,12 +77,8 @@ public class SpanPropagationUpstreamTest extends TelemetryDevTracerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("start")
-                        .log("A message")
-                        .to("log:info");
+                from("direct:start").routeId("start").log("A message").to("log:info");
             }
         };
     }
-
 }

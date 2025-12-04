@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,12 +40,6 @@ import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
-
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asMappingNode;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asStringSet;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeserializationContext;
 
 @ManagedResource(description = "Managed Kamelet RoutesBuilderLoader")
 @RoutesLoader(KameletRoutesBuilderLoader.EXTENSION)
@@ -119,5 +120,4 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             }
         };
     }
-
 }

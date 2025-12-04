@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,8 +26,6 @@ import java.util.Map;
 
 import org.apache.camel.support.component.ArgumentSubstitutionParser.Substitution;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArgumentSubstitutionParserTest {
 
@@ -111,14 +112,14 @@ public class ArgumentSubstitutionParserTest {
         args.put("times", "int");
         parser.addSignatureArguments("String[] greetTimes(String name, int times);", args);
 
-        signatures.add("public final String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);");
+        signatures.add(
+                "public final String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);");
         args = new LinkedHashMap<>();
         args.put("child", "org.apache.camel.support.component.TestProxy$InnerChild");
-        parser.addSignatureArguments("String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);",
-                args);
+        parser.addSignatureArguments(
+                "String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);", args);
 
         parser.setSignatures(signatures);
         return parser;
     }
-
 }

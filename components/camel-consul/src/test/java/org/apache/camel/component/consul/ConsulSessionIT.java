@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import java.util.List;
@@ -35,37 +36,50 @@ public class ConsulSessionIT extends ConsulTestSupport {
         final int sessions = getConsul().sessionClient().listSessions().size();
 
         {
-            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                    .to("direct:consul").request(List.class);
+            List<SessionInfo> list = fluentTemplate()
+                    .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
+                    .to("direct:consul")
+                    .request(List.class);
 
             Assertions.assertEquals(sessions, list.size());
-            Assertions.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
+            Assertions.assertFalse(list.stream()
+                    .anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
 
-        SessionCreatedResponse res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.CREATE)
+        SessionCreatedResponse res = fluentTemplate()
+                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.CREATE)
                 .withBody(ImmutableSession.builder().name(name).build())
-                .to("direct:consul").request(SessionCreatedResponse.class);
+                .to("direct:consul")
+                .request(SessionCreatedResponse.class);
 
         Assertions.assertNotNull(res.getId());
 
         {
-            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                    .to("direct:consul").request(List.class);
+            List<SessionInfo> list = fluentTemplate()
+                    .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
+                    .to("direct:consul")
+                    .request(List.class);
 
             Assertions.assertEquals(sessions + 1, list.size());
-            Assertions.assertTrue(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
+            Assertions.assertTrue(list.stream()
+                    .anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
 
         {
-            fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.DESTROY)
-                    .withHeader(ConsulConstants.CONSUL_SESSION, res.getId()).to("direct:consul")
+            fluentTemplate()
+                    .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.DESTROY)
+                    .withHeader(ConsulConstants.CONSUL_SESSION, res.getId())
+                    .to("direct:consul")
                     .send();
 
-            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                    .to("direct:consul").request(List.class);
+            List<SessionInfo> list = fluentTemplate()
+                    .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
+                    .to("direct:consul")
+                    .request(List.class);
 
             Assertions.assertEquals(sessions, list.size());
-            Assertions.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
+            Assertions.assertFalse(list.stream()
+                    .anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
     }
 

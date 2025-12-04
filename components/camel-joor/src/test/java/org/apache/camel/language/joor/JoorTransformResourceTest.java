@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class JoorTransformResourceTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().joor("resource:classpath:myjoor.joor")
+                        .transform()
+                        .joor("resource:classpath:myjoor.joor")
                         .to("mock:result");
             }
         };
@@ -37,8 +39,8 @@ public class JoorTransformResourceTest extends CamelTestSupport {
 
     @Test
     public void testTransform() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("A great number", "Happy riding", "An old Camel rider",
-                "A great number");
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived("A great number", "Happy riding", "An old Camel rider", "A great number");
 
         template.sendBody("direct:start", 20);
         template.sendBody("direct:start", 44);
@@ -47,5 +49,4 @@ public class JoorTransformResourceTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

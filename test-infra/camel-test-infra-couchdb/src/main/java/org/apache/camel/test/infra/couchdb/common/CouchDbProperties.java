@@ -24,7 +24,5 @@ public final class CouchDbProperties {
     public static final int DEFAULT_PORT = 5984;
     public static final String COUCHDB_CONTAINER = "couchdb.container";
 
-    private CouchDbProperties() {
-
-    }
+    private CouchDbProperties() {}
 }

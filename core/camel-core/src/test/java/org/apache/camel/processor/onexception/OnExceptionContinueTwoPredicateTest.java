@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoTest {
 
@@ -58,17 +59,24 @@ public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoT
 
                 // tell Camel to handle and continue when this exception is
                 // thrown
-                onException(IllegalArgumentException.class).continued(predicate).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        processorInvoked.incrementAndGet();
-                    }
-                }).to("mock:me");
+                onException(IllegalArgumentException.class)
+                        .continued(predicate)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                processorInvoked.incrementAndGet();
+                            }
+                        })
+                        .to("mock:me");
 
-                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
+                from("direct:start")
+                        .to("mock:start")
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:middle")
                         // throw a second time to validate that the exchange is
                         // reset appropriately
-                        .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
+                        .throwException(new IllegalArgumentException("Forced Again"))
+                        .to("mock:result");
             }
         };
     }

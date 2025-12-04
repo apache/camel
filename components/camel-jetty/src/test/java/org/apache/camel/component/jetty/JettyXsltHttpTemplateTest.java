@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
@@ -33,8 +34,10 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
         // give Jetty a bit time to startup and be ready
         Thread.sleep(1000);
 
-        String xml = template.requestBody("xslt:http://0.0.0.0:" + port + "/myxslt",
-                "<mail><subject>Hey</subject><body>Hello world!</body></mail>", String.class);
+        String xml = template.requestBody(
+                "xslt:http://0.0.0.0:" + port + "/myxslt",
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
+                String.class);
 
         assertNotNull(xml, "The transformed XML should not be null");
         assertTrue(xml.contains("transformed"));
@@ -60,5 +63,4 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
             }
         };
     }
-
 }

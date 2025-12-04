@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateCompletionIntervalTest extends AbstractJdbcAggregationTestSupport {
 
@@ -44,6 +45,8 @@ public class JdbcAggregateCompletionIntervalTest extends AbstractJdbcAggregation
         MockEndpoint.assertIsSatisfied(context);
 
         // from endpoint should be preserved
-        assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
+        assertEquals(
+                "direct://start",
+                mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import java.lang.reflect.Modifier;
@@ -40,8 +41,12 @@ public class PackageScanRouteBuilderFinder {
     private final ApplicationContext applicationContext;
     private final BeanPostProcessor beanPostProcessor;
 
-    public PackageScanRouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader,
-                                         BeanPostProcessor postProcessor, PackageScanClassResolver resolver) {
+    public PackageScanRouteBuilderFinder(
+            SpringCamelContext camelContext,
+            String[] packages,
+            ClassLoader classLoader,
+            BeanPostProcessor postProcessor,
+            PackageScanClassResolver resolver) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;

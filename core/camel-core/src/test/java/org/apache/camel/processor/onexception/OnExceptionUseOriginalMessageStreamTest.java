@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import java.io.ByteArrayInputStream;
@@ -109,30 +110,35 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
                         .convertBodyTo(String.class)
                         .handled(true);
 
-                from("direct:convertBodyWithStreamCache").streamCaching()
+                from("direct:convertBodyWithStreamCache")
+                        .streamCaching()
                         .convertBodyTo(String.class)
                         .throwException(new ExceptionOne());
 
-                from("direct:convertBodyWithoutStreamCache").noStreamCaching()
+                from("direct:convertBodyWithoutStreamCache")
+                        .noStreamCaching()
                         .convertBodyTo(String.class)
                         .throwException(new ExceptionOne());
 
-                from("direct:unmarshallWithStreamCache").streamCaching()
+                from("direct:unmarshallWithStreamCache")
+                        .streamCaching()
                         .unmarshal(new MyDataFormat())
                         .throwException(new ExceptionOne());
 
-                from("direct:unmarshallWithoutStreamCache").noStreamCaching()
+                from("direct:unmarshallWithoutStreamCache")
+                        .noStreamCaching()
                         .unmarshal(new MyDataFormat())
                         .throwException(new ExceptionOne());
 
-                from("direct:convertBodyInvalidUnmarshallWithoutStreamCache").noStreamCaching()
+                from("direct:convertBodyInvalidUnmarshallWithoutStreamCache")
+                        .noStreamCaching()
                         .convertBodyTo(String.class)
                         .unmarshal(new MyDataFormat());
 
-                from("direct:noStreamReading").streamCaching()
-                        .throwException(new ExceptionOne());
+                from("direct:noStreamReading").streamCaching().throwException(new ExceptionOne());
 
-                from("direct:setBodyAsExchangeProperty").noStreamCaching()
+                from("direct:setBodyAsExchangeProperty")
+                        .noStreamCaching()
                         .convertBodyTo(String.class)
                         .setProperty("OriginalBody", body())
                         .throwException(new ExceptionTwo());
@@ -140,13 +146,9 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
         };
     }
 
-    public static class ExceptionOne extends Exception {
+    public static class ExceptionOne extends Exception {}
 
-    }
-
-    public static class ExceptionTwo extends Exception {
-
-    }
+    public static class ExceptionTwo extends Exception {}
 
     public static class MyDataFormatException extends Exception {
 

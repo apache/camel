@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -26,8 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SedaEndpointTest extends ContextTestSupport {
 
@@ -161,5 +162,4 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertEquals(300, seda.getSize());
         assertEquals(3, seda.getConcurrentConsumers());
     }
-
 }

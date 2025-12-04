@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.persistent_volumes;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.Map;
 
@@ -29,8 +32,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesPersistentVolumesProducer extends DefaultProducer {
 
@@ -50,7 +51,6 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_PERSISTENT_VOLUMES:
                 doList(exchange);
                 break;
@@ -69,15 +69,20 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        PersistentVolumeList persistentVolumeList = getEndpoint().getKubernetesClient().persistentVolumes().list();
+        PersistentVolumeList persistentVolumeList =
+                getEndpoint().getKubernetesClient().persistentVolumes().list();
 
         prepareOutboundMessage(exchange, persistentVolumeList.getItems());
     }
 
     protected void doListPersistentVolumesByLabels(Exchange exchange) {
-        Map<String, String> labels
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
-        PersistentVolumeList pvList = getEndpoint().getKubernetesClient().persistentVolumes().withLabels(labels).list();
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_LABELS, Map.class);
+        PersistentVolumeList pvList = getEndpoint()
+                .getKubernetesClient()
+                .persistentVolumes()
+                .withLabels(labels)
+                .list();
 
         prepareOutboundMessage(exchange, pvList.getItems());
     }
@@ -86,9 +91,14 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
             LOG.error("Get a specific Persistent Volume require specify a Persistent Volume name");
-            throw new IllegalArgumentException("Get a specific Persistent Volume require specify a Persistent Volume name");
+            throw new IllegalArgumentException(
+                    "Get a specific Persistent Volume require specify a Persistent Volume name");
         }
-        PersistentVolume pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
+        PersistentVolume pv = getEndpoint()
+                .getKubernetesClient()
+                .persistentVolumes()
+                .withName(pvName)
+                .get();
 
         prepareOutboundMessage(exchange, pv);
     }

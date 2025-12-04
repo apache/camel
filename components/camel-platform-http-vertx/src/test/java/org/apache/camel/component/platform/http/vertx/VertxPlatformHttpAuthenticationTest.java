@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import io.restassured.RestAssured;
 import io.vertx.core.AsyncResult;
@@ -33,34 +37,25 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-
 public class VertxPlatformHttpAuthenticationTest {
 
     @Test
     public void testAuthenticationDisabled() throws Exception {
         CamelContext context = createCamelContext(authenticationConfig -> {
-            //authentication disabled by default
+            // authentication disabled by default
         });
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/disabledAuth")
-                        .setBody().constant("disabledAuth");
+                from("platform-http:/disabledAuth").setBody().constant("disabledAuth");
             }
         });
 
         try {
             context.start();
 
-            given()
-                    .when()
-                    .get("/disabledAuth")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("disabledAuth"));
+            given().when().get("/disabledAuth").then().statusCode(200).body(equalTo("disabledAuth"));
         } finally {
             context.stop();
         }
@@ -81,23 +76,17 @@ public class VertxPlatformHttpAuthenticationTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/defaultAuth")
-                        .setBody().constant("defaultAuth");
+                from("platform-http:/defaultAuth").setBody().constant("defaultAuth");
             }
         });
 
         try {
             context.start();
 
-            given()
-                    .when()
-                    .get("/defaultAuth")
-                    .then()
-                    .statusCode(401)
-                    .body(equalTo("Unauthorized"));
+            given().when().get("/defaultAuth").then().statusCode(401).body(equalTo("Unauthorized"));
 
-            given()
-                    .auth().basic("camel", "propertiesPass")
+            given().auth()
+                    .basic("camel", "propertiesPass")
                     .when()
                     .get("/defaultAuth")
                     .then()
@@ -124,38 +113,26 @@ public class VertxPlatformHttpAuthenticationTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/specific/path")
-                        .setBody().constant("specificPath");
+                from("platform-http:/specific/path").setBody().constant("specificPath");
 
-                from("platform-http:/unprotected")
-                        .setBody().constant("unprotected");
+                from("platform-http:/unprotected").setBody().constant("unprotected");
             }
         });
 
         try {
             context.start();
 
-            given()
-                    .when()
-                    .get("/specific/path")
-                    .then()
-                    .statusCode(401)
-                    .body(equalTo("Unauthorized"));
+            given().when().get("/specific/path").then().statusCode(401).body(equalTo("Unauthorized"));
 
-            given()
-                    .auth().basic("camel", "propertiesPass")
+            given().auth()
+                    .basic("camel", "propertiesPass")
                     .when()
                     .get("/specific/path")
                     .then()
                     .statusCode(200)
                     .body(equalTo("specificPath"));
 
-            given()
-                    .when()
-                    .get("/unprotected")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("unprotected"));
+            given().when().get("/unprotected").then().statusCode(200).body(equalTo("unprotected"));
 
         } finally {
             context.stop();
@@ -178,23 +155,17 @@ public class VertxPlatformHttpAuthenticationTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/custom/provider")
-                        .setBody().constant("customProvider");
+                from("platform-http:/custom/provider").setBody().constant("customProvider");
             }
         });
 
         try {
             context.start();
 
-            given()
-                    .when()
-                    .get("/custom/provider")
-                    .then()
-                    .statusCode(401)
-                    .body(equalTo("Unauthorized"));
+            given().when().get("/custom/provider").then().statusCode(401).body(equalTo("Unauthorized"));
 
-            given()
-                    .auth().basic("CustomUser", "CustomPass")
+            given().auth()
+                    .basic("CustomUser", "CustomPass")
                     .when()
                     .get("/custom/provider")
                     .then()
@@ -222,23 +193,17 @@ public class VertxPlatformHttpAuthenticationTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("platform-http:/customProvider")
-                        .setBody().constant("customProvider");
+                from("platform-http:/customProvider").setBody().constant("customProvider");
             }
         });
 
         try {
             context.start();
 
-            given()
-                    .when()
-                    .get("/customProvider")
-                    .then()
-                    .statusCode(401)
-                    .body(equalTo("Unauthorized"));
+            given().when().get("/customProvider").then().statusCode(401).body(equalTo("Unauthorized"));
 
-            given()
-                    .auth().basic("CustomUser", "CustomPass")
+            given().auth()
+                    .basic("CustomUser", "CustomPass")
                     .when()
                     .get("/customProvider")
                     .then()
@@ -285,15 +250,13 @@ public class VertxPlatformHttpAuthenticationTest {
         };
     }
 
-    private CamelContext createCamelContext(AuthenticationConfigCustomizer customizer)
-            throws Exception {
+    private CamelContext createCamelContext(AuthenticationConfigCustomizer customizer) throws Exception {
         int bindPort = AvailablePortFinder.getNextAvailable();
         RestAssured.port = bindPort;
         return createCamelContext(bindPort, customizer);
     }
 
-    private CamelContext createCamelContext(int bindPort, AuthenticationConfigCustomizer customizer)
-            throws Exception {
+    private CamelContext createCamelContext(int bindPort, AuthenticationConfigCustomizer customizer) throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
         conf.setBindPort(bindPort);
 

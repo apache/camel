@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,12 +36,15 @@ public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {
     @XmlAttribute
     @Metadata(defaultValue = ",")
     private String delimiter;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String quoteAllFields;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "\"")
     private String quote;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "\"")
     private String quoteEscape;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestSupport {
 
@@ -45,9 +46,13 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage());
+                errorHandler(deadLetterChannel("mock:dead")
+                        .disableRedelivery()
+                        .logStackTrace(false)
+                        .useOriginalMessage());
 
-                from(fileUri("?initialDelay=0&delay=10&noop=true")).transform(body().append(" World"))
+                from(fileUri("?initialDelay=0&delay=10&noop=true"))
+                        .transform(body().append(" World"))
                         .process(new MyThrowProcessor());
             }
         };
@@ -55,8 +60,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
 
     public static class MyThrowProcessor implements Processor {
 
-        public MyThrowProcessor() {
-        }
+        public MyThrowProcessor() {}
 
         @Override
         public void process(Exchange exchange) {
@@ -64,5 +68,4 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
             throw new IllegalArgumentException("Forced");
         }
     }
-
 }

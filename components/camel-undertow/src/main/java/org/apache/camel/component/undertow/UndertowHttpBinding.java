@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
@@ -39,7 +40,8 @@ public interface UndertowHttpBinding {
     void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headerMap, Exchange exchange)
             throws Exception;
 
-    void populateCamelHeaders(ClientResponse response, Map<String, Object> headerMap, Exchange exchange) throws Exception;
+    void populateCamelHeaders(ClientResponse response, Map<String, Object> headerMap, Exchange exchange)
+            throws Exception;
 
     Object toHttpResponse(HttpServerExchange httpExchange, Message message) throws IOException;
 
@@ -50,5 +52,4 @@ public interface UndertowHttpBinding {
     void setTransferException(Boolean transferException);
 
     void setMuteException(Boolean muteException);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonb;
 
 import java.math.BigDecimal;
@@ -129,6 +130,6 @@ public class NumberPojo {
     @Override
     public String toString() {
         return "NumberPojo [bg=" + bg + ", intNumber=" + intNumber + ", longNumber=" + longNumber + ", doubleNumber="
-               + doubleNumber + ", floatNumber=" + floatNumber + ", bool=" + bool + "]";
+                + doubleNumber + ", floatNumber=" + floatNumber + ", bool=" + bool + "]";
     }
 }

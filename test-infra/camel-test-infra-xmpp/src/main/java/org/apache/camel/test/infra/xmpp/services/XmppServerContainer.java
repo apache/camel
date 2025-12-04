@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.xmpp.services;
 
 import java.io.IOException;
@@ -65,8 +66,8 @@ public class XmppServerContainer extends GenericContainer<XmppServerContainer> {
     }
 
     private void get(String urlAppendix) throws IOException {
-        URL url = URI.create(
-                String.format("http://%s:%d/%s", this.getHost(), getMappedPort(PORT_REST), urlAppendix)).toURL();
+        URL url = URI.create(String.format("http://%s:%d/%s", this.getHost(), getMappedPort(PORT_REST), urlAppendix))
+                .toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.getInputStream();

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -27,9 +31,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * CAMEL-4857 issue test
@@ -73,7 +74,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
     static class MyComponent extends DefaultComponent {
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) {
+        protected Endpoint createEndpoint(
+                final String uri, final String remaining, final Map<String, Object> parameters) {
             return new MyEndpoint(uri, remaining);
         }
 
@@ -106,8 +108,8 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         // gets
         // normalized, so that an endpoint sees "tube1+tube+"
         MyEndpoint endpoint = context.getEndpoint("my:host:11303/tube1+tube%2B", MyEndpoint.class);
-        assertEquals("host:11303/tube1+tube%2B", endpoint.remaining,
-                "Path contains several tube names, every tube name may have + or ? characters");
+        assertEquals(
+                "host:11303/tube1+tube%2B",
+                endpoint.remaining, "Path contains several tube names, every tube name may have + or ? characters");
     }
-
 }

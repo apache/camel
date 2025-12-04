@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import java.util.Map;
@@ -81,7 +82,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         Message in = exchange.getIn();
         Object body = in.getBody();
         PlcWriteRequest plcWriteRequest;
-        if (body instanceof Map) { //Check if we have a Map
+        if (body instanceof Map) { // Check if we have a Map
             Map<String, Map<String, Object>> tags = (Map<String, Map<String, Object>>) body;
             plcWriteRequest = plc4XEndpoint.buildPlcWriteRequest(tags);
         } else {
@@ -128,5 +129,4 @@ public class Plc4XProducer extends DefaultAsyncProducer {
             log.warn("There are still {} open requests", openRequestsAtStop);
         }
     }
-
 }

@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringAttributeNewLineTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringAttributeNewLineTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringAttributeNewLineTest.xml");
     }
 
     @Test
@@ -41,5 +43,4 @@ public class SpringAttributeNewLineTest extends SpringTestSupport {
         Object stub = context.hasEndpoint("stub:GET    /v1/phonebook/companies/{companyCode}?oauth=OPTIONAL");
         assertNotNull(stub, "Should have stub endpoint with double spaces");
     }
-
 }

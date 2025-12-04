@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.FileInputStream;
 
@@ -37,9 +41,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * For unit testing with XML streams that can be troublesome with the StreamCache
  */
@@ -55,7 +56,7 @@ public class JmsXMLRouteIT extends AbstractJMSTest {
     protected ConsumerTemplate consumer;
 
     @ParameterizedTest
-    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    @ValueSource(strings = {"direct:object", "direct:bytes", "direct:default"})
     public void testLondonWithFileStream(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -70,7 +71,7 @@ public class JmsXMLRouteIT extends AbstractJMSTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    @ValueSource(strings = {"direct:object", "direct:bytes", "direct:default"})
     public void testTampaWithFileStream(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
@@ -85,19 +86,18 @@ public class JmsXMLRouteIT extends AbstractJMSTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    @ValueSource(strings = {"direct:object", "direct:bytes", "direct:default"})
     public void testLondonWithStringSourceAsObject(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                         + "<person user=\"james\">\n"
-                                         + "  <firstName>James</firstName>\n"
-                                         + "  <lastName>Strachan</lastName>\n"
-                                         + "  <city>London</city>\n"
-                                         + "</person>");
+        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<person user=\"james\">\n"
+                + "  <firstName>James</firstName>\n"
+                + "  <lastName>Strachan</lastName>\n"
+                + "  <city>London</city>\n"
+                + "</person>");
         assertNotNull(source);
 
         template.sendBody(endpointUri, source);
@@ -137,23 +137,29 @@ public class JmsXMLRouteIT extends AbstractJMSTest {
                             Object body = exchange.getIn().getBody();
                             // should preserve the object as Source
                             assertIsInstanceOf(Source.class, body);
-                        }).to("seda:choice");
+                        })
+                        .to("seda:choice");
 
                 from("activemq:queue:JmsXMLRouteTest.bytes")
                         .process(exchange -> {
                             Object body = exchange.getIn().getBody();
                             // should be a byte array by default
                             assertIsInstanceOf(byte[].class, body);
-                        }).to("seda:choice");
-
-                from("activemq:queue:JmsXMLRouteTest.default")
+                        })
                         .to("seda:choice");
+
+                from("activemq:queue:JmsXMLRouteTest.default").to("seda:choice");
 
                 from("seda:choice")
                         .choice()
-                        .when().xpath("/person/city = 'London'").to("mock:london")
-                        .when().xpath("/person/city = 'Tampa'").to("mock:tampa")
-                        .otherwise().to("mock:unknown")
+                        .when()
+                        .xpath("/person/city = 'London'")
+                        .to("mock:london")
+                        .when()
+                        .xpath("/person/city = 'Tampa'")
+                        .to("mock:tampa")
+                        .otherwise()
+                        .to("mock:unknown")
                         .end();
             }
         };

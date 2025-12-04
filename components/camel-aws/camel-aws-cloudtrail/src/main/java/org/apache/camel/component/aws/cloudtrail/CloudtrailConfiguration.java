@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail;
 
 import org.apache.camel.RuntimeCamelException;
@@ -30,56 +31,89 @@ public class CloudtrailConfiguration implements Cloneable {
     @UriPath(description = "A label for indexing cloudtrail endpoints")
     @Metadata(required = true)
     private String label;
+
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
+
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
     private String secretKey;
 
-    @UriParam(label = "security", secret = true,
-              description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
+    @UriParam(
+            label = "security",
+            secret = true,
+            description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
     private String sessionToken;
 
-    @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
-              description = "The region in which Cloudtrail client needs to work. When using this parameter, the configuration will expect the lowercase name of the "
+    @UriParam(
+            enums =
+                    "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
+            description =
+                    "The region in which Cloudtrail client needs to work. When using this parameter, the configuration will expect the lowercase name of the "
                             + "region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()")
     private String region;
+
     @UriParam(label = "advanced", description = "Amazon Cloudtrail client to use for all requests for this endpoint")
     @Metadata(autowired = true)
     private CloudTrailClient cloudTrailClient;
-    @UriParam(description = "Maximum number of records that will be fetched in each poll",
-              defaultValue = "1")
+
+    @UriParam(description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
     private int maxResults = 1;
+
     @UriParam(description = "Specify an event source to select events")
     private String eventSource;
-    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
-              description = "To define a proxy protocol when instantiating the Cloudtrail client")
+
+    @UriParam(
+            label = "proxy",
+            enums = "HTTP,HTTPS",
+            defaultValue = "HTTPS",
+            description = "To define a proxy protocol when instantiating the Cloudtrail client")
     private Protocol proxyProtocol = Protocol.HTTPS;
+
     @UriParam(label = "proxy", description = "To define a proxy host when instantiating the Cloudtrail client")
     private String proxyHost;
+
     @UriParam(label = "proxy", description = "To define a proxy port when instantiating the Cloudtrail client")
     private Integer proxyPort;
-    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
+
+    @UriParam(
+            label = "security",
+            description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
-    @UriParam(defaultValue = "false",
-              description = "Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
+
+    @UriParam(
+            defaultValue = "false",
+            description =
+                    "Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride option")
     private boolean overrideEndpoint;
-    @UriParam(description = "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
+
+    @UriParam(
+            description =
+                    "Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option")
     private String uriEndpointOverride;
-    @UriParam(label = "security",
-              description = "Set whether the Cloudtrail client should expect to load credentials through a default credentials provider or to expect"
+
+    @UriParam(
+            label = "security",
+            description =
+                    "Set whether the Cloudtrail client should expect to load credentials through a default credentials provider or to expect"
                             + " static credentials to be passed in.")
     private boolean useDefaultCredentialsProvider;
-    @UriParam(label = "security",
-              description = "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
+
+    @UriParam(
+            label = "security",
+            description =
+                    "Set whether the Cloudtrail client should expect to load credentials through a profile credentials provider.")
     private boolean useProfileCredentialsProvider;
 
-    @UriParam(label = "security",
-              description = "Set whether the CloudTrail client should expect to use Session Credentials. This is useful in situation in which the user"
-                            +
-                            " needs to assume a IAM role for doing operations in CloudTrail.")
+    @UriParam(
+            label = "security",
+            description =
+                    "Set whether the CloudTrail client should expect to use Session Credentials. This is useful in situation in which the user"
+                            + " needs to assume a IAM role for doing operations in CloudTrail.")
     private boolean useSessionCredentials;
-    @UriParam(label = "security",
-              description = "If using a profile credentials provider this parameter will set the profile name.")
+
+    @UriParam(
+            label = "security",
+            description = "If using a profile credentials provider this parameter will set the profile name.")
     private String profileCredentialsName;
 
     public String getLabel() {

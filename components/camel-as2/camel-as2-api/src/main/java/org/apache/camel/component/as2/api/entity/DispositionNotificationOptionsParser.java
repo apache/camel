@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.util.HashMap;
@@ -34,9 +35,7 @@ public class DispositionNotificationOptionsParser {
     private static final String SIGNED_RECEIPT_MICALG_ATTR_NAME = "signed-receipt-micalg";
 
     public static DispositionNotificationOptions parseDispositionNotificationOptions(
-            final String value,
-            DispositionNotificationOptionsParser parser)
-            throws ParseException {
+            final String value, DispositionNotificationOptionsParser parser) throws ParseException {
         if (value == null) {
             return new DispositionNotificationOptions(null, null);
         }
@@ -49,8 +48,7 @@ public class DispositionNotificationOptionsParser {
     }
 
     public DispositionNotificationOptions parseDispositionNotificationOptions(
-            final CharArrayBuffer buffer,
-            final ParserCursor cursor) {
+            final CharArrayBuffer buffer, final ParserCursor cursor) {
         ObjectHelper.notNull(buffer, "buffer");
         ObjectHelper.notNull(cursor, "cursor");
 
@@ -66,5 +64,4 @@ public class DispositionNotificationOptionsParser {
 
         return new DispositionNotificationOptions(signedReceiptProtocolParameter, signedReceiptMicalgParameter);
     }
-
 }

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 
@@ -27,19 +34,12 @@ import org.apache.logging.log4j.core.Logger;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class ServletLogExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMuteException() throws Exception {
         WebRequest req = new PostMethodWebRequest(
-                contextUrl + "/services/mute",
-                new ByteArrayInputStream("".getBytes()), "text/plain");
+                contextUrl + "/services/mute", new ByteArrayInputStream("".getBytes()), "text/plain");
 
         Appender appender = mock(Appender.class);
         when(appender.getName()).thenReturn("mockAppender");
@@ -51,9 +51,9 @@ public class ServletLogExceptionTest extends ServletCamelRouterTestSupport {
 
         ArgumentCaptor<LogEvent> captor = ArgumentCaptor.forClass(LogEvent.class);
         verify(appender, atLeastOnce()).append(captor.capture());
-        assertTrue(captor.getAllValues().stream().anyMatch(
-                event -> event.getMessage().getFormattedMessage().equals(
-                        "Server internal error response returned due to 'Camel cannot do this'")));
+        assertTrue(captor.getAllValues().stream().anyMatch(event -> event.getMessage()
+                .getFormattedMessage()
+                .equals("Server internal error response returned due to 'Camel cannot do this'")));
     }
 
     @Override

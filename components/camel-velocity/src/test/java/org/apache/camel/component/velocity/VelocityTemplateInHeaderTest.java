@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
+
+import static org.apache.camel.test.junit5.TestSupport.assertMessageBodyEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -26,10 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertMessageBodyEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VelocityTemplateInHeaderTest extends CamelTestSupport {
 
@@ -89,5 +90,4 @@ public class VelocityTemplateInHeaderTest extends CamelTestSupport {
             }
         };
     }
-
 }

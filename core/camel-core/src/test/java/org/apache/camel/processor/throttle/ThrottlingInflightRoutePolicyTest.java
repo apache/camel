@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +48,11 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
                 ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
                 policy.setMaxInflightExchanges(10);
 
-                from(url).routePolicy(policy).delay(3).to("log:foo?groupSize=10").to("mock:result");
+                from(url)
+                        .routePolicy(policy)
+                        .delay(3)
+                        .to("log:foo?groupSize=10")
+                        .to("mock:result");
             }
         };
     }

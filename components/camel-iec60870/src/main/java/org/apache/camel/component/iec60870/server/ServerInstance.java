@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.iec60870.server;
+
+import static java.util.Arrays.asList;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -41,8 +44,6 @@ import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Actio
 import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Arrays.asList;
 
 public class ServerInstance {
     private static final Logger LOG = LoggerFactory.getLogger(ServerInstance.class);
@@ -90,7 +91,8 @@ public class ServerInstance {
         @Override
         protected BackgroundModel createBackgroundModel() {
             if (ServerInstance.this.options.getBackgroundScanPeriod() > 0) {
-                LOG.info("Creating background scan model: {} ms", ServerInstance.this.options.getBackgroundScanPeriod());
+                LOG.info(
+                        "Creating background scan model: {} ms", ServerInstance.this.options.getBackgroundScanPeriod());
                 return makeDefaultBackgroundModel();
             }
             LOG.info("Not creating background scan model");
@@ -99,7 +101,9 @@ public class ServerInstance {
 
         @Override
         public void notifyDataChange(
-                final ASDUAddress asduAddress, final InformationObjectAddress informationObjectAddress, final Value<?> value,
+                final ASDUAddress asduAddress,
+                final InformationObjectAddress informationObjectAddress,
+                final Value<?> value,
                 final boolean notify) {
             super.notifyDataChange(asduAddress, informationObjectAddress, value, notify);
         }
@@ -125,8 +129,8 @@ public class ServerInstance {
     public void start() {
         this.dataModel.start();
         this.dataModule = new DataModule(this.options.getDataModuleOptions(), this.dataModel);
-        this.server
-                = new Server(this.address, this.options.getProtocolOptions(), asList(this.dataModule, new DiscardAckModule()));
+        this.server = new Server(
+                this.address, this.options.getProtocolOptions(), asList(this.dataModule, new DiscardAckModule()));
     }
 
     public void stop() {

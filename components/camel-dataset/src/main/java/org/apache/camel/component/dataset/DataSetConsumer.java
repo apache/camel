@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.concurrent.ExecutorService;
@@ -56,7 +57,8 @@ public class DataSetConsumer extends DefaultConsumer {
         final long preloadSize = endpoint.getPreloadSize();
 
         sendMessages(0, preloadSize);
-        executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
+        executorService =
+                camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
 
         executorService.execute(() -> {
             if (endpoint.getInitialDelay() > 0) {
@@ -128,7 +130,8 @@ public class DataSetConsumer extends DefaultConsumer {
         // must sanitize uri to avoid logging sensitive information
         String uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
         CamelLogger logger = new CamelLogger(uri);
-        ThroughputLogger answer = new ThroughputLogger(logger, (int) endpoint.getDataSet().getReportCount());
+        ThroughputLogger answer =
+                new ThroughputLogger(logger, (int) endpoint.getDataSet().getReportCount());
         answer.setAction("Sent");
         return answer;
     }

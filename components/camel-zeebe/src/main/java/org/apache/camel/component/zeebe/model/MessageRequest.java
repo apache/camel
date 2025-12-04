@@ -84,12 +84,11 @@ public class MessageRequest implements ZeebeMessage {
 
     @Override
     public String toString() {
-        return "MessageRequest{" + "name='" + name + '\'' +
-               ", correlationKey='" + correlationKey + '\'' +
-               ", timeToLive=" + timeToLive +
-               ", messageId='" + messageId + '\'' +
-               ", variables=" + variables +
-               '}';
+        return "MessageRequest{" + "name='" + name + '\'' + ", correlationKey='"
+                + correlationKey + '\'' + ", timeToLive="
+                + timeToLive + ", messageId='"
+                + messageId + '\'' + ", variables="
+                + variables + '}';
     }
 
     @Override
@@ -101,8 +100,11 @@ public class MessageRequest implements ZeebeMessage {
             return false;
         }
         MessageRequest that = (MessageRequest) o;
-        return timeToLive == that.timeToLive && Objects.equals(name, that.name) && correlationKey.equals(that.correlationKey)
-                && Objects.equals(messageId, that.messageId) && Objects.equals(variables, that.variables);
+        return timeToLive == that.timeToLive
+                && Objects.equals(name, that.name)
+                && correlationKey.equals(that.correlationKey)
+                && Objects.equals(messageId, that.messageId)
+                && Objects.equals(variables, that.variables);
     }
 
     @Override

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.tcp;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,9 +37,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Various tests used to validate the behaviour of Java Sockets.
@@ -115,7 +116,8 @@ public class JavaSocketManualTests {
                                         break;
                                     case 10:
                                         log.info("Complete Message - Sending Response");
-                                        byte[] response = responseBuilder.toString().getBytes();
+                                        byte[] response =
+                                                responseBuilder.toString().getBytes();
                                         responseBuilder.setLength(0);
                                         writer.write(response, 0, response.length);
                                         writer.write('\n');
@@ -141,7 +143,6 @@ public class JavaSocketManualTests {
 
                 log.info("Finished processing connection");
             }
-
         };
 
         acceptThread.start();
@@ -175,7 +176,6 @@ public class JavaSocketManualTests {
         }
         log.info("Sleeping ...");
         Thread.sleep(5000);
-
     }
 
     @Test
@@ -226,7 +226,8 @@ public class JavaSocketManualTests {
                                         break;
                                     case 10:
                                         log.info("Complete Message - Sending Response");
-                                        byte[] response = responseBuilder.toString().getBytes();
+                                        byte[] response =
+                                                responseBuilder.toString().getBytes();
                                         responseBuilder.setLength(0);
                                         writer.write(response, 0, response.length);
                                         writer.write('\n');
@@ -252,7 +253,6 @@ public class JavaSocketManualTests {
 
                 log.info("Finished processing connection");
             }
-
         };
 
         acceptThread.start();
@@ -278,7 +278,9 @@ public class JavaSocketManualTests {
         }
 
         log.info("Message send loop complete - closing connection");
-        log.info("Client Socket available() returned {} before close", clientSocket.getInputStream().available());
+        log.info(
+                "Client Socket available() returned {} before close",
+                clientSocket.getInputStream().available());
         try {
             clientSocket.getInputStream().read();
             fail("read should have timed-out");
@@ -286,8 +288,12 @@ public class JavaSocketManualTests {
             log.info("Client Socket read() timed-out before close");
         }
         clientSocket.getOutputStream().write(27);
-        log.info("Client Socket available() returned {} after close", clientSocket.getInputStream().available());
-        log.info("Client Socket read() returned {} after close", clientSocket.getInputStream().read());
+        log.info(
+                "Client Socket available() returned {} after close",
+                clientSocket.getInputStream().available());
+        log.info(
+                "Client Socket read() returned {} after close",
+                clientSocket.getInputStream().read());
         // Javadoc for Socket says closing the InputStream will close the connection
         clientSocket.getInputStream().close();
         if (!clientSocket.isClosed()) {
@@ -300,6 +306,5 @@ public class JavaSocketManualTests {
 
         log.info("Sleeping ...");
         Thread.sleep(5000);
-
     }
 }

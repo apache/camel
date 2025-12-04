@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -45,14 +46,17 @@ public class OnCompletionOnFailureOnlyTest extends OnCompletionTest {
                 from("direct:start")
                         // here we qualify onCompletion to only invoke when the
                         // exchange failed (exception or FAULT body)
-                        .onCompletion().onFailureOnly().to("log:sync").to("mock:sync")
+                        .onCompletion()
+                        .onFailureOnly()
+                        .to("log:sync")
+                        .to("mock:sync")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here the original route continues
-                        .process(new MyProcessor()).to("mock:result");
+                        .process(new MyProcessor())
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

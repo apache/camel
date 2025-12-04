@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
-
-import java.text.DecimalFormatSymbols;
-
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
 import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.text.DecimalFormatSymbols;
+
+import org.junit.jupiter.api.Test;
 
 public class UnitUtilsTest {
 

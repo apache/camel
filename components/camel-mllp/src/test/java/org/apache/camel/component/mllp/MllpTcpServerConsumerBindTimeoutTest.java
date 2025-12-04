@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 import java.net.ServerSocket;
@@ -74,12 +75,12 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
                         .toF("log:%s?level=INFO&showAll=true", routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route complete");
 
-                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
+                fromF(
+                                "mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
+                                mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route received message")
                         .to(result);
-
             }
         };
     }
@@ -108,5 +109,4 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
-
 }

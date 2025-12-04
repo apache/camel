@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,10 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCBRTest extends ManagementTestSupport {
@@ -66,20 +67,30 @@ public class ManagedCBRTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("route")
-                        .to("mock:a").id("task-a")
-                        .choice().id("choice")
-                        .when(simple("${body} contains 'Camel'")).id("when")
-                        .to("mock:b").id("task-b")
-                        .to("mock:c").id("task-c")
-                        .when(simple("${body} contains 'Donkey'")).id("when2")
-                        .to("mock:d").id("task-d")
-                        .otherwise().id("otherwise")
-                        .to("mock:e").id("task-e")
+                from("direct:start")
+                        .routeId("route")
+                        .to("mock:a")
+                        .id("task-a")
+                        .choice()
+                        .id("choice")
+                        .when(simple("${body} contains 'Camel'"))
+                        .id("when")
+                        .to("mock:b")
+                        .id("task-b")
+                        .to("mock:c")
+                        .id("task-c")
+                        .when(simple("${body} contains 'Donkey'"))
+                        .id("when2")
+                        .to("mock:d")
+                        .id("task-d")
+                        .otherwise()
+                        .id("otherwise")
+                        .to("mock:e")
+                        .id("task-e")
                         .end()
-                        .to("mock:done").id("task-done");
+                        .to("mock:done")
+                        .id("task-done");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box.api;
+
+import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import com.box.sdk.BoxFile;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.box.api.BoxHelper.buildBoxApiErrorMessage;
 
 /**
  * Provides operations to manage Box comments.
@@ -66,8 +67,7 @@ public class BoxCommentsManager {
             fileToCommentOn.addComment(message);
             return fileToCommentOn;
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -87,8 +87,7 @@ public class BoxCommentsManager {
             return file.getComments();
 
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -107,8 +106,7 @@ public class BoxCommentsManager {
 
             return comment.getInfo();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -128,8 +126,7 @@ public class BoxCommentsManager {
             BoxComment comment = new BoxComment(boxConnection, commentId);
             return comment.reply(message).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -149,8 +146,7 @@ public class BoxCommentsManager {
             BoxComment comment = new BoxComment(boxConnection, commentId);
             return comment.changeMessage(message).getResource();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
 
@@ -166,9 +162,7 @@ public class BoxCommentsManager {
             BoxComment comment = new BoxComment(boxConnection, commentId);
             comment.delete();
         } catch (BoxAPIException e) {
-            throw new RuntimeCamelException(
-                    buildBoxApiErrorMessage(e), e);
+            throw new RuntimeCamelException(buildBoxApiErrorMessage(e), e);
         }
     }
-
 }

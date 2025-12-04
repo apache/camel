@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import java.net.URI;
@@ -52,35 +53,49 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
 
     @Metadata(label = "security")
     private String basicAuthUsername;
+
     @Metadata(label = "security")
     private String basicAuthPassword;
+
     @Metadata(label = "security")
     private String bearerToken;
+
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @Metadata(label = "proxy")
     private String proxyHost;
+
     @Metadata(label = "proxy")
     private Integer proxyPort;
+
     @Metadata(label = "proxy", enums = "HTTP,SOCKS4,SOCKS5")
     private ProxyType proxyType;
+
     @Metadata(label = "proxy")
     private String proxyUsername;
+
     @Metadata(label = "proxy")
     private String proxyPassword;
 
     @Metadata(label = "advanced")
     private Vertx vertx;
+
     @Metadata(label = "advanced")
     private VertxOptions vertxOptions;
+
     @Metadata(label = "advanced")
     private VertxHttpBinding vertxHttpBinding;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
+
     @Metadata(label = "producer", defaultValue = "true")
     private boolean responsePayloadAsByteArray = true;
+
     @Metadata(label = "advanced")
     private WebClientOptions webClientOptions;
 
@@ -153,9 +168,16 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
 
     @Override
     public Producer createProducer(
-            CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters, String consumes,
-            String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            CamelContext camelContext,
+            String host,
+            String verb,
+            String basePath,
+            String uriTemplate,
+            String queryParameters,
+            String consumes,
+            String produces,
+            RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception {
         // avoid leading slash
         basePath = FileUtil.stripLeadingSeparator(basePath);
@@ -178,9 +200,11 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
 
         Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
-        if (config.getProducerComponent() == null || config.getProducerComponent().equals(scheme)) {
+        if (config.getProducerComponent() == null
+                || config.getProducerComponent().equals(scheme)) {
             // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+            if (config.getEndpointProperties() != null
+                    && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
@@ -196,16 +220,18 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         // there are cases where we might end up here without component being created beforehand
         // we need to abide by the component properties specified in the parameters when creating
         // the component, one such case is when we switch from "http" to "https" component name
-        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.remove("component"));
+        RestProducerFactoryHelper.setupComponentFor(
+                url, camelContext, (Map<String, Object>) parameters.remove("component"));
 
         VertxHttpEndpoint endpoint = (VertxHttpEndpoint) camelContext.getEndpoint(url, parameters);
         String path = uriTemplate != null ? uriTemplate : basePath;
-        HeaderFilterStrategy headerFilterStrategy
-                = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+        HeaderFilterStrategy headerFilterStrategy =
+                resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         if (headerFilterStrategy != null) {
             endpoint.getConfiguration().setHeaderFilterStrategy(headerFilterStrategy);
         } else {
-            endpoint.getConfiguration().setHeaderFilterStrategy(new VertxHttpRestHeaderFilterStrategy(path, queryParameters));
+            endpoint.getConfiguration()
+                    .setHeaderFilterStrategy(new VertxHttpRestHeaderFilterStrategy(path, queryParameters));
         }
         // the endpoint must be started before creating the producer
         ServiceHelper.startService(endpoint);

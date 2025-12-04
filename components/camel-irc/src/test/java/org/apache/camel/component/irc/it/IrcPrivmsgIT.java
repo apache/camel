@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc.it;
 
 import java.util.List;
@@ -27,8 +28,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@EnabledIfSystemProperty(named = "enable.irc.itests", matches = ".*",
-                         disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
+@EnabledIfSystemProperty(
+        named = "enable.irc.itests",
+        matches = ".*",
+        disabledReason = "Must be enabled manually to avoid flooding an IRC network with test messages")
 public class IrcPrivmsgIT extends IrcIntegrationITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IrcPrivmsgIT.class);
@@ -49,7 +52,8 @@ public class IrcPrivmsgIT extends IrcIntegrationITSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: "
+                    + exchange.getIn().getHeaders());
         }
     }
 
@@ -57,17 +61,22 @@ public class IrcPrivmsgIT extends IrcIntegrationITSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock")
-                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri())
+                        .choice()
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG"))
+                        .to("direct:mock")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN"))
+                        .to("seda:consumerJoined");
 
-                from("seda:consumerJoined")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                sendMessages();
-                            }
-                        });
+                from("seda:consumerJoined").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        sendMessages();
+                    }
+                });
 
-                from("direct:mock").filter(e -> !e.getIn().getBody(String.class).contains("VERSION")).to(resultEndpoint);
+                from("direct:mock")
+                        .filter(e -> !e.getIn().getBody(String.class).contains("VERSION"))
+                        .to(resultEndpoint);
             }
         };
     }

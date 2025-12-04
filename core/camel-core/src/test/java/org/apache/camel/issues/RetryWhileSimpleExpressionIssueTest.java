@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -45,8 +46,11 @@ public class RetryWhileSimpleExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalArgumentException.class).retryWhile(simple("${body.areWeCool} == 'no'")).redeliveryDelay(0)
-                        .handled(true).to("mock:error");
+                onException(IllegalArgumentException.class)
+                        .retryWhile(simple("${body.areWeCool} == 'no'"))
+                        .redeliveryDelay(0)
+                        .handled(true)
+                        .to("mock:error");
 
                 from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.delimited;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -32,10 +37,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * This test validates the marshalling / unmarshalling of delimited, variable-length fields within a 'fixed-length'
  * record.
@@ -48,12 +49,12 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
     public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
     private static final String TEST_RECORD = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
-    private static final String TEST_RECORD_WITH_EXTRA_CHARS
-            = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009xxx\r\n";
-    private static final String TEST_RECORD_WITH_SINGLE_EXTRA_CHAR
-            = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009x\r\n";
-    private static final String TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR
-            = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009   x\r\n";
+    private static final String TEST_RECORD_WITH_EXTRA_CHARS =
+            "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009xxx\r\n";
+    private static final String TEST_RECORD_WITH_SINGLE_EXTRA_CHAR =
+            "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009x\r\n";
+    private static final String TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR =
+            "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009   x\r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -73,8 +74,8 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindyFixedLengthDelimitedFieldTest.Order order
-                = (BindyFixedLengthDelimitedFieldTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindyFixedLengthDelimitedFieldTest.Order order = (BindyFixedLengthDelimitedFieldTest.Order)
+                unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         assertEquals("Pauline", order.getFirstName());
         assertEquals("M", order.getLastName());
@@ -146,7 +147,7 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         order.setOrderDate(calendar.getTime());
 
         marshallResult.expectedMessageCount(1);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { TEST_RECORD }));
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] {TEST_RECORD}));
         template.sendBody(URI_DIRECT_MARSHALL, order);
         marshallResult.assertIsSatisfied();
     }
@@ -166,12 +167,11 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
                         .locale("en")
                         .fixed();
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, BindyFixedLengthDelimitedFieldTest.Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, BindyFixedLengthDelimitedFieldTest.Order.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
@@ -309,11 +309,11 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.routingslip;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
 
@@ -39,8 +40,8 @@ public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
 
         // those 2 options not allowed together
         try {
-            template.sendBodyAndHeader("direct:start", "Hello World", "foo",
-                    fileUri("?fileExist=Append&tempPrefix=hello"));
+            template.sendBodyAndHeader(
+                    "direct:start", "Hello World", "foo", fileUri("?fileExist=Append&tempPrefix=hello"));
             fail("Should fail");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());

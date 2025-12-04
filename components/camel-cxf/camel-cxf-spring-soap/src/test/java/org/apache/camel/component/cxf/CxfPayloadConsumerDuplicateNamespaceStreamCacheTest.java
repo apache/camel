@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
 
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.cxf;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CxfPayloadConsumerDuplicateNamespaceStreamCacheTest extends CxfPayloadConsumerNamespaceOnEnvelopeStreamCacheTest {
+import org.junit.jupiter.api.Test;
+
+public class CxfPayloadConsumerDuplicateNamespaceStreamCacheTest
+        extends CxfPayloadConsumerNamespaceOnEnvelopeStreamCacheTest {
     /*
      * The soap namespace prefix is already defined on the root tag of the
      * payload. If this is set another time from the envelope, the result will
      * be an invalid XML.
      */
-    protected static final String REQUEST_MESSAGE
-            = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
-              + "<soap:Body><ns2:getToken xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns2=\"http://camel.apache.org/cxf/namespace\">"
-              + "<arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken></soap:Body></soap:Envelope>";
+    protected static final String REQUEST_MESSAGE =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+                    + "<soap:Body><ns2:getToken xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns2=\"http://camel.apache.org/cxf/namespace\">"
+                    + "<arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken></soap:Body></soap:Envelope>";
 
     @Override
     @Test

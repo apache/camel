@@ -44,9 +44,8 @@ class DefaultTransformerResolverTest {
         Transformer transformer = resolver.resolve(new TransformerKey("unknown"), camelContext);
         Assertions.assertNull(transformer);
 
-        transformer = resolver.resolve(new TransformerKey(
-                new DataType("foo:fromType"),
-                new DataType("foo:toType")), camelContext);
+        transformer = resolver.resolve(
+                new TransformerKey(new DataType("foo:fromType"), new DataType("foo:toType")), camelContext);
         Assertions.assertNull(transformer);
     }
 

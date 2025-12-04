@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -77,14 +78,19 @@ public class RecipientListErrorHandlingIssueTest extends ContextTestSupport {
         context.start();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://foo");
+        getMockEndpoint("mock:foo")
+                .message(0)
+                .exchangeProperty(Exchange.TO_ENDPOINT)
+                .isEqualTo("mock://foo");
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://kaboom");
+        getMockEndpoint("mock:error")
+                .message(0)
+                .exchangeProperty(Exchange.FAILURE_ENDPOINT)
+                .isEqualTo("direct://kaboom");
 
         String foo = "direct:foo,direct:kaboom";
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", foo);
 
         assertMockEndpointsSatisfied();
     }
-
 }

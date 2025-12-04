@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.builder.xml;
 
 import org.w3c.dom.Attr;
@@ -25,8 +26,7 @@ import org.apache.camel.support.builder.Namespaces;
 
 public final class NamespacesHelper {
 
-    private NamespacesHelper() {
-    }
+    private NamespacesHelper() {}
 
     public static Namespaces namespaces(Element element) {
         Namespaces namespaces = new Namespaces();
@@ -52,5 +52,4 @@ public final class NamespacesHelper {
             }
         }
     }
-
 }

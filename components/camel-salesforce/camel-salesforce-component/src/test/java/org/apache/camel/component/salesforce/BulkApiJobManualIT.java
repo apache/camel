@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,17 +33,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class BulkApiJobManualIT extends AbstractBulkApiTestBase {
 
     @BeforeEach
     public void setupProfileWithHardDelete() throws IOException {
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
-        template().requestBodyAndHeader("salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String",
-                null,
-                SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
+        template()
+                .requestBodyAndHeader(
+                        "salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String",
+                        null,
+                        SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username",
+                        loginConfig.getUserName());
     }
 
     @ParameterizedTest
@@ -119,6 +123,8 @@ public class BulkApiJobManualIT extends AbstractBulkApiTestBase {
         queryCsv.setOperation(OperationEnum.QUERY);
         result.add(queryCsv);
 
-        return result.stream().map(j -> new Object[] { j, j.getOperation().name() }).collect(Collectors.toList());
+        return result.stream()
+                .map(j -> new Object[] {j, j.getOperation().name()})
+                .collect(Collectors.toList());
     }
 }

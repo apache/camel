@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.browse;
 
 import java.util.Map;
@@ -25,12 +26,12 @@ import org.apache.camel.support.DefaultComponent;
 @org.apache.camel.spi.annotations.Component("browse")
 public class BrowseComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced",
-              description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
+    @Metadata(
+            label = "advanced",
+            description = "Maximum number of messages to keep in memory available for browsing. Use 0 for unlimited.")
     private int browseLimit;
 
-    public BrowseComponent() {
-    }
+    public BrowseComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

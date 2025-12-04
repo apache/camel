@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test download objects with deleteAfterRead = true
@@ -49,15 +50,14 @@ public class DownloadDeleteFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("hwcloud-obs:?" +
-                     "serviceKeys=#serviceKeys" +
-                     "&region=" + REGION +
-                     "&bucketName=" + BUCKET_NAME +
-                     "&ignoreSslVerification=true" +
-                     "&maxMessagesPerPoll=10" +
-                     "&includeFolders=" + INCLUDE_FOLDERS +
-                     "&deleteAfterRead=true" +
-                     "&moveAfterRead=false")
+                from("hwcloud-obs:?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + REGION + "&bucketName="
+                                + BUCKET_NAME + "&ignoreSslVerification=true"
+                                + "&maxMessagesPerPoll=10"
+                                + "&includeFolders="
+                                + INCLUDE_FOLDERS + "&deleteAfterRead=true"
+                                + "&moveAfterRead=false")
                         .log("Download objects successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:download_objects_result");
@@ -82,7 +82,10 @@ public class DownloadDeleteFunctionalTest extends CamelTestSupport {
 
         assertTrue(exchanges.size() >= NUMBER_TO_CONSUME);
         for (Exchange exchange : exchanges) {
-            assertTrue(exchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class).length() > 0);
+            assertTrue(exchange.getIn()
+                            .getHeader(OBSHeaders.OBJECT_KEY, String.class)
+                            .length()
+                    > 0);
             if (exchange.getIn().getHeader(Exchange.CONTENT_LENGTH, Integer.class) > 0) {
                 assertNotNull(exchange.getIn().getBody(String.class));
                 assertTrue(exchange.getIn().getBody(String.class).length() > 0);

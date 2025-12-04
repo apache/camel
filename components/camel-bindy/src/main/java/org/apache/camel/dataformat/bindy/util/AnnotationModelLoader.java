@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.util;
 
 import java.lang.annotation.Annotation;
@@ -57,7 +58,7 @@ public class AnnotationModelLoader {
     public Set<Class<?>> loadModels(String... packageNames) {
         Set<Class<?>> results = resolver.findAnnotated(annotations, packageNames);
 
-        //TODO;  this logic could be moved into the PackageScanClassResolver by creating:
+        // TODO;  this logic could be moved into the PackageScanClassResolver by creating:
         //          findAnnotated(annotations, packageNames, filter)
         Set<Class<?>> resultsToRemove = new HashSet<>();
         if (filter != null) {
@@ -70,5 +71,4 @@ public class AnnotationModelLoader {
         results.removeAll(resultsToRemove);
         return results;
     }
-
 }

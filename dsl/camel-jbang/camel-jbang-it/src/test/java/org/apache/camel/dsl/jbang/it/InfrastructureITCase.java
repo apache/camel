@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.time.Duration;
@@ -34,8 +35,7 @@ public class InfrastructureITCase extends JBangTestSupport {
         checkCommandOutputsPattern("infra list", "ALIAS\s+IMPLEMENTATION\s+DESCRIPTION");
     }
 
-    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                              disabledReason = "Requires too much resources")
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much resources")
     @Test
     public void runStopServiceTest() {
         String msg = execute("infra run --background " + SERVICE);
@@ -44,14 +44,12 @@ public class InfrastructureITCase extends JBangTestSupport {
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
                 .pollInterval(Duration.ofSeconds(1))
-                .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
-                        .contains(PID));
+                .untilAsserted(() -> Assertions.assertThat(execute("infra ps")).contains(PID));
         checkCommandOutputs("infra stop " + SERVICE, "Shutting down external services (PID: " + PID);
         checkCommandDoesNotOutput("infra ps", PID);
     }
 
-    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                              disabledReason = "Requires too much resources")
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much resources")
     @Test
     public void runServiceWithImplementationTest() {
         String msg = execute(String.format("infra run --background %s %s", IMPL_SERVICE, IMPLEMENTATION));

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -21,8 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileConsumerDirectoryMustExistBridgeErrorHandlerTest extends ContextTestSupport {
 
     @Test
@@ -42,8 +44,10 @@ public class FileConsumerDirectoryMustExistBridgeErrorHandlerTest extends Contex
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from(fileUri(testDirectory("new", false), "?initialDelay=1&delay=1"
-                                                          + "&autoCreate=false&directoryMustExist=true&bridgeErrorHandler=true"))
+                from(fileUri(
+                                testDirectory("new", false),
+                                "?initialDelay=1&delay=1"
+                                        + "&autoCreate=false&directoryMustExist=true&bridgeErrorHandler=true"))
                         .routeId("foo")
                         .autoStartup(false)
                         .to("mock:result");

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.xml.ws.Endpoint;
 
@@ -22,17 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.wsdl_first.PersonImpl12;
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayloadModeNoSpringTest {
 
     @Override
     @BeforeEach
     public void startService() {
-        endpoint = Endpoint.publish("http://localhost:" + port1 + "/"
-                                    + getClass().getSimpleName()
-                                    + "/PersonService",
-                new PersonImpl12());
+        endpoint = Endpoint.publish(
+                "http://localhost:" + port1 + "/" + getClass().getSimpleName() + "/PersonService", new PersonImpl12());
     }
 
     @Override
@@ -44,5 +43,4 @@ public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayload
     protected void checkSOAPAction(Exchange exchange) {
         assertEquals("GetPersonAction", exchange.getIn().getHeader("SOAPAction"));
     }
-
 }

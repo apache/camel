@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.util.Hashtable;
@@ -51,20 +52,27 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true,
-             remote = false, category = { Category.MONITORING }, headersClass = JMXConstants.class)
+@UriEndpoint(
+        firstVersion = "2.6.0",
+        scheme = "jmx",
+        title = "JMX",
+        syntax = "jmx:serverURL",
+        consumerOnly = true,
+        remote = false,
+        category = {Category.MONITORING},
+        headersClass = JMXConstants.class)
 public class JMXEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // error messages as constants so they can be asserted on from unit tests
     protected static final String ERR_PLATFORM_SERVER = "Monitor type consumer only supported on platform server.";
     protected static final String ERR_THRESHOLD_LOW = "ThresholdLow must be set when monitoring a gauge attribute.";
     protected static final String ERR_THRESHOLD_HIGH = "ThresholdHigh must be set when monitoring a gauge attribute.";
-    protected static final String ERR_GAUGE_NOTIFY
-            = "One or both of NotifyHigh and NotifyLow must be true when monitoring a gauge attribute.";
-    protected static final String ERR_STRING_NOTIFY
-            = "One or both of NotifyDiffer and NotifyMatch must be true when monitoring a string attribute.";
-    protected static final String ERR_STRING_TO_COMPARE
-            = "StringToCompare must be specified when monitoring a string attribute.";
+    protected static final String ERR_GAUGE_NOTIFY =
+            "One or both of NotifyHigh and NotifyLow must be true when monitoring a gauge attribute.";
+    protected static final String ERR_STRING_NOTIFY =
+            "One or both of NotifyDiffer and NotifyMatch must be true when monitoring a string attribute.";
+    protected static final String ERR_STRING_TO_COMPARE =
+            "StringToCompare must be specified when monitoring a string attribute.";
     protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
 
     /**
@@ -579,7 +587,10 @@ public class JMXEndpoint extends DefaultEndpoint implements EndpointServiceLocat
     private ObjectName buildObjectName() throws MalformedObjectNameException {
         ObjectName objectName;
         if (getObjectProperties() == null) {
-            StringBuilder sb = new StringBuilder(getObjectDomain()).append(':').append("name=").append(getObjectName());
+            StringBuilder sb = new StringBuilder(getObjectDomain())
+                    .append(':')
+                    .append("name=")
+                    .append(getObjectName());
             objectName = new ObjectName(sb.toString());
         } else {
             Hashtable<String, String> ht = new Hashtable<>(getObjectProperties());

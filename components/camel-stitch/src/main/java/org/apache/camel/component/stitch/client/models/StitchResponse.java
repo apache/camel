@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.LinkedHashMap;
@@ -69,7 +70,8 @@ public class StitchResponse implements StitchModel {
 
     public String toString() {
 
-        return "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: " + message;
+        return "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: "
+                + message;
     }
 
     @Override

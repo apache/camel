@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xtokenizer;
 
 import java.nio.file.Path;
@@ -40,7 +41,8 @@ public class XMLTokenSplitTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory, "xtokenizer"), body, Exchange.FILE_NAME, "orders.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -54,7 +56,8 @@ public class XMLTokenSplitTest extends CamelTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "xtokenizer2"), body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory, "xtokenizer2"), body, Exchange.FILE_NAME, "orders.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -81,13 +84,16 @@ public class XMLTokenSplitTest extends CamelTestSupport {
                 from(TestSupport.fileUri(testDirectory, "xtokenizer?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split().xtokenize("//orders/order", ns).to("mock:split");
+                        .split()
+                        .xtokenize("//orders/order", ns)
+                        .to("mock:split");
                 // END SNIPPET: e1
 
                 from(TestSupport.fileUri(testDirectory, "xtokenizer2?initialDelay=0&delay=10"))
                         // split the order child tags, and inherit namespaces from
                         // the orders root tag
-                        .split(body().xtokenize("//orders/order", ns)).to("mock:split");
+                        .split(body().xtokenize("//orders/order", ns))
+                        .to("mock:split");
             }
         };
     }

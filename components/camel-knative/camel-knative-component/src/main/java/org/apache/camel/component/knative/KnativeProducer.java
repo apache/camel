@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import java.util.ArrayList;
@@ -54,10 +55,8 @@ public class KnativeProducer extends DefaultAsyncProducer {
 
         CamelContext camelContext = getEndpoint().getCamelContext();
 
-        Processor pipeline = PluginHelper.getProcessorFactory(camelContext).createProcessor(
-                camelContext,
-                "Pipeline",
-                new Object[] { elements });
+        Processor pipeline = PluginHelper.getProcessorFactory(camelContext)
+                .createProcessor(camelContext, "Pipeline", new Object[] {elements});
 
         this.processor = AsyncProcessorConverterHelper.convert(pipeline);
     }

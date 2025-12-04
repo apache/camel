@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mail;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mail;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class MailEndpointTest extends CamelTestSupport {
 
@@ -84,8 +85,5 @@ public class MailEndpointTest extends CamelTestSupport {
         assertSame(myBnd, endpoint.getBinding());
     }
 
-    private static class MyMailBinding extends MailBinding {
-
-    }
-
+    private static class MyMailBinding extends MailBinding {}
 }

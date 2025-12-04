@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotAllowRedeliveryWhileStoppingTest extends ContextTestSupport {
 
@@ -50,8 +51,10 @@ public class NotAllowRedeliveryWhileStoppingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(
-                        defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(5000).allowRedeliveryWhileStopping(false));
+                errorHandler(defaultErrorHandler()
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(5000)
+                        .allowRedeliveryWhileStopping(false));
 
                 from("seda:start").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
             }

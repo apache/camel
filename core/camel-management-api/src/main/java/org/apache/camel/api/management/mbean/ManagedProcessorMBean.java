@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -66,7 +67,8 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Source file location (Short)")
     String getSourceLocationShort();
 
-    @ManagedAttribute(description = "Line number of this node in the source file (when loaded from a line number aware parser)")
+    @ManagedAttribute(
+            description = "Line number of this node in the source file (when loaded from a line number aware parser)")
     Integer getSourceLineNumber();
 
     @ManagedAttribute(description = "Whether this processor supports extended JMX information")
@@ -89,5 +91,4 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedOperation(description = "Dumps the processor as XML")
     String dumpProcessorAsXml() throws Exception;
-
 }

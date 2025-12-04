@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
@@ -43,7 +44,8 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
 
         if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException(
-                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: "
+                            + this);
         }
         if (original) {
             // ensure allow original is turned on
@@ -72,10 +74,17 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
                 || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
 
         OnCompletionProcessor answer = new OnCompletionProcessor(
-                camelContext, target, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
-                original, afterConsumer, definition.isRouteScoped());
+                camelContext,
+                target,
+                threadPool,
+                shutdownThreadPool,
+                isOnCompleteOnly,
+                isOnFailureOnly,
+                when,
+                original,
+                afterConsumer,
+                definition.isRouteScoped());
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
-
 }

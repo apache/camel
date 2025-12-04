@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,9 +30,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class KinesisEndpointTest {
@@ -47,9 +48,9 @@ public class KinesisEndpointTest {
 
     @Test
     public void allTheEndpointParams() {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
-                .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
-                             + "&maxResultsPerRequest=101" + "&iteratorType=latest" + "&shardId=abc" + "&sequenceNumber=123");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext.getEndpoint(
+                "aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient" + "&maxResultsPerRequest=101"
+                        + "&iteratorType=latest" + "&shardId=abc" + "&sequenceNumber=123");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
@@ -61,8 +62,8 @@ public class KinesisEndpointTest {
 
     @Test
     public void onlyRequiredEndpointParams() {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
-                .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)
+                camelContext.getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
@@ -72,9 +73,9 @@ public class KinesisEndpointTest {
 
     @Test
     public void afterSequenceNumberRequiresSequenceNumber() {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
-                .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
-                             + "&iteratorType=AFTER_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)
+                camelContext.getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
+                        + "&iteratorType=AFTER_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
@@ -85,9 +86,9 @@ public class KinesisEndpointTest {
 
     @Test
     public void atSequenceNumberRequiresSequenceNumber() {
-        Kinesis2Endpoint endpoint = (Kinesis2Endpoint) camelContext
-                .getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
-                             + "&iteratorType=AT_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
+        Kinesis2Endpoint endpoint = (Kinesis2Endpoint)
+                camelContext.getEndpoint("aws2-kinesis://some_stream_name" + "?amazonKinesisClient=#kinesisClient"
+                        + "&iteratorType=AT_SEQUENCE_NUMBER" + "&shardId=abc" + "&sequenceNumber=123");
 
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));

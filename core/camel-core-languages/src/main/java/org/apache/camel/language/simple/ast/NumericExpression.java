@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.CamelContext;
@@ -56,9 +57,13 @@ public class NumericExpression extends BaseSimpleNode {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                if (type == Object.class || type == int.class || type == Integer.class
-                        || type == long.class || type == Long.class
-                        || type == double.class || type == Double.class) {
+                if (type == Object.class
+                        || type == int.class
+                        || type == Integer.class
+                        || type == long.class
+                        || type == Long.class
+                        || type == double.class
+                        || type == Double.class) {
                     return type.cast(number);
                 }
                 return exchange.getContext().getTypeConverter().tryConvertTo(type, exchange, number);

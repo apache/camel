@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -44,7 +45,8 @@ public class SmppProducerReconnectManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producerr");
+                        .to(
+                                "smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=producerr");
             }
         };
     }

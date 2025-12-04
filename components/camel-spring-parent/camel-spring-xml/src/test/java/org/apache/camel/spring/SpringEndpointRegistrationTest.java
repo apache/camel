@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import org.springframework.beans.BeansException;
@@ -26,7 +27,6 @@ public class SpringEndpointRegistrationTest extends SpringEndpointPropertyTest {
     /**
      * This test fail during initialization if a bean is registered twice with the same id This is for CAMEL-18331
      */
-
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new NoRebindClassPathXmlApplicationContext("org/apache/camel/spring/SpringEndpointPropertyTest.xml");
@@ -36,7 +36,7 @@ public class SpringEndpointRegistrationTest extends SpringEndpointPropertyTest {
         public NoRebindClassPathXmlApplicationContext(String configLocation) throws BeansException {
             super((ApplicationContext) null);
             this.setAllowBeanDefinitionOverriding(false);
-            this.setConfigLocations(new String[] { configLocation });
+            this.setConfigLocations(new String[] {configLocation});
             this.refresh();
         }
     }

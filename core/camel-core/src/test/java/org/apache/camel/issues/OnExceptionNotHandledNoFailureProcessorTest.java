@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -49,12 +50,14 @@ public class OnExceptionNotHandledNoFailureProcessorTest extends ContextTestSupp
                 // as its a DLC it will handle it then
                 onException(RuntimeException.class).handled(false);
 
-                from("direct:start").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        throw new RuntimeException("FAIL!");
-                    }
-                }).to("mock:end");
+                from("direct:start")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                throw new RuntimeException("FAIL!");
+                            }
+                        })
+                        .to("mock:end");
             }
         };
     }

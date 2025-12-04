@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -31,10 +36,6 @@ import org.apache.camel.test.junit5.TestNameExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     public static final String REFLECTION_TEST_NAME = "Chucky";
@@ -88,7 +89,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         assertDoesNotThrow(() -> requestor.request("put", request));
     }
 
@@ -97,14 +98,14 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         assertDoesNotThrow(() -> requestorMessageInRoute.request("put", request));
     }
 
     @Test
     public void testInOnlyReflectRequestor() throws Exception {
         initializeTranceiver();
-        Object[] request = { REFLECTION_TEST_NAME };
+        Object[] request = {REFLECTION_TEST_NAME};
         reflectRequestor.request("setName", request);
         assertEquals(REFLECTION_TEST_NAME, testReflection.getName());
     }
@@ -114,7 +115,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         assertThrows(AvroRuntimeException.class, () -> {
             requestorMessageInRoute.request("throwException", request);
         });
@@ -125,7 +126,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         assertThrows(AvroRuntimeException.class, () -> {
             requestorForWrongMessages.request("get", request);
         });
@@ -134,7 +135,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     @Test
     public void testInOnlyReflectSingleParameterNotSet() throws Exception {
         initializeTranceiver();
-        Object[] request = { 100 };
+        Object[] request = {100};
         reflectRequestor.request("setAge", request);
         assertEquals(0, testReflection.getAge());
     }
@@ -144,7 +145,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         initializeTranceiver();
         TestPojo testPojo = new TestPojo();
         testPojo.setPojoName("pojo1");
-        Object[] request = { testPojo };
+        Object[] request = {testPojo};
         reflectRequestor.request("setTestPojo", request);
         assertEquals(testPojo.getPojoName(), testReflection.getTestPojo().getPojoName());
     }
@@ -156,7 +157,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         Key key = Key.newBuilder().setKey("2").build();
         Value value = Value.newBuilder().setValue("test value").build();
         keyValue.getStore().put(key, value);
-        Object[] request = { key };
+        Object[] request = {key};
         Object response = requestor.request("get", request);
         assertEquals(value, response);
     }
@@ -168,7 +169,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         Key key = Key.newBuilder().setKey("2").build();
         Value value = Value.newBuilder().setValue("test value").build();
         keyValue.getStore().put(key, value);
-        Object[] request = { key };
+        Object[] request = {key};
         Object response = requestorMessageInRoute.request("get", request);
         assertEquals(value, response);
     }
@@ -176,7 +177,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     @Test
     public void testInOutReflectRequestor() throws Exception {
         initializeTranceiver();
-        Object[] request = { REFLECTION_TEST_AGE };
+        Object[] request = {REFLECTION_TEST_AGE};
         Object response = reflectRequestor.request("increaseAge", request);
         assertEquals(testReflection.getAge(), response);
     }
@@ -186,7 +187,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         initializeTranceiver();
         TestPojo testPojo = new TestPojo();
         testPojo.setPojoName("pojo2");
-        Object[] request = { testPojo };
+        Object[] request = {testPojo};
         reflectRequestor.request("setTestPojo", request);
         request = new Object[0];
         Object response = reflectRequestor.request("getTestPojo", request);

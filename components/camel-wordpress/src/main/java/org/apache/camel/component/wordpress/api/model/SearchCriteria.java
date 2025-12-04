@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
@@ -85,5 +86,4 @@ public class SearchCriteria implements Serializable {
     public String toString() {
         return "SearchCriteria{Query=" + search + ", Page=" + page + ", Per Page=" + perPage + ", " + order + "}";
     }
-
 }

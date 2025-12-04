@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.Map;
@@ -43,6 +44,7 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
         implements ServiceLoadBalancerFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
+
     @XmlTransient
     private final String factoryKey;
 
@@ -89,8 +91,8 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
         ServiceLoadBalancer answer;
 
         // First try to find the factory from the registry.
-        ServiceLoadBalancerFactory factory
-                = CamelContextHelper.lookup(camelContext, factoryKey, ServiceLoadBalancerFactory.class);
+        ServiceLoadBalancerFactory factory =
+                CamelContextHelper.lookup(camelContext, factoryKey, ServiceLoadBalancerFactory.class);
         if (factory != null) {
             // If a factory is found in the registry do not re-configure it as
             // it should be pre-configured.
@@ -99,19 +101,22 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getCamelContextExtension()
-                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey).orElseThrow();
+                type = camelContext
+                        .getCamelContextExtension()
+                        .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH)
+                        .findClass(factoryKey)
+                        .orElseThrow();
             } catch (Exception e) {
                 throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (ServiceLoadBalancerFactory.class.isAssignableFrom(type)) {
-                factory = (ServiceLoadBalancerFactory) camelContext.getInjector().newInstance(type, false);
+                factory =
+                        (ServiceLoadBalancerFactory) camelContext.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException(
-                        "Resolving LoadBalancer: " + factoryKey
-                                                   + " detected type conflict: Not a LoadBalancerFactory implementation. Found: "
-                                                   + type.getName());
+                throw new IllegalArgumentException("Resolving LoadBalancer: " + factoryKey
+                        + " detected type conflict: Not a LoadBalancerFactory implementation. Found: "
+                        + type.getName());
             }
 
             try {
@@ -148,5 +153,4 @@ public class ServiceCallServiceLoadBalancerConfiguration extends ServiceCallConf
 
         return answer;
     }
-
 }

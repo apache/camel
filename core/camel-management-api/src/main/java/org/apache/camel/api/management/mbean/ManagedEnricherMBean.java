@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -21,13 +22,15 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedEnricherMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
+public interface ManagedEnricherMBean
+        extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
-                      mask = true)
+    @ManagedAttribute(
+            description = "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+            mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "Variable as the source for the message body to send")
@@ -36,20 +39,23 @@ public interface ManagedEnricherMBean extends ManagedProcessorMBean, ManagedExte
     @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
     String getVariableReceive();
 
-    @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
+    @ManagedAttribute(
+            description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 
-    @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
+    @ManagedAttribute(
+            description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoint();
 
     @ManagedAttribute(description = "Shares the UnitOfWork with the parent and the resource exchange")
     Boolean isShareUnitOfWork();
 
-    @ManagedAttribute(description = "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
+    @ManagedAttribute(
+            description =
+                    "Whether to aggregate when there was an exception thrown during calling the resource endpoint")
     Boolean isAggregateOnException();
 
     @Override
     @ManagedOperation(description = "Statistics of the endpoints that has been enriched from")
     TabularData extendedInformation();
-
 }

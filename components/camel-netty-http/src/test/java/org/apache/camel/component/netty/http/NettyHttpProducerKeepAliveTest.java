@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -23,19 +26,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
 
     @Test
     public void testHttpKeepAlive() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
-        String out
-                = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello World", String.class);
+        String out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello Again", String.class);
+        out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo?keepAlive=true", "Hello Again", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -45,11 +47,12 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     public void testHttpKeepAliveFalse() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
-        String out
-                = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello World", String.class);
+        String out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        out = template.requestBody("netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello Again", String.class);
+        out = template.requestBody(
+                "netty-http:http://localhost:{{port}}/foo?keepAlive=false", "Hello Again", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -58,11 +61,13 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     @Test
     public void testConnectionClosed() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        Exchange ex = template.request("netty-http:http://localhost:{{port}}/bar?keepAlive=false",
+        Exchange ex = template.request(
+                "netty-http:http://localhost:{{port}}/bar?keepAlive=false",
                 exchange -> exchange.getIn().setBody("Hello World"));
 
         MockEndpoint.assertIsSatisfied(context);
-        assertEquals(HttpHeaderValues.CLOSE.toString(), ex.getMessage().getHeader(HttpHeaderNames.CONNECTION.toString()));
+        assertEquals(
+                HttpHeaderValues.CLOSE.toString(), ex.getMessage().getHeader(HttpHeaderNames.CONNECTION.toString()));
     }
 
     @Override
@@ -72,12 +77,15 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://localhost:{{port}}/foo")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
-                from("netty-http:http://localhost:{{port}}/bar").removeHeaders("*").to("mock:input").transform()
+                from("netty-http:http://localhost:{{port}}/bar")
+                        .removeHeaders("*")
+                        .to("mock:input")
+                        .transform()
                         .constant("Bye World");
             }
         };
     }
-
 }

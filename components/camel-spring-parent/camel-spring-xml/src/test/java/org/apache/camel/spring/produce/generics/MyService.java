@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.produce.generics;
 
 public interface MyService<N extends Number> {
 
     N sqrt(N number);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
 
 import java.util.ArrayList;
@@ -40,18 +41,26 @@ public class MultiRestConsumer extends DefaultConsumer {
 
     private List<Consumer> delegateConsumers;
 
-    public MultiRestConsumer(CamelContext context, RestConsumerFactory factory, Endpoint endpoint, Processor processor,
-                             List<String> methods, String url, String path, RestConfiguration config,
-                             ConsumerConfigurer configurer) throws Exception {
+    public MultiRestConsumer(
+            CamelContext context,
+            RestConsumerFactory factory,
+            Endpoint endpoint,
+            Processor processor,
+            List<String> methods,
+            String url,
+            String path,
+            RestConfiguration config,
+            ConsumerConfigurer configurer)
+            throws Exception {
         super(endpoint, processor);
         this.delegateConsumers = new ArrayList<>();
         for (String method : methods) {
-            Consumer consumer = factory.createConsumer(context, processor, method, path,
-                    null, null, null, config, Collections.emptyMap());
+            Consumer consumer = factory.createConsumer(
+                    context, processor, method, path, null, null, null, config, Collections.emptyMap());
             configurer.configure(consumer);
 
-            context.getRestRegistry().addRestService(consumer, false, url, url, path, null, method,
-                    null, null, null, null, null, null);
+            context.getRestRegistry()
+                    .addRestService(consumer, false, url, url, path, null, method, null, null, null, null, null, null);
 
             this.delegateConsumers.add(consumer);
         }

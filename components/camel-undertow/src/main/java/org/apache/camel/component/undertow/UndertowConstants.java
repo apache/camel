@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import io.undertow.util.Headers;
@@ -28,6 +29,7 @@ public final class UndertowConstants {
      */
     @Metadata(javaType = "String")
     public static final String CONNECTION_KEY = "websocket.connectionKey";
+
     @Metadata(label = "producer", description = "The list of websocket connection keys", javaType = "List<String>")
     public static final String CONNECTION_KEY_LIST = "websocket.connectionKey.list";
     /**
@@ -36,35 +38,52 @@ public final class UndertowConstants {
      */
     @Metadata(javaType = "Boolean")
     public static final String SEND_TO_ALL = "websocket.sendToAll";
-    @Metadata(label = "consumer", description = "The numeric identifier of the type of websocket event", javaType = "Integer",
-              important = true)
+
+    @Metadata(
+            label = "consumer",
+            description = "The numeric identifier of the type of websocket event",
+            javaType = "Integer",
+            important = true)
     public static final String EVENT_TYPE = "websocket.eventType";
-    @Metadata(label = "consumer", description = "The type of websocket event",
-              javaType = "org.apache.camel.component.undertow.UndertowConstants.EventType")
+
+    @Metadata(
+            label = "consumer",
+            description = "The type of websocket event",
+            javaType = "org.apache.camel.component.undertow.UndertowConstants.EventType")
     public static final String EVENT_TYPE_ENUM = "websocket.eventTypeEnum";
     /**
      * The {@link WebSocketChannel} through which the {@code message} was received
      */
     @Metadata(label = "consumer", javaType = "io.undertow.websockets.core.WebSocketChannel")
     public static final String CHANNEL = "websocket.channel";
-    @Metadata(label = "consumer", description = "The exchange for the websocket transport, only available for ON_OPEN events",
-              javaType = "io.undertow.websockets.spi.WebSocketHttpExchange")
+
+    @Metadata(
+            label = "consumer",
+            description = "The exchange for the websocket transport, only available for ON_OPEN events",
+            javaType = "io.undertow.websockets.spi.WebSocketHttpExchange")
     public static final String EXCHANGE = "websocket.exchange";
 
     @Metadata(description = "The http response code", javaType = "Integer", important = true)
     public static final String HTTP_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
+
     @Metadata(description = "The content type", javaType = "String", important = true)
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
+
     @Metadata(label = "consumer", description = "The http character encoding", javaType = "String")
     public static final String HTTP_CHARACTER_ENCODING = Exchange.HTTP_CHARACTER_ENCODING;
+
     @Metadata(description = "The http path", javaType = "String")
     public static final String HTTP_PATH = Exchange.HTTP_PATH;
+
     @Metadata(description = "The http query", javaType = "String")
     public static final String HTTP_QUERY = Exchange.HTTP_QUERY;
+
     @Metadata(description = "The http URI", javaType = "String")
     public static final String HTTP_URI = Exchange.HTTP_URI;
+
     @Metadata(label = "producer", description = "The http method", javaType = "String")
     public static final String HTTP_METHOD = Exchange.HTTP_METHOD;
+
     @Metadata(label = "producer", description = "The host http header", javaType = "String")
     public static final String HOST_STRING = Headers.HOST_STRING;
 
@@ -110,7 +129,8 @@ public final class UndertowConstants {
                 case -1:
                     return ONERROR;
                 default:
-                    throw new IllegalArgumentException("Cannot find an " + EventType.class.getName() + " for code " + code);
+                    throw new IllegalArgumentException(
+                            "Cannot find an " + EventType.class.getName() + " for code " + code);
             }
         }
     }
@@ -118,7 +138,5 @@ public final class UndertowConstants {
     public static final String WS_PROTOCOL = "ws";
     public static final String WSS_PROTOCOL = "wss";
 
-    private UndertowConstants() {
-    }
-
+    private UndertowConstants() {}
 }

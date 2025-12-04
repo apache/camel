@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.fhir.services;
 
 import org.apache.camel.test.infra.fhir.common.FhirProperties;
@@ -47,7 +48,8 @@ public class FhirRemoteInfraService implements FhirInfraService {
 
     @Override
     public Integer getPort() {
-        String port = System.getProperty(FhirProperties.SERVICE_PORT, String.valueOf(FhirProperties.DEFAULT_SERVICE_PORT));
+        String port =
+                System.getProperty(FhirProperties.SERVICE_PORT, String.valueOf(FhirProperties.DEFAULT_SERVICE_PORT));
         return Integer.valueOf(port);
     }
 }

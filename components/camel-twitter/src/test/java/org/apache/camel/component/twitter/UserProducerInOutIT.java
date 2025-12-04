@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -31,16 +37,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twitter4j.v1.Status;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Tests posting a twitter update and getting the status update id from the Twitter API response
  */
-@EnabledIfSystemProperty(named = "enable.twitter.itests", matches = "true",
-                         disabledReason = "Likely has API limits, so it's better to keep it off by default")
+@EnabledIfSystemProperty(
+        named = "enable.twitter.itests",
+        matches = "true",
+        disabledReason = "Likely has API limits, so it's better to keep it off by default")
 public class UserProducerInOutIT extends CamelTwitterITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutIT.class);
@@ -77,11 +80,11 @@ public class UserProducerInOutIT extends CamelTwitterITSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:tweets")
-                        //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
+                        // .to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to(ExchangePattern.InOut, "twitter-timeline://user?" + getUriTokens())
-                        //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        //.transform().simple("The tweet '${body.text}' was published with the id '${body.id}'")
-                        //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
+                        // .to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
+                        // .transform().simple("The tweet '${body.text}' was published with the id '${body.id}'")
+                        // .to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.holder;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class MyProcessor implements Processor {
                 customer.value = "newCustomer";
             }
             parameters.add(0, "Ordered ammount " + amount);
-            //reuse the MessageContentList at this time to test CAMEL-4113
+            // reuse the MessageContentList at this time to test CAMEL-4113
             exchange.getMessage().setBody(parameters);
         } else {
             List<Object> parameters = in.getBody(List.class);
@@ -46,7 +47,7 @@ public class MyProcessor implements Processor {
             Holder<String> securityOrder = (Holder<String>) parameters.get(0);
             securityOrder.value = "secureParts";
             parameters.add(0, "Ordered ammount " + amount);
-            //reuse the MessageContentList at this time to test CAMEL-4113
+            // reuse the MessageContentList at this time to test CAMEL-4113
             exchange.getMessage().setBody(parameters);
         }
     }

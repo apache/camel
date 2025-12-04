@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +29,6 @@ import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupport {
 
     @Test
@@ -35,8 +36,11 @@ public class CaffeineCacheStatsCounterProducerTest extends CaffeineCacheTestSupp
         final Map<String, String> map = generateRandomMapOfString(3);
         final Set<String> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT_ALL).withBody(map)
-                .to("direct://start").send();
+        fluentTemplate()
+                .withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT_ALL)
+                .withBody(map)
+                .to("direct://start")
+                .send();
 
         MockEndpoint mock1 = getMockEndpoint("mock:result");
         mock1.expectedMinimumMessageCount(1);

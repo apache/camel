@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.it;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
 
 /**
  * Integration test that verifies the ability of SJMS to correctly process asynchronous InOut exchanges from both the
@@ -57,7 +58,8 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
             public void configure() {
 
                 from("seda:start.queue.AsyncJmsInOutIT")
-                        .to("sjms:queue:in.foo.queue.AsyncJmsInOutIT?asyncConsumer=true&replyTo=out.bar&exchangePattern=InOut")
+                        .to(
+                                "sjms:queue:in.foo.queue.AsyncJmsInOutIT?asyncConsumer=true&replyTo=out.bar&exchangePattern=InOut")
                         .to("mock:result");
 
                 from("sjms:queue:in.foo.queue.AsyncJmsInOutIT?asyncConsumer=true")

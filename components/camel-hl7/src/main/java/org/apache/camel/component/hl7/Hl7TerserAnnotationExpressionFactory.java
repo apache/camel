@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.lang.annotation.Annotation;
@@ -31,7 +32,9 @@ public class Hl7TerserAnnotationExpressionFactory extends DefaultAnnotationExpre
 
     @Override
     public Expression createExpression(
-            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            CamelContext camelContext,
+            Annotation annotation,
+            LanguageAnnotation languageAnnotation,
             Class<?> expressionReturnType) {
 
         String hl7 = getExpressionFromAnnotation(annotation);

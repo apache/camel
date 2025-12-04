@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nitrite;
 
 import org.dizitart.no2.IndexType;
@@ -21,19 +22,16 @@ import org.dizitart.no2.objects.Id;
 import org.dizitart.no2.objects.Index;
 import org.dizitart.no2.objects.Indices;
 
-@Indices({
-        @Index(value = "key1", type = IndexType.NonUnique),
-        @Index(value = "key2", type = IndexType.Unique)
-})
+@Indices({@Index(value = "key1", type = IndexType.NonUnique), @Index(value = "key2", type = IndexType.Unique)})
 public class MyPersistentObject {
     @Id
     private long id;
+
     private String key1;
     private String key2;
     private String key3;
 
-    public MyPersistentObject() {
-    }
+    public MyPersistentObject() {}
 
     public MyPersistentObject(long id, String key1, String key2, String key3) {
         this.id = id;

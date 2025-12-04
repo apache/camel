@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CamelContextAutoStartupTest {
 
     private AbstractXmlApplicationContext ac;
@@ -36,7 +37,8 @@ public class CamelContextAutoStartupTest {
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestFalse.xml");
 
-        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext camel =
+                ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertNotNull(camel.getName());
         assertEquals(true, camel.isStarted());
         assertEquals(Boolean.FALSE, camel.isAutoStartup());
@@ -67,7 +69,8 @@ public class CamelContextAutoStartupTest {
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelContextAutoStartupTestTrue.xml");
 
-        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext camel =
+                ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertNotNull(camel.getName());
         assertEquals(true, camel.isStarted());
         assertEquals(Boolean.TRUE, camel.isAutoStartup());
@@ -88,6 +91,5 @@ public class CamelContextAutoStartupTest {
     @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(ac);
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
 
 import io.methvin.watcher.hashing.FileHasher;
@@ -31,52 +32,77 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Get notified about file events in a directory using {@link java.nio.file.WatchService}.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "file-watch", title = "File Watch", syntax = "file-watch:path",
-             category = { Category.FILE }, consumerOnly = true, headersClass = FileWatchConstants.class)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "file-watch",
+        title = "File Watch",
+        syntax = "file-watch:path",
+        category = {Category.FILE},
+        consumerOnly = true,
+        headersClass = FileWatchConstants.class)
 public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriPath(description = "Path of directory to consume events from.")
     @Metadata(required = true)
     private String path;
-    @UriParam(description = "Comma separated list of events to watch. Possible values: CREATE,MODIFY,DELETE",
-              defaultValue = "CREATE,MODIFY,DELETE")
+
+    @UriParam(
+            description = "Comma separated list of events to watch. Possible values: CREATE,MODIFY,DELETE",
+            defaultValue = "CREATE,MODIFY,DELETE")
     private String events = "CREATE,MODIFY,DELETE";
+
     @UriParam(description = "Auto create directory if does not exist.", defaultValue = "true")
     private boolean autoCreate = true;
-    @UriParam(description = "Watch recursive in current and child directories (including newly created directories).",
-              defaultValue = "true")
+
+    @UriParam(
+            description = "Watch recursive in current and child directories (including newly created directories).",
+            defaultValue = "true")
     private boolean recursive = true;
-    @UriParam(label = "advanced",
-              description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
-              defaultValue = "1")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
+            defaultValue = "1")
     private int concurrentConsumers;
-    @UriParam(label = "advanced",
-              description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
-              defaultValue = "1")
+
+    @UriParam(
+            label = "advanced",
+            description =
+                    "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
+            defaultValue = "1")
     private int pollThreads;
-    @UriParam(description = "ANT style pattern to match files. The file is matched against path relative to endpoint path. "
+
+    @UriParam(
+            description =
+                    "ANT style pattern to match files. The file is matched against path relative to endpoint path. "
                             + "Pattern must be also relative (not starting with slash)",
-              defaultValue = "**")
+            defaultValue = "**")
     private String antInclude;
-    @UriParam(label = "advanced",
-              description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
-              defaultValue = "" + Integer.MAX_VALUE)
+
+    @UriParam(
+            label = "advanced",
+            description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
+            defaultValue = "" + Integer.MAX_VALUE)
     private int queueSize;
-    @UriParam(label = "advanced",
-              description = "Reference to io.methvin.watcher.hashing.FileHasher. "
-                            + "This prevents emitting duplicate events on some platforms. "
-                            + "For working with large files and if you dont need detect multiple modifications per second per file, "
-                            + "use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry.",
-              defaultValue = "#murmur3FFileHasher")
+
+    @UriParam(
+            label = "advanced",
+            description = "Reference to io.methvin.watcher.hashing.FileHasher. "
+                    + "This prevents emitting duplicate events on some platforms. "
+                    + "For working with large files and if you dont need detect multiple modifications per second per file, "
+                    + "use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry.",
+            defaultValue = "#murmur3FFileHasher")
     private FileHasher fileHasher;
-    @UriParam(description = "Enables or disables file hashing to detect duplicate events. "
-                            + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
-                            + "Check java.nio.file.WatchService limitations for your target platform.",
-              defaultValue = "true")
+
+    @UriParam(
+            description = "Enables or disables file hashing to detect duplicate events. "
+                    + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
+                    + "Check java.nio.file.WatchService limitations for your target platform.",
+            defaultValue = "true")
     private boolean useFileHashing;
 
-    public FileWatchEndpoint() {
-    }
+    public FileWatchEndpoint() {}
 
     public FileWatchEndpoint(String uri, FileWatchComponent component) {
         super(uri, component);

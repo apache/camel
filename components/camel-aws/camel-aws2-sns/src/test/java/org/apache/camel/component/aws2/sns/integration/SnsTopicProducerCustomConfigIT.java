@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,8 +28,6 @@ import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SnsTopicProducerCustomConfigIT extends Aws2SNSBase {
 
@@ -63,7 +64,8 @@ public class SnsTopicProducerCustomConfigIT extends Aws2SNSBase {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("aws2-sns://%s?subject=The+subject+message&configuration=#class:%s&autoCreateTopic=true",
+                        .toF(
+                                "aws2-sns://%s?subject=The+subject+message&configuration=#class:%s&autoCreateTopic=true",
                                 sharedNameGenerator.getName(), TestSnsConfiguration.class.getName());
             }
         };

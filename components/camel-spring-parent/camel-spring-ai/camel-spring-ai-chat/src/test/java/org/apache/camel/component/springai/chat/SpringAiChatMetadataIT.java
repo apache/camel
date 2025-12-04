@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +25,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for message metadata functionality.
@@ -56,8 +57,10 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
 
         var exchange = template().request("direct:chat", e -> {
             e.getIn().setBody("Tell me one exercise.");
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are a fitness coach. Recommend one physical activity.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are a fitness coach. Recommend one physical activity.");
             e.getIn().setHeader(SpringAiChatConstants.SYSTEM_METADATA, systemMetadata);
         });
 
@@ -78,8 +81,10 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
 
         var exchange = template().request("direct:chat", e -> {
             e.getIn().setBody("What is 2 + 2?");
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are a math tutor. Provide clear, concise answers.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are a math tutor. Provide clear, concise answers.");
             e.getIn().setHeader(SpringAiChatConstants.USER_METADATA, userMetadata);
             e.getIn().setHeader(SpringAiChatConstants.SYSTEM_METADATA, systemMetadata);
         });
@@ -92,8 +97,8 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
     @Test
     public void testUserMetadataViaEndpointConfiguration() {
         // Metadata is bound in the route builder
-        String response = template().requestBody("direct:chat-with-metadata",
-                "What is the capital of Italy?", String.class);
+        String response =
+                template().requestBody("direct:chat-with-metadata", "What is the capital of Italy?", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response.toLowerCase()).contains("rome");
@@ -143,8 +148,10 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
         // This demonstrates Camel's nested property binding for Map types
         var exchange = template().request("direct:chat-url-params", e -> {
             e.getIn().setBody("What is the capital of Spain?");
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are a geography expert. Provide short, accurate answers.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are a geography expert. Provide short, accurate answers.");
         });
 
         String response = exchange.getMessage().getBody(String.class);
@@ -156,8 +163,7 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
     public void testMetadataUrlParametersWithoutSystemMessage() {
         // Test metadata via URL parameters without system message
         // Only userMetadata should be applied
-        String response = template().requestBody("direct:chat-url-params",
-                "What is 5 * 5?", String.class);
+        String response = template().requestBody("direct:chat-url-params", "What is 5 * 5?", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response).contains("25");
@@ -214,8 +220,8 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
         assertThat(response).isNotNull();
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> metadata
-                = exchange.getMessage().getHeader(SpringAiChatConstants.RESPONSE_METADATA, Map.class);
+        Map<String, Object> metadata =
+                exchange.getMessage().getHeader(SpringAiChatConstants.RESPONSE_METADATA, Map.class);
 
         if (metadata != null) {
             assertThat(metadata).isNotEmpty();
@@ -262,25 +268,24 @@ public class SpringAiChatMetadataIT extends OllamaTestSupport {
                 getCamelContext().getRegistry().bind("defaultUserMetadata", defaultUserMetadata);
                 getCamelContext().getRegistry().bind("defaultSystemMetadata", defaultSystemMetadata);
 
-                from("direct:chat")
-                        .to("spring-ai-chat:test?chatModel=#chatModel");
+                from("direct:chat").to("spring-ai-chat:test?chatModel=#chatModel");
 
                 from("direct:chat-with-metadata")
                         .to("spring-ai-chat:metadata?chatModel=#chatModel"
-                            + "&userMetadata=#defaultUserMetadata"
-                            + "&systemMetadata=#defaultSystemMetadata");
+                                + "&userMetadata=#defaultUserMetadata"
+                                + "&systemMetadata=#defaultSystemMetadata");
 
                 from("direct:chat-prompt")
                         .to("spring-ai-chat:prompt?chatModel=#chatModel"
-                            + "&chatOperation=CHAT_SINGLE_MESSAGE_WITH_PROMPT");
+                                + "&chatOperation=CHAT_SINGLE_MESSAGE_WITH_PROMPT");
 
                 // Route demonstrating URL parameter syntax for metadata
                 // This shows how to set metadata using nested properties in the endpoint URI
                 from("direct:chat-url-params")
                         .to("spring-ai-chat:urlparams?chatModel=#chatModel"
-                            + "&userMetadata.test=t1"
-                            + "&userMetadata.test2=t2"
-                            + "&systemMetadata.test3=r3");
+                                + "&userMetadata.test=t1"
+                                + "&userMetadata.test2=t2"
+                                + "&systemMetadata.test3=r3");
             }
         };
     }

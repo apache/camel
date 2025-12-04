@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 /**
  * This class loader is used to help us load the CamelVelocityClasspathResourceLoader in OSGi
  */
 public class CamelVelocityDelegateClassLoader extends ClassLoader {
-    private static final String CAMEL_VELOCITY_CLASSPATH_RESOURCE_LOADER
-            = CamelVelocityClasspathResourceLoader.class.getName();
+    private static final String CAMEL_VELOCITY_CLASSPATH_RESOURCE_LOADER =
+            CamelVelocityClasspathResourceLoader.class.getName();
 
     CamelVelocityDelegateClassLoader(ClassLoader parent) {
         super(parent);
@@ -33,7 +34,5 @@ public class CamelVelocityDelegateClassLoader extends ClassLoader {
             return CamelVelocityClasspathResourceLoader.class;
         }
         return super.findClass(name);
-
     }
-
 }

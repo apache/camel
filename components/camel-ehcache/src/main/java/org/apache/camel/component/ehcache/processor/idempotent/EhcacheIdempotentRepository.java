@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache.processor.idempotent;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -27,15 +28,17 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses EHCache cache to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses EHCache cache to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "EHCache based message id repository")
 public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     @Metadata(description = "Name of cache", defaultValue = "EhcacheIdempotentRepository")
     private String cacheName;
+
     private Cache<String, Boolean> cache;
     private EhcacheManager cacheManager;
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 import javax.management.JMException;
@@ -60,7 +61,8 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
         // prefer to use the managed instance if it has been annotated with Spring JMX annotations
         if (obj instanceof ManagedInstance) {
             Object custom = ((ManagedInstance) obj).getInstance();
-            if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
+            if (custom != null
+                    && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
                 LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info from the custom managed object
                 mbi = springAssembler.getMBeanInfo(custom, name.toString());
@@ -98,5 +100,4 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
 
         return mbean;
     }
-
 }

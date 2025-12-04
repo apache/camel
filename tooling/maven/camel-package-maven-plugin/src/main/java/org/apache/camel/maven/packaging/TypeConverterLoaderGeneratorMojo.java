@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.maven.packaging.SchemaHelper.dashToCamelCase;
+import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -48,19 +52,21 @@ import org.jboss.jandex.Index;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
-import static org.apache.camel.maven.packaging.SchemaHelper.dashToCamelCase;
-import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.readJandexIndex;
-
-@Mojo(name = "generate-type-converter-loader", threadSafe = true,
-      requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "generate-type-converter-loader",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName CONVERTER_ANNOTATION = DotName.createSimple("org.apache.camel.Converter");
 
     @Parameter(defaultValue = "${project.build.outputDirectory}")
     protected File classesDirectory;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File resourcesOutputDir;
 
@@ -97,7 +103,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         annotations.stream()
                 .filter(annotation -> annotation.target().kind() == Kind.CLASS)
                 .filter(annotation -> annotation.target().asClass().nestingType() == NestingType.TOP_LEVEL)
-                .filter(annotation -> asBoolean(annotation, "generateLoader") || asBoolean(annotation, "generateBulkLoader"))
+                .filter(annotation ->
+                        asBoolean(annotation, "generateLoader") || asBoolean(annotation, "generateBulkLoader"))
                 .forEach(annotation -> {
                     classesCounter.incrementAndGet();
                     String currentClass = annotation.target().asClass().name().toString();
@@ -108,7 +115,11 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                     classConverters.setIgnoreOnLoadError(asBoolean(annotation, "ignoreOnLoadError"));
                     annotations.stream()
                             .filter(an -> an.target().kind() == Kind.METHOD)
-                            .filter(an -> currentClass.equals(an.target().asMethod().declaringClass().name().toString()))
+                            .filter(an -> currentClass.equals(an.target()
+                                    .asMethod()
+                                    .declaringClass()
+                                    .name()
+                                    .toString()))
                             .forEach(an -> {
                                 // is the method annotated with @Converter
                                 MethodInfo ee = an.target().asMethod();
@@ -143,7 +154,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             boolean base = "camel-base".equals(project.getArtifactId());
             String source = writeBulkLoader(fqn, bulkConverters, base);
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", source);
-            updateResource(resourcesOutputDir.toPath(),
+            updateResource(
+                    resourcesOutputDir.toPath(),
                     "META-INF/services/org/apache/camel/TypeConverterLoader",
                     "# " + GENERATED_MSG + NL + String.join(NL, fqn) + NL);
         }
@@ -153,7 +165,8 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 String source = writeLoader(currentClass, classConverters);
                 updateResource(sourcesOutputDir.toPath(), currentClass.replace('.', '/') + ".java", source);
             });
-            updateResource(resourcesOutputDir.toPath(),
+            updateResource(
+                    resourcesOutputDir.toPath(),
                     "META-INF/services/org/apache/camel/TypeConverterLoader",
                     "# " + GENERATED_MSG + NL + String.join(NL, converters.keySet()) + NL);
         }
@@ -169,8 +182,14 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 Integer order2 = asInteger(o2.annotation(CONVERTER_ANNOTATION), "order");
                 sort = order1.compareTo(order2);
                 if (sort == 0) {
-                    String str1 = o1.parameterTypes().stream().findFirst().map(Type::toString).orElse("");
-                    String str2 = o2.parameterTypes().stream().findFirst().map(Type::toString).orElse("");
+                    String str1 = o1.parameterTypes().stream()
+                            .findFirst()
+                            .map(Type::toString)
+                            .orElse("");
+                    String str2 = o2.parameterTypes().stream()
+                            .findFirst()
+                            .map(Type::toString)
+                            .orElse("");
                     return str1.compareTo(str2);
                 }
             }
@@ -198,7 +217,6 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
      * @param  method The converter method
      * @return        A string with the converter arguments
      */
-
     public String getGenericArgumentsForTypeConvertible(MethodInfo method) {
         StringBuilder writer = new StringBuilder(4096);
 
@@ -266,9 +284,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     public String toString(Type type) {
-        return type.toString()
-                .replaceAll("<.*>", "")
-                .replace('$', '.');
+        return type.toString().replaceAll("<.*>", "").replace('$', '.');
     }
 
     public String toJava(MethodInfo converter, Set<String> converterClasses) {
@@ -282,9 +298,9 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
         // the 2nd parameter is optional and can either be Exchange or CamelContext
         String param = "";
-        String paramType
-                = converter.parameterTypes().size() == 2
-                        ? converter.parameterTypes().get(1).asClassType().name().toString() : null;
+        String paramType = converter.parameterTypes().size() == 2
+                ? converter.parameterTypes().get(1).asClassType().name().toString()
+                : null;
         if (paramType != null) {
             if ("org.apache.camel.Exchange".equals(paramType)) {
                 param = ", exchange";
@@ -305,9 +321,11 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             converterClasses.add(converter.declaringClass().toString());
             pfx = "get" + converter.declaringClass().simpleName() + "()." + converter.name();
         }
-        String type = toString(converter.parameterTypes().get(converter.parameterTypes().size() - 2));
+        String type = toString(
+                converter.parameterTypes().get(converter.parameterTypes().size() - 2));
         String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
-        return pfx + "(type, " + (converter.parameterTypes().size() == 4 ? "exchange, " : "") + cast + "value" + ", registry)";
+        return pfx + "(type, " + (converter.parameterTypes().size() == 4 ? "exchange, " : "") + cast + "value"
+                + ", registry)";
     }
 
     public boolean isFallbackCanPromote(MethodInfo element) {
@@ -350,7 +368,9 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         void addTypeConverter(Type to, Type from, MethodInfo ee) {
-            converters.computeIfAbsent(toString(to), c -> new TreeMap<>(comparator)).put(from, ee);
+            converters
+                    .computeIfAbsent(toString(to), c -> new TreeMap<>(comparator))
+                    .put(from, ee);
             size++;
         }
 
@@ -380,11 +400,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         private static String toString(Type type) {
-            return type.toString()
-                    .replaceAll("<.*>", "")
-                    .replace('$', '.');
+            return type.toString().replaceAll("<.*>", "").replace('$', '.');
         }
-
     }
-
 }

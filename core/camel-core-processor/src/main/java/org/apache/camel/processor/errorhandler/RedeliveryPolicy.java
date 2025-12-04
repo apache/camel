@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.io.Serial;
@@ -117,34 +118,33 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean allowRedeliveryWhileStopping = true;
     protected String exchangeFormatterRef;
 
-    public RedeliveryPolicy() {
-    }
+    public RedeliveryPolicy() {}
 
     @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
-               + ", redeliveryDelay=" + redeliveryDelay
-               + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
-               + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
-               + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
-               + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
-               + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
-               + ", retryAttemptedLogInterval=" + retryAttemptedLogInterval
-               + ", logRetryAttempted=" + logRetryAttempted
-               + ", logStackTrace=" + logStackTrace
-               + ", logRetryStackTrace=" + logRetryStackTrace
-               + ", logHandled=" + logHandled
-               + ", logContinued=" + logContinued
-               + ", logExhausted=" + logExhausted
-               + ", logNewException=" + logNewException
-               + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
-               + ", logExhaustedMessageBody=" + logExhaustedMessageBody
-               + ", useExponentialBackOff=" + useExponentialBackOff
-               + ", backOffMultiplier=" + backOffMultiplier
-               + ", useCollisionAvoidance=" + useCollisionAvoidance
-               + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
-               + ", delayPattern=" + delayPattern
-               + ", exchangeFormatterRef=" + exchangeFormatterRef + "]";
+                + ", redeliveryDelay=" + redeliveryDelay
+                + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
+                + ", asyncDelayedRedelivery=" + asyncDelayedRedelivery
+                + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
+                + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
+                + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
+                + ", retryAttemptedLogInterval=" + retryAttemptedLogInterval
+                + ", logRetryAttempted=" + logRetryAttempted
+                + ", logStackTrace=" + logStackTrace
+                + ", logRetryStackTrace=" + logRetryStackTrace
+                + ", logHandled=" + logHandled
+                + ", logContinued=" + logContinued
+                + ", logExhausted=" + logExhausted
+                + ", logNewException=" + logNewException
+                + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
+                + ", logExhaustedMessageBody=" + logExhaustedMessageBody
+                + ", useExponentialBackOff=" + useExponentialBackOff
+                + ", backOffMultiplier=" + backOffMultiplier
+                + ", useCollisionAvoidance=" + useCollisionAvoidance
+                + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
+                + ", delayPattern=" + delayPattern
+                + ", exchangeFormatterRef=" + exchangeFormatterRef + "]";
     }
 
     public RedeliveryPolicy copy() {
@@ -238,8 +238,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
              * go in that direction. -cgs
              */
             Random random = getRandomNumberGenerator(); // NOSONAR
-            double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
-                              * random.nextDouble();
+            double variance =
+                    (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor) * random.nextDouble();
             redeliveryDelayResult += (long) (redeliveryDelayResult * variance);
         }
 
@@ -790,5 +790,4 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public void setExchangeFormatterRef(String exchangeFormatterRef) {
         this.exchangeFormatterRef = exchangeFormatterRef;
     }
-
 }

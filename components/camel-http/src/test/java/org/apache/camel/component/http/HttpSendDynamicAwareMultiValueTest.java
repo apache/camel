@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -27,9 +31,6 @@ import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpSendDynamicAwareMultiValueTest extends BaseHttpTest {
 
@@ -62,36 +63,34 @@ public class HttpSendDynamicAwareMultiValueTest extends BaseHttpTest {
             public void configure() {
                 from("direct:dynamicAwareWithMultiValue")
                         .toD("http://localhost:" + localServer.getLocalPort()
-                             + "/dynamicAware?httpClient.responseTimeout=60000&okStatusCodeRange=200-500&foo=foo");
+                                + "/dynamicAware?httpClient.responseTimeout=60000&okStatusCodeRange=200-500&foo=foo");
             }
         };
     }
 
     @Test
     public void testSendDynamicAwareMultiValue() throws Exception {
-        Exchange e = fluentTemplate
-                .to("direct:dynamicAwareWithMultiValue")
-                .send();
+        Exchange e = fluentTemplate.to("direct:dynamicAwareWithMultiValue").send();
 
         @SuppressWarnings("unlikely-arg-type")
         // NOTE: this the registry can check correctly the String type.
-        boolean found = context.getEndpointRegistry().containsKey("http://localhost:" + localServer.getLocalPort()
-                                                                  + "?httpClient.responseTimeout=60000&okStatusCodeRange=200-500");
+        boolean found = context.getEndpointRegistry()
+                .containsKey("http://localhost:" + localServer.getLocalPort()
+                        + "?httpClient.responseTimeout=60000&okStatusCodeRange=200-500");
 
         assertTrue(found, "Should find static uri with multi-value");
         assertEquals("/dynamicAware", e.getIn().getHeader(Exchange.HTTP_PATH));
         assertEquals("foo=foo", e.getIn().getHeader(Exchange.HTTP_QUERY));
 
         HttpEndpoint httpEndpoint = (HttpEndpoint) context.getEndpoint("http://localhost:" + localServer.getLocalPort()
-                                                                       + "?httpClient.responseTimeout=60000&okStatusCodeRange=200-500");
+                + "?httpClient.responseTimeout=60000&okStatusCodeRange=200-500");
 
         String okStatusCodeRange = httpEndpoint.getOkStatusCodeRange();
         assertEquals("200-500", okStatusCodeRange);
 
         HttpClient httpClient = httpEndpoint.getHttpClient();
 
-        Class<?> internalHttpClientClass = Class
-                .forName("org.apache.hc.client5.http.impl.classic.InternalHttpClient");
+        Class<?> internalHttpClientClass = Class.forName("org.apache.hc.client5.http.impl.classic.InternalHttpClient");
         Field defaultConfig = internalHttpClientClass.getDeclaredField("defaultConfig");
         defaultConfig.setAccessible(true);
         RequestConfig config = (RequestConfig) defaultConfig.get(httpClient);

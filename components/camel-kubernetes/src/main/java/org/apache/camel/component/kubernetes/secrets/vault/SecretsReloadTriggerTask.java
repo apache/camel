@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.secrets.vault;
 
 import java.time.Instant;
@@ -42,8 +43,10 @@ import org.slf4j.LoggerFactory;
 public class SecretsReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
     private CamelContext camelContext;
+
     @Metadata(defaultValue = "true")
     private boolean reloadEnabled = true;
+
     private String secrets;
     private KubernetesClient kubernetesClient;
     private SecretPropertiesFunction propertiesFunction;
@@ -117,33 +120,38 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
     public void run() {
         startingTime = Instant.now();
         final CountDownLatch isWatchClosed = new CountDownLatch(1);
-        Watch watch = kubernetesClient.secrets().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
-            @Override
-            public void eventReceived(Action action, Secret secret) {
-                switch (action.name()) {
-                    case "MODIFIED":
-                        if (isReloadEnabled()) {
-                            if (matchSecret(secret.getMetadata().getName())) {
-                                LOG.info("Update for Kubernetes Secret: {} detected, triggering CamelContext reload",
-                                        secret.getMetadata().getName());
-                                ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
-                                if (reload != null) {
-                                    // trigger reload
-                                    reload.onReload(this);
+        Watch watch = kubernetesClient
+                .secrets()
+                .inNamespace(kubernetesClient.getNamespace())
+                .watch(new Watcher<>() {
+                    @Override
+                    public void eventReceived(Action action, Secret secret) {
+                        switch (action.name()) {
+                            case "MODIFIED":
+                                if (isReloadEnabled()) {
+                                    if (matchSecret(secret.getMetadata().getName())) {
+                                        LOG.info(
+                                                "Update for Kubernetes Secret: {} detected, triggering CamelContext reload",
+                                                secret.getMetadata().getName());
+                                        ContextReloadStrategy reload =
+                                                camelContext.hasService(ContextReloadStrategy.class);
+                                        if (reload != null) {
+                                            // trigger reload
+                                            reload.onReload(this);
+                                        }
+                                    }
                                 }
-                            }
+                                break;
+                            default:
+                                LOG.debug("Not watched event {}", action.name());
                         }
-                        break;
-                    default:
-                        LOG.debug("Not watched event {}", action.name());
-                }
-            }
+                    }
 
-            @Override
-            public void onClose(WatcherException e) {
-                isWatchClosed.countDown();
-            }
-        });
+                    @Override
+                    public void onClose(WatcherException e) {
+                        isWatchClosed.countDown();
+                    }
+                });
 
         // Wait till watch gets closed
         try {

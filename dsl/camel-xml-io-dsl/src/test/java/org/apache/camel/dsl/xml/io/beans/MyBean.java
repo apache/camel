@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.beans;
 
 public class MyBean {
@@ -31,5 +32,4 @@ public class MyBean {
     public String hi(String body) {
         return body + " " + field1 + ". I am " + field2 + " and " + age + " years old!";
     }
-
 }

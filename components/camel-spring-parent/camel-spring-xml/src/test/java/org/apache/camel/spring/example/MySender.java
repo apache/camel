@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.example;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * An example POJO which is injected with a CamelTemplate
@@ -27,6 +28,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class MySender {
     @EndpointInject("mock:a")
     private ProducerTemplate successDesetination;
+
     @EndpointInject("mock:b")
     private ProducerTemplate failureDesetination;
 

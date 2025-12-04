@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteAwareSynchronizationTest extends ContextTestSupport {
 
@@ -66,7 +67,11 @@ public class RouteAwareSynchronizationTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start").to("mock:a").to("direct:foo").to("mock:b");
+                from("direct:start")
+                        .routeId("start")
+                        .to("mock:a")
+                        .to("direct:foo")
+                        .to("mock:b");
 
                 from("direct:foo").routeId("foo").to("mock:foo");
             }

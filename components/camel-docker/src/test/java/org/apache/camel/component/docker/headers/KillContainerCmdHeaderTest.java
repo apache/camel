@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker.headers;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Map;
 
@@ -24,9 +28,6 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Kill Container Request headers are applied properly
@@ -50,7 +51,6 @@ public class KillContainerCmdHeaderTest extends BaseDockerHeaderTest<KillContain
 
         Mockito.verify(dockerClient, Mockito.times(1)).killContainerCmd(containerId);
         Mockito.verify(mockObject, Mockito.times(1)).withSignal(eq(signal));
-
     }
 
     @Override
@@ -62,5 +62,4 @@ public class KillContainerCmdHeaderTest extends BaseDockerHeaderTest<KillContain
     protected DockerOperation getOperation() {
         return DockerOperation.KILL_CONTAINER;
     }
-
 }

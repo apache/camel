@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
+
+import static org.apache.camel.component.stax.StAXUtil.getTagName;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -39,8 +42,6 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.component.stax.StAXUtil.getTagName;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} body using an {@link Iterator}, which
@@ -119,8 +120,10 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     public Object evaluate(Exchange exchange) {
         try {
             InputStream inputStream = null;
-            XMLEventReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLEventReader.class, exchange,
-                    exchange.getIn().getBody());
+            XMLEventReader reader = exchange.getContext()
+                    .getTypeConverter()
+                    .tryConvertTo(
+                            XMLEventReader.class, exchange, exchange.getIn().getBody());
             if (reader == null) {
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -141,7 +144,8 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
         }
     }
 
-    private Iterator<T> createIterator(XMLEventReader reader, Class<T> clazz, InputStream inputStream) throws JAXBException {
+    private Iterator<T> createIterator(XMLEventReader reader, Class<T> clazz, InputStream inputStream)
+            throws JAXBException {
         return new StAXJAXBIterator<>(clazz, reader, inputStream);
     }
 
@@ -198,7 +202,8 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
             while (!found && reader.hasNext()) {
                 try {
                     xmlEvent = reader.peek();
-                    if (xmlEvent != null && xmlEvent.isStartElement()
+                    if (xmlEvent != null
+                            && xmlEvent.isStartElement()
                             && name.equals(xmlEvent.asStartElement().getName().getLocalPart())) {
                         found = true;
                     } else {
@@ -232,5 +237,4 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
             }
         }
     }
-
 }

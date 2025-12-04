@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools;
 
 import java.util.ArrayList;
@@ -37,7 +38,8 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OpenAIMock openAIMock = new OpenAIMock().builder()
+    static OpenAIMock openAIMock = new OpenAIMock()
+            .builder()
             .when("What is the weather in london ??\n")
             .invokeTool("FindsTheLatitudeAndLongitudeOfAGivenCity")
             .withParam("name", "London")
@@ -60,8 +62,8 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangChain4jToolsComponent component
-                = context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
+        LangChain4jToolsComponent component =
+                context.getComponent(LangChain4jTools.SCHEME, LangChain4jToolsComponent.class);
 
         component.getConfiguration().setChatModel(chatModel);
 
@@ -73,22 +75,27 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:test")
-                        .to("langchain4j-tools:test1?tags=geo")
-                        .log("response is: ${body}");
+                from("direct:test").to("langchain4j-tools:test1?tags=geo").log("response is: ${body}");
 
                 from("langchain4j-tools:test1?tags=geo&description=Forecasts the weather for the given latitude and longitude&parameter.latitude=integer&parameters.longitude=integer")
                         .log("intermediate body is: ${body}")
                         .process(exchange -> {
                             String body = exchange.getIn().getBody(String.class);
                             intermediateCalled = true;
-                            if (exchange.getIn().getHeader("longitude", String.class).contains("0") &&
-                                    exchange.getIn().getHeader("latitude", String.class).contains("51") &&
-                                    body.contains("51.50758961965397") && body.contains("-0.13388057363742217")) {
+                            if (exchange.getIn()
+                                            .getHeader("longitude", String.class)
+                                            .contains("0")
+                                    && exchange.getIn()
+                                            .getHeader("latitude", String.class)
+                                            .contains("51")
+                                    && body.contains("51.50758961965397")
+                                    && body.contains("-0.13388057363742217")) {
                                 intermediateHasValidBody = true;
                             }
                         })
-                        .setBody(simple("""
+                        .setBody(
+                                simple(
+                                        """
                                 {
                                   "location": "London, UK",
                                   "date": "2025-03-13",
@@ -105,8 +112,8 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
                                 """));
 
                 from("langchain4j-tools:test1?tags=geo&description=Finds the latitude and longitude of a given city&parameter.name=string")
-                        .setBody(simple("{\"latitude\": \"51.50758961965397\", \"longitude\": \"-0.13388057363742217\"}"));
-
+                        .setBody(simple(
+                                "{\"latitude\": \"51.50758961965397\", \"longitude\": \"-0.13388057363742217\"}"));
             }
         };
     }
@@ -114,8 +121,9 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
     @Test
     public void testSimpleInvocation() {
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(new SystemMessage(
-                """
+        messages.add(
+                new SystemMessage(
+                        """
                         You are a meteorologist, and you need to answer questions asked by the user about weather using at most 3 lines.
                          The weather information is a JSON object and has the following fields:
                              maxTemperature is the maximum temperature of the day in Celsius degrees
@@ -132,7 +140,8 @@ public class LangChain4jToolMultipleCallsTest extends CamelTestSupport {
 
         Assertions.assertThat(message).isNotNull();
         final String responseContent = message.getMessage().getBody().toString();
-        // depending on the reasoning model used to test, the result is different, but we asked for Celcius degree and 3 should be part of it
+        // depending on the reasoning model used to test, the result is different, but we asked for Celcius degree and 3
+        // should be part of it
         Assertions.assertThat(responseContent).containsIgnoringCase("3");
         Assertions.assertThat(intermediateCalled).isTrue();
         Assertions.assertThat(intermediateHasValidBody).isTrue();

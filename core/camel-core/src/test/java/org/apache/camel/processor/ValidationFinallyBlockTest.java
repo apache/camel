@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -70,7 +71,8 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                TryDefinition tryType = from("direct:start").doTry().process(validator).to("mock:valid");
+                TryDefinition tryType =
+                        from("direct:start").doTry().process(validator).to("mock:valid");
                 tryType.doCatch(ValidationException.class).to("mock:invalid");
                 tryType.doFinally().to("mock:all");
             }

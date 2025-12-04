@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RouteTemplateContext;
@@ -36,8 +37,8 @@ public class KameletLocalBeanLanguageTest extends CamelTestSupport {
 
     @Test
     public void testTwo() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hi Jack we are going to Shamrock",
-                "Hi Mary we are going to Moes");
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived("Hi Jack we are going to Shamrock", "Hi Mary we are going to Moes");
 
         template.sendBody("direct:shamrock", "Jack");
         template.sendBody("direct:moe", "Mary");
@@ -58,19 +59,17 @@ public class KameletLocalBeanLanguageTest extends CamelTestSupport {
             public void configure() {
                 routeTemplate("whereTo")
                         .templateParameter("bar") // name of bar
-                        .templateBean("myBar", "bean",
+                        .templateBean(
+                                "myBar",
+                                "bean",
                                 "org.apache.camel.component.kamelet.KameletLocalBeanLanguageTest?method=createMyBar")
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");
 
-                from("direct:shamrock")
-                        .kamelet("whereTo?bar=Shamrock")
-                        .to("mock:result");
+                from("direct:shamrock").kamelet("whereTo?bar=Shamrock").to("mock:result");
 
-                from("direct:moe")
-                        .kamelet("whereTo?bar=Moes")
-                        .to("mock:result");
+                from("direct:moe").kamelet("whereTo?bar=Moes").to("mock:result");
             }
         };
     }
@@ -93,5 +92,4 @@ public class KameletLocalBeanLanguageTest extends CamelTestSupport {
             return "Hi " + name + " we are going to " + bar;
         }
     }
-
 }

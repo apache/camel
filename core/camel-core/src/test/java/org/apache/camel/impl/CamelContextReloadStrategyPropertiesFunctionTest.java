@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
@@ -74,9 +75,7 @@ public class CamelContextReloadStrategyPropertiesFunctionTest extends ContextTes
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .setBody(constant("{{my:Bye}}"))
-                        .to("mock:result");
+                from("direct:start").setBody(constant("{{my:Bye}}")).to("mock:result");
             }
         };
     }
@@ -98,6 +97,5 @@ public class CamelContextReloadStrategyPropertiesFunctionTest extends ContextTes
         public String apply(String remainder) {
             return remainder + " " + counter;
         }
-
     }
 }

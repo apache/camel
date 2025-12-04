@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -30,8 +33,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * Unit test for using JMS as DLQ
  */
@@ -40,6 +41,7 @@ public class JmsDeadLetterQueueIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -83,12 +85,14 @@ public class JmsDeadLetterQueueIT extends AbstractJMSTest {
             public void configure() {
                 errorHandler(deadLetterChannel("seda:dead").disableRedelivery());
 
-                from("direct:start").process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    if ("Kaboom".equals(body)) {
-                        throw new IllegalArgumentException("Kaboom");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("Kaboom".equals(body)) {
+                                throw new IllegalArgumentException("Kaboom");
+                            }
+                        })
+                        .to("mock:result");
 
                 from("seda:dead").transform(exceptionMessage()).to(getUri());
 

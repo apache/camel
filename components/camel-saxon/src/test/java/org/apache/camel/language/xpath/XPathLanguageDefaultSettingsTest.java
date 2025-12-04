@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.xpath;
 
 import javax.xml.xpath.XPathFactory;
@@ -39,8 +40,10 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
     @Override
     public void setupResources() {
-        // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
-        // because of Service Provider discovery (this does not happen in OSGi because the META-INF/services package is not exported
+        // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make
+        // JAXP use it
+        // because of Service Provider discovery (this does not happen in OSGi because the META-INF/services package is
+        // not exported
         oldPropertyValue = System.setProperty(KEY, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl");
     }
 
@@ -70,5 +73,4 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

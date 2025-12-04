@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DavidSiefertTest extends ContextTestSupport {
     protected static final Object expectedBody = "Some Output";
@@ -45,8 +46,8 @@ public class DavidSiefertTest extends ContextTestSupport {
         result.message(0).header("sample.name").isEqualTo("shouldNotMatch");
         template.sendBody("direct:start", "<sample><name>value</name></sample>");
 
-        AssertionError e = assertThrows(AssertionError.class, result::assertIsSatisfied,
-                "Should have failed this test!");
+        AssertionError e =
+                assertThrows(AssertionError.class, result::assertIsSatisfied, "Should have failed this test!");
 
         log.info("Caught expected assertion failure: {}", e, e);
     }

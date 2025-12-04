@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud;
 
 import java.util.List;
@@ -262,7 +263,8 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Starting ZooKeeper Curator with namespace '{}', nodes: '{}'",
+                LOGGER.debug(
+                        "Starting ZooKeeper Curator with namespace '{}', nodes: '{}'",
                         configuration.getNamespace(),
                         String.join(",", configuration.getNodes()));
             }
@@ -275,8 +277,7 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
             // Validation
             ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
-            LOGGER.debug("Starting ZooKeeper ServiceDiscoveryBuilder with base path '{}'",
-                    configuration.getBasePath());
+            LOGGER.debug("Starting ZooKeeper ServiceDiscoveryBuilder with base path '{}'", configuration.getBasePath());
 
             serviceDiscovery = ZooKeeperCuratorHelper.createServiceDiscovery(configuration, curator, MetaData.class);
             serviceDiscovery.start();
@@ -289,7 +290,8 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
             try {
                 if (configuration.isDeregisterServicesOnStop()) {
                     for (String serviceName : serviceDiscovery.queryForNames()) {
-                        for (ServiceInstance<MetaData> serviceInstance : serviceDiscovery.queryForInstances(serviceName)) {
+                        for (ServiceInstance<MetaData> serviceInstance :
+                                serviceDiscovery.queryForInstances(serviceName)) {
                             if (serviceList.contains(serviceInstance.getId())) {
                                 serviceDiscovery.unregisterService(serviceInstance);
 
@@ -325,7 +327,7 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
         }
 
         try {
-            ServiceInstance<MetaData> instance = ServiceInstance.<MetaData> builder()
+            ServiceInstance<MetaData> instance = ServiceInstance.<MetaData>builder()
                     .address(computeServiceHost(definition))
                     .port(definition.getPort())
                     .name(definition.getName())
@@ -378,5 +380,4 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
 
         return ObjectHelper.notNull(host, "service host");
     }
-
 }

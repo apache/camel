@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.cw;
 
 import java.time.Instant;
@@ -75,8 +76,10 @@ public class Cw2Producer extends DefaultProducer {
             return Arrays.asList((MetricDatum) body);
         }
 
-        MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange))
-                .value(determineValue(exchange)).unit(determineUnit(exchange))
+        MetricDatum.Builder metricDatum = MetricDatum.builder()
+                .metricName(determineName(exchange))
+                .value(determineValue(exchange))
+                .unit(determineUnit(exchange))
                 .timestamp(determineTimestamp(exchange));
         setDimension(metricDatum, exchange);
         return Arrays.asList(metricDatum.build());
@@ -93,8 +96,10 @@ public class Cw2Producer extends DefaultProducer {
             if (dimensions != null) {
                 Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
-                    Dimension dimension
-                            = Dimension.builder().name(dimensionEntry.getKey()).value(dimensionEntry.getValue()).build();
+                    Dimension dimension = Dimension.builder()
+                            .name(dimensionEntry.getKey())
+                            .value(dimensionEntry.getValue())
+                            .build();
                     dimensionCollection.add(dimension);
                 }
                 metricDatum.dimensions(dimensionCollection);
@@ -149,7 +154,8 @@ public class Cw2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (cwProducerToString == null) {
-            cwProducerToString = "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            cwProducerToString =
+                    "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return cwProducerToString;
     }
@@ -163,9 +169,7 @@ public class Cw2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -182,5 +186,4 @@ public class Cw2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

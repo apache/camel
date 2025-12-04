@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
+
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
+import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
@@ -29,22 +33,19 @@ import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.NodeType;
 
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
-import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeserializationContext;
-
 @YamlType(
-          inline = false,
-          types = FromDefinition.class,
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "uri", type = "string", required = true),
-                  @YamlProperty(name = "variableReceive", type = "string"),
-                  @YamlProperty(name = "id", type = "string"),
-                  @YamlProperty(name = "description", type = "string"),
-                  @YamlProperty(name = "note", type = "string"),
-                  @YamlProperty(name = "parameters", type = "object"),
-                  @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
-          })
+        inline = false,
+        types = FromDefinition.class,
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        properties = {
+            @YamlProperty(name = "uri", type = "string", required = true),
+            @YamlProperty(name = "variableReceive", type = "string"),
+            @YamlProperty(name = "id", type = "string"),
+            @YamlProperty(name = "description", type = "string"),
+            @YamlProperty(name = "note", type = "string"),
+            @YamlProperty(name = "parameters", type = "object"),
+            @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
+        })
 public class FromDefinitionDeserializer implements ConstructNode {
 
     @Override
@@ -116,5 +117,4 @@ public class FromDefinitionDeserializer implements ConstructNode {
         }
         return target;
     }
-
 }

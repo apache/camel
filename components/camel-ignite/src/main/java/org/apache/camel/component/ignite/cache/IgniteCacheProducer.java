@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.cache;
 
 import java.util.Collection;
@@ -56,7 +57,6 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
         MessageHelper.copyHeaders(exchange.getIn(), out, true);
 
         switch (cacheOperationFor(exchange)) {
-
             case GET:
                 doGet(in, out);
                 break;
@@ -122,7 +122,7 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
         if (cacheKey == null) {
             throw new RuntimeCamelException(
                     "Cache PUT operation requires the cache key in the CamelIgniteCacheKey header, "
-                                            + "or a payload of type Map.");
+                            + "or a payload of type Map.");
         }
 
         cache.put(cacheKey, in.getBody());
@@ -158,7 +158,6 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
                 cursor.close();
             }
         });
-
     }
 
     @SuppressWarnings("unchecked")
@@ -227,8 +226,7 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
     }
 
     private IgniteCacheOperation cacheOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(),
-                IgniteCacheOperation.class);
+        return exchange.getIn()
+                .getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(), IgniteCacheOperation.class);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,14 +32,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Olingo4RouteTest extends AbstractOlingo4WireMockTestSupport {
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBody(String endpoint, Object body, Map<String, Object> headers) throws CamelExecutionException {
+    protected <T> T requestBody(String endpoint, Object body, Map<String, Object> headers)
+            throws CamelExecutionException {
         return (T) template().requestBodyAndHeaders(endpoint, body, headers);
     }
 
@@ -69,8 +71,7 @@ public class Olingo4RouteTest extends AbstractOlingo4WireMockTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws IOException {
-                from("direct:readentities")
-                        .to("olingo4://read/People?serviceUri=" + getResolvedTestServiceBaseUrl());
+                from("direct:readentities").to("olingo4://read/People?serviceUri=" + getResolvedTestServiceBaseUrl());
             }
         };
     }

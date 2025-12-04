@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.auth.jwt;
 
 import com.auth0.jwt.JWT;
@@ -24,8 +25,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
  * JSON Web Token credentials generator helper
  */
 public final class JwtHelper {
-    private JwtHelper() {
-    }
+    private JwtHelper() {}
 
     public static String createJwtToken(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
         try {
@@ -36,8 +36,7 @@ public final class JwtHelper {
         }
     }
 
-    public static Algorithm selectAlgorithm(JwtAlgorithm algorithmName, String secret)
-            throws IllegalArgumentException {
+    public static Algorithm selectAlgorithm(JwtAlgorithm algorithmName, String secret) throws IllegalArgumentException {
         switch (algorithmName) {
             case HMAC256:
                 return Algorithm.HMAC256(secret);

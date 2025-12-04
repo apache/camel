@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Map;
@@ -46,23 +47,26 @@ public class MDCErrorHandlerTest extends ContextTestSupport {
                     public void process(Exchange exchange) {
                         Map<String, String> m = MDC.getCopyOfContextMap();
                         Assertions.assertEquals(5, m.size());
-                        Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
-                                m.get("camel.breadcrumbId"));
+                        Assertions.assertEquals(
+                                exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID), m.get("camel.breadcrumbId"));
                         Assertions.assertEquals("start", m.get("camel.routeId"));
                     }
                 }));
 
-                from("direct:start").routeId("start")
+                from("direct:start")
+                        .routeId("start")
                         .to("log:before")
                         .throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:dead").routeId("dead")
+                from("direct:dead")
+                        .routeId("dead")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 Map<String, String> m = MDC.getCopyOfContextMap();
                                 Assertions.assertEquals(5, m.size());
-                                Assertions.assertEquals(exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
+                                Assertions.assertEquals(
+                                        exchange.getMessage().getHeader(Exchange.BREADCRUMB_ID),
                                         m.get("camel.breadcrumbId"));
                                 Assertions.assertEquals("dead", m.get("camel.routeId"));
                             }

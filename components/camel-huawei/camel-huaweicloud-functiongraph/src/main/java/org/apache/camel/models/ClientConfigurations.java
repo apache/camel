@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.models;
 
 import org.apache.camel.FunctionGraphEndpoint;
@@ -87,29 +88,29 @@ public class ClientConfigurations {
         this.setIgnoreSslVerification(endpoint.isIgnoreSslVerification());
 
         // checking for required cloud AK (access key)
-        if (ObjectHelper.isEmpty(endpoint.getAccessKey())
-                && ObjectHelper.isEmpty(endpoint.getServiceKeys())) {
+        if (ObjectHelper.isEmpty(endpoint.getAccessKey()) && ObjectHelper.isEmpty(endpoint.getServiceKeys())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("No access key (AK) given. Cannot proceed with FunctionGraph operations");
             }
             throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
         } else {
-            this.setAccessKey(ObjectHelper.isNotEmpty(endpoint.getServiceKeys())
-                    ? endpoint.getServiceKeys().getAccessKey()
-                    : endpoint.getAccessKey());
+            this.setAccessKey(
+                    ObjectHelper.isNotEmpty(endpoint.getServiceKeys())
+                            ? endpoint.getServiceKeys().getAccessKey()
+                            : endpoint.getAccessKey());
         }
 
         // checking for required cloud SK (secret key)
-        if (ObjectHelper.isEmpty(endpoint.getSecretKey())
-                && ObjectHelper.isEmpty(endpoint.getServiceKeys())) {
+        if (ObjectHelper.isEmpty(endpoint.getSecretKey()) && ObjectHelper.isEmpty(endpoint.getServiceKeys())) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("No secret key (SK) given. Cannot proceed with FunctionGraph operations");
             }
             throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
         } else {
-            this.setSecretKey(ObjectHelper.isNotEmpty(endpoint.getServiceKeys())
-                    ? endpoint.getServiceKeys().getSecretKey()
-                    : endpoint.getSecretKey());
+            this.setSecretKey(
+                    ObjectHelper.isNotEmpty(endpoint.getServiceKeys())
+                            ? endpoint.getServiceKeys().getSecretKey()
+                            : endpoint.getSecretKey());
         }
     }
 

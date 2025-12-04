@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hashicorp.vault.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class HashicorpServiceFactory {
-    private HashicorpServiceFactory() {
-
-    }
+    private HashicorpServiceFactory() {}
 
     public static SimpleTestServiceBuilder<HashicorpVaultService> builder() {
         return new SimpleTestServiceBuilder<>("hashicorp-vault");
@@ -34,6 +33,5 @@ public final class HashicorpServiceFactory {
     }
 
     public static class HashicorpVaultLocalContainerService extends HashicorpVaultLocalContainerInfraService
-            implements HashicorpVaultService {
-    }
+            implements HashicorpVaultService {}
 }

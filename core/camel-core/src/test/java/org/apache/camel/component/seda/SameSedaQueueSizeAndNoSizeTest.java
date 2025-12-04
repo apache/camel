@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -36,8 +37,10 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
             template.sendBody("seda:foo", Integer.toString(i));
         }
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("seda:foo", "Should be full now"), "Should fail");
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBody("seda:foo", "Should be full now"),
+                "Should fail");
         IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
         if (!isJavaVendor("ibm")) {
             assertEquals("Queue full", ise.getMessage());
@@ -46,8 +49,10 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
 
     @Test
     public void testSameQueueDifferentSize() {
-        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
-                () -> template.sendBody("seda:foo?size=200", "Should fail"), "Should fail");
+        ResolveEndpointFailedException e = assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> template.sendBody("seda:foo?size=200", "Should fail"),
+                "Should fail");
         IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals(
                 "Cannot use existing queue seda://foo as the existing queue size 100 does not match given queue size 200",
@@ -56,11 +61,14 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
 
     @Test
     public void testSameQueueDifferentSizeBar() {
-        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
-                () -> template.sendBody("seda:bar?size=200", "Should fail"), "Should fail");
+        ResolveEndpointFailedException e = assertThrows(
+                ResolveEndpointFailedException.class,
+                () -> template.sendBody("seda:bar?size=200", "Should fail"),
+                "Should fail");
         IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        assertEquals("Cannot use existing queue seda://bar as the existing queue size " + SedaConstants.QUEUE_SIZE
-                     + " does not match given queue size 200",
+        assertEquals(
+                "Cannot use existing queue seda://bar as the existing queue size " + SedaConstants.QUEUE_SIZE
+                        + " does not match given queue size 200",
                 ise.getMessage());
     }
 

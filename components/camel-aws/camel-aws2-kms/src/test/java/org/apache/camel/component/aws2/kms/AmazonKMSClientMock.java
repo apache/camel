@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms;
 
 import java.util.ArrayList;
@@ -38,8 +39,7 @@ import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
 
 public class AmazonKMSClientMock implements KmsClient {
 
-    public AmazonKMSClientMock() {
-    }
+    public AmazonKMSClientMock() {}
 
     @Override
     public CreateKeyResponse createKey(CreateKeyRequest createKeyRequest) {
@@ -108,5 +108,4 @@ public class AmazonKMSClientMock implements KmsClient {
         // TODO Auto-generated method stub
 
     }
-
 }

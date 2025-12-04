@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -23,9 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test CXF-CamelConduit when the destination is not a pipeline
@@ -42,7 +43,9 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
 
                 from("direct:start2").setBody(constant(ANSWER)).log("Force pipeline creation");
 
-                from("direct:start3").choice().when(header(Exchange.CONTENT_TYPE).isEqualTo("text/xml; charset=UTF-8"))
+                from("direct:start3")
+                        .choice()
+                        .when(header(Exchange.CONTENT_TYPE).isEqualTo("text/xml; charset=UTF-8"))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 exchange.getMessage().setBody(ANSWER);
@@ -57,7 +60,6 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
     @Test
     public void testStart1() {
         assertEquals("Something", getSampleWS("direct:start1").getSomething());
-
     }
 
     /**
@@ -80,6 +82,5 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
         Future<?> result = getSampleWSAsyncWithCXFAPI("direct:start2").getSomethingAsync();
         // as the CXF will build the getSomethingResponse by using asm, so we cannot get the response directly.
         assertNotNull(result.get());
-
     }
 }

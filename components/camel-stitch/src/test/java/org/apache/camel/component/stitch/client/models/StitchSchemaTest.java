@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -22,8 +25,6 @@ import java.util.Map;
 
 import org.apache.camel.component.stitch.client.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StitchSchemaTest {
 
@@ -47,9 +48,10 @@ class StitchSchemaTest {
 
         final String schemaAsJson = JsonUtils.convertMapToJson(schema.toMap());
 
-        assertEquals("{\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},"
-                     + "\"age\":{\"type\":\"integer\"},\"has_magic\":"
-                     + "{\"type\":\"boolean\"},\"modified_at\":{\"type\":\"string\",\"format\":\"date-time\"}},\"has_map\":true}",
+        assertEquals(
+                "{\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},"
+                        + "\"age\":{\"type\":\"integer\"},\"has_magic\":"
+                        + "{\"type\":\"boolean\"},\"modified_at\":{\"type\":\"string\",\"format\":\"date-time\"}},\"has_map\":true}",
                 schemaAsJson);
     }
 }

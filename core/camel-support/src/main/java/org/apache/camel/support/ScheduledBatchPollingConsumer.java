@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,7 +32,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class for any consumer which is polling batch based
  */
-public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
+public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsumer
+        implements BatchConsumer, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledBatchPollingConsumer.class);
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -22,12 +23,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  *
  */
-public class SpringAdviceWithRouteScopedErrorHandlerIssueTest extends SpringAdviceWithContextScopedErrorHandlerIssueTest {
+public class SpringAdviceWithRouteScopedErrorHandlerIssueTest
+        extends SpringAdviceWithContextScopedErrorHandlerIssueTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/spring/issues/SpringAdviceWithRouteScopedErrorHandlerIssueTest.xml");
     }
-
 }

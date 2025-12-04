@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi.annotations;
 
 import java.lang.annotation.Documented;
@@ -27,7 +28,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @ServiceFactory("health-check")
 public @interface HealthCheck {
 
@@ -38,5 +39,4 @@ public @interface HealthCheck {
      * repository. For example to use myfoo as the ID for a health-check, then set this value as <var>myfoo-check</var>.
      */
     String value();
-
 }

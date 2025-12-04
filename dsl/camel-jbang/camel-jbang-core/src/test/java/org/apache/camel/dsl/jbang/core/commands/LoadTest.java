@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.common.RuntimeUtil.getPid;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
-
-import static org.apache.camel.dsl.jbang.core.common.RuntimeUtil.getPid;
 
 class LoadTest {
 
@@ -50,7 +51,11 @@ class LoadTest {
     @Test
     public void shouldLoad() throws Exception {
         Run run = new Run(new CamelJBangMain());
-        CommandLine.populateCommand(run, "src/test/resources/hello.yaml", "--name=myload", "--max-messages=5",
+        CommandLine.populateCommand(
+                run,
+                "src/test/resources/hello.yaml",
+                "--name=myload",
+                "--max-messages=5",
                 "--prop=mydir=" + workingDir);
 
         Runnable r = () -> {
@@ -76,5 +81,4 @@ class LoadTest {
         String data = Files.readString(outPath);
         Assertions.assertEquals("I was loaded", data);
     }
-
 }

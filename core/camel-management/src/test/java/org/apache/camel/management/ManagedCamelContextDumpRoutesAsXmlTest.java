@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSupport {
@@ -59,7 +60,7 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
 
         ObjectName on = getContextObjectName();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[] { true }, new String[] { "boolean" });
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[] {true}, new String[] {"boolean"});
         assertNotNull(xml);
         log.info(xml);
 
@@ -85,16 +86,15 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
                 Endpoint bar = context.getEndpoint("mock:bar");
                 bindToRegistry("bar", bar);
 
-                from("direct:start").routeId("myRoute")
-                        .log("Got ${body}")
-                        .to("{{result}}");
+                from("direct:start").routeId("myRoute").log("Got ${body}").to("{{result}}");
 
-                from("seda:bar").routeId("myOtherRoute")
-                        .filter().header("bar")
+                from("seda:bar")
+                        .routeId("myOtherRoute")
+                        .filter()
+                        .header("bar")
                         .to("ref:bar")
                         .end();
             }
         };
     }
-
 }

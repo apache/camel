@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -37,16 +42,13 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -71,7 +73,8 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
     public void testTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("direct:JmsInOutFixedReplyQueueTimeoutTest", "World", String.class),
                 "Should have thrown exception");
 
@@ -90,18 +93,21 @@ public class JmsInOutFixedReplyQueueTimeoutTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:JmsInOutFixedReplyQueueTimeoutTest")
                         .routeId("route-1")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:queue:JmsInOutFixedReplyQueueTimeoutTest?replyTo=queue:JmsInOutFixedReplyQueueTimeoutTestReply&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutFixedReplyQueueTimeoutTest")
                         .routeId("route-2")
                         .choice()
-                            .when(body().isEqualTo("World"))
-                                .log("Sleeping for 4 sec to force a timeout")
-                                .delay(Duration.ofSeconds(4).toMillis()).
-                            endChoice().end()
-                        .transform(body().prepend("Bye ")).to("log:reply");
+                        .when(body().isEqualTo("World"))
+                        .log("Sleeping for 4 sec to force a timeout")
+                        .delay(Duration.ofSeconds(4).toMillis())
+                        .endChoice()
+                        .end()
+                        .transform(body().prepend("Bye "))
+                        .to("log:reply");
             }
         };
     }

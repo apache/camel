@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
@@ -121,27 +122,29 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
             if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
                 strategy = aggregationStrategy;
             } else if (aggStrategy instanceof BiFunction biFunction) {
-                AggregationStrategyBiFunctionAdapter adapter
-                        = new AggregationStrategyBiFunctionAdapter(biFunction);
+                AggregationStrategyBiFunctionAdapter adapter = new AggregationStrategyBiFunctionAdapter(biFunction);
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullNewExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
                 @SuppressWarnings("resource")
                 // NOTE: the adapter holds no leaking resources, so we can safely ignore its closure.
-                AggregationStrategyBeanAdapter adapter
-                        = new AggregationStrategyBeanAdapter(
-                                aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(
+                        aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
-                    adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
-                    adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullNewExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
+                    adapter.setAllowNullOldExchange(
+                            parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException(
-                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategy());
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: "
+                        + definition.getAggregationStrategy());
             }
         }
 
@@ -158,5 +161,4 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
 
         return strategy;
     }
-
 }

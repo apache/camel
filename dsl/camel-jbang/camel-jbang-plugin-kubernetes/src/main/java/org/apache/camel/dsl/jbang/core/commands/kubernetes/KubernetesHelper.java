@@ -74,7 +74,7 @@ public final class KubernetesHelper {
     }
 
     private KubernetesHelper() {
-        //prevent instantiation of utility class.
+        // prevent instantiation of utility class.
     }
 
     /**
@@ -172,13 +172,16 @@ public final class KubernetesHelper {
                     .withNamespaced(false)
                     .build();
             // if there is a node with minikube label, then it's minikube
-            GenericKubernetesResourceList list = getKubernetesClient().genericKubernetesResources(nodecrd)
-                    .withLabels(Collections.singletonMap("minikube.k8s.io/name", null)).list();
+            GenericKubernetesResourceList list = getKubernetesClient()
+                    .genericKubernetesResources(nodecrd)
+                    .withLabels(Collections.singletonMap("minikube.k8s.io/name", null))
+                    .list();
             minikube = list.getItems().size() > 0;
             // thse env properties are set when running eval $(minikube docker-env) in the console
-            // this is important for the docker builder to actually build the image in the exposed docker from the minikube registry
-            minikubeEnv = System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null
-                    && System.getenv("DOCKER_TLS_VERIFY") != null;
+            // this is important for the docker builder to actually build the image in the exposed docker from the
+            // minikube registry
+            minikubeEnv =
+                    System.getenv("MINIKUBE_ACTIVE_DOCKERD") != null && System.getenv("DOCKER_TLS_VERIFY") != null;
             if (minikube && !minikubeEnv) {
                 System.out.println(
                         "It seems you have minikube running but forgot to run \"eval $(minikube docker-env)\", default cluster to kubernetes.");
@@ -197,14 +200,23 @@ public final class KubernetesHelper {
     // so, for development purposes we disable this validation in minikube
     // https://knative.dev/docs/serving/configuration/deployment/#skipping-tag-resolution
     public static void skipKnativeImageTagResolutionInMinikube() {
-        ConfigMap cm = getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").get();
+        ConfigMap cm = getKubernetesClient()
+                .configMaps()
+                .inNamespace("knative-serving")
+                .withName("config-deployment")
+                .get();
         Map<String, String> data = cm.getData();
         String skipTag = data.get("registries-skipping-tag-resolving");
         if (skipTag == null || !skipTag.contains("localhost:5000")) {
             // patch the cm/config-deployment in knative-serving namespace with
             // registries-skipping-tag-resolving: localhost:5000
-            getKubernetesClient().configMaps().inNamespace("knative-serving").withName("config-deployment").edit(
-                    c -> new ConfigMapBuilder(c).addToData("registries-skipping-tag-resolving", "localhost:5000").build());
+            getKubernetesClient()
+                    .configMaps()
+                    .inNamespace("knative-serving")
+                    .withName("config-deployment")
+                    .edit(c -> new ConfigMapBuilder(c)
+                            .addToData("registries-skipping-tag-resolving", "localhost:5000")
+                            .build());
         }
     }
 
@@ -266,9 +278,8 @@ public final class KubernetesHelper {
             return manifest;
         }
 
-        throw new FileNotFoundException(
-                "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
-                        .formatted(extension, workingDir.toPath().toString()));
+        throw new FileNotFoundException("Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                .formatted(extension, workingDir.toPath().toString()));
     }
 
     public static Path resolveKubernetesManifestPath(String clusterType, Path workingDir) throws FileNotFoundException {
@@ -283,9 +294,8 @@ public final class KubernetesHelper {
             return manifestPath;
         }
 
-        throw new FileNotFoundException(
-                "Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
-                        .formatted(extension, workingDir.toString()));
+        throw new FileNotFoundException("Unable to resolve Kubernetes manifest file type `%s` in folder: %s"
+                .formatted(extension, workingDir.toString()));
     }
 
     public static String getPodPhase(Pod pod) {
@@ -305,7 +315,8 @@ public final class KubernetesHelper {
         if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
             manifestFile = "kubernetes";
         } else {
-            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+            manifestFile =
+                    Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
         }
         return new File(workingDir, "%s.%s".formatted(manifestFile, extension));
     }
@@ -319,7 +330,8 @@ public final class KubernetesHelper {
         if (ClusterType.KIND.isEqualTo(clusterType) || ClusterType.MINIKUBE.isEqualTo(clusterType)) {
             manifestFile = "kubernetes";
         } else {
-            manifestFile = Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
+            manifestFile =
+                    Optional.ofNullable(clusterType).map(String::toLowerCase).orElse("kubernetes");
         }
         return workingDir.resolve("%s.%s".formatted(manifestFile, extension));
     }

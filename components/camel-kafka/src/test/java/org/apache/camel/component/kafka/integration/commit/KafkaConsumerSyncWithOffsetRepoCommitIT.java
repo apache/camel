@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration.commit;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,8 +28,6 @@ import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class KafkaConsumerSyncWithOffsetRepoCommitIT extends BaseManualCommitTestSupport {
 
@@ -47,17 +48,15 @@ class KafkaConsumerSyncWithOffsetRepoCommitIT extends BaseManualCommitTestSuppor
             @Override
             public void configure() {
                 final String from = "kafka:" + TOPIC
-                                    + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false&offsetRepository=#bean:stateRepository"
-                                    + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
-                from(from).routeId("foo")
-                        .to(KafkaTestUtil.MOCK_RESULT).process(e -> {
-                            KafkaManualCommit manual
-                                    = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                            assertNotNull(manual);
-                            manual.commit();
-                        });
-                from(from)
-                        .routeId("bar").autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
+                        + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false&offsetRepository=#bean:stateRepository"
+                        + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
+                from(from).routeId("foo").to(KafkaTestUtil.MOCK_RESULT).process(e -> {
+                    KafkaManualCommit manual =
+                            e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                    assertNotNull(manual);
+                    manual.commit();
+                });
+                from(from).routeId("bar").autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
             }
         };
     }
@@ -67,5 +66,4 @@ class KafkaConsumerSyncWithOffsetRepoCommitIT extends BaseManualCommitTestSuppor
     public void kafkaManualCommitWithOffsetRepo() throws Exception {
         kafkaManualCommitTestWithStateRepository(TOPIC, stateRepository);
     }
-
 }

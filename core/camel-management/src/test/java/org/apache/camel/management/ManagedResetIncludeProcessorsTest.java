@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -29,8 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
@@ -70,7 +71,7 @@ public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
         }
 
         // reset which should reset all processors also
-        mbeanServer.invoke(on, "reset", new Object[] { true }, new String[] { "boolean" });
+        mbeanServer.invoke(on, "reset", new Object[] {true}, new String[] {"boolean"});
 
         // should be 0 on the route
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
@@ -107,15 +108,17 @@ public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("first")
-                        .to("log:foo").id("foo")
-                        .to("log:bar").id("bar")
-                        .to("mock:result").id("mock");
+                from("direct:start")
+                        .routeId("first")
+                        .to("log:foo")
+                        .id("foo")
+                        .to("log:bar")
+                        .id("bar")
+                        .to("mock:result")
+                        .id("mock");
 
-                from("direct:baz").routeId("second")
-                        .to("mock:baz").id("baz");
+                from("direct:baz").routeId("second").to("mock:baz").id("baz");
             }
         };
     }
-
 }

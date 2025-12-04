@@ -22,5 +22,4 @@ public class SmbProperties {
     public static final String SHARE_NAME = "smb.service.share";
     public static final String SMB_USERNAME = "smb.service.username";
     public static final String SMB_PASSWORD = "smb.service.password";
-
 }

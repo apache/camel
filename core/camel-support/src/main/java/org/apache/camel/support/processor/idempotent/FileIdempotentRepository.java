@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor.idempotent;
 
 import java.io.File;
@@ -54,9 +55,11 @@ import org.slf4j.LoggerFactory;
  * {@link #getDropOldestFileStore()} (is default 1000) number of entries from the file store is dropped to reduce the
  * file store and make room for newer entries.
  */
-@Metadata(label = "bean",
-          description = "A file based idempotent repository. Comes with 1st-level in-memory cache for fast check of the most frequently used keys.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description =
+                "A file based idempotent repository. Comes with 1st-level in-memory cache for fast check of the most frequently used keys.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {
@@ -71,18 +74,23 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     @Metadata(description = "The maximum size of the 1st-level in-memory cache", defaultValue = "1000")
     private int cacheSize;
+
     @Metadata(description = "File name of the repository (incl directory)", required = true)
     private File fileStore;
-    @Metadata(description = "The maximum file size for the file store in bytes. The default value is 32mb",
-              defaultValue = "" + 32 * 1024 * 1000L)
+
+    @Metadata(
+            description = "The maximum file size for the file store in bytes. The default value is 32mb",
+            defaultValue = "" + 32 * 1024 * 1000L)
     private long maxFileStoreSize = 32 * 1024 * 1000L; // 32mb store file
-    @Metadata(description = "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
+
+    @Metadata(
+            description =
+                    "Sets the number of oldest entries to drop from the file store when the maximum capacity is hit to reduce disk"
                             + " space to allow room for new entries.",
-              defaultValue = "1000")
+            defaultValue = "1000")
     private long dropOldestFileStore = 1000;
 
-    public FileIdempotentRepository() {
-    }
+    public FileIdempotentRepository() {}
 
     public FileIdempotentRepository(File fileStore, Map<String, Object> cache) {
         this.fileStore = fileStore;
@@ -117,7 +125,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param maxFileStoreSize the max size in bytes for the filestore file
      */
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
-        FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
+        FileIdempotentRepository repository =
+                new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
         return repository;
     }
@@ -158,7 +167,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                 if (maxFileStoreSize > 0 && fileStore.length() > maxFileStoreSize) {
                     LOG.warn(
                             "Maximum capacity of file store: {} hit at {} bytes. Dropping {} oldest entries from the file store",
-                            fileStore, maxFileStoreSize, dropOldestFileStore);
+                            fileStore,
+                            maxFileStoreSize,
+                            dropOldestFileStore);
                     trunkStore();
                 }
 
@@ -553,5 +564,4 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         cache.clear();
         init.set(false);
     }
-
 }

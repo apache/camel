@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pubnub;
+
+import static com.pubnub.api.enums.PNStatusCategory.PNConnectionError;
+import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;
+import static org.apache.camel.component.pubnub.PubNubConstants.CHANNEL;
+import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
 
 import java.util.Arrays;
 
@@ -37,11 +43,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.pubnub.api.enums.PNStatusCategory.PNConnectionError;
-import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;
-import static org.apache.camel.component.pubnub.PubNubConstants.CHANNEL;
-import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
-
 public class PubNubConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PubNubConsumer.class);
@@ -58,15 +59,25 @@ public class PubNubConsumer extends DefaultConsumer {
     private void initCommunication() {
         endpoint.getPubnub().addListener(new PubNubCallback());
         if (pubNubConfiguration.isWithPresence()) {
-            endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).withPresence().execute();
+            endpoint.getPubnub()
+                    .subscribe()
+                    .channels(Arrays.asList(pubNubConfiguration.getChannel()))
+                    .withPresence()
+                    .execute();
         } else {
-            endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).execute();
+            endpoint.getPubnub()
+                    .subscribe()
+                    .channels(Arrays.asList(pubNubConfiguration.getChannel()))
+                    .execute();
         }
     }
 
     private void terminateCommunication() {
         try {
-            endpoint.getPubnub().unsubscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).execute();
+            endpoint.getPubnub()
+                    .unsubscribe()
+                    .channels(Arrays.asList(pubNubConfiguration.getChannel()))
+                    .execute();
         } catch (Exception e) {
             // ignore
         }
@@ -176,5 +187,4 @@ public class PubNubConsumer extends DefaultConsumer {
             LOG.trace("file: {}.", pnFileEventResult);
         }
     }
-
 }

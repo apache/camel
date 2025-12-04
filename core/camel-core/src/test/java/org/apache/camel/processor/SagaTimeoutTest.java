@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -27,9 +31,6 @@ import org.apache.camel.model.SagaCompletionMode;
 import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.InMemorySagaService;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SagaTimeoutTest extends ContextTestSupport {
 
@@ -79,10 +80,9 @@ public class SagaTimeoutTest extends ContextTestSupport {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
 
-        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
-                () -> {
-                    template.sendBody("direct:saga-multi-participants", "Hello");
-                });
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.sendBody("direct:saga-multi-participants", "Hello");
+        });
 
         String msg1 = "Cannot begin: status is COMPENSATING";
         String msg2 = "Cannot begin: status is COMPENSATED";
@@ -101,17 +101,26 @@ public class SagaTimeoutTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addService(new InMemorySagaService());
 
-                from("direct:saga").saga().timeout(100, TimeUnit.MILLISECONDS).option("id", constant("myid"))
+                from("direct:saga")
+                        .saga()
+                        .timeout(100, TimeUnit.MILLISECONDS)
+                        .option("id", constant("myid"))
                         .completionMode(SagaCompletionMode.MANUAL)
-                        .compensation("mock:compensate").to("mock:end");
+                        .compensation("mock:compensate")
+                        .to("mock:end");
 
-                from("direct:saga-auto").saga().timeout(350, TimeUnit.MILLISECONDS).option("id", constant("myid"))
-                        .compensation("mock:compensate").completion("mock:complete")
+                from("direct:saga-auto")
+                        .saga()
+                        .timeout(350, TimeUnit.MILLISECONDS)
+                        .option("id", constant("myid"))
+                        .compensation("mock:compensate")
+                        .completion("mock:complete")
                         .to("mock:end");
 
                 from("direct:saga-multi-participants")
                         .process(exchange -> {
-                            exchange.getMessage().setHeader("id", UUID.randomUUID().toString());
+                            exchange.getMessage()
+                                    .setHeader("id", UUID.randomUUID().toString());
                         })
                         .saga()
                         .propagation(SagaPropagation.REQUIRES_NEW)
@@ -119,19 +128,24 @@ public class SagaTimeoutTest extends ContextTestSupport {
                         .to("direct:service2");
 
                 from("direct:service1")
-                        .saga().option("id", header("id"))
-                        .propagation(SagaPropagation.MANDATORY).timeout(100, TimeUnit.MILLISECONDS)
-                        .compensation("mock:compensate").completion("mock:complete")
+                        .saga()
+                        .option("id", header("id"))
+                        .propagation(SagaPropagation.MANDATORY)
+                        .timeout(100, TimeUnit.MILLISECONDS)
+                        .compensation("mock:compensate")
+                        .completion("mock:complete")
                         .delay(300L)
                         .to("mock:end");
 
                 from("direct:service2")
-                        .saga().option("id", header("id"))
-                        .propagation(SagaPropagation.MANDATORY).timeout(500, TimeUnit.MILLISECONDS)
-                        .compensation("mock:compensate").completion("mock:complete")
+                        .saga()
+                        .option("id", header("id"))
+                        .propagation(SagaPropagation.MANDATORY)
+                        .timeout(500, TimeUnit.MILLISECONDS)
+                        .compensation("mock:compensate")
+                        .completion("mock:complete")
                         .to("mock:end");
             }
         };
     }
-
 }

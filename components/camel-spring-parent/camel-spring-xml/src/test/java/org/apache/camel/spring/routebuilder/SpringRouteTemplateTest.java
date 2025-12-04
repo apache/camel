@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.routebuilder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +35,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringRouteTemplateTest extends SpringTestSupport {
 
@@ -73,8 +74,10 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
 
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus("first").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("second").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("first").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("second").name());
         assertEquals("true", context.getRoute("first").getProperties().get(Route.TEMPLATE_PROPERTY));
         assertEquals("true", context.getRoute("second").getProperties().get(Route.TEMPLATE_PROPERTY));
 
@@ -102,7 +105,8 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         assertNotNull(routeId);
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus(routeId).name());
         assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
@@ -138,7 +142,8 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         assertNotEquals("route1", routeId, "Should not be named route1");
         assertEquals(2, context.getRouteDefinitions().size());
         assertEquals(2, context.getRoutes().size());
-        assertEquals("Started", context.getRouteController().getRouteStatus(routeId).name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus(routeId).name());
         assertEquals("true", context.getRoute(routeId).getProperties().get(Route.TEMPLATE_PROPERTY));
 
         template.sendBody("direct:one", "Hello Cheese");
@@ -176,5 +181,4 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         assertNotNull(xml);
         Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));
     }
-
 }

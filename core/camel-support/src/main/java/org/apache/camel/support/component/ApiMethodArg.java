@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 public class ApiMethodArg {
@@ -33,7 +34,8 @@ public class ApiMethodArg {
         this.setter = false;
     }
 
-    public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description, boolean setter) {
+    public ApiMethodArg(
+            String name, Class<?> type, String typeArgs, String rawTypeArgs, String description, boolean setter) {
         this.name = name;
         this.type = type;
         this.typeArgs = typeArgs;

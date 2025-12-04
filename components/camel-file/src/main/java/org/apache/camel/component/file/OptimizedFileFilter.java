@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 /**
@@ -36,5 +37,4 @@ public interface OptimizedFileFilter extends GenericFileFilter {
      *              {@link #accept(GenericFile)} method.
      */
     Boolean accept(String name);
-
 }

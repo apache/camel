@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.springframework.ai.document.Document;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
  * Integration test for RAG (Retrieval Augmented Generation) features.
  */
@@ -36,8 +37,8 @@ public class SpringAiChatRagIT extends OllamaTestSupport {
     @Test
     public void testRagWithManualAugmentedData() {
         List<Document> context = new ArrayList<>();
-        context.add(
-                new Document("Apache Camel is an open-source integration framework based on Enterprise Integration Patterns."));
+        context.add(new Document(
+                "Apache Camel is an open-source integration framework based on Enterprise Integration Patterns."));
         context.add(new Document("Camel was created in 2007 and is part of the Apache Software Foundation."));
 
         var exchange = template().request("direct:rag", e -> {
@@ -52,8 +53,8 @@ public class SpringAiChatRagIT extends OllamaTestSupport {
 
     @Test
     public void testRagWithAggregatorStrategy() {
-        String response = template().requestBody("direct:rag-enricher",
-                "What framework is mentioned? Answer in two words.", String.class);
+        String response = template()
+                .requestBody("direct:rag-enricher", "What framework is mentioned? Answer in two words.", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response.toLowerCase()).containsAnyOf("camel", "apache");
@@ -67,8 +68,10 @@ public class SpringAiChatRagIT extends OllamaTestSupport {
         var exchange = template().request("direct:rag", e -> {
             e.getIn().setBody("What is the price?");
             e.getIn().setHeader(SpringAiChatConstants.AUGMENTED_DATA, context);
-            e.getIn().setHeader(SpringAiChatConstants.SYSTEM_MESSAGE,
-                    "You are a helpful assistant. Answer based only on the provided context.");
+            e.getIn()
+                    .setHeader(
+                            SpringAiChatConstants.SYSTEM_MESSAGE,
+                            "You are a helpful assistant. Answer based only on the provided context.");
         });
 
         String response = exchange.getMessage().getBody(String.class);
@@ -85,21 +88,19 @@ public class SpringAiChatRagIT extends OllamaTestSupport {
 
                 SpringAiRagAggregatorStrategy aggregatorStrategy = new SpringAiRagAggregatorStrategy();
 
-                from("direct:rag")
-                        .to("spring-ai-chat:rag?chatModel=#chatModel");
+                from("direct:rag").to("spring-ai-chat:rag?chatModel=#chatModel");
 
                 from("direct:rag-enricher")
                         .enrich("direct:retrieve-context", aggregatorStrategy)
                         .to("spring-ai-chat:rag?chatModel=#chatModel");
 
-                from("direct:retrieve-context")
-                        .process(exchange -> {
-                            // Simulate document retrieval
-                            List<String> documents = new ArrayList<>();
-                            documents.add("Apache Camel is a powerful integration framework.");
-                            documents.add("Camel supports over 300 components for integration.");
-                            exchange.getIn().setBody(documents);
-                        });
+                from("direct:retrieve-context").process(exchange -> {
+                    // Simulate document retrieval
+                    List<String> documents = new ArrayList<>();
+                    documents.add("Apache Camel is a powerful integration framework.");
+                    documents.add("Camel supports over 300 components for integration.");
+                    exchange.getIn().setBody(documents);
+                });
             }
         };
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class DumpRouteStructureTest extends ManagementTestSupport {
@@ -43,7 +44,9 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
         assertEquals("myOtherRoute", lines.get(1).id());
-        assertEquals("from[seda://bar?multipleConsumers=true&size=1234]", lines.get(1).code());
+        assertEquals(
+                "from[seda://bar?multipleConsumers=true&size=1234]",
+                lines.get(1).code());
         assertEquals(2, lines.get(2).level());
         assertEquals("filter", lines.get(2).type());
         assertEquals("myfilter", lines.get(2).id());
@@ -91,13 +94,17 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
             public void configure() {
                 context.setDebugging(true);
 
-                from("seda:bar?size=1234&multipleConsumers=true").routeId("myOtherRoute")
-                        .filter().header("bar").id("myfilter")
-                            .to("mock:bar").id("mybar")
+                from("seda:bar?size=1234&multipleConsumers=true")
+                        .routeId("myOtherRoute")
+                        .filter()
+                        .header("bar")
+                        .id("myfilter")
+                        .to("mock:bar")
+                        .id("mybar")
                         .end()
-                        .to("log:end").id("myend");
+                        .to("log:end")
+                        .id("myend");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import org.apache.camel.Endpoint;
@@ -31,6 +32,7 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
      * Constants copied from {@link org.apache.camel.component.kafka.KafkaConstants}
      */
     protected static final String PARTITION_KEY = "kafka.PARTITION_KEY";
+
     protected static final String PARTITION = "kafka.PARTITION";
     protected static final String KEY = "kafka.KEY";
     protected static final String OVERRIDE_TOPIC = "kafka.OVERRIDE_TOPIC";
@@ -91,5 +93,4 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
         T partition = exchange.getIn().getHeader(header, type);
         return partition != null ? String.valueOf(partition) : exchange.getIn().getHeader(header, String.class);
     }
-
 }

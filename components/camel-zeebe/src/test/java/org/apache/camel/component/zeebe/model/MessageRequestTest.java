@@ -17,21 +17,21 @@
 
 package org.apache.camel.component.zeebe.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collections;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MessageRequestTest {
 
-    private static final String MARSHAL_TEST_RESULT_1
-            = "{\"name\":\"test\",\"variables\":{},\"correlation_key\":\"correlation\",\"time_to_live\":100,\"message_id\":\"message\"}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"name\":\"test\",\"variables\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"},\"correlation_key\":\"correlation\",\"time_to_live\":100,\"message_id\":\"message\"}";
+    private static final String MARSHAL_TEST_RESULT_1 =
+            "{\"name\":\"test\",\"variables\":{},\"correlation_key\":\"correlation\",\"time_to_live\":100,\"message_id\":\"message\"}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"name\":\"test\",\"variables\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"},\"correlation_key\":\"correlation\",\"time_to_live\":100,\"message_id\":\"message\"}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -58,8 +58,8 @@ public class MessageRequestTest {
 
     @Test
     public void unmarshalTest() {
-        MessageRequest unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, MessageRequest.class));
+        MessageRequest unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, MessageRequest.class));
 
         MessageRequest message = new MessageRequest();
         message.setName("test");
@@ -69,8 +69,8 @@ public class MessageRequestTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        MessageRequest unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, MessageRequest.class));
+        MessageRequest unmarshalledMessage2 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, MessageRequest.class));
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");

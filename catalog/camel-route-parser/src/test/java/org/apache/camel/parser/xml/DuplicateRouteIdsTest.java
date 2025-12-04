@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,8 +29,6 @@ import org.apache.camel.parser.model.CamelRouteDetails;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DuplicateRouteIdsTest {
 
@@ -51,5 +52,4 @@ public class DuplicateRouteIdsTest {
         assertEquals("bar", list.get(1).getRouteId());
         assertEquals("foo", list.get(2).getRouteId());
     }
-
 }

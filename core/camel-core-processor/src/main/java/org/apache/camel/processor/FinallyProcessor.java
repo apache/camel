@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
@@ -53,8 +54,8 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
 
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
-                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+                exchange.setProperty(
+                        ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             }
             // and store the route id so we know in which route we failed
             String routeId = ExchangeHelper.getAtRouteId(exchange);
@@ -144,5 +145,4 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
             return "FinallyAsyncCallback";
         }
     }
-
 }

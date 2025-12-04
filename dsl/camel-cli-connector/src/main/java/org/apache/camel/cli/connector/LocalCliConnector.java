@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cli.connector;
 
 import java.io.File;
@@ -116,7 +117,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File actionFile;
     private File outputFile;
     private File traceFile;
-    private long traceFilePos;   // keep track of trace offset
+    private long traceFilePos; // keep track of trace offset
     private File messageHistoryFile;
     private File debugFile;
     private File receiveFile;
@@ -303,7 +304,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         } catch (Exception e) {
             // ignore
-            LOG.warn("Error executing action: {} due to: {}. This exception is ignored.", action != null ? action : actionFile,
+            LOG.warn(
+                    "Error executing action: {} due to: {}. This exception is ignored.",
+                    action != null ? action : actionFile,
                     e.getMessage(),
                     e);
         } finally {
@@ -350,7 +353,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         final Map<String, Object> inputOptions = map2;
-        Exchange out = camelContext.getCamelContextExtension().getExchangeFactory().create(false);
+        Exchange out =
+                camelContext.getCamelContextExtension().getExchangeFactory().create(false);
         try {
             if (source != null) {
                 Integer sourceLine = LoggerHelper.extractSourceLocationLineNumber(source);
@@ -382,9 +386,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         source = "file:" + source;
                     }
                     // load the source via routes loader, and find the builders, which we can use to get to the model
-                    Resource res = camelContext.getCamelContextExtension().getContextPlugin(ResourceLoader.class)
+                    Resource res = camelContext
+                            .getCamelContextExtension()
+                            .getContextPlugin(ResourceLoader.class)
                             .resolveResource(source);
-                    RoutesLoader loader = camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
+                    RoutesLoader loader =
+                            camelContext.getCamelContextExtension().getContextPlugin(RoutesLoader.class);
                     Collection<RoutesBuilder> builders = loader.findRoutesBuilders(res);
                     for (RoutesBuilder builder : builders) {
                         // use the model as we just want to find the EIP with the inlined expression
@@ -394,9 +401,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         // find the EIP with the inlined expression to use
                         ExpressionDefinition found = null;
                         for (RouteDefinition rd : mrb.getRoutes().getRoutes()) {
-                            Collection<ProcessorDefinition> defs
-                                    = ProcessorDefinitionHelper.filterTypeInOutputs(rd.getOutputs(),
-                                            ProcessorDefinition.class);
+                            Collection<ProcessorDefinition> defs = ProcessorDefinitionHelper.filterTypeInOutputs(
+                                    rd.getOutputs(), ProcessorDefinition.class);
                             for (ProcessorDefinition p : defs) {
                                 if (p instanceof HasExpressionType et) {
                                     ExpressionDefinition def = et.getExpressionType();
@@ -467,7 +473,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 // configure expression if options provided
                 if (inputOptions != null) {
                     PropertyBindingSupport.build()
-                            .withCamelContext(camelContext).withTarget(exp).withProperties(inputOptions).bind();
+                            .withCamelContext(camelContext)
+                            .withTarget(exp)
+                            .withProperties(inputOptions)
+                            .bind();
                 }
                 exp.init(camelContext);
                 // create dummy exchange with
@@ -497,7 +506,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             jo.put("elapsed", watch.taken());
             jo.put("status", "failed");
             // avoid double wrap
-            jo.put("exception",
+            jo.put(
+                    "exception",
                     MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
             IOHelper.writeText(jo.toJson(), outputFile);
         } else {
@@ -513,15 +523,19 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             jo.put("elapsed", watch.taken());
             jo.put("status", "success");
             // avoid double wrap
-            jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
-                    BODY_MAX_CHARS).getMap("message"));
+            jo.put(
+                    "message",
+                    MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true, BODY_MAX_CHARS)
+                            .getMap("message"));
             IOHelper.writeText(jo.toJson(), outputFile);
         }
         camelContext.getCamelContextExtension().getExchangeFactory().release(out);
     }
 
     private void doActionSendTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("send");
         if (dc != null) {
 
@@ -572,11 +586,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         String limit = root.getString("limit");
         String browse = root.getString("browse");
 
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("stub");
         if (dc != null) {
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                    Map.of("filter", filter, "limit", limit, "browse", browse));
+            JsonObject json = (JsonObject)
+                    dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "limit", limit, "browse", browse));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -585,7 +601,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionStartupRecorder() throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("startup-recorder");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
@@ -597,7 +615,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionRouteControllerTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-controller");
         if (dc != null) {
             String stacktrace = root.getString("stacktrace");
@@ -610,15 +630,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionRouteDumpTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-dump");
         if (dc != null) {
             String filter = root.getString("filter");
             String format = root.getString("format");
             String uriAsParameters = root.getString("uriAsParameters");
-            JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
+            JsonObject json = (JsonObject) dc.call(
+                    DevConsole.MediaType.JSON,
+                    Map.of("filter", filter, "format", format, "uriAsParameters", uriAsParameters));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -627,14 +649,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionRouteStructureTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
         if (dc != null) {
             String filter = root.getString("filter");
             String brief = root.getString("brief");
-            JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("filter", filter, "brief", brief));
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "brief", brief));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -643,7 +665,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionSourceTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("source");
         if (dc != null) {
             String filter = root.getString("filter");
@@ -656,8 +680,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionTopProcessorsTask() throws IOException {
-        DevConsole dc
-                = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("top");
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("top");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
             LOG.trace("Updating output file: {}", outputFile);
@@ -668,7 +694,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionThreadDumpTask() throws IOException {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("thread");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
@@ -680,7 +708,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionKafkaTask() throws IOException {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("kafka");
         if (dc != null) {
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("committed", "true"));
@@ -692,7 +722,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionTraceTask(JsonObject root) throws IOException {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("trace");
         if (dc != null) {
             String enabled = root.getString("enabled");
@@ -710,7 +742,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionBrowseTask(JsonObject root) throws IOException {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("browse");
         if (dc != null) {
             Map<String, Object> map = new HashMap<>();
@@ -724,8 +758,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (bodyMaxChars != null) {
                 map.put("bodyMaxChars", bodyMaxChars);
             }
-            JsonObject json
-                    = (JsonObject) dc.call(DevConsole.MediaType.JSON, map);
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, map);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
@@ -734,7 +767,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionReceiveTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("receive");
         if (dc != null) {
 
@@ -764,12 +799,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         String nulls = root.getStringOrDefault("nulls", "true");
         String internal = root.getStringOrDefault("internal", "false");
 
-        Map<String, Object> options = Map.of("filter", filter, "properties", properties, "nulls", nulls, "internal", internal);
+        Map<String, Object> options =
+                Map.of("filter", filter, "properties", properties, "nulls", nulls, "internal", internal);
 
         JsonObject answer = new JsonObject();
-        DevConsole dc1 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc1 = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("bean");
-        DevConsole dc2 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc2 = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("bean-model");
         if (dc1 != null) {
             JsonObject json = (JsonObject) dc1.call(DevConsole.MediaType.JSON, options);
@@ -791,14 +831,17 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private void doActionDebugTask(JsonObject root) throws Exception {
-        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+        DevConsole dc = camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("debug");
         if (dc != null) {
             String cmd = root.getStringOrDefault("command", "");
             String bp = root.getStringOrDefault("breakpoint", "");
             String history = root.getStringOrDefault("history", "false");
             String position = root.getStringOrDefault("position", "");
-            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+            JsonObject json = (JsonObject) dc.call(
+                    DevConsole.MediaType.JSON,
                     Map.of("command", cmd, "breakpoint", bp, "history", history, "position", position));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
@@ -822,7 +865,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             Exception error = cr.getLastError();
             if (error != null) {
                 jo.put("status", "failed");
-                jo.put("exception",
+                jo.put(
+                        "exception",
                         MessageHelper.dumpExceptionAsJSonObject(error).getMap("exception"));
             } else {
                 jo.put("status", "success");
@@ -868,8 +912,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             ids = List.of("*");
         } else {
             // find matching IDs
-            ids = camelContext.getRoutes()
-                    .stream().map(r -> group ? r.getGroup() : r.getRouteId())
+            ids = camelContext.getRoutes().stream()
+                    .map(r -> group ? r.getGroup() : r.getRouteId())
                     .filter(Objects::nonNull)
                     .filter(name -> {
                         for (String p : patterns) {
@@ -938,7 +982,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         boolean all = patterns.length == 1 && "*".equals(patterns[0]);
 
         List<ManagedProcessorMBean> mps = new ArrayList<>();
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
             try {
@@ -977,8 +1022,12 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     mp.enable();
                 }
             } catch (Exception e) {
-                LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
-                        e.getMessage(), e);
+                LOG.warn(
+                        "Error {} processor: {} due to: {}. This exception is ignored.",
+                        command,
+                        mp.getProcessorId(),
+                        e.getMessage(),
+                        e);
             }
         }
     }
@@ -1239,14 +1288,19 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             IOHelper.writeText(root.toJson(), statusFile);
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating status file: {} due to: {}. This exception is ignored.",
-                    statusFile, e.getMessage(), e);
+            LOG.trace(
+                    "Error updating status file: {} due to: {}. This exception is ignored.",
+                    statusFile,
+                    e.getMessage(),
+                    e);
         }
     }
 
     protected void traceTask() {
         try {
-            DevConsole dc12 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+            DevConsole dc12 = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("trace");
             if (dc12 != null) {
                 JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON, Map.of("dump", "true"));
@@ -1269,11 +1323,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating trace file: {} due to: {}. This exception is ignored.",
-                    traceFile, e.getMessage(), e);
+            LOG.trace(
+                    "Error updating trace file: {} due to: {}. This exception is ignored.",
+                    traceFile,
+                    e.getMessage(),
+                    e);
         }
         try {
-            DevConsole dc13 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+            DevConsole dc13 = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("debug");
             if (dc13 != null) {
                 JsonObject json = (JsonObject) dc13.call(DevConsole.MediaType.JSON);
@@ -1284,11 +1343,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating debug file: {} due to: {}. This exception is ignored.",
-                    debugFile, e.getMessage(), e);
+            LOG.trace(
+                    "Error updating debug file: {} due to: {}. This exception is ignored.",
+                    debugFile,
+                    e.getMessage(),
+                    e);
         }
         try {
-            DevConsole dc13b = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+            DevConsole dc13b = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("message-history");
             if (dc13b != null) {
                 JsonObject json = (JsonObject) dc13b.call(DevConsole.MediaType.JSON);
@@ -1299,11 +1363,16 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating message-history file: {} due to: {}. This exception is ignored.",
-                    messageHistoryFile, e.getMessage(), e);
+            LOG.trace(
+                    "Error updating message-history file: {} due to: {}. This exception is ignored.",
+                    messageHistoryFile,
+                    e.getMessage(),
+                    e);
         }
         try {
-            DevConsole dc14 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+            DevConsole dc14 = camelContext
+                    .getCamelContextExtension()
+                    .getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("receive");
             if (dc14 != null) {
                 JsonObject json = (JsonObject) dc14.call(DevConsole.MediaType.JSON, Map.of("dump", "true"));
@@ -1326,8 +1395,11 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating receive file: {} due to: {}. This exception is ignored.",
-                    receiveFile, e.getMessage(), e);
+            LOG.trace(
+                    "Error updating receive file: {} due to: {}. This exception is ignored.",
+                    receiveFile,
+                    e.getMessage(),
+                    e);
         }
     }
 
@@ -1388,7 +1460,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private JsonObject collectVaults() {
         JsonObject root = new JsonObject();
         // aws-secrets is optional
-        Optional<DevConsole> dcAws = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("aws-secrets");
+        Optional<DevConsole> dcAws =
+                PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("aws-secrets");
         if (dcAws.isPresent()) {
             JsonObject json = (JsonObject) dcAws.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -1396,7 +1469,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // gcp-secrets is optional
-        Optional<DevConsole> dcGcp = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("gcp-secrets");
+        Optional<DevConsole> dcGcp =
+                PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("gcp-secrets");
         if (dcGcp.isPresent()) {
             JsonObject json = (JsonObject) dcGcp.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -1404,7 +1478,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // azure-secrets is optional
-        Optional<DevConsole> dcAzure = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("azure-secrets");
+        Optional<DevConsole> dcAzure =
+                PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("azure-secrets");
         if (dcAzure.isPresent()) {
             JsonObject json = (JsonObject) dcAzure.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -1412,8 +1487,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // kubernetes-secrets is optional
-        Optional<DevConsole> dcKubernetes
-                = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("kubernetes-secrets");
+        Optional<DevConsole> dcKubernetes =
+                PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("kubernetes-secrets");
         if (dcKubernetes.isPresent()) {
             JsonObject json = (JsonObject) dcKubernetes.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -1422,8 +1497,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
 
         // hashicorp-secrets is optional
-        Optional<DevConsole> dcHashicorp
-                = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("hashicorp-secrets");
+        Optional<DevConsole> dcHashicorp =
+                PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("hashicorp-secrets");
         if (dcHashicorp.isPresent()) {
             JsonObject json = (JsonObject) dcHashicorp.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -1432,8 +1507,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
 
         // kubernetes-configmaps is optional
-        Optional<DevConsole> cmcKubernetes
-                = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("kubernetes-configmaps");
+        Optional<DevConsole> cmcKubernetes =
+                PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("kubernetes-configmaps");
         if (cmcKubernetes.isPresent()) {
             JsonObject json = (JsonObject) cmcKubernetes.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -1498,5 +1573,4 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         return answer;
     }
-
 }

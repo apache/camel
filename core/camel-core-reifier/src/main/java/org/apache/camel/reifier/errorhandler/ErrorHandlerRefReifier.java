@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.errorhandler;
 
 import org.apache.camel.ErrorHandlerFactory;
@@ -33,13 +34,14 @@ public class ErrorHandlerRefReifier extends ErrorHandlerReifier<RefErrorHandlerD
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
         ErrorHandlerFactory handler = lookupErrorHandler(route);
-        return ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route, handler,
-                processor);
+        return ((ModelCamelContext) camelContext)
+                .getModelReifierFactory()
+                .createErrorHandler(route, handler, processor);
     }
 
     private ErrorHandlerFactory lookupErrorHandler(Route route) {
-        ErrorHandlerFactory handler
-                = ErrorHandlerHelper.lookupErrorHandlerFactory(route, parseString(definition.getRef()), true);
+        ErrorHandlerFactory handler =
+                ErrorHandlerHelper.lookupErrorHandlerFactory(route, parseString(definition.getRef()), true);
         ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + "'");
         route.addErrorHandlerFactoryReference(definition, handler);
         return handler;

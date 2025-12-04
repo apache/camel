@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.spring.SpringTestSupport;
@@ -25,7 +26,8 @@ public class SpringPropertyPlaceholderIssueTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
     }
 
     @Test

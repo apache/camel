@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 
 import java.io.File;
 import java.io.InputStream;
@@ -36,8 +39,6 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 
 class ExportCamelMain extends Export {
 
@@ -105,52 +106,55 @@ class ExportCamelMain extends Export {
         // copy application properties files
         copyApplicationPropertiesFiles(srcResourcesDir);
         // copy source files
-        copySourceFiles(settings, profile,
-                srcJavaDirRoot, srcJavaDir,
-                srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, srcPackageName);
+        copySourceFiles(
+                settings,
+                profile,
+                srcJavaDirRoot,
+                srcJavaDir,
+                srcResourcesDir,
+                srcCamelResourcesDir,
+                srcKameletsResourcesDir,
+                srcPackageName);
         // copy from settings to profile
-        copySettingsAndProfile(settings, profile,
-                srcResourcesDir, prop -> {
-                    if (groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
-                        prop.put("camel.main.groovyPreloadCompiled", "true");
-                    }
-                    if (!prop.containsKey("camel.main.basePackageScan")
-                            && !prop.containsKey("camel.main.base-package-scan")) {
-                        // use dot as root package if no package are in use
-                        prop.put("camel.main.basePackageScan", srcPackageName == null ? "." : srcPackageName);
-                    }
-                    if (!hasModeline(settings)) {
-                        prop.remove("camel.main.modeline");
-                    }
-                    // are we using http then enable embedded HTTP server (if not explicit configured already)
-                    int port = httpServerPort(settings);
-                    if (port == -1
-                            && deps.stream().anyMatch(d -> d.contains("camel-platform-http") || d.contains("camel-rest"))) {
-                        port = 8080;
-                    }
-                    if (port != -1 && !prop.containsKey("camel.server.enabled")) {
-                        prop.put("camel.server.enabled", "true");
-                        if (port != 8080 && !prop.containsKey("camel.server.port")) {
-                            prop.put("camel.server.port", port);
-                        }
-                        if (!prop.containsKey("camel.server.health-check-enabled")) {
-                            if (VersionHelper.isGE(camelVersion, "4.14.0")) {
-                                prop.put("camel.management.enabled", "true");
-                                prop.put("camel.management.health-check-enabled", "true");
-                            } else {
-                                // old option name for Camel 4.13 and older
-                                prop.put("camel.server.health-check-enabled", "true");
-                            }
-                        }
-                    }
-                    port = httpManagementPort(settings);
-                    if (port != -1) {
+        copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
+            if (groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
+                prop.put("camel.main.groovyPreloadCompiled", "true");
+            }
+            if (!prop.containsKey("camel.main.basePackageScan") && !prop.containsKey("camel.main.base-package-scan")) {
+                // use dot as root package if no package are in use
+                prop.put("camel.main.basePackageScan", srcPackageName == null ? "." : srcPackageName);
+            }
+            if (!hasModeline(settings)) {
+                prop.remove("camel.main.modeline");
+            }
+            // are we using http then enable embedded HTTP server (if not explicit configured already)
+            int port = httpServerPort(settings);
+            if (port == -1
+                    && deps.stream().anyMatch(d -> d.contains("camel-platform-http") || d.contains("camel-rest"))) {
+                port = 8080;
+            }
+            if (port != -1 && !prop.containsKey("camel.server.enabled")) {
+                prop.put("camel.server.enabled", "true");
+                if (port != 8080 && !prop.containsKey("camel.server.port")) {
+                    prop.put("camel.server.port", port);
+                }
+                if (!prop.containsKey("camel.server.health-check-enabled")) {
+                    if (VersionHelper.isGE(camelVersion, "4.14.0")) {
                         prop.put("camel.management.enabled", "true");
-                        prop.put("camel.management.port", port);
+                        prop.put("camel.management.health-check-enabled", "true");
+                    } else {
+                        // old option name for Camel 4.13 and older
+                        prop.put("camel.server.health-check-enabled", "true");
                     }
-                    return prop;
-                });
+                }
+            }
+            port = httpManagementPort(settings);
+            if (port != -1) {
+                prop.put("camel.management.enabled", "true");
+                prop.put("camel.management.port", port);
+            }
+            return prop;
+        });
         // create main class
         createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // copy local lib JARs
@@ -163,8 +167,7 @@ class ExportCamelMain extends Export {
         copyAgentDependencies(deps);
         deps.removeIf(d -> d.startsWith("agent:"));
         if ("maven".equals(buildTool)) {
-            createMavenPom(settings, profile,
-                    buildDir.resolve("pom.xml"), deps, srcPackageName);
+            createMavenPom(settings, profile, buildDir.resolve("pom.xml"), deps, srcPackageName);
             if (mavenWrapper) {
                 copyMavenWrapper();
             }
@@ -184,7 +187,8 @@ class ExportCamelMain extends Export {
         return 0;
     }
 
-    private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps, String packageName) throws Exception {
+    private void createMavenPom(Path settings, Path profile, Path pom, Set<String> deps, String packageName)
+            throws Exception {
         String[] ids = gav.split(":");
 
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/" + pomTemplateName);
@@ -252,8 +256,11 @@ class ExportCamelMain extends Export {
             // special for lib JARs
             if ("lib".equals(gav.getPackaging())) {
                 sb.append("            <scope>system</scope>\n");
-                sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
-                        .append(gav.getVersion()).append(".jar</systemPath>\n");
+                sb.append("            <systemPath>\\$\\{project.basedir}/lib/")
+                        .append(gav.getArtifactId())
+                        .append("-")
+                        .append(gav.getVersion())
+                        .append(".jar</systemPath>\n");
             }
             if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
                 // special for camel-kamelets-utils
@@ -307,24 +314,29 @@ class ExportCamelMain extends Export {
                 sb1.append(String.format("        <%s>%s</%s>%n", "jib.from.image", fromImage, "jib.from.image"));
             }
 
-            InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-pom.tmpl");
+            InputStream is =
+                    ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-pom.tmpl");
             String context2 = IOHelper.loadText(is);
             IOHelper.close(is);
 
-            context2 = context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}",
-                    jibMavenPluginVersion(settings, prop));
+            context2 =
+                    context2.replaceFirst("\\{\\{ \\.JibMavenPluginVersion }}", jibMavenPluginVersion(settings, prop));
 
             // image from/to auth
             String auth = "";
             if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.from.auth."))) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-from-auth-pom.tmpl");
+                is = ExportCamelMain.class
+                        .getClassLoader()
+                        .getResourceAsStream("templates/main-docker-from-auth-pom.tmpl");
                 auth = IOHelper.loadText(is);
                 IOHelper.close(is);
             }
             context2 = context2.replace("{{ .JibFromImageAuth }}", auth);
             auth = "";
             if (prop.stringPropertyNames().stream().anyMatch(s -> s.startsWith("jib.to.auth."))) {
-                is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-docker-to-auth-pom.tmpl");
+                is = ExportCamelMain.class
+                        .getClassLoader()
+                        .getResourceAsStream("templates/main-docker-to-auth-pom.tmpl");
                 auth = IOHelper.loadText(is);
                 IOHelper.close(is);
             }
@@ -341,8 +353,8 @@ class ExportCamelMain extends Export {
                 is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/main-jkube-pom.tmpl");
                 String context3 = IOHelper.loadText(is);
                 IOHelper.close(is);
-                context3 = context3.replaceFirst("\\{\\{ \\.JkubeMavenPluginVersion }}",
-                        jkubeMavenPluginVersion(settings, prop));
+                context3 = context3.replaceFirst(
+                        "\\{\\{ \\.JkubeMavenPluginVersion }}", jkubeMavenPluginVersion(settings, prop));
                 sb2.append(context3);
             }
         }
@@ -411,12 +423,25 @@ class ExportCamelMain extends Export {
 
     @Override
     protected void copySourceFiles(
-            Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
-            Path srcKameletsResourcesDir, String packageName)
+            Path settings,
+            Path profile,
+            Path srcJavaDirRoot,
+            Path srcJavaDir,
+            Path srcResourcesDir,
+            Path srcCamelResourcesDir,
+            Path srcKameletsResourcesDir,
+            String packageName)
             throws Exception {
 
-        super.copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
-                srcKameletsResourcesDir, packageName);
+        super.copySourceFiles(
+                settings,
+                profile,
+                srcJavaDirRoot,
+                srcJavaDir,
+                srcResourcesDir,
+                srcCamelResourcesDir,
+                srcKameletsResourcesDir,
+                packageName);
 
         // log4j configuration
         InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2-main.properties");
@@ -446,5 +471,4 @@ class ExportCamelMain extends Export {
             }
         }
     }
-
 }

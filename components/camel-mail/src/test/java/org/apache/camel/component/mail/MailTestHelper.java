@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -24,12 +25,14 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 public final class MailTestHelper {
     private static final String KEY_STORE_PASSWORD = "changeit";
 
-    private MailTestHelper() {
-    }
+    private MailTestHelper() {}
 
     public static SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(MailTestHelper.class.getClassLoader().getResource("jsse/localhost.p12").toString());
+        ksp.setResource(MailTestHelper.class
+                .getClassLoader()
+                .getResource("jsse/localhost.p12")
+                .toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
 
         KeyManagersParameters kmp = new KeyManagersParameters();

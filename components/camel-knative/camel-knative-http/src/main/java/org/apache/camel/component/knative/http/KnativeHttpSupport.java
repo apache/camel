@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative.http;
 
 import java.util.HashMap;
@@ -36,18 +37,17 @@ import org.apache.camel.support.CamelContextHelper;
 public final class KnativeHttpSupport {
     private static final String PLATFORM_HTTP_ROUTER_NAME = "platform-http-router";
 
-    private KnativeHttpSupport() {
-    }
+    private KnativeHttpSupport() {}
 
     public static Predicate<HttpServerRequest> createFilter(CloudEvent cloudEvent, KnativeResource resource) {
         final Map<String, String> filters = new HashMap<>();
 
         for (Map.Entry<String, String> entry : resource.getFilters().entrySet()) {
-            cloudEvent.attribute(entry.getKey())
+            cloudEvent
+                    .attribute(entry.getKey())
                     .map(CloudEvent.Attribute::http)
                     .ifPresentOrElse(
-                            k -> filters.put(k, entry.getValue()),
-                            () -> filters.put(entry.getKey(), entry.getValue()));
+                            k -> filters.put(k, entry.getValue()), () -> filters.put(entry.getKey(), entry.getValue()));
         }
 
         return (HttpServerRequest request) -> {
@@ -115,10 +115,7 @@ public final class KnativeHttpSupport {
             return router;
         }
 
-        return CamelContextHelper.lookup(
-                camelContext,
-                PLATFORM_HTTP_ROUTER_NAME,
-                Router.class);
+        return CamelContextHelper.lookup(camelContext, PLATFORM_HTTP_ROUTER_NAME, Router.class);
     }
 
     /**
@@ -148,8 +145,8 @@ public final class KnativeHttpSupport {
      * @return              client options or empty
      */
     public static Optional<KnativeSslClientOptions> lookupClientOptions(CamelContext camelContext) {
-        KnativeSslClientOptions clientOptions
-                = CamelContextHelper.findSingleByType(camelContext, KnativeSslClientOptions.class);
+        KnativeSslClientOptions clientOptions =
+                CamelContextHelper.findSingleByType(camelContext, KnativeSslClientOptions.class);
         if (clientOptions != null) {
             return Optional.of(clientOptions);
         }
@@ -164,8 +161,8 @@ public final class KnativeHttpSupport {
      * @return              service options or empty
      */
     public static Optional<KnativeHttpServiceOptions> lookupServiceOptions(CamelContext camelContext) {
-        KnativeHttpServiceOptions serviceOptions
-                = CamelContextHelper.findSingleByType(camelContext, KnativeHttpServiceOptions.class);
+        KnativeHttpServiceOptions serviceOptions =
+                CamelContextHelper.findSingleByType(camelContext, KnativeHttpServiceOptions.class);
         if (serviceOptions != null) {
             return Optional.of(serviceOptions);
         }

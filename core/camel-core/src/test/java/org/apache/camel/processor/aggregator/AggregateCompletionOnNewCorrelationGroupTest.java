@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -44,9 +45,11 @@ public class AggregateCompletionOnNewCorrelationGroupTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionOnNewCorrelationGroup()
-                        .completionSize(3).to("log:aggregated",
-                                "mock:aggregated");
+                from("direct:start")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .completionOnNewCorrelationGroup()
+                        .completionSize(3)
+                        .to("log:aggregated", "mock:aggregated");
             }
         };
     }

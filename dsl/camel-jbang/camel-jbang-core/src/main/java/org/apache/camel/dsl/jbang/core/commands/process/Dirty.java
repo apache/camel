@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
+
+import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.getCamelDir;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,14 +27,15 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.getCamelDir;
-
-@CommandLine.Command(name = "dirty",
-                     description = "Check if there are dirty files from previous Camel runs that did not terminate gracefully")
+@CommandLine.Command(
+        name = "dirty",
+        description = "Check if there are dirty files from previous Camel runs that did not terminate gracefully")
 public class Dirty extends ProcessBaseCommand {
 
-    @CommandLine.Option(names = { "--clean" }, defaultValue = "false",
-                        description = "Clean dirty files which are no longer in use")
+    @CommandLine.Option(
+            names = {"--clean"},
+            defaultValue = "false",
+            description = "Clean dirty files which are no longer in use")
     boolean clean;
 
     public Dirty(CamelJBangMain main) {
@@ -71,5 +75,4 @@ public class Dirty extends ProcessBaseCommand {
 
         return 0;
     }
-
 }

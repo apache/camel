@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.apache.camel.dataformat.csv.TestUtils.LS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,14 +31,10 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.dataformat.csv.TestUtils.LS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of the
  * <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
  */
-
 public class CsvMarshalAutogenColumnsSpringQuoteModeTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")

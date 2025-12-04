@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -31,8 +34,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GroupedExchangeRoundtripIT.class);
@@ -73,12 +74,16 @@ public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from(aggregator).routeId("Group_Send").aggregate(new GroupedExchangeAggregationStrategy()).constant(true)
-                        .completionSize(2).completionTimeout(5000L).to(topic)
+                from(aggregator)
+                        .routeId("Group_Send")
+                        .aggregate(new GroupedExchangeAggregationStrategy())
+                        .constant(true)
+                        .completionSize(2)
+                        .completionTimeout(5000L)
+                        .to(topic)
                         .to(sendResult);
 
                 from(pubsubSubscription).routeId("Group_Receive").to(receiveResult);
-
             }
         };
     }
@@ -88,7 +93,6 @@ public class GroupedExchangeRoundtripIT extends PubsubTestSupport {
      *
      * @throws Exception
      */
-
     @Test
     public void sendGrouped() throws Exception {
 

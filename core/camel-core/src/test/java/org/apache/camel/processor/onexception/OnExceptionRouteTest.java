@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test inspired by user forum.
@@ -138,14 +139,21 @@ public class OnExceptionRouteTest extends ContextTestSupport {
                 // redelivery but handle it our self using
                 // our bean myOwnHandler, then the exchange is not routed to the
                 // default error (mock:error)
-                onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
+                onException(MyFunctionalException.class)
+                        .maximumRedeliveries(0)
+                        .handled(true)
+                        .to("bean:myOwnHandler");
 
                 // here we route message to our service bean
-                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("//type = 'myType'")
+                        .to("bean:myServiceBean")
+                        .end()
                         .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

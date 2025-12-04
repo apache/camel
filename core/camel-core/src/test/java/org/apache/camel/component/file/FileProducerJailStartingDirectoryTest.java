@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
 
@@ -32,7 +33,8 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class,
+        Exception e = assertThrows(
+                Exception.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello World", Exchange.FILE_NAME, "hello.txt"),
                 "Should have thrown exception");
 
@@ -57,7 +59,8 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
+                from("direct:start")
+                        .setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
                         .to(fileUri("outbox"))
                         .to("mock:result");
             }

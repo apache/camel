@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6;
+
+import static org.apache.camel.test.junit6.util.ExtensionHelper.testEndFooter;
+import static org.apache.camel.test.junit6.util.ExtensionHelper.testStartHeader;
 
 import java.lang.reflect.Method;
 
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-
-import static org.apache.camel.test.junit6.util.ExtensionHelper.testEndFooter;
-import static org.apache.camel.test.junit6.util.ExtensionHelper.testStartHeader;
 
 public class TestLoggerExtension
         implements BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback {
@@ -51,7 +52,6 @@ public class TestLoggerExtension
              */
             testEndFooter(testClass, testMethod.getName(), 0);
         }
-
     }
 
     @Override
@@ -60,9 +60,7 @@ public class TestLoggerExtension
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext context) {
-
-    }
+    public void afterTestExecution(ExtensionContext context) {}
 
     @Override
     public void beforeTestExecution(ExtensionContext context) {

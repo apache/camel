@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,8 +31,6 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanLifecycleTest extends ContextTestSupport {
 
@@ -86,7 +87,9 @@ public class BeanLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething", BeanScope.Prototype)
+                from("direct:foo")
+                        .routeId("foo")
+                        .bean(statefulInstance, "doSomething", BeanScope.Prototype)
                         .bean(MyStatefulBean.class, "doSomething")
                         .bean(MyStatefulBean.class.getName(), "doSomething", BeanScope.Singleton)
                         .bean(MyStatelessBean.class.getName(), "doSomething", BeanScope.Prototype)
@@ -149,11 +152,9 @@ public class BeanLifecycleTest extends ContextTestSupport {
         }
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
-        public void stop() {
-        }
+        public void stop() {}
     }
 }

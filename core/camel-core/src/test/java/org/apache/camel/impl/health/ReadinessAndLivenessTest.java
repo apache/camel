@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,11 +34,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReadinessAndLivenessTest {
 
@@ -123,7 +124,6 @@ public class ReadinessAndLivenessTest {
         public void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
             builder.up();
         }
-
     }
 
     private static class MyLiveCheck extends AbstractHealthCheck implements CamelContextAware {
@@ -146,7 +146,6 @@ public class ReadinessAndLivenessTest {
         public void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
             builder.down();
         }
-
     }
 
     private static class MyAllCheck extends AbstractHealthCheck implements CamelContextAware {
@@ -175,6 +174,5 @@ public class ReadinessAndLivenessTest {
                 builder.up();
             }
         }
-
     }
 }

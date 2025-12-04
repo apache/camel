@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class NettyUDPSyncTest extends BaseNettyTest {
-    private static final String RESPONSE
-            = "Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.";
-    private static final String REQUEST
-            = "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ";
+    private static final String RESPONSE =
+            "Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.";
+    private static final String REQUEST =
+            "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ";
 
     @Test
     public void testUDPStringInOutWithNettyConsumer() {
         for (int i = 0; i < 5; i++) {
-            String response = template.requestBody(
-                    "netty:udp://localhost:{{port}}?sync=true",
-                    REQUEST, String.class);
+            String response = template.requestBody("netty:udp://localhost:{{port}}?sync=true", REQUEST, String.class);
             assertEquals(RESPONSE, response);
         }
     }
@@ -44,14 +43,12 @@ public class NettyUDPSyncTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty:udp://localhost:{{port}}?sync=true")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(RESPONSE);
-                            }
-                        });
+                from("netty:udp://localhost:{{port}}?sync=true").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        exchange.getMessage().setBody(RESPONSE);
+                    }
+                });
             }
         };
     }
-
 }

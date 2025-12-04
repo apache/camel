@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import java.time.LocalDate;
@@ -49,89 +50,134 @@ public class ServiceNowConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String userName;
+
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String password;
+
     @UriParam(label = "security", secret = true)
     private String oauthClientId;
+
     @UriParam(label = "security", secret = true)
     private String oauthClientSecret;
+
     @UriParam(label = "security", secret = true)
     private String oauthTokenUrl;
+
     @UriParam(label = "security")
     private String apiUrl;
+
     @UriParam(label = "advanced")
     private String apiVersion;
+
     @UriParam
     private String resource;
+
     @UriParam
     private String table;
+
     @UriParam
     private Boolean excludeReferenceLink = false;
+
     @UriParam
     private Boolean suppressAutoSysField = false;
+
     @UriParam
     private Boolean includeScores = false;
+
     @UriParam
     private Boolean includeAggregates = false;
+
     @UriParam
     private Boolean includeAvailableBreakdowns = false;
+
     @UriParam
     private Boolean includeAvailableAggregates = false;
+
     @UriParam
     private Boolean includeScoreNotes = false;
+
     @UriParam
     private Boolean topLevelOnly;
+
     @UriParam
     private Boolean favorites;
+
     @UriParam(label = "advanced", defaultValue = "false")
     private Boolean retrieveTargetRecordOnImport = false;
+
     @UriParam
     private Boolean key;
+
     @UriParam
     private Boolean target;
+
     @UriParam(defaultValue = "true", enums = "false,true,all")
     private String display = "true";
+
     @UriParam(defaultValue = "10")
     private Integer perPage = 10;
-    @UriParam(enums = "value,change,changeperc,gap,gapperc,duedate,name,order,default,group,indicator_group,frequency,target,date,trend,bullet,direction")
+
+    @UriParam(
+            enums =
+                    "value,change,changeperc,gap,gapperc,duedate,name,order,default,group,indicator_group,frequency,target,date,trend,bullet,direction")
     private String sortBy;
+
     @UriParam(enums = "asc,desc")
     private String sortDir;
+
     @UriParam
     private Boolean suppressPaginationHeader = false;
+
     @UriParam(defaultValue = "false", enums = "false,true,all")
     private String displayValue = "false";
+
     @UriParam
     private Boolean inputDisplayValue = false;
+
     @UriParam(prefix = "model.", multiValue = true, description = "Defines both request and response models")
-    private transient Map<String, Class<?>> models; // field not in use as its a shortcut for both requestModels/responseModels
+    private transient Map<String, Class<?>>
+            models; // field not in use as its a shortcut for both requestModels/responseModels
+
     @UriParam(prefix = "request-model.", multiValue = true)
     private Map<String, Class<?>> requestModels;
+
     @UriParam(prefix = "response-model.", multiValue = true)
     private Map<String, Class<?>> responseModels;
+
     @UriParam(label = "advanced")
     private ObjectMapper mapper;
+
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
     private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+
     @UriParam(label = "advanced")
     private HTTPClientPolicy httpClientPolicy;
+
     @UriParam(label = "advanced")
     private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam(label = "proxy,security")
     private String proxyUserName;
+
     @UriParam(label = "proxy,security")
     private String proxyPassword;
+
     @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_FORMAT)
     private String dateFormat = ServiceNowConstants.DEFAULT_DATE_FORMAT;
+
     @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_TIME_FORMAT)
     private String timeFormat = ServiceNowConstants.DEFAULT_TIME_FORMAT;
+
     @UriParam(label = "advanced", defaultValue = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT)
     private String dateTimeFormat = ServiceNowConstants.DEFAULT_DATE_TIME_FORMAT;
 
@@ -221,8 +267,7 @@ public class ServiceNowConfiguration implements Cloneable {
     }
 
     public boolean hasBasicAuthentication() {
-        return ObjectHelper.isNotEmpty(userName)
-                && ObjectHelper.isNotEmpty(password);
+        return ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password);
     }
 
     public boolean hasOAuthAuthentication() {
@@ -493,14 +538,9 @@ public class ServiceNowConfiguration implements Cloneable {
                             .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormat))
                             .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormat))
                             .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormat)))
-                    .configure(
-                            SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                            false)
-                    .configure(
-                            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                            false)
-                    .setSerializationInclusion(
-                            JsonInclude.Include.NON_NULL);
+                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .setSerializationInclusion(JsonInclude.Include.NON_NULL);
         }
 
         return mapper;

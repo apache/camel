@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.opentelemetry;
+
+import static org.apache.camel.test.junit5.TestSupport.fileUri;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,20 +38,18 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.fileUri;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class OpenTelemetryPropagateContextTest extends CamelOpenTelemetryTestSupport {
 
     @TempDir
     private static Path tempDirectory;
 
-    private final static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("camel-process").setOperation("delayed")
-                    .setParentId(2),
-            new SpanTestData().setLabel("camel-process").setOperation("WithSpan.secondMethod")
-                    .setParentId(2),
-            new SpanTestData().setLabel("camel-process").setOperation("file").setKind(SpanKind.SERVER)
+    private static final SpanTestData[] testdata = {
+        new SpanTestData().setLabel("camel-process").setOperation("delayed").setParentId(2),
+        new SpanTestData()
+                .setLabel("camel-process")
+                .setOperation("WithSpan.secondMethod")
+                .setParentId(2),
+        new SpanTestData().setLabel("camel-process").setOperation("file").setKind(SpanKind.SERVER)
     };
 
     OpenTelemetryPropagateContextTest() {
@@ -81,11 +83,14 @@ public class OpenTelemetryPropagateContextTest extends CamelOpenTelemetryTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri(tempDirectory)).routeId("serviceA")
+                from(fileUri(tempDirectory))
+                        .routeId("serviceA")
                         .process(exchange -> {
                             longRunningProcess();
-                        }).id("longRunningProcess")
-                        .delay(simple("${random(0,500)}")).id("delayed");
+                        })
+                        .id("longRunningProcess")
+                        .delay(simple("${random(0,500)}"))
+                        .id("delayed");
             }
 
             private void longRunningProcess() {
@@ -100,7 +105,7 @@ public class OpenTelemetryPropagateContextTest extends CamelOpenTelemetryTestSup
             // Simulate io.opentelemetry.instrumentation.annotations.@WithSpan
             // in order to avoid having to start an HTTP sever just to collect the Spans
             // see https://github.com/open-telemetry/opentelemetry-java-examples/tree/main/telemetry-testing
-            //@WithSpan
+            // @WithSpan
             public void secondMethod() {
                 // The Context should be propagated
                 Assertions.assertNotSame(Context.root(), Context.current(), "OpenTelemetry was not propagated !");
@@ -115,9 +120,7 @@ public class OpenTelemetryPropagateContextTest extends CamelOpenTelemetryTestSup
                 } finally {
                     span.end();
                 }
-
             }
         };
     }
-
 }

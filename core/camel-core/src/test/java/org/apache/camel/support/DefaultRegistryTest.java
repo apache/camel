@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FooBar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultRegistryTest {
 
@@ -251,9 +252,13 @@ public class DefaultRegistryTest {
         assertEquals(0, registry.findByTypeWithName(DefaultRegistry.class).size());
 
         assertEquals(1, registry.findByTypeWithName(Company.class).size());
-        assertEquals(myCompany, registry.findByTypeWithName(Company.class).values().iterator().next());
+        assertEquals(
+                myCompany,
+                registry.findByTypeWithName(Company.class).values().iterator().next());
         assertEquals(1, registry.findByTypeWithName(FooBar.class).size());
-        assertEquals(myFooBar, registry.findByTypeWithName(FooBar.class).values().iterator().next());
+        assertEquals(
+                myFooBar,
+                registry.findByTypeWithName(FooBar.class).values().iterator().next());
 
         assertEquals(2, registry.findByTypeWithName(Object.class).size());
         Iterator it = registry.findByTypeWithName(Object.class).keySet().iterator();
@@ -313,5 +318,4 @@ public class DefaultRegistryTest {
             return name;
         }
     }
-
 }

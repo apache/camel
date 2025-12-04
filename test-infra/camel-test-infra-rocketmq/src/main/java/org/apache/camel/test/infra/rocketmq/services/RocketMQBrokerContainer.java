@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.rocketmq.services;
 
 import java.util.Collections;
@@ -35,19 +36,24 @@ public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerCont
             addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER1_PORT, RocketMQProperties.ROCKETMQ_BROKER1_PORT);
         } else {
             withNetwork(network);
-            withExposedPorts(RocketMQProperties.ROCKETMQ_BROKER3_PORT,
+            withExposedPorts(
+                    RocketMQProperties.ROCKETMQ_BROKER3_PORT,
                     RocketMQProperties.ROCKETMQ_BROKER2_PORT,
                     RocketMQProperties.ROCKETMQ_BROKER1_PORT);
         }
         withEnv("NAMESRV_ADDR", "nameserver:9876");
-        withClasspathResourceMapping(confName + "/" + confName + ".conf",
+        withClasspathResourceMapping(
+                confName + "/" + confName + ".conf",
                 "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf",
                 BindMode.READ_WRITE);
 
         withTmpFs(Collections.singletonMap("/home/rocketmq/store", "rw"));
         withTmpFs(Collections.singletonMap("/home/rocketmq/logs", "rw"));
-        withCommand("sh", "mqbroker",
-                "-c", "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf");
+        withCommand(
+                "sh",
+                "mqbroker",
+                "-c",
+                "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf");
 
         waitingFor(Wait.forListeningPort());
     }

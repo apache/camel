@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
 
 import org.apache.camel.Category;
@@ -29,10 +30,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Process documents using Docling library for parsing and conversion.
  */
-@UriEndpoint(firstVersion = "4.15.0", scheme = "docling",
-             title = "Docling",
-             syntax = "docling:operationId",
-             category = { Category.TRANSFORMATION, Category.AI }, headersClass = DoclingHeaders.class, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "4.15.0",
+        scheme = "docling",
+        title = "Docling",
+        syntax = "docling:operationId",
+        category = {Category.TRANSFORMATION, Category.AI},
+        headersClass = DoclingHeaders.class,
+        producerOnly = true)
 public class DoclingEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -42,7 +47,8 @@ public class DoclingEndpoint extends DefaultEndpoint {
     @UriParam
     private DoclingConfiguration configuration;
 
-    public DoclingEndpoint(String uri, DoclingComponent component, String operationId, DoclingConfiguration configuration) {
+    public DoclingEndpoint(
+            String uri, DoclingComponent component, String operationId, DoclingConfiguration configuration) {
         super(uri, component);
         this.operationId = operationId;
         this.configuration = configuration;
@@ -69,5 +75,4 @@ public class DoclingEndpoint extends DefaultEndpoint {
     public void setConfiguration(DoclingConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

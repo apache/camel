@@ -24,7 +24,6 @@ import java.util.Locale;
  * Supported set of file resource and URL schemes that may be used to resolve a resource (e.g. source file).
  */
 public enum SourceScheme {
-
     GIST("https://gist.github", true),
     GITHUB("https://github.com/", true),
     RAW_GITHUB("https://raw.githubusercontent.com/", true),
@@ -63,8 +62,8 @@ public enum SourceScheme {
      */
     public static SourceScheme fromUri(String path) {
         return Arrays.stream(values())
-                .filter(scheme -> path.startsWith(scheme.name().toLowerCase(Locale.US) + ":") ||
-                        (scheme.uri != null && path.startsWith(scheme.uri)))
+                .filter(scheme -> path.startsWith(scheme.name().toLowerCase(Locale.US) + ":")
+                        || (scheme.uri != null && path.startsWith(scheme.uri)))
                 .findFirst()
                 .orElse(UNKNOWN); // use file as default scheme
     }

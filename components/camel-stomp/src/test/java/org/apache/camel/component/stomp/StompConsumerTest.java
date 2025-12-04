@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
+
+import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
+import static org.fusesource.stomp.client.Constants.DESTINATION;
+import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
+import static org.fusesource.stomp.client.Constants.SEND;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,11 +31,6 @@ import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
-import static org.fusesource.stomp.client.Constants.DESTINATION;
-import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
-import static org.fusesource.stomp.client.Constants.SEND;
 
 @Disabled("Starting with Artmis 2.43, test can be played only one by one")
 public class StompConsumerTest extends StompBaseTest {

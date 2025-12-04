@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns.client;
 
 import software.amazon.awssdk.services.sns.SnsClient;
@@ -26,5 +27,4 @@ public interface Sns2InternalClient {
      * @return SnsClient snsClient
      */
     SnsClient getSNSClient();
-
 }

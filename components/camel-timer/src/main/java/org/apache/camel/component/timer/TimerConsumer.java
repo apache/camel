@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import java.util.Date;
@@ -100,7 +101,9 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         return getEndpoint().getRepeatCount();
     }
 
-    @ManagedAttribute(description = "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
+    @ManagedAttribute(
+            description =
+                    "The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.")
     public String getRunLoggingLevel() {
         return getEndpoint().getRunLoggingLevel().name();
     }
@@ -165,8 +168,10 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                     } else {
                         // no need to fire anymore as we exceeded repeat
                         // count
-                        LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.",
-                                endpoint.getTimerName(), endpoint.getRepeatCount());
+                        LOG.debug(
+                                "Cancelling {} timer as repeat count limit reached after {} counts.",
+                                endpoint.getTimerName(),
+                                endpoint.getRepeatCount());
                         cancel();
                     }
                 }
@@ -181,14 +186,17 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         if (endpoint.getDelay() >= 0) {
             // only configure task if CamelContext already started, otherwise
             // the StartupListener is configuring the task later
-            if (task != null && !configured && endpoint.getCamelContext().getStatus().isStarted()) {
+            if (task != null
+                    && !configured
+                    && endpoint.getCamelContext().getStatus().isStarted()) {
                 Timer timer = endpoint.getTimer(this);
                 configureTask(task, timer);
             }
         } else {
             // if the delay is negative then we use an ExecutorService and fire messages as soon as possible
-            executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
-                    endpoint.getEndpointUri());
+            executorService = endpoint.getCamelContext()
+                    .getExecutorServiceManager()
+                    .newSingleThreadExecutor(this, endpoint.getEndpointUri());
 
             executorService.execute(() -> {
                 polling = true;
@@ -301,7 +309,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             // handle any thrown exception
             try {
                 if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                    getExceptionHandler()
+                            .handleException("Error processing exchange", exchange, exchange.getException());
                 }
             } finally {
                 releaseExchange(exchange, false);

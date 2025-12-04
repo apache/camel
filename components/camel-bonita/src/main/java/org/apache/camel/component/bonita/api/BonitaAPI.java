@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
+
+import static jakarta.ws.rs.client.Entity.entity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,8 +34,6 @@ import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.apache.camel.component.bonita.api.util.BonitaAPIUtil;
 import org.apache.camel.util.ObjectHelper;
 
-import static jakarta.ws.rs.client.Entity.entity;
-
 public class BonitaAPI {
 
     private BonitaAPIConfig bonitaApiConfig;
@@ -41,7 +42,6 @@ public class BonitaAPI {
     protected BonitaAPI(BonitaAPIConfig bonitaApiConfig, WebTarget webTarget) {
         this.bonitaApiConfig = bonitaApiConfig;
         this.webTarget = webTarget;
-
     }
 
     private WebTarget getBaseResource() {
@@ -53,32 +53,31 @@ public class BonitaAPI {
             throw new IllegalArgumentException("processName is empty.");
         }
         WebTarget resource = getBaseResource().path("process").queryParam("s", processName);
-        List<ProcessDefinitionResponse> listProcess = resource.request().accept(MediaType.APPLICATION_JSON)
-                .get(new GenericType<List<ProcessDefinitionResponse>>() {
-                });
+        List<ProcessDefinitionResponse> listProcess = resource.request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(new GenericType<List<ProcessDefinitionResponse>>() {});
         if (!listProcess.isEmpty()) {
             return listProcess.get(0);
         } else {
-            throw new RuntimeCamelException(
-                    "The process with name " + processName + " has not been retrieved");
+            throw new RuntimeCamelException("The process with name " + processName + " has not been retrieved");
         }
     }
 
     public CaseCreationResponse startCase(
-            ProcessDefinitionResponse processDefinition,
-            Map<String, Serializable> rawInputs)
-            throws Exception {
+            ProcessDefinitionResponse processDefinition, Map<String, Serializable> rawInputs) throws Exception {
         if (processDefinition == null) {
             throw new IllegalArgumentException("ProcessDefinition is null");
         }
         if (rawInputs == null) {
             throw new IllegalArgumentException("The contract input is null");
         }
-        Map<String, Serializable> inputs = BonitaAPIUtil.getInstance(bonitaApiConfig)
-                .prepareInputs(processDefinition, rawInputs);
-        WebTarget resource = getBaseResource().path("process/{processId}/instantiation")
+        Map<String, Serializable> inputs =
+                BonitaAPIUtil.getInstance(bonitaApiConfig).prepareInputs(processDefinition, rawInputs);
+        WebTarget resource = getBaseResource()
+                .path("process/{processId}/instantiation")
                 .resolveTemplate("processId", processDefinition.getId());
-        return resource.request().accept(MediaType.APPLICATION_JSON)
+        return resource.request()
+                .accept(MediaType.APPLICATION_JSON)
                 .post(entity(inputs, MediaType.APPLICATION_JSON), CaseCreationResponse.class);
     }
 
@@ -89,5 +88,4 @@ public class BonitaAPI {
     public void setBonitaApiConfig(BonitaAPIConfig bonitaApiConfig) {
         this.bonitaApiConfig = bonitaApiConfig;
     }
-
 }

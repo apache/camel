@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.TestSupport.unwrapChannel;
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.Channel;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,10 +28,6 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.TestSupport.unwrapChannel;
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class RouteTemplateErrorHandlerTest {
     @Test
@@ -44,8 +45,7 @@ public class RouteTemplateErrorHandlerTest {
                             .from("direct:{{foo}}")
                             .to("mock:{{bar}}");
 
-                    from("direct:_r")
-                            .to("mock:_r");
+                    from("direct:_r").to("mock:_r");
                 }
             });
 
@@ -56,9 +56,10 @@ public class RouteTemplateErrorHandlerTest {
             });
 
             assertThat(context.getRouteTemplateDefinitions()).first().satisfies(d -> {
-                assertThat(d.route().getErrorHandlerFactory()).isInstanceOfSatisfying(RefErrorHandlerDefinition.class, h -> {
-                    assertThat(h.getRef()).isEqualTo("myErrorHandler");
-                });
+                assertThat(d.route().getErrorHandlerFactory())
+                        .isInstanceOfSatisfying(RefErrorHandlerDefinition.class, h -> {
+                            assertThat(h.getRef()).isEqualTo("myErrorHandler");
+                        });
             });
 
             context.addRouteFromTemplate("myId", "myTemplate", mapOf("foo", "f", "bar", "b"));

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
@@ -26,10 +31,6 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpStreamCacheFileTest extends BaseJettyTest {
 
@@ -93,5 +94,4 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
             }
         };
     }
-
 }

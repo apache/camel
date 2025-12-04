@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,13 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpringTestSupport {
 
@@ -73,7 +74,7 @@ public class HazelcastMultimapProducerForSpringTest extends HazelcastCamelSpring
 
     @Test
     public void testGet() {
-        when(map.get("4711")).thenReturn(Arrays.<Object> asList("my-foo"));
+        when(map.get("4711")).thenReturn(Arrays.<Object>asList("my-foo"));
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
         verify(map).get("4711");
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);

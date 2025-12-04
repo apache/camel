@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,8 +35,13 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
     private final String routeId;
     private final String threadPoolProfileId;
 
-    public ManagedThreadPool(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                             String sourceId, String routeId, String threadPoolProfileId) {
+    public ManagedThreadPool(
+            CamelContext camelContext,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
+            String threadPoolProfileId) {
         this.camelContext = camelContext;
         this.threadPool = threadPool;
         this.sourceId = sourceId;
@@ -188,5 +194,4 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
             return 0;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.routepolicy.quartz;
 
 import org.apache.camel.CamelContext;
@@ -87,9 +88,12 @@ public class SpringQuartzTwoAppsClusteredFailoverTest {
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:65   - Crashed...
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:66   - Crashed...
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:67   - Crashed...
-        // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3567 - ClusterManager: detected 1 failed or restarted instances.
-        // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3426 - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
-        // 2013-09-29 08:15:32,024 [eduler_Worker-1] INFO  SpringCamelContext            :2183 - Route: myRoute started and consuming from: Endpoint[direct://start]
+        // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3567 - ClusterManager:
+        // detected 1 failed or restarted instances.
+        // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3426 - ClusterManager:
+        // Scanning for instance "app-one"'s failed in-progress jobs.
+        // 2013-09-29 08:15:32,024 [eduler_Worker-1] INFO  SpringCamelContext            :2183 - Route: myRoute started
+        // and consuming from: Endpoint[direct://start]
 
         // and as the last step shutdown the second app as well as the database
         IOHelper.close(app2, db);
@@ -98,5 +102,4 @@ public class SpringQuartzTwoAppsClusteredFailoverTest {
     private AbstractXmlApplicationContext newAppContext(String config) {
         return CamelSpringTestSupport.newAppContext(config, getClass());
     }
-
 }

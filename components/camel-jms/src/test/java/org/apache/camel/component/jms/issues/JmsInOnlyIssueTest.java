@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +38,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * CAMEL-1770: unit tests for inout and in-only routing with jms
  */
@@ -45,6 +46,7 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -66,7 +68,8 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         // need a little sleep to let task executor be ready
 
-        final CompletableFuture<Object> future = template.asyncSendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
+        final CompletableFuture<Object> future =
+                template.asyncSendBody("activemq:queue:JmsInOnlyIssueTest.in", "Hello World");
 
         assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
@@ -78,14 +81,15 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("activemq:queue:JmsInOnlyIssueTest.in", ExchangePattern.InOnly,
-                exchange -> exchange.getIn().setBody("Hello World"));
+        Exchange out = template.send(
+                "activemq:queue:JmsInOnlyIssueTest.in", ExchangePattern.InOnly, exchange -> exchange.getIn()
+                        .setBody("Hello World"));
 
         MockEndpoint.assertIsSatisfied(context);
         /*
-          The getMessage returns the In message if the Out one is not present. Therefore, we check if
-          the body of the returned message equals to the In one and infer that the out one was null.
-         */
+         The getMessage returns the In message if the Out one is not present. Therefore, we check if
+         the body of the returned message equals to the In one and infer that the out one was null.
+        */
         assertEquals("Hello World", out.getMessage().getBody(), "There shouldn't be an out message");
     }
 
@@ -96,10 +100,11 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
         // need a little sleep to let task executor be ready
 
-        final CompletableFuture<Exchange> future = template.asyncSend("activemq:queue:JmsInOnlyIssueTest.in", exchange -> {
-            exchange.setPattern(ExchangePattern.InOnly);
-            exchange.getIn().setBody("Hello World");
-        });
+        final CompletableFuture<Exchange> future =
+                template.asyncSend("activemq:queue:JmsInOnlyIssueTest.in", exchange -> {
+                    exchange.setPattern(ExchangePattern.InOnly);
+                    exchange.getIn().setBody("Hello World");
+                });
 
         assertDoesNotThrow(() -> future.get(5, TimeUnit.SECONDS));
 
@@ -115,7 +120,8 @@ public class JmsInOnlyIssueTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("activemq:queue:JmsInOnlyIssueTest.in").process(exchange -> exchange.getIn().setBody("Bye World"))
+                from("activemq:queue:JmsInOnlyIssueTest.in")
+                        .process(exchange -> exchange.getIn().setBody("Bye World"))
                         .to("mock:result");
             }
         };

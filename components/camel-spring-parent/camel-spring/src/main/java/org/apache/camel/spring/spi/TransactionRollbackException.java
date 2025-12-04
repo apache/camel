@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.spi;
 
 /**
@@ -22,8 +23,7 @@ package org.apache.camel.spring.spi;
 public class TransactionRollbackException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public TransactionRollbackException() {
-    }
+    public TransactionRollbackException() {}
 
     @Override
     public String getMessage() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
@@ -63,7 +64,8 @@ public class PubsubTestSupport extends CamelTestSupport {
 
             logger.warn(
                     "Unable to setup JUL-to-slf4j logging bridge. The test execution should result in a log of bogus output. Error: {}",
-                    e.getMessage(), e);
+                    e.getMessage(),
+                    e);
         }
     }
 
@@ -94,8 +96,7 @@ public class PubsubTestSupport extends CamelTestSupport {
         return context;
     }
 
-    public void createTopicSubscription() {
-    }
+    public void createTopicSubscription() {}
 
     public void createTopicSubscriptionPair(String topicName, String subscriptionName) {
         createTopicSubscriptionPair(topicName, subscriptionName, 10);
@@ -137,8 +138,7 @@ public class PubsubTestSupport extends CamelTestSupport {
     }
 
     private FixedTransportChannelProvider createChannelProvider() {
-        ManagedChannel channel = ManagedChannelBuilder
-                .forTarget(service.getServiceAddress())
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(service.getServiceAddress())
                 .usePlaintext()
                 .build();
 
@@ -150,11 +150,10 @@ public class PubsubTestSupport extends CamelTestSupport {
         CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
         try {
-            return TopicAdminClient.create(
-                    TopicAdminSettings.newBuilder()
-                            .setTransportChannelProvider(channelProvider)
-                            .setCredentialsProvider(credentialsProvider)
-                            .build());
+            return TopicAdminClient.create(TopicAdminSettings.newBuilder()
+                    .setTransportChannelProvider(channelProvider)
+                    .setCredentialsProvider(credentialsProvider)
+                    .build());
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
@@ -165,11 +164,10 @@ public class PubsubTestSupport extends CamelTestSupport {
         CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
         try {
-            return SubscriptionAdminClient.create(
-                    SubscriptionAdminSettings.newBuilder()
-                            .setTransportChannelProvider(channelProvider)
-                            .setCredentialsProvider(credentialsProvider)
-                            .build());
+            return SubscriptionAdminClient.create(SubscriptionAdminSettings.newBuilder()
+                    .setTransportChannelProvider(channelProvider)
+                    .setCredentialsProvider(credentialsProvider)
+                    .build());
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }

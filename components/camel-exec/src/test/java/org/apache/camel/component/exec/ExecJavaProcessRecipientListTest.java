@@ -14,24 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec;
-
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.exec.internal.ExecutableJavaProgram;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
@@ -51,6 +35,23 @@ import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.THR
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.exec.internal.ExecutableJavaProgram;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the functionality of the {@link org.apache.camel.component.exec.ExecComponent}, executing<br>
@@ -202,9 +203,11 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         output.setExpectedMessageCount(1);
         Exchange exchange = sendExchange(THREADS, NO_TIMEOUT);
 
-        String err = IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class), Charset.defaultCharset());
+        String err =
+                IOUtils.toString(exchange.getIn().getHeader(EXEC_STDERR, InputStream.class), Charset.defaultCharset());
         ExecResult result = exchange.getIn().getBody(ExecResult.class);
-        String[] outs = IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(System.lineSeparator());
+        String[] outs =
+                IOUtils.toString(result.getStdout(), Charset.defaultCharset()).split(System.lineSeparator());
         String[] errs = err.split(System.lineSeparator());
 
         output.assertIsSatisfied();
@@ -260,7 +263,10 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
     }
 
     protected Exchange sendExchange(
-            final String endpoint, final Object commandArgument, final long timeout, final String body,
+            final String endpoint,
+            final Object commandArgument,
+            final long timeout,
+            final String body,
             final boolean useStderrOnEmptyStdout) {
         final List<String> args = buildArgs(commandArgument);
         final String javaAbsolutePath = buildJavaExecutablePath();
@@ -293,13 +299,10 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:input")
-                        .recipientList(header("whereTo")).to("mock:output");
+                from("direct:input").recipientList(header("whereTo")).to("mock:output");
 
-                from("direct:direct")
-                        .recipientList(header("whereTo"));
+                from("direct:direct").recipientList(header("whereTo"));
             }
         };
     }
-
 }

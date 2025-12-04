@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
 
 public final class SomeExtendingConstants {
-    @Metadata(description = "key on extended overriding parent", label = "my label", displayName = "my extended display name",
-              javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", required = true,
-              defaultValue = "VAL1", secret = true)
+    @Metadata(
+            description = "key on extended overriding parent",
+            label = "my label",
+            displayName = "my extended display name",
+            javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum",
+            required = true,
+            defaultValue = "VAL1",
+            secret = true)
     public static final String KEY_FULL = "KEY_FULL";
 
     @Metadata(description = "key on extended class")
     public static final String KEY_EXTENDED = "KEY_EXTENDED";
 
-    private SomeExtendingConstants() {
-    }
+    private SomeExtendingConstants() {}
 }

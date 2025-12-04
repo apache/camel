@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Collections;
@@ -29,8 +30,7 @@ public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>>
         return Collections.emptyList();
     }
 
-    protected NoOutputDefinition() {
-    }
+    protected NoOutputDefinition() {}
 
     protected NoOutputDefinition(NoOutputDefinition<?> source) {
         super(source);

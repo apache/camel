@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyConverter;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest {
 
@@ -56,7 +57,8 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input")
-                        .transform().method(NettyHttpAccessHttpRequestAndResponseBeanTest.class, "myTransformer");
+                        .transform()
+                        .method(NettyHttpAccessHttpRequestAndResponseBeanTest.class, "myTransformer");
             }
         };
     }
@@ -71,12 +73,10 @@ public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest
         request.content().release();
 
         HttpResponse response = new DefaultFullHttpResponse(
-                HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
-                NettyConverter.toByteBuffer(reply.getBytes()));
+                HttpVersion.HTTP_1_1, HttpResponseStatus.OK, NettyConverter.toByteBuffer(reply.getBytes()));
 
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), reply.length());
 
         return response;
     }
-
 }

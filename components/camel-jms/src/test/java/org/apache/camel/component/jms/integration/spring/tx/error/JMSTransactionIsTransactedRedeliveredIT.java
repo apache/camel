@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.error;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -35,11 +40,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class JMSTransactionIsTransactedRedeliveredIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -84,9 +85,13 @@ public class JMSTransactionIsTransactedRedeliveredIT extends AbstractSpringJMSIT
 
         // check JMX stats
         // need a little sleep to ensure JMX is updated
-        final Set<ObjectName> objectNames = Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS)
-                .until(() -> getMBeanServer()
-                        .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null),
+        final Set<ObjectName> objectNames = Awaitility.await()
+                .atMost(1000, TimeUnit.MILLISECONDS)
+                .until(
+                        () -> getMBeanServer()
+                                .queryNames(
+                                        new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""),
+                                        null),
                         Matchers.hasSize(1));
 
         assertEquals(1, objectNames.size());
@@ -132,5 +137,4 @@ public class JMSTransactionIsTransactedRedeliveredIT extends AbstractSpringJMSIT
             exchange.getIn().setHeader("count", count);
         }
     }
-
 }

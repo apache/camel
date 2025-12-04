@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -55,9 +56,8 @@ public class RabbitMQConsumerRoutingKeyIT extends RabbitMQITSupport {
                 .setMessageId("123")
                 .setHeader("bar", "baz")
                 .build();
-        Message body = MessageBuilder.withBody("foo".getBytes())
-                .andProperties(props)
-                .build();
+        Message body =
+                MessageBuilder.withBody("foo".getBytes()).andProperties(props).build();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "baz");
@@ -72,8 +72,7 @@ public class RabbitMQConsumerRoutingKeyIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
+                from("direct:start").to("spring-rabbitmq:foo?routingKey=foo.bar");
 
                 from("spring-rabbitmq:foo?queues=myqueue&routingKey=foo.bar")
                         .to("log:result")

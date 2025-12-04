@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.ArrayList;
@@ -55,8 +56,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay = true;
 
-    public DefaultScheduledPollConsumerScheduler() {
-    }
+    public DefaultScheduledPollConsumerScheduler() {}
 
     public DefaultScheduledPollConsumerScheduler(ScheduledExecutorService scheduledExecutorService) {
         this.scheduledExecutorService = scheduledExecutorService;
@@ -175,25 +175,31 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         if (futures.isEmpty()) {
             if (isUseFixedDelay()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling {} consumers poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                            concurrentConsumers, currentInitialDelay, currentDelay,
+                    LOG.debug(
+                            "Scheduling {} consumers poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                            concurrentConsumers,
+                            currentInitialDelay,
+                            currentDelay,
                             getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentConsumers; i++) {
-                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
-                            getTimeUnit()));
+                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(
+                            task, currentInitialDelay, currentDelay, getTimeUnit()));
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling {} consumers poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                            concurrentConsumers, currentInitialDelay, currentDelay,
+                    LOG.debug(
+                            "Scheduling {} consumers poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                            concurrentConsumers,
+                            currentInitialDelay,
+                            currentDelay,
                             getTimeUnit().name().toLowerCase(Locale.ENGLISH),
                             consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentConsumers; i++) {
-                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
-                            getTimeUnit()));
+                    futures.add(scheduledExecutorService.scheduleAtFixedRate(
+                            task, currentInitialDelay, currentDelay, getTimeUnit()));
                 }
             }
         }
@@ -213,7 +219,8 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
         // if no existing executor provided, then create a new thread pool ourselves
         if (scheduledExecutorService == null) {
             // we only need one thread in the pool to schedule this task
-            this.scheduledExecutorService = getCamelContext().getExecutorServiceManager()
+            this.scheduledExecutorService = getCamelContext()
+                    .getExecutorServiceManager()
                     .newScheduledThreadPool(consumer, consumer.getEndpoint().getEndpointUri(), poolSize);
             // and we should shutdown the thread pool when no longer needed
             this.shutdownExecutor = true;
@@ -236,5 +243,4 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
             futures.clear();
         }
     }
-
 }

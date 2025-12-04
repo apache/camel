@@ -78,7 +78,8 @@ public class RocketMQComponent extends DefaultComponent {
     private String secretKey;
 
     @Override
-    protected RocketMQEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected RocketMQEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         RocketMQEndpoint endpoint = new RocketMQEndpoint(uri, this);
         endpoint.setProducerGroup(getProducerGroup());
         endpoint.setConsumerGroup(getConsumerGroup());

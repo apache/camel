@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stub;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,5 +48,4 @@ public class StubShadowTest extends ContextTestSupport {
         Endpoint se = context.getEndpoint("kafka://foo");
         assertIsInstanceOf(StubEndpoint.class, se);
     }
-
 }

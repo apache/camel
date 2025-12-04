@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.observation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.Exchange;
@@ -22,34 +25,57 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
 
     private static final SpanTestData[] TEST_DATA = {
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(1)
-                    .addTag("b-tag", "request-header-value"),
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(4),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(3),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(4),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setKind(SpanKind.SERVER)
-                    .setParentId(5),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setKind(SpanKind.CLIENT)
-                    .setParentId(6),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setKind(SpanKind.SERVER).setParentId(7),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setKind(SpanKind.CLIENT)
+        new SpanTestData()
+                .setLabel("seda:b server")
+                .setUri("seda://b")
+                .setOperation("b")
+                .setKind(SpanKind.SERVER)
+                .setParentId(1)
+                .addTag("b-tag", "request-header-value"),
+        new SpanTestData()
+                .setLabel("seda:b server")
+                .setUri("seda://b")
+                .setOperation("b")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(4),
+        new SpanTestData()
+                .setLabel("seda:c server")
+                .setUri("seda://c")
+                .setOperation("c")
+                .setKind(SpanKind.SERVER)
+                .setParentId(3),
+        new SpanTestData()
+                .setLabel("seda:c server")
+                .setUri("seda://c")
+                .setOperation("c")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(4),
+        new SpanTestData()
+                .setLabel("seda:a server")
+                .setUri("seda://a")
+                .setOperation("a")
+                .setKind(SpanKind.SERVER)
+                .setParentId(5),
+        new SpanTestData()
+                .setLabel("seda:a server")
+                .setUri("seda://a")
+                .setOperation("a")
+                .setKind(SpanKind.CLIENT)
+                .setParentId(6),
+        new SpanTestData()
+                .setLabel("direct:start server")
+                .setUri("direct://start")
+                .setOperation("start")
+                .setKind(SpanKind.SERVER)
+                .setParentId(7),
+        new SpanTestData()
+                .setLabel("direct:start server")
+                .setUri("direct://start")
+                .setOperation("start")
+                .setKind(SpanKind.CLIENT)
     };
 
     SpanProcessorsTest() {
@@ -58,12 +84,13 @@ class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
 
     @Test
     void testRoute() {
-        Exchange result = template.request("direct:start",
-                exchange -> {
-                    exchange.getIn().setBody("Hello");
-                    exchange.getIn().setHeader("request-header",
+        Exchange result = template.request("direct:start", exchange -> {
+            exchange.getIn().setBody("Hello");
+            exchange.getIn()
+                    .setHeader(
+                            "request-header",
                             context.resolveLanguage("simple").createExpression("request-header-value"));
-                });
+        });
 
         verify();
         assertEquals("request-header-value", result.getMessage().getHeader("baggage-header", String.class));
@@ -76,7 +103,8 @@ class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
             public void configure() {
                 from("direct:start").to("seda:a").routeId("start");
 
-                from("seda:a").routeId("a")
+                from("seda:a")
+                        .routeId("a")
                         .log("routing at ${routeId}")
                         .process(new SetCorrelationContextProcessor("a-baggage", simple("${header.request-header}")))
                         .to("seda:b")
@@ -84,12 +112,14 @@ class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
                         .to("seda:c")
                         .log("End of routing");
 
-                from("seda:b").routeId("b")
+                from("seda:b")
+                        .routeId("b")
                         .log("routing at ${routeId}")
                         .process(new AttributeProcessor("b-tag", simple("${header.request-header}")))
                         .delay(simple("${random(1000,2000)}"));
 
-                from("seda:c").routeId("c")
+                from("seda:c")
+                        .routeId("c")
                         .to("log:test")
                         .process(new GetCorrelationContextProcessor("a-baggage", "baggage-header"))
                         .delay(simple("${random(0,100)}"));

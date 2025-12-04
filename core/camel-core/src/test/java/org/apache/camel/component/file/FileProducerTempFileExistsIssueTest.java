@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
@@ -23,25 +28,23 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
     public static final String TEST_FILE_NAME = "hello." + UUID.randomUUID() + ".txt";
 
     @Test
     public void testIllegalConfigurationPrefix() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> context.getEndpoint(fileUri("?fileExist=Append&tempPrefix=foo")).createProducer());
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class, () -> context.getEndpoint(fileUri("?fileExist=Append&tempPrefix=foo"))
+                        .createProducer());
         assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());
     }
 
     @Test
     public void testIllegalConfigurationFileName() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> context.getEndpoint(fileUri("?fileExist=Append&tempFileName=foo")).createProducer());
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class, () -> context.getEndpoint(fileUri("?fileExist=Append&tempFileName=foo"))
+                        .createProducer());
         assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());
     }
 
@@ -65,8 +68,8 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     @Test
     public void testWriteUsingTempPrefixButFileExistOverride() throws Exception {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        template.sendBodyAndHeader(fileUri("?tempPrefix=foo&fileExist=Override"), "Bye World", Exchange.FILE_NAME,
-                TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("?tempPrefix=foo&fileExist=Override"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Bye World");
     }
@@ -74,8 +77,8 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     @Test
     public void testWriteUsingTempPrefixButFileExistIgnore() throws Exception {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        template.sendBodyAndHeader(fileUri("?tempPrefix=foo&fileExist=Ignore"), "Bye World", Exchange.FILE_NAME,
-                TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("?tempPrefix=foo&fileExist=Ignore"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME);
 
         assertFileExists(testFile(TEST_FILE_NAME), "Hello World");
     }
@@ -83,12 +86,14 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     @Test
     public void testWriteUsingTempPrefixButFileExistFail() throws Exception {
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME);
-        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> template
-                .sendBodyAndHeader(fileUri("?tempPrefix=foo&fileExist=Fail"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME));
-        GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(
+                        fileUri("?tempPrefix=foo&fileExist=Fail"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME));
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
         assertTrue(cause.getMessage().startsWith("File already exist"));
 
         assertFileExists(testFile(TEST_FILE_NAME), "Hello World");
     }
-
 }

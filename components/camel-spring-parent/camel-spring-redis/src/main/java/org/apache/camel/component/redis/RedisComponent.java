@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import java.util.Map;
@@ -33,8 +34,7 @@ public class RedisComponent extends DefaultComponent {
     @Metadata(autowired = true)
     private RedisTemplate<?, ?> redisTemplate;
 
-    public RedisComponent() {
-    }
+    public RedisComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

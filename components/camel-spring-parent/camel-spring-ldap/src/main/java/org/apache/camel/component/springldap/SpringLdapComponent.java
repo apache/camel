@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springldap;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ import org.springframework.ldap.core.LdapTemplate;
 @Component("spring-ldap")
 public class SpringLdapComponent extends DefaultComponent {
 
-    public SpringLdapComponent() {
-    }
+    public SpringLdapComponent() {}
 
     /**
      * creates a Spring LDAP endpoint
@@ -54,5 +54,4 @@ public class SpringLdapComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-
 }

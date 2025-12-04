@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,11 @@ public class PropertiesComponentServicePortTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:foo").transform().constant("someserver:{{service.port:FOO}}").to("mock:bar");
+                from("direct:start")
+                        .to("mock:foo")
+                        .transform()
+                        .constant("someserver:{{service.port:FOO}}")
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -51,7 +56,10 @@ public class PropertiesComponentServicePortTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("mock:foo").transform().constant("myotherserver:{{service.port:BAR:8888}}")
+                from("direct:start")
+                        .to("mock:foo")
+                        .transform()
+                        .constant("myotherserver:{{service.port:BAR:8888}}")
                         .to("mock:bar");
             }
         });
@@ -64,5 +72,4 @@ public class PropertiesComponentServicePortTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

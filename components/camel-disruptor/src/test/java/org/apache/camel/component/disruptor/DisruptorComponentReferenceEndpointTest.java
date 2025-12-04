@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Iterator;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -82,11 +83,11 @@ public class DisruptorComponentReferenceEndpointTest extends CamelTestSupport {
 
     private int numberOfReferences(final DisruptorComponent disruptor) {
         int num = 0;
-        final Iterator<DisruptorReference> it = disruptor.getDisruptors().values().iterator();
+        final Iterator<DisruptorReference> it =
+                disruptor.getDisruptors().values().iterator();
         while (it.hasNext()) {
             num += it.next().getEndpointCount();
         }
         return num;
     }
-
 }

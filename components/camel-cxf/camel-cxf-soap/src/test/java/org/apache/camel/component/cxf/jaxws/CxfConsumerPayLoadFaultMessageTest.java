@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.io.StringReader;
@@ -32,10 +33,10 @@ import org.apache.cxf.staxutils.StaxUtils;
 // SET the fault message directly on the out message
 public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultTest {
 
-    protected static final String FAULTS
-            = "<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode>soap:Server</faultcode>"
-              + "<faultstring>Get the null value of person name</faultstring>"
-              + "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId /></UnknownPersonFault></detail></soap:Fault>";
+    protected static final String FAULTS =
+            "<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode>soap:Server</faultcode>"
+                    + "<faultstring>Get the null value of person name</faultstring>"
+                    + "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId /></UnknownPersonFault></detail></soap:Fault>";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -43,16 +44,15 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
             public void configure() {
                 from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
-                        Element details = StaxUtils.read(new StringReader(FAULTS)).getDocumentElement();
+                        Element details =
+                                StaxUtils.read(new StringReader(FAULTS)).getDocumentElement();
                         List<Element> outElements = new ArrayList<>();
                         outElements.add(details);
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements);
                         exchange.getMessage().setBody(responsePayload);
                     }
                 });
-
             }
         };
     }
-
 }

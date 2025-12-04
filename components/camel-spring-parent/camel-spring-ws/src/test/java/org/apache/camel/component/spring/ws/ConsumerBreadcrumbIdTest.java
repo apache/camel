@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,9 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.ws.client.core.WebServiceTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("TODO: investigate for Camel 3.0")
 @ContextConfiguration
@@ -64,7 +65,9 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 assertNotNull(exchange.getIn().getHeader("breadcrumbId"));
-                assertEquals("ID-Ralfs-MacBook-Pro-local-50523-1423553069254-0-5", exchange.getIn().getHeader("breadcrumbId"));
+                assertEquals(
+                        "ID-Ralfs-MacBook-Pro-local-50523-1423553069254-0-5",
+                        exchange.getIn().getHeader("breadcrumbId"));
             }
         });
     }
@@ -79,7 +82,8 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
                 // request webservice
                 from("direct:webservice-marshall-asin")
                         .marshal(jaxb)
-                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsIn&webServiceTemplate=#webServiceTemplate")
+                        .to(
+                                "spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsIn&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
                 // provide web service
                 from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsIn?endpointMapping=#endpointMapping")
@@ -88,5 +92,4 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
             }
         };
     }
-
 }

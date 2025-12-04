@@ -17,6 +17,9 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getKubernetesClient;
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait.KUBERNETES_LABEL_NAME;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +34,11 @@ import org.apache.camel.util.StringHelper;
 import org.codehaus.plexus.util.ExceptionUtils;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getKubernetesClient;
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait.KUBERNETES_LABEL_NAME;
-
-@CommandLine.Command(name = "delete",
-                     description = "Delete Camel application from Kubernetes. This operation will delete all resources associated to this app, such as: Deployment, Routes, Services, etc. filtering by label \"app.kubernetes.io/name=<name>\".",
-                     sortOptions = false)
+@CommandLine.Command(
+        name = "delete",
+        description =
+                "Delete Camel application from Kubernetes. This operation will delete all resources associated to this app, such as: Deployment, Routes, Services, etc. filtering by label \"app.kubernetes.io/name=<name>\".",
+        sortOptions = false)
 public class KubernetesDelete extends KubernetesBaseCommand {
 
     public KubernetesDelete(CamelJBangMain main) {
@@ -53,15 +55,25 @@ public class KubernetesDelete extends KubernetesBaseCommand {
         List<StatusDetails> deleteStatuses = new ArrayList<>();
         try {
             // delete Deployment cascades to pod
-            deleteStatuses.addAll(client.apps().deployments().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(client.apps()
+                    .deployments()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .delete());
             // delete service
-            deleteStatuses.addAll(client.services().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(
+                    client.services().inNamespace(namespace).withLabels(labels).delete());
             // delete configmap
-            deleteStatuses.addAll(client.configMaps().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(client.configMaps()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .delete());
             // delete secrets
-            deleteStatuses.addAll(client.secrets().inNamespace(namespace).withLabels(labels).delete());
+            deleteStatuses.addAll(
+                    client.secrets().inNamespace(namespace).withLabels(labels).delete());
             // delete ingress
-            var ingresses = client.network().v1().ingresses().inNamespace(namespace).withLabels(labels);
+            var ingresses =
+                    client.network().v1().ingresses().inNamespace(namespace).withLabels(labels);
             try {
                 deleteStatuses.addAll(ingresses.delete());
             } catch (Exception ex) {
@@ -69,12 +81,13 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             }
             // delete knative-services
             var knativeServices = client.genericKubernetesResources(new ResourceDefinitionContext.Builder()
-                    .withGroup("serving.knative.dev")
-                    .withVersion("v1")
-                    .withKind("Service")
-                    .withNamespaced(true)
-                    .build())
-                    .inNamespace(namespace).withLabels(labels);
+                            .withGroup("serving.knative.dev")
+                            .withVersion("v1")
+                            .withKind("Service")
+                            .withNamespaced(true)
+                            .build())
+                    .inNamespace(namespace)
+                    .withLabels(labels);
             try {
                 deleteStatuses.addAll(knativeServices.delete());
             } catch (Exception ex) {
@@ -82,19 +95,33 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             }
             ClusterType clusterType = KubernetesHelper.discoverClusterType();
             if (ClusterType.OPENSHIFT == clusterType) {
-                // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig cascade delete to Build and ConfigMap
+                // openshift specific: BuildConfig, ImageStreams, Route - BuildConfig cascade delete to Build and
+                // ConfigMap
                 OpenShiftClient ocpClient = client.adapt(OpenShiftClient.class);
                 // BuildConfig
-                deleteStatuses.addAll(ocpClient.buildConfigs().inNamespace(namespace).withLabels(labels).delete());
+                deleteStatuses.addAll(ocpClient
+                        .buildConfigs()
+                        .inNamespace(namespace)
+                        .withLabels(labels)
+                        .delete());
                 // ImageStreams
-                deleteStatuses.addAll(ocpClient.imageStreams().inNamespace(namespace).withLabels(labels).delete());
+                deleteStatuses.addAll(ocpClient
+                        .imageStreams()
+                        .inNamespace(namespace)
+                        .withLabels(labels)
+                        .delete());
                 // Route
-                deleteStatuses.addAll(ocpClient.routes().inNamespace(namespace).withLabels(labels).delete());
+                deleteStatuses.addAll(ocpClient
+                        .routes()
+                        .inNamespace(namespace)
+                        .withLabels(labels)
+                        .delete());
             }
             if (!deleteStatuses.isEmpty()) {
-                deleteStatuses.forEach(
-                        s -> printer().printf("Deleted: %s/%s '%s'%n", s.getGroup(), StringHelper.capitalize(s.getKind()),
-                                s.getName()));
+                deleteStatuses.forEach(s -> printer()
+                        .printf(
+                                "Deleted: %s/%s '%s'%n",
+                                s.getGroup(), StringHelper.capitalize(s.getKind()), s.getName()));
             } else {
                 printer().println("No deployment found with name: " + name);
             }

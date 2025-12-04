@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -33,8 +34,8 @@ public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
     @Override
     public Processor createProcessor() {
         DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
-        UnmarshalProcessor answer
-                = new UnmarshalProcessor(dataFormat, Boolean.TRUE == parseBoolean(definition.getAllowNullBody()));
+        UnmarshalProcessor answer =
+                new UnmarshalProcessor(dataFormat, Boolean.TRUE == parseBoolean(definition.getAllowNullBody()));
         answer.setDisabled(isDisabled(camelContext, definition));
         answer.setVariableSend(parseString(definition.getVariableSend()));
         answer.setVariableReceive(parseString(definition.getVariableReceive()));

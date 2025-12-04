@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.Charset;
 
@@ -25,8 +28,6 @@ import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Schematron Component Test.
@@ -41,13 +42,19 @@ public class SchematronComponentTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"), Charset.defaultCharset());
         template.sendBody("direct:start", payload);
         MockEndpoint.assertIsSatisfied(context);
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
-        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result)).intValue());
-        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
+        assertEquals(
+                0,
+                Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result))
+                        .intValue());
+        assertEquals(
+                0,
+                Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result))
+                        .intValue());
     }
 
     /**
@@ -58,8 +65,8 @@ public class SchematronComponentTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"), Charset.defaultCharset());
         template.sendBody("direct:start", payload);
         MockEndpoint.assertIsSatisfied(context);
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
@@ -67,16 +74,13 @@ public class SchematronComponentTest extends CamelTestSupport {
         // should throw two assertions because of the missing chapters in the XML.
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert[1]/svrl:text", result));
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert[2]/svrl:text", result));
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("schematron://sch/schematron-1.sch")
-                        .to("mock:result");
+                from("direct:start").to("schematron://sch/schematron-1.sch").to("mock:result");
             }
         };
     }

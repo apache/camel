@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +31,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JCacheProducerPutTest extends JCacheComponentTestSupport {
 
@@ -150,15 +151,10 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:put")
-                        .to("jcache://test-cache");
-                from("direct:put-with-default-action")
-                        .to("jcache://test-cache?action=PUT");
-                from("direct:put-if-absent")
-                        .to("jcache://test-cache")
-                        .to("mock:put-if-absent");
-                from("direct:put-all")
-                        .to("jcache://test-cache");
+                from("direct:put").to("jcache://test-cache");
+                from("direct:put-with-default-action").to("jcache://test-cache?action=PUT");
+                from("direct:put-if-absent").to("jcache://test-cache").to("mock:put-if-absent");
+                from("direct:put-all").to("jcache://test-cache");
             }
         };
     }

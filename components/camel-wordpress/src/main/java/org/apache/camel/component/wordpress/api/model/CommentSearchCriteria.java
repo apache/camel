@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.util.Date;
@@ -38,9 +39,7 @@ public class CommentSearchCriteria extends SearchCriteria {
     private CommentStatus status;
     private String type;
 
-    public CommentSearchCriteria() {
-
-    }
+    public CommentSearchCriteria() {}
 
     public Date getAfter() {
         return after;
@@ -153,5 +152,4 @@ public class CommentSearchCriteria extends SearchCriteria {
     public void setType(String type) {
         this.type = type;
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WebhookBasePathTest extends WebhookTestBase {
 
@@ -43,21 +44,25 @@ public class WebhookBasePathTest extends WebhookTestBase {
 
     @Test
     public void testAutoPath() {
-        String result = template.requestBody("netty-http:http://localhost:" + port + "/base"
-                                             + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"),
-                "", String.class);
+        String result = template.requestBody(
+                "netty-http:http://localhost:" + port + "/base"
+                        + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"),
+                "",
+                String.class);
         assertEquals("auto: webhook", result);
     }
 
     @Test
     public void testRootPathError() {
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
     }
 
     @Test
     public void testRootBasePathError() {
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:" + port + "/base/", "", String.class));
     }
 
@@ -85,19 +90,13 @@ public class WebhookBasePathTest extends WebhookTestBase {
             @Override
             public void configure() {
 
-                restConfiguration()
-                        .host("0.0.0.0")
-                        .port(port);
+                restConfiguration().host("0.0.0.0").port(port);
 
-                from("webhook:wb-delegate://xx?webhookPath=uri0")
-                        .transform(body().prepend("msg: "));
+                from("webhook:wb-delegate://xx?webhookPath=uri0").transform(body().prepend("msg: "));
 
-                from("webhook:wb-delegate://xx?webhookPath=/uri")
-                        .transform(body().prepend("uri: "));
+                from("webhook:wb-delegate://xx?webhookPath=/uri").transform(body().prepend("uri: "));
 
-                from("webhook:wb-delegate://auto")
-                        .transform(body().prepend("auto: "));
-
+                from("webhook:wb-delegate://auto").transform(body().prepend("auto: "));
             }
         };
     }

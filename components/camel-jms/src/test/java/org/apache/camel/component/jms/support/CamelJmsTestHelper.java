@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.support;
 
 import jakarta.jms.ConnectionFactory;
@@ -26,8 +27,7 @@ import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
  */
 public final class CamelJmsTestHelper {
 
-    private CamelJmsTestHelper() {
-    }
+    private CamelJmsTestHelper() {}
 
     public static JmsPoolConnectionFactory createPooledPersistentConnectionFactory(String brokerUrl) {
         ConnectionFactory cf = ConnectionFactoryHelper.createPersistentConnectionFactory(brokerUrl);

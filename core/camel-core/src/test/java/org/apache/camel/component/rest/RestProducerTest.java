@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -26,9 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class RestProducerTest {
 
     private final CamelContext camelContext = new DefaultCamelContext();
@@ -38,7 +39,8 @@ public class RestProducerTest {
         DefaultExchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setHeader("multiple", Arrays.asList("value1", "value2", "value3"));
 
-        assertEquals("param=value1&param=value2&param=value3",
+        assertEquals(
+                "param=value1&param=value2&param=value3",
                 RestProducer.createQueryParameters("param={multiple}", exchange));
     }
 
@@ -93,16 +95,18 @@ public class RestProducerTest {
         exchange.getMessage().setHeader("multiple", Arrays.asList("value1", "value2", "value3"));
         exchange.getMessage().setHeader("multipleOptional", Collections.EMPTY_LIST);
 
-        assertEquals("given=value"
-                     + "&required=header_required_value"
-                     + "&optional_present=header_optional_present_value"
-                     + "&multiple=value1&multiple=value2&multiple=value3",
-                RestProducer.createQueryParameters("given=value"
-                                                   + "&required={requiredParamPlaceholder}"
-                                                   + "&optional={optionalParamPlaceholder?}"
-                                                   + "&optional_present={optionalPresentParamPlaceholder?}"
-                                                   + "&multiple={multiple}"
-                                                   + "&multipleOptional={multipleOptional?}",
+        assertEquals(
+                "given=value"
+                        + "&required=header_required_value"
+                        + "&optional_present=header_optional_present_value"
+                        + "&multiple=value1&multiple=value2&multiple=value3",
+                RestProducer.createQueryParameters(
+                        "given=value"
+                                + "&required={requiredParamPlaceholder}"
+                                + "&optional={optionalParamPlaceholder?}"
+                                + "&optional_present={optionalPresentParamPlaceholder?}"
+                                + "&multiple={multiple}"
+                                + "&multipleOptional={multipleOptional?}",
                         exchange));
     }
 }

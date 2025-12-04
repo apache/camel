@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.utils;
 
 import io.fabric8.kubernetes.api.model.ConfigMap;
@@ -30,8 +31,11 @@ public class ConfigMapLockSimulator extends ResourceLockSimulator<ConfigMap> {
 
     @Override
     protected ConfigMap withNewResourceVersion(ConfigMap resource, String newResourceVersion) {
-        return new ConfigMapBuilder(resource).editOrNewMetadata().withResourceVersion(newResourceVersion)
-                .endMetadata().build();
+        return new ConfigMapBuilder(resource)
+                .editOrNewMetadata()
+                .withResourceVersion(newResourceVersion)
+                .endMetadata()
+                .build();
     }
 
     @Override

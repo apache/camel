@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
@@ -48,28 +49,36 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
     public void testSSLInOutWithNettyConsumer() throws Exception {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
-        getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
-                "SERIALNUMBER=1234567890, CN=CommonName, OU=Unit, O=Org, L=Loc, ST=State, C=US");
-        getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME,
-                "SERIALNUMBER=1234567890, CN=CommonName, OU=Unit, O=Org, L=Loc, ST=State, C=US");
-        getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, "1234567890");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(
+                        NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
+                        "SERIALNUMBER=1234567890, CN=CommonName, OU=Unit, O=Org, L=Loc, ST=State, C=US");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(
+                        NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME,
+                        "SERIALNUMBER=1234567890, CN=CommonName, OU=Unit, O=Org, L=Loc, ST=State, C=US");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, "1234567890");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate
                 // details
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf"
-                     + "&needClientAuth=true&sslClientCertHeaders=true").to("mock:input").transform().constant("Bye World");
+                                + "&needClientAuth=true&sslClientCertHeaders=true")
+                        .to("mock:input")
+                        .transform()
+                        .constant("Bye World");
             }
         });
         context.start();
 
         String response = template.requestBody(
                 "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
-                "Hello World", String.class);
+                "Hello World",
+                String.class);
         assertEquals("Bye World", response);
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

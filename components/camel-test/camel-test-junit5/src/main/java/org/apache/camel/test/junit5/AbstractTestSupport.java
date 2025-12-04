@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5;
 
 import java.util.Properties;
@@ -43,8 +44,8 @@ public abstract class AbstractTestSupport implements CommonTestSupport {
         camelContextConfiguration = new CamelContextConfiguration();
     }
 
-    protected AbstractTestSupport(TestExecutionConfiguration testConfigurationBuilder,
-                                  CamelContextConfiguration camelContextConfiguration) {
+    protected AbstractTestSupport(
+            TestExecutionConfiguration testConfigurationBuilder, CamelContextConfiguration camelContextConfiguration) {
         this.testConfigurationBuilder = testConfigurationBuilder;
         this.camelContextConfiguration = camelContextConfiguration;
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.config.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.config.model.DeleteConfigRuleResponse;
 import software.amazon.awssdk.services.config.model.PutConfigRuleResponse;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AWSConfigProducerIT extends AWSConfigBase {
 
@@ -42,13 +43,14 @@ public class AWSConfigProducerIT extends AWSConfigBase {
             public void process(Exchange exchange) {
 
                 exchange.getMessage().setHeader(AWSConfigConstants.SOURCE, "AWS");
-                exchange.getMessage().setHeader(AWSConfigConstants.RULE_SOURCE_IDENTIFIER,
-                        "S3_ACCESS_POINT_PUBLIC_ACCESS_BLOCKS");
+                exchange.getMessage()
+                        .setHeader(AWSConfigConstants.RULE_SOURCE_IDENTIFIER, "S3_ACCESS_POINT_PUBLIC_ACCESS_BLOCKS");
                 exchange.getMessage().setHeader(AWSConfigConstants.RULE_NAME, "Test");
             }
         });
 
-        PutConfigRuleResponse resultGet = (PutConfigRuleResponse) exchange.getIn().getBody();
+        PutConfigRuleResponse resultGet =
+                (PutConfigRuleResponse) exchange.getIn().getBody();
         assertTrue(resultGet.sdkHttpResponse().isSuccessful());
 
         exchange = template.request("direct:removeConfigRule", new Processor() {
@@ -59,7 +61,8 @@ public class AWSConfigProducerIT extends AWSConfigBase {
             }
         });
 
-        DeleteConfigRuleResponse deleteResponse = (DeleteConfigRuleResponse) exchange.getIn().getBody();
+        DeleteConfigRuleResponse deleteResponse =
+                (DeleteConfigRuleResponse) exchange.getIn().getBody();
         assertTrue(deleteResponse.sdkHttpResponse().isSuccessful());
     }
 

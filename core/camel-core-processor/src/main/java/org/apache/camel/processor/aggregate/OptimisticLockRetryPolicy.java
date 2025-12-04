@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,8 +51,7 @@ public class OptimisticLockRetryPolicy {
     private boolean exponentialBackOff = true;
     private boolean randomBackOff;
 
-    public OptimisticLockRetryPolicy() {
-    }
+    public OptimisticLockRetryPolicy() {}
 
     public boolean shouldRetry(final int retryCounter) {
         return maximumRetries <= 0 || retryCounter < maximumRetries;
@@ -70,8 +70,8 @@ public class OptimisticLockRetryPolicy {
             sleepFor = exponentialBackOff
                     ? (retryDelay << retryCounter)
                     : (randomBackOff
-                            ? ThreadLocalRandom.current()
-                                    .nextInt((int) (maximumRetryDelay > 0 ? maximumRetryDelay : DEFAULT_MAXIMUM_RETRY_DELAY))
+                            ? ThreadLocalRandom.current().nextInt((int)
+                                    (maximumRetryDelay > 0 ? maximumRetryDelay : DEFAULT_MAXIMUM_RETRY_DELAY))
                             : retryDelay);
             if (maximumRetryDelay > 0 && sleepFor > maximumRetryDelay) {
                 sleepFor = maximumRetryDelay;

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jms;
+
+import static org.apache.camel.Exchange.CONTENT_TYPE;
+import static org.apache.camel.Exchange.HTTP_METHOD;
+import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
@@ -26,11 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.Exchange.CONTENT_TYPE;
-import static org.apache.camel.Exchange.HTTP_METHOD;
-import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Based on user forum.
@@ -69,21 +70,23 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jms:queue:in")
-                        .setBody().simple("name=${body}")
-                        .setHeader(CONTENT_TYPE).constant("application/x-www-form-urlencoded")
-                        .setHeader(HTTP_METHOD).constant("POST")
+                        .setBody()
+                        .simple("name=${body}")
+                        .setHeader(CONTENT_TYPE)
+                        .constant("application/x-www-form-urlencoded")
+                        .setHeader(HTTP_METHOD)
+                        .constant("POST")
                         .to("http://localhost:" + port + "/myservice")
                         .to("mock:result");
 
-                from("jetty:http://0.0.0.0:" + port + "/myservice")
-                        .process(exchange -> {
-                            String body = exchange.getIn().getBody(String.class);
-                            assertEquals("name=Hello World", body);
+                from("jetty:http://0.0.0.0:" + port + "/myservice").process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    assertEquals("name=Hello World", body);
 
-                            exchange.getMessage().setBody("OK");
-                            exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
-                            exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
-                        });
+                    exchange.getMessage().setBody("OK");
+                    exchange.getMessage().setHeader(CONTENT_TYPE, "text/plain");
+                    exchange.getMessage().setHeader(HTTP_RESPONSE_CODE, 200);
+                });
             }
         };
     }
@@ -97,5 +100,4 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
 
         registry.bind("jms", amq);
     }
-
 }

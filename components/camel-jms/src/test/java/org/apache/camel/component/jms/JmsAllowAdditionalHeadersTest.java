@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ public class JmsAllowAdditionalHeadersTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -49,8 +51,11 @@ public class JmsAllowAdditionalHeadersTest extends AbstractJMSTest {
         // getMockEndpoint("mock:bar").expectedHeaderReceived("JMS_IBM_MQMD_USER", data);
 
         context.createFluentProducerTemplate()
-                .withBody("Hello World").withHeader("foo", "bar").withHeader("JMS_IBM_MQMD_USER", data)
-                .to("direct:start").send();
+                .withBody("Hello World")
+                .withHeader("foo", "bar")
+                .withHeader("JMS_IBM_MQMD_USER", data)
+                .to("direct:start")
+                .send();
 
         MockEndpoint.assertIsSatisfied(context);
     }

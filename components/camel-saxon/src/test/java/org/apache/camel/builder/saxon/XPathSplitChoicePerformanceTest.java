@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,9 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -93,9 +94,12 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 watch.restart();
                             }
                         })
-                        .split().xpath("/orders/order").streaming()
+                        .split()
+                        .xpath("/orders/order")
+                        .streaming()
                         .choice()
-                        .when().xpath("/order/amount < 10")
+                        .when()
+                        .xpath("/order/amount < 10")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
@@ -108,7 +112,8 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 }
                             }
                         })
-                        .when().xpath("/order/amount < 50")
+                        .when()
+                        .xpath("/order/amount < 50")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
@@ -121,7 +126,8 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
                                 }
                             }
                         })
-                        .when().xpath("/order/amount < 100")
+                        .when()
+                        .xpath("/order/amount < 100")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String xml = exchange.getIn().getBody(String.class);
@@ -187,5 +193,4 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
 
         log.info("Creating data file done.");
     }
-
 }

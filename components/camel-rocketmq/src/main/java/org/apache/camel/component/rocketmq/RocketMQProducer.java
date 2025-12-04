@@ -96,12 +96,16 @@ public class RocketMQProducer extends DefaultAsyncProducer {
             throws RemotingException, MQClientException, InterruptedException, NoTypeConversionAvailableException {
         org.apache.camel.Message in = exchange.getIn();
         Message message = new Message();
-        message.setTopic(in.getHeader(RocketMQConstants.OVERRIDE_TOPIC_NAME, () -> getEndpoint().getTopicName(), String.class));
-        message.setTags(in.getHeader(RocketMQConstants.OVERRIDE_TAG, () -> getEndpoint().getSendTag(), String.class));
-        message.setBody(exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, in.getBody()));
+        message.setTopic(in.getHeader(
+                RocketMQConstants.OVERRIDE_TOPIC_NAME, () -> getEndpoint().getTopicName(), String.class));
+        message.setTags(
+                in.getHeader(RocketMQConstants.OVERRIDE_TAG, () -> getEndpoint().getSendTag(), String.class));
+        message.setBody(
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, in.getBody()));
         message.setKeys(in.getHeader(RocketMQConstants.OVERRIDE_MESSAGE_KEY, "", String.class));
         initReplyManager();
-        String generateKey = GENERATE_MESSAGE_KEY_PREFIX + getEndpoint().getCamelContext().getUuidGenerator().generateUuid();
+        String generateKey = GENERATE_MESSAGE_KEY_PREFIX
+                + getEndpoint().getCamelContext().getUuidGenerator().generateUuid();
         message.setKeys(Arrays.asList(Optional.ofNullable(message.getKeys()).orElse(""), generateKey));
         LOG.debug("RocketMQ Producer sending {}", message);
         mqProducer.send(message, new SendCallback() {
@@ -118,7 +122,11 @@ public class RocketMQProducer extends DefaultAsyncProducer {
                     callback.done(false);
                     return;
                 }
-                replyManager.registerReply(replyManager, exchange, callback, generateKey,
+                replyManager.registerReply(
+                        replyManager,
+                        exchange,
+                        callback,
+                        generateKey,
                         getEndpoint().getRequestTimeoutMillis());
             }
 
@@ -151,7 +159,9 @@ public class RocketMQProducer extends DefaultAsyncProducer {
                     }
                     if (getEndpoint().getReplyToTopic() != null) {
                         replyManager = createReplyManager();
-                        LOG.debug("Using RocketMQReplyManager: {} to process replies from topic {}", replyManager,
+                        LOG.debug(
+                                "Using RocketMQReplyManager: {} to process replies from topic {}",
+                                replyManager,
                                 getEndpoint().getReplyToTopic());
                     }
                 } catch (Exception e) {
@@ -172,7 +182,9 @@ public class RocketMQProducer extends DefaultAsyncProducer {
         try {
             if (replyManager != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Stopping RocketMQReplyManager: {} from processing replies from : {}", replyManager,
+                    LOG.debug(
+                            "Stopping RocketMQReplyManager: {} from processing replies from : {}",
+                            replyManager,
                             getEndpoint().getReplyToTopic());
                 }
                 ServiceHelper.stopService(replyManager);
@@ -185,11 +197,14 @@ public class RocketMQProducer extends DefaultAsyncProducer {
     }
 
     private ReplyManager createReplyManager() {
-        RocketMQReplyManagerSupport replyManager = new RocketMQReplyManagerSupport(getEndpoint().getCamelContext());
+        RocketMQReplyManagerSupport replyManager =
+                new RocketMQReplyManagerSupport(getEndpoint().getCamelContext());
         replyManager.setEndpoint(getEndpoint());
         String name = "RocketMQReplyManagerTimeoutChecker[" + getEndpoint().getTopicName() + "]";
-        ScheduledExecutorService scheduledExecutorService
-                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, name);
+        ScheduledExecutorService scheduledExecutorService = getEndpoint()
+                .getCamelContext()
+                .getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(this, name);
         replyManager.setScheduledExecutorService(scheduledExecutorService);
         LOG.debug("Starting ReplyManager: {}", name);
         ServiceHelper.startService(replyManager);
@@ -200,9 +215,12 @@ public class RocketMQProducer extends DefaultAsyncProducer {
             throws NoTypeConversionAvailableException, InterruptedException, RemotingException, MQClientException {
         org.apache.camel.Message in = exchange.getIn();
         Message message = new Message();
-        message.setTopic(in.getHeader(RocketMQConstants.OVERRIDE_TOPIC_NAME, () -> getEndpoint().getTopicName(), String.class));
-        message.setTags(in.getHeader(RocketMQConstants.OVERRIDE_TAG, () -> getEndpoint().getSendTag(), String.class));
-        message.setBody(exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, in.getBody()));
+        message.setTopic(in.getHeader(
+                RocketMQConstants.OVERRIDE_TOPIC_NAME, () -> getEndpoint().getTopicName(), String.class));
+        message.setTags(
+                in.getHeader(RocketMQConstants.OVERRIDE_TAG, () -> getEndpoint().getSendTag(), String.class));
+        message.setBody(
+                exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, in.getBody()));
         message.setKeys(in.getHeader(RocketMQConstants.OVERRIDE_MESSAGE_KEY, "", String.class));
         LOG.debug("RocketMQ Producer sending {}", message);
         boolean waitForSendResult = getEndpoint().isWaitForSendResult();
@@ -230,7 +248,8 @@ public class RocketMQProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         this.mqProducer = new DefaultMQProducer(
                 getEndpoint().getProducerGroup(),
-                RocketMQAclUtils.getAclRPCHook(getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
+                RocketMQAclUtils.getAclRPCHook(
+                        getEndpoint().getAccessKey(), getEndpoint().getSecretKey()));
         this.mqProducer.setNamesrvAddr(getEndpoint().getNamesrvAddr());
         this.mqProducer.setNamespaceV2(getEndpoint().getNamespace());
         this.mqProducer.setEnableTrace(getEndpoint().isEnableTrace());

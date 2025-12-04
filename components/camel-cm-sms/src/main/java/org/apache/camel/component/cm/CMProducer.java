@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 import java.util.Set;
@@ -65,11 +66,13 @@ public class CMProducer extends DefaultProducer {
 
         // Validates Payload - SMSMessage
         LOG.trace("Validating SMSMessage instance provided: {}", smsMessage);
-        final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator().validate(smsMessage);
+        final Set<ConstraintViolation<SMSMessage>> constraintViolations =
+                getValidator().validate(smsMessage);
         if (!constraintViolations.isEmpty()) {
             final StringBuilder msg = new StringBuilder();
             for (final ConstraintViolation<SMSMessage> cv : constraintViolations) {
-                msg.append(String.format("- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
+                msg.append(String.format(
+                        "- Invalid value for %s: %s", cv.getPropertyPath().toString(), cv.getMessage()));
             }
             LOG.debug("SMS message: {}", msg);
             throw new InvalidPayloadRuntimeException(exchange, SMSMessage.class);
@@ -119,7 +122,9 @@ public class CMProducer extends DefaultProducer {
                 LOG.debug("Connection to {}: OK", getEndpoint().getCMUrl());
             } catch (final Exception e) {
                 throw new HostUnavailableException(
-                        String.format("Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()), e);
+                        String.format(
+                                "Connection to %s: NOT AVAILABLE", getEndpoint().getCMUrl()),
+                        e);
             }
         }
 
@@ -152,5 +157,4 @@ public class CMProducer extends DefaultProducer {
     public void setSender(CMSender sender) {
         this.sender = sender;
     }
-
 }

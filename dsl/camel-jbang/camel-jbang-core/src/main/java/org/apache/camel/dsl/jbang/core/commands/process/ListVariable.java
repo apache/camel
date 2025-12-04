@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -32,26 +33,31 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "variable", description = "List variables of Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "variable",
+        description = "List variables of Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListVariable extends ProcessWatchCommand {
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {
 
-        public PidNameKeyCompletionCandidates() {
-        }
+        public PidNameKeyCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("pid", "name", "key").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameKeyCompletionCandidates.class,
-                        description = "Sort by pid, name or key", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameKeyCompletionCandidates.class,
+            description = "Sort by pid, name or key",
+            defaultValue = "pid")
     String sort;
 
     public ListVariable(CamelJBangMain main) {
@@ -63,58 +69,78 @@ public class ListVariable extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            // there must be a status file for the running Camel integration
+            if (root != null) {
+                Row row = new Row();
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
 
-                        JsonObject jv = (JsonObject) root.get("variables");
-                        if (jv != null) {
-                            for (String id : jv.keySet()) {
-                                JsonArray arr = jv.getCollection(id);
-                                if (arr != null) {
-                                    for (int i = 0; i < arr.size(); i++) {
-                                        row = row.copy();
-                                        JsonObject jo = (JsonObject) arr.get(i);
-                                        row.id = id;
-                                        row.key = jo.getString("key");
-                                        row.type = jo.getString("type");
-                                        row.value = jo.get("value");
-                                        rows.add(row);
-                                    }
-                                }
+                JsonObject jv = (JsonObject) root.get("variables");
+                if (jv != null) {
+                    for (String id : jv.keySet()) {
+                        JsonArray arr = jv.getCollection(id);
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                row = row.copy();
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                row.id = id;
+                                row.key = jo.getString("key");
+                                row.type = jo.getString("type");
+                                row.value = jo.get("value");
+                                rows.add(row);
                             }
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("REPO").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
-                    new Column().header("TYPE").headerAlign(HorizontalAlign.CENTER)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.type),
-                    new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.key),
-                    new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(this::getValue))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("REPO")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.id),
+                                    new Column()
+                                            .header("TYPE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT)
+                                            .with(r -> r.type),
+                                    new Column()
+                                            .header("KEY")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.key),
+                                    new Column()
+                                            .header("VALUE")
+                                            .headerAlign(HorizontalAlign.RIGHT)
+                                            .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                            .with(this::getValue))));
         }
 
         return 0;
@@ -167,5 +193,4 @@ public class ListVariable extends ProcessWatchCommand {
             }
         }
     }
-
 }

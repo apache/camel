@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.concurrent.Callable;
@@ -48,7 +49,10 @@ public class BeanReturnCallableTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader("foo", constant("bar")).to("bean:myBean").to("mock:result");
+                from("direct:in")
+                        .setHeader("foo", constant("bar"))
+                        .to("bean:myBean")
+                        .to("mock:result");
             }
         };
     }
@@ -59,5 +63,4 @@ public class BeanReturnCallableTest extends ContextTestSupport {
             return () -> "I was called";
         }
     }
-
 }

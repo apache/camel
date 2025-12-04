@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.bind;
 
 import org.apache.camel.ExchangePattern;
@@ -40,5 +41,4 @@ public class BeanAsEndpointTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/bind/beanAsEndpoint.xml");
     }
-
 }

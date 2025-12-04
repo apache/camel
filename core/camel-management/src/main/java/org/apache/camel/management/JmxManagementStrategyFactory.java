@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import java.util.List;
@@ -51,19 +52,24 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
         // must add management lifecycle strategy as first choice
         if (!camelContext.getLifecycleStrategies().isEmpty()) {
 
-            // a bit of ugly code to handover pre registered services that has been add to an eager/provisional JmxManagementLifecycleStrategy
-            // which is now re-placed with a new JmxManagementLifecycleStrategy that is based on the end user configured settings
+            // a bit of ugly code to handover pre registered services that has been add to an eager/provisional
+            // JmxManagementLifecycleStrategy
+            // which is now re-placed with a new JmxManagementLifecycleStrategy that is based on the end user configured
+            // settings
             // and therefore will be in use
             List<java.util.function.Consumer<JmxManagementLifecycleStrategy>> preServices = null;
             JmxManagementLifecycleStrategy jmx = camelContext.getLifecycleStrategies().stream()
                     .filter(s -> s instanceof JmxManagementLifecycleStrategy)
                     .map(JmxManagementLifecycleStrategy.class::cast)
-                    .findFirst().orElse(null);
+                    .findFirst()
+                    .orElse(null);
             if (jmx != null) {
                 preServices = jmx.getPreServices();
             }
 
-            if (preServices != null && !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy existing) {
+            if (preServices != null
+                    && !preServices.isEmpty()
+                    && lifecycle instanceof JmxManagementLifecycleStrategy existing) {
                 for (java.util.function.Consumer<JmxManagementLifecycleStrategy> pre : preServices) {
                     existing.addPreService(pre);
                 }
@@ -74,5 +80,4 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
         }
         camelContext.getLifecycleStrategies().add(0, lifecycle);
     }
-
 }

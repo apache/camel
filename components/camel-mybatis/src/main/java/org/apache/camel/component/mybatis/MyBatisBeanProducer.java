@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 import org.apache.camel.Exchange;
@@ -129,5 +130,4 @@ public class MyBatisBeanProducer extends DefaultProducer {
             return exchange.getIn().getBody();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.CamelContext;
@@ -68,9 +69,12 @@ public class SqsDeadletterWithClientRegistryLocalstackIT extends Aws2SQSBaseTest
                 errorHandler(deadLetterChannel(String.format("aws2-sqs://%s?autoCreateQueue=true", deadletterName))
                         .useOriginalMessage());
 
-                from("direct:start").startupOrder(2).process(e -> {
-                    throw new IllegalStateException();
-                }).toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
+                from("direct:start")
+                        .startupOrder(2)
+                        .process(e -> {
+                            throw new IllegalStateException();
+                        })
+                        .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
                 fromF("aws2-sqs://%s", deadletterName).to("mock:result");
             }

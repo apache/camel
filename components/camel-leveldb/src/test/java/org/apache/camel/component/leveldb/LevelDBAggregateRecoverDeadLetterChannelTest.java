@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +28,7 @@ import org.apache.camel.test.junit5.params.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
-@DisabledOnOs({ OS.AIX, OS.OTHER })
+@DisabledOnOs({OS.AIX, OS.OTHER})
 public class LevelDBAggregateRecoverDeadLetterChannelTest extends LevelDBTestSupport {
 
     @Override
@@ -49,21 +50,57 @@ public class LevelDBAggregateRecoverDeadLetterChannelTest extends LevelDBTestSup
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         getMockEndpoint("mock:aggregated").expectedMessageCount(4);
-        getMockEndpoint("mock:aggregated").message(0).header(Exchange.REDELIVERED).isNull();
-        getMockEndpoint("mock:aggregated").message(1).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:aggregated").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(1);
-        getMockEndpoint("mock:aggregated").message(1).header(Exchange.REDELIVERY_MAX_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:aggregated").message(2).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:aggregated").message(2).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
-        getMockEndpoint("mock:aggregated").message(2).header(Exchange.REDELIVERY_MAX_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:aggregated").message(3).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:aggregated").message(3).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:aggregated").message(3).header(Exchange.REDELIVERY_MAX_COUNTER).isEqualTo(3);
+        getMockEndpoint("mock:aggregated")
+                .message(0)
+                .header(Exchange.REDELIVERED)
+                .isNull();
+        getMockEndpoint("mock:aggregated")
+                .message(1)
+                .header(Exchange.REDELIVERED)
+                .isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:aggregated")
+                .message(1)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(1);
+        getMockEndpoint("mock:aggregated")
+                .message(1)
+                .header(Exchange.REDELIVERY_MAX_COUNTER)
+                .isEqualTo(3);
+        getMockEndpoint("mock:aggregated")
+                .message(2)
+                .header(Exchange.REDELIVERED)
+                .isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:aggregated")
+                .message(2)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(2);
+        getMockEndpoint("mock:aggregated")
+                .message(2)
+                .header(Exchange.REDELIVERY_MAX_COUNTER)
+                .isEqualTo(3);
+        getMockEndpoint("mock:aggregated")
+                .message(3)
+                .header(Exchange.REDELIVERED)
+                .isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:aggregated")
+                .message(3)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(3);
+        getMockEndpoint("mock:aggregated")
+                .message(3)
+                .header(Exchange.REDELIVERY_MAX_COUNTER)
+                .isEqualTo(3);
 
         getMockEndpoint("mock:dead").expectedBodiesReceived("ABCDE");
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_MAX_COUNTER).isNull();
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .header(Exchange.REDELIVERY_COUNTER)
+                .isEqualTo(3);
+        getMockEndpoint("mock:dead")
+                .message(0)
+                .header(Exchange.REDELIVERY_MAX_COUNTER)
+                .isNull();
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
@@ -81,7 +118,8 @@ public class LevelDBAggregateRecoverDeadLetterChannelTest extends LevelDBTestSup
             public void configure() {
                 from("direct:start")
                         .aggregate(header("id"), new StringAggregationStrategy())
-                        .completionSize(5).aggregationRepository(getRepo())
+                        .completionSize(5)
+                        .aggregationRepository(getRepo())
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))

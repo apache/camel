@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,7 +31,8 @@ public class JoorPredicateTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when().joor("((int) body) / 2 > 10")
+                        .when()
+                        .joor("((int) body) / 2 > 10")
                         .to("mock:high")
                         .otherwise()
                         .to("mock:low");
@@ -51,5 +53,4 @@ public class JoorPredicateTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

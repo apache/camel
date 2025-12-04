@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.LoggingEventNotifierTest;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 @DisabledOnOs(OS.AIX)
 public class SpringLoggingEventNotifierTest extends LoggingEventNotifierTest {
@@ -35,5 +36,4 @@ public class SpringLoggingEventNotifierTest extends LoggingEventNotifierTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringLoggingEventNotifierTest.xml");
     }
-
 }

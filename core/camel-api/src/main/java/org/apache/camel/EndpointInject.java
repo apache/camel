@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.lang.annotation.Documented;
@@ -33,7 +34,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface EndpointInject {
 
     /**
@@ -45,5 +46,4 @@ public @interface EndpointInject {
      * Use the field or getter on the bean to provide the uri of the endpoint
      */
     String property() default "";
-
 }

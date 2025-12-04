@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.Optional;
@@ -65,15 +66,17 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
             if (ref != null) {
                 strategy = mandatoryLookup(ref, ResumeStrategy.class);
             } else {
-                final FactoryFinder factoryFinder
-                        = camelContext.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+                final FactoryFinder factoryFinder =
+                        camelContext.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
 
-                final ResumeStrategyConfiguration resumeStrategyConfiguration = definition.getResumeStrategyConfiguration();
+                final ResumeStrategyConfiguration resumeStrategyConfiguration =
+                        definition.getResumeStrategyConfiguration();
                 Optional<ResumeStrategy> resumeStrategyOptional = factoryFinder.newInstance(
                         resumeStrategyConfiguration.resumeStrategyService(), ResumeStrategy.class);
 
                 if (resumeStrategyOptional.isEmpty()) {
-                    throw new RuntimeCamelException("Cannot find a resume strategy class in the classpath or the registry");
+                    throw new RuntimeCamelException(
+                            "Cannot find a resume strategy class in the classpath or the registry");
                 }
 
                 final ResumeStrategy resumeStrategy = resumeStrategyOptional.get();

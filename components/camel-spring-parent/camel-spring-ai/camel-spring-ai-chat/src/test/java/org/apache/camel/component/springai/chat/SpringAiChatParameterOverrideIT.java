@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for parameter override via headers.
@@ -105,8 +106,9 @@ public class SpringAiChatParameterOverrideIT extends OllamaTestSupport {
     @Test
     public void testUsingEndpointConfigurationWithoutHeaders() {
         // This should use the endpoint's configured temperature=0.3
-        String response = template().requestBody("direct:chat-with-config",
-                "What is the capital of France? Answer in one word.", String.class);
+        String response = template()
+                .requestBody(
+                        "direct:chat-with-config", "What is the capital of France? Answer in one word.", String.class);
 
         assertThat(response).isNotNull();
         assertThat(response.toLowerCase()).contains("paris");

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
@@ -137,7 +138,8 @@ public final class DomConverter {
     }
 
     @Converter(order = 7)
-    public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
+    public byte[] toByteArray(NodeList nodeList, Exchange exchange)
+            throws TransformerException, UnsupportedEncodingException {
         String data = toString(nodeList, exchange);
         return data.getBytes(ExchangeHelper.getCharset(exchange));
     }

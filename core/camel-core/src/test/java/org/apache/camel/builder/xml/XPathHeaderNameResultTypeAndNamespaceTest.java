@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,8 +34,8 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
         mock.expectedBodiesReceived("body");
         mock.expectedHeaderReceived("cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
-        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails",
-                "<number xmlns=\"http://acme.com/cheese\">55</number>");
+        template.sendBodyAndHeader(
+                "direct:in", "body", "cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
         mock.assertIsSatisfied();
     }
@@ -44,11 +45,21 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
-                var xpath = expression().xpath().expression("/c:number = 55").namespaces(ns).resultType(Integer.class)
-                        .source("header:cheeseDetails").end();
+                var xpath = expression()
+                        .xpath()
+                        .expression("/c:number = 55")
+                        .namespaces(ns)
+                        .resultType(Integer.class)
+                        .source("header:cheeseDetails")
+                        .end();
 
-                from("direct:in").choice().when(xpath).to("mock:55")
-                        .otherwise().to("mock:other").end();
+                from("direct:in")
+                        .choice()
+                        .when(xpath)
+                        .to("mock:55")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
             }
         };
     }

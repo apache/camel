@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.apache.camel.component.google.bigquery.integration.BigQueryITSupport.PROJECT_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -28,13 +36,6 @@ import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import static org.apache.camel.component.google.bigquery.integration.BigQueryITSupport.PROJECT_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQLProducerBaseTest {
 
@@ -119,11 +120,16 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
         assertTrue(namedParameters.containsKey("id"));
         assertEquals("200", namedParameters.get("id").getValue());
-        assertEquals(StandardSQLTypeName.INT64, namedParameters.get("id").getType(), "Integer parameter is detected as INT64");
+        assertEquals(
+                StandardSQLTypeName.INT64,
+                namedParameters.get("id").getType(),
+                "Integer parameter is detected as INT64");
 
         assertTrue(namedParameters.containsKey("data"));
         assertEquals("1", namedParameters.get("data").getValue());
-        assertEquals(StandardSQLTypeName.NUMERIC, namedParameters.get("data").getType(),
+        assertEquals(
+                StandardSQLTypeName.NUMERIC,
+                namedParameters.get("data").getType(),
                 "BigDecimal parameter is detected as NUMERIC");
     }
 
@@ -149,11 +155,16 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
         assertTrue(namedParameters.containsKey("id"));
         assertEquals("1", namedParameters.get("id").getValue());
-        assertEquals(StandardSQLTypeName.STRING, namedParameters.get("id").getType(), "String parameter is detected as STRING");
+        assertEquals(
+                StandardSQLTypeName.STRING,
+                namedParameters.get("id").getType(),
+                "String parameter is detected as STRING");
 
         assertTrue(namedParameters.containsKey("data"));
         assertEquals("CustomField{value='Hello'}", namedParameters.get("data").getValue());
-        assertEquals(StandardSQLTypeName.STRING, namedParameters.get("data").getType(),
+        assertEquals(
+                StandardSQLTypeName.STRING,
+                namedParameters.get("data").getType(),
                 "Unknown parameter fallbacks to STRING");
     }
 
@@ -195,9 +206,7 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
         @Override
         public String toString() {
-            return "CustomField{" +
-                   "value='" + value + '\'' +
-                   '}';
+            return "CustomField{" + "value='" + value + '\'' + '}';
         }
     }
 }

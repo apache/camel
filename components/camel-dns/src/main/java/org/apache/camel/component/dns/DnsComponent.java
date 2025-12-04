@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns;
 
 import java.util.Map;
@@ -65,8 +66,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("dns")
 public class DnsComponent extends DefaultComponent {
 
-    public DnsComponent() {
-    }
+    public DnsComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -76,5 +76,4 @@ public class DnsComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-
 }

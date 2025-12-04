@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,14 +26,27 @@ public class RouteScopedOnExceptionLoadBalancerStopRouteTest extends ContextScop
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").onException(Exception.class).handled(true).loadBalance().roundRobin()
-                        .to("seda:error", "seda:error2").end().to("mock:exception").end()
+                from("direct:start")
+                        .onException(Exception.class)
+                        .handled(true)
+                        .loadBalance()
+                        .roundRobin()
+                        .to("seda:error", "seda:error2")
+                        .end()
+                        .to("mock:exception")
+                        .end()
                         // route starts here
-                        .to("mock:start").choice().when(body().contains("Kaboom"))
-                        .throwException(new IllegalArgumentException("Forced")).otherwise().transform(body().prepend("Bye "))
+                        .to("mock:start")
+                        .choice()
+                        .when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .otherwise()
+                        .transform(body().prepend("Bye "))
                         .to("mock:result");
 
-                from("seda:error").routeId("errorRoute").to("controlbus:route?action=stop&routeId=errorRoute&async=true")
+                from("seda:error")
+                        .routeId("errorRoute")
+                        .to("controlbus:route?action=stop&routeId=errorRoute&async=true")
                         .to("mock:error");
             }
         };

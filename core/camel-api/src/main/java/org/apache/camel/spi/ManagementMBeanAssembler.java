@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import javax.management.JMException;
@@ -40,5 +41,4 @@ public interface ManagementMBeanAssembler extends StaticService {
      * @throws JMException is thrown if error assembling the mbean
      */
     ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException;
-
 }

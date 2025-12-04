@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ldap;
 
 public final class LdapHelper {
 
-    private LdapHelper() {
-    }
+    private LdapHelper() {}
 
     /**
      * Given an LDAP search string, returns the string with certain characters escaped according to RFC 2254 guidelines.

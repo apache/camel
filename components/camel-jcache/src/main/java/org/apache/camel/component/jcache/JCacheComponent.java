@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import java.util.Map;
@@ -35,17 +36,20 @@ public class JCacheComponent extends DefaultComponent {
 
     @Metadata
     private String cachingProvider;
+
     @Metadata
     private Configuration cacheConfiguration;
+
     @Metadata
     private String cacheConfigurationPropertiesRef;
+
     @Metadata
     private Map cacheConfigurationProperties;
+
     @Metadata
     private String configurationUri;
 
-    public JCacheComponent() {
-    }
+    public JCacheComponent() {}
 
     public JCacheComponent(CamelContext context) {
         super(context);
@@ -134,5 +138,4 @@ public class JCacheComponent extends DefaultComponent {
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
     }
-
 }

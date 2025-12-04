@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common;
 
 import java.util.AbstractList;
@@ -160,5 +161,4 @@ public class CxfPayload<T> {
         // do not load or print the payload body etc as we do not want to load that into memory etc
         return super.toString();
     }
-
 }

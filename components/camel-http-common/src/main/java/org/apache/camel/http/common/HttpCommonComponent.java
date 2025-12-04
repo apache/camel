@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.http.common;
 
 import java.util.Map;
@@ -24,22 +25,30 @@ import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
-    @Metadata(label = "advanced",
-              description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
+    @Metadata(
+            label = "advanced",
+            description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     protected HttpBinding httpBinding;
+
     @Metadata(label = "advanced", description = "To use the shared HttpConfiguration as base configuration.")
     protected HttpConfiguration httpConfiguration;
-    @Metadata(label = "consumer", defaultValue = "true",
-              description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+
+    @Metadata(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     protected boolean muteException = true;
-    @Metadata(label = "advanced",
-              description = "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
                             + " This is by default turned off. "
                             + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
-    protected HttpCommonComponent() {
-    }
+    protected HttpCommonComponent() {}
 
     /**
      * Gets the parameter. This method doesn't resolve reference parameters in the registry.
@@ -80,8 +89,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      * @param  consumer  the consumer
      * @throws Exception can be thrown
      */
-    public void connect(HttpConsumer consumer) throws Exception {
-    }
+    public void connect(HttpConsumer consumer) throws Exception {}
 
     /**
      * Disconnects the URL specified on the endpoint from the specified processor.
@@ -89,8 +97,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      * @param  consumer  the consumer
      * @throws Exception can be thrown
      */
-    public void disconnect(HttpConsumer consumer) throws Exception {
-    }
+    public void disconnect(HttpConsumer consumer) throws Exception {}
 
     /**
      * Checks whether the consumer is possible to connect to the endoint.
@@ -154,5 +161,4 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
-
 }

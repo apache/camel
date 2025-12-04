@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.Collections;
@@ -37,16 +38,11 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleKeyValuePairFixTest {
-    private static final String[] FIX_REQUESTS = new String[] {
-            "8=FIX.4.1 37=1 38=1 40=butter",
-            "8=FIX.4.1 37=2 38=2 40=milk",
-            "8=FIX.4.1 37=3 38=3 40=bread"
-    };
-    private static final String[] FIX_RESPONSES = new String[] {
-            "37=1 38=2 40=butter \r\n",
-            "37=2 38=4 40=milk \r\n",
-            "37=3 38=6 40=bread \r\n"
-    };
+    private static final String[] FIX_REQUESTS =
+            new String[] {"8=FIX.4.1 37=1 38=1 40=butter", "8=FIX.4.1 37=2 38=2 40=milk", "8=FIX.4.1 37=3 38=3 40=bread"
+            };
+    private static final String[] FIX_RESPONSES =
+            new String[] {"37=1 38=2 40=butter \r\n", "37=2 38=4 40=milk \r\n", "37=3 38=6 40=bread \r\n"};
 
     @Produce("direct:fix")
     private ProducerTemplate template;
@@ -87,7 +83,8 @@ public class BindySimpleKeyValuePairFixTest {
                                 body = Collections.singletonMap(order.getClass().getName(), order);
                             } else if (order.getProduct().equals("bread")) {
                                 order.setQuantity("6");
-                                body = Collections.singletonList(Collections.singletonMap(order.getClass().getName(), order));
+                                body = Collections.singletonList(Collections.singletonMap(
+                                        order.getClass().getName(), order));
                             }
 
                             exchange.getIn().setBody(body);
@@ -102,8 +99,10 @@ public class BindySimpleKeyValuePairFixTest {
     public static class FixOrder {
         @KeyValuePairField(tag = 37)
         private String id;
+
         @KeyValuePairField(tag = 40)
         private String product;
+
         @KeyValuePairField(tag = 38)
         private String quantity;
 

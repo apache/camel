@@ -14,7 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static com.mongodb.client.model.Accumulators.sum;
+import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.currentTimestamp;
+import static com.mongodb.client.model.Updates.set;
+import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
+import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -41,23 +59,6 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.mongodb.client.model.Accumulators.sum;
-import static com.mongodb.client.model.Aggregates.group;
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.currentTimestamp;
-import static com.mongodb.client.model.Updates.set;
-import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
-import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @BeforeEach
@@ -80,17 +81,19 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
 
         // test dynamicity
         dynamicCollection.insertOne(Document.parse("{a:60}"));
-        result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION,
-                dynamicCollectionName);
+        result = template.requestBodyAndHeader(
+                "direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, dynamicCollectionName);
         assertTrue(result instanceof Long, "Result is not of type Long");
         assertEquals(1L, result, "Dynamic collection should contain 1 record");
-
     }
 
     @Test
     public void testInsertString() {
-        Object result = template.requestBody("direct:insert",
-                new Document(MONGO_ID, "testInsertString").append("scientist", "Einstein").toJson());
+        Object result = template.requestBody(
+                "direct:insert",
+                new Document(MONGO_ID, "testInsertString")
+                        .append("scientist", "Einstein")
+                        .toJson());
         assertTrue(result instanceof Document);
         Document b = testCollection.find(eq(MONGO_ID, "testInsertString")).first();
         assertNotNull(b, "No record with 'testInsertString' _id");
@@ -107,8 +110,8 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     public void testStoreOidsOnInsert() {
         Document firsDocument = new Document();
         Document secondDoocument = new Document();
-        List<?> oids
-                = template.requestBody("direct:testStoreOidOnInsert", Arrays.asList(firsDocument, secondDoocument), List.class);
+        List<?> oids = template.requestBody(
+                "direct:testStoreOidOnInsert", Arrays.asList(firsDocument, secondDoocument), List.class);
         assertTrue(oids.contains(firsDocument.get(MONGO_ID)));
         assertTrue(oids.contains(secondDoocument.get(MONGO_ID)));
     }
@@ -116,8 +119,11 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     @Test
     public void testSave() {
         Object[] req = new Object[] {
-                new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
-                new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").toJson() };
+            new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
+            new Document(MONGO_ID, "testSave2")
+                    .append("scientist", "Copernicus")
+                    .toJson()
+        };
         Object result = template.requestBody("direct:insert", req);
         assertTrue(result instanceof List);
         assertEquals(2, testCollection.countDocuments(), "Number of records persisted must be 2");
@@ -131,9 +137,10 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         assertTrue(result instanceof UpdateResult);
 
         record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
-        assertEquals("Darwin", record1.get("scientist"),
+        assertEquals(
+                "Darwin",
+                record1.get("scientist"),
                 "Scientist field of 'testSave1' must equal 'Darwin' after save operation");
-
     }
 
     @Test
@@ -142,8 +149,15 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
 
         Object[] req = new Object[] {
-                new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").append("country", "Germany").toJson(),
-                new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").append("country", "Poland").toJson() };
+            new Document(MONGO_ID, "testSave1")
+                    .append("scientist", "Einstein")
+                    .append("country", "Germany")
+                    .toJson(),
+            new Document(MONGO_ID, "testSave2")
+                    .append("scientist", "Copernicus")
+                    .append("country", "Poland")
+                    .toJson()
+        };
         Object result = template.requestBody("direct:insert", req);
         assertTrue(result instanceof List);
         assertEquals(2, testCollection.countDocuments(), "Number of records persisted must be 2");
@@ -153,14 +167,16 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         assertEquals("Einstein", record1.get("scientist"), "Scientist field of 'testSave1' must equal 'Einstein'");
         record1.put("scientist", "Kepler");
 
-        //Pass sharded collection key as CRITERIA to prevent "MongoWriteException: Failed to target upsert by query :: could not extract exact shard key"
+        // Pass sharded collection key as CRITERIA to prevent "MongoWriteException: Failed to target upsert by query ::
+        // could not extract exact shard key"
         result = template.requestBodyAndHeader("direct:save", record1, CRITERIA, eq("country", "Germany"));
         assertTrue(result instanceof UpdateResult);
 
         record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
-        assertEquals("Kepler", record1.get("scientist"),
+        assertEquals(
+                "Kepler",
+                record1.get("scientist"),
                 "Scientist field of 'testSave1' must equal 'Kepler' after save operation");
-
     }
 
     @Test
@@ -178,8 +194,12 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         assertNotNull(resultInsertOne.getInsertedId());
 
         // Testing the save logic
-        Document record1 = testCollection.find(eq(MONGO_ID, resultInsertOne.getInsertedId())).first();
-        assertEquals("Einstein", record1.get("scientist"),
+        Document record1 = testCollection
+                .find(eq(MONGO_ID, resultInsertOne.getInsertedId()))
+                .first();
+        assertEquals(
+                "Einstein",
+                record1.get("scientist"),
                 "Scientist field of '" + resultInsertOne.getInsertedId() + "' must equal 'Einstein'");
     }
 
@@ -203,9 +223,11 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
             String body;
             try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i)
+                            .toString();
                 } else {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i)
+                            .toString();
                 }
             }
             template.requestBody("direct:insert", body);
@@ -214,9 +236,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
 
         // Testing the update logic
         Bson extraField = eq("extraField", true);
-        assertEquals(50L, testCollection.countDocuments(extraField),
+        assertEquals(
+                50L,
+                testCollection.countDocuments(extraField),
                 "Number of records with 'extraField' flag on must equal 50");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Number of records with 'scientist' field = Darwin on must equal 0");
 
         Bson updateObj = combine(set("scientist", "Darwin"), currentTimestamp("lastModified"));
@@ -224,16 +250,20 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         Exchange resultExchange = template.request("direct:update", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setBody(new Bson[] { extraField, updateObj });
+                exchange.getIn().setBody(new Bson[] {extraField, updateObj});
                 exchange.getIn().setHeader(MongoDbConstants.MULTIUPDATE, true);
             }
         });
         Object result = resultExchange.getMessage().getBody();
         assertTrue(result instanceof UpdateResult);
-        assertEquals(50L, resultExchange.getMessage().getHeader(MongoDbConstants.RECORDS_AFFECTED),
+        assertEquals(
+                50L,
+                resultExchange.getMessage().getHeader(MongoDbConstants.RECORDS_AFFECTED),
                 "Number of records updated header should equal 50");
 
-        assertEquals(50, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                50,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Number of records with 'scientist' field = Darwin on must equal 50 after update");
     }
 
@@ -246,9 +276,11 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
             String body;
             try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i)
+                            .toString();
                 } else {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i)
+                            .toString();
                 }
             }
             template.requestBody("direct:insert", body);
@@ -257,16 +289,24 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
 
         // Testing the update logic
         Bson extraField = eq("extraField", true);
-        assertEquals(50L, testCollection.countDocuments(extraField),
+        assertEquals(
+                50L,
+                testCollection.countDocuments(extraField),
                 "Number of records with 'extraField' flag on must equal 50");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Number of records with 'scientist' field = Darwin on must equal 0");
 
         Bson updateObj = combine(set("scientist", "Darwin"), currentTimestamp("lastModified"));
 
-        String updates
-                = "[" + extraField.toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry()).toJson() + ","
-                  + updateObj.toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry()).toJson() + "]";
+        String updates = "["
+                + extraField
+                        .toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry())
+                        .toJson() + ","
+                + updateObj
+                        .toBsonDocument(Document.class, MongoClientSettings.getDefaultCodecRegistry())
+                        .toJson() + "]";
 
         Exchange resultExchange = template.request("direct:update", new Processor() {
             @Override
@@ -277,10 +317,14 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         });
         Object result = resultExchange.getMessage().getBody();
         assertTrue(result instanceof UpdateResult);
-        assertEquals(50L, resultExchange.getMessage().getHeader(MongoDbConstants.RECORDS_AFFECTED),
+        assertEquals(
+                50L,
+                resultExchange.getMessage().getHeader(MongoDbConstants.RECORDS_AFFECTED),
                 "Number of records updated header should equal 50");
 
-        assertEquals(50, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                50,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Number of records with 'scientist' field = Darwin on must equal 50 after update");
     }
 
@@ -290,9 +334,11 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
             String body;
             try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i)
+                            .toString();
                 } else {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i)
+                            .toString();
                 }
             }
             template.requestBody("direct:insert", body);
@@ -301,9 +347,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
 
         // Testing the update logic
         Bson extraField = eq("extraField", true);
-        assertEquals(50L, testCollection.countDocuments(extraField),
+        assertEquals(
+                50L,
+                testCollection.countDocuments(extraField),
                 "Number of records with 'extraField' flag on must equal 50");
-        assertEquals(0, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                0,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Number of records with 'scientist' field = Darwin on must equal 0");
 
         Bson updateObj = combine(set("scientist", "Darwin"), currentTimestamp("lastModified"));
@@ -312,9 +362,13 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         headers.put(MongoDbConstants.CRITERIA, extraField);
         Object result = template.requestBodyAndHeaders("direct:update", updateObj, headers);
         assertTrue(result instanceof UpdateResult);
-        assertEquals(50L, UpdateResult.class.cast(result).getModifiedCount(),
+        assertEquals(
+                50L,
+                UpdateResult.class.cast(result).getModifiedCount(),
                 "Number of records updated header should equal 50");
-        assertEquals(50, testCollection.countDocuments(new Document("scientist", "Darwin")),
+        assertEquals(
+                50,
+                testCollection.countDocuments(new Document("scientist", "Darwin")),
                 "Number of records with 'scientist' field = Darwin on must equal 50 after update");
     }
 
@@ -324,9 +378,11 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
             String body;
             try (Formatter f = new Formatter()) {
                 if (i % 2 == 0) {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i)
+                            .toString();
                 } else {
-                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i).toString();
+                    body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\", \"extraField\": true}", i)
+                            .toString();
                 }
             }
             template.requestBody("direct:insert", body);
@@ -335,7 +391,9 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
 
         // Testing the update logic
         Bson extraField = Filters.eq("extraField", true);
-        assertEquals(50L, testCollection.countDocuments(extraField),
+        assertEquals(
+                50L,
+                testCollection.countDocuments(extraField),
                 "Number of records with 'extraField' flag on must equal 50");
 
         Exchange resultExchange = template.request("direct:remove", new Processor() {
@@ -346,12 +404,15 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         });
         Object result = resultExchange.getMessage().getBody();
         assertTrue(result instanceof DeleteResult);
-        assertEquals(50L, resultExchange.getMessage().getHeader(MongoDbConstants.RECORDS_AFFECTED),
+        assertEquals(
+                50L,
+                resultExchange.getMessage().getHeader(MongoDbConstants.RECORDS_AFFECTED),
                 "Number of records deleted header should equal 50");
 
-        assertEquals(0, testCollection.countDocuments(extraField),
+        assertEquals(
+                0,
+                testCollection.countDocuments(extraField),
                 "Number of records with 'extraField' flag on must be 0 after remove");
-
     }
 
     @Test
@@ -359,7 +420,8 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         pumpDataIntoTestCollection();
 
         // Repeat ten times, obtain 10 batches of 100 results each time
-        List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", "Einstein"))),
+        List<Bson> aggregate = Arrays.asList(
+                match(or(eq("scientist", "Darwin"), eq("scientist", "Einstein"))),
                 group("$scientist", sum("count", 1)));
         Object result = template.requestBody("direct:aggregate", aggregate);
         assertTrue(result instanceof List, "Result is not of type List");
@@ -385,7 +447,8 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
         for (int i = 1; i <= 100; i++) {
             String body;
             try (Formatter f = new Formatter()) {
-                body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i).toString();
+                body = f.format("{\"_id\":\"testSave%d\", \"scientist\":\"Einstein\"}", i)
+                        .toString();
             }
             template.requestBody("direct:insert", body);
         }
@@ -407,49 +470,56 @@ public class MongoDbOperationsIT extends AbstractMongoDbITSupport implements Con
     public void testOperationHeader() {
         // check that the count operation was invoked instead of the insert
         // operation
-        Object result
-                = template.requestBodyAndHeader("direct:insert", "irrelevantBody", MongoDbConstants.OPERATION_HEADER, "count");
+        Object result = template.requestBodyAndHeader(
+                "direct:insert", "irrelevantBody", MongoDbConstants.OPERATION_HEADER, "count");
         assertTrue(result instanceof Long, "Result is not of type Long");
         assertEquals(0L, result, "Test collection should not contain any records");
 
         // check that the count operation was invoked instead of the insert
         // operation
-        result = template.requestBodyAndHeader("direct:insert", "irrelevantBody", MongoDbConstants.OPERATION_HEADER,
-                MongoDbOperation.count);
+        result = template.requestBodyAndHeader(
+                "direct:insert", "irrelevantBody", MongoDbConstants.OPERATION_HEADER, MongoDbOperation.count);
         assertTrue(result instanceof Long, "Result is not of type Long");
         assertEquals(0L, result, "Test collection should not contain any records");
-
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:count").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
+                from("direct:count")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
                 from("direct:insert")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:testStoreOidOnInsert")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
                         .setBody()
                         .header(MongoDbConstants.OID);
                 from("direct:save")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save");
                 from("direct:testStoreOidOnSave")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save")
                         .setBody()
                         .header(MongoDbConstants.OID);
                 from("direct:update")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=update");
                 from("direct:remove")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove");
-                from("direct:aggregate").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=remove");
+                from("direct:aggregate")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
                 from("direct:getDbStats").to("mongodb:myDb?database={{mongodb.testDb}}&operation=getDbStats");
-                from("direct:getColStats").to(
-                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
+                from("direct:getColStats")
+                        .to(
+                                "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getColStats");
                 from("direct:command").to("mongodb:myDb?database={{mongodb.testDb}}&operation=command");
-
             }
         };
     }

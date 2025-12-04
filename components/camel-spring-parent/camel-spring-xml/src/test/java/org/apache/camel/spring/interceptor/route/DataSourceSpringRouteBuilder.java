@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor.route;
 
 import org.apache.camel.spring.SpringRouteBuilder;
@@ -33,12 +34,19 @@ public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
         errorHandler(transactionErrorHandler(required));
 
         // set the required policy for this route
-        from("direct:okay").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
-                .setBody(constant("Elephant in Action")).bean("bookService");
+        from("direct:okay")
+                .policy(required)
+                .setBody(constant("Tiger in Action"))
+                .bean("bookService")
+                .setBody(constant("Elephant in Action"))
+                .bean("bookService");
 
         // set the required policy for this route
-        from("direct:fail").policy(required).setBody(constant("Tiger in Action")).bean("bookService")
-                .setBody(constant("Donkey in Action")).bean("bookService");
+        from("direct:fail")
+                .policy(required)
+                .setBody(constant("Tiger in Action"))
+                .bean("bookService")
+                .setBody(constant("Donkey in Action"))
+                .bean("bookService");
     }
-
 }

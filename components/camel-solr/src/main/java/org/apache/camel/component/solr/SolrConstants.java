@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.solr;
 
 import org.apache.camel.Exchange;
@@ -23,22 +24,33 @@ public interface SolrConstants {
 
     @Metadata(description = "The operation to perform.", javaType = "String")
     String PARAM_OPERATION = "CamelSolrOperation";
+
     @Metadata(description = "The collection to execute the request against.", javaType = "String")
     String PARAM_COLLECTION = "CamelSolrCollection";
+
     @Metadata(description = "The request handler to execute the solr request against.", javaType = "String")
     String PARAM_REQUEST_HANDLER = "CamelSolrRequestHandler";
+
     @Metadata(description = "The query to execute.", javaType = "String")
     String PARAM_QUERY_STRING = "CamelSolrQueryString";
+
     @Metadata(description = "The size of the response.", javaType = "Integer")
     String PARAM_SIZE = "CamelSolrSize";
+
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_FROM = "CamelSolrFrom";
-    @Metadata(description = "The solr parameters to use for the request.",
-              javaType = "org.apache.solr.common.params.SolrParams")
+
+    @Metadata(
+            description = "The solr parameters to use for the request.",
+            javaType = "org.apache.solr.common.params.SolrParams")
     String PARAM_SOLR_PARAMS = "CamelSolrParams";
-    @Metadata(description = "For the delete instruction, interpret body as query/queries instead of id/ids.",
-              javaType = "boolean", defaultValue = "false")
+
+    @Metadata(
+            description = "For the delete instruction, interpret body as query/queries instead of id/ids.",
+            javaType = "boolean",
+            defaultValue = "false")
     String PARAM_DELETE_BY_QUERY = "CamelSolrDeleteByQuery";
+
     @Metadata(description = "The content type is used to identify the type when inserting files.", javaType = "String")
     String PARAM_CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
@@ -71,5 +83,4 @@ public interface SolrConstants {
 
     int DEFAULT_CONNECT_TIMEOUT = 60000;
     int DEFAULT_REQUEST_TIMEOUT = 600000;
-
 }

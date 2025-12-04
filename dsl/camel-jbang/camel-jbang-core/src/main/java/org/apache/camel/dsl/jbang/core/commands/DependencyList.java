@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,16 +44,19 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
-
-@CommandLine.Command(name = "list",
-                     description = "Displays all Camel dependencies required to run", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "list",
+        description = "Displays all Camel dependencies required to run",
+        sortOptions = false,
+        showDefaultValues = true)
 public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
 
-    @CommandLine.Option(names = { "--output" }, description = "Output format (gav, maven, jbang)", defaultValue = "gav")
+    @CommandLine.Option(
+            names = {"--output"},
+            description = "Output format (gav, maven, jbang)",
+            defaultValue = "gav")
     protected String output;
 
     public DependencyList(CamelJBangMain main) {
@@ -60,7 +66,8 @@ public class DependencyList extends Export {
     @Override
     public Integer doCall() throws Exception {
         this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
-        this.ignoreLoadingError = true; // also attempt to update for source files that are partly complete so ignore errors
+        this.ignoreLoadingError =
+                true; // also attempt to update for source files that are partly complete so ignore errors
         this.lazyBean = true;
         return super.doCall();
     }
@@ -103,7 +110,8 @@ public class DependencyList extends Export {
                     // must be child at <project/dependencyManagement> or <project/dependencies>
                     String p = node.getParentNode().getNodeName();
                     String p2 = node.getParentNode().getParentNode().getNodeName();
-                    boolean accept = ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
+                    boolean accept =
+                            ("dependencyManagement".equals(p2) || "project".equals(p2)) && (p.equals("dependencies"));
                     if (!accept) {
                         continue;
                     }
@@ -129,10 +137,12 @@ public class DependencyList extends Export {
                         springBootVersion = v;
                         continue;
                     }
-                    if (("${quarkus.platform.group-id}".equals(g) || "io.quarkus.platform".equals(g)) &&
-                            ("${quarkus.platform.artifact-id}".equals(a) || "quarkus-bom".equals(a))) {
+                    if (("${quarkus.platform.group-id}".equals(g) || "io.quarkus.platform".equals(g))
+                            && ("${quarkus.platform.artifact-id}".equals(a) || "quarkus-bom".equals(a))) {
                         if ("${quarkus.platform.version}".equals(v)) {
-                            quarkusVersion = dom.getElementsByTagName("quarkus.platform.version").item(0).getTextContent();
+                            quarkusVersion = dom.getElementsByTagName("quarkus.platform.version")
+                                    .item(0)
+                                    .getTextContent();
                         } else {
                             quarkusVersion = v;
                         }
@@ -192,15 +202,13 @@ public class DependencyList extends Export {
             // cleanup dir after complete
             Path buildDir = Paths.get(EXPORT_DIR);
             try {
-                Files.walk(buildDir)
-                        .sorted(java.util.Comparator.reverseOrder())
-                        .forEach(p -> {
-                            try {
-                                Files.deleteIfExists(p);
-                            } catch (IOException e) {
-                                // ignore
-                            }
-                        });
+                Files.walk(buildDir).sorted(java.util.Comparator.reverseOrder()).forEach(p -> {
+                    try {
+                        Files.deleteIfExists(p);
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                });
             } catch (IOException e) {
                 // ignore
             }
@@ -298,5 +306,4 @@ public class DependencyList extends Export {
 
         return false;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto;
 
 import java.security.*;
@@ -38,8 +39,8 @@ public class PQCDefaultSNOVAMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
-                    PQCSignatureAlgorithms.SNOVA.getBcProvider());
+            signer = Signature.getInstance(
+                    PQCSignatureAlgorithms.SNOVA.getAlgorithm(), PQCSignatureAlgorithms.SNOVA.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +48,8 @@ public class PQCDefaultSNOVAMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
-                PQCSignatureAlgorithms.SNOVA.getBcProvider());
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance(
+                PQCSignatureAlgorithms.SNOVA.getAlgorithm(), PQCSignatureAlgorithms.SNOVA.getBcProvider());
         kpGen.initialize(SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK);
         return kpGen;
     }

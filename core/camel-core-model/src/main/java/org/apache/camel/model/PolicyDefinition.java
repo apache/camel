@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -39,14 +40,14 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @XmlTransient
     private Class<? extends Policy> type;
+
     @XmlTransient
     private Policy policy;
 
     @XmlAttribute(required = true)
     private String ref;
 
-    public PolicyDefinition() {
-    }
+    public PolicyDefinition() {}
 
     protected PolicyDefinition(PolicyDefinition source) {
         super(source);
@@ -159,5 +160,4 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         setRef(ref);
         return this;
     }
-
 }

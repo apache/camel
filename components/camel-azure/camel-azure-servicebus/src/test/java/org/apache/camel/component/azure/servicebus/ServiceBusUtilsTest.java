@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -30,9 +34,6 @@ import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ServiceBusUtilsTest {
 
     private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
@@ -45,12 +46,12 @@ public class ServiceBusUtilsTest {
         assertEquals("test string", message1.getBody().toString());
 
         // test int
-        final ServiceBusMessage message2
-                = ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null, null, null);
+        final ServiceBusMessage message2 =
+                ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null, null, null);
 
         assertEquals("12345", message2.getBody().toString());
 
-        //test bytes
+        // test bytes
         byte[] testByteBody = "test string".getBytes(StandardCharsets.UTF_8);
         final ServiceBusMessage message3 = ServiceBusUtils.createServiceBusMessage(testByteBody, null, null, null);
         assertArrayEquals(testByteBody, message3.getBody().toBytes());
@@ -62,23 +63,23 @@ public class ServiceBusUtilsTest {
         inputMessages.add("test data");
         inputMessages.add(String.valueOf(12345));
 
-        final Iterable<ServiceBusMessage> busMessages
-                = ServiceBusUtils.createServiceBusMessages(inputMessages, null, null, null);
+        final Iterable<ServiceBusMessage> busMessages =
+                ServiceBusUtils.createServiceBusMessages(inputMessages, null, null, null);
 
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getBody().toString().equals("test data")));
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getBody().toString().equals("12345")));
 
-        //Test bytes
+        // Test bytes
         final List<byte[]> inputMessages2 = new LinkedList<>();
         byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
         byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
         inputMessages2.add(byteBody1);
         inputMessages2.add(byteBody2);
 
-        final Iterable<ServiceBusMessage> busMessages2
-                = ServiceBusUtils.createServiceBusMessages(inputMessages2, null, null, null);
+        final Iterable<ServiceBusMessage> busMessages2 =
+                ServiceBusUtils.createServiceBusMessages(inputMessages2, null, null, null);
 
         assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
                 .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody1)));
@@ -89,22 +90,23 @@ public class ServiceBusUtilsTest {
     @Test
     void testCreateServiceBusMessageWithSession() {
         // test string
-        final ServiceBusMessage message1
-                = ServiceBusUtils.createServiceBusMessage("test string", null, null, "session-1");
+        final ServiceBusMessage message1 =
+                ServiceBusUtils.createServiceBusMessage("test string", null, null, "session-1");
 
         assertEquals("test string", message1.getBody().toString());
         assertEquals("session-1", message1.getSessionId());
 
         // test int
-        final ServiceBusMessage message2
-                = ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null, null, "session-2");
+        final ServiceBusMessage message2 =
+                ServiceBusUtils.createServiceBusMessage(String.valueOf(12345), null, null, "session-2");
 
         assertEquals("12345", message2.getBody().toString());
         assertEquals("session-2", message2.getSessionId());
 
-        //test bytes
+        // test bytes
         byte[] testByteBody = "test string".getBytes(StandardCharsets.UTF_8);
-        final ServiceBusMessage message3 = ServiceBusUtils.createServiceBusMessage(testByteBody, null, null, "session-1");
+        final ServiceBusMessage message3 =
+                ServiceBusUtils.createServiceBusMessage(testByteBody, null, null, "session-1");
         assertArrayEquals(testByteBody, message3.getBody().toBytes());
     }
 
@@ -114,8 +116,8 @@ public class ServiceBusUtilsTest {
         inputMessages.add("test data");
         inputMessages.add(String.valueOf(12345));
 
-        final Iterable<ServiceBusMessage> busMessages
-                = ServiceBusUtils.createServiceBusMessages(inputMessages, null, null, "session-1");
+        final Iterable<ServiceBusMessage> busMessages =
+                ServiceBusUtils.createServiceBusMessages(inputMessages, null, null, "session-1");
 
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getBody().toString().equals("test data")));
@@ -124,15 +126,15 @@ public class ServiceBusUtilsTest {
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getSessionId().equals("session-1")));
 
-        //Test bytes
+        // Test bytes
         final List<byte[]> inputMessages2 = new LinkedList<>();
         byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
         byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
         inputMessages2.add(byteBody1);
         inputMessages2.add(byteBody2);
 
-        final Iterable<ServiceBusMessage> busMessages2
-                = ServiceBusUtils.createServiceBusMessages(inputMessages2, null, null, "session-2");
+        final Iterable<ServiceBusMessage> busMessages2 =
+                ServiceBusUtils.createServiceBusMessages(inputMessages2, null, null, "session-2");
 
         assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
                 .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody1)));
@@ -144,11 +146,10 @@ public class ServiceBusUtilsTest {
 
     @Test
     void testCreateServiceBusMessageWithContentType() {
-        final Map<String, Object> applicationProperties = Map.of(
-                Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
+        final Map<String, Object> applicationProperties = Map.of(Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
 
-        final ServiceBusMessage message
-                = ServiceBusUtils.createServiceBusMessage("test string", applicationProperties, null, null);
+        final ServiceBusMessage message =
+                ServiceBusUtils.createServiceBusMessage("test string", applicationProperties, null, null);
 
         assertEquals("test string", message.getBody().toString());
         assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
@@ -156,15 +157,14 @@ public class ServiceBusUtilsTest {
 
     @Test
     void testCreateServiceBusMessagesWithContentType() {
-        final Map<String, Object> applicationProperties = Map.of(
-                Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
+        final Map<String, Object> applicationProperties = Map.of(Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
 
         final List<String> inputMessages = new LinkedList<>();
         inputMessages.add("test data");
         inputMessages.add(String.valueOf(12345));
 
-        final Iterable<ServiceBusMessage> busMessages
-                = ServiceBusUtils.createServiceBusMessages(inputMessages, applicationProperties, null, null);
+        final Iterable<ServiceBusMessage> busMessages =
+                ServiceBusUtils.createServiceBusMessages(inputMessages, applicationProperties, null, null);
 
         assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
                 .anyMatch(record -> record.getBody().toString().equals("test data")));
@@ -173,15 +173,15 @@ public class ServiceBusUtilsTest {
         assertThat(StreamSupport.stream(busMessages.spliterator(), false))
                 .allMatch(message -> APPLICATION_JSON_CONTENT_TYPE.equals(message.getContentType()));
 
-        //Test bytes
+        // Test bytes
         final List<byte[]> inputMessages2 = new LinkedList<>();
         byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
         byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
         inputMessages2.add(byteBody1);
         inputMessages2.add(byteBody2);
 
-        final Iterable<ServiceBusMessage> busMessages2
-                = ServiceBusUtils.createServiceBusMessages(inputMessages2, applicationProperties, null, null);
+        final Iterable<ServiceBusMessage> busMessages2 =
+                ServiceBusUtils.createServiceBusMessages(inputMessages2, applicationProperties, null, null);
 
         assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
                 .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody1)));
@@ -193,7 +193,8 @@ public class ServiceBusUtilsTest {
 
     @Test
     void validateConfigurationMissingCredentials() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> ServiceBusUtils.validateConfiguration(new ServiceBusConfiguration(), false));
     }
 
@@ -218,10 +219,8 @@ public class ServiceBusUtilsTest {
                 .connectionString("Endpoint=sb://camel.apache.org/;SharedAccessKeyName=test;SharedAccessKey=test")
                 .processor()
                 .queueName("test")
-                .processMessage(serviceBusReceivedMessageContext -> {
-                })
-                .processError(serviceBusErrorContext -> {
-                })
+                .processMessage(serviceBusReceivedMessageContext -> {})
+                .processError(serviceBusErrorContext -> {})
                 .buildProcessorClient();
         configuration.setProcessorClient(client);
         assertDoesNotThrow(() -> ServiceBusUtils.validateConfiguration(configuration, true));

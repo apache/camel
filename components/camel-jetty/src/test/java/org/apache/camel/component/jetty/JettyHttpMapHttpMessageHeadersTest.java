@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
@@ -108,7 +109,8 @@ public class JettyHttpMapHttpMessageHeadersTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:" + serverUriFiltered + "?mapHttpMessageHeaders=false").to("mock:result");
+                from("jetty:" + serverUriFiltered + "?mapHttpMessageHeaders=false")
+                        .to("mock:result");
                 from("jetty:" + serverUriNotFiltered).to("mock:result1");
             }
         };

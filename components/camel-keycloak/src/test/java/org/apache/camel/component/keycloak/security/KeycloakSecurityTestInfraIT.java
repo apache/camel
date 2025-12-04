@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
@@ -62,8 +65,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for Keycloak security policies using test-infra for container management.
  *
@@ -80,16 +81,21 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
     static KeycloakService keycloakService = KeycloakServiceFactory.createService();
 
     // Test data - use unique names to avoid conflicts
-    private static final String TEST_REALM_NAME = "security-test-realm-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_CLIENT_ID = "security-test-client-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_REALM_NAME =
+            "security-test-realm-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_CLIENT_ID =
+            "security-test-client-" + UUID.randomUUID().toString().substring(0, 8);
     private static String TEST_CLIENT_SECRET = null; // Will be generated
 
     // Test users
-    private static final String ADMIN_USER = "admin-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String ADMIN_USER =
+            "admin-user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String ADMIN_PASSWORD = "admin123";
-    private static final String NORMAL_USER = "normal-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String NORMAL_USER =
+            "normal-user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String NORMAL_PASSWORD = "user123";
-    private static final String READER_USER = "reader-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String READER_USER =
+            "reader-user-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String READER_PASSWORD = "reader123";
 
     // Test roles
@@ -262,8 +268,14 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         // Assign reader role to reader user
         assignRoleToUser(READER_USER, READER_ROLE);
 
-        log.info("Assigned roles to users: {} -> {}, {} -> {}, {} -> {}",
-                ADMIN_USER, ADMIN_ROLE, NORMAL_USER, USER_ROLE, READER_USER, READER_ROLE);
+        log.info(
+                "Assigned roles to users: {} -> {}, {} -> {}, {} -> {}",
+                ADMIN_USER,
+                ADMIN_ROLE,
+                NORMAL_USER,
+                USER_ROLE,
+                READER_USER,
+                READER_ROLE);
     }
 
     private static void assignRoleToUser(String username, String roleName) {
@@ -297,7 +309,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
 
                 from("direct:protected")
                         .policy(basicPolicy)
-                        .transform().constant("Access granted")
+                        .transform()
+                        .constant("Access granted")
                         .to("mock:result");
 
                 // Admin-only route
@@ -310,7 +323,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
 
                 from("direct:admin-only")
                         .policy(adminPolicy)
-                        .transform().constant("Admin access granted")
+                        .transform()
+                        .constant("Admin access granted")
                         .to("mock:admin-result");
 
                 // User access route
@@ -324,7 +338,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
 
                 from("direct:user-access")
                         .policy(userPolicy)
-                        .transform().constant("User access granted")
+                        .transform()
+                        .constant("User access granted")
                         .to("mock:user-result");
             }
         };
@@ -343,7 +358,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         assertEquals("admin", keycloakService.getKeycloakUsername());
         assertEquals("admin", keycloakService.getKeycloakPassword());
 
-        log.info("Testing Keycloak at: {} with realm: {}",
+        log.info(
+                "Testing Keycloak at: {} with realm: {}",
                 keycloakService.getKeycloakServerUrl(),
                 keycloakService.getKeycloakRealm());
     }
@@ -378,8 +394,12 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
         assertNotNull(adminToken);
 
-        String result = template.requestBodyAndHeader("direct:admin-only", "test message",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, adminToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:admin-only",
+                "test message",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                adminToken,
+                String.class);
         assertEquals("Admin access granted", result);
 
         log.info("Admin token test passed for user: {}", ADMIN_USER);
@@ -392,8 +412,12 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         String userToken = getAccessToken(NORMAL_USER, NORMAL_PASSWORD);
         assertNotNull(userToken);
 
-        String result = template.requestBodyAndHeader("direct:user-access", "test message",
-                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, userToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:user-access",
+                "test message",
+                KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                userToken,
+                String.class);
         assertEquals("User access granted", result);
 
         log.info("User token test passed for user: {}", NORMAL_USER);
@@ -406,8 +430,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
         assertNotNull(adminToken);
 
-        String result = template.requestBodyAndHeader("direct:protected", "test message",
-                "Authorization", "Bearer " + adminToken, String.class);
+        String result = template.requestBodyAndHeader(
+                "direct:protected", "test message", "Authorization", "Bearer " + adminToken, String.class);
         assertEquals("Access granted", result);
 
         log.info("Authorization header test passed for user: {}", ADMIN_USER);
@@ -433,8 +457,12 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         assertNotNull(userToken);
 
         CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
-            template.requestBodyAndHeader("direct:admin-only", "test message",
-                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, userToken, String.class);
+            template.requestBodyAndHeader(
+                    "direct:admin-only",
+                    "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                    userToken,
+                    String.class);
         });
         assertTrue(ex.getCause() instanceof CamelAuthorizationException);
 
@@ -449,8 +477,12 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
         assertNotNull(readerToken);
 
         CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
-            template.requestBodyAndHeader("direct:user-access", "test message",
-                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, readerToken, String.class);
+            template.requestBodyAndHeader(
+                    "direct:user-access",
+                    "test message",
+                    KeycloakSecurityConstants.ACCESS_TOKEN_HEADER,
+                    readerToken,
+                    String.class);
         });
         assertTrue(ex.getCause() instanceof CamelAuthorizationException);
 
@@ -470,7 +502,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
 
         // Test that parseToken works correctly with public key verification
         try {
-            org.keycloak.representations.AccessToken token = KeycloakSecurityHelper.parseAccessToken(adminToken, publicKey);
+            org.keycloak.representations.AccessToken token =
+                    KeycloakSecurityHelper.parseAccessToken(adminToken, publicKey);
 
             assertNotNull(token);
             assertNotNull(token.getSubject());
@@ -486,9 +519,9 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
             // Public key verification might fail due to key mismatch - this is actually expected
             // The main test is that we can successfully call parseAccessToken with a public key
             assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("Invalid token signature") ||
-                    e.getMessage().contains("verification") ||
-                    e.getMessage().contains("signature"));
+            assertTrue(e.getMessage().contains("Invalid token signature")
+                    || e.getMessage().contains("verification")
+                    || e.getMessage().contains("signature"));
 
             log.info("Public key verification failed as expected: {}", e.getMessage());
         }
@@ -525,12 +558,11 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
      */
     private PublicKey getPublicKeyFromKeycloak() {
         try (Client client = ClientBuilder.newClient()) {
-            String jwksUrl
-                    = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME + "/protocol/openid-connect/certs";
+            String jwksUrl = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME
+                    + "/protocol/openid-connect/certs";
 
-            try (Response response = client.target(jwksUrl)
-                    .request(MediaType.APPLICATION_JSON)
-                    .get()) {
+            try (Response response =
+                    client.target(jwksUrl).request(MediaType.APPLICATION_JSON).get()) {
 
                 if (response.getStatus() == 200) {
                     String jwksJson = response.readEntity(String.class);
@@ -595,8 +627,8 @@ public class KeycloakSecurityTestInfraIT extends CamelTestSupport {
      */
     private String getAccessToken(String username, String password) {
         try (Client client = ClientBuilder.newClient()) {
-            String tokenUrl
-                    = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME + "/protocol/openid-connect/token";
+            String tokenUrl = keycloakService.getKeycloakServerUrl() + "/realms/" + TEST_REALM_NAME
+                    + "/protocol/openid-connect/token";
 
             Form form = new Form()
                     .param("grant_type", "password")

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class ShutdownOrderBean {
 
     public void start(String name) {
         start.add(name);
-
     }
 
     public void shutdown(String name) {

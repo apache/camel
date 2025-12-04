@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -31,17 +38,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerSyncTest.class);
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testCalculateMethodInvocation() {
         LOG.info("Thrift calculate method sync test start");
 
@@ -58,7 +59,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testAddMethodInvocation() {
         LOG.info("Thrift add method (primitive parameters only) sync test start");
 
@@ -75,7 +76,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testCalculateWithException() {
         LOG.info("Thrift calculate method with business exception sync test start");
 
@@ -112,7 +113,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testAllTypesMethodInvocation() {
         LOG.info("Thrift method with all possile types sync test start");
 
@@ -139,7 +140,7 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testEchoMethodInvocation() {
         LOG.info("Thrift echo method (return output as pass input parameter) sync test start");
 
@@ -161,23 +162,29 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
             @Override
             public void configure() {
                 from("direct:thrift-calculate")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&synchronous=true");
                 from("direct:thrift-add")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=add&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=add&synchronous=true");
                 from("direct:thrift-ping")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&synchronous=true");
                 from("direct:thrift-zip")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=zip&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=zip&synchronous=true");
                 from("direct:thrift-alltypes")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=alltypes&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=alltypes&synchronous=true");
                 from("direct:thrift-echo")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
-                            + "/org.apache.camel.component.thrift.generated.Calculator?method=echo&synchronous=true");
+                        .to(
+                                "thrift://localhost:" + THRIFT_TEST_PORT
+                                        + "/org.apache.camel.component.thrift.generated.Calculator?method=echo&synchronous=true");
             }
         };
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
@@ -26,22 +31,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
 
     @Test
     public void testLoadRoutes() throws Exception {
-        AbstractXmlApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
+        AbstractXmlApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
         SpringCamelContext camel = applicationContext.getBean(SpringCamelContext.class);
         assertEquals(0, camel.getRoutes().size());
         assertTrue(camel.getStatus().isStarted());
 
         // load routes from xml file
-        Resource resource = PluginHelper.getResourceLoader(camel).resolveResource("org/apache/camel/spring/myRoutes.xml");
+        Resource resource =
+                PluginHelper.getResourceLoader(camel).resolveResource("org/apache/camel/spring/myRoutes.xml");
         PluginHelper.getRoutesLoader(camel).loadRoutes(resource);
 
         assertEquals(2, camel.getRoutes().size());
@@ -71,10 +73,10 @@ public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
         assertNull(camel.getRouteController().getRouteStatus("bar"));
 
         // you can also do this manually via their route ids
-        //camel.getRouteController().stopRoute("foo");
-        //camel.getRouteController().removeRoute("foo");
-        //camel.getRouteController().stopRoute("bar");
-        //camel.getRouteController().removeRoute("bar");
+        // camel.getRouteController().stopRoute("foo");
+        // camel.getRouteController().removeRoute("foo");
+        // camel.getRouteController().stopRoute("bar");
+        // camel.getRouteController().removeRoute("bar");
 
         // load updated xml
         resource = PluginHelper.getResourceLoader(camel).resolveResource("org/apache/camel/spring/myUpdatedRoutes.xml");
@@ -98,5 +100,4 @@ public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(foo, bar);
     }
-
 }

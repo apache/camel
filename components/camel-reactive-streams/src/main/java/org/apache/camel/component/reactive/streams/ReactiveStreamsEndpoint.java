@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.Category;
@@ -31,24 +32,35 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams",
-             syntax = "reactive-streams:stream",
-             remote = false, category = { Category.MESSAGING }, headersClass = ReactiveStreamsConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "reactive-streams",
+        title = "Reactive Streams",
+        syntax = "reactive-streams:stream",
+        remote = false,
+        category = {Category.MESSAGING},
+        headersClass = ReactiveStreamsConstants.class)
 @ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @UriPath
     private String stream;
+
     @UriParam(label = "consumer", defaultValue = "128")
     private Integer maxInflightExchanges = 128;
+
     @UriParam(label = "consumer", defaultValue = "0.25")
     private double exchangesRefillLowWatermark = 0.25;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnComplete;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean forwardOnError;
+
     @UriParam(label = "producer")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
 
@@ -143,7 +155,9 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.forwardOnError = forwardOnError;
     }
 
-    @ManagedAttribute(description = "The percentage of maxInflightExchanges below which new items can be requested to the source subscription")
+    @ManagedAttribute(
+            description =
+                    "The percentage of maxInflightExchanges below which new items can be requested to the source subscription")
     public double getExchangesRefillLowWatermark() {
         return exchangesRefillLowWatermark;
     }
@@ -162,5 +176,4 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     CamelReactiveStreamsService getReactiveStreamsService() {
         return ((ReactiveStreamsComponent) getComponent()).getReactiveStreamsService();
     }
-
 }

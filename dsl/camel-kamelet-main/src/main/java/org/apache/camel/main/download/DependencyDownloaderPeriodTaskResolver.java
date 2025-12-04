@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.download;
 
 import java.util.Optional;
@@ -32,8 +33,8 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
     private final String camelVersion;
     private final boolean export;
 
-    public DependencyDownloaderPeriodTaskResolver(FactoryFinder finder, CamelContext camelContext, String camelVersion,
-                                                  boolean export) {
+    public DependencyDownloaderPeriodTaskResolver(
+            FactoryFinder finder, CamelContext camelContext, String camelVersion, boolean export) {
         super(finder);
         this.camelContext = camelContext;
         this.camelVersion = camelVersion;
@@ -52,9 +53,10 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
         Optional<Object> answer = super.newInstance(key);
         if (answer.isEmpty()) {
             // need to use regular factory finder as bootstrap has already marked as a miss
-            final FactoryFinder finder
-                    = camelContext.getCamelContextExtension().getFactoryFinder(PeriodTaskResolver.RESOURCE_PATH);
-            Object obj = ResolverHelper.resolveService(camelContext, finder, key, Object.class).orElse(null);
+            final FactoryFinder finder =
+                    camelContext.getCamelContextExtension().getFactoryFinder(PeriodTaskResolver.RESOURCE_PATH);
+            Object obj = ResolverHelper.resolveService(camelContext, finder, key, Object.class)
+                    .orElse(null);
             return Optional.ofNullable(obj);
         }
         return answer;
@@ -71,9 +73,10 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
         Optional<T> answer = super.newInstance(key, type);
         if (answer.isEmpty()) {
             // need to use regular factory finder as bootstrap has already marked as a miss
-            final FactoryFinder finder
-                    = camelContext.getCamelContextExtension().getFactoryFinder(PeriodTaskResolver.RESOURCE_PATH);
-            T obj = ResolverHelper.resolveService(camelContext, finder, key, type).orElse(null);
+            final FactoryFinder finder =
+                    camelContext.getCamelContextExtension().getFactoryFinder(PeriodTaskResolver.RESOURCE_PATH);
+            T obj = ResolverHelper.resolveService(camelContext, finder, key, type)
+                    .orElse(null);
             return Optional.ofNullable(obj);
         }
         return answer;
@@ -106,8 +109,10 @@ public class DependencyDownloaderPeriodTaskResolver extends DefaultPeriodTaskRes
 
     private boolean skip(String key) {
         // skip all vault refresh during export as they will attempt to connect to remote system
-        return "aws-secret-refresh".equals(key) || "gcp-secret-refresh".equals(key) || "azure-secret-refresh".equals(key)
-                || "kubernetes-secret-refresh".equals(key) || "kubernetes-configmaps-refresh".equals(key);
+        return "aws-secret-refresh".equals(key)
+                || "gcp-secret-refresh".equals(key)
+                || "azure-secret-refresh".equals(key)
+                || "kubernetes-secret-refresh".equals(key)
+                || "kubernetes-configmaps-refresh".equals(key);
     }
-
 }

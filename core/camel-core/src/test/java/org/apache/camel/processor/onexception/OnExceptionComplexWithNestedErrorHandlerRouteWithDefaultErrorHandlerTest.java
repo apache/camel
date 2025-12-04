@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandlerTest
         extends OnExceptionComplexWithNestedErrorHandlerRouteTest {
@@ -55,7 +56,10 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandle
                         // route specific on exception for MyFunctionalException
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).handled(false).end().to("bean:myServiceBean")
+                        .onException(MyFunctionalException.class)
+                        .handled(false)
+                        .end()
+                        .to("bean:myServiceBean")
                         .to("mock:result");
 
                 from("direct:start2")
@@ -65,8 +69,12 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandle
                         // destination mock:handled
                         // we MUST use .end() to indicate that this sub block is
                         // ended
-                        .onException(MyFunctionalException.class).handled(true).to("mock:handled").end()
-                        .to("bean:myServiceBean").to("mock:result");
+                        .onException(MyFunctionalException.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .end()
+                        .to("bean:myServiceBean")
+                        .to("mock:result");
 
                 // START SNIPPET: e1
                 from("direct:start3")
@@ -78,7 +86,10 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandle
 
                         // route specific on exception to mark MyFunctionalException
                         // as being handled
-                        .onException(MyFunctionalException.class).handled(true).end().to("bean:myServiceBean")
+                        .onException(MyFunctionalException.class)
+                        .handled(true)
+                        .end()
+                        .to("bean:myServiceBean")
                         .to("mock:result");
                 // END SNIPPET: e1
             }

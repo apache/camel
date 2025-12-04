@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.security.cert.X509Certificate;
@@ -38,8 +39,7 @@ public class TrustAllTrustManager implements X509TrustManager {
 
     public static final TrustAllTrustManager INSTANCE = new TrustAllTrustManager();
 
-    private TrustAllTrustManager() {
-    }
+    private TrustAllTrustManager() {}
 
     @Override
     public void checkClientTrusted(X509Certificate[] certs, String authType) {
@@ -55,5 +55,4 @@ public class TrustAllTrustManager implements X509TrustManager {
     public X509Certificate[] getAcceptedIssuers() {
         return new X509Certificate[0];
     }
-
 }

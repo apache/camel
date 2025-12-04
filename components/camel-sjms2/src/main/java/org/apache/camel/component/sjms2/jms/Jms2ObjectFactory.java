@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2.jms;
 
 import jakarta.jms.DeliveryMode;
@@ -36,12 +37,13 @@ import org.apache.camel.util.ObjectHelper;
 public class Jms2ObjectFactory implements JmsObjectFactory {
 
     @Override
-    public MessageConsumer createMessageConsumer(Session session, Endpoint endpoint)
-            throws Exception {
+    public MessageConsumer createMessageConsumer(Session session, Endpoint endpoint) throws Exception {
         Sjms2Endpoint sjms2Endpoint = (Sjms2Endpoint) endpoint;
-        Destination destination = sjms2Endpoint.getDestinationCreationStrategy().createDestination(session,
-                sjms2Endpoint.getDestinationName(), sjms2Endpoint.isTopic());
-        return createMessageConsumer(session,
+        Destination destination = sjms2Endpoint
+                .getDestinationCreationStrategy()
+                .createDestination(session, sjms2Endpoint.getDestinationName(), sjms2Endpoint.isTopic());
+        return createMessageConsumer(
+                session,
                 destination,
                 sjms2Endpoint.getMessageSelector(),
                 sjms2Endpoint.isTopic(),
@@ -57,44 +59,40 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
 
     @Override
     public MessageConsumer createMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector, boolean topic, String subscriptionId, boolean durable,
+            Session session,
+            Destination destination,
+            String messageSelector,
+            boolean topic,
+            String subscriptionId,
+            boolean durable,
             boolean shared)
             throws Exception {
         // noLocal is default false according to JMS spec
-        return createMessageConsumer(session,
-                destination,
-                messageSelector,
-                topic,
-                subscriptionId,
-                durable,
-                shared,
-                false);
+        return createMessageConsumer(
+                session, destination, messageSelector, topic, subscriptionId, durable, shared, false);
     }
 
     @Override
     public MessageConsumer createMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector, boolean topic, String subscriptionId, boolean durable,
-            boolean shared, boolean noLocal)
+            Session session,
+            Destination destination,
+            String messageSelector,
+            boolean topic,
+            String subscriptionId,
+            boolean durable,
+            boolean shared,
+            boolean noLocal)
             throws Exception {
 
         if (topic) {
-            return createTopicMessageConsumer(session,
-                    destination,
-                    messageSelector,
-                    subscriptionId,
-                    durable,
-                    shared,
-                    noLocal);
+            return createTopicMessageConsumer(
+                    session, destination, messageSelector, subscriptionId, durable, shared, noLocal);
         } else {
             return createQueueMessageConsumer(session, destination, messageSelector);
         }
     }
 
-    private MessageConsumer createQueueMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector)
+    private MessageConsumer createQueueMessageConsumer(Session session, Destination destination, String messageSelector)
             throws JMSException {
         if (ObjectHelper.isNotEmpty(messageSelector)) {
             return session.createConsumer(destination, messageSelector);
@@ -104,45 +102,41 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
     }
 
     private MessageConsumer createTopicMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector, String subscriptionId, boolean durable, boolean shared,
+            Session session,
+            Destination destination,
+            String messageSelector,
+            String subscriptionId,
+            boolean durable,
+            boolean shared,
             boolean noLocal)
             throws JMSException {
         if (ObjectHelper.isNotEmpty(subscriptionId)) {
-            return createSubscriptionTopicConsumer(session,
-                    destination,
-                    messageSelector,
-                    subscriptionId,
-                    durable,
-                    shared,
-                    noLocal);
+            return createSubscriptionTopicConsumer(
+                    session, destination, messageSelector, subscriptionId, durable, shared, noLocal);
         } else {
-            return createSubscriptionlessTopicConsumer(session,
-                    destination,
-                    messageSelector,
-                    noLocal);
+            return createSubscriptionlessTopicConsumer(session, destination, messageSelector, noLocal);
         }
     }
 
     private MessageConsumer createSubscriptionTopicConsumer(
             Session session,
-            Destination destination, String messageSelector, String subscriptionId, boolean durable,
-            boolean shared, boolean noLocal)
+            Destination destination,
+            String messageSelector,
+            String subscriptionId,
+            boolean durable,
+            boolean shared,
+            boolean noLocal)
             throws JMSException {
         if (shared) {
             if (durable) {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    return session.createSharedDurableConsumer((Topic) destination,
-                            subscriptionId,
-                            messageSelector);
+                    return session.createSharedDurableConsumer((Topic) destination, subscriptionId, messageSelector);
                 } else {
                     return session.createSharedDurableConsumer((Topic) destination, subscriptionId);
                 }
             } else {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    return session.createSharedConsumer((Topic) destination,
-                            subscriptionId,
-                            messageSelector);
+                    return session.createSharedConsumer((Topic) destination, subscriptionId, messageSelector);
                 } else {
                     return session.createSharedConsumer((Topic) destination, subscriptionId);
                 }
@@ -150,26 +144,19 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
         } else {
             if (durable) {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    return session.createDurableSubscriber((Topic) destination,
-                            subscriptionId,
-                            messageSelector,
-                            noLocal);
+                    return session.createDurableSubscriber(
+                            (Topic) destination, subscriptionId, messageSelector, noLocal);
                 } else {
                     return session.createDurableSubscriber((Topic) destination, subscriptionId);
                 }
             } else {
-                return createSubscriptionlessTopicConsumer(session,
-                        destination,
-                        messageSelector,
-                        noLocal);
+                return createSubscriptionlessTopicConsumer(session, destination, messageSelector, noLocal);
             }
         }
     }
 
     private MessageConsumer createSubscriptionlessTopicConsumer(
-            Session session,
-            Destination destination, String messageSelector, boolean noLocal)
-            throws JMSException {
+            Session session, Destination destination, String messageSelector, boolean noLocal) throws JMSException {
         if (ObjectHelper.isNotEmpty(messageSelector)) {
             return session.createConsumer(destination, messageSelector, noLocal);
         } else {
@@ -186,8 +173,9 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
     public MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName)
             throws Exception {
         Sjms2Endpoint sjms2Endpoint = (Sjms2Endpoint) endpoint;
-        Destination destination = sjms2Endpoint.getDestinationCreationStrategy().createDestination(session,
-                destinationName, sjms2Endpoint.isTopic());
+        Destination destination = sjms2Endpoint
+                .getDestinationCreationStrategy()
+                .createDestination(session, destinationName, sjms2Endpoint.isTopic());
 
         boolean persistent = sjms2Endpoint.isDeliveryPersistent();
         if (sjms2Endpoint.getDeliveryMode() != null) {
@@ -198,7 +186,8 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
-    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception {
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination)
+            throws Exception {
         SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
 
         boolean persistent = sjmsEndpoint.isDeliveryPersistent();
@@ -211,15 +200,11 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
 
     @Override
     // Factory method: resource must be closed by client.
-    public MessageProducer createMessageProducer(
-            Session session, Destination destination,
-            boolean persistent, long ttl)
+    public MessageProducer createMessageProducer(Session session, Destination destination, boolean persistent, long ttl)
             throws Exception {
         // NOTE: client must close this resource.
         MessageProducer messageProducer = session.createProducer(destination); // NOSONAR
-        messageProducer.setDeliveryMode(persistent
-                ? DeliveryMode.PERSISTENT
-                : DeliveryMode.NON_PERSISTENT);
+        messageProducer.setDeliveryMode(persistent ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
         if (ttl > 0) {
             messageProducer.setTimeToLive(ttl);
         }

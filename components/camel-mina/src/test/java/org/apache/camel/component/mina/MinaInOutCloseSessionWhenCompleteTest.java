@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for close session when complete test.
@@ -28,8 +29,8 @@ public class MinaInOutCloseSessionWhenCompleteTest extends BaseMinaTest {
 
     @Test
     public void testCloseSessionWhenComplete() {
-        Object out
-                = template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()), "Chad");
+        Object out = template.requestBody(
+                String.format("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()), "Chad");
         assertEquals("Bye Chad", out);
     }
 
@@ -38,11 +39,12 @@ public class MinaInOutCloseSessionWhenCompleteTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort()).process(exchange -> {
-                    String body = exchange.getIn().getBody(String.class);
-                    exchange.getMessage().setBody("Bye " + body);
-                    exchange.getMessage().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
-                });
+                fromF("mina:tcp://localhost:%1$s?sync=true&textline=true", getPort())
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getMessage().setBody("Bye " + body);
+                            exchange.getMessage().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
+                        });
             }
         };
     }

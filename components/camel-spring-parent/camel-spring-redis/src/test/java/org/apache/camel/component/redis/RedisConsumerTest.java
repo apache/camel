@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,10 +37,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
 @MockitoSettings
 public class RedisConsumerTest extends CamelTestSupport {
 
@@ -45,6 +46,7 @@ public class RedisConsumerTest extends CamelTestSupport {
 
     @Captor
     private ArgumentCaptor<Collection<ChannelTopic>> collectionCaptor;
+
     @Captor
     private ArgumentCaptor<MessageListener> messageListenerCaptor;
 

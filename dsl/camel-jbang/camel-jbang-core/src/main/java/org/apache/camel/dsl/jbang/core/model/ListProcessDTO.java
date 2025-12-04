@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.model;
 
 import java.util.Map;
@@ -31,11 +32,17 @@ public class ListProcessDTO {
     private long fail;
     private int inflight;
 
-    public ListProcessDTO() {
-    }
+    public ListProcessDTO() {}
 
-    public ListProcessDTO(String pid, String name, String ready, String status, String age, String total, String fail,
-                          String inflight) {
+    public ListProcessDTO(
+            String pid,
+            String name,
+            String ready,
+            String status,
+            String age,
+            String total,
+            String fail,
+            String inflight) {
         this.pid = Integer.parseInt(pid);
         this.name = name;
         this.ready = ready;

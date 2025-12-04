@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
@@ -25,7 +26,8 @@ public class SpringProduceInjectedSingletonBeanTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringProduceInjectedSingletonBeanTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/SpringProduceInjectedSingletonBeanTest.xml");
     }
 
     @Test
@@ -53,5 +55,4 @@ public class SpringProduceInjectedSingletonBeanTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

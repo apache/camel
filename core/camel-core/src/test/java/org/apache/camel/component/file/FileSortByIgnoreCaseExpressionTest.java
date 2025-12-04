@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,9 +28,10 @@ import org.junit.jupiter.api.condition.OS;
 /**
  * Unit test for the file sort by expression
  */
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "ppc64le" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"ppc64le"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
     private void prepareFolder(String folder) {
@@ -37,8 +39,7 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(folder), "Hello London", Exchange.FILE_NAME, "REPORT-2.txt");
 
-        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME,
-                "Report-1.xml");
+        template.sendBodyAndHeader(fileUri(folder), "Hello Copenhagen", Exchange.FILE_NAME, "Report-1.xml");
     }
 
     @Test
@@ -48,7 +49,9 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("a/?sortBy=file:name&initialDelay=250&delay=1000")).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("a/?sortBy=file:name&initialDelay=250&delay=1000"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -66,7 +69,8 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("b/?initialDelay=0&delay=10&sortBy=ignoreCase:file:name")).convertBodyTo(String.class)
+                from(fileUri("b/?initialDelay=0&delay=10&sortBy=ignoreCase:file:name"))
+                        .convertBodyTo(String.class)
                         .to("mock:nocase");
             }
         });
@@ -85,7 +89,8 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("c/?initialDelay=0&delay=10&sortBy=reverse:ignoreCase:file:name")).convertBodyTo(String.class)
+                from(fileUri("c/?initialDelay=0&delay=10&sortBy=reverse:ignoreCase:file:name"))
+                        .convertBodyTo(String.class)
                         .to("mock:nocasereverse");
             }
         });
@@ -96,5 +101,4 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

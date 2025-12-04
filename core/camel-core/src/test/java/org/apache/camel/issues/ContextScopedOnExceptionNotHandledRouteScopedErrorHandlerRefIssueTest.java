@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -38,7 +39,8 @@ public class ContextScopedOnExceptionNotHandledRouteScopedErrorHandlerRefIssueTe
         getMockEndpoint("mock:handled").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"),
                 "Should have thrown exception");
 
@@ -60,9 +62,14 @@ public class ContextScopedOnExceptionNotHandledRouteScopedErrorHandlerRefIssueTe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").errorHandler(new RefErrorHandlerDefinition("myDLC"))
-                        .onException(IllegalArgumentException.class).handled(false).to("mock:handled").end()
-                        .to("mock:a").throwException(new IllegalArgumentException("Damn"));
+                from("direct:start")
+                        .errorHandler(new RefErrorHandlerDefinition("myDLC"))
+                        .onException(IllegalArgumentException.class)
+                        .handled(false)
+                        .to("mock:handled")
+                        .end()
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

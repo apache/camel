@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,10 @@ public class FromRestDisabledTest extends ContextTestSupport {
         Assertions.assertEquals(2, context.getRoutes().size());
 
         // should NOT have mock://hi endpoint
-        Assertions.assertEquals(0, CamelContextHelper.getEndpoints(context, e -> e.getEndpointUri().contains("hi")).size());
+        Assertions.assertEquals(
+                0,
+                CamelContextHelper.getEndpoints(context, e -> e.getEndpointUri().contains("hi"))
+                        .size());
     }
 
     @Override
@@ -53,9 +57,13 @@ public class FromRestDisabledTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
 
                 rest("/say")
-                    .post("/hi").to("mock:hi").disabled()
-                    .get("/bye").to("mock:bye")
-                    .get("/translate").to("mock:translate");
+                        .post("/hi")
+                        .to("mock:hi")
+                        .disabled()
+                        .get("/bye")
+                        .to("mock:bye")
+                        .get("/translate")
+                        .to("mock:translate");
             }
         };
     }

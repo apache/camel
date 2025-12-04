@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange.account;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.List;
 
@@ -28,9 +32,6 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.Wallet;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-
 @Disabled("See CAMEL-19751 before enabling")
 public class AccountProducerTest extends XChangeTestSupport {
 
@@ -39,14 +40,11 @@ public class AccountProducerTest extends XChangeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:balances")
-                        .to("xchange:binance?service=account&method=balances");
+                from("direct:balances").to("xchange:binance?service=account&method=balances");
 
-                from("direct:wallets")
-                        .to("xchange:binance?service=account&method=wallets");
+                from("direct:wallets").to("xchange:binance?service=account&method=wallets");
 
-                from("direct:fundingHistory")
-                        .to("xchange:binance?service=account&method=fundingHistory");
+                from("direct:fundingHistory").to("xchange:binance?service=account&method=fundingHistory");
             }
         };
     }
@@ -69,7 +67,7 @@ public class AccountProducerTest extends XChangeTestSupport {
 
     @Test
     public void testFundingHistory() {
-        //disabled with mocked backend, see https://issues.apache.org/jira/browse/CAMEL-18486 for more details
+        // disabled with mocked backend, see https://issues.apache.org/jira/browse/CAMEL-18486 for more details
         assumeTrue(/*useMockedBackend() ||*/ hasAPICredentials());
 
         List<FundingRecord> records = template.requestBody("direct:fundingHistory", null, List.class);
@@ -78,7 +76,8 @@ public class AccountProducerTest extends XChangeTestSupport {
 
     private boolean hasAPICredentials() {
         XChangeComponent component = context().getComponent("xchange", XChangeComponent.class);
-        ExchangeSpecification exchangeSpecification = component.getXChange("binance").getExchangeSpecification();
+        ExchangeSpecification exchangeSpecification =
+                component.getXChange("binance").getExchangeSpecification();
         return exchangeSpecification.getApiKey() != null;
     }
 }

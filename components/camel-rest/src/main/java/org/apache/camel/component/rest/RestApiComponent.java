@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public class RestApiComponent extends DefaultComponent {
     @Metadata(label = "consumer")
     private String consumerComponentName;
 
-    public RestApiComponent() {
-    }
+    public RestApiComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -45,7 +45,8 @@ public class RestApiComponent extends DefaultComponent {
 
         // if no explicit component name was given, then fallback and use default configured component name
         if (answer.getConsumerComponentName() == null) {
-            answer.setConsumerComponentName(getCamelContext().getRestConfiguration().getComponent());
+            answer.setConsumerComponentName(
+                    getCamelContext().getRestConfiguration().getComponent());
         }
 
         return answer;
@@ -64,5 +65,4 @@ public class RestApiComponent extends DefaultComponent {
     public void setConsumerComponentName(String consumerComponentName) {
         this.consumerComponentName = consumerComponentName;
     }
-
 }

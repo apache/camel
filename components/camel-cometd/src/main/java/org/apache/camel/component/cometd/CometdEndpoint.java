@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import java.net.URI;
@@ -37,44 +38,64 @@ import org.apache.camel.util.ObjectHelper;
  * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly into
  * the browser using an AJAX based mechanism.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName",
-             category = { Category.NETWORKING, Category.MESSAGING }, headersClass = CometdBinding.class)
+@UriEndpoint(
+        firstVersion = "2.0.0",
+        scheme = "cometd,cometds",
+        title = "CometD",
+        syntax = "cometd:host:port/channelName",
+        category = {Category.NETWORKING, Category.MESSAGING},
+        headersClass = CometdBinding.class)
 public class CometdEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private CometdComponent component;
 
     private URI uri;
+
     @UriPath(description = "Hostname")
     @Metadata(required = true)
     private String host;
+
     @UriPath(description = "Host port number")
     @Metadata(required = true)
     private int port;
+
     @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.")
     @Metadata(required = true)
     private String channelName;
+
     @UriParam
     private String baseResource;
+
     @UriParam(defaultValue = "240000")
     private int timeout = 240000;
+
     @UriParam
     private int interval;
+
     @UriParam(defaultValue = "30000")
     private int maxInterval = 30000;
+
     @UriParam(defaultValue = "1500")
     private int multiFrameInterval = 1500;
+
     @UriParam(defaultValue = "true")
     private boolean jsonCommented = true;
+
     @UriParam(label = "consumer")
     private boolean sessionHeadersEnabled;
+
     @UriParam(defaultValue = "1", enums = "0,1,2")
     private int logLevel = 1;
+
     @UriParam
     private boolean crossOriginFilterOn;
+
     @UriParam(defaultValue = "*")
     private String allowedOrigins;
+
     @UriParam
     private String filterPath;
+
     @UriParam(label = "producer")
     private boolean disconnectLocalSession;
 

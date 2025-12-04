@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,14 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
@@ -57,7 +58,8 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
     @Test
     public void testWithInvalidOperation() {
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:putInvalid", "my-foo", HazelcastConstants.OBJECT_ID, "4711"));
     }
 
@@ -87,7 +89,7 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
     @Test
     public void testGet() {
-        when(map.get("4711")).thenReturn(Arrays.<Object> asList("my-foo"));
+        when(map.get("4711")).thenReturn(Arrays.<Object>asList("my-foo"));
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
         verify(map).get("4711");
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
@@ -146,30 +148,37 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus"))
+                from("direct:putInvalid")
+                        .setHeader(HazelcastConstants.OPERATION, constant("bogus"))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
+                from("direct:put")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:removeValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE))
-                        .to(
-                                String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                from("direct:removeValue")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+                from("direct:get")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
+                from("direct:delete")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
+                from("direct:clear")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:valueCount").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.VALUE_COUNT))
+                from("direct:valueCount")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.VALUE_COUNT))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
+                from("direct:containsKey")
+                        .setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CONTAINS_KEY))
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX))
                         .to("seda:out");
 
@@ -178,11 +187,13 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
                         .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:putWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX,
-                        HazelcastOperation.PUT);
-                from("direct:putWithOperationName").toF("hazelcast-%sbar?operation=PUT", HazelcastConstants.MULTIMAP_PREFIX);
+                from("direct:putWithOperationNumber")
+                        .toF(
+                                "hazelcast-%sbar?operation=%s",
+                                HazelcastConstants.MULTIMAP_PREFIX, HazelcastOperation.PUT);
+                from("direct:putWithOperationName")
+                        .toF("hazelcast-%sbar?operation=PUT", HazelcastConstants.MULTIMAP_PREFIX);
             }
         };
     }
-
 }

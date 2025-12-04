@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.nodes;
 
 import java.util.concurrent.ExecutorService;
@@ -85,7 +86,8 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            NonNamespaceOperation<Node, NodeList, Resource<Node>> w = getEndpoint().getKubernetesClient().nodes();
+            NonNamespaceOperation<Node, NodeList, Resource<Node>> w =
+                    getEndpoint().getKubernetesClient().nodes();
 
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
@@ -104,7 +106,8 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {
@@ -119,7 +122,6 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }
-
                 }
             });
         }

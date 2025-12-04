@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.util.Map;
@@ -72,7 +73,8 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         processExchange(exchange, routingContext);
     }
 
-    public void onException(String connectionKey, Throwable cause, SocketAddress remote, RoutingContext routingContext) {
+    public void onException(
+            String connectionKey, Throwable cause, SocketAddress remote, RoutingContext routingContext) {
         if (cause == ConnectionBase.CLOSED_EXCEPTION) {
             // Ignore as VertxWebsocketHost registers a closeHandler to trap WebSocket close events
             return;
@@ -85,7 +87,8 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         releaseExchange(exchange, false);
     }
 
-    public void onOpen(String connectionKey, SocketAddress remote, RoutingContext routingContext, ServerWebSocket webSocket) {
+    public void onOpen(
+            String connectionKey, SocketAddress remote, RoutingContext routingContext, ServerWebSocket webSocket) {
         Exchange exchange = createExchange(true);
         populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.OPEN);
         exchange.getMessage().setBody(webSocket);
@@ -99,25 +102,30 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     protected void populateExchangeHeaders(
-            Exchange exchange, String connectionKey, SocketAddress remote, RoutingContext routingContext,
+            Exchange exchange,
+            String connectionKey,
+            SocketAddress remote,
+            RoutingContext routingContext,
             VertxWebsocketEvent event) {
         Message message = exchange.getMessage();
         Map<String, Object> headers = message.getHeaders();
         message.setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
         message.setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
         message.setHeader(VertxWebsocketConstants.EVENT, event);
-        routingContext.queryParams()
-                .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
-        routingContext.pathParams()
-                .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
+        routingContext.queryParams().forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
+        routingContext.pathParams().forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
     }
 
     protected void processExchange(Exchange exchange, RoutingContext routingContext) {
-        routingContext.vertx().executeBlocking(() -> {
-            createUoW(exchange);
-            getProcessor().process(exchange);
-            return null;
-        }, false)
+        routingContext
+                .vertx()
+                .executeBlocking(
+                        () -> {
+                            createUoW(exchange);
+                            getProcessor().process(exchange);
+                            return null;
+                        },
+                        false)
                 .onComplete(result -> {
                     try {
                         if (result.failed()) {

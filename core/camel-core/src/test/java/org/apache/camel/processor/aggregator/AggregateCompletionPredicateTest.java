@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -124,8 +125,10 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionPredicate(body().contains("END")).completionTimeout(20000)
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionPredicate(body().contains("END"))
+                        .completionTimeout(20000)
                         .to("mock:aggregated");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -38,67 +39,81 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "processor", description = "Get status of Camel processors",
-         sortOptions = false, showDefaultValues = true)
+@Command(
+        name = "processor",
+        description = "Get status of Camel processors",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CamelProcessorStatus extends ProcessWatchCommand {
 
     public static class PidNameCompletionCandidates implements Iterable<String> {
 
-        public PidNameCompletionCandidates() {
-        }
+        public PidNameCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("pid", "name").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameCompletionCandidates.class,
-                        description = "Sort by pid or name", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameCompletionCandidates.class,
+            description = "Sort by pid or name",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
+    @CommandLine.Option(
+            names = {"--remote"},
+            description = "Break down counters into remote/total pairs")
     boolean remote;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @CommandLine.Option(
+            names = {"--source"},
+            description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter routes by limiting to the given number of rows")
+    @CommandLine.Option(
+            names = {"--limit"},
+            description = "Filter routes by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter-mean" },
-                        description = "Filter processors that must be slower than the given time (ms)")
+    @CommandLine.Option(
+            names = {"--filter-mean"},
+            description = "Filter processors that must be slower than the given time (ms)")
     long mean;
 
-    @CommandLine.Option(names = { "--running" },
-                        description = "Only include running processors")
+    @CommandLine.Option(
+            names = {"--running"},
+            description = "Only include running processors")
     boolean running;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter processors by id")
+    @CommandLine.Option(
+            names = {"--filter"},
+            description = "Filter processors by id")
     String[] filter;
 
-    @CommandLine.Option(names = { "--group" },
-                        description = "Filter processors by group")
+    @CommandLine.Option(
+            names = {"--group"},
+            description = "Filter processors by group")
     String[] group;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "Include description in the ID column (if available)")
+    @CommandLine.Option(
+            names = {"--description"},
+            description = "Include description in the ID column (if available)")
     boolean description;
 
-    @CommandLine.Option(names = { "--note" },
-                        description = "Include note in the ID column (if available)")
+    @CommandLine.Option(
+            names = {"--note"},
+            description = "Include note in the ID column (if available)")
     boolean note;
 
-    @CommandLine.Option(names = { "--show-group" },
-                        description = "Include group column")
+    @CommandLine.Option(
+            names = {"--show-group"},
+            description = "Include group column")
     boolean showGroup;
 
     public CamelProcessorStatus(CamelJBangMain main) {
@@ -110,97 +125,95 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                JsonArray array = (JsonArray) root.get("routes");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject o = (JsonObject) array.get(i);
+                    Row row = new Row();
+                    row.name = context.getString("name");
+                    if ("CamelJBang".equals(row.name)) {
+                        row.name = ProcessHelper.extractName(root, ph);
+                    }
+                    row.pid = Long.toString(ph.pid());
+                    row.routeId = o.getString("routeId");
+                    row.group = o.getString("group");
+                    row.description = o.getString("description");
+                    row.note = o.getString("note");
+                    row.nodePrefixId = o.getString("nodePrefixId");
+                    row.processor = o.getString("from");
+                    row.source = o.getString("source");
+                    row.state = o.getString("state");
+                    Map<String, ?> stats = o.getMap("statistics");
+                    if (stats != null) {
+                        row.total = stats.get("exchangesTotal").toString();
+                        Object num = stats.get("remoteExchangesTotal");
+                        if (num != null) {
+                            row.totalRemote = num.toString();
                         }
-                        JsonArray array = (JsonArray) root.get("routes");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
-                            Row row = new Row();
-                            row.name = context.getString("name");
-                            if ("CamelJBang".equals(row.name)) {
-                                row.name = ProcessHelper.extractName(root, ph);
-                            }
-                            row.pid = Long.toString(ph.pid());
-                            row.routeId = o.getString("routeId");
-                            row.group = o.getString("group");
-                            row.description = o.getString("description");
-                            row.note = o.getString("note");
-                            row.nodePrefixId = o.getString("nodePrefixId");
-                            row.processor = o.getString("from");
-                            row.source = o.getString("source");
-                            row.state = o.getString("state");
-                            Map<String, ?> stats = o.getMap("statistics");
-                            if (stats != null) {
-                                row.total = stats.get("exchangesTotal").toString();
-                                Object num = stats.get("remoteExchangesTotal");
-                                if (num != null) {
-                                    row.totalRemote = num.toString();
-                                }
-                                row.inflight = stats.get("exchangesInflight").toString();
-                                num = stats.get("remoteExchangesInflight");
-                                if (num != null) {
-                                    row.inflightRemote = num.toString();
-                                }
-                                row.failed = stats.get("exchangesFailed").toString();
-                                num = stats.get("remoteExchangesFailed");
-                                if (num != null) {
-                                    row.failedRemote = num.toString();
-                                }
-                                row.mean = stats.get("meanProcessingTime").toString();
-                                if ("-1".equals(row.mean)) {
-                                    row.mean = null;
-                                }
-                                row.max = stats.get("maxProcessingTime").toString();
-                                row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("lastProcessingTime");
-                                if (last != null) {
-                                    row.last = last.toString();
-                                }
-                                last = stats.get("deltaProcessingTime");
-                                if (last != null) {
-                                    row.delta = last.toString();
-                                }
-                                last = stats.get("lastCreatedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastStarted = TimeUtils.printSince(time);
-                                }
-                                last = stats.get("lastCompletedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastCompleted = TimeUtils.printSince(time);
-                                }
-                                last = stats.get("lastFailedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastFailed = TimeUtils.printSince(time);
-                                }
-                            }
-
-                            boolean add = true;
-                            if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
-                                add = false;
-                            }
-                            if (limit > 0 && rows.size() >= limit) {
-                                add = false;
-                            }
-                            if (add) {
-                                rows.add(row);
-                                List<JsonObject> list = o.getCollection("processors");
-                                if (list != null) {
-                                    addProcessors(row, rows, list);
-                                }
-                            }
+                        row.inflight = stats.get("exchangesInflight").toString();
+                        num = stats.get("remoteExchangesInflight");
+                        if (num != null) {
+                            row.inflightRemote = num.toString();
+                        }
+                        row.failed = stats.get("exchangesFailed").toString();
+                        num = stats.get("remoteExchangesFailed");
+                        if (num != null) {
+                            row.failedRemote = num.toString();
+                        }
+                        row.mean = stats.get("meanProcessingTime").toString();
+                        if ("-1".equals(row.mean)) {
+                            row.mean = null;
+                        }
+                        row.max = stats.get("maxProcessingTime").toString();
+                        row.min = stats.get("minProcessingTime").toString();
+                        Object last = stats.get("lastProcessingTime");
+                        if (last != null) {
+                            row.last = last.toString();
+                        }
+                        last = stats.get("deltaProcessingTime");
+                        if (last != null) {
+                            row.delta = last.toString();
+                        }
+                        last = stats.get("lastCreatedExchangeTimestamp");
+                        if (last != null) {
+                            long time = Long.parseLong(last.toString());
+                            row.sinceLastStarted = TimeUtils.printSince(time);
+                        }
+                        last = stats.get("lastCompletedExchangeTimestamp");
+                        if (last != null) {
+                            long time = Long.parseLong(last.toString());
+                            row.sinceLastCompleted = TimeUtils.printSince(time);
+                        }
+                        last = stats.get("lastFailedExchangeTimestamp");
+                        if (last != null) {
+                            long time = Long.parseLong(last.toString());
+                            row.sinceLastFailed = TimeUtils.printSince(time);
                         }
                     }
-                });
+
+                    boolean add = true;
+                    if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
+                        add = false;
+                    }
+                    if (limit > 0 && rows.size() >= limit) {
+                        add = false;
+                    }
+                    if (add) {
+                        rows.add(row);
+                        List<JsonObject> list = o.getCollection("processors");
+                        if (list != null) {
+                            addProcessors(row, rows, list);
+                        }
+                    }
+                }
+            }
+        });
 
         // filter rows
         if (running || filter != null || group != null) {
@@ -302,33 +315,58 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(this::getPid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getName),
-                new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getGroup),
-                new Column().header("ID").visible(!description && !note).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getId),
-                new Column().header("ID").visible(description || note).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(60, OverflowBehaviour.NEWLINE)
-                        .with(this::getIdAndNoteDescription),
-                new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
-                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(this::getProcessor),
-                new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
-                        .with(this::getStatus),
-                new Column().header("TOTAL").with(this::getTotal),
-                new Column().header("FAIL").with(this::getFailed),
-                new Column().header("INFLIGHT").with(this::getInflight),
-                new Column().header("MEAN").with(r -> r.mean),
-                new Column().header("MIN").with(r -> r.min),
-                new Column().header("MAX").with(r -> r.max),
-                new Column().header("LAST").with(r -> r.last),
-                new Column().header("DELTA").with(this::getDelta),
-                new Column().header("SINCE-LAST").with(this::getSinceLast))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(this::getPid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getName),
+                                new Column()
+                                        .header("GROUP")
+                                        .visible(showGroup)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getGroup),
+                                new Column()
+                                        .header("ID")
+                                        .visible(!description && !note)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getId),
+                                new Column()
+                                        .header("ID")
+                                        .visible(description || note)
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                        .with(this::getIdAndNoteDescription),
+                                new Column()
+                                        .header("PROCESSOR")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .minWidth(25)
+                                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(this::getProcessor),
+                                new Column()
+                                        .header("STATUS")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(this::getStatus),
+                                new Column().header("TOTAL").with(this::getTotal),
+                                new Column().header("FAIL").with(this::getFailed),
+                                new Column().header("INFLIGHT").with(this::getInflight),
+                                new Column().header("MEAN").with(r -> r.mean),
+                                new Column().header("MIN").with(r -> r.min),
+                                new Column().header("MAX").with(r -> r.max),
+                                new Column().header("LAST").with(r -> r.last),
+                                new Column().header("DELTA").with(this::getDelta),
+                                new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -498,5 +536,4 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String code;
         boolean match;
     }
-
 }

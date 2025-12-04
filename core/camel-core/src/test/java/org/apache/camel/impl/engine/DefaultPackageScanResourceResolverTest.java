@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 
@@ -22,8 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultPackageScanResourceResolverTest {
     @Test

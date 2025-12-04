@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify unit of work with multicast.
@@ -56,17 +57,24 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start").process(new MyUOWProcessor("A")).multicast().to("direct:foo", "direct:bar");
+                from("direct:start")
+                        .process(new MyUOWProcessor("A"))
+                        .multicast()
+                        .to("direct:foo", "direct:bar");
 
-                from("direct:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNull(sync, "First exchange is not complete yet");
-                    }
-                }).process(new MyUOWProcessor("B")).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        lastOne = "processor";
-                    }
-                }).to("mock:result");
+                from("direct:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNull(sync, "First exchange is not complete yet");
+                            }
+                        })
+                        .process(new MyUOWProcessor("B"))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                lastOne = "processor";
+                            }
+                        })
+                        .to("mock:result");
 
                 from("direct:bar").to("mock:result");
             }
@@ -96,5 +104,4 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
             });
         }
     }
-
 }

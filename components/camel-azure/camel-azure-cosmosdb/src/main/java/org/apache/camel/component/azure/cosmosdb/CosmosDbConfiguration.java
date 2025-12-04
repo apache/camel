@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
+
+import static org.apache.camel.component.azure.cosmosdb.CredentialType.SHARED_ACCOUNT_KEY;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
@@ -28,76 +31,100 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.cosmosdb.CredentialType.SHARED_ACCOUNT_KEY;
-
 @UriParams
 public class CosmosDbConfiguration implements Cloneable {
 
     @UriPath
     private String databaseName;
+
     @UriPath
     private String containerName;
+
     @UriParam(label = "security", secret = true)
     @Metadata(required = false)
     private String accountKey;
+
     @UriParam(label = "common")
     @Metadata(required = true)
     private String databaseEndpoint;
+
     @UriParam(label = "common")
     private String containerPartitionKeyPath;
+
     @UriParam(label = "common")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
+
     @UriParam(label = "common", defaultValue = "SESSION")
     private ConsistencyLevel consistencyLevel = ConsistencyLevel.SESSION;
+
     @UriParam(label = "common")
     private String preferredRegions;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean clientTelemetryEnabled;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean connectionSharingAcrossClientsEnabled;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean multipleWriteRegionsEnabled = true;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean readRequestsFallbackEnabled = true;
+
     @UriParam(label = "common", defaultValue = "true")
     private boolean contentResponseOnWriteEnabled = true;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean createDatabaseIfNotExists;
+
     @UriParam(label = "common", defaultValue = "false")
     private boolean createContainerIfNotExists;
+
     @UriParam(label = "common, advanced")
     private IndexingPolicy indexingPolicy;
+
     @UriParam(label = "common")
     private ThroughputProperties throughputProperties;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean createLeaseDatabaseIfNotExists;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean createLeaseContainerIfNotExists;
+
     @UriParam(label = "consumer", defaultValue = "camel-lease")
     private String leaseContainerName = "camel-lease";
+
     @UriParam(label = "consumer")
     private String leaseDatabaseName;
+
     @UriParam(label = "consumer")
     private String hostName;
+
     @UriParam(label = "consumer")
     private ChangeFeedProcessorOptions changeFeedProcessorOptions;
+
     @UriParam(label = "producer")
     private String query;
+
     @UriParam(label = "producer")
     private String itemPartitionKey;
+
     @UriParam(label = "producer")
     private String itemId;
+
     @UriParam(label = "producer")
     private CosmosQueryRequestOptions queryRequestOptions;
+
     @UriParam(label = "producer", defaultValue = "listDatabases")
     private CosmosDbOperationsDefinition operation = CosmosDbOperationsDefinition.listDatabases;
-    @UriParam(label = "security", enums = "SHARED_ACCOUNT_KEY,AZURE_IDENTITY",
-              defaultValue = "SHARED_ACCOUNT_KEY")
+
+    @UriParam(label = "security", enums = "SHARED_ACCOUNT_KEY,AZURE_IDENTITY", defaultValue = "SHARED_ACCOUNT_KEY")
     private CredentialType credentialType = SHARED_ACCOUNT_KEY;
 
-    public CosmosDbConfiguration() {
-    }
+    public CosmosDbConfiguration() {}
 
     /**
      * The name of the Cosmos database that component should connect to. In case you are producing data and have

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
 
 import java.util.ArrayList;
@@ -59,17 +60,17 @@ public class KuduClientAutowiredTest extends AbstractKuduTest {
         final List<String> columnNames = Arrays.asList("id", "title", "name", "lastname", "address");
 
         for (int i = 0; i < columnNames.size(); i++) {
-            columns.add(
-                    new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
-                            .key(i == 0)
-                            .build());
+            columns.add(new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
+                    .key(i == 0)
+                    .build());
         }
 
         List<String> rangeKeys = new ArrayList<>();
         rangeKeys.add("id");
 
         headers.put(KuduConstants.CAMEL_KUDU_SCHEMA, new Schema(columns));
-        headers.put(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+        headers.put(
+                KuduConstants.CAMEL_KUDU_TABLE_OPTIONS, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
 
         template.requestBodyAndHeaders("direct://create", null, headers);
 

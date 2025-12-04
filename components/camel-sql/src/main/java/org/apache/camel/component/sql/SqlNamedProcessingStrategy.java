@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.Exchange;
@@ -39,8 +40,12 @@ public interface SqlNamedProcessingStrategy extends SqlProcessingStrategy {
      * @throws Exception         can be thrown in case of error
      */
     int commit(
-            DefaultSqlEndpoint endpoint, Exchange exchange, Object data,
-            NamedParameterJdbcTemplate namedJdbcTemplate, SqlParameterSource parameterSource, String query)
+            DefaultSqlEndpoint endpoint,
+            Exchange exchange,
+            Object data,
+            NamedParameterJdbcTemplate namedJdbcTemplate,
+            SqlParameterSource parameterSource,
+            String query)
             throws Exception;
 
     /**
@@ -55,8 +60,9 @@ public interface SqlNamedProcessingStrategy extends SqlProcessingStrategy {
      * @throws Exception         can be thrown in case of error
      */
     int commitBatchComplete(
-            DefaultSqlEndpoint endpoint, NamedParameterJdbcTemplate namedJdbcTemplate,
-            SqlParameterSource parameterSource, String query)
+            DefaultSqlEndpoint endpoint,
+            NamedParameterJdbcTemplate namedJdbcTemplate,
+            SqlParameterSource parameterSource,
+            String query)
             throws Exception;
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -23,9 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
 
@@ -43,7 +44,8 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
             fail("Should have thrown an exception");
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
+            ResolveEndpointFailedException cause =
+                    assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
             assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
         }
     }
@@ -52,5 +54,4 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
     public void testInvalidOptionUri() throws Exception {
         // noop
     }
-
 }

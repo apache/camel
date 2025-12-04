@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -31,10 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
@@ -57,7 +58,6 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             // signal we have deleted the file
             LATCH.countDown();
         }
-
     }
 
     public static final class OrderService {
@@ -72,7 +72,6 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
                 throw new IllegalArgumentException("Simulated fatal error");
             }
         }
-
     }
 
     @Test
@@ -115,17 +114,20 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
                 from("direct:confirm")
                         // use a route scoped onCompletion to be executed when the
                         // Exchange failed
-                        .onCompletion().onFailureOnly()
+                        .onCompletion()
+                        .onFailureOnly()
                         // and call the onFailure method on this bean
                         .bean(FileRollback.class, "onFailure")
                         // must use end to denote the end of the onCompletion route
                         .end()
                         // here starts the regular route
-                        .bean(OrderService.class, "createMail").log("Saving mail backup file")
-                        .to(fileUri()).log("Trying to send mail to ${header.to}")
-                        .bean(OrderService.class, "sendMail").log("Mail send to ${header.to}");
+                        .bean(OrderService.class, "createMail")
+                        .log("Saving mail backup file")
+                        .to(fileUri())
+                        .log("Trying to send mail to ${header.to}")
+                        .bean(OrderService.class, "sendMail")
+                        .log("Mail send to ${header.to}");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -29,7 +30,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Camel will by default use <tt>CallerRuns</tt>.
  */
 public enum ThreadPoolRejectedPolicy {
-
     Abort,
     CallerRuns;
 
@@ -41,7 +41,8 @@ public enum ThreadPoolRejectedPolicy {
                     if (r instanceof Rejectable rejectable) {
                         rejectable.reject();
                     } else {
-                        throw new RejectedExecutionException("Task " + r.toString() + " rejected from " + executor.toString());
+                        throw new RejectedExecutionException(
+                                "Task " + r.toString() + " rejected from " + executor.toString());
                     }
                 }
 
@@ -60,5 +61,4 @@ public enum ThreadPoolRejectedPolicy {
         }
         throw new IllegalArgumentException("Unknown ThreadPoolRejectedPolicy: " + this);
     }
-
 }

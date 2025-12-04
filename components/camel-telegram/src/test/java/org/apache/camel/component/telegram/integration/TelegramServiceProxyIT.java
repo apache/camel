@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @EnabledIfEnvironmentVariable(named = "TELEGRAM_AUTHORIZATION_TOKEN", matches = ".*")
 public class TelegramServiceProxyIT extends TelegramTestSupport {
@@ -54,7 +55,9 @@ public class TelegramServiceProxyIT extends TelegramTestSupport {
     @Test
     public void testGetUpdates() {
         IncomingMessage res = consumer.receiveBody(
-                String.format("telegram://bots?proxyHost=%s&proxyPort=%s&proxyType=%s", proxyHost, proxyPort, proxyType), 5000,
+                String.format(
+                        "telegram://bots?proxyHost=%s&proxyPort=%s&proxyType=%s", proxyHost, proxyPort, proxyType),
+                5000,
                 IncomingMessage.class);
         assertNotNull(res);
     }
@@ -65,9 +68,9 @@ public class TelegramServiceProxyIT extends TelegramTestSupport {
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
         Assertions.assertDoesNotThrow(() -> template.requestBody(
-                String.format("telegram://bots?chatId=%s&proxyHost=%s&proxyPort=%s&proxyType=%s", chatId, proxyHost, proxyPort,
-                        proxyType),
+                String.format(
+                        "telegram://bots?chatId=%s&proxyHost=%s&proxyPort=%s&proxyType=%s",
+                        chatId, proxyHost, proxyPort, proxyType),
                 msg));
     }
-
 }

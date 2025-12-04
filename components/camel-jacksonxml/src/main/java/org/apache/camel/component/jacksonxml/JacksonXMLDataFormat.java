@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
 import java.io.File;
@@ -223,7 +224,8 @@ public class JacksonXMLDataFormat extends ServiceSupport
             answer = reader.readValue(n);
         } else {
             // fallback to input stream
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             answer = reader.readValue(is);
         }
 
@@ -546,7 +548,9 @@ public class JacksonXMLDataFormat extends ServiceSupport
         int len = getMaxStringLength();
         if (len > 0) {
             LOG.debug("Creating XmlMapper with maxStringLength: {}", len);
-            xm.getFactory().setStreamReadConstraints(StreamReadConstraints.builder().maxStringLength(len).build());
+            xm.getFactory()
+                    .setStreamReadConstraints(
+                            StreamReadConstraints.builder().maxStringLength(len).build());
         }
         return xm;
     }
@@ -582,8 +586,8 @@ public class JacksonXMLDataFormat extends ServiceSupport
             setCollectionType(ArrayList.class);
         }
         if (include != null) {
-            JsonInclude.Include inc
-                    = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
+            JsonInclude.Include inc =
+                    getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
             xmlMapper.setSerializationInclusion(inc);
         }
         if (prettyPrint) {
@@ -595,13 +599,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
             while (it.hasNext()) {
                 String enable = it.next().toString();
                 // it can be different kind
-                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
+                SerializationFeature sf =
+                        getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
                 if (sf != null) {
                     xmlMapper.enable(sf);
                     continue;
                 }
-                DeserializationFeature df
-                        = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+                DeserializationFeature df =
+                        getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
                 if (df != null) {
                     xmlMapper.enable(df);
                     continue;
@@ -611,15 +616,15 @@ public class JacksonXMLDataFormat extends ServiceSupport
                     xmlMapper.enable(mf);
                     continue;
                 }
-                FromXmlParser.Feature pf
-                        = getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, enable);
+                FromXmlParser.Feature pf =
+                        getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, enable);
                 if (pf != null) {
                     xmlMapper.enable(pf);
                     continue;
                 }
                 throw new IllegalArgumentException(
                         "Enable feature: " + enable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
+                                + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
             }
         }
         if (disableFeatures != null) {
@@ -627,14 +632,14 @@ public class JacksonXMLDataFormat extends ServiceSupport
             while (it.hasNext()) {
                 String disable = it.next().toString();
                 // it can be different kind
-                SerializationFeature sf
-                        = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+                SerializationFeature sf =
+                        getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
                 if (sf != null) {
                     xmlMapper.disable(sf);
                     continue;
                 }
-                DeserializationFeature df
-                        = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+                DeserializationFeature df =
+                        getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
                 if (df != null) {
                     xmlMapper.disable(df);
                     continue;
@@ -644,15 +649,15 @@ public class JacksonXMLDataFormat extends ServiceSupport
                     xmlMapper.disable(mf);
                     continue;
                 }
-                FromXmlParser.Feature pf
-                        = getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, disable);
+                FromXmlParser.Feature pf =
+                        getCamelContext().getTypeConverter().tryConvertTo(FromXmlParser.Feature.class, disable);
                 if (pf != null) {
                     xmlMapper.disable(pf);
                     continue;
                 }
                 throw new IllegalArgumentException(
                         "Disable feature: " + disable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
+                                + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,FromXmlParser.Feature]");
             }
         }
 
@@ -694,5 +699,4 @@ public class JacksonXMLDataFormat extends ServiceSupport
     protected void doStop() throws Exception {
         // noop
     }
-
 }

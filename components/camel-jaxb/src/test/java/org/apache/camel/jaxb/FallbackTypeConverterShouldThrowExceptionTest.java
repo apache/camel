@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,8 +31,6 @@ import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupport {
 
@@ -84,31 +85,32 @@ public class FallbackTypeConverterShouldThrowExceptionTest extends CamelTestSupp
 
             @Override
             public void configure() {
-                from("direct:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        try {
-                            exchange.getIn().getBody(Foo.class);
-                        } catch (TypeConversionException e) {
-                            failed.incrementAndGet();
-                        }
-                    }
-                }).to("mock:a").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        try {
-                            exchange.getIn().getBody(List.class);
-                        } catch (TypeConversionException e) {
-                            // there is no type converters from the POJO -> List
-                            // so we should really not fail at all at this point
-                            failed2.incrementAndGet();
-                        }
-                    }
-
-                }).to("mock:b");
+                from("direct:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                try {
+                                    exchange.getIn().getBody(Foo.class);
+                                } catch (TypeConversionException e) {
+                                    failed.incrementAndGet();
+                                }
+                            }
+                        })
+                        .to("mock:a")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                try {
+                                    exchange.getIn().getBody(List.class);
+                                } catch (TypeConversionException e) {
+                                    // there is no type converters from the POJO -> List
+                                    // so we should really not fail at all at this point
+                                    failed2.incrementAndGet();
+                                }
+                            }
+                        })
+                        .to("mock:b");
             }
-
         };
     }
-
 }

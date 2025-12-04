@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.doc;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "enable.documentation.itests", matches = "true")
 public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSupport {
@@ -49,5 +50,4 @@ public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSu
             assertTrue(json.contains("\"modelName\": \"groovy\""));
         }
     }
-
 }

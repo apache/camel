@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,7 +28,10 @@ public class LanguageLoadScriptFromClasspathHeaderTest extends ContextTestSuppor
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("direct:start", "World", Exchange.LANGUAGE_SCRIPT,
+        template.sendBodyAndHeader(
+                "direct:start",
+                "World",
+                Exchange.LANGUAGE_SCRIPT,
                 "classpath:org/apache/camel/component/language/mysimplescript.txt");
 
         assertMockEndpointsSatisfied();
@@ -38,7 +42,9 @@ public class LanguageLoadScriptFromClasspathHeaderTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("language:simple?allowTemplateFromHeader=true").to("mock:result");
+                from("direct:start")
+                        .to("language:simple?allowTemplateFromHeader=true")
+                        .to("mock:result");
             }
         };
     }

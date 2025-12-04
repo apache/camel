@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.BitSet;
@@ -29,8 +30,8 @@ public final class UnsafeUriCharactersEncoder {
     private static final BitSet unsafeCharactersRfc1738;
     private static final BitSet unsafeCharactersHttp;
     private static final char[] HEX_DIGITS = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
-            'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f' };
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
 
     static {
         unsafeCharactersFastParser = new BitSet(14);
@@ -187,5 +188,4 @@ public final class UnsafeUriCharactersEncoder {
         // 0..9 A..F a..f
         return ch >= 48 && ch <= 57 || ch >= 65 && ch <= 70 || ch >= 97 && ch <= 102;
     }
-
 }

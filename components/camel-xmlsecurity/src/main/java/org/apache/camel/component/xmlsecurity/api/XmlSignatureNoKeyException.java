@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 /**
@@ -23,9 +24,7 @@ public class XmlSignatureNoKeyException extends XmlSignatureException {
 
     private static final long serialVersionUID = 1L;
 
-    public XmlSignatureNoKeyException() {
-
-    }
+    public XmlSignatureNoKeyException() {}
 
     public XmlSignatureNoKeyException(String message) {
         super(message);
@@ -38,5 +37,4 @@ public class XmlSignatureNoKeyException extends XmlSignatureException {
     public XmlSignatureNoKeyException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

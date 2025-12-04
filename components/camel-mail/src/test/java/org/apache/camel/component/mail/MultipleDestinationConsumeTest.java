@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -39,9 +43,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class MultipleDestinationConsumeTest extends CamelTestSupport {
     private static final MailboxUser james = Mailbox.getOrCreateUser("james", "secret");
     private static final MailboxUser bar = Mailbox.getOrCreateUser("bar", "secret");
@@ -59,10 +60,9 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         MimeMessage message = new MimeMessage(mailSession);
         message.setText(body);
 
-        message.setRecipients(Message.RecipientType.TO,
-                new Address[] {
-                        new InternetAddress(james.getEmail()),
-                        new InternetAddress(bar.getEmail()) });
+        message.setRecipients(
+                Message.RecipientType.TO,
+                new Address[] {new InternetAddress(james.getEmail()), new InternetAddress(bar.getEmail())});
 
         Transport.send(message);
 
@@ -112,7 +112,8 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false").to("mock:result");
+                from(james.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .to("mock:result");
             }
         };
     }

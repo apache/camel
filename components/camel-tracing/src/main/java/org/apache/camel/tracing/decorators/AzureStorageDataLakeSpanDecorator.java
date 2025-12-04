@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 import java.time.Duration;
@@ -41,6 +42,7 @@ public class AzureStorageDataLakeSpanDecorator extends AbstractSpanDecorator {
      * Constants copied from {@link org.apache.camel.component.azure.storage.datalake.DataLakeConstants}
      */
     static final String OPERATION = "CamelAzureStorageDataLakeOperation";
+
     static final String FILESYSTEM_NAME = "CamelAzureStorageDataLakeFileSystemName";
     static final String DIRECTORY_NAME = "CamelAzureStorageDataLakeDirectoryName";
     static final String FILE_NAME = "CamelAzureStorageDataLakeFileName";
@@ -129,5 +131,4 @@ public class AzureStorageDataLakeSpanDecorator extends AbstractSpanDecorator {
             span.setTag(STORAGE_DATALAKE_EXPRESSION, expression);
         }
     }
-
 }

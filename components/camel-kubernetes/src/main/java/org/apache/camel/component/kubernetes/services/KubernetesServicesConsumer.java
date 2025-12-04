@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.services;
 
 import java.util.concurrent.ExecutorService;
@@ -61,7 +62,6 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
 
         servicesWatcher = new ServicesConsumerTask();
         executor.submit(servicesWatcher);
-
     }
 
     @Override
@@ -89,13 +89,13 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
             FilterWatchListDeletable<Service, ServiceList, ServiceResource<Service>> w;
 
             /*
-                Valid options are (according to how the client can be constructed):
-                - inAnyNamespace
-                - inAnyNamespace + withLabel
-                - inNamespace
-                - inNamespace + withLabel
-                - inNamespace + withName
-             */
+               Valid options are (according to how the client can be constructed):
+               - inAnyNamespace
+               - inAnyNamespace + withLabel
+               - inNamespace
+               - inNamespace + withLabel
+               - inNamespace + withName
+            */
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
             String labelKey = getEndpoint().getKubernetesConfiguration().getLabelKey();
             String labelValue = getEndpoint().getKubernetesConfiguration().getLabelValue();
@@ -108,14 +108,14 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                     w = w.withLabel(labelKey, labelValue);
                 }
             } else {
-                final NonNamespaceOperation<Service, ServiceList, ServiceResource<Service>> client
-                        = getEndpoint().getKubernetesClient().services().inNamespace(namespace);
+                final NonNamespaceOperation<Service, ServiceList, ServiceResource<Service>> client =
+                        getEndpoint().getKubernetesClient().services().inNamespace(namespace);
                 w = client;
                 if (ObjectHelper.isNotEmpty(labelKey) && ObjectHelper.isNotEmpty(labelValue)) {
                     w = client.withLabel(labelKey, labelValue);
                 } else if (ObjectHelper.isNotEmpty(resourceName)) {
-                    w = (FilterWatchListDeletable<Service, ServiceList, ServiceResource<Service>>) client
-                            .withName(resourceName);
+                    w = (FilterWatchListDeletable<Service, ServiceList, ServiceResource<Service>>)
+                            client.withName(resourceName);
                 }
             }
 
@@ -126,7 +126,8 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                     Exchange exchange = createExchange(false);
                     exchange.getIn().setBody(resource);
                     exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, action);
-                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    exchange.getIn()
+                            .setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {
@@ -142,7 +143,6 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                         LOG.error(cause.getMessage(), cause);
                     }
                 }
-
             });
         }
 

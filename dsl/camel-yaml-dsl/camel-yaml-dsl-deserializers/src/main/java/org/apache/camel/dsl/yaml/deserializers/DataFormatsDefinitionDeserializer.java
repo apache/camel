@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.ArrayList;
@@ -39,12 +40,11 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
 @YamlIn
 @YamlType(
-          nodes = "dataFormats",
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "__extends",
-                                type = "array:org.apache.camel.model.dataformat.DataFormatsDefinition")
-          })
+        nodes = "dataFormats",
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        properties = {
+            @YamlProperty(name = "__extends", type = "array:org.apache.camel.model.dataformat.DataFormatsDefinition")
+        })
 public class DataFormatsDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode {
 
     @Override
@@ -52,8 +52,8 @@ public class DataFormatsDefinitionDeserializer extends YamlDeserializerSupport i
         final DataFormatsCustomizer customizer = new DataFormatsCustomizer();
 
         final YamlDeserializationContext dc = getDeserializationContext(node);
-        final YamlDeserializationContext resolver
-                = (YamlDeserializationContext) node.getProperty(YamlDeserializationContext.class.getName());
+        final YamlDeserializationContext resolver =
+                (YamlDeserializationContext) node.getProperty(YamlDeserializationContext.class.getName());
         if (resolver == null) {
             throw new YamlDeserializationException(node, "Unable to find YamlConstructor");
         }
@@ -98,5 +98,4 @@ public class DataFormatsDefinitionDeserializer extends YamlDeserializerSupport i
             }
         }
     }
-
 }

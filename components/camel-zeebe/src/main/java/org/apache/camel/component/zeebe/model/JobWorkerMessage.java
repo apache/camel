@@ -26,7 +26,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true, value = { "variables" }, allowGetters = true)
+@JsonIgnoreProperties(
+        ignoreUnknown = true,
+        value = {"variables"},
+        allowGetters = true)
 public class JobWorkerMessage implements ZeebeMessage {
     private long key;
     private String type;
@@ -40,6 +43,7 @@ public class JobWorkerMessage implements ZeebeMessage {
     private String worker;
     private int retries;
     private long deadline;
+
     @JsonProperty("variablesAsMap")
     private Map<String, Object> variables = Collections.emptyMap();
 
@@ -176,18 +180,36 @@ public class JobWorkerMessage implements ZeebeMessage {
             return false;
         }
         JobWorkerMessage that = (JobWorkerMessage) o;
-        return key == that.key && processInstanceKey == that.processInstanceKey
+        return key == that.key
+                && processInstanceKey == that.processInstanceKey
                 && processDefinitionVersion == that.processDefinitionVersion
-                && processDefinitionKey == that.processDefinitionKey && elementInstanceKey == that.elementInstanceKey
-                && retries == that.retries && deadline == that.deadline && Objects.equals(type, that.type)
-                && Objects.equals(customHeaders, that.customHeaders) && Objects.equals(bpmnProcessId, that.bpmnProcessId)
-                && Objects.equals(elementId, that.elementId) && Objects.equals(worker, that.worker)
+                && processDefinitionKey == that.processDefinitionKey
+                && elementInstanceKey == that.elementInstanceKey
+                && retries == that.retries
+                && deadline == that.deadline
+                && Objects.equals(type, that.type)
+                && Objects.equals(customHeaders, that.customHeaders)
+                && Objects.equals(bpmnProcessId, that.bpmnProcessId)
+                && Objects.equals(elementId, that.elementId)
+                && Objects.equals(worker, that.worker)
                 && Objects.equals(variables, that.variables);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, type, customHeaders, processInstanceKey, bpmnProcessId, processDefinitionVersion,
-                processDefinitionKey, elementId, elementInstanceKey, worker, retries, deadline, variables);
+        return Objects.hash(
+                key,
+                type,
+                customHeaders,
+                processInstanceKey,
+                bpmnProcessId,
+                processDefinitionVersion,
+                processDefinitionKey,
+                elementId,
+                elementInstanceKey,
+                worker,
+                retries,
+                deadline,
+                variables);
     }
 }

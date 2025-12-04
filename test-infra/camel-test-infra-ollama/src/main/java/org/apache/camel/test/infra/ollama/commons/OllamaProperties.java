@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.ollama.commons;
 
 public class OllamaProperties {
@@ -37,7 +38,5 @@ public class OllamaProperties {
     public static final String MEMORY_LIMIT = "ollama.container.memory.limit";
     public static final String ENABLE_GPU = "ollama.container.enable.gpu";
 
-    private OllamaProperties() {
-
-    }
+    private OllamaProperties() {}
 }

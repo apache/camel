@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.util.concurrent.Executor;
@@ -43,9 +44,7 @@ public class TokenCredentials extends CallCredentials {
     }
 
     @Override
-    public void thisUsesUnstableApi() {
-
-    }
+    public void thisUsesUnstableApi() {}
 
     private static Metadata.Key<String> keyOf(String name) {
         return Metadata.Key.of(name, Metadata.ASCII_STRING_MARSHALLER);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
@@ -50,5 +51,4 @@ public interface HttpActivityListener {
      */
     void onResponseReceived(
             Object source, Exchange exchange, HttpHost host, HttpResponse response, HttpEntity entity, long elapsed);
-
 }

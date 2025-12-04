@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 
@@ -37,12 +44,6 @@ import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CxfSchemaValidationTest extends CamelTestSupport {
 
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
@@ -50,35 +51,33 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
     protected static final String SERVICE_NAME_PROP = "serviceName=" + SERVICE_NAME;
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
 
-    protected final String serviceAddressValidationEnabled = "http://localhost:" + CXFTestSupport.getPort1()
-                                                             + "/" + getClass().getSimpleName() + "/PersonService";
+    protected final String serviceAddressValidationEnabled =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/PersonService";
 
-    protected final String serviceAddressValidationDisabled = "http://localhost:" + CXFTestSupport.getPort2()
-                                                              + "/" + getClass().getSimpleName() + "/PersonService";
+    protected final String serviceAddressValidationDisabled =
+            "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/PersonService";
 
     protected final String cxfServerUriValidationEnabled = "cxf://" + serviceAddressValidationEnabled + "?"
-                                                           + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
-                                                           + "&dataFormat=payload&schemaValidationEnabled=true";
-    protected final String cxfServerUriValidationDisabled
-            = "cxf://" + serviceAddressValidationDisabled + "?" + PORT_NAME_PROP + "&"
-              + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
+            + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
+            + "&dataFormat=payload&schemaValidationEnabled=true";
+    protected final String cxfServerUriValidationDisabled = "cxf://" + serviceAddressValidationDisabled + "?"
+            + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
 
-    protected final String cxfProducerUriValidationEnabled
-            = "cxf://" + serviceAddressValidationDisabled + "?" + PORT_NAME_PROP + "&"
-              + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload&schemaValidationEnabled=true";
+    protected final String cxfProducerUriValidationEnabled =
+            "cxf://" + serviceAddressValidationDisabled + "?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&"
+                    + WSDL_URL_PROP + "&dataFormat=payload&schemaValidationEnabled=true";
 
-    protected final String cxfProducerUriValidationDisabled
-            = "cxf://" + serviceAddressValidationDisabled + "?" + PORT_NAME_PROP + "&"
-              + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
+    protected final String cxfProducerUriValidationDisabled = "cxf://" + serviceAddressValidationDisabled + "?"
+            + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
 
     protected final String clientUriValidationEnabled = "direct:validationEnabled";
 
     protected final String clientUriValidationDisabled = "direct:validationDisabled";
 
     protected final String notValidRequest = "<GetPerson xmlns='http://camel.apache.org/wsdl-first/types'>"
-                                             //Max Length: 30,
-                                             + "<personId>4yLKOBllJjx4SCXRMXoNiOFEzQfCNA8BSBsyPUaQ</personId>"
-                                             + "</GetPerson>";
+            // Max Length: 30,
+            + "<personId>4yLKOBllJjx4SCXRMXoNiOFEzQfCNA8BSBsyPUaQ</personId>"
+            + "</GetPerson>";
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -92,14 +91,13 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
 
                 from(clientUriValidationDisabled).to(cxfProducerUriValidationDisabled);
 
-                from("direct:result")
-                        .process(exchange -> {
-                            String xml = "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
-                                         + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
-                                         + "</GetPersonResponse>";
+                from("direct:result").process(exchange -> {
+                    String xml = "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
+                            + "<personId>123</personId><ssn>456</ssn><name>Donald Duck</name>"
+                            + "</GetPersonResponse>";
 
-                            exchange.getMessage().setBody(xml);
-                        });
+                    exchange.getMessage().setBody(xml);
+                });
             }
         };
     }
@@ -116,7 +114,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
 
     @Test
     public void schemaValidationEnabledServerTest() throws Exception {
-        //first, invoke service with valid message. No exception should be thrown
+        // first, invoke service with valid message. No exception should be thrown
         invokeService(serviceAddressValidationEnabled, RandomStringUtils.random(10, true, true));
 
         // then invoke the service with a non-valid message
@@ -157,7 +155,6 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
             exchange.getMessage().setBody(notValidRequest);
         });
         assertNull(ex.getException());
-
     }
 
     private void invokeService(String address, String personIdParam) throws Exception {
@@ -169,8 +166,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
         Client c = ClientProxy.getClient(client);
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
+        ((BindingProvider) client).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
 
         Holder<String> personId = new Holder<>();
 

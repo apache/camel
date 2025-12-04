@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ import org.apache.camel.util.PropertiesHelper;
  */
 public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration> extends DefaultComponent {
 
-    protected DebeziumComponent() {
-    }
+    protected DebeziumComponent() {}
 
     protected DebeziumComponent(CamelContext context) {
         super(context);
@@ -45,9 +45,9 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
         final C configuration = (C) getConfiguration().copy();
 
         if (ObjectHelper.isEmpty(remaining) && ObjectHelper.isEmpty(configuration.getName())) {
-            throw new IllegalArgumentException(
-                    String.format("Connector name must be configured on endpoint using syntax debezium-%s:name",
-                            configuration.getConnectorDatabaseType()));
+            throw new IllegalArgumentException(String.format(
+                    "Connector name must be configured on endpoint using syntax debezium-%s:name",
+                    configuration.getConnectorDatabaseType()));
         }
 
         // if we have name in path, we override the name in the configuration
@@ -60,7 +60,8 @@ public abstract class DebeziumComponent<C extends EmbeddedDebeziumConfiguration>
 
         // extract the additional properties map
         if (PropertiesHelper.hasProperties(parameters, "additionalProperties.")) {
-            final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
+            final Map<String, Object> additionalProperties =
+                    endpoint.getConfiguration().getAdditionalProperties();
 
             // add and overwrite additional properties from endpoint to pre-configured properties
             additionalProperties.putAll(PropertiesHelper.extractProperties(parameters, "additionalProperties."));

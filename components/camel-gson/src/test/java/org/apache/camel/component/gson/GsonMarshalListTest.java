@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GsonMarshalListTest extends CamelTestSupport {
 
@@ -64,8 +65,7 @@ public class GsonMarshalListTest extends CamelTestSupport {
             public void configure() {
 
                 GsonDataFormat formatPojo = new GsonDataFormat();
-                Type genericType = new TypeToken<List<TestPojo>>() {
-                }.getType();
+                Type genericType = new TypeToken<List<TestPojo>>() {}.getType();
                 formatPojo.setUnmarshalGenericType(genericType);
 
                 from("direct:inPojo").marshal(formatPojo);
@@ -73,5 +73,4 @@ public class GsonMarshalListTest extends CamelTestSupport {
             }
         };
     }
-
 }

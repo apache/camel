@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams;
 
 import java.io.Closeable;
@@ -158,7 +159,8 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
                 Integer consMax = consumer.getEndpoint().getMaxInflightExchanges();
                 long max = (consMax != null && consMax > 0) ? consMax.longValue() : UNBOUNDED_REQUESTS;
                 if (requested < UNBOUNDED_REQUESTS) {
-                    long lowWatermark = Math.max(0, Math.round(consumer.getEndpoint().getExchangesRefillLowWatermark() * max));
+                    long lowWatermark =
+                            Math.max(0, Math.round(consumer.getEndpoint().getExchangesRefillLowWatermark() * max));
                     long minRequests = Math.min(max, max - lowWatermark);
                     long newRequest = max - requested - inflightCount;
                     if (newRequest > 0 && newRequest >= minRequests) {
@@ -197,7 +199,6 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
         if (consumer != null) {
             consumer.onError(throwable);
         }
-
     }
 
     @Override
@@ -240,5 +241,4 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
     public long getInflightCount() {
         return inflightCount;
     }
-
 }

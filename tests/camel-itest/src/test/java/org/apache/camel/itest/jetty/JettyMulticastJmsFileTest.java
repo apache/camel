@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @CamelSpringTest
 @ContextConfiguration
 public class JettyMulticastJmsFileTest {
@@ -38,9 +39,10 @@ public class JettyMulticastJmsFileTest {
 
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/JettyMulticastJmsFileTest";
+
     static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
+        // set them as system properties so Spring can use the property placeholder
+        // things to set them into the URL's in the spring contexts
         System.setProperty("JettyMulticastJmsFileTest.port", Integer.toString(port));
     }
 
@@ -67,5 +69,4 @@ public class JettyMulticastJmsFileTest {
 
         consumer.stop();
     }
-
 }

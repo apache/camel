@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Properties;
@@ -42,9 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
@@ -80,22 +81,27 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
             @Override
             public void configure() {
                 String uri = "kafka:" + TOPIC + "?brokers=" + service.getBootstrapServers()
-                             + "&groupId=KafkaConsumerAsyncManualCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
-                             + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#testFactory";
+                        + "&groupId=KafkaConsumerAsyncManualCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
+                        + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#testFactory";
 
                 from(uri).routeId("foo").to("direct:aggregate");
                 // With sync manual commit, this would throw a concurrent modification exception
                 // It can be used in aggregator with completion timeout/interval for instance
                 // WARN: records from one partition must be processed by one unique thread
-                from("direct:aggregate").routeId("aggregate").to(KafkaTestUtil.MOCK_RESULT)
+                from("direct:aggregate")
+                        .routeId("aggregate")
+                        .to(KafkaTestUtil.MOCK_RESULT)
                         .aggregate()
                         .constant(true)
                         .completionTimeout(1)
                         .aggregationStrategy(AggregationStrategies.groupedExchange())
-                        .split().body()
+                        .split()
+                        .body()
                         .process(e -> {
-                            KafkaManualCommit manual = e.getMessage().getBody(Exchange.class)
-                                    .getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                            KafkaManualCommit manual = e.getMessage()
+                                    .getBody(Exchange.class)
+                                    .getMessage()
+                                    .getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                             assertNotNull(manual);
 
                             try {
@@ -127,11 +133,15 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
             producer.send(data);
         }
 
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> to.assertIsSatisfied()); // changed to 10 sec for CAMEL-20722
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> to.assertIsSatisfied()); // changed to 10 sec for CAMEL-20722
 
         List<Exchange> exchangeList = to.getExchanges();
         assertEquals(5, exchangeList.size());
-        assertEquals(true, exchangeList.get(4).getMessage().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class));
+        assertEquals(
+                true,
+                exchangeList.get(4).getMessage().getHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, Boolean.class));
     }
 
     @Order(2)
@@ -165,10 +175,8 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
         to.expectedMessageCount(3);
         to.expectedBodiesReceivedInAnyOrder("message-5", "message-6", "message-7");
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> to.assertIsSatisfied());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> to.assertIsSatisfied());
 
         assertEquals(0, failCount, "There should have been 0 commit failures");
     }
-
 }

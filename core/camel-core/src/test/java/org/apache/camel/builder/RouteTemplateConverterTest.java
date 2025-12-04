@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.stream.IntStream;
 
@@ -23,10 +28,6 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteTemplateConverterTest extends ContextTestSupport {
     @Test
@@ -37,7 +38,8 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
 
-        assertEquals("direct:{{foo}}", context.getRouteDefinition("first").getInput().getEndpointUri());
+        assertEquals(
+                "direct:{{foo}}", context.getRouteDefinition("first").getInput().getEndpointUri());
         assertEquals("direct://one", context.getRoute("first").getEndpoint().getEndpointUri());
     }
 
@@ -56,8 +58,12 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
 
-        assertEquals("direct:{{foo}}?timeout=60s", context.getRouteDefinition("first").getInput().getEndpointUri());
-        assertEquals("direct://one?timeout=60s", context.getRoute("first").getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct:{{foo}}?timeout=60s",
+                context.getRouteDefinition("first").getInput().getEndpointUri());
+        assertEquals(
+                "direct://one?timeout=60s",
+                context.getRoute("first").getEndpoint().getEndpointUri());
     }
 
     @Test
@@ -79,8 +85,12 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
         assertEquals(1, context.getRouteDefinitions().size());
         assertEquals(1, context.getRoutes().size());
 
-        assertEquals("direct:{{foo}}?timeout=60s", context.getRouteDefinition("first").getInput().getEndpointUri());
-        assertEquals("direct://one?timeout=60s", context.getRoute("first").getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct:{{foo}}?timeout=60s",
+                context.getRouteDefinition("first").getInput().getEndpointUri());
+        assertEquals(
+                "direct://one?timeout=60s",
+                context.getRoute("first").getEndpoint().getEndpointUri());
     }
 
     @Test
@@ -104,11 +114,18 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
         assertEquals(3, context.getRouteDefinitions().size());
         assertEquals(3, context.getRoutes().size());
 
-        assertEquals("direct:{{foo}}?timeout=60s", context.getRouteDefinition("1").getInput().getEndpointUri());
-        assertEquals("direct://1?timeout=60s", context.getRoute("1").getEndpoint().getEndpointUri());
-        assertEquals("direct:{{foo}}?timeout=60s", context.getRouteDefinition("2").getInput().getEndpointUri());
-        assertEquals("direct://2?timeout=60s", context.getRoute("2").getEndpoint().getEndpointUri());
-        assertEquals("direct:{{foo}}", context.getRouteDefinition("3").getInput().getEndpointUri());
+        assertEquals(
+                "direct:{{foo}}?timeout=60s",
+                context.getRouteDefinition("1").getInput().getEndpointUri());
+        assertEquals(
+                "direct://1?timeout=60s", context.getRoute("1").getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct:{{foo}}?timeout=60s",
+                context.getRouteDefinition("2").getInput().getEndpointUri());
+        assertEquals(
+                "direct://2?timeout=60s", context.getRoute("2").getEndpoint().getEndpointUri());
+        assertEquals(
+                "direct:{{foo}}", context.getRouteDefinition("3").getInput().getEndpointUri());
         assertEquals("direct://3", context.getRoute("3").getEndpoint().getEndpointUri());
     }
 
@@ -126,8 +143,12 @@ public class RouteTemplateConverterTest extends ContextTestSupport {
             try {
                 context.addRouteFromTemplate(index, "myTemplate" + index, mapOf("foo", index, "bar", "cheese"));
 
-                assertEquals("direct:{{foo}}?timeout=60s", context.getRouteDefinition(index).getInput().getEndpointUri());
-                assertEquals("direct://" + index + "?timeout=60s", context.getRoute(index).getEndpoint().getEndpointUri());
+                assertEquals(
+                        "direct:{{foo}}?timeout=60s",
+                        context.getRouteDefinition(index).getInput().getEndpointUri());
+                assertEquals(
+                        "direct://" + index + "?timeout=60s",
+                        context.getRoute(index).getEndpoint().getEndpointUri());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
@@ -58,7 +59,6 @@ public class Client {
     @Override
     public String toString() {
         return "Model : " + Client.class.getName() + " : " + String.valueOf(this.clientNr) + ", "
-               + String.valueOf(this.firstName) + ", " + String.valueOf(this.lastName);
+                + String.valueOf(this.firstName) + ", " + String.valueOf(this.lastName);
     }
-
 }

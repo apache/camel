@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.extension.verifier;
 
 import java.util.Map;
@@ -27,8 +28,8 @@ public class DefaultResultVerificationError implements VerificationError {
     private final Set<String> parameterKeys;
     private final Map<Attribute, Object> details;
 
-    public DefaultResultVerificationError(Code code, String description, Set<String> parameterKeys,
-                                          Map<Attribute, Object> details) {
+    public DefaultResultVerificationError(
+            Code code, String description, Set<String> parameterKeys, Map<Attribute, Object> details) {
         this.code = code;
         this.description = description;
         this.parameterKeys = parameterKeys;
@@ -58,10 +59,10 @@ public class DefaultResultVerificationError implements VerificationError {
     @Override
     public String toString() {
         return "DefaultResultError{"
-               + "code='" + code + '\''
-               + ", description='" + description + '\''
-               + ", parameterKeys=" + parameterKeys
-               + ", details=" + details
-               + '}';
+                + "code='" + code + '\''
+                + ", description='" + description + '\''
+                + ", parameterKeys=" + parameterKeys
+                + ", details=" + details
+                + '}';
     }
 }

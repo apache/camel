@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -27,10 +32,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSupport {
@@ -58,7 +59,7 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true }, new String[] { "boolean" });
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] {true}, new String[] {"boolean"});
         assertNotNull(xml);
         log.info(xml);
 
@@ -80,11 +81,8 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("{{start}}").routeId("myRoute")
-                        .log("Got ${body}")
-                        .to("{{result}}");
+                from("{{start}}").routeId("myRoute").log("Got ${body}").to("{{result}}");
             }
         };
     }
-
 }

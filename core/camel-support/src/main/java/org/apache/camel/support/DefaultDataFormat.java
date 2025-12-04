@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.spi.DataFormat;
@@ -22,6 +23,4 @@ import org.apache.camel.support.service.ServiceSupport;
 /**
  * A default dataformat useful for implementation inheritance.
  */
-public abstract class DefaultDataFormat extends ServiceSupport implements DataFormat {
-
-}
+public abstract class DefaultDataFormat extends ServiceSupport implements DataFormat {}

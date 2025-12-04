@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.core;
+
+import static org.apache.camel.component.dropbox.util.DropboxConstants.HEADER_PUT_FILE_NAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -52,8 +55,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.dropbox.util.DropboxConstants.HEADER_PUT_FILE_NAME;
-
 public final class DropboxAPIFacade {
 
     private static final Logger LOG = LoggerFactory.getLogger(DropboxAPIFacade.class);
@@ -82,7 +83,8 @@ public final class DropboxAPIFacade {
      * @return                  a result object reporting for each remote path the result of the operation.
      * @throws DropboxException if an error occurs
      */
-    public DropboxFileUploadResult put(String localPath, String remotePath, DropboxUploadMode mode) throws DropboxException {
+    public DropboxFileUploadResult put(String localPath, String remotePath, DropboxUploadMode mode)
+            throws DropboxException {
         // in case the remote path is not specified, the remotePath = localPath
         String dropboxPath = remotePath == null ? localPath : remotePath;
 
@@ -100,8 +102,8 @@ public final class DropboxAPIFacade {
         }
     }
 
-    private DropboxFileUploadResult putFile(String localPath, DropboxUploadMode mode, String dropboxPath, boolean isPresent)
-            throws DropboxException {
+    private DropboxFileUploadResult putFile(
+            String localPath, DropboxUploadMode mode, String dropboxPath, boolean isPresent) throws DropboxException {
         File fileLocalPath = new File(localPath);
         // verify uploading of a single file
         if (fileLocalPath.isFile()) {
@@ -174,7 +176,8 @@ public final class DropboxAPIFacade {
         }
     }
 
-    private DropboxFileUploadResult putBody(Exchange exchange, DropboxUploadMode mode, String dropboxPath, boolean isPresent) {
+    private DropboxFileUploadResult putBody(
+            Exchange exchange, DropboxUploadMode mode, String dropboxPath, boolean isPresent) {
         String name = exchange.getIn().getHeader(HEADER_PUT_FILE_NAME, String.class);
         if (name == null) {
             // fallback to use CamelFileName
@@ -215,8 +218,10 @@ public final class DropboxAPIFacade {
             } else {
                 uploadMode = WriteMode.ADD;
             }
-            return client.files().uploadBuilder(dropboxPath).withMode(uploadMode).uploadAndFinish(inputStream,
-                    inputFile.length());
+            return client.files()
+                    .uploadBuilder(dropboxPath)
+                    .withMode(uploadMode)
+                    .uploadAndFinish(inputStream, inputFile.length());
         }
     }
 
@@ -229,7 +234,10 @@ public final class DropboxAPIFacade {
             } else {
                 uploadMode = WriteMode.ADD;
             }
-            return client.files().uploadBuilder(dropboxPath).withMode(uploadMode).uploadAndFinish(is, data.length);
+            return client.files()
+                    .uploadBuilder(dropboxPath)
+                    .withMode(uploadMode)
+                    .uploadAndFinish(is, data.length);
         }
     }
 
@@ -249,7 +257,8 @@ public final class DropboxAPIFacade {
             LOG.debug("Search by query: {}", query);
         }
         try {
-            SearchV2Result listing = client.files().searchV2Builder(query)
+            SearchV2Result listing = client.files()
+                    .searchV2Builder(query)
                     .withOptions(SearchOptions.newBuilder().withPath(remotePath).build())
                     .start();
             return new DropboxSearchResult(listing.getMatches());
@@ -338,7 +347,7 @@ public final class DropboxAPIFacade {
 
     private Map.Entry<String, Object> downloadSingleFile(String path) throws DropboxException {
         try (OutputStreamBuilder target = OutputStreamBuilder.withExchange(exchange);
-             DbxDownloader<FileMetadata> downloadedFile = client.files().download(path)) {
+                DbxDownloader<FileMetadata> downloadedFile = client.files().download(path)) {
             if (downloadedFile == null) {
                 return null;
             }

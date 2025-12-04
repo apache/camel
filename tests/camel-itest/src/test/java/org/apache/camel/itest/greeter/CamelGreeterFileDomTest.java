@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.greeter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -30,22 +35,18 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Timeout(30)
 @Isolated
 @CamelSpringTest
 @ContextConfiguration
 public class CamelGreeterFileDomTest {
     @RegisterExtension
-    public static GreeterServiceExtension greeterServiceExtension
-            = GreeterServiceExtension.createExtension("CamelGreeterFileDomTest.port");
+    public static GreeterServiceExtension greeterServiceExtension =
+            GreeterServiceExtension.createExtension("CamelGreeterFileDomTest.port");
 
     private static final String REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                          + "<soap:Body><greetMe xmlns=\"http://apache.org/hello_world_soap_http/types\">"
-                                          + "<requestType>Willem</requestType></greetMe></soap:Body></soap:Envelope>";
+            + "<soap:Body><greetMe xmlns=\"http://apache.org/hello_world_soap_http/types\">"
+            + "<requestType>Willem</requestType></greetMe></soap:Body></soap:Envelope>";
 
     @Autowired
     protected CamelContext camelContext;
@@ -64,5 +65,4 @@ public class CamelGreeterFileDomTest {
         File file = new File("target/greeter/response/response.txt");
         assertTrue(file.exists(), "File " + file + " should be there.");
     }
-
 }

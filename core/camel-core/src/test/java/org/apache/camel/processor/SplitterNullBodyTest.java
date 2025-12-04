@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
@@ -97,7 +98,12 @@ public class SplitterNullBodyTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").split(body()).to("mock:split").end().to("mock:result");
 
-                from("direct:streaming").split(body()).streaming().to("mock:split").end().to("mock:result");
+                from("direct:streaming")
+                        .split(body())
+                        .streaming()
+                        .to("mock:split")
+                        .end()
+                        .to("mock:result");
             }
         };
     }

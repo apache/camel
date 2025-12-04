@@ -17,12 +17,12 @@
 
 package org.apache.camel.component.box;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.box.sdk.BoxCollaboration;
 import com.box.sdk.BoxUser;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BoxCollaborationsManagerTest {
 
@@ -32,13 +32,14 @@ class BoxCollaborationsManagerTest {
 
         BoxUser user = new BoxUser(null, "id");
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> bcm.addFolderCollaboration(null, user, BoxCollaboration.Role.EDITOR));
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> bcm.addFolderCollaboration("123", null, BoxCollaboration.Role.EDITOR));
 
-        assertThrows(IllegalArgumentException.class,
-                () -> bcm.addFolderCollaboration("123", user, null));
+        assertThrows(IllegalArgumentException.class, () -> bcm.addFolderCollaboration("123", user, null));
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -36,67 +37,91 @@ public class CsvDataFormat extends DataFormatDefinition {
 
     // Format options
     @XmlAttribute
-    @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180",
-              defaultValue = "DEFAULT")
+    @Metadata(
+            enums =
+                    "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MONGODB_CSV,MONGODB_TSV,MYSQL,ORACLE,POSTGRESQL_CSV,POSTGRESQL_TEXT,RFC4180",
+            defaultValue = "DEFAULT")
     private String format;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String commentMarkerDisabled;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String commentMarker;
+
     @XmlAttribute
     private String delimiter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String escapeDisabled;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String escape;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String headerDisabled;
+
     @XmlAttribute
     private String header;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowMissingColumnNames;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreEmptyLines;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreSurroundingSpaces;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String nullStringDisabled;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String nullString;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String quoteDisabled;
+
     @XmlAttribute
     private String quote;
+
     @XmlAttribute
     private String recordSeparatorDisabled;
+
     @XmlAttribute
     private String recordSeparator;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String skipHeaderRecord;
+
     @XmlAttribute
     @Metadata(enums = "ALL,ALL_NON_NULL,MINIMAL,NON_NUMERIC,NONE")
     private String quoteMode;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String ignoreHeaderCase;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String trim;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String trailingDelimiter;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String marshallerFactoryRef;
@@ -105,15 +130,19 @@ public class CsvDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String lazyLoad;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useMaps;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String useOrderedMaps;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String recordConverterRef;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String captureHeaderRecord;

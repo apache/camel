@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
@@ -24,8 +27,6 @@ import org.apache.camel.component.jpa.JpaWithOptionsTestSupport.Query;
 import org.apache.camel.examples.Customer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Query("select c from Customer c where c.name like :seq")
 public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
@@ -81,5 +82,4 @@ public class JpaOutputTypeTest extends JpaWithOptionsTestSupport {
 
         return exception != null ? exception : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
     }
-
 }

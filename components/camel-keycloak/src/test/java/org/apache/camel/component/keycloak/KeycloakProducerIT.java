@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +43,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for Keycloak producer operations using external Keycloak instance.
  *
@@ -57,16 +58,23 @@ import static org.junit.jupiter.api.Assertions.*;
  * KEYCLOAK_ADMIN_PASSWORD=admin \ quay.io/keycloak/keycloak:latest start-dev
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "manual.keycloak.test", matches = "true",
-                                 disabledReason = "Manual test - set -Dmanual.keycloak.test=true to enable"),
-        @EnabledIfSystemProperty(named = "keycloak.server.url", matches = ".*",
-                                 disabledReason = "Keycloak server URL not provided"),
-        @EnabledIfSystemProperty(named = "keycloak.realm", matches = ".*",
-                                 disabledReason = "Keycloak realm not provided"),
-        @EnabledIfSystemProperty(named = "keycloak.username", matches = ".*",
-                                 disabledReason = "Keycloak username not provided"),
-        @EnabledIfSystemProperty(named = "keycloak.password", matches = ".*",
-                                 disabledReason = "Keycloak password not provided")
+    @EnabledIfSystemProperty(
+            named = "manual.keycloak.test",
+            matches = "true",
+            disabledReason = "Manual test - set -Dmanual.keycloak.test=true to enable"),
+    @EnabledIfSystemProperty(
+            named = "keycloak.server.url",
+            matches = ".*",
+            disabledReason = "Keycloak server URL not provided"),
+    @EnabledIfSystemProperty(named = "keycloak.realm", matches = ".*", disabledReason = "Keycloak realm not provided"),
+    @EnabledIfSystemProperty(
+            named = "keycloak.username",
+            matches = ".*",
+            disabledReason = "Keycloak username not provided"),
+    @EnabledIfSystemProperty(
+            named = "keycloak.password",
+            matches = ".*",
+            disabledReason = "Keycloak password not provided")
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KeycloakProducerIT extends CamelTestSupport {
@@ -79,9 +87,12 @@ public class KeycloakProducerIT extends CamelTestSupport {
     private static String password;
 
     // Test data - use unique names to avoid conflicts
-    private static final String TEST_REALM_NAME = "test-realm-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_USER_NAME = "test-user-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_ROLE_NAME = "test-role-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_REALM_NAME =
+            "test-realm-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_USER_NAME =
+            "test-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_ROLE_NAME =
+            "test-role-" + UUID.randomUUID().toString().substring(0, 8);
 
     static {
         // Load configuration from system properties
@@ -103,57 +114,41 @@ public class KeycloakProducerIT extends CamelTestSupport {
                         keycloakUrl, username, password);
 
                 // Realm operations
-                from("direct:createRealm")
-                        .to(keycloakEndpoint + "&operation=createRealm");
+                from("direct:createRealm").to(keycloakEndpoint + "&operation=createRealm");
 
-                from("direct:getRealm")
-                        .to(keycloakEndpoint + "&operation=getRealm");
+                from("direct:getRealm").to(keycloakEndpoint + "&operation=getRealm");
 
-                from("direct:deleteRealm")
-                        .to(keycloakEndpoint + "&operation=deleteRealm");
+                from("direct:deleteRealm").to(keycloakEndpoint + "&operation=deleteRealm");
 
                 // User operations
-                from("direct:createUser")
-                        .to(keycloakEndpoint + "&operation=createUser");
+                from("direct:createUser").to(keycloakEndpoint + "&operation=createUser");
 
-                from("direct:getUser")
-                        .to(keycloakEndpoint + "&operation=getUser");
+                from("direct:getUser").to(keycloakEndpoint + "&operation=getUser");
 
-                from("direct:listUsers")
-                        .to(keycloakEndpoint + "&operation=listUsers");
+                from("direct:listUsers").to(keycloakEndpoint + "&operation=listUsers");
 
-                from("direct:deleteUser")
-                        .to(keycloakEndpoint + "&operation=deleteUser");
+                from("direct:deleteUser").to(keycloakEndpoint + "&operation=deleteUser");
 
                 // Role operations
-                from("direct:createRole")
-                        .to(keycloakEndpoint + "&operation=createRole");
+                from("direct:createRole").to(keycloakEndpoint + "&operation=createRole");
 
-                from("direct:getRole")
-                        .to(keycloakEndpoint + "&operation=getRole");
+                from("direct:getRole").to(keycloakEndpoint + "&operation=getRole");
 
-                from("direct:listRoles")
-                        .to(keycloakEndpoint + "&operation=listRoles");
+                from("direct:listRoles").to(keycloakEndpoint + "&operation=listRoles");
 
-                from("direct:deleteRole")
-                        .to(keycloakEndpoint + "&operation=deleteRole");
+                from("direct:deleteRole").to(keycloakEndpoint + "&operation=deleteRole");
 
                 // User-Role operations
-                from("direct:assignRoleToUser")
-                        .to(keycloakEndpoint + "&operation=assignRoleToUser");
+                from("direct:assignRoleToUser").to(keycloakEndpoint + "&operation=assignRoleToUser");
 
-                from("direct:removeRoleFromUser")
-                        .to(keycloakEndpoint + "&operation=removeRoleFromUser");
+                from("direct:removeRoleFromUser").to(keycloakEndpoint + "&operation=removeRoleFromUser");
 
                 // POJO-based operations
-                from("direct:createRealmPojo")
-                        .to(keycloakEndpoint + "&operation=createRealm&pojoRequest=true");
+                from("direct:createRealmPojo").to(keycloakEndpoint + "&operation=createRealm&pojoRequest=true");
 
-                from("direct:createUserPojo")
-                        .to(keycloakEndpoint + "&operation=createUser&pojoRequest=true");
+                from("direct:createUserPojo").to(keycloakEndpoint + "&operation=createUser&pojoRequest=true");
 
-                from("direct:createRolePojo")
-                        .to(keycloakEndpoint + "&operation=createRole&pojoRequest=true");
+                from("direct:createRolePojo").to(keycloakEndpoint + "&operation=createRole&pojoRequest=true");
             }
         };
     }
@@ -368,7 +363,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Order(98)
     void testCleanupRoles() {
         // Delete test roles
-        String[] rolesToDelete = { TEST_ROLE_NAME, TEST_ROLE_NAME + "-pojo" };
+        String[] rolesToDelete = {TEST_ROLE_NAME, TEST_ROLE_NAME + "-pojo"};
 
         for (String roleName : rolesToDelete) {
             try {

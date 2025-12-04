@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.util.Optional;
@@ -80,7 +81,8 @@ public class JoorExpression extends ExpressionAdapter {
         if (target == null) {
             target = compiler.compile(exchange.getContext(), text, singleQuotes);
         }
-        // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
+        // optimize as we call the same method all the time so we dont want to find the method every time as joor would
+        // do
         // if you use its call method
         Object body = exchange.getIn().getBody();
         // in the rare case the body is already an optional
@@ -106,5 +108,4 @@ public class JoorExpression extends ExpressionAdapter {
             this.method = compiler.compile(context, text, singleQuotes);
         }
     }
-
 }

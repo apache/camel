@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.awaitility.Awaitility.await;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,14 +31,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.awaitility.Awaitility.await;
-
 public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSupport {
-    private static final String SAMPLE_FILE_NAME_1 = String.format("sample-1-%s.txt",
-            FtpConsumerPostProcessingOnDisconnectIT.class.getSimpleName());
-    private static final String SAMPLE_FILE_NAME_2 = String.format("sample-2-%s.txt",
-            FtpConsumerPostProcessingOnDisconnectIT.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME_1 =
+            String.format("sample-1-%s.txt", FtpConsumerPostProcessingOnDisconnectIT.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME_2 =
+            String.format("sample-2-%s.txt", FtpConsumerPostProcessingOnDisconnectIT.class.getSimpleName());
     private static final String SAMPLE_FILE_CHARSET = "iso-8859-1";
     private static final String SAMPLE_FILE_PAYLOAD = "abc";
 
@@ -84,21 +85,26 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true").routeId("foo").noAutoStartup()
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) {
-                                service.disconnectAllSessions(); // disconnect all Sessions on FTP server
-                            }
-                        }).to("mock:result");
-                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&noop=false&move=.camel").routeId("bar")
+                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true")
+                        .routeId("foo")
                         .noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 service.disconnectAllSessions(); // disconnect all Sessions on FTP server
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
+                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&noop=false&move=.camel")
+                        .routeId("bar")
+                        .noAutoStartup()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                service.disconnectAllSessions(); // disconnect all Sessions on FTP server
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -110,5 +116,4 @@ public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSuppor
 
         Files.write(path, SAMPLE_FILE_PAYLOAD.getBytes(SAMPLE_FILE_CHARSET));
     }
-
 }

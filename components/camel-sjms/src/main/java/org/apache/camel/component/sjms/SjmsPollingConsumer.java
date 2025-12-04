@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import jakarta.jms.Message;
@@ -53,8 +54,8 @@ public class SjmsPollingConsumer extends PollingConsumerSupport {
     @Override
     public Exchange receive(long timeout) {
         try {
-            Message message = template.receive(jmsEndpoint.getDestinationName(), jmsEndpoint.getMessageSelector(),
-                    jmsEndpoint.isTopic(), timeout);
+            Message message = template.receive(
+                    jmsEndpoint.getDestinationName(), jmsEndpoint.getMessageSelector(), jmsEndpoint.isTopic(), timeout);
             if (message != null) {
                 return getEndpoint().createExchange(message, null);
             }
@@ -73,5 +74,4 @@ public class SjmsPollingConsumer extends PollingConsumerSupport {
     protected void doStop() throws Exception {
         // noop
     }
-
 }

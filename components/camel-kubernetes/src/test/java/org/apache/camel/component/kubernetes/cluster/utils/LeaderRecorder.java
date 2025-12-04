@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.utils;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +36,6 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 /**
  * Records leadership changes and allow to do assertions.
  */
@@ -47,9 +48,8 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
     @Override
     public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
         LOG.info("Cluster view {} - leader changed to: {}", view.getLocalMember(), leader);
-        this.leaderships
-                .add(new LeadershipInfo(
-                        Optional.ofNullable(leader).map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
+        this.leaderships.add(new LeadershipInfo(
+                Optional.ofNullable(leader).map(CamelClusterMember::getId).orElse(null), System.currentTimeMillis()));
     }
 
     public List<LeadershipInfo> getLeadershipInfo() {
@@ -72,8 +72,8 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
     public void waitForLeader(Predicate<String> as, long time, TimeUnit unit) {
         StopWatch watch = new StopWatch();
         while (!as.test(getCurrentLeader())) {
-            assertFalse(watch.taken() > TimeUnit.MILLISECONDS.convert(time, unit),
-                    "Timeout while waiting for condition");
+            assertFalse(
+                    watch.taken() > TimeUnit.MILLISECONDS.convert(time, unit), "Timeout while waiting for condition");
             doWait(50);
         }
     }
@@ -121,5 +121,4 @@ public class LeaderRecorder implements CamelClusterEventListener.Leadership {
             return changeTimestamp;
         }
     }
-
 }

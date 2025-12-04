@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.messagehistory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,10 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
 
@@ -56,7 +57,10 @@ public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // there should be 3 names
-        MetricRegistry registry = context.getRegistry().findByType(MetricRegistry.class).iterator().next();
+        MetricRegistry registry = context.getRegistry()
+                .findByType(MetricRegistry.class)
+                .iterator()
+                .next();
         assertEquals(3, registry.getNames().size());
 
         // get the message history service
@@ -70,5 +74,4 @@ public class SpringMetricsMessageHistoryTest extends CamelSpringTestSupport {
         assertTrue(json.contains("bar.history"));
         assertTrue(json.contains("baz.history"));
     }
-
 }

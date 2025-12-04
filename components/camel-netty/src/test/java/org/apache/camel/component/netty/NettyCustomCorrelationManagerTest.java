@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import io.netty.channel.Channel;
@@ -54,9 +55,12 @@ public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start").log("before ${body}").to(
-                        "netty:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
-                        .log("after ${body}").to("mock:result");
+                from("seda:start")
+                        .log("before ${body}")
+                        .to(
+                                "netty:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
+                        .log("after ${body}")
+                        .to("mock:result");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true").transform(body().prepend("Bye "));
             }

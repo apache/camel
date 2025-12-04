@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -38,8 +39,7 @@ public abstract class InputMedia implements Serializable {
     @JsonProperty("parse_mode")
     private String parseMode;
 
-    protected InputMedia() {
-    }
+    protected InputMedia() {}
 
     protected InputMedia(String type, String media, String caption, String parseMode) {
         this.type = type;

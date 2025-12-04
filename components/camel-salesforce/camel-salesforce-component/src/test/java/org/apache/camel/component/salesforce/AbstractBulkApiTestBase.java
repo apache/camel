@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase {
 
@@ -65,14 +66,14 @@ public abstract class AbstractBulkApiTestBase extends AbstractSalesforceTestBase
 
                 // test createBatchQuery
                 from("direct:createBatchQuery")
-                        .to("salesforce:createBatchQuery?sObjectQuery=SELECT Name, Description__c, Price__c, Total_Inventory__c FROM Merchandise__c WHERE Name LIKE '%25Bulk API%25'");
+                        .to(
+                                "salesforce:createBatchQuery?sObjectQuery=SELECT Name, Description__c, Price__c, Total_Inventory__c FROM Merchandise__c WHERE Name LIKE '%25Bulk API%25'");
 
                 // test getQueryResultIds
                 from("direct:getQueryResultIds").to("salesforce:getQueryResultIds");
 
                 // test getQueryResult
                 from("direct:getQueryResult").to("salesforce:getQueryResult");
-
             }
         };
     }

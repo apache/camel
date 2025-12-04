@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.issues.ExceptionCamel4022Test;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  *
@@ -30,5 +31,4 @@ public class SpringExceptionCamel4022Test extends ExceptionCamel4022Test {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringExceptionCamel4022Test.xml");
     }
-
 }

@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.component.netty.http.NettyHttpEndpoint.PROXY_NOT_SUPPORTED_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.netty.http.NettyHttpEndpoint.PROXY_NOT_SUPPORTED_MESSAGE;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpProducerProxyModeTest extends CamelTestSupport {
 
@@ -43,15 +44,16 @@ public class NettyHttpProducerProxyModeTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("proxy-producer")
-                        .to("netty-http:proxy://localhost:" + port + "/foo");
+                from("direct:start").routeId("proxy-producer").to("netty-http:proxy://localhost:" + port + "/foo");
             }
         });
 
-        FailedToStartRouteException thrown = assertThrows(FailedToStartRouteException.class, () -> {
-            context.start();
-        }, PROXY_NOT_SUPPORTED_MESSAGE);
+        FailedToStartRouteException thrown = assertThrows(
+                FailedToStartRouteException.class,
+                () -> {
+                    context.start();
+                },
+                PROXY_NOT_SUPPORTED_MESSAGE);
 
         assertNotNull(thrown.getMessage());
         assertTrue(thrown.getMessage().contains(PROXY_NOT_SUPPORTED_MESSAGE));

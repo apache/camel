@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.pollingconsumer;
 
 import java.util.TimeZone;
@@ -120,8 +121,8 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport
         trigger = new CronTrigger(getCron(), getTimeZone());
 
         if (taskScheduler == null) {
-            taskScheduler
-                    = new CamelThreadPoolTaskScheduler(getCamelContext(), consumer, consumer.getEndpoint().getEndpointUri());
+            taskScheduler = new CamelThreadPoolTaskScheduler(
+                    getCamelContext(), consumer, consumer.getEndpoint().getEndpointUri());
             taskScheduler.afterPropertiesSet();
             destroyTaskScheduler = true;
         }

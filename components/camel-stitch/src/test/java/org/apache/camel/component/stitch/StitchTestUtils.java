@@ -14,24 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch;
 
 import java.util.Properties;
 
 public final class StitchTestUtils {
 
-    private StitchTestUtils() {
-    }
+    private StitchTestUtils() {}
 
     public static Properties loadStitchTokenFromJvmEnv() throws Exception {
         final Properties properties = new Properties();
         if (System.getProperty("token") == null) {
-            throw new Exception(
-                    "Make sure to supply Stitch token, e.g:  mvn verify -Dtoken=mytoken");
+            throw new Exception("Make sure to supply Stitch token, e.g:  mvn verify -Dtoken=mytoken");
         }
         properties.setProperty("token", System.getProperty("token"));
 
         return properties;
     }
-
 }

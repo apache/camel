@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.converter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +28,6 @@ import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.component.jackson.TestPojo;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonConversionsTest extends CamelTestSupport {
 
@@ -59,5 +60,4 @@ public class JacksonConversionsTest extends CamelTestSupport {
             }
         };
     }
-
 }

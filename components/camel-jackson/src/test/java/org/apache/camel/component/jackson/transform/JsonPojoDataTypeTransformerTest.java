@@ -51,7 +51,8 @@ class JsonPojoDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Christoph", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Christoph", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(32, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -60,15 +61,18 @@ class JsonPojoDataTypeTransformerTest {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
-        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA,
-                new JsonFormatSchema(Json.mapper().readTree(this.getClass().getResourceAsStream("person.schema.json"))));
+        exchange.setProperty(
+                SchemaHelper.CONTENT_SCHEMA,
+                new JsonFormatSchema(
+                        Json.mapper().readTree(this.getClass().getResourceAsStream("person.schema.json"))));
         exchange.getMessage().setBody("""
                     { "name": "Christoph", "age": 32 }
                 """);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Christoph", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Christoph", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(32, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -80,7 +84,8 @@ class JsonPojoDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Mickey", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Mickey", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(20, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -89,13 +94,17 @@ class JsonPojoDataTypeTransformerTest {
         Exchange exchange = new DefaultExchange(camelContext);
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
-        exchange.getMessage().setBody(Json.mapper().readerFor(JsonNode.class).readValue("""
+        exchange.getMessage()
+                .setBody(Json.mapper()
+                        .readerFor(JsonNode.class)
+                        .readValue("""
                     { "name": "Goofy", "age": 25 }
                 """));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Goofy", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Goofy", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(25, exchange.getMessage().getBody(Person.class).age());
     }
 
@@ -108,16 +117,17 @@ class JsonPojoDataTypeTransformerTest {
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
         Assertions.assertEquals(Person.class, exchange.getMessage().getBody().getClass());
-        Assertions.assertEquals("Donald", exchange.getMessage().getBody(Person.class).name());
+        Assertions.assertEquals(
+                "Donald", exchange.getMessage().getBody(Person.class).name());
         Assertions.assertEquals(19, exchange.getMessage().getBody(Person.class).age());
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
+        Transformer transformer = camelContext
+                .getTransformerRegistry()
                 .resolveTransformer(new TransformerKey("application-x-java-object"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(JsonPojoDataTypeTransformer.class, transformer.getClass());
     }
-
 }

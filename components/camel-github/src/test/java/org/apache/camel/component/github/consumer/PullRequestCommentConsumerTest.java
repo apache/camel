@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.Exchange;
@@ -52,7 +53,7 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
         CommitComment commitComment2 = pullRequestService.addComment(pr2.getId(), "Second comment");
         mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commitComment1, commitComment2);
 
-        Thread.sleep(1 * 1000);         // TODO do I need this?
+        Thread.sleep(1 * 1000); // TODO do I need this?
 
         mockResultEndpoint.assertIsSatisfied();
     }
@@ -62,7 +63,11 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
         public void process(Exchange exchange) {
             Message in = exchange.getIn();
             Comment comment = (Comment) in.getBody();
-            LOG.debug("Got Comment {} [{}] from User [{}]", comment.getId(), comment.getBody(), comment.getUser().getLogin());
+            LOG.debug(
+                    "Got Comment {} [{}] from User [{}]",
+                    comment.getId(),
+                    comment.getBody(),
+                    comment.getUser().getLogin());
         }
     }
 }

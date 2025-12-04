@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Custom Exchange Formatter test.
@@ -99,10 +100,14 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         context.start();
 
         // unknown parameter
-        Exception e = assertThrows(Exception.class, () -> {
-            String endpointUri2 = "log:" + LogCustomFormatterTest.class.getCanonicalName() + "?prefix=foo&bar=no";
-            template.requestBody(endpointUri2, "Hello World");
-        }, "Should have thrown exception");
+        Exception e = assertThrows(
+                Exception.class,
+                () -> {
+                    String endpointUri2 =
+                            "log:" + LogCustomFormatterTest.class.getCanonicalName() + "?prefix=foo&bar=no";
+                    template.requestBody(endpointUri2, "Hello World");
+                },
+                "Should have thrown exception");
 
         ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
         assertTrue(cause.getMessage().endsWith("Unknown parameters=[{bar=no}]"));
@@ -158,5 +163,4 @@ public class LogCustomFormatterTest extends ContextTestSupport {
             this.prefix = prefix;
         }
     }
-
 }

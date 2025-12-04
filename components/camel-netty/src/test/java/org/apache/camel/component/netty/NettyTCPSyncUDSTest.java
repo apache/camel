@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,17 +27,19 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  *
  * @see <a href="https://netty.io/wiki/native-transports.html">about netty native transport</a>
  */
-@EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
-             architectures = { "amd64", "aarch_64" })
+@EnabledOnOs(
+        value = {OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD},
+        architectures = {"amd64", "aarch_64"})
 // This is to avoid "bind(..) failed: File name too long" when running on CI.
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Most CI environments use temporary build directories whose path is too long for the Netty native code leading to failure")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason =
+                "Most CI environments use temporary build directories whose path is too long for the Netty native code leading to failure")
 public class NettyTCPSyncUDSTest extends BaseNettyTest {
 
     @Test
@@ -54,8 +59,9 @@ public class NettyTCPSyncUDSTest extends BaseNettyTest {
                 from("netty:tcp://dummy:0?sync=true&nativeTransport=true&unixDomainSocketPath=target/test.sock")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
-                                exchange.getMessage().setBody(
-                                        "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                                exchange.getMessage()
+                                        .setBody(
+                                                "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             }
                         });
             }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import java.util.HashMap;
@@ -102,8 +103,11 @@ public class AbstractEndpointBuilder {
     }
 
     private static void computeProperties(
-            Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry,
-            Map<String, Object> params, Map<String, Object> properties) {
+            Map<String, Object> remaining,
+            CamelContext camelContext,
+            boolean bindToRegistry,
+            Map<String, Object> params,
+            Map<String, Object> properties) {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
@@ -158,5 +162,4 @@ public class AbstractEndpointBuilder {
         }
         return simple.createExpression(uri.getUri());
     }
-
 }

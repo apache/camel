@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
 
 import org.xml.sax.ContentHandler;
@@ -30,8 +31,14 @@ import org.apache.camel.support.ProcessorEndpoint;
 /**
  * Process XML payloads by a SAX ContentHandler.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "2.9.0",
+        scheme = "stax",
+        title = "StAX",
+        syntax = "stax:contentHandlerClass",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION})
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath
@@ -64,16 +71,16 @@ public class StAXEndpoint extends ProcessorEndpoint {
 
         Processor target;
         if (EndpointHelper.isReferenceParameter(contentHandlerClass)) {
-            ContentHandler handler = EndpointHelper.resolveReferenceParameter(getCamelContext(),
-                    contentHandlerClass.substring(1), ContentHandler.class, true);
+            ContentHandler handler = EndpointHelper.resolveReferenceParameter(
+                    getCamelContext(), contentHandlerClass.substring(1), ContentHandler.class, true);
             target = new StAXProcessor(handler);
         } else {
-            Class<ContentHandler> clazz
-                    = getCamelContext().getClassResolver().resolveMandatoryClass(contentHandlerClass, ContentHandler.class);
+            Class<ContentHandler> clazz = getCamelContext()
+                    .getClassResolver()
+                    .resolveMandatoryClass(contentHandlerClass, ContentHandler.class);
             target = new StAXProcessor(clazz);
         }
 
         setProcessor(target);
     }
-
 }

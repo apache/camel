@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.main;
 
 import java.io.File;
@@ -400,11 +401,14 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             camelContext.addService(server);
         }
 
-        pluginRegistry = getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
+        pluginRegistry =
+                getCamelContext().getCamelContextExtension().getContextPlugin(PlatformHttpPluginRegistry.class);
         if (pluginRegistry == null && pluginsEnabled()) {
             pluginRegistry = resolvePlatformHttpPluginRegistry();
             pluginRegistry.setCamelContext(getCamelContext());
-            getCamelContext().getCamelContextExtension().addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
+            getCamelContext()
+                    .getCamelContextExtension()
+                    .addContextPlugin(PlatformHttpPluginRegistry.class, pluginRegistry);
         }
         ServiceHelper.initService(pluginRegistry);
     }
@@ -517,12 +521,17 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     jo.put("profile", camelContext.getCamelContextExtension().getProfile());
                 }
                 if (camelContext.getCamelContextExtension().getDescription() != null) {
-                    jo.put("description", camelContext.getCamelContextExtension().getDescription());
+                    jo.put(
+                            "description",
+                            camelContext.getCamelContextExtension().getDescription());
                 }
                 Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext());
                 boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
                 jo.put("ready", up ? "1/1" : "0/1");
-                jo.put("status", extractState(getCamelContext().getCamelContextExtension().getStatusPhase()));
+                jo.put(
+                        "status",
+                        extractState(
+                                getCamelContext().getCamelContextExtension().getStatusPhase()));
                 int reloaded = 0;
                 Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
                 for (ReloadStrategy r : rs) {
@@ -531,16 +540,18 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 jo.put("reload", reloaded);
                 jo.put("age", CamelContextHelper.getUptime(camelContext));
 
-                ManagedCamelContext mcc
-                        = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+                ManagedCamelContext mcc =
+                        getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
                 if (mcc != null) {
                     ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
 
                     long total = camelContext.getRoutes().stream()
-                            .filter(r -> !r.isCreatedByRestDsl() && !r.isCreatedByKamelet()).count();
+                            .filter(r -> !r.isCreatedByRestDsl() && !r.isCreatedByKamelet())
+                            .count();
                     long started = camelContext.getRoutes().stream()
                             .filter(r -> !r.isCreatedByRestDsl() && !r.isCreatedByKamelet())
-                            .filter(ServiceHelper::isStarted).count();
+                            .filter(ServiceHelper::isStarted)
+                            .count();
                     jo.put("routes", started + "/" + total);
                     String thp = mb.getThroughput();
                     thp = thp.replace(',', '.');
@@ -575,8 +586,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // use blocking handler as the task can take longer time to complete
         info.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint(this.infoPath, "GET", null,
-                "application/json", null);
+        platformHttpComponent.addHttpManagementEndpoint(this.infoPath, "GET", null, "application/json", null);
     }
 
     protected void setupHealthCheckConsole() {
@@ -630,7 +640,8 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     healthCheckDetails(root, list, up, level, includeStackTrace, includeData);
                 } else {
                     // include only DOWN details
-                    List<HealthCheck.Result> downs = res.stream().filter(r -> r.getState().equals(HealthCheck.State.DOWN))
+                    List<HealthCheck.Result> downs = res.stream()
+                            .filter(r -> r.getState().equals(HealthCheck.State.DOWN))
                             .collect(Collectors.toList());
                     healthCheckDetails(root, downs, up, level, includeStackTrace, includeData);
                 }
@@ -647,26 +658,27 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         live.handler(new BlockingHandlerDecorator(handler, true));
         ready.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint(this.healthPath, "GET", null,
-                "application/json", null);
+        platformHttpComponent.addHttpManagementEndpoint(this.healthPath, "GET", null, "application/json", null);
     }
 
     protected void setupJolokia() {
         // load plugin
-        jolokiaPlugin = pluginRegistry.resolvePluginById(JolokiaPlatformHttpPlugin.NAME, JolokiaPlatformHttpPlugin.class)
+        jolokiaPlugin = pluginRegistry
+                .resolvePluginById(JolokiaPlatformHttpPlugin.NAME, JolokiaPlatformHttpPlugin.class)
                 .orElseThrow(() -> new RuntimeException(
                         "JolokiaPlatformHttpPlugin not found. Add camel-platform-http-jolokia dependency."));
 
         Route jolokia = router.route(jolokiaPath + "/*");
-        jolokia.method(HttpMethod.GET).method(HttpMethod.POST)
+        jolokia.method(HttpMethod.GET)
+                .method(HttpMethod.POST)
                 // need body handler to accept POST data
                 .handler(BodyHandler.create(false));
 
         Handler<RoutingContext> handler = (Handler<RoutingContext>) jolokiaPlugin.getHandler();
         jolokia.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint(jolokiaPath, "GET,POST", null,
-                "text/plain,application/json", null);
+        platformHttpComponent.addHttpManagementEndpoint(
+                jolokiaPath, "GET,POST", null, "text/plain,application/json", null);
     }
 
     protected void setupUploadConsole(final String dir) {
@@ -747,8 +759,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         upload.handler(new BlockingHandlerDecorator(handler, true));
         uploadDelete.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/upload", "PUT,DELETE",
-                "multipart/form-data", null, null);
+        platformHttpComponent.addHttpManagementEndpoint("/q/upload", "PUT,DELETE", "multipart/form-data", null, null);
     }
 
     protected void setupDownloadConsole() {
@@ -767,7 +778,8 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     Set<String> names = new TreeSet<>();
                     if (cp) {
                         // also look inside classpath
-                        PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
+                        PackageScanResourceResolver resolver =
+                                PluginHelper.getPackageScanResourceResolver(camelContext);
                         resolver.addClassLoader(camelContext.getApplicationContextClassLoader());
                         try {
                             String pattern = "**/*";
@@ -838,8 +850,10 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     }
                     if (res != null && res.exists()) {
                         ctx.response().putHeader("Content-Type", "application/octet-stream");
-                        ctx.response().putHeader("Content-Disposition",
-                                "attachment; filename=\"" + FileUtil.stripPath(name) + "\"");
+                        ctx.response()
+                                .putHeader(
+                                        "Content-Disposition",
+                                        "attachment; filename=\"" + FileUtil.stripPath(name) + "\"");
                         ctx.response().setStatusCode(200);
                         String data = null;
                         try {
@@ -858,14 +872,15 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // use blocking handler as the task can take longer time to complete
         download.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/download", "GET",
-                null, "text/plain,application/octet-stream", null);
+        platformHttpComponent.addHttpManagementEndpoint(
+                "/q/download", "GET", null, "text/plain,application/octet-stream", null);
     }
 
     protected void setupSendConsole() {
         final Route send = router.route("/q/send/")
                 .produces("application/json")
-                .method(HttpMethod.GET).method(HttpMethod.POST)
+                .method(HttpMethod.GET)
+                .method(HttpMethod.POST)
                 // need body handler to have access to the body
                 .handler(BodyHandler.create(false));
 
@@ -886,15 +901,12 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         // use blocking handler as the task can take longer time to complete
         send.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/send", "GET,POST",
-                null, "application/json", null);
+        platformHttpComponent.addHttpManagementEndpoint("/q/send", "GET,POST", null, "application/json", null);
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
         Optional<PlatformHttpPluginRegistry> result = ResolverHelper.resolveService(
-                getCamelContext(),
-                PlatformHttpPluginRegistry.FACTORY,
-                PlatformHttpPluginRegistry.class);
+                getCamelContext(), PlatformHttpPluginRegistry.FACTORY, PlatformHttpPluginRegistry.class);
         return result.orElseThrow(() -> new IllegalArgumentException(
                 "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
     }
@@ -908,7 +920,11 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     private static void healthCheckDetails(
-            JsonObject jo, List<HealthCheck.Result> checks, boolean up, String level, String includeStackTrace,
+            JsonObject jo,
+            List<HealthCheck.Result> checks,
+            boolean up,
+            String level,
+            String includeStackTrace,
             String includeData) {
         healthCheckStatus(jo, up);
 
@@ -930,19 +946,24 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
 
         jo.put("name", d.getCheck().getId());
         jo.put("status", d.getState().name());
-        if (("full".equals(level) || "true".equals(includeStackTrace)) && d.getError().isPresent()) {
+        if (("full".equals(level) || "true".equals(includeStackTrace))
+                && d.getError().isPresent()) {
             // include error message in full exposure
             String msg = allCausedByErrorMessages(d.getError().get());
             jo.put("error-message", Jsoner.escape(msg));
             if ("true".equals(includeStackTrace)) {
-                jo.put("error-stacktrace", Jsoner.escape(errorStackTrace(d.getError().get())));
+                jo.put(
+                        "error-stacktrace",
+                        Jsoner.escape(errorStackTrace(d.getError().get())));
             }
         }
         if (d.getMessage().isPresent()) {
             jo.put("message", Jsoner.escape(d.getMessage().get()));
         }
         // only include data if was enabled
-        if (("true".equals(includeData)) && d.getDetails() != null && !d.getDetails().isEmpty()) {
+        if (("true".equals(includeData))
+                && d.getDetails() != null
+                && !d.getDetails().isEmpty()) {
             // lets use sorted keys
             Iterator<String> it = new TreeSet<>(d.getDetails().keySet()).iterator();
             JsonObject jo2 = new JsonObject();
@@ -1013,9 +1034,11 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 ctx.response().putHeader("content-type", "text/plain");
 
                 if (!camelContext.isDevConsole()) {
-                    ctx.end("Developer Console is not enabled on CamelContext. Set camel.context.dev-console=true in application.properties");
+                    ctx.end(
+                            "Developer Console is not enabled on CamelContext. Set camel.context.dev-console=true in application.properties");
                 }
-                DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+                DevConsoleRegistry dcr =
+                        camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
                 if (dcr == null) {
                     ctx.end("Developer Console is not included. Add camel-console to classpath.");
                     return;
@@ -1050,11 +1073,17 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                                 link = "<a href=\"dev/" + link + "\">" + c.getId() + "</a>";
                                 eol = "<br/>\n";
                             }
-                            sb.append(link).append(": ").append(c.getDescription()).append(eol);
+                            sb.append(link)
+                                    .append(": ")
+                                    .append(c.getDescription())
+                                    .append(eol);
                             // special for top in processor mode
                             if ("top".equals(c.getId())) {
                                 link = link.replace("top", "top/*");
-                                sb.append(link).append(": ").append("Display the top processors").append(eol);
+                                sb.append(link)
+                                        .append(": ")
+                                        .append("Display the top processors")
+                                        .append(eol);
                             }
                         }
                     });
@@ -1079,24 +1108,26 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     JsonObject root = new JsonObject();
 
                     // sort according to index by given id
-                    dcr.stream().sorted((o1, o2) -> {
-                        int p1 = id.indexOf(o1.getId());
-                        int p2 = id.indexOf(o2.getId());
-                        return Integer.compare(p1, p2);
-                    }).forEach(c -> {
-                        boolean include = "all".equals(id) || c.getId().equalsIgnoreCase(id);
-                        if (include && c.supportMediaType(mediaType)) {
-                            Object out = c.call(mediaType, params);
-                            if (out != null && mediaType == DevConsole.MediaType.TEXT) {
-                                sb.append(c.getDisplayName()).append(":");
-                                sb.append("\n\n");
-                                sb.append(out);
-                                sb.append("\n\n");
-                            } else if (out != null && mediaType == DevConsole.MediaType.JSON) {
-                                root.put(c.getId(), out);
-                            }
-                        }
-                    });
+                    dcr.stream()
+                            .sorted((o1, o2) -> {
+                                int p1 = id.indexOf(o1.getId());
+                                int p2 = id.indexOf(o2.getId());
+                                return Integer.compare(p1, p2);
+                            })
+                            .forEach(c -> {
+                                boolean include = "all".equals(id) || c.getId().equalsIgnoreCase(id);
+                                if (include && c.supportMediaType(mediaType)) {
+                                    Object out = c.call(mediaType, params);
+                                    if (out != null && mediaType == DevConsole.MediaType.TEXT) {
+                                        sb.append(c.getDisplayName()).append(":");
+                                        sb.append("\n\n");
+                                        sb.append(out);
+                                        sb.append("\n\n");
+                                    } else if (out != null && mediaType == DevConsole.MediaType.JSON) {
+                                        root.put(c.getId(), out);
+                                    }
+                                }
+                            });
                     if (!sb.isEmpty()) {
                         String out = sb.toString();
                         ctx.end(out);
@@ -1114,8 +1145,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         dev.handler(new BlockingHandlerDecorator(handler, true));
         devSub.handler(new BlockingHandlerDecorator(handler, true));
 
-        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET", null,
-                "text/plain,application/json", null);
+        platformHttpComponent.addHttpManagementEndpoint("/q/dev", "GET", null, "text/plain,application/json", null);
     }
 
     protected void doSend(RoutingContext ctx) {
@@ -1130,10 +1160,13 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         final Map<String, Object> headers = new LinkedHashMap<>();
         for (var entry : ctx.request().headers()) {
             String k = entry.getKey();
-            boolean exclude
-                    = "endpoint".equals(k) || "exchangePattern".equals(k) || "poll".equals(k)
-                            || "pollTimeout".equals(k) || "resultType".equals(k) || "Accept".equals(k)
-                            || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
+            boolean exclude = "endpoint".equals(k)
+                    || "exchangePattern".equals(k)
+                    || "poll".equals(k)
+                    || "pollTimeout".equals(k)
+                    || "resultType".equals(k)
+                    || "Accept".equals(k)
+                    || filter.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), null);
             if (!exclude) {
                 headers.put(entry.getKey(), entry.getValue());
             }
@@ -1218,8 +1251,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 jo.put("timestamp", timestamp);
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "failed");
-                jo.put("exception",
-                        MessageHelper.dumpExceptionAsJSonObject(e).getMap("exception"));
+                jo.put("exception", MessageHelper.dumpExceptionAsJSonObject(e).getMap("exception"));
             }
             if (out != null && out.getException() != null) {
                 jo.put("endpoint", target.getEndpointUri());
@@ -1229,8 +1261,10 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "failed");
                 // avoid double wrap
-                jo.put("exception",
-                        MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+                jo.put(
+                        "exception",
+                        MessageHelper.dumpExceptionAsJSonObject(out.getException())
+                                .getMap("exception"));
             } else if (out != null && "InOut".equals(exchangePattern)) {
                 jo.put("endpoint", target.getEndpointUri());
                 jo.put("exchangeId", out.getExchangeId());
@@ -1239,8 +1273,9 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 jo.put("elapsed", watch.taken());
                 jo.put("status", "success");
                 // dump response and remove unwanted data
-                JsonObject msg = MessageHelper.dumpAsJSonObject(out.getMessage(), false, false, true, true, true, true,
-                        BODY_MAX_CHARS).getMap("message");
+                JsonObject msg = MessageHelper.dumpAsJSonObject(
+                                out.getMessage(), false, false, true, true, true, true, BODY_MAX_CHARS)
+                        .getMap("message");
                 msg.remove("exchangeId");
                 msg.remove("exchangePattern");
                 msg.remove("exchangeType");
@@ -1270,7 +1305,8 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             jo.put("elapsed", watch.taken());
             jo.put("status", "failed");
             // avoid double wrap
-            jo.put("exception",
+            jo.put(
+                    "exception",
                     MessageHelper.dumpExceptionAsJSonObject(new NoSuchEndpointException(endpoint))
                             .getMap("exception"));
         }
@@ -1284,5 +1320,4 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 (server != null ? server.getPort() : getPort()),
                 "HTTP Management endpoints summary");
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
@@ -22,8 +25,6 @@ import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleRegistryTest {
 
@@ -120,5 +121,4 @@ public class SimpleRegistryTest {
         registry.bind("myKey", bar);
         Assertions.assertEquals("bar", registry.lookupByName("myKey"));
     }
-
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
 
 public class ThreadsRejectedPolicyTest extends ContextTestSupport {
 
@@ -51,7 +52,11 @@ public class ThreadsRejectedPolicyTest extends ContextTestSupport {
 
                 from("direct:foo")
                         // using the builder style
-                        .threads().poolSize(5).maxPoolSize(10).rejectedPolicy(Abort).threadName("myPool")
+                        .threads()
+                        .poolSize(5)
+                        .maxPoolSize(10)
+                        .rejectedPolicy(Abort)
+                        .threadName("myPool")
                         .to("mock:result");
             }
         };

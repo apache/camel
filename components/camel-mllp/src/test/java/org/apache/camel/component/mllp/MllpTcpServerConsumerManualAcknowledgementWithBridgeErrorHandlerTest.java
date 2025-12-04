@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp;
 
-import org.apache.camel.Exchange;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.apache.camel.Exchange;
+import org.junit.jupiter.api.Test;
 
 public class MllpTcpServerConsumerManualAcknowledgementWithBridgeErrorHandlerTest
         extends TcpServerConsumerAcknowledgementTestSupport {
@@ -61,7 +62,8 @@ public class MllpTcpServerConsumerManualAcknowledgementWithBridgeErrorHandlerTes
 
         Exchange failureExchange = failure.getExchanges().get(0);
         Object failureException = failureExchange.getProperty(MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION);
-        assertNotNull(failureException,
+        assertNotNull(
+                failureException,
                 "OnFailureOnly exchange should have a " + MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION + " property");
         assertIsInstanceOf(Exception.class, failureException);
     }
@@ -76,9 +78,11 @@ public class MllpTcpServerConsumerManualAcknowledgementWithBridgeErrorHandlerTes
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+        assertNull(
+                result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
                 "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+        assertNull(
+                complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
                 "Should not have the exception in the exchange property");
     }
 
@@ -92,9 +96,11 @@ public class MllpTcpServerConsumerManualAcknowledgementWithBridgeErrorHandlerTes
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+        assertNull(
+                result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
                 "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+        assertNull(
+                complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
                 "Should not have the exception in the exchange property");
     }
 
@@ -108,9 +114,11 @@ public class MllpTcpServerConsumerManualAcknowledgementWithBridgeErrorHandlerTes
 
         unparsableMessage(testMessage);
 
-        assertNull(result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+        assertNull(
+                result.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
                 "Should not have the exception in the exchange property");
-        assertNull(complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
+        assertNull(
+                complete.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT),
                 "Should not have the exception in the exchange property");
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.util.Collections;
@@ -94,8 +95,9 @@ public class TimedLeaderNotifier implements Service {
     @Override
     public void start() {
         if (this.executor == null) {
-            this.executor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "CamelKubernetesLeaderNotifier");
+            this.executor = camelContext
+                    .getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "CamelKubernetesLeaderNotifier");
         }
     }
 
@@ -184,7 +186,5 @@ public class TimedLeaderNotifier implements Service {
                 LOG.warn("Error while communicating the cluster members to the handler", e);
             }
         }
-
     }
-
 }

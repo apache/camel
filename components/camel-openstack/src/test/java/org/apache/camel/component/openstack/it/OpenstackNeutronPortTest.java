@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.it;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
@@ -23,14 +27,11 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.model.network.AllowedAddressPair;
 import org.openstack4j.model.network.Port;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class OpenstackNeutronPortTest extends OpenstackWiremockTestSupport {
 
-    private static final String URI_FORMAT
-            = "openstack-neutron://%s?username=user&password=secret&project=project&operation=%s&subsystem="
-              + NeutronConstants.NEUTRON_PORT_SYSTEM;
+    private static final String URI_FORMAT =
+            "openstack-neutron://%s?username=user&password=secret&project=project&operation=%s&subsystem="
+                    + NeutronConstants.NEUTRON_PORT_SYSTEM;
 
     private static final String NETWORK_ID = "a87cc70a-3e15-4acf-8205-9b711a3531b7";
 
@@ -45,7 +46,8 @@ public class OpenstackNeutronPortTest extends OpenstackWiremockTestSupport {
         assertEquals(NETWORK_ID, out.getNetworkId());
         assertNotNull(out.getAllowedAddressPairs());
         assertEquals(1, out.getAllowedAddressPairs().size());
-        AllowedAddressPair allowedAddressPair = out.getAllowedAddressPairs().iterator().next();
+        AllowedAddressPair allowedAddressPair =
+                out.getAllowedAddressPairs().iterator().next();
         assertNotNull(allowedAddressPair.getIpAddress());
         assertNotNull(allowedAddressPair.getMacAddress());
     }

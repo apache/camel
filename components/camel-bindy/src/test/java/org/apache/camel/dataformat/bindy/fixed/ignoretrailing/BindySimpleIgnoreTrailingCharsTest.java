@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.ignoretrailing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,9 +33,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * This test validates that bindy will ignore trailing characters in a record when the ignoreTrailingCharacters property
  * is set to 'true' on the @FixedLengthRecord annotation
@@ -43,8 +44,8 @@ public class BindySimpleIgnoreTrailingCharsTest extends CamelTestSupport {
     public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
     public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
 
-    private static final String TEST_RECORD
-            = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     xxx\r\n";
+    private static final String TEST_RECORD =
+            "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009Hello     xxx\r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -65,8 +66,8 @@ public class BindySimpleIgnoreTrailingCharsTest extends CamelTestSupport {
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindySimpleIgnoreTrailingCharsTest.Order order
-                = (BindySimpleIgnoreTrailingCharsTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindySimpleIgnoreTrailingCharsTest.Order order = (BindySimpleIgnoreTrailingCharsTest.Order)
+                unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         assertNull(order.getFirstName());
@@ -89,12 +90,11 @@ public class BindySimpleIgnoreTrailingCharsTest extends CamelTestSupport {
                 bindy.setLocale("en");
                 bindy.type(BindyType.Fixed);
 
-                from(URI_DIRECT_MARSHALL)
-                        .marshal(bindy)
-                        .to(URI_MOCK_MARSHALL_RESULT);
+                from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
 
                 from(URI_DIRECT_UNMARSHALL)
-                        .unmarshal().bindy(BindyType.Fixed, BindySimpleIgnoreTrailingCharsTest.Order.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, BindySimpleIgnoreTrailingCharsTest.Order.class)
                         .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
@@ -243,11 +243,11 @@ public class BindySimpleIgnoreTrailingCharsTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

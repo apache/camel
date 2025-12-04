@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class AthenaComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithAccessAndSecretKey() throws Exception {
         Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
-        Athena2Endpoint endpoint
-                = (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxxxx&secretKey=yyyyy");
+        Athena2Endpoint endpoint =
+                (Athena2Endpoint) component.createEndpoint("aws2-athena://label?accessKey=xxxxx&secretKey=yyyyy");
 
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -54,8 +55,8 @@ public class AthenaComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Athena2Endpoint endpoint = (Athena2Endpoint) component
-                .createEndpoint("aws2-athena://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        Athena2Endpoint endpoint = (Athena2Endpoint)
+                component.createEndpoint("aws2-athena://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -68,8 +69,9 @@ public class AthenaComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        Athena2Endpoint endpoint = (Athena2Endpoint) component.createEndpoint(
-                "aws2-athena://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+        Athena2Endpoint endpoint = (Athena2Endpoint)
+                component.createEndpoint(
+                        "aws2-athena://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

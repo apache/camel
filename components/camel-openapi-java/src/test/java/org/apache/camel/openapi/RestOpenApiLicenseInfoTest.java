@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -25,13 +29,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestOpenApiLicenseInfoTest {
 
     @ParameterizedTest
-    @ValueSource(strings = { "3.1", "3.0" })
+    @ValueSource(strings = {"3.1", "3.0"})
     public void testLicenseInfo(String openApiVersion) throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
@@ -47,15 +48,14 @@ public class RestOpenApiLicenseInfoTest {
                         .apiProperty("externalDocs.url", "https://openweathermap.org/api")
                         .apiProperty("externalDocs.description", "API Documentation");
 
-                rest("/api")
-                        .get("/api").to("direct:api");
+                rest("/api").get("/api").to("direct:api");
                 from("direct:api").setBody().constant("Hello World");
             }
         });
 
         RestConfiguration restConfiguration = context.getRestConfiguration();
-        RestOpenApiProcessor processor
-                = new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
+        RestOpenApiProcessor processor =
+                new RestOpenApiProcessor(restConfiguration.getApiProperties(), restConfiguration);
         processor.setCamelContext(context);
         processor.start();
 

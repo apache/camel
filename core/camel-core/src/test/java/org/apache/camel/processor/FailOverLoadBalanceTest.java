@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,10 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverLoadBalanceTest extends ContextTestSupport {
 
@@ -71,19 +72,22 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:exception").loadBalance()
+                from("direct:exception")
+                        .loadBalance()
                         // catch all the exception here
-                        .failover().to("direct:x", "direct:y", "direct:z");
+                        .failover()
+                        .to("direct:x", "direct:y", "direct:z");
 
-                from("direct:customerException").loadBalance().failover(MyException.class).to("direct:x", "direct:y",
-                        "direct:z");
+                from("direct:customerException")
+                        .loadBalance()
+                        .failover(MyException.class)
+                        .to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(new MyExceptionProcessor()).to("mock:x");
 
                 from("direct:y").process(new MyAnotherExceptionProcessor()).to("mock:y");
 
                 from("direct:z").to("mock:z");
-
             }
         };
     }

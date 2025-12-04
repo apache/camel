@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
@@ -31,7 +32,10 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
         getMockEndpoint("mock:commit").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);
         getMockEndpoint("mock:rollback").message(0).body().isEqualTo(null);
-        getMockEndpoint("mock:rollback").message(0).header(Exchange.EXCEPTION_CAUGHT).isInstanceOf(PersistenceException.class);
+        getMockEndpoint("mock:rollback")
+                .message(0)
+                .header(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(PersistenceException.class);
 
         template.sendBody("direct:start", null);
 
@@ -47,8 +51,7 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true)
-                        .to("mock:rollback");
+                onException(Exception.class).handled(true).to("mock:rollback");
 
                 from("direct:start")
                         .to("mybatis:insertAccount?statementType=Insert")
@@ -56,5 +59,4 @@ public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
             }
         };
     }
-
 }

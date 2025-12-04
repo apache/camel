@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.search;
 
 import java.util.Collections;
@@ -99,9 +100,12 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getLatitude())
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getLongitude())
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getRadius())) {
-            GeoLocation location
-                    = GeoLocation.of(endpoint.getProperties().getLatitude(), endpoint.getProperties().getLongitude());
-            query.geoCode(location, endpoint.getProperties().getRadius(),
+            GeoLocation location = GeoLocation.of(
+                    endpoint.getProperties().getLatitude(),
+                    endpoint.getProperties().getLongitude());
+            query.geoCode(
+                    location,
+                    endpoint.getProperties().getRadius(),
                     Unit.valueOf(endpoint.getProperties().getDistanceMetric()));
 
             LOG.debug("Searching with additional geolocation parameters.");
@@ -130,5 +134,4 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
 
         return TwitterEventType.STATUS.createExchangeList(endpoint, tweets);
     }
-
 }

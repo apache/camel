@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.model;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ public class UpdateListDTO {
     private String runtimeVersion;
     private String description;
 
-    public UpdateListDTO() {
-    }
+    public UpdateListDTO() {}
 
     public UpdateListDTO(String version, String runtime, String runtimeVersion, String description) {
         this.version = version;

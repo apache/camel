@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +37,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class BlobContainerOperationsIT extends Base {
 
     private BlobServiceClientWrapper blobServiceClientWrapper;
@@ -47,10 +48,10 @@ class BlobContainerOperationsIT extends Base {
 
     @Test
     void testCreateAndDeleteContainer() {
-        final BlobContainerClientWrapper containerClientWrapper
-                = blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
-        final BlobContainerOperations blobContainerOperations
-                = new BlobContainerOperations(configuration, containerClientWrapper);
+        final BlobContainerClientWrapper containerClientWrapper =
+                blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
+        final BlobContainerOperations blobContainerOperations =
+                new BlobContainerOperations(configuration, containerClientWrapper);
 
         final BlobOperationResponse response = blobContainerOperations.createContainer(null);
 
@@ -63,7 +64,8 @@ class BlobContainerOperationsIT extends Base {
 
         // test with options being set
         final Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(BlobConstants.METADATA, Collections.singletonMap("testKeyMetadata", "testValueMetadata"));
+        exchange.getIn()
+                .setHeader(BlobConstants.METADATA, Collections.singletonMap("testKeyMetadata", "testValueMetadata"));
         exchange.getIn().setHeader(BlobConstants.PUBLIC_ACCESS_TYPE, PublicAccessType.CONTAINER);
 
         // try to create the container again, we try until we can

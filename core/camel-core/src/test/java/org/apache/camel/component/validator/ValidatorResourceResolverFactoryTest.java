@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,12 +42,9 @@ import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
     private Context jndiContext;
@@ -54,8 +56,8 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         jndiContext.unbind("validator");
 
         String directStart = "direct:start";
-        String endpointUri
-                = "validator:org/apache/camel/component/validator/xsds/person.xsd?resourceResolverFactory=#resourceResolverFactory";
+        String endpointUri =
+                "validator:org/apache/camel/component/validator/xsds/person.xsd?resourceResolverFactory=#resourceResolverFactory";
 
         execute(directStart, endpointUri);
     }
@@ -70,32 +72,32 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         String directStart = "direct:startComponent";
         String endpointUri = "validator:org/apache/camel/component/validator/xsds/person.xsd";
         execute(directStart, endpointUri);
-
     }
 
     void execute(String directStart, String endpointUri) throws InterruptedException {
         MockEndpoint endEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         endEndpoint.expectedMessageCount(1);
 
-        final String body
-                = "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\" xmlns:c=\"org.health.check.common\">\n" //
-                  + "  <p:firstName>James</p:firstName>\n" //
-                  + "  <p:lastName>Strachan</p:lastName>\n" //
-                  + "  <p:city>London</p:city>\n" //
-                  + "  <h:health>\n"//
-                  + "      <h:lastCheck>2011-12-23</h:lastCheck>\n" //
-                  + "      <h:status>OK</h:status>\n" //
-                  + "      <c:commonElement>" //
-                  + "          <c:element1/>" //
-                  + "          <c:element2/>" //
-                  + "      </c:commonElement>" //
-                  + "  </h:health>\n" //
-                  + "</p:person>";
+        final String body =
+                "<p:person user=\"james\" xmlns:p=\"org.person\" xmlns:h=\"org.health.check.person\" xmlns:c=\"org.health.check.common\">\n" //
+                        + "  <p:firstName>James</p:firstName>\n" //
+                        + "  <p:lastName>Strachan</p:lastName>\n" //
+                        + "  <p:city>London</p:city>\n" //
+                        + "  <h:health>\n" //
+                        + "      <h:lastCheck>2011-12-23</h:lastCheck>\n" //
+                        + "      <h:status>OK</h:status>\n" //
+                        + "      <c:commonElement>" //
+                        + "          <c:element1/>" //
+                        + "          <c:element2/>" //
+                        + "      </c:commonElement>" //
+                        + "  </h:health>\n" //
+                        + "</p:person>";
 
         template.sendBody(directStart, body);
 
         // wait until endpoint is resolved
-        await().atMost(1, TimeUnit.SECONDS).until(() -> resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class) != null);
+        await().atMost(1, TimeUnit.SECONDS)
+                .until(() -> resolveMandatoryEndpoint(endpointUri, ValidatorEndpoint.class) != null);
 
         MockEndpoint.assertIsSatisfied(endEndpoint);
 
@@ -119,31 +121,36 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         jndiContext = createJndiContext();
         jndiContext.bind("resourceResolverFactory", new ResourceResolverFactoryImpl());
         return new DefaultRegistry(new JndiBeanRepository(jndiContext));
-
     }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() {
-        return new RouteBuilder[] { new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:start")
-                        .setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
-                        .recipientList(new SimpleExpression(
-                                "validator:${header.xsd_file}?resourceResolverFactory=#resourceResolverFactory"))
-                        .to("mock:end");
+        return new RouteBuilder[] {
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start")
+                            .setHeader(
+                                    "xsd_file",
+                                    new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
+                            .recipientList(new SimpleExpression(
+                                    "validator:${header.xsd_file}?resourceResolverFactory=#resourceResolverFactory"))
+                            .to("mock:end");
+                }
+            },
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+
+                    from("direct:startComponent")
+                            .setHeader(
+                                    "xsd_file",
+                                    new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
+                            .recipientList(new SimpleExpression("validator:${header.xsd_file}"))
+                            .to("mock:end");
+                }
             }
-
-        }, new RouteBuilder() {
-            @Override
-            public void configure() {
-
-                from("direct:startComponent")
-                        .setHeader("xsd_file", new ConstantExpression("org/apache/camel/component/validator/xsds/person.xsd"))
-                        .recipientList(new SimpleExpression("validator:${header.xsd_file}")).to("mock:end");
-
-            }
-        } };
+        };
     }
 
     static class ResourceResolverFactoryImpl implements ValidatorResourceResolverFactory {
@@ -152,7 +159,6 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         public LSResourceResolver createResourceResolver(CamelContext camelContext, String rootResourceUri) {
             return new CustomResourceResolver(camelContext, rootResourceUri);
         }
-
     }
 
     /** Custom resource resolver which collects all resolved resource URIs. */
@@ -169,12 +175,11 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
+        public LSInput resolveResource(
+                String type, String namespaceURI, String publicId, String systemId, String baseURI) {
             LSInput result = super.resolveResource(type, namespaceURI, publicId, systemId, baseURI);
             resolvedRsourceUris.add(systemId);
             return result;
         }
-
     }
-
 }

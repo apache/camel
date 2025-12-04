@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.NotifyBuilder;
@@ -22,9 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Memory repo test
@@ -35,7 +36,7 @@ public class FtpConsumerIdempotentMemoryRefIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/idempotent?password=admin&binary=false&idempotent=true"
-               + "&idempotentRepository=#myConsumerIdemRepo&idempotentKey=${file:onlyname}&delete=true";
+                + "&idempotentRepository=#myConsumerIdemRepo&idempotentKey=${file:onlyname}&delete=true";
     }
 
     @BindToRegistry("myConsumerIdemRepo")

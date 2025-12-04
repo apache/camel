@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import java.util.Collection;
@@ -50,8 +51,13 @@ import org.slf4j.LoggerFactory;
  * utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
-             remote = false, syntax = "disruptor:name", category = { Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "2.12.0",
+        scheme = "disruptor,disruptor-vm",
+        title = "Disruptor,Disruptor VM",
+        remote = false,
+        syntax = "disruptor:name",
+        category = {Category.MESSAGING})
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
@@ -63,25 +69,33 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     @UriPath(description = "Name of queue")
     @Metadata(required = true)
     private String name;
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers;
+
     @UriParam(label = "consumer")
     private boolean multipleConsumers;
+
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
+
     @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000;
+
     @UriParam(defaultValue = "" + DisruptorComponent.DEFAULT_BUFFER_SIZE)
     private int size;
+
     @UriParam(label = "producer")
     private boolean blockWhenFull;
+
     @UriParam(label = "consumer", defaultValue = "Blocking")
     private DisruptorWaitStrategy waitStrategy;
+
     @UriParam(label = "producer", defaultValue = "Multi")
     private DisruptorProducerType producerType;
 
-    public DisruptorEndpoint(final String endpointUri, final Component component,
-                             final DisruptorReference disruptorReference) {
+    public DisruptorEndpoint(
+            final String endpointUri, final Component component, final DisruptorReference disruptorReference) {
         super(endpointUri, component);
         this.disruptorReference = disruptorReference;
         this.name = disruptorReference.getName();
@@ -124,7 +138,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    @ManagedAttribute(description = "Option to specify whether the caller should wait for the async task to complete or not before continuing")
+    @ManagedAttribute(
+            description =
+                    "Option to specify whether the caller should wait for the async task to complete or not before continuing")
     public WaitForTaskToComplete getWaitForTaskToComplete() {
         return waitForTaskToComplete;
     }
@@ -138,7 +154,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
-    @ManagedAttribute(description = "Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete")
+    @ManagedAttribute(
+            description =
+                    "Timeout (in milliseconds) before a producer will stop waiting for an asynchronous task to complete")
     public long getTimeout() {
         return timeout;
     }
@@ -213,7 +231,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         this.blockWhenFull = blockWhenFull;
     }
 
-    @ManagedAttribute(description = "Defines the strategy used by consumer threads to wait on new exchanges to be published")
+    @ManagedAttribute(
+            description = "Defines the strategy used by consumer threads to wait on new exchanges to be published")
     public DisruptorWaitStrategy getWaitStrategy() {
         return waitStrategy;
     }
@@ -288,14 +307,15 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         try {
             // validate multiple consumers have been enabled is necessary
             if (!consumers.isEmpty() && !isMultipleConsumersSupported()) {
-                throw new IllegalStateException(
-                        "Multiple consumers for the same endpoint is not allowed: " + this);
+                throw new IllegalStateException("Multiple consumers for the same endpoint is not allowed: " + this);
             }
             if (consumers.add(consumer)) {
                 LOGGER.debug("Starting consumer {} on endpoint {}", consumer, getEndpointUri());
                 getDisruptor().reconfigure();
             } else {
-                LOGGER.debug("Tried to start Consumer {} on endpoint {} but it was already started", consumer,
+                LOGGER.debug(
+                        "Tried to start Consumer {} on endpoint {} but it was already started",
+                        consumer,
                         getEndpointUri());
             }
         } finally {
@@ -310,7 +330,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
                 LOGGER.debug("Stopping consumer {} on endpoint {}", consumer, getEndpointUri());
                 getDisruptor().reconfigure();
             } else {
-                LOGGER.debug("Tried to stop Consumer {} on endpoint {} but it was already stopped", consumer, getEndpointUri());
+                LOGGER.debug(
+                        "Tried to stop Consumer {} on endpoint {} but it was already stopped",
+                        consumer,
+                        getEndpointUri());
             }
         } finally {
             lock.unlock();

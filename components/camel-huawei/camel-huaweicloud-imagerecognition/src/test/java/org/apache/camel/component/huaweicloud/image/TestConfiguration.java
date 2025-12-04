@@ -46,7 +46,6 @@ public class TestConfiguration {
             } catch (Exception e) {
                 LOGGER.error("Cannot load property file {}, reason {}", propertyFileName, e.getMessage());
             }
-
         }
     }
 

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky on some OS as java.io.delete can
@@ -45,8 +46,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public void setEndpoint(GenericFileEndpoint<Object> endpoint) {
-        }
+        public void setEndpoint(GenericFileEndpoint<Object> endpoint) {}
 
         @Override
         public boolean deleteFile(String name) throws GenericFileOperationFailedException {
@@ -77,7 +77,8 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
+        public boolean retrieveFile(String name, Exchange exchange, long size)
+                throws GenericFileOperationFailedException {
             return false;
         }
 
@@ -97,12 +98,10 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
 
         @Override
-        public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
-        }
+        public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {}
 
         @Override
-        public void changeToParentDirectory() throws GenericFileOperationFailedException {
-        }
+        public void changeToParentDirectory() throws GenericFileOperationFailedException {}
 
         @Override
         public Object[] listFiles() throws GenericFileOperationFailedException {
@@ -148,7 +147,8 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
 
-        Assertions.assertThrows(GenericFileOperationFailedException.class,
+        Assertions.assertThrows(
+                GenericFileOperationFailedException.class,
                 () -> strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file),
                 "Should have thrown an exception");
 

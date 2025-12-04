@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.deployments;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
@@ -24,7 +25,8 @@ import org.apache.camel.spi.annotations.Component;
 public class KubernetesDeploymentsComponent extends AbstractKubernetesComponent {
 
     @Override
-    protected KubernetesDeploymentsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) {
+    protected KubernetesDeploymentsEndpoint doCreateEndpoint(
+            String uri, String remaining, KubernetesConfiguration config) {
         return new KubernetesDeploymentsEndpoint(uri, this, config);
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
@@ -47,8 +48,7 @@ public final class Builder {
     /**
      * Utility classes should not have a public constructor.
      */
-    private Builder() {
-    }
+    private Builder() {}
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder.
@@ -130,7 +130,8 @@ public final class Builder {
             exp = ce;
         } else {
             ConstantExpression ce = new ConstantExpression();
-            ce.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value)));
+            ce.setExpressionType(
+                    ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(value)));
             ce.setExpression(String.valueOf(value));
             ce.setTrim(trim ? "true" : "false");
             exp = ce;

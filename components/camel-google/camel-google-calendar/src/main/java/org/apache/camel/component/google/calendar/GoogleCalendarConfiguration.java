@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
 
 import java.util.Collection;
@@ -37,30 +38,42 @@ public class GoogleCalendarConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleCalendarApiName apiName;
-    @UriPath(enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
+
+    @UriPath(
+            enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
     @Metadata(required = true)
     private String methodName;
+
     @UriParam(defaultValue = CalendarScopes.CALENDAR)
     private String scopes;
+
     @UriParam
     private String clientId;
+
     @UriParam
     private String applicationName;
+
     @UriParam(label = "security", secret = true)
     private String emailAddress;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String refreshToken;
+
     @UriParam(label = "security", secret = true)
     private String p12FileName;
+
     @UriParam(label = "security", secret = true)
     private String user;
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
+
     @UriParam
     private String delegate;
 

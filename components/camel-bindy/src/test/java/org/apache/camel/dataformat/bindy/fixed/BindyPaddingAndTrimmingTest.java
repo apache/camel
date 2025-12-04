@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,10 +29,6 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
 
@@ -43,7 +44,8 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(URI_DIRECT_UNMARSHAL)
-                        .unmarshal().bindy(BindyType.Fixed, MyBindyModel.class)
+                        .unmarshal()
+                        .bindy(BindyType.Fixed, MyBindyModel.class)
                         .to(URI_MOCK_UNMARSHAL_RESULT);
             }
         };
@@ -55,7 +57,8 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
         template.sendBody(URI_DIRECT_UNMARSHAL, "foo  \r\n");
 
         unmarhsalResult.assertIsSatisfied();
-        MyBindyModel myBindyModel = unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
+        MyBindyModel myBindyModel =
+                unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
         assertEquals("foo  ", myBindyModel.foo);
         assertThat(myBindyModel.bar, is(""));
     }
@@ -66,9 +69,9 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
         template.sendBody(URI_DIRECT_UNMARSHAL, "foo  bar    \r\n");
 
         unmarhsalResult.assertIsSatisfied();
-        MyBindyModel myBindyModel = unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
+        MyBindyModel myBindyModel =
+                unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
         assertEquals("foo  ", myBindyModel.foo);
-
     }
 
     @FixedLengthRecord(length = 10, ignoreMissingChars = true, ignoreTrailingChars = true)

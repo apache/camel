@@ -33,11 +33,11 @@ public class TokenizerImplementationDefinition extends IdentifiedType
 
     @XmlTransient
     private String tokenizerName;
+
     @XmlTransient
     private Tokenizer.Configuration configuration;
 
-    public TokenizerImplementationDefinition() {
-    }
+    public TokenizerImplementationDefinition() {}
 
     protected TokenizerImplementationDefinition(TokenizerImplementationDefinition source) {
         this.tokenizerName = source.tokenizerName;

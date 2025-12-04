@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -43,9 +46,6 @@ import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 /**
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans, such as
  * Spring, JNDI, OSGi etc. And to use a secondary {@link SimpleRegistry} as the fallback repository to lookup and bind
@@ -58,7 +58,8 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRegistry.class);
     protected CamelContext camelContext;
-    protected final Stack<BeanRepository> localRepository = new Stack<>();;
+    protected final Stack<BeanRepository> localRepository = new Stack<>();
+    ;
     protected List<BeanRepository> repositories;
     protected Registry fallbackRegistry = new SimpleRegistry();
     protected Registry supplierRegistry = new SupplierRegistry();
@@ -264,8 +265,12 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
                 try {
                     org.apache.camel.support.ObjectHelper.invokeMethodSafe(destroyMethod, target);
                 } catch (Exception e) {
-                    LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
-                            destroyMethod, target, e.getMessage(), e);
+                    LOG.warn(
+                            "Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
+                            destroyMethod,
+                            target,
+                            e.getMessage(),
+                            e);
                 }
             }
         }

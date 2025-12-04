@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import java.io.FileNotFoundException;
@@ -30,8 +31,7 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class InfinispanUtil {
-    protected InfinispanUtil() {
-    }
+    protected InfinispanUtil() {}
 
     public static boolean isInHeaderEmpty(Exchange exchange, String header) {
         return isHeaderEmpty(exchange.getMessage(), header);
@@ -63,9 +63,9 @@ public class InfinispanUtil {
     }
 
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(CamelContext camelContext, Object source) {
-        return camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(
-                source,
-                source.getClass().getSimpleName());
+        return camelContext
+                .getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(source, source.getClass().getSimpleName());
     }
 
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(
@@ -75,9 +75,9 @@ public class InfinispanUtil {
 
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(
             CamelContext camelContext, Object source, String id) {
-        return camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(
-                source,
-                source.getClass().getSimpleName() + "-" + id);
+        return camelContext
+                .getExecutorServiceManager()
+                .newSingleThreadScheduledExecutor(source, source.getClass().getSimpleName() + "-" + id);
     }
 
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(

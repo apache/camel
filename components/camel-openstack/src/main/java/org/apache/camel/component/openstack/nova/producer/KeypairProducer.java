@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.nova.producer;
 
 import java.util.List;
@@ -86,5 +87,4 @@ public class KeypairProducer extends AbstractOpenstackProducer {
         final ActionResponse response = os.compute().keypairs().delete(keypairName);
         checkFailure(response, exchange, "Delete keypair " + keypairName);
     }
-
 }

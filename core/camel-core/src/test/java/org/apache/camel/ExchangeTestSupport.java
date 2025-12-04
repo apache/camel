@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A base class for a test which requires a {@link CamelContext} and a populated {@link Exchange}

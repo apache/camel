@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.wal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,9 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogWriterRollOverUpdateAfterDiscardTest extends LogTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(LogWriterRollOverUpdateAfterDiscardTest.class);
@@ -103,5 +102,4 @@ public class LogWriterRollOverUpdateAfterDiscardTest extends LogTestBase {
             Assertions.assertEquals(100, count, "The number of records don't match");
         }
     }
-
 }

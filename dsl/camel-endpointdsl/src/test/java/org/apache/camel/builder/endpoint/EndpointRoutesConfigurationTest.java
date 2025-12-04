@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -35,24 +36,24 @@ public class EndpointRoutesConfigurationTest extends BaseEndpointDslTest {
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {
-                new EndpointRouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from(direct("start"))
-                                .throwException(new IllegalArgumentException("Foo"));
+            new EndpointRouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from(direct("start")).throwException(new IllegalArgumentException("Foo"));
 
-                        from(direct("start2"))
-                                .throwException(new IllegalArgumentException("Foo2"));
-                    }
-                },
-                new EndpointRouteConfigurationBuilder() {
-                    @Override
-                    public void configuration() throws Exception {
-                        // global routes configuration
-                        routeConfiguration().onException(Exception.class).handled(true).to(mock("error"));
-                    }
+                    from(direct("start2")).throwException(new IllegalArgumentException("Foo2"));
                 }
+            },
+            new EndpointRouteConfigurationBuilder() {
+                @Override
+                public void configuration() throws Exception {
+                    // global routes configuration
+                    routeConfiguration()
+                            .onException(Exception.class)
+                            .handled(true)
+                            .to(mock("error"));
+                }
+            }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import java.util.ArrayList;
@@ -43,12 +44,9 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
 @YamlIn
 @YamlType(
-          nodes = "beans",
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "__extends",
-                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
-          })
+        nodes = "beans",
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        properties = {@YamlProperty(name = "__extends", type = "array:org.apache.camel.model.BeanFactoryDefinition")})
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
 
     private final Set<String> beanCache = new HashSet<>();
@@ -98,7 +96,8 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     protected void registerBean(
             CamelContext camelContext,
             List<BeanFactoryDefinition<?>> delayedRegistrations,
-            BeanFactoryDefinition<?> def, boolean delayIfFailed) {
+            BeanFactoryDefinition<?> def,
+            boolean delayIfFailed) {
 
         CamelBeanPostProcessor cbpp = PluginHelper.getBeanPostProcessor(camelContext);
         Predicate<?> lazy = cbpp.getLazyBeanStrategy();
@@ -123,8 +122,9 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             if (delayIfFailed) {
                 delayedRegistrations.add(def);
             } else {
-                String msg
-                        = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
+                String msg = name != null
+                        ? "Error creating bean: " + name + " of type: " + type
+                        : "Error creating bean: " + type;
                 throw new RuntimeException(msg, e);
             }
         }
@@ -154,9 +154,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         }
     }
 
-    protected void bindBean(
-            CamelContext camelContext, BeanFactoryDefinition<?> def,
-            String name, Object target)
+    protected void bindBean(CamelContext camelContext, BeanFactoryDefinition<?> def, String name, Object target)
             throws Exception {
 
         // unbind in case we reload
@@ -169,8 +167,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     }
 
     protected void bindLazyBean(
-            CamelContext camelContext, BeanFactoryDefinition<?> def,
-            String name, Supplier<Object> target)
+            CamelContext camelContext, BeanFactoryDefinition<?> def, String name, Supplier<Object> target)
             throws Exception {
 
         Class<?> beanType = null;
@@ -189,5 +186,4 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         model.addCustomBean(def);
     }
-
 }

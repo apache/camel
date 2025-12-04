@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.consumer;
 
 import com.dropbox.core.v2.files.Metadata;
@@ -28,8 +29,8 @@ import org.apache.camel.component.dropbox.util.DropboxConstants;
 
 public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollConsumer {
 
-    public DropboxScheduledPollSearchConsumer(DropboxEndpoint endpoint, Processor processor,
-                                              DropboxConfiguration configuration) {
+    public DropboxScheduledPollSearchConsumer(
+            DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
         super(endpoint, processor, configuration);
     }
 
@@ -48,7 +49,10 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
             StringBuilder fileExtracted = new StringBuilder();
             for (SearchMatchV2 entry : result.getFound()) {
                 Metadata metadata = entry.getMetadata().getMetadataValue();
-                fileExtracted.append(metadata.getName()).append('-').append(metadata.getPathDisplay())
+                fileExtracted
+                        .append(metadata.getName())
+                        .append('-')
+                        .append(metadata.getPathDisplay())
                         .append('\n');
             }
 

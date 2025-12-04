@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.opensearch.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +32,6 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.Request;
 import org.opensearch.client.opensearch.core.GetRequest;
-
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OpensearchClusterIndexIT extends OpensearchTestSupport {
 
@@ -48,7 +49,9 @@ class OpensearchClusterIndexIT extends OpensearchTestSupport {
         indexId = template().requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        assertTrue(client.get(new GetRequest.Builder().index("twitter").id("1").build(), ObjectNode.class).found(),
+        assertTrue(
+                client.get(new GetRequest.Builder().index("twitter").id("1").build(), ObjectNode.class)
+                        .found(),
                 "Index id 1 must exists");
     }
 
@@ -63,12 +66,15 @@ class OpensearchClusterIndexIT extends OpensearchTestSupport {
         String indexId = template().requestBodyAndHeaders("direct:indexWithSniffer", map, headers, String.class);
         assertNotNull(indexId, "indexId should be set");
 
-        assertTrue(client.get(new GetRequest.Builder().index("facebook").id("4").build(), ObjectNode.class).found(),
+        assertTrue(
+                client.get(new GetRequest.Builder().index("facebook").id("4").build(), ObjectNode.class)
+                        .found(),
                 "Index id 4 must exists");
 
         final BasicHttpClientResponseHandler responseHandler = new BasicHttpClientResponseHandler();
         Request request = new Request("GET", "/_cluster/health?pretty");
-        String body = responseHandler.handleEntity(restClient.performRequest(request).getEntity());
+        String body =
+                responseHandler.handleEntity(restClient.performRequest(request).getEntity());
         assertStringContains(body, "\"number_of_data_nodes\" : 1");
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import org.apache.camel.Message;
@@ -23,12 +24,14 @@ import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.query.Query;
 
-public class InfinispanRemoteProducer extends InfinispanProducer<InfinispanRemoteManager, InfinispanRemoteConfiguration> {
+public class InfinispanRemoteProducer
+        extends InfinispanProducer<InfinispanRemoteManager, InfinispanRemoteConfiguration> {
 
-    public InfinispanRemoteProducer(InfinispanEndpoint endpoint,
-                                    String cacheName,
-                                    InfinispanRemoteManager manager,
-                                    InfinispanRemoteConfiguration configuration) {
+    public InfinispanRemoteProducer(
+            InfinispanEndpoint endpoint,
+            String cacheName,
+            InfinispanRemoteManager manager,
+            InfinispanRemoteConfiguration configuration) {
 
         super(endpoint, cacheName, manager, configuration);
     }

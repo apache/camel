@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
 public class ServiceUtil {
     public String invoke(String id, String payload) {
         return id + payload;
     }
-
 }

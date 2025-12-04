@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.services.ContainerService;
@@ -31,8 +32,8 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
     public static class TransientAuthenticatedKafkaContainer extends KafkaContainer {
         public TransientAuthenticatedKafkaContainer(String jaasConfigFile) {
             super(DockerImageName.parse(System.getProperty(
-                    KafkaProperties.KAFKA_CONTAINER,
-                    KafkaServiceFactory.ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
+                            KafkaProperties.KAFKA_CONTAINER,
+                            KafkaServiceFactory.ContainerLocalKafkaService.KAFKA3_IMAGE_NAME))
                     .asCompatibleSubstituteFor("apache/kafka"));
 
             final MountableFile mountableFile = MountableFile.forClasspathResource(jaasConfigFile);
@@ -111,7 +112,8 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
      * @return          A string with the configuration
      */
     public static String generateSimpleSaslJaasConfig(String username, String password) {
-        return String.format("org.apache.kafka.common.security.plain.PlainLoginModule required username='%s' password='%s';",
+        return String.format(
+                "org.apache.kafka.common.security.plain.PlainLoginModule required username='%s' password='%s';",
                 username, password);
     }
 }

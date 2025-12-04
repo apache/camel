@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
 import org.apache.camel.component.aws2.eks.client.EKS2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientIAMOptimizedImp
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EKS2ClientFactoryTest {
 

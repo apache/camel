@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
@@ -46,7 +47,8 @@ public class DefaultManagementStrategyFactory implements ManagementStrategyFacto
         if (!camelContext.getLifecycleStrategies().isEmpty()) {
             // camel-spring may re-initialize JMX during startup,
             // so remove any previous JMX initialized lifecycle strategy
-            camelContext.getLifecycleStrategies()
+            camelContext
+                    .getLifecycleStrategies()
                     .removeIf(s -> s.getClass().getName().startsWith("org.apache.camel.management"));
         }
     }

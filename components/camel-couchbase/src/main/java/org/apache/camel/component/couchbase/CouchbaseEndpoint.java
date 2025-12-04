@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
+
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONNECT_TIMEOUT;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONSUME_PROCESSED_STRATEGY;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_DESIGN_DOCUMENT_NAME;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PAUSE_BETWEEN_RETRIES;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PRODUCER_RETRIES;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_QUERY_TIMEOUT;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VIEWNAME;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,30 +56,26 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONNECT_TIMEOUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONSUME_PROCESSED_STRATEGY;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_DESIGN_DOCUMENT_NAME;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PAUSE_BETWEEN_RETRIES;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_PRODUCER_RETRIES;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_QUERY_TIMEOUT;
-import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VIEWNAME;
-
 /**
  * Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol://hostname:port",
-             category = { Category.DATABASE }, headersClass = CouchbaseConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "couchbase",
+        title = "Couchbase",
+        syntax = "couchbase:protocol://hostname:port",
+        category = {Category.DATABASE},
+        headersClass = CouchbaseConstants.class)
 public class CouchbaseEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath
     @Metadata(required = true)
     private String protocol;
+
     @UriPath
     @Metadata(required = true)
     private String hostname;
+
     @UriPath(defaultValue = "8091")
     private int port;
 
@@ -88,6 +96,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     // Authentication
     @UriParam(label = "security", secret = true)
     private String username;
+
     @UriParam(label = "security", secret = true)
     private String password;
 
@@ -105,10 +114,13 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     // Producer parameters
     @UriParam(label = "producer", defaultValue = COUCHBASE_PUT)
     private String operation = COUCHBASE_PUT;
+
     @UriParam(label = "producer", defaultValue = "false")
     private boolean autoStartIdForInserts;
+
     @UriParam(label = "producer", defaultValue = "2")
     private int producerRetryAttempts = DEFAULT_PRODUCER_RETRIES;
+
     @UriParam(label = "producer", defaultValue = "5000")
     private int producerRetryPause = DEFAULT_PAUSE_BETWEEN_RETRIES;
 
@@ -117,20 +129,28 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     // View control
     @UriParam(label = "consumer", defaultValue = DEFAULT_DESIGN_DOCUMENT_NAME)
     private String designDocumentName = DEFAULT_DESIGN_DOCUMENT_NAME;
+
     @UriParam(label = "consumer", defaultValue = DEFAULT_VIEWNAME)
     private String viewName = DEFAULT_VIEWNAME;
+
     @UriParam(label = "consumer", defaultValue = "-1")
     private int limit = -1;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean descending;
+
     @UriParam(label = "consumer", defaultValue = "-1")
     private int skip = -1;
+
     @UriParam(label = "consumer")
     private String rangeStartKey;
+
     @UriParam(label = "consumer")
     private String rangeEndKey = "";
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean fullDocument = true;
+
     @UriParam(label = "consumer", defaultValue = "5000")
     private int consumerRetryPause = DEFAULT_PAUSE_BETWEEN_RETRIES;
 
@@ -146,8 +166,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
 
-    public CouchbaseEndpoint() {
-    }
+    public CouchbaseEndpoint() {}
 
     public CouchbaseEndpoint(String uri, String remaining, CouchbaseComponent component) throws URISyntaxException {
         super(uri, component);
@@ -523,10 +542,9 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     public URI[] makeBootstrapURI() throws URISyntaxException {
 
         if (additionalHosts == null || additionalHosts.isEmpty()) {
-            return new URI[] { new URI(protocol + "://" + hostname + ":" + port + "/pools") };
+            return new URI[] {new URI(protocol + "://" + hostname + ":" + port + "/pools")};
         }
         return getAllUris();
-
     }
 
     private URI[] getAllUris() throws URISyntaxException {
@@ -552,7 +570,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
         return uriArray;
     }
 
-    //create from couchbase-client
+    // create from couchbase-client
     private Bucket createClient() throws Exception {
         List<URI> hosts = Arrays.asList(makeBootstrapURI());
         String connectionString;
@@ -571,9 +589,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
 
         ClusterEnvironment env = cfb.build();
 
-        String addHosts = hosts.stream()
-                .map(URI::getHost)
-                .collect(Collectors.joining(","));
+        String addHosts = hosts.stream().map(URI::getHost).collect(Collectors.joining(","));
 
         if (!addHosts.isEmpty()) {
             connectionString = addHosts;
@@ -581,9 +597,9 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
             connectionString = hostname;
         }
 
-        Cluster cluster = Cluster.connect(connectionString, ClusterOptions
-                .clusterOptions(username, password)
-                .environment(env));
+        Cluster cluster = Cluster.connect(
+                connectionString,
+                ClusterOptions.clusterOptions(username, password).environment(env));
 
         return cluster.bucket(bucket);
     }

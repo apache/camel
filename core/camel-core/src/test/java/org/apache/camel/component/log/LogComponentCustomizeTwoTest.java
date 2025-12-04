@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,7 +25,8 @@ import org.junit.jupiter.api.Test;
 
 public class LogComponentCustomizeTwoTest extends ContextTestSupport {
 
-    private final LogCustomFormatterTest.TestExchangeFormatter formatter = new LogCustomFormatterTest.TestExchangeFormatter();
+    private final LogCustomFormatterTest.TestExchangeFormatter formatter =
+            new LogCustomFormatterTest.TestExchangeFormatter();
 
     @Test
     public void testCustomize() throws Exception {
@@ -45,8 +47,7 @@ public class LogComponentCustomizeTwoTest extends ContextTestSupport {
                     l.setExchangeFormatter(formatter);
                 });
 
-                from("direct:start")
-                        .to("log:foo");
+                from("direct:start").to("log:foo");
             }
         };
     }

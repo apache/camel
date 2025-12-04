@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedRegisterExchangeStatisticsTest extends ManagementTestSupport {
 
@@ -34,7 +35,8 @@ public class ManagedRegisterExchangeStatisticsTest extends ManagementTestSupport
     public void testExchangesCompletedStatistics() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
+        ObjectName on =
+                getCamelObjectName(TYPE_ROUTE, context.getRoutes().get(0).getRouteId());
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
 
@@ -57,5 +59,4 @@ public class ManagedRegisterExchangeStatisticsTest extends ManagementTestSupport
             }
         };
     }
-
 }

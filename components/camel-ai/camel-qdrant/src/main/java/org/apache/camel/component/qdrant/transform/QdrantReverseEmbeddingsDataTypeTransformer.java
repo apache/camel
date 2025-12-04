@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant.transform;
 
 import java.util.List;
@@ -30,8 +31,10 @@ import org.apache.camel.spi.Transformer;
 /**
  * Maps a List of retrieved LangChain4j Embeddings with similarity search to a List of String for LangChain4j RAG
  */
-@DataTypeTransformer(name = "qdrant:rag",
-                     description = "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
+@DataTypeTransformer(
+        name = "qdrant:rag",
+        description =
+                "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
 public class QdrantReverseEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType from, DataType to) throws Exception {

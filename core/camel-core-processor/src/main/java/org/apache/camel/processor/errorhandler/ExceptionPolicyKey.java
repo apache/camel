@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import org.apache.camel.Predicate;
@@ -90,6 +91,6 @@ public final class ExceptionPolicyKey {
     @Override
     public String toString() {
         return "ExceptionPolicyKey[route: " + (routeId != null ? routeId : "<global>") + ", " + exceptionClass
-               + (when != null ? " " + when : "") + "]";
+                + (when != null ? " " + when : "") + "]";
     }
 }

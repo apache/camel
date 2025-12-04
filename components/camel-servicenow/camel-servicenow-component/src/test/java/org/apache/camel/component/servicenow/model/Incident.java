@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -41,8 +42,7 @@ public class Incident {
     @JsonProperty("impact")
     private int impact;
 
-    public Incident() {
-    }
+    public Incident() {}
 
     public String getId() {
         return id;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron.producer;
 
 import java.util.List;
@@ -70,8 +71,8 @@ public class SubnetProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.SUBNET_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(NeutronConstants.SUBNET_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Subnet ID");
         final Subnet out = os.networking().subnet().get(id);
         exchange.getIn().setBody(out);
@@ -84,8 +85,8 @@ public class SubnetProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id
-                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.SUBNET_ID, String.class), String.class);
+        final String id = msg.getHeader(
+                OpenstackConstants.ID, msg.getHeader(NeutronConstants.SUBNET_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Subnet ID");
         final ActionResponse response = os.networking().subnet().delete(id);
         checkFailure(response, exchange, "Delete network " + id);

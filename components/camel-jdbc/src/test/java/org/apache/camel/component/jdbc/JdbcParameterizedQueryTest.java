@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jdbc;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +27,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
 
@@ -39,12 +40,13 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("name", "jstrachan");
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = 'cust1' and name = ? order by ID",
-                jdbcParams);
+        template.sendBodyAndHeaders(
+                "direct:start", "select * from customer where id = 'cust1' and name = ? order by ID", jdbcParams);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("jstrachan", row.get("NAME"));
@@ -59,12 +61,13 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         jdbcParams.put("name", "jstrachan");
         jdbcParams.put("id", "cust1");
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID",
-                jdbcParams);
+        template.sendBodyAndHeaders(
+                "direct:start", "select * from customer where id = :?id and name = :?name order by ID", jdbcParams);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("jstrachan", row.get("NAME"));
@@ -84,12 +87,13 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         // this header should take precedence so we will not get cust2
         headers.put(JdbcConstants.JDBC_PARAMETERS, jdbcParams);
 
-        template.sendBodyAndHeaders("direct:start", "select * from customer where id = :?id and name = :?name order by ID",
-                headers);
+        template.sendBodyAndHeaders(
+                "direct:start", "select * from customer where id = :?id and name = :?name order by ID", headers);
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(
+                List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("jstrachan", row.get("NAME"));
@@ -109,5 +113,4 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
             }
         };
     }
-
 }

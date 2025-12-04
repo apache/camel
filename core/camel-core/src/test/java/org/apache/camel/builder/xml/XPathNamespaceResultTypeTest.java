@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -30,8 +31,14 @@ public class XPathNamespaceResultTypeTest extends XPathNamespaceTest {
             public void configure() {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns).to("mock:55").otherwise()
-                        .to("mock:other").end();
+                from("direct:in")
+                        .choice()
+                        .when()
+                        .xpath("/c:number = 55", Integer.class, ns)
+                        .to("mock:55")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
             }
         };
     }

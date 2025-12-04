@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.cinder;
+
+import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_CINDER;
 
 import org.apache.camel.Category;
 import org.apache.camel.Producer;
@@ -27,23 +30,30 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-import static org.apache.camel.component.openstack.common.OpenstackConstants.SCHEME_CINDER;
-
 /**
  * Access data in OpenStack Cinder block storage.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CINDER, title = "OpenStack Cinder", syntax = "openstack-cinder:host",
-             category = { Category.CONTAINER }, producerOnly = true, headersClass = CinderConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_CINDER,
+        title = "OpenStack Cinder",
+        syntax = "openstack-cinder:host",
+        category = {Category.CONTAINER},
+        producerOnly = true,
+        headersClass = CinderConstants.class)
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "snapshots,volumes")
     @Metadata(required = true)
     String subsystem;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriParam(defaultValue = "default")
     private String domain = "default";
+
     @UriParam
     @Metadata(required = true)
     private String project;

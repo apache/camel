@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TimerGracefulShutdownTest extends ContextTestSupport {
 
@@ -59,7 +60,10 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:foo?period=10&delay=10&exceptionHandler=#eh").delay(10).to("log:time").to("mock:result");
+                from("timer:foo?period=10&delay=10&exceptionHandler=#eh")
+                        .delay(10)
+                        .to("log:time")
+                        .to("mock:result");
             }
         };
     }

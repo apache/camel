@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 public class FtpsSpanDecorator extends FileSpanDecorator {
@@ -27,5 +28,4 @@ public class FtpsSpanDecorator extends FileSpanDecorator {
     public String getComponentClassName() {
         return "org.apache.camel.component.file.remote.FtpsComponent";
     }
-
 }

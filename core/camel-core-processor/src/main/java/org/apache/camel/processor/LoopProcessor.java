@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 import java.util.concurrent.atomic.LongAdder;
 
@@ -36,12 +39,11 @@ import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-
 /**
  * The processor which sends messages in a loop.
  */
-public class LoopProcessor extends BaseDelegateProcessorSupport implements Traceable, IdAware, RouteIdAware, ShutdownAware {
+public class LoopProcessor extends BaseDelegateProcessorSupport
+        implements Traceable, IdAware, RouteIdAware, ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 
@@ -56,8 +58,14 @@ public class LoopProcessor extends BaseDelegateProcessorSupport implements Trace
     private final boolean breakOnShutdown;
     private final LongAdder taskCount = new LongAdder();
 
-    public LoopProcessor(CamelContext camelContext, Processor processor, Expression expression, Predicate predicate,
-                         Processor onPrepare, boolean copy, boolean breakOnShutdown) {
+    public LoopProcessor(
+            CamelContext camelContext,
+            Processor processor,
+            Expression expression,
+            Predicate predicate,
+            Processor onPrepare,
+            boolean copy,
+            boolean breakOnShutdown) {
         super(processor);
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.expression = expression;

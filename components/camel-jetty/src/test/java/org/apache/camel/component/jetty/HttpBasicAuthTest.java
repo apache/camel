@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.security.Principal;
@@ -37,11 +43,6 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.resource.URLResourceFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class HttpBasicAuthTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
@@ -49,7 +50,8 @@ public class HttpBasicAuthTest extends BaseJettyTest {
         Constraint constraint = new Constraint.Builder()
                 .name("BASIC")
                 .roles("user")
-                .authorization(Constraint.Authorization.SPECIFIC_ROLE).build();
+                .authorization(Constraint.Authorization.SPECIFIC_ROLE)
+                .build();
 
         ConstraintMapping cm = new ConstraintMapping();
         cm.setPathSpec("/*");
@@ -61,8 +63,7 @@ public class HttpBasicAuthTest extends BaseJettyTest {
 
         HashLoginService loginService = new HashLoginService(
                 "MyRealm",
-                new URLResourceFactory().newResource(
-                        new File("src/test/resources/myRealm.properties").toURI()));
+                new URLResourceFactory().newResource(new File("src/test/resources/myRealm.properties").toURI()));
         sh.setLoginService(loginService);
         sh.setConstraintMappings(List.of(cm));
 
@@ -71,17 +72,20 @@ public class HttpBasicAuthTest extends BaseJettyTest {
 
     @Test
     public void testHttpBasicAuth() {
-        String out
-                = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=duck",
-                        "Hello World", String.class);
+        String out = template.requestBody(
+                "http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=duck",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testHttpBasicAuthInvalidPassword() {
         try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry",
-                    "Hello World", String.class);
+            template.requestBody(
+                    "http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry",
+                    "Hello World",
+                    String.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
@@ -94,15 +98,17 @@ public class HttpBasicAuthTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                        assertNotNull(req);
-                        Principal user = req.getUserPrincipal();
-                        assertNotNull(user);
-                        assertEquals("donald", user.getName());
-                    }
-                }).transform(constant("Bye World"));
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                                assertNotNull(req);
+                                Principal user = req.getUserPrincipal();
+                                assertNotNull(user);
+                                assertEquals("donald", user.getName());
+                            }
+                        })
+                        .transform(constant("Bye World"));
             }
         };
     }

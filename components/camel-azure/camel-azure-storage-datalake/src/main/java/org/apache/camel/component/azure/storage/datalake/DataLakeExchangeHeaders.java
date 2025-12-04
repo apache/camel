@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.nio.file.OpenOption;
@@ -52,7 +53,8 @@ import org.apache.camel.util.ObjectHelper;
 public class DataLakeExchangeHeaders {
     private final Map<String, Object> headers = new HashMap<>();
 
-    public static DataLakeExchangeHeaders createDataLakeExchangeHeadersFromPathProperties(final PathProperties properties) {
+    public static DataLakeExchangeHeaders createDataLakeExchangeHeadersFromPathProperties(
+            final PathProperties properties) {
         return new DataLakeExchangeHeaders()
                 .accessTier(properties.getAccessTier())
                 .accessTierChangrTime(properties.getAccessTierChangeTime())
@@ -83,9 +85,7 @@ public class DataLakeExchangeHeaders {
     }
 
     public static DataLakeExchangeHeaders createDataLakeExchangeHeadersFromPathInfo(final PathInfo pathInfo) {
-        return new DataLakeExchangeHeaders()
-                .eTag(pathInfo.getETag())
-                .lastModified(pathInfo.getLastModified());
+        return new DataLakeExchangeHeaders().eTag(pathInfo.getETag()).lastModified(pathInfo.getLastModified());
     }
 
     public static DataLakeExchangeHeaders createDataLakeExchangeHeadersFromFileReadHeaders(
@@ -101,13 +101,32 @@ public class DataLakeExchangeHeaders {
             contentLength = rh.getContentLength();
         }
         return new PathProperties(
-                null, rh.getLastModified(), rh.getETag(), contentLength, rh.getContentType(),
-                null, rh.getContentEncoding(), rh.getContentDisposition(), rh.getContentLanguage(),
-                rh.getCacheControl(), rh.getLeaseStatus(), rh.getLeaseState(), rh.getLeaseDuration(), rh.getCopyId(),
-                rh.getCopyStatus(), rh.getCopySource(), rh.getCopyProgress(), rh.getCopyCompletionTime(),
+                null,
+                rh.getLastModified(),
+                rh.getETag(),
+                contentLength,
+                rh.getContentType(),
+                null,
+                rh.getContentEncoding(),
+                rh.getContentDisposition(),
+                rh.getContentLanguage(),
+                rh.getCacheControl(),
+                rh.getLeaseStatus(),
+                rh.getLeaseState(),
+                rh.getLeaseDuration(),
+                rh.getCopyId(),
+                rh.getCopyStatus(),
+                rh.getCopySource(),
+                rh.getCopyProgress(),
+                rh.getCopyCompletionTime(),
                 rh.getCopyStatusDescription(),
-                rh.isServerEncrypted(), null, null, null, rh.getEncryptionKeySha256(),
-                null, rh.getMetadata());
+                rh.isServerEncrypted(),
+                null,
+                null,
+                null,
+                rh.getEncryptionKeySha256(),
+                null,
+                rh.getMetadata());
     }
 
     public static ListFileSystemsOptions getListFileSystemOptionsFromHeaders(final Exchange exchange) {
@@ -148,7 +167,8 @@ public class DataLakeExchangeHeaders {
     }
 
     public static DataLakeRequestConditions getDataLakeRequestConditionsFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, DataLakeConstants.DATALAKE_REQUEST_CONDITION, DataLakeRequestConditions.class);
+        return getObjectFromHeaders(
+                exchange, DataLakeConstants.DATALAKE_REQUEST_CONDITION, DataLakeRequestConditions.class);
     }
 
     public static ListPathsOptions getListPathsOptionsFromHeaders(final Exchange exchange) {
@@ -192,7 +212,8 @@ public class DataLakeExchangeHeaders {
     }
 
     public static ParallelTransferOptions getParallelTransferOptionsFromHeaders(final Exchange exchange) {
-        return getObjectFromHeaders(exchange, DataLakeConstants.PARALLEL_TRANSFER_OPTIONS, ParallelTransferOptions.class);
+        return getObjectFromHeaders(
+                exchange, DataLakeConstants.PARALLEL_TRANSFER_OPTIONS, ParallelTransferOptions.class);
     }
 
     public static Set<OpenOption> getOpenOptionsFromHeaders(final Exchange exchange) {
@@ -267,7 +288,8 @@ public class DataLakeExchangeHeaders {
         return getObjectFromHeaders(exchange, DataLakeConstants.FLUSH, Boolean.class);
     }
 
-    private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
+    private static <T> T getObjectFromHeaders(
+            final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }
 

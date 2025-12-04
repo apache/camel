@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
 
 import java.util.Collection;
@@ -57,8 +58,11 @@ public class CamelJob implements Job, InterruptableJob {
         Exchange exchange = null;
         try {
             if (hasTriggerExpired(context)) {
-                LOG.warn("Trigger exists outside StartTime={} and EndTime={}. Skipping CamelJob jobExecutionContext={}",
-                        context.getTrigger().getStartTime(), context.getTrigger().getEndTime(), context);
+                LOG.warn(
+                        "Trigger exists outside StartTime={} and EndTime={}. Skipping CamelJob jobExecutionContext={}",
+                        context.getTrigger().getStartTime(),
+                        context.getTrigger().getEndTime(),
+                        context);
                 return;
             }
 
@@ -113,13 +117,13 @@ public class CamelJob implements Job, InterruptableJob {
 
         // Trigger valid if Start Time is null or before Fire Time
         Date startTime = context.getTrigger().getStartTime();
-        boolean validStartTime
-                = context.getTrigger().getStartTime() == null || fireTime.equals(startTime) || fireTime.after(startTime);
+        boolean validStartTime =
+                context.getTrigger().getStartTime() == null || fireTime.equals(startTime) || fireTime.after(startTime);
 
         // Trigger valid if End Time is null or after Fire Time
         Date endTime = context.getTrigger().getEndTime();
-        boolean validEndTime
-                = context.getTrigger().getEndTime() == null || fireTime.equals(endTime) || fireTime.before(endTime);
+        boolean validEndTime =
+                context.getTrigger().getEndTime() == null || fireTime.equals(endTime) || fireTime.before(endTime);
 
         return !(validStartTime && validEndTime);
     }
@@ -127,8 +131,8 @@ public class CamelJob implements Job, InterruptableJob {
     protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
         SchedulerContext schedulerContext = getSchedulerContext(context);
         String camelContextName = context.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
-        CamelContext result
-                = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
+        CamelContext result =
+                (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
         if (result == null) {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }
@@ -139,7 +143,8 @@ public class CamelJob implements Job, InterruptableJob {
         try {
             return context.getScheduler().getContext();
         } catch (SchedulerException e) {
-            throw new JobExecutionException("Failed to obtain scheduler context for job " + context.getJobDetail().getKey());
+            throw new JobExecutionException("Failed to obtain scheduler context for job "
+                    + context.getJobDetail().getKey());
         }
     }
 
@@ -166,14 +171,16 @@ public class CamelJob implements Job, InterruptableJob {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 }
                 if (triggerKey.equals(checkTriggerKey)
-                        || jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup())
+                        || jobDetail.requestsRecovery()
+                                && jobKey.getGroup().equals(checkTriggerKey.getGroup())
                                 && jobKey.getName().equals(checkTriggerKey.getName())) {
                     return quartzEndpoint;
                 }
             }
         }
 
-        // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not from a route)
+        // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not
+        // from a route)
         String endpointUri = quartzContext.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_ENDPOINT_URI);
 
         QuartzEndpoint result;

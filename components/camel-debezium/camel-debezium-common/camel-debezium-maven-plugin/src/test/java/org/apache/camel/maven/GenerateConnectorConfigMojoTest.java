@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +31,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GenerateConnectorConfigMojoTest {
 
@@ -55,9 +56,9 @@ public class GenerateConnectorConfigMojoTest {
         assertTrue(connectorConfigFile.exists());
 
         // we check the file content
-        final String connectorConfigFileAsText = FileUtils.readFileToString(connectorConfigFile, StandardCharsets.UTF_8);
+        final String connectorConfigFileAsText =
+                FileUtils.readFileToString(connectorConfigFile, StandardCharsets.UTF_8);
         assertNotNull(connectorConfigFileAsText);
         assertTrue(connectorConfigFileAsText.contains("MySqlConnectorEmbeddedDebeziumConfiguration"));
     }
-
 }

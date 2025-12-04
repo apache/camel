@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -59,9 +60,9 @@ public class TypeConversionException extends RuntimeCamelException {
      * Returns an error message for type conversion failed.
      */
     public static String createMessage(Object value, Class<?> type, Throwable cause) {
-        return "Error during type conversion from type: " + (value != null ? value.getClass().getCanonicalName() : null)
-               + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to "
-               + cause.getClass().getName() + ": " + cause.getMessage();
+        return "Error during type conversion from type: "
+                + (value != null ? value.getClass().getCanonicalName() : null)
+                + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to "
+                + cause.getClass().getName() + ": " + cause.getMessage();
     }
-
 }

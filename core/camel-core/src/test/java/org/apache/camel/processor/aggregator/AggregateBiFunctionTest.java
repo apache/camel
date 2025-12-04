@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.function.BiFunction;
@@ -25,8 +26,8 @@ import org.junit.jupiter.api.Test;
 
 public class AggregateBiFunctionTest extends ContextTestSupport {
 
-    private final BiFunction<Exchange, Exchange, Object> myAgg
-            = (Exchange e1, Exchange e2) -> e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
+    private final BiFunction<Exchange, Exchange, Object> myAgg = (Exchange e1, Exchange e2) ->
+            e1.getMessage().getBody(String.class) + "+" + e2.getMessage().getBody(String.class);
 
     @Test
     public void testBiFunction() throws Exception {
@@ -47,7 +48,10 @@ public class AggregateBiFunctionTest extends ContextTestSupport {
                 context.getRegistry().bind("myAgg", myAgg);
 
                 from("direct:start")
-                        .aggregate(header("id")).aggregationStrategy("myAgg").completionSize(3).to("mock:aggregated");
+                        .aggregate(header("id"))
+                        .aggregationStrategy("myAgg")
+                        .completionSize(3)
+                        .to("mock:aggregated");
             }
         };
     }

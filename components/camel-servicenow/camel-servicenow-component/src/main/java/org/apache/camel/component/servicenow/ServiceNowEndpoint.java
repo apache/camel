@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servicenow;
 
 import org.apache.camel.Category;
@@ -31,9 +32,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with <a href="http://www.servicenow.com/">ServiceNow</a> via its REST API.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "servicenow", title = "ServiceNow", syntax = "servicenow:instanceName",
-             producerOnly = true, category = { Category.API, Category.CLOUD, Category.MANAGEMENT },
-             headersClass = ServiceNowConstants.class)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "servicenow",
+        title = "ServiceNow",
+        syntax = "servicenow:instanceName",
+        producerOnly = true,
+        category = {Category.API, Category.CLOUD, Category.MANAGEMENT},
+        headersClass = ServiceNowConstants.class)
 public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
@@ -44,8 +50,8 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     @UriParam
     private final ServiceNowConfiguration configuration;
 
-    public ServiceNowEndpoint(String uri, ServiceNowComponent component, ServiceNowConfiguration configuration,
-                              String instanceName) {
+    public ServiceNowEndpoint(
+            String uri, ServiceNowComponent component, ServiceNowConfiguration configuration, String instanceName) {
         super(uri, component);
 
         this.configuration = configuration;
@@ -55,7 +61,8 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         ServiceNowProducer producer = configuration.getRelease().get(this);
-        LOGGER.info("Producer for ServiceNow Rel. {} = {}/{}",
+        LOGGER.info(
+                "Producer for ServiceNow Rel. {} = {}/{}",
                 configuration.getRelease().name(),
                 producer.getRelease().name(),
                 producer.getClass().getName());

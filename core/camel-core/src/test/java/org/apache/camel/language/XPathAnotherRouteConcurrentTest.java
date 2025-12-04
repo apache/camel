@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.concurrent.Callable;
@@ -81,10 +82,17 @@ public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?concurrentConsumers=10").choice().when().xpath("/persons/person/name = 'Claus'").to("mock:claus")
-                        .when().xpath("/persons/person/name = 'James'")
-                        .to("mock:james").otherwise().to("mock:other").end();
-
+                from("seda:foo?concurrentConsumers=10")
+                        .choice()
+                        .when()
+                        .xpath("/persons/person/name = 'Claus'")
+                        .to("mock:claus")
+                        .when()
+                        .xpath("/persons/person/name = 'James'")
+                        .to("mock:james")
+                        .otherwise()
+                        .to("mock:other")
+                        .end();
             }
         };
     }

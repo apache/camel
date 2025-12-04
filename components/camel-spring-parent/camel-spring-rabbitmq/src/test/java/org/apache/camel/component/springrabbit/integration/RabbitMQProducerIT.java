@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit.integration;
 
 import java.nio.charset.Charset;
@@ -124,8 +125,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
             } else {
                 // If we got no message, check if the idle timeout has been exceeded.
                 if (lastMessageStopWatch.taken() > idleTimeoutMillis) {
-                    LOG.info(
-                            "No messages received for " + (idleTimeoutMillis / 1000) + " seconds. Exiting consumer loop.");
+                    LOG.info("No messages received for " + (idleTimeoutMillis / 1000)
+                            + " seconds. Exiting consumer loop.");
                     break; // Exit the loop
                 }
             }
@@ -133,7 +134,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         LOG.info("Total messages received from queue: " + receivedCount);
 
         // --- 10. Final Verification ---
-        Assertions.assertEquals(finalSentCount, receivedCount, "The number of sent and received messages should match.");
+        Assertions.assertEquals(
+                finalSentCount, receivedCount, "The number of sent and received messages should match.");
     }
 
     @Test
@@ -195,9 +197,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
                 .setMessageId("123")
                 .setHeader("bar", "baz")
                 .build();
-        Message body = MessageBuilder.withBody("foo".getBytes())
-                .andProperties(props)
-                .build();
+        Message body =
+                MessageBuilder.withBody("foo".getBytes()).andProperties(props).build();
 
         template.sendBody("direct:start", body);
 
@@ -219,12 +220,20 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        template.sendBodyAndHeaders("direct:start", "<price>123</price>",
-                Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
-                        SpringRabbitMQConstants.TYPE, "price",
-                        SpringRabbitMQConstants.CONTENT_TYPE, "application/xml",
-                        SpringRabbitMQConstants.MESSAGE_ID, "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
-                        SpringRabbitMQConstants.PRIORITY, 1));
+        template.sendBodyAndHeaders(
+                "direct:start",
+                "<price>123</price>",
+                Map.of(
+                        SpringRabbitMQConstants.DELIVERY_MODE,
+                        MessageDeliveryMode.PERSISTENT,
+                        SpringRabbitMQConstants.TYPE,
+                        "price",
+                        SpringRabbitMQConstants.CONTENT_TYPE,
+                        "application/xml",
+                        SpringRabbitMQConstants.MESSAGE_ID,
+                        "0fe9c142-f9c1-426f-9237-f5a4c988a8ae",
+                        SpringRabbitMQConstants.PRIORITY,
+                        1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
@@ -254,9 +263,16 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        template.sendBodyAndHeaders("direct:start", "<price>123</price>",
-                Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
-                        SpringRabbitMQConstants.TYPE, "price", Exchange.BREADCRUMB_ID, "mycrumb123"));
+        template.sendBodyAndHeaders(
+                "direct:start",
+                "<price>123</price>",
+                Map.of(
+                        SpringRabbitMQConstants.DELIVERY_MODE,
+                        MessageDeliveryMode.PERSISTENT,
+                        SpringRabbitMQConstants.TYPE,
+                        "price",
+                        Exchange.BREADCRUMB_ID,
+                        "mycrumb123"));
 
         AmqpTemplate template = new RabbitTemplate(cf);
         Message out = template.receive("myqueue");
@@ -276,8 +292,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
+                from("direct:start").to("spring-rabbitmq:foo?routingKey=foo.bar");
             }
         };
     }

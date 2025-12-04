@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ class CamelOutputStream extends CachedOutputStream {
      *
      */
     private final Message outMessage;
+
     private boolean isOneWay;
     private final String targetCamelEndpointUri;
     private final Producer producer;
@@ -51,9 +53,12 @@ class CamelOutputStream extends CachedOutputStream {
     private final MessageObserver observer;
     private boolean hasLoggedAsyncWarning;
 
-    CamelOutputStream(String targetCamelEndpointUri, Producer producer,
-                      HeaderFilterStrategy headerFilterStrategy, MessageObserver observer,
-                      Message m) {
+    CamelOutputStream(
+            String targetCamelEndpointUri,
+            Producer producer,
+            HeaderFilterStrategy headerFilterStrategy,
+            MessageObserver observer,
+            Message m) {
         this.targetCamelEndpointUri = targetCamelEndpointUri;
         this.producer = producer;
         this.headerFilterStrategy = headerFilterStrategy;
@@ -103,7 +108,6 @@ class CamelOutputStream extends CachedOutputStream {
             // submit the request to the work queue
             asyncInvokeFromWorkQueue(exchange);
         }
-
     }
 
     protected void syncInvoke(org.apache.camel.Exchange exchange) throws IOException {
@@ -121,7 +125,6 @@ class CamelOutputStream extends CachedOutputStream {
         if (!isOneWay) {
             handleResponseInternal(exchange);
         }
-
     }
 
     protected void asyncInvokeFromWorkQueue(final org.apache.camel.Exchange exchange) throws IOException {
@@ -143,13 +146,10 @@ class CamelOutputStream extends CachedOutputStream {
         try {
             Executor ex = outMessage.getExchange().get(Executor.class);
             if (ex != null) {
-                outMessage.getExchange().put(Executor.class.getName()
-                                             + ".USING_SPECIFIED",
-                        Boolean.TRUE);
+                outMessage.getExchange().put(Executor.class.getName() + ".USING_SPECIFIED", Boolean.TRUE);
                 ex.execute(runnable);
             } else {
-                WorkQueueManager mgr = outMessage.getExchange().get(Bus.class)
-                        .getExtension(WorkQueueManager.class);
+                WorkQueueManager mgr = outMessage.getExchange().get(Bus.class).getExtension(WorkQueueManager.class);
                 AutomaticWorkQueue qu = mgr.getNamedWorkQueue("camel-cxf-conduit");
                 if (qu == null) {
                     qu = mgr.getAutomaticWorkQueue();
@@ -173,5 +173,4 @@ class CamelOutputStream extends CachedOutputStream {
         inMessage = CxfMessageHelper.getCxfInMessage(this.headerFilterStrategy, exchange, true);
         this.observer.onMessage(inMessage);
     }
-
 }

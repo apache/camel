@@ -44,9 +44,12 @@ class JsonDataTypeTransformerTest {
                 """);
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     { "name": "Christoph", "age": 32 }
-                """, exchange.getMessage().getBody(String.class), true);
+                """,
+                exchange.getMessage().getBody(String.class),
+                true);
     }
 
     @Test
@@ -56,23 +59,32 @@ class JsonDataTypeTransformerTest {
         exchange.getMessage().setBody(new Person("Mickey", 20));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Mickey","age":20}
-                """, exchange.getMessage().getBody(String.class), true);
+                """,
+                exchange.getMessage().getBody(String.class),
+                true);
     }
 
     @Test
     void shouldHandleJsonNode() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
 
-        exchange.getMessage().setBody(Json.mapper().readerFor(JsonNode.class).readValue("""
+        exchange.getMessage()
+                .setBody(Json.mapper()
+                        .readerFor(JsonNode.class)
+                        .readValue("""
                     { "name": "Goofy", "age": 25 }
                 """));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Goofy","age":25}
-                """, exchange.getMessage().getBody(String.class), true);
+                """,
+                exchange.getMessage().getBody(String.class),
+                true);
     }
 
     @Test
@@ -83,15 +95,18 @@ class JsonDataTypeTransformerTest {
         exchange.getMessage().setBody(new Person("Donald", 19));
         transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
 
-        JSONAssert.assertEquals("""
+        JSONAssert.assertEquals(
+                """
                     {"name":"Donald","age":19}
-                """, exchange.getMessage().getBody(String.class), true);
+                """,
+                exchange.getMessage().getBody(String.class),
+                true);
     }
 
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
-        Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("application-json"));
+        Transformer transformer =
+                camelContext.getTransformerRegistry().resolveTransformer(new TransformerKey("application-json"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(JsonDataTypeTransformer.class, transformer.getClass());
     }

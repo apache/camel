@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.irc;
 
 import org.apache.camel.Exchange;
@@ -62,7 +63,8 @@ public class IrcConsumer extends DefaultConsumer {
         connection.addIRCEventListener(listener);
 
         LOG.debug("Sleeping for {} seconds before sending commands.", configuration.getCommandTimeout() / 1000);
-        // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
+        // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after
+        // connection established
         try {
             Thread.sleep(configuration.getCommandTimeout());
         } catch (InterruptedException ex) {
@@ -71,7 +73,8 @@ public class IrcConsumer extends DefaultConsumer {
         }
         if (ObjectHelper.isNotEmpty(configuration.getNickPassword())) {
             LOG.debug("Identifying and enforcing nick with NickServ.");
-            // Identify nick and enforce, https://meta.wikimedia.org/wiki/IRC/Instructions#Register_your_nickname.2C_identify.2C_and_enforce
+            // Identify nick and enforce,
+            // https://meta.wikimedia.org/wiki/IRC/Instructions#Register_your_nickname.2C_identify.2C_and_enforce
             connection.doPrivmsg("nickserv", "identify " + configuration.getNickPassword());
             connection.doPrivmsg("nickserv", "set enforce on");
         }
@@ -280,9 +283,6 @@ public class IrcConsumer extends DefaultConsumer {
         }
 
         @Override
-        public void onError(int num, String msg) {
-        }
-
+        public void onError(int num, String msg) {}
     }
-
 }

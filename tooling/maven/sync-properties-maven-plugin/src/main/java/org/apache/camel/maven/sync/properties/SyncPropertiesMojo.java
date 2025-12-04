@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.sync.properties;
 
 import java.io.File;
@@ -56,7 +57,9 @@ public class SyncPropertiesMojo extends AbstractMojo {
      *
      * @since 4.0.0
      */
-    @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}/parent/pom.xml", property = "camel.camelParentPomXml")
+    @Parameter(
+            defaultValue = "${maven.multiModuleProjectDirectory}/parent/pom.xml",
+            property = "camel.camelParentPomXml")
     private File sourcePomXml;
 
     /**
@@ -65,8 +68,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
      *
      * @since 4.0.0
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-pom.xml",
-               property = "camel.targetPomXml")
+    @Parameter(defaultValue = "${project.build.directory}/generated-pom.xml", property = "camel.targetPomXml")
     private File targetPomXml;
 
     /**
@@ -162,7 +164,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
         final String template;
         try (InputStream in = SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml");
-             Reader r = new InputStreamReader(in, charset)) {
+                Reader r = new InputStreamReader(in, charset)) {
             template = IOHelper.toString(r);
         } catch (IOException e) {
             throw new MojoExecutionException("Could not read camel-dependencies-template.xml from class path", e);
@@ -175,10 +177,12 @@ public class SyncPropertiesMojo extends AbstractMojo {
         // Check for versions that do not fit the .*-version pattern and log an error
         // Enforce the .*-version standard
         if (checkForInvalidVersions.booleanValue()) {
-            List invalidProperties = Stream.concat(camelParentPomXmlModel.getProperties().entrySet().stream(),
-                    camelPomXmlModel.getProperties().entrySet().stream()
-                            .filter(property -> !(property.getKey().equals("jdk.version"))))
-                    .filter(property -> invalids.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
+            List invalidProperties = Stream.concat(
+                            camelParentPomXmlModel.getProperties().entrySet().stream(),
+                            camelPomXmlModel.getProperties().entrySet().stream()
+                                    .filter(property -> !(property.getKey().equals("jdk.version"))))
+                    .filter(property ->
+                            invalids.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
                     .map(property -> property.getKey())
                     .sorted()
                     .collect(Collectors.toList());
@@ -186,26 +190,29 @@ public class SyncPropertiesMojo extends AbstractMojo {
             if (invalidProperties.size() > 0) {
                 throw new MojoExecutionException(
                         "sync-properties-maven-plugin will only synchronize properties matching "
-                                                 + propertyIncludes + ".  " + "Properties were found that will not be synced "
-                                                 + invalidProperties.toString());
+                                + propertyIncludes + ".  " + "Properties were found that will not be synced "
+                                + invalidProperties.toString());
             }
         }
 
         final String properties = Stream.concat(
-                camelParentPomXmlModel.getProperties().entrySet().stream(),
-                camelPomXmlModel.getProperties().entrySet().stream()
-                        .filter(property -> {
+                        camelParentPomXmlModel.getProperties().entrySet().stream(),
+                        camelPomXmlModel.getProperties().entrySet().stream().filter(property -> {
                             final String key = (String) property.getKey();
-                            return key.equals("license-maven-plugin-version") // the only plugin version we want to propagate
+                            return key.equals("license-maven-plugin-version") // the only plugin version we want to
+                                    // propagate
                                     || (key.endsWith("-version") && !key.endsWith("-plugin-version"));
                         }))
-                .filter(property -> includes.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
+                .filter(property ->
+                        includes.test((String) property.getKey()) && !excludes.test((String) property.getKey()))
                 .map(property -> "<" + property.getKey() + ">" + property.getValue() + "</" + property.getKey() + ">")
                 .sorted()
                 .collect(Collectors.joining("\n        "));
 
         final Parent parent = camelPomXmlModel.getParent();
-        if (parent == null || !parent.getGroupId().equals("org.apache") || !parent.getArtifactId().equals("apache")) {
+        if (parent == null
+                || !parent.getGroupId().equals("org.apache")
+                || !parent.getArtifactId().equals("apache")) {
             throw new MojoExecutionException("Unexpected parent groupId / artifactId in parent " + camelPomXmlPath);
         }
 
@@ -216,8 +223,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
         }
 
         try {
-            final String camelPropertiesContent = template
-                    .replace("@apache-parent-version@", apacheParentVersion)
+            final String camelPropertiesContent = template.replace("@apache-parent-version@", apacheParentVersion)
                     .replace("@version@", version)
                     .replace("@properties@", properties);
 
@@ -239,11 +245,10 @@ public class SyncPropertiesMojo extends AbstractMojo {
         if (regularExpressions == null || regularExpressions.isEmpty()) {
             return key -> defaultResult;
         } else {
-            final List<Pattern> patterns = regularExpressions.stream()
-                    .map(Pattern::compile)
-                    .toList();
-            return key -> patterns.stream().anyMatch(pattern -> pattern.matcher(key).matches());
+            final List<Pattern> patterns =
+                    regularExpressions.stream().map(Pattern::compile).toList();
+            return key ->
+                    patterns.stream().anyMatch(pattern -> pattern.matcher(key).matches());
         }
     }
-
 }

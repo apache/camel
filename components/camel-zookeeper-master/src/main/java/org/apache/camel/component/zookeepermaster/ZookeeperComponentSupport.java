@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster;
 
 import org.apache.camel.component.zookeepermaster.group.Group;
@@ -29,10 +30,13 @@ public abstract class ZookeeperComponentSupport extends DefaultComponent {
     // use for component documentation
     @Metadata(label = "advanced")
     private CuratorFramework curator;
+
     @Metadata(defaultValue = "10000")
     private int maximumConnectionTimeout = 10 * 1000;
+
     @Metadata(defaultValue = "localhost:2181")
     private String zooKeeperUrl;
+
     @Metadata(label = "security", secret = true)
     private String zooKeeperPassword;
 
@@ -97,5 +101,4 @@ public abstract class ZookeeperComponentSupport extends DefaultComponent {
         super.doStop();
         ServiceHelper.stopAndShutdownServices(zookeeperGroupSupport);
     }
-
 }

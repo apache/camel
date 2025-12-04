@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -37,7 +38,7 @@ public class AutowireConstructorRouteTwoTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/AutowireConstructorRouteTwoTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/bean/AutowireConstructorRouteTwoTest.xml");
     }
-
 }

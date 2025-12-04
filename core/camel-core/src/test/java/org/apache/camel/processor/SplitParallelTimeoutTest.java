@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Isolated
 @Timeout(60)
@@ -71,21 +72,32 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().timeout(100)
+                        .split(body().tokenize(","), new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .timeout(100)
                         .choice()
-                            .when(body().isEqualTo("A")).to("direct:a")
-                            .when(body().isEqualTo("B")).to("direct:b")
-                            .when(body().isEqualTo("C")).to("direct:c")
-                            .end() // end
+                        .when(body().isEqualTo("A"))
+                        .to("direct:a")
+                        .when(body().isEqualTo("B"))
+                        .to("direct:b")
+                        .when(body().isEqualTo("C"))
+                        .to("direct:c")
+                        .end() // end
                         // choice
                         .end() // end split
                         .to("mock:result");
 
-                from("direct:a").process(e -> phaser.arriveAndAwaitAdvance()).delay(200).setBody(constant("A"));
+                from("direct:a")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .delay(200)
+                        .setBody(constant("A"));
 
                 from("direct:b").process(e -> phaser.arriveAndAwaitAdvance()).setBody(constant("B"));
 
-                from("direct:c").process(e -> phaser.arriveAndAwaitAdvance()).delay(10).setBody(constant("C"));
+                from("direct:c")
+                        .process(e -> phaser.arriveAndAwaitAdvance())
+                        .delay(10)
+                        .setBody(constant("C"));
             }
         };
     }
@@ -120,5 +132,4 @@ public class SplitParallelTimeoutTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-
 }

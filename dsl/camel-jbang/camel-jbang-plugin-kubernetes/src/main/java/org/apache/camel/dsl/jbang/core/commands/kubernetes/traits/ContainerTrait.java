@@ -40,13 +40,14 @@ public class ContainerTrait extends BaseTrait {
 
     @Override
     public boolean configure(Traits traitConfig, TraitContext context) {
-        return traitConfig.getContainer() == null ||
-                Optional.ofNullable(traitConfig.getContainer().getEnabled()).orElse(true);
+        return traitConfig.getContainer() == null
+                || Optional.ofNullable(traitConfig.getContainer().getEnabled()).orElse(true);
     }
 
     @Override
     public void apply(Traits traitConfig, TraitContext context) {
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
 
         ContainerBuilder container = new ContainerBuilder()
                 .withName(Optional.ofNullable(containerTrait.getName()).orElse(context.getName()));
@@ -59,14 +60,17 @@ public class ContainerTrait extends BaseTrait {
             container.withImagePullPolicy(containerTrait.getImagePullPolicy().getValue());
         }
 
-        if (containerTrait.getPort() != null || context.getService().isPresent() || context.getKnativeService().isPresent()) {
+        if (containerTrait.getPort() != null
+                || context.getService().isPresent()
+                || context.getKnativeService().isPresent()) {
             String portName = context.getKnativeService().isPresent()
                     ? KNATIVE_CONTAINER_PORT_NAME
                     : Optional.ofNullable(containerTrait.getPortName()).orElse(DEFAULT_CONTAINER_PORT_NAME);
             container.addToPorts(new ContainerPortBuilder()
                     .withName(portName)
-                    .withContainerPort(
-                            Optional.ofNullable(containerTrait.getPort()).map(Long::intValue).orElse(DEFAULT_CONTAINER_PORT))
+                    .withContainerPort(Optional.ofNullable(containerTrait.getPort())
+                            .map(Long::intValue)
+                            .orElse(DEFAULT_CONTAINER_PORT))
                     .withProtocol("TCP")
                     .build());
         }

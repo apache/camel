@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xchange;
 
 import java.io.IOException;
@@ -53,12 +54,19 @@ import org.knowm.xchange.utils.Assert;
 /**
  * Access market data and trade on Bitcoin and Altcoin exchanges.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "xchange", title = "XChange", syntax = "xchange:name", producerOnly = true,
-             category = { Category.BLOCKCHAIN }, headersClass = XChangeConfiguration.class)
+@UriEndpoint(
+        firstVersion = "2.21.0",
+        scheme = "xchange",
+        title = "XChange",
+        syntax = "xchange:name",
+        producerOnly = true,
+        category = {Category.BLOCKCHAIN},
+        headersClass = XChangeConfiguration.class)
 public class XChangeEndpoint extends DefaultEndpoint {
 
     @UriParam
     private XChangeConfiguration configuration;
+
     private transient XChange xchange;
 
     public XChangeEndpoint(String uri, XChangeComponent component, XChangeConfiguration configuration) {
@@ -125,7 +133,8 @@ public class XChangeEndpoint extends DefaultEndpoint {
         return metaData.getInstruments().keySet().stream()
                 .filter(it -> it instanceof CurrencyPair)
                 .map(it -> (CurrencyPair) it)
-                .sorted().collect(Collectors.toList());
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     public InstrumentMetaData getCurrencyPairMetaData(CurrencyPair pair) {
@@ -150,7 +159,8 @@ public class XChangeEndpoint extends DefaultEndpoint {
                 }
             }
         });
-        return balances.stream().sorted((Balance o1, Balance o2) -> o1.getCurrency().compareTo(o2.getCurrency()))
+        return balances.stream()
+                .sorted((Balance o1, Balance o2) -> o1.getCurrency().compareTo(o2.getCurrency()))
                 .collect(Collectors.toList());
     }
 
@@ -171,7 +181,8 @@ public class XChangeEndpoint extends DefaultEndpoint {
             return Collections.singletonList(wallet);
         } else {
             AccountInfo accountInfo = accountService.getAccountInfo();
-            return accountInfo.getWallets().values().stream().sorted(Comparator.comparing(Wallet::getName))
+            return accountInfo.getWallets().values().stream()
+                    .sorted(Comparator.comparing(Wallet::getName))
                     .collect(Collectors.toList());
         }
     }

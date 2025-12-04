@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.util;
 
 import java.util.Objects;
@@ -86,14 +87,14 @@ public class ConvertingPublisher<R> implements Publisher<R> {
                 }
 
                 if (r == null && ex.getIn().getBody() != null) {
-                    this.onError(new ClassCastException("Unable to convert body to the specified type: " + type.getName()));
+                    this.onError(
+                            new ClassCastException("Unable to convert body to the specified type: " + type.getName()));
 
                     active.set(false);
                     subscription.cancel();
                 } else {
                     subscriber.onNext(r);
                 }
-
             }
 
             @Override

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
@@ -35,7 +36,8 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
 
     @Override
     public AsyncProcessor createDynamicRouter(CamelContext camelContext, DynamicRouter annotation) {
-        org.apache.camel.processor.DynamicRouter dynamicRouter = new org.apache.camel.processor.DynamicRouter(camelContext);
+        org.apache.camel.processor.DynamicRouter dynamicRouter =
+                new org.apache.camel.processor.DynamicRouter(camelContext);
         dynamicRouter.setDelimiter(annotation.delimiter());
         dynamicRouter.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
         dynamicRouter.setCacheSize(annotation.cacheSize());
@@ -44,8 +46,8 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
 
     @Override
     public AsyncProcessor createRecipientList(CamelContext camelContext, RecipientList annotation) {
-        org.apache.camel.processor.RecipientList recipientList
-                = new org.apache.camel.processor.RecipientList(camelContext, annotation.delimiter());
+        org.apache.camel.processor.RecipientList recipientList =
+                new org.apache.camel.processor.RecipientList(camelContext, annotation.delimiter());
         recipientList.setStopOnException(annotation.stopOnException());
         recipientList.setIgnoreInvalidEndpoints(annotation.ignoreInvalidEndpoints());
         recipientList.setParallelProcessing(annotation.parallelProcessing());
@@ -56,26 +58,28 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
         if (ObjectHelper.isNotEmpty(annotation.executorService())) {
-            ExecutorService executor = camelContext.getExecutorServiceManager().newThreadPool(this, "@RecipientList",
-                    annotation.executorService());
+            ExecutorService executor = camelContext
+                    .getExecutorServiceManager()
+                    .newThreadPool(this, "@RecipientList", annotation.executorService());
             recipientList.setExecutorService(executor);
         }
 
         if (annotation.parallelProcessing() && recipientList.getExecutorService() == null) {
             // we are running in parallel so we need a thread pool
-            ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "@RecipientList");
+            ExecutorService executor =
+                    camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "@RecipientList");
             recipientList.setExecutorService(executor);
         }
 
         if (ObjectHelper.isNotEmpty(annotation.aggregationStrategy())) {
-            AggregationStrategy strategy
-                    = CamelContextHelper.mandatoryLookup(camelContext, annotation.aggregationStrategy(),
-                            AggregationStrategy.class);
+            AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(
+                    camelContext, annotation.aggregationStrategy(), AggregationStrategy.class);
             recipientList.setAggregationStrategy(strategy);
         }
 
         if (ObjectHelper.isNotEmpty(annotation.onPrepare())) {
-            Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, annotation.onPrepare(), Processor.class);
+            Processor onPrepare =
+                    CamelContextHelper.mandatoryLookup(camelContext, annotation.onPrepare(), Processor.class);
             recipientList.setOnPrepare(onPrepare);
         }
 

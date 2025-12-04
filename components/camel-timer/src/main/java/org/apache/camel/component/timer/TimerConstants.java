@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.timer;
 
 import org.apache.camel.Exchange;
@@ -23,10 +24,9 @@ public final class TimerConstants {
 
     @Metadata(description = "The fired time", javaType = "Date")
     public static final String HEADER_FIRED_TIME = Exchange.TIMER_FIRED_TIME;
+
     @Metadata(description = "The timestamp of the message", javaType = "long")
     public static final String HEADER_MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
-    private TimerConstants() {
-
-    }
+    private TimerConstants() {}
 }

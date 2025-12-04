@@ -39,8 +39,9 @@ public class EnvTrait extends BaseTrait {
             return false;
         }
 
-        return traitConfig.getEnvironment() != null &&
-                Optional.ofNullable(traitConfig.getEnvironment().getEnabled()).orElse(true);
+        return traitConfig.getEnvironment() != null
+                && Optional.ofNullable(traitConfig.getEnvironment().getEnabled())
+                        .orElse(true);
     }
 
     @Override
@@ -48,22 +49,23 @@ public class EnvTrait extends BaseTrait {
         Environment envTrait = traitConfig.getEnvironment();
 
         if (ObjectHelper.isNotEmpty(envTrait.getVars())) {
-            context.doWithDeployments(
-                    d -> d.editSpec()
-                            .editTemplate()
-                            .editSpec()
-                            .editFirstContainer()
-                            .addAllToEnv(envTrait.getVars().stream().map(envvar -> {
+            context.doWithDeployments(d -> d.editSpec()
+                    .editTemplate()
+                    .editSpec()
+                    .editFirstContainer()
+                    .addAllToEnv(envTrait.getVars().stream()
+                            .map(envvar -> {
                                 String[] parts = envvar.split("=", 2);
                                 return new EnvVarBuilder()
                                         .withName(parts[0])
                                         .withValue(parts[1])
                                         .build();
-                            }).collect(Collectors.toList()))
-                            .endContainer()
-                            .endSpec()
-                            .endTemplate()
-                            .endSpec());
+                            })
+                            .collect(Collectors.toList()))
+                    .endContainer()
+                    .endSpec()
+                    .endTemplate()
+                    .endSpec());
         }
     }
 }

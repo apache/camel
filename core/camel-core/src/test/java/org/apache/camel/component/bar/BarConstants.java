@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bar;
 
 public final class BarConstants {
 
     public static final String DRINK = "CamelBarDrink";
 
-    private BarConstants() {
-    }
+    private BarConstants() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -88,9 +89,7 @@ public class AdviceWithInterceptRemoveTest extends ContextTestSupport {
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
                 from("direct:foo").routeId("foo").to("mock:a").to("mock:b");
-
             }
         };
     }
-
 }

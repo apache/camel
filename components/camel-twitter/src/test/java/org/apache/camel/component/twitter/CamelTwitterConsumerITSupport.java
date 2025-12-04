@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter;
 
 import java.util.List;
@@ -38,7 +39,6 @@ public abstract class CamelTwitterConsumerITSupport extends CamelTwitterITSuppor
         for (Exchange e : tweets) {
             getLogger().info("Tweet: " + e.getIn().getBody(String.class));
         }
-
     }
 
     @Override
@@ -46,9 +46,9 @@ public abstract class CamelTwitterConsumerITSupport extends CamelTwitterITSuppor
         return new RouteBuilder() {
             public void configure() {
                 from(getUri() + getUriTokens())
-                        .transform(body().convertToString()).to("mock:result");
+                        .transform(body().convertToString())
+                        .to("mock:result");
             }
         };
     }
-
 }

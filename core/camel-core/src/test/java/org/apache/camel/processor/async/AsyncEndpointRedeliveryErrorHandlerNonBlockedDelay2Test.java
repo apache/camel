@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.concurrent.atomic.LongAdder;
 
@@ -27,11 +30,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends ContextTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test.class);
 
     private static final LongAdder attempt = new LongAdder();
     private static String beforeThreadName;
@@ -59,33 +61,44 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
+                errorHandler(defaultErrorHandler()
+                        .maximumRedeliveries(5)
+                        .redeliveryDelay(100)
+                        .asyncDelayedRedelivery());
 
-                from("seda:start").to("log:before").to("mock:before").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:camel").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        LOG.info("Processing at attempt {} {}", attempt, exchange);
-
-                        String body = exchange.getIn().getBody(String.class);
-                        if (body.contains("Camel")) {
-                            attempt.increment();
-                            if (attempt.intValue() <= 2) {
-                                LOG.info("Processing failed will thrown an exception");
-                                throw new IllegalArgumentException("Damn");
+                from("seda:start")
+                        .to("log:before")
+                        .to("mock:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                beforeThreadName = Thread.currentThread().getName();
                             }
-                        }
+                        })
+                        .to("async:camel")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                LOG.info("Processing at attempt {} {}", attempt, exchange);
 
-                        exchange.getIn().setBody("Hello " + body);
-                        LOG.info("Processing at attempt {} complete {}", attempt, exchange);
-                    }
-                }).to("log:after").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("mock:result");
+                                String body = exchange.getIn().getBody(String.class);
+                                if (body.contains("Camel")) {
+                                    attempt.increment();
+                                    if (attempt.intValue() <= 2) {
+                                        LOG.info("Processing failed will thrown an exception");
+                                        throw new IllegalArgumentException("Damn");
+                                    }
+                                }
+
+                                exchange.getIn().setBody("Hello " + body);
+                                LOG.info("Processing at attempt {} complete {}", attempt, exchange);
+                            }
+                        })
+                        .to("log:after")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

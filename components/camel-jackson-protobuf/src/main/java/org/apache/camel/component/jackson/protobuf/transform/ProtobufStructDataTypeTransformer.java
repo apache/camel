@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.protobuf.transform;
 
 import java.io.ByteArrayInputStream;
@@ -37,8 +38,9 @@ import org.apache.camel.spi.Transformer;
  * Data type uses Protobuf Jackson data format to unmarshal Exchange body to generic JsonNode. Uses given Protobuf
  * schema from the Exchange properties when unmarshalling the payload (usually already resolved via schema resolver).
  */
-@DataTypeTransformer(name = "protobuf-x-struct",
-                     description = "Transforms to generic JSonNode using Jackson Protobuf (supports content schema)")
+@DataTypeTransformer(
+        name = "protobuf-x-struct",
+        description = "Transforms to generic JSonNode using Jackson Protobuf (supports content schema)")
 public class ProtobufStructDataTypeTransformer extends Transformer {
 
     @Override
@@ -46,22 +48,32 @@ public class ProtobufStructDataTypeTransformer extends Transformer {
         ProtobufSchema schema = message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA, ProtobufSchema.class);
 
         if (schema == null) {
-            throw new CamelExecutionException("Missing proper Protobuf schema for data type processing", message.getExchange());
+            throw new CamelExecutionException(
+                    "Missing proper Protobuf schema for data type processing", message.getExchange());
         }
 
         try {
             Object unmarshalled;
             String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), null);
             if (contentClass != null) {
-                Class<?> contentType
-                        = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
-                unmarshalled = Protobuf.mapper().reader().forType(JsonNode.class).with(schema)
-                        .readValue(Protobuf.mapper().writerFor(contentType).with(schema).writeValueAsBytes(message.getBody()));
+                Class<?> contentType =
+                        message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
+                unmarshalled = Protobuf.mapper()
+                        .reader()
+                        .forType(JsonNode.class)
+                        .with(schema)
+                        .readValue(Protobuf.mapper()
+                                .writerFor(contentType)
+                                .with(schema)
+                                .writeValueAsBytes(message.getBody()));
             } else if (message.getBody() instanceof String jsonString && Json.isJson(jsonString)) {
                 unmarshalled = Json.mapper().readTree(getBodyAsStream(message));
             } else {
-                unmarshalled
-                        = Protobuf.mapper().reader().forType(JsonNode.class).with(schema).readValue(getBodyAsStream(message));
+                unmarshalled = Protobuf.mapper()
+                        .reader()
+                        .forType(JsonNode.class)
+                        .with(schema)
+                        .readValue(getBodyAsStream(message));
             }
 
             message.setBody(unmarshalled);

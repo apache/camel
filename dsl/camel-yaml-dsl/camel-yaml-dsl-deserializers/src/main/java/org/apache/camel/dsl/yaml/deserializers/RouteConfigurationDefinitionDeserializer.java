@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
@@ -36,26 +37,36 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
 @YamlIn
 @YamlType(
-          inline = false,
-          types = org.apache.camel.model.RouteConfigurationDefinition.class,
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          nodes = { "routeConfiguration" },
-          properties = {
-                  @YamlProperty(name = "id", type = "string"),
-                  @YamlProperty(name = "description", type = "string"),
-                  @YamlProperty(name = "precondition", type = "string"),
-                  @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
-                  @YamlProperty(name = "intercept", wrapItem = true,
-                                type = "array:org.apache.camel.model.InterceptDefinition"),
-                  @YamlProperty(name = "interceptFrom", wrapItem = true,
-                                type = "array:org.apache.camel.model.InterceptFromDefinition"),
-                  @YamlProperty(name = "interceptSendToEndpoint", wrapItem = true,
-                                type = "array:org.apache.camel.model.InterceptSendToEndpointDefinition"),
-                  @YamlProperty(name = "onCompletion", wrapItem = true,
-                                type = "array:org.apache.camel.model.OnCompletionDefinition"),
-                  @YamlProperty(name = "onException", wrapItem = true,
-                                type = "array:org.apache.camel.model.OnExceptionDefinition")
-          })
+        inline = false,
+        types = org.apache.camel.model.RouteConfigurationDefinition.class,
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        nodes = {"routeConfiguration"},
+        properties = {
+            @YamlProperty(name = "id", type = "string"),
+            @YamlProperty(name = "description", type = "string"),
+            @YamlProperty(name = "precondition", type = "string"),
+            @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
+            @YamlProperty(
+                    name = "intercept",
+                    wrapItem = true,
+                    type = "array:org.apache.camel.model.InterceptDefinition"),
+            @YamlProperty(
+                    name = "interceptFrom",
+                    wrapItem = true,
+                    type = "array:org.apache.camel.model.InterceptFromDefinition"),
+            @YamlProperty(
+                    name = "interceptSendToEndpoint",
+                    wrapItem = true,
+                    type = "array:org.apache.camel.model.InterceptSendToEndpointDefinition"),
+            @YamlProperty(
+                    name = "onCompletion",
+                    wrapItem = true,
+                    type = "array:org.apache.camel.model.OnCompletionDefinition"),
+            @YamlProperty(
+                    name = "onException",
+                    wrapItem = true,
+                    type = "array:org.apache.camel.model.OnExceptionDefinition")
+        })
 public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBase<RouteConfigurationDefinition> {
 
     public RouteConfigurationDefinitionDeserializer() {
@@ -122,5 +133,4 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
 
         return target;
     }
-
 }

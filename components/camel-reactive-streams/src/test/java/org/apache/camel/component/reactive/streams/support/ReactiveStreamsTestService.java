@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.support;
 
 import java.util.function.Function;
@@ -44,14 +45,10 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void start() {
-
-    }
+    public void start() {}
 
     @Override
-    public void stop() {
-
-    }
+    public void stop() {}
 
     @Override
     public Publisher<Exchange> fromStream(String name) {
@@ -74,9 +71,7 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void sendCamelExchange(String name, Exchange exchange) {
-
-    }
+    public void sendCamelExchange(String name, Exchange exchange) {}
 
     @Override
     public ReactiveStreamsCamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
@@ -84,19 +79,13 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void detachCamelConsumer(String name) {
-
-    }
+    public void detachCamelConsumer(String name) {}
 
     @Override
-    public void attachCamelProducer(String name, ReactiveStreamsProducer producer) {
-
-    }
+    public void attachCamelProducer(String name, ReactiveStreamsProducer producer) {}
 
     @Override
-    public void detachCamelProducer(String name) {
-
-    }
+    public void detachCamelProducer(String name) {}
 
     @Override
     public Publisher<Exchange> toStream(String name, Object data) {
@@ -149,14 +138,10 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void process(String uri, Function<? super Publisher<Exchange>, ?> processor) {
-
-    }
+    public void process(String uri, Function<? super Publisher<Exchange>, ?> processor) {}
 
     @Override
-    public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
-
-    }
+    public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {}
 
     @Override
     public Subscriber<Exchange> subscriber(String uri) {

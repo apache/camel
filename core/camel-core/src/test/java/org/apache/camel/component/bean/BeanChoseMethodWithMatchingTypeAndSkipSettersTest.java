@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +51,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         mock.expectedBodiesReceived("77889,667,457");
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<order id=\"77889\">" + "<customer id=\"667\"/>"
-                     + "<confirm>457</confirm>" + "</order>";
+                + "<confirm>457</confirm>" + "</order>";
         template.sendBody("seda:xml", xml);
 
         assertMockEndpointsSatisfied();
@@ -69,5 +70,4 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
             }
         };
     }
-
 }

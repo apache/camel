@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.scan;
 
 import org.apache.camel.BindToRegistry;
@@ -27,5 +28,4 @@ public class MyScanConfigurationAnnotation {
     public MyAddress address() {
         return new MyAddress(4444, "Somestreet 123");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.interceptors;
 
 import java.util.Iterator;
@@ -71,7 +72,8 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
 
             mout.put(DOCUMENT_HOLDER, doc);
 
-            Iterator<Interceptor<? extends Message>> iterator = mout.getInterceptorChain().iterator();
+            Iterator<Interceptor<? extends Message>> iterator =
+                    mout.getInterceptorChain().iterator();
             while (iterator.hasNext()) {
                 Interceptor<? extends Message> inInterceptor = iterator.next();
                 if (inInterceptor instanceof AbstractPhaseInterceptor) {
@@ -89,9 +91,7 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
             mout.getInterceptorChain().add(RawMessageWSDLGetOutInterceptor.INSTANCE);
 
             // skip the service executor and goto the end of the chain.
-            message.getInterceptorChain().doInterceptStartingAt(
-                    message,
-                    OutgoingChainInterceptor.class.getName());
+            message.getInterceptorChain().doInterceptStartingAt(message, OutgoingChainInterceptor.class.getName());
         }
     }
 
@@ -103,8 +103,13 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
         // any addresses and returning them, so for both WSDL and XSD this is the only part that needs
         // to be synchronized.
         synchronized (message.getExchange().getEndpoint()) {
-            return new WSDLGetUtils().getDocument(message, base, params, ctxUri,
-                    message.getExchange().getEndpoint().getEndpointInfo());
+            return new WSDLGetUtils()
+                    .getDocument(
+                            message,
+                            base,
+                            params,
+                            ctxUri,
+                            message.getExchange().getEndpoint().getEndpointInfo());
         }
     }
 

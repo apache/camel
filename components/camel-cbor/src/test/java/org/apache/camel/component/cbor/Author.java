@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cbor;
 
 public class Author {
@@ -36,5 +37,4 @@ public class Author {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
 }

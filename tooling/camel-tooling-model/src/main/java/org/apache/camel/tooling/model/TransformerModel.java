@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.model;
 
 public class TransformerModel extends ArtifactModel<BaseOptionModel> {
@@ -21,8 +22,7 @@ public class TransformerModel extends ArtifactModel<BaseOptionModel> {
     protected String from;
     protected String to;
 
-    public TransformerModel() {
-    }
+    public TransformerModel() {}
 
     public String getFrom() {
         return from;
@@ -44,5 +44,4 @@ public class TransformerModel extends ArtifactModel<BaseOptionModel> {
     public Kind getKind() {
         return Kind.transformer;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import java.util.ArrayList;
@@ -29,11 +30,17 @@ import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Display available plugins.", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "get",
+        description = "Display available plugins.",
+        sortOptions = false,
+        showDefaultValues = true)
 public class PluginGet extends PluginBaseCommand {
 
-    @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins.")
+    @CommandLine.Option(
+            names = {"--all"},
+            defaultValue = "false",
+            description = "Display all available plugins.")
     public boolean all;
 
     public PluginGet(CamelJBangMain main) {
@@ -50,10 +57,10 @@ public class PluginGet extends PluginBaseCommand {
 
             String name = details.getStringOrDefault("name", key);
             String command = details.getStringOrDefault("command", name);
-            String dependency = details.getStringOrDefault("dependency",
-                    "org.apache.camel:camel-jbang-plugin-%s".formatted(command));
-            String description
-                    = details.getStringOrDefault("description", "Plugin %s called with command %s".formatted(name, command));
+            String dependency = details.getStringOrDefault(
+                    "dependency", "org.apache.camel:camel-jbang-plugin-%s".formatted(command));
+            String description = details.getStringOrDefault(
+                    "description", "Plugin %s called with command %s".formatted(name, command));
 
             rows.add(new Row(name, command, dependency, description));
         });
@@ -66,8 +73,7 @@ public class PluginGet extends PluginBaseCommand {
                 if (plugins.get(camelPlugin.getName()) == null) {
                     String dependency = "org.apache.camel:camel-jbang-plugin-%s".formatted(camelPlugin.getCommand());
                     rows.add(new Row(
-                            camelPlugin.getName(), camelPlugin.getCommand(), dependency,
-                            camelPlugin.getDescription()));
+                            camelPlugin.getName(), camelPlugin.getCommand(), dependency, camelPlugin.getDescription()));
                 }
             }
 
@@ -85,19 +91,34 @@ public class PluginGet extends PluginBaseCommand {
 
     private void printRows(List<Row> rows) {
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .with(r -> r.name),
-                    new Column().header("COMMAND").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .with(r -> r.command),
-                    new Column().header("DEPENDENCY").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .with(r -> r.dependency),
-                    new Column().header("DESCRIPTION").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.description))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("NAME")
+                                            .headerAlign(HorizontalAlign.LEFT)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("COMMAND")
+                                            .headerAlign(HorizontalAlign.LEFT)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.command),
+                                    new Column()
+                                            .header("DEPENDENCY")
+                                            .headerAlign(HorizontalAlign.LEFT)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.dependency),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .headerAlign(HorizontalAlign.LEFT)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.description))));
         }
     }
 
-    private record Row(String name, String command, String dependency, String description) {
-    }
+    private record Row(String name, String command, String dependency, String description) {}
 }

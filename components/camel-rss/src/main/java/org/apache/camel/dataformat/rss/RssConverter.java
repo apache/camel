@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.rss;
 
 import java.io.StringReader;
@@ -26,8 +27,7 @@ import org.apache.camel.Converter;
 
 @Converter(generateLoader = true)
 public final class RssConverter {
-    private RssConverter() {
-    }
+    private RssConverter() {}
 
     @Converter
     public static String feedToXml(SyndFeed feed) throws FeedException {

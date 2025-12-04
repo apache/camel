@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -24,9 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
 
@@ -47,7 +48,8 @@ public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
         return new HashMap<>();
     }
 
-    protected void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws Exception {
+    protected void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload)
+            throws Exception {
         awaitAndAssert(unencrypted);
         awaitAndAssert(encrypted);
         for (Exchange e : unencrypted.getReceivedExchanges()) {
@@ -68,5 +70,4 @@ public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
         mockEp.expectedMessageCount(expected);
         return mockEp;
     }
-
 }

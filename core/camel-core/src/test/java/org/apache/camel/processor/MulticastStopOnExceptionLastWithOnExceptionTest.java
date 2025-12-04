@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastStopOnExceptionWithOnExceptionTest {
 
@@ -43,9 +44,16 @@ public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastSt
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
+                onException(Exception.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").multicast().stopOnException().to("direct:foo", "direct:baz", "direct:bar").end()
+                from("direct:start")
+                        .multicast()
+                        .stopOnException()
+                        .to("direct:foo", "direct:baz", "direct:bar")
+                        .end()
                         .to("mock:result");
 
                 from("direct:foo").to("mock:foo");
@@ -56,5 +64,4 @@ public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastSt
             }
         };
     }
-
 }

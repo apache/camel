@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -41,7 +42,8 @@ public class TemplatedRouteKameletTest extends CamelTestSupport {
                 routeTemplate("echo")
                         .templateParameter("prefix")
                         .from("kamelet:source")
-                        .setBody().simple("{{prefix}}-${body}");
+                        .setBody()
+                        .simple("{{prefix}}-${body}");
 
                 routeTemplate("myTemplate")
                         .templateParameter("uri")

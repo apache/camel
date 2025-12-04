@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage;
 
 import com.google.cloud.storage.Storage;
@@ -31,24 +32,31 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
     @Metadata(required = true)
     private String bucketName;
 
-    @UriParam(label = "common",
-              description = "The Service account key that can be used as credentials for the Storage client. It can be loaded by default from "
+    @UriParam(
+            label = "common",
+            description =
+                    "The Service account key that can be used as credentials for the Storage client. It can be loaded by default from "
                             + " classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer",
-              enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
+    @UriParam(
+            label = "producer",
+            enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
     private GoogleCloudStorageOperations operation;
 
     @UriParam(label = "producer", description = "The Object name inside the bucket")
     private String objectName;
 
-    @UriParam(label = "common", defaultValue = "US-EAST1",
-              description = "The Cloud Storage location to use when creating the new buckets")
+    @UriParam(
+            label = "common",
+            defaultValue = "US-EAST1",
+            description = "The Cloud Storage location to use when creating the new buckets")
     private String storageLocation = "US-EAST1";
 
-    @UriParam(label = "common", defaultValue = "STANDARD",
-              description = "The Cloud Storage class to use when creating the new buckets")
+    @UriParam(
+            label = "common",
+            defaultValue = "STANDARD",
+            description = "The Cloud Storage class to use when creating the new buckets")
     private StorageClass storageClass = StorageClass.STANDARD;
 
     @UriParam(label = "common", defaultValue = "true")
@@ -79,8 +87,10 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
     @UriParam(label = "consumer", description = "A regular expression to include only blobs with name matching it.")
     private String filter;
 
-    @UriParam(label = "consumer",
-              description = "The prefix which is used in the BlobListOptions to only consume objects we are interested in")
+    @UriParam(
+            label = "consumer",
+            description =
+                    "The prefix which is used in the BlobListOptions to only consume objects we are interested in")
     private String prefix;
 
     public String getBucketName() {

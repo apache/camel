@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.drive;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -27,18 +30,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
-           disabledReason = "Google Drive credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.google.drive.AbstractGoogleDriveTestSupport#hasCredentials",
+        disabledReason = "Google Drive credentials were not provided")
 public class FilesConsumerIT extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesConsumerIT.class);
-    private static final String PATH_PREFIX
-            = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
+    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection()
+            .getApiName(DriveFilesApiMethod.class)
+            .getName();
 
     @Test
     public void testListConsumer() throws Exception {
@@ -50,10 +53,9 @@ public class FilesConsumerIT extends AbstractGoogleDriveTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        FileList fileList
-                = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.FileList.class);
+        FileList fileList =
+                mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.FileList.class);
         assertTrue(fileInList(fileId, fileList));
-
     }
 
     private boolean fileInList(String fileId, FileList fileList) {

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,12 +37,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ValueOperations;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RedisStringTest extends RedisTestSupport {
@@ -114,19 +115,20 @@ public class RedisStringTest extends RedisTestSupport {
                 RedisConstants.OFFSET, "10",
                 RedisConstants.VALUE, "0");
 
-        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>> any());
+        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>>any());
     }
 
     @Test
     public void shouldExecuteGETBIT() throws Exception {
-        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<Boolean>> any())).thenReturn(true);
+        when(redisTemplate.execute(ArgumentMatchers.<RedisCallback<Boolean>>any()))
+                .thenReturn(true);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "GETBIT",
                 RedisConstants.KEY, "key",
                 RedisConstants.OFFSET, "2");
 
-        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>> any());
+        verify(redisTemplate).execute(ArgumentMatchers.<RedisCallback<String>>any());
         assertEquals(true, result);
     }
 
@@ -227,9 +229,7 @@ public class RedisStringTest extends RedisTestSupport {
 
         when(valueOperations.multiGet(fields)).thenReturn(values);
 
-        Object result = sendHeaders(
-                RedisConstants.COMMAND, "MGET",
-                RedisConstants.FIELDS, fields);
+        Object result = sendHeaders(RedisConstants.COMMAND, "MGET", RedisConstants.FIELDS, fields);
 
         verify(valueOperations).multiGet(fields);
         assertEquals(values, result);
@@ -240,9 +240,7 @@ public class RedisStringTest extends RedisTestSupport {
         Map<String, String> values = new HashMap<>();
         values.put("field1", "valu1");
 
-        sendHeaders(
-                RedisConstants.COMMAND, "MSET",
-                RedisConstants.VALUES, values);
+        sendHeaders(RedisConstants.COMMAND, "MSET", RedisConstants.VALUES, values);
 
         verify(valueOperations).multiSet(values);
     }
@@ -252,9 +250,7 @@ public class RedisStringTest extends RedisTestSupport {
         Map<String, String> values = new HashMap<>();
         values.put("field1", "valu1");
 
-        sendHeaders(
-                RedisConstants.COMMAND, "MSETNX",
-                RedisConstants.VALUES, values);
+        sendHeaders(RedisConstants.COMMAND, "MSETNX", RedisConstants.VALUES, values);
 
         verify(valueOperations).multiSetIfAbsent(values);
     }
@@ -271,6 +267,5 @@ public class RedisStringTest extends RedisTestSupport {
 
         verify(valueOperations).getAndSet("key", value);
         assertEquals("old value", result);
-
     }
 }

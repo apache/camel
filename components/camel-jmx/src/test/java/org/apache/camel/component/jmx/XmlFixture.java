@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.io.File;
@@ -21,17 +22,17 @@ import java.io.File;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.builder.Input;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class XmlFixture {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlFixture.class);
 
-    private XmlFixture() {
-    }
+    private XmlFixture() {}
 
     public static Source toSource(String aXmlString) {
         return Input.fromString(aXmlString).build();
@@ -42,7 +43,8 @@ public final class XmlFixture {
     }
 
     public static void assertXMLIgnorePrefix(String aMessage, Source aExpected, Source aActual) throws Exception {
-        XmlAssert.assertThat(aExpected).and(aActual)
+        XmlAssert.assertThat(aExpected)
+                .and(aActual)
                 .ignoreComments()
                 .ignoreWhitespace()
                 .areSimilar();
@@ -63,5 +65,4 @@ public final class XmlFixture {
         stylesheet.setSystemId(XmlFixture.class.getResource(aResourcePath).toExternalForm());
         return Input.byTransforming(aSource).withStylesheet(stylesheet).build();
     }
-
 }

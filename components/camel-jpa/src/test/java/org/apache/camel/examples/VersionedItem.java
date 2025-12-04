@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.examples;
 
 import jakarta.persistence.Entity;
@@ -30,12 +31,13 @@ public class VersionedItem {
     @Id
     @GeneratedValue
     private Long id;
+
     private String name;
+
     @Version
     private Long version;
 
-    public VersionedItem() {
-    }
+    public VersionedItem() {}
 
     public VersionedItem(String name) {
         setName(name);

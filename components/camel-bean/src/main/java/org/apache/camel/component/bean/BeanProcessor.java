@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.io.IOException;
@@ -36,7 +37,9 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor, Err
 
     public BeanProcessor(Object pojo, CamelContext camelContext) {
         this(new ConstantBeanHolder(
-                pojo, camelContext, ParameterMappingStrategyHelper.createParameterMappingStrategy(camelContext),
+                pojo,
+                camelContext,
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(camelContext),
                 camelContext.getComponent("bean", BeanComponent.class)));
     }
 
@@ -172,5 +175,4 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor, Err
             super(beanHolder);
         }
     }
-
 }

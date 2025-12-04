@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +42,6 @@ import org.apache.kudu.client.RowResultIterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class KuduProducerTest extends AbstractKuduTest {
 
     @EndpointInject(value = "mock:result")
@@ -57,7 +58,7 @@ public class KuduProducerTest extends AbstractKuduTest {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(0));
 
-                //integration test route
+                // integration test route
                 from("direct:create")
                         .to("kudu:localhost:7051/TestTable?operation=create_table")
                         .to("mock:result");
@@ -103,17 +104,17 @@ public class KuduProducerTest extends AbstractKuduTest {
         final List<String> columnNames = Arrays.asList("id", "title", "name", "lastname", "address");
 
         for (int i = 0; i < columnNames.size(); i++) {
-            columns.add(
-                    new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
-                            .key(i == 0)
-                            .build());
+            columns.add(new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), Type.STRING)
+                    .key(i == 0)
+                    .build());
         }
 
         List<String> rangeKeys = new ArrayList<>();
         rangeKeys.add("id");
 
         headers.put(KuduConstants.CAMEL_KUDU_SCHEMA, new Schema(columns));
-        headers.put(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+        headers.put(
+                KuduConstants.CAMEL_KUDU_TABLE_OPTIONS, new CreateTableOptions().setRangePartitionColumns(rangeKeys));
 
         template().requestBodyAndHeaders("direct://create", null, headers);
 
@@ -186,7 +187,8 @@ public class KuduProducerTest extends AbstractKuduTest {
         successEndpoint.assertIsSatisfied();
 
         KuduClient client = ikc.getClient();
-        KuduScanner scanner = client.newScannerBuilder(client.openTable("TestTable")).build();
+        KuduScanner scanner =
+                client.newScannerBuilder(client.openTable("TestTable")).build();
         // The table shouldn't have any row
         int rows = 0;
         while (scanner.hasMoreRows()) {
@@ -225,7 +227,8 @@ public class KuduProducerTest extends AbstractKuduTest {
         successEndpoint.assertIsSatisfied();
 
         KuduClient client = ikc.getClient();
-        KuduScanner scanner = client.newScannerBuilder(client.openTable("TestTable")).build();
+        KuduScanner scanner =
+                client.newScannerBuilder(client.openTable("TestTable")).build();
         int rows = 0;
         while (scanner.hasMoreRows()) {
             RowResultIterator iterator = scanner.nextRows();
@@ -274,7 +277,8 @@ public class KuduProducerTest extends AbstractKuduTest {
         successEndpoint.assertIsSatisfied();
 
         KuduClient client = ikc.getClient();
-        KuduScanner scanner = client.newScannerBuilder(client.openTable("TestTable")).build();
+        KuduScanner scanner =
+                client.newScannerBuilder(client.openTable("TestTable")).build();
         int rows = 0;
         while (scanner.hasMoreRows()) {
             RowResultIterator iterator = scanner.nextRows();

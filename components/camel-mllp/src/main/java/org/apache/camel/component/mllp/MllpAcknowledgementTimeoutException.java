@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
 
 /**
@@ -34,8 +35,8 @@ public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementExce
         super(EXCEPTION_MESSAGE, hl7Message, cause, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(byte[] hl7Message, byte[] partialHl7Acknowledgement, Throwable cause,
-                                               boolean logPhi) {
+    public MllpAcknowledgementTimeoutException(
+            byte[] hl7Message, byte[] partialHl7Acknowledgement, Throwable cause, boolean logPhi) {
         super(EXCEPTION_MESSAGE, hl7Message, partialHl7Acknowledgement, cause, logPhi);
     }
 
@@ -43,8 +44,8 @@ public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementExce
         super(message, hl7Message, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement,
-                                               boolean logPhi) {
+    public MllpAcknowledgementTimeoutException(
+            String message, byte[] hl7Message, byte[] partialHl7Acknowledgement, boolean logPhi) {
         super(message, hl7Message, partialHl7Acknowledgement, logPhi);
     }
 
@@ -52,8 +53,8 @@ public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementExce
         super(message, hl7Message, cause, logPhi);
     }
 
-    public MllpAcknowledgementTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement,
-                                               Throwable cause, boolean logPhi) {
+    public MllpAcknowledgementTimeoutException(
+            String message, byte[] hl7Message, byte[] partialHl7Acknowledgement, Throwable cause, boolean logPhi) {
         super(message, hl7Message, partialHl7Acknowledgement, cause, logPhi);
     }
 
@@ -68,5 +69,4 @@ public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementExce
     public byte[] getHl7Acknowledgement() {
         return super.getHl7AcknowledgementBytes();
     }
-
 }

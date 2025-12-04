@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.firehose;
 
 import java.nio.ByteBuffer;
@@ -101,10 +102,11 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         } else {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
                 DeleteDeliveryStreamRequest req = DeleteDeliveryStreamRequest.builder()
-                        .deliveryStreamName(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME,
-                                String.class))
+                        .deliveryStreamName(exchange.getIn()
+                                .getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME, String.class))
                         .build();
                 DeleteDeliveryStreamResponse result = client.deleteDeliveryStream(req);
                 Message message = getMessageForResponse(exchange);
@@ -135,10 +137,11 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         } else {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
+            if (ObjectHelper.isNotEmpty(
+                    exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
                 DescribeDeliveryStreamRequest req = DescribeDeliveryStreamRequest.builder()
-                        .deliveryStreamName(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME,
-                                String.class))
+                        .deliveryStreamName(exchange.getIn()
+                                .getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME, String.class))
                         .build();
                 DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
                 Message message = getMessageForResponse(exchange);
@@ -200,8 +203,8 @@ public class KinesisFirehose2Producer extends DefaultProducer {
     }
 
     private KinesisFirehose2Operations determineOperation(Exchange exchange) {
-        KinesisFirehose2Operations operation = exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_OPERATION,
-                KinesisFirehose2Operations.class);
+        KinesisFirehose2Operations operation = exchange.getIn()
+                .getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_OPERATION, KinesisFirehose2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }

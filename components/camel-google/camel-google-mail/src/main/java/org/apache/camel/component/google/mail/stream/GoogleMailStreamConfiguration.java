@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail.stream;
 
 import java.util.Collection;
@@ -33,31 +34,43 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String index;
+
     @UriParam
     private String clientId;
+
     @UriParam(label = "security", secret = true)
     private String clientSecret;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "security", secret = true)
     private String refreshToken;
+
     @UriParam
     private boolean raw;
+
     @UriParam
     private String applicationName;
+
     @UriParam(defaultValue = "is:unread")
     private String query = "is:unread";
+
     @UriParam(defaultValue = "10")
     private long maxResults = 10L;
+
     @UriParam
     private String labels;
+
     @UriParam(defaultValue = "true")
     private boolean markAsRead = true;
     /* Service account */
     @UriParam(label = "security")
     private String serviceAccountKey;
+
     @UriParam
     private String delegate;
+
     @UriParam
     private String scopes;
 
@@ -242,5 +255,4 @@ public class GoogleMailStreamConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -29,9 +33,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
@@ -40,6 +41,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends AbstractJMSTes
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -48,21 +50,31 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends AbstractJMSTes
     public void testJmsRequestReplyExclusiveFixedReplyTo() {
         StopWatch watch = new StopWatch();
 
-        assertEquals("Hello A", template.requestBody(
-                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
-                "A"));
-        assertEquals("Hello B", template.requestBody(
-                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
-                "B"));
-        assertEquals("Hello C", template.requestBody(
-                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
-                "C"));
-        assertEquals("Hello D", template.requestBody(
-                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
-                "D"));
-        assertEquals("Hello E", template.requestBody(
-                "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
-                "E"));
+        assertEquals(
+                "Hello A",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                        "A"));
+        assertEquals(
+                "Hello B",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                        "B"));
+        assertEquals(
+                "Hello C",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                        "C"));
+        assertEquals(
+                "Hello D",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                        "D"));
+        assertEquals(
+                "Hello E",
+                template.requestBody(
+                        "activemq:queue:JmsRequestReplyExclusiveReplyToComponentTest?replyTo=JmsRequestReplyExclusiveReplyToComponentTest.bar",
+                        "E"));
 
         long delta = watch.taken();
         assertTrue(delta < 4200, "Should be faster than about 4 seconds, was: " + delta);

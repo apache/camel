@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.task;
 
 import java.util.function.BooleanSupplier;
@@ -41,7 +42,8 @@ public interface BlockingTask extends Task {
      * @return                         true if the task has completed successfully or false if: 1) the budget is
      *                                 exhausted or 2) the task was interrupted.
      */
-    default <T> boolean run(CamelContext camelContext, Predicate<T> predicate, T payload) throws TaskRunFailureException {
+    default <T> boolean run(CamelContext camelContext, Predicate<T> predicate, T payload)
+            throws TaskRunFailureException {
         return this.run(camelContext, () -> predicate.test(payload));
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime;
 
 import java.util.HashMap;
@@ -36,9 +37,14 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 /**
  * Invoke Model of AWS Bedrock service.
  */
-@UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock", title = "AWS Bedrock",
-             syntax = "aws-bedrock:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
-             headersClass = BedrockConstants.class)
+@UriEndpoint(
+        firstVersion = "4.5.0",
+        scheme = "aws-bedrock",
+        title = "AWS Bedrock",
+        syntax = "aws-bedrock:label",
+        producerOnly = true,
+        category = {Category.AI, Category.CLOUD},
+        headersClass = BedrockConstants.class)
 public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockRuntimeClient bedrockRuntimeClient;

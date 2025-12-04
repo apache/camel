@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.interceptor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWith;
@@ -25,8 +28,6 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Advice with tests
@@ -44,7 +45,8 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"),
+            assertTrue(
+                    e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"),
                     e.getMessage());
         }
     }
@@ -57,7 +59,11 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // weave by type in the route
                 // and replace it with the following route path
-                weaveByType(LogDefinition.class).replace().multicast().to("mock:a").to("mock:b");
+                weaveByType(LogDefinition.class)
+                        .replace()
+                        .multicast()
+                        .to("mock:a")
+                        .to("mock:b");
             }
         });
         // END SNIPPET: e1
@@ -137,7 +143,10 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e5
-                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result");
+                from("direct:start")
+                        .transform(simple("Hello ${body}"))
+                        .log("Got ${body}")
+                        .to("mock:result");
                 // END SNIPPET: e5
             }
         };

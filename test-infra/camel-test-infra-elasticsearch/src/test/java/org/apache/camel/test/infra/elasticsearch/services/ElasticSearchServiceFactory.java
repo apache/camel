@@ -68,9 +68,7 @@ public final class ElasticSearchServiceFactory {
         }
     }
 
-    private ElasticSearchServiceFactory() {
-
-    }
+    private ElasticSearchServiceFactory() {}
 
     public static SimpleTestServiceBuilder<ElasticSearchService> builder() {
         return new SimpleTestServiceBuilder<>("elasticsearch");
@@ -89,19 +87,19 @@ public final class ElasticSearchServiceFactory {
 
     private static class SingletonServiceHolder {
         static final ElasticSearchService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<ElasticSearchService> instance = builder();
-            instance.addLocalMapping(
-                    () -> new SingletonElasticSearchService(new ElasticSearchLocalContainerTestService(), "elastic"))
+            instance.addLocalMapping(() ->
+                            new SingletonElasticSearchService(new ElasticSearchLocalContainerTestService(), "elastic"))
                     .addRemoteMapping(RemoteElasticSearchTestService::new);
             INSTANCE = instance.build();
         }
     }
 
     public static class ElasticSearchLocalContainerTestService extends ElasticSearchLocalContainerInfraService
-            implements ElasticSearchService {
-    }
+            implements ElasticSearchService {}
 
-    public static class RemoteElasticSearchTestService extends RemoteElasticSearchInfraService implements ElasticSearchService {
-    }
+    public static class RemoteElasticSearchTestService extends RemoteElasticSearchInfraService
+            implements ElasticSearchService {}
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.util.Map;
 
@@ -22,9 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
-
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Component("minio")
 public class MinioComponent extends HealthCheckComponent {
@@ -40,13 +41,14 @@ public class MinioComponent extends HealthCheckComponent {
     }
 
     @Override
-    protected MinioEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected MinioEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         if (isEmpty(remaining) || remaining.isBlank()) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
 
-        final MinioConfiguration configuration
-                = isNotEmpty(this.configuration) ? this.configuration.copy() : new MinioConfiguration();
+        final MinioConfiguration configuration =
+                isNotEmpty(this.configuration) ? this.configuration.copy() : new MinioConfiguration();
         configuration.setBucketName(remaining);
         MinioEndpoint endpoint = new MinioEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

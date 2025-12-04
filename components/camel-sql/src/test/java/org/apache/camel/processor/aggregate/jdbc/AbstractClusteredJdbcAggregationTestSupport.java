@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.AggregationStrategy;
@@ -30,8 +31,7 @@ public abstract class AbstractClusteredJdbcAggregationTestSupport extends CamelS
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return newAppContext(
-                "JdbcSpringDataSource.xml", "JdbcSpringDataSource.xml");
+        return newAppContext("JdbcSpringDataSource.xml", "JdbcSpringDataSource.xml");
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {

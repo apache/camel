@@ -30,13 +30,13 @@ public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpServic
     }
 
     public FtpsEmbeddedService(EmbeddedConfiguration.SecurityConfiguration securityConfiguration) {
-        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate().withSecurityConfiguration(securityConfiguration));
+        super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate()
+                .withSecurityConfiguration(securityConfiguration));
     }
 
     @Deprecated
     public FtpsEmbeddedService(boolean useImplicit, String authValue, boolean clientAuth) {
         super(EmbeddedConfigurationBuilder.defaultFtpsConfigurationTemplate());
-
     }
 
     @Override
@@ -45,8 +45,10 @@ public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpServic
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
         listenerFactory.setPort(port);
-        listenerFactory.setImplicitSsl(embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
-        listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());
+        listenerFactory.setImplicitSsl(
+                embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
+        listenerFactory.setSslConfiguration(
+                createSslConfiguration(embeddedConfiguration).createSslConfiguration());
 
         serverFactory.addListener(DEFAULT_LISTENER, listenerFactory.createListener());
 
@@ -57,7 +59,8 @@ public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpServic
         // NOTE: if you have trouble with SSL set the system property "javax.net.debug" to "all"
 
         SslConfigurationFactory sslConfigFactory = new SslConfigurationFactory();
-        sslConfigFactory.setSslProtocol(embeddedConfiguration.getSecurityConfiguration().getAuthValue());
+        sslConfigFactory.setSslProtocol(
+                embeddedConfiguration.getSecurityConfiguration().getAuthValue());
 
         sslConfigFactory.setKeystoreFile(new File(embeddedConfiguration.getKeyStore()));
         sslConfigFactory.setKeystoreType(embeddedConfiguration.getKeyStoreType());
@@ -65,7 +68,8 @@ public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpServic
         sslConfigFactory.setKeystorePassword(embeddedConfiguration.getKeyStorePassword());
         sslConfigFactory.setKeyPassword(embeddedConfiguration.getKeyStorePassword());
 
-        sslConfigFactory.setClientAuthentication(embeddedConfiguration.getSecurityConfiguration().getAuthValue());
+        sslConfigFactory.setClientAuthentication(
+                embeddedConfiguration.getSecurityConfiguration().getAuthValue());
 
         if (embeddedConfiguration.getSecurityConfiguration().isClientAuth()) {
             sslConfigFactory.setTruststoreFile(new File(embeddedConfiguration.getKeyStore()));

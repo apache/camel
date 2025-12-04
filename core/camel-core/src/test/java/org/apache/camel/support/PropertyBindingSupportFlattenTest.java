@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.CollectionHelper.mapOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import java.util.Properties;
@@ -24,9 +28,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.util.CollectionHelper.mapOf;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -55,14 +56,17 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "name", "James",
-                "bar", mapOf(
+                "name",
+                "James",
+                "bar",
+                mapOf(
                         "age", "33",
                         "{{committer}}", "true",
                         "gold-customer", "true",
-                        "work", mapOf(
-                                "id", "123",
-                                "name", "{{companyName}}")));
+                        "work",
+                                mapOf(
+                                        "id", "123",
+                                        "name", "{{companyName}}")));
 
         PropertyBindingSupport.bindWithFlattenProperties(context, foo, map);
 
@@ -89,14 +93,17 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "name", "#property:customerName",
-                "bar", mapOf(
+                "name",
+                "#property:customerName",
+                "bar",
+                mapOf(
                         "age", "#property:customerAge",
                         "rider", "true",
                         "gold-customer", "true",
-                        "work", mapOf(
-                                "id", "456",
-                                "name", "#property:{{workKey}}")));
+                        "work",
+                                mapOf(
+                                        "id", "456",
+                                        "name", "#property:{{workKey}}")));
 
         PropertyBindingSupport.bindWithFlattenProperties(context, foo, map);
 
@@ -113,7 +120,9 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("name", e.getPropertyName());
             assertEquals("#property:unknown", e.getValue());
-            assertEquals("Property with key unknown not found by properties component", e.getCause().getMessage());
+            assertEquals(
+                    "Property with key unknown not found by properties component",
+                    e.getCause().getMessage());
         }
     }
 
@@ -122,19 +131,22 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "bar", mapOf(
+                "bar",
+                mapOf(
                         "age", "33",
                         "rider", "true",
                         "gold-customer", "true",
-                        "work", mapOf(
-                                "name", "{{companyName}}")));
+                        "work", mapOf("name", "{{companyName}}")));
 
-        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo)
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(foo)
                 .withProperty("name", "James")
                 .withProperty("bar.work.id", "123")
                 .withFlattenProperties(true)
                 // and add the rest
-                .withProperties(map).bind();
+                .withProperties(map)
+                .bind();
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -150,12 +162,12 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
     public void testPropertiesNoReflection() {
         Foo foo = new Foo();
 
-        Map<String, Object> map = mapOf(
-                "name", "James",
-                "bar", mapOf(
-                        "AGE", "33"));
+        Map<String, Object> map = mapOf("name", "James", "bar", mapOf("AGE", "33"));
 
-        PropertyBindingSupport.build().withFlattenProperties(true).withReflection(false).bind(context, foo, map);
+        PropertyBindingSupport.build()
+                .withFlattenProperties(true)
+                .withReflection(false)
+                .bind(context, foo, map);
 
         assertNull(foo.getName());
         assertEquals(0, foo.getBar().getAge());
@@ -169,16 +181,22 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "nAMe", "James",
-                "bar", mapOf(
+                "nAMe",
+                "James",
+                "bar",
+                mapOf(
                         "age", "33",
                         "{{committer}}", "true",
                         "gOLd-Customer", "true",
-                        "WoRk", mapOf(
-                                "ID", "123",
-                                "naME", "{{companyName}}")));
+                        "WoRk",
+                                mapOf(
+                                        "ID", "123",
+                                        "naME", "{{companyName}}")));
 
-        PropertyBindingSupport.build().withFlattenProperties(true).withIgnoreCase(true).bind(context, foo, map);
+        PropertyBindingSupport.build()
+                .withFlattenProperties(true)
+                .withIgnoreCase(true)
+                .bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -195,14 +213,17 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "name", "James",
-                "bar", mapOf(
+                "name",
+                "James",
+                "bar",
+                mapOf(
                         "age", "33",
                         "{{committer}}", "true",
                         "gold-customer", "true",
-                        "work", mapOf(
-                                "id", "123",
-                                "name", "{{companyName}}")));
+                        "work",
+                                mapOf(
+                                        "id", "123",
+                                        "name", "{{companyName}}")));
 
         PropertyBindingSupport.build().withFlattenProperties(true).bind(context, foo, map);
 
@@ -221,20 +242,27 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "my", mapOf(
-                        "prefix", mapOf(
-                                "name", "James",
-                                "bar", mapOf(
-                                        "age", "33",
-                                        "{{committer}}", "true",
-                                        "gold-customer", "true",
-                                        "work", mapOf(
-                                                "id", "123",
-                                                "name", "{{companyName}}")))),
-                "other", mapOf(
-                        "something", "test"));
+                "my",
+                        mapOf(
+                                "prefix",
+                                mapOf(
+                                        "name",
+                                        "James",
+                                        "bar",
+                                        mapOf(
+                                                "age", "33",
+                                                "{{committer}}", "true",
+                                                "gold-customer", "true",
+                                                "work",
+                                                        mapOf(
+                                                                "id", "123",
+                                                                "name", "{{companyName}}")))),
+                "other", mapOf("something", "test"));
 
-        PropertyBindingSupport.build().withFlattenProperties(true).withOptionPrefix("my.prefix.").bind(context, foo, map);
+        PropertyBindingSupport.build()
+                .withFlattenProperties(true)
+                .withOptionPrefix("my.prefix.")
+                .bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -252,20 +280,27 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         Map<String, Object> map = mapOf(
-                "name", "James",
-                "bar", mapOf(
+                "name",
+                "James",
+                "bar",
+                mapOf(
                         "AGE", "33",
                         "{{committer}}", "true",
                         "gOLd-customer", "true",
                         "?silver-Customer", "true",
-                        "WoRk", mapOf(
-                                "?ID", "123",
-                                "?naME", "{{companyName}}",
-                                "adress", mapOf(
-                                        "?Street", "Some street",
-                                        "?zip", "1234"))));
+                        "WoRk",
+                                mapOf(
+                                        "?ID", "123",
+                                        "?naME", "{{companyName}}",
+                                        "adress",
+                                                mapOf(
+                                                        "?Street", "Some street",
+                                                        "?zip", "1234"))));
 
-        PropertyBindingSupport.build().withFlattenProperties(true).withIgnoreCase(true).bind(context, foo, map);
+        PropertyBindingSupport.build()
+                .withFlattenProperties(true)
+                .withIgnoreCase(true)
+                .bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -360,5 +395,4 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
             return this;
         }
     }
-
 }

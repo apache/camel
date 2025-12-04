@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTest {
 
@@ -44,12 +45,12 @@ public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/myapp/mytest?urlDecodeHeaders=true").process(exchange -> {
-                    String columns = exchange.getIn().getHeader("columns", String.class);
-                    exchange.getMessage().setBody("We got " + columns + " columns");
-                });
+                from("netty-http:http://localhost:{{port}}/myapp/mytest?urlDecodeHeaders=true")
+                        .process(exchange -> {
+                            String columns = exchange.getIn().getHeader("columns", String.class);
+                            exchange.getMessage().setBody("We got " + columns + " columns");
+                        });
             }
         };
     }
-
 }

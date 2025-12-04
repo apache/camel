@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jslt;
 
 import java.nio.charset.StandardCharsets;
@@ -34,14 +35,15 @@ public class JsltBasicTest extends CamelTestSupport {
     @Test
     public void testJsltAsInputStream() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
 
@@ -52,7 +54,7 @@ public class JsltBasicTest extends CamelTestSupport {
     public void testInvalidBody() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        //type integer is not allowed
+        // type integer is not allowed
         sendBody("direct://start", 4);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -61,14 +63,15 @@ public class JsltBasicTest extends CamelTestSupport {
     @Test
     public void testJsltAsText() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://start",
+        sendBody(
+                "direct://start",
                 IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json")));
 
@@ -78,12 +81,12 @@ public class JsltBasicTest extends CamelTestSupport {
     @Test
     public void testJsltAsByteArray() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context, "org/apache/camel/component/jslt/demoPlayground/output.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
         String text = IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                 context, "org/apache/camel/component/jslt/demoPlayground/input.json"));
@@ -96,17 +99,20 @@ public class JsltBasicTest extends CamelTestSupport {
     @Test
     public void testJsltAsInputStreamPrettyPrint() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:result").expectedBodiesReceived(
-                IOHelper.loadText(
-                        ResourceHelper.resolveMandatoryResourceAsInputStream(
-                                context, "org/apache/camel/component/jslt/demoPlayground/outputPrettyPrint.json"))
-                        .trim() // Remove the last newline added by IOHelper.loadText()
-        );
+        getMockEndpoint("mock:result")
+                .expectedBodiesReceived(
+                        IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
+                                        context,
+                                        "org/apache/camel/component/jslt/demoPlayground/outputPrettyPrint.json"))
+                                .trim() // Remove the last newline added by IOHelper.loadText()
+                        );
 
-        sendBody("direct://startPrettyPrint",
+        sendBody(
+                "direct://startPrettyPrint",
                 ResourceHelper.resolveMandatoryResourceAsInputStream(
                         context, "org/apache/camel/component/jslt/demoPlayground/input.json"),
-                Collections.singletonMap(JsltConstants.HEADER_JSLT_RESOURCE_URI,
+                Collections.singletonMap(
+                        JsltConstants.HEADER_JSLT_RESOURCE_URI,
                         "org/apache/camel/component/jslt/demoPlayground/transformation.json"));
 
         MockEndpoint.assertIsSatisfied(context);

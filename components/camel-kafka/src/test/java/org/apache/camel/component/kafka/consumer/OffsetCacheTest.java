@@ -17,6 +17,11 @@
 
 package org.apache.camel.component.kafka.consumer;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,11 +33,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,7 +47,8 @@ class OffsetCacheTest {
 
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic1, 1));
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic1, 2));
-        assertDoesNotThrow(() -> offsetCache.recordOffset(topic1, 2),
+        assertDoesNotThrow(
+                () -> offsetCache.recordOffset(topic1, 2),
                 "The cache should not throw exceptions for duplicate records");
     }
 
@@ -72,17 +73,20 @@ class OffsetCacheTest {
 
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic11, 1));
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic11, 2));
-        assertDoesNotThrow(() -> offsetCache.recordOffset(topic11, 2),
+        assertDoesNotThrow(
+                () -> offsetCache.recordOffset(topic11, 2),
                 "The cache should not throw exceptions for duplicate records");
 
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic12, 1));
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic12, 2));
-        assertDoesNotThrow(() -> offsetCache.recordOffset(topic12, 2),
+        assertDoesNotThrow(
+                () -> offsetCache.recordOffset(topic12, 2),
                 "The cache should not throw exceptions for duplicate records");
 
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic13, 3));
         assertDoesNotThrow(() -> offsetCache.recordOffset(topic13, 4));
-        assertDoesNotThrow(() -> offsetCache.recordOffset(topic13, 5),
+        assertDoesNotThrow(
+                () -> offsetCache.recordOffset(topic13, 5),
                 "The cache should not throw exceptions for duplicate records");
 
         assertTrue(offsetCache.contains(topic11), "The cache should contain an entry for the topic1 on partition 1");
@@ -104,7 +108,8 @@ class OffsetCacheTest {
         final TopicPartition topic12 = new TopicPartition("topic1", 2);
         final TopicPartition topic13 = new TopicPartition("topic1", 3);
 
-        final Map<TopicPartition, OffsetAndMetadata> offsets = Collections.singletonMap(topic12, new OffsetAndMetadata(3));
+        final Map<TopicPartition, OffsetAndMetadata> offsets =
+                Collections.singletonMap(topic12, new OffsetAndMetadata(3));
 
         offsetCache.removeCommittedEntries(offsets, null);
 
@@ -120,7 +125,8 @@ class OffsetCacheTest {
     @DisplayName("Tests whether the cache retains offsets if the consumer fails to commit")
     void removeRetainCommittedEntries() {
         final TopicPartition topic13 = new TopicPartition("topic1", 3);
-        final Map<TopicPartition, OffsetAndMetadata> offsets = Collections.singletonMap(topic13, new OffsetAndMetadata(3));
+        final Map<TopicPartition, OffsetAndMetadata> offsets =
+                Collections.singletonMap(topic13, new OffsetAndMetadata(3));
 
         assertDoesNotThrow(() -> offsetCache.removeCommittedEntries(offsets, new Exception("Fake exception")));
         assertEquals(2, offsetCache.cacheSize());

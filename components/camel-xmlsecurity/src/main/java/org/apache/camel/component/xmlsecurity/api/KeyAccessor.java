@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import javax.xml.crypto.KeySelector;
@@ -62,5 +63,4 @@ public interface KeyAccessor {
      * @throws Exception      if an error occurs
      */
     KeyInfo getKeyInfo(Message message, Node messageBody, KeyInfoFactory keyInfoFactory) throws Exception;
-
 }

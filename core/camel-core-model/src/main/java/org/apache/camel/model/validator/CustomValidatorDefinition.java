@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.validator;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,11 +35,11 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
 
     @XmlAttribute
     private String ref;
+
     @XmlAttribute
     private String className;
 
-    public CustomValidatorDefinition() {
-    }
+    public CustomValidatorDefinition() {}
 
     protected CustomValidatorDefinition(CustomValidatorDefinition source) {
         super(source);
@@ -72,5 +73,4 @@ public class CustomValidatorDefinition extends ValidatorDefinition {
     public void setClassName(String className) {
         this.className = className;
     }
-
 }

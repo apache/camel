@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq.integrationtest;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
     private final String ironmqQueue = "testqueue";
 
     private final String ironMQEndpoint = "ironmq:" + ironmqQueue + "?projectId=" + projectId + "&token=" + token
-                                          + "&maxMessagesPerPoll=100&wait=30&ironMQCloud=" + IRONMQCLOUD
-                                          + "&concurrentConsumers=" + CONCURRENT_CONSUMERS + "&batchDelete=" + BATCH_DELETE;
+            + "&maxMessagesPerPoll=100&wait=30&ironMQCloud=" + IRONMQCLOUD
+            + "&concurrentConsumers=" + CONCURRENT_CONSUMERS + "&batchDelete=" + BATCH_DELETE;
     private final String sedaEndpoint = "seda:push?concurrentConsumers=" + CONCURRENT_CONSUMERS;
 
     @BeforeEach
@@ -75,8 +76,8 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
         }
         int seconds = (int) watch.taken() / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
-        LOGGER.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is "
-                    + msgPrSec + " messages per second");
+        LOGGER.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES
+                + " messages. Which is " + msgPrSec + " messages per second");
     }
 
     @Test
@@ -88,8 +89,8 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context, 4, TimeUnit.MINUTES);
         int seconds = (int) watch.taken() / 1000;
         int msgPrSec = NO_OF_MESSAGES / seconds;
-        LOGGER.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is "
-                    + msgPrSec + " messages per second");
+        LOGGER.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES
+                + " messages. Which is " + msgPrSec + " messages per second");
     }
 
     @Override
@@ -101,5 +102,4 @@ public class ConcurrentConsumerLoadManualTest extends CamelTestSupport {
             }
         };
     }
-
 }

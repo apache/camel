@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,6 @@ import software.amazon.awssdk.services.redshiftdata.model.ListSchemasResponse;
 import software.amazon.awssdk.services.redshiftdata.model.ListStatementsResponse;
 import software.amazon.awssdk.services.redshiftdata.model.ListTablesResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
@@ -57,7 +58,8 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListDatabasesResponse resultGet = (ListDatabasesResponse) exchange.getIn().getBody();
+        ListDatabasesResponse resultGet =
+                (ListDatabasesResponse) exchange.getIn().getBody();
         List<String> resultList = new ArrayList<>();
         resultList.add("database1");
         resultList.add("database2");
@@ -95,7 +97,8 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ListStatementsResponse resultGet = (ListStatementsResponse) exchange.getIn().getBody();
+        ListStatementsResponse resultGet =
+                (ListStatementsResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.statements().get(0).statementName());
     }
 
@@ -129,7 +132,8 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeTableResponse resultGet = (DescribeTableResponse) exchange.getIn().getBody();
+        DescribeTableResponse resultGet =
+                (DescribeTableResponse) exchange.getIn().getBody();
         assertEquals("table1", resultGet.tableName());
     }
 
@@ -146,7 +150,8 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        ExecuteStatementResponse resultGet = (ExecuteStatementResponse) exchange.getIn().getBody();
+        ExecuteStatementResponse resultGet =
+                (ExecuteStatementResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.id());
     }
 
@@ -157,13 +162,15 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:batchExecuteStatement", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.batchExecuteStatement);
+                exchange.getIn()
+                        .setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.batchExecuteStatement);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        BatchExecuteStatementResponse resultGet = (BatchExecuteStatementResponse) exchange.getIn().getBody();
+        BatchExecuteStatementResponse resultGet =
+                (BatchExecuteStatementResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.id());
     }
 
@@ -180,7 +187,8 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CancelStatementResponse resultGet = (CancelStatementResponse) exchange.getIn().getBody();
+        CancelStatementResponse resultGet =
+                (CancelStatementResponse) exchange.getIn().getBody();
         assertEquals(true, resultGet.status());
     }
 
@@ -197,7 +205,8 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeStatementResponse resultGet = (DescribeStatementResponse) exchange.getIn().getBody();
+        DescribeStatementResponse resultGet =
+                (DescribeStatementResponse) exchange.getIn().getBody();
         assertEquals("statement1", resultGet.id());
     }
 
@@ -208,13 +217,15 @@ public class RedshiftData2ProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:getStatementResult", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.getStatementResult);
+                exchange.getIn()
+                        .setHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.getStatementResult);
             }
         });
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetStatementResultResponse resultGet = (GetStatementResultResponse) exchange.getIn().getBody();
+        GetStatementResultResponse resultGet =
+                (GetStatementResultResponse) exchange.getIn().getBody();
         assertEquals(10, resultGet.totalNumRows());
     }
 

@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.JiraTestConstants.KEY;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.createIssueWithAttachment;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,17 +53,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
-import static org.apache.camel.component.jira.JiraConstants.JIRA;
-import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.JiraTestConstants.KEY;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.createIssueWithAttachment;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AttachFileProducerInputStreamTest extends CamelTestSupport {
@@ -81,7 +82,8 @@ public class AttachFileProducerInputStreamTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
 
         when(issueRestClient.getIssue(any())).then(inv -> {
@@ -90,20 +92,27 @@ public class AttachFileProducerInputStreamTest extends CamelTestSupport {
             }
             return Promises.promise(issue);
         });
-        when(issueRestClient.addAttachment(any(URI.class), any(InputStream.class), any(String.class))).then(inv -> {
-            InputStream is = inv.getArgument(1);
-            attachedName = inv.getArgument(2);
-            attachedSize = is.readAllBytes().length;
+        when(issueRestClient.addAttachment(any(URI.class), any(InputStream.class), any(String.class)))
+                .then(inv -> {
+                    InputStream is = inv.getArgument(1);
+                    attachedName = inv.getArgument(2);
+                    attachedSize = is.readAllBytes().length;
 
-            Collection<Attachment> attachments = new ArrayList<>();
-            attachments.add(new Attachment(
-                    issue.getAttachmentsUri(), attachedName, null, null,
-                    attachedSize, null, null, null));
-            // re-create the issue with the attachment sent by the route
-            issue = createIssueWithAttachment(issue.getId(), issue.getSummary(), issue.getKey(), issue.getIssueType(),
-                    issue.getDescription(), issue.getPriority(), issue.getAssignee(), attachments);
-            return null;
-        });
+                    Collection<Attachment> attachments = new ArrayList<>();
+                    attachments.add(new Attachment(
+                            issue.getAttachmentsUri(), attachedName, null, null, attachedSize, null, null, null));
+                    // re-create the issue with the attachment sent by the route
+                    issue = createIssueWithAttachment(
+                            issue.getId(),
+                            issue.getSummary(),
+                            issue.getKey(),
+                            issue.getIssueType(),
+                            issue.getDescription(),
+                            issue.getPriority(),
+                            issue.getAssignee(),
+                            attachments);
+                    return null;
+                });
     }
 
     @Override

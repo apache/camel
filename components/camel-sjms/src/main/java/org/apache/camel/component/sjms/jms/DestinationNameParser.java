@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.jms;
 
 public final class DestinationNameParser {
 
-    private DestinationNameParser() {
-    }
+    private DestinationNameParser() {}
 
     public static boolean isTopic(String destinationName) {
         if (destinationName == null) {

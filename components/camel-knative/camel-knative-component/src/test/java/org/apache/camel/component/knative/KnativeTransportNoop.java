@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import org.apache.camel.Consumer;
@@ -30,25 +31,26 @@ import org.apache.camel.support.DefaultProducer;
 
 public class KnativeTransportNoop implements KnativeConsumerFactory, KnativeProducerFactory {
     @Override
-    public void start() {
-    }
+    public void start() {}
 
     @Override
-    public void stop() {
-    }
+    public void stop() {}
 
     @Override
-    public Producer createProducer(Endpoint endpoint, KnativeTransportConfiguration configuration, KnativeResource service) {
+    public Producer createProducer(
+            Endpoint endpoint, KnativeTransportConfiguration configuration, KnativeResource service) {
         return new DefaultProducer(endpoint) {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         };
     }
 
     @Override
     public Consumer createConsumer(
-            Endpoint endpoint, KnativeTransportConfiguration configuration, KnativeResource service, Processor processor) {
+            Endpoint endpoint,
+            KnativeTransportConfiguration configuration,
+            KnativeResource service,
+            Processor processor) {
         return new DefaultConsumer(endpoint, processor);
     }
 }

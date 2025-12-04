@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mllp.internal;
 
-import org.apache.camel.component.mllp.MllpProtocolConstants;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.mllp.internal;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.component.mllp.MllpProtocolConstants;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the MllpSocketBuffer class.
@@ -728,5 +729,4 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
         instance.write(buildTestBytes(true, true, true));
         assertNull(instance.getTrailingOutOfBandData());
     }
-
 }

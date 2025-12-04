@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +30,6 @@ import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -147,8 +148,8 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${header.high} == true && ${header.foo} == 123", true, null);
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${header.high} == true && ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange), "Should match");
@@ -160,8 +161,8 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${header.high} == false || ${header.foo} == 123", true, null);
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${header.high} == false || ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange), "Should match");
@@ -175,8 +176,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("bar", "beer");
 
         SimplePredicateParser parser = new SimplePredicateParser(
-                context,
-                "${header.high} == true && ${header.foo} == 123 && ${header.bar} == 'beer'", true, null);
+                context, "${header.high} == true && ${header.foo} == 123 && ${header.bar} == 'beer'", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange), "Should match");
@@ -224,7 +224,8 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
     public void testSimpleExpressionPredicate() {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("number", "1234");
-        SimplePredicateParser parser = new SimplePredicateParser(context, "${in.header.number} regex '\\d{4}'", true, null);
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${in.header.number} regex '\\d{4}'", true, null);
         Predicate pre = parser.parsePredicate();
         assertTrue(pre.matches(exchange), "Should match");
     }
@@ -309,16 +310,14 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
     @Test
     public void testSimpleWithAmbiguousBinaryOperator() {
-        String expression = """
+        String expression =
+                """
                 ${body[value][conditions].getJSONObject(${exchangeProperty[CamelLoopIndex]})[levelType]} == "1"
                 && ${body[value][conditions].getJSONObject(${exchangeProperty[CamelLoopIndex]})[minLevel]} != null
                 && ${body[value][conditions].getJSONObject(${exchangeProperty[CamelLoopIndex]})[minLevel]} == "50"
                 """;
-        SimplePredicateParser simplePredicateParser = new SimplePredicateParser(
-                context,
-                expression,
-                true,
-                new HashMap<>());
+        SimplePredicateParser simplePredicateParser =
+                new SimplePredicateParser(context, expression, true, new HashMap<>());
         Predicate predicate = simplePredicateParser.parsePredicate();
         assertNotNull(predicate);
     }

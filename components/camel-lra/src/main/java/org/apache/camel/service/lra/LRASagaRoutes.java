@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.service.lra;
+
+import static org.apache.camel.service.lra.LRAConstants.*;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -25,8 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.service.lra.LRAConstants.*;
 
 public class LRASagaRoutes extends RouteBuilder {
 
@@ -42,8 +43,10 @@ public class LRASagaRoutes extends RouteBuilder {
     public void configure() throws Exception {
 
         rest(sagaService.getLocalParticipantContextPath())
-                .put(PARTICIPANT_PATH_COMPENSATE).to("direct:lra-compensation");
-        from("direct:lra-compensation").routeId("lra-compensation")
+                .put(PARTICIPANT_PATH_COMPENSATE)
+                .to("direct:lra-compensation");
+        from("direct:lra-compensation")
+                .routeId("lra-compensation")
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPENSATION_KEY).isNotNull())
@@ -51,8 +54,10 @@ public class LRASagaRoutes extends RouteBuilder {
                 .end();
 
         rest(sagaService.getLocalParticipantContextPath())
-                .put(PARTICIPANT_PATH_COMPLETE).to("direct:lra-completion");
-        from("direct:lra-completion").routeId("lra-completion")
+                .put(PARTICIPANT_PATH_COMPLETE)
+                .to("direct:lra-completion");
+        from("direct:lra-completion")
+                .routeId("lra-completion")
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPLETION_KEY).isNotNull())
@@ -68,8 +73,9 @@ public class LRASagaRoutes extends RouteBuilder {
 
             // first, split by parameter separator '&'
             // then collect the map with the variable name '[0]' and value '[1]', both url decoded
-            result = Arrays.stream(queryStr.split("&")).collect(
-                    Collectors.toMap(element -> decode(saveArrayAccess(element.split("="), 0)),
+            result = Arrays.stream(queryStr.split("&"))
+                    .collect(Collectors.toMap(
+                            element -> decode(saveArrayAccess(element.split("="), 0)),
                             element -> decode(saveArrayAccess(element.split("="), 1))));
 
         } else {
@@ -98,7 +104,8 @@ public class LRASagaRoutes extends RouteBuilder {
      */
     private void verifyRequest(Exchange exchange) {
         if (exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) == null) {
-            throw new IllegalArgumentException("Missing " + Exchange.SAGA_LONG_RUNNING_ACTION + " header in received request");
+            throw new IllegalArgumentException(
+                    "Missing " + Exchange.SAGA_LONG_RUNNING_ACTION + " header in received request");
         }
 
         Set<String> usedURIs = new HashSet<>();
@@ -113,8 +120,7 @@ public class LRASagaRoutes extends RouteBuilder {
 
         // CAMEL-17751: Extract URIs from the CamelHttpQuery header
         if (usedURIs.isEmpty()) {
-            Map<String, String> queryParams
-                    = parseQuery(exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class));
+            Map<String, String> queryParams = parseQuery(exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class));
 
             if (!queryParams.isEmpty()) {
 
@@ -138,5 +144,4 @@ public class LRASagaRoutes extends RouteBuilder {
             }
         }
     }
-
 }

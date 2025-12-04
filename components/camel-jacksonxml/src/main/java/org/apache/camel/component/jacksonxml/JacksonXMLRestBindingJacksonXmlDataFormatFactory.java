@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
 
 import java.util.HashMap;
@@ -36,9 +37,14 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
 
     @Override
     public void setupJacksonXml(
-            CamelContext camelContext, RestConfiguration config,
-            String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
-            DataFormat xml, DataFormat outXml)
+            CamelContext camelContext,
+            RestConfiguration config,
+            String type,
+            Class<?> typeClass,
+            String outType,
+            Class<?> outTypeClass,
+            DataFormat xml,
+            DataFormat outXml)
             throws Exception {
         // lookup configurer
         PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
@@ -86,7 +92,8 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
     private static String getOutTypeName(String outType, Class<?> outTypeClass, String typeName) {
         String outTypeName = null;
         if (outTypeClass != null) {
-            outTypeName = outTypeClass.isArray() ? outTypeClass.getComponentType().getName() : outTypeClass.getName();
+            outTypeName =
+                    outTypeClass.isArray() ? outTypeClass.getComponentType().getName() : outTypeClass.getName();
         } else if (outType != null) {
             outTypeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
         } else if (typeName != null) {
@@ -106,8 +113,10 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
         return typeName;
     }
 
-    private void setAdditionalConfiguration(RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
-        if (config.getDataFormatProperties() != null && !config.getDataFormatProperties().isEmpty()) {
+    private void setAdditionalConfiguration(
+            RestConfiguration config, String prefix, PropertyBindingSupport.Builder builder) {
+        if (config.getDataFormatProperties() != null
+                && !config.getDataFormatProperties().isEmpty()) {
             // must use a copy as otherwise the options gets removed during
             // introspection setProperties
             Map<String, Object> copy = new HashMap<>();
@@ -115,7 +124,8 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
             // filter keys on prefix
             // - either its a known prefix and must match the prefix parameter
             // - or its a common configuration that we should always use
-            for (Map.Entry<String, Object> entry : config.getDataFormatProperties().entrySet()) {
+            for (Map.Entry<String, Object> entry :
+                    config.getDataFormatProperties().entrySet()) {
                 String key = entry.getKey();
                 String copyKey;
                 boolean known = isKeyKnownPrefix(key);
@@ -136,8 +146,9 @@ public class JacksonXMLRestBindingJacksonXmlDataFormatFactory implements RestBin
     }
 
     private boolean isKeyKnownPrefix(String key) {
-        return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.")
+        return key.startsWith("json.in.")
+                || key.startsWith("json.out.")
+                || key.startsWith("xml.in.")
                 || key.startsWith("xml.out.");
     }
-
 }

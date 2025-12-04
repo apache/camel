@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import org.apache.camel.RoutesBuilder;
@@ -38,20 +39,27 @@ public class CamelJmxConsumerObserveAttributeMatchStringTest extends CamelTestSu
         getMockEndpoint("mock:result").message(0).body().contains("<attributeName>Tracing</attributeName>");
 
         // change the attribute so JMX triggers but should be filtered
-        ManagedRouteMBean mr
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
+        ManagedRouteMBean mr = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoute("foo");
         mr.setStatisticsEnabled(true);
 
         // change the attribute so JMX triggers
-        mr = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
+        mr = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoute("foo");
         mr.setTracing(true);
 
         // change the attribute so JMX triggers
-        mr = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
+        mr = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoute("foo");
         mr.setTracing(false);
 
         // change the attribute so JMX triggers
-        mr = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
+        mr = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoute("foo");
         mr.setTracing(true);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -64,8 +72,10 @@ public class CamelJmxConsumerObserveAttributeMatchStringTest extends CamelTestSu
             public void configure() {
                 String id = getContext().getName();
 
-                fromF("jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"&observedAttribute=Tracing&stringToCompare=false",
-                        id).routeId("jmxRoute")
+                fromF(
+                                "jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"&observedAttribute=Tracing&stringToCompare=false",
+                                id)
+                        .routeId("jmxRoute")
                         .to("log:jmx")
                         .to("mock:result");
 

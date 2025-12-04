@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.endpointdsl.support;
+
+import static org.apache.camel.builder.endpoint.EndpointRouteBuilder.loadEndpointRoutesBuilder;
 
 import java.io.Reader;
 
@@ -23,8 +26,6 @@ import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesBuilderLoader;
-
-import static org.apache.camel.builder.endpoint.EndpointRouteBuilder.loadEndpointRoutesBuilder;
 
 /**
  * Base class for {@link RoutesBuilderLoader} implementations with Endpoint DSL.

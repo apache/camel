@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
-//START SNIPPET: example
+// START SNIPPET: example
 public class MyFileNameExpression implements Expression {
 
     public String getFileName(Exchange exchange) {
@@ -38,6 +39,5 @@ public class MyFileNameExpression implements Expression {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
-
 }
-//END SNIPPET: example
+// END SNIPPET: example

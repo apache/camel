@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -38,17 +42,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSupport {
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:"
-                                                   + CXFTestSupport.getPort1()
-                                                   + "/CxfPayLoadMessageXmlBindingRouterTest/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:"
-                                                    + CXFTestSupport.getPort2()
-                                                    + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
+    protected static final String ROUTER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/CxfPayLoadMessageXmlBindingRouterTest/router";
+    protected static final String SERVICE_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort2() + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
 
     protected static String getBindingId() {
         return "http://cxf.apache.org/bindings/xformat";
@@ -56,7 +55,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSuppor
 
     @BeforeAll
     public static void startService() {
-        //start a service
+        // start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
 
         svrBean.setAddress(SERVICE_ADDRESS);
@@ -88,21 +87,22 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Source> elements = payload.getBodySources();
-                        assertNotNull(elements, "We should get the elements here");
-                        assertEquals(1, elements.size(), "Get the wrong elements size");
+                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
+                                List<Source> elements = payload.getBodySources();
+                                assertNotNull(elements, "We should get the elements here");
+                                assertEquals(1, elements.size(), "Get the wrong elements size");
 
-                        Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals("http://cxf.component.camel.apache.org/", el.getNamespaceURI(),
-                                "Get the wrong namespace URI");
-                    }
-
-                })
+                                Element el = new XmlConverter().toDOMElement(elements.get(0));
+                                assertEquals(
+                                        "http://cxf.component.camel.apache.org/",
+                                        el.getNamespaceURI(),
+                                        "Get the wrong namespace URI");
+                            }
+                        })
                         .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
-
             }
         };
     }
@@ -115,8 +115,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSuppor
 
         int count = client.getInvocationCount();
         client.ping();
-        //oneway ping invoked, so invocationCount ++
+        // oneway ping invoked, so invocationCount ++
         assertEquals(client.getInvocationCount(), ++count, "The ping should be invocated");
     }
-
 }

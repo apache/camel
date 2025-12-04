@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,13 +47,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SmppDataSmCommandTest {
 
@@ -82,9 +83,17 @@ public class SmppDataSmCommandTest {
     public void executeWithConfigurationData() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
-        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
-                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0))))
+        when(session.dataShortMessage(
+                        eq("CMT"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1717"),
+                        eq(new ESMClass()),
+                        eq(new RegisteredDelivery((byte) 1)),
+                        eq(DataCodings.newInstance((byte) 0))))
                 .thenReturn(new DataSmResult(new MessageId("1"), null));
 
         command.execute(exchange);
@@ -104,11 +113,20 @@ public class SmppDataSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
         exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
-        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY,
-                new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
-        when(session.dataShortMessage(eq("XXX"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
-                eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 2)), eq(DataCodings.newInstance((byte) 0))))
+        exchange.getIn()
+                .setHeader(
+                        SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE).value());
+        when(session.dataShortMessage(
+                        eq("XXX"),
+                        eq(TypeOfNumber.NATIONAL),
+                        eq(NumberingPlanIndicator.NATIONAL),
+                        eq("1818"),
+                        eq(TypeOfNumber.INTERNATIONAL),
+                        eq(NumberingPlanIndicator.INTERNET),
+                        eq("1919"),
+                        eq(new ESMClass()),
+                        eq(new RegisteredDelivery((byte) 2)),
+                        eq(DataCodings.newInstance((byte) 0))))
                 .thenReturn(new DataSmResult(new MessageId("1"), null));
 
         command.execute(exchange);
@@ -137,24 +155,31 @@ public class SmppDataSmCommandTest {
         optionalParameters.put("0x2154", "7400000");
         optionalParameters.put("0x2155", null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
-        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
-                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0)),
-                eq(new OptionalParameter.Source_subaddress("1292".getBytes())),
-                eq(new OptionalParameter.Additional_status_info_text("urgent")),
-                eq(new OptionalParameter.Dest_addr_subunit((byte) 4)),
-                eq(new OptionalParameter.Dest_telematics_id((short) 2)),
-                eq(new OptionalParameter.Qos_time_to_live(3600000)),
-                eq(new OptionalParameter.Alert_on_message_delivery((byte) 0))))
-                .thenReturn(new DataSmResult(
-                        new MessageId("1"),
-                        new OptionalParameter[] {
-                                new OptionalParameter.Source_subaddress("1292".getBytes()),
-                                new OptionalParameter.Additional_status_info_text("urgent"),
-                                new OptionalParameter.Dest_addr_subunit((byte) 4),
-                                new OptionalParameter.Dest_telematics_id((short) 2),
-                                new OptionalParameter.Qos_time_to_live(3600000),
-                                new OptionalParameter.Alert_on_message_delivery((byte) 0) }));
+        when(session.dataShortMessage(
+                        eq("CMT"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1717"),
+                        eq(new ESMClass()),
+                        eq(new RegisteredDelivery((byte) 1)),
+                        eq(DataCodings.newInstance((byte) 0)),
+                        eq(new OptionalParameter.Source_subaddress("1292".getBytes())),
+                        eq(new OptionalParameter.Additional_status_info_text("urgent")),
+                        eq(new OptionalParameter.Dest_addr_subunit((byte) 4)),
+                        eq(new OptionalParameter.Dest_telematics_id((short) 2)),
+                        eq(new OptionalParameter.Qos_time_to_live(3600000)),
+                        eq(new OptionalParameter.Alert_on_message_delivery((byte) 0))))
+                .thenReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[] {
+                    new OptionalParameter.Source_subaddress("1292".getBytes()),
+                    new OptionalParameter.Additional_status_info_text("urgent"),
+                    new OptionalParameter.Dest_addr_subunit((byte) 4),
+                    new OptionalParameter.Dest_telematics_id((short) 2),
+                    new OptionalParameter.Qos_time_to_live(3600000),
+                    new OptionalParameter.Alert_on_message_delivery((byte) 0)
+                }));
 
         command.execute(exchange);
 
@@ -170,8 +195,8 @@ public class SmppDataSmCommandTest {
         assertEquals("3600000", optParamMap.get("QOS_TIME_TO_LIVE"));
         assertEquals("0", optParamMap.get("ALERT_ON_MESSAGE_DELIVERY"));
 
-        Map<Short, Object> optionalResultParameter
-                = exchange.getMessage().getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        Map<Short, Object> optionalResultParameter =
+                exchange.getMessage().getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         assertEquals(6, optionalResultParameter.size());
         assertArrayEquals("1292".getBytes("UTF-8"), (byte[]) optionalResultParameter.get((short) 0x0202));
         assertEquals("urgent", optionalResultParameter.get((short) 0x001D));
@@ -202,29 +227,37 @@ public class SmppDataSmCommandTest {
         optionalParameters.put((short) 0x2154, 7400000);
         optionalParameters.put((short) 0x2155, null);
         exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
-        when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
-                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
-                eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0)),
-                eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
-                eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
-                eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),
-                eq(new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2)),
-                eq(new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000)),
-                eq(new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY)),
-                eq(new OptionalParameter.OctetString((short) 0x2150, "1292", "UTF-8")),
-                eq(new OptionalParameter.COctetString((short) 0x2151, "0816")),
-                eq(new OptionalParameter.Byte((short) 0x2152, (byte) 6)),
-                eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
-                eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
-                eq(new OptionalParameter.Null((short) 0x2155))))
-                .thenReturn(new DataSmResult(
-                        new MessageId("1"), new OptionalParameter[] {
-                                new OptionalParameter.Source_subaddress("1292".getBytes()),
-                                new OptionalParameter.Additional_status_info_text("urgent"),
-                                new OptionalParameter.Dest_addr_subunit((byte) 4),
-                                new OptionalParameter.Dest_telematics_id((short) 2),
-                                new OptionalParameter.Qos_time_to_live(3600000),
-                                new OptionalParameter.Alert_on_message_delivery((byte) 0) }));
+        when(session.dataShortMessage(
+                        eq("CMT"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1616"),
+                        eq(TypeOfNumber.UNKNOWN),
+                        eq(NumberingPlanIndicator.UNKNOWN),
+                        eq("1717"),
+                        eq(new ESMClass()),
+                        eq(new RegisteredDelivery((byte) 1)),
+                        eq(DataCodings.newInstance((byte) 0)),
+                        eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
+                        eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
+                        eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),
+                        eq(new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2)),
+                        eq(new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000)),
+                        eq(new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY)),
+                        eq(new OptionalParameter.OctetString((short) 0x2150, "1292", "UTF-8")),
+                        eq(new OptionalParameter.COctetString((short) 0x2151, "0816")),
+                        eq(new OptionalParameter.Byte((short) 0x2152, (byte) 6)),
+                        eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
+                        eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
+                        eq(new OptionalParameter.Null((short) 0x2155))))
+                .thenReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[] {
+                    new OptionalParameter.Source_subaddress("1292".getBytes()),
+                    new OptionalParameter.Additional_status_info_text("urgent"),
+                    new OptionalParameter.Dest_addr_subunit((byte) 4),
+                    new OptionalParameter.Dest_telematics_id((short) 2),
+                    new OptionalParameter.Qos_time_to_live(3600000),
+                    new OptionalParameter.Alert_on_message_delivery((byte) 0)
+                }));
 
         command.execute(exchange);
 
@@ -240,8 +273,8 @@ public class SmppDataSmCommandTest {
         assertEquals("3600000", optParamMap.get("QOS_TIME_TO_LIVE"));
         assertEquals("0", optParamMap.get("ALERT_ON_MESSAGE_DELIVERY"));
 
-        Map<Short, Object> optionalResultParameter
-                = exchange.getMessage().getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        Map<Short, Object> optionalResultParameter =
+                exchange.getMessage().getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         assertEquals(6, optionalResultParameter.size());
         assertArrayEquals("1292".getBytes("UTF-8"), (byte[]) optionalResultParameter.get((short) 0x0202));
         assertEquals("urgent", optionalResultParameter.get((short) 0x001D));

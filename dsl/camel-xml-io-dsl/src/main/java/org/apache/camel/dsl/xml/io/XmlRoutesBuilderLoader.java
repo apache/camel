@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
 
 import java.io.IOException;
@@ -133,25 +134,25 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                                         .ifPresent(this::configureCamel);
                             }
                         }
-                        case "dataFormats", "dataFormat" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                        case "dataFormats", "dataFormat" -> new XmlModelParser(
+                                        resource, xmlInfo.getRootElementNamespace())
                                 .parseDataFormatsDefinition()
                                 .ifPresent(this::addDataFormats);
-                        case "routeTemplate", "routeTemplates" ->
-                            new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                    .parseRouteTemplatesDefinition()
-                                    .ifPresent(this::addRouteTemplatesCollection);
-                        case "templatedRoutes", "templatedRoute" ->
-                            new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                    .parseTemplatedRoutesDefinition()
-                                    .ifPresent(this::addTemplatedRoutesCollection);
+                        case "routeTemplate", "routeTemplates" -> new XmlModelParser(
+                                        resource, xmlInfo.getRootElementNamespace())
+                                .parseRouteTemplatesDefinition()
+                                .ifPresent(this::addRouteTemplatesCollection);
+                        case "templatedRoutes", "templatedRoute" -> new XmlModelParser(
+                                        resource, xmlInfo.getRootElementNamespace())
+                                .parseTemplatedRoutesDefinition()
+                                .ifPresent(this::addTemplatedRoutesCollection);
                         case "rests", "rest" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRestsDefinition()
                                 .ifPresent(this::addRests);
                         case "routes", "route" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRoutesDefinition()
                                 .ifPresent(this::addRoutes);
-                        default -> {
-                        }
+                        default -> {}
                     }
                 } finally {
                     // knowing this is the last time an XML may have been parsed, we can clear the cache
@@ -166,7 +167,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             @Override
             public void configuration() throws Exception {
                 switch (xmlInfo.getRootElementName()) {
-                    // load any route configuration before that may be nested under camel/spring/blueprint root tag
+                        // load any route configuration before that may be nested under camel/spring/blueprint root tag
                     case "beans", "blueprint", "camel", "routeConfigurations", "routeConfiguration": {
                         BeansDefinition bp = camelAppCache.get(input.getLocation());
                         if (bp != null) {
@@ -211,9 +212,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     throw new RuntimeException("There should only be one <restConfiguration>");
                 }
                 if (app.getRestConfigurations().size() == 1) {
-                    RestConfigurationDefinition config = app.getRestConfigurations().get(0);
+                    RestConfigurationDefinition config =
+                            app.getRestConfigurations().get(0);
                     try {
-                        config.asRestConfiguration(getCamelContext(), getCamelContext().getRestConfiguration());
+                        config.asRestConfiguration(
+                                getCamelContext(), getCamelContext().getRestConfiguration());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -382,10 +385,11 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             String ns = doc.getDocumentElement().getNamespaceURI();
             String id = null;
             if ("http://www.springframework.org/schema/beans".equals(ns)) {
-                id = String.format("camel-xml-io-dsl-spring-xml:%05d:%s", counter.incrementAndGet(), resource.getLocation());
+                id = String.format(
+                        "camel-xml-io-dsl-spring-xml:%05d:%s", counter.incrementAndGet(), resource.getLocation());
             } else if ("http://www.osgi.org/xmlns/blueprint/v1.0.0".equals(ns)) {
-                id = String.format("camel-xml-io-dsl-blueprint-xml:%05d:%s", counter.incrementAndGet(),
-                        resource.getLocation());
+                id = String.format(
+                        "camel-xml-io-dsl-blueprint-xml:%05d:%s", counter.incrementAndGet(), resource.getLocation());
             }
             if (id != null) {
                 getCamelContext().getRegistry().bind(id, doc);
@@ -421,8 +425,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             if (delayIfFailed) {
                 delayedRegistrations.add(def);
             } else {
-                String msg
-                        = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
+                String msg = name != null
+                        ? "Error creating bean: " + name + " of type: " + type
+                        : "Error creating bean: " + type;
                 throw new RuntimeException(msg, e);
             }
         }
@@ -438,10 +443,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         model.addCustomBean(def);
     }
 
-    protected void bindLazyBean(
-            BeanFactoryDefinition<?> def,
-            String name, Supplier<Object> target)
-            throws Exception {
+    protected void bindLazyBean(BeanFactoryDefinition<?> def, String name, Supplier<Object> target) throws Exception {
 
         Class<?> beanType = null;
         if (def.getType() != null) {
@@ -459,5 +461,4 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
         model.addCustomBean(def);
     }
-
 }

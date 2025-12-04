@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.AggregationStrategy;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.Test;
  * Unit test to verify that Splitter aggregator clear the filtered history in case filter has been used <b>before</b>
  * the splitter.
  */
-
 public class FilterBeforeSplitTest extends ContextTestSupport {
 
     @Test
@@ -66,8 +66,14 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
             public void configure() {
                 Predicate goodWord = body().contains("World");
 
-                from("direct:start").to("mock:before").filter(goodWord).to("mock:good").end()
-                        .split(body().tokenize(" "), new MyAggregationStrategy()).to("mock:split").end()
+                from("direct:start")
+                        .to("mock:before")
+                        .filter(goodWord)
+                        .to("mock:good")
+                        .end()
+                        .split(body().tokenize(" "), new MyAggregationStrategy())
+                        .to("mock:split")
+                        .end()
                         .to("mock:result");
             }
         };
@@ -88,6 +94,5 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }
-
     }
 }

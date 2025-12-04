@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
+
+import static org.apache.camel.component.infinispan.remote.InfinispanRemoteUtil.getCacheWithFlags;
 
 import java.util.function.Supplier;
 
@@ -30,11 +33,10 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.commons.api.BasicCache;
 
-import static org.apache.camel.component.infinispan.remote.InfinispanRemoteUtil.getCacheWithFlags;
-
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses remote Infinispan to store message ids.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses remote Infinispan to store message ids.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "Infinispan Remote message id repository")
 public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRepository {
@@ -44,11 +46,11 @@ public class InfinispanRemoteIdempotentRepository extends InfinispanIdempotentRe
 
     @Metadata(description = "Name of cache", required = true)
     private String cacheName;
+
     @Metadata(description = "Configuration for remote Infinispan")
     private InfinispanRemoteConfiguration configuration;
 
-    public InfinispanRemoteIdempotentRepository() {
-    }
+    public InfinispanRemoteIdempotentRepository() {}
 
     public InfinispanRemoteIdempotentRepository(String cacheName) {
         this.cacheName = cacheName;

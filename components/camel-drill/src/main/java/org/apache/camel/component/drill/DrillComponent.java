@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.drill;
 
 import java.util.Map;
@@ -29,8 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("drill")
 public class DrillComponent extends DefaultComponent {
 
-    public DrillComponent() {
-    }
+    public DrillComponent() {}
 
     public DrillComponent(final CamelContext context) {
         super(context);

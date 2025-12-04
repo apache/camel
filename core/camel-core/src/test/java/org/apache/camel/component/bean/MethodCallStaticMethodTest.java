@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,7 +39,8 @@ public class MethodCallStaticMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").setHeader("foo", method(StringHelper.class, "removeLeadingAndEndingQuotes(${header.bar})"))
+                from("direct:start")
+                        .setHeader("foo", method(StringHelper.class, "removeLeadingAndEndingQuotes(${header.bar})"))
                         .to("mock:result");
             }
         };

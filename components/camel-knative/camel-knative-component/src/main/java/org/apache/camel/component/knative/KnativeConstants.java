@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 public final class KnativeConstants {
     public static final String SCHEME = "knative";
     public static final String CONFIGURATION_ENV_VARIABLE = "CAMEL_KNATIVE_CONFIGURATION";
 
-    private KnativeConstants() {
-    }
+    private KnativeConstants() {}
 }

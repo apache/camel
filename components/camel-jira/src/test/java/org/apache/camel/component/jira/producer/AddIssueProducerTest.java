@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.producer;
+
+import static org.apache.camel.component.jira.JiraConstants.*;
+import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
+import static org.apache.camel.component.jira.JiraTestConstants.KEY;
+import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.userAssignee;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,15 +62,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.*;
-import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
-import static org.apache.camel.component.jira.JiraTestConstants.KEY;
-import static org.apache.camel.component.jira.Utils.createIssue;
-import static org.apache.camel.component.jira.Utils.userAssignee;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-
 @ExtendWith(MockitoExtension.class)
 public class AddIssueProducerTest extends CamelTestSupport {
 
@@ -90,7 +91,9 @@ public class AddIssueProducerTest extends CamelTestSupport {
     }
 
     public void setMocks() {
-        lenient().when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
+        lenient()
+                .when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any()))
+                .thenReturn(jiraClient);
         lenient().when(jiraClient.getIssueClient()).thenReturn(issueRestClient);
         lenient().when(jiraClient.getMetadataClient()).thenReturn(metadataRestClient);
 
@@ -118,7 +121,8 @@ public class AddIssueProducerTest extends CamelTestSupport {
             Collection<BasicComponent> components = new ArrayList<>(2);
             components.add(Utils.createBasicComponent(1L, "ux"));
             components.add(Utils.createBasicComponent(2L, "plugins"));
-            backendIssue = createIssue(11L, summary, project, issueType, description, priority, userAssignee, components, null);
+            backendIssue = createIssue(
+                    11L, summary, project, issueType, description, priority, userAssignee, components, null);
             BasicIssue basicIssue = new BasicIssue(backendIssue.getSelf(), backendIssue.getKey(), backendIssue.getId());
             return Promises.promise(basicIssue);
         });
@@ -126,7 +130,8 @@ public class AddIssueProducerTest extends CamelTestSupport {
     }
 
     private String getValue(IssueInput issueInput, String field, String key) {
-        ComplexIssueInputFieldValue complexField = (ComplexIssueInputFieldValue) issueInput.getField(field).getValue();
+        ComplexIssueInputFieldValue complexField =
+                (ComplexIssueInputFieldValue) issueInput.getField(field).getValue();
         return (String) complexField.getValuesMap().get(key);
     }
 
@@ -210,5 +215,4 @@ public class AddIssueProducerTest extends CamelTestSupport {
         mockResult.expectedMessageCount(1);
         mockResult.assertIsSatisfied();
     }
-
 }

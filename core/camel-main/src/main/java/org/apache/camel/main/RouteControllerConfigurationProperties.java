@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,26 +31,37 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
 
     @Metadata
     private boolean enabled;
+
     @Metadata
     private String includeRoutes;
+
     @Metadata
     private String excludeRoutes;
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean unhealthyOnExhausted = true;
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean unhealthyOnRestarting = true;
+
     @Metadata
     private long initialDelay;
+
     @Metadata(defaultValue = "2000")
     private long backOffDelay;
+
     @Metadata
     private long backOffMaxDelay;
+
     @Metadata
     private long backOffMaxElapsedTime;
+
     @Metadata
     private long backOffMaxAttempts;
+
     @Metadata
     private double backOffMultiplier;
+
     @Metadata(label = "advanced", defaultValue = "1")
     private int threadPoolSize;
 
@@ -353,5 +365,4 @@ public class RouteControllerConfigurationProperties implements BootstrapCloseabl
         this.unhealthyOnRestarting = unhealthyOnRestarting;
         return this;
     }
-
 }

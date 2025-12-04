@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonvalidator;
 
 import org.apache.camel.EndpointInject;
@@ -41,8 +42,7 @@ public class ValidatorDeserializationFeaturesTest extends CamelTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "{ \"name\": \"Joe Doe\", \"id\": 1, \"price\": 12.5 }secret");
+        template.sendBody("direct:start", "{ \"name\": \"Joe Doe\", \"id\": 1, \"price\": 12.5 }secret");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -54,9 +54,8 @@ public class ValidatorDeserializationFeaturesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .doTry()
-                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json" +
-                                "?enabledDeserializationFeatures=FAIL_ON_TRAILING_TOKENS"
-                        )
+                        .to("json-validator:org/apache/camel/component/jsonvalidator/schema.json"
+                                + "?enabledDeserializationFeatures=FAIL_ON_TRAILING_TOKENS")
                         .to("mock:valid")
                         .doCatch(ValidationException.class)
                         .to("mock:invalid")

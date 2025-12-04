@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import org.apache.camel.CamelContextAware;
@@ -23,7 +24,8 @@ import org.apache.camel.Service;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 
-public interface InfinispanManager<C extends BasicCacheContainer> extends BasicCacheContainer, CamelContextAware, Service {
+public interface InfinispanManager<C extends BasicCacheContainer>
+        extends BasicCacheContainer, CamelContextAware, Service {
     <K, V> BasicCache<K, V> getCache(String cacheName);
 
     default <K, V, CacheType extends BasicCache<K, V>> CacheType getCache(String cacheName, Class<CacheType> type) {

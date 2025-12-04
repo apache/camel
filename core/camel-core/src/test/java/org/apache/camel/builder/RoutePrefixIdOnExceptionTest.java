@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,13 +40,14 @@ public class RoutePrefixIdOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").nodePrefixId("myPrefix")
-                    .onException(Exception.class)
+                from("direct:start")
+                        .nodePrefixId("myPrefix")
+                        .onException(Exception.class)
                         .to("mock:error")
                         .markRollbackOnly()
-                    .end()
-                    .throwException(new IllegalArgumentException("Forced"))
-                    .to("mock:result");
+                        .end()
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:result");
             }
         };
     }

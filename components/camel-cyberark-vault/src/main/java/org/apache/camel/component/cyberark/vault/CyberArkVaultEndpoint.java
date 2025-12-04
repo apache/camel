@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cyberark.vault;
 
 import org.apache.camel.Category;
@@ -32,9 +33,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Retrieve secrets from CyberArk Conjur Vault.
  */
-@UriEndpoint(firstVersion = "4.17.0", scheme = "cyberark-vault", title = "CyberArk Vault",
-             syntax = "cyberark-vault:label", producerOnly = true, category = { Category.CLOUD, Category.SECURITY },
-             headersClass = CyberArkVaultConstants.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = "cyberark-vault",
+        title = "CyberArk Vault",
+        syntax = "cyberark-vault:label",
+        producerOnly = true,
+        category = {Category.CLOUD, Category.SECURITY},
+        headersClass = CyberArkVaultConstants.class)
 public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam

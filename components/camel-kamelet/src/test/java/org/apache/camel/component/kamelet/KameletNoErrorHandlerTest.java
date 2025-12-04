@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
@@ -47,7 +48,8 @@ public class KameletNoErrorHandlerTest extends CamelTestSupport {
                         .from("kamelet:source")
                         .throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:start").routeId("test")
+                from("direct:start")
+                        .routeId("test")
                         .errorHandler(deadLetterChannel("mock:dead"))
                         .to("kamelet:echo?prefix=a")
                         .log("${body}");

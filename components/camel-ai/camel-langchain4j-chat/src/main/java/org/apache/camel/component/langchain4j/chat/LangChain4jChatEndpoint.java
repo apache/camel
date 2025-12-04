@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.chat;
+
+import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -26,12 +29,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME;
-
-@UriEndpoint(firstVersion = "4.5.0", scheme = SCHEME,
-             title = "LangChain4j Chat",
-             syntax = "langchain4j-chat:chatId",
-             category = { Category.AI }, headersClass = LangChain4jChatHeaders.class)
+@UriEndpoint(
+        firstVersion = "4.5.0",
+        scheme = SCHEME,
+        title = "LangChain4j Chat",
+        syntax = "langchain4j-chat:chatId",
+        category = {Category.AI},
+        headersClass = LangChain4jChatHeaders.class)
 public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
@@ -41,8 +45,8 @@ public class LangChain4jChatEndpoint extends DefaultEndpoint {
     @UriParam
     private LangChain4jChatConfiguration configuration;
 
-    public LangChain4jChatEndpoint(String uri, LangChain4jChatComponent component, String chatId,
-                                   LangChain4jChatConfiguration configuration) {
+    public LangChain4jChatEndpoint(
+            String uri, LangChain4jChatComponent component, String chatId, LangChain4jChatConfiguration configuration) {
         super(uri, component);
         this.chatId = chatId;
         this.configuration = configuration;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
 
 import jakarta.validation.Configuration;
@@ -33,19 +34,19 @@ import org.apache.camel.support.CamelContextHelper;
  */
 public final class ValidatorFactories {
 
-    private ValidatorFactories() {
-    }
+    private ValidatorFactories() {}
 
     public static ValidatorFactory buildValidatorFactory(
-            CamelContext camelContext, boolean ignoreXml,
+            CamelContext camelContext,
+            boolean ignoreXml,
             ValidationProviderResolver validationProviderResolver,
             MessageInterpolator messageInterpolator,
             TraversableResolver traversableResolver,
             ConstraintValidatorFactory constraintValidatorFactory) {
 
         if (validationProviderResolver == null) {
-            ValidationProviderResolverFactory factory
-                    = CamelContextHelper.findSingleByType(camelContext, ValidationProviderResolverFactory.class);
+            ValidationProviderResolverFactory factory =
+                    CamelContextHelper.findSingleByType(camelContext, ValidationProviderResolverFactory.class);
             if (factory != null) {
                 validationProviderResolver = factory.createValidationProviderResolver(camelContext);
             }
@@ -70,5 +71,4 @@ public final class ValidatorFactories {
 
         return configuration.buildValidatorFactory();
     }
-
 }

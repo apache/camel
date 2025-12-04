@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,9 +48,12 @@ public class FilterNotMatchedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result").end().to("mock:end");
+                from("direct:start")
+                        .filter(header("foo").isEqualTo("bar"))
+                        .to("mock:result")
+                        .end()
+                        .to("mock:end");
             }
         };
     }
-
 }

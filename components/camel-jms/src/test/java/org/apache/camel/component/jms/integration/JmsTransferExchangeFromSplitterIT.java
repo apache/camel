@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ public class JmsTransferExchangeFromSplitterIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -67,9 +69,7 @@ public class JmsTransferExchangeFromSplitterIT extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .split(body().tokenize(","))
-                        .to(getUri());
+                from("direct:start").split(body().tokenize(",")).to(getUri());
 
                 from(getUri()).to("mock:result");
             }

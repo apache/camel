@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 /**
@@ -144,14 +145,12 @@ public class CMMessage {
     @Override
     public String toString() {
 
-        StringBuilder sb = new StringBuilder(
-                " {phoneNumber: " + phoneNumber + ", message: " + message + ", sender=" + sender + ", unicode: " + unicode
-                                             + ", multipart: " + multipart);
+        StringBuilder sb = new StringBuilder(" {phoneNumber: " + phoneNumber + ", message: " + message + ", sender="
+                + sender + ", unicode: " + unicode + ", multipart: " + multipart);
         if (idAsString != null && !idAsString.isEmpty()) {
             sb.append(", idAsString=").append(idAsString);
         }
         sb.append(" }");
         return sb.toString();
     }
-
 }

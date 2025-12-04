@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Paths;
 
@@ -23,30 +26,29 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DumpModelAsYamlTransformRouteTest extends DumpModelAsYamlTestSupport {
 
     @Test
     public void testDumpModelAsYaml() throws Exception {
-        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
+        String out = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(out);
         log.info(out);
 
-        String expected
-                = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/transform.yaml"), "#", true);
+        String expected = IOHelper.stripLineComments(
+                Paths.get("src/test/resources/org/apache/camel/util/transform.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
     @Test
     public void testDumpModelAsYamlUriAsParameters() throws Exception {
-        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true, true, false);
+        String out = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("myRoute"), true, true, true, false);
         assertNotNull(out);
         log.info(out);
 
-        String expected
-                = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/transform2.yaml"), "#", true);
+        String expected = IOHelper.stripLineComments(
+                Paths.get("src/test/resources/org/apache/camel/util/transform2.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -55,8 +57,12 @@ public class DumpModelAsYamlTransformRouteTest extends DumpModelAsYamlTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start?exchangePattern=InOnly").routeId("myRoute").transform().simple("Hello ${body}")
-                        .to("mock:result?failFast=false&retainFirst=5&browseLimit=123").id("myMock");
+                from("direct:start?exchangePattern=InOnly")
+                        .routeId("myRoute")
+                        .transform()
+                        .simple("Hello ${body}")
+                        .to("mock:result?failFast=false&retainFirst=5&browseLimit=123")
+                        .id("myMock");
             }
         };
     }

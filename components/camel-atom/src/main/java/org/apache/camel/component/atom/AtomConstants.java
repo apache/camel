@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atom;
 
 import org.apache.camel.spi.Metadata;
@@ -27,8 +28,9 @@ public final class AtomConstants {
      * Header key for the List of {@link com.apptasticsoftware.rssreader.Item} object is stored on the in message on the
      * exchange.
      */
-    @Metadata(description = "When consuming the List<com.apptasticsoftware.rssreader.Item> object is set to this header.",
-              javaType = "java.util.List")
+    @Metadata(
+            description = "When consuming the List<com.apptasticsoftware.rssreader.Item> object is set to this header.",
+            javaType = "java.util.List")
     public static final String ATOM_FEED = "CamelAtomFeed";
 
     private AtomConstants() {

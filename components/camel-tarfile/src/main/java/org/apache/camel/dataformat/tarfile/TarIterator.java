@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.tarfile;
 
 import java.io.BufferedInputStream;
@@ -62,8 +63,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
             tarInputStream = (TarArchiveInputStream) inputStream;
         } else {
             try {
-                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
-                        new BufferedInputStream(inputStream));
+                ArchiveInputStream input = new ArchiveStreamFactory()
+                        .createArchiveInputStream(ArchiveStreamFactory.TAR, new BufferedInputStream(inputStream));
                 tarInputStream = (TarArchiveInputStream) input;
             } catch (ArchiveException e) {
                 throw new RuntimeException(e.getMessage(), e);
@@ -79,7 +80,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
             if (tarInputStream == null) {
                 return false;
             }
-            boolean availableDataInCurrentEntry = tarInputStream.getCurrentEntry() != null && tarInputStream.available() > 0;
+            boolean availableDataInCurrentEntry =
+                    tarInputStream.getCurrentEntry() != null && tarInputStream.available() > 0;
             if (!availableDataInCurrentEntry) {
                 // advance to the next entry.
                 parent = getNextElement();

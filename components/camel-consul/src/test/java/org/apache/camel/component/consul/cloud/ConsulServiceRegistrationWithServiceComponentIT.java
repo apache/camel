@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.cloud;
 
 import java.util.HashMap;
@@ -44,9 +45,13 @@ public class ConsulServiceRegistrationWithServiceComponentIT extends ConsulServi
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME,
-                        SERVICE_PORT).routeId(SERVICE_ID)
-                        .routeGroup(SERVICE_NAME).noAutoStartup().to("log:service-registry?level=INFO");
+                fromF(
+                                "service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US",
+                                SERVICE_NAME, SERVICE_PORT)
+                        .routeId(SERVICE_ID)
+                        .routeGroup(SERVICE_NAME)
+                        .noAutoStartup()
+                        .to("log:service-registry?level=INFO");
             }
         };
     }

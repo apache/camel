@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,12 +34,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Github environment has trouble running the XMPP test container and/or component")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Github environment has trouble running the XMPP test container and/or component")
 public class XmppRouteIT extends XmppBaseIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppRouteIT.class);
@@ -102,7 +105,6 @@ public class XmppRouteIT extends XmppBaseIT {
 
     protected String getUriPrefix() {
         return "xmpp://" + getUrl()
-               + "/camel?connectionConfig=#customConnectionConfig&room=camel-anon&user=camel_consumer&password=secret&serviceName=apache.camel";
+                + "/camel?connectionConfig=#customConnectionConfig&room=camel-anon&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.simplebinding.testbean;
 
 import jakarta.ws.rs.DELETE;
@@ -42,5 +43,4 @@ public class VipCustomerResource {
     public Response deleteVipCustomer(@PathParam("id") String id, @QueryParam("sendEmail") Boolean sendEmail) {
         return null;
     }
-
 }

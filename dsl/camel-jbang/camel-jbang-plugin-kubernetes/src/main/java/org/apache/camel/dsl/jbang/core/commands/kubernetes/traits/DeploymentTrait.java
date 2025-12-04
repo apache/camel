@@ -40,7 +40,8 @@ public class DeploymentTrait extends BaseTrait {
         // disable the deployment trait if knative-service is enabled
         boolean knEnabled = false;
         if (traitConfig.getKnativeService() != null) {
-            knEnabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled()).orElse(false);
+            knEnabled = Optional.ofNullable(traitConfig.getKnativeService().getEnabled())
+                    .orElse(false);
         }
         return cronjobDisabled && !knEnabled;
     }
@@ -57,17 +58,22 @@ public class DeploymentTrait extends BaseTrait {
                         .build())
                 .endSpec();
 
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
-        Optional.ofNullable(containerTrait.getImagePullSecrets()).orElseGet(List::of).forEach(sec -> deployment.editSpec()
-                .editOrNewTemplate()
-                .editOrNewSpec()
-                .addNewImagePullSecret(sec)
-                .endSpec()
-                .endTemplate()
-                .endSpec());
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Optional.ofNullable(containerTrait.getImagePullSecrets())
+                .orElseGet(List::of)
+                .forEach(sec -> deployment
+                        .editSpec()
+                        .editOrNewTemplate()
+                        .editOrNewSpec()
+                        .addNewImagePullSecret(sec)
+                        .endSpec()
+                        .endTemplate()
+                        .endSpec());
 
         if (context.getServiceAccount() != null) {
-            deployment.editSpec()
+            deployment
+                    .editSpec()
                     .editOrNewTemplate()
                     .editOrNewSpec()
                     .withServiceAccountName(context.getServiceAccount())

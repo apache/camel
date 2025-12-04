@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Map;
 
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Remove Image Request URI parameters are applied properly
@@ -45,9 +46,9 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in").to("docker://" + getOperation().toString() + "?imageId=" + imageId + "&noPrune=" + noPrune
-                                     + "&force=" + force);
-
+                from("direct:in")
+                        .to("docker://" + getOperation().toString() + "?imageId=" + imageId + "&noPrune=" + noPrune
+                                + "&force=" + force);
             }
         };
     }
@@ -69,5 +70,4 @@ public class RemoveImageCmdUriTest extends BaseDockerHeaderTest<RemoveImageCmd> 
     protected DockerOperation getOperation() {
         return DockerOperation.REMOVE_IMAGE;
     }
-
 }

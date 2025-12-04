@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
     @RegisterExtension
@@ -42,7 +43,7 @@ public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
     // exists
     // and in case of connection error then throw that as an exception
     private final String uri = "ftp://admin@localhost:" + service.getPort() + "/unknown/?password=admin"
-                               + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
+            + "&maximumReconnectAttempts=0&autoCreate=false&throwExceptionOnConnectFailed=true&bridgeErrorHandler=true";
 
     @Test
     public void testPollEnrich() throws Exception {
@@ -75,7 +76,8 @@ public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
                         // bridge error handler,
                         // so we want to run out custom aggregation strategy for
                         // exceptions as well
-                        .pollEnrich(uri, 60000, new MyAggregationStrategy(), true).to("mock:result");
+                        .pollEnrich(uri, 60000, new MyAggregationStrategy(), true)
+                        .to("mock:result");
             }
         };
     }

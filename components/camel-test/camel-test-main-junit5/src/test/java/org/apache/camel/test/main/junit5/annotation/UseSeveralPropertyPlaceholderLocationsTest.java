@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.main.junit5.annotation;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
@@ -26,12 +29,11 @@ import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * The test class ensuring that several property placeholder locations can be specified.
  */
-@CamelMainTest(propertyPlaceholderLocations = { "classpath:extra-application.properties", "classpath:application.properties" })
+@CamelMainTest(
+        propertyPlaceholderLocations = {"classpath:extra-application.properties", "classpath:application.properties"})
 class UseSeveralPropertyPlaceholderLocationsTest {
 
     @EndpointInject("mock:out")
@@ -54,7 +56,7 @@ class UseSeveralPropertyPlaceholderLocationsTest {
         assertEquals("Hello Jack!", result);
     }
 
-    @CamelMainTest(propertyPlaceholderLocations = { "classpath:application.properties" })
+    @CamelMainTest(propertyPlaceholderLocations = {"classpath:application.properties"})
     @Nested
     class NestedTest {
 

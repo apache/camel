@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -31,11 +34,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "SLACK_TOKEN", matches = ".*"),
-        @EnabledIfSystemProperty(named = "SLACK_HOOK", matches = ".*")
+    @EnabledIfSystemProperty(named = "SLACK_TOKEN", matches = ".*"),
+    @EnabledIfSystemProperty(named = "SLACK_HOOK", matches = ".*")
 })
 public class SlackConsumerTest extends CamelTestSupport {
 
@@ -55,13 +56,10 @@ public class SlackConsumerTest extends CamelTestSupport {
     }
 
     private void sendMessage(String message) throws IOException {
-        RequestBody requestBody
-                = RequestBody.create(MediaType.parse("application/json"), String.format("{ 'text': '%s'}", message));
+        RequestBody requestBody =
+                RequestBody.create(MediaType.parse("application/json"), String.format("{ 'text': '%s'}", message));
 
-        Request request = new Request.Builder()
-                .url(hook)
-                .post(requestBody)
-                .build();
+        Request request = new Request.Builder().url(hook).post(requestBody).build();
 
         OkHttpClient client = new OkHttpClient();
         Call call = client.newCall(request);

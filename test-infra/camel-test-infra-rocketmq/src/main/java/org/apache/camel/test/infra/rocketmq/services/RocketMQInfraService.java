@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.rocketmq.services;
 
 import java.io.IOException;
@@ -30,5 +31,4 @@ public interface RocketMQInfraService extends InfrastructureService {
     void createTopic(String topic);
 
     void deleteTopic(String topic) throws IOException, InterruptedException;
-
 }

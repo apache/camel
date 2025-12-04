@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge;
 
 import java.util.Map;
@@ -46,8 +47,8 @@ public class EventbridgeComponent extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Event bus name must be specified.");
         }
-        EventbridgeConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new EventbridgeConfiguration();
+        EventbridgeConfiguration configuration =
+                this.configuration != null ? this.configuration.copy() : new EventbridgeConfiguration();
         configuration.setEventbusName(remaining);
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

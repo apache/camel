@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 public class KeycloakSecurityHelperTest {
 
@@ -230,5 +231,4 @@ public class KeycloakSecurityHelperTest {
 
         assertTrue(permissions.isEmpty());
     }
-
 }

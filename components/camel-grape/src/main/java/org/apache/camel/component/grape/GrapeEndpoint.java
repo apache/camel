@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grape;
 
 import java.util.LinkedHashMap;
@@ -35,8 +36,15 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 /**
  * Fetch, load and manage additional jars dynamically after Camel Context was started.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape",
-             remote = false, producerOnly = true, category = { Category.MANAGEMENT }, headersClass = GrapeConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "grape",
+        syntax = "grape:defaultCoordinates",
+        title = "Grape",
+        remote = false,
+        producerOnly = true,
+        category = {Category.MANAGEMENT},
+        headersClass = GrapeConstants.class)
 public class GrapeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Maven coordinates to use as default to grab if the message body is empty.")
@@ -50,7 +58,8 @@ public class GrapeEndpoint extends DefaultEndpoint {
 
     public static List<String> loadPatches(CamelContext camelContext) {
         final ClassLoader classLoader = camelContext.getApplicationContextClassLoader();
-        PatchesRepository patchesRepository = camelContext.getComponent("grape", GrapeComponent.class).getPatchesRepository();
+        PatchesRepository patchesRepository =
+                camelContext.getComponent("grape", GrapeComponent.class).getPatchesRepository();
         return DefaultGroovyMethods.each(patchesRepository.listPatches(), new Closure<Object>(null, null) {
             public void doCall(String it) {
                 MavenCoordinates coordinates = MavenCoordinates.parseMavenCoordinates(it);
@@ -66,7 +75,6 @@ public class GrapeEndpoint extends DefaultEndpoint {
             public void doCall() {
                 doCall(null);
             }
-
         });
     }
 
@@ -93,5 +101,4 @@ public class GrapeEndpoint extends DefaultEndpoint {
     public GrapeComponent getComponent() {
         return DefaultGroovyMethods.asType(super.getComponent(), GrapeComponent.class);
     }
-
 }

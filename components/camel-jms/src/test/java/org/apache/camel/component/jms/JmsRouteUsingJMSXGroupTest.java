@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,15 +40,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
-import static org.apache.camel.test.junit5.TestSupport.body;
-
 @Timeout(20)
 public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {
     public static final int POOL_SIZE = 1;
+
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsRouteUsingJMSXGroupTest.class);
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -109,7 +112,8 @@ public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {
             public void configure() {
                 from("direct:start").to("jms:queue:JmsRouteUsingJMSXGroupTest");
 
-                from("jms:queue:JmsRouteUsingJMSXGroupTest?concurrentConsumers=2").to("log:foo?showHeaders=false")
+                from("jms:queue:JmsRouteUsingJMSXGroupTest?concurrentConsumers=2")
+                        .to("log:foo?showHeaders=false")
                         .to("mock:result");
             }
         };

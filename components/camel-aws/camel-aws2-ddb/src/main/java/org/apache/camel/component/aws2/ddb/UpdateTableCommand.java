@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
@@ -29,9 +30,12 @@ public class UpdateTableCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        ddbClient.updateTable(UpdateTableRequest.builder().tableName(determineTableName())
-                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(determineReadCapacity())
-                        .writeCapacityUnits(determineWriteCapacity()).build())
+        ddbClient.updateTable(UpdateTableRequest.builder()
+                .tableName(determineTableName())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(determineReadCapacity())
+                        .writeCapacityUnits(determineWriteCapacity())
+                        .build())
                 .build());
     }
 

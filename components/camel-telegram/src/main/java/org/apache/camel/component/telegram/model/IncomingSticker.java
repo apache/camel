@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -45,8 +46,7 @@ public class IncomingSticker {
     @JsonProperty("mask_position")
     private IncomingMaskPosition maskPosition;
 
-    public IncomingSticker() {
-    }
+    public IncomingSticker() {}
 
     public String getFileId() {
         return fileId;
@@ -115,14 +115,14 @@ public class IncomingSticker {
     @Override
     public String toString() {
         return "IncomingSticker{"
-               + "fileId='" + fileId + '\''
-               + ", width=" + width
-               + ", height=" + height
-               + ", isAnimated=" + isAnimated
-               + ", thumb=" + thumb
-               + ", emoji='" + emoji + '\''
-               + ", setName='" + setName + '\''
-               + ", maskPosition=" + maskPosition
-               + '}';
+                + "fileId='" + fileId + '\''
+                + ", width=" + width
+                + ", height=" + height
+                + ", isAnimated=" + isAnimated
+                + ", thumb=" + thumb
+                + ", emoji='" + emoji + '\''
+                + ", setName='" + setName + '\''
+                + ", maskPosition=" + maskPosition
+                + '}';
     }
 }

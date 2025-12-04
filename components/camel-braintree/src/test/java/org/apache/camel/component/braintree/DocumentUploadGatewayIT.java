@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -29,29 +34,24 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class DocumentUploadGatewayIT extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentUploadGatewayIT.class);
-    private static final String PATH_PREFIX
-            = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection()
+            .getApiName(DocumentUploadGatewayApiMethod.class)
+            .getName();
 
     @Test
     public void testCreate() {
         final String documentName = "pdf-sample.pdf";
 
-        File evidenceDocument = new File(getClass().getClassLoader().getResource(documentName).getPath());
-        DocumentUploadRequest documentUploadRequest = new DocumentUploadRequest(
-                DocumentUpload.Kind.EVIDENCE_DOCUMENT,
-                evidenceDocument);
+        File evidenceDocument =
+                new File(getClass().getClassLoader().getResource(documentName).getPath());
+        DocumentUploadRequest documentUploadRequest =
+                new DocumentUploadRequest(DocumentUpload.Kind.EVIDENCE_DOCUMENT, evidenceDocument);
 
-        final Result<DocumentUpload> result = requestBody(
-                "direct://CREATE",
-                documentUploadRequest);
+        final Result<DocumentUpload> result = requestBody("direct://CREATE", documentUploadRequest);
 
         assertNotNull(result, "create result");
         assertTrue(result.isSuccess(), "create result success");
@@ -65,9 +65,7 @@ public class DocumentUploadGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test route for create
-                from("direct://CREATE")
-                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
-
+                from("direct://CREATE").to("braintree://" + PATH_PREFIX + "/create?inBody=request");
             }
         };
     }

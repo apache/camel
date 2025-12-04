@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -28,9 +32,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltTemplateFromHeaderOverrideEndpointUriTest extends CamelTestSupport {
 
@@ -52,8 +53,8 @@ public class XsltTemplateFromHeaderOverrideEndpointUriTest extends CamelTestSupp
     }
 
     private void sendMessageAndHaveItTransformed(Object body) throws Exception {
-        String sheet = IOHelper.loadText(XsltTemplateFromHeaderOverrideEndpointUriTest.class
-                .getResourceAsStream("/org/apache/camel/component/xslt/transform.xsl"));
+        String sheet = IOHelper.loadText(XsltTemplateFromHeaderOverrideEndpointUriTest.class.getResourceAsStream(
+                "/org/apache/camel/component/xslt/transform.xsl"));
         Assertions.assertNotNull(sheet);
 
         MockEndpoint endpoint = getMockEndpoint("mock:result");
@@ -80,10 +81,11 @@ public class XsltTemplateFromHeaderOverrideEndpointUriTest extends CamelTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("xslt-saxon:dummy.xsl?contentCache=false&allowTemplateFromHeader=true").multicast()
+                from("direct:start")
+                        .to("xslt-saxon:dummy.xsl?contentCache=false&allowTemplateFromHeader=true")
+                        .multicast()
                         .to("mock:result");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
+
+import static org.apache.camel.builder.Builder.constant;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
@@ -23,13 +26,10 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.TotalRequestsThrottler;
 
-import static org.apache.camel.builder.Builder.constant;
-
 @ManagedResource(description = "Managed Concurrent Requests Throttler")
 public class ManagedThrottler extends ManagedProcessor implements ManagedThrottlerMBean {
 
-    public ManagedThrottler(CamelContext context, Throttler throttler,
-                            ProcessorDefinition<?> definition) {
+    public ManagedThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
         super(context, throttler, definition);
     }
 

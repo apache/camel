@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.Collection;
@@ -29,5 +30,4 @@ public class RoutePipeline extends Pipeline {
     public RoutePipeline(CamelContext camelContext, Collection<Processor> processors) {
         super(camelContext, processors);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.NotifyBuilder;
@@ -23,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SmbConsumerIdempotentMemoryRefIT extends SmbServerTestSupport {
 
     private MemoryIdempotentRepository repo;
@@ -33,7 +34,7 @@ public class SmbConsumerIdempotentMemoryRefIT extends SmbServerTestSupport {
     protected String getSmbUrl() {
         return String.format(
                 "smb:%s/%s/idem?username=%s&password=%s&idempotent=true"
-                             + "&idempotentRepository=#myConsumerIdemRepo&idempotentKey=${file:onlyname}&delete=true",
+                        + "&idempotentRepository=#myConsumerIdemRepo&idempotentKey=${file:onlyname}&delete=true",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
@@ -89,8 +90,7 @@ public class SmbConsumerIdempotentMemoryRefIT extends SmbServerTestSupport {
         return new RouteBuilder() {
 
             public void configure() {
-                from(getSmbUrl())
-                        .to("mock:result");
+                from(getSmbUrl()).to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,6 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
@@ -67,8 +68,7 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
         Long counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");
         assertEquals(0, counter.intValue(), "Should not have been invoked");
 
-        Object dummy = PluginHelper.getBeanIntrospection(context).getOrElseProperty(this, "dummy", null,
-                false);
+        Object dummy = PluginHelper.getBeanIntrospection(context).getOrElseProperty(this, "dummy", null, false);
         assertEquals("MyDummy", dummy);
 
         counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");
@@ -84,5 +84,4 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
             }
         };
     }
-
 }

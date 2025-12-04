@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.net.URI;
 
@@ -22,8 +25,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Tests that we get the handback object in the message header

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify continuing using same thread on the consumer side.
@@ -48,21 +49,24 @@ public class DirectShouldUseSameThreadTest extends ContextTestSupport {
             public void configure() {
                 final ThreadLocal<String> local = new ThreadLocal<>();
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        local.set("Hello");
-                        id = Thread.currentThread().getId();
-                    }
-                }).to("direct:foo");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                local.set("Hello");
+                                id = Thread.currentThread().getId();
+                            }
+                        })
+                        .to("direct:foo");
 
-                from("direct:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals("Hello", local.get());
-                        assertEquals(id, Thread.currentThread().getId());
-                    }
-                }).to("mock:result");
+                from("direct:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals("Hello", local.get());
+                                assertEquals(id, Thread.currentThread().getId());
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

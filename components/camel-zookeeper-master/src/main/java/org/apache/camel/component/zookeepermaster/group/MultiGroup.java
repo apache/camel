@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeepermaster.group;
 
 public interface MultiGroup<T extends NodeState> extends Group<T> {
@@ -22,5 +23,4 @@ public interface MultiGroup<T extends NodeState> extends Group<T> {
      * Check if we are the master.
      */
     boolean isMaster(String id);
-
 }

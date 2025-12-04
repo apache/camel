@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp;
 
 import java.io.InputStream;
@@ -35,10 +36,10 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
     @Test
     public void testWebhookRegistration() throws Exception {
         String challenge = "987";
-        WebhookConfiguration config
-                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        WebhookConfiguration config =
+                ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl() + "?hub.mode=subscribe&hub.verify_token=" + VERIFY_TOKEN
-                     + "&hub.challenge=" + challenge;
+                + "&hub.challenge=" + challenge;
 
         MockEndpoint mock = getMockEndpoint("mock:endpoint");
         mock.expectedBodiesReceived(challenge);
@@ -51,16 +52,16 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
     @Test
     public void testWebhookRegistrationFailed() throws Exception {
         String challenge = "987";
-        WebhookConfiguration config
-                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        WebhookConfiguration config =
+                ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl() + "?hub.mode=subscribe&hub.verify_token=" + WRONG_VERIFY_TOKEN
-                     + "&hub.challenge=" + challenge;
+                + "&hub.challenge=" + challenge;
 
         MockEndpoint mock = getMockEndpoint("mock:endpoint");
         mock.expectedMinimumMessageCount(1);
 
-        Assertions
-                .assertThatThrownBy(() -> template().sendBodyAndHeader("netty-http:" + url, null, Exchange.HTTP_METHOD, "GET"))
+        Assertions.assertThatThrownBy(
+                        () -> template().sendBodyAndHeader("netty-http:" + url, null, Exchange.HTTP_METHOD, "GET"))
                 .rootCause()
                 .hasMessageContaining("statusCode: 403");
         mock.assertIsSatisfied();
@@ -68,8 +69,8 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
 
     @Test
     public void testWebhook() throws Exception {
-        WebhookConfiguration config
-                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        WebhookConfiguration config =
+                ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
         try (InputStream content = getClass().getClassLoader().getResourceAsStream("webhook-request.json")) {
@@ -82,7 +83,8 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:endpoint");
 
         mock.assertIsSatisfied();
-        Assertions.assertThat(mock.getExchanges().get(0).getIn().getBody(String.class)).contains("\"type\": \"text\"");
+        Assertions.assertThat(mock.getExchanges().get(0).getIn().getBody(String.class))
+                .contains("\"type\": \"text\"");
     }
 
     @Override
@@ -101,10 +103,11 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
             public void configure() {
                 restConfiguration().host("localhost").port(port);
 
-                from("webhook:whatsapp:" + phoneNumberId + "?webhookAutoRegister=false").id("webhook")
-                        .convertBodyTo(String.class).to("mock:endpoint");
+                from("webhook:whatsapp:" + phoneNumberId + "?webhookAutoRegister=false")
+                        .id("webhook")
+                        .convertBodyTo(String.class)
+                        .to("mock:endpoint");
             }
         };
     }
-
 }

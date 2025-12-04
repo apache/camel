@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
 
 import org.apache.camel.Category;
@@ -30,10 +31,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Spring AI Embeddings
  */
-@UriEndpoint(firstVersion = "4.17.0", scheme = SpringAiEmbeddings.SCHEME, title = "Spring AI Embeddings",
-             syntax = "spring-ai-embeddings:embeddingId", producerOnly = true, category = {
-                     Category.AI
-             }, headersClass = SpringAiEmbeddingsHeaders.class)
+@UriEndpoint(
+        firstVersion = "4.17.0",
+        scheme = SpringAiEmbeddings.SCHEME,
+        title = "Spring AI Embeddings",
+        syntax = "spring-ai-embeddings:embeddingId",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = SpringAiEmbeddingsHeaders.class)
 public class SpringAiEmbeddingsEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id")
@@ -43,10 +48,10 @@ public class SpringAiEmbeddingsEndpoint extends DefaultEndpoint {
     private SpringAiEmbeddingsConfiguration configuration;
 
     public SpringAiEmbeddingsEndpoint(
-                                      String endpointUri,
-                                      Component component,
-                                      String embeddingId,
-                                      SpringAiEmbeddingsConfiguration configuration) {
+            String endpointUri,
+            Component component,
+            String embeddingId,
+            SpringAiEmbeddingsConfiguration configuration) {
 
         super(endpointUri, component);
 

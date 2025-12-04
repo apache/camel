@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to verify end-user exceptions for miss configuration
@@ -30,15 +31,19 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
 
     @Test
     public void testProcessorRefMissConfigured() {
-        Exception e = assertThrows(Exception.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                public void configure() {
-                    from("direct:in").process("hello");
-                }
-            });
-        }, "Should have thrown IllegalArgumentException");
+        Exception e = assertThrows(
+                Exception.class,
+                () -> {
+                    context.addRoutes(new RouteBuilder() {
+                        public void configure() {
+                            from("direct:in").process("hello");
+                        }
+                    });
+                },
+                "Should have thrown IllegalArgumentException");
 
-        assertEquals("No bean could be found in the registry for: hello of type: org.apache.camel.Processor",
+        assertEquals(
+                "No bean could be found in the registry for: hello of type: org.apache.camel.Processor",
                 e.getCause().getMessage());
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Arrays;
@@ -46,17 +47,17 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinition> {
     @XmlElements({
-            @XmlElement(name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
-            @XmlElement(name = "failoverLoadBalancer", type = FailoverLoadBalancerDefinition.class),
-            @XmlElement(name = "randomLoadBalancer", type = RandomLoadBalancerDefinition.class),
-            @XmlElement(name = "roundRobinLoadBalancer", type = RoundRobinLoadBalancerDefinition.class),
-            @XmlElement(name = "stickyLoadBalancer", type = StickyLoadBalancerDefinition.class),
-            @XmlElement(name = "topicLoadBalancer", type = TopicLoadBalancerDefinition.class),
-            @XmlElement(name = "weightedLoadBalancer", type = WeightedLoadBalancerDefinition.class) })
+        @XmlElement(name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
+        @XmlElement(name = "failoverLoadBalancer", type = FailoverLoadBalancerDefinition.class),
+        @XmlElement(name = "randomLoadBalancer", type = RandomLoadBalancerDefinition.class),
+        @XmlElement(name = "roundRobinLoadBalancer", type = RoundRobinLoadBalancerDefinition.class),
+        @XmlElement(name = "stickyLoadBalancer", type = StickyLoadBalancerDefinition.class),
+        @XmlElement(name = "topicLoadBalancer", type = TopicLoadBalancerDefinition.class),
+        @XmlElement(name = "weightedLoadBalancer", type = WeightedLoadBalancerDefinition.class)
+    })
     private LoadBalancerDefinition loadBalancerType;
 
-    public LoadBalanceDefinition() {
-    }
+    public LoadBalanceDefinition() {}
 
     protected LoadBalanceDefinition(LoadBalanceDefinition source) {
         super(source);
@@ -165,7 +166,10 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
      * @return                         the builder
      */
     public LoadBalanceDefinition failover(
-            int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, boolean sticky,
+            int maximumFailoverAttempts,
+            boolean inheritErrorHandler,
+            boolean roundRobin,
+            boolean sticky,
             Class<?>... exceptions) {
         FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));
@@ -196,7 +200,8 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
      * @param  distributionRatioDelimiter String containing delimiter to be used for ratios
      * @return                            the builder
      */
-    public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
+    public LoadBalanceDefinition weighted(
+            boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
         WeightedLoadBalancerDefinition def = new WeightedLoadBalancerDefinition();
         def.setRoundRobin(Boolean.toString(roundRobin));
         def.setDistributionRatio(distributionRatio);
@@ -268,7 +273,8 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
 
     @Override
     public String getLabel() {
-        return getOutputs().stream().map(ProcessorDefinition::getLabel)
+        return getOutputs().stream()
+                .map(ProcessorDefinition::getLabel)
                 .collect(Collectors.joining(",", getShortName() + "[", "]"));
     }
 

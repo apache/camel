@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -33,12 +40,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
 
@@ -111,9 +112,15 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)).log("instance...").choice()
-                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added")
-                        .to("mock:added").otherwise().log("...removed").to("mock:removed");
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX))
+                        .log("instance...")
+                        .choice()
+                        .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                        .log("...added")
+                        .to("mock:added")
+                        .otherwise()
+                        .log("...removed")
+                        .to("mock:removed");
             }
         };
     }

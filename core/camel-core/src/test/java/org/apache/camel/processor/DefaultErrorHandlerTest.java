@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Default error handler test
@@ -86,15 +87,17 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
                 // if no error handler is configured it should
                 // use the default error handler
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Boom");
-                        }
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Boom");
+                                }
+                                exchange.getIn().setBody("Bye World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
@@ -53,8 +54,9 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        String out = (String) mbeanServer.invoke(name, "browseMessageAsJSon", new Object[] { 0, true },
-                new String[] { "java.lang.Integer", "java.lang.Boolean" });
+        String out = (String) mbeanServer.invoke(name, "browseMessageAsJSon", new Object[] {0, true}, new String[] {
+            "java.lang.Integer", "java.lang.Boolean"
+        });
         assertNotNull(out);
         log.info(out);
         assertTrue(out.contains("\"body\": {"));
@@ -74,14 +76,16 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        String out = (String) mbeanServer.invoke(name, "browseMessageAsJSon", new Object[] { 0, false },
-                new String[] { "java.lang.Integer", "java.lang.Boolean" });
+        String out = (String) mbeanServer.invoke(name, "browseMessageAsJSon", new Object[] {0, false}, new String[] {
+            "java.lang.Integer", "java.lang.Boolean"
+        });
         assertNotNull(out);
         assertFalse(out.contains("\"body\": {"));
         assertTrue(out.contains("\"value\": 123"));
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsJSon", new Object[] { 1, false },
-                new String[] { "java.lang.Integer", "java.lang.Boolean" });
+        out = (String) mbeanServer.invoke(name, "browseMessageAsJSon", new Object[] {1, false}, new String[] {
+            "java.lang.Integer", "java.lang.Boolean"
+        });
         assertNotNull(out);
         assertFalse(out.contains("\"body\": {"));
         assertTrue(out.contains("\"value\": 456"));
@@ -100,8 +104,8 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsJSon", new Object[] { true },
-                new String[] { "java.lang.Boolean" });
+        String out = (String) mbeanServer.invoke(
+                name, "browseAllMessagesAsJSon", new Object[] {true}, new String[] {"java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
 
@@ -122,8 +126,8 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsJSon", new Object[] { false },
-                new String[] { "java.lang.Boolean" });
+        String out = (String) mbeanServer.invoke(
+                name, "browseAllMessagesAsJSon", new Object[] {false}, new String[] {"java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
 
@@ -146,8 +150,10 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] { 0, 1, true },
-                new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
+        String out =
+                (String) mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] {0, 1, true}, new String[] {
+                    "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"
+                });
         assertNotNull(out);
         log.info(out);
 
@@ -168,8 +174,10 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] { 0, 1, false },
-                new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
+        String out = (String)
+                mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] {0, 1, false}, new String[] {
+                    "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"
+                });
         assertNotNull(out);
         log.info(out);
 
@@ -185,12 +193,15 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         try {
-            mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] { 3, 1, false },
-                    new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
+            mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] {3, 1, false}, new String[] {
+                "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"
+            });
             fail("Should have thrown exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("From index cannot be larger than to index, was: 3 > 1", e.getCause().getMessage());
+            assertEquals(
+                    "From index cannot be larger than to index, was: 3 > 1",
+                    e.getCause().getMessage());
         }
     }
 
@@ -205,5 +216,4 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
             }
         };
     }
-
 }

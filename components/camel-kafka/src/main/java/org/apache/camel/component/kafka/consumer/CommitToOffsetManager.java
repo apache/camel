@@ -26,7 +26,8 @@ public class CommitToOffsetManager extends AbstractCommitManager {
     private final OffsetCache offsetCache = new OffsetCache();
     private final StateRepository<String, String> offsetRepository;
 
-    public CommitToOffsetManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
+    public CommitToOffsetManager(
+            Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         super(consumer, kafkaConsumer, threadId, printableTopic);
 
         offsetRepository = configuration.getOffsetRepository();

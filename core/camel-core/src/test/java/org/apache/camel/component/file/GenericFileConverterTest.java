@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.BufferedInputStream;
@@ -44,7 +45,9 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(File.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(File.class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -63,7 +66,9 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(String.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -83,7 +88,9 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(byte[].class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(byte[].class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -103,7 +110,9 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(Serializable.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(Serializable.class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -123,7 +132,9 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(InputStream.class).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(InputStream.class)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -143,13 +154,16 @@ public class GenericFileConverterTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).convertBodyTo(InputStream.class).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        Object body = exchange.getIn().getBody();
-                        assertIsInstanceOf(InputStreamCache.class, body);
-                    }
-                }).to("mock:result");
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .convertBodyTo(InputStream.class)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                Object body = exchange.getIn().getBody();
+                                assertIsInstanceOf(InputStreamCache.class, body);
+                            }
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -172,13 +186,15 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
                 from(fileUri("?initialDelay=0&delay=10"))
                         .streamCache(Boolean.toString(false))
-                        .convertBodyTo(InputStream.class).process(new Processor() {
+                        .convertBodyTo(InputStream.class)
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
                                 Object body = exchange.getIn().getBody();
                                 assertIsInstanceOf(BufferedInputStream.class, body);
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         });
         context.start();
@@ -194,5 +210,4 @@ public class GenericFileConverterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -36,7 +37,8 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("test" + File.separator + TEST_FILE_NAME);
         mock.message(0).header(Exchange.FILE_NAME_ONLY).isEqualTo(TEST_FILE_NAME);
 
-        template.sendBodyAndHeader(fileUri("filerelative"), "Hello World", Exchange.FILE_NAME, "test/" + TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("filerelative"), "Hello World", Exchange.FILE_NAME, "test/" + TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +51,8 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("test" + File.separator + TEST_FILE_NAME);
         mock.message(0).header(Exchange.FILE_NAME_ONLY).isEqualTo(TEST_FILE_NAME);
 
-        template.sendBodyAndHeader(fileUri("fileabsolute"), "Hello World", Exchange.FILE_NAME, "test/" + TEST_FILE_NAME);
+        template.sendBodyAndHeader(
+                fileUri("fileabsolute"), "Hello World", Exchange.FILE_NAME, "test/" + TEST_FILE_NAME);
 
         assertMockEndpointsSatisfied();
     }
@@ -59,10 +62,12 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("filerelative?initialDelay=0&delay=10&recursive=true")).convertBodyTo(String.class)
+                from(fileUri("filerelative?initialDelay=0&delay=10&recursive=true"))
+                        .convertBodyTo(String.class)
                         .to("mock:relative");
 
-                from("file://" + testDirectory("fileabsolute").toAbsolutePath() + "?initialDelay=0&delay=10&recursive=true")
+                from("file://" + testDirectory("fileabsolute").toAbsolutePath()
+                                + "?initialDelay=0&delay=10&recursive=true")
                         .convertBodyTo(String.class)
                         .to("mock:absolute");
             }

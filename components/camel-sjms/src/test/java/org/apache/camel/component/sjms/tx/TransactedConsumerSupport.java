@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.tx;
 
 import java.util.concurrent.CountDownLatch;
@@ -38,8 +39,13 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
     public abstract String getBrokerUri();
 
     protected void runTest(
-            String destinationName, int routeCount, int messageCount, int totalRedeliverdFalse, int totalRedeliveredTrue,
-            int concurrentConsumers, int maxAttemptsCount)
+            String destinationName,
+            int routeCount,
+            int messageCount,
+            int totalRedeliverdFalse,
+            int totalRedeliveredTrue,
+            int concurrentConsumers,
+            int maxAttemptsCount)
             throws Exception {
         // The CountDownLatch is used to make our final assertions await
         // unit all the messages have been processed. It is also
@@ -88,27 +94,29 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
     }
 
     protected void addRoute(
-            final String destinationName, final int routeNumber, final int concurrentConsumers,
-            final int maxAttemptsCount, final CountDownLatch latch)
+            final String destinationName,
+            final int routeNumber,
+            final int concurrentConsumers,
+            final int maxAttemptsCount,
+            final CountDownLatch latch)
             throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
 
                 if (context.getRoute("direct.route") == null) {
-                    from("direct:start")
-                            .id("direct.route")
-                            .to(destinationName);
+                    from("direct:start").id("direct.route").to(destinationName);
                 }
 
                 // Our test consumer route
-                from(destinationName + "?transacted=true&concurrentConsumers="
-                     + concurrentConsumers)
+                from(destinationName + "?transacted=true&concurrentConsumers=" + concurrentConsumers)
                         .id("consumer.route." + routeNumber)
                         // first consume all the messages that are not redelivered
-                        .choice().when(header("JMSRedelivered").isEqualTo("false"))
+                        .choice()
+                        .when(header("JMSRedelivered").isEqualTo("false"))
                         // The rollback processor
-                        .log("Route " + routeNumber + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                        .log("Route " + routeNumber
+                                + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                         .to("mock:test.before." + routeNumber)
                         .process(new Processor() {
                             private final AtomicInteger counter = new AtomicInteger();
@@ -128,7 +136,8 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                         })
                         // Now process again any messages that were redelivered
                         .when(header("JMSRedelivered").isEqualTo("true"))
-                        .log("Route " + routeNumber + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                        .log("Route " + routeNumber
+                                + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                         .to("mock:test.after." + routeNumber)
                         .process(new Processor() {
                             @Override

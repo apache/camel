@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import java.util.HashMap;
@@ -39,16 +40,23 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 /**
  * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", category = { Category.MESSAGING, Category.IOT },
-             syntax = "paho:topic", headersClass = PahoConstants.class)
+@UriEndpoint(
+        firstVersion = "2.16.0",
+        scheme = "paho",
+        title = "Paho",
+        category = {Category.MESSAGING, Category.IOT},
+        syntax = "paho:topic",
+        headersClass = PahoConstants.class)
 public class PahoEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // Configuration members
     @UriPath(description = "Name of the topic")
     @Metadata(required = true)
     private final String topic;
+
     @UriParam
     private final PahoConfiguration configuration;
+
     @UriParam(label = "advanced")
     private volatile MqttClient client;
 
@@ -124,7 +132,8 @@ public class PahoEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         mq.setSSLHostnameVerifier(config.getSslHostnameVerifier());
         mq.setSSLProperties(config.getSslClientProps());
         if (config.getWillTopic() != null && config.getWillPayload() != null) {
-            mq.setWill(config.getWillTopic(),
+            mq.setWill(
+                    config.getWillTopic(),
                     config.getWillPayload().getBytes(),
                     config.getWillQos(),
                     config.isWillRetained());

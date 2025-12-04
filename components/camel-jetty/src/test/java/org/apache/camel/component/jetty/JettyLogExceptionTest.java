@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
@@ -27,12 +34,6 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class JettyLogExceptionTest extends BaseJettyTest {
 
@@ -53,9 +54,9 @@ public class JettyLogExceptionTest extends BaseJettyTest {
 
         ArgumentCaptor<LogEvent> captor = ArgumentCaptor.forClass(LogEvent.class);
         verify(appender, atLeastOnce()).append(captor.capture());
-        assertTrue(captor.getAllValues().stream().anyMatch(
-                event -> event.getMessage().getFormattedMessage().equals(
-                        "Server internal error response returned due to 'Camel cannot do this'")));
+        assertTrue(captor.getAllValues().stream().anyMatch(event -> event.getMessage()
+                .getFormattedMessage()
+                .equals("Server internal error response returned due to 'Camel cannot do this'")));
     }
 
     @Override
@@ -63,7 +64,8 @@ public class JettyLogExceptionTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:{{port}}/foo?muteException=true&logException=true").to("mock:destination")
+                from("jetty:http://localhost:{{port}}/foo?muteException=true&logException=true")
+                        .to("mock:destination")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };

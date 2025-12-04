@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.box;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,18 +33,18 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Test class for {@link BoxEventLogsManager} APIs.
  */
-@EnabledIf(value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
-           disabledReason = "Box credentials were not provided")
+@EnabledIf(
+        value = "org.apache.camel.component.box.AbstractBoxITSupport#hasCredentials",
+        disabledReason = "Box credentials were not provided")
 public class BoxEventLogsManagerIT extends AbstractBoxITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoxEventLogsManagerIT.class);
     private static final String PATH_PREFIX = BoxApiCollection.getCollection()
-            .getApiName(BoxEventLogsManagerApiMethod.class).getName();
+            .getApiName(BoxEventLogsManagerApiMethod.class)
+            .getName();
     private static final long ONE_MINUTE_OF_MILLISECONDS = 1000 * 60;
 
     @Disabled // Requires enterprise admin account to test
@@ -74,7 +77,6 @@ public class BoxEventLogsManagerIT extends AbstractBoxITSupport {
             public void configure() {
                 // test route for getEnterpriseEvents
                 from("direct://GETENTERPRISEEVENTS").to("box://" + PATH_PREFIX + "/getEnterpriseEvents");
-
             }
         };
     }

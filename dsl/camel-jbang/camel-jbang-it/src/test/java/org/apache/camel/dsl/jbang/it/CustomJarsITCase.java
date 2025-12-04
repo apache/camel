@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it;
 
 import java.io.IOException;
@@ -27,13 +28,14 @@ public class CustomJarsITCase extends JBangTestSupport {
     @Test
     public void testCustomJars() throws IOException {
         copyResourceInDataFolder(TestResources.CIRCUIT_BREAKER);
-        Assertions
-                .assertThatCode(() -> execute(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer", mountPoint())))
+        Assertions.assertThatCode(
+                        () -> execute(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer", mountPoint())))
                 .as("the application without dependency will cause error")
                 .hasStackTraceContaining("Failed to create route: circuitBreaker")
                 .hasStackTraceContaining(
                         "Cannot find camel-resilience4j or camel-microprofile-fault-tolerance on the classpath.");
-        executeBackground(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer,camel-resilience4j", mountPoint()));
+        executeBackground(
+                String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer,camel-resilience4j", mountPoint()));
         checkLogContains("timer called");
         checkLogContains("Fallback message", 10);
     }

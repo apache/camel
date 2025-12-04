@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.math.BigInteger;
@@ -46,6 +47,5 @@ public class BigIntegerFormatFactory extends AbstractFormatFactory {
         public BigInteger parse(String string) throws Exception {
             return new BigInteger(string);
         }
-
     }
 }

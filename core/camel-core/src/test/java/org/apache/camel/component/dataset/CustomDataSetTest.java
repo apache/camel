@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,7 +35,8 @@ public class CustomDataSetTest extends ContextTestSupport {
         final Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
         @Override
-        public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) {
+        public void assertMessageExpected(
+                DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) {
             // lets compare the XPath result
             Predicate predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
             log.debug("evaluating predicate: {}", predicate);

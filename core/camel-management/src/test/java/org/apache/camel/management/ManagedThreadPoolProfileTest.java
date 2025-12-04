@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,13 +33,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_THREAD_POOL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
+@DisabledIfSystemProperty(
+        named = "camel.threads.virtual.enabled",
+        matches = "true",
+        disabledReason = "In case of Virtual Threads, the created thread pools don't have all these attributes")
 @DisabledOnOs(OS.AIX)
 public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
 
@@ -76,7 +79,6 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
 
         String profileId = (String) mbeanServer.getAttribute(on, "ThreadPoolProfileId");
         assertEquals("custom", profileId);
-
     }
 
     @Override
@@ -94,9 +96,12 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
 
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start").threads().id("mythreads").executorService("custom").to("mock:result");
+                from("direct:start")
+                        .threads()
+                        .id("mythreads")
+                        .executorService("custom")
+                        .to("mock:result");
             }
         };
     }
-
 }

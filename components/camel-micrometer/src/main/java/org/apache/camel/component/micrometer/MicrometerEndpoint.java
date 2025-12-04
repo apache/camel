@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
 
 import java.util.ArrayList;
@@ -37,10 +38,15 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Collect various metrics directly from Camel routes using the Micrometer library.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer",
-             remote = false, syntax = "micrometer:metricsType:metricsName", producerOnly = true,
-             category = { Category.MONITORING },
-             headersClass = MicrometerConstants.class)
+@UriEndpoint(
+        firstVersion = "2.22.0",
+        scheme = "micrometer",
+        title = "Micrometer",
+        remote = false,
+        syntax = "micrometer:metricsType:metricsName",
+        producerOnly = true,
+        category = {Category.MONITORING},
+        headersClass = MicrometerConstants.class)
 public class MicrometerEndpoint extends DefaultEndpoint {
 
     protected MeterRegistry registry;
@@ -48,24 +54,31 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @UriPath(description = "Type of metrics", enums = "counter,summary,timer")
     @Metadata(required = true)
     protected final Meter.Type metricsType;
+
     @UriPath(description = "Name of metrics")
     @Metadata(required = true)
     protected final String metricsName;
+
     @UriParam(description = "Description of metrics")
     protected String metricsDescription;
+
     @UriParam(description = "Tags of metrics", multiValue = true, prefix = "tags.")
     protected Map<String, String> tags;
+
     @UriParam(description = "Action expression when using timer type", enums = "start,stop")
     private String action;
+
     @UriParam(description = "Value expression when using histogram type")
     private String value;
+
     @UriParam(description = "Increment value expression when using counter type")
     private String increment;
+
     @UriParam(description = "Decrement value expression when using counter type")
     private String decrement;
 
-    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, Meter.Type metricsType,
-                              String metricsName) {
+    public MicrometerEndpoint(
+            String uri, Component component, MeterRegistry registry, Meter.Type metricsType, String metricsName) {
         super(uri, component);
         this.registry = registry;
         this.metricsType = metricsType;

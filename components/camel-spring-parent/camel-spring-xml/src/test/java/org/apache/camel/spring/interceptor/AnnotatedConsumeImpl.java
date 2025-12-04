@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.Consume;
@@ -32,7 +33,8 @@ public class AnnotatedConsumeImpl implements AnnotatedConsume {
     public void handleTitle(String title) {
         Transactional tx = this.getClass().getAnnotation(Transactional.class);
         if (tx == null) {
-            throw new IllegalStateException("Spring annotation-driven should have instrumented this class as @Transactional");
+            throw new IllegalStateException(
+                    "Spring annotation-driven should have instrumented this class as @Transactional");
         }
         if (!"NEVER".equals(tx.propagation().name())) {
             throw new IllegalStateException("Should be NEVER propagation");
@@ -47,5 +49,4 @@ public class AnnotatedConsumeImpl implements AnnotatedConsume {
 
         producer.sendBody(title);
     }
-
 }

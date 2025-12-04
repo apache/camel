@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tensorflow.serving;
 
 import io.grpc.ChannelCredentials;
@@ -32,9 +33,14 @@ import org.apache.camel.support.DefaultEndpoint;
 import tensorflow.serving.ModelServiceGrpc;
 import tensorflow.serving.PredictionServiceGrpc;
 
-@UriEndpoint(firstVersion = "4.10.0", scheme = "tensorflow-serving", title = "TensorFlow Serving",
-             syntax = "tensorflow-serving:api", producerOnly = true,
-             category = { Category.AI }, headersClass = TensorFlowServingConstants.class)
+@UriEndpoint(
+        firstVersion = "4.10.0",
+        scheme = "tensorflow-serving",
+        title = "TensorFlow Serving",
+        syntax = "tensorflow-serving:api",
+        producerOnly = true,
+        category = {Category.AI},
+        headersClass = TensorFlowServingConstants.class)
 public class TensorFlowServingEndpoint extends DefaultEndpoint {
 
     @UriPath(enums = "model-status,model-metadata,classify,regress,predict", description = "The TensorFlow Serving API")
@@ -48,8 +54,11 @@ public class TensorFlowServingEndpoint extends DefaultEndpoint {
     private ModelServiceGrpc.ModelServiceBlockingStub modelService;
     private PredictionServiceGrpc.PredictionServiceBlockingStub predictionService;
 
-    public TensorFlowServingEndpoint(String uri, TensorFlowServingComponent component, String path,
-                                     TensorFlowServingConfiguration configuration) {
+    public TensorFlowServingEndpoint(
+            String uri,
+            TensorFlowServingComponent component,
+            String path,
+            TensorFlowServingConfiguration configuration) {
         super(uri, component);
         this.api = path;
         this.configuration = configuration;

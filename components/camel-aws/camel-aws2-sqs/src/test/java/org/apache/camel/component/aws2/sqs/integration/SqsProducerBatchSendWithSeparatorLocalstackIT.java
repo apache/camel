@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs.integration;
 
 import org.apache.camel.EndpointInject;
@@ -53,11 +54,15 @@ public class SqsProducerBatchSendWithSeparatorLocalstackIT extends Aws2SQSBaseTe
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").startupOrder(2).setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
+                from("direct:start")
+                        .startupOrder(2)
+                        .setHeader(Sqs2Constants.SQS_OPERATION, constant("sendBatchMessage"))
                         .toF("aws2-sqs://%s?autoCreateQueue=true", sharedNameGenerator.getName());
 
                 fromF("aws2-sqs://%s?deleteAfterRead=true&autoCreateQueue=true", sharedNameGenerator.getName())
-                        .startupOrder(1).log("${body}").to("mock:result");
+                        .startupOrder(1)
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

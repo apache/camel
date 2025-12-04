@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.io.Serializable;
@@ -72,8 +73,12 @@ abstract class PropertiesValidationResult implements Serializable {
     public boolean isSuccess() {
         boolean ok = syntaxError == null && unknown == null && required == null;
         if (ok) {
-            ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
-                    && invalidBoolean == null && invalidInteger == null && invalidNumber == null
+            ok = invalidEnum == null
+                    && invalidEnumChoices == null
+                    && invalidReference == null
+                    && invalidBoolean == null
+                    && invalidInteger == null
+                    && invalidNumber == null
                     && invalidDuration == null;
         }
         if (ok) {
@@ -303,5 +308,4 @@ abstract class PropertiesValidationResult implements Serializable {
     static boolean isEmpty(String value) {
         return value == null || value.isBlank();
     }
-
 }

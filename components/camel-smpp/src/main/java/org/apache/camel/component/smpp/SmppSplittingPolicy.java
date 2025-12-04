@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smpp;
 
 public enum SmppSplittingPolicy {
-
     ALLOW,
     REJECT,
     TRUNCATE;
@@ -36,5 +36,4 @@ public enum SmppSplittingPolicy {
 
         throw new SmppException("Unrecognised SmppSplittingPolicy: " + policyName);
     }
-
 }

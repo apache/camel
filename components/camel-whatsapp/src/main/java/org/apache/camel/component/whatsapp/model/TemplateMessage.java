@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import java.util.List;
@@ -24,8 +25,7 @@ public class TemplateMessage {
     private Language language;
     private List<Component> components;
 
-    public TemplateMessage() {
-    }
+    public TemplateMessage() {}
 
     public String getName() {
         return name;
@@ -50,5 +50,4 @@ public class TemplateMessage {
     public void setComponents(List<Component> components) {
         this.components = components;
     }
-
 }

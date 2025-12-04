@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -27,10 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringRestOpenApiReaderModelApiSecurityPlaceholderTest extends CamelSpringTestSupport {
 
@@ -75,7 +76,7 @@ public class SpringRestOpenApiReaderModelApiSecurityPlaceholderTest extends Came
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -88,8 +89,8 @@ public class SpringRestOpenApiReaderModelApiSecurityPlaceholderTest extends Came
         config.setInfo(info);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
@@ -135,8 +136,8 @@ public class SpringRestOpenApiReaderModelApiSecurityPlaceholderTest extends Came
         assertTrue(json.contains("\"scheme\" : \"basic\""));
         assertTrue(json.contains("\"scheme\" : \"bearer\""));
         assertTrue(json.contains("\"bearerFormat\" : \"org.apache.camel.openapi.User\""));
-        assertTrue(
-                json.contains("\"openIdConnectUrl\" : \"http://petstore.swagger.io/oauth/.well-known/openid-configuration\""));
+        assertTrue(json.contains(
+                "\"openIdConnectUrl\" : \"http://petstore.swagger.io/oauth/.well-known/openid-configuration\""));
         assertFalse(json.contains("\"enum\""));
         assertFalse(json.contains("\"{{\""));
 

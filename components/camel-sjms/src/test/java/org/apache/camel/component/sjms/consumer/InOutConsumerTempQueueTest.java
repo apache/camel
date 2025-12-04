@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.Exchange;
@@ -42,7 +43,8 @@ public class InOutConsumerTempQueueTest extends JmsTestSupport {
                         .to("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut").to("log:before")
+                from("sjms:queue:in.out.temp.queue.InOutConsumerTempQueueTest?exchangePattern=InOut")
+                        .to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = (String) exchange.getIn().getBody();
@@ -54,5 +56,4 @@ public class InOutConsumerTempQueueTest extends JmsTestSupport {
             }
         };
     }
-
 }

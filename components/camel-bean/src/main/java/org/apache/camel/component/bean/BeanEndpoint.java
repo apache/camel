@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import java.util.Map;
@@ -35,28 +36,44 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Invoke methods of Java beans stored in Camel registry.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true,
-             remote = false, category = { Category.CORE, Category.SCRIPT })
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "bean",
+        title = "Bean",
+        syntax = "bean:beanName",
+        producerOnly = true,
+        remote = false,
+        category = {Category.CORE, Category.SCRIPT})
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
+
     @UriPath(label = "common", description = "Sets the name of the bean to invoke")
     @Metadata(required = true)
     private String beanName;
+
     @UriParam(label = "common", description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @UriParam(label = "common", defaultValue = "Singleton", description = "Scope of bean."
-                                                                          + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
-                                                                          + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
-                                                                          + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
-                                                                          + " while processing a request and you want to call the same bean instance multiple times while processing the request."
-                                                                          + " The bean does not have to be thread-safe as the instance is only called from the same request."
-                                                                          + " When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
-                                                                          + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
-                                                                          + " so when using prototype then this depends on the delegated registry.")
+
+    @UriParam(
+            label = "common",
+            defaultValue = "Singleton",
+            description = "Scope of bean."
+                    + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
+                    + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
+                    + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
+                    + " while processing a request and you want to call the same bean instance multiple times while processing the request."
+                    + " The bean does not have to be thread-safe as the instance is only called from the same request."
+                    + " When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
+                    + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
+                    + " so when using prototype then this depends on the delegated registry.")
     private BeanScope scope = BeanScope.Singleton;
-    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean",
-              multiValue = true)
+
+    @UriParam(
+            prefix = "bean.",
+            label = "advanced",
+            description = "Used for configuring additional properties on the bean",
+            multiValue = true)
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {
@@ -101,11 +118,10 @@ public class BeanEndpoint extends DefaultEndpoint {
             ObjectHelper.notNull(beanName, "beanName", this);
             BeanHolder holder = getBeanHolder();
             if (holder == null) {
-                ParameterMappingStrategy strategy
-                        = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+                ParameterMappingStrategy strategy =
+                        ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
                 BeanComponent bean = getCamelContext().getComponent("bean", BeanComponent.class);
-                RegistryBean registryBean
-                        = new RegistryBean(getCamelContext(), beanName, strategy, bean);
+                RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName, strategy, bean);
                 if (scope == BeanScope.Singleton) {
                     // if singleton then create a cached holder that use the same singleton instance
                     holder = registryBean.createCacheHolder();
@@ -129,7 +145,7 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     public String getBeanName() {
         return beanName;
@@ -172,7 +188,7 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected String createEndpointUri() {

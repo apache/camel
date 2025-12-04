@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>
@@ -39,7 +40,8 @@ public class CsvUnmarshalCommentMarkerSpringTest extends CamelSpringTestSupport 
     void testCsvUnmarshal() throws Exception {
         result.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "# Cool books list (comment)\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
+        template.sendBody(
+                "direct:start", "# Cool books list (comment)\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
         MockEndpoint.assertIsSatisfied(context);
 

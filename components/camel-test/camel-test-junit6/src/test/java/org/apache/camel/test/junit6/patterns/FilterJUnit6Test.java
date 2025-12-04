@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.patterns;
 
 import org.apache.camel.EndpointInject;
@@ -64,6 +65,5 @@ public class FilterJUnit6Test extends CamelTestSupport {
             }
         };
     }
-
 }
 // END SNIPPET: example

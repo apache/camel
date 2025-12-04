@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.eventnotifier;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
+import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
+import static org.assertj.core.api.Assertions.withPrecision;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,10 +33,6 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT;
-import static org.apache.camel.component.micrometer.MicrometerConstants.ROUTE_ID_TAG;
-import static org.assertj.core.api.Assertions.withPrecision;
 
 public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEventNotifierTest {
 
@@ -54,7 +55,6 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
             public boolean isBaseEndpointURI() {
                 return false;
             }
-
         });
         return eventNotifier;
     }
@@ -67,8 +67,11 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
             @Override
             public Object evaluate(Exchange exchange) {
                 try {
-                    Awaitility.await().pollDelay(SLEEP, TimeUnit.MILLISECONDS).catchUncaughtExceptions().untilAsserted(
-                            () -> Assertions.assertThat(currentInflightExchanges()).isEqualTo(1.0D, withPrecision(0.1D)));
+                    Awaitility.await()
+                            .pollDelay(SLEEP, TimeUnit.MILLISECONDS)
+                            .catchUncaughtExceptions()
+                            .untilAsserted(() -> Assertions.assertThat(currentInflightExchanges())
+                                    .isEqualTo(1.0D, withPrecision(0.1D)));
                     return exchange.getIn().getBody();
                 } catch (Exception e) {
                     if (e.getCause() instanceof InterruptedException) {
@@ -93,7 +96,11 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
     }
 
     private double currentInflightExchanges() {
-        return meterRegistry.find(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT).tag(ROUTE_ID_TAG, ROUTE_ID).gauge().value();
+        return meterRegistry
+                .find(DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT)
+                .tag(ROUTE_ID_TAG, ROUTE_ID)
+                .gauge()
+                .value();
     }
 
     @Override
@@ -105,5 +112,4 @@ public class MicrometerExchangeEventNotifierTest extends AbstractMicrometerEvent
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
@@ -78,7 +79,9 @@ public class TcpServerAcceptThread extends Thread {
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName(serverSocket));
 
-        MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
+        MDC.put(
+                UnitOfWork.MDC_CAMEL_CONTEXT_ID,
+                consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
         if (route != null) {
@@ -104,7 +107,8 @@ public class TcpServerAcceptThread extends Thread {
                         try {
                             serverSocket.close();
                         } catch (Exception ex) {
-                            log.debug("Exception encountered closing ServerSocket after SocketException on accept() - ignoring",
+                            log.debug(
+                                    "Exception encountered closing ServerSocket after SocketException on accept() - ignoring",
                                     ex);
                         }
                     }
@@ -115,7 +119,9 @@ public class TcpServerAcceptThread extends Thread {
                         try {
                             serverSocket.close();
                         } catch (Exception ex) {
-                            log.debug("Exception encountered closing ServerSocket after exception on accept() - ignoring", ex);
+                            log.debug(
+                                    "Exception encountered closing ServerSocket after exception on accept() - ignoring",
+                                    ex);
                         }
                     }
                     continue;

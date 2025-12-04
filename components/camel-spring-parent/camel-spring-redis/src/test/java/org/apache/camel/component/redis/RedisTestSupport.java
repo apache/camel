@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis;
 
 import org.apache.camel.Exchange;
@@ -40,8 +41,7 @@ public class RedisTestSupport extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                        .to("spring-redis://localhost:6379?redisTemplate=#redisTemplate");
+                from("direct:start").to("spring-redis://localhost:6379?redisTemplate=#redisTemplate");
             }
         };
     }

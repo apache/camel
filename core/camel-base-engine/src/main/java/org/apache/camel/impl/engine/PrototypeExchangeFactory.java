@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.Consumer;
@@ -151,13 +152,28 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
                     long leaks = (created + acquired) - (released + discarded);
                     log.warn(
                             "{}{} ({}) usage (leaks detected: {}) [pooled: {}, created: {}, acquired: {}, released: {}, discarded: {}]",
-                            name, id, uri, leaks, pooled, created, acquired, released, discarded);
+                            name,
+                            id,
+                            uri,
+                            leaks,
+                            pooled,
+                            created,
+                            acquired,
+                            released,
+                            discarded);
                 } else {
-                    log.info("{}{} ({}) usage [pooled: {}, created: {}, acquired: {}, released: {}, discarded: {}]",
-                            name, id, uri, pooled, created, acquired, released, discarded);
+                    log.info(
+                            "{}{} ({}) usage [pooled: {}, created: {}, acquired: {}, released: {}, discarded: {}]",
+                            name,
+                            id,
+                            uri,
+                            pooled,
+                            created,
+                            acquired,
+                            released,
+                            discarded);
                 }
             }
         }
     }
-
 }

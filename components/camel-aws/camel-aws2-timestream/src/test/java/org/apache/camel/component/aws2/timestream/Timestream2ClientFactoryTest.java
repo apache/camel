@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.timestream.client.Timestream2ClientFactory;
 import org.apache.camel.component.aws2.timestream.client.Timestream2InternalClient;
@@ -22,14 +25,13 @@ import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientI
 import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class Timestream2ClientFactoryTest {
 
     @Test
     public void getStandardTimestreamClientDefault() {
         Timestream2Configuration timestream2Configuration = new Timestream2Configuration();
-        Timestream2InternalClient timestreamClient = Timestream2ClientFactory.getTimestreamClient(timestream2Configuration);
+        Timestream2InternalClient timestreamClient =
+                Timestream2ClientFactory.getTimestreamClient(timestream2Configuration);
         assertTrue(timestreamClient instanceof Timestream2ClientStandardImpl);
     }
 
@@ -37,7 +39,8 @@ public class Timestream2ClientFactoryTest {
     public void getStandardTimestreamClient() {
         Timestream2Configuration timestream2Configuration = new Timestream2Configuration();
         timestream2Configuration.setUseDefaultCredentialsProvider(false);
-        Timestream2InternalClient timestreamClient = Timestream2ClientFactory.getTimestreamClient(timestream2Configuration);
+        Timestream2InternalClient timestreamClient =
+                Timestream2ClientFactory.getTimestreamClient(timestream2Configuration);
         assertTrue(timestreamClient instanceof Timestream2ClientStandardImpl);
     }
 
@@ -45,8 +48,8 @@ public class Timestream2ClientFactoryTest {
     public void getIAMOptimizedTimestreamClient() {
         Timestream2Configuration timestream2Configuration = new Timestream2Configuration();
         timestream2Configuration.setUseDefaultCredentialsProvider(true);
-        Timestream2InternalClient timestream2InternalClient
-                = Timestream2ClientFactory.getTimestreamClient(timestream2Configuration);
+        Timestream2InternalClient timestream2InternalClient =
+                Timestream2ClientFactory.getTimestreamClient(timestream2Configuration);
         assertTrue(timestream2InternalClient instanceof Timestream2ClientIAMOptimizedImpl);
     }
 }

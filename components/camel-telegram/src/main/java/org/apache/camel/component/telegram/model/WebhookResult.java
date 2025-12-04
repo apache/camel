@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,8 +31,7 @@ public class WebhookResult {
 
     private String description;
 
-    public WebhookResult() {
-    }
+    public WebhookResult() {}
 
     public boolean isOk() {
         return ok;
@@ -59,11 +59,6 @@ public class WebhookResult {
 
     @Override
     public String toString() {
-        return "WebhookResult{"
-               + "ok=" + ok
-               + ", result=" + result
-               + ", description='" + description + '\''
-               + '}';
+        return "WebhookResult{" + "ok=" + ok + ", result=" + result + ", description='" + description + '\'' + '}';
     }
-
 }

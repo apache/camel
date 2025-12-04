@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support;
 
 /**
@@ -21,8 +22,7 @@ package org.apache.camel.component.kafka.consumer.support;
  */
 public final class ProcessingResult {
 
-    private static final ProcessingResult UNPROCESSED_RESULT
-            = new ProcessingResult(false, false);
+    private static final ProcessingResult UNPROCESSED_RESULT = new ProcessingResult(false, false);
 
     private final boolean breakOnErrorHit;
     private final boolean failed;

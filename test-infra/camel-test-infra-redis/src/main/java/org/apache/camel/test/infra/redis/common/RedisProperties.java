@@ -24,7 +24,5 @@ public final class RedisProperties {
     public static final String PORT = "redis.port";
     public static final int DEFAULT_PORT = 6379;
 
-    private RedisProperties() {
-
-    }
+    private RedisProperties() {}
 }

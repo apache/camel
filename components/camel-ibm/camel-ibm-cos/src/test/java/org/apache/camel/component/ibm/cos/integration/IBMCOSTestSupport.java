@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.cos.integration;
 
 import java.util.UUID;
@@ -56,9 +57,8 @@ public class IBMCOSTestSupport extends CamelTestSupport {
         String endpointUrl = getProperty("camel.ibm.cos.endpointUrl");
 
         AWSCredentials credentials = new BasicIBMOAuthCredentials(apiKey, serviceInstanceId);
-        ClientConfiguration clientConfig = new ClientConfiguration()
-                .withRequestTimeout(5000)
-                .withTcpKeepAlive(true);
+        ClientConfiguration clientConfig =
+                new ClientConfiguration().withRequestTimeout(5000).withTcpKeepAlive(true);
 
         // For IBM COS, use null as the signing region and let the SDK determine it from the endpoint
         cosClient = AmazonS3ClientBuilder.standard()
@@ -69,7 +69,8 @@ public class IBMCOSTestSupport extends CamelTestSupport {
                 .build();
 
         // Create unique bucket for this test class
-        bucketName = "camel-test-" + UUID.randomUUID().toString().substring(0, 12).toLowerCase();
+        bucketName =
+                "camel-test-" + UUID.randomUUID().toString().substring(0, 12).toLowerCase();
 
         try {
             cosClient.createBucket(bucketName);
@@ -83,7 +84,9 @@ public class IBMCOSTestSupport extends CamelTestSupport {
         if (cosClient != null && bucketName != null) {
             try {
                 // Delete all objects in the bucket
-                cosClient.listObjectsV2(bucketName).getObjectSummaries()
+                cosClient
+                        .listObjectsV2(bucketName)
+                        .getObjectSummaries()
                         .forEach(obj -> cosClient.deleteObject(bucketName, obj.getKey()));
 
                 // Delete the bucket
@@ -117,11 +120,7 @@ public class IBMCOSTestSupport extends CamelTestSupport {
     protected String buildEndpointUri() {
         return String.format(
                 "ibm-cos://%s?apiKey=RAW(%s)&serviceInstanceId=RAW(%s)&endpointUrl=%s&location=%s",
-                bucketName,
-                getApiKey(),
-                getServiceInstanceId(),
-                getEndpointUrl(),
-                getLocation());
+                bucketName, getApiKey(), getServiceInstanceId(), getEndpointUrl(), getLocation());
     }
 
     protected String buildEndpointUri(String operation) {

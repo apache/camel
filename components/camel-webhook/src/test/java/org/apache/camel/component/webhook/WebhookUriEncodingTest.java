@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,14 +28,13 @@ import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class WebhookUriEncodingTest extends WebhookTestBase {
 
     @Test
     public void test() {
-        Exchange exchange = template.send("netty-http:http://localhost:" + port + "/base/uri", ExchangePattern.InOut,
-                e -> e.getMessage().setBody(""));
+        Exchange exchange = template.send(
+                "netty-http:http://localhost:" + port + "/base/uri", ExchangePattern.InOut, e -> e.getMessage()
+                        .setBody(""));
         Message result = exchange.getMessage();
         assertEquals("msg: webhook", result.getBody(String.class));
         assertEquals("hello} world", result.getHeader("foo"));
@@ -57,13 +59,10 @@ public class WebhookUriEncodingTest extends WebhookTestBase {
             @Override
             public void configure() {
 
-                restConfiguration()
-                        .host("0.0.0.0")
-                        .port(port);
+                restConfiguration().host("0.0.0.0").port(port);
 
                 from("webhook:wb-delegate://xx?webhookBasePath=/base&webhookPath=/uri&foo=hello} world&bar=RAW(hello} world)")
                         .transform(body().prepend("msg: "));
-
             }
         };
     }

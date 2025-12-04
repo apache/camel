@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,16 +38,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Integration test for LangChain4j Agent component mixing Camel route tools (tags) and custom LangChain4j tools.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
 
-    private static final String USER_DATABASE = """
+    private static final String USER_DATABASE =
+            """
             {"id": "123", "name": "John Smith", "membership": "Gold", "rentals": 15, "preferredVehicle": "SUV"}
             """;
 
@@ -54,9 +56,8 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA =
+            ModelHelper.hasEnvironmentConfiguration() ? null : OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -73,7 +74,8 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains(CALCULATION_RESULT) || response.contains("ten"),
+        assertTrue(
+                response.contains(CALCULATION_RESULT) || response.contains("ten"),
                 "Response should contain the calculation result from the additional calculator tool");
     }
 
@@ -82,15 +84,16 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:mixedTools",
-                "Calculate 15 * 4 and convert 'hello' to uppercase",
-                String.class);
+        String response = template.requestBody(
+                "direct:mixedTools", "Calculate 15 * 4 and convert 'hello' to uppercase", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains("60") || response.contains("sixty"),
+        assertTrue(
+                response.contains("60") || response.contains("sixty"),
                 "Response should contain the multiplication result from additional tools");
-        assertTrue(response.contains("HELLO"),
+        assertTrue(
+                response.contains("HELLO"),
                 "Response should contain the uppercase conversion result from additional tools");
     }
 
@@ -99,15 +102,14 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:mixedTools",
-                "What is the name of user ID 123 and calculate 5 * 6?",
-                String.class);
+        String response = template.requestBody(
+                "direct:mixedTools", "What is the name of user ID 123 and calculate 5 * 6?", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.contains(USER_DB_NAME),
-                "Response should contain the user name from the Camel route tool");
-        assertTrue(response.contains("30") || response.contains("thirty"),
+        assertTrue(response.contains(USER_DB_NAME), "Response should contain the user name from the Camel route tool");
+        assertTrue(
+                response.contains("30") || response.contains("thirty"),
                 "Response should contain the calculation result from the additional calculator tool");
     }
 
@@ -120,9 +122,9 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
-        assertTrue(response.toLowerCase().contains(WEATHER_INFO),
+        assertTrue(
+                response.toLowerCase().contains(WEATHER_INFO),
                 "Response should contain weather information from the Camel route tool");
-
     }
 
     @Override
@@ -134,9 +136,8 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
         List<Object> customTools = Arrays.asList(calculator, stringTool);
 
         // Create agent configuration with custom tools
-        AgentConfiguration config = new AgentConfiguration()
-                .withChatModel(chatModel)
-                .withCustomTools(customTools);
+        AgentConfiguration config =
+                new AgentConfiguration().withChatModel(chatModel).withCustomTools(customTools);
 
         // Create agent
         Agent agent = new AgentWithoutMemory(config);
@@ -157,7 +158,8 @@ public class LangChain4jAgentMixedToolsIT extends CamelTestSupport {
                         .setBody(constant(USER_DATABASE));
 
                 from("langchain4j-tools:weatherService?tags=weather&description=Get current weather information&parameter.location=string")
-                        .setBody(constant("{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
+                        .setBody(constant(
+                                "{\"weather\": \"" + WEATHER_INFO + "\", \"location\": \"Current Location\"}"));
             }
         };
     }

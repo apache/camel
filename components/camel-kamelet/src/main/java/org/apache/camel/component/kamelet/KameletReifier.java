@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.DisabledAware;
@@ -38,7 +39,8 @@ public class KameletReifier extends ProcessorReifier<KameletDefinition> {
             processor = new NoopProcessor();
         }
         // wrap in uow
-        String outputId = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+        String outputId =
+                definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         camelContext.getCamelContextExtension().createProcessor(outputId);
         try {
             Processor answer = new KameletProcessor(camelContext, parseString(definition.getName()), processor);

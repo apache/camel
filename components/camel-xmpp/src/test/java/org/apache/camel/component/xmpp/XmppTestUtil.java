@@ -31,15 +31,14 @@ import org.jxmpp.jid.impl.JidCreate;
 
 public final class XmppTestUtil {
 
-    private XmppTestUtil() {
-
-    }
+    private XmppTestUtil() {}
 
     public static void bindSSLContextTo(Registry registry, String hostAddress, int port) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
 
         keyStore.load(ObjectHelper.loadResourceAsStream("bogus_mina_tls.cer"), "boguspw".toCharArray());
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        TrustManagerFactory trustManagerFactory =
+                TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(keyStore);
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustManagerFactory.getTrustManagers(), null);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
@@ -68,8 +69,12 @@ public class KeyManagersParameters extends JsseParameters {
             kmf = KeyManagerFactory.getInstance(kmfAlgorithm, this.parsePropertyValue(this.getProvider()));
         }
 
-        LOG.debug("KeyManagerFactory [{}], initialized from [{}], is using provider [{}] and algorithm [{}].",
-                kmf, this, kmf.getProvider(), kmf.getAlgorithm());
+        LOG.debug(
+                "KeyManagerFactory [{}], initialized from [{}], is using provider [{}] and algorithm [{}].",
+                kmf,
+                this,
+                kmf.getProvider(),
+                kmf.getAlgorithm());
 
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {

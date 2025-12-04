@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.messagehistory;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
+import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_HISTORY;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,10 +39,6 @@ import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
-import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_HISTORY;
-import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
 /**
  * A factory to setup and use {@link MicrometerMessageHistory} as message history implementation.
@@ -174,8 +175,8 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
         }
 
         try {
-            MicrometerMessageHistoryService messageHistoryService
-                    = camelContext.hasService(MicrometerMessageHistoryService.class);
+            MicrometerMessageHistoryService messageHistoryService =
+                    camelContext.hasService(MicrometerMessageHistoryService.class);
             if (messageHistoryService == null) {
                 messageHistoryService = new MicrometerMessageHistoryService();
                 messageHistoryService.setPrettyPrint(isPrettyPrint());
@@ -188,7 +189,6 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
-
     }
 
     @Override

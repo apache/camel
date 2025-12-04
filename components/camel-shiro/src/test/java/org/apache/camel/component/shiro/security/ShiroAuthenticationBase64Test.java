@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.shiro.security;
 
 import org.apache.camel.EndpointInject;
@@ -36,17 +37,18 @@ public class ShiroAuthenticationBase64Test extends CamelTestSupport {
     protected MockEndpoint failureEndpoint;
 
     private byte[] passPhrase = {
-            (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-            (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-            (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-            (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17 };
+        (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
+        (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
+        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
+        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17
+    };
 
     @Test
     public void testShiroAuthenticationFailure() throws Exception {
-        //Incorrect password
+        // Incorrect password
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "stirr");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector
-                = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector =
+                new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
 
         successEndpoint.expectedMessageCount(0);
         failureEndpoint.expectedMessageCount(1);
@@ -60,8 +62,8 @@ public class ShiroAuthenticationBase64Test extends CamelTestSupport {
     @Test
     public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
-        TestShiroSecurityTokenInjector shiroSecurityTokenInjector
-                = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector =
+                new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
 
         successEndpoint.expectedMessageCount(2);
         failureEndpoint.expectedMessageCount(0);
@@ -75,16 +77,24 @@ public class ShiroAuthenticationBase64Test extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
+        final ShiroSecurityPolicy securityPolicy =
+                new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
         securityPolicy.setBase64(true);
 
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")
             public void configure() {
-                onException(UnknownAccountException.class, IncorrectCredentialsException.class,
-                        LockedAccountException.class, AuthenticationException.class).to("mock:authenticationException");
+                onException(
+                                UnknownAccountException.class,
+                                IncorrectCredentialsException.class,
+                                LockedAccountException.class,
+                                AuthenticationException.class)
+                        .to("mock:authenticationException");
 
-                from("direct:secureEndpoint").policy(securityPolicy).to("log:incoming payload").to("mock:success");
+                from("direct:secureEndpoint")
+                        .policy(securityPolicy)
+                        .to("log:incoming payload")
+                        .to("mock:success");
             }
         };
     }
@@ -102,5 +112,4 @@ public class ShiroAuthenticationBase64Test extends CamelTestSupport {
             exchange.getIn().setBody("Beatle Mania");
         }
     }
-
 }

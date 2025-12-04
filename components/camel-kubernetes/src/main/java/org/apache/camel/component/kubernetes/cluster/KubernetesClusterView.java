@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster;
 
 import java.util.Collections;
@@ -63,9 +64,11 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
 
     private boolean disabled;
 
-    public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster,
-                                 KubernetesConfiguration configuration,
-                                 KubernetesLockConfiguration lockConfiguration) {
+    public KubernetesClusterView(
+            CamelContext camelContext,
+            KubernetesClusterService cluster,
+            KubernetesConfiguration configuration,
+            KubernetesLockConfiguration lockConfiguration) {
         super(cluster, lockConfiguration.getGroupName());
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
         this.configuration = ObjectHelper.notNull(configuration, "configuration");
@@ -106,35 +109,41 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
         if (controller == null) {
             this.kubernetesClient = KubernetesHelper.getKubernetesClient(configuration);
 
-            controller = new KubernetesLeadershipController(camelContext, kubernetesClient, this.lockConfiguration, event -> {
-                if (event instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
-                    // New leader
-                    Optional<String> leader
-                            = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();
-                    currentLeader = leader.map(this::toMember).orElse(null);
-                    fireLeadershipChangedEvent(currentLeader);
-                } else if (event instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
-                    Set<String> members
-                            = KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent.class.cast(event).getData();
-                    Set<String> oldMembers = currentMembers.stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
-                    currentMembers = members.stream().map(this::toMember).collect(Collectors.toList());
+            controller = new KubernetesLeadershipController(
+                    camelContext, kubernetesClient, this.lockConfiguration, event -> {
+                        if (event instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
+                            // New leader
+                            Optional<String> leader = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class
+                                    .cast(event)
+                                    .getData();
+                            currentLeader = leader.map(this::toMember).orElse(null);
+                            fireLeadershipChangedEvent(currentLeader);
+                        } else if (event instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
+                            Set<String> members = KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent.class
+                                    .cast(event)
+                                    .getData();
+                            Set<String> oldMembers = currentMembers.stream()
+                                    .map(CamelClusterMember::getId)
+                                    .collect(Collectors.toSet());
+                            currentMembers =
+                                    members.stream().map(this::toMember).collect(Collectors.toList());
 
-                    // Computing differences
-                    Set<String> added = new HashSet<>(members);
-                    added.removeAll(oldMembers);
+                            // Computing differences
+                            Set<String> added = new HashSet<>(members);
+                            added.removeAll(oldMembers);
 
-                    Set<String> removed = new HashSet<>(oldMembers);
-                    removed.removeAll(members);
+                            Set<String> removed = new HashSet<>(oldMembers);
+                            removed.removeAll(members);
 
-                    for (String id : added) {
-                        fireMemberAddedEvent(toMember(id));
-                    }
+                            for (String id : added) {
+                                fireMemberAddedEvent(toMember(id));
+                            }
 
-                    for (String id : removed) {
-                        fireMemberRemovedEvent(toMember(id));
-                    }
-                }
-            });
+                            for (String id : removed) {
+                                fireMemberRemovedEvent(toMember(id));
+                            }
+                        }
+                    });
 
             this.controller.setDisabled(disabled);
             controller.start();
@@ -189,5 +198,4 @@ public class KubernetesClusterView extends AbstractCamelClusterView implements C
             return sb.toString();
         }
     }
-
 }

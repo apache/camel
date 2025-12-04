@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.common;
 
 import java.util.Optional;
@@ -33,8 +34,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 public final class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
-    private TestUtils() {
-    }
+    private TestUtils() {}
 
     /**
      * Wait for a given condition to be true or the retry amount (30) to expire
@@ -52,7 +52,8 @@ public final class TestUtils {
                 state = resourceCheck.test(payload);
 
                 if (!state) {
-                    LOG.debug("The resource is not yet available. Waiting {} seconds before retrying",
+                    LOG.debug(
+                            "The resource is not yet available. Waiting {} seconds before retrying",
                             TimeUnit.MILLISECONDS.toSeconds(waitTime));
                     retries--;
                     Thread.sleep(waitTime);
@@ -80,7 +81,8 @@ public final class TestUtils {
                 state = resourceCheck.getAsBoolean();
 
                 if (!state) {
-                    LOG.debug("The resource is not yet available. Waiting {} seconds before retrying",
+                    LOG.debug(
+                            "The resource is not yet available. Waiting {} seconds before retrying",
                             TimeUnit.MILLISECONDS.toSeconds(waitTime));
                     retries--;
                     Thread.sleep(waitTime);
@@ -126,10 +128,16 @@ public final class TestUtils {
         Optional<Object> testInstance = extensionContext.getTestInstance();
         if (testInstance.isPresent()) {
             final Object o = testInstance.get();
-            log.error("Failed to initialize service {} for test {} on ({})", clazz.getSimpleName(),
-                    extensionContext.getDisplayName(), o.getClass().getName());
+            log.error(
+                    "Failed to initialize service {} for test {} on ({})",
+                    clazz.getSimpleName(),
+                    extensionContext.getDisplayName(),
+                    o.getClass().getName());
         } else {
-            log.error("Failed to initialize service {} for test {}", clazz.getSimpleName(), extensionContext.getDisplayName());
+            log.error(
+                    "Failed to initialize service {} for test {}",
+                    clazz.getSimpleName(),
+                    extensionContext.getDisplayName());
         }
     }
 }

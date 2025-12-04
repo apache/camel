@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springrabbit;
 
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 
-public class CamelDirectMessageListenerContainer extends DirectMessageListenerContainer implements MessageListenerContainer {
+public class CamelDirectMessageListenerContainer extends DirectMessageListenerContainer
+        implements MessageListenerContainer {
 
     public CamelDirectMessageListenerContainer(SpringRabbitMQEndpoint endpoint) {
         super(endpoint.getConnectionFactory());

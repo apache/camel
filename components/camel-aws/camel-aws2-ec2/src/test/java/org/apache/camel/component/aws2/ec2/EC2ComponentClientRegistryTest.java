@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ec2;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.ec2;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class EC2ComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,8 +52,8 @@ public class EC2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
         context.getRegistry().bind("amazonEc2Client", clientMock);
         AWS2EC2Component component = context.getComponent("aws2-ec2", AWS2EC2Component.class);
-        AWS2EC2Endpoint endpoint
-                = (AWS2EC2Endpoint) component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy");
+        AWS2EC2Endpoint endpoint =
+                (AWS2EC2Endpoint) component.createEndpoint("aws2-ec2://TestDomain?accessKey=xxx&secretKey=yyyy");
 
         assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
         assertSame(clientMock, endpoint.getConfiguration().getAmazonEc2Client());

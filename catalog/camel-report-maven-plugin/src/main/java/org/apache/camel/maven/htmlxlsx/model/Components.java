@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.Collections;
@@ -33,7 +34,8 @@ public class Components {
     private Map<String, List<EipAttribute>> attributeMap = new HashMap<>();
 
     @JsonIgnore
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+    private final ObjectMapper objectMapper =
+            new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
     @JsonAnySetter
     public void setAttribute(String key, Object value) throws JsonProcessingException {
@@ -41,8 +43,8 @@ public class Components {
         List<EipAttribute> listValue;
 
         if (value instanceof String) {
-            EipAttribute eipAttribute
-                    = objectMapper.readValue(String.format("{\"%s\":\"%s\"}", key, value), EipAttribute.class);
+            EipAttribute eipAttribute =
+                    objectMapper.readValue(String.format("{\"%s\":\"%s\"}", key, value), EipAttribute.class);
             listValue = Collections.singletonList(eipAttribute);
         } else if (!(value instanceof List)) {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
@@ -50,9 +52,7 @@ public class Components {
             listValue = Collections.singletonList(eipAttribute);
         } else {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
-            listValue = objectMapper.readValue(json, new TypeReference<List<EipAttribute>>() {
-
-            });
+            listValue = objectMapper.readValue(json, new TypeReference<List<EipAttribute>>() {});
         }
 
         attributeMap.put(key, listValue);
@@ -71,8 +71,6 @@ public class Components {
     @Override
     public String toString() {
 
-        return "Components{" +
-               "attributeMap=" + attributeMap +
-               '}';
+        return "Components{" + "attributeMap=" + attributeMap + '}';
     }
 }

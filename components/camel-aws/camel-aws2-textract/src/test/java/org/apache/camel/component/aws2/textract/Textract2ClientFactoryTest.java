@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.textract;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.textract.client.Textract2ClientFactory;
 import org.apache.camel.component.aws2.textract.client.Textract2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientIAMOp
 import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Textract2ClientFactoryTest {
 

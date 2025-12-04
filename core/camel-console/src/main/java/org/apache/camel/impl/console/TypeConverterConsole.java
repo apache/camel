@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Map;
@@ -40,7 +41,8 @@ public class TypeConverterConsole extends AbstractDevConsole {
         sb.append(String.format("\n    Exists LoggingLevel: %s", reg.getTypeConverterExistsLoggingLevel()));
         final TypeConverterRegistry.Statistics statistics = reg.getStatistics();
 
-        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> sb.append(String.format("\n    Attempts: %s", v)));
+        statistics.computeIfEnabled(
+                statistics::getAttemptCounter, v -> sb.append(String.format("\n    Attempts: %s", v)));
         statistics.computeIfEnabled(statistics::getHitCounter, v -> sb.append(String.format("\n    Hit: %s", v)));
         statistics.computeIfEnabled(statistics::getMissCounter, v -> sb.append(String.format("\n    Miss: %s", v)));
         statistics.computeIfEnabled(statistics::getFailedCounter, v -> sb.append(String.format("\n    Failed: %s", v)));

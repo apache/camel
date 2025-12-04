@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,13 +46,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextTest extends ManagementTestSupport {
 
@@ -61,19 +62,22 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContextClient() {
-        ManagedCamelContextMBean client
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedCamelContext();
+        ManagedCamelContextMBean client = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedCamelContext();
         assertNotNull(client);
 
         assertEquals("my-camel-context", client.getCamelId());
         assertEquals("My special Camel description", client.getCamelDescription());
         assertEquals("Started", client.getState());
 
-        List<ManagedRouteMBean> routes
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoutes();
+        List<ManagedRouteMBean> routes = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedRoutes();
         assertEquals(3, routes.size());
 
-        routes = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+        routes = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
                 .getManagedRoutesByGroup("cheese");
         assertEquals(2, routes.size());
     }
@@ -118,22 +122,26 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mbeanServer.invoke(on, "sendBody", new Object[] { "direct:start", "Hello World" },
-                new String[] { "java.lang.String", "java.lang.Object" });
+        mbeanServer.invoke(on, "sendBody", new Object[] {"direct:start", "Hello World"}, new String[] {
+            "java.lang.String", "java.lang.Object"
+        });
         assertMockEndpointsSatisfied();
 
         resetMocks();
         mock.expectedBodiesReceived("Hello World");
-        mbeanServer.invoke(on, "sendStringBody", new Object[] { "direct:start", "Hello World" },
-                new String[] { "java.lang.String", "java.lang.String" });
+        mbeanServer.invoke(on, "sendStringBody", new Object[] {"direct:start", "Hello World"}, new String[] {
+            "java.lang.String", "java.lang.String"
+        });
         assertMockEndpointsSatisfied();
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
-                new String[] { "java.lang.String", "java.lang.Object" });
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] {"direct:foo", "Hello World"}, new String[] {
+            "java.lang.String", "java.lang.Object"
+        });
         assertEquals("Bye World", reply);
 
-        reply = mbeanServer.invoke(on, "requestStringBody", new Object[] { "direct:foo", "Hello World" },
-                new String[] { "java.lang.String", "java.lang.String" });
+        reply = mbeanServer.invoke(on, "requestStringBody", new Object[] {"direct:foo", "Hello World"}, new String[] {
+            "java.lang.String", "java.lang.String"
+        });
         assertEquals("Bye World", reply);
 
         resetMocks();
@@ -142,25 +150,29 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
-        mbeanServer.invoke(on, "sendBodyAndHeaders", new Object[] { "direct:start", "Hello World", headers },
-                new String[] { "java.lang.String", "java.lang.Object", "java.util.Map" });
+        mbeanServer.invoke(
+                on, "sendBodyAndHeaders", new Object[] {"direct:start", "Hello World", headers}, new String[] {
+                    "java.lang.String", "java.lang.Object", "java.util.Map"
+                });
         assertMockEndpointsSatisfied();
 
         resetMocks();
         mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
-        reply = mbeanServer.invoke(on, "requestBodyAndHeaders", new Object[] { "direct:start", "Hello World", headers },
-                new String[] { "java.lang.String", "java.lang.Object", "java.util.Map" });
+        reply = mbeanServer.invoke(
+                on, "requestBodyAndHeaders", new Object[] {"direct:start", "Hello World", headers}, new String[] {
+                    "java.lang.String", "java.lang.Object", "java.util.Map"
+                });
         assertEquals("Hello World", reply);
         assertMockEndpointsSatisfied();
 
         // test can send
-        Boolean can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[] { "direct:start" },
-                new String[] { "java.lang.String" });
+        Boolean can = (Boolean) mbeanServer.invoke(
+                on, "canSendToEndpoint", new Object[] {"direct:start"}, new String[] {"java.lang.String"});
         assertTrue(can);
-        can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[] { "timer:foo" },
-                new String[] { "java.lang.String" });
+        can = (Boolean) mbeanServer.invoke(
+                on, "canSendToEndpoint", new Object[] {"timer:foo"}, new String[] {"java.lang.String"});
         assertFalse(can);
 
         // stop Camel
@@ -176,8 +188,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
 
         // create a new endpoint
-        Object reply
-                = mbeanServer.invoke(on, "createEndpoint", new Object[] { "seda:bar" }, new String[] { "java.lang.String" });
+        Object reply =
+                mbeanServer.invoke(on, "createEndpoint", new Object[] {"seda:bar"}, new String[] {"java.lang.String"});
         assertEquals(Boolean.TRUE, reply);
 
         assertNotNull(context.hasEndpoint("seda:bar"));
@@ -187,7 +199,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(registered, "Should be registered " + seda);
 
         // create it again
-        reply = mbeanServer.invoke(on, "createEndpoint", new Object[] { "seda:bar" }, new String[] { "java.lang.String" });
+        reply = mbeanServer.invoke(on, "createEndpoint", new Object[] {"seda:bar"}, new String[] {"java.lang.String"});
         assertEquals(Boolean.FALSE, reply);
 
         registered = mbeanServer.isRegistered(seda);
@@ -203,8 +215,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
 
         // create a new endpoint
-        Object reply
-                = mbeanServer.invoke(on, "createEndpoint", new Object[] { "seda:bar" }, new String[] { "java.lang.String" });
+        Object reply =
+                mbeanServer.invoke(on, "createEndpoint", new Object[] {"seda:bar"}, new String[] {"java.lang.String"});
         assertEquals(Boolean.TRUE, reply);
 
         assertNotNull(context.hasEndpoint("seda:bar"));
@@ -214,7 +226,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(registered, "Should be registered " + seda);
 
         // remove it
-        Object num = mbeanServer.invoke(on, "removeEndpoints", new Object[] { "seda:*" }, new String[] { "java.lang.String" });
+        Object num =
+                mbeanServer.invoke(on, "removeEndpoints", new Object[] {"seda:*"}, new String[] {"java.lang.String"});
         assertEquals(1, num);
 
         assertNull(context.hasEndpoint("seda:bar"));
@@ -222,7 +235,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertFalse(registered, "Should not be registered " + seda);
 
         // remove it again
-        num = mbeanServer.invoke(on, "removeEndpoints", new Object[] { "seda:*" }, new String[] { "java.lang.String" });
+        num = mbeanServer.invoke(on, "removeEndpoints", new Object[] {"seda:*"}, new String[] {"java.lang.String"});
         assertEquals(0, num);
 
         assertNull(context.hasEndpoint("seda:bar"));
@@ -297,17 +310,17 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").group("cheese").routeId("aaa")
-                        .delay(10)
-                        .to("mock:result");
+                from("direct:start").group("cheese").routeId("aaa").delay(10).to("mock:result");
 
                 from("direct:bar").to("mock:bar").routeId("bbb");
 
-                from("direct:foo").group("cheese").routeId("ccc")
+                from("direct:foo")
+                        .group("cheese")
+                        .routeId("ccc")
                         .delay(10)
-                        .transform(constant("Bye World")).id("myTransform");
+                        .transform(constant("Bye World"))
+                        .id("myTransform");
             }
         };
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.eventhubs;
+
+import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_SIZE;
+import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_TIMEOUT;
 
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,9 +35,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_SIZE;
-import static org.apache.camel.component.azure.eventhubs.EventHubsConstants.COMPLETED_BY_TIMEOUT;
 
 public class EventHubsConsumer extends DefaultConsumer {
 
@@ -59,8 +60,8 @@ public class EventHubsConsumer extends DefaultConsumer {
         super.doStart();
 
         // create the client
-        processorClient = EventHubsClientFactory.createEventProcessorClient(getConfiguration(),
-                this::onEventListener, this::onErrorListener);
+        processorClient = EventHubsClientFactory.createEventProcessorClient(
+                getConfiguration(), this::onEventListener, this::onErrorListener);
 
         // start the client but we will rely on the Azure Client Scheduler for thread management
         processorClient.start();
@@ -94,16 +95,22 @@ public class EventHubsConsumer extends DefaultConsumer {
         // set body as byte[] and let camel typeConverters do the job to convert
         message.setBody(eventContext.getEventData().getBody());
         // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, eventContext.getPartitionContext().getPartitionId());
-        message.setHeader(EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
+        message.setHeader(
+                EventHubsConstants.PARTITION_ID,
+                eventContext.getPartitionContext().getPartitionId());
+        message.setHeader(
+                EventHubsConstants.PARTITION_KEY, eventContext.getEventData().getPartitionKey());
         message.setHeader(EventHubsConstants.OFFSET, eventContext.getEventData().getOffset());
-        message.setHeader(EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
-        message.setHeader(EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
+        message.setHeader(
+                EventHubsConstants.ENQUEUED_TIME, eventContext.getEventData().getEnqueuedTime());
+        message.setHeader(
+                EventHubsConstants.SEQUENCE_NUMBER, eventContext.getEventData().getSequenceNumber());
         if (eventContext.getEventData().getEnqueuedTime() != null) {
             long ts = eventContext.getEventData().getEnqueuedTime().getEpochSecond() * 1000;
             message.setHeader(EventHubsConstants.MESSAGE_TIMESTAMP, ts);
         }
-        message.setHeader(EventHubsConstants.METADATA, eventContext.getEventData().getProperties());
+        message.setHeader(
+                EventHubsConstants.METADATA, eventContext.getEventData().getProperties());
 
         return exchange;
     }
@@ -113,7 +120,9 @@ public class EventHubsConsumer extends DefaultConsumer {
         final Message message = exchange.getIn();
 
         // set headers
-        message.setHeader(EventHubsConstants.PARTITION_ID, errorContext.getPartitionContext().getPartitionId());
+        message.setHeader(
+                EventHubsConstants.PARTITION_ID,
+                errorContext.getPartitionContext().getPartitionId());
 
         // set exception
         exchange.setException(errorContext.getThrowable());
@@ -148,8 +157,7 @@ public class EventHubsConsumer extends DefaultConsumer {
 
         // log exception if an exception occurred and was not handled
         if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange,
-                    exchange.getException());
+            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
         }
     }
 
@@ -177,8 +185,10 @@ public class EventHubsConsumer extends DefaultConsumer {
                 if (lastTask != null) {
                     lastTask.cancel();
                 }
-                eventContext.updateCheckpointAsync()
-                        .subscribe(unused -> LOG.debug("Processed one event..."),
+                eventContext
+                        .updateCheckpointAsync()
+                        .subscribe(
+                                unused -> LOG.debug("Processed one event..."),
                                 error -> LOG.debug("Error when updating Checkpoint: {}", error.getMessage()),
                                 () -> {
                                     LOG.debug("Checkpoint updated.");
@@ -187,13 +197,16 @@ public class EventHubsConsumer extends DefaultConsumer {
                 exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_TIMEOUT);
                 LOG.debug("eventhub consumer batch timeout reached");
             } else {
-                LOG.debug("neither eventhub consumer batch size of {}/{} nor batch timeout reached yet", cnt,
+                LOG.debug(
+                        "neither eventhub consumer batch size of {}/{} nor batch timeout reached yet",
+                        cnt,
                         getConfiguration().getCheckpointBatchSize());
             }
             // we assume that the timer task has done the update by its side
         } catch (Exception ex) {
-            getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
-                    exchange, ex);
+            getExceptionHandler()
+                    .handleException(
+                            "Error occurred during updating the checkpoint. This exception is ignored.", exchange, ex);
         }
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -28,5 +29,4 @@ public class ManagedStop extends ManagedProcessor implements ManagedStopMBean {
     public ManagedStop(CamelContext context, StopProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
     }
-
 }

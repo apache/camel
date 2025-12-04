@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.jq;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,8 @@ public class JqExpressionPropertyFnTest extends JqTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().jq(".foo = property(\"MyProperty\")")
+                        .transform()
+                        .jq(".foo = property(\"MyProperty\")")
                         .to("mock:result");
             }
         };
@@ -38,7 +40,8 @@ public class JqExpressionPropertyFnTest extends JqTestSupport {
         getMockEndpoint("mock:result")
                 .expectedBodiesReceived(MAPPER.createObjectNode().put("foo", "MyPropertyValue"));
 
-        fluentTemplate.to("direct:start")
+        fluentTemplate
+                .to("direct:start")
                 .withProcessor(e -> {
                     e.setProperty("MyProperty", "MyPropertyValue");
                     e.getMessage().setBody(node("foo", "bar"));

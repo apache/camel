@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb;
 
 import java.io.File;
@@ -164,9 +165,14 @@ public class LevelDBFile implements Service {
             LOG.debug("Starting LevelDB using file: {}", getFile());
         }
 
-        Options options = new Options().writeBufferSize(writeBufferSize).maxOpenFiles(maxOpenFiles)
-                .blockRestartInterval(blockRestartInterval).blockSize(blockSize).verifyChecksums(verifyChecksums)
-                .paranoidChecks(paranoidChecks).cacheSize(cacheSize);
+        Options options = new Options()
+                .writeBufferSize(writeBufferSize)
+                .maxOpenFiles(maxOpenFiles)
+                .blockRestartInterval(blockRestartInterval)
+                .blockSize(blockSize)
+                .verifyChecksums(verifyChecksums)
+                .paranoidChecks(paranoidChecks)
+                .cacheSize(cacheSize);
 
         if ("snappy".equals(compressionType)) {
             options.compressionType(CompressionType.SNAPPY);
@@ -186,16 +192,16 @@ public class LevelDBFile implements Service {
     }
 
     private DBFactory getFactory() {
-        String[] classNames = new String[] {
-                "org.fusesource.leveldbjni.JniDBFactory",
-                "org.iq80.leveldb.impl.Iq80DBFactory"
-        };
+        String[] classNames =
+                new String[] {"org.fusesource.leveldbjni.JniDBFactory", "org.iq80.leveldb.impl.Iq80DBFactory"};
         for (String cn : classNames) {
             try {
                 Class<?> clz = ObjectHelper.loadClass(cn, getClass().getClassLoader());
                 DBFactory factory = (DBFactory) clz.newInstance();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using {} implementation of org.iq80.leveldb.DBFactory", factory.getClass().getName());
+                    LOG.debug(
+                            "Using {} implementation of org.iq80.leveldb.DBFactory",
+                            factory.getClass().getName());
                 }
                 return factory;
             } catch (Throwable ignored) {

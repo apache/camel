@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,8 +40,12 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
     private Expression delay;
     private long delayValue;
 
-    public Delayer(CamelContext camelContext, Processor processor, Expression delay,
-                   ScheduledExecutorService executorService, boolean shutdownExecutorService) {
+    public Delayer(
+            CamelContext camelContext,
+            Processor processor,
+            Expression delay,
+            ScheduledExecutorService executorService,
+            boolean shutdownExecutorService) {
         super(camelContext, processor, executorService, shutdownExecutorService);
         this.delay = delay;
     }
@@ -109,5 +114,4 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
 
         return time;
     }
-
 }

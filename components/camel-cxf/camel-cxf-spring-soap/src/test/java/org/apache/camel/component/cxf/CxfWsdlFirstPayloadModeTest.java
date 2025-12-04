@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.xml.ws.Endpoint;
 
@@ -24,15 +27,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
     @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + getPort1()
-                         + "/CxfWsdlFirstPayloadModeTest/PersonService/";
+        String address = "http://localhost:" + getPort1() + "/CxfWsdlFirstPayloadModeTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
 
@@ -54,8 +54,7 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
         // Since CXF 2.2.7 there are some performance improvement to use the stax as much as possible
         // which causes the XML validate doesn't work on the from endpoint
         // So we skip the toHandler messageCount here
-        //assertEquals(3, toHandler.getMessageCount());
+        // assertEquals(3, toHandler.getMessageCount());
         assertEquals(1, toHandler.getFaultCount());
     }
-
 }

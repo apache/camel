@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 
@@ -33,11 +37,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "/HandlersSpringTest.xml" })
+@ContextConfiguration(locations = {"/HandlersSpringTest.xml"})
 public class UndertowHandlersSpringTest {
 
     private Integer port;
@@ -64,8 +65,8 @@ public class UndertowHandlersSpringTest {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2VjcmV0";
-        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
-                "Authorization", auth, String.class);
+        String out = template.requestBodyAndHeader(
+                "undertow:http://localhost:" + port + "/spring", "Hello World", "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
@@ -77,8 +78,12 @@ public class UndertowHandlersSpringTest {
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2Vjc";
         try {
-            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
-                    "Authorization", auth, String.class);
+            String out = template.requestBodyAndHeader(
+                    "undertow:http://localhost:" + port + "/spring",
+                    "Hello World",
+                    "Authorization",
+                    auth,
+                    String.class);
             fail("Should send back 401");
             assertEquals("Bye World", out);
 
@@ -88,7 +93,6 @@ public class UndertowHandlersSpringTest {
             HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
             assertEquals(401, cause.getStatusCode());
         }
-
     }
 
     public Integer getPort() {
@@ -99,5 +103,4 @@ public class UndertowHandlersSpringTest {
     public void setPort(Integer port) {
         this.port = port;
     }
-
 }

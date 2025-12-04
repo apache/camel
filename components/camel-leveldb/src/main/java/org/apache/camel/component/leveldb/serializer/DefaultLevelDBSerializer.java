@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.leveldb.serializer;
 
 import java.io.ByteArrayInputStream;
@@ -31,7 +32,7 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
     @Override
     public byte[] serializeKey(String key) throws IOException {
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(key);
             return baos.toByteArray();
         }
@@ -42,7 +43,7 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
         try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(buffer))) {
             return (String) ois.readObject();
         } catch (ClassNotFoundException e) {
-            //this should not happen because serialized content should be String
+            // this should not happen because serialized content should be String
             throw new IllegalStateException("Content has to be serialized String.", e);
         }
     }
@@ -52,7 +53,7 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
             throws IOException {
         return serializeExchange(exchange, allowSerializedHeaders, h -> {
             try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                 ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                    ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(h);
                 return baos.toByteArray();
             }
@@ -65,7 +66,7 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
             try (final ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(buffer))) {
                 return (DefaultExchangeHolder) ois.readObject();
             } catch (ClassNotFoundException e) {
-                //this should not happen because serialized content should be byte[]
+                // this should not happen because serialized content should be byte[]
                 throw new IllegalStateException("Content has to be serialized String.", e);
             }
         });

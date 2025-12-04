@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -56,7 +57,9 @@ public class BeanParameterThreeBodyOgnlTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("bean:foo?method=bar(${body[0]},${body[1]},${body[2]})").to("mock:result");
+                from("direct:start")
+                        .to("bean:foo?method=bar(${body[0]},${body[1]},${body[2]})")
+                        .to("mock:result");
             }
         };
     }
@@ -82,5 +85,4 @@ public class BeanParameterThreeBodyOgnlTest extends ContextTestSupport {
             return "1";
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.approval;
 
 import java.io.Serializable;
@@ -56,7 +57,8 @@ public final class ApprovalRequest implements Serializable {
         public final List<Field> fields;
 
         private FieldHolder() {
-            fields = Arrays.stream(ApprovalRequest.class.getDeclaredFields()).filter(f -> !Modifier.isFinal(f.getModifiers()))
+            fields = Arrays.stream(ApprovalRequest.class.getDeclaredFields())
+                    .filter(f -> !Modifier.isFinal(f.getModifiers()))
                     .collect(Collectors.toList());
         }
     }
@@ -148,9 +150,11 @@ public final class ApprovalRequest implements Serializable {
 
         final ApprovalRequest other = (ApprovalRequest) obj;
 
-        return Objects.equals(actionType, other.actionType) && Objects.equals(contextActorId, other.contextActorId)
+        return Objects.equals(actionType, other.actionType)
+                && Objects.equals(contextActorId, other.contextActorId)
                 && Objects.equals(contextId, other.contextId)
-                && Objects.equals(comments, other.comments) && Objects.equals(nextApproverIds, other.nextApproverIds)
+                && Objects.equals(comments, other.comments)
+                && Objects.equals(nextApproverIds, other.nextApproverIds)
                 && Objects.equals(processDefinitionNameOrId, other.processDefinitionNameOrId)
                 && Objects.equals(skipEntryCriteria, other.skipEntryCriteria);
     }
@@ -182,8 +186,14 @@ public final class ApprovalRequest implements Serializable {
     @Override
     public int hashCode() {
         return Arrays.hashCode(new Object[] {
-                actionType, contextActorId, contextId, comments, nextApproverIds, processDefinitionNameOrId,
-                skipEntryCriteria });
+            actionType,
+            contextActorId,
+            contextId,
+            comments,
+            nextApproverIds,
+            processDefinitionNameOrId,
+            skipEntryCriteria
+        });
     }
 
     public boolean isSkipEntryCriteria() {

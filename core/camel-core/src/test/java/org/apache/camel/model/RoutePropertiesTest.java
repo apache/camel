@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RoutePropertiesTest extends ContextTestSupport {
 
@@ -38,7 +39,10 @@ public class RoutePropertiesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("route-id").routeProperty("key1", "val1").routeProperty("key2", "val2")
+                from("direct:start")
+                        .routeId("route-id")
+                        .routeProperty("key1", "val1")
+                        .routeProperty("key2", "val2")
                         .to("mock:output");
             }
         });
@@ -62,12 +66,16 @@ public class RoutePropertiesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("route-id").routeProperty(Route.ID_PROPERTY, "the id").to("mock:output");
+                from("direct:start")
+                        .routeId("route-id")
+                        .routeProperty(Route.ID_PROPERTY, "the id")
+                        .to("mock:output");
             }
         });
 
-        Assertions.assertThrows(FailedToCreateRouteException.class, () -> context.start(),
+        Assertions.assertThrows(
+                FailedToCreateRouteException.class,
+                () -> context.start(),
                 "Should have prevented setting a property with a reserved name");
-
     }
 }

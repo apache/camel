@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.arangodb.integration;
 
 import java.util.Collections;
@@ -71,7 +72,8 @@ public abstract class BaseGraph extends BaseArangoDb {
         edgesCollection = arangoDatabase.collection(EDGE_COLLECTION_NAME);
 
         // create graph
-        arangoDatabase.createGraph(GRAPH_NAME,
+        arangoDatabase.createGraph(
+                GRAPH_NAME,
                 Collections.singletonList(new EdgeDefinition()
                         .collection(EDGE_COLLECTION_NAME)
                         .from(VERTEX_COLLECTION_NAME)

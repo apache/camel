@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +31,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
 
-    private static final String[] EXISTED_USERS = { "Kim", "Pavlo", "Peter" };
+    private static final String[] EXISTED_USERS = {"Kim", "Pavlo", "Peter"};
     private static String[] broadcastMessageTo = {};
     private static Map<String, String> connectionKeyUserMap = new HashMap<>();
 
@@ -54,13 +55,13 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
         wsclient3.connect();
         wsclient3.await(awaitTime);
 
-        //all connections were registered in external store
+        // all connections were registered in external store
         assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
 
         wsclient2.close();
         wsclient2.await(awaitTime);
 
-        broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
+        broadcastMessageTo = new String[] {EXISTED_USERS[0], EXISTED_USERS[1]};
 
         wsclient1.sendTextMessage("Gambas");
         wsclient1.await(awaitTime);
@@ -88,7 +89,8 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
         return new RouteBuilder() {
             public void configure() {
                 // route for single client broadcast to multiple clients guarantee delivery
-                from("atmosphere-websocket:///guarantee").to("log:info")
+                from("atmosphere-websocket:///guarantee")
+                        .to("log:info")
                         .choice()
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
                         .process(new Processor() {
@@ -108,7 +110,8 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
                                 removeExternalConnectionRegister();
                             }
                         })
-                        .when(header(WebsocketConstants.ERROR_TYPE).isEqualTo(WebsocketConstants.MESSAGE_NOT_SENT_ERROR_TYPE))
+                        .when(header(WebsocketConstants.ERROR_TYPE)
+                                .isEqualTo(WebsocketConstants.MESSAGE_NOT_SENT_ERROR_TYPE))
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 handleNotDeliveredMessage(exchange);
@@ -119,7 +122,8 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
                             public void process(final Exchange exchange) {
                                 createBroadcastMultipleClientsResponse(exchange);
                             }
-                        }).to("atmosphere-websocket:///guarantee");
+                        })
+                        .to("atmosphere-websocket:///guarantee");
             }
         };
     }
@@ -152,7 +156,7 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
 
         String additionalMessage = "";
 
-        //send the message only to selected connections
+        // send the message only to selected connections
         for (String element : broadcastMessageTo) {
             connectionKeyList.add(connectionKeyUserMap.get(element));
             additionalMessage += element + " ";

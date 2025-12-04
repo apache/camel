@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,9 +35,6 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DefaultCxfRsBindingTest {
 
@@ -63,12 +64,11 @@ public class DefaultCxfRsBindingTest {
         Message camelMessage = new DefaultMessage(context);
         org.apache.cxf.message.Message cxfMessage = new MessageImpl();
         Map<String, List<String>> headers = new HashMap<>();
-        headers.put("emptyList", Collections.<String> emptyList());
+        headers.put("emptyList", Collections.<String>emptyList());
         headers.put("zeroSizeList", new ArrayList<String>(0));
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
         cxfRsBinding.copyProtocolHeader(cxfMessage, camelMessage, exchange);
         assertNull(camelMessage.getHeader("emptyList"), "We should get nothing here");
         assertNull(camelMessage.getHeader("zeroSizeList"), "We should get nothing here");
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.idempotent.cassandra;
+
+import static org.apache.camel.utils.cassandra.CassandraUtils.append;
+import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
+import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -35,22 +43,16 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.utils.cassandra.CassandraUtils.append;
-import static org.apache.camel.utils.cassandra.CassandraUtils.applyConsistencyLevel;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateDelete;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
-import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
-
 /**
  * Implementation of {@link IdempotentRepository} using Cassandra table to store message ids. Advice: use
  * LeveledCompaction for this table and tune read/write consistency levels. Warning: Cassandra is not the best tool for
  * queuing use cases See http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
-@Metadata(label = "bean",
-          description = "Idempotent repository that uses Cassandra table to store message ids."
-                        + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
-          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Metadata(
+        label = "bean",
+        description = "Idempotent repository that uses Cassandra table to store message ids."
+                + " Advice: use LeveledCompaction for this table and tune read/write consistency levels.",
+        annotations = {"interfaceName=org.apache.camel.spi.IdempotentRepository"})
 @Configurer(metadataOnly = true)
 public class CassandraIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
@@ -58,22 +60,33 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
 
     @Metadata(description = "Cassandra session", required = true)
     private CassandraSessionHolder session;
+
     @Metadata(description = "The table name for storing the data", defaultValue = "CAMEL_IDEMPOTENT")
     private String table = "CAMEL_IDEMPOTENT";
-    @Metadata(description = "Values used as primary key prefix. Multiple values can be separated by comma.",
-              displayName = "Prefix Primary Key Values")
+
+    @Metadata(
+            description = "Values used as primary key prefix. Multiple values can be separated by comma.",
+            displayName = "Prefix Primary Key Values")
     private String prefixPKValues;
-    @Metadata(description = "Primary key columns. Multiple values can be separated by comma.",
-              displayName = "Primary Key Columns",
-              javaType = "java.lang.String", defaultValue = "KEY")
+
+    @Metadata(
+            description = "Primary key columns. Multiple values can be separated by comma.",
+            displayName = "Primary Key Columns",
+            javaType = "java.lang.String",
+            defaultValue = "KEY")
     private String pkColumns = "KEY";
+
     @Metadata(description = "Time to live in seconds used for inserts", displayName = "Time to Live")
     private Integer ttl;
-    @Metadata(description = "Write consistency level",
-              enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
+
+    @Metadata(
+            description = "Write consistency level",
+            enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel writeConsistencyLevel;
-    @Metadata(description = "Read consistency level",
-              enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
+
+    @Metadata(
+            description = "Read consistency level",
+            enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel readConsistencyLevel;
 
     private PreparedStatement insertStatement;
@@ -81,8 +94,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
     private PreparedStatement deleteStatement;
     private PreparedStatement truncateStatement;
 
-    public CassandraIdempotentRepository() {
-    }
+    public CassandraIdempotentRepository() {}
 
     public CassandraIdempotentRepository(CqlSession session) {
         this.session = new CassandraSessionHolder(session);
@@ -109,7 +121,7 @@ public class CassandraIdempotentRepository extends ServiceSupport implements Ide
         if (prefixPKValues != null) {
             return append(prefixPKValues.split(","), key);
         } else {
-            return new Object[] { key };
+            return new Object[] {key};
         }
     }
     // -------------------------------------------------------------------------

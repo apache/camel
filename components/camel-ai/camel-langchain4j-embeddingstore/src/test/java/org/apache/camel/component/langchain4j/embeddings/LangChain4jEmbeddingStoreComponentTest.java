@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
 
 import dev.langchain4j.data.embedding.Embedding;
@@ -35,8 +36,8 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangChain4jEmbeddingStoreComponent component
-                = context.getComponent(LangChain4jEmbeddingStore.SCHEME, LangChain4jEmbeddingStoreComponent.class);
+        LangChain4jEmbeddingStoreComponent component =
+                context.getComponent(LangChain4jEmbeddingStore.SCHEME, LangChain4jEmbeddingStoreComponent.class);
 
         EmbeddingStore<TextSegment> embeddingStore = WeaviateEmbeddingStore.builder()
                 .scheme("http")
@@ -58,9 +59,9 @@ public class LangChain4jEmbeddingStoreComponentTest extends CamelTestSupport {
         TextSegment segment1 = TextSegment.from("I like football.");
         Embedding testEmbedding = embeddingModel.embed(segment1).content();
 
-        Message first = fluentTemplate.to("langchain4j-embeddingstore:first")
+        Message first = fluentTemplate
+                .to("langchain4j-embeddingstore:first")
                 .withBody(testEmbedding)
                 .request(Message.class);
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.Optional;
@@ -48,8 +49,7 @@ public final class ResolverHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private ResolverHelper() {
-    }
+    private ResolverHelper() {}
 
     public static Component lookupComponentInRegistryWithFallback(CamelContext context, String name) {
         return lookupComponentInRegistryWithFallback(context, name, EXCEPTION_HANDLER);
@@ -57,8 +57,8 @@ public final class ResolverHelper {
 
     public static Component lookupComponentInRegistryWithFallback(
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean
-                = lookupInRegistry(context, Component.class, false, exceptionHandler, name, name + COMPONENT_FALLBACK_SUFFIX);
+        Object bean = lookupInRegistry(
+                context, Component.class, false, exceptionHandler, name, name + COMPONENT_FALLBACK_SUFFIX);
         if (bean != null) {
             if (bean instanceof Component component) {
                 return component;
@@ -73,7 +73,9 @@ public final class ResolverHelper {
         }
 
         if (bean != null) {
-            LOG.debug("Found Component with incompatible class: {}", bean.getClass().getName());
+            LOG.debug(
+                    "Found Component with incompatible class: {}",
+                    bean.getClass().getName());
         }
         return null;
     }
@@ -84,14 +86,16 @@ public final class ResolverHelper {
 
     public static DataFormat lookupDataFormatInRegistryWithFallback(
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean = lookupInRegistry(context, DataFormat.class, false, exceptionHandler, name,
-                name + DATA_FORMAT_FALLBACK_SUFFIX);
+        Object bean = lookupInRegistry(
+                context, DataFormat.class, false, exceptionHandler, name, name + DATA_FORMAT_FALLBACK_SUFFIX);
         if (bean instanceof DataFormat dataFormat) {
             return dataFormat;
         }
 
         if (bean != null) {
-            LOG.debug("Found DataFormat with incompatible class: {}", bean.getClass().getName());
+            LOG.debug(
+                    "Found DataFormat with incompatible class: {}",
+                    bean.getClass().getName());
         }
         return null;
     }
@@ -102,14 +106,21 @@ public final class ResolverHelper {
 
     public static DataFormatFactory lookupDataFormatFactoryInRegistryWithFallback(
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean = lookupInRegistry(context, DataFormatFactory.class, false, exceptionHandler, name,
+        Object bean = lookupInRegistry(
+                context,
+                DataFormatFactory.class,
+                false,
+                exceptionHandler,
+                name,
                 name + DATA_FORMAT_FACTORY_FALLBACK_SUFFIX);
         if (bean instanceof DataFormatFactory dataFormatFactory) {
             return dataFormatFactory;
         }
 
         if (bean != null) {
-            LOG.debug("Found DataFormatFactory with incompatible class: {}", bean.getClass().getName());
+            LOG.debug(
+                    "Found DataFormatFactory with incompatible class: {}",
+                    bean.getClass().getName());
         }
         return null;
     }
@@ -120,13 +131,16 @@ public final class ResolverHelper {
 
     public static Language lookupLanguageInRegistryWithFallback(
             CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
-        Object bean = lookupInRegistry(context, Language.class, false, exceptionHandler, name, name + LANGUAGE_FALLBACK_SUFFIX);
+        Object bean = lookupInRegistry(
+                context, Language.class, false, exceptionHandler, name, name + LANGUAGE_FALLBACK_SUFFIX);
         if (bean instanceof Language language) {
             return language;
         }
 
         if (bean != null) {
-            LOG.debug("Found Language with incompatible class: {}", bean.getClass().getName());
+            LOG.debug(
+                    "Found Language with incompatible class: {}",
+                    bean.getClass().getName());
         }
         return null;
     }
@@ -145,7 +159,8 @@ public final class ResolverHelper {
         return resolveService(
                 camelContext,
                 camelContext.getCamelContextExtension().getFactoryFinder(factoryPath),
-                factoryKey, factoryClass);
+                factoryKey,
+                factoryClass);
     }
 
     /**
@@ -156,12 +171,12 @@ public final class ResolverHelper {
      * @param  factoryClass the type of the class
      * @return              an instance fo the given factory
      */
-    public static <T> Optional<T> resolveService(
-            CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
+    public static <T> Optional<T> resolveService(CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
         return resolveService(
                 camelContext,
                 camelContext.getCamelContextExtension().getDefaultFactoryFinder(),
-                factoryKey, factoryClass);
+                factoryKey,
+                factoryClass);
     }
 
     /**
@@ -187,7 +202,11 @@ public final class ResolverHelper {
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found {}: {} via: {}{}", factoryClass.getSimpleName(), type.getName(), FactoryFinder.DEFAULT_PATH,
+                LOG.debug(
+                        "Found {}: {} via: {}{}",
+                        factoryClass.getSimpleName(),
+                        type.getName(),
+                        FactoryFinder.DEFAULT_PATH,
                         factoryKey);
             }
             if (factoryClass.isAssignableFrom(type)) {
@@ -208,7 +227,10 @@ public final class ResolverHelper {
     }
 
     private static Object lookupInRegistry(
-            CamelContext context, Class<?> type, boolean lookupByNameAndType, LookupExceptionHandler exceptionHandler,
+            CamelContext context,
+            Class<?> type,
+            boolean lookupByNameAndType,
+            LookupExceptionHandler exceptionHandler,
             String... names) {
         for (String name : names) {
             try {
@@ -235,7 +257,5 @@ public final class ResolverHelper {
         public void handleException(Exception e, Logger log, String name) {
             log.debug("Ignored error looking up bean: {}", name, e);
         }
-
     }
-
 }

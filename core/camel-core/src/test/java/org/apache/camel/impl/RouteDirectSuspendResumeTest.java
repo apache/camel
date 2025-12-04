@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteDirectSuspendResumeTest extends ContextTestSupport {
 
@@ -44,10 +45,10 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
         context.getRouteController().suspendRoute("foo");
 
         // direct consumer supports suspension
-        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Suspended", context.getRouteController().getRouteStatus("foo").name());
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:foo", "B"),
-                "Should have thrown an exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:foo", "B"), "Should have thrown an exception");
 
         log.info("Resuming");
 
@@ -60,7 +61,8 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Override

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.redshift.data.client.RedshiftData2ClientFactory;
 import org.apache.camel.component.aws2.redshift.data.client.RedshiftData2InternalClient;
@@ -23,15 +26,13 @@ import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2Cl
 import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RedshiftData2ClientFactoryTest {
 
     @Test
     public void getStandardRedshiftDataClientDefault() {
         RedshiftData2Configuration redshiftData2Configuration = new RedshiftData2Configuration();
-        RedshiftData2InternalClient redshiftDataClient
-                = RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
+        RedshiftData2InternalClient redshiftDataClient =
+                RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
         assertTrue(redshiftDataClient instanceof RedshiftData2ClientStandardImpl);
     }
 
@@ -39,8 +40,8 @@ public class RedshiftData2ClientFactoryTest {
     public void getStandardRedshiftDataClient() {
         RedshiftData2Configuration redshiftData2Configuration = new RedshiftData2Configuration();
         redshiftData2Configuration.setUseDefaultCredentialsProvider(false);
-        RedshiftData2InternalClient redshiftDataClient
-                = RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
+        RedshiftData2InternalClient redshiftDataClient =
+                RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
         assertTrue(redshiftDataClient instanceof RedshiftData2ClientStandardImpl);
     }
 
@@ -48,8 +49,8 @@ public class RedshiftData2ClientFactoryTest {
     public void getIAMOptimizedRedshiftDataClient() {
         RedshiftData2Configuration redshiftData2Configuration = new RedshiftData2Configuration();
         redshiftData2Configuration.setUseDefaultCredentialsProvider(true);
-        RedshiftData2InternalClient redshiftDataClient
-                = RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
+        RedshiftData2InternalClient redshiftDataClient =
+                RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
         assertTrue(redshiftDataClient instanceof RedshiftData2ClientIAMOptimizedImpl);
     }
 
@@ -57,8 +58,8 @@ public class RedshiftData2ClientFactoryTest {
     public void getSessionTokenRedshiftDataClient() {
         RedshiftData2Configuration redshiftData2Configuration = new RedshiftData2Configuration();
         redshiftData2Configuration.setUseSessionCredentials(true);
-        RedshiftData2InternalClient redshiftDataClient
-                = RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
+        RedshiftData2InternalClient redshiftDataClient =
+                RedshiftData2ClientFactory.getRedshiftDataClient(redshiftData2Configuration);
         assertTrue(redshiftDataClient instanceof RedshiftData2ClientSessionTokenImpl);
     }
 }

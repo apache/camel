@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,8 +32,9 @@ public class StompSslConsumerTest extends StompConsumerTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
-                        sslServicePort)
+                fromF(
+                                "stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
+                                sslServicePort)
                         .transform(body().convertToString())
                         .to("mock:result");
             }

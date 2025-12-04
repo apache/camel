@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.ArrayList;
@@ -51,8 +52,10 @@ import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed KafkaConsumer")
 public class KafkaConsumer extends DefaultConsumer
-        implements ResumeAware<ResumeStrategy>, HealthCheckAware, ConsumerListenerAware<KafkaConsumerListener>,
-        Suspendable {
+        implements ResumeAware<ResumeStrategy>,
+                HealthCheckAware,
+                ConsumerListenerAware<KafkaConsumerListener>,
+                Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);
 
@@ -106,29 +109,30 @@ public class KafkaConsumer extends DefaultConsumer
         Properties props = configuration.createConsumerProperties();
         endpoint.updateClassProperties(props);
 
-        ObjectHelper.ifNotEmpty(endpoint.getKafkaClientFactory().getBrokers(configuration),
+        ObjectHelper.ifNotEmpty(
+                endpoint.getKafkaClientFactory().getBrokers(configuration),
                 v -> props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, v));
 
         String groupId = ObjectHelper.supplyIfEmpty(configuration.getGroupId(), this::randomUUID);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
-        ObjectHelper.ifNotEmpty(configuration.getGroupInstanceId(),
-                v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
+        ObjectHelper.ifNotEmpty(
+                configuration.getGroupInstanceId(), v -> props.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, v));
 
         return props;
     }
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}", endpoint.getConfiguration().getTopic(),
+        LOG.info(
+                "Starting Kafka consumer on topic: {} with breakOnFirstError: {}",
+                endpoint.getConfiguration().getTopic(),
                 endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
 
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                endpoint.getCamelContext(),
-                "consumers",
-                HealthCheckRepository.class);
+                endpoint.getCamelContext(), "consumers", HealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             consumerHealthCheck = new KafkaConsumerHealthCheck(this, getRouteId());
@@ -160,9 +164,11 @@ public class KafkaConsumer extends DefaultConsumer
         if (endpoint.getConfiguration().isPreValidateHostAndPort()) {
             String brokers = getEndpoint().getConfiguration().getBrokers();
             if (ObjectHelper.isEmpty(brokers)) {
-                throw new IllegalArgumentException("URL to the Kafka brokers must be configured with the brokers option.");
+                throw new IllegalArgumentException(
+                        "URL to the Kafka brokers must be configured with the brokers option.");
             }
-            ClientUtils.parseAndValidateAddresses(List.of(brokers.split(",")), ClientDnsLookup.USE_ALL_DNS_IPS.toString());
+            ClientUtils.parseAndValidateAddresses(
+                    List.of(brokers.split(",")), ClientDnsLookup.USE_ALL_DNS_IPS.toString());
         }
 
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
@@ -179,9 +185,13 @@ public class KafkaConsumer extends DefaultConsumer
     @Override
     protected void doStop() throws Exception {
         if (endpoint.getConfiguration().isTopicIsPattern()) {
-            LOG.info("Stopping Kafka consumer on topic pattern: {}", endpoint.getConfiguration().getTopic());
+            LOG.info(
+                    "Stopping Kafka consumer on topic pattern: {}",
+                    endpoint.getConfiguration().getTopic());
         } else {
-            LOG.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
+            LOG.info(
+                    "Stopping Kafka consumer on topic: {}",
+                    endpoint.getConfiguration().getTopic());
         }
 
         if (healthCheckRepository != null && consumerHealthCheck != null) {
@@ -203,8 +213,10 @@ public class KafkaConsumer extends DefaultConsumer
                 int timeout = endpoint.getConfiguration().getShutdownTimeout();
                 LOG.debug("Shutting down Kafka consumer worker threads with timeout {} millis", timeout);
                 if (!executor.awaitTermination(timeout, TimeUnit.MILLISECONDS)) {
-                    LOG.warn("Shutting down Kafka {} consumer worker threads did not finish within {} millis",
-                            tasks.size(), timeout);
+                    LOG.warn(
+                            "Shutting down Kafka {} consumer worker threads did not finish within {} millis",
+                            tasks.size(),
+                            timeout);
                 }
             }
 
@@ -228,7 +240,9 @@ public class KafkaConsumer extends DefaultConsumer
     @Override
     protected void doSuspend() throws Exception {
         for (KafkaFetchRecords task : tasks) {
-            LOG.info("Pausing Kafka record fetcher task running client ID {}", task.healthState().getClientId());
+            LOG.info(
+                    "Pausing Kafka record fetcher task running client ID {}",
+                    task.healthState().getClientId());
             task.pause();
         }
 
@@ -238,7 +252,9 @@ public class KafkaConsumer extends DefaultConsumer
     @Override
     protected void doResume() throws Exception {
         for (KafkaFetchRecords task : tasks) {
-            LOG.info("Resuming Kafka record fetcher task running client ID {}", task.healthState().getClientId());
+            LOG.info(
+                    "Resuming Kafka record fetcher task running client ID {}",
+                    task.healthState().getClientId());
             task.resume();
         }
 

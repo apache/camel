@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
@@ -116,7 +117,8 @@ public final class MetricsRegistryService extends ServiceSupport
     protected void doInit() throws Exception {
         if (metricsRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            metricsRegistry = camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
+            metricsRegistry =
+                    camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
             // create a new metricsRegistry by default
             if (metricsRegistry == null) {
                 metricsRegistry = new MetricRegistry();
@@ -129,8 +131,8 @@ public final class MetricsRegistryService extends ServiceSupport
             // they both use same units so reuse
             this.secondsMapper = this.mapper;
         } else {
-            this.secondsMapper
-                    = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+            this.secondsMapper =
+                    new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
         }
     }
 
@@ -141,7 +143,10 @@ public final class MetricsRegistryService extends ServiceSupport
             if (agent != null) {
                 MBeanServer server = agent.getMBeanServer();
                 if (server != null) {
-                    reporter = JmxReporter.forRegistry(metricsRegistry).registerWith(server).inDomain(jmxDomain).build();
+                    reporter = JmxReporter.forRegistry(metricsRegistry)
+                            .registerWith(server)
+                            .inDomain(jmxDomain)
+                            .build();
                     reporter.start();
                 }
             } else {
@@ -183,5 +188,4 @@ public final class MetricsRegistryService extends ServiceSupport
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

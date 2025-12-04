@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pinecone;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,8 +26,6 @@ import java.util.Properties;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PineconeComponentConfigurationTest extends CamelTestSupport {
 
@@ -36,8 +37,8 @@ public class PineconeComponentConfigurationTest extends CamelTestSupport {
     @Test
     void createEndpointWithMinimalConfiguration() throws Exception {
         PineconeVectorDbComponent component = context.getComponent("pinecone", PineconeVectorDbComponent.class);
-        PineconeVectorDbEndpoint endpoint = (PineconeVectorDbEndpoint) component
-                .createEndpoint(
+        PineconeVectorDbEndpoint endpoint = (PineconeVectorDbEndpoint)
+                component.createEndpoint(
                         "pinecone://test-collection?indexName=test-serverless-index&collectionSimilarityMetric=cosine&collectionDimension=3&cloud=aws&cloudRegion=us-east-1");
         assertEquals("test-serverless-index", endpoint.getConfiguration().getIndexName());
         assertEquals("cosine", endpoint.getConfiguration().getCollectionSimilarityMetric());
@@ -52,9 +53,8 @@ public class PineconeComponentConfigurationTest extends CamelTestSupport {
         Map<String, Object> propsMap = (Map) properties;
 
         PineconeVectorDbComponent component = context.getComponent("pinecone", PineconeVectorDbComponent.class);
-        PineconeVectorDbEndpoint endpoint = (PineconeVectorDbEndpoint) component
-                .createEndpoint(
-                        "pinecone://test-collection", "", propsMap);
+        PineconeVectorDbEndpoint endpoint =
+                (PineconeVectorDbEndpoint) component.createEndpoint("pinecone://test-collection", "", propsMap);
         assertEquals("test-serverless-index", endpoint.getConfiguration().getIndexName());
         assertEquals("cosine", endpoint.getConfiguration().getCollectionSimilarityMetric());
         assertEquals(3, endpoint.getConfiguration().getCollectionDimension());
@@ -65,5 +65,4 @@ public class PineconeComponentConfigurationTest extends CamelTestSupport {
         assertEquals(false, endpoint.getConfiguration().isTls());
         assertEquals("http://www.foobar.com", endpoint.getConfiguration().getHost());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.List;
@@ -43,5 +44,4 @@ public interface Navigate<T> {
      * @return <tt>true</tt> if more outputs
      */
     boolean hasNext();
-
 }

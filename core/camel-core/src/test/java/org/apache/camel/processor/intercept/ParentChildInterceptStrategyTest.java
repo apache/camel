@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -68,11 +69,28 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
             public void configure() {
                 context.getCamelContextExtension().addInterceptStrategy(new MyParentChildInterceptStrategy());
 
-                from("direct:start").routeId("route").to("mock:a").id("task-a").choice().id("choice")
-                        .when(simple("${body} contains 'Camel'")).id("when").to("mock:b").id("task-b")
-                        .to("mock:c").id("task-c").when(simple("${body} contains 'Donkey'")).id("when2").to("mock:d")
-                        .id("task-d").otherwise().id("otherwise").to("mock:e").id("task-e")
-                        .end().to("mock:done");
+                from("direct:start")
+                        .routeId("route")
+                        .to("mock:a")
+                        .id("task-a")
+                        .choice()
+                        .id("choice")
+                        .when(simple("${body} contains 'Camel'"))
+                        .id("when")
+                        .to("mock:b")
+                        .id("task-b")
+                        .to("mock:c")
+                        .id("task-c")
+                        .when(simple("${body} contains 'Donkey'"))
+                        .id("when2")
+                        .to("mock:d")
+                        .id("task-d")
+                        .otherwise()
+                        .id("otherwise")
+                        .to("mock:e")
+                        .id("task-e")
+                        .end()
+                        .to("mock:done");
             }
         };
     }
@@ -94,7 +112,5 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
 
             return target;
         }
-
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -22,8 +25,6 @@ import org.jgroups.Address;
 import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 /**
  * JGroups-specific filters factory.
@@ -38,8 +39,7 @@ public final class JGroupsFilters {
      */
     private static final int COORDINATOR_NODE_INDEX = 0;
 
-    private JGroupsFilters() {
-    }
+    private JGroupsFilters() {}
 
     /**
      * Creates predicate rejecting messages that are instances of {@code org.jgroups.View}, but have not been received
@@ -56,13 +56,14 @@ public final class JGroupsFilters {
                 View view = (View) body;
                 Address coordinatorNodeAddress = view.getMembers().get(COORDINATOR_NODE_INDEX);
                 Address channelAddress = exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, Address.class);
-                LOG.debug("Comparing endpoint channel address {} against the coordinator node address {}.",
-                        channelAddress, coordinatorNodeAddress);
+                LOG.debug(
+                        "Comparing endpoint channel address {} against the coordinator node address {}.",
+                        channelAddress,
+                        coordinatorNodeAddress);
                 return channelAddress.equals(coordinatorNodeAddress);
             }
             LOG.debug("Body {} is not an instance of org.jgroups.View . Skipping filter.", body);
             return false;
         };
     }
-
 }

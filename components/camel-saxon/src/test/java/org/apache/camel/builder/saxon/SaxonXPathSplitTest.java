@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -50,16 +51,18 @@ public class SaxonXPathSplitTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split().xpath("/persons/person")
+                        .split()
+                        .xpath("/persons/person")
                         .choice()
-                        .when().xpath("person/city = 'London'")
+                        .when()
+                        .xpath("person/city = 'London'")
                         .to("mock:london")
-                        .when().xpath("person/city = 'Paris'")
+                        .when()
+                        .xpath("person/city = 'Paris'")
                         .to("mock:paris")
                         .otherwise()
                         .to("mock:other");
             }
         };
     }
-
 }

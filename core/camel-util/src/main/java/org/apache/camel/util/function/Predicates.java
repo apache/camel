@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.function;
 
 import java.util.Objects;
@@ -24,8 +25,7 @@ import java.util.function.Predicate;
  *
  */
 public final class Predicates {
-    private Predicates() {
-    }
+    private Predicates() {}
 
     /**
      * Wrap a predicate, useful for method references.

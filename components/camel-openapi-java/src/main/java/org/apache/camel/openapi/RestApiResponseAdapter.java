@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.io.IOException;
@@ -55,5 +56,4 @@ public interface RestApiResponseAdapter {
      * Copy content from this adapter into the given {@link Exchange}.
      */
     void copyResult(Exchange exchange);
-
 }

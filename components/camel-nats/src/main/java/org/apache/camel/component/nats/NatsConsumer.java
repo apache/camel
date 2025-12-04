@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats;
 
 import java.io.IOException;
@@ -72,7 +73,8 @@ public class NatsConsumer extends DefaultConsumer {
                 ? this.getEndpoint().getConfiguration().getConnection()
                 : this.getEndpoint().getConnection();
 
-        this.executor.submit(new NatsConsumingTask(this.connection, this.getEndpoint().getConfiguration()));
+        this.executor.submit(
+                new NatsConsumingTask(this.connection, this.getEndpoint().getConfiguration()));
     }
 
     @Override
@@ -149,7 +151,6 @@ public class NatsConsumer extends DefaultConsumer {
             } catch (final Exception e) {
                 NatsConsumer.this.getExceptionHandler().handleException("Error during processing", e);
             }
-
         }
 
         private void setupJetStreamConsumer(String topic, String queueName) throws IOException, JetStreamApiException {
@@ -157,10 +158,12 @@ public class NatsConsumer extends DefaultConsumer {
             String durableName = this.configuration.getDurableName();
 
             String subscriptionType = this.configuration.isPullSubscription() ? "PULL" : "PUSH";
-            LOG.debug("Setting up JetStream {}/{} consumer for stream: '{}', subject: {}",
+            LOG.debug(
+                    "Setting up JetStream {}/{} consumer for stream: '{}', subject: {}",
                     subscriptionType,
                     ObjectHelper.isNotEmpty(durableName)
-                            ? String.format("DURABLE, durableName: '%s'", durableName) : "EPHEMERAL",
+                            ? String.format("DURABLE, durableName: '%s'", durableName)
+                            : "EPHEMERAL",
                     streamName,
                     this.configuration.getTopic());
 
@@ -191,28 +194,37 @@ public class NatsConsumer extends DefaultConsumer {
             NatsConsumer.this.dispatcher = this.connection.createDispatcher(messageHandler);
 
             if (this.configuration.isPullSubscription()) {
-                PullSubscribeOptions pullOptions = PullSubscribeOptions.builder()
-                        .configuration(cc)
-                        .build();
+                PullSubscribeOptions pullOptions =
+                        PullSubscribeOptions.builder().configuration(cc).build();
 
-                NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
-                        NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
-                        dispatcher,
-                        messageHandler,
-                        pullOptions);
+                NatsConsumer.this.jetStreamSubscription = this.connection
+                        .jetStream()
+                        .subscribe(
+                                NatsConsumer.this
+                                        .getEndpoint()
+                                        .getConfiguration()
+                                        .getTopic(),
+                                dispatcher,
+                                messageHandler,
+                                pullOptions);
             } else {
                 PushSubscribeOptions pushOptions = PushSubscribeOptions.builder()
                         .configuration(cc)
                         .deliverGroup(queueName)
                         .build();
 
-                NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
-                        NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
-                        queueName,
-                        dispatcher,
-                        messageHandler,
-                        true,
-                        pushOptions);
+                NatsConsumer.this.jetStreamSubscription = this.connection
+                        .jetStream()
+                        .subscribe(
+                                NatsConsumer.this
+                                        .getEndpoint()
+                                        .getConfiguration()
+                                        .getTopic(),
+                                queueName,
+                                dispatcher,
+                                messageHandler,
+                                true,
+                                pushOptions);
             }
 
             NatsConsumer.this.setActive(true);
@@ -245,22 +257,36 @@ public class NatsConsumer extends DefaultConsumer {
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
                     exchange.getIn().setHeader(NatsConstants.NATS_SID, msg.getSID());
                     exchange.getIn().setHeader(NatsConstants.NATS_SUBJECT, msg.getSubject());
-                    exchange.getIn().setHeader(NatsConstants.NATS_QUEUE_NAME, msg.getSubscription().getQueueName());
+                    exchange.getIn()
+                            .setHeader(
+                                    NatsConstants.NATS_QUEUE_NAME,
+                                    msg.getSubscription().getQueueName());
                     exchange.getIn().setHeader(NatsConstants.NATS_MESSAGE_TIMESTAMP, System.currentTimeMillis());
                     if (msg.isStatusMessage() && msg.getStatus() != null) {
-                        exchange.getIn().setHeader(NatsConstants.NATS_STATUS_CODE, msg.getStatus().getCode());
-                        exchange.getIn().setHeader(NatsConstants.NATS_STATUS_ERROR, msg.getStatus().getMessage());
+                        exchange.getIn()
+                                .setHeader(
+                                        NatsConstants.NATS_STATUS_CODE,
+                                        msg.getStatus().getCode());
+                        exchange.getIn()
+                                .setHeader(
+                                        NatsConstants.NATS_STATUS_ERROR,
+                                        msg.getStatus().getMessage());
                     }
                     if (msg.getHeaders() != null) {
-                        final HeaderFilterStrategy strategy = NatsConsumer.this.getEndpoint()
+                        final HeaderFilterStrategy strategy = NatsConsumer.this
+                                .getEndpoint()
                                 .getConfiguration()
                                 .getHeaderFilterStrategy();
                         msg.getHeaders().entrySet().forEach(entry -> {
                             if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                                 if (entry.getValue().size() == 1) {
-                                    // going from camel to nats add all headers in lists, so we extract them in the opposite
+                                    // going from camel to nats add all headers in lists, so we extract them in the
+                                    // opposite
                                     // way if it contains a single value
-                                    exchange.getIn().setHeader(entry.getKey(), entry.getValue().get(0));
+                                    exchange.getIn()
+                                            .setHeader(
+                                                    entry.getKey(),
+                                                    entry.getValue().get(0));
                                 } else {
                                     exchange.getIn().setHeader(entry.getKey(), entry.getValue());
                                 }
@@ -273,7 +299,8 @@ public class NatsConsumer extends DefaultConsumer {
 
                     // is there a reply?
                     if (!NatsConsumingTask.this.configuration.isReplyToDisabled()
-                            && msg.getReplyTo() != null && msg.getConnection() != null) {
+                            && msg.getReplyTo() != null
+                            && msg.getConnection() != null) {
                         final Connection con = msg.getConnection();
                         final byte[] data = exchange.getMessage().getBody(byte[].class);
                         if (data != null) {
@@ -301,5 +328,4 @@ public class NatsConsumer extends DefaultConsumer {
             throw jsae;
         }
     }
-
 }

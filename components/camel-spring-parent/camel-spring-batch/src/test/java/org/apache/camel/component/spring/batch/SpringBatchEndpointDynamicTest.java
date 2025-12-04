@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch;
+
+import static org.apache.camel.test.junit5.TestSupport.header;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Date;
@@ -33,11 +39,6 @@ import org.mockito.quality.Strictness;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
-
-import static org.apache.camel.test.junit5.TestSupport.header;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
@@ -64,10 +65,14 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:dynamic").to("spring-batch:fake?jobFromHeader=true").errorHandler(deadLetterChannel("mock:error"))
+                from("direct:dynamic")
+                        .to("spring-batch:fake?jobFromHeader=true")
+                        .errorHandler(deadLetterChannel("mock:error"))
                         .to("mock:test");
-                from("direct:dynamicWithJobRegistry").to("spring-batch:fake?jobFromHeader=true&jobRegistry=#jobRegistry")
-                        .errorHandler(deadLetterChannel("mock:error")).to("mock:test");
+                from("direct:dynamicWithJobRegistry")
+                        .to("spring-batch:fake?jobFromHeader=true&jobRegistry=#jobRegistry")
+                        .errorHandler(deadLetterChannel("mock:error"))
+                        .to("mock:test");
             }
         };
     }
@@ -86,7 +91,7 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(0);
         errorEndpoint.expectedMessageCount(1);
 
-        //dynamic job should fail as header is not present and the job is dynamic
+        // dynamic job should fail as header is not present and the job is dynamic
         sendBody("direct:dyanmic?block=false", "Start the job, please.");
         mockEndpoint.assertIsSatisfied();
         mockEndpoint.assertIsSatisfied();
@@ -98,7 +103,7 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(0);
         errorEndpoint.expectedMessageCount(1);
 
-        //dynamic job should fail as header is present but the job does not exist
+        // dynamic job should fail as header is present but the job does not exist
         header(SpringBatchConstants.JOB_NAME).append("thisJobDoesNotExsistAtAll" + Date.from(Instant.now()));
         sendBody("direct:dyanmic?block=false", "Start the job, please.");
 
@@ -138,5 +143,4 @@ public class SpringBatchEndpointDynamicTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         errorEndpoint.assertIsSatisfied();
     }
-
 }

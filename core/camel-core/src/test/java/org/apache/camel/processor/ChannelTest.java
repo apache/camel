@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,15 +46,21 @@ public class ChannelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        if (counter++ < 1) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                    }
-                }).delay(10).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                if (counter++ < 1) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                            }
+                        })
+                        .delay(10)
+                        .to("mock:result");
             }
         };
     }

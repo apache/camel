@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mybatis;
 
 /**
  * Statement types to instruct which MyBatis operation to use.
  */
 public enum StatementType {
-
     SelectOne,
     SelectList,
     Insert,

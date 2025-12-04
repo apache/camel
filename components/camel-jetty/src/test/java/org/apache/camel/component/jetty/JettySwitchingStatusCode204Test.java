@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,17 +31,13 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class JettySwitchingStatusCode204Test extends BaseJettyTest {
 
     @Test
     public void testSwitchNoBodyTo204ViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                CloseableHttpResponse httpResponse = httpClient.execute(request)) {
             assertEquals(204, httpResponse.getCode());
             assertNull(httpResponse.getEntity());
         }
@@ -64,7 +65,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     public void testNoSwitchingNoCodeViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foo");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                CloseableHttpResponse httpResponse = httpClient.execute(request)) {
             assertEquals(200, httpResponse.getCode());
             assertNotNull(httpResponse.getEntity());
             assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
@@ -93,7 +94,7 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
     public void testNoSwitchingNoBodyViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                CloseableHttpResponse httpResponse = httpClient.execute(request)) {
             assertEquals(200, httpResponse.getCode());
             assertNotNull(httpResponse.getEntity());
             assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
@@ -131,11 +132,12 @@ public class JettySwitchingStatusCode204Test extends BaseJettyTest {
 
                 from("direct:foo").to("http://localhost:{{port}}/foo");
 
-                from("jetty:http://localhost:{{port}}/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody()
+                from("jetty:http://localhost:{{port}}/foobar")
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+                        .setBody()
                         .constant("");
 
                 from("direct:foobar").to("http://localhost:{{port}}/foobar");
-
             }
         };
     }

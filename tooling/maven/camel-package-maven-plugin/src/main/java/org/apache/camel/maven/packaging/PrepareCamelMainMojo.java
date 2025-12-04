@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
@@ -49,8 +50,11 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 /**
  * Prepares camel-main by generating Camel Main configuration metadata for tooling support.
  */
-@Mojo(name = "prepare-main-doc", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true,
-      requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(
+        name = "prepare-main-doc",
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
 
     /**
@@ -104,8 +108,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             MethodSource<?> setter = clazz.getMethod(setterName, javaType);
             if (setter != null) {
                 String desc = setter.getJavaDoc().getFullText();
-                boolean deprecated
-                        = clazz.getAnnotation(Deprecated.class) != null || setter.getAnnotation(Deprecated.class) != null;
+                boolean deprecated =
+                        clazz.getAnnotation(Deprecated.class) != null || setter.getAnnotation(Deprecated.class) != null;
                 MainModel.MainOptionModel model = new MainModel.MainOptionModel();
                 model.setName(name);
                 model.setJavaType(javaType);
@@ -297,7 +301,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + gcpVaultConfig + " due " + e.getMessage(), e);
         }
 
-        File azureVaultConfig = new File(camelApiDir, "src/main/java/org/apache/camel/vault/AzureVaultConfiguration.java");
+        File azureVaultConfig =
+                new File(camelApiDir, "src/main/java/org/apache/camel/vault/AzureVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(azureVaultConfig);
             model.forEach(m -> m.setName("camel.vault.azure." + m.getName()));
@@ -306,8 +311,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + azureVaultConfig + " due " + e.getMessage(), e);
         }
 
-        File kubernetesVaultConfig
-                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/KubernetesVaultConfiguration.java");
+        File kubernetesVaultConfig =
+                new File(camelApiDir, "src/main/java/org/apache/camel/vault/KubernetesVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(kubernetesVaultConfig);
             model.forEach(m -> m.setName("camel.vault.kubernetes." + m.getName()));
@@ -316,18 +321,19 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + kubernetesVaultConfig + " due " + e.getMessage(), e);
         }
 
-        File springCloudConfigConfig
-                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/SpringCloudConfigConfiguration.java");
+        File springCloudConfigConfig =
+                new File(camelApiDir, "src/main/java/org/apache/camel/vault/SpringCloudConfigConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(springCloudConfigConfig);
             model.forEach(m -> m.setName("camel.vault.springConfig." + m.getName()));
             data.addAll(model);
         } catch (Exception e) {
-            throw new MojoFailureException("Error parsing file " + springCloudConfigConfig + " due " + e.getMessage(), e);
+            throw new MojoFailureException(
+                    "Error parsing file " + springCloudConfigConfig + " due " + e.getMessage(), e);
         }
 
-        File kubernetesConfigmapsVaultConfig
-                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/KubernetesConfigMapVaultConfiguration.java");
+        File kubernetesConfigmapsVaultConfig = new File(
+                camelApiDir, "src/main/java/org/apache/camel/vault/KubernetesConfigMapVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(kubernetesConfigmapsVaultConfig);
             model.forEach(m -> m.setName("camel.vault.kubernetescm." + m.getName()));
@@ -337,8 +343,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     "Error parsing file " + kubernetesConfigmapsVaultConfig + " due " + e.getMessage(), e);
         }
 
-        File hashicorpVaultConfig
-                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/HashicorpVaultConfiguration.java");
+        File hashicorpVaultConfig =
+                new File(camelApiDir, "src/main/java/org/apache/camel/vault/HashicorpVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(hashicorpVaultConfig);
             model.forEach(m -> m.setName("camel.vault.hashicorp." + m.getName()));
@@ -347,8 +353,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + hashicorpVaultConfig + " due " + e.getMessage(), e);
         }
 
-        File ibmVaultConfig
-                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/IBMSecretsManagerVaultConfiguration.java");
+        File ibmVaultConfig =
+                new File(camelApiDir, "src/main/java/org/apache/camel/vault/IBMSecretsManagerVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(ibmVaultConfig);
             model.forEach(m -> m.setName("camel.vault.ibm." + m.getName()));
@@ -357,8 +363,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             throw new MojoFailureException("Error parsing file " + ibmVaultConfig + " due " + e.getMessage(), e);
         }
 
-        File cyberarkVaultConfig
-                = new File(camelApiDir, "src/main/java/org/apache/camel/vault/CyberArkVaultConfiguration.java");
+        File cyberarkVaultConfig =
+                new File(camelApiDir, "src/main/java/org/apache/camel/vault/CyberArkVaultConfiguration.java");
         try {
             List<MainModel.MainOptionModel> model = parseConfigurationSource(cyberarkVaultConfig);
             model.forEach(m -> m.setName("camel.vault.cyberark." + m.getName()));
@@ -381,108 +387,143 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         if (!data.isEmpty()) {
             MainModel model = new MainModel();
             model.getOptions().addAll(data);
-            model.getGroups().add(new MainGroupModel(
-                    "camel.main", "Camel Main configurations", "org.apache.camel.main.DefaultConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.startupcondition", "Camel Startup Condition configurations",
-                    "org.apache.camel.main.StartupConditionConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.routecontroller", "Camel Route Controller configurations",
+                            "camel.main",
+                            "Camel Main configurations",
+                            "org.apache.camel.main.DefaultConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.startupcondition",
+                            "Camel Startup Condition configurations",
+                            "org.apache.camel.main.StartupConditionConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.routecontroller",
+                            "Camel Route Controller configurations",
                             "org.apache.camel.main.RouteControllerConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.server",
-                    "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
-                    "org.apache.camel.main.HttpServerConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.management",
-                    "Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations",
-                    "org.apache.camel.main.HttpManagementServerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.debug", "Camel Debugger configurations",
+                            "camel.server",
+                            "Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations",
+                            "org.apache.camel.main.HttpServerConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.management",
+                            "Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations",
+                            "org.apache.camel.main.HttpManagementServerConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.debug",
+                            "Camel Debugger configurations",
                             "org.apache.camel.main.DebuggerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.trace", "Camel Tracer configurations",
+                            "camel.trace",
+                            "Camel Tracer configurations",
                             "org.apache.camel.main.TracerConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.ssl", "Camel SSL configurations",
+                            "camel.ssl",
+                            "Camel SSL configurations",
                             "org.apache.camel.main.SSLConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.threadpool", "Camel Thread Pool configurations",
+                            "camel.threadpool",
+                            "Camel Thread Pool configurations",
                             "org.apache.camel.main.ThreadPoolConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.health", "Camel Health Check configurations",
-                    "org.apache.camel.main.HealthConfigurationProperties"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.rest", "Camel Rest-DSL configurations", "org.apache.camel.spi.RestConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.aws", "Camel AWS Vault configurations",
-                            "org.apache.camel.vault.AwsVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.gcp", "Camel GCP Vault configurations",
-                            "org.apache.camel.vault.GcpVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.azure", "Camel Azure Key Vault configurations",
-                            "org.apache.camel.vault.AzureVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.kubernetes", "Camel Kubernetes Vault configurations",
-                            "org.apache.camel.vault.KubernetesVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.kubernetescm", "Camel Kubernetes Configmaps Vault configurations",
-                            "org.apache.camel.vault.KubernetesConfigMapVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.hashicorp", "Camel Hashicorp Vault configurations",
-                            "org.apache.camel.vault.HashicorpVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.ibm", "Camel IBM Secrets Manager Vault configurations",
-                            "org.apache.camel.vault.IBMSecretsManagerVaultConfiguration"));
-            model.getGroups().add(
-                    new MainGroupModel(
-                            "camel.vault.cyberark", "Camel CyberArk Conjur Vault configurations",
-                            "org.apache.camel.vault.CyberArkVaultConfiguration"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.opentelemetry", "Camel OpenTelemetry configurations",
-                    "org.apache.camel.main.OtelConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.opentelemetry2", "Camel OpenTelemetry 2 configurations",
-                    "org.apache.camel.main.Otel2ConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.telemetryDev", "Camel Telemetry Dev configurations",
-                    "org.apache.camel.main.TelemetryDevConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.mdc", "Camel MDC configurations",
-                    "org.apache.camel.main.MdcConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.metrics", "Camel Micrometer Metrics configurations",
-                    "org.apache.camel.main.MetricsConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.faulttolerance", "Fault Tolerance EIP Circuit Breaker configurations",
+                            "camel.health",
+                            "Camel Health Check configurations",
+                            "org.apache.camel.main.HealthConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.rest", "Camel Rest-DSL configurations", "org.apache.camel.spi.RestConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.aws",
+                            "Camel AWS Vault configurations",
+                            "org.apache.camel.vault.AwsVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.gcp",
+                            "Camel GCP Vault configurations",
+                            "org.apache.camel.vault.GcpVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.azure",
+                            "Camel Azure Key Vault configurations",
+                            "org.apache.camel.vault.AzureVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.kubernetes",
+                            "Camel Kubernetes Vault configurations",
+                            "org.apache.camel.vault.KubernetesVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.kubernetescm",
+                            "Camel Kubernetes Configmaps Vault configurations",
+                            "org.apache.camel.vault.KubernetesConfigMapVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.hashicorp",
+                            "Camel Hashicorp Vault configurations",
+                            "org.apache.camel.vault.HashicorpVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.ibm",
+                            "Camel IBM Secrets Manager Vault configurations",
+                            "org.apache.camel.vault.IBMSecretsManagerVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.vault.cyberark",
+                            "Camel CyberArk Conjur Vault configurations",
+                            "org.apache.camel.vault.CyberArkVaultConfiguration"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.opentelemetry",
+                            "Camel OpenTelemetry configurations",
+                            "org.apache.camel.main.OtelConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.opentelemetry2",
+                            "Camel OpenTelemetry 2 configurations",
+                            "org.apache.camel.main.Otel2ConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.telemetryDev",
+                            "Camel Telemetry Dev configurations",
+                            "org.apache.camel.main.TelemetryDevConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.mdc",
+                            "Camel MDC configurations",
+                            "org.apache.camel.main.MdcConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.metrics",
+                            "Camel Micrometer Metrics configurations",
+                            "org.apache.camel.main.MetricsConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.faulttolerance",
+                            "Fault Tolerance EIP Circuit Breaker configurations",
                             "org.apache.camel.main.FaultToleranceConfigurationProperties"));
             model.getGroups()
                     .add(new MainGroupModel(
-                            "camel.resilience4j", "Resilience4j EIP Circuit Breaker configurations",
+                            "camel.resilience4j",
+                            "Resilience4j EIP Circuit Breaker configurations",
                             "org.apache.camel.main.Resilience4jConfigurationProperties"));
-            model.getGroups().add(new MainGroupModel(
-                    "camel.lra", "Camel Saga EIP (Long Running Actions) configurations",
-                    "org.apache.camel.main.LraConfigurationProperties"));
+            model.getGroups()
+                    .add(new MainGroupModel(
+                            "camel.lra",
+                            "Camel Saga EIP (Long Running Actions) configurations",
+                            "org.apache.camel.main.LraConfigurationProperties"));
 
             String json = JsonMapper.createJsonSchema(model);
 
             updateResource(outFolder.toPath(), "META-INF/camel-main-configuration-metadata.json", json);
         }
     }
-
 }

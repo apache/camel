@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.AsyncCallback;
@@ -62,8 +63,10 @@ public class DefaultConsumer extends ServiceSupport
         this.asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
         // create a per consumer exchange factory
-        this.exchangeFactory = endpoint.getCamelContext().getCamelContextExtension()
-                .getExchangeFactory().newExchangeFactory(this);
+        this.exchangeFactory = endpoint.getCamelContext()
+                .getCamelContextExtension()
+                .getExchangeFactory()
+                .newExchangeFactory(this);
     }
 
     @Override
@@ -214,7 +217,8 @@ public class DefaultConsumer extends ServiceSupport
         // force creating and load the class during build time so the JVM does not
         // load the class on first exchange to be created
         Object dummy = new DefaultConsumerCallback(this, null, false);
-        LOG.trace("Warming up DefaultConsumer loaded class: {}", dummy.getClass().getName());
+        LOG.trace(
+                "Warming up DefaultConsumer loaded class: {}", dummy.getClass().getName());
     }
 
     @Override
@@ -292,8 +296,8 @@ public class DefaultConsumer extends ServiceSupport
             try {
                 // handle any thrown exception
                 if (exchange.getException() != null) {
-                    consumer.getExceptionHandler().handleException("Error processing exchange", exchange,
-                            exchange.getException());
+                    consumer.getExceptionHandler()
+                            .handleException("Error processing exchange", exchange, exchange.getException());
                 }
             } finally {
                 if (!autoRelease) {
@@ -308,5 +312,4 @@ public class DefaultConsumer extends ServiceSupport
             return "DefaultConsumerCallback";
         }
     }
-
 }

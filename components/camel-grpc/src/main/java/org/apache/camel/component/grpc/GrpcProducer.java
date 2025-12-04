@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import com.google.auth.Credentials;
@@ -61,7 +62,8 @@ public class GrpcProducer extends DefaultAsyncProducer {
             if (configuration.isSynchronous()) {
                 throw new IllegalStateException("Cannot use synchronous processing in streaming mode");
             } else if (configuration.getStreamRepliesTo() == null) {
-                throw new IllegalStateException("The streamReplyTo property is mandatory when using the STREAMING mode");
+                throw new IllegalStateException(
+                        "The streamReplyTo property is mandatory when using the STREAMING mode");
             }
         }
 
@@ -92,26 +94,36 @@ public class GrpcProducer extends DefaultAsyncProducer {
             if (configuration.getAuthenticationType() == GrpcAuthType.GOOGLE) {
                 ObjectHelper.notNull(configuration.getKeyCertChainResource(), "serviceAccountResource");
 
-                Credentials creds = GoogleCredentials.fromStream(
-                        ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                configuration.getServiceAccountResource()));
+                Credentials creds = GoogleCredentials.fromStream(ResourceHelper.resolveResourceAsInputStream(
+                        endpoint.getCamelContext(), configuration.getServiceAccountResource()));
                 callCreds = MoreCallCredentials.from(creds);
             } else if (configuration.getAuthenticationType() == GrpcAuthType.JWT) {
                 ObjectHelper.notNull(configuration.getJwtSecret(), "jwtSecret");
 
-                String jwtToken = JwtHelper.createJwtToken(configuration.getJwtAlgorithm(), configuration.getJwtSecret(),
-                        configuration.getJwtIssuer(), configuration.getJwtSubject());
+                String jwtToken = JwtHelper.createJwtToken(
+                        configuration.getJwtAlgorithm(),
+                        configuration.getJwtSecret(),
+                        configuration.getJwtIssuer(),
+                        configuration.getJwtSubject());
                 callCreds = new JwtCallCredentials(jwtToken);
             }
 
             if (configuration.isSynchronous()) {
                 LOG.debug("Getting synchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel,
-                        callCreds, endpoint.getCamelContext());
+                grpcStub = GrpcUtils.constructGrpcBlockingStub(
+                        endpoint.getServicePackage(),
+                        endpoint.getServiceName(),
+                        channel,
+                        callCreds,
+                        endpoint.getCamelContext());
             } else {
                 LOG.debug("Getting asynchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcAsyncStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel,
-                        callCreds, endpoint.getCamelContext());
+                grpcStub = GrpcUtils.constructGrpcAsyncStub(
+                        endpoint.getServicePackage(),
+                        endpoint.getServiceName(),
+                        channel,
+                        callCreds,
+                        endpoint.getCamelContext());
             }
             forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
 
@@ -140,7 +152,10 @@ public class GrpcProducer extends DefaultAsyncProducer {
         NettyChannelBuilder channelBuilder;
 
         if (ObjectHelper.isNotEmpty(configuration.getHost()) && configuration.getPort() > 0) {
-            LOG.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
+            LOG.info(
+                    "Creating channel to the remote gRPC server {}:{}",
+                    configuration.getHost(),
+                    configuration.getPort());
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
         } else {
             throw new IllegalArgumentException("No connection properties (host or port) specified");
@@ -151,22 +166,23 @@ public class GrpcProducer extends DefaultAsyncProducer {
 
             SslContextBuilder sslContextBuilder = GrpcSslContexts.forClient()
                     .keyManager(
-                            ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                    configuration.getKeyCertChainResource()),
-                            ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                    configuration.getKeyResource()),
+                            ResourceHelper.resolveResourceAsInputStream(
+                                    endpoint.getCamelContext(), configuration.getKeyCertChainResource()),
+                            ResourceHelper.resolveResourceAsInputStream(
+                                    endpoint.getCamelContext(), configuration.getKeyResource()),
                             configuration.getKeyPassword());
 
             if (ObjectHelper.isNotEmpty(configuration.getTrustCertCollectionResource())) {
-                sslContextBuilder
-                        = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(endpoint.getCamelContext(),
-                                configuration.getTrustCertCollectionResource()));
+                sslContextBuilder = sslContextBuilder.trustManager(ResourceHelper.resolveResourceAsInputStream(
+                        endpoint.getCamelContext(), configuration.getTrustCertCollectionResource()));
             }
 
-            channelBuilder = channelBuilder.sslContext(GrpcSslContexts.configure(sslContextBuilder).build());
+            channelBuilder = channelBuilder.sslContext(
+                    GrpcSslContexts.configure(sslContextBuilder).build());
         }
 
-        channel = channelBuilder.negotiationType(configuration.getNegotiationType())
+        channel = channelBuilder
+                .negotiationType(configuration.getNegotiationType())
                 .flowControlWindow(configuration.getFlowControlWindow())
                 .userAgent(configuration.getUserAgent())
                 .maxInboundMessageSize(configuration.getMaxMessageSize())

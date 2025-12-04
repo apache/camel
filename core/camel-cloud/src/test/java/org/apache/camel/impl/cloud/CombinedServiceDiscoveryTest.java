@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -22,8 +25,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
 @SuppressWarnings("deprecation")
@@ -46,13 +47,16 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
 
     @Test
     public void testCombinedServiceDiscoveryConfiguration() throws Exception {
-        StaticServiceCallServiceDiscoveryConfiguration staticConf1 = new StaticServiceCallServiceDiscoveryConfiguration();
+        StaticServiceCallServiceDiscoveryConfiguration staticConf1 =
+                new StaticServiceCallServiceDiscoveryConfiguration();
         staticConf1.setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
 
-        StaticServiceCallServiceDiscoveryConfiguration staticConf2 = new StaticServiceCallServiceDiscoveryConfiguration();
+        StaticServiceCallServiceDiscoveryConfiguration staticConf2 =
+                new StaticServiceCallServiceDiscoveryConfiguration();
         staticConf2.setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        CombinedServiceCallServiceDiscoveryConfiguration multiConf = new CombinedServiceCallServiceDiscoveryConfiguration();
+        CombinedServiceCallServiceDiscoveryConfiguration multiConf =
+                new CombinedServiceCallServiceDiscoveryConfiguration();
         multiConf.setServiceDiscoveryConfigurations(Arrays.asList(staticConf1, staticConf2));
 
         CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
@@ -63,9 +67,14 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
 
     @Test
     public void testCombinedServiceDiscoveryConfigurationDsl() throws Exception {
-        CombinedServiceCallServiceDiscoveryConfiguration multiConf = new CombinedServiceCallServiceDiscoveryConfiguration();
-        multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
-        multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
+        CombinedServiceCallServiceDiscoveryConfiguration multiConf =
+                new CombinedServiceCallServiceDiscoveryConfiguration();
+        multiConf
+                .staticServiceDiscovery()
+                .setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
+        multiConf
+                .staticServiceDiscovery()
+                .setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
         CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
         assertEquals(2, discovery.getDelegates().size());
@@ -78,7 +87,8 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         System.setProperty("svc-list-1", "discovery1@localhost:1111,discovery1@localhost:1112");
         System.setProperty("svc-list-2", "discovery1@localhost:1113,discovery2@localhost:1114");
 
-        CombinedServiceCallServiceDiscoveryConfiguration multiConf = new CombinedServiceCallServiceDiscoveryConfiguration();
+        CombinedServiceCallServiceDiscoveryConfiguration multiConf =
+                new CombinedServiceCallServiceDiscoveryConfiguration();
         multiConf.staticServiceDiscovery().servers("{{svc-list-1}}");
         multiConf.staticServiceDiscovery().servers("{{svc-list-2}}");
 

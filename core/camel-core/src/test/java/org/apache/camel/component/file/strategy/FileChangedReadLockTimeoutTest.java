@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +26,9 @@ public class FileChangedReadLockTimeoutTest extends FileChangedReadLockTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockTimeout=2000"))
-                        .to(fileUri("out"),
-                                "mock:result");
+                from(fileUri(
+                                "in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockTimeout=2000"))
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 import java.util.HashMap;
@@ -154,7 +155,7 @@ public class ResequencerEngine<E> {
     private void evaluateConditions() {
         lock.lock();
         try {
-            for (var it = waitConditions.entrySet().iterator(); it.hasNext();) {
+            for (var it = waitConditions.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<CountDownLatch, Predicate<Sequence<?>>> e = it.next();
                 if (e.getValue().test(sequence)) {
                     e.getKey().countDown();
@@ -251,10 +252,9 @@ public class ResequencerEngine<E> {
 
             // validate the exchange shouldn't be 'rejected' (if applicable)
             if (rejectOld != null && rejectOld && beforeLastDelivered(element)) {
-                throw new MessageRejectedException(
-                        "rejecting message [" + element.getObject()
-                                                   + "], it should have been sent before the last delivered message ["
-                                                   + lastDelivered.getObject() + "]");
+                throw new MessageRejectedException("rejecting message [" + element.getObject()
+                        + "], it should have been sent before the last delivered message ["
+                        + lastDelivered.getObject() + "]");
             }
 
             // add element to sequence in proper order
@@ -386,5 +386,4 @@ public class ResequencerEngine<E> {
     private static <E> Sequence<Element<E>> createSequence(SequenceElementComparator<E> comparator) {
         return new Sequence<>(new ElementComparator<>(comparator));
     }
-
 }

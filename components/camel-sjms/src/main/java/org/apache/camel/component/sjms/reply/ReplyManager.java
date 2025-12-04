@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
 
 import java.util.concurrent.ExecutorService;
@@ -72,8 +73,12 @@ public interface ReplyManager extends SessionMessageListener {
      * @return                       the correlation id used
      */
     String registerReply(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout);
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long requestTimeout);
 
     /**
      * Updates the correlation id to the new correlation id.

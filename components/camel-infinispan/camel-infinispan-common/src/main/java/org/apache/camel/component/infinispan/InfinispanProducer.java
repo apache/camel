@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import java.util.Map;
@@ -221,7 +222,8 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     public void onGetOrDefault(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
         final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
-        final Object defaultValue = message.getHeader(InfinispanConstants.DEFAULT_VALUE, configuration::getDefaultValue);
+        final Object defaultValue =
+                message.getHeader(InfinispanConstants.DEFAULT_VALUE, configuration::getDefaultValue);
         final Object result = cache.getOrDefault(key, defaultValue);
 
         setResult(message, result);
@@ -338,8 +340,8 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
                     resultWithNewValue = cache.replaceAsync(key, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
                     setResult(message, resultWithNewValue);
                 } else {
-                    resultWithNewAndOldValue
-                            = cache.replaceAsync(key, oldValue, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
+                    resultWithNewAndOldValue =
+                            cache.replaceAsync(key, oldValue, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
                     setResult(message, resultWithNewAndOldValue);
                 }
             } else {
@@ -360,7 +362,6 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
                 setResult(message, resultWithNewAndOldValue);
             }
         }
-
     }
 
     @InvokeOnHeader("SIZE")
@@ -423,8 +424,8 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     }
 
     protected void setResult(Message message, Object result) {
-        String resultHeader
-                = message.getHeader(InfinispanConstants.RESULT_HEADER, configuration::getResultHeader, String.class);
+        String resultHeader =
+                message.getHeader(InfinispanConstants.RESULT_HEADER, configuration::getResultHeader, String.class);
         if (resultHeader != null) {
             message.setHeader(resultHeader, result);
         } else {

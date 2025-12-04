@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.Endpoint;
@@ -51,7 +52,8 @@ public class StompConsumer extends DefaultConsumer {
 
     void processExchange(Exchange exchange) {
         try {
-            exchange.getIn().getHeaders().entrySet().removeIf(e -> getEndpoint().getHeaderFilterStrategy()
+            exchange.getIn().getHeaders().entrySet().removeIf(e -> getEndpoint()
+                    .getHeaderFilterStrategy()
                     .applyFilterToExternalHeaders(e.getKey(), e.getValue(), exchange));
             getProcessor().process(exchange);
         } catch (Exception e) {

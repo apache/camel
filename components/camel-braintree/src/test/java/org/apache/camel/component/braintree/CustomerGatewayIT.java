@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -35,14 +44,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledIfSystemProperty(named = "braintreeAuthenticationType", matches = ".*")
 public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
@@ -91,10 +92,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
         HashMap<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.id", customerId);
         Result<Customer> updateResult = requestBodyAndHeaders(
-                "direct://UPDATE_IN_BODY",
-                new CustomerRequest().firstName("user-mod"),
-                headers,
-                Result.class);
+                "direct://UPDATE_IN_BODY", new CustomerRequest().firstName("user-mod"), headers, Result.class);
 
         assertNotNull(updateResult);
         assertTrue(updateResult.isSuccess());
@@ -109,9 +107,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
 
         // Check if customer has been deleted customer
         ResourceCollection<Customer> customers = requestBody(
-                "direct://SEARCH_IN_BODY",
-                new CustomerSearchRequest().id().is(customerId),
-                ResourceCollection.class);
+                "direct://SEARCH_IN_BODY", new CustomerSearchRequest().id().is(customerId), ResourceCollection.class);
 
         assertNotNull(customers);
         assertEquals(0, customers.getMaximumSize());
@@ -126,7 +122,8 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
 
         CustomerRequest customerRequest = new CustomerRequest().firstName(id);
 
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> requestBodyAndHeaders("direct://UPDATE_IN_BODY", customerRequest, headers));
 
         assertIsInstanceOf(NotFoundException.class, ex.getCause().getCause());
@@ -136,8 +133,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
     public void testSearchUnknownCustomer() {
         String uuid = "unknown-" + UUID.randomUUID().toString();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> requestBody("direct://FIND_IN_BODY", uuid));
+        Exception ex = assertThrows(CamelExecutionException.class, () -> requestBody("direct://FIND_IN_BODY", uuid));
 
         assertIsInstanceOf(NotFoundException.class, ex.getCause().getCause());
     }
@@ -182,16 +178,11 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct://CREATE_IN_BODY")
-                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
-                from("direct://DELETE_IN_BODY")
-                        .to("braintree://" + PATH_PREFIX + "/delete?inBody=id");
-                from("direct://FIND_IN_BODY")
-                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
-                from("direct://SEARCH_IN_BODY")
-                        .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
-                from("direct://UPDATE_IN_BODY")
-                        .to("braintree://" + PATH_PREFIX + "/update?inBody=request");
+                from("direct://CREATE_IN_BODY").to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                from("direct://DELETE_IN_BODY").to("braintree://" + PATH_PREFIX + "/delete?inBody=id");
+                from("direct://FIND_IN_BODY").to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                from("direct://SEARCH_IN_BODY").to("braintree://" + PATH_PREFIX + "/search?inBody=query");
+                from("direct://UPDATE_IN_BODY").to("braintree://" + PATH_PREFIX + "/update?inBody=request");
             }
         };
     }

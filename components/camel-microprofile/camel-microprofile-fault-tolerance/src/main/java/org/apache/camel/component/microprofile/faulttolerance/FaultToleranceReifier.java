@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.microprofile.faulttolerance;
 
 import java.util.HashMap;
@@ -48,13 +49,15 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
         // create the regular and fallback processors
         Processor processor = createChildProcessor(true);
         Processor fallback = null;
-        if (definition.getOnFallback() != null && !definition.getOnFallback().getOutputs().isEmpty()) {
+        if (definition.getOnFallback() != null
+                && !definition.getOnFallback().getOutputs().isEmpty()) {
             fallback = createOutputsProcessor(definition.getOnFallback().getOutputs());
         }
-        boolean fallbackViaNetwork
-                = definition.getOnFallback() != null && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
+        boolean fallbackViaNetwork = definition.getOnFallback() != null
+                && parseBoolean(definition.getOnFallback().getFallbackViaNetwork(), false);
         if (fallbackViaNetwork) {
-            throw new UnsupportedOperationException("camel-microprofile-fault-tolerance does not support onFallbackViaNetwork");
+            throw new UnsupportedOperationException(
+                    "camel-microprofile-fault-tolerance does not support onFallbackViaNetwork");
         }
         final FaultToleranceConfigurationCommon config = buildFaultToleranceConfiguration();
 
@@ -130,21 +133,30 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
-        loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
-                        .getFaultToleranceConfiguration(null),
-                () -> lookupByNameAndType(FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID,
-                        FaultToleranceConfigurationDefinition.class)),
+        loadProperties(
+                properties,
+                Suppliers.firstNotNull(
+                        () -> camelContext
+                                .getCamelContextExtension()
+                                .getContextPlugin(Model.class)
+                                .getFaultToleranceConfiguration(null),
+                        () -> lookupByNameAndType(
+                                FaultToleranceConstants.DEFAULT_FAULT_TOLERANCE_CONFIGURATION_ID,
+                                FaultToleranceConfigurationDefinition.class)),
                 configurer);
 
         // Extract properties from referenced configuration, the one configured
         // on camel context takes the precedence over those in the registry
         if (definition.getConfiguration() != null) {
             final String ref = parseString(definition.getConfiguration());
-            loadProperties(properties, Suppliers.firstNotNull(
-                    () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
-                            .getFaultToleranceConfiguration(ref),
-                    () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
+            loadProperties(
+                    properties,
+                    Suppliers.firstNotNull(
+                            () -> camelContext
+                                    .getCamelContextExtension()
+                                    .getContextPlugin(Model.class)
+                                    .getFaultToleranceConfiguration(ref),
+                            () -> mandatoryLookup(ref, FaultToleranceConfigurationDefinition.class)),
                     configurer);
         }
 
@@ -182,5 +194,4 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
             }
         });
     }
-
 }

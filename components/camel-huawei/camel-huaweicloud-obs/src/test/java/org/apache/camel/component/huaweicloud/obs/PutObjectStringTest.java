@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 
@@ -34,8 +37,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PutObjectStringTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PutObjectTest.class);
 
@@ -47,9 +48,8 @@ public class PutObjectStringTest extends CamelTestSupport {
     ObsClient mockClient = Mockito.mock(ObsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -60,11 +60,10 @@ public class PutObjectStringTest extends CamelTestSupport {
                         .setProperty(OBSProperties.OBJECT_NAME, constant("string_file.txt"))
                         .setProperty(OBSProperties.BUCKET_NAME, constant("reji-abc"))
                         .setProperty(OBSProperties.BUCKET_LOCATION, constant("cn-north-1"))
-                        .to("hwcloud-obs:putObject?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&obsClient=#obsClient")
+                        .to("hwcloud-obs:putObject?" + "serviceKeys=#serviceKeys"
+                                + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&obsClient=#obsClient")
                         .log("Put object successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:put_object_result");
@@ -76,12 +75,15 @@ public class PutObjectStringTest extends CamelTestSupport {
     public void putObjectStringTest() throws Exception {
 
         PutObjectResult putObjectResult = new PutObjectResult(
-                "reji-abc", "string_file.txt",
-                "eb733a00c0c9d336e65691a37ab54293", "version-xxx",
-                StorageClassEnum.STANDARD, "https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt");
+                "reji-abc",
+                "string_file.txt",
+                "eb733a00c0c9d336e65691a37ab54293",
+                "version-xxx",
+                StorageClassEnum.STANDARD,
+                "https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt");
 
-        Mockito.when(mockClient.putObject(Mockito.any(String.class),
-                Mockito.any(String.class), Mockito.any(InputStream.class)))
+        Mockito.when(mockClient.putObject(
+                        Mockito.any(String.class), Mockito.any(String.class), Mockito.any(InputStream.class)))
                 .thenReturn(putObjectResult);
 
         MockEndpoint mock = getMockEndpoint("mock:put_object_result");
@@ -91,12 +93,12 @@ public class PutObjectStringTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"bucketName\":\"reji-abc\",\"objectKey\":\"string_file.txt\"," +
-                     "\"etag\":\"eb733a00c0c9d336e65691a37ab54293\",\"versionId\":\"version-xxx\"," +
-                     "\"storageClass\":\"STANDARD\"," +
-                     "\"objectUrl\":\"https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt\"," +
-                     "\"statusCode\":0}",
+        assertEquals(
+                "{\"bucketName\":\"reji-abc\",\"objectKey\":\"string_file.txt\","
+                        + "\"etag\":\"eb733a00c0c9d336e65691a37ab54293\",\"versionId\":\"version-xxx\","
+                        + "\"storageClass\":\"STANDARD\","
+                        + "\"objectUrl\":\"https://reji-abc.obs.cn-north-1.myhuaweicloud.com/test_file.txt\","
+                        + "\"statusCode\":0}",
                 responseExchange.getIn().getBody());
-
     }
 }

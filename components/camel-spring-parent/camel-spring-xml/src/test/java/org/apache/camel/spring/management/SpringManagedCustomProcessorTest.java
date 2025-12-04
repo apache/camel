@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -30,9 +34,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Disabled("Flaky test")
 public class SpringManagedCustomProcessorTest extends SpringTestSupport {
 
@@ -43,7 +44,8 @@ public class SpringManagedCustomProcessorTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedCustomProcessorTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringManagedCustomProcessorTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {
@@ -93,5 +95,4 @@ public class SpringManagedCustomProcessorTest extends SpringTestSupport {
             exchange.getIn().setHeader("foo", getFoo());
         }
     }
-
 }

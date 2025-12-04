@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.mtom;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -25,10 +30,6 @@ import jakarta.xml.ws.Holder;
 import javax.imageio.ImageIO;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Hello Test Impl class
@@ -51,11 +52,9 @@ public class HelloImpl implements Hello {
         }
 
         photo.value = MtomTestHelper.RESP_PHOTO_DATA;
-
     }
 
     public void echoData(Holder<byte[]> data) {
         throw new UnsupportedOperationException();
     }
-
 }

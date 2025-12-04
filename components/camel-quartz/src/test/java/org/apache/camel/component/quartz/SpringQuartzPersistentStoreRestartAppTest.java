@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class SpringQuartzPersistentStoreRestartAppTest {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -34,8 +35,7 @@ public class SpringQuartzPersistentStoreRestartAppTest {
     @Test
     public void testQuartzPersistentStoreRestart() throws Exception {
         // load spring app
-        AbstractXmlApplicationContext app
-                = newAppContext("SpringQuartzPersistentStoreTest.xml");
+        AbstractXmlApplicationContext app = newAppContext("SpringQuartzPersistentStoreTest.xml");
 
         app.start();
 
@@ -84,5 +84,4 @@ public class SpringQuartzPersistentStoreRestartAppTest {
     private AbstractXmlApplicationContext newAppContext(String config) {
         return CamelSpringTestSupport.newAppContext(config, getClass());
     }
-
 }

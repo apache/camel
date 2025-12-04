@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import net.sf.saxon.Configuration;
@@ -61,7 +62,8 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("xquery:org/apache/camel/component/xquery/transformWithExtension.xquery?configuration=#saxonConf")
+                        .to(
+                                "xquery:org/apache/camel/component/xquery/transformWithExtension.xquery?configuration=#saxonConf")
                         .to("mock:result");
             }
         };
@@ -79,7 +81,7 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
 
         @Override
         public SequenceType[] getArgumentTypes() {
-            return new SequenceType[] { SequenceType.SINGLE_STRING };
+            return new SequenceType[] {SequenceType.SINGLE_STRING};
         }
 
         @Override
@@ -110,5 +112,4 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
             };
         }
     }
-
 }

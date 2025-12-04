@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.Processor;
@@ -32,5 +33,4 @@ public class CircuitBreakerReifier extends ProcessorReifier<CircuitBreakerDefini
         throw new IllegalStateException(
                 "Cannot find camel-resilience4j or camel-microprofile-fault-tolerance on the classpath.");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -38,8 +39,7 @@ public class RestContextRefDefinition {
     @XmlAttribute(required = true)
     private String ref;
 
-    public RestContextRefDefinition() {
-    }
+    public RestContextRefDefinition() {}
 
     public RestContextRefDefinition(String ref) {
         this.ref = ref;
@@ -64,5 +64,4 @@ public class RestContextRefDefinition {
     public List<RestDefinition> lookupRests(CamelContext camelContext) {
         return RestContextRefDefinitionHelper.lookupRests(camelContext, ref);
     }
-
 }

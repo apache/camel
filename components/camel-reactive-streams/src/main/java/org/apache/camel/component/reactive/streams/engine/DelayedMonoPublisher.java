@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.reactive.streams.engine;
 
 import java.util.LinkedList;
@@ -116,7 +117,6 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
                 if (runAgain) {
                     flushCycle();
                 }
-
             });
         }
     }

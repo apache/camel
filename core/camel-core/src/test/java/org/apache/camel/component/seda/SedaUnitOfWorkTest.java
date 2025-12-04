@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda but keeping the same UoW.
@@ -65,7 +66,8 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         assertEquals("onFailureA", sync);
         assertEquals("onFailureA", lastOne);
-        assertEquals("yes", kaboom, "Should have propagated the header inside the Synchronization.onFailure() callback");
+        assertEquals(
+                "yes", kaboom, "Should have propagated the header inside the Synchronization.onFailure() callback");
     }
 
     @Override
@@ -75,24 +77,30 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start").process(new MyUOWProcessor(SedaUnitOfWorkTest.this, "A")).to("seda:foo");
+                from("direct:start")
+                        .process(new MyUOWProcessor(SedaUnitOfWorkTest.this, "A"))
+                        .to("seda:foo");
 
-                from("seda:foo").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertNull(sync);
-                    }
-                }).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        lastOne = "processor";
-                    }
-                }).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        if ("yes".equals(exchange.getIn().getHeader("kaboom"))) {
-                            throw new IllegalStateException("kaboom done!");
-                        }
-                        lastOne = "processor2";
-                    }
-                }).to("mock:result");
+                from("seda:foo")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertNull(sync);
+                            }
+                        })
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                lastOne = "processor";
+                            }
+                        })
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                if ("yes".equals(exchange.getIn().getHeader("kaboom"))) {
+                                    throw new IllegalStateException("kaboom done!");
+                                }
+                                lastOne = "processor2";
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -124,5 +132,4 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
             });
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 import org.apache.camel.Endpoint;
@@ -37,5 +38,4 @@ public interface SpanDecorator {
     SpanContextPropagationExtractor getExtractor(Exchange exchange);
 
     SpanContextPropagationInjector getInjector(Exchange exchange);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.converter;
 
 import java.util.Map;
@@ -35,7 +36,7 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
         this.reader = reader;
         this.nsmap = nsmap;
-        //the original nsmap will be mutated if some of its declarations are redundantly present at the current reader
+        // the original nsmap will be mutated if some of its declarations are redundantly present at the current reader
         Set<String> prefixes = nsmap.keySet();
         for (int i = 0; i < reader.getNamespaceCount(); i++) {
             prefixes.remove(reader.getNamespacePrefix(i));
@@ -177,7 +178,8 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     public String getNamespaceURI(int index) {
         if (depth == 1) {
             return index < xprefixes.length
-                    ? getNamespaceURI(xprefixes[index]) : reader.getNamespaceURI(index - xprefixes.length);
+                    ? getNamespaceURI(xprefixes[index])
+                    : reader.getNamespaceURI(index - xprefixes.length);
         } else {
             return reader.getNamespaceURI(index);
         }
@@ -204,7 +206,8 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     }
 
     @Override
-    public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length) throws XMLStreamException {
+    public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length)
+            throws XMLStreamException {
         return reader.getTextCharacters(sourceStart, target, targetStart, length);
     }
 
@@ -287,5 +290,4 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     public String getPIData() {
         return reader.getPIData();
     }
-
 }

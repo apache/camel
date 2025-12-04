@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.apache.camel.util.ObjectHelper.asList;
+import static org.apache.camel.util.ObjectHelper.asString;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
@@ -62,9 +66,6 @@ import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.asList;
-import static org.apache.camel.util.ObjectHelper.asString;
-
 /**
  * Information about a method to be used for invocation.
  */
@@ -111,9 +112,14 @@ public class MethodInfo {
         }
     }
 
-    public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters,
-                      List<ParameterInfo> bodyParameters,
-                      boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
+    public MethodInfo(
+            CamelContext camelContext,
+            Class<?> type,
+            Method method,
+            List<ParameterInfo> parameters,
+            List<ParameterInfo> bodyParameters,
+            boolean hasCustomAnnotation,
+            boolean hasHandlerAnnotation) {
         this.camelContext = camelContext;
         this.type = type;
         this.method = method;
@@ -131,8 +137,8 @@ public class MethodInfo {
             pattern = aep;
         }
 
-        org.apache.camel.RoutingSlip routingSlipAnnotation
-                = (org.apache.camel.RoutingSlip) collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
+        org.apache.camel.RoutingSlip routingSlipAnnotation =
+                (org.apache.camel.RoutingSlip) collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null) {
             routingSlip = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRoutingSlip(camelContext, routingSlipAnnotation);
@@ -144,8 +150,8 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.DynamicRouter dynamicRouterAnnotation
-                = (org.apache.camel.DynamicRouter) collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation =
+                (org.apache.camel.DynamicRouter) collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null) {
             dynamicRouter = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createDynamicRouter(camelContext, dynamicRouterAnnotation);
@@ -157,8 +163,8 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.RecipientList recipientListAnnotation
-                = (org.apache.camel.RecipientList) collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
+        org.apache.camel.RecipientList recipientListAnnotation =
+                (org.apache.camel.RecipientList) collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null) {
             recipientList = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRecipientList(camelContext, recipientListAnnotation);
@@ -211,7 +217,8 @@ public class MethodInfo {
             Class<?> searchType = (Class<?>) it.next();
             Method[] methods = searchType.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods();
             for (Method method : methods) {
-                if (targetMethodName.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
+                if (targetMethodName.equals(method.getName())
+                        && Arrays.equals(paramTypes, method.getParameterTypes())) {
                     for (Annotation a : method.getAnnotations()) {
                         // favour existing annotation so only add if not exists
                         Class<?> at = a.annotationType();
@@ -303,8 +310,12 @@ public class MethodInfo {
 
                 // invoke pojo
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", method, pojo,
-                            asString(arguments), exchange);
+                    LOG.trace(
+                            ">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}",
+                            method,
+                            pojo,
+                            asString(arguments),
+                            exchange);
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
 
@@ -327,19 +338,18 @@ public class MethodInfo {
                     return routingSlipInvocation(callback, result);
                 }
 
-                //If it's Java 8 async result
+                // If it's Java 8 async result
                 if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
                     CompletionStage<?> completionStage = (CompletionStage<?>) result;
 
-                    completionStage
-                            .whenComplete((resultObject, e) -> {
-                                if (e != null) {
-                                    exchange.setException(e);
-                                } else if (resultObject != null) {
-                                    fillResult(exchange, resultObject);
-                                }
-                                callback.done(false);
-                            });
+                    completionStage.whenComplete((resultObject, e) -> {
+                        if (e != null) {
+                            exchange.setException(e);
+                        } else if (resultObject != null) {
+                            fillResult(exchange, resultObject);
+                        }
+                        callback.done(false);
+                    });
                     return false;
                 }
 
@@ -496,22 +506,32 @@ public class MethodInfo {
      */
     public boolean isCovariantWith(MethodInfo method) {
         return method.getMethod().getName().equals(this.getMethod().getName())
-                && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
-                        || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType()))
-                && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
+                && (method.getMethod()
+                                .getReturnType()
+                                .isAssignableFrom(this.getMethod().getReturnType())
+                        || this.getMethod()
+                                .getReturnType()
+                                .isAssignableFrom(method.getMethod().getReturnType()))
+                && Arrays.deepEquals(
+                        method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
     }
 
-    protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws InvocationTargetException {
+    protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange)
+            throws InvocationTargetException {
         try {
             return ObjectHelper.invokeMethodSafe(mth, pojo, arguments);
         } catch (IllegalAccessException e) {
             throw new RuntimeExchangeException(
-                    "IllegalAccessException occurred invoking method: " + mth + " using arguments: " + asList(arguments),
-                    exchange, e);
+                    "IllegalAccessException occurred invoking method: " + mth + " using arguments: "
+                            + asList(arguments),
+                    exchange,
+                    e);
         } catch (IllegalArgumentException e) {
             throw new RuntimeExchangeException(
-                    "IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + asList(arguments),
-                    exchange, e);
+                    "IllegalArgumentException occurred invoking method: " + mth + " using arguments: "
+                            + asList(arguments),
+                    exchange,
+                    e);
         }
     }
 
@@ -612,7 +632,8 @@ public class MethodInfo {
             Object[] answer = new Object[expressions != null ? expressions.length : 1];
             for (int i = 0; expressions == null || i < expressions.length; i++) {
                 if (body instanceof StreamCache) {
-                    // need to reset stream cache for each expression as you may access the message body in multiple parameters
+                    // need to reset stream cache for each expression as you may access the message body in multiple
+                    // parameters
                     ((StreamCache) body).reset();
                 }
 
@@ -655,7 +676,8 @@ public class MethodInfo {
         private Object evaluateVarargsParameterExpressions(Exchange exchange, Object body, Iterator<?> it) {
             // special for varargs
             if (body instanceof StreamCache) {
-                // need to reset stream cache for each expression as you may access the message body in multiple parameters
+                // need to reset stream cache for each expression as you may access the message body in multiple
+                // parameters
                 ((StreamCache) body).reset();
             }
             List<Object> answer = new ArrayList<>();
@@ -690,8 +712,7 @@ public class MethodInfo {
          * </ul>
          */
         private Object evaluateParameterValue(
-                Exchange exchange, int index, Object parameterValue, Class<?> parameterType,
-                boolean varargs) {
+                Exchange exchange, int index, Object parameterValue, Class<?> parameterType, boolean varargs) {
             Object answer = null;
 
             // convert the parameter value to a String
@@ -709,31 +730,36 @@ public class MethodInfo {
                 if (!valid && !varargs) {
                     // it may be a parameter type instead, and if so, then we should return null,
                     // as this method is only for evaluating parameter values
-                    Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp,
-                            parameterType);
+                    Boolean isClass = BeanHelper.isAssignableToExpectedType(
+                            exchange.getContext().getClassResolver(), exp, parameterType);
                     // the method will return a non-null value if exp is a class
                     if (isClass != null) {
                         return null;
                     }
                 }
 
-                // use simple language to evaluate the expression, as it may use the simple language to refer to message body, headers etc.
+                // use simple language to evaluate the expression, as it may use the simple language to refer to message
+                // body, headers etc.
                 Expression expression = null;
                 try {
                     expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
                     parameterValue = expression.evaluate(exchange, Object.class);
-                    // use "null" to indicate the expression returned a null value which is a valid response we need to honor
+                    // use "null" to indicate the expression returned a null value which is a valid response we need to
+                    // honor
                     if (parameterValue == null) {
                         parameterValue = "null";
                     }
                 } catch (Exception e) {
                     throw new ExpressionEvaluationException(
-                            expression, "Cannot create/evaluate simple expression: " + exp
-                                        + " to be bound to parameter at index: " + index + " on method: " + getMethod(),
-                            exchange, e);
+                            expression,
+                            "Cannot create/evaluate simple expression: " + exp + " to be bound to parameter at index: "
+                                    + index + " on method: " + getMethod(),
+                            exchange,
+                            e);
                 }
 
-                // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
+                // special for explicit null parameter values (as end users can explicit indicate they want null as
+                // parameter)
                 // see method javadoc for details
                 if ("null".equals(parameterValue)) {
                     return Void.TYPE;
@@ -747,8 +773,10 @@ public class MethodInfo {
                     if (!valid) {
                         valid = parameterValue instanceof String;
                         if (!valid) {
-                            // the parameter value was not already valid, but since the simple language have evaluated the expression
-                            // which may change the parameterValue, so we have to check it again to see if it is now valid
+                            // the parameter value was not already valid, but since the simple language have evaluated
+                            // the expression
+                            // which may change the parameterValue, so we have to check it again to see if it is now
+                            // valid
                             exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
                             // re-validate if the parameter was not valid the first time
                             valid = BeanHelper.isValidParameterValue(exp);
@@ -757,7 +785,8 @@ public class MethodInfo {
                 }
 
                 if (valid) {
-                    // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
+                    // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter
+                    // value
                     if (parameterValue instanceof String) {
                         parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
                     }
@@ -767,16 +796,23 @@ public class MethodInfo {
                     } else {
                         try {
                             // it is a valid parameter value, so convert it to the expected type of the parameter
-                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange,
-                                    parameterValue);
+                            answer = exchange.getContext()
+                                    .getTypeConverter()
+                                    .mandatoryConvertTo(parameterType, exchange, parameterValue);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer,
+                                LOG.trace(
+                                        "Parameter #{} evaluated as: {} type: {}",
+                                        index,
+                                        answer,
                                         org.apache.camel.util.ObjectHelper.type(answer));
                             }
                         } catch (Exception e) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}",
-                                        org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
+                                LOG.debug(
+                                        "Cannot convert from type: {} to type: {} for parameter #{}",
+                                        org.apache.camel.util.ObjectHelper.type(parameterValue),
+                                        parameterType,
+                                        index);
                             }
                             throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
                         }
@@ -809,13 +845,19 @@ public class MethodInfo {
                             answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
                         }
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer,
+                            LOG.trace(
+                                    "Parameter #{} evaluated as: {} type: {}",
+                                    index,
+                                    answer,
                                     org.apache.camel.util.ObjectHelper.type(answer));
                         }
                     } catch (NoTypeConversionAvailableException e) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}",
-                                    org.apache.camel.util.ObjectHelper.type(result), parameterType, index);
+                            LOG.debug(
+                                    "Cannot convert from type: {} to type: {} for parameter #{}",
+                                    org.apache.camel.util.ObjectHelper.type(result),
+                                    parameterType,
+                                    index);
                         }
                         throw new ParameterBindingException(e, method, index, parameterType, result);
                     }
@@ -831,6 +873,5 @@ public class MethodInfo {
         public String toString() {
             return "ParametersExpression: " + Arrays.asList(expressions);
         }
-
     }
 }

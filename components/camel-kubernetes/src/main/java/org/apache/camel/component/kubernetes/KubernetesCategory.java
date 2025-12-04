@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes;
 
 public final class KubernetesCategory {
@@ -44,7 +45,5 @@ public final class KubernetesCategory {
 
     public static final String BUILD_CONFIGS = "buildConfigs";
 
-    private KubernetesCategory() {
-
-    }
+    private KubernetesCategory() {}
 }

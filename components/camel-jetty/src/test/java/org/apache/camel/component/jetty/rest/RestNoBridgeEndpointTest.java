@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNoBridgeEndpointTest extends BaseJettyTest {
 
@@ -47,10 +48,11 @@ public class RestNoBridgeEndpointTest extends BaseJettyTest {
 
                 from("direct:foo").removeHeaders("CamelHttp*").to("http://localhost:" + getPort2());
 
-                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform()
+                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true")
+                        .to("mock:result")
+                        .transform()
                         .simple("Bye ${header.id}");
             }
         };
     }
-
 }

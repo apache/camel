@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.util.List;
@@ -32,7 +33,8 @@ public class DaprServiceInvocationHandler implements DaprOperationHandler {
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
     private final DaprEndpoint endpoint;
 
-    public DaprServiceInvocationHandler(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
+    public DaprServiceInvocationHandler(
+            DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
         this.endpoint = endpoint;
     }
@@ -45,7 +47,8 @@ public class DaprServiceInvocationHandler implements DaprOperationHandler {
         String method = configurationOptionsProxy.getMethodToInvoke(exchange);
 
         DaprClient client = endpoint.getClient();
-        final byte[] response = client.invokeMethod(service, method, payload, httpExtension, byte[].class).block();
+        final byte[] response = client.invokeMethod(service, method, payload, httpExtension, byte[].class)
+                .block();
 
         return DaprOperationResponse.create(response);
     }

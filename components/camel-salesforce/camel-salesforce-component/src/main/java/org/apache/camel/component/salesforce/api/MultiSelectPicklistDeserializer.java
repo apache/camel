@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api;
 
 import java.io.IOException;
@@ -47,7 +48,8 @@ public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> imp
         this.enumClass = null;
     }
 
-    public MultiSelectPicklistDeserializer(JsonParser jp, Class<? extends Enum<?>> enumClass) throws JsonMappingException {
+    public MultiSelectPicklistDeserializer(JsonParser jp, Class<? extends Enum<?>> enumClass)
+            throws JsonMappingException {
         super(enumClass);
         this.enumClass = enumClass;
         try {

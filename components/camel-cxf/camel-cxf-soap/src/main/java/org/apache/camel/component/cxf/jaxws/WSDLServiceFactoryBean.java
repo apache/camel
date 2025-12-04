@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
 
 import java.util.Map;
@@ -86,17 +87,17 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
             Map<String, ?> ports = CastUtils.cast(service.getPorts());
             if (ports.size() == 0) {
                 throw new IllegalArgumentException(
-                        "There is no port/endpoint in the service "
-                                                   + getServiceQName() + "of WSDL"
-                                                   + url);
+                        "There is no port/endpoint in the service " + getServiceQName() + "of WSDL" + url);
             }
             if (ports.size() > 1) {
                 throw new IllegalArgumentException(
                         "Port/endpoint name must be specified, There is more than one port in the service"
-                                                   + service.getQName()
-                                                   + " of the WSDL" + url);
+                                + service.getQName()
+                                + " of the WSDL" + url);
             }
-            QName endpointQName = new QName(service.getQName().getNamespaceURI(), ports.keySet().iterator().next());
+            QName endpointQName = new QName(
+                    service.getQName().getNamespaceURI(),
+                    ports.keySet().iterator().next());
             setEndpointName(endpointQName);
         }
         return definition;
@@ -130,5 +131,4 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
         // Camel specific invoker will be set
         return null;
     }
-
 }

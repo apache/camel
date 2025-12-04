@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Set;
@@ -439,5 +440,4 @@ public interface BacklogDebugger extends StatefulService {
      * Callback invoked after a breakpoint
      */
     void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
-
 }

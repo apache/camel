@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.djl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -38,8 +40,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CvImageClassificationLocalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CvImageClassificationLocalTest.class);
@@ -63,7 +63,9 @@ public class CvImageClassificationLocalTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(98);
         mock.await();
-        long count = mock.getExchanges().stream().filter(exchange -> exchange.getIn().getBody(Boolean.class)).count();
+        long count = mock.getExchanges().stream()
+                .filter(exchange -> exchange.getIn().getBody(Boolean.class))
+                .count();
         assertEquals(97, count);
     }
 
@@ -72,7 +74,8 @@ public class CvImageClassificationLocalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/resources/data/mnist?recursive=true&noop=true")
-                        .routeId("infer").autoStartup(false)
+                        .routeId("infer")
+                        .autoStartup(false)
                         .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator")
                         .log("${header.CamelFileName} = ${body}")
                         .process(exchange -> {
@@ -90,12 +93,14 @@ public class CvImageClassificationLocalTest extends CamelTestSupport {
     private void loadLocalModel() throws IOException, MalformedModelException {
         // create deep learning model
         Model model = Model.newInstance(MODEL_NAME);
-        model.setBlock(new Mlp(28 * 28, 10, new int[] { 128, 64 }));
+        model.setBlock(new Mlp(28 * 28, 10, new int[] {128, 64}));
         model.load(Paths.get(MODEL_DIR), MODEL_NAME);
         // create translator for pre-processing and postprocessing
         List<String> classes = IntStream.range(0, 10).mapToObj(String::valueOf).collect(Collectors.toList());
-        Translator<Image, Classifications> translator
-                = ImageClassificationTranslator.builder().addTransform(new ToTensor()).optSynset(classes).build();
+        Translator<Image, Classifications> translator = ImageClassificationTranslator.builder()
+                .addTransform(new ToTensor())
+                .optSynset(classes)
+                .build();
 
         // Bind model beans
         context.getRegistry().bind("MyModel", model);

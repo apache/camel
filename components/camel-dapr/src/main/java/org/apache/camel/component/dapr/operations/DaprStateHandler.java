@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.util.List;
@@ -102,7 +103,8 @@ public class DaprStateHandler implements DaprOperationHandler {
         stateRequest.setMetadata(metadata);
         stateRequest.setStateOptions(stateOptions);
 
-        State<byte[]> response = client.getState(stateRequest, TypeRef.get(byte[].class)).block();
+        State<byte[]> response =
+                client.getState(stateRequest, TypeRef.get(byte[].class)).block();
 
         return DaprOperationResponse.create(response);
     }
@@ -115,7 +117,8 @@ public class DaprStateHandler implements DaprOperationHandler {
         GetBulkStateRequest stateRequest = new GetBulkStateRequest(stateStore, keys);
         stateRequest.setMetadata(metadata);
 
-        List<State<byte[]>> response = client.getBulkState(stateRequest, TypeRef.get(byte[].class)).block();
+        List<State<byte[]>> response =
+                client.getBulkState(stateRequest, TypeRef.get(byte[].class)).block();
 
         return DaprOperationResponse.create(response);
     }
@@ -201,7 +204,8 @@ public class DaprStateHandler implements DaprOperationHandler {
             case executeTransaction:
                 List<TransactionalStateOperation<?>> transactions = configurationOptionsProxy.getTransactions(exchange);
                 if (ObjectHelper.isEmpty(transactions)) {
-                    throw new IllegalArgumentException("Transactions must not be empty for 'executeTransaction' operation");
+                    throw new IllegalArgumentException(
+                            "Transactions must not be empty for 'executeTransaction' operation");
                 }
                 break;
             default:

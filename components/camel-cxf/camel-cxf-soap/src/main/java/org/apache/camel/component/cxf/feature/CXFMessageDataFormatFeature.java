@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.feature;
 
 import java.util.ArrayList;
@@ -86,13 +87,18 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
             SAAJOutInterceptor out = new SAAJOutInterceptor();
             ep.getOutInterceptors().add(out);
             ep.getOutInterceptors().add(new CxfMessageSoapHeaderOutInterceptor());
-            ep.getOutInterceptors().add(new MessageModeOutInterceptor(out, ep.getBinding().getBindingInfo().getName()));
+            ep.getOutInterceptors()
+                    .add(new MessageModeOutInterceptor(
+                            out, ep.getBinding().getBindingInfo().getName()));
             fmt = SOAPMessage.class;
         } else {
             ep.getOutInterceptors()
-                    .add(new MessageModeOutInterceptor(Source.class, ep.getBinding().getBindingInfo().getName()));
+                    .add(new MessageModeOutInterceptor(
+                            Source.class, ep.getBinding().getBindingInfo().getName()));
         }
-        ep.getInInterceptors().add(new MessageModeInInterceptor(fmt, ep.getBinding().getBindingInfo().getName()));
+        ep.getInInterceptors()
+                .add(new MessageModeInInterceptor(
+                        fmt, ep.getBinding().getBindingInfo().getName()));
         ep.put(AbstractInDatabindingInterceptor.NO_VALIDATE_PARTS, Boolean.TRUE);
         // need to remove the wrapper class and holder interceptor
         removeInterceptors(ep.getInInterceptors(), REMOVING_IN_INTERCEPTORS);
@@ -147,5 +153,4 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
             }
         }
     }
-
 }

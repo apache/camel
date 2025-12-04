@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
 
 import java.util.*;
@@ -100,7 +101,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
      * Create a dynamic tool provider that returns all Camel route as LangChain4j tools. This uses LangChain4j's
      * ToolProvider API for dynamic tool registration.
      */
-    private ToolProvider createCamelToolProvider(Map<String, CamelToolSpecification> availableTools, Exchange exchange) {
+    private ToolProvider createCamelToolProvider(
+            Map<String, CamelToolSpecification> availableTools, Exchange exchange) {
         return (ToolProviderRequest toolProviderRequest) -> {
             // Build the tool provider result with all available Camel tools
             ToolProviderResult.Builder resultBuilder = ToolProviderResult.builder();
@@ -114,15 +116,18 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
                 // Create a functional tool executor for this specific Camel route
                 ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
-                    LOG.info("Executing Camel route tool: '{}' with arguments: {}", toolName, toolExecutionRequest.arguments());
+                    LOG.info(
+                            "Executing Camel route tool: '{}' with arguments: {}",
+                            toolName,
+                            toolExecutionRequest.arguments());
 
                     try {
                         // Parse JSON arguments if provided
                         String arguments = toolExecutionRequest.arguments();
                         if (arguments != null && !arguments.trim().isEmpty()) {
                             JsonNode jsonNode = objectMapper.readValue(arguments, JsonNode.class);
-                            jsonNode.fieldNames()
-                                    .forEachRemaining(name -> exchange.getMessage().setHeader(name, jsonNode.get(name)));
+                            jsonNode.fieldNames().forEachRemaining(name -> exchange.getMessage()
+                                    .setHeader(name, jsonNode.get(name)));
                         }
 
                         // Set the tool name as a header for route identification
@@ -168,7 +173,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                         camelToolSpec -> camelToolSpec.getToolSpecification().name(),
                         camelToolSpec -> camelToolSpec,
                         (existing, replacement) -> existing // Keep first if duplicate names
-                ));
+                        ));
 
         LOG.info("Discovered {} unique tools for tags: {}", toolsByName.size(), tags);
         return toolsByName;

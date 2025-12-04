@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -45,9 +46,16 @@ public class RecipientListParallelStreamingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").recipientList(header("foo")).parallelProcessing().to("mock:result");
+                from("direct:start")
+                        .recipientList(header("foo"))
+                        .parallelProcessing()
+                        .to("mock:result");
 
-                from("direct:streaming").recipientList(header("foo")).parallelProcessing().streaming().to("mock:result");
+                from("direct:streaming")
+                        .recipientList(header("foo"))
+                        .parallelProcessing()
+                        .streaming()
+                        .to("mock:result");
 
                 from("direct:a").delay(100).transform(constant("a"));
                 from("direct:b").delay(500).transform(constant("b"));

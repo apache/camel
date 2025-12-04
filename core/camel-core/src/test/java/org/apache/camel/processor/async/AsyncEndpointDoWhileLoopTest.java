@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,11 +41,17 @@ public class AsyncEndpointDoWhileLoopTest extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").loopDoWhile(body().isNotEqualTo("done")).to("async:bye:camel").to("mock:line")
+                from("direct:start")
+                        .loopDoWhile(body().isNotEqualTo("done"))
+                        .to("async:bye:camel")
+                        .to("mock:line")
                         .filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
-                        .setBody().constant("done").end().end().to("mock:result");
+                        .setBody()
+                        .constant("done")
+                        .end()
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

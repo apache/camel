@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainWithRestConfigTest {
     @Test
@@ -43,7 +44,8 @@ public class MainWithRestConfigTest {
             main.start();
 
             assertEquals(8989, main.getCamelContext().getRestConfiguration().getPort());
-            assertEquals("undertow", main.getCamelContext().getRestConfiguration().getComponent());
+            assertEquals(
+                    "undertow", main.getCamelContext().getRestConfiguration().getComponent());
         } finally {
             main.stop();
         }
@@ -60,8 +62,7 @@ public class MainWithRestConfigTest {
             main.configure().addRoutesBuilder(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    restConfiguration()
-                            .component("jetty");
+                    restConfiguration().component("jetty");
                 }
             });
             main.setOverrideProperties(properties);

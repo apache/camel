@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.concurrent.TimeUnit;
@@ -127,5 +128,4 @@ public class PeriodTaskSchedulerTest extends ContextTestSupport {
 
         Awaitility.waitAtMost(5, TimeUnit.SECONDS).until(() -> counter.get() == 1 && taskCounter.get() == 10);
     }
-
 }

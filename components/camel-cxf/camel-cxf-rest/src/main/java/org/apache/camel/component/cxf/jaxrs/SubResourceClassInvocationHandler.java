@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Constructor;
@@ -34,8 +35,8 @@ public class SubResourceClassInvocationHandler implements InvocationHandler {
             // create a instance to return
             if (returnType.isInterface()) {
                 // create a new proxy for it
-                result = Proxy.newProxyInstance(returnType.getClassLoader(), new Class[] { returnType },
-                        new SubResourceClassInvocationHandler());
+                result = Proxy.newProxyInstance(
+                        returnType.getClassLoader(), new Class[] {returnType}, new SubResourceClassInvocationHandler());
             } else {
                 // get the constructor and create a new instance
                 Constructor<?> c = ResourceUtils.findResourceConstructor(returnType, true);
@@ -44,5 +45,4 @@ public class SubResourceClassInvocationHandler implements InvocationHandler {
         }
         return result;
     }
-
 }

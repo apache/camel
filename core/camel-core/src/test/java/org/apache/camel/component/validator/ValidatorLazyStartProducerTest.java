@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileNotFoundException;
 
@@ -22,16 +25,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class ValidatorLazyStartProducerTest extends ContextTestSupport {
 
     @Test
     public void testLazyStartProducerFail() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:fail",
-                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>"),
+        Exception e = assertThrows(
+                Exception.class,
+                () -> template.sendBody(
+                        "direct:fail",
+                        "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>"),
                 "Should throw exception");
 
         assertIsInstanceOf(FileNotFoundException.class, e.getCause());
@@ -42,8 +46,8 @@ public class ValidatorLazyStartProducerTest extends ContextTestSupport {
     public void testLazyStartProducerOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("direct:ok",
-                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBody(
+                "direct:ok", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
 
         assertMockEndpointsSatisfied();
     }
@@ -53,10 +57,12 @@ public class ValidatorLazyStartProducerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:fail").to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true")
+                from("direct:fail")
+                        .to("validator:org/apache/camel/component/validator/unknown.xsd?lazyStartProducer=true")
                         .to("mock:result");
 
-                from("direct:ok").to("validator:org/apache/camel/component/validator/schema.xsd?lazyStartProducer=true")
+                from("direct:ok")
+                        .to("validator:org/apache/camel/component/validator/schema.xsd?lazyStartProducer=true")
                         .to("mock:result");
             }
         };

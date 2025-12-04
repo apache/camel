@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.issues;
+
+import static org.apache.camel.builder.Builder.constant;
 
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,8 +30,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
-
-import static org.apache.camel.builder.Builder.constant;
 
 public class AdviceWithOnExceptionTransactedTest extends CamelSpringTestSupport {
 
@@ -51,19 +52,17 @@ public class AdviceWithOnExceptionTransactedTest extends CamelSpringTestSupport 
             }
 
             @Override
-            public void commit(TransactionStatus status) throws TransactionException {
-            }
+            public void commit(TransactionStatus status) throws TransactionException {}
 
             @Override
-            public void rollback(TransactionStatus status) throws TransactionException {
-            }
+            public void rollback(TransactionStatus status) throws TransactionException {}
         });
     }
 
     @Test
     public void testAddFirstWithOnException() throws Exception {
-        AdviceWith.adviceWith(context, "advice-with-on-exception-transacted-test-route",
-                a -> a.weaveAddFirst().transform(constant("Bye World")));
+        AdviceWith.adviceWith(context, "advice-with-on-exception-transacted-test-route", a -> a.weaveAddFirst()
+                .transform(constant("Bye World")));
 
         context.start();
 

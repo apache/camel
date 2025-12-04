@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
 
 import java.io.Writer;
@@ -32,8 +33,13 @@ import org.apache.camel.spi.annotations.Dataformat;
  */
 @Dataformat("univocityFixed")
 public class UniVocityFixedDataFormat
-        extends
-        AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings, FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedDataFormat> {
+        extends AbstractUniVocityDataFormat<
+                FixedWidthFormat,
+                FixedWidthWriterSettings,
+                FixedWidthWriter,
+                FixedWidthParserSettings,
+                FixedWidthParser,
+                UniVocityFixedDataFormat> {
 
     private String fieldLengths;
     private Boolean skipTrailingCharsUntilNewline;
@@ -155,7 +161,8 @@ public class UniVocityFixedDataFormat
             fields.put(arr1[i], arr2[i]);
         }
         if (fields.size() != arr1.length) {
-            throw new IllegalArgumentException("The headers cannot have duplicates in order to use the fixed-width format.");
+            throw new IllegalArgumentException(
+                    "The headers cannot have duplicates in order to use the fixed-width format.");
         }
         return new FixedWidthFields(fields);
     }

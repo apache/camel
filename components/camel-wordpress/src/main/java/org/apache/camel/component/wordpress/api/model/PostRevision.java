@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
@@ -35,9 +36,7 @@ public class PostRevision extends Publishable implements Serializable {
 
     private String excerpt;
 
-    public PostRevision() {
-
-    }
+    public PostRevision() {}
 
     public String getGuid() {
         return guid;
@@ -83,5 +82,4 @@ public class PostRevision extends Publishable implements Serializable {
     public String toString() {
         return "PostRevision{ID=" + getId() + ", PostID=" + this.parent + ", " + getTitle() + "}";
     }
-
 }

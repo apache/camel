@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -23,15 +27,14 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class RecordStringConverterTest {
 
     @Test
     public void convertRecordToString() {
-        Record record = Record.builder().sequenceNumber("1")
-                .data(SdkBytes.fromByteBuffer(ByteBuffer.wrap("this is a String".getBytes(StandardCharsets.UTF_8)))).build();
+        Record record = Record.builder()
+                .sequenceNumber("1")
+                .data(SdkBytes.fromByteBuffer(ByteBuffer.wrap("this is a String".getBytes(StandardCharsets.UTF_8))))
+                .build();
 
         String result = RecordStringConverter.toString(record);
         assertThat(result, is("this is a String"));

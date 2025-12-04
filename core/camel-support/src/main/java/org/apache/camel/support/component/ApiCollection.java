@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.component;
 
 import java.util.Collections;
@@ -72,9 +73,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
     protected final void setApiHelpers(Map<E, ApiMethodHelper<? extends ApiMethod>> apiHelpers) {
         this.apiHelpers = Collections.unmodifiableMap(apiHelpers);
 
-        this.apiNames = apiHelpers.keySet()
-                .stream()
-                .map(ApiName::getName).collect(Collectors.toUnmodifiableSet());
+        this.apiNames = apiHelpers.keySet().stream().map(ApiName::getName).collect(Collectors.toUnmodifiableSet());
     }
 
     protected final void setApiMethods(Map<Class<? extends ApiMethod>, E> apiMethods) {

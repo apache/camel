@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
@@ -33,27 +34,31 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "transformer", description = "Get list of data type transformers", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "transformer",
+        description = "Get list of data type transformers",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListTransformer extends ProcessBaseCommand {
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
 
-        public PidNameAgeTotalCompletionCandidates() {
-        }
+        public PidNameAgeTotalCompletionCandidates() {}
 
         @Override
         public Iterator<String> iterator() {
             return List.of("pid", "name", "age", "total").iterator();
         }
-
     }
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
-                        description = "Sort by pid, name, age or total", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeTotalCompletionCandidates.class,
+            description = "Sort by pid, name, age or total",
+            defaultValue = "pid")
     String sort;
 
     public ListTransformer(CamelJBangMain main) {
@@ -65,33 +70,31 @@ public class ListTransformer extends ProcessBaseCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("transformers");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("transformers");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.dataTypeName = o.getString("name");
-                                row.dataTypeFrom = o.getString("from");
-                                row.dataTypeTo = o.getString("to");
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                rows.add(row);
-                            }
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                JsonObject context = (JsonObject) root.get("context");
+                JsonObject jo = (JsonObject) root.get("transformers");
+                if (context != null && jo != null) {
+                    JsonArray array = (JsonArray) jo.get("transformers");
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject o = (JsonObject) array.get(i);
+                        Row row = new Row();
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
                         }
+                        row.pid = Long.toString(ph.pid());
+                        row.dataTypeName = o.getString("name");
+                        row.dataTypeFrom = o.getString("from");
+                        row.dataTypeTo = o.getString("to");
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
+                        rows.add(row);
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -104,14 +107,36 @@ public class ListTransformer extends ProcessBaseCommand {
     }
 
     protected void printTable(List<Row> rows) {
-        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> r.name),
-                new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                new Column().header("DATA-TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.dataTypeName),
-                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).with(r -> r.dataTypeFrom),
-                new Column().header("TO").dataAlign(HorizontalAlign.LEFT).with(r -> r.dataTypeTo))));
+        printer()
+                .println(AsciiTable.getTable(
+                        AsciiTable.NO_BORDERS,
+                        rows,
+                        Arrays.asList(
+                                new Column()
+                                        .header("PID")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.pid),
+                                new Column()
+                                        .header("NAME")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column()
+                                        .header("AGE")
+                                        .headerAlign(HorizontalAlign.CENTER)
+                                        .with(r -> r.age),
+                                new Column()
+                                        .header("DATA-TYPE")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .with(r -> r.dataTypeName),
+                                new Column()
+                                        .header("FROM")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .with(r -> r.dataTypeFrom),
+                                new Column()
+                                        .header("TO")
+                                        .dataAlign(HorizontalAlign.LEFT)
+                                        .with(r -> r.dataTypeTo))));
     }
 
     protected int sortRow(Row o1, Row o2) {
@@ -142,5 +167,4 @@ public class ListTransformer extends ProcessBaseCommand {
         String dataTypeFrom;
         String dataTypeTo;
     }
-
 }

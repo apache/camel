@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WSS_PORT;
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WS_PORT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.WebSocketConnectOptions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WSS_PORT;
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WS_PORT;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class VertxWebsocketDefaultPortAssignmentTest extends VertxWebSocketTestSupport {
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "ws:", "wss:" })
+    @ValueSource(strings = {"", "ws:", "wss:"})
     void testDefaultPortAssignment(String wsScheme) {
         String uri = "vertx-websocket:" + wsScheme + "localhost/test";
         VertxWebsocketEndpoint endpoint = context.getEndpoint(uri, VertxWebsocketEndpoint.class);

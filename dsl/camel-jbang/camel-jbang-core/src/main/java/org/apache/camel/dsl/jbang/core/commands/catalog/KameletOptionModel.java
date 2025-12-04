@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.List;
@@ -27,5 +28,4 @@ public class KameletOptionModel {
     String defaultValue;
     String example;
     List<String> enumValues;
-
 }

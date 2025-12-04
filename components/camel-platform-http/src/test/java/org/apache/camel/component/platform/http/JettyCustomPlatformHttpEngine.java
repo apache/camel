@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import org.apache.camel.Processor;
@@ -29,9 +30,7 @@ public class JettyCustomPlatformHttpEngine implements PlatformHttpEngine {
     public PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
         if (port == 0) {
             JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
-                    platformHttpEndpoint.getCamelContext(),
-                    JettyServerTest.JETTY_SERVER_NAME,
-                    JettyServerTest.class);
+                    platformHttpEndpoint.getCamelContext(), JettyServerTest.JETTY_SERVER_NAME, JettyServerTest.class);
 
             port = jettyServerTest.getServerPort();
         }

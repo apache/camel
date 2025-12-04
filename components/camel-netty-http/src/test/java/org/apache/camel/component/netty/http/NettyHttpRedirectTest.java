@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty.http;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpRedirectTest extends BaseNettyTest {
 
@@ -34,7 +35,8 @@ public class NettyHttpRedirectTest extends BaseNettyTest {
             template.requestBody("netty-http:http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            NettyHttpOperationFailedException cause =
+                    assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(301, cause.getStatusCode());
             assertTrue(cause.isRedirectError());
             assertTrue(cause.hasRedirectLocation());
@@ -47,11 +49,10 @@ public class NettyHttpRedirectTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("netty-http:http://localhost:{{port}}/test")
-                        .process(exchange -> {
-                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
-                            exchange.getMessage().setHeader("location", "http://localhost:" + getPort() + "/newtest");
-                        });
+                from("netty-http:http://localhost:{{port}}/test").process(exchange -> {
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
+                    exchange.getMessage().setHeader("location", "http://localhost:" + getPort() + "/newtest");
+                });
             }
         };
     }

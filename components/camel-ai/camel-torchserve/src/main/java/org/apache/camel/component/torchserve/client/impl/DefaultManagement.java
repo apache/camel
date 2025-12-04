@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.client.impl;
 
 import java.util.List;
@@ -61,7 +62,8 @@ public class DefaultManagement implements Management {
     @Override
     public Response registerModel(String url, RegisterOptions options) throws ApiException {
         try {
-            return Response.from(api.registerModel(url,
+            return Response.from(api.registerModel(
+                    url,
                     options.getModelName(),
                     options.getHandler(),
                     options.getRuntime(),
@@ -81,7 +83,8 @@ public class DefaultManagement implements Management {
     @Override
     public Response setAutoScale(String modelName, ScaleWorkerOptions options) throws ApiException {
         try {
-            return Response.from(api.setAutoScale(modelName,
+            return Response.from(api.setAutoScale(
+                    modelName,
                     options.getMinWorker(),
                     options.getMaxWorker(),
                     options.getNumberGpu(),
@@ -93,9 +96,12 @@ public class DefaultManagement implements Management {
     }
 
     @Override
-    public Response setAutoScale(String modelName, String modelVersion, ScaleWorkerOptions options) throws ApiException {
+    public Response setAutoScale(String modelName, String modelVersion, ScaleWorkerOptions options)
+            throws ApiException {
         try {
-            return Response.from(api.versionSetAutoScale(modelName, modelVersion,
+            return Response.from(api.versionSetAutoScale(
+                    modelName,
+                    modelVersion,
                     options.getMinWorker(),
                     options.getMaxWorker(),
                     options.getNumberGpu(),
@@ -129,9 +135,7 @@ public class DefaultManagement implements Management {
     @Override
     public Response unregisterModel(String modelName, UnregisterOptions options) throws ApiException {
         try {
-            return Response.from(api.unregisterModel(modelName,
-                    options.getSynchronous(),
-                    options.getTimeout()));
+            return Response.from(api.unregisterModel(modelName, options.getSynchronous(), options.getTimeout()));
         } catch (org.apache.camel.component.torchserve.client.management.invoker.ApiException e) {
             throw new ApiException(e);
         }
@@ -141,9 +145,8 @@ public class DefaultManagement implements Management {
     public Response unregisterModel(String modelName, String modelVersion, UnregisterOptions options)
             throws ApiException {
         try {
-            return Response.from(api.versionUnregisterModel(modelName, modelVersion,
-                    options.getSynchronous(),
-                    options.getTimeout()));
+            return Response.from(api.versionUnregisterModel(
+                    modelName, modelVersion, options.getSynchronous(), options.getTimeout()));
         } catch (org.apache.camel.component.torchserve.client.management.invoker.ApiException e) {
             throw new ApiException(e);
         }

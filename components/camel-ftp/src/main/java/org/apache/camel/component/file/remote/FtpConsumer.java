@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import java.util.Arrays;
@@ -53,8 +54,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private transient String ftpConsumerToString;
 
-    public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations,
-                       GenericFileProcessStrategy processStrategy) {
+    public FtpConsumer(
+            RemoteFileEndpoint<FTPFile> endpoint,
+            Processor processor,
+            RemoteFileOperations<FTPFile> fileOperations,
+            GenericFileProcessStrategy processStrategy) {
         super(endpoint, processor, fileOperations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
@@ -81,7 +85,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 } catch (GenericFileOperationFailedException e) {
                     // log a WARN as we want to start the consumer.
                     LOG.warn(
-                            "Error auto creating directory: " + dir + " due " + e.getMessage() + ". This exception is ignored.",
+                            "Error auto creating directory: " + dir + " due " + e.getMessage()
+                                    + ". This exception is ignored.",
                             e);
                 }
             }
@@ -162,7 +167,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private boolean handleFtpEntries(
             Exchange dynamic,
-            String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
+            String absolutePath,
+            List<GenericFile<FTPFile>> fileList,
+            int depth,
+            FTPFile[] files,
+            FTPFile file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("FtpFile[name={}, dir={}, file={}]", file.getName(), file.isDirectory(), file.isFile());
         }
@@ -186,13 +195,17 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private boolean handleDirectory(
             Exchange dynamic,
-            String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
+            String absolutePath,
+            List<GenericFile<FTPFile>> fileList,
+            int depth,
+            FTPFile[] files,
+            FTPFile file) {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
             // calculate the absolute file path using util class
-            String absoluteFilePath
-                    = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
-            Supplier<GenericFile<FTPFile>> remote
-                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+            String absoluteFilePath = FtpUtils.absoluteFilePath(
+                    (FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
+            Supplier<GenericFile<FTPFile>> remote = Suppliers.memorize(() -> asRemoteFile(
+                    absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
             Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
             if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relativePath, true, files)) {
                 // recursive scan and add the sub files and folders
@@ -209,13 +222,17 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     private void handleFile(
             Exchange dynamic,
-            String absolutePath, List<GenericFile<FTPFile>> fileList, int depth, FTPFile[] files, FTPFile file) {
+            String absolutePath,
+            List<GenericFile<FTPFile>> fileList,
+            int depth,
+            FTPFile[] files,
+            FTPFile file) {
         if (depth >= endpoint.getMinDepth()) {
             // calculate the absolute file path using util class
-            String absoluteFilePath
-                    = FtpUtils.absoluteFilePath((FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
-            Supplier<GenericFile<FTPFile>> remote
-                    = Suppliers.memorize(() -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+            String absoluteFilePath = FtpUtils.absoluteFilePath(
+                    (FtpConfiguration) endpoint.getConfiguration(), absolutePath, file.getName());
+            Supplier<GenericFile<FTPFile>> remote = Suppliers.memorize(() -> asRemoteFile(
+                    absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
             Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
             if (isValidFile(dynamic, remote, file.getName(), absoluteFilePath, relativePath, false, files)) {
                 // matched file so add
@@ -270,7 +287,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
         } catch (GenericFileOperationFailedException e) {
             if (ignoreCannotRetrieveFile(null, null, e)) {
-                LOG.debug("Cannot list files in directory {} due directory does not exist or file permission error.", dir);
+                LOG.debug(
+                        "Cannot list files in directory {} due directory does not exist or file permission error.",
+                        dir);
             } else {
                 throw e;
             }
@@ -303,8 +322,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 }
             }
             if (cause instanceof GenericFileOperationFailedException) {
-                GenericFileOperationFailedException generic
-                        = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
+                GenericFileOperationFailedException generic =
+                        ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
                 // exchange is null and cause has the reason for failure to read
                 // directories
                 if (generic.getCode() == 550) {
@@ -316,7 +335,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
-    protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, FTPFile file) {
+    protected Supplier<String> getRelativeFilePath(
+            String endpointPath, String path, String absolutePath, FTPFile file) {
         return () -> {
             // the relative filename, skip the leading endpoint configured path
             String relativePath = StringHelper.after(absolutePath, endpointPath);
@@ -325,7 +345,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         };
     }
 
-    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, String absoluteFilePath, FTPFile file, String charset) {
+    private RemoteFile<FTPFile> asRemoteFile(
+            String absolutePath, String absoluteFilePath, FTPFile file, String charset) {
         RemoteFile<FTPFile> answer = new RemoteFile<>();
 
         answer.setCharset(charset);
@@ -359,7 +380,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     @Override
     protected void updateFileHeaders(GenericFile<FTPFile> file, Message message) {
         long length = file.getFile().getSize();
-        long modified = file.getFile().getTimestamp() != null ? file.getFile().getTimestamp().getTimeInMillis() : -1;
+        long modified = file.getFile().getTimestamp() != null
+                ? file.getFile().getTimestamp().getTimeInMillis()
+                : -1;
         file.setFileLength(length);
         file.setLastModified(modified);
         if (length >= 0) {
@@ -421,7 +444,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     @Override
     public String toString() {
         if (ftpConsumerToString == null) {
-            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ftpConsumerToString =
+                    "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ftpConsumerToString;
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi.annotations;
 
 import java.lang.annotation.Documented;
@@ -28,7 +29,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface ExternalSchemaElement {
 
     /**
@@ -64,5 +65,4 @@ public @interface ExternalSchemaElement {
      * this parameter allows to specify this root element name (in {@link #namespace2()}).
      */
     String documentElement2();
-
 }

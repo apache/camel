@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import java.util.Map;
@@ -57,10 +58,11 @@ public class TahuEdgeProducerRouteBuilder extends RouteBuilder {
 
         CamelContext context = getContext();
 
-        tahuEdgeNodeEndpoint = context.getEndpoint(TahuConstants.EDGE_NODE_SCHEME + ":G2/E2?deviceIds=D2&primaryHostId=IamHost",
-                TahuEdgeEndpoint.class);
+        tahuEdgeNodeEndpoint = context.getEndpoint(
+                TahuConstants.EDGE_NODE_SCHEME + ":G2/E2?deviceIds=D2&primaryHostId=IamHost", TahuEdgeEndpoint.class);
 
-        edgeNodeDescriptor = new EdgeNodeDescriptor(tahuEdgeNodeEndpoint.getGroupId(), tahuEdgeNodeEndpoint.getEdgeNode());
+        edgeNodeDescriptor =
+                new EdgeNodeDescriptor(tahuEdgeNodeEndpoint.getGroupId(), tahuEdgeNodeEndpoint.getEdgeNode());
 
         tahuDeviceEndpoint = context.getEndpoint(TahuConstants.EDGE_NODE_SCHEME + ":G2/E2/D2", TahuEdgeEndpoint.class);
 
@@ -71,7 +73,9 @@ public class TahuEdgeProducerRouteBuilder extends RouteBuilder {
         tahuEdgeNodeEndpoint.setMetricDataTypePayloadMap(dataSimulator.getNodeBirthPayload(edgeNodeDescriptor));
 
         SparkplugBPayloadMap deviceMetricPayloadMap = new SparkplugBPayloadMap.SparkplugBPayloadMapBuilder()
-                .addMetrics(dataSimulator.getDeviceBirthPayload(deviceDescriptor).getMetrics()).createPayload();
+                .addMetrics(
+                        dataSimulator.getDeviceBirthPayload(deviceDescriptor).getMetrics())
+                .createPayload();
         tahuDeviceEndpoint.setMetricDataTypePayloadMap(deviceMetricPayloadMap);
 
         from(NODE_DATA_URI)
@@ -83,13 +87,10 @@ public class TahuEdgeProducerRouteBuilder extends RouteBuilder {
                 .id(DEVICE_DATA_TEST_ROUTE_ID)
                 .process(populateDeviceDataPayload)
                 .to(tahuDeviceEndpoint);
-
     }
 
     private static final int[] COMPLEX_METRIC_DATA_TYPE_INTS = new int[] {
-            MetricDataType.DataSet.toIntValue(),
-            MetricDataType.Template.toIntValue(),
-            MetricDataType.Unknown.toIntValue()
+        MetricDataType.DataSet.toIntValue(), MetricDataType.Template.toIntValue(), MetricDataType.Unknown.toIntValue()
     };
 
     private void populateTestMessage(Exchange exch, SparkplugBPayload payload, EdgeNodeDescriptor edgeNodeDescriptor) {
@@ -119,5 +120,4 @@ public class TahuEdgeProducerRouteBuilder extends RouteBuilder {
     protected Processor populateDeviceDataPayload = (exch) -> {
         populateTestMessage(exch, dataSimulator.getDeviceDataPayload(deviceDescriptor), deviceDescriptor);
     };
-
 }

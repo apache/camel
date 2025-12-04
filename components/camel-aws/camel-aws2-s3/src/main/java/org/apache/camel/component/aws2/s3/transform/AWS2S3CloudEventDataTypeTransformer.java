@@ -31,8 +31,9 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts AWS S3 get object response to CloudEvent v1_0 data format. The data type sets Camel
  * specific CloudEvent headers with values extracted from AWS S3 get object response.
  */
-@DataTypeTransformer(name = "aws2-s3:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with AWS S3 get object response details")
+@DataTypeTransformer(
+        name = "aws2-s3:application-cloudevents",
+        description = "Adds CloudEvent headers to the Camel message with AWS S3 get object response details")
 public class AWS2S3CloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,12 +41,14 @@ public class AWS2S3CloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.aws.s3.getObject");
 
         if (message.getHeaders().containsKey(AWS2S3Constants.BUCKET_NAME)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "aws.s3.bucket." + message.getHeader(AWS2S3Constants.BUCKET_NAME, String.class));
         }
 

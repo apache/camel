@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.util.Date;
@@ -78,14 +79,13 @@ public class Gizmo {
 
     @Override
     public String toString() {
-        return "Gizmo{" +
-               "name='" + name + '\'' +
-               ", quantity=" + quantity +
-               ", colors=" + colors +
-               ", inStock=" + inStock +
-               ", manufacturer=" + manufacturer +
-               ", date=" + date +
-               '}';
+        return "Gizmo{" + "name='"
+                + name + '\'' + ", quantity="
+                + quantity + ", colors="
+                + colors + ", inStock="
+                + inStock + ", manufacturer="
+                + manufacturer + ", date="
+                + date + '}';
     }
 
     @Override
@@ -99,12 +99,12 @@ public class Gizmo {
         }
 
         Gizmo gizmo = (Gizmo) o;
-        return getQuantity() == gizmo.getQuantity() &&
-                isInStock() == gizmo.isInStock() &&
-                Objects.equals(getName(), gizmo.getName()) &&
-                Objects.equals(getColors(), gizmo.getColors()) &&
-                Objects.equals(date, gizmo.getDate()) &&
-                Objects.equals(getManufacturer(), gizmo.getManufacturer());
+        return getQuantity() == gizmo.getQuantity()
+                && isInStock() == gizmo.isInStock()
+                && Objects.equals(getName(), gizmo.getName())
+                && Objects.equals(getColors(), gizmo.getColors())
+                && Objects.equals(date, gizmo.getDate())
+                && Objects.equals(getManufacturer(), gizmo.getManufacturer());
     }
 
     @Override

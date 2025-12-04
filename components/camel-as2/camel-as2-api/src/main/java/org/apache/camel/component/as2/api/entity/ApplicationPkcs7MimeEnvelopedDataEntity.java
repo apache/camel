@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.ByteArrayOutputStream;
@@ -43,15 +44,19 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
 
     private byte[] encryptedData;
 
-    public ApplicationPkcs7MimeEnvelopedDataEntity(MimeEntity entity2Encrypt,
-                                                   CMSEnvelopedDataGenerator dataGenerator,
-                                                   OutputEncryptor encryptor,
-                                                   String encryptedContentTransferEncoding,
-                                                   boolean isMainBody)
-                                                                       throws HttpException {
-        super(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-data"),
-                new BasicNameValuePair("name", "smime.p7m")),
-              encryptedContentTransferEncoding);
+    public ApplicationPkcs7MimeEnvelopedDataEntity(
+            MimeEntity entity2Encrypt,
+            CMSEnvelopedDataGenerator dataGenerator,
+            OutputEncryptor encryptor,
+            String encryptedContentTransferEncoding,
+            boolean isMainBody)
+            throws HttpException {
+        super(
+                ContentType.create(
+                        "application/pkcs7-mime",
+                        new BasicNameValuePair("smime-type", "enveloped-data"),
+                        new BasicNameValuePair("name", "smime.p7m")),
+                encryptedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
         setMainBody(isMainBody);
         try {
@@ -61,11 +66,14 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
         }
     }
 
-    public ApplicationPkcs7MimeEnvelopedDataEntity(byte[] encryptedData, String encryptedContentTransferEncoding,
-                                                   boolean isMainBody) {
-        super(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-data"),
-                new BasicNameValuePair("name", "smime.p7m")),
-              encryptedContentTransferEncoding);
+    public ApplicationPkcs7MimeEnvelopedDataEntity(
+            byte[] encryptedData, String encryptedContentTransferEncoding, boolean isMainBody) {
+        super(
+                ContentType.create(
+                        "application/pkcs7-mime",
+                        new BasicNameValuePair("smime-type", "enveloped-data"),
+                        new BasicNameValuePair("name", "smime.p7m")),
+                encryptedContentTransferEncoding);
         this.encryptedData = ObjectHelper.notNull(encryptedData, "encryptedData");
 
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
@@ -78,19 +86,22 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
 
         // Write out mime part headers if this is not the main body of message.
         if (!isMainBody()) {
-            try (CanonicalOutputStream canonicalOutstream = new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
+            try (CanonicalOutputStream canonicalOutstream =
+                    new CanonicalOutputStream(ncos, StandardCharsets.US_ASCII.name())) {
 
                 for (Header header : getAllHeaders()) {
                     canonicalOutstream.writeln(header.toString());
                 }
                 canonicalOutstream.writeln(); // ensure empty line between
-                                             // headers and body; RFC2046 -
-                                             // 5.1.1
+                // headers and body; RFC2046 -
+                // 5.1.1
             }
         }
 
         // Write out signed data.
-        String transferEncoding = getContentTransferEncoding() == null ? null : getContentTransferEncoding().getValue();
+        String transferEncoding = getContentTransferEncoding() == null
+                ? null
+                : getContentTransferEncoding().getValue();
         try (OutputStream transferEncodedStream = EntityUtils.encode(ncos, transferEncoding)) {
 
             transferEncodedStream.write(encryptedData);

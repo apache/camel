@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stringtemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTemplateCustomDelimiterTest extends CamelTestSupport {
     private static final String DIRECT_BRACE = "direct:brace";
@@ -29,16 +30,22 @@ public class StringTemplateCustomDelimiterTest extends CamelTestSupport {
 
     @Test
     public void testWithBraceDelimiter() {
-        Exchange response = template.request(DIRECT_BRACE, exchange -> exchange.getIn().setBody("Yay !"));
+        Exchange response =
+                template.request(DIRECT_BRACE, exchange -> exchange.getIn().setBody("Yay !"));
 
-        assertEquals("With brace delimiter Yay !", response.getMessage().getBody().toString().trim());
+        assertEquals(
+                "With brace delimiter Yay !",
+                response.getMessage().getBody().toString().trim());
     }
 
     @Test
     public void testWithDollarDelimiter() {
-        Exchange response = template.request(DIRECT_DOLLAR, exchange -> exchange.getIn().setBody("Yay !"));
+        Exchange response =
+                template.request(DIRECT_DOLLAR, exchange -> exchange.getIn().setBody("Yay !"));
 
-        assertEquals("With identical dollar delimiter Yay !", response.getMessage().getBody().toString().trim());
+        assertEquals(
+                "With identical dollar delimiter Yay !",
+                response.getMessage().getBody().toString().trim());
     }
 
     @Override
@@ -46,10 +53,12 @@ public class StringTemplateCustomDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(DIRECT_BRACE).to(
-                        "string-template:org/apache/camel/component/stringtemplate/custom-delimiter-brace.tm?delimiterStart={&delimiterStop=}");
-                from(DIRECT_DOLLAR).to(
-                        "string-template:org/apache/camel/component/stringtemplate/custom-delimiter-dollar.tm?delimiterStart=$&delimiterStop=$");
+                from(DIRECT_BRACE)
+                        .to(
+                                "string-template:org/apache/camel/component/stringtemplate/custom-delimiter-brace.tm?delimiterStart={&delimiterStop=}");
+                from(DIRECT_DOLLAR)
+                        .to(
+                                "string-template:org/apache/camel/component/stringtemplate/custom-delimiter-dollar.tm?delimiterStart=$&delimiterStop=$");
             }
         };
     }

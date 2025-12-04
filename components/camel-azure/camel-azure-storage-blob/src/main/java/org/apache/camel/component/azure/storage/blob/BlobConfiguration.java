@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.time.Duration;
@@ -36,81 +37,120 @@ public class BlobConfiguration implements Cloneable {
 
     @UriPath
     private String accountName;
+
     @UriPath
     private String containerName;
+
     @UriParam
     @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
+
     @UriParam
     private String sasToken;
+
     @UriParam
     @Metadata(autowired = true)
     private BlobServiceClient serviceClient;
+
     @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam(label = "producer",
-              enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
-                      + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
-                      + "clearPageBlob,getPageBlobRanges",
-              defaultValue = "listBlobContainers")
+
+    @UriParam(
+            label = "producer",
+            enums =
+                    "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
+                            + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
+                            + "clearPageBlob,getPageBlobRanges",
+            defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
+
     @UriParam(label = "common")
     private String blobName;
+
     @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
     private BlobType blobType = BlobType.blockblob;
+
     @UriParam(label = "common")
     private String fileDir;
+
     @UriParam(label = "common", defaultValue = "0")
     private long blobOffset;
+
     @UriParam(label = "common")
     private Long dataCount;
+
     @UriParam(label = "common")
     private Duration timeout;
+
     @UriParam(label = "common")
     private String prefix;
+
     @UriParam(label = "common")
     private Integer maxResultsPerPage;
+
     @UriParam(label = "common", defaultValue = "0")
     private int maxRetryRequests;
+
     @UriParam(defaultValue = "true")
     private boolean closeStreamAfterRead = true;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean closeStreamAfterWrite = true;
+
     @UriParam(label = "producer")
     private Long downloadLinkExpiration;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean commitBlockListLater = true;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean createAppendBlob = true;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean createPageBlob = true;
+
     @UriParam(label = "producer", defaultValue = "0")
     private Long blobSequenceNumber;
+
     @UriParam(label = "producer", defaultValue = "512")
     private Long pageBlobSize = BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
+
     @UriParam(label = "producer", defaultValue = "COMMITTED")
     private BlockListType blockListType = BlockListType.COMMITTED;
+
     @UriParam(label = "producer")
     private OffsetDateTime changeFeedStartTime;
+
     @UriParam(label = "producer")
     private OffsetDateTime changeFeedEndTime;
+
     @UriParam(label = "producer")
     private Context changeFeedContext;
+
     @UriParam(label = "common")
     private String regex;
+
     @UriParam(label = "security", secret = true)
     private String sourceBlobAccessKey;
-    @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
-              defaultValue = "AZURE_IDENTITY")
+
+    @UriParam(
+            label = "common",
+            enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
+            defaultValue = "AZURE_IDENTITY")
     private CredentialType credentialType;
+
     @UriParam(label = "common")
     private boolean leaseBlob;
+
     @UriParam(label = "common", defaultValue = "60")
     private Integer leaseDurationInSeconds = 60;
+
     @UriParam(label = "security", secret = true)
     private String azureClientId;
+
     @UriParam(label = "security", secret = true)
     private String azureClientSecret;
+
     @UriParam(label = "security")
     private String azureTenantId;
 

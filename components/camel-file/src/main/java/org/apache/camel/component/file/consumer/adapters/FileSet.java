@@ -26,9 +26,7 @@ import org.apache.camel.resume.Offset;
 public class FileSet implements Offset<File> {
     private final List<File> files = new ArrayList<>();
 
-    public FileSet() {
-
-    }
+    public FileSet() {}
 
     public FileSet(File offset) {
         files.add(offset);

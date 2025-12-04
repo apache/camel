@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.nodes;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NODES;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,14 +28,16 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_NODES;
-
 /**
  * Perform operations on Kubernetes Nodes and get notified on Node changes.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = SCHEME_NODES, title = "Kubernetes Nodes",
-             syntax = "kubernetes-nodes:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "2.17.0",
+        scheme = SCHEME_NODES,
+        title = "Kubernetes Nodes",
+        syntax = "kubernetes-nodes:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNodesEndpoint(String uri, KubernetesNodesComponent component, KubernetesConfiguration config) {
@@ -49,7 +54,5 @@ public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
         Consumer consumer = new KubernetesNodesConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-
     }
-
 }

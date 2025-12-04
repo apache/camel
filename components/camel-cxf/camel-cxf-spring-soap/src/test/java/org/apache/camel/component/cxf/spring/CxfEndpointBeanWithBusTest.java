@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -22,10 +27,6 @@ import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for testing CXF bus injection.
@@ -36,7 +37,7 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[] { "org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml" };
+        return new String[] {"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"};
     }
 
     @Test
@@ -53,18 +54,20 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
                 return;
             }
         }
-        fail("Could not find the LoggingInInterceptor on the bus. " + endpoint.getBus().getInInterceptors());
+        fail("Could not find the LoggingInInterceptor on the bus. "
+                + endpoint.getBus().getInInterceptors());
     }
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
-        assertEquals("http://localhost:" + port1
-                     + "/CxfEndpointBeanWithBusTest/router/",
-                routerEndpoint.getAddress(), "Got the wrong endpoint address");
-        assertEquals("org.apache.camel.component.cxf.HelloService",
-                routerEndpoint.getServiceClass().getName(), "Got the wrong endpont service class");
-
+        assertEquals(
+                "http://localhost:" + port1 + "/CxfEndpointBeanWithBusTest/router/",
+                routerEndpoint.getAddress(),
+                "Got the wrong endpoint address");
+        assertEquals(
+                "org.apache.camel.component.cxf.HelloService",
+                routerEndpoint.getServiceClass().getName(),
+                "Got the wrong endpont service class");
     }
-
 }

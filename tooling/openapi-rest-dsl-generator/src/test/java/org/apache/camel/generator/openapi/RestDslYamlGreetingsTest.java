@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -28,15 +31,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class RestDslYamlGreetingsTest {
 
     static OpenAPI document;
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/greetings-spec.yaml");
+        document =
+                new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/greetings-spec.yaml");
     }
 
     @Test
@@ -44,10 +46,11 @@ public class RestDslYamlGreetingsTest {
         final CamelContext context = new DefaultCamelContext();
 
         final String yaml = RestDslGenerator.toYaml(document).generate(context);
-        final URI file = RestDslXmlGeneratorV3Test.class.getResource("/GreetingsYaml.txt").toURI();
+        final URI file = RestDslXmlGeneratorV3Test.class
+                .getResource("/GreetingsYaml.txt")
+                .toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(yaml).isEqualTo(expectedContent);
     }
-
 }

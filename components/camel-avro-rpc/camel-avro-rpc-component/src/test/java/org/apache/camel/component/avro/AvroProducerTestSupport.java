@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.TestNameExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AvroProducerTestSupport extends AvroTestSupport {
 
@@ -66,7 +67,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     public void testInOnly() {
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         template.sendBodyAndHeader("direct:in", request, AvroConstants.AVRO_MESSAGE_NAME, "put");
         assertEquals(value, keyValue.getStore().get(key));
     }
@@ -77,7 +78,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
         mock.expectedMessageCount(1);
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         template.sendBody("direct:in-message-name", request);
         assertEquals(value, keyValue.getStore().get(key));
         mock.assertIsSatisfied(5000);
@@ -86,7 +87,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     @Test
     public void testInOnlyReflection() {
         String name = "Chuck";
-        Object[] request = { name };
+        Object[] request = {name};
         template.sendBody("direct:in-reflection", request);
         assertEquals(name, testReflection.getName());
     }
@@ -99,7 +100,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
         mockErrorChannel.expectedMessageCount(1);
         Key key = Key.newBuilder().setKey("1").build();
         Value value = Value.newBuilder().setValue("test value").build();
-        Object[] request = { key, value };
+        Object[] request = {key, value};
         template.sendBodyAndHeader("direct:in-message-name", request, AvroConstants.AVRO_MESSAGE_NAME, "/get");
         mockErrorChannel.assertIsSatisfied(5000);
         mockInMessageEnd.assertIsSatisfied();
@@ -136,7 +137,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     @Test
     public void testInOutReflection() throws InterruptedException {
         int age = 100;
-        Object[] request = { age };
+        Object[] request = {age};
 
         MockEndpoint mock = getMockEndpoint("mock:result-inout-reflection");
         mock.expectedMessageCount(1);
@@ -152,5 +153,4 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
 
         return ProducerRouteType.specific;
     }
-
 }

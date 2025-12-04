@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 /**
@@ -25,5 +26,4 @@ package org.apache.camel.spi;
  * @param level    indent level of the EIP node
  * @param code     EIP code such as label or short name that is human-readable or pseudocode
  */
-public record ModelDumpLine(String location, String type, String id, int level, String code) {
-}
+public record ModelDumpLine(String location, String type, String id, int level, String code) {}

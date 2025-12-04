@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.io.ByteArrayInputStream;
@@ -52,19 +53,19 @@ public class PushTopicHelper {
         this.preApi29 = Double.valueOf(config.getApiVersion()) < 29.0;
 
         // validate notify fields right away
-        if (preApi29 && (config.getNotifyForOperationCreate() != null || config.getNotifyForOperationDelete() != null
-                || config.getNotifyForOperationUndelete() != null
-                || config.getNotifyForOperationUpdate() != null)) {
-            throw new IllegalArgumentException(
-                    "NotifyForOperationCreate, NotifyForOperationDelete"
-                                               + ", NotifyForOperationUndelete, and NotifyForOperationUpdate"
-                                               + " are only supported since API version 29.0"
-                                               + ", instead use NotifyForOperations");
+        if (preApi29
+                && (config.getNotifyForOperationCreate() != null
+                        || config.getNotifyForOperationDelete() != null
+                        || config.getNotifyForOperationUndelete() != null
+                        || config.getNotifyForOperationUpdate() != null)) {
+            throw new IllegalArgumentException("NotifyForOperationCreate, NotifyForOperationDelete"
+                    + ", NotifyForOperationUndelete, and NotifyForOperationUpdate"
+                    + " are only supported since API version 29.0"
+                    + ", instead use NotifyForOperations");
         } else if (!preApi29 && config.getNotifyForOperations() != null) {
-            throw new IllegalArgumentException(
-                    "NotifyForOperations is readonly since API version 29.0"
-                                               + ", instead use NotifyForOperationCreate, NotifyForOperationDelete"
-                                               + ", NotifyForOperationUndelete, and NotifyForOperationUpdate");
+            throw new IllegalArgumentException("NotifyForOperations is readonly since API version 29.0"
+                    + ", instead use NotifyForOperationCreate, NotifyForOperationDelete"
+                    + ", NotifyForOperationUndelete, and NotifyForOperationUpdate");
         }
     }
 
@@ -75,12 +76,14 @@ public class PushTopicHelper {
         // lookup Topic first
         try {
             // use SOQL to lookup Topic, since Name is not an external ID!!!
-            restClient
-                    .query("SELECT Id, Name, Query, ApiVersion, IsActive, "
-                           + "NotifyForFields, NotifyForOperations, NotifyForOperationCreate, "
-                           + "NotifyForOperationDelete, NotifyForOperationUndelete, " + "NotifyForOperationUpdate, Description "
-                           + "FROM PushTopic WHERE Name = '" + topicName + "'",
-                            Collections.emptyMap(), callback);
+            restClient.query(
+                    "SELECT Id, Name, Query, ApiVersion, IsActive, "
+                            + "NotifyForFields, NotifyForOperations, NotifyForOperationCreate, "
+                            + "NotifyForOperationDelete, NotifyForOperationUndelete, "
+                            + "NotifyForOperationUpdate, Description "
+                            + "FROM PushTopic WHERE Name = '" + topicName + "'",
+                    Collections.emptyMap(),
+                    callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -89,7 +92,8 @@ public class PushTopicHelper {
             if (callbackException != null) {
                 throw callbackException;
             }
-            QueryRecordsPushTopic records = OBJECT_MAPPER.readValue(callback.getResponse(), QueryRecordsPushTopic.class);
+            QueryRecordsPushTopic records =
+                    OBJECT_MAPPER.readValue(callback.getResponse(), QueryRecordsPushTopic.class);
             if (records.getTotalSize() == 1) {
 
                 PushTopic topic = records.getRecords().get(0);
@@ -98,15 +102,17 @@ public class PushTopicHelper {
                 // check if we need to update topic
                 final boolean notifyOperationsChanged;
                 if (preApi29) {
-                    notifyOperationsChanged = notEquals(config.getNotifyForOperations(), topic.getNotifyForOperations());
+                    notifyOperationsChanged =
+                            notEquals(config.getNotifyForOperations(), topic.getNotifyForOperations());
                 } else {
-                    notifyOperationsChanged
-                            = notEquals(config.getNotifyForOperationCreate(), topic.getNotifyForOperationCreate())
-                                    || notEquals(config.getNotifyForOperationDelete(), topic.getNotifyForOperationDelete())
-                                    || notEquals(config.getNotifyForOperationUndelete(), topic.getNotifyForOperationUndelete())
-                                    || notEquals(config.getNotifyForOperationUpdate(), topic.getNotifyForOperationUpdate());
+                    notifyOperationsChanged = notEquals(
+                                    config.getNotifyForOperationCreate(), topic.getNotifyForOperationCreate())
+                            || notEquals(config.getNotifyForOperationDelete(), topic.getNotifyForOperationDelete())
+                            || notEquals(config.getNotifyForOperationUndelete(), topic.getNotifyForOperationUndelete())
+                            || notEquals(config.getNotifyForOperationUpdate(), topic.getNotifyForOperationUpdate());
                 }
-                if (!query.equals(topic.getQuery()) || notEquals(config.getNotifyForFields(), topic.getNotifyForFields())
+                if (!query.equals(topic.getQuery())
+                        || notEquals(config.getNotifyForFields(), topic.getNotifyForFields())
                         || notifyOperationsChanged) {
 
                     if (!config.isUpdateTopic()) {
@@ -162,8 +168,11 @@ public class PushTopicHelper {
         LOG.info("Creating Topic {}: {}", topicName, topic);
         final SyncResponseCallback callback = new SyncResponseCallback();
         try {
-            restClient.createSObject(PUSH_TOPIC_OBJECT_NAME, new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
-                    Collections.emptyMap(), callback);
+            restClient.createSObject(
+                    PUSH_TOPIC_OBJECT_NAME,
+                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
+                    Collections.emptyMap(),
+                    callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -175,15 +184,17 @@ public class PushTopicHelper {
 
             CreateSObjectResult result = OBJECT_MAPPER.readValue(callback.getResponse(), CreateSObjectResult.class);
             if (!result.getSuccess()) {
-                final SalesforceException salesforceException
-                        = new SalesforceException(result.getErrors(), HttpStatus.BAD_REQUEST_400);
+                final SalesforceException salesforceException =
+                        new SalesforceException(result.getErrors(), HttpStatus.BAD_REQUEST_400);
                 throw new CamelException(
-                        String.format("Error creating Topic %s: %s", topicName, result.getErrors()), salesforceException);
+                        String.format("Error creating Topic %s: %s", topicName, result.getErrors()),
+                        salesforceException);
             }
         } catch (SalesforceException e) {
             throw new CamelException(String.format("Error creating Topic %s: %s", topicName, e.getMessage()), e);
         } catch (IOException e) {
-            throw new CamelException(String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()), e);
+            throw new CamelException(
+                    String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CamelException(String.format("Interrupted while creating Topic %s", topicName), e);
@@ -217,8 +228,12 @@ public class PushTopicHelper {
                 topic.setNotifyForOperationUpdate(config.getNotifyForOperationUpdate());
             }
 
-            restClient.updateSObject("PushTopic", topicId, new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
-                    Collections.emptyMap(), callback);
+            restClient.updateSObject(
+                    "PushTopic",
+                    topicId,
+                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
+                    Collections.emptyMap(),
+                    callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -252,5 +267,4 @@ public class PushTopicHelper {
     private static <T> boolean notEquals(T o1, T o2) {
         return o1 != null && !o1.equals(o2);
     }
-
 }

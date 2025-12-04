@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
 
 import java.util.HashMap;
@@ -50,9 +51,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     public void testPollingConsumerWithLock() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:locked");
-        mock.expectedBodiesReceived(
-                "orders: 1",
-                "orders: 2");
+        mock.expectedBodiesReceived("orders: 1", "orders: 2");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Donald%");
@@ -98,7 +97,8 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                 };
 
                 onException(Exception.class)
-                        .setBody().simple("${exception}")
+                        .setBody()
+                        .simple("${exception}")
                         .to("mock:error")
                         .handled(true);
 
@@ -108,11 +108,13 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                         .maximumRedeliveries(2)
                         .end()
                         .pollEnrich()
-                        .simple("jpa://" + Customer.class.getName()
-                                + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
+                        .simple(
+                                "jpa://" + Customer.class.getName()
+                                        + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
                         .aggregationStrategy(enrichStrategy)
                         .to("jpa://" + Customer.class.getName())
-                        .setBody().simple("orders: ${body.orderCount}")
+                        .setBody()
+                        .simple("orders: ${body.orderCount}")
                         .to("mock:locked");
 
                 from("direct:not-locked")
@@ -121,7 +123,8 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                                 + "?query=select c from Customer c where c.name like '${header.name}'")
                         .aggregationStrategy(enrichStrategy)
                         .to("jpa://" + Customer.class.getName())
-                        .setBody().simple("orders: ${body.orderCount}")
+                        .setBody()
+                        .simple("orders: ${body.orderCount}")
                         .to("mock:not-locked");
             }
         };

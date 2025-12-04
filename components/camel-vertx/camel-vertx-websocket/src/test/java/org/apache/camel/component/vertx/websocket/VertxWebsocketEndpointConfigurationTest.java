@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 
@@ -29,13 +37,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestSupport {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable();
@@ -48,18 +49,18 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
 
     @Test
     public void testHttpClientOptions() {
-        VertxWebsocketEndpoint endpoint = context
-                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/client?clientOptions=#clientOptions",
-                        VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint = context.getEndpoint(
+                "vertx-websocket:localhost:" + PORT + "/options/client?clientOptions=#clientOptions",
+                VertxWebsocketEndpoint.class);
 
         assertSame(clientOptions, endpoint.getConfiguration().getClientOptions());
     }
 
     @Test
     public void testHttpServerOptions() {
-        VertxWebsocketEndpoint endpoint = context
-                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/server?serverOptions=#serverOptions",
-                        VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint = context.getEndpoint(
+                "vertx-websocket:localhost:" + PORT + "/options/server?serverOptions=#serverOptions",
+                VertxWebsocketEndpoint.class);
 
         assertSame(serverOptions, endpoint.getConfiguration().getServerOptions());
     }
@@ -69,22 +70,24 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
         MockEndpoint mockEndpoint = getMockEndpoint("mock:defaultConfiguration");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("vertx-websocket:localhost:" + getVertxServerRandomPort() + "/default/configuration", "Hello world");
+        template.sendBody(
+                "vertx-websocket:localhost:" + getVertxServerRandomPort() + "/default/configuration", "Hello world");
 
         mockEndpoint.assertIsSatisfied();
     }
 
     @Test
     void testAllowOriginHeader() {
-        VertxWebsocketEndpoint endpoint = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint =
+                context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
         WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
         assertTrue(connectOptions.getAllowOriginHeader());
     }
 
     @Test
     void testDisallowOriginHeader() {
-        VertxWebsocketEndpoint endpoint
-                = context.getEndpoint("vertx-websocket:localhost/test?allowOriginHeader=false", VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint = context.getEndpoint(
+                "vertx-websocket:localhost/test?allowOriginHeader=false", VertxWebsocketEndpoint.class);
         WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
         assertFalse(connectOptions.getAllowOriginHeader());
     }
@@ -93,8 +96,8 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     void testCustomOriginHeaderUrl() {
         String originUrl = "https://foo.bar.com";
 
-        VertxWebsocketEndpoint endpoint = context.getEndpoint("vertx-websocket:localhost/test?originHeaderUrl=" + originUrl,
-                VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint = context.getEndpoint(
+                "vertx-websocket:localhost/test?originHeaderUrl=" + originUrl, VertxWebsocketEndpoint.class);
 
         WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
         MultiMap headers = connectOptions.getHeaders();
@@ -107,29 +110,34 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     void testPropertiesBinding() {
         String testQueryParam = "testParam=hello";
         String endpointParams = "consumeAsClient=true&maxReconnectAttempts=2";
-        VertxWebsocketEndpoint endpoint
-                = context.getEndpoint("vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + testQueryParam,
-                        VertxWebsocketEndpoint.class);
+        VertxWebsocketEndpoint endpoint = context.getEndpoint(
+                "vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + testQueryParam,
+                VertxWebsocketEndpoint.class);
         URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
-        assertEquals(testQueryParam, websocketURI.getQuery(), "Query parameters are not correctly set in the in websocketURI.");
+        assertEquals(
+                testQueryParam,
+                websocketURI.getQuery(),
+                "Query parameters are not correctly set in the in websocketURI.");
     }
 
     @Test
     void testHandshakeHeaders() {
-        String handshakeHeaders
-                = "handshake.Authorization=Bearer token&handshake.ApiSign=-u-4tjFSE=&handshake.Timestamp=2024-04-23T15:22:16.000000Z";
+        String handshakeHeaders =
+                "handshake.Authorization=Bearer token&handshake.ApiSign=-u-4tjFSE=&handshake.Timestamp=2024-04-23T15:22:16.000000Z";
         String endpointParams = "consumeAsClient=true";
 
-        VertxWebsocketEndpoint endpoint
-                = context.getEndpoint("vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + handshakeHeaders,
-                        VertxWebsocketEndpoint.class);
-        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("Authorization"),
+        VertxWebsocketEndpoint endpoint = context.getEndpoint(
+                "vertx-websocket:foo.bar.com/test?" + endpointParams + "&" + handshakeHeaders,
+                VertxWebsocketEndpoint.class);
+        assertNotNull(
+                endpoint.getConfiguration().getHandshakeHeaders().get("Authorization"),
                 "Handshake headers Authorization is not correctly configured.");
-        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("ApiSign"),
+        assertNotNull(
+                endpoint.getConfiguration().getHandshakeHeaders().get("ApiSign"),
                 "Handshake headers ApiSign is not correctly configured.");
-        assertNotNull(endpoint.getConfiguration().getHandshakeHeaders().get("Timestamp"),
+        assertNotNull(
+                endpoint.getConfiguration().getHandshakeHeaders().get("Timestamp"),
                 "Handshake headers Timestamp is not correctly configured.");
-
     }
 
     @Override
@@ -137,8 +145,7 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("vertx-websocket:///default/configuration")
-                        .to("mock:defaultConfiguration");
+                from("vertx-websocket:///default/configuration").to("mock:defaultConfiguration");
             }
         };
     }

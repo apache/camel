@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IronmqSpanDecoratorTest {
 
@@ -32,11 +33,11 @@ public class IronmqSpanDecoratorTest {
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(IronmqSpanDecorator.CAMEL_IRON_MQ_MESSAGE_ID, String.class)).thenReturn(messageId);
+        Mockito.when(message.getHeader(IronmqSpanDecorator.CAMEL_IRON_MQ_MESSAGE_ID, String.class))
+                .thenReturn(messageId);
 
         AbstractMessagingSpanDecorator decorator = new IronmqSpanDecorator();
 
         assertEquals(messageId, decorator.getMessageId(exchange));
     }
-
 }

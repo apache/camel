@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -26,16 +29,14 @@ import org.apache.camel.Message;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        LangChain4jEmbeddingsComponent component
-                = context.getComponent(LangChain4jEmbeddings.SCHEME, LangChain4jEmbeddingsComponent.class);
+        LangChain4jEmbeddingsComponent component =
+                context.getComponent(LangChain4jEmbeddings.SCHEME, LangChain4jEmbeddingsComponent.class);
 
         component.getConfiguration().setEmbeddingModel(new AllMiniLmL6V2EmbeddingModel());
 
@@ -45,9 +46,8 @@ public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
     @Test
     public void testSimpleEmbedding() {
 
-        Message first = fluentTemplate.to("langchain4j-embeddings:first")
-                .withBody("hi")
-                .request(Message.class);
+        Message first =
+                fluentTemplate.to("langchain4j-embeddings:first").withBody("hi").request(Message.class);
 
         Embedding firstEmbedding = first.getHeader(LangChain4jEmbeddingsHeaders.VECTOR, Embedding.class);
         assertThat(firstEmbedding.vector()).hasSize(384);
@@ -56,7 +56,8 @@ public class LangChain4jEmbeddingsComponentTest extends CamelTestSupport {
         assertThat(firstTextSegment).isNotNull();
         assertThat(firstTextSegment.text()).isEqualTo("hi");
 
-        Message second = fluentTemplate.to("langchain4j-embeddings:second")
+        Message second = fluentTemplate
+                .to("langchain4j-embeddings:second")
                 .withBody("hello")
                 .request(Message.class);
 

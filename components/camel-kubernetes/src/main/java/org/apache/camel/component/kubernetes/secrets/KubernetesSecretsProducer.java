@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.secrets;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,8 +38,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesSecretsProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesSecretsProducer.class);
@@ -55,7 +56,6 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_SECRETS:
                 doList(exchange);
                 break;
@@ -90,16 +90,25 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         SecretList secretsList;
 
         if (ObjectHelper.isEmpty(namespace)) {
-            secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().list();
+            secretsList = getEndpoint()
+                    .getKubernetesClient()
+                    .secrets()
+                    .inAnyNamespace()
+                    .list();
         } else {
-            secretsList = getEndpoint().getKubernetesClient().secrets().inNamespace(namespace).list();
+            secretsList = getEndpoint()
+                    .getKubernetesClient()
+                    .secrets()
+                    .inNamespace(namespace)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, secretsList.getItems());
     }
 
     protected void doListSecretsByLabels(Exchange exchange) {
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         SecretList secretsList;
 
@@ -109,9 +118,19 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace().withLabels(labels).list();
+            secretsList = getEndpoint()
+                    .getKubernetesClient()
+                    .secrets()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            secretsList = getEndpoint().getKubernetesClient().secrets().inNamespace(namespace).withLabels(labels).list();
+            secretsList = getEndpoint()
+                    .getKubernetesClient()
+                    .secrets()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, secretsList.getItems());
@@ -128,7 +147,12 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             LOG.error("Get a specific Secret require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Secret require specify a namespace name");
         }
-        Secret secret = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).get();
+        Secret secret = getEndpoint()
+                .getKubernetesClient()
+                .secrets()
+                .inNamespace(namespaceName)
+                .withName(secretName)
+                .get();
 
         prepareOutboundMessage(exchange, secret);
     }
@@ -141,11 +165,12 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         doCreateOrUpdateSecret(exchange, "Create", Resource::create);
     }
 
-    private void doCreateOrUpdateSecret(Exchange exchange, String operationName, Function<Resource<Secret>, Secret> operation) {
+    private void doCreateOrUpdateSecret(
+            Exchange exchange, String operationName, Function<Resource<Secret>, Secret> operation) {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Secret secretToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRET, Secret.class);
-        HashMap<String, String> secretAnnotations
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_ANNOTATIONS, HashMap.class);
+        HashMap<String, String> secretAnnotations =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_ANNOTATIONS, HashMap.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("{} a specific secret require specify a namespace name", operationName);
             throw new IllegalArgumentException(
@@ -159,9 +184,11 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(secretAnnotations)) {
             secretToCreate.getMetadata().setAnnotations(secretAnnotations);
         }
-        Secret secret
-                = operation.apply(
-                        getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).resource(secretToCreate));
+        Secret secret = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .secrets()
+                .inNamespace(namespaceName)
+                .resource(secretToCreate));
 
         prepareOutboundMessage(exchange, secret);
     }
@@ -178,8 +205,12 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific secret require specify a namespace name");
         }
 
-        List<StatusDetails> statusDetails
-                = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName).withName(secretName).delete();
+        List<StatusDetails> statusDetails = getEndpoint()
+                .getKubernetesClient()
+                .secrets()
+                .inNamespace(namespaceName)
+                .withName(secretName)
+                .delete();
         boolean secretDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, secretDeleted);

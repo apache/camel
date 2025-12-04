@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.watch;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Paths;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class FileWatchComponentNegativeTest extends FileWatchComponentTestBase {
 
     @Test
     public void testNonExistentDirectory() throws Exception {
-        String nonExistentDirectory = Paths.get(testPath(), "nonExistentDirectory").toString();
+        String nonExistentDirectory =
+                Paths.get(testPath(), "nonExistentDirectory").toString();
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("file-watch://" + nonExistentDirectory + "?autoCreate=false").to("mock:watchAll");
+                    from("file-watch://" + nonExistentDirectory + "?autoCreate=false")
+                            .to("mock:watchAll");
                 }
             });
             fail("Should throw exception");
@@ -42,10 +45,9 @@ public class FileWatchComponentNegativeTest extends FileWatchComponentTestBase {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("file-watch://" + nonExistentDirectory + "?autoCreate=true").to("mock:watchAll");
+                from("file-watch://" + nonExistentDirectory + "?autoCreate=true")
+                        .to("mock:watchAll");
             }
         });
-
     }
-
 }

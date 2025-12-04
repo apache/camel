@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -36,9 +40,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport {
 
@@ -96,7 +97,8 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
         HttpServerOptions options = new HttpServerOptions();
         options.setWebSocketSubProtocols(Arrays.asList("foo", "bar", "cheese"));
 
-        VertxWebsocketHostConfiguration configuration = new VertxWebsocketHostConfiguration(vertx, router, options, null);
+        VertxWebsocketHostConfiguration configuration =
+                new VertxWebsocketHostConfiguration(vertx, router, options, null);
         VertxWebsocketHostKey key = new VertxWebsocketHostKey("localhost", 0);
         VertxWebsocketHost host = new VertxWebsocketHost(context, configuration, key);
         host.start();
@@ -131,6 +133,5 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
     }
 
     @Override
-    protected void startCamelContext() {
-    }
+    protected void startCamelContext() {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -40,5 +41,4 @@ public interface RouteTemplateParameterSource {
      * Gets the route id's as a set.
      */
     Set<String> routeIds();
-
 }

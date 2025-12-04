@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import io.restassured.RestAssured;
 import org.apache.camel.CamelContext;
@@ -25,11 +31,6 @@ import org.apache.camel.component.platform.http.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class VertxPlatformHttpCookieTest {
 
@@ -45,17 +46,18 @@ public class VertxPlatformHttpCookieTest {
                             .process(exchange -> {
                                 getCookieHandler(exchange).addCookie("foo", "bar");
                             })
-                            .setBody().constant("add");
+                            .setBody()
+                            .constant("add");
                 }
             });
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .get("/add")
                     .then()
                     .statusCode(200)
-                    .cookie("foo",
+                    .cookie(
+                            "foo",
                             detailedCookie()
                                     .value("bar")
                                     .path(CookieConfiguration.DEFAULT_PATH)
@@ -72,15 +74,17 @@ public class VertxPlatformHttpCookieTest {
     public void testAddCookieCustomConfiguration() throws Exception {
         CamelContext context = createCamelContext();
         long cookieMaxAge = 60L * 60 * 24 * 7; // 1 week
-        context.getRegistry().bind("cookieConfiguration",
-                new CookieConfiguration.Builder()
-                        .setPath("/testpath")
-                        .setDomain("apache.org")
-                        .setHttpOnly(true)
-                        .setSecure(true)
-                        .setMaxAge(cookieMaxAge)
-                        .setSameSite(CookieConfiguration.CookieSameSite.STRICT)
-                        .build());
+        context.getRegistry()
+                .bind(
+                        "cookieConfiguration",
+                        new CookieConfiguration.Builder()
+                                .setPath("/testpath")
+                                .setDomain("apache.org")
+                                .setHttpOnly(true)
+                                .setSecure(true)
+                                .setMaxAge(cookieMaxAge)
+                                .setSameSite(CookieConfiguration.CookieSameSite.STRICT)
+                                .build());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -90,17 +94,18 @@ public class VertxPlatformHttpCookieTest {
                             .process(exchange -> {
                                 getCookieHandler(exchange).addCookie("foo", "bar");
                             })
-                            .setBody().constant("add-custom");
+                            .setBody()
+                            .constant("add-custom");
                 }
             });
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .get("/add/custom")
                     .then()
                     .statusCode(200)
-                    .cookie("foo",
+                    .cookie(
+                            "foo",
                             detailedCookie()
                                     .value("bar")
                                     .path("/testpath")
@@ -128,16 +133,16 @@ public class VertxPlatformHttpCookieTest {
                                 // write cookie name/value as a header so we can verify it was read
                                 String cookieName = "foo";
                                 String cookieVal = getCookieHandler(exchange).getCookieValue(cookieName);
-                                exchange.getMessage().setHeader(
-                                        "cookie_name_val", String.format("%s=%s", cookieName, cookieVal));
+                                exchange.getMessage()
+                                        .setHeader("cookie_name_val", String.format("%s=%s", cookieName, cookieVal));
                             })
-                            .setBody().constant("get");
+                            .setBody()
+                            .constant("get");
                 }
             });
             context.start();
 
-            given()
-                    .header("cookie", "foo=bar")
+            given().header("cookie", "foo=bar")
                     .when()
                     .get("/get")
                     .then()
@@ -161,21 +166,18 @@ public class VertxPlatformHttpCookieTest {
                             .process(exchange -> {
                                 getCookieHandler(exchange).removeCookie("foo");
                             })
-                            .setBody().constant("remove");
+                            .setBody()
+                            .constant("remove");
                 }
             });
             context.start();
 
-            given()
-                    .header("cookie", "foo=bar")
+            given().header("cookie", "foo=bar")
                     .when()
                     .get("/remove")
                     .then()
                     .statusCode(200)
-                    .cookie("foo",
-                            detailedCookie()
-                                    .maxAge(0)
-                                    .expiryDate(notNullValue()))
+                    .cookie("foo", detailedCookie().maxAge(0).expiryDate(notNullValue()))
                     .body(equalTo("remove"));
         } finally {
             context.stop();
@@ -194,13 +196,13 @@ public class VertxPlatformHttpCookieTest {
                             .process(exchange -> {
                                 getCookieHandler(exchange).removeCookie("foo");
                             })
-                            .setBody().constant("remove");
+                            .setBody()
+                            .constant("remove");
                 }
             });
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .get("/remove")
                     .then()
                     .statusCode(200)
@@ -221,21 +223,21 @@ public class VertxPlatformHttpCookieTest {
                 public void configure() {
                     from("platform-http:/replace?useCookieHandler=true")
                             .process(exchange -> {
-                                getCookieHandler(exchange)
-                                        .addCookie("XSRF-TOKEN", "88533580000c314");
+                                getCookieHandler(exchange).addCookie("XSRF-TOKEN", "88533580000c314");
                             })
-                            .setBody().constant("replace");
+                            .setBody()
+                            .constant("replace");
                 }
             });
             context.start();
 
-            given()
-                    .header("XSRF-TOKEN", "c359b44aef83415")
+            given().header("XSRF-TOKEN", "c359b44aef83415")
                     .when()
                     .get("/replace")
                     .then()
                     .statusCode(200)
-                    .cookie("XSRF-TOKEN",
+                    .cookie(
+                            "XSRF-TOKEN",
                             detailedCookie()
                                     .value("88533580000c314")
                                     .path(CookieConfiguration.DEFAULT_PATH)

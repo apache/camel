@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -27,14 +36,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
 
@@ -51,8 +52,10 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startGrpcServer() throws Exception {
-        grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(new GrpcProducerClientInterceptorTest.PingPongImpl())
-                .build().start();
+        grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT)
+                .addService(new GrpcProducerClientInterceptorTest.PingPongImpl())
+                .build()
+                .start();
         LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
     }
 
@@ -70,8 +73,10 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
         when(mockClientInterceptor2.interceptCall(any(), any(), any())).thenCallRealMethod();
         LOG.info("gRPC PingSyncSync method test start");
         // Testing simple sync method invoke with host and port parameters
-        PingRequest pingRequest
-                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+        PingRequest pingRequest = PingRequest.newBuilder()
+                .setPingName(GRPC_TEST_PING_VALUE)
+                .setPingId(GRPC_TEST_PING_ID)
+                .build();
         template.requestBody("direct:grpc-interceptor", pingRequest);
         verify(mockClientInterceptor, times(1)).interceptCall(any(), any(), any());
         verify(mockClientInterceptor2, times(1)).interceptCall(any(), any(), any());
@@ -81,8 +86,8 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
     public void testNoAutoDiscover() throws Exception {
         GrpcComponent component = context.getComponent("grpc", GrpcComponent.class);
         GrpcEndpoint endpoint = (GrpcEndpoint) component.createEndpoint("grpc://localhost:" + GRPC_TEST_PORT
-                                                                        + "/org.apache.camel.component.grpc"
-                                                                        + ".PingPong?method=pingSyncSync&autoDiscoverClientInterceptors=false");
+                + "/org.apache.camel.component.grpc"
+                + ".PingPong?method=pingSyncSync&autoDiscoverClientInterceptors=false");
 
         assertFalse(endpoint.getConfiguration().isAutoDiscoverClientInterceptors());
         assertEquals(0, endpoint.getConfiguration().getClientInterceptors().size());
@@ -99,8 +104,8 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
             public void configure() {
                 from("direct:grpc-interceptor")
                         .to("grpc://localhost:" + GRPC_TEST_PORT
-                            + "/org.apache.camel.component.grpc"
-                            + ".PingPong?method=pingSyncSync");
+                                + "/org.apache.camel.component.grpc"
+                                + ".PingPong?method=pingSyncSync");
             }
         };
     }
@@ -111,13 +116,16 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
     static class PingPongImpl extends PingPongGrpc.PingPongImplBase {
         @Override
         public void pingSyncSync(PingRequest request, StreamObserver<PongResponse> responseObserver) {
-            LOG.info("gRPC server received data from PingPong service PingId={} PingName={}", request.getPingId(),
+            LOG.info(
+                    "gRPC server received data from PingPong service PingId={} PingName={}",
+                    request.getPingId(),
                     request.getPingName());
-            PongResponse response = PongResponse.newBuilder().setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE)
-                    .setPongId(request.getPingId()).build();
+            PongResponse response = PongResponse.newBuilder()
+                    .setPongName(request.getPingName() + GRPC_TEST_PONG_VALUE)
+                    .setPongId(request.getPingId())
+                    .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
     }
-
 }

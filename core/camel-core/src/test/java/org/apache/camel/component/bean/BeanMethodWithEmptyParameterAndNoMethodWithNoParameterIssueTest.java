@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * CAMEL-6455
@@ -43,7 +44,8 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Camel"),
                 "Should have thrown exception");
 
@@ -57,7 +59,8 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
     public void testOtherBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBody("direct:other", "Camel"),
                 "Should have thrown exception");
 
@@ -84,7 +87,6 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
         public static void doSomething(Exchange exchange) {
             exchange.getIn().setHeader("foo", "bar");
         }
-
     }
 
     public static final class MyOtherBean {
@@ -96,6 +98,5 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
         public static void doSomething(Exchange exchange, String foo, String bar) {
             exchange.getIn().setHeader(foo, bar);
         }
-
     }
 }

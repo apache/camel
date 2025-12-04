@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
 
 import java.io.BufferedWriter;
@@ -114,7 +115,8 @@ public class StreamProducer extends DefaultAsyncProducer {
         Thread.sleep(ms);
     }
 
-    private void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
+    private void writeToStream(OutputStream outputStream, Exchange exchange)
+            throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
 
         if (body == null) {
@@ -138,7 +140,8 @@ public class StreamProducer extends DefaultAsyncProducer {
         // okay now fallback to mandatory converterable to string
         String s = exchange.getIn().getMandatoryBody(String.class);
         Charset charset = endpoint.getCharset();
-        Writer writer = charset != null ? new OutputStreamWriter(outputStream, charset) : new OutputStreamWriter(outputStream);
+        Writer writer =
+                charset != null ? new OutputStreamWriter(outputStream, charset) : new OutputStreamWriter(outputStream);
         BufferedWriter bw = IOHelper.buffered(writer);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
@@ -179,7 +182,8 @@ public class StreamProducer extends DefaultAsyncProducer {
     }
 
     private Boolean isDone(Exchange exchange) {
-        return exchange != null && exchange.getProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
+        return exchange != null
+                && exchange.getProperty(ExchangePropertyKey.SPLIT_COMPLETE, Boolean.FALSE, Boolean.class);
     }
 
     private void closeStream(Exchange exchange, boolean force) throws Exception {
@@ -193,7 +197,7 @@ public class StreamProducer extends DefaultAsyncProducer {
         boolean headerStream = "header".equals(uri);
         boolean reachedLimit = endpoint.getAutoCloseCount() > 0 && count.decrementAndGet() <= 0;
         boolean isDone = endpoint.isCloseOnDone() && isDone(exchange);
-        boolean expiredStream = force || headerStream || isDone || reachedLimit;  // evaluation order is important!
+        boolean expiredStream = force || headerStream || isDone || reachedLimit; // evaluation order is important!
 
         // never ever close a system stream
         if (!systemStream && expiredStream) {

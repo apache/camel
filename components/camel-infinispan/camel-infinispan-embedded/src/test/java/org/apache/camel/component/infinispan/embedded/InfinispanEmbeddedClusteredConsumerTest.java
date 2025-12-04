@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,11 +32,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-@DisabledOnOs(value = { OS.LINUX },
-              architectures = { "s390x" },
-              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledOnOs(
+        value = {OS.LINUX},
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
 public class InfinispanEmbeddedClusteredConsumerTest extends InfinispanEmbeddedClusteredTestSupport {
 
     private static final long WAIT_TIMEOUT = 5000;
@@ -55,9 +57,15 @@ public class InfinispanEmbeddedClusteredConsumerTest extends InfinispanEmbeddedC
         MockEndpoint mockResultCreatedEvents = getMockEndpoint("mock:resultCreated");
         mockResultCreatedEvents.expectedMessageCount(1);
 
-        mockResultCreatedEvents.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResultCreatedEvents
+                .message(0)
+                .header(InfinispanConstants.EVENT_TYPE)
+                .isEqualTo("CACHE_ENTRY_CREATED");
         mockResultCreatedEvents.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResultCreatedEvents.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResultCreatedEvents
+                .message(0)
+                .header(InfinispanConstants.CACHE_NAME)
+                .isNotNull();
         mockResultCreatedEvents.message(0).header(InfinispanConstants.KEY).isEqualTo(key.toString());
 
         getCache(1).put(key, "value");
@@ -70,16 +78,28 @@ public class InfinispanEmbeddedClusteredConsumerTest extends InfinispanEmbeddedC
 
         MockEndpoint mockResultCreatedEvents = getMockEndpoint("mock:resultCreated");
         mockResultCreatedEvents.expectedMessageCount(1);
-        mockResultCreatedEvents.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResultCreatedEvents
+                .message(0)
+                .header(InfinispanConstants.EVENT_TYPE)
+                .isEqualTo("CACHE_ENTRY_CREATED");
         mockResultCreatedEvents.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResultCreatedEvents.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResultCreatedEvents
+                .message(0)
+                .header(InfinispanConstants.CACHE_NAME)
+                .isNotNull();
         mockResultCreatedEvents.message(0).header(InfinispanConstants.KEY).isEqualTo(key.toString());
 
         MockEndpoint mockResultExpiredEvents = getMockEndpoint("mock:resultExpired");
         mockResultExpiredEvents.expectedMessageCount(1);
-        mockResultExpiredEvents.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_EXPIRED");
+        mockResultExpiredEvents
+                .message(0)
+                .header(InfinispanConstants.EVENT_TYPE)
+                .isEqualTo("CACHE_ENTRY_EXPIRED");
         mockResultExpiredEvents.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResultExpiredEvents.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResultExpiredEvents
+                .message(0)
+                .header(InfinispanConstants.CACHE_NAME)
+                .isNotNull();
         mockResultExpiredEvents.message(0).header(InfinispanConstants.KEY).isEqualTo(key.toString());
 
         injectTimeService();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr.operations;
 
 import java.util.EnumMap;
@@ -31,7 +32,8 @@ public class DaprOperationManager {
 
     public DaprOperationManager(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
-        handlerMap.put(DaprOperation.invokeService, new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(
+                DaprOperation.invokeService, new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.state, new DaprStateHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.pubSub, new DaprPubSubHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.invokeBinding, new DaprInvokeBindingHandler(configurationOptionsProxy, endpoint));

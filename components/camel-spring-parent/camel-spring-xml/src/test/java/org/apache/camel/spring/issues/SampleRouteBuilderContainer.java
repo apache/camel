@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,5 +32,4 @@ public class SampleRouteBuilderContainer implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         routeBuilder.configure();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,11 +44,17 @@ public class XPathNestedNamespaceTest extends ContextTestSupport {
             public void configure() {
                 Namespaces ns = new Namespaces("stp", "http://www.barcap.com/gcd/stpengine/1-0");
 
-                from("direct:start").choice().when().xpath("//stp:termination", ns).to("mock:FOO").when()
-                        .xpath("/stp:STPTradeML/stp:FpML/stp:trade", ns).to("mock:BAR").otherwise()
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .xpath("//stp:termination", ns)
+                        .to("mock:FOO")
+                        .when()
+                        .xpath("/stp:STPTradeML/stp:FpML/stp:trade", ns)
+                        .to("mock:BAR")
+                        .otherwise()
                         .to("mock:OTHER");
             }
         };
     }
-
 }

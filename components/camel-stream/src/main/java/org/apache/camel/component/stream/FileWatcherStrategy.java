@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-
 /**
  * To watch for file changes/rollover via JDK file watcher API. This is used to know for example of streaming from a
  * file, that gets rolled-over, so we know about this, and can begin reading the file again from the beginning.
@@ -48,7 +49,6 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
     public interface OnChangeEvent {
 
         void onChange(File file);
-
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(FileWatcherStrategy.class);
@@ -102,8 +102,10 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
             // if its mac OSX then attempt to apply workaround or warn its slower
             String os = ObjectHelper.getSystemProperty("os.name", "");
             if (os.toLowerCase(Locale.US).startsWith("mac")) {
-                // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification integration)
-                Class<WatchEvent.Modifier> clazz = getCamelContext().getClassResolver()
+                // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification
+                // integration)
+                Class<WatchEvent.Modifier> clazz = getCamelContext()
+                        .getClassResolver()
                         .resolveClass("com.sun.nio.file.SensitivityWatchEventModifier", WatchEvent.Modifier.class);
                 if (clazz != null) {
                     WatchEvent.Modifier[] modifiers = clazz.getEnumConstants();
@@ -130,8 +132,9 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
 
                 task = new WatchFileChangesTask(watcher, path, onChangeEvent);
 
-                executorService
-                        = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherStrategy");
+                executorService = getCamelContext()
+                        .getExecutorServiceManager()
+                        .newSingleThreadExecutor(this, "FileWatcherStrategy");
                 executorService.submit(task);
             } catch (IOException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -139,10 +142,11 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
         }
     }
 
-    private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher) throws IOException {
+    private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher)
+            throws IOException {
         WatchKey key;
         if (modifier != null) {
-            key = path.register(watcher, new WatchEvent.Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY }, modifier);
+            key = path.register(watcher, new WatchEvent.Kind<?>[] {ENTRY_CREATE, ENTRY_MODIFY}, modifier);
         } else {
             key = path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
         }
@@ -221,5 +225,4 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
             LOG.info("FileWatcherStrategy is stopping watching folder: {}", folder);
         }
     }
-
 }

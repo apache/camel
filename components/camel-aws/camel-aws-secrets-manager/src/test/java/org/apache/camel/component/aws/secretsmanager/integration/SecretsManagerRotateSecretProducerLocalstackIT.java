@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -30,10 +35,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.RotateSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
@@ -57,7 +58,8 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
             }
         });
 
-        CreateSecretResponse resultGet = (CreateSecretResponse) exchange.getMessage().getBody();
+        CreateSecretResponse resultGet =
+                (CreateSecretResponse) exchange.getMessage().getBody();
         assertNotNull(resultGet);
 
         arn = resultGet.arn();
@@ -76,7 +78,8 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
             }
         });
 
-        RotateSecretResponse resultRotate = (RotateSecretResponse) exchange.getMessage().getBody();
+        RotateSecretResponse resultRotate =
+                (RotateSecretResponse) exchange.getMessage().getBody();
         assertNotNull(resultRotate);
         assertTrue(resultRotate.sdkHttpResponse().isSuccessful());
         assertEquals("TestSecret4", resultRotate.name());
@@ -87,8 +90,7 @@ public class SecretsManagerRotateSecretProducerLocalstackIT extends AwsSecretsMa
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
                 from("direct:rotateSecret")
                         .to("aws-secrets-manager://test?operation=rotateSecret")

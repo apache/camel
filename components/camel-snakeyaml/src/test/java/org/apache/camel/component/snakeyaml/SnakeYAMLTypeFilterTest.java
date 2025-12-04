@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.snakeyaml;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -50,31 +51,26 @@ public class SnakeYAMLTypeFilterTest extends CamelTestSupport {
                 // SafeConstructor
                 SnakeYAMLDataFormat safeConstructorDf = new SnakeYAMLDataFormat();
 
-                from("direct:safe-constructor")
-                        .unmarshal(safeConstructorDf);
+                from("direct:safe-constructor").unmarshal(safeConstructorDf);
 
                 // Type filter Constructor
                 SnakeYAMLDataFormat typeConstructorDf = new SnakeYAMLDataFormat();
                 typeConstructorDf.setTypeFilters(TestPojo.class);
 
-                from("direct:type-constructor")
-                        .unmarshal(typeConstructorDf);
+                from("direct:type-constructor").unmarshal(typeConstructorDf);
 
                 // Type filter Constructor from string definitions
                 SnakeYAMLDataFormat typeConstructorStrDf = new SnakeYAMLDataFormat();
                 typeConstructorStrDf.setTypeFilters(
                         "org.apache.camel.component.snakeyaml.model.TestPojo,org.apache.camel.component.snakeyaml.model.R.*");
 
-                from("direct:type-constructor-strdef")
-                        .unmarshal(typeConstructorStrDf);
+                from("direct:type-constructor-strdef").unmarshal(typeConstructorStrDf);
 
                 // Allow all Constructor
                 SnakeYAMLDataFormat allConstructorDf = new SnakeYAMLDataFormat();
                 allConstructorDf.setAllowAnyType(true);
 
-                from("direct:all-constructor")
-                        .unmarshal(allConstructorDf)
-                        .to("mock:all-constructor");
+                from("direct:all-constructor").unmarshal(allConstructorDf).to("mock:all-constructor");
             }
         };
     }

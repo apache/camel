@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.edit;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -28,5 +29,4 @@ public class EditPlugin implements Plugin {
     public void customize(CommandLine commandLine, CamelJBangMain main) {
         commandLine.addSubcommand("edit", new EditCommand(main));
     }
-
 }

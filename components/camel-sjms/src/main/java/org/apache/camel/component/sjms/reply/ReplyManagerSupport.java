@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.reply;
+
+import static org.apache.camel.component.sjms.jms.JmsMessageHelper.getJMSCorrelationID;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -41,8 +44,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.sjms.jms.JmsMessageHelper.getJMSCorrelationID;
 
 /**
  * Base class for {@link ReplyManager} implementations.
@@ -111,12 +112,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     @Override
     public String registerReply(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout) {
+            ReplyManager replyManager,
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long requestTimeout) {
         // add to correlation map
         QueueReplyHandler handler = new QueueReplyHandler(
-                replyManager, exchange, callback,
-                originalCorrelationId, correlationId, requestTimeout);
+                replyManager, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
         // Just make sure we don't override the old value of the correlationId
         ReplyHandler result = correlation.putIfAbsent(correlationId, handler, requestTimeout);
         if (result != null) {
@@ -153,22 +157,26 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     if (log.isWarnEnabled()) {
                         log.warn(
                                 "Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
-                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                holder.getRequestTimeout(), holder.getCorrelationId(), replyTo,
+                                        + " Setting ExchangeTimedOutException on {} and continue routing.",
+                                holder.getRequestTimeout(),
+                                holder.getCorrelationId(),
+                                replyTo,
                                 ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception
                     String msg = "reply message with correlationID: " + holder.getCorrelationId()
-                                 + " not received on destination: " + replyTo;
+                            + " not received on destination: " + replyTo;
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
                     Message message = holder.getMessage();
                     Session session = holder.getSession();
                     SjmsMessage response = new SjmsMessage(exchange, message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
-                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
-                    // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
+                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full
+                    // access
+                    // to everything it may need, and can populate headers, properties, etc. accordingly (solves
+                    // CAMEL-6218).
                     exchange.setOut(response);
                     Object body = response.getBody();
 
@@ -184,7 +192,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
                         JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-                        exchange.getOut().setHeader(SjmsConstants.JMS_CORRELATION_ID, holder.getOriginalCorrelationId());
+                        exchange.getOut()
+                                .setHeader(SjmsConstants.JMS_CORRELATION_ID, holder.getOriginalCorrelationId());
                     }
                 }
             } finally {
@@ -207,7 +216,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
-        log.trace("Using timeout checker interval with {} millis", endpoint.getComponent().getRequestTimeoutCheckerInterval());
+        log.trace(
+                "Using timeout checker interval with {} millis",
+                endpoint.getComponent().getRequestTimeoutCheckerInterval());
         correlation = new CorrelationTimeoutMap(
                 scheduledExecutorService, endpoint.getComponent().getRequestTimeoutCheckerInterval(), executorService);
         ServiceHelper.startService(correlation);
@@ -243,5 +254,4 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             executorService = null;
         }
     }
-
 }

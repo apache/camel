@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.embeddings;
 
 import java.util.ArrayList;
@@ -52,14 +53,12 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
         } else if (body instanceof List) {
             inputTexts = (List<String>) body;
         } else {
-            throw new IllegalArgumentException(
-                    "Message body must be a String or List<String>, but was: "
-                                               + (body != null ? body.getClass().getName() : "null"));
+            throw new IllegalArgumentException("Message body must be a String or List<String>, but was: "
+                    + (body != null ? body.getClass().getName() : "null"));
         }
 
-        final EmbeddingResponse response = model.call(new EmbeddingRequest(
-                inputTexts,
-                EmbeddingOptions.builder().build()));
+        final EmbeddingResponse response = model.call(
+                new EmbeddingRequest(inputTexts, EmbeddingOptions.builder().build()));
 
         if (response.getResults() != null && !response.getResults().isEmpty()) {
             if (inputTexts.size() == 1) {

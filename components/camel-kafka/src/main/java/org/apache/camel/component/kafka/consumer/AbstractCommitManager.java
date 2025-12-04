@@ -44,8 +44,8 @@ public abstract class AbstractCommitManager implements CommitManager {
 
     private final Consumer<?, ?> consumer;
 
-    protected AbstractCommitManager(Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId,
-                                    String printableTopic) {
+    protected AbstractCommitManager(
+            Consumer<?, ?> consumer, KafkaConsumer kafkaConsumer, String threadId, String printableTopic) {
         this.consumer = consumer;
         this.kafkaConsumer = kafkaConsumer;
         this.threadId = threadId;
@@ -54,17 +54,18 @@ public abstract class AbstractCommitManager implements CommitManager {
     }
 
     protected KafkaManualCommit getManualCommit(
-            Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> record,
+            Exchange exchange,
+            TopicPartition partition,
+            ConsumerRecord<Object, Object> record,
             KafkaManualCommitFactory manualCommitFactory) {
 
         StateRepository<String, String> offsetRepository = configuration.getOffsetRepository();
         long commitTimeoutMs = configuration.getCommitTimeoutMs();
 
-        KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload = new KafkaManualCommitFactory.CamelExchangePayload(
-                exchange, consumer, threadId, offsetRepository);
-        KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload = new KafkaManualCommitFactory.KafkaRecordPayload(
-                partition,
-                record.offset(), commitTimeoutMs);
+        KafkaManualCommitFactory.CamelExchangePayload camelExchangePayload =
+                new KafkaManualCommitFactory.CamelExchangePayload(exchange, consumer, threadId, offsetRepository);
+        KafkaManualCommitFactory.KafkaRecordPayload kafkaRecordPayload =
+                new KafkaManualCommitFactory.KafkaRecordPayload(partition, record.offset(), commitTimeoutMs);
 
         return manualCommitFactory.newInstance(camelExchangePayload, kafkaRecordPayload, this);
     }
@@ -73,7 +74,8 @@ public abstract class AbstractCommitManager implements CommitManager {
     public KafkaManualCommit getManualCommit(
             Exchange exchange, TopicPartition partition, ConsumerRecord<Object, Object> consumerRecord) {
 
-        KafkaManualCommitFactory manualCommitFactory = kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
+        KafkaManualCommitFactory manualCommitFactory =
+                kafkaConsumer.getEndpoint().getKafkaManualCommitFactory();
         if (manualCommitFactory == null) {
             manualCommitFactory = new DefaultKafkaManualCommitFactory();
         }
@@ -84,8 +86,12 @@ public abstract class AbstractCommitManager implements CommitManager {
     @Override
     public void forceCommit(TopicPartition partition, long partitionLastOffset) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
-                    partition.partition(), partitionLastOffset);
+            LOG.debug(
+                    "Forcing commitSync {} [topic: {} partition: {} offset: {}]",
+                    threadId,
+                    partition.topic(),
+                    partition.partition(),
+                    partitionLastOffset);
         }
 
         long timeout = configuration.getCommitTimeoutMs();
@@ -95,11 +101,13 @@ public abstract class AbstractCommitManager implements CommitManager {
     }
 
     protected void saveStateToOffsetRepository(
-            TopicPartition partition, long partitionLastOffset,
-            StateRepository<String, String> offsetRepository) {
+            TopicPartition partition, long partitionLastOffset, StateRepository<String, String> offsetRepository) {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, partition.topic(),
+            LOG.debug(
+                    "Saving offset repository state {} [topic: {} partition: {} offset: {}]",
+                    threadId,
+                    partition.topic(),
                     partition.partition(),
                     partitionLastOffset);
         }
@@ -113,5 +121,4 @@ public abstract class AbstractCommitManager implements CommitManager {
     protected static String serializeOffsetValue(long offset) {
         return String.valueOf(offset);
     }
-
 }

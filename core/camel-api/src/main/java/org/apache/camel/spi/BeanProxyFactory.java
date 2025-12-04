@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
@@ -42,5 +43,4 @@ public interface BeanProxyFactory {
      * @return                  the created bean proxy
      */
     <T> T createProxy(Endpoint endpoint, boolean binding, Class<T>... interfaceClasses) throws Exception;
-
 }

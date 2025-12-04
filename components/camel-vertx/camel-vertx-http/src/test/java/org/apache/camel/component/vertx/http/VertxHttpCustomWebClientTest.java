@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.vertx.ext.web.client.WebClientOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpCustomWebClientTest {
 
@@ -61,8 +62,7 @@ public class VertxHttpCustomWebClientTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start")
-                            .to("vertx-http:http://localhost:8080");
+                    from("direct:start").to("vertx-http:http://localhost:8080");
                 }
             });
 
@@ -70,7 +70,9 @@ public class VertxHttpCustomWebClientTest {
 
             VertxHttpEndpoint ve = context.getEndpoint("vertx-http:http://localhost:8080", VertxHttpEndpoint.class);
             assertTrue(ve.getConfiguration().getWebClientOptions().isSsl());
-            assertEquals(Integer.MAX_VALUE, ve.getConfiguration().getWebClientOptions().getConnectTimeout());
+            assertEquals(
+                    Integer.MAX_VALUE,
+                    ve.getConfiguration().getWebClientOptions().getConnectTimeout());
         }
     }
 }

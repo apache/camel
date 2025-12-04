@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 import java.util.Map;
 import java.util.Set;
@@ -43,8 +46,6 @@ import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
-import static org.apache.camel.util.StringHelper.removeStartingCharacters;
-
 /**
  * JMS component which uses Spring JMS.
  */
@@ -59,27 +60,39 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     @Metadata(label = "advanced", description = "To use a shared JMS configuration")
     private JmsConfiguration configuration;
-    @Metadata(label = "advanced",
-              description = "Whether the JMS consumer should include JMSCorrelationIDAsBytes as a header on the Camel Message.",
-              defaultValue = "true")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether the JMS consumer should include JMSCorrelationIDAsBytes as a header on the Camel Message.",
+            defaultValue = "true")
     private boolean includeCorrelationIDAsBytes = true;
+
     @Metadata(label = "advanced", description = "To use a custom QueueBrowseStrategy when browsing queues")
     private QueueBrowseStrategy queueBrowseStrategy;
-    @Metadata(label = "advanced",
-              description = "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
                             + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.",
-              defaultValue = "true")
+            defaultValue = "true")
     private boolean allowAutoWiredConnectionFactory = true;
-    @Metadata(label = "advanced",
-              description = "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
                             + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.",
-              defaultValue = "true")
+            defaultValue = "true")
     private boolean allowAutoWiredDestinationResolver = true;
-    @Metadata(label = "advanced",
-              description = "Whether to detect the network address location of the JMS broker on startup."
-                            + " This information is gathered via reflection on the ConnectionFactory, and is vendor specific."
-                            + " This option can be used to turn this off.",
-              defaultValue = "true")
+
+    @Metadata(
+            label = "advanced",
+            description = "Whether to detect the network address location of the JMS broker on startup."
+                    + " This information is gathered via reflection on the ConnectionFactory, and is vendor specific."
+                    + " This option can be used to turn this off.",
+            defaultValue = "true")
     private boolean serviceLocationEnabled = true;
 
     public JmsComponent() {
@@ -141,8 +154,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     public static JmsComponent jmsComponentTransacted(
-            ConnectionFactory connectionFactory,
-            PlatformTransactionManager transactionManager) {
+            ConnectionFactory connectionFactory, PlatformTransactionManager transactionManager) {
         JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
         configuration.setTransactionManager(transactionManager);
         configuration.setTransacted(true);
@@ -552,8 +564,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     public void setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(
             long waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
-        configuration
-                .setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+        configuration.setWaitForTemporaryReplyToToBeUpdatedThreadSleepingTime(
+                waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
     }
 
     public int getWaitForTemporaryReplyToToBeUpdatedCounter() {
@@ -1110,7 +1122,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     @Override
     protected void doInit() throws Exception {
         // only attempt to set connection factory if there is no transaction manager
-        if (configuration.getConnectionFactory() == null && configuration.getOrCreateTransactionManager() == null
+        if (configuration.getConnectionFactory() == null
+                && configuration.getOrCreateTransactionManager() == null
                 && isAllowAutoWiredConnectionFactory()) {
             Set<ConnectionFactory> beans = getCamelContext().getRegistry().findByType(ConnectionFactory.class);
             if (beans.size() == 1) {
@@ -1132,7 +1145,8 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         }
 
         if (configuration.getTemporaryQueueResolver() == null && isAllowAutoWiredDestinationResolver()) {
-            Set<TemporaryQueueResolver> beans = getCamelContext().getRegistry().findByType(TemporaryQueueResolver.class);
+            Set<TemporaryQueueResolver> beans =
+                    getCamelContext().getRegistry().findByType(TemporaryQueueResolver.class);
             if (beans.size() == 1) {
                 TemporaryQueueResolver destinationResolver = beans.iterator().next();
                 configuration.setTemporaryQueueResolver(destinationResolver);
@@ -1161,10 +1175,12 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         lock.lock();
         try {
             if (asyncStartStopExecutorService == null) {
-                // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
+                // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated
+                // thread
                 // for each task, and the thread pool will shrink when no more tasks running
-                asyncStartStopExecutorService
-                        = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+                asyncStartStopExecutorService = getCamelContext()
+                        .getExecutorServiceManager()
+                        .newCachedThreadPool(this, "AsyncStartStopListener");
             }
             return asyncStartStopExecutorService;
         } finally {
@@ -1173,8 +1189,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         boolean pubSubDomain = false;
         boolean tempDestination = false;
@@ -1189,11 +1204,13 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
             } else if (remaining.startsWith(JmsConfiguration.TEMP_QUEUE_PREFIX)) {
                 pubSubDomain = false;
                 tempDestination = true;
-                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
+                remaining =
+                        removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
             } else if (remaining.startsWith(JmsConfiguration.TEMP_TOPIC_PREFIX)) {
                 pubSubDomain = true;
                 tempDestination = true;
-                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
+                remaining =
+                        removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
             }
         }
 
@@ -1219,14 +1236,17 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         }
 
         // resolve any custom connection factory first
-        ConnectionFactory cf = resolveAndRemoveReferenceParameter(parameters, "connectionFactory", ConnectionFactory.class);
+        ConnectionFactory cf =
+                resolveAndRemoveReferenceParameter(parameters, "connectionFactory", ConnectionFactory.class);
         if (cf != null) {
             endpoint.getConfiguration().setConnectionFactory(cf);
         }
 
         // if username or password provided then wrap the connection factory
-        String cfUsername = getAndRemoveParameter(parameters, "username", String.class, getConfiguration().getUsername());
-        String cfPassword = getAndRemoveParameter(parameters, "password", String.class, getConfiguration().getPassword());
+        String cfUsername = getAndRemoveParameter(
+                parameters, "username", String.class, getConfiguration().getUsername());
+        String cfPassword = getAndRemoveParameter(
+                parameters, "password", String.class, getConfiguration().getPassword());
         if (cfUsername != null && cfPassword != null) {
             cf = endpoint.getConfiguration().getOrCreateConnectionFactory();
             ObjectHelper.notNull(cf, "ConnectionFactory");
@@ -1265,11 +1285,11 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
 
-        MessageListenerContainerFactory messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
-                "messageListenerContainerFactoryRef", MessageListenerContainerFactory.class);
+        MessageListenerContainerFactory messageListenerContainerFactory = resolveAndRemoveReferenceParameter(
+                parameters, "messageListenerContainerFactoryRef", MessageListenerContainerFactory.class);
         if (messageListenerContainerFactory == null) {
-            messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
-                    "messageListenerContainerFactory", MessageListenerContainerFactory.class);
+            messageListenerContainerFactory = resolveAndRemoveReferenceParameter(
+                    parameters, "messageListenerContainerFactory", MessageListenerContainerFactory.class);
         }
         if (messageListenerContainerFactory != null) {
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
@@ -1292,13 +1312,19 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     }
 
     protected JmsEndpoint createTemporaryQueueEndpoint(
-            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            String uri,
+            JmsComponent component,
+            String subject,
+            JmsConfiguration configuration,
             QueueBrowseStrategy queueBrowseStrategy) {
         return new JmsTemporaryQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }
 
     protected JmsEndpoint createQueueEndpoint(
-            String uri, JmsComponent component, String subject, JmsConfiguration configuration,
+            String uri,
+            JmsComponent component,
+            String subject,
+            JmsConfiguration configuration,
             QueueBrowseStrategy queueBrowseStrategy) {
         return new JmsQueueEndpoint(uri, component, subject, configuration, queueBrowseStrategy);
     }
@@ -1343,5 +1369,4 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
     protected JmsConfiguration createConfiguration() {
         return new JmsConfiguration();
     }
-
 }

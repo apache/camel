@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +28,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class QueueToQueueTransactionWithoutDefineTransactionManagerIT extends AbstractTransactionIT {
 
     @Override
@@ -47,8 +48,8 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerIT extends Ab
                 errorHandler(noErrorHandler());
                 from("activemq:queue:QueueToQueueTransactionWithoutDefineTransactionManagerIT?transacted=false")
                         .process(new ConditionalExceptionProcessor())
-                        .to("activemq:queue:QueueToQueueTransactionWithoutDefineTransactionManagerIT.dest?transacted=false");
-
+                        .to(
+                                "activemq:queue:QueueToQueueTransactionWithoutDefineTransactionManagerIT.dest?transacted=false");
             }
         });
 
@@ -58,9 +59,10 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerIT extends Ab
 
         notify.matchesWaitTime();
 
-        assertEquals(1, getConditionalExceptionProcessor().getCount(),
+        assertEquals(
+                1,
+                getConditionalExceptionProcessor().getCount(),
                 "Expected only 1 calls to process() (1 failure) but encountered "
-                                                                       + getConditionalExceptionProcessor().getCount() + ".");
+                        + getConditionalExceptionProcessor().getCount() + ".");
     }
-
 }

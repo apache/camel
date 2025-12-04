@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BreadcrumbTest extends MDCTest {
 
@@ -33,17 +34,29 @@ public class BreadcrumbTest extends MDCTest {
                 context.setUseMDCLogging(false);
                 context.setUseBreadcrumb(true);
 
-                from("direct:a").routeId("route-a").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals(exchange.getExchangeId(), exchange.getIn().getHeader("breadcrumbId"));
-                    }
-                }).to("log:foo").to("direct:b");
+                from("direct:a")
+                        .routeId("route-a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals(
+                                        exchange.getExchangeId(),
+                                        exchange.getIn().getHeader("breadcrumbId"));
+                            }
+                        })
+                        .to("log:foo")
+                        .to("direct:b");
 
-                from("direct:b").routeId("route-b").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        assertEquals(exchange.getExchangeId(), exchange.getIn().getHeader("breadcrumbId"));
-                    }
-                }).to("log:bar").to("mock:result");
+                from("direct:b")
+                        .routeId("route-b")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                assertEquals(
+                                        exchange.getExchangeId(),
+                                        exchange.getIn().getHeader("breadcrumbId"));
+                            }
+                        })
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }

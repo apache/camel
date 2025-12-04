@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,18 +37,20 @@ public class EnrichIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .choice()
-                        .when().constant(true)
-                            .enrich()
-                                .constant("direct:test")
-                            .end()
-                            .id("Enriching something")
+                from("direct:start")
+                        .routeId("myRoute")
+                        .choice()
+                        .when()
+                        .constant(true)
+                        .enrich()
+                        .constant("direct:test")
                         .end()
-                        .log("${body}").id("After enrich");
+                        .id("Enriching something")
+                        .end()
+                        .log("${body}")
+                        .id("After enrich");
 
-                from("direct:test")
-                        .setBody(constant("I'm running")).id("Setting body");
+                from("direct:test").setBody(constant("I'm running")).id("Setting body");
             }
         };
     }

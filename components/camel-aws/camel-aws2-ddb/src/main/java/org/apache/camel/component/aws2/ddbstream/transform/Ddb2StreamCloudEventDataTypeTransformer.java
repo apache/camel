@@ -31,8 +31,10 @@ import org.apache.camel.spi.Transformer;
  * Data type transformer converts AWS Dynamo DB Streams get records response to CloudEvent v1_0 data format. The data
  * type sets Camel specific CloudEvent headers with values extracted from AWS Dynamo DB Streams get records.
  */
-@DataTypeTransformer(name = "aws2-ddbstream:application-cloudevents",
-                     description = "Adds CloudEvent headers to the Camel message with AWS Dynamo DB Streams get records response details")
+@DataTypeTransformer(
+        name = "aws2-ddbstream:application-cloudevents",
+        description =
+                "Adds CloudEvent headers to the Camel message with AWS Dynamo DB Streams get records response details")
 public class Ddb2StreamCloudEventDataTypeTransformer extends Transformer {
 
     @Override
@@ -40,16 +42,19 @@ public class Ddb2StreamCloudEventDataTypeTransformer extends Transformer {
         final Map<String, Object> headers = message.getHeaders();
 
         CloudEvent cloudEvent = CloudEvents.v1_0;
-        headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
+        headers.putIfAbsent(
+                CloudEvent.CAMEL_CLOUD_EVENT_ID, message.getExchange().getExchangeId());
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.aws.ddbstream.getRecords");
 
         if (message.getHeaders().containsKey(Ddb2StreamConstants.EVENT_SOURCE)) {
-            headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
+            headers.put(
+                    CloudEvent.CAMEL_CLOUD_EVENT_SOURCE,
                     "aws.ddbstream." + message.getHeader(Ddb2StreamConstants.EVENT_SOURCE, String.class));
         }
 
-        headers.put(CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(Ddb2StreamConstants.EVENT_ID, String.class));
+        headers.put(
+                CloudEvent.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(Ddb2StreamConstants.EVENT_ID, String.class));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_TIME, cloudEvent.getEventTime(message.getExchange()));
         headers.put(CloudEvent.CAMEL_CLOUD_EVENT_CONTENT_TYPE, CloudEvent.APPLICATION_OCTET_STREAM_MIME_TYPE);
     }

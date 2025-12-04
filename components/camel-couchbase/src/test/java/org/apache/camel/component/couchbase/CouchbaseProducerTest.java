@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
+
+import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,16 +43,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CouchbaseProducerTest {
@@ -86,32 +87,27 @@ public class CouchbaseProducerTest {
 
     @Test
     public void testBodyMandatory() {
-        assertThrows(CouchbaseException.class,
-                () -> producer.process(exchange));
+        assertThrows(CouchbaseException.class, () -> producer.process(exchange));
     }
 
     @Test
     public void testPersistToLowerThanSupported() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseProducer(endpoint, client, -1, 0));
+        assertThrows(IllegalArgumentException.class, () -> new CouchbaseProducer(endpoint, client, -1, 0));
     }
 
     @Test
     public void testPersistToHigherThanSupported() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseProducer(endpoint, client, 5, 0));
+        assertThrows(IllegalArgumentException.class, () -> new CouchbaseProducer(endpoint, client, 5, 0));
     }
 
     @Test
     public void testReplicateToLowerThanSupported() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseProducer(endpoint, client, 0, -1));
+        assertThrows(IllegalArgumentException.class, () -> new CouchbaseProducer(endpoint, client, 0, -1));
     }
 
     @Test
     public void testReplicateToHigherThanSupported() {
-        assertThrows(IllegalArgumentException.class,
-                () -> new CouchbaseProducer(endpoint, client, 0, 4));
+        assertThrows(IllegalArgumentException.class, () -> new CouchbaseProducer(endpoint, client, 0, 4));
     }
 
     @Test

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 
 import java.io.FileOutputStream;
 import java.nio.file.Path;
@@ -25,8 +28,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-
 /**
  *
  */
@@ -36,7 +37,7 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&readLockMinLength=0&delete=true";
+                + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&readLockMinLength=0&delete=true";
     }
 
     @Test
@@ -52,7 +53,8 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
 
     private void writeZeroFile() throws Exception {
         createDirectory(service.ftpFile("changed"));
-        FileOutputStream fos = new FileOutputStream(service.ftpFile("changed/zerofile.dat").toFile(), true);
+        FileOutputStream fos =
+                new FileOutputStream(service.ftpFile("changed/zerofile.dat").toFile(), true);
         fos.flush();
         fos.close();
     }
@@ -66,5 +68,4 @@ public class FtpChangedZeroLengthReadLockIT extends FtpServerTestSupport {
             }
         };
     }
-
 }

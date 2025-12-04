@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import java.io.ByteArrayOutputStream;
@@ -51,8 +52,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
 
     public static final String HEADER_NAME = "CamelSplitAttachmentId";
 
-    public SplitAttachmentsExpression() {
-    }
+    public SplitAttachmentsExpression() {}
 
     @Override
     public Object evaluate(Exchange exchange) {
@@ -64,7 +64,8 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         try {
             List<Message> answer = new ArrayList<>();
             AttachmentMessage inMessage = exchange.getIn(AttachmentMessage.class);
-            for (Map.Entry<String, Attachment> entry : inMessage.getAttachmentObjects().entrySet()) {
+            for (Map.Entry<String, Attachment> entry :
+                    inMessage.getAttachmentObjects().entrySet()) {
                 Message attachmentMessage = extractAttachment(entry.getValue(), entry.getKey(), exchange.getContext());
                 if (attachmentMessage != null) {
                     answer.add(attachmentMessage);
@@ -103,5 +104,4 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         IOHelper.copyAndCloseInput(mimePartStream, bos);
         return bos.toByteArray();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import jakarta.servlet.http.HttpSession;
@@ -65,8 +66,10 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").toF("netty-http:http://127.0.0.1:%d/session", getPort())
-                        .toF("netty-http:http://127.0.0.1:%d/session", getPort()).to("mock:result");
+                from("direct:start")
+                        .toF("netty-http:http://127.0.0.1:%d/session", getPort())
+                        .toF("netty-http:http://127.0.0.1:%d/session", getPort())
+                        .to("mock:result");
 
                 from("direct:instance")
                         .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
@@ -78,20 +81,21 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
                         .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
                         .to("mock:result");
 
-                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort()).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) {
-                        HttpMessage message = exchange.getIn(HttpMessage.class);
-                        HttpSession session = message.getRequest().getSession();
-                        String body = message.getBody(String.class);
-                        if ("bar".equals(session.getAttribute("foo"))) {
-                            message.setBody("Old " + body);
-                        } else {
-                            session.setAttribute("foo", "bar");
-                            message.setBody("New " + body);
-                        }
-                    }
-                });
+                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort())
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                HttpMessage message = exchange.getIn(HttpMessage.class);
+                                HttpSession session = message.getRequest().getSession();
+                                String body = message.getBody(String.class);
+                                if ("bar".equals(session.getAttribute("foo"))) {
+                                    message.setBody("Old " + body);
+                                } else {
+                                    session.setAttribute("foo", "bar");
+                                    message.setBody("New " + body);
+                                }
+                            }
+                        });
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
 
 import java.util.LinkedHashMap;
@@ -47,5 +48,4 @@ final class TestUtils {
         }
         return map;
     }
-
 }

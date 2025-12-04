@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -43,13 +44,13 @@ public class InterceptDoTryCatchTest extends ContextTestSupport {
                 intercept().to("mock:intercepted");
 
                 from("direct:start")
-                    .to("mock:foo")
-                    .doTry()
+                        .to("mock:foo")
+                        .doTry()
                         .throwException(new IllegalArgumentException("Forced"))
-                    .doCatch(Exception.class)
+                        .doCatch(Exception.class)
                         .to("mock:bar")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }

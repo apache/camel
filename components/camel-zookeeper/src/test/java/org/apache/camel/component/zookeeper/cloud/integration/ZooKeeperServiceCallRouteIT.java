@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.cloud.integration;
 
 import java.util.ArrayList;
@@ -77,13 +78,12 @@ public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
         expectedBodies = new ArrayList<>(SERVICE_COUNT);
 
         for (int i = 0; i < SERVICE_COUNT; i++) {
-            ServiceInstance<MetaData> instance
-                    = ServiceInstance.<MetaData> builder()
-                            .address("127.0.0.1")
-                            .port(AvailablePortFinder.getNextRandomAvailable())
-                            .name(SERVICE_NAME)
-                            .id("service-" + i)
-                            .build();
+            ServiceInstance<MetaData> instance = ServiceInstance.<MetaData>builder()
+                    .address("127.0.0.1")
+                    .port(AvailablePortFinder.getNextRandomAvailable())
+                    .name(SERVICE_NAME)
+                    .id("service-" + i)
+                    .build();
 
             discovery.registerService(instance);
             instances.add(instance);
@@ -139,7 +139,8 @@ public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
                         .to("mock:result");
 
                 instances.forEach(r -> fromF("jetty:http://%s:%d", r.getAddress(), r.getPort())
-                        .transform().simple("${in.body} on " + r.getPort()));
+                        .transform()
+                        .simple("${in.body} on " + r.getPort()));
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
 
 import org.apache.camel.Exchange;
@@ -34,8 +35,7 @@ public class DelegatePerformanceCounter implements PerformanceCounter {
     private PerformanceCounter counter;
     private boolean statisticsEnabled;
 
-    public DelegatePerformanceCounter() {
-    }
+    public DelegatePerformanceCounter() {}
 
     public void setCounter(PerformanceCounter counter) {
         this.counter = counter;

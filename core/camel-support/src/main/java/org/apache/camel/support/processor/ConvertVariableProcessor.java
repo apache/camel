@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.concurrent.CompletableFuture;
@@ -56,8 +57,14 @@ public class ConvertVariableProcessor extends ServiceSupport
     private final String charset;
     private final boolean mandatory;
 
-    public ConvertVariableProcessor(String name, Expression variableName, String toName, Expression toVariableName,
-                                    Class<?> type, String charset, boolean mandatory) {
+    public ConvertVariableProcessor(
+            String name,
+            Expression variableName,
+            String toName,
+            Expression toVariableName,
+            Class<?> type,
+            String charset,
+            boolean mandatory) {
         ObjectHelper.notNull(variableName, "variableName");
         ObjectHelper.notNull(type, "type", this);
         this.name = name;
@@ -174,7 +181,8 @@ public class ConvertVariableProcessor extends ServiceSupport
 
     @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback =
+                new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
         return callback.getFuture();
     }

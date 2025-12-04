@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,10 +29,6 @@ import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Disabled("Now we support to set sslContextParameters on different endpoints")
 public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest {
@@ -46,9 +47,12 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setSslContext(getSSLContext()).create();
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
+                .setSslContext(getSSLContext())
+                .create();
         localServer.start();
     }
 
@@ -70,22 +74,24 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
             @Override
             public void configure() {
                 from("direct:foo")
-                        .to("https://localhost:" + localServer.getLocalPort()
-                            + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");
+                        .to(
+                                "https://localhost:" + localServer.getLocalPort()
+                                        + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https://localhost:" + localServer.getLocalPort()
-                            + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
+                        .to(
+                                "https://localhost:" + localServer.getLocalPort()
+                                        + "/mail?x509HostnameVerifier=x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });
         try {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = (IllegalArgumentException) e.getCause().getCause();
+            IllegalArgumentException iae =
+                    (IllegalArgumentException) e.getCause().getCause();
             assertNotNull(iae);
             assertTrue(iae.getMessage().startsWith("Only same instance of SSLContextParameters is supported."));
         }
     }
-
 }

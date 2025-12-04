@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.server;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -55,8 +56,7 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
     @Test
     public void testSetSecurityPolicies3() {
         final MiloServerComponent component = new MiloServerComponent();
-        Assertions.assertDoesNotThrow(
-                () -> component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"));
+        Assertions.assertDoesNotThrow(() ->
+                component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"));
     }
-
 }

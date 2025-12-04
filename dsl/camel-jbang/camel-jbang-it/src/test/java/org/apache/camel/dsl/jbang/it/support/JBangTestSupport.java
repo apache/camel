@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it.support;
 
 import java.io.ByteArrayInputStream;
@@ -63,8 +64,8 @@ public abstract class JBangTestSupport {
 
     private static final String DATA_FOLDER = System.getProperty(CliProperties.DATA_FOLDER);
 
-    protected static final int ASSERTION_WAIT_SECONDS
-            = Integer.parseInt(System.getProperty("jbang.it.assert.wait.timeout", "60"));
+    protected static final int ASSERTION_WAIT_SECONDS =
+            Integer.parseInt(System.getProperty("jbang.it.assert.wait.timeout", "60"));
 
     protected static final String DEFAULT_ROUTE_FOLDER = "/home/jbang";
 
@@ -74,15 +75,21 @@ public abstract class JBangTestSupport {
 
     @BeforeEach
     protected void beforeEach(TestInfo testInfo) throws IOException {
-        Assertions.assertThat(DATA_FOLDER).as("%s need to be set", CliProperties.DATA_FOLDER).isNotBlank();
-        containerDataFolder = Files.createDirectory(Paths.get(DATA_FOLDER, containerService.id())).toAbsolutePath().toString();
+        Assertions.assertThat(DATA_FOLDER)
+                .as("%s need to be set", CliProperties.DATA_FOLDER)
+                .isNotBlank();
+        containerDataFolder = Files.createDirectory(Paths.get(DATA_FOLDER, containerService.id()))
+                .toAbsolutePath()
+                .toString();
         Files.setPosixFilePermissions(Paths.get(containerDataFolder), EnumSet.allOf(PosixFilePermission.class));
-        logger.debug("running {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
+        logger.debug(
+                "running {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
     }
 
     @AfterEach
     protected void afterEach(TestInfo testInfo) {
-        logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
+        logger.debug(
+                "ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
         assertNoErrors();
         logger.debug("clean up data folder");
         if (containerDataFolder != null) {
@@ -202,9 +209,7 @@ public abstract class JBangTestSupport {
 
     protected void assertFileInDataFolderDoesNotExist(String file) {
         final Path toVerify = Path.of(containerDataFolder, file);
-        Assertions.assertThat(toVerify)
-                .as("file " + toVerify + " exists")
-                .doesNotExist();
+        Assertions.assertThat(toVerify).as("file " + toVerify + " exists").doesNotExist();
     }
 
     protected void checkLogContainsAllOf(String... contains) {
@@ -214,15 +219,13 @@ public abstract class JBangTestSupport {
     protected void checkLogContainsAllOf(int waitForSeconds, String... contains) {
         Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
                 .atMost(waitForSeconds, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertThat(getLogs())
-                        .contains(contains)));
+                .untilAsserted(() -> Assertions.assertThat(getLogs()).contains(contains)));
     }
 
     protected void checkContainerLogContainsAllOf(int waitForSeconds, String... contains) {
         Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
                 .atMost(waitForSeconds, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertThat(getContainerLogs())
-                        .contains(contains)));
+                .untilAsserted(() -> Assertions.assertThat(getContainerLogs()).contains(contains)));
     }
 
     protected void checkLogContains(String contains) {
@@ -366,11 +369,13 @@ public abstract class JBangTestSupport {
     }
 
     protected String downloadNewFileInDataFolder(URL downloadUrl, String fileName) {
-        final String fName = fileName == null ? Paths.get(downloadUrl.getPath().toString()).getFileName().toString() : fileName;
+        final String fName = fileName == null
+                ? Paths.get(downloadUrl.getPath().toString()).getFileName().toString()
+                : fileName;
 
         final StringWriter sw = new StringWriter();
         try (ReadableByteChannel channel = Channels.newChannel(downloadUrl.openStream());
-             Reader reader = Channels.newReader(channel, Charset.defaultCharset())) {
+                Reader reader = Channels.newReader(channel, Charset.defaultCharset())) {
             reader.transferTo(sw);
             sw.flush();
         } catch (IOException e) {
@@ -408,10 +413,13 @@ public abstract class JBangTestSupport {
 
     protected void assertFileInContainerExists(String fileAbsolutePath) {
         String fileName = Path.of(fileAbsolutePath).getFileName().toFile().getName();
-        Assertions.assertThat(containerService.listDirectory(Path.of(fileAbsolutePath).getParent().toAbsolutePath().toString())
-                .anyMatch(child -> fileName.equals(child)))
+        Assertions.assertThat(containerService
+                        .listDirectory(Path.of(fileAbsolutePath)
+                                .getParent()
+                                .toAbsolutePath()
+                                .toString())
+                        .anyMatch(child -> fileName.equals(child)))
                 .as("check if file " + fileAbsolutePath + " exists")
                 .isTrue();
     }
-
 }

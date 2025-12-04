@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import org.apache.camel.Message;
@@ -37,7 +38,12 @@ public final class ConsulCoordinatesProducer extends AbstractConsulProducer<Coor
 
     @InvokeOnHeader(ConsulCoordinatesActions.NODES)
     protected void nodes(Message message) throws Exception {
-        setBodyAndResult(message, getClient().getNodes(
-                message.getHeader(ConsulConstants.CONSUL_DATACENTER, getConfiguration().getDatacenter(), String.class)));
+        setBodyAndResult(
+                message,
+                getClient()
+                        .getNodes(message.getHeader(
+                                ConsulConstants.CONSUL_DATACENTER,
+                                getConfiguration().getDatacenter(),
+                                String.class)));
     }
 }

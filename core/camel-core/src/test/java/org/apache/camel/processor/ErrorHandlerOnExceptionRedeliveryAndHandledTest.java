@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -25,9 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTestSupport {
 
@@ -61,27 +62,33 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
             public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(0));
 
-                onException(IOException.class).maximumRedeliveries(3).handled(true).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
-                            String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
-                            counter += s;
-                        }
-                        // we throw an exception here, but the default error
-                        // handler should not kick in
-                        throw new ConnectException("Cannot connect to bar server");
-                    }
-                }).to("mock:other");
+                onException(IOException.class)
+                        .maximumRedeliveries(3)
+                        .handled(true)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
+                                    String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
+                                    counter += s;
+                                }
+                                // we throw an exception here, but the default error
+                                // handler should not kick in
+                                throw new ConnectException("Cannot connect to bar server");
+                            }
+                        })
+                        .to("mock:other");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
-                            String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
-                            counter += s;
-                        }
-                        throw new ConnectException("Cannot connect to foo server");
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                if (exchange.getIn().getHeader(Exchange.REDELIVERED) != null) {
+                                    String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
+                                    counter += s;
+                                }
+                                throw new ConnectException("Cannot connect to foo server");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

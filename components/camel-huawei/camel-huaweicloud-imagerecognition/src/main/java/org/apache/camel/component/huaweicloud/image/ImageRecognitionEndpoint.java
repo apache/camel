@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.image;
 
 import com.huaweicloud.sdk.image.v2.ImageClient;
@@ -32,18 +33,26 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * To identify objects, scenes, and concepts in images on Huawei Cloud
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "hwcloud-imagerecognition", title = "Huawei Cloud Image Recognition",
-             syntax = "hwcloud-imagerecognition:operation",
-             category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true)
+@UriEndpoint(
+        firstVersion = "3.12.0",
+        scheme = "hwcloud-imagerecognition",
+        title = "Huawei Cloud Image Recognition",
+        syntax = "hwcloud-imagerecognition:operation",
+        category = {Category.CLOUD, Category.MESSAGING},
+        producerOnly = true)
 public class ImageRecognitionEndpoint extends DefaultEndpoint {
     @UriPath(
-             description = "Name of Image Recognition operation to perform, including celebrityRecognition and tagRecognition",
-             displayName = "Operation name", label = "producer")
+            description =
+                    "Name of Image Recognition operation to perform, including celebrityRecognition and tagRecognition",
+            displayName = "Operation name",
+            label = "producer")
     @Metadata(required = true)
     private String operation;
 
-    @UriParam(description = "Configuration object for cloud service authentication",
-              displayName = "Service Configuration", secret = true)
+    @UriParam(
+            description = "Configuration object for cloud service authentication",
+            displayName = "Service Configuration",
+            secret = true)
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
@@ -75,61 +84,74 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
-              defaultValue = "false", label = "security")
+    @UriParam(
+            description = "Ignore SSL verification",
+            displayName = "SSL Verification Ignored",
+            defaultValue = "false",
+            label = "security")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
     @UriParam(
-              description = "Image Recognition service region. Currently only cn-north-1 and cn-north-4 are supported. This is lower precedence than endpoint based configuration.",
-              displayName = "Service region")
+            description =
+                    "Image Recognition service region. Currently only cn-north-1 and cn-north-4 are supported. This is lower precedence than endpoint based configuration.",
+            displayName = "Service region")
     @Metadata(required = true)
     private String region;
 
     @UriParam(
-              description = "Fully qualified Image Recognition service url. Carries higher precedence than region based configuration.",
-              displayName = "Service endpoint")
+            description =
+                    "Fully qualified Image Recognition service url. Carries higher precedence than region based configuration.",
+            displayName = "Service endpoint")
     @Metadata(required = false)
     private String endpoint;
 
     @UriParam(
-              description = "Indicates the Base64 character string converted from the image. The size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels."
+            description =
+                    "Indicates the Base64 character string converted from the image. The size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels."
                             + "The supported image formats include JPG, PNG, and BMP. \n"
                             + "Configure either this parameter or imageUrl, and this one carries higher precedence than imageUrl.",
-              displayName = "Image in Base64")
+            displayName = "Image in Base64")
     @Metadata(required = false)
     private String imageContent;
 
-    @UriParam(description = "Indicates the URL of an image. The options are as follows:\n"
+    @UriParam(
+            description =
+                    "Indicates the URL of an image. The options are as follows:\n"
                             + "HTTP/HTTPS URLs on the public network\n"
                             + "OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n"
                             + "Configure either this parameter or imageContent, and this one carries lower precedence than imageContent.",
-              displayName = "Image Url")
+            displayName = "Image Url")
     @Metadata(required = false)
     private String imageUrl;
 
     @UriParam(
-              description = "Indicates the language of the returned tags when the operation is tagRecognition, including zh and en.",
-              displayName = "Tag Language", defaultValue = "zh")
+            description =
+                    "Indicates the language of the returned tags when the operation is tagRecognition, including zh and en.",
+            displayName = "Tag Language",
+            defaultValue = "zh")
     @Metadata(required = false)
     private String tagLanguage = ImageRecognitionConstants.TAG_LANGUAGE_ZH;
 
-    @UriParam(description = "Indicates the threshold of confidence.\n"
+    @UriParam(
+            description =
+                    "Indicates the threshold of confidence.\n"
                             + "When the operation is tagRecognition, this parameter ranges from 0 to 100. Tags whose confidence score is lower than the threshold will not be returned. The default value is 60.\n"
                             + "When the operation is celebrityRecognition, this parameter ranges from 0 to 1. Labels whose confidence score is lower than the threshold will not be returned. The default value is 0.48.",
-              displayName = "Threshold of confidence")
+            displayName = "Threshold of confidence")
     @Metadata(required = false)
     private float threshold = -1;
 
-    @UriParam(description = "Indicates the maximum number of the returned tags when the operation is tagRecognition.",
-              displayName = "Tag Limit", defaultValue = "50")
+    @UriParam(
+            description = "Indicates the maximum number of the returned tags when the operation is tagRecognition.",
+            displayName = "Tag Limit",
+            defaultValue = "50")
     @Metadata(required = false)
     private int tagLimit = ImageRecognitionConstants.DEFAULT_TAG_LIMIT;
 
     private ImageClient imageClient;
 
-    public ImageRecognitionEndpoint() {
-    }
+    public ImageRecognitionEndpoint() {}
 
     public ImageRecognitionEndpoint(String uri, String operation, ImageRecognitionComponent component) {
         super(uri, component);

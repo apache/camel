@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.wal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -34,8 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(LogWriterRollOverUpdateAsyncBase.class);
     protected BlockingQueue<EntryInfo.CachedEntryInfo> entryInfos;
@@ -48,7 +48,6 @@ abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
         reportFile = new File(testDir, "test.data");
 
         logWriter = new LogWriter(reportFile, new DefaultLogSupervisor(100), 100);
-
     }
 
     private void markRecordsAsCommitted() {
@@ -116,5 +115,4 @@ abstract class LogWriterRollOverUpdateAsyncBase extends LogTestBase {
             Assertions.assertEquals(100, count, "The number of records don't match");
         }
     }
-
 }

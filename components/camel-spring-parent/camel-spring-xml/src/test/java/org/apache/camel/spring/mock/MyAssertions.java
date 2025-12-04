@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.mock;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.beans.factory.InitializingBean;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * An example bean which adds some expectations on some mock endpoints and then asserts that the expectactions are met.

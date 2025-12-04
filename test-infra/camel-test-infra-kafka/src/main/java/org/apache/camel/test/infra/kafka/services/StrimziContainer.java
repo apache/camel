@@ -25,9 +25,8 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class StrimziContainer extends GenericContainer<StrimziContainer> {
-    static final String STRIMZI_CONTAINER = LocalPropertyResolver.getProperty(
-            StrimziContainer.class,
-            KafkaProperties.STRIMZI_CONTAINER);
+    static final String STRIMZI_CONTAINER =
+            LocalPropertyResolver.getProperty(StrimziContainer.class, KafkaProperties.STRIMZI_CONTAINER);
     private static final int KAFKA_PORT = 9092;
 
     public StrimziContainer(Network network, String name, String zookeeperInstanceName) {
@@ -44,11 +43,13 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
                 .withEnv("KAFKA_ZOOKEEPER_CONNECT", zookeeperInstanceName + ":2181")
                 .withNetwork(network)
                 .withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd))
-                .withCommand("sh", "-c",
+                .withCommand(
+                        "sh",
+                        "-c",
                         "bin/kafka-server-start.sh config/server.properties "
-                                         + "--override listeners=${KAFKA_LISTENERS} "
-                                         + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
-                                         + "--override zookeeper.connect=${KAFKA_ZOOKEEPER_CONNECT}")
+                                + "--override listeners=${KAFKA_LISTENERS} "
+                                + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
+                                + "--override zookeeper.connect=${KAFKA_ZOOKEEPER_CONNECT}")
                 .waitingFor(Wait.forListeningPort());
     }
 

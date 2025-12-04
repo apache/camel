@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.tx;
 
 import java.lang.management.ManagementFactory;
@@ -85,8 +86,11 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
             } else {
                 log.info("normal thread: {}", threadInfo);
             }
-            log.info("full stack: {}",
-                    Arrays.stream(threadInfo.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n\t")));
+            log.info(
+                    "full stack: {}",
+                    Arrays.stream(threadInfo.getStackTrace())
+                            .map(Object::toString)
+                            .collect(Collectors.joining("\n\t")));
         }
     }
 

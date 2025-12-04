@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +48,8 @@ public class FileConsumeSimpleRelativeMoveToAbsoluteTest extends ContextTestSupp
             @Override
             public void configure() {
                 from(fileUri("?recursive=true&move=" + base + "&initialDelay=0&delay=10"))
-                        .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

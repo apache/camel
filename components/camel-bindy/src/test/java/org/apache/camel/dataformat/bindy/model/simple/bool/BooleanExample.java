@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.simple.bool;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -48,5 +49,4 @@ public class BooleanExample {
     public String toString() {
         return "BoolExample [name=" + name + ", exist=" + exist + "]";
     }
-
 }

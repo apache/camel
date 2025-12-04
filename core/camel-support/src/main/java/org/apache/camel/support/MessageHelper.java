@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.File;
@@ -59,8 +60,7 @@ public final class MessageHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private MessageHelper() {
-    }
+    private MessageHelper() {}
 
     /**
      * Extracts the given body and returns it as a String, that can be used for logging etc.
@@ -82,8 +82,10 @@ public final class MessageHelper {
         }
 
         // we need to favor using stream cache so the body can be re-read later
-        StreamCache newBody = message.getExchange().getContext().getTypeConverter().tryConvertTo(StreamCache.class,
-                message.getExchange(), body);
+        StreamCache newBody = message.getExchange()
+                .getContext()
+                .getTypeConverter()
+                .tryConvertTo(StreamCache.class, message.getExchange(), body);
         if (newBody != null) {
             message.setBody(newBody);
         }
@@ -200,8 +202,10 @@ public final class MessageHelper {
         if (message.getExchange() != null) {
             String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_STREAMS);
             if (globalOption != null) {
-                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(),
-                        globalOption);
+                streams = message.getExchange()
+                        .getContext()
+                        .getTypeConverter()
+                        .convertTo(Boolean.class, message.getExchange(), globalOption);
             }
         }
         return streams;
@@ -236,7 +240,8 @@ public final class MessageHelper {
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
-    public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles) {
+    public static String extractBodyForLogging(
+            Message message, String prepend, boolean allowStreams, boolean allowFiles) {
         // default to 1000 chars
         int maxChars = 1000;
 
@@ -290,10 +295,14 @@ public final class MessageHelper {
      * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(
-            Message message, String prepend, boolean allowCachedStreams, boolean allowStreams, boolean allowFiles,
+            Message message,
+            String prepend,
+            boolean allowCachedStreams,
+            boolean allowStreams,
+            boolean allowFiles,
             int maxChars) {
-        String value
-                = extractValueForLogging(message.getBody(), message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+        String value = extractValueForLogging(
+                message.getBody(), message, allowCachedStreams, allowStreams, allowFiles, maxChars);
         if (prepend != null) {
             return prepend + value;
         } else {
@@ -318,7 +327,6 @@ public final class MessageHelper {
     public static String extractValueForLogging(
             Object obj, Message message, boolean allowStreams, boolean allowFiles, int maxChars) {
         return extractValueForLogging(obj, message, allowStreams, allowStreams, allowFiles, maxChars);
-
     }
 
     /**
@@ -337,7 +345,12 @@ public final class MessageHelper {
      * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractValueForLogging(
-            Object obj, Message message, boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars) {
+            Object obj,
+            Message message,
+            boolean allowCachedStreams,
+            boolean allowStreams,
+            boolean allowFiles,
+            int maxChars) {
         if (maxChars < 0) {
             return "[Body is not logged]";
         }
@@ -385,8 +398,10 @@ public final class MessageHelper {
         String body = null;
         if (message.getExchange() != null) {
             try {
-                body = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class, message.getExchange(),
-                        obj);
+                body = message.getExchange()
+                        .getContext()
+                        .getTypeConverter()
+                        .tryConvertTo(String.class, message.getExchange(), obj);
             } catch (Exception e) {
                 // ignore as the body is for logging purpose
             }
@@ -417,7 +432,7 @@ public final class MessageHelper {
         // clip body if length enabled and the body is too big
         if (maxChars > 0 && body.length() > maxChars) {
             body = body.substring(0, maxChars) + "... [Body clipped after " + maxChars + " chars, total length is "
-                   + body.length() + "]";
+                    + body.length() + "]";
         }
 
         return body;
@@ -489,9 +504,15 @@ public final class MessageHelper {
      * @return                           the XML
      */
     public static String dumpAsXml(
-            Message message, boolean includeExchangeProperties, boolean includeExchangeVariables,
-            boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
-            boolean allowFiles, int maxChars) {
+            Message message,
+            boolean includeExchangeProperties,
+            boolean includeExchangeVariables,
+            boolean includeBody,
+            int indent,
+            boolean allowCachedStreams,
+            boolean allowStreams,
+            boolean allowFiles,
+            int maxChars) {
         StringBuilder sb = new StringBuilder(1024);
 
         final String prefix = " ".repeat(indent);
@@ -500,10 +521,15 @@ public final class MessageHelper {
         sb.append(prefix);
         String messageType = ObjectHelper.classCanonicalName(message);
         String exchangeType = ObjectHelper.classCanonicalName(message.getExchange());
-        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId())
-                .append("\" exchangePattern=\"").append(message.getExchange().getPattern().name())
-                .append("\" exchangeType=\"").append(exchangeType)
-                .append("\" messageType=\"").append(messageType).append("\">\n");
+        sb.append("<message exchangeId=\"")
+                .append(message.getExchange().getExchangeId())
+                .append("\" exchangePattern=\"")
+                .append(message.getExchange().getPattern().name())
+                .append("\" exchangeType=\"")
+                .append(exchangeType)
+                .append("\" messageType=\"")
+                .append(messageType)
+                .append("\">\n");
 
         // exchange variables
         if (includeExchangeVariables && message.getExchange().hasVariables()) {
@@ -525,8 +551,8 @@ public final class MessageHelper {
                 // dump value as XML, use Camel type converter to convert to String
                 if (value != null) {
                     try {
-                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles,
-                                maxChars);
+                        String xml = extractValueForLogging(
+                                value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
@@ -549,7 +575,8 @@ public final class MessageHelper {
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 String key = entry.getKey();
                 // skip some special that are too big
-                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                if (Exchange.MESSAGE_HISTORY.equals(key)
+                        || Exchange.GROUPED_EXCHANGE.equals(key)
                         || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
@@ -565,8 +592,8 @@ public final class MessageHelper {
                 // dump value as XML, use Camel type converter to convert to String
                 if (value != null) {
                     try {
-                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles,
-                                maxChars);
+                        String xml = extractValueForLogging(
+                                value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
@@ -599,8 +626,8 @@ public final class MessageHelper {
                 // dump value as XML, use Camel type converter to convert to String
                 if (value != null) {
                     try {
-                        String xml = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles,
-                                maxChars);
+                        String xml = extractValueForLogging(
+                                value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
                         if (xml != null) {
                             // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
@@ -663,8 +690,7 @@ public final class MessageHelper {
         // Preserve the DataType if both messages are DataTypeAware
         if (source.hasTrait(MessageTrait.DATA_AWARE)) {
             target.setBody(source.getBody());
-            target.setPayloadForTrait(MessageTrait.DATA_AWARE,
-                    source.getPayloadForTrait(MessageTrait.DATA_AWARE));
+            target.setPayloadForTrait(MessageTrait.DATA_AWARE, source.getPayloadForTrait(MessageTrait.DATA_AWARE));
 
             return;
         }
@@ -746,8 +772,9 @@ public final class MessageHelper {
         String id = routeId;
         String label = "";
         if (exchange.getFromEndpoint() != null) {
-            label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
-                    + "]";
+            label = "from["
+                    + URISupport.sanitizeUri(
+                            StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100)) + "]";
         }
         final long elapsed = exchange.getClock().elapsed();
 
@@ -769,8 +796,12 @@ public final class MessageHelper {
         sb.append(
                 "---------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
-        sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
-                "Source", "ID", "Processor", "Elapsed (ms)"));
+        sb.append(String.format(
+                goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
+                "Source",
+                "ID",
+                "Processor",
+                "Elapsed (ms)"));
         sb.append("\n");
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
@@ -821,7 +852,8 @@ public final class MessageHelper {
                 // give enough space for removing
                 // characters in the sanitizeUri method and will be reasonably
                 // fast
-                label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
+                label = URISupport.sanitizeUri(
+                        StringHelper.limitLength(history.getNode().getLabel(), 100));
 
                 sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, history.getElapsed()));
                 sb.append("\n");
@@ -890,9 +922,15 @@ public final class MessageHelper {
      * @return              the JSon
      */
     public static String dumpAsJSon(
-            Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars,
+            Message message,
+            boolean includeBody,
+            int indent,
+            boolean allowStreams,
+            boolean allowFiles,
+            int maxChars,
             boolean pretty) {
-        return dumpAsJSon(message, false, false, includeBody, indent, false, allowStreams, allowFiles, maxChars, pretty);
+        return dumpAsJSon(
+                message, false, false, includeBody, indent, false, allowStreams, allowFiles, maxChars, pretty);
     }
 
     /**
@@ -912,13 +950,26 @@ public final class MessageHelper {
      * @return                           the JSon
      */
     public static String dumpAsJSon(
-            Message message, boolean includeExchangeProperties, boolean includeExchangeVariables, boolean includeBody,
+            Message message,
+            boolean includeExchangeProperties,
+            boolean includeExchangeVariables,
+            boolean includeBody,
             int indent,
-            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars, boolean pretty) {
+            boolean allowCachedStreams,
+            boolean allowStreams,
+            boolean allowFiles,
+            int maxChars,
+            boolean pretty) {
 
-        JsonObject jo = dumpAsJSonObject(message, includeExchangeProperties, includeExchangeVariables, includeBody,
-                allowCachedStreams, allowStreams,
-                allowFiles, maxChars);
+        JsonObject jo = dumpAsJSonObject(
+                message,
+                includeExchangeProperties,
+                includeExchangeVariables,
+                includeBody,
+                allowCachedStreams,
+                allowStreams,
+                allowFiles,
+                maxChars);
         String answer = jo.toJson();
         if (pretty) {
             if (indent > 0) {
@@ -945,8 +996,14 @@ public final class MessageHelper {
      * @return                           the JSon Object
      */
     public static JsonObject dumpAsJSonObject(
-            Message message, boolean includeExchangeProperties, boolean includeExchangeVariables, boolean includeBody,
-            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars) {
+            Message message,
+            boolean includeExchangeProperties,
+            boolean includeExchangeVariables,
+            boolean includeBody,
+            boolean allowCachedStreams,
+            boolean allowStreams,
+            boolean allowFiles,
+            int maxChars) {
 
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -975,7 +1032,8 @@ public final class MessageHelper {
                     if (s == null) {
                         // cannot JSon serialize out of the box, so we need to use string value
                         try {
-                            s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                            s = extractValueForLogging(
+                                    value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
                         } catch (Exception e) {
                             // ignore
                         }
@@ -1002,7 +1060,8 @@ public final class MessageHelper {
                 JsonObject jh = new JsonObject();
                 String key = entry.getKey();
                 // skip some special that are too big
-                if (Exchange.MESSAGE_HISTORY.equals(key) || Exchange.GROUPED_EXCHANGE.equals(key)
+                if (Exchange.MESSAGE_HISTORY.equals(key)
+                        || Exchange.GROUPED_EXCHANGE.equals(key)
                         || Exchange.FILE_EXCHANGE_FILE.equals(key)) {
                     continue;
                 }
@@ -1018,7 +1077,8 @@ public final class MessageHelper {
                     if (s == null) {
                         // cannot JSon serialize out of the box, so we need to use string value
                         try {
-                            s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                            s = extractValueForLogging(
+                                    value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
                         } catch (Exception e) {
                             // ignore
                         }
@@ -1057,7 +1117,8 @@ public final class MessageHelper {
                     if (s == null) {
                         // cannot JSon serialize out of the box, so we need to use string value
                         try {
-                            s = extractValueForLogging(value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
+                            s = extractValueForLogging(
+                                    value, message, allowCachedStreams, allowStreams, allowFiles, maxChars);
                         } catch (Exception e) {
                             // ignore
                         }
@@ -1199,5 +1260,4 @@ public final class MessageHelper {
         }
         return root;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi.annotations;
 
 import java.lang.annotation.ElementType;
@@ -23,5 +24,4 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface YamlIn {
-}
+public @interface YamlIn {}

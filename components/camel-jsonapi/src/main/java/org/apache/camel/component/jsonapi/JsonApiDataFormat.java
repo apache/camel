@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonapi;
 
 import java.io.InputStream;
@@ -44,8 +45,7 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
     private String mainFormatType;
     private Class<?> mainFormatTypeClass;
 
-    public JsonApiDataFormat() {
-    }
+    public JsonApiDataFormat() {}
 
     public JsonApiDataFormat(Class<?>[] dataFormatTypesClasses) {
         this.dataFormatTypeClasses = dataFormatTypesClasses;
@@ -91,7 +91,8 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
         if (body instanceof byte[] arr) {
             doc = converter.readDocument(arr, mainFormatTypeClass);
         } else {
-            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+            InputStream is =
+                    exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
             doc = converter.readDocument(is, mainFormatTypeClass);
         }
         return doc.get();
@@ -155,5 +156,4 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
             mainFormatTypeClass = getCamelContext().getClassResolver().resolveMandatoryClass(mainFormatType);
         }
     }
-
 }

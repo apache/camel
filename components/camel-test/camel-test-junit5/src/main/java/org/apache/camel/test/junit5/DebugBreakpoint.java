@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5;
 
 import org.apache.camel.Exchange;
@@ -29,14 +30,19 @@ public abstract class DebugBreakpoint extends BreakpointSupport {
 
     @Override
     public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
-        debugBefore(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
-                definition.getLabel());
+        debugBefore(
+                exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(), definition.getLabel());
     }
 
     @Override
     public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-        debugAfter(exchange, processor, (ProcessorDefinition<?>) definition, definition.getId(),
-                definition.getLabel(), timeTaken);
+        debugAfter(
+                exchange,
+                processor,
+                (ProcessorDefinition<?>) definition,
+                definition.getId(),
+                definition.getLabel(),
+                timeTaken);
     }
 
     /**
@@ -61,6 +67,10 @@ public abstract class DebugBreakpoint extends BreakpointSupport {
      * @param label      the definition label
      */
     protected abstract void debugAfter(
-            Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label,
+            Exchange exchange,
+            Processor processor,
+            ProcessorDefinition<?> definition,
+            String id,
+            String label,
             long timeTaken);
 }

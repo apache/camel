@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.AdviceWith;
@@ -59,8 +60,7 @@ public class TransactedInterceptUsingAdviceWithSendToEndpointTest extends Transa
         AdviceWith.adviceWith(context.getRouteDefinition(routeId), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:(foo|bar)")
-                        .to("mock:intercepted");
+                interceptSendToEndpoint("direct:(foo|bar)").to("mock:intercepted");
             }
         });
     }
@@ -75,17 +75,21 @@ public class TransactedInterceptUsingAdviceWithSendToEndpointTest extends Transa
                         .enrich("direct:foo", (oldExchange, newExchange) -> {
                             return newExchange;
                         })
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 from("direct:fail")
                         .routeId("fail_route")
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
                         .enrich("direct:bar", (oldExchange, newExchange) -> {
                             return newExchange;
                         })
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
 
                 from("direct:foo").to("log:okay");
 
@@ -93,5 +97,4 @@ public class TransactedInterceptUsingAdviceWithSendToEndpointTest extends Transa
             }
         };
     }
-
 }

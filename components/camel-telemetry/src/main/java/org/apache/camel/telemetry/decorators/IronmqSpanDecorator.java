@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry.decorators;
 
 import org.apache.camel.Exchange;
@@ -36,5 +37,4 @@ public class IronmqSpanDecorator extends AbstractMessagingSpanDecorator {
     protected String getMessageId(Exchange exchange) {
         return exchange.getIn().getHeader(CAMEL_IRON_MQ_MESSAGE_ID, String.class);
     }
-
 }

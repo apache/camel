@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestComponentTest {
 
@@ -44,8 +45,8 @@ public class RestComponentTest {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("host", "#host-ref");
 
-        final RestEndpoint endpoint
-                = (RestEndpoint) rest.createEndpoint("rest://GET:/path:?host=#host-ref", "GET:/path", parameters);
+        final RestEndpoint endpoint =
+                (RestEndpoint) rest.createEndpoint("rest://GET:/path:?host=#host-ref", "GET:/path", parameters);
 
         assertEquals("http://localhost:8080", endpoint.getHost());
     }
@@ -55,8 +56,8 @@ public class RestComponentTest {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("host", "http://localhost:8080");
 
-        final RestEndpoint endpoint = (RestEndpoint) rest.createEndpoint("rest://GET:/path:?host=http%3A%2F%2Flocalhost%3A8080",
-                "GET:/path", parameters);
+        final RestEndpoint endpoint = (RestEndpoint)
+                rest.createEndpoint("rest://GET:/path:?host=http%3A%2F%2Flocalhost%3A8080", "GET:/path", parameters);
 
         assertEquals("http://localhost:8080", endpoint.getHost());
     }

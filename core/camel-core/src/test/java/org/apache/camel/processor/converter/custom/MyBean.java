@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.converter.custom;
 
 import org.apache.camel.util.ObjectHelper;
@@ -22,8 +23,7 @@ public class MyBean {
     private String a;
     private String b;
 
-    public MyBean() {
-    }
+    public MyBean() {}
 
     public MyBean(String a, String b) {
         this.a = a;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +33,6 @@ import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests related to maxConcurrentConsumers configuration
@@ -79,7 +80,8 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
+        String testMessage =
+                "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
@@ -92,14 +94,14 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
         mllpClient.connect();
 
-        String testMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
+        String testMessage =
+                "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20160902123950|RISTECH|ADT^A08|00001|D|2.3|||||||" + '\r' + '\n';
         mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         // second connection should fail
-        assertThrows(MllpJUnitResourceException.class,
-                () -> mllpClient2.connect());
+        assertThrows(MllpJUnitResourceException.class, () -> mllpClient2.connect());
     }
 
     void addTestRoute(int maxConcurrentConsumers) throws Exception {
@@ -109,12 +111,12 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
             public void configure() {
                 String routeId = "mllp-max-concurrent-consumers-route";
 
-                fromF("mllp://%s:%d?maxConcurrentConsumers=%d&autoAck=true&connectTimeout=100&receiveTimeout=1000",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), maxConcurrentConsumers)
+                fromF(
+                                "mllp://%s:%d?maxConcurrentConsumers=%d&autoAck=true&connectTimeout=100&receiveTimeout=1000",
+                                mllpClient.getMllpHost(), mllpClient.getMllpPort(), maxConcurrentConsumers)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route received message")
                         .to(result);
-
             }
         };
         context.addRoutes(builder);

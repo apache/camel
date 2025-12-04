@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.Exchange;
@@ -49,7 +50,8 @@ public class KameletConsumerUoWIssueTest extends CamelTestSupport {
             public void configure() {
                 routeTemplate("tick")
                         .from("timer:tick?repeatCount=1&delay=-1&includeMetadata=true")
-                        .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .exchangeProperty(Exchange.TIMER_COUNTER)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
@@ -61,10 +63,10 @@ public class KameletConsumerUoWIssueTest extends CamelTestSupport {
                                     }
                                 });
                             }
-                        }).to("kamelet:sink");
+                        })
+                        .to("kamelet:sink");
 
-                from("kamelet:tick").noAutoStartup().routeId("tick")
-                        .to("mock:foo");
+                from("kamelet:tick").noAutoStartup().routeId("tick").to("mock:foo");
             }
         };
     }

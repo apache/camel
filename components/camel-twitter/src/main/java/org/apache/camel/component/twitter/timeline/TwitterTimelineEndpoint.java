@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.timeline;
+
+import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_TIMELINE;
+import static org.apache.camel.component.twitter.data.TimelineType.USER;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -31,27 +35,35 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.twitter.TwitterConstants.SCHEME_TIMELINE;
-import static org.apache.camel.component.twitter.data.TimelineType.USER;
-
 /**
  * Send tweets and receive tweets from user's timeline.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = SCHEME_TIMELINE, title = "Twitter Timeline",
-             syntax = "twitter-timeline:timelineType",
-             category = { Category.SAAS, Category.SOCIAL }, headersClass = TwitterConstants.class)
+@UriEndpoint(
+        firstVersion = "2.10.0",
+        scheme = SCHEME_TIMELINE,
+        title = "Twitter Timeline",
+        syntax = "twitter-timeline:timelineType",
+        category = {Category.SAAS, Category.SOCIAL},
+        headersClass = TwitterConstants.class)
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")
     @Metadata(required = true)
     private TimelineType timelineType;
+
     @UriParam(description = "The username when using timelineType=user")
     private String user;
+
     @UriParam(description = "The list name when using timelineType=list")
     private String list;
 
-    public TwitterTimelineEndpoint(String uri, String remaining, String user, String list, TwitterTimelineComponent component,
-                                   TwitterConfiguration properties) {
+    public TwitterTimelineEndpoint(
+            String uri,
+            String remaining,
+            String user,
+            String list,
+            TwitterTimelineComponent component,
+            TwitterConfiguration properties) {
         super(uri, component, properties);
         if (remaining == null) {
             throw new IllegalArgumentException(String.format("The timeline type must be specified for '%s'", uri));
@@ -80,9 +92,8 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         if (timelineType != USER) {
-            throw new IllegalArgumentException(
-                    "Cannot create any producer with uri " + getEndpointUri() +
-                                               ". A producer type was not provided (or an incorrect pairing was used).");
+            throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri()
+                    + ". A producer type was not provided (or an incorrect pairing was used).");
         }
 
         return new UserProducer(this);
@@ -114,14 +125,11 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
         if (handler != null) {
             return TwitterHelper.createConsumer(processor, this, handler);
         }
-        throw new IllegalArgumentException(
-                "Cannot create any consumer with uri " + getEndpointUri()
-                                           + ". A consumer type was not provided (or an incorrect pairing was used).");
-
+        throw new IllegalArgumentException("Cannot create any consumer with uri " + getEndpointUri()
+                + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
     public TimelineType getTimelineType() {
         return timelineType;
     }
-
 }

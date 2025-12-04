@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs.simplebinding.testbean;
 
 import jakarta.activation.DataHandler;
@@ -30,7 +31,8 @@ public class MultipartCustomer {
     @POST
     @Path("/{id}")
     public Response multipartPostWithParametersAndPayload(
-            @QueryParam("query") String abc, @PathParam("id") String id,
+            @QueryParam("query") String abc,
+            @PathParam("id") String id,
             @Multipart(value = "part1", type = "image/jpeg") DataHandler dh1,
             @Multipart(value = "part2", type = "image/jpeg") DataHandler dh2,
             @Multipart(value = "body", type = "text/xml") Customer request) {
@@ -46,5 +48,4 @@ public class MultipartCustomer {
             @Multipart(value = "body", type = "text/xml") Customer request) {
         return null;
     }
-
 }

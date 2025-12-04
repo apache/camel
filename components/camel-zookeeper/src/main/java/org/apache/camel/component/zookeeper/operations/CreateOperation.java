@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
+
+import static java.lang.String.format;
 
 import java.util.List;
 
@@ -23,8 +26,6 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
-
-import static java.lang.String.format;
 
 /**
  * <code>CreateOperation</code> is a basic Zookeeper operation used to create and set the data contained in a given node
@@ -75,5 +76,4 @@ public class CreateOperation extends ZooKeeperOperation<String> {
     public void setCreateMode(CreateMode createMode) {
         this.createMode = createMode;
     }
-
 }

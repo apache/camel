@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.HashMap;
@@ -33,42 +34,60 @@ import org.infinispan.client.hotrod.configuration.Configuration;
 public class InfinispanRemoteConfiguration extends InfinispanConfiguration implements Cloneable {
     @UriParam
     private String hosts;
+
     @UriParam(label = "common,security", defaultValue = "false")
     private boolean secure;
+
     @UriParam(label = "common,security")
     private String username;
+
     @UriParam(label = "common,security", secret = true)
     private String password;
+
     @UriParam(label = "common,security")
     private String saslMechanism;
+
     @UriParam(label = "common,security")
     private String securityRealm;
+
     @UriParam(label = "common,security")
     private String securityServerName;
+
     @Metadata(autowired = true)
     @UriParam(label = "advanced")
     private Configuration cacheContainerConfiguration;
+
     @Metadata(autowired = true)
     @UriParam(label = "advanced")
     private RemoteCacheManager cacheContainer;
+
     @UriParam(label = "advanced")
     private Map<String, String> configurationProperties;
+
     @UriParam(label = "consumer")
     private String eventTypes;
+
     @UriParam(label = "consumer")
     private InfinispanRemoteCustomListener customListener;
+
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private Flag[] flags;
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean embeddingStoreEnabled = true;
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean embeddingStoreRegisterSchema = true;
+
     @UriParam(label = "producer,advanced")
     private int embeddingStoreDimension;
+
     @UriParam(label = "producer,advanced", defaultValue = "COSINE")
     private VectorSimilarity embeddingStoreVectorSimilarity = VectorSimilarity.COSINE;
+
     @UriParam(label = "producer,advanced", defaultValue = "3")
     private int embeddingStoreDistance = 3;
+
     @UriParam(label = "producer,advanced")
     private String embeddingStoreTypeName;
 

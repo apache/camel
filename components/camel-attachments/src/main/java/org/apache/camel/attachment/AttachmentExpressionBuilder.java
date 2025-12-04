@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.attachment;
+
+import static org.apache.camel.support.builder.ExpressionBuilder.simpleExpression;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -25,8 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ObjectHelper;
-
-import static org.apache.camel.support.builder.ExpressionBuilder.simpleExpression;
 
 public class AttachmentExpressionBuilder {
 
@@ -191,8 +192,7 @@ public class AttachmentExpressionBuilder {
      */
     public static Expression attachmentOgnlExpression(final String ognl) {
         return new SimpleExpressionBuilder.KeyedOgnlExpressionAdapter(
-                ognl, "attachmentOgnl(" + ognl + ")",
-                (exchange, exp) -> {
+                ognl, "attachmentOgnl(" + ognl + ")", (exchange, exp) -> {
                     String text = exp.evaluate(exchange, String.class);
                     var am = toAttachmentMessage(exchange);
                     var dh = am.getAttachment(text);
@@ -214,5 +214,4 @@ public class AttachmentExpressionBuilder {
                     return dh;
                 });
     }
-
 }

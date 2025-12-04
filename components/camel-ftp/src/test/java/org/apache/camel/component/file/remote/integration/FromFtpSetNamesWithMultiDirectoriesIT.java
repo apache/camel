@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -29,8 +32,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit test to verify that using option setNames and having multi remote directories the files are stored locally in
  * the same directory layout.
@@ -41,7 +42,7 @@ public class FromFtpSetNamesWithMultiDirectoriesIT extends FtpServerTestSupport 
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
+                + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
     }
 
     @Test

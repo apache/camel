@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.mail.stream;
 
 import java.util.Map;
@@ -35,8 +36,10 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
     private Gmail client;
+
     @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
+
     @Metadata(label = "advanced")
     private GoogleMailStreamConfiguration configuration;
 
@@ -52,14 +55,22 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
     public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
         if (client == null) {
             if (googleMailConfiguration.getClientSecret() != null) {
-                client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-                        googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopesAsList(),
-                        googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
-                        googleMailConfiguration.getAccessToken());
+                client = getClientFactory()
+                        .makeClient(
+                                googleMailConfiguration.getClientId(),
+                                googleMailConfiguration.getClientSecret(),
+                                googleMailConfiguration.getScopesAsList(),
+                                googleMailConfiguration.getApplicationName(),
+                                googleMailConfiguration.getRefreshToken(),
+                                googleMailConfiguration.getAccessToken());
             } else if (googleMailConfiguration.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getServiceAccountKey(),
-                        googleMailConfiguration.getScopesAsList(), googleMailConfiguration.getApplicationName(),
-                        googleMailConfiguration.getDelegate());
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                googleMailConfiguration.getServiceAccountKey(),
+                                googleMailConfiguration.getScopesAsList(),
+                                googleMailConfiguration.getApplicationName(),
+                                googleMailConfiguration.getDelegate());
             }
         }
         return client;

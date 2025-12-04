@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 import java.io.InputStream;
@@ -82,11 +83,11 @@ public class Kinesis2Producer extends DefaultProducer {
                     .streamName(getEndpoint().getConfiguration().getStreamName())
                     .records(requestBatch)
                     .build();
-            PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
+            PutRecordsResponse putRecordsResponse =
+                    connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
             if (putRecordsResponse.failedRecordCount() > 0) {
-                throw new RuntimeException(
-                        "Failed to send records " + putRecordsResponse.failedRecordCount() + " of "
-                                           + putRecordsResponse.records().size());
+                throw new RuntimeException("Failed to send records " + putRecordsResponse.failedRecordCount() + " of "
+                        + putRecordsResponse.records().size());
             }
         }
     }

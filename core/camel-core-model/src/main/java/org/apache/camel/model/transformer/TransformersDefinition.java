@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.transformer;
 
 import java.util.List;
@@ -37,14 +38,14 @@ import org.apache.camel.spi.Metadata;
 public class TransformersDefinition implements CopyableDefinition<TransformersDefinition> {
 
     @XmlElements({
-            @XmlElement(name = "dataFormatTransformer", type = DataFormatTransformerDefinition.class),
-            @XmlElement(name = "endpointTransformer", type = EndpointTransformerDefinition.class),
-            @XmlElement(name = "loadTransformer", type = LoadTransformerDefinition.class),
-            @XmlElement(name = "customTransformer", type = CustomTransformerDefinition.class) })
+        @XmlElement(name = "dataFormatTransformer", type = DataFormatTransformerDefinition.class),
+        @XmlElement(name = "endpointTransformer", type = EndpointTransformerDefinition.class),
+        @XmlElement(name = "loadTransformer", type = LoadTransformerDefinition.class),
+        @XmlElement(name = "customTransformer", type = CustomTransformerDefinition.class)
+    })
     private List<TransformerDefinition> transformers;
 
-    public TransformersDefinition() {
-    }
+    public TransformersDefinition() {}
 
     protected TransformersDefinition(TransformersDefinition source) {
         this.transformers = ProcessorDefinitionHelper.deepCopyDefinitions(source.transformers);

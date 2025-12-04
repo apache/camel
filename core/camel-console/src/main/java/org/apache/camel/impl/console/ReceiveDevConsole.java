@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -50,14 +51,24 @@ import org.apache.camel.util.json.Jsoner;
 @Configurer(extended = true)
 public class ReceiveDevConsole extends AbstractDevConsole {
 
-    @Metadata(defaultValue = "100",
-              description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
+    @Metadata(
+            defaultValue = "100",
+            description =
+                    "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
     private int capacity = 100;
-    @Metadata(defaultValue = "32768", label = "advanced",
-              description = "To limit the message body to a maximum size in the received message. Use 0 or negative value to use unlimited size.")
+
+    @Metadata(
+            defaultValue = "32768",
+            label = "advanced",
+            description =
+                    "To limit the message body to a maximum size in the received message. Use 0 or negative value to use unlimited size.")
     private int bodyMaxChars = 32 * 1024;
-    @Metadata(defaultValue = "true", label = "advanced",
-              description = "Whether all received messages should be removed when dumping. By default, the messages are removed, which means that dumping will not contain previous dumped messages.")
+
+    @Metadata(
+            defaultValue = "true",
+            label = "advanced",
+            description =
+                    "Whether all received messages should be removed when dumping. By default, the messages are removed, which means that dumping will not contain previous dumped messages.")
     private boolean removeOnDump = true;
 
     /**
@@ -261,8 +272,8 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     }
 
     private void addMessage(Exchange exchange) {
-        JsonObject json
-                = MessageHelper.dumpAsJSonObject(exchange.getMessage(), true, true, true, true, true, true, bodyMaxChars);
+        JsonObject json =
+                MessageHelper.dumpAsJSonObject(exchange.getMessage(), true, true, true, true, true, true, bodyMaxChars);
         json.put("uid", uuid.incrementAndGet());
         json.put("endpointUri", exchange.getFromEndpoint().toString());
         json.put("remoteEndpoint", exchange.getFromEndpoint().isRemote());
@@ -287,14 +298,22 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             if (!scheme && !endpoint.endsWith("*")) {
                 endpoint = endpoint + "*";
             }
-            // find all producers for this camel context via JMX mbeans (this allows to find also producers created via dynamic EIPs)
-            MBeanServer mbeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
+            // find all producers for this camel context via JMX mbeans (this allows to find also producers created via
+            // dynamic EIPs)
+            MBeanServer mbeanServer =
+                    camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
             if (mbeanServer != null) {
                 try {
-                    String jmxDomain
-                            = camelContext.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                    String prefix
-                            = camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                    String jmxDomain = camelContext
+                            .getManagementStrategy()
+                            .getManagementAgent()
+                            .getMBeanObjectDomainName();
+                    String prefix = camelContext
+                                    .getManagementStrategy()
+                                    .getManagementAgent()
+                                    .getIncludeHostName()
+                            ? "*/"
+                            : "";
                     ObjectName query = ObjectName.getInstance(
                             jmxDomain + ":context=" + prefix + camelContext.getManagementName() + ",type=producers,*");
                     Set<ObjectName> set = mbeanServer.queryNames(query, null);
@@ -305,11 +324,12 @@ public class ReceiveDevConsole extends AbstractDevConsole {
                                 // is the endpoint able to create a consumer
                                 target = camelContext.getEndpoint(uri);
                                 // is the target able to create a consumer
-                                org.apache.camel.spi.UriEndpoint ann
-                                        = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+                                org.apache.camel.spi.UriEndpoint ann =
+                                        ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
                                 if (ann != null) {
                                     if (ann.producerOnly()) {
-                                        // skip if the endpoint cannot consume (we need to be able to consume to receive)
+                                        // skip if the endpoint cannot consume (we need to be able to consume to
+                                        // receive)
                                         target = null;
                                     }
                                     if ("*".equals(endpoint) && !ann.remote()) {
@@ -330,8 +350,8 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         } else {
             target = camelContext.getEndpoint(endpoint);
             // is the target able to create a consumer
-            org.apache.camel.spi.UriEndpoint ann
-                    = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+            org.apache.camel.spi.UriEndpoint ann =
+                    ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
             if (ann != null) {
                 if (ann.producerOnly()) {
                     // skip if the endpoint cannot consume (we need to be able to consume to receive)
@@ -341,5 +361,4 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         }
         return target;
     }
-
 }

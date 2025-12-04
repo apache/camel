@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -31,16 +34,12 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerWithBeanTest";
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
-    private static final String CXF_RS_ENDPOINT_URI_2
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT
+            + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_ENDPOINT_URI_2 = "cxfrs://http://localhost:" + CXT
+            + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
     private static final String CXF_RS_BEAN_ENDPOINT_URI = "cxfrs:bean:myEndpoint";
 
     @Override
@@ -77,7 +76,7 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         put.setEntity(entity);
 
         try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(put)) {
+                CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getCode());
             assertEquals("c20string", EntityUtils.toString(response.getEntity()));
         }

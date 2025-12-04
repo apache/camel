@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -26,26 +27,31 @@ public interface ManagedRecipientListMBean extends ManagedProcessorMBean, Manage
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression that returns which endpoints (url) to send the message to (the recipients).",
-                      mask = true)
+    @ManagedAttribute(
+            description = "Expression that returns which endpoints (url) to send the message to (the recipients).",
+            mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "The uri delimiter to use")
     String getUriDelimiter();
 
-    @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
+    @ManagedAttribute(
+            description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 
-    @ManagedAttribute(description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently.")
+    @ManagedAttribute(
+            description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently.")
     Boolean isParallelAggregate();
 
     @ManagedAttribute(description = "If enabled then sending messages to the recipient lists occurs concurrently.")
     Boolean isParallelProcessing();
 
-    @ManagedAttribute(description = "If enabled then Camel will process replies out-of-order, eg in the order they come back.")
+    @ManagedAttribute(
+            description = "If enabled then Camel will process replies out-of-order, eg in the order they come back.")
     Boolean isStreaming();
 
-    @ManagedAttribute(description = "Will now stop further processing if an exception or failure occurred during processing.")
+    @ManagedAttribute(
+            description = "Will now stop further processing if an exception or failure occurred during processing.")
     Boolean isStopOnException();
 
     @ManagedAttribute(description = "Shares the UnitOfWork with the parent and the resource exchange")
@@ -57,5 +63,4 @@ public interface ManagedRecipientListMBean extends ManagedProcessorMBean, Manage
     @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
-
 }

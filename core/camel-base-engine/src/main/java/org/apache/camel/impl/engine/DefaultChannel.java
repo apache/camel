@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
@@ -193,11 +194,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 boolean skip = routeDefinition != null
                         && (routeDefinition.isCreatedFromRest() || routeDefinition.isCreatedFromTemplate());
                 if (!skip && routeDefinition != null) {
-                    backlogDebuggerSetupInitialBreakpoints(definition, routeDefinition, first, debugger, targetOutputDef);
+                    backlogDebuggerSetupInitialBreakpoints(
+                            definition, routeDefinition, first, debugger, targetOutputDef);
                     if (first && debugger.isSingleStepIncludeStartEnd()) {
                         // debugger captures message history, and we need to capture history of incoming
-                        addAdvice(
-                                new MessageHistoryAdvice(camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
+                        addAdvice(new MessageHistoryAdvice(
+                                camelContext.getMessageHistoryFactory(), routeDefinition.getInput()));
                         // add breakpoint on route input instead of first node
                         addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, routeDefinition.getInput()));
                     }
@@ -238,16 +240,19 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (!skip) {
             for (InterceptStrategy strategy : interceptors) {
                 Processor next = target == nextProcessor ? null : nextProcessor;
-                // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
-                Processor wrapped
-                        = strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
+                // use the fine grained definition (eg the child if available). Its always possible to get back to the
+                // parent
+                Processor wrapped =
+                        strategy.wrapProcessorInInterceptors(route.getCamelContext(), targetOutputDef, target, next);
                 if (!(wrapped instanceof AsyncProcessor)) {
-                    LOG.warn("Interceptor: {} at: {} does not return an AsyncProcessor instance."
-                             + " This causes the asynchronous routing engine to not work as optimal as possible."
-                             + " See more details at the InterceptStrategy javadoc."
-                             + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
-                             + " but its not the most optimal solution. Please consider changing your interceptor to comply.",
-                            strategy, definition);
+                    LOG.warn(
+                            "Interceptor: {} at: {} does not return an AsyncProcessor instance."
+                                    + " This causes the asynchronous routing engine to not work as optimal as possible."
+                                    + " See more details at the InterceptStrategy javadoc."
+                                    + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
+                                    + " but its not the most optimal solution. Please consider changing your interceptor to comply.",
+                            strategy,
+                            definition);
                 }
                 if (!(wrapped instanceof WrapAwareProcessor)) {
                     // wrap the target so it becomes a service and we can manage its lifecycle
@@ -342,8 +347,11 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     }
 
     private void backlogDebuggerSetupInitialBreakpoints(
-            NamedNode definition, NamedRoute routeDefinition, boolean first,
-            BacklogDebugger debugger, NamedNode targetOutputDef) {
+            NamedNode definition,
+            NamedRoute routeDefinition,
+            boolean first,
+            BacklogDebugger debugger,
+            NamedNode targetOutputDef) {
         // setup initial breakpoints
         if (debugger.getInitialBreakpoints() != null) {
             boolean match = false;
@@ -407,5 +415,4 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // just output the next processor as all the interceptors and error handler is just too verbose
         return "Channel[" + nextProcessor + "]";
     }
-
 }

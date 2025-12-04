@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,8 +29,8 @@ public class XmlBlueprintLoadTest {
     public void testLoadRoutesBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             // load OSGi blueprint XML <blueprint> with embedded <camelContext>
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/blueprintRoutes.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/blueprintRoutes.xml");
 
             Assertions.assertDoesNotThrow(() -> {
                 // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
@@ -44,8 +45,8 @@ public class XmlBlueprintLoadTest {
     public void testLoadRestsBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             // load OSGi blueprint XML <blueprint> with embedded <camelContext>
-            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
-                    "/org/apache/camel/dsl/xml/io/blueprintRests.xml");
+            Resource resource = PluginHelper.getResourceLoader(context)
+                    .resolveResource("/org/apache/camel/dsl/xml/io/blueprintRests.xml");
 
             Assertions.assertDoesNotThrow(() -> {
                 // should be able to parse the file and not fail (camel-jbang supports creating spring beans)
@@ -55,5 +56,4 @@ public class XmlBlueprintLoadTest {
             Assertions.assertEquals(2, context.getRestDefinitions().size());
         }
     }
-
 }

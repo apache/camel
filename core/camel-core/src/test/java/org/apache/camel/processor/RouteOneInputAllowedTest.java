@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteOneInputAllowedTest extends ContextTestSupport {
 
@@ -44,5 +45,4 @@ public class RouteOneInputAllowedTest extends ContextTestSupport {
             assertEquals("Only one input is allowed per route. Cannot accept input: From[direct:b]", e.getMessage());
         }
     }
-
 }

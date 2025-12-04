@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.chunk;
+
+import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_ENDPOINT_URI_PREFIX;
+import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_LAYER_SEPARATOR;
+import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI;
+import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,16 +44,18 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.IOUtils;
 
-import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_ENDPOINT_URI_PREFIX;
-import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_LAYER_SEPARATOR;
-import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI;
-import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
-
 /**
  * Transform messages using Chunk templating engine.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
-             remote = false, category = { Category.TRANSFORMATION }, headersClass = ChunkConstants.class)
+@UriEndpoint(
+        firstVersion = "2.15.0",
+        scheme = "chunk",
+        title = "Chunk",
+        syntax = "chunk:resourceUri",
+        producerOnly = true,
+        remote = false,
+        category = {Category.TRANSFORMATION},
+        headersClass = ChunkConstants.class)
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
@@ -55,19 +63,23 @@ public class ChunkEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+
     @UriParam(description = "Define the encoding of the body")
     private String encoding;
+
     @UriParam(description = "Define the themes folder to scan")
     private String themeFolder;
+
     @UriParam(description = "Define the themes subfolder to scan")
     private String themeSubfolder;
+
     @UriParam(description = "Define the theme layer to elaborate")
     private String themeLayer;
+
     @UriParam(description = "Define the file extension of the template")
     private String extension;
 
-    public ChunkEndpoint() {
-    }
+    public ChunkEndpoint() {}
 
     public ChunkEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
@@ -128,8 +140,8 @@ public class ChunkEndpoint extends ResourceEndpoint {
             ExchangeHelper.setInOutBodyPatternAware(exchange, newChunk.toString());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
-            ChunkEndpoint newEndpoint
-                    = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
+            ChunkEndpoint newEndpoint =
+                    getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
             newEndpoint.onExchange(exchange);
         }
     }
@@ -211,9 +223,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
     }
 
     private String getResourceUriExtended() {
-        return themeLayer == null
-                ? getResourceUri()
-                : getResourceUri() + CHUNK_LAYER_SEPARATOR + themeLayer;
+        return themeLayer == null ? getResourceUri() : getResourceUri() + CHUNK_LAYER_SEPARATOR + themeLayer;
     }
 
     public String getEncoding() {

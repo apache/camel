@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
@@ -44,16 +45,17 @@ public class PropertiesComponentIgnoreMissingPropertyTest extends ContextTestSup
         out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context, "{{foo}}");
         Assertions.assertEquals("{{foo}}", out);
 
-        out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(context, "foo:dummy?a=1&b={{foo}}&c={{myQueueSize}}");
+        out = EndpointHelper.resolveEndpointUriPropertyPlaceholders(
+                context, "foo:dummy?a=1&b={{foo}}&c={{myQueueSize}}");
         Assertions.assertEquals("foo:dummy?a=1&b={{foo}}&c=10", out);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         context.getPropertiesComponent().setIgnoreMissingProperty(true);
         return context;
     }
-
 }

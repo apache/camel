@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,9 +34,6 @@ import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Checks if conversions of generic objects are happening correctly.
  */
@@ -46,8 +47,10 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
 
         template.sendBody(new BrandNewType("wrapped message"));
 
-        List<OutgoingTextMessage> msgs = Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
+        List<OutgoingTextMessage> msgs = Awaitility.await()
+                .atMost(5, TimeUnit.SECONDS)
+                .until(
+                        () -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
                         rawMessages -> rawMessages.size() == 1)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
@@ -61,14 +64,14 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:message")
-                                .to("telegram:bots?authorizationToken=mock-token&chatId=1234");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:message").to("telegram:bots?authorizationToken=mock-token&chatId=1234");
+                }
+            }
+        };
     }
 
     @Override
@@ -97,5 +100,4 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
             return message;
         }
     }
-
 }

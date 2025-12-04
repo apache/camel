@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -29,14 +38,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     private String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/move?password=admin&fileExist=Move";
@@ -50,8 +51,11 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
 
     @Test
     public void testExistingFileDoesNotExists() {
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
-                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         assertFileExists(service.ftpFile("move/hello.txt"));
         assertFileNotExists(service.ftpFile("move/renamed-hello.txt"));
@@ -59,10 +63,16 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
 
     @Test
     public void testExistingFileExists() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
-                Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World",
-                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Bye World",
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
         assertFileExists(service.ftpFile("move/renamed-hello.txt"), "Hello World");
@@ -71,12 +81,16 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     @Test
     public void testExistingFileExistsTempFilename() throws Exception {
         template.sendBodyAndHeader(
-                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}",
-                "Hello World", Exchange.FILE_NAME,
+                getFtpUrl()
+                        + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Hello World",
+                Exchange.FILE_NAME,
                 "hello.txt");
         template.sendBodyAndHeader(
-                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}",
-                "Bye World", Exchange.FILE_NAME,
+                getFtpUrl()
+                        + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}",
+                "Bye World",
+                Exchange.FILE_NAME,
                 "hello.txt");
 
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
@@ -87,12 +101,18 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     @Test
     public void testExistingFileExistsTempFileNameMoveDynamicSubdir() throws Exception {
         final String subdirPrefix = generateRandomString(5);
-        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=" + subdirPrefix
-                                   + "-${date:now:yyyyMMddHHmmssSSS}/",
-                "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=" + subdirPrefix
-                                   + "-${date:now:yyyyMMddHHmmssSSS}/",
-                "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=" + subdirPrefix
+                        + "-${date:now:yyyyMMddHHmmssSSS}/",
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=" + subdirPrefix
+                        + "-${date:now:yyyyMMddHHmmssSSS}/",
+                "Bye World",
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
@@ -111,12 +131,18 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     @Test
     public void testExistingFileExistsTempFileNameMoveDynamicSubdirFullPath() throws Exception {
         final String subdirPrefix = generateRandomString(5);
-        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/"
-                                   + subdirPrefix + "-${date:now:yyyyMMddHHmmssSSS}/${file:onlyname}",
-                "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/"
-                                   + subdirPrefix + "-${date:now:yyyyMMddHHmmssSSS}/${file:onlyname}",
-                "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/" + subdirPrefix
+                        + "-${date:now:yyyyMMddHHmmssSSS}/${file:onlyname}",
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/" + subdirPrefix
+                        + "-${date:now:yyyyMMddHHmmssSSS}/${file:onlyname}",
+                "Bye World",
+                Exchange.FILE_NAME,
+                "hello.txt");
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
         File folder = service.ftpFile("move").toFile();
@@ -133,10 +159,16 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
 
     @Test
     public void testExistingFileExistsTempFilenameMoveSubDir() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=archive", "Hello World",
-                Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=archive", "Bye World",
-                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=archive",
+                "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=archive",
+                "Bye World",
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
 
@@ -145,7 +177,8 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
 
     @Test
     public void testExistingFileExistsMoveSubDir() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
@@ -157,18 +190,22 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     @Test
     public void testFailOnMoveExistingFileExistsEagerDeleteTrue() throws Exception {
         template.sendBodyAndHeader(
-                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file",
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true",
+                "Old file",
                 Exchange.FILE_NAME,
                 "renamed-hello.txt");
 
         template.sendBodyAndHeader(
-                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Hello World",
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true",
+                "Hello World",
                 Exchange.FILE_NAME,
                 "hello.txt");
         // we should be okay as we will just delete any existing file
         template.sendBodyAndHeader(
-                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Bye World",
-                Exchange.FILE_NAME, "hello.txt");
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true",
+                "Bye World",
+                Exchange.FILE_NAME,
+                "hello.txt");
 
         // we could write the new file so the old context should be there
         assertFileExists(service.ftpFile("move/hello.txt"), "Bye World");
@@ -180,21 +217,24 @@ public class FtpProducerMoveExistingIT extends FtpServerTestSupport {
     @Test
     public void testFailOnMoveExistingFileExistsEagerDeleteFalse() throws Exception {
         template.sendBodyAndHeader(
-                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file",
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true",
+                "Old file",
                 Exchange.FILE_NAME,
                 "renamed-hello.txt");
 
         template.sendBodyAndHeader(
                 getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
-                "Hello World", Exchange.FILE_NAME,
+                "Hello World",
+                Exchange.FILE_NAME,
                 "hello.txt");
 
         String uri = getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false";
-        Exception ex = assertThrows(CamelExecutionException.class,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
 
-        GenericFileOperationFailedException cause
-                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        GenericFileOperationFailedException cause =
+                assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
 
         // we could not write the new file so the previous context should be

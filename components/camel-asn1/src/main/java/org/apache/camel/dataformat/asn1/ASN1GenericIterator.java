@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
 
 import java.io.ByteArrayInputStream;
@@ -94,7 +95,7 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
     @SuppressWarnings("rawtypes")
     private Object createGenericTypeObject(ASN1Primitive current)
             throws NoSuchMethodException, IOException, InstantiationException, IllegalAccessException,
-            InvocationTargetException {
+                    InvocationTargetException {
         Class<?>[] paramIS = new Class[1];
         paramIS[0] = InputStream.class;
 
@@ -140,5 +141,4 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
         IOHelper.close(asn1InputStream);
         asn1InputStream = null;
     }
-
 }

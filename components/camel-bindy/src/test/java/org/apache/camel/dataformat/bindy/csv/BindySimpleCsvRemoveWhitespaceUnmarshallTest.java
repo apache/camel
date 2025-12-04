@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -28,8 +31,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ContextConfiguration
 @CamelSpringTest
 public class BindySimpleCsvRemoveWhitespaceUnmarshallTest {
@@ -38,7 +39,7 @@ public class BindySimpleCsvRemoveWhitespaceUnmarshallTest {
     protected ProducerTemplate template;
 
     private String record = "1 , 2,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
-                            + ",,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009";
+            + ",,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009";
 
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;

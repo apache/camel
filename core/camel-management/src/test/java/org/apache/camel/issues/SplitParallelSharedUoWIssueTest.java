@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.util.stream.Stream;
@@ -41,13 +42,17 @@ public class SplitParallelSharedUoWIssueTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setBody(constant(Stream.iterate(1, i -> i + 1).limit(1000).toList()))
-                    .split().body().shareUnitOfWork().parallelProcessing()
+                        .setBody(constant(
+                                Stream.iterate(1, i -> i + 1).limit(1000).toList()))
+                        .split()
+                        .body()
+                        .shareUnitOfWork()
+                        .parallelProcessing()
                         .log("Number ${body}")
                         .to("mock:line")
-                    .end()
-                    .log("All done")
-                    .to("mock:result");
+                        .end()
+                        .log("All done")
+                        .to("mock:result");
             }
         };
     }

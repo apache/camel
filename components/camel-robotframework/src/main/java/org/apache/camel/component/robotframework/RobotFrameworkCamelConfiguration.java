@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.robotframework;
 
 import org.apache.camel.RuntimeCamelException;
@@ -25,96 +26,142 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
 
     @UriParam
     private String name;
+
     @UriParam
     private String document;
+
     @UriParam
     private String metadata;
+
     @UriParam
     private String tags;
+
     @UriParam
     private String tests;
+
     @UriParam
     private String suites;
+
     @UriParam
     private String includes;
+
     @UriParam
     private String excludes;
+
     @UriParam
     private String criticalTags;
+
     @UriParam
     private String nonCriticalTags;
+
     @UriParam
     private String runMode;
+
     @UriParam(defaultValue = "false")
     private boolean dryrun;
+
     @UriParam(defaultValue = "false")
     private boolean skipTeardownOnExit;
+
     @UriParam(defaultValue = "false")
     private boolean exitOnFailure;
+
     @UriParam
     private String randomize;
+
     @UriParam
     private String variables;
+
     @UriParam
     private String variableFiles;
+
     @UriParam
     private String outputDirectory;
+
     @UriParam
     private String output;
+
     @UriParam
     private String log;
+
     @UriParam
     private String report;
+
     @UriParam
     private String xunitFile;
+
     @UriParam
     private String debugFile;
+
     @UriParam
     private boolean timestampOutputs;
+
     @UriParam
     private String splitOutputs;
+
     @UriParam
     private String logTitle;
+
     @UriParam
     private String reportTitle;
+
     @UriParam
     private String summaryTitle;
+
     @UriParam
     private String reportBackground;
+
     @UriParam
     private String logLevel;
+
     @UriParam
     private String suiteStatLevel;
+
     @UriParam
     private String tagStatIncludes;
+
     @UriParam
     private String tagStatExcludes;
+
     @UriParam
     private String combinedTagStats;
+
     @UriParam
     private String tagDocs;
+
     @UriParam
     private String tagStatLinks;
+
     @UriParam
     private String listeners;
+
     @UriParam
     private String listener;
+
     @UriParam
     private boolean warnOnSkippedFiles;
+
     @UriParam(defaultValue = "78")
     private String monitorWidth;
+
     @UriParam
     private String monitorColors;
+
     @UriParam
     private String argumentFiles;
+
     @UriParam
     private boolean runEmptySuite;
+
     @UriParam
     private String runFailed;
+
     @UriParam
     private boolean noStatusReturnCode;
+
     @UriParam
     private boolean allowTemplateFromHeader;
+
     @UriParam
     private boolean allowContextMapAll;
 
@@ -658,5 +705,4 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

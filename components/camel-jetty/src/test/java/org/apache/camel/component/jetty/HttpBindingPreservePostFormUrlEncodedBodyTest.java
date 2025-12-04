@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,21 +25,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest {
 
     @Test
     public void testSendToJetty() {
-        Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
+        Exchange exchange =
+                template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
 
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("b1=x&b2=y");
-                exchange.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
-            }
-
-        });
+                    public void process(Exchange exchange) {
+                        exchange.getIn().setBody("b1=x&b2=y");
+                        exchange.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
+                        exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
+                    }
+                });
         // convert the response to a String
         String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
@@ -52,13 +53,21 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
 
                         // for unit testing make sure we got right message
                         assertEquals("b1=x&b2=y", body, "The body message is wrong");
-                        assertEquals("a", exchange.getIn().getHeader("query1"),
+                        assertEquals(
+                                "a",
+                                exchange.getIn().getHeader("query1"),
                                 "Get a wrong query parameter from the message header");
-                        assertEquals("b", exchange.getIn().getHeader("query2"),
+                        assertEquals(
+                                "b",
+                                exchange.getIn().getHeader("query2"),
                                 "Get a wrong query parameter from the message header");
-                        assertEquals("x", exchange.getIn().getHeader("b1"),
+                        assertEquals(
+                                "x",
+                                exchange.getIn().getHeader("b1"),
                                 "Get a wrong form parameter from the message header");
-                        assertEquals("y", exchange.getIn().getHeader("b2"),
+                        assertEquals(
+                                "y",
+                                exchange.getIn().getHeader("b2"),
                                 "Get a wrong form parameter from the message header");
 
                         // send a response
@@ -68,5 +77,4 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
             }
         };
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,10 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for consuming a batch of files (multiple files in one consume)
@@ -55,9 +56,12 @@ public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
                         .convertBodyTo(String.class)
                         .to("mock:basic");
                 fromF("file://%s/basic-as-default?initialDelay=0&delay=10&extendedAttributes=*", testDirectory())
-                        .convertBodyTo(String.class).to("mock:basic-as-default");
-                fromF("file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime",
-                        testDirectory()).convertBodyTo(String.class)
+                        .convertBodyTo(String.class)
+                        .to("mock:basic-as-default");
+                fromF(
+                                "file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime",
+                                testDirectory())
+                        .convertBodyTo(String.class)
                         .to("mock:basic-as-default-with-filter");
                 fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", testDirectory())
                         .convertBodyTo(String.class)
@@ -96,7 +100,8 @@ public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
         mock.message(0).header("CamelFileExtendedAttributes").convertTo(Map.class);
         assertMockEndpointsSatisfied();
 
-        Map<String, Object> attributes = mock.getExchanges().get(0).getIn().getHeader("CamelFileExtendedAttributes", Map.class);
+        Map<String, Object> attributes =
+                mock.getExchanges().get(0).getIn().getHeader("CamelFileExtendedAttributes", Map.class);
         assertNotNull(attributes);
         assertFalse(attributes.isEmpty());
         for (Map.Entry<String, Object> entry : attributes.entrySet()) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.support;
 
 import java.io.IOException;
@@ -37,5 +38,4 @@ public interface SourceLoader {
      * @throws IOException is thrown if error loading the source
      */
     String loadResource(Resource resource) throws IOException;
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +26,9 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.spi.BeanIntrospection;
 
-import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
-
 final class JmsServiceLocationHelper {
 
-    private JmsServiceLocationHelper() {
-    }
+    private JmsServiceLocationHelper() {}
 
     public static String getBrokerURLFromConnectionFactory(BeanIntrospection bi, ConnectionFactory cf) {
         // try to find the brokerURL for JMS broker such as Apache ActiveMQ and Artemis
@@ -78,7 +78,8 @@ final class JmsServiceLocationHelper {
 
     private static String artemisBrokerURL(ConnectionFactory cf) {
         try {
-            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) {
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory"
+                    .equals(cf.getClass().getName())) {
                 Object obj = invokeMethodSafe("getServerLocator", cf);
                 if (obj != null) {
                     Object[] arr = (Object[]) invokeMethodSafe("getStaticTransportConfigurations", obj);
@@ -103,7 +104,8 @@ final class JmsServiceLocationHelper {
 
     private static String artemisUsername(ConnectionFactory cf) {
         try {
-            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) {
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory"
+                    .equals(cf.getClass().getName())) {
                 return (String) invokeMethodSafe("getUser", cf);
             }
         } catch (Exception e) {
@@ -111,5 +113,4 @@ final class JmsServiceLocationHelper {
         }
         return null;
     }
-
 }

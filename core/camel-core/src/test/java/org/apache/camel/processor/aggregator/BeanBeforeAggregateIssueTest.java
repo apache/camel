@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
 
@@ -55,8 +56,11 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start").bean(TestBean.class).aggregate(constant("true"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(myRepo).completionSize(2)
+                from("seda:start")
+                        .bean(TestBean.class)
+                        .aggregate(constant("true"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(myRepo)
+                        .completionSize(2)
                         .to("mock:result");
             }
         };

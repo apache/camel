@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson;
 
 import org.apache.camel.component.gson.annotation.ExcludeAge;
@@ -71,7 +72,6 @@ public class TestPojoExclusion {
             return false;
         }
         return weight == that.weight;
-
     }
 
     @Override

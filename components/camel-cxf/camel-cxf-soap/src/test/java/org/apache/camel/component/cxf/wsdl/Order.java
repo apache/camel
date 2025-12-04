@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wsdl;
 
 public class Order {
@@ -41,5 +42,4 @@ public class Order {
     public String toString() {
         return "order[" + customerName + "," + productName + "]";
     }
-
 }

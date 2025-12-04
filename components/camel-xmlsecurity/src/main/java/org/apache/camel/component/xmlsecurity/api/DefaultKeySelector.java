@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.api;
 
 import java.io.IOException;
@@ -69,8 +70,7 @@ public class DefaultKeySelector extends KeySelector implements CamelContextAware
         keyStoreAndAlias.setPassword(password);
     }
 
-    public void setKeyStoreParameters(KeyStoreParameters parameters)
-            throws GeneralSecurityException, IOException {
+    public void setKeyStoreParameters(KeyStoreParameters parameters) throws GeneralSecurityException, IOException {
         if (parameters != null) {
             keyStoreAndAlias.setKeyStore(parameters.createKeyStore());
         }
@@ -107,18 +107,19 @@ public class DefaultKeySelector extends KeySelector implements CamelContextAware
             try {
                 if (this.getCamelContext() != null && keyStoreAndAlias.getPassword() != null) {
                     try {
-                        String passwordProperty = this.getCamelContext().resolvePropertyPlaceholders(
-                                new String(keyStoreAndAlias.getPassword()));
-                        key = keyStoreAndAlias.getKeyStore().getKey(keyStoreAndAlias.getAlias(),
-                                passwordProperty.toCharArray());
+                        String passwordProperty = this.getCamelContext()
+                                .resolvePropertyPlaceholders(new String(keyStoreAndAlias.getPassword()));
+                        key = keyStoreAndAlias
+                                .getKeyStore()
+                                .getKey(keyStoreAndAlias.getAlias(), passwordProperty.toCharArray());
                     } catch (Exception e) {
                         throw new RuntimeCamelException(
-                                "Error parsing property value: "
-                                                        + new String(keyStoreAndAlias.getPassword()),
-                                e);
+                                "Error parsing property value: " + new String(keyStoreAndAlias.getPassword()), e);
                     }
                 } else {
-                    key = keyStoreAndAlias.getKeyStore().getKey(keyStoreAndAlias.getAlias(), keyStoreAndAlias.getPassword());
+                    key = keyStoreAndAlias
+                            .getKeyStore()
+                            .getKey(keyStoreAndAlias.getAlias(), keyStoreAndAlias.getPassword());
                 }
             } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
                 throw new KeySelectorException(e);
@@ -157,5 +158,4 @@ public class DefaultKeySelector extends KeySelector implements CamelContextAware
     public void setCamelContext(CamelContext context) {
         this.context = context;
     }
-
 }

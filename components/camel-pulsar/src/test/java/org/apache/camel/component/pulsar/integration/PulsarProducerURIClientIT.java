@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -33,9 +34,9 @@ public class PulsarProducerURIClientIT extends PulsarITSupport {
     private static final String TOPIC_URI = "persistent://public/default/camel-producer-topic";
     private static final String PRODUCER = "camel-producer";
     private static final String URI_ENDPOINT = "pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                                               + "&subscriptionName=camel-subscription&consumerQueueSize=1"
-                                               + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER + "&serviceUrl="
-                                               + service.getPulsarBrokerUrl();
+            + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+            + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER + "&serviceUrl="
+            + service.getPulsarBrokerUrl();
 
     @Produce("direct:start")
     private ProducerTemplate producerTemplate;
@@ -43,8 +44,7 @@ public class PulsarProducerURIClientIT extends PulsarITSupport {
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    public PulsarProducerURIClientIT() {
-    }
+    public PulsarProducerURIClientIT() {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -59,7 +59,11 @@ public class PulsarProducerURIClientIT extends PulsarITSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl()
+                .serviceUrl(getPulsarBrokerUrl())
+                .ioThreads(1)
+                .listenerThreads(1)
+                .build();
     }
 
     @Test

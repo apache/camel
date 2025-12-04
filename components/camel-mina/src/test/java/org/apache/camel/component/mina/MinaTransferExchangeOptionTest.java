@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 
@@ -27,11 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
@@ -53,9 +54,9 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint(
-                String.format("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true&objectCodecPattern=*",
-                        getPort()));
+        Endpoint endpoint = context.getEndpoint(String.format(
+                "mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true&objectCodecPattern=*",
+                getPort()));
         Producer producer = endpoint.createProducer();
         Exchange exchange = endpoint.createExchange();
 
@@ -81,7 +82,8 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
             Message fault = exchange.getMessage();
             assertNotNull(fault);
             assertNotNull(fault.getBody());
-            assertTrue(fault.getBody() instanceof InterruptedException, "Should get the InterruptedException exception");
+            assertTrue(
+                    fault.getBody() instanceof InterruptedException, "Should get the InterruptedException exception");
             assertEquals("nihao", fault.getHeader("hello"));
         }
 
@@ -100,8 +102,9 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true&objectCodecPattern=*",
-                        getPort())
+                fromF(
+                                "mina:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true&objectCodecPattern=*",
+                                getPort())
                         .process(e -> {
                             LOG.debug("Enter Processor...");
                             assertNotNull(e.getIn().getBody());

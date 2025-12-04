@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -41,15 +42,13 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         routes.add(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Foo"));
+                from("direct:start").throwException(new IllegalArgumentException("Foo"));
             }
         });
         routes.add(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start2")
-                        .throwException(new IllegalArgumentException("Foo2"));
+                from("direct:start2").throwException(new IllegalArgumentException("Foo2"));
             }
         });
         routes.add(new RouteConfigurationBuilder() {
@@ -90,8 +89,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         routes.add(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         });
         routes.add(new RouteBuilder() {
@@ -99,7 +97,9 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start2")
                         // route scoped that overrides the global scoped
-                        .onCompletion().to("mock:done2").end()
+                        .onCompletion()
+                        .to("mock:done2")
+                        .end()
                         .to("mock:result");
             }
         });
@@ -197,10 +197,7 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
         routes.add(new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start")
-                        .setBody(constant("A"))
-                        .setBody(constant("B"))
-                        .to("mock:result");
+                from("seda:start").setBody(constant("A")).setBody(constant("B")).to("mock:result");
             }
         });
         routes.add(new RouteBuilder() {
@@ -301,5 +298,4 @@ public class RoutesConfigurationBuilderTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

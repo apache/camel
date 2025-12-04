@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import java.util.HashMap;
@@ -35,10 +36,13 @@ public class XsltSaxonComponent extends XsltComponent {
 
     @Metadata(label = "advanced")
     private Configuration saxonConfiguration;
+
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+
     @Metadata(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean secureProcessing = true;
 
@@ -61,10 +65,8 @@ public class XsltSaxonComponent extends XsltComponent {
      * lookup.
      */
     public void setSaxonExtensionFunctions(String extensionFunctions) {
-        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-                getCamelContext(),
-                extensionFunctions,
-                Object.class);
+        this.saxonExtensionFunctions =
+                EndpointHelper.resolveReferenceListParameter(getCamelContext(), extensionFunctions, Object.class);
     }
 
     public boolean isSecureProcessing() {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eks;
 
 import java.util.Map;
@@ -43,7 +44,8 @@ public class EKS2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EKS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new EKS2Configuration();
+        EKS2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new EKS2Configuration();
         EKS2Endpoint endpoint = new EKS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

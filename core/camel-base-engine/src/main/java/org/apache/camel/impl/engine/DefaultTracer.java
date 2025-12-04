@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
+
+import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 import java.util.Map;
 import java.util.Objects;
@@ -39,8 +42,6 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
 
 /**
  * Default {@link Tracer} implementation that will log traced messages to the logger named
@@ -372,5 +373,4 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
             tracingFormat = getCamelContext().getTracingLoggingFormat();
         }
     }
-
 }

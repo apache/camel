@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 import java.util.List;
 import java.util.Map;
@@ -37,8 +40,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PollingConsumerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 public class JpaPollingConsumer extends PollingConsumerSupport {
 
@@ -125,8 +126,12 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     @Override
     public Exchange receive() {
         // resolve the entity manager before evaluating the expression
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory,
-                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
+        final EntityManager entityManager = getTargetEntityManager(
+                null,
+                entityManagerFactory,
+                getEndpoint().isUsePassedInEntityManager(),
+                getEndpoint().isSharedEntityManager(),
+                true);
 
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeader(JpaConstants.ENTITY_MANAGER, entityManager);
@@ -167,7 +172,8 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     entityManager.clear();
 
                 } catch (PersistenceException e) {
-                    LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+                    LOG.info(
+                            "Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
 
                     entityManager.close();
 
@@ -176,7 +182,6 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
                 exchange.getIn().setBody(answer);
             }
-
         });
 
         return exchange;

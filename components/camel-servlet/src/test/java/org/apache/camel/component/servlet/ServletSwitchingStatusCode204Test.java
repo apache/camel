@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSupport {
 
@@ -60,10 +61,11 @@ public class ServletSwitchingStatusCode204Test extends ServletCamelRouterTestSup
 
                 from("servlet:/foo").setBody().constant("No Content");
 
-                from("servlet:/foobar").setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200)).setBody().constant("");
-
+                from("servlet:/foobar")
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(200))
+                        .setBody()
+                        .constant("");
             }
         };
     }
-
 }

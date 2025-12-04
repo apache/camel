@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk.support;
 
 import java.io.IOException;
@@ -60,5 +61,4 @@ public class SubmitDataWriter extends SplunkDataWriter {
     private Index getIndex() {
         return (index == null) ? null : endpoint.getService().getIndexes().get(index);
     }
-
 }

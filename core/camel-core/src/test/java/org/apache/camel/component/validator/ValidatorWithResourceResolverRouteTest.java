@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import java.net.URL;
@@ -42,10 +43,10 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
-        template
-                .sendBody("direct:start",
-                        "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author><content><rb:chapter><rb:subject></rb:subject>"
-                                          + "<rb:abstract></rb:abstract><rb:body></rb:body></rb:chapter></content></report>");
+        template.sendBody(
+                "direct:start",
+                "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author><content><rb:chapter><rb:subject></rb:subject>"
+                        + "<rb:abstract></rb:abstract><rb:body></rb:body></rb:chapter></content></report>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -56,7 +57,8 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
+        template.sendBody(
+                "direct:start",
                 "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author></report>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
@@ -77,8 +79,8 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         // we have to do it here, because we need the context created first
         CatalogManager.getStaticManager().setIgnoreMissingProperties(true);
         CatalogResolver catalogResolver = new CatalogResolver(true);
-        URL catalogUrl = ResourceHelper.resolveMandatoryResourceAsUrl(context,
-                "org/apache/camel/component/validator/catalog.cat");
+        URL catalogUrl = ResourceHelper.resolveMandatoryResourceAsUrl(
+                context, "org/apache/camel/component/validator/catalog.cat");
         catalogResolver.getCatalog().parseCatalog(catalogUrl);
         LSResourceResolver resourceResolver = new CatalogLSResourceResolver(catalogResolver);
         context.getRegistry().bind("resourceResolver", resourceResolver);
@@ -86,10 +88,16 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").doTry()
-                        .to("validator:org/apache/camel/component/validator/report.xsd?resourceResolver=#resourceResolver")
+                from("direct:start")
+                        .doTry()
+                        .to(
+                                "validator:org/apache/camel/component/validator/report.xsd?resourceResolver=#resourceResolver")
                         .to("mock:valid")
-                        .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally").end();
+                        .doCatch(ValidationException.class)
+                        .to("mock:invalid")
+                        .doFinally()
+                        .to("mock:finally")
+                        .end();
             }
         };
     }

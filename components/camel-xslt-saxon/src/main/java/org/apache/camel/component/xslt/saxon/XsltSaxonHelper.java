@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt.saxon;
 
 import java.util.List;
@@ -31,8 +32,7 @@ final class XsltSaxonHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonHelper.class);
 
-    private XsltSaxonHelper() {
-    }
+    private XsltSaxonHelper() {}
 
     public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration) {
         if (saxonConfiguration != null) {
@@ -41,8 +41,7 @@ final class XsltSaxonHelper {
     }
 
     public static void registerSaxonConfigurationProperties(
-            TransformerFactoryImpl factory,
-            Map<String, Object> saxonConfigurationProperties) {
+            TransformerFactoryImpl factory, Map<String, Object> saxonConfigurationProperties) {
         if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
             for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
                 factory.getConfiguration().setConfigurationProperty(entry.getKey(), entry.getValue());
@@ -51,19 +50,17 @@ final class XsltSaxonHelper {
     }
 
     public static void registerSaxonExtensionFunctions(
-            TransformerFactoryImpl factory,
-            List<Object> saxonExtensionFunctions,
-            boolean secureProcessing)
+            TransformerFactoryImpl factory, List<Object> saxonExtensionFunctions, boolean secureProcessing)
             throws Exception {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
             for (Object extensionFunction : saxonExtensionFunctions) {
                 if (extensionFunction instanceof ExtensionFunctionDefinition) {
                     LOG.debug("Saxon.registerExtensionFunction {}", extensionFunction);
-                    factory.getConfiguration().registerExtensionFunction((ExtensionFunctionDefinition) extensionFunction);
+                    factory.getConfiguration()
+                            .registerExtensionFunction((ExtensionFunctionDefinition) extensionFunction);
                 }
             }
         }
     }
-
 }

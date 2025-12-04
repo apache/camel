@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.issues;
 
 import org.apache.camel.builder.AdviceWith;
@@ -28,7 +29,8 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/test/issues/AdviceWithOnExceptionMultipleIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/test/issues/AdviceWithOnExceptionMultipleIssueTest.xml");
     }
 
     @Override
@@ -38,10 +40,10 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
-        AdviceWith.adviceWith(context, "RouteA", a -> a.interceptSendToEndpoint("mock:resultA").process());
+        AdviceWith.adviceWith(context, "RouteA", a -> a.interceptSendToEndpoint("mock:resultA")
+                .process());
 
-        AdviceWith.adviceWith(context, "RouteB", a -> {
-        });
+        AdviceWith.adviceWith(context, "RouteB", a -> {});
 
         context.start();
 
@@ -52,9 +54,10 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
     @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
-        AdviceWith.adviceWith(context, "RouteA", a -> a.interceptSendToEndpoint("mock:resultA").process(e -> {
-            throw new Exception("my exception");
-        }));
+        AdviceWith.adviceWith(context, "RouteA", a -> a.interceptSendToEndpoint("mock:resultA")
+                .process(e -> {
+                    throw new Exception("my exception");
+                }));
 
         context.start();
 
@@ -76,8 +79,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
 
         AdviceWith.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
-            }
+            public void configure() throws Exception {}
         });
 
         context.start();
@@ -86,5 +88,4 @@ public class AdviceWithOnExceptionMultipleIssueTest extends CamelSpringTestSuppo
         template.sendBody("direct:startA", "a trigger");
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

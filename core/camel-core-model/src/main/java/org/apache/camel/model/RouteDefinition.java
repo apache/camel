@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ import org.apache.camel.spi.RoutePolicy;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = { "routeProperties", "errorHandler", "input", "inputType", "outputType", "outputs" })
+@XmlType(propOrder = {"routeProperties", "errorHandler", "input", "inputType", "outputType", "outputs"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends OutputDefinition<RouteDefinition>
@@ -100,8 +101,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     private Resource resource;
     private String precondition;
 
-    public RouteDefinition() {
-    }
+    public RouteDefinition() {}
 
     public RouteDefinition(@AsEndpointUri String uri) {
         from(uri);
@@ -916,9 +916,12 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
         // does not have a <from> as it is implied to be the rest endpoint
         this.input = input;
 
-        if (getCamelContext() != null && (getCamelContext().isSourceLocationEnabled()
-                || getCamelContext().isDebugging() || getCamelContext().isDebugStandby()
-                || getCamelContext().isTracing() || getCamelContext().isTracingStandby())) {
+        if (getCamelContext() != null
+                && (getCamelContext().isSourceLocationEnabled()
+                        || getCamelContext().isDebugging()
+                        || getCamelContext().isDebugStandby()
+                        || getCamelContext().isTracing()
+                        || getCamelContext().isTracingStandby())) {
             // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
             ProcessorDefinitionHelper.prepareSourceLocation(getResource(), input);
         }
@@ -1222,8 +1225,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * To control how to shutdown the route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRoute", defaultValue = "Default",
-              enums = "Default,Defer")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.ShutdownRoute",
+            defaultValue = "Default",
+            enums = "Default,Defer")
     public void setShutdownRoute(String shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
@@ -1239,8 +1245,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * To control how to shut down the route.
      */
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.ShutdownRunningTask", defaultValue = "CompleteCurrentTaskOnly",
-              enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
+    @Metadata(
+            label = "advanced",
+            javaType = "org.apache.camel.ShutdownRunningTask",
+            defaultValue = "CompleteCurrentTaskOnly",
+            enums = "CompleteCurrentTaskOnly,CompleteAllTasks")
     public void setShutdownRunningTask(String shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
@@ -1391,5 +1400,4 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     public static RouteDefinition fromEndpoint(Endpoint endpoint) {
         return new RouteDefinition().from(endpoint);
     }
-
 }

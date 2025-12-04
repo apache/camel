@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,8 +27,6 @@ import org.jgroups.Message;
 import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport {
 
     // Constants
@@ -34,7 +35,8 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
 
     static final String MESSAGE = "MESSAGE";
 
-    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s?channelProperties=%s", CLUSTER_NAME, "udp.xml");
+    static final String CONFIGURED_ENDPOINT_URI =
+            String.format("jgroups:%s?channelProperties=%s", CLUSTER_NAME, "udp.xml");
 
     // Fixtures
 
@@ -100,5 +102,4 @@ public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport 
         // Then
         assertNotNull(component.getChannel());
     }
-
 }

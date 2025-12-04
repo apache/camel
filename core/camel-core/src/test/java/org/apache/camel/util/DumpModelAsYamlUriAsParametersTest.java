@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Paths;
 
@@ -23,35 +26,29 @@ import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class DumpModelAsYamlUriAsParametersTest extends DumpModelAsYamlTestSupport {
 
     @Test
     public void testDumpModelAsYaml() throws Exception {
-        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true, true, false);
+        String out = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("myRoute"), true, true, true, false);
         assertNotNull(out);
         log.info(out);
 
-        String expected
-                = IOHelper.stripLineComments(Paths.get("src/test/resources/org/apache/camel/util/uri-as-parameters.yaml"), "#",
-                        true);
+        String expected = IOHelper.stripLineComments(
+                Paths.get("src/test/resources/org/apache/camel/util/uri-as-parameters.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
     @Test
     public void testDumpModelAsYamlGeneratedIds() throws Exception {
-        String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true, false, false);
+        String out = PluginHelper.getModelToYAMLDumper(context)
+                .dumpModelAsYaml(context, context.getRouteDefinition("myRoute"), true, true, false, false);
         assertNotNull(out);
         log.info(out);
 
-        String expected
-                = IOHelper.stripLineComments(
-                        Paths.get("src/test/resources/org/apache/camel/util/uri-as-parameters-no-ids.yaml"),
-                        "#",
-                        true);
+        String expected = IOHelper.stripLineComments(
+                Paths.get("src/test/resources/org/apache/camel/util/uri-as-parameters-no-ids.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 
@@ -60,9 +57,12 @@ public class DumpModelAsYamlUriAsParametersTest extends DumpModelAsYamlTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo?size=1234&multipleConsumers=true").routeId("myRoute")
-                        .transform().simple("Hello ${body}")
-                        .to("mock:result?retainFirst=5&failFast=true").id("myMock");
+                from("seda:foo?size=1234&multipleConsumers=true")
+                        .routeId("myRoute")
+                        .transform()
+                        .simple("Hello ${body}")
+                        .to("mock:result?retainFirst=5&failFast=true")
+                        .id("myMock");
             }
         };
     }

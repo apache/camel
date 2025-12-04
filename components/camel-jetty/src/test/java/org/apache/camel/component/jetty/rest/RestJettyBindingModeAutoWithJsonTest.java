@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
 
@@ -49,12 +50,19 @@ public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration()
+                        .component("jetty")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("new").consumes("application/json").type(UserPojo.class).to("mock:input");
+                rest("/users/")
+                        .post("new")
+                        .consumes("application/json")
+                        .type(UserPojo.class)
+                        .to("mock:input");
             }
         };
     }
-
 }

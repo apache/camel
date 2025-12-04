@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -24,9 +28,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class XQueryEndpointTest extends CamelSpringTestSupport {
 
     @Test
@@ -34,8 +35,7 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBody("direct:start", "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -43,9 +43,11 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
         assertNotNull(xml, "The transformed XML should not be null");
-        assertEquals("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-                     + "<body>Hello world!</body></mail></transformed>",
-                xml, "transformed");
+        assertEquals(
+                "<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
+                        + "<body>Hello world!</body></mail></transformed>",
+                xml,
+                "transformed");
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
         assertEquals("Hey", bean.getSubject(), "bean.subject");

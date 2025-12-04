@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.common;
 
 import org.apache.camel.component.cxf.util.CxfUtils;
@@ -25,7 +26,7 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
-//closes UnitOfWork in good case
+// closes UnitOfWork in good case
 public class UnitOfWorkCloserInterceptor extends AbstractPhaseInterceptor<Message> {
     boolean handleOneWayMessage;
 
@@ -56,7 +57,9 @@ public class UnitOfWorkCloserInterceptor extends AbstractPhaseInterceptor<Messag
     private boolean isOneWay(Message message) {
         Exchange ex = message.getExchange();
         BindingOperationInfo binding = ex.getBindingOperationInfo();
-        if (null != binding && null != binding.getOperationInfo() && binding.getOperationInfo().isOneWay()) {
+        if (null != binding
+                && null != binding.getOperationInfo()
+                && binding.getOperationInfo().isOneWay()) {
             return true;
         }
         return false;

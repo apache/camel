@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -31,11 +37,6 @@ import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
 
@@ -115,7 +116,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         // After that it asserts that two options are not equal.
 
         // load spring app
-        AbstractXmlApplicationContext app = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest1.xml");
+        AbstractXmlApplicationContext app =
+                newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest1.xml");
         app.start();
         CamelContext camel = app.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel);
@@ -128,7 +130,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
+        AbstractXmlApplicationContext app2 =
+                newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel2);
@@ -164,7 +167,8 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
         log.info("Restarting ...");
 
         // load spring app
-        AbstractXmlApplicationContext app2 = newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
+        AbstractXmlApplicationContext app2 =
+                newAppContext("SpringQuartzPersistentStoreRestartAppChangeOptionsTest2.xml");
         app2.start();
         CamelContext camel2 = app2.getBean("camelContext-" + getClass().getSimpleName(), CamelContext.class);
         assertNotNull(camel2);
@@ -185,7 +189,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest {
     }
 
     private static AbstractXmlApplicationContext newAppContext(String config) {
-        return CamelSpringTestSupport.newAppContext(config, SpringQuartzPersistentStoreRestartAppChangeOptionsTest.class);
+        return CamelSpringTestSupport.newAppContext(
+                config, SpringQuartzPersistentStoreRestartAppChangeOptionsTest.class);
     }
-
 }

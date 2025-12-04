@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -58,15 +59,16 @@ public class FtpProducerAllowNullBodyFileAlreadyExistIT extends FtpServerTestSup
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:appendTypeAppend").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                from("direct:appendTypeAppend")
+                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
                         .to(getFtpUrl() + "&allowNullBody=true&fileExist=Append")
                         .to("mock:appendTypeAppendResult");
 
-                from("direct:appendTypeOverride").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                from("direct:appendTypeOverride")
+                        .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
                         .to(getFtpUrl() + "&allowNullBody=true&fileExist=Override")
                         .to("mock:appendTypeOverrideResult");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -44,5 +45,4 @@ public class SjmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("JMSXRecvTimestamp");
         getOutFilter().add("JMSXState");
     }
-
 }

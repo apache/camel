@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.oaipmh.component;
 
 import java.net.URI;
@@ -36,8 +37,14 @@ import org.joda.time.format.ISODateTimeFormat;
 /**
  * Harvest metadata using OAI-PMH protocol
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
-             category = { Category.SEARCH }, headersClass = OAIPMHConstants.class)
+@UriEndpoint(
+        firstVersion = "3.5.0",
+        scheme = "oaipmh",
+        title = "OAI-PMH",
+        syntax = "oaipmh:baseUrl",
+        lenientProperties = true,
+        category = {Category.SEARCH},
+        headersClass = OAIPMHConstants.class)
 public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private transient URI url;
@@ -58,8 +65,10 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
     @UriParam(description = "Request name supported by OAI-PMh protocol", defaultValue = "ListRecords")
     private String verb = "ListRecords";
 
-    @UriParam(description = "Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records.",
-              defaultValue = "oai_dc")
+    @UriParam(
+            description =
+                    "Specifies the metadataPrefix of the format that should be included in the metadata part of the returned records.",
+            defaultValue = "oai_dc")
     private String metadataPrefix = "oai_dc";
 
     @UriParam(label = "security", description = "Causes the defined url to make an https request")
@@ -71,8 +80,10 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
     @UriParam(description = "Identifier of the requested resources. Applicable only with certain verbs")
     private String identifier;
 
-    @UriParam(label = "producer",
-              description = "Returns the response of a single request. Otherwise it will make requests until there is no more data to return.")
+    @UriParam(
+            label = "producer",
+            description =
+                    "Returns the response of a single request. Otherwise it will make requests until there is no more data to return.")
     private boolean onlyFirst;
 
     private Map<String, Object> queryParameters;
@@ -222,5 +233,4 @@ public class OAIPMHEndpoint extends ScheduledPollEndpoint implements EndpointSer
     public void setOnlyFirst(boolean onlyFist) {
         this.onlyFirst = onlyFist;
     }
-
 }

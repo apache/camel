@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MethodCallMissingParenthesisTest extends ContextTestSupport {
 
@@ -36,7 +37,8 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").transform()
+                from("direct:start")
+                        .transform()
                         .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo})")
                         .to("mock:result");
             }
@@ -53,17 +55,21 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").transform()
-                        .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}").to("mock:result");
+                from("direct:start")
+                        .transform()
+                        .method(MethodCallMissingParenthesisTest.class, "doSomething(${body}, ${header.foo}")
+                        .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel"),
                 "Method should end with parenthesis, was doSomething(${body}, ${header.foo}");
 
-        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        IllegalArgumentException iae =
+                assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals("Method should end with parenthesis, was doSomething(${body}, ${header.foo}", iae.getMessage());
     }
 
@@ -72,18 +78,21 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").transform()
+                from("direct:start")
+                        .transform()
                         .method(MethodCallMissingParenthesisTest.class, "--doSomething(${body}, ${header.foo})")
                         .to("mock:result");
             }
         });
         context.start();
 
-        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(
+                CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:start", "Hello", "foo", "Camel"),
                 "Should throw exception");
 
-        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        IllegalArgumentException iae =
+                assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals(
                 "Method name must start with a valid java identifier at position: 0 in method: --doSomething(${body}, ${header.foo})",
                 iae.getMessage());
@@ -92,5 +101,4 @@ public class MethodCallMissingParenthesisTest extends ContextTestSupport {
     public String doSomething(String body, String header) {
         return body + "=" + header;
     }
-
 }

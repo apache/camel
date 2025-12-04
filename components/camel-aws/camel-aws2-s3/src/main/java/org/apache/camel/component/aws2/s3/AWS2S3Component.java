@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
 
 import java.util.Map;
@@ -46,8 +47,8 @@ public class AWS2S3Component extends HealthCheckComponent {
         if (remaining.startsWith("arn:")) {
             remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
-        final AWS2S3Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new AWS2S3Configuration();
+        final AWS2S3Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new AWS2S3Configuration();
         configuration.setBucketName(remaining);
         AWS2S3Endpoint endpoint = new AWS2S3Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

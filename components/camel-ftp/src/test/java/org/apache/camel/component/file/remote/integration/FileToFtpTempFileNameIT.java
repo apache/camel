@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -25,8 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -39,8 +40,8 @@ public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
     public void testFileToFtp() {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
-        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "in"), "Hello World", Exchange.FILE_NAME,
-                "sub/hello.txt");
+        template.sendBodyAndHeader(
+                TestSupport.fileUri(testDirectory, "in"), "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
 
         assertTrue(notify.matchesWaitTime());
 
@@ -55,7 +56,7 @@ public class FileToFtpTempFileNameIT extends FtpServerTestSupport {
             public void configure() {
                 from(TestSupport.fileUri(testDirectory, "in?recursive=true"))
                         .to("ftp://admin:admin@localhost:{{ftp.server.port}}"
-                            + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
+                                + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
             }
         };
     }

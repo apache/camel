@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProtocolNoSlashTest extends BaseNettyTest {
 
@@ -31,12 +32,14 @@ public class NettyHttpProtocolNoSlashTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived("beer", "yes");
         getMockEndpoint("mock:input").expectedHeaderReceived("host", "localhost:" + getPort());
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
+        getMockEndpoint("mock:input")
+                .expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/foo");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "beer=yes");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
-        String out = template.requestBody("netty-http:http:localhost:{{port}}/foo?beer=yes", "Hello World", String.class);
+        String out =
+                template.requestBody("netty-http:http:localhost:{{port}}/foo?beer=yes", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -49,9 +52,9 @@ public class NettyHttpProtocolNoSlashTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http:localhost:{{port}}/foo")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

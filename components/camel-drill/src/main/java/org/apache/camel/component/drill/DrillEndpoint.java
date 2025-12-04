@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.drill;
 
 import java.sql.ResultSet;
@@ -38,20 +39,30 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 /**
  * Perform queries against an Apache Drill cluster.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "drill", title = "Drill", syntax = "drill:host", producerOnly = true,
-             category = { Category.DATABASE, Category.BIGDATA }, headersClass = DrillConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "drill",
+        title = "Drill",
+        syntax = "drill:host",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.BIGDATA},
+        headersClass = DrillConstants.class)
 public class DrillEndpoint extends DefaultPollingEndpoint implements EndpointServiceLocation {
 
     @UriPath(description = "Host name or IP address")
     @Metadata(required = true)
     private String host;
+
     @UriParam(description = "Port number")
     @Metadata(required = false, defaultValue = "2181")
     private Integer port = 2181;
+
     @UriParam(description = "Drill directory", defaultValue = "")
     private String directory = "";
+
     @UriParam(defaultValue = "")
     private String clusterId = "";
+
     @UriParam(defaultValue = "ZK", enums = "ZK,DRILLBIT")
     private DrillConnectionMode mode = DrillConnectionMode.ZK;
 
@@ -171,5 +182,4 @@ public class DrillEndpoint extends DefaultPollingEndpoint implements EndpointSer
     public void setMode(DrillConnectionMode mode) {
         this.mode = mode;
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +34,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JCacheProducerGetTest extends JCacheComponentTestSupport {
 
@@ -195,21 +196,11 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:get")
-                        .to("jcache://test-cache")
-                        .to("mock:get");
-                from("direct:get-and-remove")
-                        .to("jcache://test-cache")
-                        .to("mock:get-and-remove");
-                from("direct:get-and-replace")
-                        .to("jcache://test-cache")
-                        .to("mock:get-and-replace");
-                from("direct:get-and-put")
-                        .to("jcache://test-cache")
-                        .to("mock:get-and-put");
-                from("direct:get-all")
-                        .to("jcache://test-cache")
-                        .to("mock:get-all");
+                from("direct:get").to("jcache://test-cache").to("mock:get");
+                from("direct:get-and-remove").to("jcache://test-cache").to("mock:get-and-remove");
+                from("direct:get-and-replace").to("jcache://test-cache").to("mock:get-and-replace");
+                from("direct:get-and-put").to("jcache://test-cache").to("mock:get-and-put");
+                from("direct:get-all").to("jcache://test-cache").to("mock:get-all");
             }
         };
     }

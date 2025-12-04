@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -52,12 +53,8 @@ public class ProcessorDefinitionDslTest extends BaseEndpointDslTest {
                 from(direct("b")).to(log("endpoint.b"));
                 from(direct("c")).to(log("endpoint.c"));
                 from(direct("d")).to(log("endpoint.d"));
-                from(direct("e"))
-                        .setBody(constant("body"))
-                        .setHeader("next", constant("m3"));
-
+                from(direct("e")).setBody(constant("body")).setHeader("next", constant("m3"));
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import java.io.Reader;
@@ -30,8 +31,7 @@ import org.apache.camel.util.function.ThrowingConsumer;
  */
 public abstract class EndpointRouteBuilder extends RouteBuilder implements EndpointBuilderFactory {
 
-    public EndpointRouteBuilder() {
-    }
+    public EndpointRouteBuilder() {}
 
     public EndpointRouteBuilder(CamelContext context) {
         super(context);
@@ -49,8 +49,7 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
      * @param  rbc       a lambda expression receiving the {@code RouteBuilder} to use for creating routes
      * @throws Exception if an error occurs
      */
-    public static void addEndpointRoutes(CamelContext context, LambdaEndpointRouteBuilder rbc)
-            throws Exception {
+    public static void addEndpointRoutes(CamelContext context, LambdaEndpointRouteBuilder rbc) throws Exception {
         context.addRoutes(new EndpointRouteBuilder(context) {
             @Override
             public void configure() throws Exception {
@@ -89,7 +88,8 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
      * @param  consumer the function used to create a {@link EndpointRouteBuilder}
      * @return          a {@link EndpointRouteBuilder}
      */
-    public static EndpointRouteBuilder loadEndpointRoutesBuilder(ThrowingConsumer<EndpointRouteBuilder, Exception> consumer) {
+    public static EndpointRouteBuilder loadEndpointRoutesBuilder(
+            ThrowingConsumer<EndpointRouteBuilder, Exception> consumer) {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -97,5 +97,4 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
             }
         };
     }
-
 }

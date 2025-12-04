@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 
@@ -32,10 +37,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the JSON mapping of the API updates.
@@ -81,7 +82,6 @@ public class TelegramConsumerMappingTest extends TelegramTestSupport {
         assertEquals("-45658", chat.getId());
         assertEquals("A chat group", chat.getTitle());
         assertEquals("group", chat.getType());
-
     }
 
     @Test
@@ -91,7 +91,9 @@ public class TelegramConsumerMappingTest extends TelegramTestSupport {
         assertTrue(messageResult.isOk());
         assertTrue(messageResult.isOk());
         assertEquals((Long) 33L, messageResult.getMessage().getMessageId());
-        assertEquals(Instant.ofEpochSecond(1548091564).getEpochSecond(), messageResult.getMessage().getDate().getEpochSecond());
+        assertEquals(
+                Instant.ofEpochSecond(1548091564).getEpochSecond(),
+                messageResult.getMessage().getDate().getEpochSecond());
         assertEquals((Long) 665977497L, messageResult.getMessage().getFrom().getId());
         assertTrue(messageResult.getMessage().getFrom().isBot());
         assertEquals("camelbot", messageResult.getMessage().getFrom().getFirstName());
@@ -109,13 +111,14 @@ public class TelegramConsumerMappingTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
@@ -128,5 +131,4 @@ public class TelegramConsumerMappingTest extends TelegramTestSupport {
                         TelegramTestUtil.stringResource("messages/updates-single.json"),
                         TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
-
 }

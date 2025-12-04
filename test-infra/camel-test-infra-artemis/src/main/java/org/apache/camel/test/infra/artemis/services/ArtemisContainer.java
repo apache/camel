@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
@@ -29,18 +30,16 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
     private static final String DEFAULT_USERNAME = "admin";
-    // NOTE: default value used for testing purposes only
-    private static final String DEFAULT_PASSWORD = "admin"; // NOSONAR
+    private static final String DEFAULT_PASSWORD = "admin";
 
     public ArtemisContainer() {
-        super(DockerImageName
-                .parse(LocalPropertyResolver.getProperty(ArtemisContainer.class, ArtemisProperties.ARTEMIS_CONTAINER)));
+        super(DockerImageName.parse(
+                LocalPropertyResolver.getProperty(ArtemisContainer.class, ArtemisProperties.ARTEMIS_CONTAINER)));
 
         this.withEnv("AMQ_EXTRA_ARGS", "--relax-jolokia")
                 .withEnv("AMQ_USER", DEFAULT_USERNAME)
                 .withEnv("AMQ_PASSWORD", DEFAULT_PASSWORD)
-                .withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
-                        DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT)
+                .withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT, DEFAULT_ADMIN_PORT, DEFAULT_ACCEPTOR_PORT)
                 .waitingFor(Wait.forListeningPort());
     }
 

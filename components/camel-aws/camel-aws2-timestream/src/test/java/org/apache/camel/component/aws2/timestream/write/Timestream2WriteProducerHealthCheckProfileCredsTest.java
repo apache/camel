@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.timestream.write;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,6 @@ import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class Timestream2WriteProducerHealthCheckProfileCredsTest extends CamelTestSupport {
 
@@ -66,7 +66,8 @@ public class Timestream2WriteProducerHealthCheckProfileCredsTest extends CamelTe
             @Override
             public void configure() {
                 from("direct:describeEndpoints")
-                        .to("aws2-timestream://write:test?operation=describeEndpoints&region=l&useDefaultCredentialsProvider=true");
+                        .to(
+                                "aws2-timestream://write:test?operation=describeEndpoints&region=l&useDefaultCredentialsProvider=true");
             }
         };
     }
@@ -83,12 +84,11 @@ public class Timestream2WriteProducerHealthCheckProfileCredsTest extends CamelTe
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAws2TimestreamHealthCheck = res2.stream()
                     .anyMatch(result -> result.getCheck().getId().startsWith("producer:aws2-timestream-write"));
-            boolean hasRegionMessage = res2.stream()
-                    .anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
+            boolean hasRegionMessage =
+                    res2.stream().anyMatch(r -> r.getMessage().stream().anyMatch(msg -> msg.contains("region")));
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2TimestreamHealthCheck, "aws2-timestream-write check");
             Assertions.assertTrue(hasRegionMessage, "aws2-timestream-write check error message");
         });
-
     }
 }

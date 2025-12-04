@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
+
+import static io.restassured.RestAssured.given;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-
 public class PlatformHttpCamelHeadersTest extends AbstractPlatformHttpTest {
 
     @Test
     void testFilterCamelHeaders() {
-        given()
-                .header("Accept", "application/json")
+        given().header("Accept", "application/json")
                 .header("User-Agent", "User-Agent-Camel")
                 .header("caMElHttpResponseCode", "503")
                 .port(port)
@@ -48,13 +48,15 @@ public class PlatformHttpCamelHeadersTest extends AbstractPlatformHttpTest {
             public void configure() {
                 from("platform-http:/get")
                         .process(e -> {
-                            Assertions.assertEquals("application/json", e.getMessage().getHeader("Accept"));
-                            Assertions.assertEquals("User-Agent-Camel", e.getMessage().getHeader("User-Agent"));
+                            Assertions.assertEquals(
+                                    "application/json", e.getMessage().getHeader("Accept"));
+                            Assertions.assertEquals(
+                                    "User-Agent-Camel", e.getMessage().getHeader("User-Agent"));
                             Assertions.assertNull(e.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
                         })
-                        .setBody().constant("");
+                        .setBody()
+                        .constant("");
             }
         };
     }
-
 }

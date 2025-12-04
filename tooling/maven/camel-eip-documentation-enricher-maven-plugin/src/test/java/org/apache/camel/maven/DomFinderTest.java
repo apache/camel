@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.xml.xpath.XPath;
 
@@ -24,16 +27,14 @@ import org.w3c.dom.NodeList;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DomFinderTest {
 
     private DomFinder domFinder;
 
     @Test
     public void testFindElementsAndTypes() throws Exception {
-        Document document = XmlHelper.buildNamespaceAwareDocument(
-                ResourceUtils.getResourceAsFile("xmls/3_elements.xml"));
+        Document document =
+                XmlHelper.buildNamespaceAwareDocument(ResourceUtils.getResourceAsFile("xmls/3_elements.xml"));
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         domFinder = new DomFinder(document, xPath);
 
@@ -44,8 +45,8 @@ public class DomFinderTest {
 
     @Test
     public void testFindAttributesElements() throws Exception {
-        Document document = XmlHelper.buildNamespaceAwareDocument(
-                ResourceUtils.getResourceAsFile("xmls/complex_type.xml"));
+        Document document =
+                XmlHelper.buildNamespaceAwareDocument(ResourceUtils.getResourceAsFile("xmls/complex_type.xml"));
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         domFinder = new DomFinder(document, xPath);
 
@@ -54,7 +55,8 @@ public class DomFinderTest {
         assertEquals(2, attributesList.getLength());
 
         assertEquals("uri", ((Element) attributesList.item(0)).getAttribute(Constants.NAME_ATTRIBUTE_NAME));
-        assertEquals("skipSendToOriginalEndpoint",
+        assertEquals(
+                "skipSendToOriginalEndpoint",
                 ((Element) attributesList.item(1)).getAttribute(Constants.NAME_ATTRIBUTE_NAME));
     }
 

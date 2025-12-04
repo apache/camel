@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.key.vault;
 
 import java.time.Instant;
@@ -70,8 +71,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
 
-    public EventhubsReloadTriggerTask() {
-    }
+    public EventhubsReloadTriggerTask() {}
 
     @Override
     public CamelContext getCamelContext() {
@@ -136,24 +136,31 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
         String blobAccessKey = null;
         String blobAccountName = null;
         String blobContainerName = null;
-        AzureVaultConfiguration azureVaultConfiguration = getCamelContext().getVaultConfiguration().azure();
+        AzureVaultConfiguration azureVaultConfiguration =
+                getCamelContext().getVaultConfiguration().azure();
         if (ObjectHelper.isNotEmpty(azureVaultConfiguration)) {
             eventhubConnectionString = azureVaultConfiguration.getEventhubConnectionString();
             blobAccessKey = azureVaultConfiguration.getBlobAccessKey();
             blobAccountName = azureVaultConfiguration.getBlobAccountName();
             blobContainerName = azureVaultConfiguration.getBlobContainerName();
         }
-        if (ObjectHelper.isNotEmpty(eventhubConnectionString) && ObjectHelper.isNotEmpty(blobAccessKey)
-                && ObjectHelper.isNotEmpty(blobAccountName) && ObjectHelper.isNotEmpty(blobContainerName)) {
+        if (ObjectHelper.isNotEmpty(eventhubConnectionString)
+                && ObjectHelper.isNotEmpty(blobAccessKey)
+                && ObjectHelper.isNotEmpty(blobAccountName)
+                && ObjectHelper.isNotEmpty(blobContainerName)) {
             BlobContainerAsyncClient c = new BlobContainerClientBuilder()
                     .endpoint(String.format(Locale.ROOT, "https://%s" + BLOB_SERVICE_URI_SEGMENT, blobAccountName))
                     .containerName(blobContainerName)
-                    .credential(new StorageSharedKeyCredential(blobAccountName, blobAccessKey)).buildAsyncClient();
+                    .credential(new StorageSharedKeyCredential(blobAccountName, blobAccessKey))
+                    .buildAsyncClient();
 
             EventProcessorClientBuilder eventProcessorClientBuilder = new EventProcessorClientBuilder()
-                    .checkpointStore(new BlobCheckpointStore(c)).consumerGroup("$Default")
-                    .connectionString(eventhubConnectionString).processEvent(this::onEventListener)
-                    .processError(this::onErrorListener).transportType(AmqpTransportType.AMQP);
+                    .checkpointStore(new BlobCheckpointStore(c))
+                    .consumerGroup("$Default")
+                    .connectionString(eventhubConnectionString)
+                    .processEvent(this::onEventListener)
+                    .processError(this::onErrorListener)
+                    .transportType(AmqpTransportType.AMQP);
 
             eventProcessorClient = eventProcessorClientBuilder.buildEventProcessorClient();
             eventProcessorClient.start();

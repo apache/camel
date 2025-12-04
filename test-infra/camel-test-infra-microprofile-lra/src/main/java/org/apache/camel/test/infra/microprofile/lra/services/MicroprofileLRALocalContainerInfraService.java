@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import com.github.dockerjava.api.model.Network;
@@ -28,10 +29,12 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = MicroprofileLRAInfraService.class,
-              description = "Transaction Manager for microservices that is based on the SAGA pattern for distributed transaction.",
-              serviceAlias = { "microprofile" },
-              serviceImplementationAlias = "lra")
+@InfraService(
+        service = MicroprofileLRAInfraService.class,
+        description =
+                "Transaction Manager for microservices that is based on the SAGA pattern for distributed transaction.",
+        serviceAlias = {"microprofile"},
+        serviceImplementationAlias = "lra")
 public class MicroprofileLRALocalContainerInfraService
         implements MicroprofileLRAInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "microprofile-lra";
@@ -42,8 +45,7 @@ public class MicroprofileLRALocalContainerInfraService
 
     public MicroprofileLRALocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                MicroprofileLRALocalContainerInfraService.class,
-                MicroprofileLRAProperties.MICROPROFILE_LRA_CONTAINER));
+                MicroprofileLRALocalContainerInfraService.class, MicroprofileLRAProperties.MICROPROFILE_LRA_CONTAINER));
     }
 
     public MicroprofileLRALocalContainerInfraService(String imageName) {
@@ -118,7 +120,8 @@ public class MicroprofileLRALocalContainerInfraService
     @Override
     public String callbackHost() {
         // Get host ip address from container
-        Network bridgeNetwork = this.container.getDockerClient()
+        Network bridgeNetwork = this.container
+                .getDockerClient()
                 .inspectNetworkCmd()
                 .withNetworkId("bridge")
                 .exec();

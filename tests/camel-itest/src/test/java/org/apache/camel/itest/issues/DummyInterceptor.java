@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.issues;
 
 import org.apache.camel.CamelContext;
@@ -26,8 +27,7 @@ public class DummyInterceptor implements InterceptStrategy {
     // Just simply return the target processor
     @Override
     public Processor wrapProcessorInInterceptors(
-            CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
-            throws Exception {
+            CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
         return target;
     }
 }

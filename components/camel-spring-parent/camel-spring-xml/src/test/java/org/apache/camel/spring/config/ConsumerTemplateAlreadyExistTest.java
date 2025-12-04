@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.config;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -22,10 +27,6 @@ import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 @ContextConfiguration
 public class ConsumerTemplateAlreadyExistTest extends SpringRunWithTestSupport {
@@ -40,22 +41,25 @@ public class ConsumerTemplateAlreadyExistTest extends SpringRunWithTestSupport {
     public void testHasExistingTemplate() {
         assertNotNull(template, "Should have injected a consumer template");
 
-        ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("myConsumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup =
+                context.getRegistry().lookupByNameAndType("myConsumerTemplate", ConsumerTemplate.class);
         assertNotNull(lookup, "Should lookup consumer template");
 
-        ConsumerTemplate lookup2 = context.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup2 =
+                context.getRegistry().lookupByNameAndType("consumerTemplate", ConsumerTemplate.class);
         assertNull(lookup2, "Should not be able to lookup consumer template");
     }
 
     @Test
     public void testShouldBeSingleton() {
-        ConsumerTemplate lookup = context.getRegistry().lookupByNameAndType("myConsumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup =
+                context.getRegistry().lookupByNameAndType("myConsumerTemplate", ConsumerTemplate.class);
         assertNotNull(lookup, "Should lookup producer template");
 
-        ConsumerTemplate lookup2 = context.getRegistry().lookupByNameAndType("myConsumerTemplate", ConsumerTemplate.class);
+        ConsumerTemplate lookup2 =
+                context.getRegistry().lookupByNameAndType("myConsumerTemplate", ConsumerTemplate.class);
         assertNotNull(lookup, "Should lookup producer template");
 
         assertSame(lookup, lookup2, "Should be same instances (singleton)");
     }
-
 }

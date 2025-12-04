@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -28,10 +33,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
@@ -40,13 +41,12 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -67,7 +67,8 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertTrue(exchanges.size() >= 3);
 
-        Map<String, Object> row = assertIsInstanceOf(Map.class, exchanges.get(0).getIn().getBody());
+        Map<String, Object> row =
+                assertIsInstanceOf(Map.class, exchanges.get(0).getIn().getBody());
         assertEquals(1, row.get("ID"));
         assertEquals("Camel", row.get("PROJECT"));
         assertEquals("ASF", row.get("LICENSE"));

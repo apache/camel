@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -40,19 +41,22 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     @XmlAttribute(required = true)
     @Metadata(enums = "Get,GetAndRemove,Set,Push,Pop", javaType = "org.apache.camel.model.ClaimCheckOperation")
     private String operation;
+
     @XmlAttribute
     private String key;
+
     @XmlAttribute
     private String filter;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.AggregationStrategy")
     private String aggregationStrategy;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String aggregationStrategyMethodName;
 
-    public ClaimCheckDefinition() {
-    }
+    public ClaimCheckDefinition() {}
 
     protected ClaimCheckDefinition(ClaimCheckDefinition source) {
         super(source);
@@ -234,5 +238,4 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
-
 }

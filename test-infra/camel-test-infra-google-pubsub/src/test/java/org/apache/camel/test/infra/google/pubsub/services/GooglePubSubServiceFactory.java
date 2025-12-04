@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.google.pubsub.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class GooglePubSubServiceFactory {
-    private GooglePubSubServiceFactory() {
-
-    }
+    private GooglePubSubServiceFactory() {}
 
     public static SimpleTestServiceBuilder<GooglePubSubService> builder() {
         return new SimpleTestServiceBuilder<>("google");
@@ -35,9 +34,8 @@ public final class GooglePubSubServiceFactory {
     }
 
     public static class GooglePubSubLocalContainerService extends GooglePubSubLocalContainerInfraService
-            implements GooglePubSubService {
-    }
+            implements GooglePubSubService {}
 
-    public static class GooglePubSubRemoteService extends GooglePubSubRemoteInfraService implements GooglePubSubService {
-    }
+    public static class GooglePubSubRemoteService extends GooglePubSubRemoteInfraService
+            implements GooglePubSubService {}
 }

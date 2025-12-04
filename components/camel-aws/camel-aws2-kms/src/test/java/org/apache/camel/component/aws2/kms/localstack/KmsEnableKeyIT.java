@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kms.localstack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KmsEnableKeyIT extends Aws2KmsBase {
 
@@ -50,7 +51,8 @@ public class KmsEnableKeyIT extends Aws2KmsBase {
             }
         });
 
-        String keyId = ex.getMessage().getBody(CreateKeyResponse.class).keyMetadata().keyId();
+        String keyId =
+                ex.getMessage().getBody(CreateKeyResponse.class).keyMetadata().keyId();
 
         template.send("direct:disableKey", new Processor() {
 
@@ -80,7 +82,11 @@ public class KmsEnableKeyIT extends Aws2KmsBase {
 
         MockEndpoint.assertIsSatisfied(context);
         assertEquals(1, result.getExchanges().size());
-        assertTrue(result.getExchanges().get(0).getIn().getBody(ListKeysResponse.class).hasKeys());
+        assertTrue(result.getExchanges()
+                .get(0)
+                .getIn()
+                .getBody(ListKeysResponse.class)
+                .hasKeys());
     }
 
     @Override
@@ -88,8 +94,7 @@ public class KmsEnableKeyIT extends Aws2KmsBase {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String awsEndpoint
-                        = "aws2-kms://default?operation=createKey";
+                String awsEndpoint = "aws2-kms://default?operation=createKey";
                 String disableKey = "aws2-kms://default?operation=disableKey";
                 String enableKey = "aws2-kms://default?operation=enableKey";
                 String listKeys = "aws2-kms://default?operation=listKeys";

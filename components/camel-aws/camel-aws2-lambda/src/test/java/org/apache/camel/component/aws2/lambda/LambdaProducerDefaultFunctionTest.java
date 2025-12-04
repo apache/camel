@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
 
@@ -57,9 +58,9 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("direct:invokeFunction").to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient")
+                from("direct:invokeFunction")
+                        .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient")
                         .to("mock:result");
-
             }
         };
     }

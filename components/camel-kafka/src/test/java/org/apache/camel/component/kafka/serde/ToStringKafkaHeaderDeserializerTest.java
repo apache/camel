@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.serde;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ToStringKafkaHeaderDeserializerTest {
 
@@ -39,5 +40,4 @@ public class ToStringKafkaHeaderDeserializerTest {
         assertThat(deserializedValue, CoreMatchers.instanceOf(String.class));
         assertEquals(expected, deserializedValue);
     }
-
 }

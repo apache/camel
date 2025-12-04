@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cluster;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
 
@@ -71,8 +72,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:bar").routeId("bar")
-                        .to("mock:bar");
+                from("seda:bar").routeId("bar").to("mock:bar");
             }
         });
 
@@ -99,8 +99,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:foo").routeId("foo")
-                        .to("mock:foo");
+                from("seda:foo").routeId("foo").to("mock:foo");
             }
         };
     }
@@ -112,8 +111,7 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:bar").routeId("bar")
-                        .to("mock:bar");
+                from("seda:bar").routeId("bar").to("mock:bar");
             }
         });
 

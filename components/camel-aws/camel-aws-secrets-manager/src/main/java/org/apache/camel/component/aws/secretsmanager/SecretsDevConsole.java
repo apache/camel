@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager;
 
 import java.time.Instant;
@@ -74,7 +75,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
             } else {
                 sb.append("\n    Login: Access and Secret Keys");
             }
-            AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
+            AwsVaultConfiguration aws =
+                    getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
             if (aws != null) {
                 sb.append(String.format("\n    Refresh Enabled: %s", aws.isRefreshEnabled()));
                 sb.append(String.format("\n    Refresh Period: %s", aws.getRefreshPeriod()));
@@ -93,7 +95,9 @@ public class SecretsDevConsole extends AbstractDevConsole {
             Collections.sort(sorted);
 
             for (String sec : sorted) {
-                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                Instant last = secretsRefreshTask != null
+                        ? secretsRefreshTask.getUpdates().get(sec)
+                        : null;
                 String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
                 if (age != null) {
                     sb.append(String.format("\n    %s (age: %s)", sec, age));
@@ -118,7 +122,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
             } else {
                 root.put("login", "Access and Secret Keys");
             }
-            AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
+            AwsVaultConfiguration aws =
+                    getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
             if (aws != null) {
                 root.put("refreshEnabled", aws.isRefreshEnabled());
                 root.put("refreshPeriod", aws.getRefreshPeriod());
@@ -146,7 +151,9 @@ public class SecretsDevConsole extends AbstractDevConsole {
             for (String sec : sorted) {
                 JsonObject jo = new JsonObject();
                 jo.put("name", sec);
-                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                Instant last = secretsRefreshTask != null
+                        ? secretsRefreshTask.getUpdates().get(sec)
+                        : null;
                 if (last != null) {
                     long timestamp = last.toEpochMilli();
                     jo.put("timestamp", timestamp);

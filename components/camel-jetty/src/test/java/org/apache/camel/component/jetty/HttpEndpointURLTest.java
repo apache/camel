@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     public void testHttpEndpointURLWithIPv6() {
-        JettyHttpEndpoint endpoint
-                = (JettyHttpEndpoint) context.getEndpoint("jetty://http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
-        assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
+        JettyHttpEndpoint endpoint = (JettyHttpEndpoint)
+                context.getEndpoint("jetty://http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
+        assertEquals(
+                "http://[2a00:8a00:6000:40::1413]:30300/test?test=true",
+                endpoint.getHttpUri().toString());
     }
-
 }

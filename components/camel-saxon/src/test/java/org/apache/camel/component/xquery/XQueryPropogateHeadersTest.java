@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -31,11 +32,11 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<transformed sender=\"bar\" subject=\"Hey\"><mail><subject>Hey</subject>"
-                                    + "<body>Hello world!</body></mail></transformed>");
+                + "<body>Hello world!</body></mail></transformed>");
         mock.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("direct:one",
-                "<mail><subject>Hey</subject><body>Hello world!</body></mail>", "foo", "bar");
+        template.sendBodyAndHeader(
+                "direct:one", "<mail><subject>Hey</subject><body>Hello world!</body></mail>", "foo", "bar");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -47,8 +48,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         mock.expectedBodiesReceived("London");
         mock.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("direct:two",
-                "<person name='James' city='London'/>", "foo", "bar");
+        template.sendBodyAndHeader("direct:two", "<person name='James' city='London'/>", "foo", "bar");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -60,8 +60,7 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
         mock.expectedBodiesReceived("London");
         mock.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("direct:three",
-                "<person name='James' city='London'/>", "foo", "bar");
+        template.sendBodyAndHeader("direct:three", "<person name='James' city='London'/>", "foo", "bar");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -75,11 +74,13 @@ public class XQueryPropogateHeadersTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:two")
-                        .transform().xquery("/person/@city", String.class)
+                        .transform()
+                        .xquery("/person/@city", String.class)
                         .to("mock:result");
 
                 from("direct:three")
-                        .setBody().xquery("/person/@city", String.class)
+                        .setBody()
+                        .xquery("/person/@city", String.class)
                         .to("mock:result");
             }
         };

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
@@ -24,8 +27,6 @@ import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that handled policy is working as expected for wiki documentation.
@@ -148,7 +149,6 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         public OrderFailedException(String message) {
             super(message);
         }
-
     }
     // END SNIPPET: e3
 

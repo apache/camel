@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import java.util.List;
@@ -87,7 +88,8 @@ public abstract class RouteConfigurationBuilder extends RouteBuilder implements 
         if (initializedConfiguration.compareAndSet(false, true)) {
             configuration();
         }
-        List<RouteConfigurationDefinition> list = getRouteConfigurationCollection().getRouteConfigurations();
+        List<RouteConfigurationDefinition> list =
+                getRouteConfigurationCollection().getRouteConfigurations();
         if (!list.isEmpty()) {
             // remove existing before updating
             for (RouteConfigurationDefinition def : list) {
@@ -112,8 +114,9 @@ public abstract class RouteConfigurationBuilder extends RouteBuilder implements 
         if (getResource() != null) {
             getRouteConfigurationCollection().setResource(getResource());
         }
-        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+        camelContext
+                .getCamelContextExtension()
+                .getContextPlugin(Model.class)
                 .addRouteConfigurations(getRouteConfigurationCollection().getRouteConfigurations());
     }
-
 }

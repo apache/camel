@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -92,8 +93,8 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
         Assertions.assertThat(env).isNotNull();
 
         // Verify BATCH mode was set
-        RuntimeExecutionMode mode = env.getConfiguration()
-                .get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
+        RuntimeExecutionMode mode =
+                env.getConfiguration().get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
         Assertions.assertThat(mode).isEqualTo(RuntimeExecutionMode.BATCH);
     }
 
@@ -117,8 +118,8 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
         Assertions.assertThat(env).isNotNull();
 
         // Verify STREAMING mode was set
-        RuntimeExecutionMode mode = env.getConfiguration()
-                .get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
+        RuntimeExecutionMode mode =
+                env.getConfiguration().get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
         Assertions.assertThat(mode).isEqualTo(RuntimeExecutionMode.STREAMING);
     }
 
@@ -203,8 +204,8 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
         Assertions.assertThat(checkpointConfig).isNotNull();
 
         // Verify execution mode
-        RuntimeExecutionMode mode = env.getConfiguration()
-                .get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
+        RuntimeExecutionMode mode =
+                env.getConfiguration().get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
         Assertions.assertThat(mode).isEqualTo(RuntimeExecutionMode.STREAMING);
 
         // Verify parallelism
@@ -278,51 +279,46 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:batchMode")
-                        .to("flink:datastream?dataStream=#batchDataStream"
-                            + "&executionMode=BATCH");
+                from("direct:batchMode").to("flink:datastream?dataStream=#batchDataStream" + "&executionMode=BATCH");
 
                 from("direct:streamingMode")
-                        .to("flink:datastream?dataStream=#streamingDataStream"
-                            + "&executionMode=STREAMING");
+                        .to("flink:datastream?dataStream=#streamingDataStream" + "&executionMode=STREAMING");
 
                 from("direct:checkpointing")
                         .to("flink:datastream?dataStream=#checkpointDataStream"
-                            + "&checkpointInterval=5000"
-                            + "&checkpointingMode=EXACTLY_ONCE"
-                            + "&checkpointTimeout=30000"
-                            + "&minPauseBetweenCheckpoints=2000");
+                                + "&checkpointInterval=5000"
+                                + "&checkpointingMode=EXACTLY_ONCE"
+                                + "&checkpointTimeout=30000"
+                                + "&minPauseBetweenCheckpoints=2000");
 
                 from("direct:parallelism")
                         .to("flink:datastream?dataStream=#parallelismDataStream"
-                            + "&parallelism=4"
-                            + "&maxParallelism=64");
+                                + "&parallelism=4"
+                                + "&maxParallelism=64");
 
                 from("direct:fullConfig")
                         .to("flink:datastream?dataStream=#fullConfigDataStream"
-                            + "&executionMode=STREAMING"
-                            + "&checkpointInterval=10000"
-                            + "&checkpointingMode=AT_LEAST_ONCE"
-                            + "&checkpointTimeout=60000"
-                            + "&minPauseBetweenCheckpoints=5000"
-                            + "&parallelism=8"
-                            + "&maxParallelism=128"
-                            + "&jobName=FullConfigTest");
+                                + "&executionMode=STREAMING"
+                                + "&checkpointInterval=10000"
+                                + "&checkpointingMode=AT_LEAST_ONCE"
+                                + "&checkpointTimeout=60000"
+                                + "&minPauseBetweenCheckpoints=5000"
+                                + "&parallelism=8"
+                                + "&maxParallelism=128"
+                                + "&jobName=FullConfigTest");
 
                 from("direct:invalidMode")
                         .to("flink:datastream?dataStream=#batchDataStream"
-                            + "&executionMode=INVALID_MODE"
-                            + "&dataStreamCallback=#captureEnvCallback");
+                                + "&executionMode=INVALID_MODE"
+                                + "&dataStreamCallback=#captureEnvCallback");
 
                 from("direct:invalidCheckpointMode")
                         .to("flink:datastream?dataStream=#checkpointDataStream"
-                            + "&checkpointInterval=5000"
-                            + "&checkpointingMode=INVALID_CHECKPOINT_MODE"
-                            + "&dataStreamCallback=#captureEnvCallback");
+                                + "&checkpointInterval=5000"
+                                + "&checkpointingMode=INVALID_CHECKPOINT_MODE"
+                                + "&dataStreamCallback=#captureEnvCallback");
 
-                from("direct:routeConfig")
-                        .to("flink:datastream?dataStream=#parallelismDataStream"
-                            + "&parallelism=2");
+                from("direct:routeConfig").to("flink:datastream?dataStream=#parallelismDataStream" + "&parallelism=2");
             }
         };
     }

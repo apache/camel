@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.oauth;
 
 import java.net.URI;
@@ -118,6 +119,5 @@ public abstract class OAuthHttpClientDecorator implements DisposableHttpClient {
         public URI getUri() {
             return uri;
         }
-
     }
 }

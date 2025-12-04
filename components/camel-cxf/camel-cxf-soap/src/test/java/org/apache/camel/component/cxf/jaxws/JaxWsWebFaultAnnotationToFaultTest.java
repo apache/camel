@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,15 +33,12 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Test for throwing an exception with a JAX-WS WebFault annotation from Camel CXF consumer
  */
 public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1()
-                                                   + "/JaxWsWebFaultAnnotationToFaultTest/router";
+    protected static final String ROUTER_ADDRESS =
+            "http://localhost:" + CXFTestSupport.getPort1() + "/JaxWsWebFaultAnnotationToFaultTest/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.cxf.greeter_control.Greeter";
     protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
 
@@ -76,10 +77,8 @@ public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
         } catch (Exception t) {
             LOG.warn("The CXF client did not manage to map the client exception: {}", t.getMessage(), t);
             fail("The CXF client did not manage to map the client exception "
-                 + t.getClass().getName() + " to a " + PingMeFault.class.getName()
-                 + ": " + t.getMessage());
+                    + t.getClass().getName() + " to a " + PingMeFault.class.getName()
+                    + ": " + t.getMessage());
         }
-
     }
-
 }

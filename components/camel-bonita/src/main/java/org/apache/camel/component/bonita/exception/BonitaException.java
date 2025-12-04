@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.exception;
 
 public class BonitaException extends Exception {
@@ -27,5 +28,4 @@ public class BonitaException extends Exception {
     public BonitaException(Throwable throwable) {
         super(throwable);
     }
-
 }

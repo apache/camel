@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
@@ -48,8 +49,10 @@ public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseIT extends
             @Override
             public void configure() {
                 from("ftp://localhost:{{ftp.server.port}}//tmp/mytemp?username=admin&password=admin&delay=10000"
-                     + "&disconnect=true&download=true&stepwise=false&delete=false&handleDirectoryParserAbsoluteResult=true")
-                        .routeId("foo").noAutoStartup().to("mock:result");
+                                + "&disconnect=true&download=true&stepwise=false&delete=false&handleDirectoryParserAbsoluteResult=true")
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

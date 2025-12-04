@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.transformer;
 
 import org.apache.camel.CamelContext;
@@ -33,14 +34,14 @@ public class DataFormatTransformerReifier extends TransformerReifier<DataFormatT
     @Override
     // Transformer implements AutoCloseable and must be closed by this method client.
     protected Transformer doCreateTransformer() {
-        DataFormat dataFormat
-                = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
+        DataFormat dataFormat = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
         @SuppressWarnings("resource")
         // NOTE: the client must take care of closing this resource.
-        Transformer dft = new DataFormatTransformer(camelContext).setDataFormat(dataFormat)
+        Transformer dft = new DataFormatTransformer(camelContext)
+                .setDataFormat(dataFormat)
                 .setName(definition.getScheme(), definition.getName())
-                .setFrom(definition.getFromType()).setTo(definition.getToType());
+                .setFrom(definition.getFromType())
+                .setTo(definition.getToType());
         return dft;
     }
-
 }

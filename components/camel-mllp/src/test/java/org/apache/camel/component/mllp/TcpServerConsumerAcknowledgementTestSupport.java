@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mllp;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,15 +34,13 @@ import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelTestSupport {
     static final String TEST_MESSAGE = "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
-                                       + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S"
-                                       + '\r';
+            + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S"
+            + '\r';
 
-    static final String EXPECTED_ACKNOWLEDGEMENT = "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ACK|||2.6" + '\r'
-                                                   + "MSA|AA|" + '\r';
+    static final String EXPECTED_ACKNOWLEDGEMENT =
+            "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ACK|||2.6" + '\r' + "MSA|AA|" + '\r';
 
     @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
@@ -109,9 +110,15 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
                         .log(LoggingLevel.INFO, routeId, "Test route complete")
                         .to("mock://on-failure-only");
 
-                fromF("mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&exchangePattern=%s&connectTimeout=%d&receiveTimeout=%d",
-                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), isBridgeErrorHandler(), isAutoAck(),
-                        exchangePattern(), connectTimeout, responseTimeout)
+                fromF(
+                                "mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&exchangePattern=%s&connectTimeout=%d&receiveTimeout=%d",
+                                mllpClient.getMllpHost(),
+                                mllpClient.getMllpPort(),
+                                isBridgeErrorHandler(),
+                                isAutoAck(),
+                                exchangePattern(),
+                                connectTimeout,
+                                responseTimeout)
                         .routeId(routeId)
                         .to(result);
             }

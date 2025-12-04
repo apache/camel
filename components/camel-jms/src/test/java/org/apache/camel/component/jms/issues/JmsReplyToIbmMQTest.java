@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.jms.ConnectionFactory;
 
@@ -28,9 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class JmsReplyToIbmMQTest extends CamelTestSupport {
 
@@ -41,8 +42,7 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
     public void testCustomJMSReplyToInOut() {
         template.sendBody("jms:queue:DEV.QUEUE.1", "What is your name?");
 
-        String reply
-                = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 5000, String.class);
+        String reply = consumer.receiveBody("jms:queue:DEV.QUEUE.2", 5000, String.class);
         assertEquals("My name is Camel", reply);
     }
 
@@ -61,9 +61,8 @@ public class JmsReplyToIbmMQTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory
-                = ConnectionFactoryHelper.createConnectionFactory(
-                        service.queueManager(), service.channel(), service.listenerPort());
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(
+                service.queueManager(), service.channel(), service.listenerPort());
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
     }

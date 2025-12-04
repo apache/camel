@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.jms;
+
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -31,15 +34,12 @@ import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.util.StringHelper.removeStartingCharacters;
-
 /**
  * Utility class for {@link jakarta.jms.Message}.
  */
 public final class JmsMessageHelper {
 
-    private JmsMessageHelper() {
-    }
+    private JmsMessageHelper() {}
 
     /**
      * Removes the property from the JMS message.
@@ -177,7 +177,8 @@ public final class JmsMessageHelper {
             return false;
         }
 
-        return destination.startsWith(JmsConstants.QUEUE_PREFIX) || destination.startsWith(JmsConstants.TEMP_QUEUE_PREFIX);
+        return destination.startsWith(JmsConstants.QUEUE_PREFIX)
+                || destination.startsWith(JmsConstants.TEMP_QUEUE_PREFIX);
     }
 
     /**
@@ -191,7 +192,8 @@ public final class JmsMessageHelper {
             return false;
         }
 
-        return destination.startsWith(JmsConstants.TOPIC_PREFIX) || destination.startsWith(JmsConstants.TEMP_TOPIC_PREFIX);
+        return destination.startsWith(JmsConstants.TOPIC_PREFIX)
+                || destination.startsWith(JmsConstants.TEMP_TOPIC_PREFIX);
     }
 
     /**
@@ -463,5 +465,4 @@ public final class JmsMessageHelper {
 
         return null;
     }
-
 }

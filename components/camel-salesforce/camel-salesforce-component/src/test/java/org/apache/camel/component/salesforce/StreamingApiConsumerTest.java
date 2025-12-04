@@ -14,7 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -41,15 +51,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class StreamingApiConsumerTest {
 
@@ -71,14 +72,15 @@ public class StreamingApiConsumerTest {
 
             final AccountUpdates other = (AccountUpdates) obj;
 
-            return Objects.equals(id, other.id) && Objects.equals(name, other.name) && Objects.equals(phone, other.phone);
+            return Objects.equals(id, other.id)
+                    && Objects.equals(name, other.name)
+                    && Objects.equals(phone, other.phone);
         }
 
         @Override
         public int hashCode() {
             return Objects.hash(id, name, phone);
         }
-
     }
 
     static final SubscriptionHelper NOT_USED = null;
@@ -96,10 +98,13 @@ public class StreamingApiConsumerTest {
 
     @Mock
     private Message mockChangeEvent;
+
     @Mock
     private Map<String, Object> mockChangeEventPayload;
+
     @Mock
     private Map<String, Object> mockChangeEventData;
+
     @Mock
     private Map<String, Object> mockChangeEventMap;
 
@@ -137,7 +142,7 @@ public class StreamingApiConsumerTest {
         changeEventHeader.put("commitUser", "0052p000009cl8uBBB");
         changeEventHeader.put("commitNumber", 10585193272713L);
         changeEventHeader.put("entityName", "Account");
-        changeEventHeader.put("recordIds", new Object[] { "0012p00002HHpNlAAL" });
+        changeEventHeader.put("recordIds", new Object[] {"0012p00002HHpNlAAL"});
 
         when(mockChangeEventPayload.get("ChangeEventHeader")).thenReturn(changeEventHeader);
 
@@ -276,8 +281,9 @@ public class StreamingApiConsumerTest {
         try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
             consumer.processMessage(mock(ClientSessionChannel.class), message);
 
-            verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
-                    .generate(new org.cometd.common.HashMapMessage(message)));
+            verify(in)
+                    .setBody(new org.cometd.common.JacksonJSONContextClient()
+                            .generate(new org.cometd.common.HashMapMessage(message)));
             verify(in).setHeader("CamelSalesforceCreatedDate", ZonedDateTime.parse("2018-07-06T12:41:04Z"));
             verify(in).setHeader("CamelSalesforceReplayId", 4L);
             verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
@@ -311,7 +317,7 @@ public class StreamingApiConsumerTest {
             verify(in).setHeader("CamelSalesforceCommitUser", "0052p000009cl8uBBB");
             verify(in).setHeader("CamelSalesforceCommitNumber", 10585193272713L);
             verify(in).setHeader("CamelSalesforceEntityName", "Account");
-            verify(in).setHeader("CamelSalesforceRecordIds", new Object[] { "0012p00002HHpNlAAL" });
+            verify(in).setHeader("CamelSalesforceRecordIds", new Object[] {"0012p00002HHpNlAAL"});
 
             verify(mockChangeEventPayload).remove("ChangeEventHeader");
 
@@ -341,8 +347,9 @@ public class StreamingApiConsumerTest {
         try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
             consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
-            verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
-                    .generate(new org.cometd.common.HashMapMessage(mockChangeEvent)));
+            verify(in)
+                    .setBody(new org.cometd.common.JacksonJSONContextClient()
+                            .generate(new org.cometd.common.HashMapMessage(mockChangeEvent)));
         }
     }
 

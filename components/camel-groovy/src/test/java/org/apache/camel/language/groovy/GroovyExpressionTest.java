@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
+
+import static org.apache.camel.test.junit5.TestSupport.assertExpression;
+import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
+import static org.apache.camel.test.junit5.TestSupport.assertPredicate;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,13 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertExpression;
-import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
-import static org.apache.camel.test.junit5.TestSupport.assertPredicate;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GroovyExpressionTest {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpressionTest.class);
@@ -76,8 +77,10 @@ public class GroovyExpressionTest {
         exchange.setVariable("header:myKey.bar", 123);
         exchange.setVariable("myOtherKey", "Hello Again");
 
-        assertEquals("Hello Again", GroovyLanguage.groovy("variables['myOtherKey']").evaluate(exchange));
-        assertEquals("abc", GroovyLanguage.groovy("variables['header:myKey.foo']").evaluate(exchange));
+        assertEquals(
+                "Hello Again", GroovyLanguage.groovy("variables['myOtherKey']").evaluate(exchange));
+        assertEquals(
+                "abc", GroovyLanguage.groovy("variables['header:myKey.foo']").evaluate(exchange));
         assertEquals(123, GroovyLanguage.groovy("variables['header:myKey.bar']").evaluate(exchange));
     }
 
@@ -110,7 +113,8 @@ public class GroovyExpressionTest {
         } catch (Exception e) {
             LOG.debug("Caught expected exception: {}", e.getMessage(), e);
             String message = e.getMessage();
-            assertTrue(message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
+            assertTrue(
+                    message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
         }
     }
 

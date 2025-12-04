@@ -17,6 +17,10 @@
 
 package org.apache.camel.component.hashicorp.vault.integration.operations;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,10 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HashicorpProducerListSecretsIT extends HashicorpVaultBase {
 
@@ -62,8 +62,7 @@ public class HashicorpProducerListSecretsIT extends HashicorpVaultBase {
         });
         exchange = template.request("direct:listSecrets", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
 
         MockEndpoint.assertIsSatisfied(context);
@@ -79,12 +78,14 @@ public class HashicorpProducerListSecretsIT extends HashicorpVaultBase {
             @Override
             public void configure() {
                 from("direct:createSecret")
-                        .toF("hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                        .toF(
+                                "hashicorp-vault://secret?operation=createSecret&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-write");
 
                 from("direct:listSecrets")
-                        .toF("hashicorp-vault://secret?operation=listSecrets&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
+                        .toF(
+                                "hashicorp-vault://secret?operation=listSecrets&token=RAW(%s)&host=%s&port=%s&scheme=http&secretPath=test",
                                 service.token(), service.host(), service.port())
                         .to("mock:result-list");
             }

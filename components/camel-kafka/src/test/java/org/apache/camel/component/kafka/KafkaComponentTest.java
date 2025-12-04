@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,9 +37,6 @@ import org.apache.kafka.common.config.SslConfigs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class KafkaComponentTest {
 
@@ -68,7 +69,9 @@ public class KafkaComponentTest {
 
         KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
         assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
-        assertEquals("broker1:12345,broker2:12566", endpoint.getComponent().getConfiguration().getBrokers());
+        assertEquals(
+                "broker1:12345,broker2:12566",
+                endpoint.getComponent().getConfiguration().getBrokers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
     }
@@ -88,16 +91,20 @@ public class KafkaComponentTest {
         kafkaComponent.stop();
         kafkaComponent.start();
 
-        final String uri
-                = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party&additionalProperties.extra.1=123&additionalProperties.extra.2=test";
+        final String uri =
+                "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party&additionalProperties.extra.1=123&additionalProperties.extra.2=test";
 
         KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
         assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
-        assertEquals("123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
-        assertEquals("test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
-        assertEquals("test.extra.3", endpoint.getConfiguration().getAdditionalProperties().get("extra.3"));
+        assertEquals(
+                "123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
+        assertEquals(
+                "test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
+        assertEquals(
+                "test.extra.3",
+                endpoint.getConfiguration().getAdditionalProperties().get("extra.3"));
 
         // test properties on producer keys
         final Properties producerProperties = endpoint.getConfiguration().createProducerProperties();
@@ -142,12 +149,17 @@ public class KafkaComponentTest {
         assertEquals(3782, endpoint.getConfiguration().getRetryBackoffMs().intValue());
         assertEquals(765, endpoint.getConfiguration().getSendBufferBytes().intValue());
         assertEquals(Integer.valueOf(1), endpoint.getConfiguration().getMaxInFlightRequest());
-        assertEquals("org.apache.camel.reporters.TestReport,org.apache.camel.reporters.SampleReport",
+        assertEquals(
+                "org.apache.camel.reporters.TestReport,org.apache.camel.reporters.SampleReport",
                 endpoint.getConfiguration().getMetricReporters());
         assertEquals(Integer.valueOf(3), endpoint.getConfiguration().getNoOfMetricsSample());
         assertEquals(Integer.valueOf(12344), endpoint.getConfiguration().getMetricsSampleWindowMs());
-        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getValueSerializer());
-        assertEquals(KafkaConstants.KAFKA_DEFAULT_SERIALIZER, endpoint.getConfiguration().getKeySerializer());
+        assertEquals(
+                KafkaConstants.KAFKA_DEFAULT_SERIALIZER,
+                endpoint.getConfiguration().getValueSerializer());
+        assertEquals(
+                KafkaConstants.KAFKA_DEFAULT_SERIALIZER,
+                endpoint.getConfiguration().getKeySerializer());
         assertEquals("testing", endpoint.getConfiguration().getSslKeyPassword());
         assertEquals("/abc", endpoint.getConfiguration().getSslKeystoreLocation());
         assertEquals("testing", endpoint.getConfiguration().getSslKeystorePassword());
@@ -177,7 +189,9 @@ public class KafkaComponentTest {
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
 
         KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
-        assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeys().keySet());
+        assertEquals(
+                endpoint.getConfiguration().createProducerProperties().keySet(),
+                getProducerKeys().keySet());
     }
 
     private Properties getProducerKeys() {
@@ -246,7 +260,9 @@ public class KafkaComponentTest {
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566&securityProtocol=SSL";
 
         KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
-        assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeysSSL().keySet());
+        assertEquals(
+                endpoint.getConfiguration().createProducerProperties().keySet(),
+                getProducerKeysSSL().keySet());
     }
 
     @Test
@@ -256,7 +272,9 @@ public class KafkaComponentTest {
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566&securityProtocol=SASL_PLAINTEXT";
 
         KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
-        assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeysSASL().keySet());
+        assertEquals(
+                endpoint.getConfiguration().createProducerProperties().keySet(),
+                getProducerKeysSASL().keySet());
     }
 
     private void setProducerProperty(Map<String, Object> params) {
@@ -350,15 +368,17 @@ public class KafkaComponentTest {
         context.getPropertiesComponent().addOverrideProperty("foo", "123");
         context.getPropertiesComponent().addOverrideProperty("bar", "test");
 
-        final String uri
-                = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party&additionalProperties.extra.1={{foo}}&additionalProperties.extra.2={{bar}}";
+        final String uri =
+                "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party&additionalProperties.extra.1={{foo}}&additionalProperties.extra.2={{bar}}";
 
         KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
         assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
-        assertEquals("123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
-        assertEquals("test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
+        assertEquals(
+                "123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
+        assertEquals(
+                "test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
 
         // test properties on producer keys
         final Properties producerProperties = endpoint.getConfiguration().createProducerProperties();
@@ -370,5 +390,4 @@ public class KafkaComponentTest {
         assertEquals("123", consumerProperties.getProperty("extra.1"));
         assertEquals("test", consumerProperties.getProperty("extra.2"));
     }
-
 }

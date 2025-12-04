@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SimpleJmsComponentTest extends CamelTestSupport {
 
@@ -35,8 +36,8 @@ public class SimpleJmsComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                ActiveMQConnectionFactory connectionFactory
-                        = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+                ActiveMQConnectionFactory connectionFactory =
+                        new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
                 SjmsComponent component = new SjmsComponent();
                 component.setConnectionFactory(connectionFactory);
                 getContext().addComponent("sjms", component);

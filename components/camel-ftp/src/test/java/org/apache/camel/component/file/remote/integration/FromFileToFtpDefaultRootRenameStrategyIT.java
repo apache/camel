@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +30,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileToFtpDefaultRootRenameStrategyIT extends FtpServerTestSupport {
 
@@ -43,7 +44,7 @@ public class FromFileToFtpDefaultRootRenameStrategyIT extends FtpServerTestSuppo
      */
     private String getFtpPollingUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}"
-               + "?password=admin&delete=true&binary=true&delay=1000&initialDelay=1500&readLock=rename";
+                + "?password=admin&delete=true&binary=true&delay=1000&initialDelay=1500&readLock=rename";
     }
 
     /*
@@ -89,5 +90,4 @@ public class FromFileToFtpDefaultRootRenameStrategyIT extends FtpServerTestSuppo
             }
         };
     }
-
 }

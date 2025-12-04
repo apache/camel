@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
@@ -27,14 +31,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test to verify that the noop file strategy usage of lock files.
  */
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
+@DisabledOnOs(
+        architectures = {"s390x"},
+        disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class FileNoOpLockFileTest extends ContextTestSupport {
 
     @Test
@@ -70,13 +72,16 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     }
 
     private boolean existsLockFile(boolean expected) {
-        String filename = (expected ? "locked/" : "notlocked/") + "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        String filename =
+                (expected ? "locked/" : "notlocked/") + "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
         return expected == Files.exists(testFile(filename));
     }
 
     private void checkLockFile(boolean expected) {
-        String filename = (expected ? "locked/" : "notlocked/") + "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-        assertEquals(expected, Files.exists(testFile(filename)), "Lock file should " + (expected ? "exists" : "not exists"));
+        String filename =
+                (expected ? "locked/" : "notlocked/") + "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        assertEquals(
+                expected, Files.exists(testFile(filename)), "Lock file should " + (expected ? "exists" : "not exists"));
     }
 
     @Override
@@ -85,11 +90,13 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
             public void configure() {
                 // for locks
                 from(fileUri("locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile"))
-                        .process(new MyNoopProcessor()).to("mock:report");
+                        .process(new MyNoopProcessor())
+                        .to("mock:report");
 
                 // for no locks
                 from(fileUri("notlocked/?initialDelay=0&delay=10&noop=true&readLock=none"))
-                        .process(new MyNoopProcessor()).to("mock:report");
+                        .process(new MyNoopProcessor())
+                        .to("mock:report");
             }
         };
     }
@@ -102,5 +109,4 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
             checkLockFile(locked);
         }
     }
-
 }

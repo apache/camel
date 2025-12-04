@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -53,11 +54,14 @@ public class CBRConcurrencyIssueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:start?concurrentConsumers=10").log("Got foo ${header.foo} header").choice()
-                        .when(header("foo").isEqualTo("send")).to("mock:result")
-                        .when(header("foo").isEqualTo("receive")).to("mock:other");
+                from("seda:start?concurrentConsumers=10")
+                        .log("Got foo ${header.foo} header")
+                        .choice()
+                        .when(header("foo").isEqualTo("send"))
+                        .to("mock:result")
+                        .when(header("foo").isEqualTo("receive"))
+                        .to("mock:other");
             }
         };
     }
-
 }

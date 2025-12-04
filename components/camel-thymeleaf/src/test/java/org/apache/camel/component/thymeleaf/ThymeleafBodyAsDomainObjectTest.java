@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +35,6 @@ public class ThymeleafBodyAsDomainObjectTest extends ThymeleafAbstractBaseTest {
         mock.message(0).header(FIRST_NAME).isNull();
 
         template.request(DIRECT_START, exchange -> {
-
             exchange.getIn().setBody(letter());
             exchange.setProperty(ORDER_NUMBER, "7");
         });
@@ -120,14 +120,11 @@ public class ThymeleafBodyAsDomainObjectTest extends ThymeleafAbstractBaseTest {
         @Override
         public String toString() {
 
-            return "Letter{" +
-                   "firstName='" + firstName + '\'' +
-                   ", lastName='" + lastName + '\'' +
-                   ", item='" + item + '\'' +
-                   ", closing='" + closing + '\'' +
-                   '}';
+            return "Letter{" + "firstName='"
+                    + firstName + '\'' + ", lastName='"
+                    + lastName + '\'' + ", item='"
+                    + item + '\'' + ", closing='"
+                    + closing + '\'' + '}';
         }
-
     }
-
 }

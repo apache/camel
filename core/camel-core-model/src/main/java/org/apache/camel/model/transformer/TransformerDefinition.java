@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.transformer;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -48,15 +49,17 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
 
     @XmlAttribute
     private String scheme;
+
     @XmlAttribute
     private String name;
+
     @XmlAttribute
     private String fromType;
+
     @XmlAttribute
     private String toType;
 
-    public TransformerDefinition() {
-    }
+    public TransformerDefinition() {}
 
     protected TransformerDefinition(TransformerDefinition source) {
         this.scheme = source.scheme;
@@ -143,5 +146,4 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
     public void setToType(Class<?> clazz) {
         this.toType = new DataType(clazz).toString();
     }
-
 }

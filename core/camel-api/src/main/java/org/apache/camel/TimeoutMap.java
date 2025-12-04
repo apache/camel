@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -90,6 +91,5 @@ public interface TimeoutMap<K, V> extends Service {
          * @param value the item value
          */
         void timeoutMapEvent(Type type, K key, V value);
-
     }
 }

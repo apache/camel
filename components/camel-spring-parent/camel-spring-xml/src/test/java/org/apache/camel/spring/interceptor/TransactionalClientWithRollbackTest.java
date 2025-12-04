@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.sql.DataSource;
 
@@ -30,10 +35,6 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Transactional client test with rollback in the DSL.
  */
@@ -44,7 +45,8 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");
     }
 
     @Override
@@ -93,17 +95,21 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
                 errorHandler(transactionErrorHandler(required));
 
                 // must setup policy for each route
-                from("direct:okay").policy(required)
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                from("direct:okay")
+                        .policy(required)
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 // must setup policy for each route
-                from("direct:fail").policy(required)
-                        .setBody(constant("Tiger in Action")).bean("bookService")
+                from("direct:fail")
+                        .policy(required)
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
                         // force a rollback
                         .rollback();
             }
         };
     }
-
 }

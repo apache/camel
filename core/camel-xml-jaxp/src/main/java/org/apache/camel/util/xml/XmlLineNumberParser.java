@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.xml;
 
 import java.io.IOException;
@@ -64,11 +65,9 @@ public final class XmlLineNumberParser {
     public interface XmlTextTransformer {
 
         String transform(String text);
-
     }
 
-    private XmlLineNumberParser() {
-    }
+    private XmlLineNumberParser() {}
 
     /**
      * Parses the XML.
@@ -149,7 +148,9 @@ public final class XmlLineNumberParser {
 
             @Override
             public void setDocumentLocator(final Locator locator) {
-                this.locator = locator; // Save the locator, so that it can be used later for line tracking when traversing nodes.
+                this.locator =
+                        locator; // Save the locator, so that it can be used later for line tracking when traversing
+                // nodes.
                 this.found = rootNames == null;
             }
 
@@ -163,7 +164,8 @@ public final class XmlLineNumberParser {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+            public void startElement(
+                    final String uri, final String localName, final String qName, final Attributes attributes)
                     throws SAXException {
                 addTextIfNeeded();
 
@@ -182,7 +184,8 @@ public final class XmlLineNumberParser {
                     }
 
                     for (int i = 0; i < attributes.getLength(); i++) {
-                        el.setAttribute(transformer.transform(attributes.getQName(i)),
+                        el.setAttribute(
+                                transformer.transform(attributes.getQName(i)),
                                 transformer.transform(attributes.getValue(i)));
                     }
 
@@ -253,7 +256,5 @@ public final class XmlLineNumberParser {
         public String transform(String text) {
             return text;
         }
-
     }
-
 }

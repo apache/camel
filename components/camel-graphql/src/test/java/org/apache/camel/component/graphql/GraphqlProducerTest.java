@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.graphql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GraphqlProducerTest {
 
@@ -29,11 +30,7 @@ public class GraphqlProducerTest {
 
         String body = GraphqlProducer.buildRequestBody(query, null, null);
 
-        String expectedBody = "{"
-                              + "\"query\":\"queryText\","
-                              + "\"operationName\":null,"
-                              + "\"variables\":{}"
-                              + "}";
+        String expectedBody = "{" + "\"query\":\"queryText\"," + "\"operationName\":null," + "\"variables\":{}" + "}";
         assertEquals(expectedBody, body);
     }
 
@@ -48,11 +45,10 @@ public class GraphqlProducerTest {
         String body = GraphqlProducer.buildRequestBody(query, operationName, variables);
 
         String expectedBody = "{"
-                              + "\"query\":\"queryText\","
-                              + "\"operationName\":\"queryName\","
-                              + "\"variables\":{\"key1\":\"value1\",\"key2\":\"value2\"}"
-                              + "}";
+                + "\"query\":\"queryText\","
+                + "\"operationName\":\"queryName\","
+                + "\"variables\":{\"key1\":\"value1\",\"key2\":\"value2\"}"
+                + "}";
         assertEquals(expectedBody, body);
     }
-
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TwoRouteSuspendResumeTest extends ContextTestSupport {
 
@@ -51,7 +52,9 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
 
         // need to give seda consumer thread time to idle
         await().atMost(1, TimeUnit.SECONDS).until(() -> {
-            return context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty();
+            return context.getEndpoint("seda:foo", SedaEndpoint.class)
+                    .getQueue()
+                    .isEmpty();
         });
 
         // even though we wait for the queues to empty, there is a race condition where the consumer
@@ -67,8 +70,10 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         mockBar.assertIsSatisfied();
         mock.assertIsSatisfied(1000);
 
-        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Suspended", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
 
         log.info("Resuming");
 
@@ -78,8 +83,10 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         context.getRouteController().resumeRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("bar").name());
     }
 
     @Override

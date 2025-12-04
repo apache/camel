@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Map;
@@ -30,10 +35,6 @@ import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /*
  * AsyncCXFTest tests the execution of CXF async which was reported as a potential candidate to
@@ -73,7 +74,6 @@ public class AsyncCXFTest extends ExchangeTestSupport {
         for (MockTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(MockTrace trace, String expectedBody) {
@@ -90,9 +90,7 @@ public class AsyncCXFTest extends ExchangeTestSupport {
                 "cxfrs://http://localhost:" + cxfPort + "/rest/helloservice/sayHello?synchronous=false",
                 Op.EVENT_SENT);
         MockSpanAdapter rest = SpanTestSupport.getSpan(
-                spans,
-                "rest://post:/rest/helloservice:/sayHello?routeId=direct-hi",
-                Op.EVENT_RECEIVED);
+                spans, "rest://post:/rest/helloservice:/sayHello?routeId=direct-hi", Op.EVENT_RECEIVED);
         MockSpanAdapter log = SpanTestSupport.getSpan(spans, "log://hi", Op.EVENT_SENT);
         MockSpanAdapter mock = SpanTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
 
@@ -135,7 +133,8 @@ public class AsyncCXFTest extends ExchangeTestSupport {
         assertEquals(rest.getTag("spanid"), mock.getTag("parentSpan"));
 
         // Validate message logging
-        assertEquals("A direct message", directSendFrom.logEntries().get(0).fields().get("message"));
+        assertEquals(
+                "A direct message", directSendFrom.logEntries().get(0).fields().get("message"));
         assertEquals("say-hi", rest.logEntries().get(0).fields().get("message"));
     }
 
@@ -144,22 +143,18 @@ public class AsyncCXFTest extends ExchangeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .routeId("myRoute")
-                        .to("direct:send");
+                from("direct:start").routeId("myRoute").to("direct:send");
 
                 from("direct:send")
                         .log("A direct message")
-                        .to("cxfrs:http://localhost:" + cxfPort
-                            + "/rest/helloservice/sayHello?synchronous=false");
+                        .to("cxfrs:http://localhost:" + cxfPort + "/rest/helloservice/sayHello?synchronous=false");
 
-                restConfiguration()
-                        .port(cxfPort);
+                restConfiguration().port(cxfPort);
 
                 rest("/rest/helloservice")
-                    .post("/sayHello")
-                    .routeId("rest-GET-say-hi")
-                    .to("direct:hi");
+                        .post("/sayHello")
+                        .routeId("rest-GET-say-hi")
+                        .to("direct:hi");
 
                 from("direct:hi")
                         .routeId("direct-hi")
@@ -170,5 +165,4 @@ public class AsyncCXFTest extends ExchangeTestSupport {
             }
         };
     }
-
 }

@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent.api;
+
+import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
 
 import dev.langchain4j.service.tool.ToolProvider;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
-
-import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
 
 /**
  * Core agent interface that abstracts different types of AI agents within the Apache Camel LangChain4j integration.
@@ -121,5 +122,4 @@ public interface Agent {
      *                          execution failures
      */
     String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.modeline;
 
 import java.io.LineNumberReader;
@@ -120,5 +121,4 @@ public class JBangModelineParser implements ModelineParser {
         line = line.trim();
         return line;
     }
-
 }

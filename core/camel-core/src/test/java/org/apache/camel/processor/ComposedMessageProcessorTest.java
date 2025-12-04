@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ComposedMessageProcessorTest extends ContextTestSupport {
 
@@ -46,7 +47,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<OrderItem> validatedOrder = resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
+        List<OrderItem> validatedOrder =
+                resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
         assertTrue(validatedOrder.get(0).valid);
         assertTrue(validatedOrder.get(1).valid);
     }
@@ -66,7 +68,8 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<OrderItem> validatedOrder = resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
+        List<OrderItem> validatedOrder =
+                resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
         assertFalse(validatedOrder.get(0).valid);
         assertFalse(validatedOrder.get(1).valid);
     }
@@ -87,14 +90,26 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
                 // START SNIPPET: e2
                 // split up the order so individual OrderItems can be validated
                 // by the appropriate bean
-                from("direct:start").split().body().choice().when().method("orderItemHelper", "isWidget")
-                        .to("bean:widgetInventory").otherwise().to("bean:gadgetInventory").end()
+                from("direct:start")
+                        .split()
+                        .body()
+                        .choice()
+                        .when()
+                        .method("orderItemHelper", "isWidget")
+                        .to("bean:widgetInventory")
+                        .otherwise()
+                        .to("bean:gadgetInventory")
+                        .end()
                         .to("seda:aggregate");
 
                 // collect and re-assemble the validated OrderItems into an
                 // order again
-                from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").completionTimeout(100)
-                        .completionTimeoutCheckerInterval(10).to("mock:result");
+                from("seda:aggregate")
+                        .aggregate(new MyOrderAggregationStrategy())
+                        .header("orderId")
+                        .completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:result");
                 // END SNIPPET: e2
             }
         };
@@ -114,8 +129,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     // END SNIPPET: e3
 
     public static final class OrderItemHelper {
-        private OrderItemHelper() {
-        }
+        private OrderItemHelper() {}
 
         // START SNIPPET: e4
         public static boolean isWidget(@Body OrderItem orderItem) {

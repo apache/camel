@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.hpa;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -36,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesHPAProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesHPAProducer.class);
@@ -56,7 +57,6 @@ public class KubernetesHPAProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_HPA:
                 doList(exchange);
                 break;
@@ -91,9 +91,20 @@ public class KubernetesHPAProducer extends DefaultProducer {
         HorizontalPodAutoscalerList hpaList;
 
         if (ObjectHelper.isEmpty(namespace)) {
-            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inAnyNamespace().list();
+            hpaList = getEndpoint()
+                    .getKubernetesClient()
+                    .autoscaling()
+                    .v1()
+                    .horizontalPodAutoscalers()
+                    .inAnyNamespace()
+                    .list();
         } else {
-            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespace)
+            hpaList = getEndpoint()
+                    .getKubernetesClient()
+                    .autoscaling()
+                    .v1()
+                    .horizontalPodAutoscalers()
+                    .inNamespace(namespace)
                     .list();
         }
 
@@ -111,11 +122,23 @@ public class KubernetesHPAProducer extends DefaultProducer {
         }
 
         if (ObjectHelper.isEmpty(namespace)) {
-            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inAnyNamespace()
-                    .withLabels(labels).list();
+            hpaList = getEndpoint()
+                    .getKubernetesClient()
+                    .autoscaling()
+                    .v1()
+                    .horizontalPodAutoscalers()
+                    .inAnyNamespace()
+                    .withLabels(labels)
+                    .list();
         } else {
-            hpaList = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespace)
-                    .withLabels(labels).list();
+            hpaList = getEndpoint()
+                    .getKubernetesClient()
+                    .autoscaling()
+                    .v1()
+                    .horizontalPodAutoscalers()
+                    .inNamespace(namespace)
+                    .withLabels(labels)
+                    .list();
         }
 
         prepareOutboundMessage(exchange, hpaList.getItems());
@@ -132,9 +155,14 @@ public class KubernetesHPAProducer extends DefaultProducer {
             LOG.error("Get a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Get a specific hpa require specify a namespace name");
         }
-        HorizontalPodAutoscaler hpa
-                = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers().inNamespace(namespaceName)
-                        .withName(podName).get();
+        HorizontalPodAutoscaler hpa = getEndpoint()
+                .getKubernetesClient()
+                .autoscaling()
+                .v1()
+                .horizontalPodAutoscalers()
+                .inNamespace(namespaceName)
+                .withName(podName)
+                .get();
 
         prepareOutboundMessage(exchange, hpa);
     }
@@ -148,12 +176,13 @@ public class KubernetesHPAProducer extends DefaultProducer {
     }
 
     private void doCreateOrUpdateHPA(
-            Exchange exchange, String operationName,
+            Exchange exchange,
+            String operationName,
             Function<Resource<HorizontalPodAutoscaler>, HorizontalPodAutoscaler> operation) {
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        HorizontalPodAutoscalerSpec hpaSpec
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, HorizontalPodAutoscalerSpec.class);
+        HorizontalPodAutoscalerSpec hpaSpec =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, HorizontalPodAutoscalerSpec.class);
         if (ObjectHelper.isEmpty(hpaName)) {
             LOG.error("{} a specific hpa require specify a hpa name", operationName);
             throw new IllegalArgumentException(operationName + " a specific hpa require specify a hpa name");
@@ -167,12 +196,20 @@ public class KubernetesHPAProducer extends DefaultProducer {
             throw new IllegalArgumentException(operationName + " a specific hpa require specify a hpa spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, Map.class);
-        HorizontalPodAutoscaler hpaCreating = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName(hpaName)
-                .withLabels(labels).endMetadata().withSpec(hpaSpec).build();
-        HorizontalPodAutoscaler hpa
-                = operation.apply(getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers()
-                        .inNamespace(namespaceName)
-                        .resource(hpaCreating));
+        HorizontalPodAutoscaler hpaCreating = new HorizontalPodAutoscalerBuilder()
+                .withNewMetadata()
+                .withName(hpaName)
+                .withLabels(labels)
+                .endMetadata()
+                .withSpec(hpaSpec)
+                .build();
+        HorizontalPodAutoscaler hpa = operation.apply(getEndpoint()
+                .getKubernetesClient()
+                .autoscaling()
+                .v1()
+                .horizontalPodAutoscalers()
+                .inNamespace(namespaceName)
+                .resource(hpaCreating));
 
         prepareOutboundMessage(exchange, hpa);
     }
@@ -189,8 +226,14 @@ public class KubernetesHPAProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific hpa require specify a namespace name");
         }
 
-        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers()
-                .inNamespace(namespaceName).withName(hpaName).delete();
+        List<StatusDetails> statusDetails = getEndpoint()
+                .getKubernetesClient()
+                .autoscaling()
+                .v1()
+                .horizontalPodAutoscalers()
+                .inNamespace(namespaceName)
+                .withName(hpaName)
+                .delete();
         boolean hpaDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, hpaDeleted);

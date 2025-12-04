@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import java.util.HashMap;
@@ -30,28 +31,40 @@ import org.apache.camel.spi.UriParams;
 public class KnativeConfiguration implements Cloneable {
     @UriParam
     private KnativeEnvironment environment;
+
     @UriParam
     private KnativeSinkBinding sinkBinding;
+
     @UriParam
     private String typeId;
+
     @UriParam(defaultValue = "1.0", enums = "1.0,1.0.1,1.0.2")
     private String cloudEventsSpecVersion = CloudEvents.v1_0.version();
+
     @UriParam(defaultValue = "org.apache.camel.event")
     private String cloudEventsType = "org.apache.camel.event";
+
     @UriParam(prefix = "transport.")
     private Map<String, Object> transportOptions;
+
     @UriParam(prefix = "filter.")
     private Map<String, String> filters;
+
     @UriParam(prefix = "ce.override.")
     private Map<String, String> ceOverride;
+
     @UriParam(label = "advanced")
     private String apiVersion;
+
     @UriParam(label = "advanced")
     private String kind;
+
     @UriParam(label = "advanced")
     private String name;
+
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean replyWithCloudEvent;
+
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private Boolean reply;
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ical;
 
 import java.io.File;
@@ -90,12 +91,8 @@ public class ICalDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:unmarshal")
-                        .unmarshal().ical(true)
-                        .to("mock:result");
-                from("direct:marshal")
-                        .marshal("ical")
-                        .to("mock:result");
+                from("direct:unmarshal").unmarshal().ical(true).to("mock:result");
+                from("direct:marshal").marshal("ical").to("mock:result");
             }
         };
     }
@@ -145,5 +142,4 @@ public class ICalDataFormatTest extends CamelTestSupport {
         icsCalendar.add(meeting);
         return icsCalendar;
     }
-
 }

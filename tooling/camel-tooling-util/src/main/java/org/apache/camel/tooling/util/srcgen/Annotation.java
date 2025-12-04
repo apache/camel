@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.util.srcgen;
 
 import java.util.LinkedHashMap;
@@ -56,9 +57,7 @@ public class Annotation {
         if (values.length == 1) {
             return setStringValue(name, values[0]);
         } else {
-            String value = Stream.of(values)
-                    .map(Annotation::quote)
-                    .collect(Collectors.joining(", ", "{", "}"));
+            String value = Stream.of(values).map(Annotation::quote).collect(Collectors.joining(", ", "{", "}"));
             return setLiteralValue(value);
         }
     }
@@ -100,5 +99,4 @@ public class Annotation {
             return sb.toString();
         }
     }
-
 }

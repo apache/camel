@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.common.exception;
 
 import java.util.Optional;
@@ -26,5 +27,4 @@ public class UnsupportedNodeTypeException extends MarkedYamlEngineException {
     public UnsupportedNodeTypeException(Node node) {
         super(null, Optional.empty(), "Unsupported type: " + node.getNodeType(), node.getStartMark());
     }
-
 }

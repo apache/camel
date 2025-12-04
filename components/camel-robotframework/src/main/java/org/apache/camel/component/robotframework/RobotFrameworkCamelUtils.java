@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.robotframework;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ public final class RobotFrameworkCamelUtils {
     /**
      * Utility classes should not have a public constructor.
      */
-    private RobotFrameworkCamelUtils() {
-    }
+    private RobotFrameworkCamelUtils() {}
 
     @SuppressWarnings("unchecked")
     public static List<String> createRobotVariablesFromCamelExchange(Exchange exchange, boolean allowContextMapAll)
@@ -49,24 +49,39 @@ public final class RobotFrameworkCamelUtils {
         List<String> variableKeyValuePairList = new ArrayList<>();
         for (Map.Entry<String, Object> variableEntry : variablesMap.entrySet()) {
             if (ROBOT_VAR_CAMEL_BODY.equals(variableEntry.getKey())) {
-                String bodyVariable = variableEntry.getKey() + ROBOT_VAR_FIELD_SEPERATOR
-                                      + exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class,
-                                              variableEntry.getValue());
+                String bodyVariable = variableEntry.getKey()
+                        + ROBOT_VAR_FIELD_SEPERATOR
+                        + exchange.getContext()
+                                .getTypeConverter()
+                                .mandatoryConvertTo(String.class, variableEntry.getValue());
                 variableKeyValuePairList.add(bodyVariable);
             } else if (ROBOT_VAR_CAMEL_HEADERS.equals(variableEntry.getKey())) {
                 // here the param is the headers map
-                createStringValueOfVariablesFromMap(variableKeyValuePairList,
-                        ObjectHelper.cast(Map.class, variableEntry.getValue()), exchange, new StringBuilder(),
-                        ROBOT_VAR_CAMEL_HEADERS, true);
+                createStringValueOfVariablesFromMap(
+                        variableKeyValuePairList,
+                        ObjectHelper.cast(Map.class, variableEntry.getValue()),
+                        exchange,
+                        new StringBuilder(),
+                        ROBOT_VAR_CAMEL_HEADERS,
+                        true);
             } else if (ROBOT_VAR_CAMEL_VARIABLES.equals(variableEntry.getKey())) {
                 // here the param is the headers map
-                createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getVariables(),
-                        exchange, new StringBuilder(), ROBOT_VAR_CAMEL_VARIABLES, true);
+                createStringValueOfVariablesFromMap(
+                        variableKeyValuePairList,
+                        exchange.getVariables(),
+                        exchange,
+                        new StringBuilder(),
+                        ROBOT_VAR_CAMEL_VARIABLES,
+                        true);
             } else if (ROBOT_CAMEL_EXCHANGE_NAME.equals(variableEntry.getKey())) {
                 // here the param is camel exchange
-                createStringValueOfVariablesFromMap(variableKeyValuePairList, exchange.getProperties(),
+                createStringValueOfVariablesFromMap(
+                        variableKeyValuePairList,
+                        exchange.getProperties(),
                         ObjectHelper.cast(Exchange.class, variableEntry.getValue()),
-                        new StringBuilder(), ROBOT_VAR_CAMEL_PROPERTIES, true);
+                        new StringBuilder(),
+                        ROBOT_VAR_CAMEL_PROPERTIES,
+                        true);
             }
         }
         return variableKeyValuePairList;
@@ -74,7 +89,10 @@ public final class RobotFrameworkCamelUtils {
 
     @SuppressWarnings("unchecked")
     private static void createStringValueOfVariablesFromMap(
-            List<String> list, Map<String, Object> headersMap, Exchange exchange, StringBuilder headerVariableName,
+            List<String> list,
+            Map<String, Object> headersMap,
+            Exchange exchange,
+            StringBuilder headerVariableName,
             String baseName,
             boolean includeBaseName)
             throws TypeConversionException, NoTypeConversionAvailableException {
@@ -84,11 +102,19 @@ public final class RobotFrameworkCamelUtils {
             }
             headerVariableName.append(ROBOT_VAR_NESTING_SEPERATOR).append(entry.getKey());
             if (entry.getValue() instanceof Map) {
-                createStringValueOfVariablesFromMap(list, ObjectHelper.cast(Map.class, entry.getValue()), exchange,
-                        headerVariableName, headerVariableName.toString(), false);
+                createStringValueOfVariablesFromMap(
+                        list,
+                        ObjectHelper.cast(Map.class, entry.getValue()),
+                        exchange,
+                        headerVariableName,
+                        headerVariableName.toString(),
+                        false);
             } else {
-                headerVariableName.append(ROBOT_VAR_FIELD_SEPERATOR)
-                        .append(exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue()));
+                headerVariableName
+                        .append(ROBOT_VAR_FIELD_SEPERATOR)
+                        .append(exchange.getContext()
+                                .getTypeConverter()
+                                .mandatoryConvertTo(String.class, entry.getValue()));
             }
             list.add(headerVariableName.toString());
             if (includeBaseName) {
@@ -98,5 +124,4 @@ public final class RobotFrameworkCamelUtils {
             }
         }
     }
-
 }

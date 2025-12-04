@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.CamelContext;
@@ -56,10 +57,8 @@ public class AutowiredConnectionFactoryTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SJMS_QUEUE_NAME)
-                        .to(MOCK_RESULT);
+                from(SJMS_QUEUE_NAME).to(MOCK_RESULT);
             }
         };
     }
-
 }

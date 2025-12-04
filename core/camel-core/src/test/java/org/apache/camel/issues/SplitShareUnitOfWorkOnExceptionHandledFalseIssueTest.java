@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
@@ -31,10 +32,11 @@ public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Contex
         getMockEndpoint("mock:b").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:start", "Camel,Donkey"),
-                "Should throw exception");
+        Exception e = assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "Camel,Donkey"), "Should throw exception");
 
-        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        IllegalArgumentException cause =
+                assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals("Forced", cause.getMessage());
 
         assertMockEndpointsSatisfied();
@@ -47,9 +49,17 @@ public class SplitShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Contex
             public void configure() {
                 onException(Exception.class).handled(false).to("mock:a");
 
-                from("direct:start").split(body()).shareUnitOfWork().stopOnException().to("direct:b").end().to("mock:result");
+                from("direct:start")
+                        .split(body())
+                        .shareUnitOfWork()
+                        .stopOnException()
+                        .to("direct:b")
+                        .end()
+                        .to("mock:result");
 
-                from("direct:b").to("mock:b").filter(body().contains("Donkey"))
+                from("direct:b")
+                        .to("mock:b")
+                        .filter(body().contains("Donkey"))
                         .throwException(new IllegalArgumentException("Forced"));
             }
         };

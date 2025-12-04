@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.producer;
 
 import java.util.Map;
@@ -45,5 +46,4 @@ public class BonitaStartProducer extends BonitaProducer {
         ProcessDefinitionResponse processDefinition = bonitaApi.getProcessDefinition(processName);
         bonitaApi.startCase(processDefinition, exchange.getIn().getBody(Map.class));
     }
-
 }

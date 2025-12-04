@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 import java.util.Date;
@@ -26,8 +27,7 @@ public class Employee {
     private int salary;
     private Date hireDate;
 
-    public Employee() {
-    }
+    public Employee() {}
 
     public String getFirstName() {
         return firstName;
@@ -101,11 +101,11 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee{"
-               + "firstName='" + firstName + '\''
-               + ", lastName='" + lastName + '\''
-               + ", title='" + title + '\''
-               + ", salary=" + salary
-               + ", hireDate=" + hireDate
-               + '}';
+                + "firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", title='" + title + '\''
+                + ", salary=" + salary
+                + ", hireDate=" + hireDate
+                + '}';
     }
 }

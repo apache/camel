@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static java.util.Map.entry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-
-import static java.util.Map.entry;
 
 public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
@@ -54,7 +55,8 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
     protected static final String SPAZZ_TESTING_SERVICE = "Spazz Testing Service";
 
-    protected static final String THANK_YOU_FOR_YOUR_ORDER = "Thank you for your order number 7 of Widgets for Dummies.";
+    protected static final String THANK_YOU_FOR_YOUR_ORDER =
+            "Thank you for your order number 7 of Widgets for Dummies.";
 
     protected static final String YOU_WILL_NOTIFIED = "You will be notified when your order ships.";
 
@@ -146,13 +148,12 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
     protected String expected() {
 
-        return "\n\n" +
-               "Dear Doe, Jane\n" +
-               "\n" +
-               "Thank you for your order number 7 of Widgets for Dummies.\n" +
-               "\n" +
-               "Regards Camel Riders Bookstore\n" +
-               "Spazz Testing Service";
+        return "\n\n" + "Dear Doe, Jane\n"
+                + "\n"
+                + "Thank you for your order number 7 of Widgets for Dummies.\n"
+                + "\n"
+                + "Regards Camel Riders Bookstore\n"
+                + "Spazz Testing Service";
     }
 
     @Override
@@ -169,7 +170,6 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
             exchange.setProperty(ORDER_NUMBER, "7");
         }
-
     }
 
     protected static class ResourceUriHeaderProcessor implements Processor {
@@ -184,7 +184,6 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
             exchange.setProperty(ORDER_NUMBER, "7");
         }
-
     }
 
     protected static class TemplateHeaderProcessor implements Processor {
@@ -199,7 +198,6 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
             exchange.setProperty(ORDER_NUMBER, "7");
         }
-
     }
 
     protected static class UrlTemplateHeaderProcessor implements Processor {
@@ -214,7 +212,6 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
             exchange.setProperty(ORDER_NUMBER, "7");
         }
-
     }
 
     protected static class VariableMapHeaderProcessor implements Processor {
@@ -231,7 +228,5 @@ public abstract class ThymeleafAbstractBaseTest extends CamelTestSupport {
 
             exchange.getIn().setHeader(ThymeleafConstants.THYMELEAF_VARIABLE_MAP, new HashMap<>(variables));
         }
-
     }
-
 }

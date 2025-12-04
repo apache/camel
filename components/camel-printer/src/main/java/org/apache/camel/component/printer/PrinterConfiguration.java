@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.printer;
 
 import java.net.URI;
@@ -41,33 +42,44 @@ public class PrinterConfiguration {
     @UriPath
     @Metadata(required = true)
     private String hostname;
+
     @UriPath
     private int port;
+
     @UriPath
     private String printername;
+
     @UriParam
     private String printerPrefix;
+
     @UriParam(defaultValue = "1")
     private int copies = 1;
+
     @UriParam
     private String flavor;
+
     @UriParam
     private DocFlavor docFlavor;
+
     @UriParam
     private String mimeType;
+
     @UriParam(defaultValue = "na-letter")
     private String mediaSize;
+
     @UriParam(defaultValue = "one-sided", enums = "one-sided,duplex,tumble,two-sided-short-edge,two-sided-long-edge")
     private String sides;
+
     @UriParam(defaultValue = "portrait", enums = "portrait,landscape,reverse-portrait,reverse-landscape")
     private String orientation;
+
     @UriParam(defaultValue = "true")
     private boolean sendToPrinter = true;
+
     @UriParam
     private String mediaTray;
 
-    public PrinterConfiguration() {
-    }
+    public PrinterConfiguration() {}
 
     public PrinterConfiguration(URI uri) {
         this.uri = uri;

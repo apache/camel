@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,7 +38,11 @@ public class EnrichExpressionIgnoreInvalidEndpointTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").enrich().header("source").ignoreInvalidEndpoint().to("mock:result");
+                from("direct:start")
+                        .enrich()
+                        .header("source")
+                        .ignoreInvalidEndpoint()
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Hello World");
 

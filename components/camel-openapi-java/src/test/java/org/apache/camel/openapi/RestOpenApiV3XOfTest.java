@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.BindToRegistry;
@@ -29,9 +33,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiV3XOfTest extends CamelTestSupport {
 
@@ -50,14 +51,13 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
                         .tag("OneOf")
                         .bindingMode(RestBindingMode.json)
                         .description("OneOf rest service")
-
                         .consumes("application/json")
                         .produces("application/json")
-                         .type(OneOfFormWrapper.class)
+                        .type(OneOfFormWrapper.class)
                         .responseMessage()
-                        .code(200).message("Ok")
+                        .code(200)
+                        .message("Ok")
                         .endResponseMessage()
-
                         .to("direct:res");
 
                 rest("/form")
@@ -65,14 +65,13 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
                         .tag("AllOf")
                         .bindingMode(RestBindingMode.json)
                         .description("AllOf rest service")
-
                         .consumes("application/json")
                         .produces("application/json")
                         .type(AllOfFormWrapper.class)
                         .responseMessage()
-                        .code(200).message("Ok")
+                        .code(200)
+                        .message("Ok")
                         .endResponseMessage()
-
                         .to("direct:res");
 
                 rest("/form")
@@ -80,29 +79,27 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
                         .tag("AnyOf")
                         .bindingMode(RestBindingMode.json)
                         .description("AnyOf rest service")
-
                         .consumes("application/json")
                         .produces("application/json")
                         .type(AnyOfFormWrapper.class)
                         .responseMessage()
-                        .code(200).message("Ok")
+                        .code(200)
+                        .message("Ok")
                         .endResponseMessage()
-
                         .to("direct:res");
 
-                from("direct:res")
-                        .setBody(constant("{\"result\": \"Ok\"}"));
+                from("direct:res").setBody(constant("{\"result\": \"Ok\"}"));
             }
         };
     }
 
     // TODO: Does not work with 3.1 https://github.com/swagger-api/swagger-core/issues/4904
     @ParameterizedTest
-    @ValueSource(strings = { "3.0" })
+    @ValueSource(strings = {"3.0"})
     public void testReaderReadOneOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -110,8 +107,8 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
@@ -119,18 +116,22 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
         if (config.isOpenApi30()) {
-            assertTrue(json.contains(
-                    "\"XOfFormA\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"a\" : { \"type\" : \"string\" }, \"b\" : { \"type\" : \"integer\", \"format\" : \"int32\" } },"));
-            assertTrue(json.contains(
-                    "\"XOfFormB\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"x\" : { \"type\" : \"integer\", \"format\" : \"int32\" }, \"y\" : { \"type\" : \"string\" } },"));
+            assertTrue(
+                    json.contains(
+                            "\"XOfFormA\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"a\" : { \"type\" : \"string\" }, \"b\" : { \"type\" : \"integer\", \"format\" : \"int32\" } },"));
+            assertTrue(
+                    json.contains(
+                            "\"XOfFormB\" : { \"type\" : \"object\", \"properties\" : { \"code\" : { \"type\" : \"string\" }, \"x\" : { \"type\" : \"integer\", \"format\" : \"int32\" }, \"y\" : { \"type\" : \"string\" } },"));
         }
 
         if (config.isOpenApi30()) {
-            assertTrue(json.contains(
-                    "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
+            assertTrue(
+                    json.contains(
+                            "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"$ref\" : \"#/components/schemas/OneOfForm\" } },"));
         } else if (config.isOpenApi31()) {
-            assertTrue(json.contains(
-                    "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : { \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", \"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } }, \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ], \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfForm\", \"type\" : \"string\" } } }, \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfFormWrapper\", \"type\" : \"string\" } }"));
+            assertTrue(
+                    json.contains(
+                            "\"OneOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"formType\" : { \"type\" : \"string\" }, \"form\" : { \"discriminator\" : { \"propertyName\" : \"code\", \"mapping\" : { \"a-123\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormA\", \"b-456\" : \"#/components/schemas/org.apache.camel.openapi.model.XOfFormB\" } }, \"oneOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ], \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfForm\", \"type\" : \"string\" } } }, \"x-className\" : { \"format\" : \"org.apache.camel.openapi.model.OneOfFormWrapper\", \"type\" : \"string\" } }"));
         }
 
         context.stop();
@@ -138,11 +139,11 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
 
     // TODO: Does not work with 3.1 https://github.com/swagger-api/swagger-core/issues/4904
     @ParameterizedTest
-    @ValueSource(strings = { "3.0" })
+    @ValueSource(strings = {"3.0"})
     public void testReaderReadAllOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -150,19 +151,21 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
 
         String json = RestOpenApiSupport.getJsonFromOpenAPIAsString(openApi, config);
         LOG.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
-        assertTrue(json.contains(
-                "\"AllOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"fullForm\" : { \"$ref\" : \"#/components/schemas/AllOfForm\" } },"));
+        assertTrue(
+                json.contains(
+                        "\"AllOfFormWrapper\" : { \"type\" : \"object\", \"properties\" : { \"fullForm\" : { \"$ref\" : \"#/components/schemas/AllOfForm\" } },"));
         if (config.isOpenApi31()) {
-            assertTrue(json.contains(
-                    "\"allOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
+            assertTrue(
+                    json.contains(
+                            "\"allOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
         }
 
         context.stop();
@@ -170,11 +173,11 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
 
     // TODO: Does not work with 3.1 https://github.com/swagger-api/swagger-core/issues/4904
     @ParameterizedTest
-    @ValueSource(strings = { "3.0" })
+    @ValueSource(strings = {"3.0"})
     public void testReaderReadAnyOf(String version) throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -182,8 +185,8 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         config.setVersion(version);
 
         RestOpenApiReader reader = new RestOpenApiReader();
-        OpenAPI openApi = reader.read(context, context.getRestDefinitions(), config, context.getName(),
-                new DefaultClassResolver());
+        OpenAPI openApi = reader.read(
+                context, context.getRestDefinitions(), config, context.getName(), new DefaultClassResolver());
         assertNotNull(openApi);
         assertNotNull(openApi);
 
@@ -191,12 +194,11 @@ public class RestOpenApiV3XOfTest extends CamelTestSupport {
         LOG.info(json);
         json = json.replace("\n", " ").replaceAll("\\s+", " ");
 
-        assertTrue(json.contains(
-                "{ \"formElements\" : { \"$ref\" : \"#/components/schemas/AnyOfForm\" } }"));
-        assertTrue(json.contains(
-                "\"anyOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
+        assertTrue(json.contains("{ \"formElements\" : { \"$ref\" : \"#/components/schemas/AnyOfForm\" } }"));
+        assertTrue(
+                json.contains(
+                        "\"anyOf\" : [ { \"$ref\" : \"#/components/schemas/XOfFormA\" }, { \"$ref\" : \"#/components/schemas/XOfFormB\" } ]"));
 
         context.stop();
     }
-
 }

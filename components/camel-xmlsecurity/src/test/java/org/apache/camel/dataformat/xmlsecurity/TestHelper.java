@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.xmlsecurity;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -25,6 +29,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import org.xmlunit.assertj3.XmlAssert;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -38,42 +44,38 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmlunit.assertj3.XmlAssert;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestHelper {
-    protected static final String NS_XML_FRAGMENT
-            = "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">"
-              + "<netherlands>"
-              + "<source>cow</source>"
-              + "<cheese>gouda</cheese>"
-              + "</netherlands>"
-              + "<italy>"
-              + "<source>cow</source>"
-              + "<cheese>gorgonzola</cheese>"
-              + "</italy>"
-              + "<france>"
-              + "<source>goat</source>"
-              + "<cheese>brie</cheese>"
-              + "</france>"
-              + "</ns1:cheesesites>";
+    protected static final String NS_XML_FRAGMENT =
+            "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">"
+                    + "<netherlands>"
+                    + "<source>cow</source>"
+                    + "<cheese>gouda</cheese>"
+                    + "</netherlands>"
+                    + "<italy>"
+                    + "<source>cow</source>"
+                    + "<cheese>gorgonzola</cheese>"
+                    + "</italy>"
+                    + "<france>"
+                    + "<source>goat</source>"
+                    + "<cheese>brie</cheese>"
+                    + "</france>"
+                    + "</ns1:cheesesites>";
 
     protected static final String XML_FRAGMENT = "<cheesesites>"
-                                                 + "<netherlands>"
-                                                 + "<source>cow</source>"
-                                                 + "<cheese>gouda</cheese>"
-                                                 + "</netherlands>"
-                                                 + "<italy>"
-                                                 + "<source>cow</source>"
-                                                 + "<cheese>gorgonzola</cheese>"
-                                                 + "</italy>"
-                                                 + "<france>"
-                                                 + "<source>goat</source>"
-                                                 + "<cheese>brie</cheese>"
-                                                 + "</france>"
-                                                 + "</cheesesites>";
+            + "<netherlands>"
+            + "<source>cow</source>"
+            + "<cheese>gouda</cheese>"
+            + "</netherlands>"
+            + "<italy>"
+            + "<source>cow</source>"
+            + "<cheese>gorgonzola</cheese>"
+            + "</italy>"
+            + "<france>"
+            + "<source>goat</source>"
+            + "<cheese>brie</cheese>"
+            + "</france>"
+            + "</cheesesites>";
 
     static final boolean HAS_3DES;
 
@@ -90,16 +92,18 @@ public class TestHelper {
     }
 
     static final boolean UNRESTRICTED_POLICIES_INSTALLED;
+
     static {
         boolean ok = false;
         try {
-            byte[] data = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+            byte[] data = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
             SecretKey key192 = new SecretKeySpec(
                     new byte[] {
-                            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                            0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-                            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 },
+                        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17
+                    },
                     "AES");
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, key192);
@@ -205,5 +209,4 @@ public class TestHelper {
     private Document createDocumentFromInputStream(InputStream is, CamelContext context) {
         return context.getTypeConverter().convertTo(Document.class, is);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.tools;
+
+import static org.apache.camel.component.springai.tools.SpringAiTools.SCHEME;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,8 +29,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
-
-import static org.apache.camel.component.springai.tools.SpringAiTools.SCHEME;
 
 @Component(SCHEME)
 public class SpringAiToolsComponent extends DefaultComponent {
@@ -71,8 +72,8 @@ public class SpringAiToolsComponent extends DefaultComponent {
         SpringAiToolsConfiguration springAiToolsConfiguration = this.configuration.copy();
 
         Map<String, Object> toolParameters = PropertiesHelper.extractProperties(parameters, "parameter.");
-        SpringAiToolsEndpoint endpoint
-                = new SpringAiToolsEndpoint(uri, this, toolId, tagList, springAiToolsConfiguration);
+        SpringAiToolsEndpoint endpoint =
+                new SpringAiToolsEndpoint(uri, this, toolId, tagList, springAiToolsConfiguration);
         endpoint.setParameters(toolParameters.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> (String) e.getValue())));
 

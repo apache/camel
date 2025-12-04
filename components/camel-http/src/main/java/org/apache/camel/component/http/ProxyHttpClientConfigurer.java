@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.util.Arrays;
@@ -50,8 +51,16 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this(host, port, scheme, null, null, null, null, null, nonProxyHosts);
     }
 
-    public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain,
-                                     String ntHost, HttpCredentialsHelper credentialsHelper, String nonProxyHosts) {
+    public ProxyHttpClientConfigurer(
+            String host,
+            Integer port,
+            String scheme,
+            String username,
+            String password,
+            String domain,
+            String ntHost,
+            HttpCredentialsHelper credentialsHelper,
+            String nonProxyHosts) {
         this.host = host;
         this.port = port;
         this.scheme = scheme;
@@ -60,8 +69,7 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this.domain = domain;
         this.ntHost = ntHost;
         this.credentialsHelper = credentialsHelper;
-        this.nonProxyHosts = Optional.ofNullable(nonProxyHosts)
-                .stream()
+        this.nonProxyHosts = Optional.ofNullable(nonProxyHosts).stream()
                 .flatMap(s -> Arrays.stream(s.split(",")))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
@@ -85,8 +93,8 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
             } else {
                 defaultcreds = new UsernamePasswordCredentials(username, password);
             }
-            clientBuilder.setDefaultCredentialsProvider(credentialsHelper
-                    .getCredentialsProvider(host, port, defaultcreds));
+            clientBuilder.setDefaultCredentialsProvider(
+                    credentialsHelper.getCredentialsProvider(host, port, defaultcreds));
         }
     }
 }

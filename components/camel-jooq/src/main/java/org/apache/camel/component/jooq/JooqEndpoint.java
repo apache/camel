@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
 
 import org.apache.camel.Category;
@@ -33,8 +34,12 @@ import org.jooq.ResultQuery;
 /**
  * Store and retrieve Java objects from an SQL database using JOOQ.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "jooq", syntax = "jooq:entityType", title = "JOOQ",
-             category = { Category.DATABASE })
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "jooq",
+        syntax = "jooq:entityType",
+        title = "JOOQ",
+        category = {Category.DATABASE})
 public class JooqEndpoint extends ScheduledPollEndpoint {
 
     private Expression producerExpression;
@@ -90,8 +95,8 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
                 if (answer == null) {
                     Object defaultValue = exchange.getIn().getBody();
                     if (defaultValue != null) {
-                        throw RuntimeCamelException
-                                .wrapRuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
+                        throw RuntimeCamelException.wrapRuntimeCamelException(
+                                new NoTypeConversionAvailableException(defaultValue, type));
                     }
 
                     answer = exchange.getContext().getInjector().newInstance(type);
@@ -107,5 +112,4 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
         configureConsumer(consumer);
         return consumer;
     }
-
 }

@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,25 +68,19 @@ import org.apache.cxf.message.MessageImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class DefaultCxfBindingTest {
 
-    private static final String SOAP_MESSAGE_1 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
-                                                 + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
-                                                 + " <soap:Body> <request> <ns1:identifier>TEST</ns1:identifier> </request>"
-                                                 + " </soap:Body> </soap:Envelope>";
+    private static final String SOAP_MESSAGE_1 =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
+                    + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
+                    + " <soap:Body> <request> <ns1:identifier>TEST</ns1:identifier> </request>"
+                    + " </soap:Body> </soap:Envelope>";
 
-    private static final String SOAP_MESSAGE_2 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
-                                                 + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
-                                                 + " <soap:Body> <ns1:identifier xmlns:ns1=\"http://www.mycompany.com/test/\" xmlns=\"http://www.mycompany.com/test/1/\">TEST</ns1:identifier>"
-                                                 + " </soap:Body> </soap:Envelope>";
+    private static final String SOAP_MESSAGE_2 =
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
+                    + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
+                    + " <soap:Body> <ns1:identifier xmlns:ns1=\"http://www.mycompany.com/test/\" xmlns=\"http://www.mycompany.com/test/1/\">TEST</ns1:identifier>"
+                    + " </soap:Body> </soap:Envelope>";
 
     private DefaultCamelContext context;
 
@@ -135,7 +138,8 @@ public class DefaultCxfBindingTest {
         assertEquals(2, nsMap.size());
         assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
 
-        Element element = (Element) document.getElementsByTagName("ns1:identifier").item(0);
+        Element element =
+                (Element) document.getElementsByTagName("ns1:identifier").item(0);
         assertNotNull(element, "We should get the element");
         DefaultCxfBinding.addNamespace(element, nsMap);
         assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns"));
@@ -189,8 +193,7 @@ public class DefaultCxfBindingTest {
         verifyHeader(headers, "MYFRUITHEADER", "peach");
         verifyHeader(headers, "MyBrewHeader", Arrays.asList("cappuccino", "espresso"));
 
-        Set<Attachment> attachments
-                = CastUtils.cast((Set<?>) requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS));
+        Set<Attachment> attachments = CastUtils.cast((Set<?>) requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS));
         assertNotNull(attachments);
         assertEquals(1, attachments.size());
         Attachment att = attachments.iterator().next();
@@ -260,8 +263,8 @@ public class DefaultCxfBindingTest {
         assertNotNull(camelHeaders);
         assertEquals(responseContext, camelHeaders.get(Client.RESPONSE_CONTEXT));
 
-        Map<String, org.apache.camel.attachment.Attachment> camelAttachments
-                = exchange.getMessage(AttachmentMessage.class).getAttachmentObjects();
+        Map<String, org.apache.camel.attachment.Attachment> camelAttachments =
+                exchange.getMessage(AttachmentMessage.class).getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
         assertEquals("value 1", camelAttachments.get("att-1").getHeader("additional-header"));
@@ -301,8 +304,11 @@ public class DefaultCxfBindingTest {
 
         exchange.getMessage().setHeader("soapAction", "urn:hello:world");
         exchange.getMessage().setHeader("MyFruitHeader", "peach");
-        exchange.getMessage(AttachmentMessage.class).addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
-        exchange.getMessage(AttachmentMessage.class).getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
+        exchange.getMessage(AttachmentMessage.class)
+                .addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
+        exchange.getMessage(AttachmentMessage.class)
+                .getAttachmentObject("att-1")
+                .setHeader("attachment-header", "value 1");
 
         Endpoint endpoint = mock(Endpoint.class);
         Binding binding = mock(Binding.class);
@@ -370,8 +376,8 @@ public class DefaultCxfBindingTest {
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
         assertEquals(Arrays.asList("cappuccino", "espresso"), camelHeaders.get("MyBrewHeader"));
 
-        Map<String, org.apache.camel.attachment.Attachment> camelAttachments
-                = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        Map<String, org.apache.camel.attachment.Attachment> camelAttachments =
+                exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
         assertEquals("value 1", camelAttachments.get("att-1").getHeader("attachment-header"));
@@ -412,5 +418,4 @@ public class DefaultCxfBindingTest {
         assertTrue(values != null && values.size() == 1, "The entry must be available");
         assertEquals(values.get(0), value, "The value must match");
     }
-
 }

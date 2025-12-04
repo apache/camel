@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.UUID;
@@ -36,10 +37,10 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     public void testTwoDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME,
-                TEST_FILE_NAME_1);
-        template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Bye World", Exchange.FILE_NAME,
-                TEST_FILE_NAME_2);
+        template.sendBodyAndHeader(
+                fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
+        template.sendBodyAndHeader(
+                fileUri("?doneFileName=${file:name}.ready"), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME_2);
 
         assertMockEndpointsSatisfied();
     }
@@ -48,8 +49,8 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     public void testOneDoneFileMissing() {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME,
-                TEST_FILE_NAME_1);
+        template.sendBodyAndHeader(
+                fileUri("?doneFileName=${file:name}.ready"), "Hello World", Exchange.FILE_NAME, TEST_FILE_NAME_1);
         template.sendBodyAndHeader(fileUri(), "Bye World", Exchange.FILE_NAME, TEST_FILE_NAME_2);
 
         // give chance to poll 2nd file but it lacks the done file
@@ -61,9 +62,9 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?doneFileName=${file:name}.ready&initialDelay=0&delay=10")).to("mock:result");
+                from(fileUri("?doneFileName=${file:name}.ready&initialDelay=0&delay=10"))
+                        .to("mock:result");
             }
         };
     }
-
 }

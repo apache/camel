@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
@@ -25,17 +26,23 @@ import org.apache.hc.core5.http.HttpException;
 
 public class MultipartSignedEntity extends MultipartMimeEntity {
 
-    public MultipartSignedEntity(MimeEntity data, AS2SignedDataGenerator signer, String signatureCharSet,
-                                 String signatureTransferEncoding, boolean isMainBody, String boundary) throws HttpException {
+    public MultipartSignedEntity(
+            MimeEntity data,
+            AS2SignedDataGenerator signer,
+            String signatureCharSet,
+            String signatureTransferEncoding,
+            boolean isMainBody,
+            String boundary)
+            throws HttpException {
         super(signer, isMainBody, (boundary == null) ? EntityUtils.createBoundaryValue() : boundary);
         addPart(data);
-        ApplicationPkcs7SignatureEntity signature
-                = new ApplicationPkcs7SignatureEntity(data, signer, signatureCharSet, signatureTransferEncoding, false);
+        ApplicationPkcs7SignatureEntity signature =
+                new ApplicationPkcs7SignatureEntity(data, signer, signatureCharSet, signatureTransferEncoding, false);
         addPart(signature);
     }
 
-    protected MultipartSignedEntity(ContentType contentType, String contentTransferEncoding, String boundary,
-                                    boolean isMainBody) {
+    protected MultipartSignedEntity(
+            ContentType contentType, String contentTransferEncoding, String boundary, boolean isMainBody) {
         super(contentType, contentTransferEncoding);
         this.boundary = boundary;
         this.isMainBody = isMainBody;

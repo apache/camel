@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored.template.ast;
 
 import java.util.Map;
@@ -46,11 +47,12 @@ public class InParameter {
     private void parseValueExpression(Token valueSrcToken) {
         if (SSPTParserConstants.SIMPLE_EXP_TOKEN == valueSrcToken.kind) {
             this.valueExtractor = (exchange, container) -> {
-                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(valueSrcToken.toString());
+                Expression exp =
+                        exchange.getContext().resolveLanguage("simple").createExpression(valueSrcToken.toString());
                 return exp.evaluate(exchange, Object.class);
             };
         } else if (SSPTParserConstants.PARAMETER_POS_TOKEN == valueSrcToken.kind) {
-            //remove leading :#
+            // remove leading :#
             final String mapKey = valueSrcToken.toString().substring(2);
             this.valueExtractor = (exchange, container) -> ((Map) container).get(mapKey);
         }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.webhook;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WebhookPathTest extends WebhookTestBase {
 
@@ -43,7 +44,8 @@ public class WebhookPathTest extends WebhookTestBase {
 
     @Test
     public void testRootPathError() {
-        assertThrows(CamelExecutionException.class,
+        assertThrows(
+                CamelExecutionException.class,
                 () -> template.requestBody("netty-http:http://localhost:" + port, "", String.class));
     }
 
@@ -71,16 +73,11 @@ public class WebhookPathTest extends WebhookTestBase {
             @Override
             public void configure() {
 
-                restConfiguration()
-                        .host("0.0.0.0")
-                        .port(port);
+                restConfiguration().host("0.0.0.0").port(port);
 
-                from("webhook:wb-delegate://xx")
-                        .transform(body().prepend("msg: "));
+                from("webhook:wb-delegate://xx").transform(body().prepend("msg: "));
 
-                from("webhook:wb-delegate://xx?webhookPath=/uri")
-                        .transform(body().prepend("uri: "));
-
+                from("webhook:wb-delegate://xx?webhookPath=/uri").transform(body().prepend("uri: "));
             }
         };
     }

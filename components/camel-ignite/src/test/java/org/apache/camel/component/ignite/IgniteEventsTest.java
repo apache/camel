@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +41,6 @@ import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
 
 public class IgniteEventsTest extends AbstractIgniteTest {
 
@@ -70,20 +71,25 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         cache.put(resourceUid, "123");
         cache.get(resourceUid);
         cache.remove(resourceUid);
-        cache.withExpiryPolicy(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MILLISECONDS, 100)).create())
+        cache.withExpiryPolicy(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MILLISECONDS, 100))
+                        .create())
                 .put(resourceUid, "123");
 
-        await().atMost(150, TimeUnit.MILLISECONDS)
-                .until(() -> cache.get(resourceUid), Matchers.nullValue());
+        await().atMost(150, TimeUnit.MILLISECONDS).until(() -> cache.get(resourceUid), Matchers.nullValue());
 
         MockEndpoint.assertIsSatisfied(context);
 
         List<Integer> eventTypes = receivedEventTypes("mock:test1");
 
-        Assertions.assertThat(eventTypes).containsSubsequence(EventType.EVT_CACHE_STARTED, EventType.EVT_CACHE_ENTRY_CREATED,
-                EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_READ,
-                EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED);
-
+        Assertions.assertThat(eventTypes)
+                .containsSubsequence(
+                        EventType.EVT_CACHE_STARTED,
+                        EventType.EVT_CACHE_ENTRY_CREATED,
+                        EventType.EVT_CACHE_OBJECT_PUT,
+                        EventType.EVT_CACHE_OBJECT_READ,
+                        EventType.EVT_CACHE_OBJECT_REMOVED,
+                        EventType.EVT_CACHE_OBJECT_PUT,
+                        EventType.EVT_CACHE_OBJECT_EXPIRED);
     }
 
     @Test
@@ -91,7 +97,8 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("ignite-events:" + resourceUid + "?events=EVT_CACHE_OBJECT_PUT").to("mock:test3");
+                from("ignite-events:" + resourceUid + "?events=EVT_CACHE_OBJECT_PUT")
+                        .to("mock:test3");
             }
         });
 
@@ -110,13 +117,13 @@ public class IgniteEventsTest extends AbstractIgniteTest {
 
         List<Integer> eventTypes = receivedEventTypes("mock:test3");
 
-        Assertions.assertThat(eventTypes).containsExactly(EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_PUT);
-
+        Assertions.assertThat(eventTypes)
+                .containsExactly(EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_PUT);
     }
 
     private List<Integer> receivedEventTypes(String mockEndpoint) {
-        List<Integer> eventTypes = Lists
-                .newArrayList(Lists.transform(getMockEndpoint(mockEndpoint).getExchanges(), new Function<Exchange, Integer>() {
+        List<Integer> eventTypes = Lists.newArrayList(
+                Lists.transform(getMockEndpoint(mockEndpoint).getExchanges(), new Function<Exchange, Integer>() {
                     @Override
                     public Integer apply(Exchange input) {
                         return input.getIn().getBody(Event.class).type();
@@ -142,5 +149,4 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         config.setIncludeEventTypes(EventType.EVTS_ALL_MINUS_METRIC_UPDATE);
         return config;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.ArrayList;
@@ -23,8 +24,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.ComponentModel;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "component",
-                     description = "List components from the Camel Catalog", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "component",
+        description = "List components from the Camel Catalog",
+        sortOptions = false,
+        showDefaultValues = true)
 public class CatalogComponent extends CatalogBaseCommand {
 
     public CatalogComponent(CamelJBangMain main) {
@@ -52,5 +56,4 @@ public class CatalogComponent extends CatalogBaseCommand {
         }
         return rows;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -75,5 +76,4 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
     public String toString() {
         return String.format("%s[type='%s']", this.getClass().getSimpleName(), type);
     }
-
 }

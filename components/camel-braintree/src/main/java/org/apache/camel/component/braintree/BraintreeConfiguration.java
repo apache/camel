@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.braintree;
 
 import java.util.concurrent.locks.Lock;
@@ -42,34 +43,49 @@ public class BraintreeConfiguration {
     @UriPath
     @Metadata(required = true)
     private BraintreeApiName apiName;
-    @UriPath(enums = "accept,addFileEvidence,addTextEvidence,cancel,cancelRelease,cloneTransaction,create,createForCurrency"
-                     + ",credit,delete,fetchMerchantAccounts,finalize,find,generate,grant,holdInEscrow,parse,refund,releaseFromEscrow"
-                     + ",removeEvidence,retryCharge,revoke,sale,search,submitForPartialSettlement,submitForSettlement,transactionLevelFees"
-                     + ",update,updateDetails,verify,voidTransaction")
+
+    @UriPath(
+            enums =
+                    "accept,addFileEvidence,addTextEvidence,cancel,cancelRelease,cloneTransaction,create,createForCurrency"
+                            + ",credit,delete,fetchMerchantAccounts,finalize,find,generate,grant,holdInEscrow,parse,refund,releaseFromEscrow"
+                            + ",removeEvidence,retryCharge,revoke,sale,search,submitForPartialSettlement,submitForSettlement,transactionLevelFees"
+                            + ",update,updateDetails,verify,voidTransaction")
     @Metadata(required = true)
     private String methodName;
+
     @UriParam
     private String environment;
+
     @UriParam
     private String merchantId;
+
     @UriParam(label = "security", secret = true)
     private String publicKey;
+
     @UriParam(label = "security", secret = true)
     private String privateKey;
+
     @UriParam(label = "security", secret = true)
     private String accessToken;
+
     @UriParam(label = "proxy")
     private String proxyHost;
+
     @UriParam(label = "proxy")
     private Integer proxyPort;
+
     @UriParam(label = "logging", enums = "OFF,SEVERE,WARNING,INFO,CONFIG,FINE,FINER,FINEST,ALL")
     private String httpLogLevel;
+
     @UriParam(label = "logging", defaultValue = "Braintree")
     private String httpLogName;
+
     @UriParam(label = "logging", defaultValue = "true")
     private boolean logHandlerEnabled = true;
+
     @UriParam(label = "advanced")
     private Integer httpReadTimeout;
+
     private final Lock lock = new ReentrantLock();
 
     public BraintreeApiName getApiName() {
@@ -235,8 +251,7 @@ public class BraintreeConfiguration {
         }
 
         throw new IllegalArgumentException(
-                String.format(
-                        "Environment should be development, sandbox or production, got %s", name));
+                String.format("Environment should be development, sandbox or production, got %s", name));
     }
 
     /**
@@ -251,7 +266,8 @@ public class BraintreeConfiguration {
                 gateway = new BraintreeGateway(accessToken);
                 setEnvironment(gateway.getConfiguration().getEnvironment().getEnvironmentName());
             } else {
-                gateway = new BraintreeGateway(getBraintreeEnvironment(), getMerchantId(), getPublicKey(), getPrivateKey());
+                gateway = new BraintreeGateway(
+                        getBraintreeEnvironment(), getMerchantId(), getPublicKey(), getPrivateKey());
             }
 
             if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
@@ -265,7 +281,8 @@ public class BraintreeConfiguration {
             // If custom log name is defined, a new logger wil be requested otherwise
             // the one supplied by Braintree' SDK will be used
             final Logger logger = ObjectHelper.isNotEmpty(httpLogName)
-                    ? Logger.getLogger(httpLogName) : gateway.getConfiguration().getLogger();
+                    ? Logger.getLogger(httpLogName)
+                    : gateway.getConfiguration().getLogger();
 
             // Cleanup handlers as by default braintree install a ConsoleHandler
             for (Handler handler : logger.getHandlers()) {

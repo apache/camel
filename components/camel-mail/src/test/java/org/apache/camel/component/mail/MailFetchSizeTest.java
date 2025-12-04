@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for fetch size.
@@ -55,7 +56,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.setResultWaitTime(2000L);
         mock.assertIsSatisfied();
 
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(3, jones.getInbox().getMessageCount()));
 
         // reset mock to assert the next batch of 2 messages polled
@@ -66,7 +68,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
 
-        Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> assertEquals(1, jones.getInbox().getMessageCount()));
 
         // reset mock to assert the last message polled
@@ -101,8 +104,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(jones.uriPrefix(Protocol.pop3) + "&fetchSize=2&delay=2000"
-                     + "&delete=true").to("mock:result");
+                from(jones.uriPrefix(Protocol.pop3) + "&fetchSize=2&delay=2000" + "&delete=true")
+                        .to("mock:result");
             }
         };
     }

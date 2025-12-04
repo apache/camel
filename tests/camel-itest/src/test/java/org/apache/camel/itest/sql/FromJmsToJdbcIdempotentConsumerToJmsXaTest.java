@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.sql;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,10 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * JMS with JDBC idempotent consumer test using XA.
@@ -50,7 +51,8 @@ public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIde
             DriverManager.getConnection("jdbc:derby:target/testdb;shutdown=true");
             fail("Should have thrown exception");
         } catch (SQLException e) {
-            // a successful shutdown always results in an SQLException to indicate that Derby has shut down and that there is no other exception.
+            // a successful shutdown always results in an SQLException to indicate that Derby has shut down and that
+            // there is no other exception.
             assertEquals("Database 'target/testdb' shutdown.", e.getMessage());
         }
     }
@@ -62,6 +64,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIde
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsXaTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsXaTest.xml");
     }
 }

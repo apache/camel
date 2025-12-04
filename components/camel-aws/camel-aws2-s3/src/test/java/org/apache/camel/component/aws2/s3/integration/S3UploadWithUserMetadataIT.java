@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -29,9 +33,6 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3UploadWithUserMetadataIT extends Aws2S3Base {
 
@@ -52,8 +53,10 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
         });
 
         S3Client s = AWSSDKClientUtils.newS3Client();
-        ResponseInputStream<GetObjectResponse> response
-                = s.getObject(GetObjectRequest.builder().bucket(name.get()).key("camel-content-type.txt").build());
+        ResponseInputStream<GetObjectResponse> response = s.getObject(GetObjectRequest.builder()
+                .bucket(name.get())
+                .key("camel-content-type.txt")
+                .build());
         assertTrue(response.response().hasMetadata());
         assertEquals("MetadataFromCamel", response.response().metadata().get("user-metadata-example"));
     }
@@ -66,7 +69,6 @@ public class S3UploadWithUserMetadataIT extends Aws2S3Base {
                 String awsEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());
 
                 from("direct:putObject").to(awsEndpoint);
-
             }
         };
     }

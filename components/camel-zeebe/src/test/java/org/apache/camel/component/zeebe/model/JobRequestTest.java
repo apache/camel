@@ -17,20 +17,20 @@
 
 package org.apache.camel.component.zeebe.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collections;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class JobRequestTest {
 
     private static final String MARSHAL_TEST_RESULT_1 = "{\"variables\":{},\"retries\":2,\"job_key\":1}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"variables\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"},\"retries\":2,\"job_key\":1}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"variables\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"},\"retries\":2,\"job_key\":1}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -55,8 +55,8 @@ public class JobRequestTest {
 
     @Test
     public void unmarshalTest() {
-        JobRequest unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobRequest.class));
+        JobRequest unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobRequest.class));
 
         JobRequest message = new JobRequest();
         message.setJobKey(1);
@@ -64,8 +64,8 @@ public class JobRequestTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        JobRequest unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobRequest.class));
+        JobRequest unmarshalledMessage2 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobRequest.class));
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");

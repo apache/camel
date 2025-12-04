@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.List;
@@ -43,19 +44,24 @@ public interface PostRevisionsSPI {
     @Path("/v{apiVersion}/posts/{postId}/revisions")
     @Produces(MediaType.APPLICATION_JSON)
     List<PostRevision> list(
-            @PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId,
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("postId") int postId,
             @QueryParam("context") Context context);
 
     @GET
     @Path("/v{apiVersion}/posts/{postId}/revisions/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     PostRevision retrieveRevision(
-            @PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId, @PathParam("id") int revisionId,
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("postId") int postId,
+            @PathParam("id") int revisionId,
             @QueryParam("context") Context context);
 
     @DELETE
     @Path("/v{apiVersion}/posts/{postId}/revisions/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("apiVersion") String apiVersion, @PathParam("postId") int postId, @PathParam("id") int revisionId);
-
+    void delete(
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("postId") int postId,
+            @PathParam("id") int revisionId);
 }

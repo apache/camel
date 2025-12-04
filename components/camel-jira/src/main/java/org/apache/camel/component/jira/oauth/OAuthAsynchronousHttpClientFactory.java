@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jira.oauth;
 
 import java.io.File;
@@ -41,8 +42,8 @@ import org.slf4j.LoggerFactory;
  */
 public class OAuthAsynchronousHttpClientFactory {
 
-    private static final String JIRA_REST_CLIENT_VERSION
-            = MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-client-api");
+    private static final String JIRA_REST_CLIENT_VERSION =
+            MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-client-api");
 
     @SuppressWarnings("unchecked")
     public DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler) {
@@ -58,12 +59,10 @@ public class OAuthAsynchronousHttpClientFactory {
                     }
 
                     @Override
-                    public void setThreadLocalContext(Object context) {
-                    }
+                    public void setThreadLocalContext(Object context) {}
 
                     @Override
-                    public void clearThreadLocalContext() {
-                    }
+                    public void clearThreadLocalContext() {}
                 });
 
         final HttpClient httpClient = defaultHttpClientFactory.create(options);
@@ -78,20 +77,16 @@ public class OAuthAsynchronousHttpClientFactory {
 
     private static class NoOpEventPublisher implements EventPublisher {
         @Override
-        public void publish(Object o) {
-        }
+        public void publish(Object o) {}
 
         @Override
-        public void register(Object o) {
-        }
+        public void register(Object o) {}
 
         @Override
-        public void unregister(Object o) {
-        }
+        public void unregister(Object o) {}
 
         @Override
-        public void unregisterAll() {
-        }
+        public void unregisterAll() {}
     }
 
     /**
@@ -178,16 +173,18 @@ public class OAuthAsynchronousHttpClientFactory {
         static String getVersion(String groupId, String artifactId) {
             final Properties props = new Properties();
             String pomProps = String.format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId);
-            try (InputStream resourceAsStream = org.apache.camel.util.ObjectHelper.loadResourceAsStream(pomProps,
-                    OAuthAsynchronousHttpClientFactory.class.getClassLoader())) {
+            try (InputStream resourceAsStream = org.apache.camel.util.ObjectHelper.loadResourceAsStream(
+                    pomProps, OAuthAsynchronousHttpClientFactory.class.getClassLoader())) {
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);
             } catch (Exception e) {
-                LOG.debug("Could not find version for Jira Rest Java Client maven artifact {}:{}. Error: {}", groupId,
-                        artifactId, e.getMessage());
+                LOG.debug(
+                        "Could not find version for Jira Rest Java Client maven artifact {}:{}. Error: {}",
+                        groupId,
+                        artifactId,
+                        e.getMessage());
                 return UNKNOWN_VERSION;
             }
         }
     }
-
 }

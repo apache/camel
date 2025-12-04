@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetry;
 
 /**
@@ -30,5 +31,4 @@ public interface SpanLifecycleManager {
     void close(Span span);
 
     void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing);
-
 }

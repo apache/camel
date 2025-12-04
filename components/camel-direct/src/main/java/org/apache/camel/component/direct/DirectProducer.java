@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.direct;
 
 import org.apache.camel.AsyncCallback;
@@ -56,7 +57,8 @@ public class DirectProducer extends DefaultAsyncProducer {
         }
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
-                throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+                throw new DirectConsumerNotAvailableException(
+                        "No consumers available on endpoint: " + endpoint, exchange);
             } else {
                 LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
@@ -94,8 +96,8 @@ public class DirectProducer extends DefaultAsyncProducer {
                     callback.done(true);
                     return true;
                 } else {
-                    //Ensure we can close the CLIENT Scope created by this DirectProducer
-                    //in the same thread
+                    // Ensure we can close the CLIENT Scope created by this DirectProducer
+                    // in the same thread
                     if (exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN) != null) {
                         exchange.setProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, Boolean.TRUE);
                     }
@@ -114,5 +116,4 @@ public class DirectProducer extends DefaultAsyncProducer {
             return true;
         }
     }
-
 }

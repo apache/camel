@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.util.Map;
@@ -25,8 +26,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mongodb-gridfs")
 public class GridFsComponent extends DefaultComponent {
 
-    public GridFsComponent() {
-    }
+    public GridFsComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -35,5 +35,4 @@ public class GridFsComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-
 }

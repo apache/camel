@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.Processor;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Processor;
+import org.junit.jupiter.api.Test;
 
 public class CouchbaseEndpointTest {
 
@@ -48,20 +49,18 @@ public class CouchbaseEndpointTest {
     public void testHostnameRequired() {
         final CouchbaseComponent component = new CouchbaseComponent();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> {
-                    new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", component);
-                });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CouchbaseEndpoint("couchbase:http://:80/bucket", "couchbase://:80/bucket", component);
+        });
     }
 
     @Test
     public void testSchemeRequired() {
         final CouchbaseComponent component = new CouchbaseComponent();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> {
-                    new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", component);
-                });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CouchbaseEndpoint("couchbase:localhost:80/bucket", "localhost:80/bucket", component);
+        });
     }
 
     @Test
@@ -73,10 +72,9 @@ public class CouchbaseEndpointTest {
     public void testCouchbaseEndpointWithoutProtocol() {
         final CouchbaseComponent component = new CouchbaseComponent();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> {
-                    new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", component);
-                });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CouchbaseEndpoint("localhost:80/bucket", "localhost:80/bucket", component);
+        });
     }
 
     @Test
@@ -91,8 +89,10 @@ public class CouchbaseEndpointTest {
 
         CouchbaseComponent component = new CouchbaseComponent();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> component.createEndpoint("couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> component.createEndpoint(
+                        "couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params));
     }
 
     @Test
@@ -105,8 +105,10 @@ public class CouchbaseEndpointTest {
 
         CouchbaseComponent component = new CouchbaseComponent();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> component.createEndpoint("couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> component.createEndpoint(
+                        "couchbase:localhost:80/bucket", "couchbase:localhost:80/bucket", params));
     }
 
     @Test

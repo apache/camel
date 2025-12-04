@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchDbComponentTest extends CamelTestSupport {
 
@@ -41,8 +42,8 @@ public class CouchDbComponentTest extends CamelTestSupport {
         String uri = "couchdb:http://localhost:5984/db";
         String remaining = "http://localhost:5984/db";
 
-        CouchDbEndpoint endpoint
-                = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint =
+                context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertNotNull(endpoint);
     }
 
@@ -60,8 +61,8 @@ public class CouchDbComponentTest extends CamelTestSupport {
         String uri = "couchdb:http://localhost:14/db";
         String remaining = "http://localhost:14/db";
 
-        CouchDbEndpoint endpoint
-                = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint =
+                context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertEquals("http", endpoint.getProtocol());
         assertEquals("localhost", endpoint.getHostname());
         assertEquals("db", endpoint.getDatabase());

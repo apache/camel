@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util.function;
 
 import java.util.function.BiConsumer;
@@ -22,8 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class Bindings {
-    private Bindings() {
-    }
+    private Bindings() {}
 
     public static <T1, T2> Consumer<T2> bind(T1 v1, BiConsumer<T1, T2> consumer) {
         return v2 -> consumer.accept(v1, v2);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring.jaxrs;
 
 import org.apache.camel.Component;
@@ -24,7 +25,8 @@ import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 public class SpringCxfRsEndpointFactoryBean implements CxfRsEndpointFactoryBean {
 
     @Override
-    public CxfRsEndpoint createEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) throws Exception {
+    public CxfRsEndpoint createEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean)
+            throws Exception {
         return new CxfRsSpringEndpoint(component, uri, bean);
     }
 }

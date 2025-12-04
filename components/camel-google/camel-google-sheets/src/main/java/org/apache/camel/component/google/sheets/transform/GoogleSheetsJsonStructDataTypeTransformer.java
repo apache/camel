@@ -49,8 +49,9 @@ import org.apache.camel.util.ObjectHelper;
  * update/append values operation. The Implementation also supports splitResults setting where a set of values is split
  * into its individual items.
  */
-@DataTypeTransformer(name = "google-sheets:application-x-struct",
-                     description = "Transforms to/from JSon data and Google Sheets ValueRange object")
+@DataTypeTransformer(
+        name = "google-sheets:application-x-struct",
+        description = "Transforms to/from JSon data and Google Sheets ValueRange object")
 public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
 
     private static final String ROW_PREFIX = "#";
@@ -59,26 +60,32 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
     public void transform(Message message, DataType fromType, DataType toType) {
         final Optional<ValueRange> valueRange = getValueRangeBody(message);
 
-        String range = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A:A").toString();
-        String majorDimension = message
-                .getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension", RangeCoordinate.DIMENSION_ROWS).toString();
-        String spreadsheetId = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", "").toString();
-        String[] columnNames
-                = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "A").toString().split(",");
+        String range = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "range", "A:A")
+                .toString();
+        String majorDimension = message.getHeader(
+                        GoogleSheetsConstants.PROPERTY_PREFIX + "majorDimension", RangeCoordinate.DIMENSION_ROWS)
+                .toString();
+        String spreadsheetId = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", "")
+                .toString();
+        String[] columnNames = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "columnNames", "A")
+                .toString()
+                .split(",");
 
-        boolean splitResults = Boolean
-                .parseBoolean(message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "splitResults", "false").toString());
+        boolean splitResults =
+                Boolean.parseBoolean(message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "splitResults", "false")
+                        .toString());
 
         if (valueRange.isPresent()) {
-            message.setBody(
-                    transformFromValueRangeModel(message, valueRange.get(), spreadsheetId, range, majorDimension, columnNames));
+            message.setBody(transformFromValueRangeModel(
+                    message, valueRange.get(), spreadsheetId, range, majorDimension, columnNames));
         } else if (splitResults) {
             message.setBody(transformFromSplitValuesModel(message, spreadsheetId, range, majorDimension, columnNames));
         } else {
-            String valueInputOption
-                    = message.getHeader(GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption", "USER_ENTERED").toString();
-            message.setBody(
-                    transformToValueRangeModel(message, spreadsheetId, range, majorDimension, valueInputOption, columnNames));
+            String valueInputOption = message.getHeader(
+                            GoogleSheetsConstants.PROPERTY_PREFIX + "valueInputOption", "USER_ENTERED")
+                    .toString();
+            message.setBody(transformToValueRangeModel(
+                    message, spreadsheetId, range, majorDimension, valueInputOption, columnNames));
         }
     }
 
@@ -86,7 +93,11 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
      * Constructs proper ValueRange object from given generic Json struct.
      */
     private ValueRange transformToValueRangeModel(
-            Message message, String spreadsheetId, String range, String majorDimension, String valueInputOption,
+            Message message,
+            String spreadsheetId,
+            String range,
+            String majorDimension,
+            String valueInputOption,
             String[] columnNames) {
         try {
             List<String> jsonBeans = bodyAsJsonBeans(message);
@@ -98,7 +109,8 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                 final ArrayList<String> properties = createCoordinateNameSpec(range, majorDimension, columnNames);
 
                 for (String json : jsonBeans) {
-                    Map<String, Object> dataShape = Json.mapper().reader().forType(Map.class).readValue(json);
+                    Map<String, Object> dataShape =
+                            Json.mapper().reader().forType(Map.class).readValue(json);
 
                     if (dataShape.containsKey("spreadsheetId")) {
                         spreadsheetId = Optional.ofNullable(dataShape.remove("spreadsheetId"))
@@ -107,8 +119,7 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                     }
 
                     List<Object> rangeValues = new ArrayList<>();
-                    properties
-                            .stream()
+                    properties.stream()
                             .filter(specEntry -> !Objects.equals("spreadsheetId", specEntry))
                             .forEach(specEntry -> rangeValues.add(dataShape.getOrDefault(specEntry, null)));
 
@@ -131,8 +142,7 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
             return valueRange;
         } catch (InvalidPayloadException | JsonProcessingException e) {
             throw new CamelExecutionException(
-                    "Failed to apply Google Sheets Json struct data type on exchange",
-                    message.getExchange(), e);
+                    "Failed to apply Google Sheets Json struct data type on exchange", message.getExchange(), e);
         }
     }
 
@@ -141,7 +151,11 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
      * only.
      */
     private List<String> transformFromValueRangeModel(
-            Message message, ValueRange valueRange, String spreadsheetId, String range, String majorDimension,
+            Message message,
+            ValueRange valueRange,
+            String spreadsheetId,
+            String range,
+            String majorDimension,
             String[] columnNames) {
         final List<String> jsonBeans = new ArrayList<>();
 
@@ -162,8 +176,10 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                         model.put("spreadsheetId", spreadsheetId);
                         int columnIndex = rangeCoordinate.getColumnStartIndex();
                         for (Object value : values) {
-                            model.put(CellCoordinate.getColumnName(columnIndex, rangeCoordinate.getColumnStartIndex(),
-                                    columnNames), value);
+                            model.put(
+                                    CellCoordinate.getColumnName(
+                                            columnIndex, rangeCoordinate.getColumnStartIndex(), columnNames),
+                                    value);
                             columnIndex++;
                         }
                         jsonBeans.add(Json.mapper().writer().writeValueAsString(model));
@@ -184,8 +200,7 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
 
         } catch (IOException e) {
             throw new CamelExecutionException(
-                    "Failed to apply Google Sheets Json struct data type on exchange",
-                    message.getExchange(), e);
+                    "Failed to apply Google Sheets Json struct data type on exchange", message.getExchange(), e);
         }
 
         return jsonBeans;
@@ -210,13 +225,16 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
                 RangeCoordinate rangeCoordinate = RangeCoordinate.fromRange(range);
 
                 if (ObjectHelper.isNotEmpty(message.getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION))) {
-                    majorDimension = message.getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION).toString();
+                    majorDimension = message.getHeader(GoogleSheetsStreamConstants.MAJOR_DIMENSION)
+                            .toString();
                 }
 
                 if (ObjectHelper.equal(RangeCoordinate.DIMENSION_ROWS, majorDimension)) {
                     int columnIndex = rangeCoordinate.getColumnStartIndex();
                     for (Object value : values) {
-                        model.put(CellCoordinate.getColumnName(columnIndex, rangeCoordinate.getColumnStartIndex(), columnNames),
+                        model.put(
+                                CellCoordinate.getColumnName(
+                                        columnIndex, rangeCoordinate.getColumnStartIndex(), columnNames),
                                 value);
                         columnIndex++;
                     }
@@ -232,8 +250,7 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
             return Json.mapper().writer().writeValueAsString(model);
         } catch (InvalidPayloadException | JsonProcessingException e) {
             throw new CamelExecutionException(
-                    "Failed to apply Google Sheets Json struct data type on exchange",
-                    message.getExchange(), e);
+                    "Failed to apply Google Sheets Json struct data type on exchange", message.getExchange(), e);
         }
     }
 
@@ -263,7 +280,8 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
      * Converts message body to list of Json objects. Supports different message body types such as List, String,
      * InputStream.
      */
-    private static List<String> bodyAsJsonBeans(Message message) throws JsonProcessingException, InvalidPayloadException {
+    private static List<String> bodyAsJsonBeans(Message message)
+            throws JsonProcessingException, InvalidPayloadException {
         if (message.getBody() == null) {
             return Collections.emptyList();
         }
@@ -286,7 +304,8 @@ public class GoogleSheetsJsonStructDataTypeTransformer extends Transformer {
      * Construct row and column coordinate names for given range. Supports mapping of custom column names to proper
      * row/column coordinates.
      */
-    public static ArrayList<String> createCoordinateNameSpec(String range, String majorDimension, String... columnNames) {
+    public static ArrayList<String> createCoordinateNameSpec(
+            String range, String majorDimension, String... columnNames) {
         ArrayList<String> names = new ArrayList<>();
 
         RangeCoordinate coordinate = RangeCoordinate.fromRange(range);

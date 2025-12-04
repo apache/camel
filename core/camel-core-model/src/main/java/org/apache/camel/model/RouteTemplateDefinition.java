@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.ArrayList;
@@ -44,9 +45,10 @@ import org.apache.camel.spi.ResourceAware;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeTemplate")
-@XmlType(propOrder = { "templateParameters", "templateBeans", "route" })
+@XmlType(propOrder = {"templateParameters", "templateBeans", "route"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteTemplateDefinition> implements ResourceAware {
+public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteTemplateDefinition>
+        implements ResourceAware {
 
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -57,11 +59,14 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
     @XmlElement(name = "templateParameter")
     @Metadata(description = "Adds a template parameter the route template uses")
     private List<RouteTemplateParameterDefinition> templateParameters;
+
     @XmlElement(name = "templateBean")
     @Metadata(description = "Adds a local bean the route template uses")
     private List<BeanFactoryDefinition<RouteTemplateDefinition>> templateBeans;
+
     @XmlElement(name = "route", required = true)
     private RouteDefinition route = new RouteDefinition();
+
     @XmlTransient
     private Resource resource;
 
@@ -310,7 +315,8 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
      * @param type the type of the bean to associate the binding
      * @param bean a supplier for the bean
      */
-    public RouteTemplateDefinition templateBean(String name, Class<?> type, RouteTemplateContext.BeanSupplier<Object> bean) {
+    public RouteTemplateDefinition templateBean(
+            String name, Class<?> type, RouteTemplateContext.BeanSupplier<Object> bean) {
         if (templateBeans == null) {
             templateBeans = new ArrayList<>();
         }

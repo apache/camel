@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -27,7 +28,8 @@ import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 @ManagedResource(description = "Managed Sticky LoadBalancer")
 public class ManagedStickyLoadBalancer extends ManagedProcessor implements ManagedStickyLoadBalancerMBean {
 
-    public ManagedStickyLoadBalancer(CamelContext context, StickyLoadBalancer processor, LoadBalanceDefinition definition) {
+    public ManagedStickyLoadBalancer(
+            CamelContext context, StickyLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -43,13 +45,15 @@ public class ManagedStickyLoadBalancer extends ManagedProcessor implements Manag
 
     @Override
     public String getExpressionLanguage() {
-        StickyLoadBalancerDefinition sticky = (StickyLoadBalancerDefinition) getDefinition().getLoadBalancerType();
+        StickyLoadBalancerDefinition sticky =
+                (StickyLoadBalancerDefinition) getDefinition().getLoadBalancerType();
         return sticky.getCorrelationExpression().getExpressionType().getLanguage();
     }
 
     @Override
     public String getExpression() {
-        StickyLoadBalancerDefinition sticky = (StickyLoadBalancerDefinition) getDefinition().getLoadBalancerType();
+        StickyLoadBalancerDefinition sticky =
+                (StickyLoadBalancerDefinition) getDefinition().getLoadBalancerType();
         return sticky.getCorrelationExpression().getExpressionType().getExpression();
     }
 
@@ -70,5 +74,4 @@ public class ManagedStickyLoadBalancer extends ManagedProcessor implements Manag
         }
         return null;
     }
-
 }

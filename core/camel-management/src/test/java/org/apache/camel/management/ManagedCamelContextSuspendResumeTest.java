@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,10 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport {
@@ -55,8 +56,9 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
-                new String[] { "java.lang.String", "java.lang.Object" });
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] {"direct:foo", "Hello World"}, new String[] {
+            "java.lang.String", "java.lang.Object"
+        });
         assertEquals("Bye World", reply);
 
         // suspend Camel
@@ -71,8 +73,9 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
         status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
-        reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello Camel" },
-                new String[] { "java.lang.String", "java.lang.Object" });
+        reply = mbeanServer.invoke(on, "requestBody", new Object[] {"direct:foo", "Hello Camel"}, new String[] {
+            "java.lang.String", "java.lang.Object"
+        });
         assertEquals("Bye World", reply);
     }
 
@@ -85,5 +88,4 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cron.api;
 
 import org.apache.camel.Endpoint;
@@ -25,5 +26,4 @@ import org.apache.camel.spi.HasId;
 public interface CamelCronService extends HasId {
 
     Endpoint createEndpoint(CamelCronConfiguration configuration) throws Exception;
-
 }

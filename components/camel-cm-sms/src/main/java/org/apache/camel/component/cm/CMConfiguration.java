@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm;
 
 import jakarta.validation.constraints.Max;
@@ -32,15 +33,18 @@ public class CMConfiguration {
     @UriParam(javaType = "java.lang.String")
     @Metadata(required = true)
     private String productToken;
+
     @NotNull
     @Size(min = 1, max = 11)
     @UriParam(javaType = "java.lang.String")
     @Metadata(required = true)
     private String defaultFrom;
+
     @Min(1)
     @Max(8)
     @UriParam(defaultValue = "8", javaType = "int")
     private int defaultMaxNumberOfParts = 8;
+
     @UriParam
     private boolean testConnectionOnStartup;
 
@@ -89,5 +93,4 @@ public class CMConfiguration {
     public void setTestConnectionOnStartup(final boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pg.replication.slot;
 
 import java.sql.Connection;
@@ -42,9 +43,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
-             syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
-             category = { Category.DATABASE }, consumerOnly = true)
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "pg-replication-slot",
+        title = "PostgresSQL Replication Slot",
+        syntax = "pg-replication-slot:host:port/database/slot:outputPlugin",
+        category = {Category.DATABASE},
+        consumerOnly = true)
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PgReplicationSlotEndpoint.class);
@@ -54,25 +59,34 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     @UriPath(description = "Postgres host", label = "common", defaultValue = "localhost")
     private String host = "localhost";
+
     @UriPath(description = "Postgres port", label = "common", defaultValue = "5432")
     private Integer port = 5432;
+
     @UriPath(description = "Postgres database name", label = "common")
     @Metadata(required = true)
     private String database;
+
     @UriPath
     @Metadata(description = "Replication Slot name", label = "common", required = true)
     private String slot;
+
     @UriPath
     @Metadata(description = "Output plugin name", label = "common", required = true)
     private String outputPlugin;
+
     @UriParam(description = "Postgres user", label = "common", defaultValue = "postgres")
     private String user = "postgres";
+
     @UriParam(description = "Postgres password", label = "common", secret = true)
     private String password;
+
     @UriParam(label = "advanced", defaultValue = "10")
     private Integer statusInterval = 10;
+
     @UriParam(label = "advanced", prefix = "slotOptions.", multiValue = true)
     private Map<String, Object> slotOptions = Collections.emptyMap();
+
     @UriParam(label = "advanced", defaultValue = "true")
     private Boolean autoCreateSlot = true;
 
@@ -107,8 +121,7 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         PGProperty.TCP_KEEP_ALIVE.set(props, true);
 
         return DriverManager.getConnection(
-                String.format("jdbc:postgresql://%s:%d/%s", this.getHost(), this.getPort(), this.getDatabase()),
-                props);
+                String.format("jdbc:postgresql://%s:%d/%s", this.getHost(), this.getPort(), this.getDatabase()), props);
     }
 
     /**

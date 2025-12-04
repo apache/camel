@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -36,8 +37,7 @@ public class LineNumberProcessorDebuggingTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .process(new MyProcessor());
+                from("direct:start").process(new MyProcessor());
             }
         });
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.lang.management.ManagementFactory;
@@ -53,10 +54,12 @@ public class JMXMonitorConsumer extends JMXConsumer {
         Monitor bean = null;
         if (ep.getMonitorType().equals("counter")) {
             CounterMonitor counter = new CounterMonitor();
-            Number initThreshold
-                    = convertNumberToAttributeType(ep.getInitThreshold(), ep.getJMXObjectName(), ep.getObservedAttribute());
-            Number offset = convertNumberToAttributeType(ep.getOffset(), ep.getJMXObjectName(), ep.getObservedAttribute());
-            Number modulus = convertNumberToAttributeType(ep.getModulus(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number initThreshold = convertNumberToAttributeType(
+                    ep.getInitThreshold(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number offset =
+                    convertNumberToAttributeType(ep.getOffset(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number modulus =
+                    convertNumberToAttributeType(ep.getModulus(), ep.getJMXObjectName(), ep.getObservedAttribute());
             counter.setInitThreshold(initThreshold);
             counter.setOffset(offset);
             counter.setModulus(modulus);
@@ -68,10 +71,10 @@ public class JMXMonitorConsumer extends JMXConsumer {
             gm.setNotifyHigh(ep.isNotifyHigh());
             gm.setNotifyLow(ep.isNotifyLow());
             gm.setDifferenceMode(ep.isDifferenceMode());
-            Number highValue
-                    = convertNumberToAttributeType(ep.getThresholdHigh(), ep.getJMXObjectName(), ep.getObservedAttribute());
-            Number lowValue
-                    = convertNumberToAttributeType(ep.getThresholdLow(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number highValue = convertNumberToAttributeType(
+                    ep.getThresholdHigh(), ep.getJMXObjectName(), ep.getObservedAttribute());
+            Number lowValue = convertNumberToAttributeType(
+                    ep.getThresholdLow(), ep.getJMXObjectName(), ep.getObservedAttribute());
             gm.setThresholds(highValue, lowValue);
             bean = gm;
         } else if (ep.getMonitorType().equals("string")) {

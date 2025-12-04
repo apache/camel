@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
 
 import java.util.HashMap;
@@ -39,10 +40,13 @@ import org.slf4j.LoggerFactory;
 public class CometdBinding {
 
     public static final String HEADERS_FIELD = "CamelHeaders";
+
     @Metadata(description = "The clientId of the session", javaType = "String")
     public static final String COMETD_CLIENT_ID_HEADER_NAME = "CometdClientId";
+
     @Metadata(description = "The subscription", javaType = "String")
     public static final String COMETD_SUBSCRIPTION_HEADER_NAME = "subscription";
+
     public static final String COMETD_SESSION_ATTR_HEADER_NAME = "CometdSessionAttr";
 
     private static final Logger LOG = LoggerFactory.getLogger(CometdBinding.class);
@@ -59,7 +63,8 @@ public class CometdBinding {
         this.enableSessionHeader = enableSessionHeader;
     }
 
-    public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage) {
+    public ServerMessage.Mutable createCometdMessage(
+            ServerChannel channel, ServerSession serverSession, Message camelMessage) {
         ServerMessage.Mutable mutable = bayeux.newMessage();
         mutable.setChannel(channel.getId());
 
@@ -101,16 +106,19 @@ public class CometdBinding {
         for (String attributeName : attributeNames) {
             Object attribute = remote.getAttribute(attributeName);
 
-            if (attribute instanceof Integer || attribute instanceof String || attribute instanceof Long
-                    || attribute instanceof Double || attribute instanceof Boolean) {
+            if (attribute instanceof Integer
+                    || attribute instanceof String
+                    || attribute instanceof Long
+                    || attribute instanceof Double
+                    || attribute instanceof Boolean) {
                 message.setHeader(attributeName, attribute);
             } else {
                 // Do we need to support other type of session objects ?
                 LOG.info(
                         "Session attribute {} has a value of {} which cannot be included as at header because it is not an int, string, or long.",
-                        attributeName, attribute);
+                        attributeName,
+                        attribute);
             }
-
         }
     }
 
@@ -121,7 +129,7 @@ public class CometdBinding {
         }
     }
 
-    //TODO: do something in the style of JMS where they have header Strategies?
+    // TODO: do something in the style of JMS where they have header Strategies?
     private Object filterHeaders(Map<String, Object> headers) {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, Object> entry : headers.entrySet()) {
@@ -141,5 +149,4 @@ public class CometdBinding {
             return null;
         }
     }
-
 }

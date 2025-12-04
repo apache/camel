@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.aggregation;
 
 import java.util.List;
@@ -26,9 +27,10 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 
-@Metadata(label = "bean",
-          description = "Aggregates two ElasticSearch BulkOperation into a single BulkRequest",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Metadata(
+        label = "bean",
+        description = "Aggregates two ElasticSearch BulkOperation into a single BulkRequest",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class ElasticsearchBulkRequestAggregationStrategy implements AggregationStrategy {
 

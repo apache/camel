@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -23,9 +24,8 @@ import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 @JdkService(ModelJAXBContextFactory.FACTORY + "-spring")
 public class SpringModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
 
-    public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES = ":"
-                                                                  + "org.apache.camel.core.xml:"
-                                                                  + "org.apache.camel.spring.xml:";
+    public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES =
+            ":" + "org.apache.camel.core.xml:" + "org.apache.camel.spring.xml:";
 
     @Override
     protected String getPackages() {

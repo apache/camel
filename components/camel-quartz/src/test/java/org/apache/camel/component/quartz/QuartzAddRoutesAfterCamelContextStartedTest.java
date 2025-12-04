@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.quartz;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuartzAddRoutesAfterCamelContextStartedTest extends BaseQuartzTest {
 
@@ -36,12 +37,12 @@ public class QuartzAddRoutesAfterCamelContextStartedTest extends BaseQuartzTest 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=1").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=100&trigger.repeatCount=1")
+                        .to("mock:result");
             }
         });
 
         // it should also work
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

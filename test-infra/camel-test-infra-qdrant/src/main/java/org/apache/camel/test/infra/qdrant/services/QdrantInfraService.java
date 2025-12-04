@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.qdrant.services;
 
 import java.net.URI;
@@ -48,9 +49,7 @@ public interface QdrantInfraService extends InfrastructureService {
         final String reqPath = !path.startsWith("/") ? "/" + path : path;
         final String reqUrl = String.format("http://%s:%d%s", getHttpHost(), getHttpPort(), reqPath);
 
-        String requestBody = new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(body);
+        String requestBody = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(reqUrl))

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,8 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Tag("not-parallel")
 class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
@@ -57,7 +58,8 @@ class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(5));
 
-        assertDoesNotThrow(() -> context.getRouteController().startAllRoutes(),
+        assertDoesNotThrow(
+                () -> context.getRouteController().startAllRoutes(),
                 "The split parallel route should start without exceptions");
 
         mock.assertIsSatisfied();
@@ -65,8 +67,8 @@ class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
     @BeforeEach
     public void createBigFile() throws FileNotFoundException {
-        Assumptions.assumeTrue(AVAILABLE_PROCESSORS > 1,
-                "Skipping test because this system may not have enough resources to run it");
+        Assumptions.assumeTrue(
+                AVAILABLE_PROCESSORS > 1, "Skipping test because this system may not have enough resources to run it");
 
         // create big file
         try (PrintWriter writer = new PrintWriter(
@@ -85,25 +87,28 @@ class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
                 LOG.info(
                         "Setting up the max pool size to the number of available processors: {}. Pool size will be set to half of that: {}",
-                        AVAILABLE_PROCESSORS, poolSize);
+                        AVAILABLE_PROCESSORS,
+                        poolSize);
 
-                ThreadPoolProfile tpp
-                        = new ThreadPoolProfileBuilder("ftp-pool")
-                                .poolSize(poolSize)
-                                .maxPoolSize(AVAILABLE_PROCESSORS)
-                                .maxQueueSize(1_000)
-                                .build();
+                ThreadPoolProfile tpp = new ThreadPoolProfileBuilder("ftp-pool")
+                        .poolSize(poolSize)
+                        .maxPoolSize(AVAILABLE_PROCESSORS)
+                        .maxQueueSize(1_000)
+                        .build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(tpp);
 
                 onException().maximumRedeliveries(5).redeliveryDelay(1_000);
 
-                fromF("file:%s", testDirectory).noAutoStartup().routeId("foo")
-                    .split(body().tokenize("\n")).executorService("ftp-pool")
+                fromF("file:%s", testDirectory)
+                        .noAutoStartup()
+                        .routeId("foo")
+                        .split(body().tokenize("\n"))
+                        .executorService("ftp-pool")
                         .to(getFtpUrl())
                         .to("log:line?groupSize=100")
-                    .end()
-                    .log("End of splitting")
-                    .to("mock:result");
+                        .end()
+                        .log("End of splitting")
+                        .to("mock:result");
             }
         };
     }

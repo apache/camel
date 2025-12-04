@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.customerrelations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -31,9 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class CustomerServicesTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
@@ -43,25 +44,29 @@ public class CustomerServicesTest {
         ClassPathXmlApplicationContext serverContext = null;
         ClassPathXmlApplicationContext clientContext = null;
         try {
-            serverContext = new ClassPathXmlApplicationContext(
-                    new String[] { "spring-config/server-applicationContext.xml" });
+            serverContext =
+                    new ClassPathXmlApplicationContext(new String[] {"spring-config/server-applicationContext.xml"});
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
             assertNotNull(server, "We should get server here");
 
             // add an interceptor to verify headers
-            EndpointImpl.class.cast(server).getServer().getEndpoint().getInInterceptors()
+            EndpointImpl.class
+                    .cast(server)
+                    .getServer()
+                    .getEndpoint()
+                    .getInInterceptors()
                     .add(new HeaderChecker(Phase.READ));
 
-            clientContext = new ClassPathXmlApplicationContext(
-                    new String[] { "spring-config/client-applicationContext.xml" });
-            CustomerServiceV1 customerService = clientContext
-                    .getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
+            clientContext =
+                    new ClassPathXmlApplicationContext(new String[] {"spring-config/client-applicationContext.xml"});
+            CustomerServiceV1 customerService = clientContext.getBean(
+                    "org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
 
             // CXF 2.1.2 only apply the SOAPAction for the request message (in SoapPreProtocolOutInterceptor)
             // After went through the SOAP 1.1 specification, I got that the SOAPAction is only for the request message
             // So I comment out this HeaderChecker Interceptor setting up code
             /*JaxWsClientProxy.class.cast(Proxy.getInvocationHandler(customerService))
-                .getClient().getInInterceptors().add(new HeaderChecker(Phase.READ));*/
+            .getClient().getInInterceptors().add(new HeaderChecker(Phase.READ));*/
 
             Customer customer = customerService.getCustomer("12345");
             assertNotNull(customer, "We should get Customer here");
@@ -78,8 +83,7 @@ public class CustomerServicesTest {
 
         @Override
         public void handleMessage(Message message) throws Fault {
-            Map<String, List<String>> headers
-                    = CastUtils.cast((Map<?, ?>) message.get(Message.PROTOCOL_HEADERS));
+            Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) message.get(Message.PROTOCOL_HEADERS));
             assertNotNull(headers);
             assertEquals("\"getCustomer\"", headers.get("SOAPAction").get(0));
         }

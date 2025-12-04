@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +41,8 @@ class HL7MLLPNettyEncoder extends MessageToByteEncoder<Object> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, Object message, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Object message, ByteBuf byteBuf)
+            throws Exception {
         if (message == null) {
             throw new IllegalArgumentException("Message to be encoded is null");
         } else if (message instanceof Exception) {
@@ -62,9 +64,8 @@ class HL7MLLPNettyEncoder extends MessageToByteEncoder<Object> {
         } else if (message instanceof byte[]) {
             body = (byte[]) message;
         } else {
-            throw new IllegalArgumentException(
-                    "The message to encode is not a supported type: "
-                                               + message.getClass().getCanonicalName());
+            throw new IllegalArgumentException("The message to encode is not a supported type: "
+                    + message.getClass().getCanonicalName());
         }
         byteBuf.writeByte(config.getStartByte());
         byteBuf.writeBytes(body);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
@@ -41,7 +42,10 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     private final CamelJBangMain main;
 
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
+    @CommandLine.Option(
+            names = {"-h", "--help"},
+            usageHelp = true,
+            description = "Display the help and sub-commands")
     private boolean helpRequested = false;
 
     public CamelCommand(CamelJBangMain main) {
@@ -76,13 +80,11 @@ public abstract class CamelCommand implements Callable<Integer> {
             for (CommandLine.Model.ArgSpec argSpec : spec.args()) {
                 var provider = spec.defaultValueProvider();
                 String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
-                if (defaultValue != null &&
-                        argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
+                if (defaultValue != null && argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
                     for (String name : optionSpec.names()) {
                         String placeholder = "#" + StringHelper.after(name, "--");
                         Object v = argSpec.getValue();
-                        if (v != null &&
-                                v.toString().contains(placeholder)) {
+                        if (v != null && v.toString().contains(placeholder)) {
                             argSpec.setValue(v.toString().replace(placeholder, defaultValue));
                         }
                     }
@@ -137,11 +139,12 @@ public abstract class CamelCommand implements Callable<Integer> {
             CommandLineHelper.loadProperties(configProperties::putAll);
             List<String> lines = new ArrayList<>();
             spec.options().forEach(opt -> {
-                if (Arrays.stream(opt.names()).anyMatch(name ->
-                // name starts with --
-                configProperties.containsKey(name.substring(2)))) {
-                    lines.add(String.format("    %s=%s",
-                            opt.longestName(), opt.getValue().toString()));
+                if (Arrays.stream(opt.names())
+                        .anyMatch(name ->
+                                // name starts with --
+                                configProperties.containsKey(name.substring(2)))) {
+                    lines.add(String.format(
+                            "    %s=%s", opt.longestName(), opt.getValue().toString()));
                 }
             });
             if (!lines.isEmpty()) {
@@ -168,5 +171,4 @@ public abstract class CamelCommand implements Callable<Integer> {
             return true;
         }
     }
-
 }

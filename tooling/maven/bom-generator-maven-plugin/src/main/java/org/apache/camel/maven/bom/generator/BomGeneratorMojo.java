@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.bom.generator;
 
 import java.io.File;
@@ -209,7 +210,9 @@ public class BomGeneratorMojo extends AbstractMojo {
 
     private void setActualVersion(Document pom, XPathExpression path) throws XPathExpressionException {
         Node node = (Node) path.evaluate(pom, XPathConstants.NODE);
-        if (node != null && node.getTextContent() != null && node.getTextContent().trim().equals("${project.version}")) {
+        if (node != null
+                && node.getTextContent() != null
+                && node.getTextContent().trim().equals("${project.version}")) {
             node.setTextContent(project.getVersion());
         }
     }
@@ -261,7 +264,8 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         NodeList nodes = (NodeList) expr.evaluate(pom, XPathConstants.NODESET);
         if (nodes.getLength() == 0) {
-            throw new IllegalStateException("No dependencies found in the dependencyManagement section of the current pom");
+            throw new IllegalStateException(
+                    "No dependencies found in the dependencyManagement section of the current pom");
         }
 
         Node dependenciesSection = nodes.item(0);
@@ -327,7 +331,6 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             dependenciesSection.appendChild(dependencyEl);
         }
-
     }
 
     private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<String> external)
@@ -342,7 +345,8 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         if (!errors.isEmpty()) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Found ").append(errors.size())
+            msg.append("Found ")
+                    .append(errors.size())
                     .append(" conflicts between the current managed dependencies and the external BOMS:\n");
             for (String error : errors) {
                 msg.append(" - ").append(error).append("\n");
@@ -356,8 +360,8 @@ public class BomGeneratorMojo extends AbstractMojo {
         Set<String> provided = new HashSet<>();
         if (checkConflicts != null && checkConflicts.getBoms() != null) {
             for (ExternalBomConflictCheck check : checkConflicts.getBoms()) {
-                Set<String> bomProvided
-                        = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
+                Set<String> bomProvided =
+                        getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
                 provided.addAll(bomProvided);
             }
         }
@@ -365,26 +369,30 @@ public class BomGeneratorMojo extends AbstractMojo {
         return provided;
     }
 
-    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
+    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version)
+            throws Exception {
         return getProvidedDependencyManagement(groupId, artifactId, version, new TreeSet<>());
     }
 
     private Set<String> getProvidedDependencyManagement(
-            String groupId, String artifactId, String version, Set<String> gaChecked)
-            throws Exception {
+            String groupId, String artifactId, String version, Set<String> gaChecked) throws Exception {
         String ga = groupId + ":" + artifactId;
         gaChecked.add(ga);
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
         MavenProject bomProject = loadExternalProjectPom(bom.getFile());
 
         Set<String> provided = new HashSet<>();
-        if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
+        if (bomProject.getDependencyManagement() != null
+                && bomProject.getDependencyManagement().getDependencies() != null) {
             for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
                 if ("pom".equals(dep.getType()) && "import".equals(dep.getScope())) {
                     String subGa = dep.getGroupId() + ":" + dep.getArtifactId();
                     if (!gaChecked.contains(subGa)) {
-                        Set<String> sub = getProvidedDependencyManagement(dep.getGroupId(), dep.getArtifactId(),
-                                resolveVersion(bomProject, dep.getVersion()), gaChecked);
+                        Set<String> sub = getProvidedDependencyManagement(
+                                dep.getGroupId(),
+                                dep.getArtifactId(),
+                                resolveVersion(bomProject, dep.getVersion()),
+                                gaChecked);
                         provided.addAll(sub);
                     }
                 } else {
@@ -417,20 +425,16 @@ public class BomGeneratorMojo extends AbstractMojo {
 
     private String comparisonKey(Dependency dependency) {
         return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
-               + (dependency.getType() != null ? dependency.getType() : "jar");
+                + (dependency.getType() != null ? dependency.getType() : "jar");
     }
 
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {
 
         Artifact art = artifactFactory.createArtifact(groupId, artifactId, version, "runtime", type);
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-        buildingRequest
-                .setRemoteRepositories(remoteRepositories)
-                .setLocalRepository(localRepository);
+        buildingRequest.setRemoteRepositories(remoteRepositories).setLocalRepository(localRepository);
 
-        return artifactResolver
-                .resolveArtifact(buildingRequest, art)
-                .getArtifact();
+        return artifactResolver.resolveArtifact(buildingRequest, art).getArtifact();
     }
 
     private MavenProject loadExternalProjectPom(File pomFile) throws Exception {
@@ -443,5 +447,4 @@ public class BomGeneratorMojo extends AbstractMojo {
             return project;
         }
     }
-
 }

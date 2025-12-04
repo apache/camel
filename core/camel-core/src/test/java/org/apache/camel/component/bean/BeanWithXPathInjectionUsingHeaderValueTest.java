@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Handler;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests the XPath annotation 'header' value which when set will cause the XPath to be evaluated on the required header,
@@ -33,14 +34,20 @@ public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSuppo
 
     @Test
     public void testConstantXPathHeaders() {
-        template.sendBodyAndHeader("bean:myBean", "<response>OK</response>", "invoiceDetails",
+        template.sendBodyAndHeader(
+                "bean:myBean",
+                "<response>OK</response>",
+                "invoiceDetails",
                 "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");
 
         assertEquals("OK", myBean.response, "bean response:  " + myBean);
         assertEquals("Alan", myBean.userName, "bean userName: " + myBean);
         assertEquals("26/08/2012", myBean.date, "bean date:  " + myBean);
 
-        template.sendBodyAndHeader("bean:myBean", "<response>OK</response>", "invoiceDetails",
+        template.sendBodyAndHeader(
+                "bean:myBean",
+                "<response>OK</response>",
+                "invoiceDetails",
                 "<invoice><person><name>Jack</name><date>27/08/2012</date></person></invoice>");
 
         assertEquals("OK", myBean.response, "bean response:  " + myBean);
@@ -64,8 +71,8 @@ public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSuppo
         public void handler(
                 @XPath("//response/text()") String response,
                 @XPath(source = "header:invoiceDetails", value = "//invoice/person/name/text()") String userName,
-                @XPath(source = "header:invoiceDetails", value = "//invoice/person/date",
-                       resultType = String.class) String date) {
+                @XPath(source = "header:invoiceDetails", value = "//invoice/person/date", resultType = String.class)
+                        String date) {
             this.response = response;
             this.userName = userName;
             this.date = date;

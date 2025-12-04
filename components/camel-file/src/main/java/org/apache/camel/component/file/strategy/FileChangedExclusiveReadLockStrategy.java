@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
@@ -43,8 +44,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -69,7 +70,9 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             }
 
             if (!target.exists()) {
-                CamelLogger.log(LOG, readLockLoggingLevel,
+                CamelLogger.log(
+                        LOG,
+                        readLockLoggingLevel,
                         "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                 return false;
             }
@@ -83,9 +86,10 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             LOG.trace("New older than threshold: {}", newOlderThan);
 
             // CHECKSTYLE:OFF
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
-                    || (minAge != 0 && newLastModified < newOlderThan))) {
-            // CHECKSTYLE:ON
+            if (newLength >= minLength
+                    && ((minAge == 0 && newLastModified == lastModified && newLength == length)
+                            || (minAge != 0 && newLastModified < newOlderThan))) {
+                // CHECKSTYLE:ON
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {

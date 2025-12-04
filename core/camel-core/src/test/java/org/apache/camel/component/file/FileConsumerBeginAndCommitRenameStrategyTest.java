@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the FileRenameStrategy using preMove and move options
@@ -53,29 +54,34 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         Endpoint ep1 = context.getEndpoint(fileUri("?move=../done/${file:name}&delete=true"));
         Endpoint ep2 = context.getEndpoint(fileUri("?move=${file:name.noext}.bak&delete=true"));
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ep1.createConsumer(exchange -> {
-        }), "Should have thrown an exception");
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> ep1.createConsumer(exchange -> {}),
+                "Should have thrown an exception");
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> ep2.createConsumer(exchange -> {
-        }), "Should have thrown an exception");
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> ep2.createConsumer(exchange -> {}),
+                "Should have thrown an exception");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("reports?preMove=../inprogress/${file:name}&move=../done/${file:name}&initialDelay=0&delay=10"))
+                from(fileUri(
+                                "reports?preMove=../inprogress/${file:name}&move=../done/${file:name}&initialDelay=0&delay=10"))
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) {
-                                GenericFile<File> file
-                                        = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                                GenericFile<File> file =
+                                        (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
                                 assertNotNull(file);
                                 assertTrue(file.getRelativeFilePath().contains("inprogress"));
                             }
-                        }).to("mock:report");
+                        })
+                        .to("mock:report");
             }
         };
     }
-
 }

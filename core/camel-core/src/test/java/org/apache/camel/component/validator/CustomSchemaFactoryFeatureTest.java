@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import javax.xml.XMLConstants;
@@ -40,7 +41,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);
         v.init();
-        v.createEndpoint("validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
+        v.createEndpoint(
+                "validator:org/apache/camel/component/validator/unsecuredSchema.xsd?schemaFactory=#MySchemaFactory");
     }
-
 }

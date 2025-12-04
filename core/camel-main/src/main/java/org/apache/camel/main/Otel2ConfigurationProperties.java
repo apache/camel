@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -29,8 +30,10 @@ public class Otel2ConfigurationProperties implements BootstrapCloseable {
     private MainConfigurationProperties parent;
 
     private boolean enabled;
+
     @Metadata(defaultValue = "camel", required = true)
     private String instrumentationName = "camel";
+
     private boolean encoding;
     private String excludePatterns;
     private boolean traceProcessors;
@@ -150,5 +153,4 @@ public class Otel2ConfigurationProperties implements BootstrapCloseable {
         this.traceProcessors = traceProcessors;
         return this;
     }
-
 }

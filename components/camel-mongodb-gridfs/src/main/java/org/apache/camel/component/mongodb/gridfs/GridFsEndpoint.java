@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs;
 
 import com.mongodb.ReadPreference;
@@ -40,9 +41,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Interact with MongoDB GridFS.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS",
-             syntax = "mongodb-gridfs:connectionBean", category = { Category.DATABASE, Category.FILE },
-             headersClass = GridFsConstants.class)
+@UriEndpoint(
+        firstVersion = "2.18.0",
+        scheme = "mongodb-gridfs",
+        title = "MongoDB GridFS",
+        syntax = "mongodb-gridfs:connectionBean",
+        category = {Category.DATABASE, Category.FILE},
+        headersClass = GridFsConstants.class)
 public class GridFsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
@@ -50,13 +55,17 @@ public class GridFsEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String connectionBean;
+
     @UriParam
     @Metadata(required = true)
     private String database;
+
     @UriParam(defaultValue = "fs")
     private String bucket;
+
     @UriParam(enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
     private WriteConcern writeConcern;
+
     @UriParam
     private ReadPreference readPreference;
 
@@ -65,16 +74,22 @@ public class GridFsEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "consumer")
     private String query;
+
     @UriParam(label = "consumer", defaultValue = "1000", javaType = "java.time.Duration")
     private long initialDelay = 1000;
+
     @UriParam(label = "consumer", defaultValue = "500", javaType = "java.time.Duration")
     private long delay = 500;
+
     @UriParam(label = "consumer", defaultValue = "TimeStamp")
     private QueryStrategy queryStrategy = QueryStrategy.TimeStamp;
+
     @UriParam(label = "consumer", defaultValue = "camel-timestamps")
     private String persistentTSCollection = "camel-timestamps";
+
     @UriParam(label = "consumer", defaultValue = "camel-timestamp")
     private String persistentTSObject = "camel-timestamp";
+
     @UriParam(label = "consumer", defaultValue = "camel-processed")
     private String fileAttributeName = "camel-processed";
 
@@ -106,7 +121,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
         }
         db = mongoConnection.getDatabase(database);
         if (db == null) {
-            throw new IllegalStateException("Could not initialize GridFsComponent. Database " + database + " does not exist.");
+            throw new IllegalStateException(
+                    "Could not initialize GridFsComponent. Database " + database + " does not exist.");
         }
 
         if (bucket != null) {

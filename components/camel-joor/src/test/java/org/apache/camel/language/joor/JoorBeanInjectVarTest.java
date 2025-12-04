@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import org.apache.camel.BindToRegistry;
@@ -33,7 +34,8 @@ public class JoorBeanInjectVarTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().joor("var bean = #bean:myEcho; return 'Hello ' + bean.echo(bodyAs(String))")
+                        .transform()
+                        .joor("var bean = #bean:myEcho; return 'Hello ' + bean.echo(bodyAs(String))")
                         .to("mock:result");
             }
         };
@@ -48,5 +50,4 @@ public class JoorBeanInjectVarTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

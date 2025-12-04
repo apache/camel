@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats;
 
 import java.util.Map;
@@ -29,8 +30,10 @@ public class NatsComponent extends HeaderFilterStrategyComponent implements SSLC
 
     @Metadata
     private String servers;
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+
     @Metadata
     private boolean verbose;
 

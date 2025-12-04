@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.time.Duration;
 import java.util.Date;
@@ -44,8 +47,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.TimeUtils;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 /**
  * A number of helper methods
  */
@@ -56,8 +57,7 @@ public final class CamelContextHelper {
     /**
      * Utility classes should not have a public constructor.
      */
-    private CamelContextHelper() {
-    }
+    private CamelContextHelper() {}
 
     /**
      * Whether the given configuration property contains a sensitive key (such as password, accesstoken, etc.)
@@ -89,8 +89,7 @@ public final class CamelContextHelper {
      * Returns the mandatory endpoint for the given URI or the {@link org.apache.camel.NoSuchEndpointException} is
      * thrown
      */
-    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri)
-            throws NoSuchEndpointException {
+    public static Endpoint getMandatoryEndpoint(CamelContext camelContext, String uri) throws NoSuchEndpointException {
         Endpoint endpoint = camelContext.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
@@ -203,7 +202,8 @@ public final class CamelContextHelper {
     public static <T> T mandatoryConvertTo(CamelContext context, Class<T> type, Object value) {
         T answer = convertTo(context, type, value);
         if (answer == null) {
-            throw new IllegalArgumentException("Value " + value + " converted to " + type.getName() + " cannot be null");
+            throw new IllegalArgumentException(
+                    "Value " + value + " converted to " + type.getName() + " cannot be null");
         }
         return answer;
     }
@@ -374,8 +374,7 @@ public final class CamelContextHelper {
                     int size = Integer.parseInt(s);
                     if (size <= 0) {
                         throw new IllegalArgumentException(
-                                "Property " + property + " must be a positive number, was: "
-                                                           + s);
+                                "Property " + property + " must be a positive number, was: " + s);
                     }
                     return size;
                 } catch (NumberFormatException e) {
@@ -655,9 +654,7 @@ public final class CamelContextHelper {
      * @return              the existing endpoints that match the predicate.
      */
     public static List<Endpoint> getEndpoints(CamelContext camelContext, Predicate<Endpoint> predicate) {
-        return camelContext.getEndpoints().stream()
-                .filter(predicate)
-                .toList();
+        return camelContext.getEndpoints().stream().filter(predicate).toList();
     }
 
     private static void validateRestConfigurationComponent(String component, String configurationComponent) {
@@ -666,9 +663,8 @@ public final class CamelContextHelper {
         }
 
         if (!Objects.equals(component, configurationComponent)) {
-            throw new IllegalArgumentException(
-                    "No RestConfiguration for component: " + component + " found, RestConfiguration targets: "
-                                               + configurationComponent);
+            throw new IllegalArgumentException("No RestConfiguration for component: " + component
+                    + " found, RestConfiguration targets: " + configurationComponent);
         }
     }
 
@@ -708,5 +704,4 @@ public final class CamelContextHelper {
 
         return clock.asDate();
     }
-
 }

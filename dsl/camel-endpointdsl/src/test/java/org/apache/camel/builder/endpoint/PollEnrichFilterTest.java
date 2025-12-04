@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 
@@ -24,8 +27,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class PollEnrichFilterTest extends BaseEndpointDslTest {
 
@@ -55,15 +56,16 @@ public class PollEnrichFilterTest extends BaseEndpointDslTest {
             @Override
             public void configure() {
                 from(direct("start"))
-                        .pollEnrich(file(TEST_DATA_DIR).noop(true).filter(new GenericFileFilter<File>() {
-                            @Override
-                            public boolean accept(GenericFile<File> file) {
-                                return file.getFileName().startsWith("my");
-                            }
-                        }), 1000)
+                        .pollEnrich(
+                                file(TEST_DATA_DIR).noop(true).filter(new GenericFileFilter<File>() {
+                                    @Override
+                                    public boolean accept(GenericFile<File> file) {
+                                        return file.getFileName().startsWith("my");
+                                    }
+                                }),
+                                1000)
                         .to(mock("result"));
             }
         };
     }
-
 }

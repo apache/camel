@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.secret.manager;
 
 import java.time.Instant;
@@ -71,7 +72,8 @@ public class GoogleSecretManagerDevConsole extends AbstractDevConsole {
             } else {
                 sb.append("\n    Login: Service Account Key File");
             }
-            GcpVaultConfiguration gcp = getCamelContext().getVaultConfiguration().getGcpVaultConfiguration();
+            GcpVaultConfiguration gcp =
+                    getCamelContext().getVaultConfiguration().getGcpVaultConfiguration();
             if (gcp != null) {
                 sb.append(String.format("\n    Refresh Enabled: %s", gcp.isRefreshEnabled()));
                 sb.append(String.format("\n    Refresh Period: %s", gcp.getRefreshPeriod()));
@@ -90,7 +92,9 @@ public class GoogleSecretManagerDevConsole extends AbstractDevConsole {
             Collections.sort(sorted);
 
             for (String sec : sorted) {
-                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                Instant last = secretsRefreshTask != null
+                        ? secretsRefreshTask.getUpdates().get(sec)
+                        : null;
                 String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
                 if (age != null) {
                     sb.append(String.format("\n    %s (age: %s)", sec, age));
@@ -112,7 +116,8 @@ public class GoogleSecretManagerDevConsole extends AbstractDevConsole {
             } else {
                 root.put("login", "Service Account Key File");
             }
-            GcpVaultConfiguration gcp = getCamelContext().getVaultConfiguration().getGcpVaultConfiguration();
+            GcpVaultConfiguration gcp =
+                    getCamelContext().getVaultConfiguration().getGcpVaultConfiguration();
             if (gcp != null) {
                 root.put("refreshEnabled", gcp.isRefreshEnabled());
                 root.put("refreshPeriod", gcp.getRefreshPeriod());
@@ -140,7 +145,9 @@ public class GoogleSecretManagerDevConsole extends AbstractDevConsole {
             for (String sec : sorted) {
                 JsonObject jo = new JsonObject();
                 jo.put("name", sec);
-                Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
+                Instant last = secretsRefreshTask != null
+                        ? secretsRefreshTask.getUpdates().get(sec)
+                        : null;
                 if (last != null) {
                     long timestamp = last.toEpochMilli();
                     jo.put("timestamp", timestamp);

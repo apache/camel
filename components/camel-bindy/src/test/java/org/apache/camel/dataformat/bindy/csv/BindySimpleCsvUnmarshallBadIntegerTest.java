@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -28,9 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -89,13 +90,12 @@ public class BindySimpleCsvUnmarshallBadIntegerTest {
         Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         assertIsInstanceOf(Exception.class, cause.getCause());
         assertEquals("Parsing error detected for field defined at the position: 1, line: 1", cause.getMessage());
-
     }
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat orderBindyDataFormat
-                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
+        BindyCsvDataFormat orderBindyDataFormat =
+                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
 
         @Override
         public void configure() {
@@ -106,8 +106,6 @@ public class BindySimpleCsvUnmarshallBadIntegerTest {
             onException(Exception.class).maximumRedeliveries(0).handled(true);
 
             from(URI_DIRECT_START).unmarshal(orderBindyDataFormat).to(URI_MOCK_RESULT);
-
         }
-
     }
 }

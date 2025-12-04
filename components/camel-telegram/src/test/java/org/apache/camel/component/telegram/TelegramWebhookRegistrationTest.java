@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.awaitility.Awaitility.waitAtMost;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -34,9 +38,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.waitAtMost;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Tests a producer that sends media information.
  */
@@ -44,23 +45,24 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
 
     @Test
     public void testAutomaticRegistration() throws Exception {
-        final MockProcessor<String> mockProcessor = getMockRoutes().getMock("setWebhook?url=http://my-domain.com/my-test");
+        final MockProcessor<String> mockProcessor =
+                getMockRoutes().getMock("setWebhook?url=http://my-domain.com/my-test");
         mockProcessor.clearRecordedMessages();
         try (final DefaultCamelContext mockContext = new DefaultCamelContext()) {
             mockContext.addRoutes(getMockRoutes());
             mockContext.start();
 
             /* Make sure the Telegram mock API is up and running */
-            Awaitility.await()
-                    .atMost(5, TimeUnit.SECONDS)
-                    .until(() -> {
-                        HttpClient client = HttpClient.newBuilder().build();
-                        HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create("http://localhost:" + port + "/botmock-token/getTest")).GET().build();
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+                HttpClient client = HttpClient.newBuilder().build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + port + "/botmock-token/getTest"))
+                        .GET()
+                        .build();
 
-                        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        return response.statusCode() == 200;
-                    });
+                final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                return response.statusCode() == 200;
+            });
 
             context().addRoutes(new RouteBuilder() {
                 @Override
@@ -80,34 +82,35 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
             mockProcessor.clearRecordedMessages();
 
             context().stop();
-
         }
     }
 
     @Test
     public void testNoRegistration() throws Exception {
-        final MockProcessor<String> mockProcessor = getMockRoutes().getMock("setWebhook?url=http://my-domain.com/my-test");
+        final MockProcessor<String> mockProcessor =
+                getMockRoutes().getMock("setWebhook?url=http://my-domain.com/my-test");
         mockProcessor.clearRecordedMessages();
         try (final DefaultCamelContext mockContext = new DefaultCamelContext()) {
             mockContext.addRoutes(getMockRoutes());
             mockContext.start();
 
             /* Make sure the Telegram mock API is up and running */
-            Awaitility.await()
-                    .atMost(5, TimeUnit.SECONDS)
-                    .until(() -> {
-                        HttpClient client = HttpClient.newBuilder().build();
-                        HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create("http://localhost:" + port + "/botmock-token/getTest")).GET().build();
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
+                HttpClient client = HttpClient.newBuilder().build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:" + port + "/botmock-token/getTest"))
+                        .GET()
+                        .build();
 
-                        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        return response.statusCode() == 200;
-                    });
+                final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                return response.statusCode() == 200;
+            });
 
             context().addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false").to("mock:endpoint");
+                    from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false")
+                            .to("mock:endpoint");
                 }
             });
             context().start();
@@ -123,7 +126,6 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
             Awaitility.await()
                     .pollDelay(500, TimeUnit.MILLISECONDS)
                     .until(() -> mockProcessor.getRecordedMessages().size() == 0);
-
         }
     }
 
@@ -133,21 +135,13 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
         result.setOk(true);
         result.setResult(true);
         return new TelegramMockRoutes(port)
-                .addEndpoint(
-                        "getTest",
-                        "GET",
-                        String.class,
-                        "running")
+                .addEndpoint("getTest", "GET", String.class, "running")
                 .addEndpoint(
                         "setWebhook?url=http://my-domain.com/my-test",
                         "GET",
                         String.class,
                         TelegramTestUtil.serialize(result))
-                .addEndpoint(
-                        "deleteWebhook",
-                        "GET",
-                        String.class,
-                        TelegramTestUtil.serialize(result));
+                .addEndpoint("deleteWebhook", "GET", String.class, TelegramTestUtil.serialize(result));
     }
 
     @Override

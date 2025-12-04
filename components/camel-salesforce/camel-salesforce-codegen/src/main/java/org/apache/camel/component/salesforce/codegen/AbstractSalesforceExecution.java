@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.codegen;
 
 import java.io.IOException;
@@ -304,8 +305,7 @@ public abstract class AbstractSalesforceExecution {
 
         // set session before calling start()
         final SalesforceSession session = new SalesforceSession(
-                new DefaultCamelContext(), httpClient, httpClient.getTimeout(),
-                getSalesforceLoginSession());
+                new DefaultCamelContext(), httpClient, httpClient.getTimeout(), getSalesforceLoginSession());
         httpClient.setSession(session);
 
         try {
@@ -319,8 +319,8 @@ public abstract class AbstractSalesforceExecution {
 
     private SalesforceLoginConfig getSalesforceLoginSession() {
         if (keyStoreParameters != null) {
-            SalesforceLoginConfig salesforceLoginConfig
-                    = new SalesforceLoginConfig(loginUrl, clientId, userName, keyStoreParameters, false);
+            SalesforceLoginConfig salesforceLoginConfig =
+                    new SalesforceLoginConfig(loginUrl, clientId, userName, keyStoreParameters, false);
             salesforceLoginConfig.setJwtAudience(jwtAudience);
 
             return salesforceLoginConfig;
@@ -334,7 +334,8 @@ public abstract class AbstractSalesforceExecution {
         }
 
         try {
-            final SalesforceHttpClient httpClient = (SalesforceHttpClient) ((DefaultRestClient) restClient).getHttpClient();
+            final SalesforceHttpClient httpClient =
+                    (SalesforceHttpClient) ((DefaultRestClient) restClient).getHttpClient();
             ServiceHelper.stopAndShutdownServices(restClient, httpClient.getSession(), httpClient);
         } catch (final Exception e) {
             getLog().error("Error stopping Salesforce HTTP client", e);
@@ -437,6 +438,5 @@ public abstract class AbstractSalesforceExecution {
 
     protected abstract Logger getLog();
 
-    public void setup() {
-    }
+    public void setup() {}
 }

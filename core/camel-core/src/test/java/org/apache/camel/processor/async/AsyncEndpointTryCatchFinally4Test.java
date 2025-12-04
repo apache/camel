@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AsyncEndpointTryCatchFinally4Test extends ContextTestSupport {
 
@@ -44,11 +45,18 @@ public class AsyncEndpointTryCatchFinally4Test extends ContextTestSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").doTry().to("mock:try").doCatch(IllegalArgumentException.class).to("mock:catch")
-                        .to("async:bye:camel").doFinally().to("mock:finally")
-                        .to("async:bye:world").end().to("mock:result");
+                from("direct:start")
+                        .doTry()
+                        .to("mock:try")
+                        .doCatch(IllegalArgumentException.class)
+                        .to("mock:catch")
+                        .to("async:bye:camel")
+                        .doFinally()
+                        .to("mock:finally")
+                        .to("async:bye:world")
+                        .end()
+                        .to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tika;
 
 import java.io.ByteArrayOutputStream;
@@ -91,7 +92,8 @@ public class TikaProducer extends DefaultProducer {
                 result = doParse(exchange);
                 break;
             default:
-                throw new IllegalArgumentException(String.format("Unknown operation %s", tikaConfiguration.getOperation()));
+                throw new IllegalArgumentException(
+                        String.format("Unknown operation %s", tikaConfiguration.getOperation()));
         }
         // propagate headers
         exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
@@ -163,9 +165,7 @@ public class TikaProducer extends DefaultProducer {
         return result;
     }
 
-    private TransformerHandler getTransformerHandler(
-            OutputStream output, String method,
-            boolean prettyPrint)
+    private TransformerHandler getTransformerHandler(OutputStream output, String method, boolean prettyPrint)
             throws TransformerConfigurationException, UnsupportedEncodingException {
         SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);

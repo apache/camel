@@ -17,5 +17,4 @@
 
 package org.apache.camel.component.zeebe.model;
 
-public interface ZeebeMessage {
-}
+public interface ZeebeMessage {}

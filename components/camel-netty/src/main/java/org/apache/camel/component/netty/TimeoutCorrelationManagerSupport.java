@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty;
 
 import java.util.concurrent.ExecutorService;
@@ -177,8 +178,9 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
         timeoutLogger = new CamelLogger(LOG, timeoutLoggingLevel);
 
         if (scheduledExecutorService == null) {
-            scheduledExecutorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "NettyTimeoutCorrelationManager");
+            scheduledExecutorService = camelContext
+                    .getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "NettyTimeoutCorrelationManager");
             stopScheduledExecutorService = true;
         }
         if (workerPool == null) {
@@ -231,7 +233,8 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
             Exchange exchange = value.getExchange();
             AsyncCallback callback = value.getCallback();
             if (exchange != null && callback != null) {
-                Object timeoutBody = getTimeoutResponse(key, exchange.getMessage().getBody());
+                Object timeoutBody =
+                        getTimeoutResponse(key, exchange.getMessage().getBody());
                 if (timeoutBody != null) {
                     exchange.getMessage().setBody(timeoutBody);
                 } else {

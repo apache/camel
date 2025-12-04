@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.util.HashMap;
@@ -38,23 +39,16 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         expectedHeaders.put(HttpHeaders.HOST, CUSTOM_HOST);
 
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register(CUSTOM_HOST, "*",
-                        new HeaderValidationHandler(
-                                "GET",
-                                null,
-                                null,
-                                getExpectedContent(),
-                                expectedHeaders))
-                .register("*",
-                        new HeaderValidationHandler(
-                                "GET",
-                                null,
-                                null,
-                                getExpectedContent(),
-                                null))
+                .register(
+                        CUSTOM_HOST,
+                        "*",
+                        new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders))
+                .register("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), null))
                 .create();
 
         localServer.start();
@@ -74,9 +68,8 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
 
-        HttpEndpoint endpoint = (HttpEndpoint) component
-                .createEndpoint(
-                        "http://localhost:" + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
+        HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint(
+                "http://localhost:" + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
         try (HttpProducer producer = new HttpProducer(endpoint)) {
             Exchange exchange = producer.createExchange();
             exchange.getIn().setBody(null);
@@ -95,9 +88,8 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
 
-        HttpEndpoint endpoint
-                = (HttpEndpoint) component.createEndpoint("http://localhost:"
-                                                          + localServer.getLocalPort() + "/myget");
+        HttpEndpoint endpoint =
+                (HttpEndpoint) component.createEndpoint("http://localhost:" + localServer.getLocalPort() + "/myget");
         try (HttpProducer producer = new HttpProducer(endpoint)) {
             Exchange exchange = producer.createExchange();
             exchange.getIn().setBody(null);

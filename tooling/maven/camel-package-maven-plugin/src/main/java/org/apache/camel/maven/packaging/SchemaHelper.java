@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.util.Locale;
@@ -27,8 +28,7 @@ import org.apache.maven.project.MavenProject;
 
 public final class SchemaHelper {
 
-    private SchemaHelper() {
-    }
+    private SchemaHelper() {}
 
     /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -74,11 +75,19 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0))
-                        .process(outer).to("direct:outer");
+                from("direct:start")
+                        .errorHandler(deadLetterChannel("mock:outer")
+                                .maximumRedeliveries(1)
+                                .redeliveryDelay(0))
+                        .process(outer)
+                        .to("direct:outer");
 
-                from("direct:outer").errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliveryDelay(0))
-                        .process(inner).to("mock:end");
+                from("direct:outer")
+                        .errorHandler(deadLetterChannel("mock:inner")
+                                .maximumRedeliveries(2)
+                                .redeliveryDelay(0))
+                        .process(inner)
+                        .to("mock:end");
             }
         };
     }
@@ -99,5 +108,4 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
             this.name = name;
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +34,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CreateInstanceRmq2Test extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -40,9 +41,8 @@ public class CreateInstanceRmq2Test extends CamelTestSupport {
     DmsClient mockClient = Mockito.mock(DmsClient.class);
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys = new ServiceKeys(
-            testConfiguration.getProperty("accessKey"),
-            testConfiguration.getProperty("secretKey"));
+    ServiceKeys serviceKeys =
+            new ServiceKeys(testConfiguration.getProperty("accessKey"), testConfiguration.getProperty("secretKey"));
 
     @BindToRegistry("availableZones")
     List<String> availableZones = new ArrayList<>();
@@ -54,25 +54,27 @@ public class CreateInstanceRmq2Test extends CamelTestSupport {
                 from("direct:operation")
                         .setProperty(DMSProperties.NAME, constant(testConfiguration.getProperty("name")))
                         .setProperty(DMSProperties.ENGINE, constant("rabbitmq"))
-                        .setProperty(DMSProperties.ENGINE_VERSION, constant(testConfiguration.getProperty("engineVersion")))
+                        .setProperty(
+                                DMSProperties.ENGINE_VERSION, constant(testConfiguration.getProperty("engineVersion")))
                         .setProperty(DMSProperties.STORAGE_SPACE, constant(1000))
                         .setProperty(DMSProperties.ACCESS_USER, constant(testConfiguration.getProperty("accessUser")))
                         .setProperty(DMSProperties.PASSWORD, constant(testConfiguration.getProperty("password")))
                         .setProperty(DMSProperties.VPC_ID, constant(testConfiguration.getProperty("vpcId")))
-                        .setProperty(DMSProperties.SECURITY_GROUP_ID,
+                        .setProperty(
+                                DMSProperties.SECURITY_GROUP_ID,
                                 constant(testConfiguration.getProperty("securityGroupId")))
                         .setProperty(DMSProperties.SUBNET_ID, constant(testConfiguration.getProperty("subnetId")))
                         .setProperty(DMSProperties.AVAILABLE_ZONES, constant(availableZones))
                         .setProperty(DMSProperties.PRODUCT_ID, constant(testConfiguration.getProperty("productId")))
-                        .setProperty(DMSProperties.STORAGE_SPEC_CODE,
+                        .setProperty(
+                                DMSProperties.STORAGE_SPEC_CODE,
                                 constant(testConfiguration.getProperty("storageSpecCode")))
-                        .to("hwcloud-dms:createInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + testConfiguration.getProperty("projectId") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&instanceId=" + testConfiguration.getProperty("instanceId") +
-                            "&ignoreSslVerification=true" +
-                            "&dmsClient=#dmsClient")
+                        .to("hwcloud-dms:createInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + testConfiguration.getProperty("projectId") + "&region="
+                                + testConfiguration.getProperty("region") + "&instanceId="
+                                + testConfiguration.getProperty("instanceId") + "&ignoreSslVerification=true"
+                                + "&dmsClient=#dmsClient")
                         .log("Operation successful")
                         .to("mock:operation_result");
             }
@@ -81,10 +83,10 @@ public class CreateInstanceRmq2Test extends CamelTestSupport {
 
     @Test
     public void testOperation() throws Exception {
-        CreateInstanceResponse response = new CreateInstanceResponse()
-                .withInstanceId("test-instance-id");
+        CreateInstanceResponse response = new CreateInstanceResponse().withInstanceId("test-instance-id");
 
-        Mockito.when(mockClient.createInstance(Mockito.any(CreateInstanceRequest.class))).thenReturn(response);
+        Mockito.when(mockClient.createInstance(Mockito.any(CreateInstanceRequest.class)))
+                .thenReturn(response);
 
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
@@ -96,7 +98,8 @@ public class CreateInstanceRmq2Test extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("{\"instance_id\":\"test-instance-id\"}",
+        assertEquals(
+                "{\"instance_id\":\"test-instance-id\"}",
                 responseExchange.getIn().getBody(String.class));
     }
 }

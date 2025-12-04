@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,9 +31,6 @@ import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
@@ -63,17 +64,22 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        mbeanServer.invoke(on, "setGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1" },
-                new String[] { "java.lang.String", "java.lang.String" });
-        mbeanServer.invoke(on, "setGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_STREAMS, "true" },
-                new String[] { "java.lang.String", "java.lang.String" });
+        mbeanServer.invoke(on, "setGlobalOption", new String[] {Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1"}, new String[] {
+            "java.lang.String", "java.lang.String"
+        });
+        mbeanServer.invoke(on, "setGlobalOption", new String[] {Exchange.LOG_DEBUG_BODY_STREAMS, "true"}, new String[] {
+            "java.lang.String", "java.lang.String"
+        });
 
-        Object invoke = mbeanServer.invoke(on, "getGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_MAX_CHARS },
-                new String[] { "java.lang.String" });
+        Object invoke = mbeanServer.invoke(
+                on, "getGlobalOption", new String[] {Exchange.LOG_DEBUG_BODY_MAX_CHARS}, new String[] {
+                    "java.lang.String"
+                });
         assertEquals("-1", invoke);
 
-        invoke = mbeanServer.invoke(on, "getGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_STREAMS },
-                new String[] { "java.lang.String" });
+        invoke = mbeanServer.invoke(
+                on, "getGlobalOption", new String[] {Exchange.LOG_DEBUG_BODY_STREAMS}, new String[] {"java.lang.String"
+                });
         assertEquals("true", invoke);
     }
 
@@ -83,9 +89,7 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start").to("mock:result");
-
             }
         };
     }
-
 }

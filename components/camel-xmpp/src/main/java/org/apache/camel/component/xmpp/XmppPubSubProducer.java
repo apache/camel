@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.Exchange;
@@ -53,9 +54,11 @@ public class XmppPubSubProducer extends DefaultProducer {
         } catch (XMPPException e) {
             throw new RuntimeExchangeException(
                     "Cannot connect to XMPP Server: "
-                                               + ((connection != null)
-                                                       ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()),
-                    exchange, e);
+                            + ((connection != null)
+                                    ? XmppEndpoint.getConnectionMessage(connection)
+                                    : endpoint.getHost()),
+                    exchange,
+                    e);
         }
 
         try {
@@ -70,10 +73,10 @@ public class XmppPubSubProducer extends DefaultProducer {
             }
         } catch (XMPPException xmppe) {
             throw new RuntimeExchangeException(
-                    "Cannot send XMPP pubsub: from " + endpoint.getUser()
-                                               + " to: " + XmppEndpoint.getConnectionMessage(connection),
-                    exchange, xmppe);
+                    "Cannot send XMPP pubsub: from " + endpoint.getUser() + " to: "
+                            + XmppEndpoint.getConnectionMessage(connection),
+                    exchange,
+                    xmppe);
         }
     }
-
 }

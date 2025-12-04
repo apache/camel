@@ -25,9 +25,7 @@ import java.io.StringWriter;
  */
 public class ExceptionHelper {
 
-    private ExceptionHelper() {
-
-    }
+    private ExceptionHelper() {}
 
     /**
      * Dumps the stack trace from the given exception to a String

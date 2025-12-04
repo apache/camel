@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.cassandra.integration;
 
+import static org.apache.camel.component.cassandra.CassandraConstants.CASSANDRA_RESUME_ACTION;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,9 +31,6 @@ import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.resume.ResumeAction;
 import org.apache.camel.resume.ResumeActionAware;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.cassandra.CassandraConstants.CASSANDRA_RESUME_ACTION;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CassandraComponentResumeStrategyIT extends BaseCassandra {
 

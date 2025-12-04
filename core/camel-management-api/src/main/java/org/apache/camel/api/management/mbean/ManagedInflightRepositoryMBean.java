@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -26,7 +27,9 @@ public interface ManagedInflightRepositoryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Current size of inflight exchanges.")
     int getSize();
 
-    @ManagedAttribute(description = "Whether browsing inflight exchanges is enabled. This is required to be enabled for the browse operations to function.")
+    @ManagedAttribute(
+            description =
+                    "Whether browsing inflight exchanges is enabled. This is required to be enabled for the browse operations to function.")
     boolean isInflightBrowseEnabled();
 
     @ManagedOperation(description = "Current size of inflight exchanges which are from the given route.")
@@ -38,7 +41,8 @@ public interface ManagedInflightRepositoryMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Lists all the exchanges which are currently inflight, limited and sorted")
     TabularData browse(int limit, boolean sortByLongestDuration);
 
-    @ManagedOperation(description = "List all the exchanges that origins from the given route, which are currently inflight, limited and sorted")
+    @ManagedOperation(
+            description =
+                    "List all the exchanges that origins from the given route, which are currently inflight, limited and sorted")
     TabularData browse(String fromRouteId, int limit, boolean sortByLongestDuration);
-
 }

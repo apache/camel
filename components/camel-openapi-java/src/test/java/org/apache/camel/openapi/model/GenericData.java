@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 /**
  * Generic interface used to validate that inheritance and generics also works with the camel open-api compoment
  */
-interface GenericData {
-}
+interface GenericData {}

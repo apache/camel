@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.xml;
 
 import java.util.LinkedHashSet;
@@ -57,16 +58,22 @@ import org.springframework.core.Ordered;
 public class CamelBeanPostProcessor
         implements org.apache.camel.spi.CamelBeanPostProcessor, BeanPostProcessor, ApplicationContextAware, Ordered {
     private static final Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
+
     @XmlTransient
     Set<String> prototypeBeans = new LinkedHashSet<>();
+
     @XmlTransient
     private CamelContext camelContext;
+
     @XmlTransient
     private ApplicationContext applicationContext;
+
     @XmlTransient
     private String camelId;
+
     @XmlTransient
     private boolean bindToRegistrySupported;
+
     @XmlTransient
     private Predicate<BindToRegistry> lazyBeanStrategy;
 
@@ -78,7 +85,9 @@ public class CamelBeanPostProcessor
         public CamelContext getOrLookupCamelContext() {
             if (camelContext == null) {
                 if (camelId != null) {
-                    LOG.trace("Looking up CamelContext by id: {} from Spring ApplicationContext: {}", camelId,
+                    LOG.trace(
+                            "Looking up CamelContext by id: {} from Spring ApplicationContext: {}",
+                            camelId,
                             applicationContext);
                     camelContext = applicationContext.getBean(camelId, CamelContext.class);
                 } else {
@@ -130,7 +139,9 @@ public class CamelBeanPostProcessor
                     protected RuntimeException createProxyInstantiationRuntimeException(
                             Class<?> type, Endpoint endpoint, Exception e) {
                         return new BeanInstantiationException(
-                                type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
+                                type,
+                                "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint,
+                                e);
                     }
 
                     @Override
@@ -154,10 +165,12 @@ public class CamelBeanPostProcessor
                             ServiceHelper.startService(service);
                             if (prototypeBeans.add(beanName)) {
                                 // do not spam the log with WARN so do this only once per bean name
-                                CamelBeanPostProcessor.LOG
-                                        .warn("The bean with id [{}] is prototype scoped and cannot stop the injected "
-                                              + " service when bean is destroyed: {}. You may want to stop the service "
-                                              + "manually from the bean.", beanName, service);
+                                CamelBeanPostProcessor.LOG.warn(
+                                        "The bean with id [{}] is prototype scoped and cannot stop the injected "
+                                                + " service when bean is destroyed: {}. You may want to stop the service "
+                                                + "manually from the bean.",
+                                        beanName,
+                                        service);
                             }
                         }
                     }
@@ -167,8 +180,7 @@ public class CamelBeanPostProcessor
         }
     };
 
-    public CamelBeanPostProcessor() {
-    }
+    public CamelBeanPostProcessor() {}
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -248,5 +260,4 @@ public class CamelBeanPostProcessor
     public Predicate<BindToRegistry> getLazyBeanStrategy() {
         return lazyBeanStrategy;
     }
-
 }

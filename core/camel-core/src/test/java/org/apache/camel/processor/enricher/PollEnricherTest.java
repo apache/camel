@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PollEnricherTest extends ContextTestSupport {
 
@@ -133,11 +134,17 @@ public class PollEnricherTest extends ContextTestSupport {
                 // InOnly routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-1").pollEnrich("seda:foo1", aggregationStrategy).to("mock:mock");
+                from("direct:enricher-test-1")
+                        .pollEnrich("seda:foo1", aggregationStrategy)
+                        .to("mock:mock");
 
-                from("direct:enricher-test-2").pollEnrich("seda:foo2", 1000, aggregationStrategy).to("mock:mock");
+                from("direct:enricher-test-2")
+                        .pollEnrich("seda:foo2", 1000, aggregationStrategy)
+                        .to("mock:mock");
 
-                from("direct:enricher-test-3").pollEnrich("seda:foo3", -1, aggregationStrategy).to("mock:mock");
+                from("direct:enricher-test-3")
+                        .pollEnrich("seda:foo3", -1, aggregationStrategy)
+                        .to("mock:mock");
 
                 // -------------------------------------------------------------
                 // InOut routes
@@ -147,5 +154,4 @@ public class PollEnricherTest extends ContextTestSupport {
             }
         };
     }
-
 }

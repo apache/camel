@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateInstancePojoFunctionalTest extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
@@ -43,12 +44,11 @@ public class UpdateInstancePojoFunctionalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:operation")
-                        .to("hwcloud-dms:updateInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&instanceId=" + INSTANCE_ID +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-dms:updateInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&instanceId="
+                                + INSTANCE_ID + "&ignoreSslVerification=true")
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");
@@ -77,7 +77,7 @@ public class UpdateInstancePojoFunctionalTest extends CamelTestSupport {
                 .withSecurityGroupId("replace_with_new_information")
                 .withMaintainBegin("replace_with_new_information")
                 .withMaintainEnd("replace_with_new_information")
-                .withEnablePublicip(false/*replace_with_new_information*/)
+                .withEnablePublicip(false /*replace_with_new_information*/)
                 .withPublicipId("replace_with_new_information");
 
         template.sendBody("direct:operation", sampleBody);

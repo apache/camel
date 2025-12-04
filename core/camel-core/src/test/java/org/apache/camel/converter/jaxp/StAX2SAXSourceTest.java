@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.jaxp;
+
+import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -36,8 +39,6 @@ import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-
 public class StAX2SAXSourceTest extends ContextTestSupport {
 
     private static final String TEST_XML = "<root xmlns=\"urn:org.apache.camel:test\">Text</root>";
@@ -48,8 +49,8 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
     public void testDefaultPrefixInRootElementWithCopyTransformer() throws Exception {
         TransformerFactory trf = TransformerFactory.newInstance();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        XMLStreamReader reader
-                = context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, new StringReader(TEST_XML));
+        XMLStreamReader reader =
+                context.getTypeConverter().mandatoryConvertTo(XMLStreamReader.class, new StringReader(TEST_XML));
         // ensure UTF-8 encoding
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.toString());
@@ -64,5 +65,4 @@ public class StAX2SAXSourceTest extends ContextTestSupport {
         baos.flush();
         MatcherAssert.assertThat(baos.toString(), equalTo(TEST_XML));
     }
-
 }

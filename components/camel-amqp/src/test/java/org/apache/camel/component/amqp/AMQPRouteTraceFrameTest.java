@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,10 +38,6 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
@@ -73,8 +74,8 @@ public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
         System.setProperty(AMQPConnectionDetails.AMQP_PORT, String.valueOf(service.brokerPort()));
         context.getRegistry().bind("amqpConnection", discoverAMQP(context));
 
-        JmsConnectionFactory connectionFactory
-                = new JmsConnectionFactory(service.serviceAddress() + "?amqp.traceFrames=true");
+        JmsConnectionFactory connectionFactory =
+                new JmsConnectionFactory(service.serviceAddress() + "?amqp.traceFrames=true");
 
         AMQPComponent amqp = amqpComponent(service.serviceAddress());
         amqp.getConfiguration().setConnectionFactory(connectionFactory);

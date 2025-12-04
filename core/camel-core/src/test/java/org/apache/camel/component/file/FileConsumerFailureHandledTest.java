@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,9 +31,6 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for consuming files but the exchange fails and is handled by the failure handler (usually the
@@ -112,17 +113,23 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
             public void configure() {
                 // make sure mock:error is the dead letter channel
                 // use no delay for fast unit testing
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error")
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false));
 
                 // special for not handled when we got beer
-                onException(ValidationException.class).onWhen(exceptionMessage().contains("beer")).handled(false)
+                onException(ValidationException.class)
+                        .onWhen(exceptionMessage().contains("beer"))
+                        .handled(false)
                         .to("mock:beer");
 
                 // special failure handler for ValidationException
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from(fileUri("?initialDelay=0&delay=10&delete=true")).process(new MyValidatorProcessor())
+                from(fileUri("?initialDelay=0&delay=10&delete=true"))
+                        .process(new MyValidatorProcessor())
                         .to("mock:valid");
             }
         };
@@ -142,5 +149,4 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
             exchange.getMessage().setBody("Hello " + body);
         }
     }
-
 }

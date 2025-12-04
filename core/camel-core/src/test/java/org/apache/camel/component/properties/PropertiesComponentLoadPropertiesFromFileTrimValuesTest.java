@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Writer;
 import java.nio.file.Files;
@@ -22,8 +25,6 @@ import java.nio.file.Files;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends ContextTestSupport {
 
@@ -34,15 +35,15 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         // create space.properties file
         try (Writer w = Files.newBufferedWriter(testFile("space.properties"))) {
             String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS
-                          + "cool.both= Both leading and trailing space " + LS;
+                    + "cool.both= Both leading and trailing space " + LS;
             w.write(cool);
 
-            String space
-                    = "space.leading=   \\r\\n" + LS + "space.trailing=\\t   " + LS + "space.both=  \\r   \\t  \\n   " + LS;
+            String space = "space.leading=   \\r\\n" + LS + "space.trailing=\\t   " + LS
+                    + "space.both=  \\r   \\t  \\n   " + LS;
             w.write(space);
 
             String mixed = "mixed.leading=   Leading space\\r\\n" + LS + "mixed.trailing=Trailing space\\t   " + LS
-                           + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   " + LS;
+                    + "mixed.both=  Both leading and trailing space\\r   \\t  \\n   " + LS;
             w.write(mixed);
 
             String empty = "empty.line=                               ";
@@ -65,9 +66,9 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
 
         assertEquals("Leading space\r\n", context.resolvePropertyPlaceholders("{{mixed.leading}}"));
         assertEquals("Trailing space\t", context.resolvePropertyPlaceholders("{{mixed.trailing}}"));
-        assertEquals("Both leading and trailing space\r   \t  \n", context.resolvePropertyPlaceholders("{{mixed.both}}"));
+        assertEquals(
+                "Both leading and trailing space\r   \t  \n", context.resolvePropertyPlaceholders("{{mixed.both}}"));
 
         assertEquals("", context.resolvePropertyPlaceholders("{{empty.line}}"));
     }
-
 }

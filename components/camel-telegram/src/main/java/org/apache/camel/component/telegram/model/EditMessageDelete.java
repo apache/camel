@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,9 +46,6 @@ public class EditMessageDelete extends OutgoingMessage {
 
     @Override
     public String toString() {
-        return "EditMessageDelete{"
-               + "messageId=" + messageId
-               + ", chatId='" + chatId + '\''
-               + '}';
+        return "EditMessageDelete{" + "messageId=" + messageId + ", chatId='" + chatId + '\'' + '}';
     }
 }

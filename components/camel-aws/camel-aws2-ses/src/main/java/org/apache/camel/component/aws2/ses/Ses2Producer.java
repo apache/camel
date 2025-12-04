@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ses;
 
 import java.io.ByteArrayOutputStream;
@@ -97,8 +98,8 @@ public class Ses2Producer extends DefaultProducer {
     }
 
     private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange) {
-        software.amazon.awssdk.services.ses.model.Message.Builder message
-                = software.amazon.awssdk.services.ses.model.Message.builder();
+        software.amazon.awssdk.services.ses.model.Message.Builder message =
+                software.amazon.awssdk.services.ses.model.Message.builder();
         String content;
         if (exchange.getIn().getBody() instanceof RawMessage raw) {
             content = raw.data().toString();
@@ -107,17 +108,19 @@ public class Ses2Producer extends DefaultProducer {
         }
         boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
         if (isHtmlEmail) {
-            message.body(Body.builder().html(Content.builder().data(content).build()).build());
+            message.body(
+                    Body.builder().html(Content.builder().data(content).build()).build());
         } else {
-            message.body(Body.builder().text(Content.builder().data(content).build()).build());
+            message.body(
+                    Body.builder().text(Content.builder().data(content).build()).build());
         }
         message.subject(Content.builder().data(determineSubject(exchange)).build());
         return message.build();
     }
 
     private software.amazon.awssdk.services.ses.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
-        software.amazon.awssdk.services.ses.model.RawMessage.Builder message
-                = software.amazon.awssdk.services.ses.model.RawMessage.builder();
+        software.amazon.awssdk.services.ses.model.RawMessage.Builder message =
+                software.amazon.awssdk.services.ses.model.RawMessage.builder();
         jakarta.mail.Message content = exchange.getIn().getBody(jakarta.mail.Message.class);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         content.writeTo(bos);
@@ -131,9 +134,7 @@ public class Ses2Producer extends DefaultProducer {
             replyToAddresses = getConfiguration().getReplyToAddresses();
         }
         if (ObjectHelper.isNotEmpty(replyToAddresses)) {
-            return Stream.of(replyToAddresses.split(","))
-                    .map(String::trim)
-                    .toList();
+            return Stream.of(replyToAddresses.split(",")).map(String::trim).toList();
         } else {
             return Collections.emptyList();
         }
@@ -151,7 +152,11 @@ public class Ses2Producer extends DefaultProducer {
         List<String> to = determineRawTo(exchange);
         List<String> cc = determineRawCc(exchange);
         List<String> bcc = determineRawBcc(exchange);
-        return Destination.builder().toAddresses(to).ccAddresses(cc).bccAddresses(bcc).build();
+        return Destination.builder()
+                .toAddresses(to)
+                .ccAddresses(cc)
+                .bccAddresses(bcc)
+                .build();
     }
 
     private List<String> determineRawCc(Exchange exchange) {
@@ -160,9 +165,7 @@ public class Ses2Producer extends DefaultProducer {
             cc = getConfiguration().getCc();
         }
         if (ObjectHelper.isNotEmpty(cc)) {
-            return Stream.of(cc.split(","))
-                    .map(String::trim)
-                    .toList();
+            return Stream.of(cc.split(",")).map(String::trim).toList();
         } else {
             return Collections.emptyList();
         }
@@ -174,9 +177,7 @@ public class Ses2Producer extends DefaultProducer {
             bcc = getConfiguration().getBcc();
         }
         if (ObjectHelper.isNotEmpty(bcc)) {
-            return Stream.of(bcc.split(","))
-                    .map(String::trim)
-                    .toList();
+            return Stream.of(bcc.split(",")).map(String::trim).toList();
         } else {
             return Collections.emptyList();
         }
@@ -188,9 +189,7 @@ public class Ses2Producer extends DefaultProducer {
             to = getConfiguration().getTo();
         }
         if (ObjectHelper.isNotEmpty(to)) {
-            return Stream.of(to.split(","))
-                    .map(String::trim)
-                    .toList();
+            return Stream.of(to.split(",")).map(String::trim).toList();
         } else {
             return Collections.emptyList();
         }
@@ -241,7 +240,8 @@ public class Ses2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (sesProducerToString == null) {
-            sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sesProducerToString =
+                    "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sesProducerToString;
     }
@@ -259,9 +259,7 @@ public class Ses2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -278,5 +276,4 @@ public class Ses2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

@@ -36,18 +36,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "These tests are flaky and unreliable - see CAMEL-19832")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "These tests are flaky and unreliable - see CAMEL-19832")
 public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
 
     private static final String START_ENDPOINT_URI = "rocketmq:START_TOPIC_RRT?producerGroup=p1&consumerGroup=c1";
 
-    private static final String INTERMEDIATE_ENDPOINT_URI = "rocketmq:INTERMEDIATE_TOPIC" +
-                                                            "?producerGroup=intermediaProducer" +
-                                                            "&consumerGroup=intermediateConsumer" +
-                                                            "&replyToTopic=REPLY_TO_TOPIC" +
-                                                            "&replyToConsumerGroup=replyToConsumerGroup" +
-                                                            "&requestTimeoutMillis=30000";
+    private static final String INTERMEDIATE_ENDPOINT_URI =
+            "rocketmq:INTERMEDIATE_TOPIC" + "?producerGroup=intermediaProducer"
+                    + "&consumerGroup=intermediateConsumer"
+                    + "&replyToTopic=REPLY_TO_TOPIC"
+                    + "&replyToConsumerGroup=replyToConsumerGroup"
+                    + "&requestTimeoutMillis=30000";
 
     private static final String RESULT_ENDPOINT_URI = "mock:result";
 
@@ -78,7 +80,8 @@ public class RocketMQRequestReplyRouteIT extends RocketMQTestSupport {
         replierConsumer.registerMessageListener((MessageListenerConcurrently) (msgs, unused) -> {
             MessageExt messageExt = msgs.get(0);
             String key = messageExt.getKeys();
-            Message response = new Message("REPLY_TO_TOPIC", "", key, EXPECTED_MESSAGE.getBytes(StandardCharsets.UTF_8));
+            Message response =
+                    new Message("REPLY_TO_TOPIC", "", key, EXPECTED_MESSAGE.getBytes(StandardCharsets.UTF_8));
             try {
                 replierProducer.send(response);
             } catch (Exception e) {

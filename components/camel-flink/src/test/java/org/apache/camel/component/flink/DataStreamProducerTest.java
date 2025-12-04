@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import java.util.Arrays;
@@ -40,7 +41,10 @@ public class DataStreamProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataStreamCallback() {
-        template.sendBodyAndHeader(flinkDataStreamUri, null, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+        template.sendBodyAndHeader(
+                flinkDataStreamUri,
+                null,
+                FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
                     @Override
                     public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
@@ -52,7 +56,9 @@ public class DataStreamProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataStreamCallbackWithPayload() {
-        template.sendBodyAndHeader(flinkDataStreamUri, "test-payload",
+        template.sendBodyAndHeader(
+                flinkDataStreamUri,
+                "test-payload",
                 FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
                     @Override
@@ -66,7 +72,10 @@ public class DataStreamProducerTest extends CamelTestSupport {
     @Test
     public void shouldExecuteDataStreamCallbackWithMultiplePayloads() {
         List<String> payloads = Arrays.asList("payload1", "payload2", "payload3");
-        template.sendBodyAndHeader(flinkDataStreamUri, payloads, FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
+        template.sendBodyAndHeader(
+                flinkDataStreamUri,
+                payloads,
+                FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
                     @Override
                     public void doOnDataStream(DataStream ds, Object... payloads) throws Exception {
@@ -83,8 +92,7 @@ public class DataStreamProducerTest extends CamelTestSupport {
         StreamExecutionEnvironment env = streamExecutionEnvironment;
         env.setRuntimeMode(RuntimeExecutionMode.BATCH);
 
-        Assertions.assertThat(env.getConfiguration().get(
-                org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE))
+        Assertions.assertThat(env.getConfiguration().get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE))
                 .isEqualTo(RuntimeExecutionMode.BATCH);
     }
 

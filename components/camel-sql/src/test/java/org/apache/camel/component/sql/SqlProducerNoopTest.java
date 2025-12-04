@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,13 +30,12 @@ public class SqlProducerNoopTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -103,9 +103,15 @@ public class SqlProducerNoopTest extends CamelTestSupport {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query").to("sql:select * from projects?noop=true").to("mock:query");
-                from("direct:update").to("sql:update projects set license='MIT' where id=3?noop=true").to("mock:update");
-                from("direct:insert").to("sql:insert into projects values (4, 'Zookeeper', 'ASF')?noop=true").to("mock:insert");
-                from("direct:delete").to("sql:delete from projects where id=1?noop=true").to("mock:delete");
+                from("direct:update")
+                        .to("sql:update projects set license='MIT' where id=3?noop=true")
+                        .to("mock:update");
+                from("direct:insert")
+                        .to("sql:insert into projects values (4, 'Zookeeper', 'ASF')?noop=true")
+                        .to("mock:insert");
+                from("direct:delete")
+                        .to("sql:delete from projects where id=1?noop=true")
+                        .to("mock:delete");
             }
         };
     }

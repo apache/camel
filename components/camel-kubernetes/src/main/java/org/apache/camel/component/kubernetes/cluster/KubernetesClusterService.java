@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster;
 
 import java.net.InetAddress;
@@ -105,26 +106,28 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
             throw new IllegalStateException("jitterFactor must be >= 1 (found: " + config.getJitterFactor() + ")");
         }
         if (config.getRetryPeriodMillis() <= 0) {
-            throw new IllegalStateException("retryPeriodMillis must be > 0 (found: " + config.getRetryPeriodMillis() + ")");
+            throw new IllegalStateException(
+                    "retryPeriodMillis must be > 0 (found: " + config.getRetryPeriodMillis() + ")");
         }
         if (config.getRenewDeadlineMillis() <= 0) {
-            throw new IllegalStateException("renewDeadlineMillis must be > 0 (found: " + config.getRenewDeadlineMillis() + ")");
+            throw new IllegalStateException(
+                    "renewDeadlineMillis must be > 0 (found: " + config.getRenewDeadlineMillis() + ")");
         }
         if (config.getLeaseDurationMillis() <= 0) {
-            throw new IllegalStateException("leaseDurationMillis must be > 0 (found: " + config.getLeaseDurationMillis() + ")");
+            throw new IllegalStateException(
+                    "leaseDurationMillis must be > 0 (found: " + config.getLeaseDurationMillis() + ")");
         }
         if (config.getLeaseDurationMillis() <= config.getRenewDeadlineMillis()) {
-            throw new IllegalStateException(
-                    "leaseDurationMillis must be greater than renewDeadlineMillis ("
-                                            + config.getLeaseDurationMillis() + " is not greater than "
-                                            + config.getRenewDeadlineMillis() + ")");
+            throw new IllegalStateException("leaseDurationMillis must be greater than renewDeadlineMillis ("
+                    + config.getLeaseDurationMillis() + " is not greater than "
+                    + config.getRenewDeadlineMillis() + ")");
         }
         if (config.getRenewDeadlineMillis() <= config.getJitterFactor() * config.getRetryPeriodMillis()) {
             throw new IllegalStateException(
                     "renewDeadlineMillis must be greater than jitterFactor*retryPeriodMillis " + "("
-                                            + config.getRenewDeadlineMillis()
-                                            + " is not greater than " + config.getJitterFactor() + "*"
-                                            + config.getRetryPeriodMillis() + ")");
+                            + config.getRenewDeadlineMillis()
+                            + " is not greater than " + config.getJitterFactor() + "*"
+                            + config.getRetryPeriodMillis() + ")");
         }
 
         return config;
@@ -276,5 +279,4 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     public void setRetryPeriodMillis(long retryPeriodMillis) {
         lockConfiguration.setRetryPeriodMillis(retryPeriodMillis);
     }
-
 }

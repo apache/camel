@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,8 +40,11 @@ public class AggregateCompletionSizeExpressionAndTimeoutTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(",")).aggregate(constant(true), new BodyInAggregatingStrategy())
-                        .completionSize(constant(2)).completionTimeout(1000)
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .aggregate(constant(true), new BodyInAggregatingStrategy())
+                        .completionSize(constant(2))
+                        .completionTimeout(1000)
                         .to("log:result", "mock:result");
             }
         };

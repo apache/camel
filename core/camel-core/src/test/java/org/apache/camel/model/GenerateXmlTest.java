@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.StringWriter;
 import java.util.List;
@@ -24,8 +27,6 @@ import jakarta.xml.bind.Marshaller;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class GenerateXmlTest extends XmlTestSupport {
 
@@ -44,7 +45,8 @@ public class GenerateXmlTest extends XmlTestSupport {
         RoutesDefinition context = new RoutesDefinition();
         RouteDefinition route = context.route();
         route.from("seda:a");
-        route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).to("seda:b");
+        route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }"))
+                .to("seda:b");
         route.description("This is a description of the route");
         List<?> list = route.getOutputs();
         assertEquals(1, list.size(), "Size of list: " + list);

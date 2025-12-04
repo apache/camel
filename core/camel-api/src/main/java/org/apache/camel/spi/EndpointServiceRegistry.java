@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -92,7 +93,6 @@ public interface EndpointServiceRegistry extends StaticService {
          * The route id where this service is used as route consumer, or used in the route by a send processor.
          */
         String getRouteId();
-
     }
 
     /**
@@ -104,5 +104,4 @@ public interface EndpointServiceRegistry extends StaticService {
      * Number of endpoint services in the registry.
      */
     int size();
-
 }

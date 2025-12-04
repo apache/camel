@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.health;
 
 import java.util.Collection;
@@ -77,9 +78,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * A collection of health check IDs.
      */
     default Collection<String> getCheckIDs() {
-        return stream()
-                .map(HealthCheck::getId)
-                .toList();
+        return stream().map(HealthCheck::getId).toList();
     }
 
     /**
@@ -176,5 +175,4 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * The initial state of health-checks.
      */
     HealthCheck.State getInitialState();
-
 }

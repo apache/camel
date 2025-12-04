@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.component.aws2.lambda.client.Lambda2ClientFactory;
 import org.apache.camel.component.aws2.lambda.client.Lambda2InternalClient;
@@ -22,8 +25,6 @@ import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientOptimized
 import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientSessionTokenImpl;
 import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LambdaClientFactoryTest {
 

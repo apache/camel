@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URL;
 
@@ -41,12 +48,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
 
     protected static final String SERVICE_NAME_PROP = "serviceName=";
@@ -59,9 +60,8 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
 
     @BeforeEach
     public void startService() {
-        endpoint = Endpoint.publish("http://localhost:" + port1 + "/" + getClass().getSimpleName()
-                                    + "/PersonService",
-                new PersonImpl());
+        endpoint = Endpoint.publish(
+                "http://localhost:" + port1 + "/" + getClass().getSimpleName() + "/PersonService", new PersonImpl());
     }
 
     @AfterEach
@@ -69,13 +69,11 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         if (endpoint != null) {
             endpoint.stop();
         }
-
     }
 
     protected void checkSOAPAction(Exchange exchange) {
         // check the SOAPAction to be null
         assertNull(exchange.getIn().getHeader("SOAPAction"));
-
     }
 
     @Override
@@ -84,19 +82,20 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf://http://localhost:" + port2
-                     + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&"
-                     + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
+                                + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP
+                                + getServiceName() + "&"
+                                + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
                         .process(new Processor() {
 
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 checkSOAPAction(exchange);
                             }
-
                         })
                         .to("cxf://http://localhost:" + port1
-                            + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName()
-                            + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
+                                + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP
+                                + getServiceName()
+                                + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
             }
         };
     }
@@ -114,8 +113,10 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
 
         Client c = ClientProxy.getClient(client);
 
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+        ((BindingProvider) client)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                         "http://localhost:" + port1 + "/" + getClass().getSimpleName() + "/PersonService");
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
@@ -126,7 +127,6 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
         assertEquals("Bonjour", name.value);
-
     }
 
     @Test
@@ -135,10 +135,11 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         PersonService ss = new PersonService(wsdlURL, QName.valueOf(getServiceName()));
 
         Person client = ss.getSoap();
-        ((BindingProvider) client).getRequestContext()
-                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                        "http://localhost:" + port1 + "/"
-                                                                + getClass().getSimpleName() + "/PersonService");
+        ((BindingProvider) client)
+                .getRequestContext()
+                .put(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port1 + "/" + getClass().getSimpleName() + "/PersonService");
 
         Client c = ClientProxy.getClient(client);
         c.getInInterceptors().add(new LoggingInInterceptor());
@@ -158,7 +159,6 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
 
         assertNotNull(t);
         assertTrue(t instanceof UnknownPersonFault);
-
     }
 
     protected String getServiceName() {

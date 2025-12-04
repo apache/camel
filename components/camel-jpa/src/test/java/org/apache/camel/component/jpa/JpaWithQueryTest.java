@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.examples.MultiSteps;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Timeout(30)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Apache CI is hanging on this test")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Apache CI is hanging on this test")
 public class JpaWithQueryTest extends JpaWithNamedQueryTest {
 
     @Override

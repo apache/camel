@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,9 +28,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InvokeFunctionExchangeFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(InvokeFunctionExchangeFunctionalTest.class.getName());
@@ -46,12 +47,11 @@ public class InvokeFunctionExchangeFunctionalTest extends CamelTestSupport {
                         .setProperty(FunctionGraphProperties.OPERATION, constant("invokeFunction"))
                         .setProperty(FunctionGraphProperties.FUNCTION_NAME, constant(FUNCTION_NAME))
                         .setProperty(FunctionGraphProperties.FUNCTION_PACKAGE, constant(FUNCTION_PACKAGE))
-                        .to("hwcloud-functiongraph:?" +
-                            "accessKey=" + ACCESS_KEY +
-                            "&secretKey=" + SECRET_KEY +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-functiongraph:?" + "accessKey="
+                                + ACCESS_KEY + "&secretKey="
+                                + SECRET_KEY + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Invoke function successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:invoke_function_result");
@@ -78,6 +78,10 @@ public class InvokeFunctionExchangeFunctionalTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         assertNotNull(responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS));
-        assertTrue(responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS).toString().length() > 0);
+        assertTrue(responseExchange
+                        .getProperty(FunctionGraphProperties.XCFFLOGS)
+                        .toString()
+                        .length()
+                > 0);
     }
 }

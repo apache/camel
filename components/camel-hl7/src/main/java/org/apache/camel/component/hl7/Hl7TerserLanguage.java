@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.HL7Exception;
@@ -58,7 +59,6 @@ public class Hl7TerserLanguage extends SingleInputTypedLanguageSupport {
             public String toString() {
                 return "hl7terser(" + expression + ")";
             }
-
         };
     }
 

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.ws.security;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.javacrumbs.calc.model.PlusRequest;
 import net.javacrumbs.calc.model.PlusResponse;
@@ -30,12 +35,7 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Disabled("run manually since it requires running sample"
-          + " secured ws on j2ee-compliant application server")
+@Disabled("run manually since it requires running sample" + " secured ws on j2ee-compliant application server")
 public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSupport {
 
     @Produce
@@ -59,7 +59,6 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
         assertEquals(3, result.getResult());
 
         assertTrue(ProducerWss4JSecurityHeaderTestInterceptor.isX509DataPresent);
-
     }
 
     @Test
@@ -73,7 +72,6 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
         assertEquals(3, result.getResult());
 
         assertTrue(ProducerWss4JSecurityHeaderTestInterceptor.isX509DataPresent);
-
     }
 
     private PlusResponse createSampleRequestResponsePair() {
@@ -101,5 +99,4 @@ public class ProducerWss4JSecurityHeaderManualTest extends CamelSpringTestSuppor
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/spring/ws/security/ProducerWss4JSecurityHeaderTest-context.xml");
     }
-
 }

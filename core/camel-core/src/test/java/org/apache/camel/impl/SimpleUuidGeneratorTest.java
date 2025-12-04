@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.StopWatch;
@@ -22,8 +25,6 @@ import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleUuidGeneratorTest {
 
@@ -50,5 +51,4 @@ public class SimpleUuidGeneratorTest {
 
         LOG.info("Took {}", TimeUtils.printDuration(watch.taken(), true));
     }
-
 }

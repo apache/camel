@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reactive;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitParallelLookupVertxTest extends CamelTestSupport {
 
@@ -39,7 +40,8 @@ public class SplitParallelLookupVertxTest extends CamelTestSupport {
     @Test
     public void testSplit() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E,F,G,H,I,J");
-        getMockEndpoint("mock:split").expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
+        getMockEndpoint("mock:split")
+                .expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
         template.sendBody("direct:start", "A,B,C,D,E,F,G,H,I,J");
 
@@ -55,7 +57,8 @@ public class SplitParallelLookupVertxTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:foo")
-                        .split(body()).parallelProcessing()
+                        .split(body())
+                        .parallelProcessing()
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();

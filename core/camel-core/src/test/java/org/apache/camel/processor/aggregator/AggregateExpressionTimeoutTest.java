@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import java.util.HashMap;
@@ -54,8 +55,10 @@ public class AggregateExpressionTimeoutTest extends ContextTestSupport {
                         // and the timeout header contains the timeout in millis of
                         // inactivity them timeout and complete the aggregation
                         // and send it to mock:aggregated
-                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionTimeout(header("timeout"))
-                        .completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionTimeout(header("timeout"))
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest {
 
@@ -79,15 +80,18 @@ public class NettyHttpTwoRoutesBootstrapConfigurationTest extends BaseNettyTest 
                 // have a NettyServerBootstrapConfiguration instance in the registry, with the key = myBootstrapOptions
                 // which we then tell netty-http to lookup and use
 
-                from("netty-http:http://0.0.0.0:{{port}}/foo?bootstrapConfiguration=#myBootstrapOptions").routeId("foo")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?bootstrapConfiguration=#myBootstrapOptions")
+                        .routeId("foo")
                         .to("mock:foo")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
 
-                from("netty-http:http://0.0.0.0:{{port}}/bar?bootstrapConfiguration=#myBootstrapOptions").routeId("bar")
+                from("netty-http:http://0.0.0.0:{{port}}/bar?bootstrapConfiguration=#myBootstrapOptions")
+                        .routeId("bar")
                         .to("mock:bar")
-                        .transform().constant("Bye Camel");
+                        .transform()
+                        .constant("Bye Camel");
             }
         };
     }
-
 }

@@ -26,7 +26,5 @@ public final class RabbitMQProperties {
     public static final String RABBITMQ_CONNECTION_HTTP = "rabbitmq.connection.http";
     public static final String RABBITMQ_CONTAINER = "rabbitmq.container";
 
-    private RabbitMQProperties() {
-
-    }
+    private RabbitMQProperties() {}
 }

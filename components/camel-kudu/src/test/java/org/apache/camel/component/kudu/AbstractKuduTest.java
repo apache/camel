@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kudu;
 
 import java.util.ArrayList;
@@ -56,19 +57,17 @@ public abstract class AbstractKuduTest extends CamelTestSupport {
 
         for (int i = 0; i < columnNames.size(); i++) {
             Type type = i == 0 ? Type.INT32 : Type.STRING;
-            columns.add(
-                    new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), type)
-                            .key(i == 0)
-                            .build());
+            columns.add(new ColumnSchema.ColumnSchemaBuilder(columnNames.get(i), type)
+                    .key(i == 0)
+                    .build());
         }
 
         List<String> rangeKeys = new ArrayList<>();
         rangeKeys.add("id");
 
         try {
-            client.createTable(tableName,
-                    new Schema(columns),
-                    new CreateTableOptions().setRangePartitionColumns(rangeKeys));
+            client.createTable(
+                    tableName, new Schema(columns), new CreateTableOptions().setRangePartitionColumns(rangeKeys));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,22 +55,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class AbstractClientBaseTest {
     static class Client extends AbstractClientBase {
         Client(final SalesforceSession session, final SalesforceLoginConfig loginConfig) throws SalesforceException {
-            super(null, session, mock(SalesforceHttpClient.class), loginConfig,
-                  1 /* 1 second termination timeout */);
+            super(null, session, mock(SalesforceHttpClient.class), loginConfig, 1 /* 1 second termination timeout */);
         }
 
         @Override
@@ -67,9 +67,7 @@ public class AbstractClientBaseTest {
         }
 
         @Override
-        protected void setAccessToken(final Request request) {
-        }
-
+        protected void setAccessToken(final Request request) {}
     }
 
     SalesforceSession session = mock(SalesforceSession.class);
@@ -96,7 +94,8 @@ public class AbstractClientBaseTest {
         final Exchange exchange = new DefaultExchange(context);
         final Message in = new DefaultMessage(context);
         in.setHeader("sforce-auto-assign", "TRUE");
-        in.setHeader("SFORCE-CALL-OPTIONS", new String[] { "client=SampleCaseSensitiveToken/100", "defaultNamespace=battle" });
+        in.setHeader(
+                "SFORCE-CALL-OPTIONS", new String[] {"client=SampleCaseSensitiveToken/100", "defaultNamespace=battle"});
         in.setHeader("Sforce-Limit-Info", singletonList("per-app-api-usage"));
         in.setHeader("x-sfdc-packageversion-clientPackage", "1.0");
         in.setHeader("Sforce-Query-Options", "batchSize=1000");
@@ -105,11 +104,15 @@ public class AbstractClientBaseTest {
 
         final Map<String, List<String>> headers = AbstractClientBase.determineHeaders(exchange);
 
-        assertThat(headers).containsOnly(entry("sforce-auto-assign", singletonList("TRUE")),
-                entry("SFORCE-CALL-OPTIONS", asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
-                entry("Sforce-Limit-Info", singletonList("per-app-api-usage")),
-                entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
-                entry("Sforce-Query-Options", singletonList("batchSize=1000")));
+        assertThat(headers)
+                .containsOnly(
+                        entry("sforce-auto-assign", singletonList("TRUE")),
+                        entry(
+                                "SFORCE-CALL-OPTIONS",
+                                asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
+                        entry("Sforce-Limit-Info", singletonList("per-app-api-usage")),
+                        entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
+                        entry("Sforce-Query-Options", singletonList("batchSize=1000")));
     }
 
     @Test
@@ -131,12 +134,12 @@ public class AbstractClientBaseTest {
     @Test
     public void shouldNotHangIfRequestsHaveFinished() throws Exception {
         final Request request = mock(Request.class);
-        final ArgumentCaptor<Response.CompleteListener> listener = ArgumentCaptor.forClass(Response.CompleteListener.class);
+        final ArgumentCaptor<Response.CompleteListener> listener =
+                ArgumentCaptor.forClass(Response.CompleteListener.class);
 
         doNothing().when(request).send(listener.capture());
 
-        client.doHttpRequest(request, (response, headers, exception) -> {
-        });
+        client.doHttpRequest(request, (response, headers, exception) -> {});
 
         final Result result = mock(Result.class);
         final Response response = mock(Response.class);
@@ -168,8 +171,7 @@ public class AbstractClientBaseTest {
 
     @Test
     public void shouldTimeoutWhenRequestsAreStillOngoing() throws Exception {
-        client.doHttpRequest(mock(Request.class), (response, headers, exception) -> {
-        });
+        client.doHttpRequest(mock(Request.class), (response, headers, exception) -> {});
 
         // the request never completes
 

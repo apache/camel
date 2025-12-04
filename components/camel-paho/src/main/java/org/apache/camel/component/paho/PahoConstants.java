@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
 
 import org.apache.camel.spi.Metadata;
@@ -39,16 +40,20 @@ public final class PahoConstants {
 
     @Deprecated
     public static final String HEADER_ORIGINAL_MESSAGE = "PahoOriginalMessage";
+
     public static final String CAMEL_PAHO = "CamelPaho";
+
     @Metadata(label = "producer", description = "The client quality of service level (0-2).", javaType = "Integer")
     public static final String CAMEL_PAHO_MSG_QOS = CAMEL_PAHO + "Qos";
+
     @Metadata(label = "producer", description = "Retain option.", javaType = "Boolean")
     public static final String CAMEL_PAHO_MSG_RETAINED = CAMEL_PAHO + "Retained";
-    @Metadata(label = "producer",
-              description = "The name of topic to override and send to instead of topic specified on endpoint.",
-              javaType = "String")
+
+    @Metadata(
+            label = "producer",
+            description = "The name of topic to override and send to instead of topic specified on endpoint.",
+            javaType = "String")
     public static final String CAMEL_PAHO_OVERRIDE_TOPIC = CAMEL_PAHO + "OverrideTopic";
 
-    private PahoConstants() {
-    }
+    private PahoConstants() {}
 }

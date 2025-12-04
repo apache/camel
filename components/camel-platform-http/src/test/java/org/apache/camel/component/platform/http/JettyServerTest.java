@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import org.apache.camel.test.infra.jetty.services.JettyConfiguration;
@@ -34,16 +35,17 @@ public class JettyServerTest {
 
         final JettyConfiguration configuration = JettyConfigurationBuilder.bareTemplate()
                 .withPort(port)
-                .withHandlerCollectionConfiguration().addHandlers(contextHandlerCollection).build().build();
+                .withHandlerCollectionConfiguration()
+                .addHandlers(contextHandlerCollection)
+                .build()
+                .build();
         this.service = new JettyEmbeddedService(configuration);
 
         this.port = port;
-
     }
 
     public void start() {
         service.initialize();
-
     }
 
     public void stop() throws Exception {

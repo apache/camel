@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
 
 import java.io.InputStream;
@@ -41,7 +42,8 @@ public class VertxHttpBufferConverterTest extends CamelTestSupport {
     public void testStringToBufferWithEncoding() {
         String encodedString = "Ťava dvojhrbá";
         Exchange exchange = ExchangeBuilder.anExchange(context)
-                .withHeader(Exchange.CONTENT_TYPE, "text/html; charset=iso-8859-2").build();
+                .withHeader(Exchange.CONTENT_TYPE, "text/html; charset=iso-8859-2")
+                .build();
         Buffer buffer = context.getTypeConverter().convertTo(Buffer.class, exchange, encodedString);
         Assertions.assertArrayEquals(encodedString.getBytes(Charset.forName("iso-8859-2")), buffer.getBytes());
     }
@@ -75,7 +77,8 @@ public class VertxHttpBufferConverterTest extends CamelTestSupport {
     public void testBufferToStringWithEncoding() {
         String encodedString = "Ťava dvojhrbá";
         Exchange exchange = ExchangeBuilder.anExchange(context)
-                .withHeader(Exchange.CONTENT_TYPE, "text/plain; charset=iso-8859-2").build();
+                .withHeader(Exchange.CONTENT_TYPE, "text/plain; charset=iso-8859-2")
+                .build();
         String result = context.getTypeConverter()
                 .convertTo(String.class, exchange, Buffer.buffer(encodedString, "iso-8859-2"));
         Assertions.assertEquals(encodedString, result);

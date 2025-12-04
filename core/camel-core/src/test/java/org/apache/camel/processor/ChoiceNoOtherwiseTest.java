@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,7 +32,13 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when().simple("${header.foo} == 'bar'").to("mock:x").end().to("mock:end");
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .simple("${header.foo} == 'bar'")
+                        .to("mock:x")
+                        .end()
+                        .to("mock:end");
             }
         });
         context.start();
@@ -50,7 +57,12 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(simple("${header.foo} == 'bar'")).to("mock:x").end().to("mock:end");
+                from("direct:start")
+                        .choice()
+                        .when(simple("${header.foo} == 'bar'"))
+                        .to("mock:x")
+                        .end()
+                        .to("mock:end");
             }
         });
         context.start();
@@ -69,7 +81,14 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when().simple("${header.foo} == 'bar'").to("mock:x").otherwise().end().to("mock:end");
+                from("direct:start")
+                        .choice()
+                        .when()
+                        .simple("${header.foo} == 'bar'")
+                        .to("mock:x")
+                        .otherwise()
+                        .end()
+                        .to("mock:end");
             }
         });
         context.start();
@@ -88,7 +107,13 @@ public class ChoiceNoOtherwiseTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").choice().when(simple("${header.foo} == 'bar'")).to("mock:x").otherwise().end().to("mock:end");
+                from("direct:start")
+                        .choice()
+                        .when(simple("${header.foo} == 'bar'"))
+                        .to("mock:x")
+                        .otherwise()
+                        .end()
+                        .to("mock:end");
             }
         });
         context.start();

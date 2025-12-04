@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -22,14 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class KameletConsumeOnlyTest extends CamelTestSupport {
 
     @Test
     public void canConsumeFromKamelet() {
-        assertThat(
-                consumer.receiveBody("kamelet:tick", Integer.class)).isEqualTo(1);
+        assertThat(consumer.receiveBody("kamelet:tick", Integer.class)).isEqualTo(1);
     }
 
     // **********************************************
@@ -45,7 +45,8 @@ public class KameletConsumeOnlyTest extends CamelTestSupport {
             public void configure() {
                 routeTemplate("tick")
                         .from("timer:{{routeId}}?repeatCount=1&delay=-1&includeMetadata=true")
-                        .setBody().exchangeProperty(Exchange.TIMER_COUNTER)
+                        .setBody()
+                        .exchangeProperty(Exchange.TIMER_COUNTER)
                         .to("kamelet:sink");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -42,5 +43,4 @@ public interface SSLContextParametersAware extends CamelContextAware {
      * Enable usage of global SSL context parameters.
      */
     void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters);
-
 }

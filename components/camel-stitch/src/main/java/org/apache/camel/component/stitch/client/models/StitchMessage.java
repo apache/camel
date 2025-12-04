@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stitch.client.models;
 
 import java.util.Collections;
@@ -54,14 +55,13 @@ public final class StitchMessage implements StitchModel {
 
     @SuppressWarnings("unchecked")
     public static Builder fromMap(final Map<String, Object> data) {
-        final Action action = Action.valueOf(data.getOrDefault(ACTION, DEFAULT_ACTION.name()).toString().toUpperCase());
+        final Action action = Action.valueOf(
+                data.getOrDefault(ACTION, DEFAULT_ACTION.name()).toString().toUpperCase());
         final long sequence = ObjectHelper.cast(Long.class, data.getOrDefault(SEQUENCE, DEFAULT_SEQUENCE));
-        final Map<String, Object> inputData = ObjectHelper.cast(Map.class, data.getOrDefault(DATA, Collections.emptyMap()));
+        final Map<String, Object> inputData =
+                ObjectHelper.cast(Map.class, data.getOrDefault(DATA, Collections.emptyMap()));
 
-        return new Builder()
-                .withAction(action)
-                .withData(inputData)
-                .withSequence(sequence);
+        return new Builder().withAction(action).withData(inputData).withSequence(sequence);
     }
 
     public Action getAction() {
@@ -92,8 +92,7 @@ public final class StitchMessage implements StitchModel {
         private Long sequence;
         private Map<String, Object> data = new LinkedHashMap<>();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         /**
          * This will always be upsert.

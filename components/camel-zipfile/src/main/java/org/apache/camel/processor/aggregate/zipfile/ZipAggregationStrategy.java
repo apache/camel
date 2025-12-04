@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.zipfile;
 
 import java.io.File;
@@ -53,28 +54,39 @@ import org.apache.camel.util.FileUtil;
  * <b>Note:</b> Please note that this aggregation strategy requires eager completion check to work properly.
  * </p>
  */
-@Metadata(label = "bean",
-          description = "AggregationStrategy to zip together incoming messages into a zip file."
-                        + " Please note that this aggregation strategy requires eager completion check to work properly.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Metadata(
+        label = "bean",
+        description = "AggregationStrategy to zip together incoming messages into a zip file."
+                + " Please note that this aggregation strategy requires eager completion check to work properly.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class ZipAggregationStrategy implements AggregationStrategy {
 
     @Metadata(description = "Sets the prefix that will be used when creating the ZIP filename.")
     private String filePrefix;
+
     @Metadata(description = "Sets the suffix that will be used when creating the ZIP filename.", defaultValue = "zip")
     private String fileSuffix = ".zip";
-    @Metadata(label = "advanced",
-              description = "Whether to add empty files to the ZIP.", defaultValue = "false")
+
+    @Metadata(label = "advanced", description = "Whether to add empty files to the ZIP.", defaultValue = "false")
     private boolean allowEmptyFiles;
-    @Metadata(label = "advanced",
-              description = "If the incoming message is from a file, then the folder structure of said file can be preserved")
+
+    @Metadata(
+            label = "advanced",
+            description =
+                    "If the incoming message is from a file, then the folder structure of said file can be preserved")
     private boolean preserveFolderStructure;
-    @Metadata(label = "advanced",
-              description = "Whether to use CamelFileName header for the filename instead of using unique message id")
+
+    @Metadata(
+            label = "advanced",
+            description = "Whether to use CamelFileName header for the filename instead of using unique message id")
     private boolean useFilenameHeader;
-    @Metadata(label = "advanced", description = "Whether to use temporary files for zip manipulations instead of memory.")
+
+    @Metadata(
+            label = "advanced",
+            description = "Whether to use temporary files for zip manipulations instead of memory.")
     private boolean useTempFile;
+
     @Metadata(label = "advanced", description = "Sets the parent directory to use for writing temporary files")
     private File parentDir = new File(System.getProperty("java.io.tmpdir"));
 
@@ -122,8 +134,8 @@ public class ZipAggregationStrategy implements AggregationStrategy {
      * @param allowEmptyFiles         if true, the Aggregation will also add empty files to the zip.
      *
      */
-    public ZipAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader, boolean useTempFile,
-                                  boolean allowEmptyFiles) {
+    public ZipAggregationStrategy(
+            boolean preserveFolderStructure, boolean useFilenameHeader, boolean useTempFile, boolean allowEmptyFiles) {
         this.preserveFolderStructure = preserveFolderStructure;
         this.useFilenameHeader = useFilenameHeader;
         this.useTempFile = useTempFile;
@@ -296,21 +308,24 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
 
     private static void newZipFile(File zipFile) throws URISyntaxException, IOException {
-        if (zipFile.exists() && !zipFile.delete()) { //Delete, because ZipFileSystem needs to create file on its own (with correct END bytes in the file)
+        if (zipFile.exists()
+                && !zipFile
+                        .delete()) { // Delete, because ZipFileSystem needs to create file on its own (with correct END
+            // bytes in the file)
             throw new IOException("Cannot delete file " + zipFile);
         }
         Map<String, Object> env = new HashMap<>();
-        env.put("create", Boolean.TRUE.toString()); //Intentionally String, it is implemented this way in ZipFileSystem
+        env.put("create", Boolean.TRUE.toString()); // Intentionally String, it is implemented this way in ZipFileSystem
 
         try (FileSystem ignored = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
-            //noop, just open and close FileSystem to initialize correct headers in file
+            // noop, just open and close FileSystem to initialize correct headers in file
         }
     }
 
     private void addFileToZip(File zipFile, File file, String fileName) throws IOException, URISyntaxException {
         String entryName = fileName == null ? file.getName() : fileName;
         Map<String, Object> env = new HashMap<>();
-        env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
+        env.put("useTempFile", this.useTempFile); // Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
             Path parent = dest.getParent();
@@ -325,7 +340,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             throws IOException, URISyntaxException {
         Map<String, Object> env = new HashMap<>();
         env.put("encoding", charset);
-        env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
+        env.put("useTempFile", this.useTempFile); // Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
             Path parent = dest.getParent();

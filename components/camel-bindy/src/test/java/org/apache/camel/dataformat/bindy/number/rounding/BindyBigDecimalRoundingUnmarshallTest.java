@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.number.rounding;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -29,8 +32,6 @@ import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
 
@@ -71,11 +72,8 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
                         .classType(NumberModel.class)
                         .locale("en");
 
-                from(URI_DIRECT_START)
-                        .unmarshal(bindy)
-                        .to(URI_MOCK_RESULT);
+                from(URI_DIRECT_START).unmarshal(bindy).to(URI_MOCK_RESULT);
             }
-
         };
     }
 

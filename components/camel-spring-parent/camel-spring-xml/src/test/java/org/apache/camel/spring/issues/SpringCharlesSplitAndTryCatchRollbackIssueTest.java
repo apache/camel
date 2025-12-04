@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.issues.CharlesSplitAndTryCatchRollbackIssueTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringCharlesSplitAndTryCatchRollbackIssueTest extends CharlesSplitAndTryCatchRollbackIssueTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/issues/SpringCharlesSplitAndTryCatchRollbackIssueTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/issues/SpringCharlesSplitAndTryCatchRollbackIssueTest.xml");
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.spi.Metadata;
@@ -35,6 +36,7 @@ public interface XmppConstants {
 
     String STANZA_ID = "CamelXmppStanzaID";
     String TO = "CamelXmppTo";
+
     @Metadata(label = "consumer", description = "The XMPP message", javaType = "org.jivesoftware.smack.packet.Message")
     String DOC_HEADER = "CamelXmppDoc";
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Map;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaConsumer;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
 
@@ -80,8 +81,7 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
 
     private static class MyJmsEndpoint extends SedaEndpoint {
 
-        public MyJmsEndpoint() {
-        }
+        public MyJmsEndpoint() {}
 
         @Override
         public Consumer createConsumer(Processor processor) {
@@ -105,5 +105,4 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
             throw new IllegalArgumentException("Cannot start");
         }
     }
-
 }

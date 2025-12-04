@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -26,7 +27,8 @@ public interface ManagedWeightedBalancerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Whether round robin mode is enabled")
     String getRoundRobin();
 
-    @ManagedAttribute(description = "The distribution ratio of integer weights separated by delimiters for example '2,3,5'")
+    @ManagedAttribute(
+            description = "The distribution ratio of integer weights separated by delimiters for example '2,3,5'")
     String getDistributionRatio();
 
     @ManagedAttribute(description = "The delimiter")
@@ -34,5 +36,4 @@ public interface ManagedWeightedBalancerMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Processor id of the last chosen processor")
     String getLastChosenProcessorId();
-
 }

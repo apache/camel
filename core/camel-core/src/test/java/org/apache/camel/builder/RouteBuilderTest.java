@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,9 +51,6 @@ import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
@@ -125,8 +126,8 @@ public class RouteBuilderTest extends TestSupport {
 
             assertNotNull(channel, "Should have a channel");
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
-            SendProcessor sendProcessor
-                    = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
+            SendProcessor sendProcessor = assertIsInstanceOf(
+                    SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
             assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
     }
@@ -137,8 +138,14 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b")
-                        .when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
+                from("direct:a")
+                        .choice()
+                        .when(header("foo").isEqualTo("bar"))
+                        .to("direct:b")
+                        .when(header("foo").isEqualTo("cheese"))
+                        .to("direct:c")
+                        .otherwise()
+                        .to("direct:d");
             }
         };
         // END SNIPPET: e3
@@ -165,10 +172,12 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals(2, filters.size(), "Should be two when clauses");
 
             Processor filter1 = filters.get(0);
-            assertSendTo(unwrapChannel(((FilterProcessor) filter1).getProcessor()).getNextProcessor(), "direct://b");
+            assertSendTo(
+                    unwrapChannel(((FilterProcessor) filter1).getProcessor()).getNextProcessor(), "direct://b");
 
             Processor filter2 = filters.get(1);
-            assertSendTo(unwrapChannel(((FilterProcessor) filter2).getProcessor()).getNextProcessor(), "direct://c");
+            assertSendTo(
+                    unwrapChannel(((FilterProcessor) filter2).getProcessor()).getNextProcessor(), "direct://c");
 
             assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "direct://d");
         }
@@ -258,7 +267,8 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             assertNotNull(channel, "Should have a channel");
-            MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
+            MulticastProcessor multicastProcessor =
+                    assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
             List<Processor> endpoints = new ArrayList<>(multicastProcessor.getProcessors());
             assertEquals(2, endpoints.size(), "Should have 2 endpoints");
 
@@ -268,8 +278,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected List<Route> buildRouteWithInterceptor() throws Exception {
-        interceptor1 = new org.apache.camel.support.processor.DelegateProcessor() {
-        };
+        interceptor1 = new org.apache.camel.support.processor.DelegateProcessor() {};
 
         interceptor2 = new MyInterceptorProcessor();
 
@@ -302,7 +311,8 @@ public class RouteBuilderTest extends TestSupport {
             // last should be our seda
 
             List<Processor> processors = new ArrayList<>(line.next());
-            Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
+            Processor sendTo = assertIsInstanceOf(
+                    SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
             assertSendTo(sendTo, "direct://d");
         }
     }
@@ -425,7 +435,8 @@ public class RouteBuilderTest extends TestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:a")
-                        .idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .idempotentConsumer(
+                                header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                         .to("direct:b");
             }
         };
@@ -449,11 +460,16 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             assertNotNull(channel, "Should have a channel");
-            IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, channel.getNextProcessor());
-            assertEquals("header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString(), "messageIdExpression");
+            IdempotentConsumer idempotentConsumer =
+                    assertIsInstanceOf(IdempotentConsumer.class, channel.getNextProcessor());
+            assertEquals(
+                    "header(myMessageId)",
+                    idempotentConsumer.getMessageIdExpression().toString(),
+                    "messageIdExpression");
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
+            SendProcessor sendProcessor = assertIsInstanceOf(
+                    SendProcessor.class,
                     unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
             assertEquals("direct://b", sendProcessor.getDestination().getEndpointUri(), "Endpoint URI");
         }
@@ -567,8 +583,7 @@ public class RouteBuilderTest extends TestSupport {
         AtomicInteger after = new AtomicInteger();
 
         RouteBuilder builder = new RouteBuilder() {
-            public void configure() {
-            }
+            public void configure() {}
         };
 
         builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
@@ -595,8 +610,7 @@ public class RouteBuilderTest extends TestSupport {
         List<String> ordered = new ArrayList<>();
 
         RouteBuilder builder = new RouteBuilder() {
-            public void configure() {
-            }
+            public void configure() {}
         };
 
         builder.addLifecycleInterceptor(new RouteBuilderLifecycleStrategy() {
@@ -634,8 +648,9 @@ public class RouteBuilderTest extends TestSupport {
         });
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getCamelContextExtension().getRegistry().bind(UUID.randomUUID().toString(),
-                    new RouteBuilderLifecycleStrategy() {
+            context.getCamelContextExtension()
+                    .getRegistry()
+                    .bind(UUID.randomUUID().toString(), new RouteBuilderLifecycleStrategy() {
                         @Override
                         public void beforeConfigure(RouteBuilder builder) {
                             ordered.add("before-3");

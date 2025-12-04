@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.vertx.core.Vertx;
 import org.apache.camel.BindToRegistry;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class VertxWebSocketSlowClientConsumerTest extends VertxWebSocketTestSupport {
     private static final String MESSAGE_BODY = "Hello World";
@@ -60,7 +61,8 @@ public class VertxWebSocketSlowClientConsumerTest extends VertxWebSocketTestSupp
                         .toF("vertx-websocket:localhost:%d/echo/slow?sendToAll=true", port);
 
                 fromF("vertx-websocket:localhost:%d/echo/slow?consumeAsClient=true", port)
-                        .delay(600).syncDelayed()
+                        .delay(600)
+                        .syncDelayed()
                         .to("mock:clientConsumerResult");
             }
         };

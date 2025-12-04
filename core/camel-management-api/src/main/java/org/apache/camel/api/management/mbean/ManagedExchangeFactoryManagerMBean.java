@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -58,5 +59,4 @@ public interface ManagedExchangeFactoryManagerMBean extends ManagedServiceMBean 
 
     @ManagedOperation(description = "Lists all the statistics in tabular form")
     TabularData listStatistics();
-
 }

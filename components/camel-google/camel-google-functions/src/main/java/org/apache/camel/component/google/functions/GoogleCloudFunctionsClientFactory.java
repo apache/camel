@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.functions;
 
 import java.io.InputStream;
@@ -31,27 +32,25 @@ public final class GoogleCloudFunctionsClientFactory {
     /**
      * Prevent instantiation.
      */
-    private GoogleCloudFunctionsClientFactory() {
-    }
+    private GoogleCloudFunctionsClientFactory() {}
 
     public static CloudFunctionsServiceClient create(
-            CamelContext context,
-            GoogleCloudFunctionsConfiguration configuration)
-            throws Exception {
+            CamelContext context, GoogleCloudFunctionsConfiguration configuration) throws Exception {
         CloudFunctionsServiceClient cloudFunctionsClient = null;
         if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
-            Credentials myCredentials = ServiceAccountCredentials
-                    .fromStream(resolveMandatoryResourceAsInputStream);
+            InputStream resolveMandatoryResourceAsInputStream =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
+            Credentials myCredentials = ServiceAccountCredentials.fromStream(resolveMandatoryResourceAsInputStream);
             CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder()
-                    .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
+                    .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
+                    .build();
             cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
         } else {
             // it needs to define the environment variable GOOGLE_APPLICATION_CREDENTIALS
             // with the service account file
             // more info at https://cloud.google.com/docs/authentication/production
-            CloudFunctionsServiceSettings settings = CloudFunctionsServiceSettings.newBuilder().build();
+            CloudFunctionsServiceSettings settings =
+                    CloudFunctionsServiceSettings.newBuilder().build();
             cloudFunctionsClient = CloudFunctionsServiceClient.create(settings);
         }
         return cloudFunctionsClient;

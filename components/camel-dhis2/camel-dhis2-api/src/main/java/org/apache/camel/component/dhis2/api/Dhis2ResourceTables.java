@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dhis2.api;
 
 import java.util.Map;
@@ -30,7 +31,8 @@ public class Dhis2ResourceTables {
         this.dhis2Client = dhis2Client;
     }
 
-    public void analytics(Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval, Boolean async) {
+    public void analytics(
+            Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval, Boolean async) {
         PostOperation postOperation = dhis2Client.post("resourceTables/analytics");
         if (skipEvents != null) {
             postOperation.withParameter("skipEvents", String.valueOf(skipEvents));
@@ -53,8 +55,11 @@ public class Dhis2ResourceTables {
                 } catch (InterruptedException e) {
                     throw new RuntimeCamelException(e);
                 }
-                Iterable<Map> notifications = dhis2Client.get("system/tasks/ANALYTICS_TABLE/{taskId}",
-                        taskId).withoutPaging().transfer().returnAs(Map.class);
+                Iterable<Map> notifications = dhis2Client
+                        .get("system/tasks/ANALYTICS_TABLE/{taskId}", taskId)
+                        .withoutPaging()
+                        .transfer()
+                        .returnAs(Map.class);
                 if (notifications.iterator().hasNext()) {
                     notification = notifications.iterator().next();
                     if (notification.get("level").equals("ERROR")) {

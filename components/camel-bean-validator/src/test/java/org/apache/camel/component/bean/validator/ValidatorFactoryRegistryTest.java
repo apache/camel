@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.validator;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.condition.OS.AIX;
 
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
@@ -24,9 +28,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.condition.OS.AIX;
 
 @DisabledOnOs(AIX)
 public class ValidatorFactoryRegistryTest extends CamelTestSupport {
@@ -48,9 +49,8 @@ public class ValidatorFactoryRegistryTest extends CamelTestSupport {
 
     @Test
     void configureValidatorFactoryFromRegistry() throws Exception {
-        BeanValidatorEndpoint endpoint
-                = context.getEndpoint("bean-validator:dummy?validatorFactory=#otherValidatorFactory",
-                        BeanValidatorEndpoint.class);
+        BeanValidatorEndpoint endpoint = context.getEndpoint(
+                "bean-validator:dummy?validatorFactory=#otherValidatorFactory", BeanValidatorEndpoint.class);
         BeanValidatorProducer producer = (BeanValidatorProducer) endpoint.createProducer();
 
         assertSame(this.otherValidatorFactory, endpoint.getValidatorFactory());

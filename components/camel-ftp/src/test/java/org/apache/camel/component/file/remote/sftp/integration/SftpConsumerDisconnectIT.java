@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,15 +32,12 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 @Disabled
 public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
-    private static final String SAMPLE_FILE_NAME_1
-            = String.format("sample-1-%s.txt", SftpConsumerDisconnectIT.class.getSimpleName());
-    private static final String SAMPLE_FILE_NAME_2
-            = String.format("sample-2-%s.txt", SftpConsumerDisconnectIT.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME_1 =
+            String.format("sample-1-%s.txt", SftpConsumerDisconnectIT.class.getSimpleName());
+    private static final String SAMPLE_FILE_NAME_2 =
+            String.format("sample-2-%s.txt", SftpConsumerDisconnectIT.class.getSimpleName());
     private static final String SAMPLE_FILE_CHARSET = "iso-8859-1";
     private static final String SAMPLE_FILE_PAYLOAD = "abc";
 
@@ -58,7 +59,8 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
         // File is deleted
         File deletedFile = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME_1);
         await().atMost(250, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile));
+                .untilAsserted(
+                        () -> assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile));
     }
 
     @Test
@@ -88,24 +90,30 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&delete=true&knownHostsFile="
-                     + service.getKnownHostsFile())
-                        .routeId("foo").noAutoStartup().process(new Processor() {
+                                + "?username=admin&password=admin&delete=true&knownHostsFile="
+                                + service.getKnownHostsFile())
+                        .routeId("foo")
+                        .noAutoStartup()
+                        .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 service.disconnectAllSessions(); // disconnect all Sessions from
                                 // the SFTP server
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                     + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
+                                + "?username=admin&password=admin&noop=false&move=.camel")
+                        .routeId("bar")
+                        .noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 service.disconnectAllSessions(); // disconnect all Sessions
                                 // from the SFTP server
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -115,5 +123,4 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
 
         FileUtils.write(file, SAMPLE_FILE_PAYLOAD, SAMPLE_FILE_CHARSET);
     }
-
 }

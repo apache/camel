@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
@@ -40,16 +41,16 @@ public class RestSecuritiesDefinition {
     private RestDefinition rest;
 
     @XmlElements({
-            @XmlElement(name = "apiKey", type = ApiKeyDefinition.class),
-            @XmlElement(name = "basicAuth", type = BasicAuthDefinition.class),
-            @XmlElement(name = "bearerToken", type = BearerTokenDefinition.class),
-            @XmlElement(name = "oauth2", type = OAuth2Definition.class),
-            @XmlElement(name = "openIdConnect", type = OpenIdConnectDefinition.class),
-            @XmlElement(name = "mutualTLS", type = MutualTLSDefinition.class) })
+        @XmlElement(name = "apiKey", type = ApiKeyDefinition.class),
+        @XmlElement(name = "basicAuth", type = BasicAuthDefinition.class),
+        @XmlElement(name = "bearerToken", type = BearerTokenDefinition.class),
+        @XmlElement(name = "oauth2", type = OAuth2Definition.class),
+        @XmlElement(name = "openIdConnect", type = OpenIdConnectDefinition.class),
+        @XmlElement(name = "mutualTLS", type = MutualTLSDefinition.class)
+    })
     private List<RestSecurityDefinition> securityDefinitions = new ArrayList<>();
 
-    public RestSecuritiesDefinition() {
-    }
+    public RestSecuritiesDefinition() {}
 
     public RestSecuritiesDefinition(RestDefinition rest) {
         this.rest = rest;
@@ -143,5 +144,4 @@ public class RestSecuritiesDefinition {
     public RestDefinition end() {
         return rest;
     }
-
 }

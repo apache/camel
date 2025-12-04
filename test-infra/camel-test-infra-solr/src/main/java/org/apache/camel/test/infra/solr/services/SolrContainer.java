@@ -33,7 +33,7 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
     public static final String CONTAINER_NAME = "solr";
 
     public static final String SOLR_DFT_COLLECTION = "collection1";
-    public static final String[] SOLR_CONTAINER_COMMANDS = new String[] { "solr-precreate", SOLR_DFT_COLLECTION };
+    public static final String[] SOLR_CONTAINER_COMMANDS = new String[] {"solr-precreate", SOLR_DFT_COLLECTION};
 
     public SolrContainer() {
         super(LocalPropertyResolver.getProperty(SolrLocalContainerInfraService.class, SolrProperties.SOLR_CONTAINER));
@@ -68,5 +68,4 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
 
         return solrContainer;
     }
-
 }

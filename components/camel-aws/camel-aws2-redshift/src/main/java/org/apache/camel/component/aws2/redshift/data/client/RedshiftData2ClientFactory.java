@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.redshift.data.client;
 
 import org.apache.camel.component.aws2.redshift.data.RedshiftData2Configuration;
@@ -26,8 +27,7 @@ import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2Cl
  */
 public final class RedshiftData2ClientFactory {
 
-    private RedshiftData2ClientFactory() {
-    }
+    private RedshiftData2ClientFactory() {}
 
     /**
      * Return the correct AWS RedshiftData client (based on remote vs local).

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,13 +30,12 @@ public class SqlProducerOutputHeaderTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -67,7 +67,8 @@ public class SqlProducerOutputHeaderTest extends CamelTestSupport {
                 // required for the sql component
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("direct:query").to("sql:select max(id) from projects?outputType=SelectOne&outputHeader=MaxProjectID")
+                from("direct:query")
+                        .to("sql:select max(id) from projects?outputType=SelectOne&outputHeader=MaxProjectID")
                         .to("mock:query");
             }
         };

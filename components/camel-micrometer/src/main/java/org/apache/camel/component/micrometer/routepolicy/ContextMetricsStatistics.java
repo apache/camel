@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -26,10 +27,13 @@ final class ContextMetricsStatistics extends MicrometerRoutePolicy.MetricsStatis
     private final boolean registerKamelets;
     private final boolean registerTemplates;
 
-    ContextMetricsStatistics(MeterRegistry meterRegistry, CamelContext camelContext,
-                             MicrometerRoutePolicyNamingStrategy namingStrategy,
-                             MicrometerRoutePolicyConfiguration configuration, boolean registerKamelets,
-                             boolean registerTemplates) {
+    ContextMetricsStatistics(
+            MeterRegistry meterRegistry,
+            CamelContext camelContext,
+            MicrometerRoutePolicyNamingStrategy namingStrategy,
+            MicrometerRoutePolicyConfiguration configuration,
+            boolean registerKamelets,
+            boolean registerTemplates) {
         super(meterRegistry, camelContext, null, namingStrategy, configuration);
         this.registerKamelets = registerKamelets;
         this.registerTemplates = registerTemplates;

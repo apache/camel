@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -39,8 +40,7 @@ public class GlobalOptionsDefinition {
     @XmlElement(name = "globalOption")
     private List<GlobalOptionDefinition> globalOptions;
 
-    public GlobalOptionsDefinition() {
-    }
+    public GlobalOptionsDefinition() {}
 
     /**
      * A series of global options as key value pairs
@@ -54,7 +54,7 @@ public class GlobalOptionsDefinition {
     }
 
     public Map<String, String> asMap() {
-        return getGlobalOptions().stream().collect(Collectors.toMap(o -> o.getKey(), o -> o.getValue(), (o1, o2) -> o2));
+        return getGlobalOptions().stream()
+                .collect(Collectors.toMap(o -> o.getKey(), o -> o.getValue(), (o1, o2) -> o2));
     }
-
 }

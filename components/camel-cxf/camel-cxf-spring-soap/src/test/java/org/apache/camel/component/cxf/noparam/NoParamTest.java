@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.noparam;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -25,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NoParamTest extends CamelSpringTestSupport {
 
@@ -49,5 +50,4 @@ public class NoParamTest extends CamelSpringTestSupport {
         assertNotNull(body);
         LOGGER.error(body.toString());
     }
-
 }

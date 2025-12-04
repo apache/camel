@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.crypto;
 
 /**
@@ -21,10 +22,9 @@ package org.apache.camel.converter.crypto;
  */
 public final class HexUtils {
 
-    private static char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    private static char[] hexChars = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-    private HexUtils() {
-    }
+    private HexUtils() {}
 
     /**
      * Creates a string representation of the supplied byte array in Hexidecimal format
@@ -75,8 +75,8 @@ public final class HexUtils {
             if (isHexChar(current)) {
                 normalize.append(current);
             } else if (!Character.isWhitespace(current)) {
-                throw new IllegalStateException(
-                        String.format("Conversion of hex string to array failed. '%c' is not a valid hex character", current));
+                throw new IllegalStateException(String.format(
+                        "Conversion of hex string to array failed. '%c' is not a valid hex character", current));
             }
         }
         // pad with a zero if we have an uneven number of characters.
@@ -99,5 +99,4 @@ public final class HexUtils {
     public static boolean isHexChar(char current) {
         return Character.digit(current, 16) >= 0;
     }
-
 }

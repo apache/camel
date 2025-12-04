@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.Endpoint;
@@ -36,8 +37,7 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
 
     private static final Logger LOG = LoggerFactory.getLogger(PooledProcessorExchangeFactory.class);
 
-    public PooledProcessorExchangeFactory() {
-    }
+    public PooledProcessorExchangeFactory() {}
 
     public PooledProcessorExchangeFactory(Processor processor) {
         super(processor);
@@ -157,5 +157,4 @@ public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFa
             return false;
         }
     }
-
 }

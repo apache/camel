@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.ringbuffer;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -29,8 +30,8 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
 
     private final Ringbuffer<Object> ringbuffer;
 
-    public HazelcastRingbufferProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
-                                       String cacheName) {
+    public HazelcastRingbufferProducer(
+            HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
         super(endpoint);
         this.ringbuffer = hazelcastInstance.getRingbuffer(cacheName);
     }
@@ -41,7 +42,6 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
         HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-
             case READ_ONCE_HEAD:
                 this.readOnceHead(exchange);
                 break;
@@ -63,9 +63,9 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the RINGBUFFER.", operation,
-                                HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(String.format(
+                        "The value '%s' is not allowed for parameter '%s' on the RINGBUFFER.",
+                        operation, HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

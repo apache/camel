@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TahuHostConsumerIT extends TahuTestSupport {
 
@@ -51,5 +52,4 @@ public class TahuHostConsumerIT extends TahuTestSupport {
     public void createRouteBuilder(CamelContext context) throws Exception {
         context.addRoutes(new TahuHostConsumerRouteBuilder(context));
     }
-
 }

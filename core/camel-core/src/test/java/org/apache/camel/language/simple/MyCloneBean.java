@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
 
 public class MyCloneBean implements Cloneable {
 
     private int myField;
 
-    public MyCloneBean() {
-    }
+    public MyCloneBean() {}
 
     public MyCloneBean(int myField) {
         this.myField = myField;
@@ -43,5 +43,4 @@ public class MyCloneBean implements Cloneable {
     public MyCloneBean deepCopy() {
         return new MyCloneBean(this.myField);
     }
-
 }

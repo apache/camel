@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.exec.impl;
+
+import static org.apache.camel.component.exec.impl.ExecParseUtils.splitCommaSeparatedToListOfInts;
+import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,9 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.exec.impl.ExecParseUtils.splitCommaSeparatedToListOfInts;
-import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
-
 /**
  * Default implementation of {@link ExecBinding}.
  *
@@ -53,16 +54,19 @@ public class DefaultExecBinding implements ExecBinding {
 
         // do not convert args as we do that manually later
         Object args = exchange.getIn().removeHeader(EXEC_COMMAND_ARGS);
-        String cmd = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(), String.class);
-        String dir = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
+        String cmd =
+                getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(), String.class);
+        String dir =
+                getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
         long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
-        String exitValuesString
-                = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXIT_VALUES, endpoint.getExitValues(), String.class);
-        String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
-        boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT,
-                endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
-        LoggingLevel commandLogLevel = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_LOG_LEVEL,
-                endpoint.getCommandLogLevel(), LoggingLevel.class);
+        String exitValuesString =
+                getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXIT_VALUES, endpoint.getExitValues(), String.class);
+        String outFilePath =
+                getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
+        boolean useStderrOnEmptyStdout = getAndRemoveHeader(
+                exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT, endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
+        LoggingLevel commandLogLevel = getAndRemoveHeader(
+                exchange.getIn(), EXEC_COMMAND_LOG_LEVEL, endpoint.getCommandLogLevel(), LoggingLevel.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
         // If the args is a list of strings already..

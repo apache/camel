@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jolt;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test testing the Removr.
@@ -49,10 +50,8 @@ public class JoltDefaultrTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start")
-                        .to("jolt:org/apache/camel/component/jolt/defaultr.json?transformDsl=Defaultr");
+                from("direct://start").to("jolt:org/apache/camel/component/jolt/defaultr.json?transformDsl=Defaultr");
             }
         };
     }
-
 }

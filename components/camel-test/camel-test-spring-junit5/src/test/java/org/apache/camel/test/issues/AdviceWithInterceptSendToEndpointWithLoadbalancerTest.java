@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.issues;
 
 import org.apache.camel.builder.AdviceWith;
@@ -40,8 +41,9 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
 
-        AdviceWith.adviceWith(context, "load-balancer-test-route",
-                a -> a.interceptSendToEndpoint("seda:end1").skipSendToOriginalEndpoint().to("mock:end"));
+        AdviceWith.adviceWith(context, "load-balancer-test-route", a -> a.interceptSendToEndpoint("seda:end1")
+                .skipSendToOriginalEndpoint()
+                .to("mock:end"));
 
         context.start();
 
@@ -58,7 +60,8 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
         public void configure() throws Exception {
             from("direct:start")
                     .routeId("load-balancer-test-route")
-                    .loadBalance().failover()
+                    .loadBalance()
+                    .failover()
                     .to("seda:end1", "seda:end2");
         }
     }

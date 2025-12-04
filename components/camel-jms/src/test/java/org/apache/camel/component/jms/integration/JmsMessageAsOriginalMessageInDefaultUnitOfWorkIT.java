@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -36,9 +37,11 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkIT extends AbstractJM
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
@@ -47,7 +50,10 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkIT extends AbstractJM
         mockResult.expectedBodiesReceived("Hello World");
         mockResult.expectedHeaderReceived("header-key", "header-value");
 
-        template.sendBodyAndHeader("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest", "Hello World", "header-key",
+        template.sendBodyAndHeader(
+                "jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest",
+                "Hello World",
+                "header-key",
                 "header-value");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -64,9 +70,7 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkIT extends AbstractJM
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class)
-                        .useOriginalMessage()
-                        .to(mockResult);
+                onException(Exception.class).useOriginalMessage().to(mockResult);
 
                 from("jms:queue:JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest")
                         .throwException(new Exception("forced exception for test"));

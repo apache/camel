@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-/* -*-             c-basic-offset: 4; indent-tabs-mode: nil; -*-  //------100-columns-wide------>|*/
-// for license please see accompanying LICENSE.txt file (available also at http://www.xmlpull.org/)
 package org.apache.camel.xml.io;
 
 import org.apache.camel.spi.Resource;
@@ -53,8 +51,12 @@ public class XmlPullParserLocationException extends RuntimeException {
         StringBuilder sb = new StringBuilder();
         sb.append(cause.getMessage()).append("\n");
         if (resource != null) {
-            sb.append("in ").append(resource.getLocation()).append(", line ")
-                    .append(row).append(", column ").append(column)
+            sb.append("in ")
+                    .append(resource.getLocation())
+                    .append(", line ")
+                    .append(row)
+                    .append(", column ")
+                    .append(column)
                     .append(":\n");
             try {
                 String line = IOHelper.loadTextLine(resource.getInputStream(), row);
@@ -73,5 +75,4 @@ public class XmlPullParserLocationException extends RuntimeException {
         }
         return sb.toString();
     }
-
 }

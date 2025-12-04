@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stax;
+
+import static org.apache.camel.component.stax.StAXBuilder.stax;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,20 +33,18 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.component.stax.StAXBuilder.stax;
-
 public class IssueWithWrongEncodingTest extends CamelTestSupport {
 
     private static final String XML_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<products>\n"
-                                        + "    <product>\n"
-                                        + "        <name>first product ";
+            + "    <product>\n"
+            + "        <name>first product ";
 
     private static final String XML_2 = "</name>\n"
-                                        + "    </product>\n"
-                                        + "    <product>\n"
-                                        + "        <name>second product</name>\n"
-                                        + "    </product>\n"
-                                        + "</products>";
+            + "    </product>\n"
+            + "    <product>\n"
+            + "        <name>second product</name>\n"
+            + "    </product>\n"
+            + "</products>";
 
     @TempDir
     Path testDirectory;
@@ -55,8 +56,8 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
 
         File file = new File("src/test/resources/products_with_valid_utf8.xml");
 
-        template.sendBodyAndHeader("file:" + testDirectory.toString(), file, Exchange.FILE_NAME,
-                "products_with_valid_utf8.xml");
+        template.sendBodyAndHeader(
+                "file:" + testDirectory.toString(), file, Exchange.FILE_NAME, "products_with_valid_utf8.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }

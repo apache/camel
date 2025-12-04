@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.json;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -33,8 +36,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
 
 public class AbstractMicrometerService extends ServiceSupport {
 
@@ -132,7 +133,8 @@ public class AbstractMicrometerService extends ServiceSupport {
     protected void doStart() {
         if (meterRegistry == null) {
             Registry camelRegistry = getCamelContext().getRegistry();
-            meterRegistry = camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
+            meterRegistry =
+                    camelRegistry.lookupByNameAndType(MicrometerConstants.METRICS_REGISTRY_NAME, MeterRegistry.class);
             // create a new metricsRegistry by default
             if (meterRegistry == null) {
                 meterRegistry = new SimpleMeterRegistry();
@@ -167,15 +169,20 @@ public class AbstractMicrometerService extends ServiceSupport {
             }
             if (!rt.isPresent()) {
                 // If not other runtime is available, we assume we're on Camel main
-                rt = Optional.of(new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
+                rt = Optional.of(
+                        new RuntimeInfo(RuntimeInfo.MAIN, getCamelContext().getVersion()));
             }
             meterRegistry.gaugeCollectionSize(
                     APP_INFO_METER_NAME,
                     Tags.of(
-                            "camel.version", getCamelContext().getVersion(),
-                            "camel.context", getCamelContext().getName(),
-                            "camel.runtime.provider", rt.get().runtimeProvider,
-                            "camel.runtime.version", rt.get().runtimeVersion),
+                            "camel.version",
+                            getCamelContext().getVersion(),
+                            "camel.context",
+                            getCamelContext().getName(),
+                            "camel.runtime.provider",
+                            rt.get().runtimeProvider,
+                            "camel.runtime.version",
+                            rt.get().runtimeVersion),
                     new ArrayList<String>());
         }
     }
@@ -224,5 +231,4 @@ public class AbstractMicrometerService extends ServiceSupport {
             return Optional.empty();
         }
     }
-
 }

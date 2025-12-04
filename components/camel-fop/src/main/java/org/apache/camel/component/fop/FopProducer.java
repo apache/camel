@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fop;
 
 import java.io.ByteArrayOutputStream;
@@ -74,8 +75,9 @@ public class FopProducer extends DefaultProducer {
         String headerOutputFormat = exchange.getIn().getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, String.class);
         if (headerOutputFormat != null) {
             // it may be a shorthand
-            FopOutputType type
-                    = exchange.getContext().getTypeConverter().tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
+            FopOutputType type = exchange.getContext()
+                    .getTypeConverter()
+                    .tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
             if (type != null) {
                 return type.getFormatExtended();
             } else {
@@ -101,17 +103,19 @@ public class FopProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void setEncryptionParameters(FOUserAgent userAgent, Map<String, Object> headers) {
-        Map<String, Object> encryptionParameters = PropertiesHelper
-                .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
+        Map<String, Object> encryptionParameters =
+                PropertiesHelper.extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
         if (!encryptionParameters.isEmpty()) {
             PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
-            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), encryptionParams, encryptionParameters);
+            PropertyBindingSupport.bindProperties(
+                    getEndpoint().getCamelContext(), encryptionParams, encryptionParameters);
             userAgent.getRendererOptions().put("encryption-params", encryptionParams);
         }
     }
 
     private void setUserAgentRendererOptions(FOUserAgent userAgent, Map<String, Object> headers) {
-        Map<String, Object> parameters = PropertiesHelper.extractProperties(headers, FopConstants.CAMEL_FOP_RENDERER_OPTIONS);
+        Map<String, Object> parameters =
+                PropertiesHelper.extractProperties(headers, FopConstants.CAMEL_FOP_RENDERER_OPTIONS);
         if (!parameters.isEmpty()) {
             userAgent.getRendererOptions().putAll(parameters);
         }
@@ -123,5 +127,4 @@ public class FopProducer extends DefaultProducer {
             PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), userAgent, parameters);
         }
     }
-
 }

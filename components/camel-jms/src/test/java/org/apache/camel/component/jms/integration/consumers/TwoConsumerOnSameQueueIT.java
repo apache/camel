@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.consumers;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,12 +43,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel") })
+@Tags({@Tag("not-parallel")})
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
 
@@ -124,8 +125,9 @@ public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
         template.sendBody("activemq:queue:TwoConsumerOnSameQueueTest", "Hello World");
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(
-                () -> assertEquals(2, mockA.getReceivedCounter() + mockB.getReceivedCounter()));
+        Awaitility.await()
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(2, mockA.getReceivedCounter() + mockB.getReceivedCounter()));
 
         for (Exchange exchange : mockA.getReceivedExchanges()) {
             assertExchange(exchange);
@@ -153,11 +155,9 @@ public class TwoConsumerOnSameQueueIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("a")
-                        .to("log:a", "mock:a");
+                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("a").to("log:a", "mock:a");
 
-                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("b")
-                        .to("log:b", "mock:b");
+                from("activemq:queue:TwoConsumerOnSameQueueTest").routeId("b").to("log:b", "mock:b");
             }
         };
     }

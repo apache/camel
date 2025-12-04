@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.List;
@@ -180,7 +181,8 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
             Exchange exchange = exchanges.get(i);
             Message msg = exchange.getMessage();
-            JsonObject jo = MessageHelper.dumpAsJSonObject(msg, false, false, includeBody, true, true, true, 128 * 1024);
+            JsonObject jo =
+                    MessageHelper.dumpAsJSonObject(msg, false, false, includeBody, true, true, true, 128 * 1024);
             arr.add(jo);
         }
         String out = arr.toJson();

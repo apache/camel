@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.zeebe.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -24,15 +27,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ProcessRequestTest {
 
-    private static final String MARSHAL_TEST_RESULT_1
-            = "{\"variables\":{},\"process_id\":\"process_1\",\"process_version\":1,\"process_key\":1,\"process_instance_key\":1}";
-    private static final String MARSHAL_TEST_RESULT_2
-            = "{\"variables\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"},\"process_id\":\"process_1\",\"process_version\":1,\"process_key\":1,\"process_instance_key\":1}";
+    private static final String MARSHAL_TEST_RESULT_1 =
+            "{\"variables\":{},\"process_id\":\"process_1\",\"process_version\":1,\"process_key\":1,\"process_instance_key\":1}";
+    private static final String MARSHAL_TEST_RESULT_2 =
+            "{\"variables\":{\"varC\":{},\"varB\":10,\"varA\":\"test\"},\"process_id\":\"process_1\",\"process_version\":1,\"process_key\":1,\"process_instance_key\":1}";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -59,8 +59,8 @@ public class ProcessRequestTest {
 
     @Test
     public void unmarshalTest() {
-        ProcessRequest unmarshalledMessage1
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessRequest.class));
+        ProcessRequest unmarshalledMessage1 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessRequest.class));
 
         ProcessRequest message = new ProcessRequest();
         message.setProcessInstanceKey(1);
@@ -70,8 +70,8 @@ public class ProcessRequestTest {
 
         assertEquals(message, unmarshalledMessage1);
 
-        ProcessRequest unmarshalledMessage2
-                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessRequest.class));
+        ProcessRequest unmarshalledMessage2 =
+                assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessRequest.class));
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");

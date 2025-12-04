@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog;
 
 import java.net.URISyntaxException;
@@ -89,5 +90,4 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
     String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException;
-
 }

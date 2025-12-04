@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.web3j;
 
 import io.reactivex.Flowable;
@@ -61,16 +62,13 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     }
 
     @BeforeAll
-    public static void startServer() {
-    }
+    public static void startServer() {}
 
     @AfterAll
-    public static void stopServer() {
-    }
+    public static void stopServer() {}
 
     @Override
     public void doPreSetup() throws Exception {
-        try (AutoCloseable closeable = MockitoAnnotations.openMocks(this)) {
-        }
+        try (AutoCloseable closeable = MockitoAnnotations.openMocks(this)) {}
     }
 }

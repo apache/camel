@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.es.integration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElasticsearchPingIT extends ElasticsearchTestSupport {
 
@@ -34,8 +35,7 @@ class ElasticsearchPingIT extends ElasticsearchTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ping")
-                        .to("elasticsearch://elasticsearch?operation=Ping");
+                from("direct:ping").to("elasticsearch://elasticsearch?operation=Ping");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.groovy.xml;
 
 import org.w3c.dom.Document;
@@ -34,8 +35,8 @@ import org.junit.jupiter.api.Test;
 
 public class GroovyXmlDataFormatTest extends CamelTestSupport {
 
-    private static final String BOOKS
-            = """
+    private static final String BOOKS =
+            """
                     <library>
                       <book id="bk101">
                         <title>No Title</title>
@@ -52,8 +53,8 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
                     </library>
                     """;
 
-    private static final String BOOKS_NO_ATTR
-            = """
+    private static final String BOOKS_NO_ATTR =
+            """
                     <library>
                       <book>
                         <title>No Title</title>
@@ -70,8 +71,8 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
                     </library>
                     """;
 
-    private static final String BOOKS_JSON
-            = """
+    private static final String BOOKS_JSON =
+            """
                     {
                         "library": {
                             "book": [
@@ -94,8 +95,8 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
                     }
                     """;
 
-    private static final String COUNTRIES
-            = """
+    private static final String COUNTRIES =
+            """
                     <countries>
                       <country>Norway</country>
                       <country>Denmark</country>
@@ -105,8 +106,8 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
                     </countries>
                     """;
 
-    private static final String COUNTRIES_JSON
-            = """
+    private static final String COUNTRIES_JSON =
+            """
                     {
                         "countries": [
                           {
@@ -295,11 +296,16 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
 
         Node n = (Node) out;
         Assertions.assertEquals(5, n.children().size());
-        Assertions.assertEquals("country[attributes={}; value=[Norway]]", n.children().get(0).toString());
-        Assertions.assertEquals("country[attributes={}; value=[Denmark]]", n.children().get(1).toString());
-        Assertions.assertEquals("country[attributes={}; value=[Sweden]]", n.children().get(2).toString());
-        Assertions.assertEquals("country[attributes={}; value=[Germany]]", n.children().get(3).toString());
-        Assertions.assertEquals("country[attributes={}; value=[Finland]]", n.children().get(4).toString());
+        Assertions.assertEquals(
+                "country[attributes={}; value=[Norway]]", n.children().get(0).toString());
+        Assertions.assertEquals(
+                "country[attributes={}; value=[Denmark]]", n.children().get(1).toString());
+        Assertions.assertEquals(
+                "country[attributes={}; value=[Sweden]]", n.children().get(2).toString());
+        Assertions.assertEquals(
+                "country[attributes={}; value=[Germany]]", n.children().get(3).toString());
+        Assertions.assertEquals(
+                "country[attributes={}; value=[Finland]]", n.children().get(4).toString());
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -326,17 +332,15 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:marshal").streamCache(false)
-                        .marshal().groovyXml()
+                from("direct:marshal").streamCache(false).marshal().groovyXml().to("mock:marshal");
+
+                from("direct:marshalNoAttr")
+                        .streamCache(false)
+                        .marshal(
+                                dataFormat().groovyXml().attributeMapping(false).end())
                         .to("mock:marshal");
 
-                from("direct:marshalNoAttr").streamCache(false)
-                        .marshal(dataFormat().groovyXml().attributeMapping(false).end())
-                        .to("mock:marshal");
-
-                from("direct:unmarshal")
-                        .unmarshal().groovyXml()
-                        .to("mock:unmarshal");
+                from("direct:unmarshal").unmarshal().groovyXml().to("mock:unmarshal");
             }
         };
     }

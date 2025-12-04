@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
+
+import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Mockito.*;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -22,10 +27,6 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-
-import static org.hamcrest.Matchers.startsWith;
-import static org.mockito.Mockito.*;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public class ThroughPutLoggerTest {
 

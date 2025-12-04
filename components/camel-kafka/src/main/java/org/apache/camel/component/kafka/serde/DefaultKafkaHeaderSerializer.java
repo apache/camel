@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.serde;
 
 import java.nio.ByteBuffer;
@@ -56,8 +57,9 @@ public class DefaultKafkaHeaderSerializer implements KafkaHeaderSerializer, Came
             }
         }
 
-        LOG.debug("Cannot propagate header value of type[{}], skipping... "
-                  + "Supported types: String, Integer, Long, Double, byte[].",
+        LOG.debug(
+                "Cannot propagate header value of type[{}], skipping... "
+                        + "Supported types: String, Integer, Long, Double, byte[].",
                 value != null ? value.getClass() : "null");
         return null;
     }

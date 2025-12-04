@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram;
+
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,10 +31,6 @@ import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests the reception of messages without text having media content.
@@ -49,20 +50,21 @@ public class TelegramConsumerMediaPhotoTest extends TelegramTestSupport {
 
         assertNotNull(msg.getPhoto());
         assertCollectionSize(msg.getPhoto(), 4);
-        assertEquals(4, msg.getPhoto().stream().map(ph -> ph.getFileId()).distinct().count());
+        assertEquals(
+                4, msg.getPhoto().stream().map(ph -> ph.getFileId()).distinct().count());
     }
 
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                getMockRoutes(),
-                new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("telegram:bots?authorizationToken=mock-token")
-                                .to("mock:telegram");
-                    }
-                } };
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                }
+            }
+        };
     }
 
     @Override
@@ -75,5 +77,4 @@ public class TelegramConsumerMediaPhotoTest extends TelegramTestSupport {
                         TelegramTestUtil.stringResource("messages/updates-media.json"),
                         TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
-
 }

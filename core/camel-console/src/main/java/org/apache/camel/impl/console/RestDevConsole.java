@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -113,5 +114,4 @@ public class RestDevConsole extends AbstractDevConsole {
 
         return root;
     }
-
 }

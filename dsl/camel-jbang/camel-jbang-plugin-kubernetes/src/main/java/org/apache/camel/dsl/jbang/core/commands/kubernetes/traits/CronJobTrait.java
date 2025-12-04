@@ -49,10 +49,13 @@ public class CronJobTrait extends BaseTrait {
                 .withNewSpec()
                 .endSpec();
 
-        Container containerTrait = Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
+        Container containerTrait =
+                Optional.ofNullable(traitConfig.getContainer()).orElseGet(Container::new);
         // sets the image pull secret
-        Optional.ofNullable(containerTrait.getImagePullSecrets()).orElseGet(List::of)
-                .forEach(sec -> cronjobBuilder.editOrNewSpec()
+        Optional.ofNullable(containerTrait.getImagePullSecrets())
+                .orElseGet(List::of)
+                .forEach(sec -> cronjobBuilder
+                        .editOrNewSpec()
                         .editOrNewJobTemplate()
                         .editOrNewSpec()
                         .editOrNewTemplate()
@@ -66,7 +69,8 @@ public class CronJobTrait extends BaseTrait {
 
         // sets the service account
         if (context.getServiceAccount() != null) {
-            cronjobBuilder.editOrNewSpec()
+            cronjobBuilder
+                    .editOrNewSpec()
                     .editOrNewJobTemplate()
                     .editOrNewSpec()
                     .editOrNewTemplate()
@@ -80,7 +84,8 @@ public class CronJobTrait extends BaseTrait {
         }
 
         // sets the schedule and restart-policy
-        cronjobBuilder.editOrNewSpec()
+        cronjobBuilder
+                .editOrNewSpec()
                 // set the timezone
                 .withSchedule(traitConfig.getCronjob().getSchedule())
                 .editOrNewJobTemplate()
@@ -97,21 +102,39 @@ public class CronJobTrait extends BaseTrait {
 
         // sets the timezone
         if (ObjectHelper.isNotEmpty(cronjobTrait.getTimezone())) {
-            cronjobBuilder.editOrNewSpec().withTimeZone(cronjobTrait.getTimezone()).endSpec();
+            cronjobBuilder
+                    .editOrNewSpec()
+                    .withTimeZone(cronjobTrait.getTimezone())
+                    .endSpec();
         }
         // sets the ActiveDeadlineSeconds
         if (cronjobTrait.getActiveDeadlineSeconds() != null && cronjobTrait.getActiveDeadlineSeconds() > 0) {
-            cronjobBuilder.editOrNewSpec().editOrNewJobTemplate().editOrNewSpec()
-                    .withActiveDeadlineSeconds(cronjobTrait.getActiveDeadlineSeconds()).endSpec().endJobTemplate().endSpec();
+            cronjobBuilder
+                    .editOrNewSpec()
+                    .editOrNewJobTemplate()
+                    .editOrNewSpec()
+                    .withActiveDeadlineSeconds(cronjobTrait.getActiveDeadlineSeconds())
+                    .endSpec()
+                    .endJobTemplate()
+                    .endSpec();
         }
         // sets the BackoffLimit
         if (cronjobTrait.getBackoffLimit() != null && cronjobTrait.getBackoffLimit() > 0) {
-            cronjobBuilder.editOrNewSpec().editOrNewJobTemplate().editOrNewSpec()
-                    .withBackoffLimit(cronjobTrait.getBackoffLimit()).endSpec().endJobTemplate().endSpec();
+            cronjobBuilder
+                    .editOrNewSpec()
+                    .editOrNewJobTemplate()
+                    .editOrNewSpec()
+                    .withBackoffLimit(cronjobTrait.getBackoffLimit())
+                    .endSpec()
+                    .endJobTemplate()
+                    .endSpec();
         }
         // sets the StartingDeadlineSeconds
         if (cronjobTrait.getStartingDeadlineSeconds() != null && cronjobTrait.getStartingDeadlineSeconds() > 0) {
-            cronjobBuilder.editOrNewSpec().withStartingDeadlineSeconds(cronjobTrait.getStartingDeadlineSeconds()).endSpec();
+            cronjobBuilder
+                    .editOrNewSpec()
+                    .withStartingDeadlineSeconds(cronjobTrait.getStartingDeadlineSeconds())
+                    .endSpec();
         }
         context.add(cronjobBuilder);
     }

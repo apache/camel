@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.reply;
+
+import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
 
 import jakarta.jms.Destination;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 
 import org.apache.camel.component.jms.MessageSentCallback;
-
-import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
 
 /**
  * Callback to be used when using the option <tt>useMessageIDAsCorrelationID</tt>.
@@ -36,8 +37,8 @@ public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSe
     private final String correlationId;
     private final long requestTimeout;
 
-    public UseMessageIdAsCorrelationIdMessageSentCallback(ReplyManager replyManager, String correlationId,
-                                                          long requestTimeout) {
+    public UseMessageIdAsCorrelationIdMessageSentCallback(
+            ReplyManager replyManager, String correlationId, long requestTimeout) {
         this.replyManager = replyManager;
         this.correlationId = correlationId;
         this.requestTimeout = requestTimeout;

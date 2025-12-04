@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.io.File;
@@ -81,20 +82,23 @@ import picocli.CommandLine;
  * @see org.apache.camel.dsl.jbang.core.commands.CamelCommand
  * @see org.apache.camel.dsl.jbang.core.commands.CamelJBangMain
  */
-@CommandLine.Command(name = "list",
-                     description = "List available update versions for Camel and its runtime variants")
+@CommandLine.Command(name = "list", description = "List available update versions for Camel and its runtime variants")
 public class UpdateList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @CommandLine.Option(
+            names = {"--repo", "--repos"},
+            description =
+                    "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @CommandLine.Option(
+            names = {"--json"},
+            description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--use-cache" },
-                        description = "Use Maven cache")
+    @CommandLine.Option(
+            names = {"--use-cache"},
+            description = "Use Maven cache")
     boolean useCache;
 
     private static final String CAMEL_UPGRADE_GROUPID = "org.apache.camel.upgrade";
@@ -111,7 +115,7 @@ public class UpdateList extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
-        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader(); ) {
             downloader.setRepositories(repos);
             downloader.setFresh(!useCache);
             downloader.start();
@@ -119,40 +123,42 @@ public class UpdateList extends CamelCommand {
             RecipeVersions recipesVersions = collectRecipesVersions(downloader);
 
             // Convert recipes versions into Rows for table and json visualization
-            recipesVersions.plainCamelRecipesVersion()
-                    .forEach(l -> rows
-                            .add(new Row(
-                                    l[0], RuntimeType.main.runtime(), "",
-                                    "Migrates Camel 4 application to Camel " + l[0])));
+            recipesVersions
+                    .plainCamelRecipesVersion()
+                    .forEach(l -> rows.add(new Row(
+                            l[0], RuntimeType.main.runtime(), "", "Migrates Camel 4 application to Camel " + l[0])));
             recipesVersions.camelSpringBootRecipesVersion().forEach(l -> {
-
-                String[] runtimeVersion
-                        = recipesVersions.sbVersions().stream().filter(v -> v[0].equals(l[0])).findFirst().orElse(null);
+                String[] runtimeVersion = recipesVersions.sbVersions().stream()
+                        .filter(v -> v[0].equals(l[0]))
+                        .findFirst()
+                        .orElse(null);
 
                 // There may be Camel recipes releases that do not follow Camel Spring Boot micro version, for example
                 // upgrade recipes 4.12.1 was released, but only Camel 4.12.0 is released, in this case,
                 // consider the major.minor only
                 if (runtimeVersion == null) {
                     String majorMinorVersion = getMajorMinorVersion(l[0]);
-                    runtimeVersion
-                            = recipesVersions.sbVersions().stream()
-                                    .filter(v -> {
-                                        // Handle micro Camel Upgrade Recipes versions like 4.14.0.1
-                                        String actualMajorMinorVersion = getMajorMinorVersion(v[0]);
-                                        return actualMajorMinorVersion.equals(majorMinorVersion);
-                                    })
-                                    .findFirst()
-                                    .orElse(new String[] { null, "N/A" });
+                    runtimeVersion = recipesVersions.sbVersions().stream()
+                            .filter(v -> {
+                                // Handle micro Camel Upgrade Recipes versions like 4.14.0.1
+                                String actualMajorMinorVersion = getMajorMinorVersion(v[0]);
+                                return actualMajorMinorVersion.equals(majorMinorVersion);
+                            })
+                            .findFirst()
+                            .orElse(new String[] {null, "N/A"});
                 }
 
                 rows.add(new Row(
-                        l[0], RuntimeType.springBoot.runtime(), runtimeVersion[1],
+                        l[0],
+                        RuntimeType.springBoot.runtime(),
+                        runtimeVersion[1],
                         "Migrates Camel Spring Boot 4 application to Camel Spring Boot " + l[0]));
             });
             // Translate quarkus versions to Camel
             recipesVersions.camelQuarkusRecipesVersions();
             recipesVersions.quarkusUpdateRecipes().forEach(l -> {
-                List<String[]> runtimeVersions = recipesVersions.qVersions().stream().filter(v -> v[1].startsWith(l.version()))
+                List<String[]> runtimeVersions = recipesVersions.qVersions().stream()
+                        .filter(v -> v[1].startsWith(l.version()))
                         .collect(Collectors.toList());
                 if (!runtimeVersions.isEmpty()) {
                     runtimeVersions.sort(Comparator.comparing(o -> o[1]));
@@ -161,32 +167,44 @@ public class UpdateList extends CamelCommand {
                     String quarkusVersion = runtimeVersion[1];
                     quarkusVersion = quarkusVersion.substring(0, quarkusVersion.lastIndexOf('.')) + ".x";
 
-                    rows.add(new Row(runtimeVersion[0], RuntimeType.quarkus.runtime(), quarkusVersion, l.description()));
+                    rows.add(
+                            new Row(runtimeVersion[0], RuntimeType.quarkus.runtime(), quarkusVersion, l.description()));
                 }
             });
         }
 
-        rows.sort(Comparator.comparing(Row::version).reversed()
-                .thenComparing(Row::runtime));
+        rows.sort(Comparator.comparing(Row::version).reversed().thenComparing(Row::runtime));
 
         if (jsonOutput) {
-            printer().println(
-                    Jsoner.serialize(
-                            rows.stream()
-                                    .map(row -> new UpdateListDTO(
-                                            row.version.toString(), row.runtime, row.runtimeVersion, row.description))
-                                    .map(UpdateListDTO::toMap)
-                                    .collect(Collectors.toList())));
+            printer()
+                    .println(Jsoner.serialize(rows.stream()
+                            .map(row -> new UpdateListDTO(
+                                    row.version.toString(), row.runtime, row.runtimeVersion, row.description))
+                            .map(UpdateListDTO::toMap)
+                            .collect(Collectors.toList())));
         } else {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("VERSION").minWidth(10).dataAlign(HorizontalAlign.LEFT)
-                            .with(r -> r.version().toString()),
-                    new Column().header("RUNTIME")
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtime()),
-                    new Column().header("RUNTIME VERSION")
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtimeVersion()),
-                    new Column().header("DESCRIPTION")
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.description()))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("VERSION")
+                                            .minWidth(10)
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.version().toString()),
+                                    new Column()
+                                            .header("RUNTIME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.runtime()),
+                                    new Column()
+                                            .header("RUNTIME VERSION")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.runtimeVersion()),
+                                    new Column()
+                                            .header("DESCRIPTION")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.description()))));
         }
 
         return 0;
@@ -208,64 +226,45 @@ public class UpdateList extends CamelCommand {
      */
     private RecipeVersions collectRecipesVersions(MavenDependencyDownloader downloader)
             throws ExecutionException, InterruptedException {
-        CompletableFuture<List<String[]>> plainCamelRecipesVersionFuture
-                = CompletableFuture.supplyAsync(() -> downloader.resolveAvailableVersions(
-                        CAMEL_UPGRADE_GROUPID,
-                        CAMEL_UPGRADE_ARTIFACTID,
-                        FIRST_RECIPE_VERSION,
-                        repos));
+        CompletableFuture<List<String[]>> plainCamelRecipesVersionFuture =
+                CompletableFuture.supplyAsync(() -> downloader.resolveAvailableVersions(
+                        CAMEL_UPGRADE_GROUPID, CAMEL_UPGRADE_ARTIFACTID, FIRST_RECIPE_VERSION, repos));
 
         final List<String[]> sbVersions = new ArrayList<>();
         CompletableFuture<List<String[]>> camelSpringBootRecipesVersionFuture = CompletableFuture.supplyAsync(() -> {
             List<String[]> camelSpringBootRecipesVersion = downloader.resolveAvailableVersions(
-                    CAMEL_UPGRADE_GROUPID,
-                    CAMEL_SB_UPGRADE_ARTIFACTID,
-                    FIRST_RECIPE_VERSION,
-                    repos);
+                    CAMEL_UPGRADE_GROUPID, CAMEL_SB_UPGRADE_ARTIFACTID, FIRST_RECIPE_VERSION, repos);
             if (!camelSpringBootRecipesVersion.isEmpty()) {
                 // 4.8.0 is the first version with update recipes
-                sbVersions.addAll(
-                        downloader.resolveAvailableVersions(
-                                "org.apache.camel.springboot",
-                                "camel-spring-boot",
-                                FIRST_RECIPE_VERSION,
-                                repos));
+                sbVersions.addAll(downloader.resolveAvailableVersions(
+                        "org.apache.camel.springboot", "camel-spring-boot", FIRST_RECIPE_VERSION, repos));
             }
 
             return camelSpringBootRecipesVersion;
         });
 
         final Set<QuarkusUpdates> quarkusUpdateRecipes = new LinkedHashSet<>();
-        CompletableFuture<List<String[]>> camelQuarkusRecipesVersionsFuture = CompletableFuture
-                .supplyAsync(() -> {
-                    List<String[]> camelQuarkusRecipesVersions = downloader.resolveAvailableVersions(
-                            "io.quarkus",
-                            "quarkus-update-recipes",
-                            QUARKUS_FIRST_RECIPE_VERSION,
-                            repos);
+        CompletableFuture<List<String[]>> camelQuarkusRecipesVersionsFuture = CompletableFuture.supplyAsync(() -> {
+            List<String[]> camelQuarkusRecipesVersions = downloader.resolveAvailableVersions(
+                    "io.quarkus", "quarkus-update-recipes", QUARKUS_FIRST_RECIPE_VERSION, repos);
 
-                    for (String[] camelQuarkusRecipeVersion : camelQuarkusRecipesVersions) {
-                        String version = camelQuarkusRecipeVersion[0];
-                        MavenArtifact artifact = downloader.downloadArtifact("io.quarkus",
-                                "quarkus-update-recipes",
-                                version);
+            for (String[] camelQuarkusRecipeVersion : camelQuarkusRecipesVersions) {
+                String version = camelQuarkusRecipeVersion[0];
+                MavenArtifact artifact = downloader.downloadArtifact("io.quarkus", "quarkus-update-recipes", version);
 
-                        try {
-                            quarkusUpdateRecipes.addAll(getCamelQuarkusRecipesInJar(artifact.getFile()));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+                try {
+                    quarkusUpdateRecipes.addAll(getCamelQuarkusRecipesInJar(artifact.getFile()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-                    return camelQuarkusRecipesVersions;
-                });
+            return camelQuarkusRecipesVersions;
+        });
 
-        CompletableFuture<List<String[]>> qVersionsFuture
-                = CompletableFuture.supplyAsync(() -> downloader.resolveAvailableVersions(
-                        "org.apache.camel.quarkus",
-                        "camel-quarkus-catalog",
-                        QUARKUS_FIRST_UPDATABLE_VERSION,
-                        repos));
+        CompletableFuture<List<String[]>> qVersionsFuture =
+                CompletableFuture.supplyAsync(() -> downloader.resolveAvailableVersions(
+                        "org.apache.camel.quarkus", "camel-quarkus-catalog", QUARKUS_FIRST_UPDATABLE_VERSION, repos));
 
         return new RecipeVersions(
                 plainCamelRecipesVersionFuture.get(),
@@ -276,13 +275,13 @@ public class UpdateList extends CamelCommand {
                 qVersionsFuture.get());
     }
 
-    record RecipeVersions(List<String[]> plainCamelRecipesVersion,
+    record RecipeVersions(
+            List<String[]> plainCamelRecipesVersion,
             List<String[]> sbVersions,
             List<String[]> camelSpringBootRecipesVersion,
             Set<QuarkusUpdates> quarkusUpdateRecipes,
             List<String[]> camelQuarkusRecipesVersions,
-            List<String[]> qVersions) {
-    }
+            List<String[]> qVersions) {}
 
     record Row(ComparableVersion version, String runtime, String runtimeVersion, String description) {
         public Row(String version, String runtime, String runtimeVersion, String description) {
@@ -290,8 +289,7 @@ public class UpdateList extends CamelCommand {
         }
     }
 
-    record QuarkusUpdates(String version, String description) {
-    }
+    record QuarkusUpdates(String version, String description) {}
 
     /**
      * Extracts Camel Quarkus recipe information from a JAR file.
@@ -316,18 +314,17 @@ public class UpdateList extends CamelCommand {
                     String description = Arrays.stream(content.split(System.lineSeparator()))
                             .filter(l -> l.startsWith("description"))
                             .map(l -> l.substring(l.indexOf(":") + 1).trim())
-                            .findFirst().orElse("");
+                            .findFirst()
+                            .orElse("");
                     // cleanup ugly ` in description
                     description = description.replace("`", "");
 
                     quarkusUpdateRecipes.add(new QuarkusUpdates(
-                            name.substring(name.lastIndexOf("/") + 1, name.indexOf(".yaml")),
-                            description));
+                            name.substring(name.lastIndexOf("/") + 1, name.indexOf(".yaml")), description));
                 }
             }
 
             return quarkusUpdateRecipes;
         }
     }
-
 }

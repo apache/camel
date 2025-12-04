@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.Message;
@@ -40,5 +41,4 @@ public interface JmsBrowsableEndpoint {
      * To create exchange for the messages to be browsed.
      */
     Exchange createExchange(Message message, Session session);
-
 }

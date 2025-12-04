@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.agent;
 
 public class LangChain4jAgent {
     public static final String SCHEME = "langchain4j-agent";
 
-    private LangChain4jAgent() {
-    }
-
+    private LangChain4jAgent() {}
 }

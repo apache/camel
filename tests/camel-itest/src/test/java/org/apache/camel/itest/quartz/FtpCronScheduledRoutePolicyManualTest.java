@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.quartz;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -35,15 +39,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-
 @Disabled("Manual test")
 public class FtpCronScheduledRoutePolicyManualTest extends CamelTestSupport {
 
     protected FtpServer ftpServer;
-    private String ftp
-            = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5000&idempotent=false&localWorkDirectory=target/tmp";
+    private String ftp =
+            "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5000&idempotent=false&localWorkDirectory=target/tmp";
 
     @Test
     void testFtpCronScheduledRoutePolicyTest() throws Exception {
@@ -64,7 +65,9 @@ public class FtpCronScheduledRoutePolicyManualTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.SECONDS);
 
                 from(ftp)
-                        .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .noAutoStartup()
+                        .routePolicy(policy)
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                         .log("Processing ${file:name}")
                         .to("log:done");
             }
@@ -104,5 +107,4 @@ public class FtpCronScheduledRoutePolicyManualTest extends CamelTestSupport {
 
         ftpServer = serverFactory.createServer();
     }
-
 }

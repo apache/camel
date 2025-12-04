@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
@@ -95,9 +96,9 @@ public class NettyHttpProducerHttpPathTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:http://localhost:{{port}}/foo?matchOnUriPrefix=true")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
-
 }

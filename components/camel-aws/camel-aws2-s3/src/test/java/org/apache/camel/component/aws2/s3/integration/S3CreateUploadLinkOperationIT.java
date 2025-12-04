@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,9 +29,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3CreateUploadLinkOperationIT extends Aws2S3Base {
 
@@ -68,11 +69,9 @@ public class S3CreateUploadLinkOperationIT extends Aws2S3Base {
             public void configure() {
                 String awsEndpoint = "aws2-s3://" + name.get() + "?autoCreateBucket=true";
 
-                from("direct:addObject")
-                        .to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                from("direct:addObject").to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
-                from("direct:createUploadLink")
-                        .to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                from("direct:createUploadLink").to(awsEndpoint + "&accessKey=xxx&secretKey=yyy&region=eu-west-1");
             }
         };
     }

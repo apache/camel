@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -28,14 +31,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DynamicRouteIT extends AbstractJMSTest {
 
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     @BindToRegistry
     private final MyBean myBean = new MyBean();
+
     private final String componentName = "jms";
     protected ProducerTemplate template;
 
@@ -45,7 +48,6 @@ public class DynamicRouteIT extends AbstractJMSTest {
         assertEquals("response is foo", response);
         response = template.requestBody("jms:queue:request", "bar", String.class);
         assertEquals("response is bar", response);
-
     }
 
     @Test
@@ -61,12 +63,9 @@ public class DynamicRouteIT extends AbstractJMSTest {
 
         return new RouteBuilder() {
             public void configure() {
-                from("jms:queue:request")
-                        .dynamicRouter().method(MyDynamicRouter.class, "route");
-                from("direct:start")
-                        .dynamicRouter(method(new MyDynamicRouter()));
+                from("jms:queue:request").dynamicRouter().method(MyDynamicRouter.class, "route");
+                from("direct:start").dynamicRouter(method(new MyDynamicRouter()));
             }
-
         };
     }
 
@@ -107,5 +106,4 @@ public class DynamicRouteIT extends AbstractJMSTest {
     void setUpRequirements() {
         template = camelContextExtension.getProducerTemplate();
     }
-
 }

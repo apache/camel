@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elasticsearch.rest.client;
 
 import java.util.Map;
@@ -29,23 +30,36 @@ public class ElasticsearchRestClientComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     RestClient restClient;
+
     @Metadata
     String hostAddressesList;
+
     @Metadata(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
+
     @Metadata(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int socketTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
+
     @Metadata(label = "security", secret = true)
     private String user;
+
     @Metadata(label = "security", secret = true)
     private String password;
+
     @Metadata(label = "security", supportFileReference = true)
     private String certificatePath;
+
     @Metadata(label = "advanced")
     private boolean enableSniffer;
-    @Metadata(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
+
+    @Metadata(
+            label = "advanced",
+            defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
     private int snifferInterval = ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY;
-    @Metadata(label = "advanced", defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
+
+    @Metadata(
+            label = "advanced",
+            defaultValue = "" + ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticSearchRestClientConstant.SNIFFER_INTERVAL_AND_FAILURE_DELAY;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

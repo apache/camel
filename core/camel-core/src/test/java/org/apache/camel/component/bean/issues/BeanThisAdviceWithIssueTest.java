@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.BeanScope;
@@ -39,12 +40,14 @@ public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:mytest").id(ROUTE_ID).bean(this, "hello", BeanScope.Prototype).to("log:out");
+                from("direct:mytest")
+                        .id(ROUTE_ID)
+                        .bean(this, "hello", BeanScope.Prototype)
+                        .to("log:out");
             }
 
             @SuppressWarnings("Unused")
-            public void hello(final Exchange exchange) {
-            }
+            public void hello(final Exchange exchange) {}
         });
 
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {

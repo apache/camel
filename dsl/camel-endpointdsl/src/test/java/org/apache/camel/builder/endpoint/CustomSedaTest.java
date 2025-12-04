@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CustomSedaTest extends BaseEndpointDslTest {
 
@@ -48,14 +49,11 @@ public class CustomSedaTest extends BaseEndpointDslTest {
                 SedaComponent seda2 = new SedaComponent();
                 context.addComponent("seda2", seda2);
 
-                from(seda("foo"))
-                        .to(mock("result"));
+                from(seda("foo")).to(mock("result"));
 
-                from(seda("seda2", "foo"))
-                        .to(mock("result"));
+                from(seda("seda2", "foo")).to(mock("result"));
 
-                from(direct("foo"))
-                        .to(seda("seda2", "foo"));
+                from(direct("foo")).to(seda("seda2", "foo"));
             }
         };
     }

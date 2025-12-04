@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchbase;
 
 import java.util.Map;
@@ -28,15 +29,15 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("couchbase")
 public class CouchbaseComponent extends HealthCheckComponent {
 
-    public CouchbaseComponent() {
-    }
+    public CouchbaseComponent() {}
 
     public CouchbaseComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected CouchbaseEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected CouchbaseEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         CouchbaseEndpoint endpoint = new CouchbaseEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;

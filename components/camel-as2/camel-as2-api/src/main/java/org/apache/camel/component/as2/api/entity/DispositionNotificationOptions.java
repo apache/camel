@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api.entity;
 
 import org.apache.camel.component.as2.api.util.AS2HeaderUtils.Parameter;
@@ -35,5 +36,4 @@ public class DispositionNotificationOptions {
     public Parameter getSignedReceiptMicalg() {
         return signedReceiptMicalg;
     }
-
 }

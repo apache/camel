@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.slack;
 
 import java.util.Collections;
@@ -53,12 +54,8 @@ public class SlackProducerTest extends CamelTestSupport {
         errors.expectedMessageCount(0);
 
         Message message = new Message();
-        message.setBlocks(Collections.singletonList(SectionBlock
-                .builder()
-                .text(MarkdownTextObject
-                        .builder()
-                        .text("*Hello from Camel!*")
-                        .build())
+        message.setBlocks(Collections.singletonList(SectionBlock.builder()
+                .text(MarkdownTextObject.builder().text("*Hello from Camel!*").build())
                 .build()));
 
         template.sendBody(test, message);
@@ -78,7 +75,8 @@ public class SlackProducerTest extends CamelTestSupport {
                 onException(Exception.class).handled(true).to(errors);
 
                 final String slackUser = System.getProperty("SLACK_USER", "CamelTest");
-                from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook").setBody(constant("{\"ok\": true}"));
+                from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook")
+                        .setBody(constant("{\"ok\": true}"));
 
                 from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slackUser));
             }

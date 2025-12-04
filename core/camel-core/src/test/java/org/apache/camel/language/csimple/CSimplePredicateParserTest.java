@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
 
 import org.junit.jupiter.api.Assertions;
@@ -53,8 +54,8 @@ public class CSimplePredicateParserTest {
         Assertions.assertEquals("isEqualTo(exchange, bodyAs(message, String.class).substring(3), \"DEF\")", code);
 
         code = parser.parsePredicate("${bodyAs(int)} > ${headerAs('foo', int)}");
-        Assertions.assertEquals("isGreaterThan(exchange, bodyAs(message, int.class), headerAs(message, \"foo\", int.class))",
-                code);
+        Assertions.assertEquals(
+                "isGreaterThan(exchange, bodyAs(message, int.class), headerAs(message, \"foo\", int.class))", code);
 
         code = parser.parsePredicate("${camelContext.getName()} == 'myCamel'");
         Assertions.assertEquals("isEqualTo(exchange, context.getName(), \"myCamel\")", code);
@@ -93,14 +94,15 @@ public class CSimplePredicateParserTest {
         code = parser.parsePredicate("${exchangeProperty[foo]} != 'bar'");
         Assertions.assertEquals("isNotEqualTo(exchange, exchangeProperty(exchange, \"foo\"), \"bar\")", code);
         code = parser.parsePredicate("${exchangePropertyAs(foo, com.foo.User)} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class), \"bar\")",
-                code);
+        Assertions.assertEquals(
+                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class), \"bar\")", code);
         code = parser.parsePredicate("${exchangePropertyAs(foo, com.foo.User).name} != 'bar'");
         Assertions.assertEquals(
-                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")", code);
+                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")",
+                code);
         code = parser.parsePredicate("${exchangePropertyAs(foo, com.foo.User).getName()} != 'bar'");
         Assertions.assertEquals(
-                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")", code);
+                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")",
+                code);
     }
-
 }

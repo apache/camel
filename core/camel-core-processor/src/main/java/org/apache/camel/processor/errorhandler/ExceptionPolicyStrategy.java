@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.errorhandler;
 
 import java.util.Set;
@@ -38,6 +39,6 @@ public interface ExceptionPolicyStrategy {
      * @param  exception         the exception that was thrown
      * @return                   the resolved exception type to handle this exception, <tt>null</tt> if none found.
      */
-    ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception);
-
+    ExceptionPolicyKey getExceptionPolicy(
+            Set<ExceptionPolicyKey> exceptionPolicies, Exchange exchange, Throwable exception);
 }

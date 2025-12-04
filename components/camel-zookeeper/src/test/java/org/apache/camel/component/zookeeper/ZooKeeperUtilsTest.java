@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper;
+
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
+import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
@@ -23,10 +28,6 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.zookeeper.CreateMode;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
-import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ZooKeeperUtilsTest {
 
     private CamelContext camelContext = new DefaultCamelContext();
@@ -34,9 +35,12 @@ public class ZooKeeperUtilsTest {
     @Test
     public void testCreateModeExtraction() {
         assertEquals(CreateMode.EPHEMERAL, getCreateModeFromString("EPHEMERAL", CreateMode.EPHEMERAL));
-        assertEquals(CreateMode.EPHEMERAL_SEQUENTIAL, getCreateModeFromString("EPHEMERAL_SEQUENTIAL", CreateMode.EPHEMERAL));
+        assertEquals(
+                CreateMode.EPHEMERAL_SEQUENTIAL, getCreateModeFromString("EPHEMERAL_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.PERSISTENT, getCreateModeFromString("PERSISTENT", CreateMode.EPHEMERAL));
-        assertEquals(CreateMode.PERSISTENT_SEQUENTIAL, getCreateModeFromString("PERSISTENT_SEQUENTIAL", CreateMode.EPHEMERAL));
+        assertEquals(
+                CreateMode.PERSISTENT_SEQUENTIAL,
+                getCreateModeFromString("PERSISTENT_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.EPHEMERAL, getCreateModeFromString("DOESNOTEXIST", CreateMode.EPHEMERAL));
     }
 
@@ -45,7 +49,8 @@ public class ZooKeeperUtilsTest {
         assertEquals(CreateMode.EPHEMERAL, testModeInMessage("EPHEMERAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.EPHEMERAL_SEQUENTIAL, testModeInMessage("EPHEMERAL_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.PERSISTENT, testModeInMessage("PERSISTENT", CreateMode.EPHEMERAL));
-        assertEquals(CreateMode.PERSISTENT_SEQUENTIAL, testModeInMessage("PERSISTENT_SEQUENTIAL", CreateMode.EPHEMERAL));
+        assertEquals(
+                CreateMode.PERSISTENT_SEQUENTIAL, testModeInMessage("PERSISTENT_SEQUENTIAL", CreateMode.EPHEMERAL));
         assertEquals(CreateMode.EPHEMERAL, testModeInMessage("DOESNOTEXIST", CreateMode.EPHEMERAL));
     }
 

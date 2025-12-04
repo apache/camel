@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfEndpointJMSConsumerTest extends CamelSpringTestSupport {
 
@@ -65,10 +66,10 @@ public class CxfEndpointJMSConsumerTest extends CamelSpringTestSupport {
     public void testInvocation() {
         // Here we just the address with JMS URI
         String address = "jms:jndi:dynamicQueues/test.cxf.jmstransport.queue"
-                         + "?jndiInitialContextFactory"
-                         + "=org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory"
-                         + "&jndiConnectionFactoryName=ConnectionFactory&jndiURL="
-                         + broker.serviceAddress();
+                + "?jndiInitialContextFactory"
+                + "=org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory"
+                + "&jndiConnectionFactoryName=ConnectionFactory&jndiURL="
+                + broker.serviceAddress();
 
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(Greeter.class);
@@ -77,5 +78,4 @@ public class CxfEndpointJMSConsumerTest extends CamelSpringTestSupport {
         String response = greeter.greetMe("Willem");
         assertEquals("Hello Willem", response, "Get a wrong response");
     }
-
 }

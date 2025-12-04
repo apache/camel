@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.stream;
 
 import org.apache.camel.spi.Metadata;
@@ -22,9 +23,9 @@ public final class StreamConstants {
 
     @Metadata(label = "consumer", description = "The index", javaType = "long")
     public static final String STREAM_INDEX = "CamelStreamIndex";
+
     @Metadata(label = "consumer", description = "Is complete", javaType = "boolean")
     public static final String STREAM_COMPLETE = "CamelStreamComplete";
 
-    private StreamConstants() {
-    }
+    private StreamConstants() {}
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -25,8 +28,6 @@ import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test demonstrating how to use Spring AI's VectorStoreChatMemoryAdvisor with Camel.
@@ -44,9 +45,7 @@ public class SpringAiChatVectorMemoryIT extends OllamaTestSupport {
         super.setupResources();
 
         // Create embedding model for vector store
-        OllamaApi ollamaApi = OllamaApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .build();
+        OllamaApi ollamaApi = OllamaApi.builder().baseUrl(OLLAMA.baseUrl()).build();
 
         EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
@@ -56,8 +55,7 @@ public class SpringAiChatVectorMemoryIT extends OllamaTestSupport {
                 .build();
 
         // Create vector store for chat memory
-        chatMemoryVectorStore = SimpleVectorStore.builder(embeddingModel)
-                .build();
+        chatMemoryVectorStore = SimpleVectorStore.builder(embeddingModel).build();
     }
 
     @Test
@@ -138,7 +136,8 @@ public class SpringAiChatVectorMemoryIT extends OllamaTestSupport {
 
                 // Route with VectorStoreChatMemoryAdvisor
                 from("direct:chat-with-vector-memory")
-                        .to("spring-ai-chat:vector-memory?chatModel=#chatModel&chatMemoryVectorStore=#chatMemoryVectorStore");
+                        .to(
+                                "spring-ai-chat:vector-memory?chatModel=#chatModel&chatMemoryVectorStore=#chatMemoryVectorStore");
             }
         };
     }

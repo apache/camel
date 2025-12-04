@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -27,21 +31,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class SqlProducerOutputTypeStreamListTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("sql/createAndPopulateDatabase.sql").build();
-
+                .addScript("sql/createAndPopulateDatabase.sql")
+                .build();
     }
 
     @Override
@@ -118,15 +118,18 @@ public class SqlProducerOutputTypeStreamListTest extends CamelTestSupport {
                 from("direct:withSplit")
                         .to("sql:select * from projects order by id?outputType=StreamList")
                         .to("log:stream")
-                        .split(body()).streaming()
+                        .split(body())
+                        .streaming()
                         .to("log:row")
                         .to("mock:result")
                         .end();
 
                 from("direct:withSplitModel")
-                        .to("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel")
+                        .to(
+                                "sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel")
                         .to("log:stream")
-                        .split(body()).streaming()
+                        .split(body())
+                        .streaming()
                         .to("log:row")
                         .to("mock:result")
                         .end();

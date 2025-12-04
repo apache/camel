@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,8 +69,6 @@ import org.jboss.forge.roaster.model.source.AnnotationElementSource;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.mvel2.templates.TemplateRuntime;
 
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-
 /**
  * Generate or updates the component/dataformat/language/eip documentation .adoc files in the project src/main/docs
  * directory.
@@ -75,15 +76,15 @@ import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 @Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
-    //Set to true if you need to move a new manual attribute from text body to header attributes.
+    // Set to true if you need to move a new manual attribute from text body to header attributes.
     private static final boolean RELOCATE_MANUAL_ATTRIBUTES = false;
 
-    //Header attributes that are preserved through header generation
+    // Header attributes that are preserved through header generation
     private static final Pattern[] MANUAL_ATTRIBUTES = {
-            Pattern.compile(":(group): *(.*)"),
-            Pattern.compile(":(summary-group): *(.*)"),
-            Pattern.compile(":(camel-spring-boot-name): *(.*)"),
-            Pattern.compile(":(starter-artifactid): *(.*)")
+        Pattern.compile(":(group): *(.*)"),
+        Pattern.compile(":(summary-group): *(.*)"),
+        Pattern.compile(":(camel-spring-boot-name): *(.*)"),
+        Pattern.compile(":(starter-artifactid): *(.*)")
     };
 
     /**
@@ -136,8 +137,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     @Override
-    public void execute(MavenProject project)
-            throws MojoFailureException, MojoExecutionException {
+    public void execute(MavenProject project) throws MojoFailureException, MojoExecutionException {
         buildDir = new File(project.getBuild().getDirectory());
         componentDocDir = new File(project.getBasedir(), "src/main/docs");
         dataformatDocDir = new File(project.getBasedir(), "src/main/docs");
@@ -285,7 +285,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // avoid any differences
                     // to make sure the build is stable
                     if ("bindy".equals(dataFormatName)) {
-                        model.getOptions().stream().filter(o -> "type".equals(o.getName()))
+                        model.getOptions().stream()
+                                .filter(o -> "type".equals(o.getName()))
                                 .forEach(o -> o.setDefaultValue(null));
                     }
 
@@ -317,7 +318,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                             throw new MojoExecutionException("Failed build due failFast=true");
                         }
                     }
-
                 }
             }
         }
@@ -452,7 +452,11 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private static boolean isMailComponent(String name) {
-        return name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp")
+        return name.equals("imap")
+                || name.equals("imaps")
+                || name.equals("pop3")
+                || name.equals("pop3s")
+                || name.equals("smtp")
                 || name.equals("smtps");
     }
 
@@ -514,7 +518,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             List<String> newLines = new ArrayList<>(lines.length + 8);
 
-            //title
+            // title
             String title = model.getTitle() + titleSuffix;
             if (model.isDeprecated()) {
                 title += " (deprecated)";
@@ -529,8 +533,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             }
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());
-            //TODO put the deprecation into the actual support level.
-            newLines.add(":supportlevel: " + model.getSupportLevel().toString() + (model.isDeprecated() ? "-deprecated" : ""));
+            // TODO put the deprecation into the actual support level.
+            newLines.add(":supportlevel: " + model.getSupportLevel().toString()
+                    + (model.isDeprecated() ? "-deprecated" : ""));
             if (model.isDeprecated()) {
                 newLines.add(":deprecated: *deprecated*");
             }
@@ -563,7 +568,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
             boolean copy = false;
             if (updated || RELOCATE_MANUAL_ATTRIBUTES) {
-                outer: for (String line : lines) {
+                outer:
+                for (String line : lines) {
                     if (!copy && line.isBlank()) {
                         copy = true;
                     } else if (copy) {
@@ -653,7 +659,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         return "Both producer and consumer are supported";
     }
 
-    private boolean updateOptionsIn(final File file, final String kind, final String changed) throws MojoExecutionException {
+    private boolean updateOptionsIn(final File file, final String kind, final String changed)
+            throws MojoExecutionException {
         if (!file.exists()) {
             return false;
         }
@@ -850,9 +857,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             } catch (Exception e2) {
                 classpath = e2.toString();
             }
-            throw new RuntimeException(
-                    "Unable to load source for class " + className + " in folders " + getSourceRoots()
-                                       + " (classpath: " + classpath + ")");
+            throw new RuntimeException("Unable to load source for class " + className + " in folders "
+                    + getSourceRoots() + " (classpath: " + classpath + ")");
         }
     }
 
@@ -862,9 +868,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private List<Path> getSourceRoots() {
         if (sourceRoots == null) {
-            sourceRoots = project.getCompileSourceRoots().stream()
-                    .map(Paths::get)
-                    .collect(Collectors.toList());
+            sourceRoots =
+                    project.getCompileSourceRoots().stream().map(Paths::get).collect(Collectors.toList());
         }
         return sourceRoots;
     }
@@ -888,15 +893,16 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         }
         ASTNode n = (ASTNode) jd.tags().get(0);
         String txt = source.substring(n.getStartPosition(), n.getStartPosition() + n.getLength());
-        return txt
-                .replaceAll(" *\n *\\* *\n", "\n\n")
-                .replaceAll(" *\n *\\* +", "\n");
+        return txt.replaceAll(" *\n *\\* *\n", "\n\n").replaceAll(" *\n *\\* +", "\n");
     }
 
-    private static String evaluateTemplate(final String templateName, final Object model) throws MojoExecutionException {
-        try (InputStream templateStream = UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
+    private static String evaluateTemplate(final String templateName, final Object model)
+            throws MojoExecutionException {
+        try (InputStream templateStream =
+                UpdateReadmeMojo.class.getClassLoader().getResourceAsStream(templateName)) {
             String template = PackageHelper.loadText(templateStream);
-            return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
+            return (String)
+                    TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (IOException e) {
             throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
         }

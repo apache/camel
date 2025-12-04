@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collections;
@@ -90,5 +91,4 @@ public class DefaultBackOffTimer extends ServiceSupport implements BackOffTimer 
         tasks.clear();
         camelContext.removeService(this);
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.filter;
 
 import org.junit.jupiter.api.Assertions;
@@ -47,6 +48,7 @@ class PrioritizedFilterStatisticsTest {
         long last = stats.getLast();
         String strVal = stats.toString();
         Assertions.assertEquals(
-                String.format("PrioritizedFilterStatistics [id: test, count: 1, first: %d, last: %d]", first, last), strVal);
+                String.format("PrioritizedFilterStatistics [id: test, count: 1, first: %d, last: %d]", first, last),
+                strVal);
     }
 }

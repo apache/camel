@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.io.IOException;
@@ -52,8 +53,8 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
         this(camelContext, knownHostsResource, false);
     }
 
-    public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
-                                       boolean failOnUnknownHost) {
+    public ResourceBasedSSHKeyVerifier(
+            CamelContext camelContext, String knownHostsResource, boolean failOnUnknownHost) {
         this.camelContext = camelContext;
         this.knownHostsResource = knownHostsResource;
         this.failOnUnknownHost = failOnUnknownHost;
@@ -64,8 +65,8 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
         log.debug("Trying to find known_hosts file {}", knownHostsResource);
         InputStream knownHostsInputStream = null;
         try {
-            knownHostsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext,
-                    knownHostsResource);
+            knownHostsInputStream =
+                    ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, knownHostsResource);
             List<String> possibleTokens = getKnownHostsFileTokensForSocketAddress(remoteAddress);
             log.debug("Trying to match PublicKey against provided known_hosts file");
             PublicKey matchingKey = findKeyForServerToken(knownHostsInputStream, possibleTokens);
@@ -188,5 +189,4 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     private int byteArrayToInt(byte[] tmpData) {
         return new BigInteger(tmpData).intValue();
     }
-
 }

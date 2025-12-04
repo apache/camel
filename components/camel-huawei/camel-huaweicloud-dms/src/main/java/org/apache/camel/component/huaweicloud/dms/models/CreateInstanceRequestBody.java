@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import java.util.ArrayList;
@@ -496,34 +497,33 @@ public class CreateInstanceRequestBody {
 
     @Override
     public String toString() {
-        return "CreateInstanceRequestBody{" +
-               "name='" + name + '\'' +
-               ", description='" + description + '\'' +
-               ", engine='" + engine + '\'' +
-               ", engineVersion='" + engineVersion + '\'' +
-               ", specification='" + specification + '\'' +
-               ", storageSpace=" + storageSpace +
-               ", partitionNum=" + partitionNum +
-               ", accessUser='" + accessUser + '\'' +
-               ", password='" + password + '\'' +
-               ", vpcId='" + vpcId + '\'' +
-               ", securityGroupId='" + securityGroupId + '\'' +
-               ", subnetId='" + subnetId + '\'' +
-               ", availableZones=" + availableZones +
-               ", productId='" + productId + '\'' +
-               ", kafkaManagerUser='" + kafkaManagerUser + '\'' +
-               ", kafkaManagerPassword='" + kafkaManagerPassword + '\'' +
-               ", maintainBegin='" + maintainBegin + '\'' +
-               ", maintainEnd='" + maintainEnd + '\'' +
-               ", enablePublicip=" + enablePublicip +
-               ", publicBandwidth='" + publicBandwidth + '\'' +
-               ", publicipId='" + publicipId + '\'' +
-               ", sslEnable=" + sslEnable +
-               ", retentionPolicy='" + retentionPolicy + '\'' +
-               ", connectorEnable=" + connectorEnable +
-               ", enableAutoTopic=" + enableAutoTopic +
-               ", storageSpecCode='" + storageSpecCode + '\'' +
-               ", enterpriseProjectId='" + enterpriseProjectId + '\'' +
-               '}';
+        return "CreateInstanceRequestBody{" + "name='"
+                + name + '\'' + ", description='"
+                + description + '\'' + ", engine='"
+                + engine + '\'' + ", engineVersion='"
+                + engineVersion + '\'' + ", specification='"
+                + specification + '\'' + ", storageSpace="
+                + storageSpace + ", partitionNum="
+                + partitionNum + ", accessUser='"
+                + accessUser + '\'' + ", password='"
+                + password + '\'' + ", vpcId='"
+                + vpcId + '\'' + ", securityGroupId='"
+                + securityGroupId + '\'' + ", subnetId='"
+                + subnetId + '\'' + ", availableZones="
+                + availableZones + ", productId='"
+                + productId + '\'' + ", kafkaManagerUser='"
+                + kafkaManagerUser + '\'' + ", kafkaManagerPassword='"
+                + kafkaManagerPassword + '\'' + ", maintainBegin='"
+                + maintainBegin + '\'' + ", maintainEnd='"
+                + maintainEnd + '\'' + ", enablePublicip="
+                + enablePublicip + ", publicBandwidth='"
+                + publicBandwidth + '\'' + ", publicipId='"
+                + publicipId + '\'' + ", sslEnable="
+                + sslEnable + ", retentionPolicy='"
+                + retentionPolicy + '\'' + ", connectorEnable="
+                + connectorEnable + ", enableAutoTopic="
+                + enableAutoTopic + ", storageSpecCode='"
+                + storageSpecCode + '\'' + ", enterpriseProjectId='"
+                + enterpriseProjectId + '\'' + '}';
     }
 }

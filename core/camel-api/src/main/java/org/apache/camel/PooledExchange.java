@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import org.apache.camel.spi.ExchangeFactory;
@@ -68,5 +69,4 @@ public interface PooledExchange extends Exchange {
      * <b>Important:</b> This API is NOT intended for Camel end users, but used internally by Camel itself.
      */
     boolean isAutoRelease();
-
 }

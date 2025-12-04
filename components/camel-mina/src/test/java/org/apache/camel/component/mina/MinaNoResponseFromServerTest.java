@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mina;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExchangeException;
@@ -30,9 +34,6 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /**
  * Unit test to test what happens if remote server closes session but doesn't reply
  */
@@ -47,7 +48,8 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
         mock.expectedMessageCount(0);
 
         final String format = String.format("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort());
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+        RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.requestBody(format, "Hello World"),
                 "Should throw a CamelExchangeException");
 
@@ -61,7 +63,8 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
 
             public void configure() {
                 fromF("mina:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())
-                        .transform(constant("Bye World")).to("mock:result");
+                        .transform(constant("Bye World"))
+                        .to("mock:result");
             }
         };
     }
@@ -81,7 +84,6 @@ public class MinaNoResponseFromServerTest extends BaseMinaTest {
                     // do nothing
                 }
             };
-
         }
 
         @Override

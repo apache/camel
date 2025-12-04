@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,13 +42,6 @@ import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  *
  */
@@ -51,8 +52,8 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is
-                = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/log4j2.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                context, "file:src/test/resources/log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -69,10 +70,12 @@ public class ResourceHelperTest extends TestSupport {
         context.start();
 
         testDirectory("my space", true);
-        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), testFile("my space/log4j2.properties").toFile());
+        FileUtil.copyFile(
+                new File("src/test/resources/log4j2.properties"),
+                testFile("my space/log4j2.properties").toFile());
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context,
-                fileUri("my%20space/log4j2.properties"));
+        InputStream is =
+                ResourceHelper.resolveMandatoryResourceAsInputStream(context, fileUri("my%20space/log4j2.properties"));
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -216,8 +219,7 @@ public class ResourceHelperTest extends TestSupport {
             fail("Should not find file");
         } catch (FileNotFoundException e) {
             assertEquals(
-                    "Cannot find resource: classpath:notfound.txt for URI: classpath:notfound.txt",
-                    e.getMessage());
+                    "Cannot find resource: classpath:notfound.txt for URI: classpath:notfound.txt", e.getMessage());
         }
 
         context.stop();
@@ -292,7 +294,8 @@ public class ResourceHelperTest extends TestSupport {
         params.put("bar", "yes");
 
         // should clear the map after usage
-        assertEquals("http://localhost:8080/data?foo=123&bar=yes",
+        assertEquals(
+                "http://localhost:8080/data?foo=123&bar=yes",
                 ResourceHelper.appendParameters("http://localhost:8080/data", params));
         assertEquals(0, params.size());
     }
@@ -306,5 +309,4 @@ public class ResourceHelperTest extends TestSupport {
         assertTrue(res.exists());
         assertEquals("Hello", context.getTypeConverter().convertTo(String.class, res.getInputStream()));
     }
-
 }

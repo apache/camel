@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import java.util.Iterator;
@@ -23,7 +24,8 @@ import org.apache.camel.model.language.TokenizerExpression;
 /**
  * Ensures that the "tokenize" language is compliant with the single input expectations.
  */
-class TokenizeLanguageTest extends AbstractSingleInputTypedLanguageTest<TokenizerExpression.Builder, TokenizerExpression> {
+class TokenizeLanguageTest
+        extends AbstractSingleInputTypedLanguageTest<TokenizerExpression.Builder, TokenizerExpression> {
 
     TokenizeLanguageTest() {
         super(null, factory -> factory.tokenize().token("\n"));
@@ -52,5 +54,4 @@ class TokenizeLanguageTest extends AbstractSingleInputTypedLanguageTest<Tokenize
         }
         super.assertBodyReceived(expected, body);
     }
-
 }

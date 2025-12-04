@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.IOException;
@@ -45,12 +46,15 @@ import org.slf4j.LoggerFactory;
 
 public class SalesforceSecurityHandler implements ProtocolHandler {
 
-    static final String CLIENT_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat("camel-salesforce-client");
-    static final String AUTHENTICATION_REQUEST_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat(".request");
+    static final String CLIENT_ATTRIBUTE =
+            SalesforceSecurityHandler.class.getName().concat("camel-salesforce-client");
+    static final String AUTHENTICATION_REQUEST_ATTRIBUTE =
+            SalesforceSecurityHandler.class.getName().concat(".request");
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceSecurityHandler.class);
 
-    private static final String AUTHENTICATION_RETRIES_ATTRIBUTE = SalesforceSecurityHandler.class.getName().concat(".retries");
+    private static final String AUTHENTICATION_RETRIES_ATTRIBUTE =
+            SalesforceSecurityHandler.class.getName().concat(".retries");
     private static final String EXPIRED_PASSWORD_CODE = "INVALID_OPERATION_WITH_EXPIRED_PASSWORD";
 
     private final SalesforceHttpClient httpClient;
@@ -108,8 +112,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         @Override
         public void onComplete(Result result) {
             HttpRequest request = (HttpRequest) result.getRequest();
-            ContentResponse response
-                    = new HttpContentResponse(result.getResponse(), getContent(), getMediaType(), getEncoding());
+            ContentResponse response =
+                    new HttpContentResponse(result.getResponse(), getContent(), getMediaType(), getEncoding());
 
             // get number of retries
             HttpConversation conversation = request.getConversation();
@@ -130,8 +134,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             }
 
             // response to a re-login request
-            HttpRequest origRequest
-                    = (HttpRequest) conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE);
+            HttpRequest origRequest = (HttpRequest) conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE);
             if (origRequest != null) {
 
                 // parse response
@@ -196,7 +199,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                 // get detailed cause, if request comes from an
                 // AbstractClientBase
                 final InputStream inputStream = getContent().length == 0 ? null : getContentAsInputStream();
-                final SalesforceException cause = client != null ? client.createRestException(response, inputStream) : null;
+                final SalesforceException cause =
+                        client != null ? client.createRestException(response, inputStream) : null;
 
                 if (status == HttpStatus.BAD_REQUEST_400 && cause != null && isInvalidSessionError(cause)) {
 
@@ -223,7 +227,10 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         }
 
         protected void retryOnFailure(
-                HttpRequest request, HttpConversation conversation, Integer retries, AbstractClientBase client,
+                HttpRequest request,
+                HttpConversation conversation,
+                Integer retries,
+                AbstractClientBase client,
                 Throwable failure) {
             LOG.warn("Retrying on Salesforce authentication failure {}", failure.getMessage(), failure);
 
@@ -232,7 +239,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         }
 
         private boolean isInvalidSessionError(SalesforceException e) {
-            return e.getErrors() != null && e.getErrors().size() == 1
+            return e.getErrors() != null
+                    && e.getErrors().size() == 1
                     && "InvalidSessionId".equals(e.getErrors().get(0).getErrorCode());
         }
 
@@ -246,7 +254,10 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
         }
 
         private void retryRequest(
-                HttpRequest request, AbstractClientBase client, Integer retries, HttpConversation conversation,
+                HttpRequest request,
+                AbstractClientBase client,
+                Integer retries,
+                HttpConversation conversation,
                 boolean copy) {
             // copy the request to resend
             // TODO handle a change in Salesforce instanceUrl, right now we
@@ -276,7 +287,9 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             conversation.setAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE, ++retries);
 
             Object originalRequest = conversation.getAttribute(AUTHENTICATION_REQUEST_ATTRIBUTE);
-            LOG.debug("Retry attempt {} on authentication error for {}", retries,
+            LOG.debug(
+                    "Retry attempt {} on authentication error for {}",
+                    retries,
                     originalRequest != null ? originalRequest : newRequest);
 
             // update currentToken for original request

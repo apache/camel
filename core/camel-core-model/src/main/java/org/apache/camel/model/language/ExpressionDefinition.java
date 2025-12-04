@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import java.util.List;
@@ -51,28 +52,36 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
 public class ExpressionDefinition
-        implements Expression, Predicate, ExpressionFactory, ExpressionFactoryAware, PredicateFactory, PredicateFactoryAware,
-        HasExpressionType {
+        implements Expression,
+                Predicate,
+                ExpressionFactory,
+                ExpressionFactoryAware,
+                PredicateFactory,
+                PredicateFactoryAware,
+                HasExpressionType {
 
     @XmlTransient
     private Predicate predicate;
+
     @XmlTransient
     private Expression expressionValue;
+
     @XmlTransient
     private ExpressionDefinition expressionType;
 
     @XmlAttribute
     @XmlID
     private String id;
+
     @XmlValue
     @Metadata(required = true)
     private String expression;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean")
     private String trim;
 
-    public ExpressionDefinition() {
-    }
+    public ExpressionDefinition() {}
 
     public ExpressionDefinition(ExpressionDefinition source) {
         this.predicate = source.predicate;

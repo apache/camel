@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.qdrant;
 
 public class QdrantActionException extends Exception {
@@ -40,10 +41,6 @@ public class QdrantActionException extends Exception {
 
     @Override
     public String toString() {
-        return "QdrantActionException{"
-               + "action=" + action
-               + ", "
-               + "message=" + super.getLocalizedMessage()
-               + '}';
+        return "QdrantActionException{" + "action=" + action + ", " + "message=" + super.getLocalizedMessage() + '}';
     }
 }

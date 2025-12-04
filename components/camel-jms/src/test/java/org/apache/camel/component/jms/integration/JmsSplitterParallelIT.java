@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +36,7 @@ public class JmsSplitterParallelIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -65,7 +67,8 @@ public class JmsSplitterParallelIT extends AbstractJMSTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .split(body().tokenize(",")).parallelProcessing()
+                        .split(body().tokenize(","))
+                        .parallelProcessing()
                         .to("log:before")
                         .to(ExchangePattern.InOut, getUri())
                         .to("log:after")
@@ -73,9 +76,7 @@ public class JmsSplitterParallelIT extends AbstractJMSTest {
                         .end()
                         .to("mock:result");
 
-                from(getUri())
-                        .transform(body().prepend("Bye "))
-                        .to("mock:reply");
+                from(getUri()).transform(body().prepend("Bye ")).to("mock:reply");
             }
         };
     }

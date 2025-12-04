@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak.security.cache;
 
 import java.util.concurrent.TimeUnit;
@@ -42,8 +43,7 @@ public class CaffeineTokenCache implements TokenCache {
      * @param recordStats whether to record cache statistics
      */
     public CaffeineTokenCache(long ttlSeconds, long maxSize, boolean recordStats) {
-        Caffeine<Object, Object> builder = Caffeine.newBuilder()
-                .expireAfterWrite(ttlSeconds, TimeUnit.SECONDS);
+        Caffeine<Object, Object> builder = Caffeine.newBuilder().expireAfterWrite(ttlSeconds, TimeUnit.SECONDS);
 
         if (maxSize > 0) {
             builder.maximumSize(maxSize);
@@ -54,8 +54,11 @@ public class CaffeineTokenCache implements TokenCache {
         }
 
         this.cache = builder.build();
-        LOG.debug("Initialized Caffeine token cache with TTL={}s, maxSize={}, stats={}",
-                ttlSeconds, maxSize > 0 ? maxSize : "unlimited", recordStats);
+        LOG.debug(
+                "Initialized Caffeine token cache with TTL={}s, maxSize={}, stats={}",
+                ttlSeconds,
+                maxSize > 0 ? maxSize : "unlimited",
+                recordStats);
     }
 
     /**
@@ -112,10 +115,7 @@ public class CaffeineTokenCache implements TokenCache {
     public CacheStats getStats() {
         com.github.benmanes.caffeine.cache.stats.CacheStats caffeineStats = cache.stats();
 
-        return new CacheStats(
-                caffeineStats.hitCount(),
-                caffeineStats.missCount(),
-                caffeineStats.evictionCount());
+        return new CacheStats(caffeineStats.hitCount(), caffeineStats.missCount(), caffeineStats.evictionCount());
     }
 
     /**

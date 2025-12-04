@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +30,6 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformEventNotifierTest {
 
@@ -44,19 +45,13 @@ public class VertxPlatformEventNotifierTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/camel/ok")
-                            .setBody().constant("Bye World");
+                    from("platform-http:/camel/ok").setBody().constant("Bye World");
                 }
             });
 
             context.start();
 
-            given()
-                    .body("Hello World")
-                    .post("/camel/ok")
-                    .then()
-                    .statusCode(200)
-                    .body(is("Bye World"));
+            given().body("Hello World").post("/camel/ok").then().statusCode(200).body(is("Bye World"));
 
             Assertions.assertEquals(2, events.size());
             Assertions.assertEquals("ExchangeCreated (failed:false)", events.get(0));
@@ -76,15 +71,13 @@ public class VertxPlatformEventNotifierTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/camel/fail")
-                            .throwException(new IllegalArgumentException("Forced error"));
+                    from("platform-http:/camel/fail").throwException(new IllegalArgumentException("Forced error"));
                 }
             });
 
             context.start();
 
-            given()
-                    .body("Hello World")
+            given().body("Hello World")
                     .post("/camel/fail")
                     .then()
                     .statusCode(500)
@@ -107,5 +100,4 @@ public class VertxPlatformEventNotifierTest {
             }
         }
     }
-
 }

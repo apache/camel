@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 public class InOnlyQueueConsumerTest extends JmsTestSupport {
 
-    private static final String TEST_DESTINATION_NAME = "sjms:queue:in.only.queue.consumer.test.InOnlyQueueConsumerTest";
+    private static final String TEST_DESTINATION_NAME =
+            "sjms:queue:in.only.queue.consumer.test.InOnlyQueueConsumerTest";
 
     @Test
     public void testInOnlyQueueProducer() throws Exception {
@@ -36,7 +38,6 @@ public class InOnlyQueueConsumerTest extends JmsTestSupport {
         template.sendBody(TEST_DESTINATION_NAME, "World");
 
         mock.assertIsSatisfied();
-
     }
 
     /**

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
+import static org.apache.camel.support.ObjectHelper.isNumber;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -52,9 +56,6 @@ import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
 
-import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
-import static org.apache.camel.support.ObjectHelper.isNumber;
-
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
  */
@@ -64,15 +65,20 @@ public class SimplePredicateParser extends BaseSimpleParser {
     private final Map<String, Expression> cacheExpression;
     private boolean skipFileFunctions;
 
-    public SimplePredicateParser(CamelContext camelContext, String expression,
-                                 boolean allowEscape,
-                                 Map<String, Expression> cacheExpression) {
+    public SimplePredicateParser(
+            CamelContext camelContext,
+            String expression,
+            boolean allowEscape,
+            Map<String, Expression> cacheExpression) {
         this(camelContext, expression, allowEscape, false, cacheExpression);
     }
 
-    public SimplePredicateParser(CamelContext camelContext, String expression,
-                                 boolean allowEscape, boolean skipFileFunctions,
-                                 Map<String, Expression> cacheExpression) {
+    public SimplePredicateParser(
+            CamelContext camelContext,
+            String expression,
+            boolean allowEscape,
+            boolean skipFileFunctions,
+            Map<String, Expression> cacheExpression) {
         super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
         this.skipFileFunctions = skipFileFunctions;
@@ -300,8 +306,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * @return               the created node, or <tt>null</tt> to let a default node be created instead.
      */
     private SimpleNode createNode(
-            SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
-            AtomicBoolean startFunction) {
+            SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble, AtomicBoolean startFunction) {
         if (token.getType().isFunctionStart()) {
             startFunction.set(true);
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
@@ -427,7 +432,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
                 if (left == null) {
                     throw new SimpleParserException(
-                            "Binary operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                            "Binary operator " + operator + " has no left hand side token",
+                            token.getToken().getIndex());
                 }
                 if (!binary.acceptLeftNode(left)) {
                     throw new SimpleParserException(
@@ -436,11 +442,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
                 if (right == null) {
                     throw new SimpleParserException(
-                            "Binary operator " + operator + " has no right hand side token", token.getToken().getIndex());
+                            "Binary operator " + operator + " has no right hand side token",
+                            token.getToken().getIndex());
                 }
                 if (!binary.acceptRightNode(right)) {
                     throw new SimpleParserException(
-                            "Binary operator " + operator + " does not support right hand side token " + right.getToken(),
+                            "Binary operator " + operator + " does not support right hand side token "
+                                    + right.getToken(),
                             token.getToken().getIndex());
                 }
 
@@ -490,20 +498,24 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
                 if (left == null) {
                     throw new SimpleParserException(
-                            "Logical operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                            "Logical operator " + operator + " has no left hand side token",
+                            token.getToken().getIndex());
                 }
                 if (!logical.acceptLeftNode(left)) {
                     throw new SimpleParserException(
-                            "Logical operator " + operator + " does not support left hand side token " + left.getToken(),
+                            "Logical operator " + operator + " does not support left hand side token "
+                                    + left.getToken(),
                             token.getToken().getIndex());
                 }
                 if (right == null) {
                     throw new SimpleParserException(
-                            "Logical operator " + operator + " has no right hand side token", token.getToken().getIndex());
+                            "Logical operator " + operator + " has no right hand side token",
+                            token.getToken().getIndex());
                 }
                 if (!logical.acceptRightNode(right)) {
                     throw new SimpleParserException(
-                            "Logical operator " + operator + " does not support right hand side token " + left.getToken(),
+                            "Logical operator " + operator + " does not support right hand side token "
+                                    + left.getToken(),
                             token.getToken().getIndex());
                 }
 
@@ -774,5 +786,4 @@ public class SimplePredicateParser extends BaseSimpleParser {
         return accept(TokenType.numericValue);
         // no other tokens to check so do not use nextToken
     }
-
 }

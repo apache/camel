@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.torchserve.it;
 
 import java.util.concurrent.TimeUnit;
@@ -83,8 +84,8 @@ class ManagementIT extends TorchServeITSupport {
             var mock = getMockEndpoint("mock:result");
             mock.expectedBodyReceived().body().contains("unregistered");
 
-            template.send("direct:unregister_headers",
-                    exchange -> exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL));
+            template.send("direct:unregister_headers", exchange -> exchange.getMessage()
+                    .setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL));
 
             mock.await(1, TimeUnit.SECONDS);
             mock.assertIsSatisfied();
@@ -142,8 +143,8 @@ class ManagementIT extends TorchServeITSupport {
                 var mock = getMockEndpoint("mock:result");
                 mock.expectedBodyReceived().body().contains("processing");
 
-                template.send("direct:scale-worker_headers",
-                        exchange -> exchange.getMessage().setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL));
+                template.send("direct:scale-worker_headers", exchange -> exchange.getMessage()
+                        .setHeader(TorchServeConstants.MODEL_NAME, ADDED_MODEL));
 
                 mock.await(1, TimeUnit.SECONDS);
                 mock.assertIsSatisfied();
@@ -223,23 +224,23 @@ class ManagementIT extends TorchServeITSupport {
                 from("direct:scale-worker_headers")
                         .to("torchserve:management/scale-worker")
                         .to("mock:result");
-                from("direct:describe")
-                        .to("torchserve:management/describe")
-                        .to("mock:result");
+                from("direct:describe").to("torchserve:management/describe").to("mock:result");
                 from("direct:unregister")
                         .toF("torchserve:management/unregister?modelName=%s", ADDED_MODEL)
                         .to("mock:result");
                 from("direct:unregister_version")
-                        .toF("torchserve:management/unregister?modelName=%s&modelVersion=%s", ADDED_MODEL, ADDED_MODEL_VERSION)
+                        .toF(
+                                "torchserve:management/unregister?modelName=%s&modelVersion=%s",
+                                ADDED_MODEL, ADDED_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:unregister_headers")
                         .to("torchserve:management/unregister")
                         .to("mock:result");
-                from("direct:list")
-                        .to("torchserve:management/list")
-                        .to("mock:result");
+                from("direct:list").to("torchserve:management/list").to("mock:result");
                 from("direct:set-default")
-                        .toF("torchserve:management/set-default?modelName=%s&modelVersion=%s", TEST_MODEL, TEST_MODEL_VERSION)
+                        .toF(
+                                "torchserve:management/set-default?modelName=%s&modelVersion=%s",
+                                TEST_MODEL, TEST_MODEL_VERSION)
                         .to("mock:result");
                 from("direct:set-default_headers")
                         .to("torchserve:management/set-default")

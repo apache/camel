@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5.integration;
+
+import static org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -33,10 +38,6 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.eclipse.paho.mqttv5.common.packet.UserProperty;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.paho.mqtt5.PahoMqtt5Constants.CAMEL_PAHO_MSG_PROPERTIES;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
 
@@ -62,8 +63,10 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
                 from("paho-mqtt5:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort)
                         .to("mock:persistenceTest");
 
-                from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
+                from("direct:testCustomizedPaho")
+                        .to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
+                from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort)
+                        .to("mock:testCustomizedPaho");
             }
         };
     }
@@ -72,8 +75,8 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
 
     @Test
     public void checkOptions() {
-        String uri = "paho-mqtt5:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort + "&qos=2"
-                     + "&persistence=file";
+        String uri = "paho-mqtt5:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort
+                + "&qos=2" + "&persistence=file";
 
         PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
 
@@ -82,7 +85,8 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
         assertEquals("sampleClient", endpoint.getConfiguration().getClientId());
         assertEquals("tcp://localhost:" + mqttPort, endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
-        Assertions.assertEquals(PahoMqtt5Persistence.FILE, endpoint.getConfiguration().getPersistence());
+        Assertions.assertEquals(
+                PahoMqtt5Persistence.FILE, endpoint.getConfiguration().getPersistence());
     }
 
     @Test
@@ -96,8 +100,8 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
 
     @Test
     public void checkUserNameAndPassword() {
-        String uri = "paho-mqtt5:/test/topic?brokerUrl=tcp://localhost:" + mqttPort
-                     + "&userName=test&password=testpass";
+        String uri =
+                "paho-mqtt5:/test/topic?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=testpass";
 
         PahoMqtt5Endpoint endpoint = getMandatoryEndpoint(uri, PahoMqtt5Endpoint.class);
 
@@ -133,8 +137,8 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
 
         // Then
         mock.assertIsSatisfied();
-        MqttProperties receivedMqttProperties
-                = mock.getExchanges().get(0).getIn().getHeader(CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
+        MqttProperties receivedMqttProperties =
+                mock.getExchanges().get(0).getIn().getHeader(CAMEL_PAHO_MSG_PROPERTIES, MqttProperties.class);
         assertEquals(receivedMqttProperties.getContentType(), publishedMqttProperties.getContentType());
         assertEquals(receivedMqttProperties.getResponseTopic(), publishedMqttProperties.getResponseTopic());
         assertEquals(receivedMqttProperties.getUserProperties(), publishedMqttProperties.getUserProperties());
@@ -208,19 +212,20 @@ public class PahoMqtt5ComponentMqtt5IT extends PahoMqtt5ITSupport {
         mock.expectedMessageCount(0);
 
         // When
-        template.sendBody("paho-mqtt5:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test",
+        template.sendBody(
+                "paho-mqtt5:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test",
                 "msg");
 
         // Then
         mock.assertIsSatisfied();
     }
 
-    private MqttProperties createMqttProperties(String contentType, String responseTopic, List<UserProperty> userProperties) {
+    private MqttProperties createMqttProperties(
+            String contentType, String responseTopic, List<UserProperty> userProperties) {
         MqttProperties properties = new MqttProperties();
         properties.setContentType(contentType);
         properties.setResponseTopic(responseTopic);
         properties.setUserProperties(userProperties);
         return properties;
     }
-
 }

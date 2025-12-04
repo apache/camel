@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.io.IOException;
@@ -39,8 +40,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 public final class NettyHttpHelper {
 
-    private NettyHttpHelper() {
-    }
+    private NettyHttpHelper() {}
 
     /**
      * Appends the key/value to the headers.
@@ -200,7 +200,8 @@ public final class NettyHttpHelper {
     public static URI createURI(Exchange exchange, String url) throws URISyntaxException {
         URI uri = new URI(url);
 
-        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        // rest producer may provide an override query string to be used which we should discard if using (hence the
+        // remove)
         String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header
         // (header overrules endpoint, raw query header overrules query header)

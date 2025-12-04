@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import com.hierynomus.smbj.share.File;
@@ -61,8 +62,7 @@ public class SmbCopyAndDeleteOnRenameFailIT extends AbstractSmbRenameIT {
          * @throws GenericFileOperationFailedException always, to simulate atomic rename failure
          */
         @Override
-        public boolean atomicRenameFile(File src, String to)
-                throws GenericFileOperationFailedException {
+        public boolean atomicRenameFile(File src, String to) throws GenericFileOperationFailedException {
             // Force failure to trigger fallback to copy+delete
             throw new GenericFileOperationFailedException("Simulated atomic rename failure for testing fallback");
         }

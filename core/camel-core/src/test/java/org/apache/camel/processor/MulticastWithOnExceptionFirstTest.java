@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,9 +26,16 @@ public class MulticastWithOnExceptionFirstTest extends MulticastWithOnExceptionT
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).handled(true).to("mock:handled").transform(simple("Damn ${exception.message}"));
+                onException(Exception.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .transform(simple("Damn ${exception.message}"));
 
-                from("direct:start").multicast().to("direct:bar", "direct:foo", "direct:baz").end().to("mock:result");
+                from("direct:start")
+                        .multicast()
+                        .to("direct:bar", "direct:foo", "direct:baz")
+                        .end()
+                        .to("mock:result");
 
                 from("direct:foo").to("mock:foo");
 
@@ -37,5 +45,4 @@ public class MulticastWithOnExceptionFirstTest extends MulticastWithOnExceptionT
             }
         };
     }
-
 }

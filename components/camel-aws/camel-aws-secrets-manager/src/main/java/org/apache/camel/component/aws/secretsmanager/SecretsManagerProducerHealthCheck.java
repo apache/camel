@@ -48,7 +48,8 @@ public class SecretsManagerProducerHealthCheck extends AbstractHealthCheck {
         }
         try {
             SecretsManagerClient secretsManagerClient = secretsManagerEndpoint.getSecretsManagerClient();
-            secretsManagerClient.listSecrets(ListSecretsRequest.builder().maxResults(1).build());
+            secretsManagerClient.listSecrets(
+                    ListSecretsRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
@@ -67,5 +68,4 @@ public class SecretsManagerProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

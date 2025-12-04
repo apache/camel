@@ -78,29 +78,33 @@ import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
  * In case key and item attribute value maps are identical you can omit the special top level properties completely. The
  * transformer will map the whole Json body as is then and use it as source for the attribute value map.
  */
-@DataTypeTransformer(name = "aws2-ddb:application-json",
-                     description = "Prepares the message to perform a DynamoDB operation with the aws2-ddb component")
+@DataTypeTransformer(
+        name = "aws2-ddb:application-json",
+        description = "Prepares the message to perform a DynamoDB operation with the aws2-ddb component")
 public class Ddb2JsonDataTypeTransformer extends Transformer {
 
     private final JacksonDataFormat dataFormat = new JacksonDataFormat(Json.mapper(), JsonNode.class);
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        if (message.getHeaders().containsKey(Ddb2Constants.ITEM) ||
-                message.getHeaders().containsKey(Ddb2Constants.KEY)) {
+        if (message.getHeaders().containsKey(Ddb2Constants.ITEM)
+                || message.getHeaders().containsKey(Ddb2Constants.KEY)) {
             return;
         }
 
         JsonNode jsonBody = getBodyAsJsonNode(message);
 
-        String operation
-                = Optional.ofNullable(jsonBody.get("operation")).map(JsonNode::asText).orElse(Ddb2Operations.PutItem.name());
-        if (message.getExchange().hasProperties() && message.getExchange().getProperty("operation", String.class) != null) {
+        String operation = Optional.ofNullable(jsonBody.get("operation"))
+                .map(JsonNode::asText)
+                .orElse(Ddb2Operations.PutItem.name());
+        if (message.getExchange().hasProperties()
+                && message.getExchange().getProperty("operation", String.class) != null) {
             operation = message.getExchange().getProperty("operation", String.class);
         }
 
         if (message.getHeaders().containsKey(Ddb2Constants.OPERATION)) {
-            operation = message.getHeader(Ddb2Constants.OPERATION, Ddb2Operations.class).name();
+            operation = message.getHeader(Ddb2Constants.OPERATION, Ddb2Operations.class)
+                    .name();
         }
 
         JsonNode key = jsonBody.get("key");
@@ -108,17 +112,14 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
         Map<String, Object> keyProps;
         if (key != null) {
-            keyProps = dataFormat.getObjectMapper().convertValue(key, new TypeReference<>() {
-            });
+            keyProps = dataFormat.getObjectMapper().convertValue(key, new TypeReference<>() {});
         } else {
-            keyProps = dataFormat.getObjectMapper().convertValue(jsonBody, new TypeReference<>() {
-            });
+            keyProps = dataFormat.getObjectMapper().convertValue(jsonBody, new TypeReference<>() {});
         }
 
         Map<String, Object> itemProps;
         if (item != null) {
-            itemProps = dataFormat.getObjectMapper().convertValue(item, new TypeReference<>() {
-            });
+            itemProps = dataFormat.getObjectMapper().convertValue(item, new TypeReference<>() {});
         } else {
             itemProps = keyProps;
         }
@@ -155,7 +156,8 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
             return (JsonNode) dataFormat.unmarshal(message.getExchange(), message.getMandatoryBody(InputStream.class));
         } catch (Exception e) {
-            throw new CamelExecutionException("Failed to get mandatory Json node from message body", message.getExchange(), e);
+            throw new CamelExecutionException(
+                    "Failed to get mandatory Json node from message body", message.getExchange(), e);
         }
     }
 
@@ -209,7 +211,8 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
         }
 
         if (value instanceof int[]) {
-            return AttributeValue.builder().ns(Stream.of((int[]) value).map(Object::toString).collect(Collectors.toList()))
+            return AttributeValue.builder()
+                    .ns(Stream.of((int[]) value).map(Object::toString).collect(Collectors.toList()))
                     .build();
         }
 
@@ -219,9 +222,13 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
             if (values.isEmpty()) {
                 return AttributeValue.builder().ss().build();
             } else if (values.get(0) instanceof Integer) {
-                return AttributeValue.builder().ns(values.stream().map(Object::toString).collect(Collectors.toList())).build();
+                return AttributeValue.builder()
+                        .ns(values.stream().map(Object::toString).collect(Collectors.toList()))
+                        .build();
             } else {
-                return AttributeValue.builder().ss(values.stream().map(Object::toString).collect(Collectors.toList())).build();
+                return AttributeValue.builder()
+                        .ss(values.stream().map(Object::toString).collect(Collectors.toList()))
+                        .build();
             }
         }
 
@@ -241,6 +248,7 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
     private static AttributeValueUpdate getAttributeValueUpdate(Object value) {
         return AttributeValueUpdate.builder()
                 .action(AttributeAction.PUT)
-                .value(getAttributeValue(value)).build();
+                .value(getAttributeValue(value))
+                .build();
     }
 }

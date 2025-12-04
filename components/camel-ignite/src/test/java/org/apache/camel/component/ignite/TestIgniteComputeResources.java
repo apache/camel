@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
 
 import java.util.Collection;
@@ -143,7 +144,5 @@ public final class TestIgniteComputeResources {
         }
     };
 
-    private TestIgniteComputeResources() {
-
-    }
+    private TestIgniteComputeResources() {}
 }

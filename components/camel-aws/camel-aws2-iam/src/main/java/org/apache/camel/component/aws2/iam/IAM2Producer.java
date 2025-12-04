@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
 
 import org.apache.camel.Endpoint;
@@ -141,7 +142,8 @@ public class IAM2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (iamProducerToString == null) {
-            iamProducerToString = "IAMProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            iamProducerToString =
+                    "IAMProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return iamProducerToString;
     }
@@ -186,7 +188,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.createUser((CreateUserRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create user command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -204,7 +208,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.createUser(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create user command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -220,7 +226,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.deleteUser((DeleteUserRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete user command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -238,7 +246,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.deleteUser(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete user command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -254,7 +264,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.getUser((GetUserRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "get user command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -272,7 +284,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.getUser(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("get user command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "get user command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -288,7 +302,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.listUsers((ListUsersRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List users command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -299,7 +315,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.listUsers();
             } catch (AwsServiceException ase) {
-                LOG.trace("List users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List users command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -315,7 +333,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.createAccessKey((CreateAccessKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Access Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -331,7 +351,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.createAccessKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Access Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -347,7 +369,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.deleteAccessKey((DeleteAccessKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Access Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -369,7 +393,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.deleteAccessKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Access Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -385,7 +411,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.updateAccessKey((UpdateAccessKeyRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Update Access Key command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -413,7 +441,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.updateAccessKey(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Access Key command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Update Access Key command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -429,7 +459,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.createGroup((CreateGroupRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Create Group command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -451,7 +483,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.createGroup(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Create Group command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -465,9 +499,13 @@ public class IAM2Producer extends DefaultProducer {
             if (payload instanceof DeleteGroupResponse) {
                 DeleteGroupResponse result;
                 try {
-                    result = iamClient.deleteGroup((DeleteGroupRequest) payload); // TODO this cast is impossible and will produce ClassCastException for non-null value
+                    result = iamClient.deleteGroup((DeleteGroupRequest)
+                            payload); // TODO this cast is impossible and will produce ClassCastException for non-null
+                    // value
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Group command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -485,7 +523,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.deleteGroup(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Group command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -501,7 +541,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.listGroups((ListGroupsRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Groups command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -512,7 +554,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.listGroups();
             } catch (AwsServiceException ase) {
-                LOG.trace("List Groups command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Groups command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -528,7 +572,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.addUserToGroup((AddUserToGroupRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Add User To Group command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -552,7 +598,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.addUserToGroup(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Add User To Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Add User To Group command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -568,7 +616,9 @@ public class IAM2Producer extends DefaultProducer {
                 try {
                     result = iamClient.removeUserFromGroup((RemoveUserFromGroupRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Remove User From Group command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -592,7 +642,9 @@ public class IAM2Producer extends DefaultProducer {
             try {
                 result = iamClient.removeUserFromGroup(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Remove User From Group command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Remove User From Group command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -608,9 +660,7 @@ public class IAM2Producer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -627,5 +677,4 @@ public class IAM2Producer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

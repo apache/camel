@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.pubsub.integration;
+
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ORDERING_KEY;
-
 class MessageOrderingIT extends PubsubTestSupport {
 
     private static final String TOPIC_NAME = "camel.input-topic";
@@ -43,7 +44,7 @@ class MessageOrderingIT extends PubsubTestSupport {
     private Endpoint directIn;
 
     @EndpointInject("google-pubsub:{{project.id}}:" + TOPIC_NAME
-                    + "?messageOrderingEnabled=true&pubsubEndpoint=us-east1-pubsub.googleapis.com:443")
+            + "?messageOrderingEnabled=true&pubsubEndpoint=us-east1-pubsub.googleapis.com:443")
     private Endpoint pubsubTopic;
 
     @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
@@ -62,12 +63,14 @@ class MessageOrderingIT extends PubsubTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn).routeId("directRoute")
+                from(directIn)
+                        .routeId("directRoute")
                         .setHeader(ORDERING_KEY, constant("orderkey"))
                         .to(pubsubTopic)
                         .to(inputMock);
 
-                from(pubsubSubscription).routeId("subscriptionRoute")
+                from(pubsubSubscription)
+                        .routeId("subscriptionRoute")
                         .autoStartup(false)
                         .to(outputMock);
             }
@@ -77,7 +80,8 @@ class MessageOrderingIT extends PubsubTestSupport {
     @Override
     public void createTopicSubscription() {
         TopicName inputTopicName = TopicName.of(PROJECT_ID, TOPIC_NAME);
-        ProjectSubscriptionName projectInputSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, SUBSCRIPTION_NAME);
+        ProjectSubscriptionName projectInputSubscriptionName =
+                ProjectSubscriptionName.of(PROJECT_ID, SUBSCRIPTION_NAME);
         Topic inputTopic = Topic.newBuilder().setName(inputTopicName.toString()).build();
         Subscription inputSubscription = Subscription.newBuilder()
                 .setName(projectInputSubscriptionName.toString())

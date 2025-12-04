@@ -14,7 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -42,18 +55,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
 
     public static WireMockServer petstore = new WireMockServer(wireMockConfig().dynamicPort());
@@ -73,7 +74,6 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
     @BeforeEach
     public void resetWireMock() {
         petstore.resetRequests();
-
     }
 
     @ParameterizedTest
@@ -90,9 +90,9 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
 
         assertEquals(14, created.getId());
 
-        petstore.verify(
-                postRequestedFor(urlEqualTo("/api/v3/pet")).withHeader("Accept", equalTo("application/xml,application/json"))
-                        .withHeader("Content-Type", equalTo("application/xml")));
+        petstore.verify(postRequestedFor(urlEqualTo("/api/v3/pet"))
+                .withHeader("Accept", equalTo("application/xml,application/json"))
+                .withHeader("Content-Type", equalTo("application/xml")));
     }
 
     @ParameterizedTest
@@ -107,8 +107,8 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals(14, pet.getId());
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
-        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-                equalTo("application/xml,application/json")));
+        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14"))
+                .withHeader("Accept", equalTo("application/xml,application/json")));
     }
 
     @ParameterizedTest
@@ -123,8 +123,8 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals(14, pet.getId());
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
-        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
-                equalTo("application/xml,application/json")));
+        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14"))
+                .withHeader("Accept", equalTo("application/xml,application/json")));
     }
 
     @ParameterizedTest
@@ -142,9 +142,9 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals(14, pet.getId());
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
-        petstore.verify(
-                getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept", equalTo("application/xml,application/json"))
-                        .withHeader("api_key", equalTo("dolphins")));
+        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14"))
+                .withHeader("Accept", equalTo("application/xml,application/json"))
+                .withHeader("api_key", equalTo("dolphins")));
     }
 
     @ParameterizedTest
@@ -162,8 +162,8 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         assertEquals(14, pet.getId());
         assertEquals("Olafur Eliason Arnalds", pet.getName());
 
-        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14?api_key=dolphins")).withHeader("Accept",
-                equalTo("application/xml,application/json")));
+        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14?api_key=dolphins"))
+                .withHeader("Accept", equalTo("application/xml,application/json")));
     }
 
     @ParameterizedTest
@@ -171,16 +171,16 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
     public void shouldBeGettingPetsByStatus(String componentName) throws Exception {
         initializeContextForComponent(componentName);
 
-        final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
-                Pets.class);
+        final Pets pets =
+                template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available", Pets.class);
 
         assertNotNull(pets);
         assertNotNull(pets.pets);
         assertEquals(2, pets.pets.size());
 
-        petstore.verify(
-                getRequestedFor(urlPathEqualTo("/api/v3/pet/findByStatus")).withQueryParam("status", equalTo("available"))
-                        .withHeader("Accept", equalTo("application/xml,application/json")));
+        petstore.verify(getRequestedFor(urlPathEqualTo("/api/v3/pet/findByStatus"))
+                .withQueryParam("status", equalTo("available"))
+                .withHeader("Accept", equalTo("application/xml,application/json")));
     }
 
     @Override
@@ -190,14 +190,18 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setComponentName(componentName);
         component.setHost("http://localhost:" + petstore.port());
-        component.setSpecificationUri(RestOpenApiComponentV3YamlTest.class.getResource("/openapi-v3.yaml").toString());
+        component.setSpecificationUri(RestOpenApiComponentV3YamlTest.class
+                .getResource("/openapi-v3.yaml")
+                .toString());
 
         camelContext.addComponent("petStore", component);
 
         final RestOpenApiComponent altPetStore = new RestOpenApiComponent();
         altPetStore.setComponentName(componentName);
         altPetStore.setHost("http://localhost:" + petstore.port());
-        altPetStore.setSpecificationUri(RestOpenApiComponentV3YamlTest.class.getResource("/alt-openapi.yaml").toString());
+        altPetStore.setSpecificationUri(RestOpenApiComponentV3YamlTest.class
+                .getResource("/alt-openapi.yaml")
+                .toString());
 
         camelContext.addComponent("altPetStore", altPetStore);
 
@@ -217,7 +221,9 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
 
                 from("direct:getPetById").to("petStore:getPetById").unmarshal(jaxb);
 
-                from("direct:getPetByIdWithEndpointParams").to("petStore:getPetById?petId=14").unmarshal(jaxb);
+                from("direct:getPetByIdWithEndpointParams")
+                        .to("petStore:getPetById?petId=14")
+                        .unmarshal(jaxb);
 
                 from("direct:addPet").marshal(jaxb).to("petStore:addPet").unmarshal(jaxb);
 
@@ -232,27 +238,46 @@ public class RestOpenApiComponentV3YamlTest extends ManagedCamelTestSupport {
 
     @BeforeAll
     public static void setupStubs() throws IOException, URISyntaxException {
-        petstore.stubFor(get(urlEqualTo("/openapi-v3.yaml")).willReturn(aResponse().withBody(
-                Files.readAllBytes(
-                        Paths.get(RestOpenApiComponentV3YamlTest.class.getResource("/openapi-v3.yaml").getPath())))));
-
-        petstore.stubFor(post(urlEqualTo("/api/v3/pet"))
-                .withRequestBody(equalTo(
-                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><name>Jean-Luc Picard</name></Pet>"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
-                        .withBody("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id></Pet>")));
+        petstore.stubFor(get(urlEqualTo("/openapi-v3.yaml"))
+                .willReturn(aResponse()
+                        .withBody(Files.readAllBytes(Paths.get(RestOpenApiComponentV3YamlTest.class
+                                .getResource("/openapi-v3.yaml")
+                                .getPath())))));
 
         petstore.stubFor(
-                get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+                post(urlEqualTo("/api/v3/pet"))
+                        .withRequestBody(
+                                equalTo(
+                                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><name>Jean-Luc Picard</name></Pet>"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpURLConnection.HTTP_CREATED)
+                                        .withBody(
+                                                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id></Pet>")));
 
-        petstore.stubFor(get(urlPathEqualTo("/api/v3/pet/findByStatus")).withQueryParam("status", equalTo("available"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pets><Pet><id>1</id><name>Olafur Eliason Arnalds</name></Pet><Pet><name>Jean-Luc Picard</name></Pet></pets>")));
+        petstore.stubFor(
+                get(urlEqualTo("/api/v3/pet/14"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpURLConnection.HTTP_OK)
+                                        .withBody(
+                                                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
 
-        petstore.stubFor(get(urlEqualTo("/api/v3/pet/14?api_key=dolphins"))
-                .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
-                        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+        petstore.stubFor(
+                get(urlPathEqualTo("/api/v3/pet/findByStatus"))
+                        .withQueryParam("status", equalTo("available"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpURLConnection.HTTP_OK)
+                                        .withBody(
+                                                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pets><Pet><id>1</id><name>Olafur Eliason Arnalds</name></Pet><Pet><name>Jean-Luc Picard</name></Pet></pets>")));
+
+        petstore.stubFor(
+                get(urlEqualTo("/api/v3/pet/14?api_key=dolphins"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpURLConnection.HTTP_OK)
+                                        .withBody(
+                                                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
-
 }

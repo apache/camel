@@ -38,9 +38,7 @@ public class MultiPartFilter implements Filter {
     public static final String MULTIPART = "populate.multipart";
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -49,15 +47,12 @@ public class MultiPartFilter implements Filter {
         if (srequest.getContentType() == null || !srequest.getContentType().startsWith("multipart/form-data")) {
             chain.doFilter(request, response);
         } else {
-            srequest.getParts(); //load and init attachments
+            srequest.getParts(); // load and init attachments
             request.setAttribute(MULTIPART, Boolean.TRUE);
             chain.doFilter(request, response);
         }
     }
 
     @Override
-    public void destroy() {
-
-    }
-
+    public void destroy() {}
 }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flowable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,14 +28,13 @@ import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
 
     @BeforeEach
     public void deployEventRegistryModels() throws Exception {
-        eventRegistryEngineConfiguration.getEventRepositoryService().createDeployment()
+        eventRegistryEngineConfiguration
+                .getEventRepositoryService()
+                .createDeployment()
                 .addClasspathResource("channel/userHeaderChannel.channel")
                 .addClasspathResource("event/userWithHeaderEvent.event")
                 .deploy();
@@ -50,7 +53,8 @@ public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
             exchange.getIn().setHeader("headerProperty2", 99);
             template.send("direct:start", exchange);
 
-            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+            ProcessInstance processInstance = runtimeService
+                    .createProcessInstanceQuery()
                     .processDefinitionKey("camelProcess")
                     .singleResult();
             assertNotNull(processInstance);
@@ -60,7 +64,10 @@ public class FlowableInboundChannelHeaderTest extends CamelFlowableTestCase {
             assertEquals("headerTestValue", runtimeService.getVariable(processInstance.getId(), "header1"));
             assertEquals(99, runtimeService.getVariable(processInstance.getId(), "header2"));
 
-            Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).singleResult();
+            Task task = taskService
+                    .createTaskQuery()
+                    .processInstanceId(processInstance.getId())
+                    .singleResult();
             assertNotNull(task);
 
         } finally {

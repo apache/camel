@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cassandra;
 
 import org.apache.camel.spi.Metadata;
@@ -32,7 +33,5 @@ public final class CassandraConstants {
     @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
     public static final String CASSANDRA_RESUME_ACTION = "CamelCqlResumeAction";
 
-    private CassandraConstants() {
-    }
-
+    private CassandraConstants() {}
 }

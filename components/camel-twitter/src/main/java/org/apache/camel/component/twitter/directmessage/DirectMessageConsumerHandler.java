@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.twitter.directmessage;
 
 import java.util.Iterator;
@@ -55,9 +56,15 @@ public class DirectMessageConsumerHandler extends AbstractTwitterConsumerHandler
         // the previous and current next_cursor, if not equals there is pagination.
         DirectMessageList directMessages;
         if (cursor != null) {
-            directMessages = getTwitter().v1().directMessages().getDirectMessages(endpoint.getProperties().getCount(), cursor);
+            directMessages = getTwitter()
+                    .v1()
+                    .directMessages()
+                    .getDirectMessages(endpoint.getProperties().getCount(), cursor);
         } else {
-            directMessages = getTwitter().v1().directMessages().getDirectMessages(endpoint.getProperties().getCount());
+            directMessages = getTwitter()
+                    .v1()
+                    .directMessages()
+                    .getDirectMessages(endpoint.getProperties().getCount());
         }
 
         String nextCursor = directMessages.getNextCursor();

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.univocity;
+
+import static org.apache.camel.support.ExchangeHelper.convertToMandatoryType;
+import static org.apache.camel.support.ExchangeHelper.convertToType;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -26,9 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.univocity.parsers.common.AbstractWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-
-import static org.apache.camel.support.ExchangeHelper.convertToMandatoryType;
-import static org.apache.camel.support.ExchangeHelper.convertToType;
 
 /**
  * This class marshalls the exchange body using an uniVocity writer. It can automatically generates headers and keep

@@ -27,9 +27,8 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
-    static final String CONFLUENT_CONTAINER = LocalPropertyResolver.getProperty(
-            ConfluentContainer.class,
-            KafkaProperties.CONFLUENT_CONTAINER);
+    static final String CONFLUENT_CONTAINER =
+            LocalPropertyResolver.getProperty(ConfluentContainer.class, KafkaProperties.CONFLUENT_CONTAINER);
     private static final int KAFKA_PORT = 9092;
 
     public ConfluentContainer(Network network, String name) {
@@ -42,9 +41,11 @@ public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
         withEnv("LOG_DIR", "/tmp/logs")
                 .withExposedPorts(KAFKA_PORT)
                 .withEnv("KAFKA_BROKER_ID", "1")
-                .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
+                .withEnv(
+                        "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
                         "BROKER:PLAINTEXT,PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT")
-                .withEnv("KAFKA_ADVERTISED_LISTENERS",
+                .withEnv(
+                        "KAFKA_ADVERTISED_LISTENERS",
                         String.format("PLAINTEXT://%s:9092,BROKER://%s:9093", getHost(), getHost()))
                 .withEnv("KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS", "0")
                 .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
@@ -53,8 +54,7 @@ public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
                 .withEnv("KAFKA_PROCESS_ROLES", "broker,controller")
                 .withEnv("KAFKA_NODE_ID", "1")
                 .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@0.0.0.0:9094")
-                .withEnv("KAFKA_LISTENERS",
-                        "PLAINTEXT://0.0.0.0:9092,BROKER://0.0.0.0:9093,CONTROLLER://0.0.0.0:9094")
+                .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,BROKER://0.0.0.0:9093,CONTROLLER://0.0.0.0:9094")
                 .withEnv("KAFKA_INTER_BROKER_LISTENER_NAME", "BROKER")
                 .withEnv("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
                 .withEnv("KAFKA_LOG_DIRS", "/tmp/kraft-combined-logs")
@@ -66,11 +66,12 @@ public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
                 .withEnv("LANG", "C.UTF-8")
                 .withEnv("UB_CLASSPATH", "/usr/share/java/cp-base-lite/*")
                 .withEnv("KAFKA_ZOOKEEPER_CONNECT", "")
-                .withEnv("CLUSTER_ID", UUID.randomUUID().toString().replace("-", "").substring(0, 22))
+                .withEnv(
+                        "CLUSTER_ID",
+                        UUID.randomUUID().toString().replace("-", "").substring(0, 22))
                 .withNetwork(network)
                 .withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd))
-                .withCommand("sh", "-c",
-                        "/etc/confluent/docker/run")
+                .withCommand("sh", "-c", "/etc/confluent/docker/run")
                 .waitingFor(Wait.forLogMessage(".*Kafka Server started.*", 1));
     }
 

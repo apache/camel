@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import org.apache.camel.Exchange;
@@ -52,8 +53,7 @@ public class SmbRecursiveMaxDepthIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl())
-                        .to("mock:received_send");
+                from(getSmbUrl()).to("mock:received_send");
             }
         };
     }

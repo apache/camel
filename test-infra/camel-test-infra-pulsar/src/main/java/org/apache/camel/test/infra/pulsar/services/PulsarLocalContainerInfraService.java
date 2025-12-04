@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.pulsar.services;
 
 import java.time.Duration;
@@ -28,9 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.pulsar.PulsarContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = PulsarInfraService.class,
-              description = "Distributed messaging and streaming platform",
-              serviceAlias = { "pulsar" })
+@InfraService(
+        service = PulsarInfraService.class,
+        description = "Distributed messaging and streaming platform",
+        serviceAlias = {"pulsar"})
 public class PulsarLocalContainerInfraService implements PulsarInfraService, ContainerService<PulsarContainer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PulsarLocalContainerInfraService.class);
@@ -38,7 +40,8 @@ public class PulsarLocalContainerInfraService implements PulsarInfraService, Con
     private final PulsarContainer container;
 
     public PulsarLocalContainerInfraService() {
-        this(LocalPropertyResolver.getProperty(PulsarLocalContainerInfraService.class, PulsarProperties.PULSAR_CONTAINER));
+        this(LocalPropertyResolver.getProperty(
+                PulsarLocalContainerInfraService.class, PulsarProperties.PULSAR_CONTAINER));
     }
 
     public PulsarLocalContainerInfraService(String imageName) {
@@ -56,8 +59,7 @@ public class PulsarLocalContainerInfraService implements PulsarInfraService, Con
     protected PulsarContainer initContainer(String imageName) {
         class TestInfraPulsarContainer extends PulsarContainer {
             public TestInfraPulsarContainer(boolean fixedPort) {
-                super(DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("apachepulsar/pulsar"));
+                super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("apachepulsar/pulsar"));
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 

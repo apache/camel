@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.cluster.lock;
 
 import java.math.BigDecimal;
@@ -78,9 +79,11 @@ public class KubernetesLeadershipController implements Service {
 
     private final String logPrefix;
 
-    public KubernetesLeadershipController(CamelContext camelContext, KubernetesClient kubernetesClient,
-                                          KubernetesLockConfiguration lockConfiguration,
-                                          KubernetesClusterEventHandler eventHandler) {
+    public KubernetesLeadershipController(
+            CamelContext camelContext,
+            KubernetesClient kubernetesClient,
+            KubernetesLockConfiguration lockConfiguration,
+            KubernetesClusterEventHandler eventHandler) {
         this.camelContext = camelContext;
         this.kubernetesClient = kubernetesClient;
         this.lockConfiguration = lockConfiguration;
@@ -95,8 +98,9 @@ public class KubernetesLeadershipController implements Service {
     public void start() {
         if (serializedExecutor == null) {
             LOG.debug("{} Starting leadership controller...", logPrefix);
-            serializedExecutor = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "CamelKubernetesLeadershipController");
+            serializedExecutor = camelContext
+                    .getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "CamelKubernetesLeadershipController");
             leaderNotifier = new TimedLeaderNotifier(this.camelContext, this.eventHandler);
 
             leaderNotifier.start();
@@ -166,7 +170,9 @@ public class KubernetesLeadershipController implements Service {
 
         if (this.latestLeaderInfo.hasEmptyLeader()) {
             // There is no previous leader
-            LOG.info("{} The cluster has no leaders for group {}. Trying to acquire the leadership...", logPrefix,
+            LOG.info(
+                    "{} The cluster has no leaders for group {}. Trying to acquire the leadership...",
+                    logPrefix,
                     this.lockConfiguration.getGroupName());
             boolean acquired = tryAcquireLeadership();
             if (acquired) {
@@ -197,8 +203,10 @@ public class KubernetesLeadershipController implements Service {
             return;
         }
 
-        this.leaderNotifier.refreshLeadership(Optional.ofNullable(this.latestLeaderInfo.getLeader()),
-                System.currentTimeMillis(), this.lockConfiguration.getLeaseDurationMillis(),
+        this.leaderNotifier.refreshLeadership(
+                Optional.ofNullable(this.latestLeaderInfo.getLeader()),
+                System.currentTimeMillis(),
+                this.lockConfiguration.getLeaseDurationMillis(),
                 this.latestLeaderInfo.getMembers());
         rescheduleAfterDelay();
     }
@@ -212,7 +220,9 @@ public class KubernetesLeadershipController implements Service {
         // Even if the current pod is already leader, we should let a possible
         // old version of the pod to shut down
         long delay = this.lockConfiguration.getLeaseDurationMillis();
-        LOG.info("{} Current pod owns the leadership, but it will be effective in {} seconds...", logPrefix,
+        LOG.info(
+                "{} Current pod owns the leadership, but it will be effective in {} seconds...",
+                logPrefix,
                 new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP));
 
         try {
@@ -234,7 +244,9 @@ public class KubernetesLeadershipController implements Service {
     private void refreshStatusLosingLeadership() {
         // Wait always the same amount of time before giving up the leadership
         long delay = this.lockConfiguration.getLeaseDurationMillis();
-        LOG.info("{} Current pod owns the leadership, but it will be lost in {} seconds...", logPrefix,
+        LOG.info(
+                "{} Current pod owns the leadership, but it will be lost in {} seconds...",
+                logPrefix,
                 new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP));
 
         try {
@@ -288,12 +300,14 @@ public class KubernetesLeadershipController implements Service {
         if (this.latestLeaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
             LOG.debug("{} Current Pod is still the leader", logPrefix);
 
-            this.leaderNotifier.refreshLeadership(Optional.of(this.lockConfiguration.getPodName()), timeBeforePulling,
+            this.leaderNotifier.refreshLeadership(
+                    Optional.of(this.lockConfiguration.getPodName()),
+                    timeBeforePulling,
                     this.lockConfiguration.getRenewDeadlineMillis(),
                     this.latestLeaderInfo.getMembers());
 
-            HasMetadata newLease = this.leaseManager.refreshLeaseRenewTime(kubernetesClient, this.latestLeaseResource,
-                    this.lockConfiguration.getRenewDeadlineSeconds());
+            HasMetadata newLease = this.leaseManager.refreshLeaseRenewTime(
+                    kubernetesClient, this.latestLeaseResource, this.lockConfiguration.getRenewDeadlineSeconds());
             updateLatestLeaderInfo(newLease, this.latestMembers);
 
             rescheduleAfterDelay();
@@ -302,8 +316,11 @@ public class KubernetesLeadershipController implements Service {
             LOG.debug("{} Current Pod has lost the leadership", logPrefix);
             this.currentState = State.NOT_LEADER;
             // set a empty leader to signal leadership loss
-            this.leaderNotifier.refreshLeadership(Optional.empty(), System.currentTimeMillis(),
-                    lockConfiguration.getLeaseDurationMillis(), this.latestLeaderInfo.getMembers());
+            this.leaderNotifier.refreshLeadership(
+                    Optional.empty(),
+                    System.currentTimeMillis(),
+                    lockConfiguration.getLeaseDurationMillis(),
+                    this.latestLeaderInfo.getMembers());
 
             // restart from scratch to acquire leadership
             this.serializedExecutor.execute(this::refreshStatus);
@@ -311,7 +328,8 @@ public class KubernetesLeadershipController implements Service {
     }
 
     private void rescheduleAfterDelay() {
-        this.serializedExecutor.schedule(this::refreshStatus,
+        this.serializedExecutor.schedule(
+                this::refreshStatus,
                 jitter(this.lockConfiguration.getRetryPeriodMillis(), this.lockConfiguration.getJitterFactor()),
                 TimeUnit.MILLISECONDS);
     }
@@ -321,13 +339,17 @@ public class KubernetesLeadershipController implements Service {
 
         HasMetadata leaseResource;
         try {
-            leaseResource = leaseManager.fetchLeaseResource(kubernetesClient,
+            leaseResource = leaseManager.fetchLeaseResource(
+                    kubernetesClient,
                     this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
                     this.lockConfiguration.getKubernetesResourceName(),
                     this.lockConfiguration.getGroupName());
         } catch (Exception e) {
-            LOG.warn("{} Unable to retrieve the current lease resource {} for group {} from Kubernetes",
-                    logPrefix, this.lockConfiguration.getKubernetesResourceName(), this.lockConfiguration.getGroupName());
+            LOG.warn(
+                    "{} Unable to retrieve the current lease resource {} for group {} from Kubernetes",
+                    logPrefix,
+                    this.lockConfiguration.getKubernetesResourceName(),
+                    this.lockConfiguration.getGroupName());
             LOG.debug("{} Exception thrown during lease resource lookup", logPrefix, e);
             return false;
         }
@@ -356,8 +378,10 @@ public class KubernetesLeadershipController implements Service {
             LOG.warn("{} Unexpected condition. Latest leader info or list of members is empty.", logPrefix);
             return false;
         } else if (!members.contains(this.lockConfiguration.getPodName())) {
-            LOG.warn("{} The list of cluster members {} does not contain the current Pod. Cannot yield the leadership.",
-                    logPrefix, latestLeaderInfo.getMembers());
+            LOG.warn(
+                    "{} The list of cluster members {} does not contain the current Pod. Cannot yield the leadership.",
+                    logPrefix,
+                    latestLeaderInfo.getMembers());
             return false;
         }
 
@@ -367,18 +391,22 @@ public class KubernetesLeadershipController implements Service {
         }
 
         LOG.debug("{} Lock lease resource already present in the Kubernetes namespace. Checking...", logPrefix);
-        LeaderInfo leaderInfo = leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
+        LeaderInfo leaderInfo =
+                leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
         if (!leaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
             // Already yielded
             return true;
         }
 
         try {
-            HasMetadata updatedLeaseResource = leaseManager.optimisticDeleteLeaderInfo(kubernetesClient, leaseResource,
-                    this.lockConfiguration.getGroupName());
+            HasMetadata updatedLeaseResource = leaseManager.optimisticDeleteLeaderInfo(
+                    kubernetesClient, leaseResource, this.lockConfiguration.getGroupName());
 
-            LOG.debug("{} Lease resource {} for group {} successfully updated", logPrefix,
-                    this.lockConfiguration.getKubernetesResourceName(), this.lockConfiguration.getGroupName());
+            LOG.debug(
+                    "{} Lease resource {} for group {} successfully updated",
+                    logPrefix,
+                    this.lockConfiguration.getKubernetesResourceName(),
+                    this.lockConfiguration.getGroupName());
             updateLatestLeaderInfo(updatedLeaseResource, members);
             return true;
         } catch (Exception ex) {
@@ -404,54 +432,68 @@ public class KubernetesLeadershipController implements Service {
             LOG.warn("{} Unexpected condition. Latest leader info or list of members is empty.", logPrefix);
             return false;
         } else if (!members.contains(this.lockConfiguration.getPodName())) {
-            LOG.warn("{} The list of cluster members {} does not contain the current Pod. Cannot acquire leadership.",
-                    logPrefix, latestLeaderInfo.getMembers());
+            LOG.warn(
+                    "{} The list of cluster members {} does not contain the current Pod. Cannot acquire leadership.",
+                    logPrefix,
+                    latestLeaderInfo.getMembers());
             return false;
         }
 
         // Info we would set set in the lease resource to become leaders
         LeaderInfo newLeaderInfo = new LeaderInfo(
-                this.lockConfiguration.getGroupName(), this.lockConfiguration.getPodName(), new Date(), members,
+                this.lockConfiguration.getGroupName(),
+                this.lockConfiguration.getPodName(),
+                new Date(),
+                members,
                 this.lockConfiguration.getLeaseDurationSeconds());
 
         if (leaseResource == null) {
             // No leaseResource created so far
-            LOG.debug("{} Lock lease resource is not present in the Kubernetes namespace. A new lease resource will be created",
+            LOG.debug(
+                    "{} Lock lease resource is not present in the Kubernetes namespace. A new lease resource will be created",
                     logPrefix);
 
             try {
-                HasMetadata newLeaseResource = leaseManager.createNewLeaseResource(kubernetesClient,
+                HasMetadata newLeaseResource = leaseManager.createNewLeaseResource(
+                        kubernetesClient,
                         this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
                         this.lockConfiguration.getKubernetesResourceName(),
                         newLeaderInfo);
 
-                LOG.debug("{} Lease resource {} successfully created for group {}", logPrefix,
-                        this.lockConfiguration.getKubernetesResourceName(), newLeaderInfo.getGroupName());
+                LOG.debug(
+                        "{} Lease resource {} successfully created for group {}",
+                        logPrefix,
+                        this.lockConfiguration.getKubernetesResourceName(),
+                        newLeaderInfo.getGroupName());
                 updateLatestLeaderInfo(newLeaseResource, members);
                 return true;
             } catch (Exception ex) {
                 // Suppress exception
-                LOG.warn("{} Unable to create the lease resource, it may have been created by other cluster members "
-                         + "concurrently. If the problem persists, check if the service account has the right permissions"
-                         + " to create it",
+                LOG.warn(
+                        "{} Unable to create the lease resource, it may have been created by other cluster members "
+                                + "concurrently. If the problem persists, check if the service account has the right permissions"
+                                + " to create it",
                         logPrefix);
                 LOG.debug("{} Exception while trying to create the lease resource", logPrefix, ex);
                 return false;
             }
         } else {
             LOG.debug("{} Lock lease resource already present in the Kubernetes namespace. Checking...", logPrefix);
-            LeaderInfo leaderInfo
-                    = leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
+            LeaderInfo leaderInfo =
+                    leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
 
             boolean canAcquire = !leaderInfo.hasValidLeader();
             if (canAcquire) {
                 // Try to be the new leader
                 try {
-                    HasMetadata updatedLeaseResource
-                            = leaseManager.optimisticAcquireLeadership(kubernetesClient, leaseResource, newLeaderInfo);
+                    HasMetadata updatedLeaseResource =
+                            leaseManager.optimisticAcquireLeadership(kubernetesClient, leaseResource, newLeaderInfo);
 
-                    LOG.debug("{} Lease resource {} successfully updated for group {}", logPrefix,
-                            this.lockConfiguration.getKubernetesResourceName(), newLeaderInfo.getGroupName());
+                    LOG.debug(
+                            "{} Lease resource {} successfully updated for group {}",
+                            logPrefix,
+                            this.lockConfiguration.getKubernetesResourceName(),
+                            newLeaderInfo.getGroupName());
                     updateLatestLeaderInfo(updatedLeaseResource, members);
                     return true;
                 } catch (Exception ex) {
@@ -461,7 +503,9 @@ public class KubernetesLeadershipController implements Service {
                 }
             } else {
                 // Another pod is the leader and it's still active
-                LOG.debug("{} Another Pod ({}) is the current leader and it is still active", logPrefix,
+                LOG.debug(
+                        "{} Another Pod ({}) is the current leader and it is still active",
+                        logPrefix,
                         this.latestLeaderInfo.getLeader());
                 return false;
             }
@@ -472,14 +516,18 @@ public class KubernetesLeadershipController implements Service {
         LOG.debug("{} Updating internal status about the current leader", logPrefix);
         this.latestLeaseResource = leaseResource;
         this.latestMembers = members;
-        this.latestLeaderInfo = leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
+        this.latestLeaderInfo =
+                leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
         LOG.debug("{} Current leader info: {}", logPrefix, this.latestLeaderInfo);
     }
 
     private Set<String> pullClusterMembers() {
-        List<Pod> pods = kubernetesClient.pods()
+        List<Pod> pods = kubernetesClient
+                .pods()
                 .inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-                .withLabels(this.lockConfiguration.getClusterLabels()).list().getItems();
+                .withLabels(this.lockConfiguration.getClusterLabels())
+                .list()
+                .getItems();
 
         return pods.stream()
                 .filter(PodStatusUtil::isRunning)

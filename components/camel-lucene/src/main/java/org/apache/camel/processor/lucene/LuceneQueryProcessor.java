@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.lucene;
 
 import java.io.File;
@@ -35,7 +36,8 @@ public class LuceneQueryProcessor implements Processor {
     private int maxNumberOfHits;
     private int totalHitsThreshold;
 
-    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits) {
+    public LuceneQueryProcessor(
+            String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits) {
         this.setAnalyzer(analyzer);
         this.setIndexDirectory(new File(indexDirectoryPath));
         this.setSearchPhrase(defaultSearchPhrase);
@@ -55,7 +57,8 @@ public class LuceneQueryProcessor implements Processor {
             searcher.open(indexDirectory, analyzer);
             hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
         } else {
-            throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
+            throw new IllegalArgumentException(
+                    "SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
         }
 
         exchange.getIn().setBody(hits);

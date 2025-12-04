@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 public class Animal {
     private String name;
     private boolean dangerous;
 
-    public Animal() {
-    }
+    public Animal() {}
 
     public Animal(String name) {
         this.name = name;

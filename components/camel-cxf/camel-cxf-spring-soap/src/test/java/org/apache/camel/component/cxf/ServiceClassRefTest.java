@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -25,8 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify using '#' notation to reference serviceClass.
@@ -46,7 +47,8 @@ public class ServiceClassRefTest {
     public void testServiceClassNameCreatedByRefNotation() throws Exception {
         // verify the '#' notation works
         CxfEndpoint endpoint = context.getEndpoint("cxf:bean:fromEndpoint", CxfEndpoint.class);
-        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl",
+        assertEquals(
+                "org.apache.camel.component.cxf.HelloServiceImpl",
                 endpoint.getServiceClass().getName());
         assertEquals(DataFormat.POJO, endpoint.getDataFormat());
 
@@ -54,5 +56,4 @@ public class ServiceClassRefTest {
         endpoint = context.getEndpoint("cxf:bean:fromEndpointWithProps", CxfEndpoint.class);
         assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder.endpoint;
 
 import org.apache.camel.EndpointInject;
@@ -31,7 +32,8 @@ public class SedaToDSimpleExpressionTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(direct("start")).toD(seda("${exchangeProperty.whereTo}").advanced().blockWhenFull(true));
+                from(direct("start"))
+                        .toD(seda("${exchangeProperty.whereTo}").advanced().blockWhenFull(true));
 
                 from("seda:cheese").to("mock:result");
             }

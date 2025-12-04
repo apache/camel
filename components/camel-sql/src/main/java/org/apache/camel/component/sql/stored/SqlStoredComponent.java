@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import java.util.Map;
@@ -33,11 +34,13 @@ public class SqlStoredComponent extends DefaultComponent {
 
     @Metadata(autowired = true)
     private DataSource dataSource;
-    @Metadata(label = "advanced",
-              description = "Whether to detect the network address location of the JMS broker on startup."
-                            + " This information is gathered via reflection on the ConnectionFactory, and is vendor specific."
-                            + " This option can be used to turn this off.",
-              defaultValue = "true")
+
+    @Metadata(
+            label = "advanced",
+            description = "Whether to detect the network address location of the JMS broker on startup."
+                    + " This information is gathered via reflection on the ConnectionFactory, and is vendor specific."
+                    + " This option can be used to turn this off.",
+            defaultValue = "true")
     private boolean serviceLocationEnabled = true;
 
     @Override
@@ -91,5 +94,4 @@ public class SqlStoredComponent extends DefaultComponent {
     public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
         this.serviceLocationEnabled = serviceLocationEnabled;
     }
-
 }

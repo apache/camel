@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,8 @@ import org.junit.jupiter.api.Test;
 public class Plc4XConsumerTest {
 
     @Test
-    public void doStart() {
-    }
+    public void doStart() {}
 
     @Test
-    public void doStop() {
-    }
-
+    public void doStop() {}
 }

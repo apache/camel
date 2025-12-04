@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms2.support;
 
 import jakarta.jms.Connection;
@@ -45,6 +46,7 @@ public abstract class Jms2TestSupport extends CamelTestSupport {
 
     @Produce
     protected ProducerTemplate template;
+
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
@@ -84,9 +86,9 @@ public abstract class Jms2TestSupport extends CamelTestSupport {
     protected static ConnectionFactory getConnectionFactory(String serviceAddress) throws Exception {
         final String protocol = System.getProperty("protocol", "CORE").toUpperCase();
 
-        //Currently AMQP and HORENTQ don't operate in exactly the same way on artemis as OPENWIRE
-        //and CORE so its not possible to write protocol agnostic tests but in the future releases
-        //of artemis we may be able test against them in an agnostic way.
+        // Currently AMQP and HORENTQ don't operate in exactly the same way on artemis as OPENWIRE
+        // and CORE so its not possible to write protocol agnostic tests but in the future releases
+        // of artemis we may be able test against them in an agnostic way.
         switch (protocol) {
             case "OPENWIRE":
                 return new ActiveMQConnectionFactory(serviceAddress);
@@ -106,13 +108,26 @@ public abstract class Jms2TestSupport extends CamelTestSupport {
     }
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return new Jms2ObjectFactory().createMessageConsumer(session,
-                destinationCreationStrategy.createDestination(session, destination, false), null, false, null, true, false);
+        return new Jms2ObjectFactory()
+                .createMessageConsumer(
+                        session,
+                        destinationCreationStrategy.createDestination(session, destination, false),
+                        null,
+                        false,
+                        null,
+                        true,
+                        false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
-        return new Jms2ObjectFactory().createMessageConsumer(session,
-                destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true,
-                false);
+        return new Jms2ObjectFactory()
+                .createMessageConsumer(
+                        session,
+                        destinationCreationStrategy.createDestination(session, destination, true),
+                        messageSelector,
+                        true,
+                        null,
+                        true,
+                        false);
     }
 }

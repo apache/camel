@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docker;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class DockerHelperTest {
 
@@ -27,5 +28,4 @@ public class DockerHelperTest {
         String headerField = DockerHelper.transformFromHeaderName(DockerConstants.DOCKER_REGISTRY);
         assertEquals("registry", headerField);
     }
-
 }

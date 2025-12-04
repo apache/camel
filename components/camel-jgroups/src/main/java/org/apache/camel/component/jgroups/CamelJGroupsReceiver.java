@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
+
+import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -26,8 +29,6 @@ import org.jgroups.Receiver;
 import org.jgroups.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.jgroups.JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 /**
  * Implementation of JGroups message receiver ({@code org.jgroups.Receiver}) wrapping incoming messages into Camel
@@ -82,9 +83,11 @@ public class CamelJGroupsReceiver implements Receiver {
 
     public Exchange createExchange(View view) {
         Exchange exchange = consumer.createExchange(true);
-        exchange.getIn().setHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, endpoint.getResolvedChannel().getAddress());
+        exchange.getIn()
+                .setHeader(
+                        HEADER_JGROUPS_CHANNEL_ADDRESS,
+                        endpoint.getResolvedChannel().getAddress());
         exchange.getIn().setBody(view);
         return exchange;
     }
-
 }

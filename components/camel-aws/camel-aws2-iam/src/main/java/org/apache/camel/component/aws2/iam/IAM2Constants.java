@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam;
 
 import org.apache.camel.spi.Metadata;
@@ -24,15 +25,21 @@ import org.apache.camel.spi.Metadata;
 public interface IAM2Constants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String OPERATION = "CamelAwsIAMOperation";
+
     @Metadata(description = "The username for the user you want to manage", javaType = "String")
     String USERNAME = "CamelAwsIAMUsername";
+
     @Metadata(description = "The accessKey you want to manage", javaType = "String")
     String ACCESS_KEY_ID = "CamelAwsIAMAccessKeyID";
-    @Metadata(description = "The Status of the AccessKey you want to set, possible value are active and inactive",
-              javaType = "String")
+
+    @Metadata(
+            description = "The Status of the AccessKey you want to set, possible value are active and inactive",
+            javaType = "String")
     String ACCESS_KEY_STATUS = "CamelAwsIAMAccessKeyStatus";
+
     @Metadata(description = "The name of an AWS IAM Group", javaType = "String")
     String GROUP_NAME = "CamelAwsIAMGroupName";
+
     @Metadata(description = "The path of an AWS IAM Group", javaType = "String")
     String GROUP_PATH = "CamelAwsIAMGroupPath";
 }

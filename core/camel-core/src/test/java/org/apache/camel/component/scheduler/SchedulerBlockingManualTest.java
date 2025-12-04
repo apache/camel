@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,23 +39,22 @@ public class SchedulerBlockingManualTest extends ContextTestSupport {
                 SchedulerComponent comp = getContext().getComponent("scheduler", SchedulerComponent.class);
                 comp.setPoolSize(4);
 
-                from("scheduler://trigger?delay=2000&repeatCount=3").routeId("scheduler")
+                from("scheduler://trigger?delay=2000&repeatCount=3")
+                        .routeId("scheduler")
                         .threads(10)
                         .log("1")
                         .to(ExchangePattern.InOut, "seda:route1")
                         .log("1.1");
 
-                from("seda:route1?concurrentConsumers=2").routeId("first route")
+                from("seda:route1?concurrentConsumers=2")
+                        .routeId("first route")
                         .log("2")
                         .delay(5000)
                         .log("2.1")
                         .to(ExchangePattern.InOut, "seda:route2")
                         .log("2.2");
 
-                from("seda:route2").routeId("second route")
-                        .log("3")
-                        .delay(3000)
-                        .log("3.1");
+                from("seda:route2").routeId("second route").log("3").delay(3000).log("3.1");
             }
         };
     }

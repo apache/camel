@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.util.HashMap;
@@ -52,15 +53,16 @@ public class SshProducerExitCodeTest extends SshComponentTestSupport {
             public void configure() {
                 // 1st try (expected: ExitValue=1)
                 from("direct:start")
-                        .setBody().simple("exit 1")
+                        .setBody()
+                        .simple("exit 1")
                         .to("ssh:localhost:" + port)
                         .log("1st try: ExitValue=${header.CamelSshExitValue}")
 
                         // 2nd try (expected: ExitValue=2)
-                        .setBody().simple("exit 2")
+                        .setBody()
+                        .simple("exit 2")
                         .to("ssh:localhost:" + port)
                         .log("2nd try: ExitValue=${header.CamelSshExitValue}")
-
                         .to("mock:result");
             }
         };

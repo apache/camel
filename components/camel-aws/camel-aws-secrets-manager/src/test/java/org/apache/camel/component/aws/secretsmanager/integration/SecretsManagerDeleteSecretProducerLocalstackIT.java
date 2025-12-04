@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.secretsmanager.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,9 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretResponse;
 import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SecretsManagerDeleteSecretProducerLocalstackIT extends AwsSecretsManagerBaseTest {
 
@@ -56,9 +57,9 @@ public class SecretsManagerDeleteSecretProducerLocalstackIT extends AwsSecretsMa
             }
         });
 
-        DeleteSecretResponse resultDelete = (DeleteSecretResponse) exchange.getIn().getBody();
+        DeleteSecretResponse resultDelete =
+                (DeleteSecretResponse) exchange.getIn().getBody();
         assertTrue(resultDelete.sdkHttpResponse().isSuccessful());
-
     }
 
     @Override
@@ -66,8 +67,7 @@ public class SecretsManagerDeleteSecretProducerLocalstackIT extends AwsSecretsMa
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createSecret")
-                        .to("aws-secrets-manager://test?operation=createSecret");
+                from("direct:createSecret").to("aws-secrets-manager://test?operation=createSecret");
 
                 from("direct:deleteSecret")
                         .to("aws-secrets-manager://test?operation=deleteSecret")

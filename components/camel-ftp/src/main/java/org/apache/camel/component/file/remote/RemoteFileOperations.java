@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
@@ -33,7 +34,8 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * @return                                     <tt>true</tt> if connected
      * @throws GenericFileOperationFailedException can be thrown
      */
-    boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException;
+    boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
+            throws GenericFileOperationFailedException;
 
     /**
      * Returns whether we are connected to the remote server or not
@@ -73,5 +75,4 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean sendSiteCommand(String command) throws GenericFileOperationFailedException;
-
 }

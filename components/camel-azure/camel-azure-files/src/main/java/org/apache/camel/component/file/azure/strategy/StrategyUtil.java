@@ -25,9 +25,7 @@ import org.apache.camel.component.file.strategy.GenericFileRenameExclusiveReadLo
 
 final class StrategyUtil {
 
-    private StrategyUtil() {
-
-    }
+    private StrategyUtil() {}
 
     static <T> void ifNotEmpty(Map<String, Object> params, String key, Class<T> clazz, Consumer<T> consumer) {
         Object o = params.get(key);
@@ -53,5 +51,4 @@ final class StrategyUtil {
         ifNotEmpty(params, "readLockMarkerFile", Boolean.class, readLockStrategy::setMarkerFiler);
         ifNotEmpty(params, "readLockLoggingLevel", LoggingLevel.class, readLockStrategy::setReadLockLoggingLevel);
     }
-
 }

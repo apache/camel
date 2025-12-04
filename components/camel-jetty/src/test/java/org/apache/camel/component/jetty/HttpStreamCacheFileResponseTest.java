@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -24,9 +28,6 @@ import java.time.Duration;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
     @TempDir
@@ -40,8 +41,7 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
         assertEquals(body2, out);
 
-        await()
-                .atMost(Duration.ofSeconds(1))
+        await().atMost(Duration.ofSeconds(1))
                 .untilAsserted(() -> assertEquals(0, testDirectory.list().length, "There should be no files"));
     }
 
@@ -60,10 +60,10 @@ public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/myserver")
                         // wrap the response in 2 input streams so it will force
                         // caching to disk
-                        .transform().constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
+                        .transform()
+                        .constant(new BufferedInputStream(new ByteArrayInputStream(body2.getBytes())))
                         .to("log:reply");
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,8 +41,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @Isolated
@@ -498,11 +499,9 @@ public class AggregateProcessorTest extends ContextTestSupport {
         final AtomicBoolean tested = new AtomicBoolean();
 
         ExceptionHandler myHandler = new ExceptionHandler() {
-            public void handleException(Throwable exception) {
-            }
+            public void handleException(Throwable exception) {}
 
-            public void handleException(String message, Throwable exception) {
-            }
+            public void handleException(String message, Throwable exception) {}
 
             public void handleException(String message, Exchange exchange, Throwable exception) {
                 assertEquals("Error processing aggregated exchange", message);
@@ -626,5 +625,4 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         ap.stop();
     }
-
 }

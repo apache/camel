@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.util.HashMap;
@@ -60,8 +61,8 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
             }
 
             Map<String, WebSocketBase> connectedPeers = getConnectedPeers(exchange);
-            VertxWebsocketResultHandler vertxWebsocketResultHandler
-                    = new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
+            VertxWebsocketResultHandler vertxWebsocketResultHandler =
+                    new VertxWebsocketResultHandler(exchange, callback, connectedPeers.keySet());
 
             if (connectedPeers.isEmpty()) {
                 callback.done(true);
@@ -110,8 +111,8 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
         Map<String, WebSocketBase> connectedPeers = new HashMap<>();
         Message message = exchange.getMessage();
 
-        boolean isSendToAll = message.getHeader(VertxWebsocketConstants.SEND_TO_ALL,
-                endpoint.getConfiguration().isSendToAll(), boolean.class);
+        boolean isSendToAll = message.getHeader(
+                VertxWebsocketConstants.SEND_TO_ALL, endpoint.getConfiguration().isSendToAll(), boolean.class);
         if (isSendToAll) {
             // Try to find all peers connected to an existing vertx-websocket consumer
             if (ObjectHelper.isNotEmpty(peers)) {

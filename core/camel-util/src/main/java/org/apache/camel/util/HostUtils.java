@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.net.InetAddress;
@@ -29,27 +30,27 @@ import java.util.TreeMap;
 public final class HostUtils {
 
     private HostUtils() {
-        //Utility Class
+        // Utility Class
     }
 
     /**
      * Returns a {@link Map} of {@link InetAddress} per {@link NetworkInterface}.
      */
     public static Map<String, Set<InetAddress>> getNetworkInterfaceAddresses() {
-        //JVM returns interfaces in a non-predictable order, so to make this more predictable
-        //let's have them sort by interface name (by using a TreeMap).
+        // JVM returns interfaces in a non-predictable order, so to make this more predictable
+        // let's have them sort by interface name (by using a TreeMap).
         Map<String, Set<InetAddress>> interfaceAddressMap = new TreeMap<>();
         try {
             Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
             while (ifaces.hasMoreElements()) {
                 NetworkInterface iface = ifaces.nextElement();
-                //We only care about usable non-loopback interfaces.
+                // We only care about usable non-loopback interfaces.
                 if (iface.isUp() && !iface.isLoopback() && !iface.isPointToPoint()) {
                     String name = iface.getName();
                     Enumeration<InetAddress> ifaceAdresses = iface.getInetAddresses();
                     while (ifaceAdresses.hasMoreElements()) {
                         InetAddress ia = ifaceAdresses.nextElement();
-                        //We want to filter out mac addresses
+                        // We want to filter out mac addresses
                         if (!ia.isLoopbackAddress() && !ia.getHostAddress().contains(":")) {
                             Set<InetAddress> addresses = interfaceAddressMap.get(name);
                             if (addresses == null) {
@@ -62,7 +63,7 @@ public final class HostUtils {
                 }
             }
         } catch (SocketException ex) {
-            //noop
+            // noop
         }
         return interfaceAddressMap;
     }
@@ -112,5 +113,4 @@ public final class HostUtils {
     public static String getLocalIp() throws UnknownHostException {
         return chooseAddress().getHostAddress();
     }
-
 }

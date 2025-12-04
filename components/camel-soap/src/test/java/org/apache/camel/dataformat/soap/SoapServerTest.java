@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +30,6 @@ import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * Checks the soap data format by using fixed request and expected response
@@ -68,7 +69,8 @@ public class SoapServerTest extends CamelTestSupport {
                 ElementNameStrategy elNameStrat = new TypeNameStrategy();
                 SoapDataFormat soapDataFormat = new SoapDataFormat(jaxbPackage, elNameStrat);
                 CustomerServiceImpl serverBean = new CustomerServiceImpl();
-                from("direct:start").onException(Exception.class) //
+                from("direct:start")
+                        .onException(Exception.class) //
                         .handled(true) //
                         .marshal(soapDataFormat) //
                         .end() //
@@ -78,5 +80,4 @@ public class SoapServerTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
@@ -33,8 +34,10 @@ public class NoSuchHeaderException extends CamelExchangeException {
     }
 
     public NoSuchHeaderException(Exchange exchange, String headerName, Class<?> type) {
-        super("No '" + headerName + "' header available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, headerName), exchange);
+        super(
+                "No '" + headerName + "' header available" + (type != null ? " of type: " + type.getName() : "")
+                        + reason(exchange, headerName),
+                exchange);
         this.headerName = headerName;
         this.type = type;
     }

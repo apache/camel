@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 /**
@@ -51,5 +52,4 @@ public interface ContextPathMatcher {
      * @return          <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     boolean matchMethod(String method, String restrict);
-
 }

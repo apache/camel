@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +34,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyFileConsumerTest extends BaseJettyTest {
     @TempDir
@@ -80,7 +81,8 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         MockEndpoint.assertIsSatisfied(context);
 
         File des = testDirectory.resolve("test/java.jpg").toFile();
-        Awaitility.await().atMost(Duration.ofSeconds(2))
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(2))
                 .untilAsserted(() -> assertTrue(des.exists(), "The uploaded file should exists"));
         assertEquals(jpg.length(), des.length(), "This two file should have same size");
     }
@@ -93,13 +95,15 @@ public class JettyFileConsumerTest extends BaseJettyTest {
                         .to(TestSupport.fileUri(testDirectory, "test?fileName=temp.xml"))
                         .setBody(constant("OK"));
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true")
-                        .to(TestSupport.fileUri(testDirectory, "test?fileName=java.jpg")).setBody(constant("OK"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice2")
+                        .to("log:foo?showAll=true")
+                        .to(TestSupport.fileUri(testDirectory, "test?fileName=java.jpg"))
+                        .setBody(constant("OK"));
 
-                from(TestSupport.fileUri(testDirectory, "binary?noop=true")).to("http://localhost:{{port}}/myapp/myservice2")
+                from(TestSupport.fileUri(testDirectory, "binary?noop=true"))
+                        .to("http://localhost:{{port}}/myapp/myservice2")
                         .to("mock:result");
             }
         };
     }
-
 }

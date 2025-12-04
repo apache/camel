@@ -25,10 +25,11 @@ import org.apache.camel.support.resume.Resumables;
 public class KinesisConsumerOffsetProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
-        exchange.getMessage().setHeader(
-                Exchange.OFFSET,
-                Resumables.of(
-                        exchange.getMessage().getHeader(Kinesis2Constants.SHARD_ID),
-                        exchange.getMessage().getHeader(Kinesis2Constants.SEQUENCE_NUMBER)));
+        exchange.getMessage()
+                .setHeader(
+                        Exchange.OFFSET,
+                        Resumables.of(
+                                exchange.getMessage().getHeader(Kinesis2Constants.SHARD_ID),
+                                exchange.getMessage().getHeader(Kinesis2Constants.SEQUENCE_NUMBER)));
     }
 }

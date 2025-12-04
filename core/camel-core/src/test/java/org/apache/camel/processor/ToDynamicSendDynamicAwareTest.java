@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -27,8 +30,6 @@ import org.apache.camel.component.bar.BarComponent;
 import org.apache.camel.component.bar.BarConstants;
 import org.apache.camel.support.component.EndpointUriFactorySupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
 

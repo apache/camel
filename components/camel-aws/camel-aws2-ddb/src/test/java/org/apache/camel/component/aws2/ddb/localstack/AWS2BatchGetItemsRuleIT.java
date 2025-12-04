@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddb.localstack;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +40,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
 
     @EndpointInject("direct:start")
@@ -54,9 +55,8 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
     protected void cleanupResources() throws Exception {
         super.cleanupResources();
 
-        DeleteTableRequest deleteTableRequest = DeleteTableRequest.builder()
-                .tableName(tableName)
-                .build();
+        DeleteTableRequest deleteTableRequest =
+                DeleteTableRequest.builder().tableName(tableName).build();
         ddbClient.deleteTable(deleteTableRequest);
     }
 
@@ -66,16 +66,14 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
         ddbClient = AWSSDKClientUtils.newDynamoDBClient();
         CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(tableName)
-                .keySchema(
-                        KeySchemaElement.builder()
-                                .attributeName(attributeName)
-                                .keyType(KeyType.HASH)
-                                .build())
-                .attributeDefinitions(
-                        AttributeDefinition.builder()
-                                .attributeType(ScalarAttributeType.S)
-                                .attributeName(attributeName)
-                                .build())
+                .keySchema(KeySchemaElement.builder()
+                        .attributeName(attributeName)
+                        .keyType(KeyType.HASH)
+                        .build())
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeType(ScalarAttributeType.S)
+                        .attributeName(attributeName)
+                        .build())
                 .provisionedThroughput(ProvisionedThroughput.builder()
                         .readCapacityUnits(5L)
                         .writeCapacityUnits(5L)
@@ -96,12 +94,10 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
             Map<String, AttributeValue> key = new HashMap<>();
             key.put(attributeName, AttributeValue.builder().s(retrieveValue).build());
             Map<String, KeysAndAttributes> keysAndAttributesMap = new HashMap<>();
-            KeysAndAttributes keysAndAttributes = KeysAndAttributes.builder()
-                    .keys(key)
-                    .build();
+            KeysAndAttributes keysAndAttributes =
+                    KeysAndAttributes.builder().keys(key).build();
             keysAndAttributesMap.put(tableName, keysAndAttributes);
             e.getIn().setHeader(Ddb2Constants.BATCH_ITEMS, keysAndAttributesMap);
-
         });
 
         assertNull(exchange.getIn().getExchange().getException());
@@ -112,7 +108,8 @@ public class AWS2BatchGetItemsRuleIT extends Aws2DDBBase {
     private void putItem(String value1, String value2) {
         final Map<String, AttributeValue> attributeMap = new HashMap<>();
         attributeMap.put(attributeName, AttributeValue.builder().s(value1).build());
-        attributeMap.put(secondaryAttributeName, AttributeValue.builder().s(value2).build());
+        attributeMap.put(
+                secondaryAttributeName, AttributeValue.builder().s(value2).build());
 
         template.send("direct:start", e -> {
             e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchGetItems);

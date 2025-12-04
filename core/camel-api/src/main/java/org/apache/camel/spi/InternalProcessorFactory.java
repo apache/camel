@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.AsyncProcessor;
@@ -48,7 +49,11 @@ public interface InternalProcessorFactory {
     Channel createChannel(CamelContext camelContext);
 
     AsyncProducer createInterceptSendToEndpointProcessor(
-            InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip, Predicate onWhen);
+            InterceptSendToEndpoint endpoint,
+            Endpoint delegate,
+            AsyncProducer producer,
+            boolean skip,
+            Predicate onWhen);
 
     AsyncProcessor createWrapProcessor(Processor processor, Processor wrapped);
 
@@ -57,5 +62,4 @@ public interface InternalProcessorFactory {
     AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception;
 
     Producer createProducer(Endpoint endpoint) throws Exception;
-
 }

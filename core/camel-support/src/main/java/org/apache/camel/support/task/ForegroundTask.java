@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.task;
 
 import java.time.Duration;
@@ -106,8 +107,10 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
                 }
                 nextAttemptTime = lastAttemptTime + budget.interval();
                 if (doRun(supplier)) {
-                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
-                            getName(), budget.iteration());
+                    LOG.debug(
+                            "Task {} is complete after {} iterations and it is ready to continue",
+                            getName(),
+                            budget.iteration());
                     status = Status.Completed;
                     completed = true;
                     break;
@@ -142,8 +145,11 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
             cause = null;
             return supplier.getAsBoolean();
         } catch (TaskRunFailureException e) {
-            LOG.debug("Task {} failed at {} iterations and will attempt again on next interval: {}",
-                    getName(), budget.iteration(), e.getMessage());
+            LOG.debug(
+                    "Task {} failed at {} iterations and will attempt again on next interval: {}",
+                    getName(),
+                    budget.iteration(),
+                    e.getMessage());
             cause = e;
             return false;
         }
@@ -179,8 +185,10 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
                 }
                 T ret = supplier.get();
                 if (predicate.test(ret)) {
-                    LOG.debug("Task {} is complete after {} iterations and it is ready to continue",
-                            getName(), budget.iteration());
+                    LOG.debug(
+                            "Task {} is complete after {} iterations and it is ready to continue",
+                            getName(),
+                            budget.iteration());
                     status = Status.Completed;
                     return Optional.ofNullable(ret);
                 }
@@ -228,5 +236,4 @@ public class ForegroundTask extends AbstractTask implements BlockingTask {
     public long getCurrentDelay() {
         return budget.interval();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tooling.maven;
 
 import java.util.List;
@@ -39,16 +40,20 @@ public interface MavenDownloader extends Service {
      */
     List<MavenArtifact> resolveArtifacts(
             String rootGav,
-            List<String> dependencyGAVs, Set<String> extraRepositories,
-            boolean transitively, boolean useApacheSnapshots)
+            List<String> dependencyGAVs,
+            Set<String> extraRepositories,
+            boolean transitively,
+            boolean useApacheSnapshots)
             throws MavenResolutionException;
 
     /**
      * Overload for {@link MavenDownloader#resolveArtifacts(String, List, Set, boolean, boolean)}
      */
     List<MavenArtifact> resolveArtifacts(
-            List<String> dependencyGAVs, Set<String> extraRepositories,
-            boolean transitively, boolean useApacheSnapshots)
+            List<String> dependencyGAVs,
+            Set<String> extraRepositories,
+            boolean transitively,
+            boolean useApacheSnapshots)
             throws MavenResolutionException;
 
     /**
@@ -136,5 +141,4 @@ public interface MavenDownloader extends Service {
      * the ASF SNAPSHOT maven repository.
      */
     boolean isMavenApacheSnapshotEnabled();
-
 }

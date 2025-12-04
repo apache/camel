@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 /**
  * A marker to indicate the {@link Service} should not be registered in JMX for management.
  */
-public interface NonManagedService {
-}
+public interface NonManagedService {}

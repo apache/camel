@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.listener;
 
 import org.apache.camel.Exchange;
@@ -51,11 +52,13 @@ public class CamelListener {
         }
 
         if (exchange.getException() != null) {
-            consumer.getExceptionHandler().handleException(
-                    String.format("Error processing exchange for hazelcast consumer on object '%s' in cache '%s'.", key,
-                            cacheName),
-                    exchange,
-                    exchange.getException());
+            consumer.getExceptionHandler()
+                    .handleException(
+                            String.format(
+                                    "Error processing exchange for hazelcast consumer on object '%s' in cache '%s'.",
+                                    key, cacheName),
+                            exchange,
+                            exchange.getException());
         }
 
         consumer.releaseExchange(exchange, false);
@@ -68,5 +71,4 @@ public class CamelListener {
     public HazelcastDefaultConsumer getConsumer() {
         return consumer;
     }
-
 }

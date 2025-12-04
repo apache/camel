@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTest {
 
     @BindToRegistry("myAuthenticator")
@@ -43,7 +44,8 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
             template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
             fail("Should send back 401");
         } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            NettyHttpOperationFailedException cause =
+                    assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(401, cause.getStatusCode());
         }
 
@@ -52,13 +54,11 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
         String auth = "Basic c2NvdHQ6c2VjcmV0";
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        await().atMost(500, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> {
-                    String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World",
-                            "Authorization",
-                            auth, String.class);
-                    assertEquals("Bye World", out);
-                });
+        await().atMost(500, TimeUnit.MILLISECONDS).untilAsserted(() -> {
+            String out = template.requestBodyAndHeader(
+                    "netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+            assertEquals("Bye World", out);
+        });
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -69,7 +69,8 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=foo&securityConfiguration.securityAuthenticator=#myAuthenticator")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .transform()
+                        .constant("Bye World");
             }
         };
     }
@@ -110,5 +111,4 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
             return null;
         }
     }
-
 }

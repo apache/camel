@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +37,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Unit test inspired by user forum
  */
@@ -46,6 +47,7 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -82,10 +84,10 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsRouteWithInOnlyTest").to("mock:inbox")
-                        .to(ExchangePattern.InOnly, "activemq:topic:JmsRouteWithInOnlyTest.order").bean(
-                                "orderService",
-                                "handleOrder");
+                from("activemq:queue:JmsRouteWithInOnlyTest")
+                        .to("mock:inbox")
+                        .to(ExchangePattern.InOnly, "activemq:topic:JmsRouteWithInOnlyTest.order")
+                        .bean("orderService", "handleOrder");
 
                 from("activemq:topic:JmsRouteWithInOnlyTest.order").to("mock:topic");
             }
@@ -109,6 +111,5 @@ public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
         public String handleOrder(String body) {
             return "OK: " + body;
         }
-
     }
 }

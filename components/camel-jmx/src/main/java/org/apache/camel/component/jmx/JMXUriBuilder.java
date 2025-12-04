@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jmx;
 
 import java.util.LinkedHashMap;
@@ -27,8 +28,7 @@ public class JMXUriBuilder {
     private Map<String, String> mQueryProps = new LinkedHashMap<>();
     private String mServerName = "platform";
 
-    public JMXUriBuilder() {
-    }
+    public JMXUriBuilder() {}
 
     public JMXUriBuilder(String aServerName) {
         setServerName(aServerName);
@@ -211,5 +211,4 @@ public class JMXUriBuilder {
         }
         return sb.toString();
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.set;
+
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SET;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,17 +30,20 @@ import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SET;
-
 /**
  * Perform operations on <a href="http://www.hazelcast.com/">Hazelcast</a> distributed set.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_SET, title = "Hazelcast Set", syntax = "hazelcast-set:cacheName",
-             category = { Category.CACHE, Category.CLUSTERING }, headersClass = HazelcastConstants.class)
+@UriEndpoint(
+        firstVersion = "2.7.0",
+        scheme = SCHEME_SET,
+        title = "Hazelcast Set",
+        syntax = "hazelcast-set:cacheName",
+        category = {Category.CACHE, Category.CLUSTERING},
+        headersClass = HazelcastConstants.class)
 public class HazelcastSetEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastSetEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
-                                String cacheName) {
+    public HazelcastSetEndpoint(
+            HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         setCommand(HazelcastCommand.set);
     }
@@ -53,5 +59,4 @@ public class HazelcastSetEndpoint extends HazelcastDefaultEndpoint {
     public Producer createProducer() throws Exception {
         return new HazelcastSetProducer(hazelcastInstance, this, cacheName);
     }
-
 }

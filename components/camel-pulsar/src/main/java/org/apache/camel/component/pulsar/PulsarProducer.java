@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pulsar;
 
 import java.io.IOException;
@@ -60,8 +61,8 @@ public class PulsarProducer extends DefaultAsyncProducer {
                 messageBuilder.key(key);
             }
 
-            Map<String, String> properties
-                    = CastUtils.cast(exchange.getIn().getHeader(PulsarMessageHeaders.PROPERTIES_OUT, Map.class));
+            Map<String, String> properties =
+                    CastUtils.cast(exchange.getIn().getHeader(PulsarMessageHeaders.PROPERTIES_OUT, Map.class));
             if (ObjectHelper.isNotEmpty(properties)) {
                 messageBuilder.properties(properties);
             }
@@ -81,19 +82,19 @@ public class PulsarProducer extends DefaultAsyncProducer {
                 messageBuilder.deliverAfter(deliverAfter, TimeUnit.MILLISECONDS);
             }
 
-            messageBuilder.sendAsync()
+            messageBuilder
+                    .sendAsync()
                     .thenAccept(r -> exchange.getIn().setBody(r))
-                    .whenComplete(
-                            (r, e) -> {
-                                try {
-                                    if (e != null) {
-                                        exchange.setException(new CamelExchangeException(
-                                                "An error occurred while sending a message to pulsar", exchange, e));
-                                    }
-                                } finally {
-                                    callback.done(false);
-                                }
-                            });
+                    .whenComplete((r, e) -> {
+                        try {
+                            if (e != null) {
+                                exchange.setException(new CamelExchangeException(
+                                        "An error occurred while sending a message to pulsar", exchange, e));
+                            }
+                        } finally {
+                            callback.done(false);
+                        }
+                    });
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -114,8 +115,7 @@ public class PulsarProducer extends DefaultAsyncProducer {
     private static byte[] serialize(Exchange exchange, Object content) throws IOException {
         byte[] result;
         try {
-            result = exchange.getContext().getTypeConverter()
-                    .mandatoryConvertTo(byte[].class, exchange, content);
+            result = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, content);
         } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
             // fallback to try to serialize the data
             result = PulsarMessageUtils.serialize(content);
@@ -130,14 +130,19 @@ public class PulsarProducer extends DefaultAsyncProducer {
                 final String topicUri = pulsarEndpoint.getUri();
                 PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
                 String producerName = configuration.getProducerName();
-                final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint.getPulsarClient().newProducer().topic(topicUri)
+                final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint
+                        .getPulsarClient()
+                        .newProducer()
+                        .topic(topicUri)
                         .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS)
                         .blockIfQueueFull(configuration.isBlockIfQueueFull())
                         .maxPendingMessages(configuration.getMaxPendingMessages())
                         .maxPendingMessagesAcrossPartitions(configuration.getMaxPendingMessagesAcrossPartitions())
-                        .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS)
+                        .batchingMaxPublishDelay(
+                                configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS)
                         .batchingMaxMessages(configuration.getMaxPendingMessages())
-                        .enableBatching(configuration.isBatchingEnabled()).batcherBuilder(configuration.getBatcherBuilder())
+                        .enableBatching(configuration.isBatchingEnabled())
+                        .batcherBuilder(configuration.getBatcherBuilder())
                         .initialSequenceId(configuration.getInitialSequenceId())
                         .compressionType(configuration.getCompressionType())
                         .hashingScheme(HashingScheme.valueOf(configuration.getHashingScheme()))

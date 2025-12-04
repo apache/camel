@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
@@ -22,9 +26,6 @@ import org.apache.camel.support.EndpointHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EndpointHelperTest extends SpringTestSupport {
 
@@ -42,5 +43,4 @@ public class EndpointHelperTest extends SpringTestSupport {
         assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
         assertNull(EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
-
 }

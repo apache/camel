@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.zipfile;
 
 import java.io.File;
@@ -55,13 +56,12 @@ public class ZipFileIteratorDataFormatTest extends CamelTestSupport {
             public void configure() {
                 from("direct:zip")
                         .setHeader(Exchange.FILE_NAME, constant("report.txt"))
-                        .marshal().zipFile()
+                        .marshal()
+                        .zipFile()
                         .to("file:target/output")
                         .to("mock:result");
 
-                from("direct:unzip")
-                        .unmarshal().zipFile()
-                        .to("mock:unzip");
+                from("direct:unzip").unmarshal().zipFile().to("mock:unzip");
             }
         };
     }

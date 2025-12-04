@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.zookeeper.operations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FutureEventDrivenOperationTest {
     private String data = "Event Received";
@@ -29,12 +30,11 @@ public class FutureEventDrivenOperationTest {
 
     @Test
     public void shouldWaitForEvents() throws Exception {
-        final FutureEventDrivenOperation<String> future
-                = new FutureEventDrivenOperation<String>(null, "somepath", EventType.NodeCreated) {
+        final FutureEventDrivenOperation<String> future =
+                new FutureEventDrivenOperation<String>(null, "somepath", EventType.NodeCreated) {
 
                     @Override
-                    protected void installWatch() {
-                    }
+                    protected void installWatch() {}
 
                     @Override
                     public OperationResult<String> getResult() {
@@ -53,13 +53,14 @@ public class FutureEventDrivenOperationTest {
             final FutureEventDrivenOperation<String> future, final WatchedEvent event, final int millisecondsTillFire) {
         new Thread(new Runnable() {
 
-            public void run() {
-                try {
-                    Thread.sleep(millisecondsTillFire);
-                    future.process(event);
-                } catch (InterruptedException e) {
-                }
-            }
-        }).start();
+                    public void run() {
+                        try {
+                            Thread.sleep(millisecondsTillFire);
+                            future.process(event);
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                })
+                .start();
     }
 }

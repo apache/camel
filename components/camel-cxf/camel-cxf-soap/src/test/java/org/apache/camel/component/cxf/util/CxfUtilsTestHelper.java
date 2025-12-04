@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.util;
 
 import java.util.HashMap;
@@ -50,10 +51,7 @@ public final class CxfUtilsTestHelper {
         return converter.toString(converter.toDOMSource(writer.getDocument()), null);
     }
 
-    private static void writeElement(
-            Element e,
-            XMLStreamWriter writer,
-            Map<String, String> namespaces)
+    private static void writeElement(Element e, XMLStreamWriter writer, Map<String, String> namespaces)
             throws XMLStreamException {
         String prefix = e.getPrefix();
         String ns = e.getNamespaceURI();
@@ -105,8 +103,7 @@ public final class CxfUtilsTestHelper {
                     writer.writeNamespace("", attr.getNodeValue());
                     if (attr.getNodeValue().equals(ns)) {
                         declareNamespace = false;
-                    } else if (StringUtils.isEmpty(attr.getNodeValue())
-                            && StringUtils.isEmpty(ns)) {
+                    } else if (StringUtils.isEmpty(attr.getNodeValue()) && StringUtils.isEmpty(ns)) {
                         declareNamespace = false;
                     }
                 } else {
@@ -171,5 +168,4 @@ public final class CxfUtilsTestHelper {
             }
         }
     }
-
 }

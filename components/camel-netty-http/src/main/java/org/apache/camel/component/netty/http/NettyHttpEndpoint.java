@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.net.URI;
@@ -42,14 +43,22 @@ import org.slf4j.LoggerFactory;
 /**
  * Netty HTTP server and client using the Netty 4.x.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
-             syntax = "netty-http:protocol://host:port/path", category = { Category.NETWORKING, Category.HTTP },
-             lenientProperties = true, headersClass = NettyHttpConstants.class)
-@Metadata(excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
-                              + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager",
-          annotations = {
-                  "protocol=http",
-          })
+@UriEndpoint(
+        firstVersion = "2.14.0",
+        scheme = "netty-http",
+        extendsScheme = "netty",
+        title = "Netty HTTP",
+        syntax = "netty-http:protocol://host:port/path",
+        category = {Category.NETWORKING, Category.HTTP},
+        lenientProperties = true,
+        headersClass = NettyHttpConstants.class)
+@Metadata(
+        excludeProperties =
+                "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
+                        + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager",
+        annotations = {
+            "protocol=http",
+        })
 public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
@@ -57,24 +66,35 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
 
     @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam(label = "advanced", name = "configuration",
-              javaType = "org.apache.camel.component.netty.http.NettyHttpConfiguration",
-              description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+
+    @UriParam(
+            label = "advanced",
+            name = "configuration",
+            javaType = "org.apache.camel.component.netty.http.NettyHttpConfiguration",
+            description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
     private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
+
     @UriParam(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
+
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
+
     @UriParam(label = "consumer,advanced")
     private boolean traceEnabled;
+
     @UriParam(label = "consumer,advanced")
     private String httpMethodRestrict;
+
     @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
+
     @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+
     @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
     private Map<String, Object> securityOptions; // to include in component docs
+
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
 
@@ -94,7 +114,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
 
         if (nettySharedHttpServer != null) {
             answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
-            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer,
+            LOG.info(
+                    "NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}",
+                    answer,
                     nettySharedHttpServer.getPort());
         } else {
             // reuse pipeline factory for the same address
@@ -250,7 +272,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
                 // setup default JAAS authenticator if none was configured
                 JAASSecurityAuthenticator jaas = new JAASSecurityAuthenticator();
                 jaas.setName(securityConfiguration.getRealm());
-                LOG.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
+                LOG.info(
+                        "No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}",
+                        jaas);
                 securityConfiguration.setSecurityAuthenticator(jaas);
             }
         }

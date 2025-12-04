@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.nats.integration;
 
 import java.util.Arrays;
@@ -52,8 +53,7 @@ class NatsProducerHeadersSupportIT extends NatsITSupport {
     void testNatsProducerShouldForwardHeaders() throws InterruptedException {
 
         this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_1, HEADER_VALUE_1);
-        this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_2,
-                Arrays.asList(HEADER_VALUE_2, HEADER_VALUE_3));
+        this.mockResultEndpoint.expectedHeaderReceived(HEADER_KEY_2, Arrays.asList(HEADER_VALUE_2, HEADER_VALUE_3));
 
         this.template.setDefaultEndpoint(this.mockResultEndpoint);
         final Map<String, Object> headers = new HashMap<>();
@@ -75,5 +75,4 @@ class NatsProducerHeadersSupportIT extends NatsITSupport {
             getOutFilter().addAll(Arrays.asList(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH));
         }
     }
-
 }

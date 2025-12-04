@@ -37,19 +37,18 @@ public class KafkaRecordStreamingProcessorFacade extends AbstractKafkaRecordProc
     private final KafkaRecordStreamingProcessor kafkaRecordProcessor;
 
     public KafkaRecordStreamingProcessorFacade(
-                                               KafkaConsumer camelKafkaConsumer, String threadId,
-                                               CommitManager commitManager, KafkaConsumerListener consumerListener) {
+            KafkaConsumer camelKafkaConsumer,
+            String threadId,
+            CommitManager commitManager,
+            KafkaConsumerListener consumerListener) {
         super(camelKafkaConsumer, threadId, commitManager, consumerListener);
 
         kafkaRecordProcessor = buildKafkaRecordProcessor(commitManager);
-
     }
 
     private KafkaRecordStreamingProcessor buildKafkaRecordProcessor(CommitManager commitManager) {
         return new KafkaRecordStreamingProcessor(
-                camelKafkaConsumer.getEndpoint().getConfiguration(),
-                camelKafkaConsumer.getProcessor(),
-                commitManager);
+                camelKafkaConsumer.getEndpoint().getConfiguration(), camelKafkaConsumer.getProcessor(), commitManager);
     }
 
     /**
@@ -63,14 +62,16 @@ public class KafkaRecordStreamingProcessorFacade extends AbstractKafkaRecordProc
      * @return                      The result of processing this set of records
      */
     private ProcessingResult processRecord(
-            TopicPartition partition, boolean partitionHasNext, boolean recordHasNext,
+            TopicPartition partition,
+            boolean partitionHasNext,
+            boolean recordHasNext,
             KafkaRecordStreamingProcessor kafkaRecordProcessor,
             ConsumerRecord<Object, Object> consumerRecord) {
 
         logRecord(consumerRecord);
 
-        return kafkaRecordProcessor.processExchange(camelKafkaConsumer, partition, partitionHasNext,
-                recordHasNext, consumerRecord);
+        return kafkaRecordProcessor.processExchange(
+                camelKafkaConsumer, partition, partitionHasNext, recordHasNext, consumerRecord);
     }
 
     @Override
@@ -97,14 +98,20 @@ public class KafkaRecordStreamingProcessorFacade extends AbstractKafkaRecordProc
             while (!result.isBreakOnErrorHit() && recordIterator.hasNext() && !isStopping()) {
                 ConsumerRecord<Object, Object> consumerRecord = recordIterator.next();
 
-                LOG.debug("Processing record on partition {} with offset {}",
+                LOG.debug(
+                        "Processing record on partition {} with offset {}",
                         consumerRecord.partition(),
                         consumerRecord.offset());
 
-                result = processRecord(partition, partitionIterator.hasNext(), recordIterator.hasNext(),
-                        kafkaRecordProcessor, consumerRecord);
+                result = processRecord(
+                        partition,
+                        partitionIterator.hasNext(),
+                        recordIterator.hasNext(),
+                        kafkaRecordProcessor,
+                        consumerRecord);
 
-                LOG.debug("Processed record on partition {} with offset {}",
+                LOG.debug(
+                        "Processed record on partition {} with offset {}",
                         consumerRecord.partition(),
                         consumerRecord.offset());
 
@@ -125,5 +132,4 @@ public class KafkaRecordStreamingProcessorFacade extends AbstractKafkaRecordProc
 
         return result;
     }
-
 }

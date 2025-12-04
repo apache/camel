@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -45,8 +46,7 @@ public class InlineKeyboardMarkup implements Serializable, ReplyMarkup {
         this.inlineKeyboard = inlineKeyboard;
     }
 
-    public InlineKeyboardMarkup() {
-    }
+    public InlineKeyboardMarkup() {}
 
     public List<List<InlineKeyboardButton>> getInlineKeyboard() {
         return inlineKeyboard;
@@ -63,8 +63,7 @@ public class InlineKeyboardMarkup implements Serializable, ReplyMarkup {
     public static final class Builder {
         private List<List<InlineKeyboardButton>> inlineKeyboard = new ArrayList<>();
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder inlineKeyboard(List<List<InlineKeyboardButton>> inlineKeyboard) {
             this.inlineKeyboard = inlineKeyboard;
@@ -83,8 +82,6 @@ public class InlineKeyboardMarkup implements Serializable, ReplyMarkup {
 
     @Override
     public String toString() {
-        return "InlineKeyboardMarkup{"
-               + "inlineKeyboard=" + inlineKeyboard
-               + '}';
+        return "InlineKeyboardMarkup{" + "inlineKeyboard=" + inlineKeyboard + '}';
     }
 }

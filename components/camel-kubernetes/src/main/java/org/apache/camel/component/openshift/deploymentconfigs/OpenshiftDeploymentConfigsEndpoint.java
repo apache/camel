@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openshift.deploymentconfigs;
+
+import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_DEPLOYMENT_CONFIGS;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -25,18 +28,20 @@ import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.kubernetes.KubernetesConstants.SCHEME_DEPLOYMENT_CONFIGS;
-
 /**
  * Perform operations on OpenShift Deployment Configs and get notified on Deployment Config changes.
  */
-@UriEndpoint(firstVersion = "3.18.0", scheme = SCHEME_DEPLOYMENT_CONFIGS, title = "OpenShift Deployment Configs",
-             syntax = "openshift-deploymentconfigs:masterUrl", category = { Category.CONTAINER, Category.CLOUD },
-             headersClass = KubernetesConstants.class)
+@UriEndpoint(
+        firstVersion = "3.18.0",
+        scheme = SCHEME_DEPLOYMENT_CONFIGS,
+        title = "OpenShift Deployment Configs",
+        syntax = "openshift-deploymentconfigs:masterUrl",
+        category = {Category.CONTAINER, Category.CLOUD},
+        headersClass = KubernetesConstants.class)
 public class OpenshiftDeploymentConfigsEndpoint extends AbstractKubernetesEndpoint {
 
-    public OpenshiftDeploymentConfigsEndpoint(String uri, OpenshiftDeploymentConfigsComponent component,
-                                              KubernetesConfiguration config) {
+    public OpenshiftDeploymentConfigsEndpoint(
+            String uri, OpenshiftDeploymentConfigsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }
 
@@ -51,5 +56,4 @@ public class OpenshiftDeploymentConfigsEndpoint extends AbstractKubernetesEndpoi
         configureConsumer(consumer);
         return consumer;
     }
-
 }

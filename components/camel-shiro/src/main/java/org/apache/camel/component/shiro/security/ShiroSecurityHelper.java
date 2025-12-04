@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.shiro.security;
 
 import java.util.regex.Matcher;
@@ -26,17 +27,16 @@ public final class ShiroSecurityHelper {
 
     private static Pattern pattern = Pattern.compile("(\\d+):(.+)");
 
-    private ShiroSecurityHelper() {
-    }
+    private ShiroSecurityHelper() {}
 
-    public static ByteSource encrypt(
-            ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) {
+    public static ByteSource encrypt(ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) {
         byte[] data = serialize(securityToken);
         return cipherService.encrypt(data, passPhrase);
     }
 
     static byte[] serialize(ShiroSecurityToken token) {
-        StringBuilder sb = new StringBuilder().append(token.getUsername().length())
+        StringBuilder sb = new StringBuilder()
+                .append(token.getUsername().length())
                 .append(":")
                 .append(token.getUsername())
                 .append(token.getPassword() != null ? token.getPassword() : "");

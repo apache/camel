@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mail;
 
 import jakarta.mail.Message;
@@ -30,5 +31,4 @@ public interface MailUidGenerator {
      * @return         the unique id, must never be <tt>null</tt>.
      */
     String generateUuid(MailEndpoint mailEndpoint, Message message);
-
 }

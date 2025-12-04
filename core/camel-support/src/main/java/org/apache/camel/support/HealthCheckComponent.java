@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
@@ -24,18 +25,21 @@ import org.apache.camel.spi.Metadata;
  */
 public abstract class HealthCheckComponent extends DefaultComponent {
 
-    @Metadata(label = "health", defaultValue = "true",
-              description = "Used for enabling or disabling all consumer based health checks from this component")
+    @Metadata(
+            label = "health",
+            defaultValue = "true",
+            description = "Used for enabling or disabling all consumer based health checks from this component")
     private boolean healthCheckConsumerEnabled = true;
 
-    @Metadata(label = "health", defaultValue = "true",
-              description = "Used for enabling or disabling all producer based health checks from this component."
-                            + " Notice: Camel has by default disabled all producer based health-checks."
-                            + " You can turn on producer checks globally by setting camel.health.producersEnabled=true.")
+    @Metadata(
+            label = "health",
+            defaultValue = "true",
+            description = "Used for enabling or disabling all producer based health checks from this component."
+                    + " Notice: Camel has by default disabled all producer based health-checks."
+                    + " You can turn on producer checks globally by setting camel.health.producersEnabled=true.")
     private boolean healthCheckProducerEnabled = true;
 
-    public HealthCheckComponent() {
-    }
+    public HealthCheckComponent() {}
 
     public HealthCheckComponent(CamelContext context) {
         super(context);
@@ -64,5 +68,4 @@ public abstract class HealthCheckComponent extends DefaultComponent {
     public void setHealthCheckProducerEnabled(boolean healthCheckProducerEnabled) {
         this.healthCheckProducerEnabled = healthCheckProducerEnabled;
     }
-
 }

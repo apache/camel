@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.AggregationStrategy;
@@ -51,11 +52,9 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
                         .to("mock:failingRoute")
                         .throwException(new RuntimeException("Boem!"));
 
-                from("direct:error")
-                        .to("mock:error");
+                from("direct:error").to("mock:error");
 
-                from("direct:nextRoute")
-                        .to("mock:nextRoute");
+                from("direct:nextRoute").to("mock:nextRoute");
 
                 from("direct:start")
                         .enrich("direct:failingRoute", new BodyOnlyAggregationStrategy())
@@ -74,8 +73,9 @@ public class BodyOnlyAggregationStrategyTest extends ContextTestSupport {
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             oldExchange.getIn().setBody(newExchange.getIn().getBody());
 
-            oldExchange.getExchangeExtension().setErrorHandlerHandled(
-                    newExchange.getExchangeExtension().getErrorHandlerHandled());
+            oldExchange
+                    .getExchangeExtension()
+                    .setErrorHandlerHandled(newExchange.getExchangeExtension().getErrorHandlerHandled());
 
             return oldExchange;
         }

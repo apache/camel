@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups.raft;
 
 import java.util.Map;
@@ -36,20 +37,22 @@ public class JGroupsRaftComponent extends DefaultComponent {
     @UriParam
     @Metadata(defaultValue = "null")
     private RaftHandle raftHandle;
+
     @UriParam
     @Metadata(defaultValue = "NopStateMachine")
     private StateMachine stateMachine = new NopStateMachine();
+
     @UriParam
     @Metadata(required = true)
     private String raftId;
+
     @UriParam
     @Metadata(defaultValue = "raft.xml")
     private String channelProperties;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
-        return new JGroupsRaftEndpoint(
-                uri, remaining, this, raftId, channelProperties, stateMachine, raftHandle);
+        return new JGroupsRaftEndpoint(uri, remaining, this, raftId, channelProperties, stateMachine, raftHandle);
     }
 
     public RaftHandle getRaftHandle() {
@@ -99,5 +102,5 @@ public class JGroupsRaftComponent extends DefaultComponent {
         this.channelProperties = channelProperties;
     }
 
-    //TODO: implement a org.jgroups.protocols.raft.StateMachine as a Camel Consumer.
+    // TODO: implement a org.jgroups.protocols.raft.StateMachine as a Camel Consumer.
 }

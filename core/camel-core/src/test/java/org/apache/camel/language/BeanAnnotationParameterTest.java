@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
@@ -71,7 +72,11 @@ public class BeanAnnotationParameterTest extends ContextTestSupport {
 
                 from("direct:two").bean(MyBean.class, "callA").to("mock:result");
 
-                from("direct:four").bean(MyBean.class, "callA").to("mock:middle").bean(MyBean.class, "callB").to("mock:result");
+                from("direct:four")
+                        .bean(MyBean.class, "callA")
+                        .to("mock:middle")
+                        .bean(MyBean.class, "callB")
+                        .to("mock:result");
             }
         };
     }
@@ -85,7 +90,6 @@ public class BeanAnnotationParameterTest extends ContextTestSupport {
         public String callB() {
             return "Bye World";
         }
-
     }
 
     public static final class GreetingService {

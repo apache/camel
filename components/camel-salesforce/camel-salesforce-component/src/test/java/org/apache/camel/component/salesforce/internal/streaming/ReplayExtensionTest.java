@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.streaming;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -25,8 +28,6 @@ import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
 import org.cometd.common.HashMapMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReplayExtensionTest {
 
@@ -107,7 +108,6 @@ public class ReplayExtensionTest {
         ConcurrentMap<String, Long> dataMap = getDataMap(replayExtension);
 
         assertEquals(Long.valueOf(1L), dataMap.get("/topic/AccountUpdates"));
-
     }
 
     @Test

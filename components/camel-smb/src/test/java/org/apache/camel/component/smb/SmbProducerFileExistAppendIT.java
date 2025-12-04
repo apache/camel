@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbProducerFileExistAppendIT extends SmbServerTestSupport {
 
@@ -52,7 +53,8 @@ public class SmbProducerFileExistAppendIT extends SmbServerTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         await().atMost(3, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals("Hello World\nBye World",
+                .untilAsserted(() -> assertEquals(
+                        "Hello World\nBye World",
                         new String(copyFileContentFromContainer("/data/rw/exist/hello.txt"))));
     }
 

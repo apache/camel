@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -24,11 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
 
@@ -50,8 +51,7 @@ class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // give time to delete file
-        await().atMost(200, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> assertEquals(3, counter.get()));
+        await().atMost(200, TimeUnit.MILLISECONDS).untilAsserted(() -> assertEquals(3, counter.get()));
 
         // assert the file is deleted
         File file = service.ftpFile("thirdpool/hello.txt").toFile();
@@ -67,14 +67,17 @@ class FromFtpThirdPoolOkIT extends FtpServerTestSupport {
                 // use no delay for fast unit testing
                 onException(IllegalArgumentException.class).logStackTrace(false).to("mock:error");
 
-                from(getFtpUrl()).process(exchange -> {
-                    if (counter.incrementAndGet() < 3) {
-                        // file should exist
-                        File file = service.ftpFile("thirdpool/hello.txt").toFile();
-                        assertTrue(file.exists(), "The file should NOT have been deleted");
-                        throw new IllegalArgumentException("Forced by unit test");
-                    }
-                }).to("mock:result");
+                from(getFtpUrl())
+                        .process(exchange -> {
+                            if (counter.incrementAndGet() < 3) {
+                                // file should exist
+                                File file =
+                                        service.ftpFile("thirdpool/hello.txt").toFile();
+                                assertTrue(file.exists(), "The file should NOT have been deleted");
+                                throw new IllegalArgumentException("Forced by unit test");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,9 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.body;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("TODO: investigate for Camel 3.0")
 public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
@@ -58,8 +59,8 @@ public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() {
-                    return template.requestBody("netty-http:http://localhost:{{port}}/echo", Integer.toString(index),
-                            String.class);
+                    return template.requestBody(
+                            "netty-http:http://localhost:{{port}}/echo", Integer.toString(index), String.class);
                 }
             });
             responses.put(index, out);
@@ -86,9 +87,9 @@ public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
             public void configure() {
                 // expose a echo service
                 from("netty-http:http://localhost:{{port}}/echo")
-                        .transform(body().append(body())).to("mock:result");
+                        .transform(body().append(body()))
+                        .to("mock:result");
             }
         };
     }
-
 }

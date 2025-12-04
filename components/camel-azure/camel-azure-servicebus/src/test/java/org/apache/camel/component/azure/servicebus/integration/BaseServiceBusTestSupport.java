@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus.integration;
+
+import static java.lang.System.getProperty;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -42,8 +45,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.System.getProperty;
-
 public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     public static final String CONNECTION_STRING_PROPERTY_NAME = "camel.component.azure-servicebus.connection-string";
     protected static final String CONNECTION_STRING = getProperty(CONNECTION_STRING_PROPERTY_NAME);
@@ -55,8 +56,10 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     protected static final String SUBSCRIPTION_WITH_SESSIONS_NAME = "camelTestSubscriptionSessions";
     protected static final String MOCK_RESULT = "mock:result";
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseServiceBusTestSupport.class);
+
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
     protected static ServiceBusAdministrationClient serviceBusAdminClient;
     protected CountDownLatch messageLatch;
     protected List<ServiceBusReceivedMessageContext> receivedMessageContexts;
@@ -68,19 +71,23 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
                 .buildClient();
         try {
             serviceBusAdminClient.createQueue(QUEUE_NAME);
-            serviceBusAdminClient.createQueue(QUEUE_WITH_SESSIONS_NAME, new CreateQueueOptions().setSessionRequired(true));
+            serviceBusAdminClient.createQueue(
+                    QUEUE_WITH_SESSIONS_NAME, new CreateQueueOptions().setSessionRequired(true));
         } catch (ResourceExistsException e) {
             LOGGER.warn("Test queue already existed", e);
         }
         try {
             serviceBusAdminClient.createTopic(TOPIC_NAME);
-            serviceBusAdminClient.createTopic(TOPIC_WITH_SESSIONS_NAME, new CreateTopicOptions().setSessionRequired(true));
+            serviceBusAdminClient.createTopic(
+                    TOPIC_WITH_SESSIONS_NAME, new CreateTopicOptions().setSessionRequired(true));
         } catch (ResourceExistsException e) {
             LOGGER.warn("Test topic already existed", e);
         }
         try {
             serviceBusAdminClient.createSubscription(TOPIC_NAME, SUBSCRIPTION_NAME);
-            serviceBusAdminClient.createSubscription(TOPIC_WITH_SESSIONS_NAME, SUBSCRIPTION_WITH_SESSIONS_NAME,
+            serviceBusAdminClient.createSubscription(
+                    TOPIC_WITH_SESSIONS_NAME,
+                    SUBSCRIPTION_WITH_SESSIONS_NAME,
                     new CreateSubscriptionOptions().setSessionRequired(true));
         } catch (ResourceExistsException e) {
             LOGGER.warn("Test subscription already existed", e);
@@ -118,8 +125,8 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
                 .processor()
                 .queueName(QUEUE_NAME)
                 .processMessage(this::processMessage)
-                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
-                        serviceBusErrorContext.getException()))
+                .processError(serviceBusErrorContext ->
+                        LOGGER.error("Service Bus client error", serviceBusErrorContext.getException()))
                 .buildProcessorClient();
     }
 
@@ -129,8 +136,8 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
                 .sessionProcessor()
                 .queueName(QUEUE_WITH_SESSIONS_NAME)
                 .processMessage(this::processMessage)
-                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
-                        serviceBusErrorContext.getException()))
+                .processError(serviceBusErrorContext ->
+                        LOGGER.error("Service Bus client error", serviceBusErrorContext.getException()))
                 .buildProcessorClient();
     }
 
@@ -141,8 +148,8 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
                 .topicName(TOPIC_NAME)
                 .subscriptionName(SUBSCRIPTION_NAME)
                 .processMessage(this::processMessage)
-                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
-                        serviceBusErrorContext.getException()))
+                .processError(serviceBusErrorContext ->
+                        LOGGER.error("Service Bus client error", serviceBusErrorContext.getException()))
                 .buildProcessorClient();
     }
 
@@ -154,8 +161,8 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
                 .topicName(TOPIC_WITH_SESSIONS_NAME)
                 .subscriptionName(SUBSCRIPTION_WITH_SESSIONS_NAME)
                 .processMessage(this::processMessage)
-                .processError(serviceBusErrorContext -> LOGGER.error("Service Bus client error",
-                        serviceBusErrorContext.getException()))
+                .processError(serviceBusErrorContext ->
+                        LOGGER.error("Service Bus client error", serviceBusErrorContext.getException()))
                 .buildProcessorClient();
     }
 

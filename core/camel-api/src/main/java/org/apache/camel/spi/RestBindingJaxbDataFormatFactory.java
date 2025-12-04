@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -32,9 +33,13 @@ public interface RestBindingJaxbDataFormatFactory {
      * Setup XML data format
      */
     void setupJaxb(
-            CamelContext camelContext, RestConfiguration config,
-            String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
-            DataFormat jaxb, DataFormat outJaxb)
+            CamelContext camelContext,
+            RestConfiguration config,
+            String type,
+            Class<?> typeClass,
+            String outType,
+            Class<?> outTypeClass,
+            DataFormat jaxb,
+            DataFormat outJaxb)
             throws Exception;
-
 }

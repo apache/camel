@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
@@ -37,5 +38,4 @@ public class SomeExtendingEndpoint extends SomeEndpoint {
     public void setPort(int port) {
         this.port = port;
     }
-
 }

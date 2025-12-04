@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
@@ -40,7 +41,9 @@ public class EnricherDslTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").enrichWith("direct:resource").body(Integer.class, String.class, (o, n) -> n + o)
+                from("direct:start")
+                        .enrichWith("direct:resource")
+                        .body(Integer.class, String.class, (o, n) -> n + o)
                         .to("mock:enriched");
 
                 // set an empty message

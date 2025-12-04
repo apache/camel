@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho.mqtt5;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PahoMqtt5SendDynamicAwareTest extends CamelTestSupport {
     PahoMqtt5SendDynamicAware pahoMqtt5SendDynamicAware;
@@ -35,8 +36,8 @@ public class PahoMqtt5SendDynamicAwareTest extends CamelTestSupport {
     public void testUriParsing() throws Exception {
         this.pahoMqtt5SendDynamicAware.setScheme("paho-mqtt5");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry
-                = new SendDynamicAware.DynamicAwareEntry("paho-mqtt5:destination", "paho-mqtt5:${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry(
+                "paho-mqtt5:destination", "paho-mqtt5:${header.test}", null, null);
         Processor processor = this.pahoMqtt5SendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC));
@@ -46,8 +47,8 @@ public class PahoMqtt5SendDynamicAwareTest extends CamelTestSupport {
     public void testSlashedUriParsing() throws Exception {
         this.pahoMqtt5SendDynamicAware.setScheme("paho-mqtt5");
         Exchange exchange = createExchangeWithBody("The Body");
-        SendDynamicAware.DynamicAwareEntry entry
-                = new SendDynamicAware.DynamicAwareEntry("paho-mqtt5://destination", "paho-mqtt5://${header.test}", null, null);
+        SendDynamicAware.DynamicAwareEntry entry = new SendDynamicAware.DynamicAwareEntry(
+                "paho-mqtt5://destination", "paho-mqtt5://${header.test}", null, null);
         Processor processor = this.pahoMqtt5SendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
         processor.process(exchange);
         assertEquals("destination", exchange.getMessage().getHeader(PahoMqtt5Constants.CAMEL_PAHO_OVERRIDE_TOPIC));

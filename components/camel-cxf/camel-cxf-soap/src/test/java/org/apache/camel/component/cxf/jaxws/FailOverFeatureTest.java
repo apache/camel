@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FailOverFeatureTest {
 
@@ -76,13 +77,12 @@ public class FailOverFeatureTest {
 
     private void startRoutePayload() throws Exception {
 
-        String proxy = "cxf://" + PAYLOAD_PROXY_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS + "?wsdl"
-                       + "&dataFormat=PAYLOAD";
+        String proxy =
+                "cxf://" + PAYLOAD_PROXY_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS + "?wsdl" + "&dataFormat=PAYLOAD";
 
         // use a non-exists address to trigger fail-over
         // another problem is: if synchronous=false fail-over will not happen
-        String real = "cxf://" + NONE_EXIST_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS + "?wsdl"
-                      + "&dataFormat=PAYLOAD";
+        String real = "cxf://" + NONE_EXIST_ADDRESS + "?wsdlURL=" + SERVICE_ADDRESS + "?wsdl" + "&dataFormat=PAYLOAD";
 
         context1 = new DefaultCamelContext();
         startRoute(context1, proxy, real);
@@ -90,12 +90,12 @@ public class FailOverFeatureTest {
 
     private void startRoutePojo() throws Exception {
 
-        String proxy = "cxf://" + POJO_PROXY_ADDRESS + "?serviceClass=" + "org.apache.camel.component.cxf.jaxws.HelloService"
-                       + "&dataFormat=POJO";
+        String proxy = "cxf://" + POJO_PROXY_ADDRESS + "?serviceClass="
+                + "org.apache.camel.component.cxf.jaxws.HelloService" + "&dataFormat=POJO";
 
         // use a non-exists address to trigger fail-over
-        String real = "cxf://" + NONE_EXIST_ADDRESS + "?serviceClass=" + "org.apache.camel.component.cxf.jaxws.HelloService"
-                      + "&dataFormat=POJO";
+        String real = "cxf://" + NONE_EXIST_ADDRESS + "?serviceClass="
+                + "org.apache.camel.component.cxf.jaxws.HelloService" + "&dataFormat=POJO";
 
         context2 = new DefaultCamelContext();
         startRoute(context2, proxy, real);
@@ -123,7 +123,6 @@ public class FailOverFeatureTest {
             }
         });
         ctx.start();
-
     }
 
     private String tryFailover(String url) {
@@ -136,5 +135,4 @@ public class FailOverFeatureTest {
         HelloService client = (HelloService) factory.create();
         return client.sayHello();
     }
-
 }

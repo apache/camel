@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.service;
 
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import org.apache.camel.util.URISupport;
 public class ServiceComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private ServiceRegistry service;
+
     @Metadata(label = "advanced")
     private ServiceRegistry.Selector serviceSelector;
 
@@ -84,11 +86,7 @@ public class ServiceComponent extends DefaultComponent {
         parameters.keySet().removeAll(params.keySet());
 
         return new ServiceEndpoint(
-                uri,
-                this,
-                service,
-                params,
-                URISupport.appendParametersToURI(delegateUri, parameters));
+                uri, this, service, params, URISupport.appendParametersToURI(delegateUri, parameters));
     }
 
     public ServiceRegistry getService() {
@@ -120,8 +118,8 @@ public class ServiceComponent extends DefaultComponent {
 
     private ServiceRegistry getServiceRegistry() {
         if (service == null) {
-            return ServiceRegistryHelper.lookupService(getCamelContext(), serviceSelector).orElseThrow(
-                    () -> new IllegalStateException("No cluster service found"));
+            return ServiceRegistryHelper.lookupService(getCamelContext(), serviceSelector)
+                    .orElseThrow(() -> new IllegalStateException("No cluster service found"));
         }
 
         return service;

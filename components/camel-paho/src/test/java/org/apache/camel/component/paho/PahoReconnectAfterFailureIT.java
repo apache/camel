@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -42,10 +47,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class PahoReconnectAfterFailureIT implements ConfigurableRoute, ConfigurableContext {
 
@@ -113,7 +114,9 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
     public void startConsumerShouldReconnectMqttClientAfterFailures() throws Exception {
         RouteController routeController = camelContextExtension.getContext().getRouteController();
 
-        assertNotEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
+        assertNotEquals(
+                ServiceStatus.Started,
+                routeController.getRouteStatus(TESTING_ROUTE_ID),
                 "Broker down, expecting  route not to be started");
 
         // Start broker and wait for supervisor to restart route
@@ -123,7 +126,9 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
         routeStartedLatch.await(10, TimeUnit.SECONDS);
 
         Awaitility.await().untilAsserted(() -> {
-            assertEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
+            assertEquals(
+                    ServiceStatus.Started,
+                    routeController.getRouteStatus(TESTING_ROUTE_ID),
                     "Expecting consumer connected to broker and route started");
         });
 
@@ -164,5 +169,4 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
         broker = new ArtemisMQTTService(port);
         broker.initialize();
     }
-
 }

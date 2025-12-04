@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.image.models;
 
 public class ClientConfigurations {
@@ -157,5 +158,4 @@ public class ClientConfigurations {
     public void setTagLimit(int tagLimit) {
         this.tagLimit = tagLimit;
     }
-
 }

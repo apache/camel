@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.dsl.yaml.support;
+
+import static org.apache.camel.maven.dsl.yaml.GenerateYamlSupportMojo.CN_YAML_PROPERTY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.javapoet.AnnotationSpec;
 import org.apache.camel.tooling.util.Strings;
 
-import static org.apache.camel.maven.dsl.yaml.GenerateYamlSupportMojo.CN_YAML_PROPERTY;
-
 public final class YamlProperties {
-    private YamlProperties() {
-    }
+    private YamlProperties() {}
 
     public static AnnotationBuilder annotation(String name, String type) {
         return new AnnotationBuilder().withName(name).withType(type);

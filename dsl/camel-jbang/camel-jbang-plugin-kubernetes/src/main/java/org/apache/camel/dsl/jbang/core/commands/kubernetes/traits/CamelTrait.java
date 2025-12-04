@@ -41,7 +41,8 @@ public class CamelTrait extends BaseTrait {
 
         if (ObjectHelper.isNotEmpty(camelTrait.getProperties())) {
             // TODO: use ConfigMap resource
-            context.addConfigurationResource("application.properties",
+            context.addConfigurationResource(
+                    "application.properties",
                     camelTrait.getProperties().stream().collect(Collectors.joining(System.lineSeparator())));
         }
     }

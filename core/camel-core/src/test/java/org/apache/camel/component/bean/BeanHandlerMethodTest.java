@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
@@ -23,11 +29,6 @@ import org.apache.camel.Handler;
 import org.apache.camel.Header;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class BeanHandlerMethodTest extends ContextTestSupport {
 
@@ -59,7 +60,8 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         MyAmbigiousBean pojo = new MyAmbigiousBean();
-        AmbiguousMethodCallException e = assertThrows(AmbiguousMethodCallException.class,
+        AmbiguousMethodCallException e = assertThrows(
+                AmbiguousMethodCallException.class,
                 () -> info.createInvocation(pojo, exchange),
                 "Should have thrown an exception");
         assertEquals(2, e.getMethods().size());
@@ -94,7 +96,8 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         MyReallyDummyBean pojo = new MyReallyDummyBean();
 
-        AmbiguousMethodCallException e = assertThrows(AmbiguousMethodCallException.class,
+        AmbiguousMethodCallException e = assertThrows(
+                AmbiguousMethodCallException.class,
                 () -> info.createInvocation(pojo, exchange),
                 "Should have thrown an exception");
         assertEquals(2, e.getMethods().size());
@@ -106,7 +109,8 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         MyNoHandlerBean pojo = new MyNoHandlerBean();
-        AmbiguousMethodCallException e = assertThrows(AmbiguousMethodCallException.class,
+        AmbiguousMethodCallException e = assertThrows(
+                AmbiguousMethodCallException.class,
                 () -> info.createInvocation(pojo, exchange),
                 "Should have thrown an exception");
         assertEquals(3, e.getMethods().size());
@@ -116,7 +120,6 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
 
         @Handler
         String hello(@Body String hi);
-
     }
 
     public abstract static class MyAbstractBean implements MyBaseInterface {
@@ -130,12 +133,9 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
 
-    public static class MyConcreteBean extends MyAbstractBean {
-
-    }
+    public static class MyConcreteBean extends MyAbstractBean {}
 
     public static class MyNoDummyBean {
 
@@ -147,7 +147,6 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
 
     public static class MyAmbigiousBean {
@@ -161,7 +160,6 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
 
     public static class MyDummyBean {
@@ -175,7 +173,6 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
 
     public static class MyOtherDummyBean {
@@ -189,7 +186,6 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
 
     public static class MyNoHandlerBean {
@@ -208,7 +204,6 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
 
     public static class MyReallyDummyBean {
@@ -223,7 +218,5 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
             fail("Should not invoke me");
             return null;
         }
-
     }
-
 }

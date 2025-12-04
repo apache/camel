@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,14 +32,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringASN1DataFormatRouteTest extends CamelSpringTestSupport {
 
     private String fileName = "src/test/resources/asn1_data/SMS_SINGLE.tt";
 
-    private void baseUnmarshalReturnClassObjectTest(String mockEnpointName, String directEndpointName) throws Exception {
+    private void baseUnmarshalReturnClassObjectTest(String mockEnpointName, String directEndpointName)
+            throws Exception {
         getMockEndpoint(mockEnpointName).expectedMessageCount(1);
 
         File testFile = new File(fileName);
@@ -62,5 +64,4 @@ public class SpringASN1DataFormatRouteTest extends CamelSpringTestSupport {
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/asn1/SpringASN1DataFormatRouteTest.xml");
     }
-
 }

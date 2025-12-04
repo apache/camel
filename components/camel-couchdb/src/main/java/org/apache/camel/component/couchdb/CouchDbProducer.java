@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.couchdb;
 
 import java.util.UUID;
@@ -54,10 +55,15 @@ public class CouchDbProducer extends DefaultProducer {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Document saved [_id={}, _rev={}]", save.getResult().getId(), save.getResult().getRev());
+                LOG.trace(
+                        "Document saved [_id={}, _rev={}]",
+                        save.getResult().getId(),
+                        save.getResult().getRev());
             }
-            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, save.getResult().getRev());
-            exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, save.getResult().getId());
+            exchange.getIn()
+                    .setHeader(CouchDbConstants.HEADER_DOC_REV, save.getResult().getRev());
+            exchange.getIn()
+                    .setHeader(CouchDbConstants.HEADER_DOC_ID, save.getResult().getId());
         } else {
             if (operation.equalsIgnoreCase(CouchDbOperations.DELETE.toString())) {
                 Response<DocumentResult> delete = deleteJsonElement(json);
@@ -66,10 +72,19 @@ public class CouchDbProducer extends DefaultProducer {
                 }
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Document saved [_id={}, _rev={}]", delete.getResult().getId(), delete.getResult().getRev());
+                    LOG.trace(
+                            "Document saved [_id={}, _rev={}]",
+                            delete.getResult().getId(),
+                            delete.getResult().getRev());
                 }
-                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_REV, delete.getResult().getRev());
-                exchange.getIn().setHeader(CouchDbConstants.HEADER_DOC_ID, delete.getResult().getId());
+                exchange.getIn()
+                        .setHeader(
+                                CouchDbConstants.HEADER_DOC_REV,
+                                delete.getResult().getRev());
+                exchange.getIn()
+                        .setHeader(
+                                CouchDbConstants.HEADER_DOC_ID,
+                                delete.getResult().getId());
             }
             if (operation.equalsIgnoreCase(CouchDbOperations.GET.toString())) {
                 String docId = exchange.getIn().getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
@@ -135,9 +150,11 @@ public class CouchDbProducer extends DefaultProducer {
         Response delete;
         if (json instanceof JsonObject) {
             JsonObject obj = (JsonObject) json;
-            delete = couchClient.removeByIdAndRev(obj.get("_id").getAsString(), obj.get("_rev").getAsString());
+            delete = couchClient.removeByIdAndRev(
+                    obj.get("_id").getAsString(), obj.get("_rev").getAsString());
         } else {
-            delete = couchClient.removeByIdAndRev(json.getAsJsonObject().get("_id").getAsString(),
+            delete = couchClient.removeByIdAndRev(
+                    json.getAsJsonObject().get("_id").getAsString(),
                     json.getAsJsonObject().get("_rev").getAsString());
         }
         return delete;

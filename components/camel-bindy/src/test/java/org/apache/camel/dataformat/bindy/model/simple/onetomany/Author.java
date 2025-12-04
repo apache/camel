@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.simple.onetomany;
 
 import java.util.List;
@@ -68,5 +69,4 @@ public class Author {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
 }

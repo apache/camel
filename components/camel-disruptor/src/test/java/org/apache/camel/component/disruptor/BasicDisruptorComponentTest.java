@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import org.apache.camel.EndpointInject;
@@ -51,10 +52,8 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("disruptor:test")
-                        .to("mock:result");
+                from("disruptor:test").to("mock:result");
             }
         };
     }
-
 }

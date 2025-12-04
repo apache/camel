@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.console;
 
 import java.util.Map;
@@ -27,13 +28,19 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "dependency-downloader", group = "camel-jbang", displayName = "Maven Dependency Downloader",
-            description = "Displays information about dependencies downloaded at runtime")
+@DevConsole(
+        name = "dependency-downloader",
+        group = "camel-jbang",
+        displayName = "Maven Dependency Downloader",
+        description = "Displays information about dependencies downloaded at runtime")
 public class DependencyDownloaderConsole extends AbstractDevConsole {
 
     public DependencyDownloaderConsole() {
-        super("camel-jbang", "dependency-downloader", "Maven Dependency Downloader",
-              "Displays information about dependencies downloaded at runtime");
+        super(
+                "camel-jbang",
+                "dependency-downloader",
+                "Maven Dependency Downloader",
+                "Displays information about dependencies downloaded at runtime");
     }
 
     @Override
@@ -51,9 +58,15 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
             sb.append("\n");
             sb.append("\nDownloads:");
             for (DownloadRecord r : downloader.downloadRecords()) {
-                sb.append("\n    ").append(String.format("%s:%s:%s (took: %s) from: %s@%s",
-                        r.groupId(), r.artifactId(), r.version(), TimeUtils.printDuration(r.elapsed(), true), r.repoId(),
-                        r.repoUrl()));
+                sb.append("\n    ")
+                        .append(String.format(
+                                "%s:%s:%s (took: %s) from: %s@%s",
+                                r.groupId(),
+                                r.artifactId(),
+                                r.version(),
+                                TimeUtils.printDuration(r.elapsed(), true),
+                                r.repoId(),
+                                r.repoUrl()));
             }
         }
 

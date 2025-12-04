@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.util.List;
@@ -34,14 +35,17 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
     @Override
     public void setupResources() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
-                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setCanonicalHostName("localhost")
+                .setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy())
+                .setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/myids", (httpRequest, httpResponse, httpContext) -> {
                     Assertions.assertNull(httpRequest.getFirstHeader("ids"));
                     String u = httpRequest.getRequestUri();
                     httpResponse.setEntity(new StringEntity(u));
-                }).create();
+                })
+                .create();
         localServer.start();
     }
 
@@ -67,8 +71,10 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
 
     @Test
     public void testIds() {
-        String o = fluentTemplate.to("direct:myids").withHeader("ids", List.of(1, 2, 3)).request(String.class);
+        String o = fluentTemplate
+                .to("direct:myids")
+                .withHeader("ids", List.of(1, 2, 3))
+                .request(String.class);
         Assertions.assertEquals("/myids?ids=id=1&id=2&id=3", o);
     }
-
 }

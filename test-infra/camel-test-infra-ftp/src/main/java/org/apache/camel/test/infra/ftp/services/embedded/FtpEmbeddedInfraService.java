@@ -47,9 +47,10 @@ import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = FtpInfraService.class,
-              description = "Embedded FTP Server",
-              serviceAlias = { "ftp" })
+@InfraService(
+        service = FtpInfraService.class,
+        description = "Embedded FTP Server",
+        serviceAlias = {"ftp"})
 public class FtpEmbeddedInfraService extends AbstractService implements FtpInfraService {
     protected static final String DEFAULT_LISTENER = "default";
     private static final Logger LOG = LoggerFactory.getLogger(FtpEmbeddedInfraService.class);
@@ -86,8 +87,11 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
     }
 
     private int getListenerPort() {
-        return ((DefaultFtpServer) ftpServer).getListeners().values().stream()
-                .map(Listener::getPort).findAny().get();
+        return ((DefaultFtpServer) ftpServer)
+                .getListeners().values().stream()
+                        .map(Listener::getPort)
+                        .findAny()
+                        .get();
     }
 
     @Deprecated
@@ -177,8 +181,11 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
 
     @Override
     protected void registerProperties(BiConsumer<String, String> store) {
-        final String host = ((DefaultFtpServer) ftpServer).getListeners().values().stream()
-                .map(Listener::getServerAddress).findAny().get();
+        final String host = ((DefaultFtpServer) ftpServer)
+                .getListeners().values().stream()
+                        .map(Listener::getServerAddress)
+                        .findAny()
+                        .get();
         store.accept(FtpProperties.SERVER_HOST, host);
         store.accept(FtpProperties.SERVER_PORT, String.valueOf(getPort()));
         store.accept(FtpProperties.ROOT_DIR, rootDir.toString());
@@ -221,6 +228,5 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
     }
 
     @Override
-    public void registerProperties() {
-    }
+    public void registerProperties() {}
 }

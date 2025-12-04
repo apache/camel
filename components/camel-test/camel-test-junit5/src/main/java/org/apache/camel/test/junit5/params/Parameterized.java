@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit5.params;
 
 import java.lang.annotation.ElementType;
@@ -23,8 +24,7 @@ import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.TYPE })
+@Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(ParameterizedExtension.class)
-public @interface Parameterized {
-}
+public @interface Parameterized {}

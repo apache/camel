@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
@@ -27,21 +31,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class ProducerBodyArrayTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
 
     @Override
-
     public void doPreSetup() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setName(getClass().getSimpleName())
                 .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/storedProcedureTest.sql").build();
-
+                .addScript("sql/storedProcedureTest.sql")
+                .build();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        Integer[] numbers = new Integer[] { 1, 2 };
+        Integer[] numbers = new Integer[] {1, 2};
         template.requestBody("direct:query", numbers);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -73,12 +73,14 @@ public class ProducerBodyArrayTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // required for the sql component
-                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
+                getContext()
+                        .getComponent("sql-stored", SqlStoredComponent.class)
+                        .setDataSource(db);
 
-                from("direct:query").to("sql-stored:SUBNUMBERS(INTEGER ${body[0]},INTEGER ${body[1]},OUT INTEGER resultofsub)")
+                from("direct:query")
+                        .to("sql-stored:SUBNUMBERS(INTEGER ${body[0]},INTEGER ${body[1]},OUT INTEGER resultofsub)")
                         .to("mock:query");
             }
         };
     }
-
 }

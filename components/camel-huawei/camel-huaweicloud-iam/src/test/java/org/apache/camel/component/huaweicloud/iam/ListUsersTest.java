@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.iam;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -24,8 +27,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ListUsersTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ListUsersTest.class.getName());
@@ -40,12 +41,11 @@ public class ListUsersTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:list_users")
-                        .to("hwcloud-iam:listUsers?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
-                            "&region=" + testConfiguration.getProperty("region") +
-                            "&ignoreSslVerification=true" +
-                            "&iamClient=#iamClient")
+                        .to("hwcloud-iam:listUsers?" + "accessKey="
+                                + testConfiguration.getProperty("accessKey") + "&secretKey="
+                                + testConfiguration.getProperty("secretKey") + "&region="
+                                + testConfiguration.getProperty("region") + "&ignoreSslVerification=true"
+                                + "&iamClient=#iamClient")
                         .log("List users successful")
                         .to("mock:list_users_result");
             }
@@ -61,7 +61,8 @@ public class ListUsersTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("[{\"domainId\":\"123\",\"name\":\"User 1\"},{\"domainId\":\"456\",\"name\":\"User 2\"}]",
+        assertEquals(
+                "[{\"domainId\":\"123\",\"name\":\"User 1\"},{\"domainId\":\"456\",\"name\":\"User 2\"}]",
                 responseExchange.getIn().getBody(String.class));
     }
 }

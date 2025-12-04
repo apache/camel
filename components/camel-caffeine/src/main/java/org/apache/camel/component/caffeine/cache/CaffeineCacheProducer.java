@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.cache;
 
 import java.util.Collections;
@@ -32,8 +33,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     private final CaffeineConfiguration configuration;
     private final Cache cache;
 
-    public CaffeineCacheProducer(CaffeineCacheEndpoint endpoint, CaffeineConfiguration configuration,
-                                 Cache cache) {
+    public CaffeineCacheProducer(CaffeineCacheEndpoint endpoint, CaffeineConfiguration configuration, Cache cache) {
         super(endpoint, CaffeineConstants.ACTION, configuration::getAction);
         this.configuration = configuration;
         this.cache = cache;
@@ -73,7 +73,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CaffeineConstants.ACTION_GET_ALL)
     public void onGetAll(Message message) {
-        Object result = cache.getAllPresent(message.getHeader(CaffeineConstants.KEYS, Collections::emptySet, Set.class));
+        Object result =
+                cache.getAllPresent(message.getHeader(CaffeineConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, result, null);
     }
@@ -90,7 +91,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
 
         Set<?> keys = message.getHeader(CaffeineConstants.KEYS, Set.class);
         /* Empty cache if no key set is provided
-           - implies no deletions at all if an empty key set is provided */
+        - implies no deletions at all if an empty key set is provided */
         if (keys == null) {
             cache.invalidateAll();
         } else {
@@ -121,7 +122,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                    "No value provided in header or as default value (" + CaffeineConstants.KEY + ")", message.getExchange());
+                    "No value provided in header or as default value (" + CaffeineConstants.KEY + ")",
+                    message.getExchange());
         }
 
         return value;
@@ -131,7 +133,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
         Object value = message.getHeader(CaffeineConstants.VALUE);
         if (value == null) {
             if (type != null) {
-                Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass(type);
+                Class<?> clazz =
+                        getEndpoint().getCamelContext().getClassResolver().resolveClass(type);
                 value = message.getBody(clazz);
             } else {
                 value = message.getBody();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.dataformat;
 
 import java.util.Map;
@@ -34,5 +35,4 @@ public class Base64DataFormatReifier extends DataFormatReifier<Base64DataFormat>
         properties.put("urlSafe", definition.getUrlSafe());
         properties.put("lineSeparator", definition.getLineSeparator());
     }
-
 }

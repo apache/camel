@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
 
 import java.util.Objects;
@@ -37,7 +38,9 @@ public class MonitorFilterConfiguration implements Cloneable {
     @UriParam(defaultValue = "0.0", description = "Deadband value for MonitorFilterType DataChangeFilter.")
     private Double dataChangeFilterDeadbandValue = 0.0;
 
-    @UriParam(defaultValue = "StatusValueTimestamp", description = "Data change trigger for data change monitor filter type.")
+    @UriParam(
+            defaultValue = "StatusValueTimestamp",
+            description = "Data change trigger for data change monitor filter type.")
     private DataChangeTrigger dataChangeFilterTrigger = DataChangeTrigger.StatusValueTimestamp;
 
     public MonitorFilterType getMonitorFilterType() {

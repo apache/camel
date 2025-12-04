@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.consumer;
 
 import java.util.ArrayDeque;
@@ -44,8 +45,12 @@ public class GitTagConsumer extends AbstractGitConsumer {
                 Exchange e = createExchange(true);
                 e.getMessage().setBody(ref.getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_NAME, ref.getName());
-                e.getMessage().setHeader(GitConstants.GIT_BRANCH_LEAF, ref.getLeaf().getName());
-                e.getMessage().setHeader(GitConstants.GIT_BRANCH_OBJECT_ID, ref.getObjectId().getName());
+                e.getMessage()
+                        .setHeader(GitConstants.GIT_BRANCH_LEAF, ref.getLeaf().getName());
+                e.getMessage()
+                        .setHeader(
+                                GitConstants.GIT_BRANCH_OBJECT_ID,
+                                ref.getObjectId().getName());
                 exchanges.add(e);
             }
         }
@@ -63,5 +68,4 @@ public class GitTagConsumer extends AbstractGitConsumer {
             tagsConsumed.add(value.toString());
         }
     }
-
 }

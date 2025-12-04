@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.support;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,8 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 public class MyDummyComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {
     @Override
-    public boolean configure(CamelContext camelContext, Object component, String name, Object value, boolean ignoreCase) {
+    public boolean configure(
+            CamelContext camelContext, Object component, String name, Object value, boolean ignoreCase) {
         if (ignoreCase) {
             return doConfigureIgnoreCase(camelContext, component, name, value);
         } else {
@@ -33,21 +35,23 @@ public class MyDummyComponentConfigurer extends PropertyConfigurerSupport implem
     private static boolean doConfigure(CamelContext camelContext, Object component, String name, Object value) {
         switch (name) {
             case "configuration":
-                ((MyDummyComponent) component).setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
+                ((MyDummyComponent) component)
+                        .setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
                 return true;
             default:
                 return false;
         }
     }
 
-    private static boolean doConfigureIgnoreCase(CamelContext camelContext, Object component, String name, Object value) {
+    private static boolean doConfigureIgnoreCase(
+            CamelContext camelContext, Object component, String name, Object value) {
         switch (name.toLowerCase()) {
             case "configuration":
-                ((MyDummyComponent) component).setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
+                ((MyDummyComponent) component)
+                        .setConfiguration(property(camelContext, MyDummyConfiguration.class, value));
                 return true;
             default:
                 return false;
         }
     }
-
 }

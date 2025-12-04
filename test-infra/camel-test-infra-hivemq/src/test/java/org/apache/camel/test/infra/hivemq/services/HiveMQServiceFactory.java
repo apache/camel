@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hivemq.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
@@ -50,11 +51,9 @@ public final class HiveMQServiceFactory {
         public char[] getUserPassword() {
             return getService().getUserPassword();
         }
-
     }
 
-    private HiveMQServiceFactory() {
-    }
+    private HiveMQServiceFactory() {}
 
     public static SimpleTestServiceBuilder<HiveMQService> builder() {
         return new SimpleTestServiceBuilder<HiveMQService>(HiveMQProperties.HIVEMQ_TEST_SERVICE_NAME)
@@ -80,24 +79,24 @@ public final class HiveMQServiceFactory {
 
     private static class SingletonServiceHolder {
         static final HiveMQService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<HiveMQService> builder = builder();
 
             builder.addLocalMapping(() -> new SingletonHiveMQService(new LocalHiveMQService(), "hivemq"))
                     .addRemoteMapping(RemoteHiveMQService::new)
-                    .addMapping(HiveMQProperties.HIVEMQ_SPARKPLUG_INSTANCE_SELECTOR,
+                    .addMapping(
+                            HiveMQProperties.HIVEMQ_SPARKPLUG_INSTANCE_SELECTOR,
                             () -> new SingletonHiveMQService(new LocalHiveMQSparkplugTCKService(), "hivemq-sparkplug"));
 
             INSTANCE = builder.build();
         }
     }
 
-    public static class LocalHiveMQService extends LocalHiveMQInfraService implements HiveMQService {
-    }
+    public static class LocalHiveMQService extends LocalHiveMQInfraService implements HiveMQService {}
 
-    public static class RemoteHiveMQService extends RemoteHiveMQInfraService implements HiveMQService {
-    }
+    public static class RemoteHiveMQService extends RemoteHiveMQInfraService implements HiveMQService {}
 
-    public static class LocalHiveMQSparkplugTCKService extends LocalHiveMQSparkplugTCKInfraService implements HiveMQService {
-    }
+    public static class LocalHiveMQSparkplugTCKService extends LocalHiveMQSparkplugTCKInfraService
+            implements HiveMQService {}
 }

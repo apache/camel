@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
@@ -36,36 +37,40 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
 @YamlIn
 @YamlType(
-          nodes = "route",
-          types = RouteDefinition.class,
-          order = YamlDeserializerResolver.ORDER_DEFAULT,
-          properties = {
-                  @YamlProperty(name = "id", type = "string"),
-                  @YamlProperty(name = "description", type = "string"),
-                  @YamlProperty(name = "note", type = "string"),
-                  @YamlProperty(name = "group", type = "string"),
-                  @YamlProperty(name = "nodePrefixId", type = "string"),
-                  @YamlProperty(name = "precondition", type = "string"),
-                  @YamlProperty(name = "routeConfigurationId", type = "string"),
-                  @YamlProperty(name = "autoStartup", type = "boolean"),
-                  @YamlProperty(name = "routePolicy", type = "string"),
-                  @YamlProperty(name = "startupOrder", type = "number"),
-                  @YamlProperty(name = "streamCache", type = "boolean"),
-                  @YamlProperty(name = "messageHistory", type = "boolean"),
-                  @YamlProperty(name = "logMask", type = "boolean"),
-                  @YamlProperty(name = "trace", type = "boolean"),
-                  @YamlProperty(name = "errorHandlerRef", type = "string"),
-                  @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
-                  @YamlProperty(name = "shutdownRoute", type = "enum:Default,Defer",
-                                defaultValue = "Default",
-                                description = "To control how to shut down the route."),
-                  @YamlProperty(name = "shutdownRunningTask", type = "enum:CompleteCurrentTaskOnly,CompleteAllTasks",
-                                defaultValue = "CompleteCurrentTaskOnly",
-                                description = "To control how to shut down the route."),
-                  @YamlProperty(name = "inputType", type = "object:org.apache.camel.model.InputTypeDefinition"),
-                  @YamlProperty(name = "outputType", type = "object:org.apache.camel.model.OutputTypeDefinition"),
-                  @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
-          })
+        nodes = "route",
+        types = RouteDefinition.class,
+        order = YamlDeserializerResolver.ORDER_DEFAULT,
+        properties = {
+            @YamlProperty(name = "id", type = "string"),
+            @YamlProperty(name = "description", type = "string"),
+            @YamlProperty(name = "note", type = "string"),
+            @YamlProperty(name = "group", type = "string"),
+            @YamlProperty(name = "nodePrefixId", type = "string"),
+            @YamlProperty(name = "precondition", type = "string"),
+            @YamlProperty(name = "routeConfigurationId", type = "string"),
+            @YamlProperty(name = "autoStartup", type = "boolean"),
+            @YamlProperty(name = "routePolicy", type = "string"),
+            @YamlProperty(name = "startupOrder", type = "number"),
+            @YamlProperty(name = "streamCache", type = "boolean"),
+            @YamlProperty(name = "messageHistory", type = "boolean"),
+            @YamlProperty(name = "logMask", type = "boolean"),
+            @YamlProperty(name = "trace", type = "boolean"),
+            @YamlProperty(name = "errorHandlerRef", type = "string"),
+            @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
+            @YamlProperty(
+                    name = "shutdownRoute",
+                    type = "enum:Default,Defer",
+                    defaultValue = "Default",
+                    description = "To control how to shut down the route."),
+            @YamlProperty(
+                    name = "shutdownRunningTask",
+                    type = "enum:CompleteCurrentTaskOnly,CompleteAllTasks",
+                    defaultValue = "CompleteCurrentTaskOnly",
+                    description = "To control how to shut down the route."),
+            @YamlProperty(name = "inputType", type = "object:org.apache.camel.model.InputTypeDefinition"),
+            @YamlProperty(name = "outputType", type = "object:org.apache.camel.model.OutputTypeDefinition"),
+            @YamlProperty(name = "from", type = "object:org.apache.camel.model.FromDefinition", required = true)
+        })
 public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefinition> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteDefinitionDeserializer.class);
@@ -165,5 +170,4 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
             }
         }
     }
-
 }

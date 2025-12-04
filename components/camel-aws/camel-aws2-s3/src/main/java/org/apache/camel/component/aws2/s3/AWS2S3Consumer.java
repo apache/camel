@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
 
 import java.io.IOException;
@@ -80,7 +81,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().isMoveAfterRead()) {
             try {
                 getAmazonS3Client()
-                        .headBucket(HeadBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build());
+                        .headBucket(HeadBucketRequest.builder()
+                                .bucket(getConfiguration().getDestinationBucket())
+                                .build());
                 LOG.trace("Bucket [{}] already exists", getConfiguration().getDestinationBucket());
                 return;
             } catch (AwsServiceException ase) {
@@ -90,15 +93,20 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 }
             }
 
-            LOG.trace("Destination Bucket [{}] doesn't exist yet", getConfiguration().getDestinationBucket());
+            LOG.trace(
+                    "Destination Bucket [{}] doesn't exist yet",
+                    getConfiguration().getDestinationBucket());
 
             if (getConfiguration().isAutoCreateBucket()) {
                 // creates the new bucket because it doesn't exist yet
-                CreateBucketRequest createBucketRequest
-                        = CreateBucketRequest.builder().bucket(getConfiguration().getDestinationBucket()).build();
+                CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
+                        .bucket(getConfiguration().getDestinationBucket())
+                        .build();
 
-                LOG.trace("Creating Destination bucket [{}] in region [{}] with request [{}]...",
-                        getConfiguration().getDestinationBucket(), getConfiguration().getRegion(),
+                LOG.trace(
+                        "Creating Destination bucket [{}] in region [{}] with request [{}]...",
+                        getConfiguration().getDestinationBucket(),
+                        getConfiguration().getRegion(),
                         createBucketRequest);
 
                 getAmazonS3Client().createBucket(createBucketRequest);
@@ -124,8 +132,11 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         } else if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
-            ResponseInputStream<GetObjectResponse> s3Object
-                    = getAmazonS3Client().getObject(GetObjectRequest.builder().bucket(bucketName).key(fileName).build());
+            ResponseInputStream<GetObjectResponse> s3Object = getAmazonS3Client()
+                    .getObject(GetObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(fileName)
+                            .build());
             exchanges = createExchanges(s3Object, fileName);
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
@@ -168,7 +179,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 marker = null;
             }
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket [{}]...", listObjects.contents().size(), bucketName);
+                LOG.trace(
+                        "Found {} objects in bucket [{}]...",
+                        listObjects.contents().size(),
+                        bucketName);
             }
 
             exchanges = createExchanges(listObjects.contents());
@@ -228,8 +242,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 LOG.debug("S3Object to be consumed: {}", key);
 
-                Builder getRequest
-                        = GetObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(key);
+                Builder getRequest = GetObjectRequest.builder()
+                        .bucket(getConfiguration().getBucketName())
+                        .key(key);
                 if (getConfiguration().isUseCustomerKey()) {
                     if (ObjectHelper.isNotEmpty(getConfiguration().getCustomerKeyId())) {
                         getRequest.sseCustomerKey(getConfiguration().getCustomerKeyId());
@@ -241,8 +256,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                         getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                     }
                 }
-                ResponseInputStream<GetObjectResponse> s3Object
-                        = getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> s3Object =
+                        getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
 
                 if (includeS3Object(s3Object)) {
                     s3Objects.add(s3Object);
@@ -284,8 +299,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             return true;
         } else {
             // Config says to ignore folders/directories
-            return !Optional.of(s3Object.response().contentType()).orElse("")
-                    .toLowerCase().startsWith("application/x-directory");
+            return !Optional.of(s3Object.response().contentType())
+                    .orElse("")
+                    .toLowerCase()
+                    .startsWith("application/x-directory");
         }
     }
 
@@ -353,7 +370,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 String bucketName = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_NAME, String.class);
                 String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
 
-                LOG.trace("Moving object from bucket {} with key {} to bucket {}...", bucketName, key,
+                LOG.trace(
+                        "Moving object from bucket {} with key {} to bucket {}...",
+                        bucketName,
+                        key,
                         getConfiguration().getDestinationBucket());
 
                 StringBuilder builder = new StringBuilder();
@@ -368,16 +388,22 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 String destinationKey = builder.toString();
                 if (getConfiguration().isRemovePrefixOnMove()) {
-                    destinationKey = destinationKey.replaceFirst(getConfiguration().getPrefix(), "");
+                    destinationKey =
+                            destinationKey.replaceFirst(getConfiguration().getPrefix(), "");
                 }
 
-                getAmazonS3Client().copyObject(CopyObjectRequest.builder().destinationKey(destinationKey)
-                        .destinationBucket(getConfiguration().getDestinationBucket())
-                        .sourceBucket(bucketName)
-                        .sourceKey(key)
-                        .build());
+                getAmazonS3Client()
+                        .copyObject(CopyObjectRequest.builder()
+                                .destinationKey(destinationKey)
+                                .destinationBucket(getConfiguration().getDestinationBucket())
+                                .sourceBucket(bucketName)
+                                .sourceKey(key)
+                                .build());
 
-                LOG.trace("Moved object from bucket {} with key {} to bucket {}...", bucketName, key,
+                LOG.trace(
+                        "Moved object from bucket {} with key {} to bucket {}...",
+                        bucketName,
+                        key,
                         getConfiguration().getDestinationBucket());
             }
             if (getConfiguration().isDeleteAfterRead()) {
@@ -386,14 +412,18 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
                 LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
 
-                getAmazonS3Client().deleteObject(
-                        DeleteObjectRequest.builder().bucket(getConfiguration().getBucketName()).key(key).build());
+                getAmazonS3Client()
+                        .deleteObject(DeleteObjectRequest.builder()
+                                .bucket(getConfiguration().getBucketName())
+                                .key(key)
+                                .build());
 
                 LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
             }
         } catch (AwsServiceException e) {
-            getExceptionHandler().handleException("Error occurred during moving or deleting object. This exception is ignored.",
-                    exchange, e);
+            getExceptionHandler()
+                    .handleException(
+                            "Error occurred during moving or deleting object. This exception is ignored.", exchange, e);
         }
     }
 
@@ -428,8 +458,12 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         return createExchange(getEndpoint().getExchangePattern(), s3Object, key);
     }
 
-    public Exchange createExchange(ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
-        LOG.trace("Getting object with key [{}] from bucket [{}]...", key, getConfiguration().getBucketName());
+    public Exchange createExchange(
+            ExchangePattern pattern, ResponseInputStream<GetObjectResponse> s3Object, String key) {
+        LOG.trace(
+                "Getting object with key [{}] from bucket [{}]...",
+                key,
+                getConfiguration().getBucketName());
 
         LOG.trace("Got object [{}]", s3Object);
 
@@ -457,11 +491,14 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         message.setHeader(AWS2S3Constants.CONTENT_TYPE, s3Object.response().contentType());
         message.setHeader(AWS2S3Constants.CONTENT_LENGTH, s3Object.response().contentLength());
         message.setHeader(AWS2S3Constants.CONTENT_ENCODING, s3Object.response().contentEncoding());
-        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
+        message.setHeader(
+                AWS2S3Constants.CONTENT_DISPOSITION, s3Object.response().contentDisposition());
         message.setHeader(AWS2S3Constants.CACHE_CONTROL, s3Object.response().cacheControl());
-        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
+        message.setHeader(
+                AWS2S3Constants.SERVER_SIDE_ENCRYPTION, s3Object.response().serverSideEncryption());
         message.setHeader(AWS2S3Constants.EXPIRATION_TIME, s3Object.response().expiration());
-        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
+        message.setHeader(
+                AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
         message.setHeader(AWS2S3Constants.METADATA, s3Object.response().metadata());
         if (s3Object.response().lastModified() != null) {
@@ -495,7 +532,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (s3ConsumerToString == null) {
-            s3ConsumerToString = "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            s3ConsumerToString =
+                    "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return s3ConsumerToString;
     }

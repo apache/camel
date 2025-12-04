@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import org.apache.camel.CamelContext;
@@ -28,9 +29,12 @@ public class JoorCustomImportsTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        context.getRegistry().bind("MyConfig", ""
-                                               + "import org.apache.camel.language.joor.MyUser;\n"
-                                               + "import static org.apache.camel.language.joor.JoorCustomImportsTest.echo;");
+        context.getRegistry()
+                .bind(
+                        "MyConfig",
+                        ""
+                                + "import org.apache.camel.language.joor.MyUser;\n"
+                                + "import static org.apache.camel.language.joor.JoorCustomImportsTest.echo;");
 
         JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
         joor.setConfigResource("ref:MyConfig");
@@ -43,10 +47,13 @@ public class JoorCustomImportsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        // must return null from script as its a void operator, but the joor language expects a returned value
-                        .script(joor(
-                                "var u = new MyUser(); u.setName('Tony'); u.setAge(22); exchange.getMessage().setBody(u); return null;"))
-                        .transform().joor("var u = bodyAs(MyUser.class); return echo(u.getName());")
+                        // must return null from script as its a void operator, but the joor language expects a returned
+                        // value
+                        .script(
+                                joor(
+                                        "var u = new MyUser(); u.setName('Tony'); u.setAge(22); exchange.getMessage().setBody(u); return null;"))
+                        .transform()
+                        .joor("var u = bodyAs(MyUser.class); return echo(u.getName());")
                         .to("mock:result");
             }
         };
@@ -64,5 +71,4 @@ public class JoorCustomImportsTest extends CamelTestSupport {
     public static String echo(String s) {
         return s + s;
     }
-
 }

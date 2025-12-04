@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio;
 
 public class Trailer {
     int numberOfRecords;
 
-    public Trailer() {
-    }
+    public Trailer() {}
 
     public Trailer(int numberOfRecords) {
         this.numberOfRecords = numberOfRecords;

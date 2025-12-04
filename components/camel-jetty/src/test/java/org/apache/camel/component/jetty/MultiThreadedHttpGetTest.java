@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -28,10 +33,6 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiThreadedHttpGetTest extends BaseJettyTest {
 
@@ -107,10 +108,12 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
             public void configure() {
                 from("seda:withConversion?concurrentConsumers=5")
                         .to("http://localhost:{{port}}/search")
-                        .convertBodyTo(String.class).to("mock:results");
+                        .convertBodyTo(String.class)
+                        .to("mock:results");
 
                 from("seda:withoutConversion?concurrentConsumers=5")
-                        .to("http://localhost:{{port}}/search").to("mock:results");
+                        .to("http://localhost:{{port}}/search")
+                        .to("mock:results");
 
                 from("jetty:http://localhost:{{port}}/search").process(new Processor() {
                     public void process(Exchange exchange) {
@@ -120,5 +123,4 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
             }
         };
     }
-
 }

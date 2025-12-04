@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.storage;
 
 import java.io.ByteArrayInputStream;
@@ -87,7 +88,6 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
                     throw new IllegalArgumentException("Unsupported operation");
             }
         }
-
     }
 
     private void processFile(Storage storage, Exchange exchange) throws IOException, InvalidPayloadException {
@@ -156,10 +156,9 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
      * @throws IOException    if the InputStream cannot be read.
      */
     private InputStream setContentLength(Map<String, String> objectMetadata, InputStream is) throws IOException {
-        if (!objectMetadata.containsKey(Exchange.CONTENT_LENGTH) ||
-                objectMetadata.get(Exchange.CONTENT_LENGTH).equals("0")) {
-            LOG.debug(
-                    "The content length is not defined. It needs to be determined by reading the data into memory");
+        if (!objectMetadata.containsKey(Exchange.CONTENT_LENGTH)
+                || objectMetadata.get(Exchange.CONTENT_LENGTH).equals("0")) {
+            LOG.debug("The content length is not defined. It needs to be determined by reading the data into memory");
             ByteArrayOutputStream baos = determineLengthInputStream(is);
             objectMetadata.put("Content-Length", String.valueOf(baos.size()));
             return new ByteArrayInputStream(baos.toByteArray());
@@ -185,8 +184,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         if (contentLength != null) {
             objectMetadata.put("Content-Length", String.valueOf(contentLength));
         } else if (ObjectHelper.isNotEmpty(exchange.getProperty(Exchange.CONTENT_LENGTH))) {
-            objectMetadata.put("Content-Length",
-                    exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
+            objectMetadata.put("Content-Length", exchange.getProperty(Exchange.CONTENT_LENGTH, String.class));
         }
 
         String contentType = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_TYPE, String.class);
@@ -199,8 +197,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             objectMetadata.put("Cache-Control", cacheControl);
         }
 
-        String contentDisposition = exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION,
-                String.class);
+        String contentDisposition =
+                exchange.getIn().getHeader(GoogleCloudStorageConstants.CONTENT_DISPOSITION, String.class);
         if (contentDisposition != null) {
             objectMetadata.put("Content-Disposition", contentDisposition);
         }
@@ -221,8 +219,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     private void createDownloadLink(Storage storage, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String objectName = determineObjectName(exchange);
-        Long expirationMillis
-                = exchange.getIn().getHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 300000L, Long.class);
+        Long expirationMillis = exchange.getIn()
+                .getHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 300000L, Long.class);
         long milliSeconds = 0;
         if (expirationMillis != null) {
             milliSeconds += expirationMillis;
@@ -236,16 +234,15 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(url.toString());
-
     }
 
     private void copyObject(Storage storage, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String objectName = determineObjectName(exchange);
-        final String destinationObjectName = exchange.getIn()
-                .getHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, String.class);
-        final String bucketNameDestination = exchange.getIn()
-                .getHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, String.class);
+        final String destinationObjectName =
+                exchange.getIn().getHeader(GoogleCloudStorageConstants.DESTINATION_OBJECT_NAME, String.class);
+        final String bucketNameDestination =
+                exchange.getIn().getHeader(GoogleCloudStorageConstants.DESTINATION_BUCKET_NAME, String.class);
 
         if (ObjectHelper.isEmpty(bucketNameDestination)) {
             throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
@@ -254,7 +251,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
         }
 
-        //if bucket does not exsist, create it
+        // if bucket does not exsist, create it
         Bucket destinationBucketCheck = storage.get(bucketNameDestination);
         if (destinationBucketCheck != null) {
             LOG.trace("destinationBucketCheck [{}] already exists", destinationBucketCheck.getName());
@@ -262,8 +259,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             LOG.trace("Destination Bucket [{}] doesn't exist yet", bucketNameDestination);
             if (getConfiguration().isAutoCreateBucket()) {
                 // creates the new bucket because it doesn't exist yet
-                destinationBucketCheck
-                        = GoogleCloudStorageEndpoint.createNewBucket(bucketNameDestination, getConfiguration(), storage);
+                destinationBucketCheck =
+                        GoogleCloudStorageEndpoint.createNewBucket(bucketNameDestination, getConfiguration(), storage);
             }
         }
 
@@ -274,7 +271,6 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(copyWriter);
-
     }
 
     private void deleteObject(Storage storage, Exchange exchange) {
@@ -285,7 +281,6 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         boolean result = storage.delete(blobId);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-
     }
 
     private void deleteBucket(Storage storage, Exchange exchange) {
@@ -298,7 +293,6 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         boolean result = storage.delete(bucketName);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-
     }
 
     private void listBuckets(Storage storage, Exchange exchange) {
@@ -351,14 +345,14 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
             }
         } else {
             bloblist = new LinkedList<>();
-            for (Blob blob : storage.list(bucketName, Storage.BlobListOption.prefix(prefix)).iterateAll()) {
+            for (Blob blob : storage.list(bucketName, Storage.BlobListOption.prefix(prefix))
+                    .iterateAll()) {
                 bloblist.add(blob);
             }
         }
 
         Message message = getMessageForResponse(exchange);
         message.setBody(bloblist);
-
     }
 
     private String determineObjectName(Exchange exchange) {
@@ -373,7 +367,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private String determineBucketName(Exchange exchange) {
-        String bucketName = exchange.getMessage().getHeader(GoogleCloudStorageConstants.OVERRIDE_BUCKET_NAME, String.class);
+        String bucketName =
+                exchange.getMessage().getHeader(GoogleCloudStorageConstants.OVERRIDE_BUCKET_NAME, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
             bucketName = getConfiguration().getBucketName();
         }
@@ -388,9 +383,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private GoogleCloudStorageOperations determineOperation(Exchange exchange) {
-        GoogleCloudStorageOperations operation = exchange.getIn().getHeader(
-                GoogleCloudStorageConstants.OPERATION,
-                GoogleCloudStorageOperations.class);
+        GoogleCloudStorageOperations operation =
+                exchange.getIn().getHeader(GoogleCloudStorageConstants.OPERATION, GoogleCloudStorageOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -405,5 +399,4 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     private GoogleCloudStorageConfiguration getConfiguration() {
         return this.endpoint.getConfiguration();
     }
-
 }

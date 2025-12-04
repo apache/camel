@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -27,8 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestDslYamlGeneratorV3SimpleWithRoutesDescriptionTest {
 
@@ -45,11 +46,11 @@ public class RestDslYamlGeneratorV3SimpleWithRoutesDescriptionTest {
         final CamelContext context = new DefaultCamelContext();
 
         final String yaml = RestDslGenerator.toYaml(document).generate(context, true);
-        final URI file
-                = RestDslXmlGeneratorV3Test.class.getResource("/OpenApiV3PetstoreSimpleWithRoutesDescriptionYaml.txt").toURI();
+        final URI file = RestDslXmlGeneratorV3Test.class
+                .getResource("/OpenApiV3PetstoreSimpleWithRoutesDescriptionYaml.txt")
+                .toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(yaml).isEqualTo(expectedContent);
     }
-
 }

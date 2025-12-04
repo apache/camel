@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.msk;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -31,8 +34,6 @@ import software.amazon.awssdk.services.kafka.model.DescribeClusterResponse;
 import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 import software.amazon.awssdk.services.kafka.model.ListClustersResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
@@ -44,8 +45,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
-            public void process(Exchange exchange) {
-            }
+            public void process(Exchange exchange) {}
         });
 
         MockEndpoint.assertIsSatisfied(context);
@@ -62,7 +62,8 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:listClustersPojo", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setBody(ListClustersRequest.builder().maxResults(10).build());
+                exchange.getIn()
+                        .setBody(ListClustersRequest.builder().maxResults(10).build());
             }
         });
 
@@ -90,7 +91,8 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
+        CreateClusterResponse resultGet =
+                (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterName());
         assertEquals(ClusterState.CREATING.name(), resultGet.state().toString());
     }
@@ -108,7 +110,8 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DeleteClusterResponse resultGet = (DeleteClusterResponse) exchange.getIn().getBody();
+        DeleteClusterResponse resultGet =
+                (DeleteClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.state().toString());
     }
@@ -126,13 +129,15 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        DescribeClusterResponse resultGet = (DescribeClusterResponse) exchange.getIn().getBody();
+        DescribeClusterResponse resultGet =
+                (DescribeClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterInfo().clusterArn());
         assertEquals(ClusterState.ACTIVE.name(), resultGet.clusterInfo().state().toString());
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/msk/MSKComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/msk/MSKComponentSpringTest-context.xml");
     }
 }

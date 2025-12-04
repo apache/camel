@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.Map;
@@ -38,8 +39,7 @@ public class Main extends MainCommandLineSupport {
      *
      * It is recommended to use {@link Main#Main(Class)} to specify the main class.
      */
-    public Main() {
-    }
+    public Main() {}
 
     /**
      * Camel main application
@@ -178,5 +178,4 @@ public class Main extends MainCommandLineSupport {
         }
         return answer;
     }
-
 }

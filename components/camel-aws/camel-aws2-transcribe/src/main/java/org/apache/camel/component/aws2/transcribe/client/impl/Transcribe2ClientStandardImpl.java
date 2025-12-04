@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.transcribe.client.impl;
 
 import java.net.URI;
@@ -57,16 +58,15 @@ public class Transcribe2ClientStandardImpl implements Transcribe2InternalClient 
         if (configuration.isOverrideEndpoint()) {
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
-        if (ObjectHelper.isNotEmpty(configuration.getAccessKey()) && ObjectHelper.isNotEmpty(configuration.getSecretKey())) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+        if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
+                && ObjectHelper.isNotEmpty(configuration.getSecretKey())) {
+            AwsBasicCredentials cred =
+                    AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
         }
         if (configuration.isTrustAllCertificates()) {
-            httpClientBuilder.buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
+            httpClientBuilder.buildWithDefaults(AttributeMap.builder()
+                    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
                     .build());
         }
         clientBuilder.httpClient(httpClientBuilder.build());

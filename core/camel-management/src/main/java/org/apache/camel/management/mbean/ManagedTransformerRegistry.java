@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
@@ -87,14 +88,15 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
                 DataType from = transformer.getFrom();
                 DataType to = transformer.getTo();
                 String desc = transformer.toString();
-                boolean fromStatic
-                        = name != null ? transformerRegistry.isStatic(name) : transformerRegistry.isStatic(from, to);
-                boolean fromDynamic
-                        = name != null ? transformerRegistry.isDynamic(name) : transformerRegistry.isDynamic(from, to);
+                boolean fromStatic =
+                        name != null ? transformerRegistry.isStatic(name) : transformerRegistry.isStatic(from, to);
+                boolean fromDynamic =
+                        name != null ? transformerRegistry.isDynamic(name) : transformerRegistry.isDynamic(from, to);
 
                 CompositeData data = new CompositeDataSupport(
-                        ct, new String[] { "name", "from", "to", "static", "dynamic", "description" },
-                        new Object[] { name, from.toString(), to.toString(), fromStatic, fromDynamic, desc });
+                        ct,
+                        new String[] {"name", "from", "to", "static", "dynamic", "description"},
+                        new Object[] {name, from.toString(), to.toString(), fromStatic, fromDynamic, desc});
                 answer.put(data);
             }
             return answer;
@@ -102,5 +104,4 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

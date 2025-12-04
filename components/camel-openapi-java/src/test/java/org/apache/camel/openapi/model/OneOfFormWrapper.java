@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,14 +28,8 @@ public class OneOfFormWrapper {
     String formType;
 
     @JsonProperty("form")
-    @JsonTypeInfo(
-                  use = JsonTypeInfo.Id.NAME,
-                  include = JsonTypeInfo.As.EXISTING_PROPERTY,
-                  property = "code")
-    @JsonSubTypes({
-            @Type(value = XOfFormA.class, name = "Form A"),
-            @Type(value = XOfFormB.class, name = "Form B")
-    })
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "code")
+    @JsonSubTypes({@Type(value = XOfFormA.class, name = "Form A"), @Type(value = XOfFormB.class, name = "Form B")})
     OneOfForm form;
 
     public String getFormType() {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.apache.camel.component.bean.ParameterMappingStrategyHelper.createParameterMappingStrategy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -55,8 +58,6 @@ import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.bean.ParameterMappingStrategyHelper.createParameterMappingStrategy;
-
 /**
  * Represents the metadata about a bean type created via a combination of introspection and annotations together with
  * some useful sensible defaults
@@ -69,8 +70,17 @@ public class BeanInfo {
     private static final String CLIENT_PROXY_SUFFIX = "_ClientProxy";
     private static final String SUBCLASS_SUFFIX = "_Subclass";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
-            "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
-            "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
+        "equals",
+        "finalize",
+        "getClass",
+        "hashCode",
+        "notify",
+        "notifyAll",
+        "wait", // java.lang.Object
+        "getInvocationHandler",
+        "getProxyClass",
+        "isProxyClass",
+        "newProxyInstance" // java.lang.Proxy
     };
     private final CamelContext camelContext;
     private final BeanComponent component;
@@ -88,22 +98,39 @@ public class BeanInfo {
     private boolean publicNoArgConstructors;
 
     public BeanInfo(CamelContext camelContext, Class<?> type) {
-        this(camelContext, type, createParameterMappingStrategy(camelContext),
-             camelContext.getComponent("bean", BeanComponent.class));
+        this(
+                camelContext,
+                type,
+                createParameterMappingStrategy(camelContext),
+                camelContext.getComponent("bean", BeanComponent.class));
     }
 
-    public BeanInfo(CamelContext camelContext, Method explicitMethod, ParameterMappingStrategy parameterMappingStrategy,
-                    BeanComponent beanComponent) {
-        this(camelContext, explicitMethod.getDeclaringClass(), null, explicitMethod, parameterMappingStrategy, beanComponent);
+    public BeanInfo(
+            CamelContext camelContext,
+            Method explicitMethod,
+            ParameterMappingStrategy parameterMappingStrategy,
+            BeanComponent beanComponent) {
+        this(
+                camelContext,
+                explicitMethod.getDeclaringClass(),
+                null,
+                explicitMethod,
+                parameterMappingStrategy,
+                beanComponent);
     }
 
-    public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy, BeanComponent beanComponent) {
+    public BeanInfo(
+            CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy, BeanComponent beanComponent) {
         this(camelContext, type, null, null, strategy, beanComponent);
     }
 
-    public BeanInfo(CamelContext camelContext, Class<?> type, Object instance, Method explicitMethod,
-                    ParameterMappingStrategy strategy,
-                    BeanComponent beanComponent) {
+    public BeanInfo(
+            CamelContext camelContext,
+            Class<?> type,
+            Object instance,
+            Method explicitMethod,
+            ParameterMappingStrategy strategy,
+            BeanComponent beanComponent) {
 
         this.camelContext = camelContext;
         this.type = type;
@@ -204,7 +231,8 @@ public class BeanInfo {
                 // and there must be an even number of parenthesis in the syntax
                 // (we can use betweenOuterPair as it return null if the syntax is invalid)
                 if (StringHelper.betweenOuterPair(methodName, '(', ')') == null) {
-                    throw new IllegalArgumentException("Method should have even pair of parenthesis, was " + methodName);
+                    throw new IllegalArgumentException(
+                            "Method should have even pair of parenthesis, was " + methodName);
                 }
             }
             boolean emptyParameters = methodName.endsWith("()");
@@ -246,7 +274,12 @@ public class BeanInfo {
     }
 
     private MethodInfo evalMethods(
-            Object pojo, Exchange exchange, String methodName, boolean emptyParameters, String name, List<MethodInfo> methods) {
+            Object pojo,
+            Exchange exchange,
+            String methodName,
+            boolean emptyParameters,
+            String name,
+            List<MethodInfo> methods) {
         MethodInfo methodInfo;
         // there are more methods with that name so we cannot decide which to use
 
@@ -306,8 +339,13 @@ public class BeanInfo {
         try {
             Method method = pojo.getClass().getMethod("getClass");
             methodInfo = new MethodInfo(
-                    exchange.getContext(), pojo.getClass(), method, Collections.emptyList(),
-                    Collections.emptyList(), false, false);
+                    exchange.getContext(),
+                    pojo.getClass(),
+                    method,
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    false,
+                    false);
         } catch (NoSuchMethodException e) {
             throw new MethodNotFoundException(exchange, pojo, "getClass");
         }
@@ -374,7 +412,8 @@ public class BeanInfo {
         // Foster the use of a potentially already registered most specific override
         MethodInfo existingMethodInfo = findMostSpecificOverride(methodInfo);
         if (existingMethodInfo != null) {
-            LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}",
+            LOG.trace(
+                    "This method is already overridden in a subclass, so the method from the sub class is preferred: {}",
                     existingMethodInfo);
             return;
         }
@@ -406,7 +445,6 @@ public class BeanInfo {
 
         // must add to method map last otherwise we break stuff
         methodMap.put(method, methodInfo);
-
     }
 
     /**
@@ -447,7 +485,8 @@ public class BeanInfo {
         List<ParameterInfo> bodyParameters = new ArrayList<>();
 
         boolean hasCustomAnnotation = false;
-        boolean hasHandlerAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
+        boolean hasHandlerAnnotation =
+                org.apache.camel.util.ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
 
         int size = parameterTypes.length;
 
@@ -457,18 +496,19 @@ public class BeanInfo {
 
         for (int i = 0; i < size; i++) {
             Class<?> parameterType = parameterTypes[i];
-            Annotation[] parameterAnnotations
-                    = parametersAnnotations[i].toArray(new Annotation[0]);
+            Annotation[] parameterAnnotations = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
             // whether this parameter is vararg which must be last parameter
             boolean varargs = method.isVarArgs() && i == size - 1;
 
-            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, varargs, parameterAnnotations, expression);
+            ParameterInfo parameterInfo =
+                    new ParameterInfo(i, parameterType, varargs, parameterAnnotations, expression);
             LOG.trace("Parameter #{}: {}", i, parameterInfo);
             parameters.add(parameterInfo);
             if (expression == null) {
-                boolean bodyAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
+                boolean bodyAnnotation =
+                        org.apache.camel.util.ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
                 LOG.trace("Parameter #{} has @Body annotation: {}", i, bodyAnnotation);
                 hasCustomAnnotation |= bodyAnnotation;
                 if (bodyParameters.isEmpty()) {
@@ -513,7 +553,8 @@ public class BeanInfo {
             return;
         }
         try {
-            Annotation[][] pa = c.getDeclaredMethod(m.getName(), m.getParameterTypes()).getParameterAnnotations();
+            Annotation[][] pa =
+                    c.getDeclaredMethod(m.getName(), m.getParameterTypes()).getParameterAnnotations();
             for (int i = 0; i < pa.length; i++) {
                 a[i].addAll(Arrays.asList(pa[i]));
             }
@@ -623,9 +664,12 @@ public class BeanInfo {
         // named method and with no parameters
         boolean noParameters = name != null && name.endsWith("()");
         if (noParameters && localOperationsWithNoBody != null && localOperationsWithNoBody.size() == 1) {
-            // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
+            // if there was a method name configured and it has no parameters, then use the method with no body (eg no
+            // parameters)
             return localOperationsWithNoBody.get(0);
-        } else if (!noParameters && localOperationsWithBody != null && localOperationsWithBody.size() == 1
+        } else if (!noParameters
+                && localOperationsWithBody != null
+                && localOperationsWithBody.size() == 1
                 && localOperationsWithCustomAnnotation == null) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
@@ -647,14 +691,16 @@ public class BeanInfo {
                     // do we have hardcoded parameters values provided from the method name then use that for matching
                     String parameters = StringHelper.between(name, "(", ")");
                     if (parameters != null) {
-                        // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
+                        // special as we have hardcoded parameters, so we need to choose method that matches those
+                        // parameters the best
                         LOG.trace("Choosing best matching method matching parameters: {}", parameters);
                         answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
                     }
                 }
                 if (answer == null) {
                     // multiple possible operations so find the best suited if possible
-                    answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
+                    answer = chooseMethodWithMatchingBody(
+                            exchange, possibleOperations, localOperationsWithCustomAnnotation);
                 }
                 if (answer == null && possibleOperations.size() > 1) {
                     answer = getSingleCovariantMethod(possibleOperations);
@@ -712,8 +758,11 @@ public class BeanInfo {
     }
 
     private MethodInfo chooseBestPossibleMethod(
-            Exchange exchange, String parameters, boolean allowConversion,
-            List<MethodInfo> operations, List<MethodInfo> candidates) {
+            Exchange exchange,
+            String parameters,
+            boolean allowConversion,
+            List<MethodInfo> operations,
+            List<MethodInfo> candidates) {
         MethodInfo fallbackCandidate = null;
 
         for (MethodInfo info : operations) {
@@ -737,15 +786,19 @@ public class BeanInfo {
                     if (StringHelper.hasStartToken(parameter, "simple")) {
                         LOG.trace(
                                 "Evaluating simple expression for parameter #{}: {} to determine the class type of the parameter",
-                                index, parameter);
-                        Object out = getCamelContext().resolveLanguage("simple").createExpression(parameter).evaluate(exchange,
-                                Object.class);
+                                index,
+                                parameter);
+                        Object out = getCamelContext()
+                                .resolveLanguage("simple")
+                                .createExpression(parameter)
+                                .evaluate(exchange, Object.class);
                         if (out != null) {
                             parameterType = out.getClass();
                         }
                     }
 
-                    // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
+                    // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if
+                    // possible
                     if (Object.class.equals(expectedType)) {
                         fallbackCandidate = info;
                         matches = false;
@@ -754,8 +807,9 @@ public class BeanInfo {
 
                     boolean matchingTypes = isParameterMatchingType(parameterType, expectedType);
                     if (!matchingTypes && allowConversion) {
-                        matchingTypes
-                                = getCamelContext().getTypeConverterRegistry().lookup(expectedType, parameterType) != null;
+                        matchingTypes =
+                                getCamelContext().getTypeConverterRegistry().lookup(expectedType, parameterType)
+                                        != null;
                     }
                     if (!matchingTypes) {
                         matches = false;
@@ -776,8 +830,10 @@ public class BeanInfo {
     private boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
         if (Number.class.equals(parameterType)) {
             // number should match long/int/etc.
-            if (Integer.class.isAssignableFrom(expectedType) || Long.class.isAssignableFrom(expectedType)
-                    || int.class.isAssignableFrom(expectedType) || long.class.isAssignableFrom(expectedType)) {
+            if (Integer.class.isAssignableFrom(expectedType)
+                    || Long.class.isAssignableFrom(expectedType)
+                    || int.class.isAssignableFrom(expectedType)
+                    || long.class.isAssignableFrom(expectedType)) {
                 return true;
             }
         }
@@ -803,8 +859,7 @@ public class BeanInfo {
     }
 
     private MethodInfo chooseMethodWithMatchingBody(
-            Exchange exchange, Collection<MethodInfo> operationList,
-            List<MethodInfo> operationsWithCustomAnnotation)
+            Exchange exchange, Collection<MethodInfo> operationList, List<MethodInfo> operationsWithCustomAnnotation)
             throws AmbiguousMethodCallException {
         // see if we can find a method whose body param type matches the message body
         Message in = exchange.getIn();
@@ -812,7 +867,9 @@ public class BeanInfo {
         if (body != null) {
             Class<?> bodyType = body.getClass();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
+                LOG.trace(
+                        "Matching for method with a single parameter that matches type: {}",
+                        bodyType.getCanonicalName());
             }
 
             List<MethodInfo> possibles = new ArrayList<>();
@@ -842,8 +899,8 @@ public class BeanInfo {
             }
 
             // find best suited method to use
-            return chooseBestPossibleMethodInfo(exchange, operationList, body, possibles, possiblesWithException,
-                    operationsWithCustomAnnotation);
+            return chooseBestPossibleMethodInfo(
+                    exchange, operationList, body, possibles, possiblesWithException, operationsWithCustomAnnotation);
         }
 
         // no match so return null
@@ -851,8 +908,11 @@ public class BeanInfo {
     }
 
     private MethodInfo chooseBestPossibleMethodInfo(
-            Exchange exchange, Collection<MethodInfo> operationList, Object body,
-            List<MethodInfo> possibles, List<MethodInfo> possiblesWithException,
+            Exchange exchange,
+            Collection<MethodInfo> operationList,
+            Object body,
+            List<MethodInfo> possibles,
+            List<MethodInfo> possiblesWithException,
             List<MethodInfo> possibleWithCustomAnnotation)
             throws AmbiguousMethodCallException {
 
@@ -877,12 +937,15 @@ public class BeanInfo {
                     }
 
                     // we should only try to convert, as we are looking for best match
-                    Object value = exchange.getContext().getTypeConverter().tryConvertTo(methodInfo.getBodyParameterType(),
-                            exchange, body);
+                    Object value = exchange.getContext()
+                            .getTypeConverter()
+                            .tryConvertTo(methodInfo.getBodyParameterType(), exchange, body);
                     if (value != null) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Converted body from: {} to: {}",
-                                    body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
+                            LOG.trace(
+                                    "Converted body from: {} to: {}",
+                                    body.getClass().getCanonicalName(),
+                                    methodInfo.getBodyParameterType().getCanonicalName());
                         }
                         matchCounter++;
                         newBody = value;
@@ -1017,8 +1080,7 @@ public class BeanInfo {
      * parameter cannot be mapped due to insufficient annotations or not fitting with the default type conventions.
      */
     private Expression createParameterUnmarshalExpression(
-            Method method,
-            Class<?> parameterType, Annotation[] parameterAnnotation) {
+            Method method, Class<?> parameterType, Annotation[] parameterAnnotation) {
 
         // look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
@@ -1032,8 +1094,7 @@ public class BeanInfo {
     }
 
     private Expression createParameterUnmarshalExpressionForAnnotation(
-            Method method,
-            Class<?> parameterType, Annotation annotation) {
+            Method method, Class<?> parameterType, Annotation annotation) {
         if (annotation instanceof ExchangeProperty propertyAnnotation) {
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof ExchangeProperties) {
@@ -1049,8 +1110,8 @@ public class BeanInfo {
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
         } else if (annotation instanceof PropertyInject propertyAnnotation) {
-            Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(),
-                    propertyAnnotation.defaultValue());
+            Expression inject = ExpressionBuilder.propertiesComponentExpression(
+                    propertyAnnotation.value(), propertyAnnotation.defaultValue());
             return ExpressionBuilder.convertToExpression(inject, parameterType);
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
@@ -1062,11 +1123,15 @@ public class BeanInfo {
                 }
                 Object object = camelContext.getInjector().newInstance(type);
                 if (object instanceof AnnotationExpressionFactory expressionFactory) {
-                    return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
+                    return expressionFactory.createExpression(
+                            camelContext, annotation, languageAnnotation, parameterType);
                 } else {
                     LOG.warn(
                             "Ignoring bad annotation: {} on method: {} which declares a factory {} which does not implement {}",
-                            languageAnnotation, method, type.getName(), AnnotationExpressionFactory.class.getName());
+                            languageAnnotation,
+                            method,
+                            type.getName(),
+                            AnnotationExpressionFactory.class.getName());
                 }
             }
         }
@@ -1098,7 +1163,8 @@ public class BeanInfo {
         while (it.hasNext()) {
             MethodInfo info = it.next();
             // if the class is an interface then keep the method
-            boolean isFromInterface = Modifier.isInterface(info.getMethod().getDeclaringClass().getModifiers());
+            boolean isFromInterface =
+                    Modifier.isInterface(info.getMethod().getDeclaringClass().getModifiers());
             if (!isFromInterface && Modifier.isAbstract(info.getMethod().getModifiers())) {
                 // we cannot invoke an abstract method
                 it.remove();
@@ -1112,7 +1178,8 @@ public class BeanInfo {
         }
 
         if (methodName.contains("(") && !methodName.endsWith(")")) {
-            throw new IllegalArgumentException("Name must have both starting and ending parenthesis, was: " + methodName);
+            throw new IllegalArgumentException(
+                    "Name must have both starting and ending parenthesis, was: " + methodName);
         }
 
         // do not use qualifier for name matching
@@ -1157,7 +1224,8 @@ public class BeanInfo {
                     int pos2 = qualifyType.indexOf(".class");
                     if (pos1 != -1 && pos2 != -1 && pos1 > pos2) {
                         // a parameter can include type in the syntax to help with choosing correct method
-                        // therefore we need to check if type is provided in syntax (name.class value, name2.class value2, ...)
+                        // therefore we need to check if type is provided in syntax (name.class value, name2.class
+                        // value2, ...)
                         value = qualifyType.substring(pos1);
                         value = value.trim();
                         qualifyType = qualifyType.substring(0, pos1);
@@ -1170,15 +1238,14 @@ public class BeanInfo {
                     }
 
                     // if qualify type indeed is a class, then it must be assignable with the parameter type
-                    Boolean assignable = BeanHelper.isAssignableToExpectedType(getCamelContext().getClassResolver(),
-                            qualifyType, parameterType);
+                    Boolean assignable = BeanHelper.isAssignableToExpectedType(
+                            getCamelContext().getClassResolver(), qualifyType, parameterType);
                     // the method will return null if the qualifyType is not a class
                     if (assignable != null && !assignable) {
                         return false;
                     }
 
-                    if (!qualifyType.endsWith(".class")
-                            && !BeanHelper.isValidParameterValue(value)) {
+                    if (!qualifyType.endsWith(".class") && !BeanHelper.isValidParameterValue(value)) {
                         // its a parameter value, so continue to next parameter
                         // as we should only check for FQN/type parameters
                         return false;
@@ -1203,7 +1270,8 @@ public class BeanInfo {
 
     private static Class<?> getTargetClass(Class<?> clazz) {
         if (clazz != null
-                && (clazz.getName().contains(CGLIB_CLASS_SEPARATOR) || clazz.getName().endsWith(CLIENT_PROXY_SUFFIX)
+                && (clazz.getName().contains(CGLIB_CLASS_SEPARATOR)
+                        || clazz.getName().endsWith(CLIENT_PROXY_SUFFIX)
                         || clazz.getName().endsWith(SUBCLASS_SUFFIX))) {
             Class<?> superClass = clazz.getSuperclass();
             if (superClass != null && !Object.class.equals(superClass)) {
@@ -1374,5 +1442,4 @@ public class BeanInfo {
 
         return name;
     }
-
 }

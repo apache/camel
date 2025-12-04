@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import javax.management.openmbean.CompositeData;
@@ -60,14 +61,26 @@ public class ManagedTaskManagerRegistry extends ManagedService implements Manage
                 long firstTime = task.getFirstAttemptTime();
                 long lastTime = task.getLastAttemptTime();
                 long nextTime = task.getNextAttemptTime();
-                String failure = task.getException() != null ? task.getException().getMessage() : null;
+                String failure =
+                        task.getException() != null ? task.getException().getMessage() : null;
                 CompositeType ct = CamelOpenMBeanTypes.listInternalTaskCompositeType();
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "name", "kind", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime", "nextTime",
-                                "failure" },
-                        new Object[] { name, kind, status, attempts, delay, elapsed, firstTime, lastTime, nextTime, failure });
+                            "name",
+                            "kind",
+                            "status",
+                            "attempts",
+                            "delay",
+                            "elapsed",
+                            "firstTime",
+                            "lastTime",
+                            "nextTime",
+                            "failure"
+                        },
+                        new Object[] {
+                            name, kind, status, attempts, delay, elapsed, firstTime, lastTime, nextTime, failure
+                        });
                 answer.put(data);
             }
             return answer;
@@ -75,5 +88,4 @@ public class ManagedTaskManagerRegistry extends ManagedService implements Manage
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
-
 }

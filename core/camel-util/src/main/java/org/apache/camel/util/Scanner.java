@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.apache.camel.util.BufferCaster.cast;
 
 import java.io.Closeable;
 import java.io.File;
@@ -42,8 +45,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.apache.camel.util.BufferCaster.cast;
 
 public final class Scanner implements Iterator<String>, Closeable {
 
@@ -79,7 +80,9 @@ public final class Scanner implements Iterator<String>, Closeable {
     private IOException lastIOException;
 
     public Scanner(InputStream source, String charsetName, String pattern) {
-        this(new InputStreamReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName)), cachePattern(pattern));
+        this(
+                new InputStreamReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName)),
+                cachePattern(pattern));
     }
 
     public Scanner(File source, String charsetName, String pattern) throws FileNotFoundException {
@@ -95,7 +98,9 @@ public final class Scanner implements Iterator<String>, Closeable {
     }
 
     public Scanner(ReadableByteChannel source, String charsetName, String pattern) {
-        this(Channels.newReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName), -1), cachePattern(pattern));
+        this(
+                Channels.newReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName), -1),
+                cachePattern(pattern));
     }
 
     public Scanner(Readable source, String pattern) {
@@ -327,5 +332,4 @@ public final class Scanner implements Iterator<String>, Closeable {
             LOCK.unlock();
         }
     }
-
 }

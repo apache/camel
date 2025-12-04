@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
 
-        String message
-                = "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=220\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t\r\n";
+        String message =
+                "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=220\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t\r\n";
 
         result.expectedBodiesReceived(message);
         template.sendBody(generateModel());
@@ -84,14 +85,12 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat
-                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.tab.Order.class);
+        BindyKeyValuePairDataFormat kvpBindyDataFormat =
+                new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.tab.Order.class);
 
         @Override
         public void configure() {
             from(URI_DIRECT_START).marshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
-
     }
-
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,11 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration test for batch processing operations using test-infra for container management.
@@ -53,17 +54,18 @@ public class BatchProcessingIT extends CamelTestSupport {
         LOG.info("Testing batch conversion of {} files to Markdown", filePaths.size());
 
         // Send batch for conversion
-        BatchProcessingResults results = template.requestBody(
-                "direct:batch-markdown",
-                filePaths,
-                BatchProcessingResults.class);
+        BatchProcessingResults results =
+                template.requestBody("direct:batch-markdown", filePaths, BatchProcessingResults.class);
 
         assertNotNull(results);
         assertEquals(filePaths.size(), results.getTotalDocuments());
         assertTrue(results.getSuccessCount() > 0);
 
-        LOG.info("Batch conversion completed: {}/{} successful, total time: {}ms",
-                results.getSuccessCount(), results.getTotalDocuments(), results.getTotalProcessingTimeMs());
+        LOG.info(
+                "Batch conversion completed: {}/{} successful, total time: {}ms",
+                results.getSuccessCount(),
+                results.getTotalDocuments(),
+                results.getTotalProcessingTimeMs());
 
         // Verify individual results
         for (BatchConversionResult result : results.getResults()) {
@@ -82,16 +84,15 @@ public class BatchProcessingIT extends CamelTestSupport {
 
         // Test with custom parallelism
         BatchProcessingResults results = template.requestBodyAndHeader(
-                "direct:batch-parallel",
-                filePaths,
-                DoclingHeaders.BATCH_PARALLELISM, 2,
-                BatchProcessingResults.class);
+                "direct:batch-parallel", filePaths, DoclingHeaders.BATCH_PARALLELISM, 2, BatchProcessingResults.class);
 
         assertNotNull(results);
         assertEquals(filePaths.size(), results.getTotalDocuments());
 
-        LOG.info("Batch with parallelism=2 completed: {}/{} successful",
-                results.getSuccessCount(), results.getTotalDocuments());
+        LOG.info(
+                "Batch with parallelism=2 completed: {}/{} successful",
+                results.getSuccessCount(),
+                results.getTotalDocuments());
     }
 
     @Test
@@ -108,13 +109,16 @@ public class BatchProcessingIT extends CamelTestSupport {
             template.requestBodyAndHeader(
                     "direct:batch-fail-on-error",
                     filePaths,
-                    DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR, true,
+                    DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
+                    true,
                     BatchProcessingResults.class);
             fail("Expected an exception to be thrown when failOnFirstError=true and a document fails");
         } catch (Exception e) {
             // Expected to fail due to failOnFirstError=true
             exceptionThrown = true;
-            LOG.info("Batch correctly failed on first error with exception: {}", e.getClass().getName());
+            LOG.info(
+                    "Batch correctly failed on first error with exception: {}",
+                    e.getClass().getName());
             LOG.info("Exception message: {}", e.getMessage());
 
             // Check if the exception message contains the expected text
@@ -124,9 +128,10 @@ public class BatchProcessingIT extends CamelTestSupport {
                 fullMessage = fullMessage + " " + e.getCause().getMessage();
             }
 
-            assertTrue(fullMessage.contains("Batch processing failed") || fullMessage.contains("nonexistent"),
+            assertTrue(
+                    fullMessage.contains("Batch processing failed") || fullMessage.contains("nonexistent"),
                     "Expected exception message to contain 'Batch processing failed' or 'nonexistent', but was: "
-                                                                                                               + fullMessage);
+                            + fullMessage);
         }
 
         assertTrue(exceptionThrown, "Expected an exception to be thrown");
@@ -144,7 +149,8 @@ public class BatchProcessingIT extends CamelTestSupport {
         BatchProcessingResults results = template.requestBodyAndHeader(
                 "direct:batch-continue-on-error",
                 filePaths,
-                DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR, false,
+                DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
+                false,
                 BatchProcessingResults.class);
 
         assertNotNull(results);
@@ -153,9 +159,12 @@ public class BatchProcessingIT extends CamelTestSupport {
         assertTrue(results.hasAnyFailures());
         assertEquals(1, results.getFailureCount());
 
-        LOG.info("Batch completed with partial success: {}/{} successful, {}/{} failed",
-                results.getSuccessCount(), results.getTotalDocuments(),
-                results.getFailureCount(), results.getTotalDocuments());
+        LOG.info(
+                "Batch completed with partial success: {}/{} successful, {}/{} failed",
+                results.getSuccessCount(),
+                results.getTotalDocuments(),
+                results.getFailureCount(),
+                results.getTotalDocuments());
     }
 
     @Test
@@ -163,22 +172,24 @@ public class BatchProcessingIT extends CamelTestSupport {
         List<String> filePaths = createTestFiles();
         LOG.info("Testing batch text extraction from {} files", filePaths.size());
 
-        BatchProcessingResults results = template.requestBody(
-                "direct:batch-text",
-                filePaths,
-                BatchProcessingResults.class);
+        BatchProcessingResults results =
+                template.requestBody("direct:batch-text", filePaths, BatchProcessingResults.class);
 
         assertNotNull(results);
         assertEquals(filePaths.size(), results.getTotalDocuments());
 
-        LOG.info("Batch text extraction completed: {}/{} successful",
-                results.getSuccessCount(), results.getTotalDocuments());
+        LOG.info(
+                "Batch text extraction completed: {}/{} successful",
+                results.getSuccessCount(),
+                results.getTotalDocuments());
 
         // Verify text extraction
         for (BatchConversionResult result : results.getSuccessful()) {
             assertNotNull(result.getResult());
-            LOG.debug("Extracted text from {}: {} characters",
-                    result.getOriginalPath(), result.getResult().length());
+            LOG.debug(
+                    "Extracted text from {}: {} characters",
+                    result.getOriginalPath(),
+                    result.getResult().length());
         }
     }
 
@@ -191,10 +202,7 @@ public class BatchProcessingIT extends CamelTestSupport {
         // Process batch with splitBatchResults=true
         // This will return a List<BatchConversionResult> instead of BatchProcessingResults
         @SuppressWarnings("unchecked")
-        List<BatchConversionResult> results = template.requestBody(
-                "direct:batch-split",
-                filePaths,
-                List.class);
+        List<BatchConversionResult> results = template.requestBody("direct:batch-split", filePaths, List.class);
 
         assertNotNull(results);
         assertEquals(3, results.size(), "Should have 3 individual results");
@@ -209,8 +217,12 @@ public class BatchProcessingIT extends CamelTestSupport {
             assertNotNull(result.getResult(), "Result " + i + " should have content");
             assertEquals(i, result.getBatchIndex(), "Result should have correct batch index");
 
-            LOG.info("Individual result {}: documentId={}, success={}, contentLength={}",
-                    i, result.getDocumentId(), result.isSuccess(), result.getResult().length());
+            LOG.info(
+                    "Individual result {}: documentId={}, success={}, contentLength={}",
+                    i,
+                    result.getDocumentId(),
+                    result.isSuccess(),
+                    result.getResult().length());
         }
     }
 
@@ -236,7 +248,8 @@ public class BatchProcessingIT extends CamelTestSupport {
         getMockEndpoint("mock:individual-result").assertIsSatisfied();
 
         // Verify each exchange contains a BatchConversionResult
-        List<org.apache.camel.Exchange> exchanges = getMockEndpoint("mock:individual-result").getReceivedExchanges();
+        List<org.apache.camel.Exchange> exchanges =
+                getMockEndpoint("mock:individual-result").getReceivedExchanges();
         assertEquals(3, exchanges.size());
 
         for (int i = 0; i < exchanges.size(); i++) {
@@ -249,11 +262,16 @@ public class BatchProcessingIT extends CamelTestSupport {
 
             // Verify content contains expected text
             String content = result.getResult();
-            assertTrue(content.contains("Document") || content.contains("Content"),
+            assertTrue(
+                    content.contains("Document") || content.contains("Content"),
                     "Content should contain document text");
 
-            LOG.info("Processed individual exchange {}: documentId={}, batchIndex={}, contentLength={}",
-                    i, result.getDocumentId(), result.getBatchIndex(), content.length());
+            LOG.info(
+                    "Processed individual exchange {}: documentId={}, batchIndex={}, contentLength={}",
+                    i,
+                    result.getDocumentId(),
+                    result.getBatchIndex(),
+                    content.length());
         }
 
         LOG.info("✓ All individual exchanges processed successfully!");
@@ -266,25 +284,23 @@ public class BatchProcessingIT extends CamelTestSupport {
         Path file2 = createTestFileWithContent("report-Q1.md", "Q1 Financial Report", "Revenue: $50,000");
         Path file3 = createTestFileWithContent("meeting-notes.md", "Team Meeting Notes", "Action Items:");
 
-        List<String> filePaths = Arrays.asList(
-                file1.toString(),
-                file2.toString(),
-                file3.toString());
+        List<String> filePaths = Arrays.asList(file1.toString(), file2.toString(), file3.toString());
 
         LOG.info("Testing batch conversion with content verification for {} files", filePaths.size());
 
         // Process batch
-        BatchProcessingResults results = template.requestBody(
-                "direct:batch-markdown-with-content",
-                filePaths,
-                BatchProcessingResults.class);
+        BatchProcessingResults results =
+                template.requestBody("direct:batch-markdown-with-content", filePaths, BatchProcessingResults.class);
 
         assertNotNull(results);
         assertEquals(3, results.getTotalDocuments());
         assertTrue(results.isAllSuccessful(), "All conversions should succeed");
 
-        LOG.info("Batch conversion completed: {}/{} successful in {}ms",
-                results.getSuccessCount(), results.getTotalDocuments(), results.getTotalProcessingTimeMs());
+        LOG.info(
+                "Batch conversion completed: {}/{} successful in {}ms",
+                results.getSuccessCount(),
+                results.getTotalDocuments(),
+                results.getTotalProcessingTimeMs());
 
         // Verify content for each file
         int verifiedCount = 0;
@@ -296,37 +312,45 @@ public class BatchProcessingIT extends CamelTestSupport {
             String convertedContent = result.getResult();
             String originalPath = result.getOriginalPath();
 
-            LOG.info("Verifying content for document {}: {} ({} characters)",
-                    result.getDocumentId(), originalPath, convertedContent.length());
+            LOG.info(
+                    "Verifying content for document {}: {} ({} characters)",
+                    result.getDocumentId(),
+                    originalPath,
+                    convertedContent.length());
 
             // Verify content based on which file it is
             if (originalPath.contains("invoice-001")) {
-                assertTrue(convertedContent.contains("Invoice #001") || convertedContent.contains("Invoice"),
+                assertTrue(
+                        convertedContent.contains("Invoice #001") || convertedContent.contains("Invoice"),
                         "Invoice content should contain invoice reference");
-                assertTrue(convertedContent.contains("1,500") || convertedContent.contains("1500"),
+                assertTrue(
+                        convertedContent.contains("1,500") || convertedContent.contains("1500"),
                         "Invoice should contain the amount");
                 LOG.debug("✓ Invoice file content verified");
                 verifiedCount++;
             } else if (originalPath.contains("report-Q1")) {
-                assertTrue(convertedContent.contains("Q1") || convertedContent.contains("Financial"),
+                assertTrue(
+                        convertedContent.contains("Q1") || convertedContent.contains("Financial"),
                         "Report should contain Q1 or Financial reference");
-                assertTrue(convertedContent.contains("50,000") || convertedContent.contains("50000")
-                        || convertedContent.contains("Revenue"),
+                assertTrue(
+                        convertedContent.contains("50,000")
+                                || convertedContent.contains("50000")
+                                || convertedContent.contains("Revenue"),
                         "Report should contain revenue information");
                 LOG.debug("✓ Report file content verified");
                 verifiedCount++;
             } else if (originalPath.contains("meeting-notes")) {
-                assertTrue(convertedContent.contains("Meeting") || convertedContent.contains("Team"),
+                assertTrue(
+                        convertedContent.contains("Meeting") || convertedContent.contains("Team"),
                         "Meeting notes should contain meeting reference");
-                assertTrue(convertedContent.contains("Action"),
-                        "Meeting notes should contain action items section");
+                assertTrue(convertedContent.contains("Action"), "Meeting notes should contain action items section");
                 LOG.debug("✓ Meeting notes file content verified");
                 verifiedCount++;
             }
 
             // Verify batch metadata
-            assertTrue(result.getBatchIndex() >= 0 && result.getBatchIndex() < 3,
-                    "Batch index should be between 0 and 2");
+            assertTrue(
+                    result.getBatchIndex() >= 0 && result.getBatchIndex() < 3, "Batch index should be between 0 and 2");
             assertNotNull(result.getDocumentId(), "Document ID should not be null");
         }
 
@@ -343,8 +367,8 @@ public class BatchProcessingIT extends CamelTestSupport {
 
     private Path createTestFileWithContent(String filename, String title, String content) throws Exception {
         Path tempFile = Files.createTempFile("docling-batch-verify-", "-" + filename);
-        String fileContent = String.format("# %s\n\n%s\n\n## Details\n\nContent: %s\n\n- Item 1\n- Item 2\n",
-                title, content, filename);
+        String fileContent = String.format(
+                "# %s\n\n%s\n\n## Details\n\nContent: %s\n\n- Item 1\n- Item 2\n", title, content, filename);
         Files.write(tempFile, fileContent.getBytes());
         LOG.debug("Created test file: {} with title '{}' and content '{}'", filename, title, content);
         return tempFile;
@@ -355,20 +379,17 @@ public class BatchProcessingIT extends CamelTestSupport {
         Path file2 = createTestFile("doc2.md");
         Path file3 = createTestFile("doc3.md");
 
-        return Arrays.asList(
-                file1.toString(),
-                file2.toString(),
-                file3.toString());
+        return Arrays.asList(file1.toString(), file2.toString(), file3.toString());
     }
 
     private Path createTestFile(String filename) throws Exception {
         Path tempFile = Files.createTempFile("docling-batch-test-", "-" + filename);
         String content = "# Test Document: " + filename + "\n\n"
-                         + "This is a test document for batch processing.\n\n"
-                         + "## Section 1\n\n"
-                         + "Some content here.\n\n"
-                         + "- List item 1\n"
-                         + "- List item 2\n";
+                + "This is a test document for batch processing.\n\n"
+                + "## Section 1\n\n"
+                + "Some content here.\n\n"
+                + "- List item 1\n"
+                + "- List item 2\n";
         Files.write(tempFile, content.getBytes());
         return tempFile;
     }
@@ -393,35 +414,41 @@ public class BatchProcessingIT extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:batch-markdown")
-                        .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true");
+                        .to(
+                                "docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true");
 
                 from("direct:batch-parallel")
                         .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&contentInBody=true");
 
                 from("direct:batch-fail-on-error")
-                        .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchFailOnFirstError=true&contentInBody=true");
+                        .to(
+                                "docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchFailOnFirstError=true&contentInBody=true");
 
                 from("direct:batch-continue-on-error")
-                        .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchFailOnFirstError=false&contentInBody=true");
+                        .to(
+                                "docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchFailOnFirstError=false&contentInBody=true");
 
                 from("direct:batch-text")
-                        .to("docling:convert?operation=BATCH_EXTRACT_TEXT&batchSize=10&batchParallelism=4&contentInBody=true");
+                        .to(
+                                "docling:convert?operation=BATCH_EXTRACT_TEXT&batchSize=10&batchParallelism=4&contentInBody=true");
 
                 from("direct:batch-markdown-with-content")
-                        .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true");
+                        .to(
+                                "docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true");
 
                 // Route with splitBatchResults=true
                 from("direct:batch-split")
-                        .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true&splitBatchResults=true");
+                        .to(
+                                "docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true&splitBatchResults=true");
 
                 // Route that splits and processes each document individually
                 from("direct:batch-split-and-process")
-                        .to("docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true&splitBatchResults=true")
+                        .to(
+                                "docling:convert?operation=BATCH_CONVERT_TO_MARKDOWN&batchSize=10&batchParallelism=4&contentInBody=true&splitBatchResults=true")
                         .split(body())
                         .log("Processing individual document: ${body.documentId}")
                         .to("mock:individual-result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -23,9 +24,10 @@ import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = RedisInfraService.class,
-              description = "In Memory Database",
-              serviceAlias = { "redis" })
+@InfraService(
+        service = RedisInfraService.class,
+        description = "In Memory Database",
+        serviceAlias = {"redis"})
 public class RedisLocalContainerInfraService implements RedisInfraService, ContainerService<RedisContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(RedisLocalContainerInfraService.class);
 
@@ -40,8 +42,8 @@ public class RedisLocalContainerInfraService implements RedisInfraService, Conta
     }
 
     public RedisLocalContainerInfraService(String imageName) {
-        container = RedisContainer.initContainer(imageName, RedisContainer.CONTAINER_NAME,
-                ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+        container = RedisContainer.initContainer(
+                imageName, RedisContainer.CONTAINER_NAME, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));

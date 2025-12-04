@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.sftp.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -22,18 +26,18 @@ import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
+@EnabledIf(
+        value =
+                "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleProduceNotStepwiseIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleProduce() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "?username=admin&password=admin&stepwise=false",
-                "Hello World", Exchange.FILE_NAME,
+                        + "?username=admin&password=admin&stepwise=false",
+                "Hello World",
+                Exchange.FILE_NAME,
                 "hello.txt");
 
         File file = ftpFile("hello.txt").toFile();
@@ -45,8 +49,9 @@ public class SftpSimpleProduceNotStepwiseIT extends SftpServerTestSupport {
     public void testSftpSimpleSubPathProduce() {
         template.sendBodyAndHeader(
                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub?username=admin&password=admin&stepwise=false",
-                "Bye World", Exchange.FILE_NAME,
+                        + "/mysub?username=admin&password=admin&stepwise=false",
+                "Bye World",
+                Exchange.FILE_NAME,
                 "bye.txt");
 
         File file = ftpFile("mysub/bye.txt").toFile();
@@ -56,10 +61,12 @@ public class SftpSimpleProduceNotStepwiseIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleTwoSubPathProduce() {
-        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
-                                   + "/mysub/myother?username=admin&password=admin&stepwise=false",
+        template.sendBodyAndHeader(
+                "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
+                        + "/mysub/myother?username=admin&password=admin&stepwise=false",
                 "Farewell World",
-                Exchange.FILE_NAME, "farewell.txt");
+                Exchange.FILE_NAME,
+                "farewell.txt");
 
         File file = ftpFile("mysub/myother/farewell.txt").toFile();
         assertTrue(file.exists(), "File should exist: " + file);

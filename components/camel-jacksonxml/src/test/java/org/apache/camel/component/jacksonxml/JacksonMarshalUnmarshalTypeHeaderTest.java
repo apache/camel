@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jacksonxml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
 
@@ -33,7 +34,8 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(TestPojo.class);
 
         String json = "<pojo name=\"Camel\"/>";
-        template.sendBodyAndHeader("direct:backPojo", json, JacksonXMLConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
+        template.sendBodyAndHeader(
+                "direct:backPojo", json, JacksonXMLConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -52,9 +54,7 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
                 format.setAllowUnmarshallType(true);
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");
-
             }
         };
     }
-
 }

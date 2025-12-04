@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -49,7 +50,11 @@ public class SplitterOnPrepareExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").split(body().tokenize(",")).onPrepare(new FixNamePrepare()).stopOnException().to("mock:a");
+                from("direct:start")
+                        .split(body().tokenize(","))
+                        .onPrepare(new FixNamePrepare())
+                        .stopOnException()
+                        .to("mock:a");
             }
         };
     }

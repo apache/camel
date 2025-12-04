@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,10 +30,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
 
     @Test
@@ -38,8 +39,11 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        Object answer = template.requestBodyAndHeader("netty-http:http://localhost:" + getPort() + "/users/new", body,
-                Exchange.CONTENT_TYPE, "application/json");
+        Object answer = template.requestBodyAndHeader(
+                "netty-http:http://localhost:" + getPort() + "/users/new",
+                body,
+                Exchange.CONTENT_TYPE,
+                "application/json");
         assertNotNull(answer);
         String answerString = new String((byte[]) answer);
         assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
@@ -60,20 +64,18 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.off);
+                restConfiguration()
+                        .component("netty-http")
+                        .host("localhost")
+                        .port(getPort())
+                        .bindingMode(RestBindingMode.off);
 
                 JsonDataFormat jsondf = new JsonDataFormat()
                         .library(JsonLibrary.Jackson)
                         .allowUnmarshallType(true)
                         .unmarshalType(UserPojoEx.class);
-                transformer()
-                        .fromType("json")
-                        .toType(UserPojoEx.class)
-                        .withDataFormat(jsondf);
-                transformer()
-                        .fromType(UserPojoEx.class)
-                        .toType("json")
-                        .withDataFormat(jsondf);
+                transformer().fromType("json").toType(UserPojoEx.class).withDataFormat(jsondf);
+                transformer().fromType(UserPojoEx.class).toType("json").withDataFormat(jsondf);
                 rest("/users/")
                         // REST binding does nothing
                         .post("new")
@@ -90,5 +92,4 @@ public class RestNettyHttpBindingModeOffWithContractTest extends BaseNettyTest {
             }
         };
     }
-
 }

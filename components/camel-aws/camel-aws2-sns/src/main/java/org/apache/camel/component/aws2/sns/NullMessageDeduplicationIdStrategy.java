@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sns;
 
 import org.apache.camel.Exchange;
@@ -24,5 +25,4 @@ public class NullMessageDeduplicationIdStrategy implements MessageDeduplicationI
     public String getMessageDeduplicationId(Exchange exchange) {
         return null;
     }
-
 }

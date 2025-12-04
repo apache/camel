@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.disruptor;
 
 import java.util.ArrayList;
@@ -52,19 +53,20 @@ import org.slf4j.LoggerFactory;
 public class DisruptorReference {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorReference.class);
 
-    private final Set<DisruptorEndpoint> endpoints = Collections
-            .newSetFromMap(new WeakHashMap<DisruptorEndpoint, Boolean>(4));
+    private final Set<DisruptorEndpoint> endpoints =
+            Collections.newSetFromMap(new WeakHashMap<DisruptorEndpoint, Boolean>(4));
     private final DisruptorComponent component;
     private final String uri;
     private final String name;
 
-    //The mark on the reference indicates if we are in the process of reconfiguring the Disruptor:
-    //(ref,   mark) : Description
-    //(null, false) : not started or completely shut down
-    //(null,  true) : in process of reconfiguring
-    //( x  , false) : normally functioning Disruptor
-    //( x  ,  true) : never set
-    private final AtomicMarkableReference<Disruptor<ExchangeEvent>> disruptor = new AtomicMarkableReference<>(null, false);
+    // The mark on the reference indicates if we are in the process of reconfiguring the Disruptor:
+    // (ref,   mark) : Description
+    // (null, false) : not started or completely shut down
+    // (null,  true) : in process of reconfiguring
+    // ( x  , false) : normally functioning Disruptor
+    // ( x  ,  true) : never set
+    private final AtomicMarkableReference<Disruptor<ExchangeEvent>> disruptor =
+            new AtomicMarkableReference<>(null, false);
 
     private final DelayedExecutor delayedExecutor = new DelayedExecutor();
 
@@ -77,15 +79,21 @@ public class DisruptorReference {
     private final Queue<Exchange> temporaryExchangeBuffer;
     private final Lock lock = new ReentrantLock();
 
-    //access guarded by this
+    // access guarded by this
     private ExecutorService executor;
 
     private LifecycleAwareExchangeEventHandler[] handlers = new LifecycleAwareExchangeEventHandler[0];
 
     private int uniqueConsumerCount;
 
-    DisruptorReference(final DisruptorComponent component, final String uri, final String name, final int size,
-                       final DisruptorProducerType producerType, final DisruptorWaitStrategy waitStrategy) throws Exception {
+    DisruptorReference(
+            final DisruptorComponent component,
+            final String uri,
+            final String name,
+            final int size,
+            final DisruptorProducerType producerType,
+            final DisruptorWaitStrategy waitStrategy)
+            throws Exception {
         this.component = component;
         this.uri = uri;
         this.name = name;
@@ -110,12 +118,11 @@ public class DisruptorReference {
 
             while (currentDisruptor == null) {
                 currentDisruptor = disruptor.get(changeIsPending);
-                //Check if we are reconfiguring
+                // Check if we are reconfiguring
                 if (currentDisruptor == null && !changeIsPending[0]) {
-                    throw new DisruptorNotStartedException(
-                            "Disruptor is not yet started or already shut down.");
+                    throw new DisruptorNotStartedException("Disruptor is not yet started or already shut down.");
                 } else if (currentDisruptor == null && changeIsPending[0]) {
-                    //We should be back shortly...keep trying but spare CPU resources
+                    // We should be back shortly...keep trying but spare CPU resources
                     LockSupport.parkNanos(1L);
                 }
             }
@@ -132,9 +139,7 @@ public class DisruptorReference {
         publishExchangeOnRingBuffer(exchange, getCurrentDisruptor().getRingBuffer());
     }
 
-    private void publishExchangeOnRingBuffer(
-            final Exchange exchange,
-            final RingBuffer<ExchangeEvent> ringBuffer) {
+    private void publishExchangeOnRingBuffer(final Exchange exchange, final RingBuffer<ExchangeEvent> ringBuffer) {
         final long sequence = ringBuffer.next();
         ringBuffer.get(sequence).setExchange(exchange, uniqueConsumerCount);
         ringBuffer.publish(sequence);
@@ -166,22 +171,22 @@ public class DisruptorReference {
         newDisruptor.start();
 
         if (executor != null) {
-            //and use our delayed executor to really really execute the event handlers now
+            // and use our delayed executor to really really execute the event handlers now
             delayedExecutor.executeDelayedCommands(executor);
         }
 
-        //make sure all event handlers are correctly started before we continue
+        // make sure all event handlers are correctly started before we continue
         for (final LifecycleAwareExchangeEventHandler handler : handlers) {
             boolean eventHandlerStarted = false;
             while (!eventHandlerStarted) {
                 try {
-                    //The disruptor start command executed above should have triggered a start signal to all
-                    //event processors which, in their death, should notify our event handlers. They respond by
-                    //switching a latch and we want to await that latch here to make sure they are started.
+                    // The disruptor start command executed above should have triggered a start signal to all
+                    // event processors which, in their death, should notify our event handlers. They respond by
+                    // switching a latch and we want to await that latch here to make sure they are started.
                     if (!handler.awaitStarted(10, TimeUnit.SECONDS)) {
-                        //we wait for a relatively long, but limited amount of time to prevent an application using
-                        //this component from hanging indefinitely
-                        //Please report a bug if you can reproduce this
+                        // we wait for a relatively long, but limited amount of time to prevent an application using
+                        // this component from hanging indefinitely
+                        // Please report a bug if you can reproduce this
                         LOGGER.error("Disruptor/event handler failed to start properly, PLEASE REPORT");
                     }
                     eventHandlerStarted = true;
@@ -198,41 +203,41 @@ public class DisruptorReference {
     }
 
     private Disruptor<ExchangeEvent> createDisruptor() throws Exception {
-        //create a new Disruptor
+        // create a new Disruptor
         final Disruptor<ExchangeEvent> newDisruptor = new Disruptor<>(
-                ExchangeEventFactory.INSTANCE, size, delayedExecutor, producerType.getProducerType(),
+                ExchangeEventFactory.INSTANCE,
+                size,
+                delayedExecutor,
+                producerType.getProducerType(),
                 waitStrategy.createWaitStrategyInstance());
 
-        //determine the list of eventhandlers to be associated to the Disruptor
+        // determine the list of eventhandlers to be associated to the Disruptor
         final ArrayList<LifecycleAwareExchangeEventHandler> eventHandlers = new ArrayList<>();
 
         uniqueConsumerCount = 0;
 
         for (final DisruptorEndpoint endpoint : endpoints) {
-            final Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> consumerEventHandlers
-                    = endpoint.createConsumerEventHandlers();
+            final Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> consumerEventHandlers =
+                    endpoint.createConsumerEventHandlers();
 
             if (consumerEventHandlers != null) {
                 uniqueConsumerCount += consumerEventHandlers.keySet().size();
 
-                for (Collection<LifecycleAwareExchangeEventHandler> lifecycleAwareExchangeEventHandlers : consumerEventHandlers
-                        .values()) {
+                for (Collection<LifecycleAwareExchangeEventHandler> lifecycleAwareExchangeEventHandlers :
+                        consumerEventHandlers.values()) {
                     eventHandlers.addAll(lifecycleAwareExchangeEventHandlers);
                 }
-
             }
         }
 
         LOGGER.debug("Disruptor created with {} event handlers", eventHandlers.size());
-        handleEventsWith(newDisruptor,
-                eventHandlers.toArray(new LifecycleAwareExchangeEventHandler[0]));
+        handleEventsWith(newDisruptor, eventHandlers.toArray(new LifecycleAwareExchangeEventHandler[0]));
 
         return newDisruptor;
     }
 
     private void handleEventsWith(
-            Disruptor<ExchangeEvent> newDisruptor,
-            final LifecycleAwareExchangeEventHandler[] newHandlers) {
+            Disruptor<ExchangeEvent> newDisruptor, final LifecycleAwareExchangeEventHandler[] newHandlers) {
         if (newHandlers == null || newHandlers.length == 0) {
             handlers = new LifecycleAwareExchangeEventHandler[1];
             handlers[0] = new BlockingExchangeEventHandler();
@@ -244,13 +249,13 @@ public class DisruptorReference {
     }
 
     private void publishBufferedExchanges(Disruptor<ExchangeEvent> newDisruptor) {
-        //now empty out all buffered Exchange if we had any
+        // now empty out all buffered Exchange if we had any
         final List<Exchange> exchanges = new ArrayList<>(temporaryExchangeBuffer.size());
         while (!temporaryExchangeBuffer.isEmpty()) {
             exchanges.add(temporaryExchangeBuffer.remove());
         }
         RingBuffer<ExchangeEvent> ringBuffer = newDisruptor.getRingBuffer();
-        //and offer them again to our new ringbuffer
+        // and offer them again to our new ringbuffer
         for (final Exchange exchange : exchanges) {
             publishExchangeOnRingBuffer(exchange, ringBuffer);
         }
@@ -259,20 +264,21 @@ public class DisruptorReference {
     private void resizeThreadPoolExecutor(final int newSize) {
         if (executor == null && newSize > 0) {
             LOGGER.debug("Creating new executor with {} threads", newSize);
-            //no thread pool executor yet, create a new one
-            executor = component.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, uri,
-                    newSize);
+            // no thread pool executor yet, create a new one
+            executor = component.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, uri, newSize);
         } else if (executor != null && newSize <= 0) {
             LOGGER.debug("Shutting down executor");
-            //we need to shut down our executor
+            // we need to shut down our executor
             component.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
         } else if (executor instanceof ThreadPoolExecutor threadPoolExecutor) {
             LOGGER.debug("Resizing existing executor to {} threads", newSize);
-            //our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
-            //Java 9 support, checkout http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int-
-            // and http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setMaximumPoolSize-int-
-            //for more information
+            // our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
+            // Java 9 support, checkout
+            // http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int-
+            // and
+            // http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setMaximumPoolSize-int-
+            // for more information
             if (newSize <= threadPoolExecutor.getCorePoolSize()) {
                 threadPoolExecutor.setCorePoolSize(newSize);
                 threadPoolExecutor.setMaximumPoolSize(newSize);
@@ -282,11 +288,10 @@ public class DisruptorReference {
             }
         } else if (newSize > 0) {
             LOGGER.debug("Shutting down old and creating new executor with {} threads", newSize);
-            //hmmm...no idea what kind of executor this is...just kill it and start fresh
+            // hmmm...no idea what kind of executor this is...just kill it and start fresh
             component.getCamelContext().getExecutorServiceManager().shutdown(executor);
 
-            executor = component.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, uri,
-                    newSize);
+            executor = component.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, uri, newSize);
         }
     }
 
@@ -298,8 +303,9 @@ public class DisruptorReference {
             disruptor.set(null, isReconfiguring);
 
             if (currentDisruptor != null) {
-                //check if we had a blocking event handler to keep an empty disruptor 'busy'
-                if (handlers != null && handlers.length == 1
+                // check if we had a blocking event handler to keep an empty disruptor 'busy'
+                if (handlers != null
+                        && handlers.length == 1
                         && handlers[0] instanceof BlockingExchangeEventHandler blockingExchangeEventHandler) {
                     // yes we did, unblock it so we can get rid of our backlog,
                     // The eventhandler will empty its pending exchanges in our temporary buffer
@@ -308,20 +314,22 @@ public class DisruptorReference {
 
                 currentDisruptor.shutdown();
 
-                //they have already been given a trigger to halt when they are done by shutting down the disruptor
-                //we do however want to await their completion before they are scheduled to process events from the new
+                // they have already been given a trigger to halt when they are done by shutting down the disruptor
+                // we do however want to await their completion before they are scheduled to process events from the new
                 for (final LifecycleAwareExchangeEventHandler eventHandler : handlers) {
                     boolean eventHandlerFinished = false;
-                    //the disruptor is now empty and all consumers are either done or busy processing their last exchange
+                    // the disruptor is now empty and all consumers are either done or busy processing their last
+                    // exchange
                     while (!eventHandlerFinished) {
                         try {
-                            //The disruptor shutdown command executed above should have triggered a halt signal to all
-                            //event processors which, in their death, should notify our event handlers. They respond by
-                            //switching a latch and we want to await that latch here to make sure they are done.
+                            // The disruptor shutdown command executed above should have triggered a halt signal to all
+                            // event processors which, in their death, should notify our event handlers. They respond by
+                            // switching a latch and we want to await that latch here to make sure they are done.
                             if (!eventHandler.awaitStopped(10, TimeUnit.SECONDS)) {
-                                //we wait for a relatively long, but limited amount of time to prevent an application using
-                                //this component from hanging indefinitely
-                                //Please report a bug if you can repruduce this
+                                // we wait for a relatively long, but limited amount of time to prevent an application
+                                // using
+                                // this component from hanging indefinitely
+                                // Please report a bug if you can repruduce this
                                 LOGGER.error("Disruptor/event handler failed to shut down properly, PLEASE REPORT");
                             }
                             eventHandlerFinished = true;
@@ -374,7 +382,7 @@ public class DisruptorReference {
                 return (int) (getBufferSize() - getRemainingCapacity() + temporaryExchangeBuffer.size());
             }
         } catch (DisruptorNotStartedException e) {
-            //fall through...
+            // fall through...
         }
         return temporaryExchangeBuffer.size();
     }
@@ -396,10 +404,10 @@ public class DisruptorReference {
             LOGGER.debug("Removing Endpoint: {}", disruptorEndpoint);
             if (getEndpointCount() == 1) {
                 LOGGER.debug("Last Endpoint removed, shutdown disruptor");
-                //Shutdown our disruptor
+                // Shutdown our disruptor
                 shutdownDisruptor(false);
 
-                //As there are no endpoints dependent on this Disruptor, we may also shutdown our executor
+                // As there are no endpoints dependent on this Disruptor, we may also shutdown our executor
                 shutdownExecutor();
             }
             endpoints.remove(disruptorEndpoint);
@@ -421,7 +429,7 @@ public class DisruptorReference {
     @Override
     public String toString() {
         return "DisruptorReference{" + "uri='" + uri + '\'' + ", endpoint count=" + endpoints.size()
-               + ", handler count=" + handlers.length + '}';
+                + ", handler count=" + handlers.length + '}';
     }
 
     /**
@@ -437,8 +445,8 @@ public class DisruptorReference {
             blockingLatch.await();
             final Exchange exchange = event.getSynchronizedExchange().cancelAndGetOriginalExchange();
 
-            final boolean ignoreExchange
-                    = exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class);
+            final boolean ignoreExchange =
+                    exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class);
             if (ignoreExchange) {
                 // Property was set and it was set to true, so don't process Exchange.
                 LOGGER.trace("Ignoring exchange {}", exchange);
@@ -450,7 +458,6 @@ public class DisruptorReference {
         public void unblock() {
             blockingLatch.countDown();
         }
-
     }
 
     /**

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine.processor.idempotent;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.UUID;
 
@@ -23,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
 
@@ -75,7 +76,6 @@ public class CaffeineIdempotentRepositoryTest extends CamelTestSupport {
         // add key and check again
         assertTrue(repo.add(key01));
         assertTrue(repo.contains(key01));
-
     }
 
     @Test

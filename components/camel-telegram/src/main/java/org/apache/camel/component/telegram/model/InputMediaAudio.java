@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -44,8 +45,8 @@ public class InputMediaAudio extends InputMedia {
      * @param performer Optional. performer.
      * @param title     Optional. title.
      */
-    public InputMediaAudio(String media, String caption, String parseMode, Integer duration, String performer,
-                           String title) {
+    public InputMediaAudio(
+            String media, String caption, String parseMode, Integer duration, String performer, String title) {
         super(TYPE, media, caption, parseMode);
         this.duration = duration;
         this.performer = performer;

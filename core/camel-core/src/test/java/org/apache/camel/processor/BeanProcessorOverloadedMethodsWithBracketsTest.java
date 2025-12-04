@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanProcessorOverloadedMethodsWithBracketsTest extends ContextTestSupport {
 
@@ -40,7 +41,9 @@ public class BeanProcessorOverloadedMethodsWithBracketsTest extends ContextTestS
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .bean(MyOverloadedClass.class, "myMethod('" + strArgWithBrackets + "', '" + strArgWithBrackets + "')")
+                        .bean(
+                                MyOverloadedClass.class,
+                                "myMethod('" + strArgWithBrackets + "', '" + strArgWithBrackets + "')")
                         .to("mock:result");
             }
         };

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.io.beans;
 
 public class MyCtrBean {
@@ -46,5 +47,4 @@ public class MyCtrBean {
     public String hello(String body) {
         return field1 + " " + body + ". I am " + field2 + " and " + age + " years old!";
     }
-
 }

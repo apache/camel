@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
+
+import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,26 +32,29 @@ import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
-
 @Command(name = "logs", description = "Print the logs of a Kubernetes pod", sortOptions = false)
 public class KubernetesPodLogs extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file to get logs from. Integration name is derived from the file name.",
-                            arity = "0..1", paramLabel = "<file>")
+    @CommandLine.Parameters(
+            description = "The Camel file to get logs from. Integration name is derived from the file name.",
+            arity = "0..1",
+            paramLabel = "<file>")
     protected String filePath;
 
-    @CommandLine.Option(names = { "--label" },
-                        description = "Label name and value used as a pod selector.")
+    @CommandLine.Option(
+            names = {"--label"},
+            description = "Label name and value used as a pod selector.")
     protected String label;
 
-    @CommandLine.Option(names = "--container",
-                        description = "Name identifying the pod container to grab the logs from.")
+    @CommandLine.Option(
+            names = "--container",
+            description = "Name identifying the pod container to grab the logs from.")
     protected String container;
 
-    @CommandLine.Option(names = { "--tail" },
-                        defaultValue = "-1",
-                        description = "The number of lines from the end of the logs to show. Defaults to -1 to show all the lines.")
+    @CommandLine.Option(
+            names = {"--tail"},
+            defaultValue = "-1",
+            description = "The number of lines from the end of the logs to show. Defaults to -1 to show all the lines.")
     int tail = -1;
 
     // total timeout of 60s
@@ -91,10 +97,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
     // Returns true if a retry should be attempted
     private boolean watchLogs() {
 
-        PodResource podRes = pods().withLabel(label)
-                .resources()
-                .findFirst()
-                .orElse(null);
+        PodResource podRes = pods().withLabel(label).resources().findFirst().orElse(null);
         if (podRes == null) {
             printer().printf("Pod for label %s not available%n", label);
             return true;
@@ -118,7 +121,8 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
                 }
             }
 
-            try (logs; BufferedReader reader = new BufferedReader(new InputStreamReader(logs.getOutput()))) {
+            try (logs;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(logs.getOutput()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     printer().println(line);

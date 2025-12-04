@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import java.io.Serial;
@@ -54,12 +55,10 @@ public class TaskTimeTrackedUpdatedEvent extends Event implements Serializable {
 
     @Override
     public String toString() {
-        return "TaskTimeTrackedUpdatedEvent{" +
-               "taskId='" + taskId + '\'' +
-               ", historyItems=" + historyItems +
-               ", data=" + data +
-               ", webhookId='" + webhookId + '\'' +
-               '}';
+        return "TaskTimeTrackedUpdatedEvent{" + "taskId='"
+                + taskId + '\'' + ", historyItems="
+                + historyItems + ", data="
+                + data + ", webhookId='"
+                + webhookId + '\'' + '}';
     }
-
 }

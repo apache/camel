@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.Collection;
@@ -52,8 +53,11 @@ public class HealthDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
             } else {
                 if (res.getMessage().isPresent()) {
-                    sb.append(
-                            String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage().get()));
+                    sb.append(String.format(
+                            "\n    %s: %s (%s)",
+                            res.getCheck().getId(),
+                            res.getState(),
+                            res.getMessage().get()));
                 } else {
                     sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
                 }

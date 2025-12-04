@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.lumberjack;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class LumberjackComponentSSLTest extends CamelTestSupport {
     private static int port;
 
@@ -50,7 +51,8 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Lumberjack configured with SSL
-                from("lumberjack:0.0.0.0:" + port + "?sslContextParameters=#ssl").to("mock:output");
+                from("lumberjack:0.0.0.0:" + port + "?sslContextParameters=#ssl")
+                        .to("mock:output");
             }
         };
     }

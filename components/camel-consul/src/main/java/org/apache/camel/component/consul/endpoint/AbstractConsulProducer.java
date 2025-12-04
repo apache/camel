@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul.endpoint;
 
 import java.math.BigInteger;
@@ -40,8 +41,8 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
     private final Function<Consul, C> clientSupplier;
     private C client;
 
-    protected AbstractConsulProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration,
-                                     Function<Consul, C> clientSupplier) {
+    protected AbstractConsulProducer(
+            ConsulEndpoint endpoint, ConsulConfiguration configuration, Function<Consul, C> clientSupplier) {
         super(endpoint, ConsulConstants.CONSUL_ACTION, configuration.getAction());
 
         this.endpoint = endpoint;
@@ -85,15 +86,18 @@ abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
 
         ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_INDEX, BigInteger.class), builder::index);
         ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_WAIT, String.class), builder::wait);
-        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_DATACENTER, conf.getDatacenter(), String.class),
+        ObjectHelper.ifNotEmpty(
+                message.getHeader(ConsulConstants.CONSUL_DATACENTER, conf.getDatacenter(), String.class),
                 builder::datacenter);
-        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NEAR_NODE, conf.getNearNode(), String.class),
-                builder::near);
+        ObjectHelper.ifNotEmpty(
+                message.getHeader(ConsulConstants.CONSUL_NEAR_NODE, conf.getNearNode(), String.class), builder::near);
         ObjectHelper.ifNotEmpty(conf.getAclToken(), builder::token);
         ObjectHelper.ifNotEmpty(
-                message.getHeader(ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class),
+                message.getHeader(
+                        ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class),
                 builder::consistencyMode);
-        ObjectHelper.ifNotEmpty(message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMetasAsList(), List.class),
+        ObjectHelper.ifNotEmpty(
+                message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMetasAsList(), List.class),
                 builder::nodeMeta);
 
         return builder.build();

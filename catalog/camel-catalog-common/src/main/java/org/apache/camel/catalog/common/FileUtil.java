@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.common;
 
 import java.io.File;
@@ -21,9 +22,7 @@ import java.util.Set;
 
 public final class FileUtil {
 
-    private FileUtil() {
-
-    }
+    private FileUtil() {}
 
     public static void findJavaFiles(File dir, Set<File> javaFiles) {
         File[] files = dir.isDirectory() ? dir.listFiles() : null;

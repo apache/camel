@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -61,10 +62,13 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 // lets define the namespaces we'll need in our filters
-                Namespaces ns = new Namespaces("c", "http://acme.com/cheese").add("xsd", "http://www.w3.org/2001/XMLSchema");
+                Namespaces ns =
+                        new Namespaces("c", "http://acme.com/cheese").add("xsd", "http://www.w3.org/2001/XMLSchema");
 
                 // now lets create an xpath based Message Filter
-                from("direct:start").filter(xpath("/c:person[@name='James']", ns)).to("mock:result");
+                from("direct:start")
+                        .filter(xpath("/c:person[@name='James']", ns))
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

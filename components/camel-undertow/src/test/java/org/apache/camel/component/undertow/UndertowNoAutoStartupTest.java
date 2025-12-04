@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -21,8 +22,7 @@ import org.junit.jupiter.api.Test;
 
 public class UndertowNoAutoStartupTest extends BaseUndertowTest {
     @Test
-    public void testUndertow() {
-    }
+    public void testUndertow() {}
 
     @Override
     protected RouteBuilder createRouteBuilder() {

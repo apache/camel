@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.enricher;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelExecutionException;
@@ -24,9 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class EnricherAggregateOnExceptionTest extends ContextTestSupport {
 
@@ -81,9 +82,13 @@ public class EnricherAggregateOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").enrich("direct:foo", new MyAggregationStrategy(), true).to("mock:result");
+                from("direct:start")
+                        .enrich("direct:foo", new MyAggregationStrategy(), true)
+                        .to("mock:result");
 
-                from("direct:start2").enrich("direct:foo", new MyAggregationStrategy(), false).to("mock:result");
+                from("direct:start2")
+                        .enrich("direct:foo", new MyAggregationStrategy(), false)
+                        .to("mock:result");
 
                 from("direct:foo").process(new MyProcessor());
             }

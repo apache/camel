@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromRestGetInterceptFromTest extends ContextTestSupport {
 
@@ -54,8 +55,7 @@ public class FromRestGetInterceptFromTest extends ContextTestSupport {
 
                 rest("/say/hello").get().to("direct:hello");
 
-                from("direct:hello")
-                        .to("mock:hello").to("mock:bar").transform().constant("Bye World");
+                from("direct:hello").to("mock:hello").to("mock:bar").transform().constant("Bye World");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.messagehistory;
 
 import com.codahale.metrics.Timer;
@@ -42,7 +43,7 @@ public class MetricsMessageHistory extends DefaultMessageHistory {
 
     @Override
     public String toString() {
-        return "MetricsMessageHistory[routeId=" + getRouteId() + ", node=" + getNode().getId() + ']';
+        return "MetricsMessageHistory[routeId=" + getRouteId() + ", node="
+                + getNode().getId() + ']';
     }
-
 }

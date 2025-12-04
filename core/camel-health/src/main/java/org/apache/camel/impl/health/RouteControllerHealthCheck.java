@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.health;
 
 import java.util.Comparator;
@@ -92,11 +93,14 @@ public class RouteControllerHealthCheck extends AbstractHealthCheck {
             long next;
             // we can only track elapsed/time for active supervised routes
             elapsed = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                    ? state.getCurrentElapsedTime() : 0;
+                    ? state.getCurrentElapsedTime()
+                    : 0;
             last = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                    ? state.getLastAttemptTime() : 0;
+                    ? state.getLastAttemptTime()
+                    : 0;
             next = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                    ? state.getNextAttemptTime() : 0;
+                    ? state.getNextAttemptTime()
+                    : 0;
 
             String key = "route." + routeId;
             builder.detail(key + ".id", routeId);
@@ -114,18 +118,18 @@ public class RouteControllerHealthCheck extends AbstractHealthCheck {
                     builder.error(cause);
                     String msg;
                     if (exhausted) {
-                        msg = String.format("Restarting route: %s is exhausted after %s attempts due %s."
-                                            + " No more attempts will be made and the route is no longer supervised by this route controller and remains as stopped.",
-                                routeId, attempts,
-                                cause.getMessage());
+                        msg = String.format(
+                                "Restarting route: %s is exhausted after %s attempts due %s."
+                                        + " No more attempts will be made and the route is no longer supervised by this route controller and remains as stopped.",
+                                routeId, attempts, cause.getMessage());
                     } else {
-                        msg = String.format("Failed restarting route: %s attempt: %s due: %s", routeId, attempts,
-                                cause.getMessage());
+                        msg = String.format(
+                                "Failed restarting route: %s attempt: %s due: %s",
+                                routeId, attempts, cause.getMessage());
                     }
                     builder.message(msg);
                 }
             }
         }
     }
-
 }

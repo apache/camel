@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 @ManagedResource(description = "Managed Topic LoadBalancer")
 public class ManagedTopicLoadBalancer extends ManagedProcessor implements ManagedTopicLoadBalancerMBean {
 
-    public ManagedTopicLoadBalancer(CamelContext context, TopicLoadBalancer processor, LoadBalanceDefinition definition) {
+    public ManagedTopicLoadBalancer(
+            CamelContext context, TopicLoadBalancer processor, LoadBalanceDefinition definition) {
         super(context, processor, definition);
     }
 

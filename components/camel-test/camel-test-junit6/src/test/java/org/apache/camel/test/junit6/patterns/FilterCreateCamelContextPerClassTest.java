@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -33,9 +34,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
-        MockEndpoint me = getMockEndpoint("mock:result");
-        me.reset();
-        me.expectedBodiesReceived(expectedBody);
+        getMockEndpoint("mock:result").expectedBodiesReceived(expectedBody);
 
         template.sendBodyAndHeader("direct:start", expectedBody, "foo", "bar");
 
@@ -44,9 +43,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
     @Test
     public void testSendNotMatchingMessage() throws Exception {
-        MockEndpoint me = getMockEndpoint("mock:result");
-        me.reset();
-        me.expectedMessageCount(0);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 

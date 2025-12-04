@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.crypto.kem;
 
 import java.security.*;
@@ -49,15 +50,15 @@ public class PQCDefaultCMCEMaterial {
 
     protected static KeyPairGenerator prepareKeyPair()
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(), PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
         kpg.initialize(CMCEParameterSpec.mceliece8192128f, new SecureRandom());
         return kpg;
     }
 
     protected static KeyGenerator prepareKeyGenerator() throws NoSuchAlgorithmException, NoSuchProviderException {
-        KeyGenerator kg = KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(),
-                PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
+        KeyGenerator kg = KeyGenerator.getInstance(
+                PQCKeyEncapsulationAlgorithms.CMCE.getAlgorithm(), PQCKeyEncapsulationAlgorithms.CMCE.getBcProvider());
         return kg;
     }
 }

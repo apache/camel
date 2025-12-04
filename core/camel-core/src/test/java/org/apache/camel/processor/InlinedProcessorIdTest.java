@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,8 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class InlinedProcessorIdTest extends ContextTestSupport {
 
     @Override
@@ -32,11 +33,18 @@ public class InlinedProcessorIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo").to("log:foo").id("log").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        exchange.getIn().setHeader("foo", 123);
-                    }
-                }).id("inlined").to("mock:result").id("result");
+                from("direct:start")
+                        .routeId("foo")
+                        .to("log:foo")
+                        .id("log")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                exchange.getIn().setHeader("foo", 123);
+                            }
+                        })
+                        .id("inlined")
+                        .to("mock:result")
+                        .id("result");
             }
         };
     }
@@ -58,5 +66,4 @@ public class InlinedProcessorIdTest extends ContextTestSupport {
         assertEquals("inlined", route.getOutputs().get(1).getId());
         assertEquals("result", route.getOutputs().get(2).getId());
     }
-
 }

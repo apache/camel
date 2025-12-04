@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.kms;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.kms;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class KMSComponentClientRegistryTest extends CamelTestSupport {
 
@@ -51,8 +52,8 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
         AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
         context.getRegistry().bind("amazonKmsClient", clientMock);
         KMS2Component component = context.getComponent("aws2-kms", KMS2Component.class);
-        KMS2Endpoint endpoint
-                = (KMS2Endpoint) component.createEndpoint("aws2-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1");
+        KMS2Endpoint endpoint = (KMS2Endpoint)
+                component.createEndpoint("aws2-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
         assertSame(clientMock, endpoint.getConfiguration().getKmsClient());
     }

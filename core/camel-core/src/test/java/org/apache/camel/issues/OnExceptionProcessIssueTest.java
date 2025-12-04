@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,9 +26,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OnExceptionProcessIssueTest extends ContextTestSupport {
 
@@ -45,7 +46,10 @@ public class OnExceptionProcessIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).useOriginalMessage().handled(true).setHeader("foo", constant("bar"))
+                onException(Exception.class)
+                        .useOriginalMessage()
+                        .handled(true)
+                        .setHeader("foo", constant("bar"))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 Message in = exchange.getIn();
@@ -54,7 +58,9 @@ public class OnExceptionProcessIssueTest extends ContextTestSupport {
                             }
                         });
 
-                from("direct:start").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn"));
+                from("direct:start")
+                        .transform(constant("Bye World"))
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import java.io.ByteArrayInputStream;
@@ -27,8 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public final class BlobUtils {
 
-    private BlobUtils() {
-    }
+    private BlobUtils() {}
 
     public static Message getInMessage(final Exchange exchange) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn();
@@ -75,5 +75,4 @@ public final class BlobUtils {
                 ? configuration.getBlobName()
                 : BlobExchangeHeaders.getBlobNameFromHeaders(exchange);
     }
-
 }

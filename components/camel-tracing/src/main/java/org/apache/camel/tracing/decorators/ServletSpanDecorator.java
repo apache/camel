@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.tracing.decorators;
 
 public class ServletSpanDecorator extends AbstractHttpSpanDecorator {
@@ -27,5 +28,4 @@ public class ServletSpanDecorator extends AbstractHttpSpanDecorator {
     public String getComponentClassName() {
         return "org.apache.camel.component.servlet.ServletComponent";
     }
-
 }

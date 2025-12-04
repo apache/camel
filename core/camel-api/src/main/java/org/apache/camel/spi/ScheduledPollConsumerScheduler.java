@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
@@ -65,5 +66,4 @@ public interface ScheduledPollConsumerScheduler extends ShutdownableService, Cam
      * @return <tt>true</tt> if started, <tt>false</tt> otherwise.
      */
     boolean isSchedulerStarted();
-
 }

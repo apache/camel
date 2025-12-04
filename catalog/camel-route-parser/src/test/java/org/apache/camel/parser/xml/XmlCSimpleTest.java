@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,8 +29,6 @@ import org.apache.camel.parser.model.CamelCSimpleExpressionDetails;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlCSimpleTest {
 
@@ -51,5 +52,4 @@ public class XmlCSimpleTest {
         assertTrue(list.get(0).isPredicate());
         assertFalse(list.get(0).isExpression());
     }
-
 }

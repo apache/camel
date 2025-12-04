@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sts;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,8 +29,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class STS2ProducerSpringTest extends CamelSpringTestSupport {
 
@@ -66,7 +67,8 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
+        GetSessionTokenResponse resultGet =
+                (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 
@@ -83,12 +85,14 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        GetFederationTokenResponse resultGet = (GetFederationTokenResponse) exchange.getIn().getBody();
+        GetFederationTokenResponse resultGet =
+                (GetFederationTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/aws2/sts/STSComponentSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws2/sts/STSComponentSpringTest-context.xml");
     }
 }

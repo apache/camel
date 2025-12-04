@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.it.support;
 
 import java.lang.annotation.ElementType;
@@ -38,17 +39,18 @@ public @interface JiraIssue {
             if (context.getTestInstance().isEmpty()) {
                 return ConditionEvaluationResult.enabled("unable to verify version");
             }
-            final JBangTestSupport currTestClass = (JBangTestSupport) context.getTestInstance().get();
+            final JBangTestSupport currTestClass =
+                    (JBangTestSupport) context.getTestInstance().get();
             if (currTestClass == null) {
                 return ConditionEvaluationResult.enabled("unable to verify version");
             }
             return context.getTestMethod()
-                    .filter(method -> method.isAnnotationPresent(JiraIssue.class))
-                    .map(method -> method.getAnnotation(JiraIssue.class).value())
-                    .map(issue -> JiraUtil.isIssueSolved(issue, currTestClass.version()))
-                    .orElse(Boolean.TRUE)
-                            ? ConditionEvaluationResult.enabled("Jira Issue is solved in this version")
-                            : ConditionEvaluationResult.disabled("Jira Issue is not solved yet in this version");
+                            .filter(method -> method.isAnnotationPresent(JiraIssue.class))
+                            .map(method -> method.getAnnotation(JiraIssue.class).value())
+                            .map(issue -> JiraUtil.isIssueSolved(issue, currTestClass.version()))
+                            .orElse(Boolean.TRUE)
+                    ? ConditionEvaluationResult.enabled("Jira Issue is solved in this version")
+                    : ConditionEvaluationResult.disabled("Jira Issue is not solved yet in this version");
         }
     }
 }

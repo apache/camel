@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.paho;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -33,16 +37,15 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class PahoComponentTest extends PahoTestSupport {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
+
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
@@ -67,7 +70,8 @@ public class PahoComponentTest extends PahoTestSupport {
 
                 from("direct:testCustomizedPaho")
                         .to("customizedPaho:testCustomizedPaho?brokerUrl=" + service.serviceAddress());
-                from("paho:testCustomizedPaho?brokerUrl=" + service.serviceAddress()).to("mock:testCustomizedPaho");
+                from("paho:testCustomizedPaho?brokerUrl=" + service.serviceAddress())
+                        .to("mock:testCustomizedPaho");
             }
         };
     }
@@ -77,8 +81,8 @@ public class PahoComponentTest extends PahoTestSupport {
     @Test
     public void checkOptions() {
         String uri = "paho:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=" + service.serviceAddress()
-                     + "&qos=2"
-                     + "&persistence=file";
+                + "&qos=2"
+                + "&persistence=file";
 
         PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
 
@@ -172,8 +176,7 @@ public class PahoComponentTest extends PahoTestSupport {
 
         // When
         template.sendBody(
-                "paho:someRandomQueue?brokerUrl=" + service.serviceAddress() + "&userName=test&password=test",
-                "msg");
+                "paho:someRandomQueue?brokerUrl=" + service.serviceAddress() + "&userName=test&password=test", "msg");
 
         // Then
         mock.assertIsSatisfied();

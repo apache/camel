@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class SpringJmsSelectorIT extends AbstractSpringJMSITSupport {
 
     @Test
@@ -43,7 +44,7 @@ public class SpringJmsSelectorIT extends AbstractSpringJMSITSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/integration/spring/SpringJmsSelectorIT.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jms/integration/spring/SpringJmsSelectorIT.xml");
     }
-
 }

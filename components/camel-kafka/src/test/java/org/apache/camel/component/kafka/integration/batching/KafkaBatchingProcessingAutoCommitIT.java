@@ -43,28 +43,34 @@ public class KafkaBatchingProcessingAutoCommitIT extends BatchingProcessingITSup
     protected RouteBuilder createRouteBuilder() {
         // allowManualCommit=true&autoOffsetReset=earliest
         String from = "kafka:" + TOPIC
-                      + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest";
+                + "?groupId=KafkaBatchingProcessingIT&pollTimeoutMs=1000&batching=true&maxPollRecords=10&autoOffsetReset=earliest";
 
         return new RouteBuilder() {
 
             @Override
             public void configure() {
-                from(from).routeId("batching").process(e -> {
-                    // The received records are stored as exchanges in a list. This gets the list of those exchanges
-                    final List<?> exchanges = e.getMessage().getBody(List.class);
+                from(from)
+                        .routeId("batching")
+                        .process(e -> {
+                            // The received records are stored as exchanges in a list. This gets the list of those
+                            // exchanges
+                            final List<?> exchanges = e.getMessage().getBody(List.class);
 
-                    // Ensure we are actually receiving what we are asking for
-                    if (exchanges == null || exchanges.isEmpty()) {
-                        return;
-                    }
+                            // Ensure we are actually receiving what we are asking for
+                            if (exchanges == null || exchanges.isEmpty()) {
+                                return;
+                            }
 
-                    // The records from the batch are stored in a list of exchanges in the original exchange.
-                    for (Object o : exchanges) {
-                        if (o instanceof Exchange exchange) {
-                            LOG.info("Processing exchange with body {}", exchange.getMessage().getBody(String.class));
-                        }
-                    }
-                }).to(KafkaTestUtil.MOCK_RESULT);
+                            // The records from the batch are stored in a list of exchanges in the original exchange.
+                            for (Object o : exchanges) {
+                                if (o instanceof Exchange exchange) {
+                                    LOG.info(
+                                            "Processing exchange with body {}",
+                                            exchange.getMessage().getBody(String.class));
+                                }
+                            }
+                        })
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }

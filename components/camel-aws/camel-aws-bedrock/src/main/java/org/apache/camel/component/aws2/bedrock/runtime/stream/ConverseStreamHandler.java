@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
 import java.util.List;
@@ -42,11 +43,9 @@ public final class ConverseStreamHandler {
      * @param  fullText the string builder to accumulate text
      * @return          the response handler
      */
-    public static ConverseStreamResponseHandler createCompleteHandler(
-            StreamMetadata metadata,
-            StringBuilder fullText) {
+    public static ConverseStreamResponseHandler createCompleteHandler(StreamMetadata metadata, StringBuilder fullText) {
 
-        int[] chunkCount = { 0 };
+        int[] chunkCount = {0};
 
         return ConverseStreamResponseHandler.builder()
                 .subscriber(ConverseStreamResponseHandler.Visitor.builder()
@@ -83,11 +82,9 @@ public final class ConverseStreamHandler {
      * @return               the response handler
      */
     public static ConverseStreamResponseHandler createChunksHandler(
-            StreamMetadata metadata,
-            List<String> chunks,
-            Consumer<String> chunkConsumer) {
+            StreamMetadata metadata, List<String> chunks, Consumer<String> chunkConsumer) {
 
-        int[] chunkCount = { 0 };
+        int[] chunkCount = {0};
 
         return ConverseStreamResponseHandler.builder()
                 .subscriber(ConverseStreamResponseHandler.Visitor.builder()
@@ -174,7 +171,8 @@ public final class ConverseStreamHandler {
             return guardrailTrace;
         }
 
-        public void setGuardrailTrace(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace guardrailTrace) {
+        public void setGuardrailTrace(
+                software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace guardrailTrace) {
             this.guardrailTrace = guardrailTrace;
         }
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import java.util.Locale;
@@ -42,14 +43,18 @@ public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     @Metadata(required = true, javaType = "org.apache.camel.model.dataformat.BindyType", enums = "Csv,Fixed,KeyValue")
     private String type;
+
     @XmlAttribute(name = "classType")
     private String classTypeAsString;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowEmptyStream;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String unwrapSingleInstance;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String locale;
@@ -200,8 +205,10 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     public BindyDataFormat locale(Locale locale) {
-        return locale(locale.getCountry().isEmpty()
-                ? locale.getLanguage() : locale.getLanguage() + "-" + locale.getCountry());
+        return locale(
+                locale.getCountry().isEmpty()
+                        ? locale.getLanguage()
+                        : locale.getLanguage() + "-" + locale.getCountry());
     }
 
     public BindyDataFormat locale(String locale) {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -27,34 +30,43 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class SimpleJmsRequestReplySharedReplyToTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
     @Test
     public void testJmsRequestReplySharedReplyTo() {
-        assertEquals("Hello A", template.requestBody(
-                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
-                "A"));
-        assertEquals("Hello B", template.requestBody(
-                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
-                "B"));
-        assertEquals("Hello C", template.requestBody(
-                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
-                "C"));
-        assertEquals("Hello D", template.requestBody(
-                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
-                "D"));
-        assertEquals("Hello E", template.requestBody(
-                "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
-                "E"));
+        assertEquals(
+                "Hello A",
+                template.requestBody(
+                        "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                        "A"));
+        assertEquals(
+                "Hello B",
+                template.requestBody(
+                        "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                        "B"));
+        assertEquals(
+                "Hello C",
+                template.requestBody(
+                        "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                        "C"));
+        assertEquals(
+                "Hello D",
+                template.requestBody(
+                        "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                        "D"));
+        assertEquals(
+                "Hello E",
+                template.requestBody(
+                        "activemq:queue:queue:SimpleJmsRequestReplySharedReplyToTest.foo?replyTo=queue:SimpleJmsRequestReplySharedReplyToTest.bar&replyToType=Shared&replyToDestinationSelectorName=mySelector&replyToConsumerType=Simple",
+                        "E"));
     }
 
     @Override

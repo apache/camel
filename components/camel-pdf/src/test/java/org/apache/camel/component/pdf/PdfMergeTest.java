@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pdf;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,11 +39,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PdfMergeTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
@@ -54,16 +55,16 @@ public class PdfMergeTest extends CamelTestSupport {
         File pdfFile2 = File.createTempFile("pdf2", "pdf");
         document2.save(pdfFile2);
 
-        template.sendBodyAndHeader("direct:start", "", PdfHeaderConstants.FILES_TO_MERGE_HEADER_NAME,
-                List.of(pdfFile1, pdfFile2));
+        template.sendBodyAndHeader(
+                "direct:start", "", PdfHeaderConstants.FILES_TO_MERGE_HEADER_NAME, List.of(pdfFile1, pdfFile2));
 
         resultEndpoint.setExpectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(exchange -> {
             Object body = exchange.getIn().getBody();
             assertThat(body, instanceOf(ByteArrayOutputStream.class));
             try {
-                PDDocument doc = Loader.loadPDF(
-                        new RandomAccessReadBuffer(new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())));
+                PDDocument doc = Loader.loadPDF(new RandomAccessReadBuffer(
+                        new ByteArrayInputStream(((ByteArrayOutputStream) body).toByteArray())));
                 PDFTextStripper pdfTextStripper = new PDFTextStripper();
                 String text = pdfTextStripper.getText(doc);
                 assertEquals(2, doc.getNumberOfPages());
@@ -75,7 +76,6 @@ public class PdfMergeTest extends CamelTestSupport {
             return true;
         });
         resultEndpoint.assertIsSatisfied();
-
     }
 
     @Override
@@ -83,9 +83,7 @@ public class PdfMergeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("pdf:merge")
-                        .to("mock:result");
+                from("direct:start").to("pdf:merge").to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.io.IOException;
@@ -87,5 +88,4 @@ public interface StreamCache {
      * @return position or -1 if not supported in the cached implementation
      */
     long position();
-
 }

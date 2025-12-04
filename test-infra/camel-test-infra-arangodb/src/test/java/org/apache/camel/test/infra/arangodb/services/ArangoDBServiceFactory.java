@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.arangodb.services;
 
 import org.apache.camel.test.infra.common.services.ContainerTestService;
@@ -47,9 +48,7 @@ public final class ArangoDBServiceFactory {
         }
     }
 
-    private ArangoDBServiceFactory() {
-
-    }
+    private ArangoDBServiceFactory() {}
 
     public static SimpleTestServiceBuilder<ArangoDBService> builder() {
         return new SimpleTestServiceBuilder<>("arangodb");
@@ -68,9 +67,11 @@ public final class ArangoDBServiceFactory {
 
     private static class SingletonServiceHolder {
         static final ArangoDBService INSTANCE;
+
         static {
             SimpleTestServiceBuilder<ArangoDBService> instance = builder();
-            instance.addLocalMapping(() -> new SingletonArangoDBService(new ArangoDBLocalContainerService(), "arangoDB"))
+            instance.addLocalMapping(
+                            () -> new SingletonArangoDBService(new ArangoDBLocalContainerService(), "arangoDB"))
                     .addRemoteMapping(ArangoDBRemoteService::new)
                     .build();
 
@@ -80,8 +81,6 @@ public final class ArangoDBServiceFactory {
 }
 
 class ArangoDBLocalContainerService extends ArangoDBLocalContainerInfraService
-        implements ArangoDBService, ContainerTestService {
-}
+        implements ArangoDBService, ContainerTestService {}
 
-class ArangoDBRemoteService extends ArangoDBRemoteInfraService implements ArangoDBService {
-}
+class ArangoDBRemoteService extends ArangoDBRemoteInfraService implements ArangoDBService {}

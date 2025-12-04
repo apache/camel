@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded.cluster;
+
+import static org.apache.camel.component.infinispan.embedded.cluster.InfinispanEmbeddedClusteredTestSupport.createCache;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,10 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.infinispan.manager.DefaultCacheManager;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.infinispan.embedded.cluster.InfinispanEmbeddedClusteredTestSupport.createCache;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-
 public class InfinispanEmbeddedClusteredViewTest {
     @Test
     public void getLeaderTest() throws Exception {
@@ -37,12 +38,12 @@ public class InfinispanEmbeddedClusteredViewTest {
         try (DefaultCacheManager cacheContainer = new DefaultCacheManager()) {
             createCache(cacheContainer, viewName);
 
-            //Set up a single node cluster.
+            // Set up a single node cluster.
             InfinispanEmbeddedClusterService clusterService = new InfinispanEmbeddedClusterService();
             clusterService.setCacheContainer(cacheContainer);
             clusterService.setId("node");
 
-            //Set up context with single locked route.
+            // Set up context with single locked route.
             try (DefaultCamelContext context = new DefaultCamelContext()) {
                 context.disableJMX();
                 context.addService(clusterService);

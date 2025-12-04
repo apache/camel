@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +43,6 @@ import org.openstack4j.api.networking.SubnetService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Subnet;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class SubnetProducerTest extends NeutronProducerTestSupport {
@@ -133,10 +134,7 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
     }
 
     private Subnet createSubnet() {
-        return Builders.subnet()
-                .name("name")
-                .networkId("netId")
-                .build();
+        return Builders.subnet().name("name").networkId("netId").build();
     }
 
     private void assertEqualsSubnet(Subnet old, Subnet newSubnet) {

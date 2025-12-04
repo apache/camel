@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.openldap.services;
 
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 
 public class OpenldapRemoteInfraService implements OpenldapInfraService {
 
-    public OpenldapRemoteInfraService() {
-    }
+    public OpenldapRemoteInfraService() {}
 
     public OpenldapRemoteInfraService(String host, int port, int sslPort) {
         System.setProperty(OpenldapProperties.HOST, host);

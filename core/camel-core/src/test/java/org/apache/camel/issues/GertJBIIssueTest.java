@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GertJBIIssueTest extends ContextTestSupport {
 
@@ -47,7 +48,6 @@ public class GertJBIIssueTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0));
 
                 from("direct:start").threads(2).to("mock:done").throwException(new IllegalArgumentException("Forced"));
-
             }
         });
         context.start();
@@ -94,5 +94,4 @@ public class GertJBIIssueTest extends ContextTestSupport {
         assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Forced", cause.getMessage());
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support;
 
 import java.util.Collection;
@@ -23,8 +24,7 @@ import org.apache.camel.component.kafka.consumer.support.subcription.TopicInfo;
 
 public final class TopicHelper {
 
-    private TopicHelper() {
-    }
+    private TopicHelper() {}
 
     public static String getPrintableTopic(Pattern topicPattern, Collection<String> topics) {
         if (topicPattern != null) {

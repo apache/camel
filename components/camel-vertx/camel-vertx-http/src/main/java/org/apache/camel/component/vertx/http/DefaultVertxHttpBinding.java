@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -42,8 +45,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-import static org.apache.camel.component.vertx.http.VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT;
-
 public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
     private volatile Map<String, Object> defaultQueryParams;
@@ -66,7 +67,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         }
 
         // Determine the HTTP method to use if not specified in the HTTP_METHOD header
-        HttpMethod method = message.getHeader(VertxHttpConstants.HTTP_METHOD, configuration.getHttpMethod(), HttpMethod.class);
+        HttpMethod method =
+                message.getHeader(VertxHttpConstants.HTTP_METHOD, configuration.getHttpMethod(), HttpMethod.class);
         if (method == null) {
             if (ObjectHelper.isNotEmpty(queryString)) {
                 method = HttpMethod.GET;
@@ -77,7 +79,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
             }
         }
 
-        // Resolve the URI to use which is either a combination of headers HTTP_URI & HTTP_PATH or the HTTP URI configured on the endpoint
+        // Resolve the URI to use which is either a combination of headers HTTP_URI & HTTP_PATH or the HTTP URI
+        // configured on the endpoint
         URI uri = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
 
         WebClient webClient = endpoint.getWebClient();
@@ -133,11 +136,13 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         // Transfer exchange headers to the HTTP request while applying the filter strategy
         if (strategy != null) {
             final TypeConverter tc = exchange.getContext().getTypeConverter();
-            for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
+            for (Map.Entry<String, Object> entry :
+                    exchange.getMessage().getHeaders().entrySet()) {
                 String key = entry.getKey();
                 Object headerValue = entry.getValue();
 
-                if (endpoint.getConfiguration().isBridgeEndpoint() && request.queryParams().contains(key)) {
+                if (endpoint.getConfiguration().isBridgeEndpoint()
+                        && request.queryParams().contains(key)) {
                     // Avoid duplicating headers when bridgeEndpoint and query params contains the same header keys
                     continue;
                 }
@@ -151,7 +156,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response)
+    public void handleResponse(
+            VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response)
             throws Exception {
 
         Message message = exchange.getMessage();
@@ -172,7 +178,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     }
 
     @Override
-    public void populateResponseHeaders(Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy strategy) {
+    public void populateResponseHeaders(
+            Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy strategy) {
         Message message = exchange.getMessage();
         message.setHeader(VertxHttpConstants.HTTP_RESPONSE_CODE, response.statusCode());
         message.setHeader(VertxHttpConstants.HTTP_RESPONSE_TEXT, response.statusMessage());
@@ -194,7 +201,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                     if (!found && name.equalsIgnoreCase("content-type")) {
                         found = true;
                         name = VertxHttpConstants.CONTENT_TYPE;
-                        exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
+                        exchange.setProperty(
+                                ExchangePropertyKey.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
                     }
                     Object extracted = HttpHelper.extractHttpParameterValue(value);
                     if (strategy != null && !strategy.applyFilterToExternalHeaders(name, extracted, exchange)) {
@@ -220,8 +228,9 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                 boolean allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
 
                 if (allowJavaSerializedObject || exceptionOnly && transferException) {
-                    InputStream inputStream
-                            = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
+                    InputStream inputStream = exchange.getContext()
+                            .getTypeConverter()
+                            .convertTo(InputStream.class, responseBody.getBytes());
                     if (inputStream != null) {
                         try {
                             return VertxHttpHelper.deserializeJavaObjectFromStream(inputStream);
@@ -268,9 +277,13 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
             URI httpURI = VertxHttpHelper.resolveHttpURI(exchange, endpoint);
             exception = new HttpOperationFailedException(
-                    httpURI.toString(), result.statusCode(), result.statusMessage(), location, headers, result.bodyAsString());
+                    httpURI.toString(),
+                    result.statusCode(),
+                    result.statusMessage(),
+                    location,
+                    headers,
+                    result.bodyAsString());
         }
         return exception;
     }
-
 }

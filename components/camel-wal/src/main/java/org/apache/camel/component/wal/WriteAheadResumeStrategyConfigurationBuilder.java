@@ -23,8 +23,8 @@ import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.support.resume.BasicResumeStrategyConfigurationBuilder;
 
 public class WriteAheadResumeStrategyConfigurationBuilder
-        extends
-        BasicResumeStrategyConfigurationBuilder<WriteAheadResumeStrategyConfigurationBuilder, WriteAheadResumeStrategyConfiguration> {
+        extends BasicResumeStrategyConfigurationBuilder<
+                WriteAheadResumeStrategyConfigurationBuilder, WriteAheadResumeStrategyConfiguration> {
     private File logFile;
     private ResumeStrategy delegateResumeStrategy;
     private long supervisorInterval;
@@ -41,7 +41,8 @@ public class WriteAheadResumeStrategyConfigurationBuilder
         return this;
     }
 
-    public WriteAheadResumeStrategyConfigurationBuilder withDelegateResumeStrategy(ResumeStrategy delegateResumeStrategy) {
+    public WriteAheadResumeStrategyConfigurationBuilder withDelegateResumeStrategy(
+            ResumeStrategy delegateResumeStrategy) {
         this.delegateResumeStrategy = delegateResumeStrategy;
 
         return this;
@@ -55,8 +56,8 @@ public class WriteAheadResumeStrategyConfigurationBuilder
 
     @Override
     public WriteAheadResumeStrategyConfiguration build() {
-        final WriteAheadResumeStrategyConfiguration writeAheadResumeStrategyConfiguration
-                = new WriteAheadResumeStrategyConfiguration();
+        final WriteAheadResumeStrategyConfiguration writeAheadResumeStrategyConfiguration =
+                new WriteAheadResumeStrategyConfiguration();
 
         buildCommonConfiguration(writeAheadResumeStrategyConfiguration);
 

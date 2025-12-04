@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 /**
@@ -51,5 +52,4 @@ public interface ModelLifecycleStrategy {
      * @param routeTemplateDefinition the route template definition
      */
     void onRemoveRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition);
-
 }

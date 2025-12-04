@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
 
 import jakarta.jms.ConnectionFactory;
@@ -25,14 +26,14 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class AMQPConfiguration extends JmsConfiguration {
 
-    @UriParam(label = "consumer,advanced",
-              description = "Whether to include AMQP annotations when mapping from AMQP to Camel Message."
-                            + " Setting this to true maps AMQP message annotations that contain a JMS_AMQP_MA_ prefix to message headers."
-                            + " Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored.")
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Whether to include AMQP annotations when mapping from AMQP to Camel Message."
+                    + " Setting this to true maps AMQP message annotations that contain a JMS_AMQP_MA_ prefix to message headers."
+                    + " Due to limitations in Apache Qpid JMS API, currently delivery annotations are ignored.")
     private boolean includeAmqpAnnotations;
 
-    public AMQPConfiguration() {
-    }
+    public AMQPConfiguration() {}
 
     public AMQPConfiguration(ConnectionFactory connectionFactory) {
         super(connectionFactory);
@@ -50,5 +51,4 @@ public class AMQPConfiguration extends JmsConfiguration {
     public void setIncludeAmqpAnnotations(boolean includeAmqpAnnotations) {
         this.includeAmqpAnnotations = includeAmqpAnnotations;
     }
-
 }

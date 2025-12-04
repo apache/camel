@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -23,8 +26,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Fails on CI server")
 public class JettyThreadPoolSizeTest extends BaseJettyTest {
@@ -54,14 +55,16 @@ public class JettyThreadPoolSizeTest extends BaseJettyTest {
                 jettyComponent.setMinThreads(5);
                 jettyComponent.setMaxThreads(5);
 
-                from("jetty://http://localhost:{{port}}/myserverWithCustomPoolSize").to("mock:result");
+                from("jetty://http://localhost:{{port}}/myserverWithCustomPoolSize")
+                        .to("mock:result");
             }
         };
     }
 
     private long countJettyThread() {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        return threadSet.stream().filter(thread -> thread.getName().contains("CamelJettyServer")).count();
+        return threadSet.stream()
+                .filter(thread -> thread.getName().contains("CamelJettyServer"))
+                .count();
     }
-
 }

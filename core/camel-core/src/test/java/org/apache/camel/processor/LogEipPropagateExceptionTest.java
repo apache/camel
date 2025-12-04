@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -56,7 +57,6 @@ public class LogEipPropagateExceptionTest extends ContextTestSupport {
 
         sendBody("direct:startSuccess", "Hello World");
         assertMockEndpointsSatisfied();
-
     }
 
     @Override
@@ -64,17 +64,27 @@ public class LogEipPropagateExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:startFailure").onException(Throwable.class).to("mock:exceptionFailure").end()
-                        .to("direct:handleFailure").to("mock:resultFailure");
+                from("direct:startFailure")
+                        .onException(Throwable.class)
+                        .to("mock:exceptionFailure")
+                        .end()
+                        .to("direct:handleFailure")
+                        .to("mock:resultFailure");
 
-                from("direct:handleFailure").errorHandler(noErrorHandler()).log("FAULTY log").to("mock:handleFailure");
+                from("direct:handleFailure")
+                        .errorHandler(noErrorHandler())
+                        .log("FAULTY log")
+                        .to("mock:handleFailure");
 
-                from("direct:startSuccess").onException(Throwable.class).to("mock:exceptionSuccess").end()
-                        .to("direct:handleSuccess").to("mock:resultSuccess");
+                from("direct:startSuccess")
+                        .onException(Throwable.class)
+                        .to("mock:exceptionSuccess")
+                        .end()
+                        .to("direct:handleSuccess")
+                        .to("mock:resultSuccess");
 
                 from("direct:handleSuccess").errorHandler(noErrorHandler()).to("mock:handleSuccess");
             }
         };
     }
-
 }

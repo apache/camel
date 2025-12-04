@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -38,8 +41,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration tests for PQC lifecycle operations through Camel routes.
@@ -106,9 +107,7 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
                         .to("pqc:lifecycle?operation=getKeyMetadata")
                         .to("mock:result");
 
-                from("direct:listKeys")
-                        .to("pqc:lifecycle?operation=listKeys")
-                        .to("mock:result");
+                from("direct:listKeys").to("pqc:lifecycle?operation=listKeys").to("mock:result");
 
                 from("direct:rotateKey")
                         .setHeader(PQCConstants.KEY_ID, constant("old-key"))
@@ -170,7 +169,8 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testExportKeyThroughManager() throws Exception {
         // Generate a key first
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-route-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair =
+                keyManager.generateKeyPair("DILITHIUM", "export-route-key", DilithiumParameterSpec.dilithium2);
 
         // Export the key
         byte[] exportedKey = keyManager.exportPublicKey(keyPair, KeyLifecycleManager.KeyFormat.PEM);
@@ -263,8 +263,8 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
     @Test
     void testKeyPersistenceAcrossManagers() throws Exception {
         // Generate key with first manager
-        KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "persistence-key",
-                DilithiumParameterSpec.dilithium2);
+        KeyPair originalKeyPair =
+                keyManager.generateKeyPair("DILITHIUM", "persistence-key", DilithiumParameterSpec.dilithium2);
 
         // Create new manager instance
         KeyLifecycleManager newManager = new FileBasedKeyLifecycleManager(tempDir.toString());
@@ -273,8 +273,12 @@ public class PQCKeyLifecycleIntegrationTest extends CamelTestSupport {
         KeyPair retrievedKeyPair = newManager.getKey("persistence-key");
 
         assertNotNull(retrievedKeyPair);
-        assertArrayEquals(originalKeyPair.getPublic().getEncoded(), retrievedKeyPair.getPublic().getEncoded());
-        assertArrayEquals(originalKeyPair.getPrivate().getEncoded(), retrievedKeyPair.getPrivate().getEncoded());
+        assertArrayEquals(
+                originalKeyPair.getPublic().getEncoded(),
+                retrievedKeyPair.getPublic().getEncoded());
+        assertArrayEquals(
+                originalKeyPair.getPrivate().getEncoded(),
+                retrievedKeyPair.getPrivate().getEncoded());
     }
 
     @Test

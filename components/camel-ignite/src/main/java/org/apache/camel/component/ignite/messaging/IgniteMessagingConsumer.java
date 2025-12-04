@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.messaging;
 
 import java.util.UUID;
@@ -54,7 +55,9 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
                 }
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                LOG.error(String.format("Exception while processing Ignite Message from topic %s", endpoint.getTopic()), e);
+                LOG.error(
+                        String.format("Exception while processing Ignite Message from topic %s", endpoint.getTopic()),
+                        e);
             }
             return true;
         }
@@ -83,5 +86,4 @@ public class IgniteMessagingConsumer extends DefaultConsumer {
 
         LOG.info("Stopped Ignite Messaging consumer for topic {}.", endpoint.getTopic());
     }
-
 }

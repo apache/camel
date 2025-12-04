@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -24,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @Disabled("Must be online")
 public class RssUriEncodingIssueTest extends CamelTestSupport {
 
@@ -33,8 +34,8 @@ public class RssUriEncodingIssueTest extends CamelTestSupport {
 
     @Test
     public void testUriIssue() throws Exception {
-        String uri
-                = "rss:http://api.flickr.com/services/feeds/photos_public.gne?id=23353282@N05&tags=lowlands&lang=en-us&format=rss_200";
+        String uri =
+                "rss:http://api.flickr.com/services/feeds/photos_public.gne?id=23353282@N05&tags=lowlands&lang=en-us&format=rss_200";
 
         PollingConsumer consumer = context.getEndpoint(uri).createPollingConsumer();
         consumer.start();
@@ -44,5 +45,4 @@ public class RssUriEncodingIssueTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getBody());
         consumer.stop();
     }
-
 }

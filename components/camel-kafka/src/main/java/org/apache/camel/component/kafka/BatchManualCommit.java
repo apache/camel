@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka;
 
 import java.util.List;
@@ -30,8 +31,8 @@ public class BatchManualCommit implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        KafkaManualCommit manual
-                = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+        KafkaManualCommit manual =
+                exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
         if (manual == null) {
             List<?> exchanges = exchange.getMessage().getBody(List.class);
             if (exchanges != null && !exchanges.isEmpty()) {
@@ -46,7 +47,8 @@ public class BatchManualCommit implements Processor {
             LOG.debug("Performing Kafka Batch manual commit: {}", manual);
             manual.commit();
         } else {
-            LOG.debug("Cannot perform Kafka Batch manual commit due header: {} is missing", KafkaConstants.MANUAL_COMMIT);
+            LOG.debug(
+                    "Cannot perform Kafka Batch manual commit due header: {} is missing", KafkaConstants.MANUAL_COMMIT);
         }
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
 import java.util.HashMap;
@@ -31,9 +32,14 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeCl
 /**
  * Invoke Model of AWS Bedrock Agent Runtime service.
  */
-@UriEndpoint(firstVersion = "4.5.0", scheme = "aws-bedrock-agent-runtime", title = "AWS Bedrock Agent Runtime",
-             syntax = "aws-bedrock-agent-runtime:label", producerOnly = true, category = { Category.AI, Category.CLOUD },
-             headersClass = BedrockAgentRuntimeConstants.class)
+@UriEndpoint(
+        firstVersion = "4.5.0",
+        scheme = "aws-bedrock-agent-runtime",
+        title = "AWS Bedrock Agent Runtime",
+        syntax = "aws-bedrock-agent-runtime:label",
+        producerOnly = true,
+        category = {Category.AI, Category.CLOUD},
+        headersClass = BedrockAgentRuntimeConstants.class)
 public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;
@@ -41,7 +47,8 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
     @UriParam
     private BedrockAgentRuntimeConfiguration configuration;
 
-    public BedrockAgentRuntimeEndpoint(String uri, Component component, BedrockAgentRuntimeConfiguration configuration) {
+    public BedrockAgentRuntimeEndpoint(
+            String uri, Component component, BedrockAgentRuntimeConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -67,7 +74,8 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
 
         bedrockAgentRuntimeClient = configuration.getBedrockAgentRuntimeClient() != null
                 ? configuration.getBedrockAgentRuntimeClient()
-                : BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(configuration).getBedrockAgentRuntimeClient();
+                : BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(configuration)
+                        .getBedrockAgentRuntimeClient();
     }
 
     @Override

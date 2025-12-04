@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.keycloak;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -37,8 +40,6 @@ import org.keycloak.representations.idm.EventRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Integration test for Keycloak consumer operations using test-infra for container management.
  *
@@ -53,8 +54,10 @@ public class KeycloakConsumerIT extends CamelTestSupport {
     static KeycloakService keycloakService = KeycloakServiceFactory.createService();
 
     // Test data - use unique names to avoid conflicts
-    private static final String TEST_REALM_NAME = "consumer-test-realm-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_USER_NAME = "consumer-test-user-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_REALM_NAME =
+            "consumer-test-realm-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_USER_NAME =
+            "consumer-test-user-" + UUID.randomUUID().toString().substring(0, 8);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -78,36 +81,32 @@ public class KeycloakConsumerIT extends CamelTestSupport {
                 String keycloakProducerEndpoint = "keycloak:admin";
 
                 // Producer routes to create events
-                from("direct:createRealm")
-                        .to(keycloakProducerEndpoint + "?operation=createRealm");
+                from("direct:createRealm").to(keycloakProducerEndpoint + "?operation=createRealm");
 
-                from("direct:createUser")
-                        .to(keycloakProducerEndpoint + "?operation=createUser");
+                from("direct:createUser").to(keycloakProducerEndpoint + "?operation=createUser");
 
-                from("direct:createRole")
-                        .to(keycloakProducerEndpoint + "?operation=createRole");
+                from("direct:createRole").to(keycloakProducerEndpoint + "?operation=createRole");
 
-                from("direct:deleteRealm")
-                        .to(keycloakProducerEndpoint + "?operation=deleteRealm");
+                from("direct:deleteRealm").to(keycloakProducerEndpoint + "?operation=deleteRealm");
 
                 // Consumer routes - consuming admin events (autoStartup=false, started manually in test)
                 from("keycloak:adminEvents"
-                     + "?realm=" + TEST_REALM_NAME
-                     + "&eventType=admin-events"
-                     + "&maxResults=50"
-                     + "&initialDelay=500"
-                     + "&delay=1000")
+                                + "?realm=" + TEST_REALM_NAME
+                                + "&eventType=admin-events"
+                                + "&maxResults=50"
+                                + "&initialDelay=500"
+                                + "&delay=1000")
                         .autoStartup(false)
                         .routeId("admin-events-consumer")
                         .to("mock:admin-events");
 
                 // Consumer route - consuming regular events (if enabled in Keycloak)
                 from("keycloak:events"
-                     + "?realm=" + TEST_REALM_NAME
-                     + "&eventType=events"
-                     + "&maxResults=50"
-                     + "&initialDelay=500"
-                     + "&delay=1000")
+                                + "?realm=" + TEST_REALM_NAME
+                                + "&eventType=events"
+                                + "&maxResults=50"
+                                + "&initialDelay=500"
+                                + "&delay=1000")
                         .autoStartup(false)
                         .routeId("events-consumer")
                         .to("mock:events");
@@ -120,16 +119,15 @@ public class KeycloakConsumerIT extends CamelTestSupport {
     void testSetup_CreateRealm() throws Exception {
         log.info("Creating test realm: {}", TEST_REALM_NAME);
 
-        template.sendBodyAndHeader("direct:createRealm", null,
-                KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        template.sendBodyAndHeader("direct:createRealm", null, KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         log.info("Test realm created successfully");
 
         // Enable events and admin events on the realm
         log.info("Enabling events and admin events for realm: {}", TEST_REALM_NAME);
         org.keycloak.admin.client.Keycloak keycloakClient = keycloakService.getKeycloakAdminClient();
-        org.keycloak.representations.idm.RealmRepresentation realmRep
-                = keycloakClient.realm(TEST_REALM_NAME).toRepresentation();
+        org.keycloak.representations.idm.RealmRepresentation realmRep =
+                keycloakClient.realm(TEST_REALM_NAME).toRepresentation();
 
         // Enable admin events
         realmRep.setAdminEventsEnabled(true);
@@ -150,9 +148,9 @@ public class KeycloakConsumerIT extends CamelTestSupport {
         context.getRouteController().startRoute("admin-events-consumer");
 
         // Wait for consumer route to be started
-        Awaitility.await()
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> context.getRouteController().getRouteStatus("admin-events-consumer").isStarted());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> context.getRouteController()
+                .getRouteStatus("admin-events-consumer")
+                .isStarted());
 
         MockEndpoint mock = getMockEndpoint("mock:admin-events");
         mock.reset();
@@ -162,16 +160,15 @@ public class KeycloakConsumerIT extends CamelTestSupport {
         // Create a user which should generate an admin event
         log.info("Creating user: {} in realm: {}", TEST_USER_NAME, TEST_REALM_NAME);
 
-        template.sendBodyAndHeaders("direct:createUser", null,
-                new java.util.HashMap<>() {
-                    {
-                        put(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
-                        put(KeycloakConstants.USERNAME, TEST_USER_NAME);
-                        put(KeycloakConstants.USER_EMAIL, TEST_USER_NAME + "@test.com");
-                        put(KeycloakConstants.USER_FIRST_NAME, "Test");
-                        put(KeycloakConstants.USER_LAST_NAME, "User");
-                    }
-                });
+        template.sendBodyAndHeaders("direct:createUser", null, new java.util.HashMap<>() {
+            {
+                put(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+                put(KeycloakConstants.USERNAME, TEST_USER_NAME);
+                put(KeycloakConstants.USER_EMAIL, TEST_USER_NAME + "@test.com");
+                put(KeycloakConstants.USER_FIRST_NAME, "Test");
+                put(KeycloakConstants.USER_LAST_NAME, "User");
+            }
+        });
 
         log.info("Waiting for admin events to be consumed...");
         mock.assertIsSatisfied();
@@ -179,18 +176,20 @@ public class KeycloakConsumerIT extends CamelTestSupport {
         // Verify the event body is an AdminEventRepresentation
         Object eventBody = mock.getExchanges().get(0).getIn().getBody();
         assertNotNull(eventBody);
-        assertTrue(eventBody instanceof AdminEventRepresentation,
-                "Event body should be AdminEventRepresentation, but was: " + eventBody.getClass().getName());
+        assertTrue(
+                eventBody instanceof AdminEventRepresentation,
+                "Event body should be AdminEventRepresentation, but was: "
+                        + eventBody.getClass().getName());
 
         AdminEventRepresentation adminEvent = (AdminEventRepresentation) eventBody;
-        log.info("Received admin event - Operation: {}, Resource Type: {}",
-                adminEvent.getOperationType(), adminEvent.getResourceType());
+        log.info(
+                "Received admin event - Operation: {}, Resource Type: {}",
+                adminEvent.getOperationType(),
+                adminEvent.getResourceType());
 
         // Verify headers
-        assertEquals("admin-event",
-                mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.EVENT_TYPE));
-        assertEquals(TEST_REALM_NAME,
-                mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.REALM_NAME));
+        assertEquals("admin-event", mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.EVENT_TYPE));
+        assertEquals(TEST_REALM_NAME, mock.getExchanges().get(0).getIn().getHeader(KeycloakConstants.REALM_NAME));
     }
 
     @Test
@@ -215,9 +214,9 @@ public class KeycloakConsumerIT extends CamelTestSupport {
         context.getRouteController().startRoute("events-consumer");
 
         // Wait for consumer route to be started
-        Awaitility.await()
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> context.getRouteController().getRouteStatus("events-consumer").isStarted());
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> context.getRouteController()
+                .getRouteStatus("events-consumer")
+                .isStarted());
 
         MockEndpoint mock = getMockEndpoint("mock:events");
         mock.reset();
@@ -249,8 +248,7 @@ public class KeycloakConsumerIT extends CamelTestSupport {
         try {
             log.info("Deleting test realm: {}", TEST_REALM_NAME);
 
-            template.sendBodyAndHeader("direct:deleteRealm", null,
-                    KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+            template.sendBodyAndHeader("direct:deleteRealm", null, KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
             log.info("Test realm deleted successfully");
         } catch (Exception e) {

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import java.io.InputStream;
@@ -31,9 +32,7 @@ public class DummyDataformat extends ServiceSupport implements DataFormat, DataF
     private String version;
 
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) {
-
-    }
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) {}
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) {

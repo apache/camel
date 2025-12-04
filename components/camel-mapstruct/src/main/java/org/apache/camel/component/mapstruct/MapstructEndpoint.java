@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
 
 import org.apache.camel.Category;
@@ -28,15 +29,22 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(firstVersion = "3.19.0", scheme = "mapstruct", title = "MapStruct", syntax = "mapstruct:className",
-             remote = false, producerOnly = true,
-             category = { Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "3.19.0",
+        scheme = "mapstruct",
+        title = "MapStruct",
+        syntax = "mapstruct:className",
+        remote = false,
+        producerOnly = true,
+        category = {Category.TRANSFORMATION})
 public class MapstructEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true)
     private String className;
+
     private transient Class<?> clazz;
+
     @UriParam(defaultValue = "true")
     private boolean mandatory = true;
 

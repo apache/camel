@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.gson.annotation;
 
 import java.lang.annotation.ElementType;
@@ -22,6 +23,5 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
-public @interface ExcludeWeight {
-}
+@Target({ElementType.FIELD})
+public @interface ExcludeWeight {}

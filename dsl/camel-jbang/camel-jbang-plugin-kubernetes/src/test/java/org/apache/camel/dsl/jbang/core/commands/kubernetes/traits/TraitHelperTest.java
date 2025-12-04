@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.traits;
 
 import java.util.Arrays;
@@ -28,14 +29,14 @@ public class TraitHelperTest {
     @Test
     public void mergeTraitsTest() {
         String[] defaultGroup = new String[] {
-                "container.port=8080",
-                "container.port-name=custom",
-                "container.service-port-name=custom-port",
-                "container.service-port=8443" };
+            "container.port=8080",
+            "container.port-name=custom",
+            "container.service-port-name=custom-port",
+            "container.service-port=8443"
+        };
         String[] overridesGroup = new String[] {
-                "container.port=80",
-                "container.service-port=443",
-                "container.image-pull-policy=IfNotPresent" };
+            "container.port=80", "container.service-port=443", "container.image-pull-policy=IfNotPresent"
+        };
         String[] result = TraitHelper.mergeTraits(overridesGroup, defaultGroup);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(5, result.length);
@@ -54,9 +55,10 @@ public class TraitHelperTest {
     @Test
     public void extractTraitsFromAnnotationsTest() {
         String[] annotations = new String[] {
-                "trait.camel.apache.org/container.port=8080",
-                "trait.camel.apache.org/container.port-name=custom",
-                "camel.apache.org/name=MyRoute" };
+            "trait.camel.apache.org/container.port=8080",
+            "trait.camel.apache.org/container.port-name=custom",
+            "camel.apache.org/name=MyRoute"
+        };
         String[] result = TraitHelper.extractTraitsFromAnnotations(annotations);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(2, result.length);
@@ -92,10 +94,8 @@ public class TraitHelperTest {
     @Test
     public void parseTraitsTest() {
         String[] traits = new String[] {
-                "my-prop=my-val",
-                "custom.property=custom",
-                "container.port=8080",
-                "container.port-name=custom" };
+            "my-prop=my-val", "custom.property=custom", "container.port=8080", "container.port-name=custom"
+        };
         Traits traitsSpec = TraitHelper.parseTraits(traits);
         Assertions.assertNotNull(traitsSpec);
         Assertions.assertEquals(8080L, traitsSpec.getContainer().getPort());

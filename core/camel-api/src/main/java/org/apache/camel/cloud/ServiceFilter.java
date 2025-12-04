@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.cloud;
 
 import java.util.List;
@@ -37,5 +38,4 @@ public interface ServiceFilter {
      * @return          the chosen service to use.
      */
     List<ServiceDefinition> apply(Exchange exchange, List<ServiceDefinition> services);
-
 }

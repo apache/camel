@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns;
 
 import java.util.HashMap;
@@ -39,12 +40,13 @@ import org.xbill.DNS.Section;
 public class DnsDigEndpointTest extends CamelTestSupport {
 
     private static final String RESPONSE_MONKEY = "\"A Macaque, an old world species of "
-                                                  + "monkey native to Southeast Asia|thumb]A monkey is a primate of the "
-                                                  + "Haplorrhini suborder and simian infraorder, either an Old World monkey "
-                                                  + "or a New World monkey, but excluding apes. There are about 260 known "
-                                                  + "living specie\" \"s of monkey. Many are arboreal, although there are "
-                                                  + "species that live primarily on the ground, such as baboons... "
-                                                  + "http://en.wikipedia.org/wiki/Monkey\"";
+            + "monkey native to Southeast Asia|thumb]A monkey is a primate of the "
+            + "Haplorrhini suborder and simian infraorder, either an Old World monkey "
+            + "or a New World monkey, but excluding apes. There are about 260 known "
+            + "living specie\" \"s of monkey. Many are arboreal, although there are "
+            + "species that live primarily on the ground, such as baboons... "
+            + "http://en.wikipedia.org/wiki/Monkey\"";
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
@@ -76,5 +78,4 @@ public class DnsDigEndpointTest extends CamelTestSupport {
         template.sendBodyAndHeaders(null, headers);
         resultEndpoint.assertIsSatisfied();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.queue;
 
 import java.util.concurrent.ExecutorService;
@@ -34,8 +35,12 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
     private QueueConsumerTask queueConsumerTask;
     private HazelcastQueueConfiguration config;
 
-    public HazelcastQueueConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
-                                  final HazelcastQueueConfiguration configuration) {
+    public HazelcastQueueConsumer(
+            HazelcastInstance hazelcastInstance,
+            Endpoint endpoint,
+            Processor processor,
+            String cacheName,
+            final HazelcastQueueConfiguration configuration) {
         super(hazelcastInstance, endpoint, processor, cacheName);
         this.processor = processor;
         this.config = configuration;
@@ -84,7 +89,8 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                 while (isRunAllowed()) {
                     try {
                         final Object body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
-                        // CAMEL-16035 - If the polling timeout is exceeded with nothing to poll from the queue, the queue.poll() method return NULL
+                        // CAMEL-16035 - If the polling timeout is exceeded with nothing to poll from the queue, the
+                        // queue.poll() method return NULL
                         if (body != null) {
                             Exchange exchange = createExchange(false);
                             exchange.getIn().setBody(body);
@@ -103,5 +109,4 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
             }
         }
     }
-
 }

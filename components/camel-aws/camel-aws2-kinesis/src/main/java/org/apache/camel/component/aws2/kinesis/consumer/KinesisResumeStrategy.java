@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis.consumer;
 
 import org.apache.camel.resume.Offset;
@@ -31,7 +32,8 @@ import org.slf4j.LoggerFactory;
 public class KinesisResumeStrategy implements ResumeStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(KinesisResumeStrategy.class);
 
-    private ResumeStrategyConfiguration configuration = KinesisResumeStrategyConfiguration.builder().build();
+    private ResumeStrategyConfiguration configuration =
+            KinesisResumeStrategyConfiguration.builder().build();
     private ResumeCache resumeCache;
     private ResumeAdapter adapter;
 
@@ -58,7 +60,8 @@ public class KinesisResumeStrategy implements ResumeStrategy {
 
     @Override
     public <T extends Resumable> void updateLastOffset(T offset) {
-        resumeCache.add(offset.getOffsetKey().getValue().toString(),
+        resumeCache.add(
+                offset.getOffsetKey().getValue().toString(),
                 new KinesisOffset(offset.getLastOffset().getValue(String.class)));
     }
 

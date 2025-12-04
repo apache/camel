@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.spy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,11 +38,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.Mockito.spy;
-
 public class RestOpenApiSupportTest {
 
     @Test
@@ -53,14 +54,12 @@ public class RestOpenApiSupportTest {
 
         assertEquals("http://host/prefix/base", openApi.getServers().get(0).getUrl());
         assertEquals("https://host/prefix/base", openApi.getServers().get(1).getUrl());
-
     }
 
     @ParameterizedTest
     @MethodSource("basePathAndPrefixVariations")
     public void shouldAdaptWithVaryingBasePathsAndPrefixesV3(
-            final String prefix, final String basePath,
-            final String expected) {
+            final String prefix, final String basePath, final String expected) {
         OpenAPI doc = new OpenAPI();
         if (basePath != null) {
             doc.addServersItem(new Server().url("http://myhost/" + basePath));
@@ -81,8 +80,8 @@ public class RestOpenApiSupportTest {
     public void shouldAdaptWithVaryingSchemesV3(final String xForwardedScheme, final String[] expected) {
         final OpenAPI openApi = spy(new OpenAPI());
 
-        RestOpenApiSupport.setupXForwardedHeaders(openApi,
-                Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
+        RestOpenApiSupport.setupXForwardedHeaders(
+                openApi, Collections.singletonMap(RestOpenApiSupport.HEADER_X_FORWARDED_PROTO, xForwardedScheme));
 
         List<String> schemas = new ArrayList<String>();
         if (openApi.getServers() != null) {
@@ -101,7 +100,7 @@ public class RestOpenApiSupportTest {
     }
 
     static Stream<Arguments> basePathAndPrefixVariations() {
-        return Stream.of(//
+        return Stream.of( //
                 arguments("/prefix", "/base", "/prefix/base"), //
                 arguments("/prefix", "/base/", "/prefix/base/"), //
                 arguments("/prefix", "base", "/prefix/base"), //
@@ -126,21 +125,21 @@ public class RestOpenApiSupportTest {
                 arguments("prefix/", "base/", "prefix/base/"), //
                 arguments("prefix/", "", "prefix/"), //
                 arguments("prefix/", null, "prefix/") //
-        );
+                );
     }
 
     static Stream<Arguments> schemeVariations() {
         final String[] none = new String[0];
 
-        return Stream.of(//
+        return Stream.of( //
                 arguments(null, none), //
                 arguments("", none), //
                 arguments(",", none), //
                 arguments(" , ", none), //
-                arguments("HTTPS,http", new String[] { "https", "http" }), //
-                arguments(" HTTPS,  http ", new String[] { "https", "http" }), //
-                arguments(",http,", new String[] { "http" }), //
-                arguments("hTtpS", new String[] { "https" })//
-        );
+                arguments("HTTPS,http", new String[] {"https", "http"}), //
+                arguments(" HTTPS,  http ", new String[] {"https", "http"}), //
+                arguments(",http,", new String[] {"http"}), //
+                arguments("hTtpS", new String[] {"https"}) //
+                );
     }
 }

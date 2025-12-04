@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteStopAndFailTest extends ManagementTestSupport {
@@ -91,8 +92,9 @@ public class ManagedRouteStopAndFailTest extends ManagementTestSupport {
         Assertions.assertNotNull(re);
         Assertions.assertTrue(re.isUnhealthy());
         Assertions.assertEquals(RouteError.Phase.STOP, re.getPhase());
-        Assertions.assertEquals("Route " + routeId + " is forced stopped and marked as failed", re.getException().getMessage());
-
+        Assertions.assertEquals(
+                "Route " + routeId + " is forced stopped and marked as failed",
+                re.getException().getMessage());
     }
 
     @Override
@@ -104,5 +106,4 @@ public class ManagedRouteStopAndFailTest extends ManagementTestSupport {
             }
         };
     }
-
 }

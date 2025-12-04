@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.throttle.concurrent;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
 public class ThrottlingGroupingTest extends ContextTestSupport {
@@ -128,7 +129,10 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     }
 
     private void sendMessagesWithHeaderExpression(
-            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int messageCount)
+            final ExecutorService executor,
+            final MockEndpoint resultEndpoint,
+            final int throttle,
+            final int messageCount)
             throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
 
@@ -154,7 +158,8 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
     private void shutdownAndAwait(final ExecutorService executorService) {
         executorService.shutdown();
         try {
-            assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
+            assertTrue(
+                    executorService.awaitTermination(10, TimeUnit.SECONDS),
                     "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
         } catch (InterruptedException e) {
             fail("Test ExecutorService shutdown is not expected to be interrupted.");
@@ -168,38 +173,61 @@ public class ThrottlingGroupingTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("seda:a").throttle(header("max"), 1).concurrentRequestsMode().to("mock:result");
-                from("seda:b").throttle(header("max"), 2).concurrentRequestsMode().to("mock:result2");
-                from("seda:c").throttle(header("max")).concurrentRequestsMode().correlationExpression(header("key"))
+                from("seda:a")
+                        .throttle(header("max"), 1)
+                        .concurrentRequestsMode()
+                        .to("mock:result");
+                from("seda:b")
+                        .throttle(header("max"), 2)
+                        .concurrentRequestsMode()
+                        .to("mock:result2");
+                from("seda:c")
+                        .throttle(header("max"))
+                        .concurrentRequestsMode()
+                        .correlationExpression(header("key"))
                         .to("mock:resultdynamic");
 
-                from("direct:ga").throttle(constant(CONCURRENT_REQUESTS), header("key")).concurrentRequestsMode()
+                from("direct:ga")
+                        .throttle(constant(CONCURRENT_REQUESTS), header("key"))
+                        .concurrentRequestsMode()
                         .process(exchange -> {
                             String key = (String) exchange.getMessage().getHeader("key");
                             // should be no more in-flight exchanges than set on the throttle
-                            assertTrue(semaphores.computeIfAbsent(key, k -> new Semaphore(CONCURRENT_REQUESTS)).tryAcquire(),
+                            assertTrue(
+                                    semaphores
+                                            .computeIfAbsent(key, k -> new Semaphore(CONCURRENT_REQUESTS))
+                                            .tryAcquire(),
                                     "'direct:ga' too many requests for key " + key);
                         })
                         .delay(100)
                         .process(exchange -> {
-                            semaphores.get(exchange.getMessage().getHeader("key")).release();
+                            semaphores
+                                    .get(exchange.getMessage().getHeader("key"))
+                                    .release();
                         })
                         .to("log:gresult", "mock:gresult");
 
-                from("direct:gexpressionHeader").throttle(header("throttleValue"), header("key")).concurrentRequestsMode()
+                from("direct:gexpressionHeader")
+                        .throttle(header("throttleValue"), header("key"))
+                        .concurrentRequestsMode()
                         .process(exchange -> {
                             String key = (String) exchange.getMessage().getHeader("key");
-                            // should be no more in-flight exchanges than set on the throttle via the 'throttleValue' header
+                            // should be no more in-flight exchanges than set on the throttle via the 'throttleValue'
+                            // header
                             assertTrue(
-                                    semaphores.computeIfAbsent(key,
-                                            k -> new Semaphore(
-                                                    (Integer) exchange.getMessage().getHeader("throttleValue")))
+                                    semaphores
+                                            .computeIfAbsent(
+                                                    key,
+                                                    k -> new Semaphore((Integer) exchange.getMessage()
+                                                            .getHeader("throttleValue")))
                                             .tryAcquire(),
                                     "'direct:gexpressionHeader' too many requests for key " + key);
                         })
                         .delay(100)
                         .process(exchange -> {
-                            semaphores.get(exchange.getMessage().getHeader("key")).release();
+                            semaphores
+                                    .get(exchange.getMessage().getHeader("key"))
+                                    .release();
                         })
                         .to("log:gresult", "mock:gresult");
             }

@@ -47,5 +47,4 @@ public record Source(SourceScheme scheme, String name, String content, String ex
     public boolean isXml() {
         return "xml".equals(language());
     }
-
 }

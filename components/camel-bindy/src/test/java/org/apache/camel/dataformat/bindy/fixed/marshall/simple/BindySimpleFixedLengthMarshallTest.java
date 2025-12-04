@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.marshall.simple;
 
 import java.math.BigDecimal;
@@ -107,11 +108,8 @@ public class BindySimpleFixedLengthMarshallTest {
             bindy.setClassType(Order.class);
             bindy.type(BindyType.Fixed);
 
-            from(URI_DIRECT_START)
-                    .marshal(bindy)
-                    .to(URI_MOCK_RESULT);
+            from(URI_DIRECT_START).marshal(bindy).to(URI_MOCK_RESULT);
         }
-
     }
 
     @FixedLengthRecord(length = 65, paddingChar = ' ')
@@ -241,11 +239,11 @@ public class BindySimpleFixedLengthMarshallTest {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
-                   + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                    + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr
+                    + ", "
+                    + this.firstName + ", " + this.lastName + ", "
+                    + String.valueOf(this.orderDate);
         }
     }
-
 }

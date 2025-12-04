@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.myconverter;
 
 import java.util.TimeZone;
@@ -25,8 +26,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 @Converter
 public final class StaticDummyFallbackConverter {
 
-    private StaticDummyFallbackConverter() {
-    }
+    private StaticDummyFallbackConverter() {}
 
     @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
@@ -35,5 +35,4 @@ public final class StaticDummyFallbackConverter {
         }
         return null;
     }
-
 }

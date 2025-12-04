@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
 
 import java.io.InputStream;
@@ -53,11 +54,16 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
     private final boolean skipBindingOnErrorCode;
     private final String outType;
 
-    public RestProducerBindingProcessor(AsyncProcessor processor, CamelContext camelContext,
-                                        DataFormat jsonDataFormat, DataFormat xmlDataFormat,
-                                        DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                                        String bindingMode, boolean skipBindingOnErrorCode,
-                                        String outType) {
+    public RestProducerBindingProcessor(
+            AsyncProcessor processor,
+            CamelContext camelContext,
+            DataFormat jsonDataFormat,
+            DataFormat xmlDataFormat,
+            DataFormat outJsonDataFormat,
+            DataFormat outXmlDataFormat,
+            String bindingMode,
+            boolean skipBindingOnErrorCode,
+            String outType) {
 
         super(processor);
 
@@ -222,11 +228,11 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             return getProcessor().process(exchange, callback);
         } else {
             if (bindingMode.contains("xml")) {
-                exchange.setException(
-                        new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
+                exchange.setException(new CamelExchangeException(
+                        "Cannot bind to xml as message body is not xml compatible", exchange));
             } else {
-                exchange.setException(
-                        new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
+                exchange.setException(new CamelExchangeException(
+                        "Cannot bind to json as message body is not json compatible", exchange));
             }
             // we failed so cannot call producer
             callback.done(true);
@@ -378,5 +384,4 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             return "RestProducerBindingUnmarshalCallback";
         }
     }
-
 }

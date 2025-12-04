@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
 
 import java.util.UUID;
@@ -47,7 +48,10 @@ public class S3HeadBucketIT extends Aws2S3Base {
         Exchange res = template.send("direct:headBucket", exchange -> {
             exchange.getIn().setBody("Hello World");
             exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.headBucket);
-            exchange.getIn().setHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, "doesnotexist" + UUID.randomUUID().toString());
+            exchange.getIn()
+                    .setHeader(
+                            AWS2S3Constants.OVERRIDE_BUCKET_NAME,
+                            "doesnotexist" + UUID.randomUUID().toString());
         });
         if (res.getException() != null) {
             throw res.getException();
@@ -64,11 +68,11 @@ public class S3HeadBucketIT extends Aws2S3Base {
                 String awsEndpoint = "aws2-s3://test-ss3-s3?ignoreBody=true";
 
                 from("direct:headBucket")
-                    .to(awsEndpoint)
-                    .filter(header(AWS2S3Constants.BUCKET_EXISTS))
+                        .to(awsEndpoint)
+                        .filter(header(AWS2S3Constants.BUCKET_EXISTS))
                         .to("mock:exists")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }

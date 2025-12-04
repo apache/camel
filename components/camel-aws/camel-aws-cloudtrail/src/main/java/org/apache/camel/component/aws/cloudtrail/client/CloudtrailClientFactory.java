@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.cloudtrail.client;
 
 import org.apache.camel.component.aws.cloudtrail.CloudtrailConfiguration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws.cloudtrail.client.impl.CloudtrailClientSta
  */
 public final class CloudtrailClientFactory {
 
-    private CloudtrailClientFactory() {
-    }
+    private CloudtrailClientFactory() {}
 
     /**
      * Return the correct aws Cloudtrail client (based on remote vs local).

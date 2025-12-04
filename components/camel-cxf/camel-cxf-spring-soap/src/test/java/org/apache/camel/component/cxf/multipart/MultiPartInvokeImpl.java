@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.multipart;
 
 import jakarta.xml.ws.Holder;
@@ -24,11 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @jakarta.jws.WebService(
-                        serviceName = "MultiPartInvokeService",
-                        portName = "MultiPartInvokePort",
-                        targetNamespace = "http://adapter.ti.tongtech.com/ws",
-                        endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
-
+        serviceName = "MultiPartInvokeService",
+        portName = "MultiPartInvokePort",
+        targetNamespace = "http://adapter.ti.tongtech.com/ws",
+        endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
 public class MultiPartInvokeImpl implements MultiPartInvoke {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiPartInvokeImpl.class);
@@ -48,5 +48,4 @@ public class MultiPartInvokeImpl implements MultiPartInvoke {
             throw new RuntimeException(ex);
         }
     }
-
 }

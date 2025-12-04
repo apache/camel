@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import java.util.ArrayList;
@@ -52,7 +53,8 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&move=done")).convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&move=done"))
+                        .convertBodyTo(String.class)
                         .split(new MyCustomExpression())
                         .recipientList(header("myCustomDestination"));
             }

@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
+
+import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
+import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
 
 import java.util.Map;
 
@@ -27,9 +31,6 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
-
-import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isHostParam;
-import static org.apache.camel.component.rest.openapi.RestOpenApiHelper.isMediaRange;
 
 /**
  * An awesome REST component backed by OpenApi specifications. Creates endpoints that connect to REST APIs defined by
@@ -79,78 +80,121 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     static final String DEFAULT_SPECIFICATION_URI = "openapi.json";
 
-    @Metadata(description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
-                            + " specification, but these can be overridden with properties on the component or endpoint level. If not"
-                            + " given the component tries to load `openapi.json` resource. Note that the `host` defined on the"
-                            + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-                            + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
-                            + " configuration.",
-              label = "common")
+    @Metadata(
+            description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
+                    + " specification, but these can be overridden with properties on the component or endpoint level. If not"
+                    + " given the component tries to load `openapi.json` resource. Note that the `host` defined on the"
+                    + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
+                    + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
+                    + " configuration.",
+            label = "common")
     private String specificationUri;
-    @Metadata(description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
-              label = "common")
+
+    @Metadata(
+            description =
+                    "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in OpenApi specification.",
+            label = "common")
     private String basePath = "";
-    @Metadata(description = "Name of the Camel component that will perform the requests. The component must be present"
-                            + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
-                            + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in"
-                            + " endpoint configuration.",
-              label = "producer,advanced")
+
+    @Metadata(
+            description = "Name of the Camel component that will perform the requests. The component must be present"
+                    + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
+                    + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in"
+                    + " endpoint configuration.",
+            label = "producer,advanced")
     private String componentName;
-    @Metadata(description = "Name of the Camel component that will service the requests. The component must be present"
-                            + " in Camel registry and it must implement RestOpenApiConsumerFactory service provider interface. If not set"
-                            + " CLASSPATH is searched for single component that implements RestOpenApiConsumerFactory SPI.  Can be overridden in"
-                            + " endpoint configuration.",
-              label = "consumer,advanced")
+
+    @Metadata(
+            description = "Name of the Camel component that will service the requests. The component must be present"
+                    + " in Camel registry and it must implement RestOpenApiConsumerFactory service provider interface. If not set"
+                    + " CLASSPATH is searched for single component that implements RestOpenApiConsumerFactory SPI.  Can be overridden in"
+                    + " endpoint configuration.",
+            label = "consumer,advanced")
     private String consumerComponentName;
-    @Metadata(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
-                            + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
-                            + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
-                            + " REST configuration is consulted first, `rest-openapi` next, and global configuration last. If set"
-                            + " overrides any value found in the OpenApi specification, RestConfiguration. Can be overridden in endpoint"
-                            + " configuration.",
-              label = "producer")
+
+    @Metadata(
+            description = "Scheme hostname and port to direct the HTTP requests to in the form of"
+                    + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
+                    + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
+                    + " REST configuration is consulted first, `rest-openapi` next, and global configuration last. If set"
+                    + " overrides any value found in the OpenApi specification, RestConfiguration. Can be overridden in endpoint"
+                    + " configuration.",
+            label = "producer")
     private String host;
-    @Metadata(description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
+
+    @Metadata(
+            description =
+                    "What payload type this component capable of consuming. Could be one type, like `application/json`"
                             + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
                             + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification."
                             + " Can be overridden in endpoint configuration",
-              label = "producer,advanced")
+            label = "producer,advanced")
     private String consumes;
-    @Metadata(description = "What payload type this component is producing. For example `application/json`"
-                            + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
-                            + " any value present in the OpenApi specification. Can be overridden in endpoint configuration.",
-              label = "producer,advanced")
+
+    @Metadata(
+            description = "What payload type this component is producing. For example `application/json`"
+                    + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
+                    + " any value present in the OpenApi specification. Can be overridden in endpoint configuration.",
+            label = "producer,advanced")
     private String produces;
-    @Metadata(label = "consumer,advanced",
-              description = "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
+
+    @Metadata(
+            label = "consumer,advanced",
+            description =
+                    "Package name to use as base (offset) for classpath scanning of POJO classes are located when using binding mode is enabled for JSon or XML. Multiple package names can be separated by comma.")
     private String bindingPackageScan;
-    @Metadata(label = "consumer",
-              description = "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
+
+    @Metadata(
+            label = "consumer",
+            description =
+                    "Whether to enable validation of the client request to check if the incoming request is valid according to the OpenAPI specification")
     private boolean clientRequestValidation;
-    @Metadata(label = "consumer",
-              description = "Whether to enable validation of the client request to check if the outgoing response from Camel is valid according to the OpenAPI specification")
+
+    @Metadata(
+            label = "consumer",
+            description =
+                    "Whether to enable validation of the client request to check if the outgoing response from Camel is valid according to the OpenAPI specification")
     private boolean clientResponseValidation;
-    @Metadata(label = "producer", description = "Enable validation of requests against the configured OpenAPI specification")
+
+    @Metadata(
+            label = "producer",
+            description = "Enable validation of requests against the configured OpenAPI specification")
     private boolean requestValidationEnabled;
-    @Metadata(description = "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
-              label = "consumer", enums = "fail,ignore,mock", defaultValue = "fail")
+
+    @Metadata(
+            description =
+                    "Whether the consumer should fail,ignore or return a mock response for OpenAPI operations that are not mapped to a corresponding route.",
+            label = "consumer",
+            enums = "fail,ignore,mock",
+            defaultValue = "fail")
     private String missingOperation;
-    @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
+
+    @Metadata(
+            description =
+                    "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern."
                             + " Multiple patterns can be specified separated by comma.",
-              label = "consumer,advanced", defaultValue = "classpath:camel-mock/**")
+            label = "consumer,advanced",
+            defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern = "classpath:camel-mock/**";
+
     @Metadata(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
-    @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
+
+    @Metadata(
+            description = "To use a custom strategy for how to process Rest DSL requests",
+            label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
     private boolean useGlobalSslContextParameters;
-    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",
-              label = "security")
+
+    @Metadata(
+            description =
+                    "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",
+            label = "security")
     private SSLContextParameters sslContextParameters;
 
-    public RestOpenApiComponent() {
-    }
+    public RestOpenApiComponent() {}
 
     public RestOpenApiComponent(final CamelContext context) {
         super(context);

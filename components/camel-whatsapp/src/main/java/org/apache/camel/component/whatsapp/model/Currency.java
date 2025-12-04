@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,8 +33,7 @@ public class Currency {
     @JsonProperty("amount_1000")
     private String amount1000;
 
-    public Currency() {
-    }
+    public Currency() {}
 
     public String getFallbackValue() {
         return fallbackValue;
@@ -58,5 +58,4 @@ public class Currency {
     public void setAmount1000(String amount1000) {
         this.amount1000 = amount1000;
     }
-
 }

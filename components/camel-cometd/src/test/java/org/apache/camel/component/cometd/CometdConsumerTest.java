@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,40 +41,47 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class CometdConsumerTest {
 
     private static final String USER_NAME = "userName";
     private CometdConsumer testObj;
+
     @Mock
     private CamelContext context;
+
     @Mock
     private ExtendedCamelContext ecc;
+
     @Mock
     private ExchangeFactory exchangeFactory;
+
     @Mock
     private CometdEndpoint endpoint;
+
     @Mock
     private Processor processor;
+
     @Mock
     private BayeuxServerImpl bayeuxServerImpl;
+
     @Mock
     private LocalSession localSession;
+
     @Mock
     private ServerChannel serverChannel;
+
     @Mock
     private ServerSession remote;
+
     @Mock
     private MarkedReference<ServerChannel> markedReferenceServerChannel;
 
     @BeforeEach
     public void before() {
         when(bayeuxServerImpl.newLocalSession(ArgumentMatchers.isNull())).thenReturn(localSession);
-        when(bayeuxServerImpl.createChannelIfAbsent(ArgumentMatchers.isNull())).thenReturn(markedReferenceServerChannel);
+        when(bayeuxServerImpl.createChannelIfAbsent(ArgumentMatchers.isNull()))
+                .thenReturn(markedReferenceServerChannel);
         when(markedReferenceServerChannel.getReference()).thenReturn(serverChannel);
 
         when(endpoint.getCamelContext()).thenReturn(context);
@@ -98,5 +110,4 @@ public class CometdConsumerTest {
         // assert
         assertEquals(expectedService, result);
     }
-
 }

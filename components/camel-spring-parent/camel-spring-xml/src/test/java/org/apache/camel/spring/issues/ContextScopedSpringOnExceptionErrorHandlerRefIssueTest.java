@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.issues.ContextScopedOnExceptionErrorHandlerRefIssueTest;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 /**
  *
  */
-public class ContextScopedSpringOnExceptionErrorHandlerRefIssueTest extends ContextScopedOnExceptionErrorHandlerRefIssueTest {
+public class ContextScopedSpringOnExceptionErrorHandlerRefIssueTest
+        extends ContextScopedOnExceptionErrorHandlerRefIssueTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/issues/ContextScopedSpringOnExceptionErrorHandlerRefIssueTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/issues/ContextScopedSpringOnExceptionErrorHandlerRefIssueTest.xml");
     }
-
 }

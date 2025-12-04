@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ExceptionHelper;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NoClassDefFoundErrorWrapExceptionTest extends ContextTestSupport {
 
@@ -44,7 +45,10 @@ public class NoClassDefFoundErrorWrapExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start").process(new ProcessorA()).process(new ProcessorB()).process(new ProcessorFail());
+                from("seda:start")
+                        .process(new ProcessorA())
+                        .process(new ProcessorB())
+                        .process(new ProcessorFail());
             }
         };
     }

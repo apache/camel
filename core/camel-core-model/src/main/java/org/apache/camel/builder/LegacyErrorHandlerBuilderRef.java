@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
@@ -23,14 +24,14 @@ import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
  * Legacy error handler for XML DSL in camel-spring-xml
  */
 @Deprecated(since = "3.17.0")
-public class LegacyErrorHandlerBuilderRef extends LegacyErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {
+public class LegacyErrorHandlerBuilderRef extends LegacyErrorHandlerBuilderSupport
+        implements ErrorHandlerRefProperties {
 
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER;
 
     private final ErrorHandlerRefConfiguration configuration = new ErrorHandlerRefConfiguration();
 
-    public LegacyErrorHandlerBuilderRef() {
-    }
+    public LegacyErrorHandlerBuilderRef() {}
 
     public LegacyErrorHandlerBuilderRef(String ref) {
         this.configuration.setRef(ref);

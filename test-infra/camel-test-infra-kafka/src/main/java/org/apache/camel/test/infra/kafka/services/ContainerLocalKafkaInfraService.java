@@ -27,13 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = KafkaInfraService.class,
-              description = "Apache Kafka, Distributed event streaming platform",
-              serviceAlias = "kafka")
+@InfraService(
+        service = KafkaInfraService.class,
+        description = "Apache Kafka, Distributed event streaming platform",
+        serviceAlias = "kafka")
 public class ContainerLocalKafkaInfraService implements KafkaInfraService, ContainerService<KafkaContainer> {
-    public static final String KAFKA3_IMAGE_NAME = LocalPropertyResolver.getProperty(
-            ContainerLocalKafkaInfraService.class,
-            KafkaProperties.KAFKA3_CONTAINER);
+    public static final String KAFKA3_IMAGE_NAME =
+            LocalPropertyResolver.getProperty(ContainerLocalKafkaInfraService.class, KafkaProperties.KAFKA3_CONTAINER);
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaInfraService.class);
     protected KafkaContainer kafka;
@@ -104,10 +104,9 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
     }
 
     public static ContainerLocalKafkaInfraService kafka3Container() {
-        KafkaContainer container
-                = new KafkaContainer(
-                        DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
-                                .asCompatibleSubstituteFor("apache/kafka"));
+        KafkaContainer container = new KafkaContainer(
+                DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+                        .asCompatibleSubstituteFor("apache/kafka"));
 
         return new ContainerLocalKafkaInfraService(container);
     }

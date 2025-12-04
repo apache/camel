@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.LoggingLevel;
@@ -26,19 +27,31 @@ public class NettyHttpSecurityConfiguration {
 
     @Metadata(label = "security", defaultValue = "true", description = "Whether to enable authentication")
     private boolean authenticate = true;
-    @Metadata(label = "security", defaultValue = "Basic",
-              description = "Security constraint. Currently only Basic is supported.")
+
+    @Metadata(
+            label = "security",
+            defaultValue = "Basic",
+            description = "Security constraint. Currently only Basic is supported.")
     private String constraint = "Basic";
+
     @Metadata(label = "security", description = "Name of security realm")
     private String realm;
-    @Metadata(label = "security",
-              description = "Sets a SecurityConstraint to use for checking if a web resource is restricted or not."
-                            + " By default this is null, which means all resources is restricted.")
+
+    @Metadata(
+            label = "security",
+            description = "Sets a SecurityConstraint to use for checking if a web resource is restricted or not."
+                    + " By default this is null, which means all resources is restricted.")
     private SecurityConstraint securityConstraint;
-    @Metadata(label = "security", description = " Sets the SecurityAuthenticator to use for authenticating the HttpPrincipal.")
+
+    @Metadata(
+            label = "security",
+            description = " Sets the SecurityAuthenticator to use for authenticating the HttpPrincipal.")
     private SecurityAuthenticator securityAuthenticator;
-    @Metadata(label = "security", defaultValue = "DEBUG",
-              description = "Sets a logging level to use for logging denied login attempts (incl stacktraces)")
+
+    @Metadata(
+            label = "security",
+            defaultValue = "DEBUG",
+            description = "Sets a logging level to use for logging denied login attempts (incl stacktraces)")
     private LoggingLevel loginDeniedLoggingLevel = LoggingLevel.DEBUG;
 
     public boolean isAuthenticate() {
@@ -112,5 +125,4 @@ public class NettyHttpSecurityConfiguration {
     public void setLoginDeniedLoggingLevel(LoggingLevel loginDeniedLoggingLevel) {
         this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
     }
-
 }

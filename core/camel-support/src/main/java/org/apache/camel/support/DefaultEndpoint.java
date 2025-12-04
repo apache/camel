@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
@@ -55,35 +55,50 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private CamelContext camelContext;
     private Component component;
 
-    @Metadata(label = "advanced", defaultValue = "true",
-              description = "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
+    @Metadata(
+            label = "advanced",
+            defaultValue = "true",
+            description =
+                    "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
                             + " by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component."
                             + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc."
                             + " Important: If a component has the same option defined on both component and endpoint level, then disabling"
                             + " autowiring on endpoint level would not affect that the component will still be autowired, and therefore the endpoint"
                             + " will be configured with option from the component level. In other words turning off autowiring would then require to turn it off on the component level.")
     private boolean autowiredEnabled = true;
-    @UriParam(label = "producer,advanced",
-              description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
+
+    @UriParam(
+            label = "producer,advanced",
+            description =
+                    "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
                             + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
                             + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
                             + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
-    @UriParam(label = "consumer,advanced",
-              description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while"
+
+    @UriParam(
+            label = "consumer,advanced",
+            description =
+                    "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while"
                             + " the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                             + " Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only,"
                             + " and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component"
                             + " and make this possible for future releases."
                             + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
-    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.",
-              description = "To let the consumer use a custom ExceptionHandler."
+
+    @UriParam(
+            label = "consumer,advanced",
+            optionalPrefix = "consumer.",
+            description =
+                    "To let the consumer use a custom ExceptionHandler."
                             + " Notice if the option bridgeErrorHandler is enabled then this option is not in use."
                             + " By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private ExceptionHandler exceptionHandler;
-    @UriParam(label = "consumer,advanced",
-              description = "Sets the exchange pattern when the consumer creates an exchange.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description = "Sets the exchange pattern when the consumer creates an exchange.")
     // no default value set on @UriParam as the MEP is sometimes InOnly or InOut depending on the component in use
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
@@ -117,8 +132,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * <p/>
      * <b>Note:</b> It is preferred to create endpoints using the associated component.
      */
-    protected DefaultEndpoint() {
-    }
+    protected DefaultEndpoint() {}
 
     @Override
     public int hashCode() {
@@ -129,8 +143,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint that) {
             // must also match the same CamelContext in case we compare endpoints from different contexts
-            String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
-            String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
+            String thisContextName =
+                    this.getCamelContext() != null ? this.getCamelContext().getName() : null;
+            String thatContextName =
+                    that.getCamelContext() != null ? that.getCamelContext().getName() : null;
             return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri())
                     && ObjectHelper.equal(thisContextName, thatContextName);
         }
@@ -165,9 +181,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         if (endpointUri == null) {
             endpointUri = createEndpointUri();
             if (endpointUri == null) {
-                throw new IllegalArgumentException(
-                        "endpointUri is not specified and " + getClass().getName()
-                                                   + " does not implement createEndpointUri() to create a default value");
+                throw new IllegalArgumentException("endpointUri is not specified and "
+                        + getClass().getName() + " does not implement createEndpointUri() to create a default value");
             }
         }
         return endpointUri;
@@ -219,8 +234,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {} copy: {}",
-                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout(),
+            LOG.debug(
+                    "Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {} copy: {}",
+                    getPollingConsumerQueueSize(),
+                    isPollingConsumerBlockWhenFull(),
+                    getPollingConsumerBlockTimeout(),
                     isPollingConsumerCopy());
         }
         EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
@@ -417,7 +435,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             configurer = propertyConfigurerAware.getPropertyConfigurer(bean);
         }
         // use configurer and ignore case as end users may type an option name with mixed case
-        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true)
+        PropertyBindingSupport.build()
+                .withConfigurer(configurer)
+                .withIgnoreCase(true)
                 // if the endpoint is lenient then use optional
                 .withOptional(isLenientProperties())
                 .bind(camelContext, bean, parameters);
@@ -471,10 +491,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             if (consumer instanceof DefaultConsumer defaultConsumer) {
                 defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
             } else {
-                throw new IllegalArgumentException(
-                        "Option bridgeErrorHandler is only supported by endpoints,"
-                                                   + " having their consumer extend DefaultConsumer. The consumer is a "
-                                                   + consumer.getClass().getName() + " class.");
+                throw new IllegalArgumentException("Option bridgeErrorHandler is only supported by endpoints,"
+                        + " having their consumer extend DefaultConsumer. The consumer is a "
+                        + consumer.getClass().getName() + " class.");
             }
         }
         if (exceptionHandler != null) {
@@ -511,7 +530,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                                     if (LOG.isDebugEnabled()) {
                                         LOG.debug(
                                                 "Autowired property: {} on endpoint: {} as exactly one instance of type: {} ({}) found in the registry",
-                                                name, this, type.getName(), value.getClass().getName());
+                                                name,
+                                                this,
+                                                type.getName(),
+                                                value.getClass().getName());
                                     }
                                 }
                             }

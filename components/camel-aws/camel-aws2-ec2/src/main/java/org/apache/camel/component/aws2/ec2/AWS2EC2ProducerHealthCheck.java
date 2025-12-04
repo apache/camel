@@ -66,5 +66,4 @@ public class AWS2EC2ProducerHealthCheck extends AbstractHealthCheck {
         }
         builder.up();
     }
-
 }

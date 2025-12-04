@@ -14,23 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.java.joor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JavaMultiCompileTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain(
-                "routes/MyBar*.java",
-                null);
+        doTestMain("routes/MyBar*.java", null);
     }
 
     protected void doTestMain(String includes, String excludes) throws Exception {
@@ -52,5 +51,4 @@ public class JavaMultiCompileTest {
 
         main.stop();
     }
-
 }

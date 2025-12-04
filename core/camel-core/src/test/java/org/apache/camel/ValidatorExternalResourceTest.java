@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,22 +28,24 @@ public class ValidatorExternalResourceTest extends ContextTestSupport {
         final MockEndpoint mock = getMockEndpoint("mock:out");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "<ord:order  xmlns:ord=\"http://example.org/ord\"\n" +
-                                          "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                                          "   xsi:schemaLocation=\"http://example.org/ord order.xsd\">\n" +
-                                          "  <customer>\n" +
-                                          "    <name>Priscilla Walmsley</name>\n" +
-                                          "    <number>12345</number>\n" +
-                                          "  </customer>\n" +
-                                          "  <items>\n" +
-                                          "    <product>\n" +
-                                          "      <number>98765</number>\n" +
-                                          "      <name>Short-Sleeved Linen Blouse</name>\n" +
-                                          "      <size system=\"US-DRESS\">10</size>\n" +
-                                          "      <color value=\"blue\"/>\n" +
-                                          "    </product>\n" +
-                                          "  </items>\n" +
-                                          "</ord:order>");
+        template.sendBody(
+                "direct:start",
+                "<ord:order  xmlns:ord=\"http://example.org/ord\"\n"
+                        + "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                        + "   xsi:schemaLocation=\"http://example.org/ord order.xsd\">\n"
+                        + "  <customer>\n"
+                        + "    <name>Priscilla Walmsley</name>\n"
+                        + "    <number>12345</number>\n"
+                        + "  </customer>\n"
+                        + "  <items>\n"
+                        + "    <product>\n"
+                        + "      <number>98765</number>\n"
+                        + "      <name>Short-Sleeved Linen Blouse</name>\n"
+                        + "      <size system=\"US-DRESS\">10</size>\n"
+                        + "      <color value=\"blue\"/>\n"
+                        + "    </product>\n"
+                        + "  </items>\n"
+                        + "</ord:order>");
 
         mock.assertIsSatisfied();
     }
@@ -53,7 +56,8 @@ public class ValidatorExternalResourceTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toD("validator:https://raw.githubusercontent.com/apache/camel/main/core/camel-core/src/test/resources/org/apache/camel/component/validator/xsds/order.xsd")
+                        .toD(
+                                "validator:https://raw.githubusercontent.com/apache/camel/main/core/camel-core/src/test/resources/org/apache/camel/component/validator/xsds/order.xsd")
                         .to("mock:out");
             }
         };

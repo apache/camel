@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import org.apache.camel.Category;
@@ -31,16 +32,13 @@ import org.apache.camel.support.DefaultEndpoint;
  * Perform operations on the Langchain4jEmbeddingStores.
  */
 @UriEndpoint(
-             firstVersion = "4.14.0",
-             scheme = LangChain4jEmbeddingStore.SCHEME,
-             title = "LangChain4j Embedding Store",
-             syntax = "langchain4j-embeddings:embeddingStoreId",
-             producerOnly = true,
-             category = {
-                     Category.DATABASE,
-                     Category.AI
-             },
-             headersClass = LangChain4jEmbeddingStoreHeaders.class)
+        firstVersion = "4.14.0",
+        scheme = LangChain4jEmbeddingStore.SCHEME,
+        title = "LangChain4j Embedding Store",
+        syntax = "langchain4j-embeddings:embeddingStoreId",
+        producerOnly = true,
+        category = {Category.DATABASE, Category.AI},
+        headersClass = LangChain4jEmbeddingStoreHeaders.class)
 public class LangChain4jEmbeddingStoreEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     @UriPath(description = "The id of the embedding store")
@@ -49,8 +47,11 @@ public class LangChain4jEmbeddingStoreEndpoint extends DefaultEndpoint {
     @UriParam
     private LangChain4jEmbeddingStoreConfiguration configuration;
 
-    public LangChain4jEmbeddingStoreEndpoint(String endpointUri, Component component, String embeddingStoreId,
-                                             LangChain4jEmbeddingStoreConfiguration configuration) {
+    public LangChain4jEmbeddingStoreEndpoint(
+            String endpointUri,
+            Component component,
+            String embeddingStoreId,
+            LangChain4jEmbeddingStoreConfiguration configuration) {
 
         super(endpointUri, component);
         this.embeddingStoreId = embeddingStoreId;
@@ -84,5 +85,4 @@ public class LangChain4jEmbeddingStoreEndpoint extends DefaultEndpoint {
     public void doStop() throws Exception {
         super.doStop();
     }
-
 }

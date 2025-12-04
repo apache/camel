@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite.set;
 
 import java.util.Collection;
@@ -52,9 +53,9 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
         Object body = in.getBody();
 
         switch (setOperationFor(exchange)) {
-
             case ADD:
-                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                if (Collection.class.isAssignableFrom(body.getClass())
+                        && !endpoint.isTreatCollectionsAsCacheObjects()) {
                     out.setBody(set.addAll((Collection<? extends Object>) body));
                 } else {
                     out.setBody(set.add(body));
@@ -62,7 +63,8 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
                 break;
 
             case CONTAINS:
-                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                if (Collection.class.isAssignableFrom(body.getClass())
+                        && !endpoint.isTreatCollectionsAsCacheObjects()) {
                     out.setBody(set.containsAll((Collection<? extends Object>) body));
                 } else {
                     out.setBody(set.contains(body));
@@ -74,7 +76,8 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
                 break;
 
             case REMOVE:
-                if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
+                if (Collection.class.isAssignableFrom(body.getClass())
+                        && !endpoint.isTreatCollectionsAsCacheObjects()) {
                     out.setBody(set.removeAll((Collection<? extends Object>) body));
                 } else {
                     out.setBody(set.remove(body));
@@ -106,7 +109,8 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
                 break;
 
             default:
-                exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Set producer."));
+                exchange.setException(
+                        new UnsupportedOperationException("Operation not supported by Ignite Set producer."));
                 break;
         }
 
@@ -115,8 +119,7 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
     }
 
     private IgniteSetOperation setOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_SETS_OPERATION, endpoint.getOperation(),
-                IgniteSetOperation.class);
+        return exchange.getIn()
+                .getHeader(IgniteConstants.IGNITE_SETS_OPERATION, endpoint.getOperation(), IgniteSetOperation.class);
     }
-
 }

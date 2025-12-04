@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class MyRouteDuplicateIdTest extends CamelTestSupport {
 
@@ -41,15 +42,12 @@ public class MyRouteDuplicateIdTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo")
-                        .to("mock:foo");
+                from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").routeId("bar")
-                        .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
 
                 // duplicate route id on purpose
-                from("direct:baz").routeId("foo")
-                        .to("mock:baz");
+                from("direct:baz").routeId("foo").to("mock:baz");
             }
         };
     }

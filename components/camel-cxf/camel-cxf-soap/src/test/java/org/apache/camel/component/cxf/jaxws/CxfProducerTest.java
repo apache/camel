@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ConnectException;
 import java.util.ArrayList;
@@ -47,10 +52,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class CxfProducerTest {
     protected static final String ECHO_OPERATION = "echo";
     protected static final String GREET_ME_OPERATION = "greetMe";
@@ -64,16 +65,19 @@ public class CxfProducerTest {
     protected Endpoint endpoint;
 
     protected String getSimpleServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + CXFTestSupport.getPort1() + "/"
+                + getClass().getSimpleName() + "/test";
     }
 
     protected String getJaxWsServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + CXFTestSupport.getPort2() + "/"
+                + getClass().getSimpleName() + "/test";
     }
 
     protected String getWrongServerAddress() {
         // Avoiding the test error on camel-cxf module
-        return "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/" + getClass().getSimpleName() + "/test";
+        return "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/"
+                + getClass().getSimpleName() + "/test";
     }
 
     @BeforeEach
@@ -119,7 +123,9 @@ public class CxfProducerTest {
         LOG.info("Received output text: {}", result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
-        assertEquals("UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING),
+        assertEquals(
+                "UTF-8",
+                responseContext.get(org.apache.cxf.message.Message.ENCODING),
                 "We should get the response context here");
         assertEquals("echo " + TEST_MESSAGE, result, "reply body on Camel");
 
@@ -138,12 +144,12 @@ public class CxfProducerTest {
         assertNotNull(reply.getException(), "We should get the exception here");
         assertTrue(reply.getException().getCause() instanceof ConnectException);
 
-        //Test the data format PAYLOAD
+        // Test the data format PAYLOAD
         reply = sendSimpleMessageWithPayloadMessage(getWrongEndpointUri() + "&dataFormat=PAYLOAD");
         assertNotNull(reply.getException(), "We should get the exception here");
         assertTrue(reply.getException().getCause() instanceof ConnectException);
 
-        //Test the data format MESSAGE
+        // Test the data format MESSAGE
         reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull(reply.getException(), "We should get the exception here");
         assertTrue(reply.getException().getCause() instanceof ConnectException);
@@ -158,8 +164,10 @@ public class CxfProducerTest {
         LOG.info("Received output text: {}", result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
-        assertEquals("{http://apache.org/hello_world_soap_http}greetMe",
-                responseContext.get("jakarta.xml.ws.wsdl.operation").toString(), "Get the wrong wsdl operation name");
+        assertEquals(
+                "{http://apache.org/hello_world_soap_http}greetMe",
+                responseContext.get("jakarta.xml.ws.wsdl.operation").toString(),
+                "Get the wrong wsdl operation name");
         assertEquals("Hello " + TEST_MESSAGE, result, "reply body on Camel");
 
         // check the other camel header copying
@@ -168,8 +176,7 @@ public class CxfProducerTest {
     }
 
     protected String getSimpleEndpointUri() {
-        return "cxf://" + getSimpleServerAddress()
-               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+        return "cxf://" + getSimpleServerAddress() + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
     }
 
     protected String getJaxwsEndpointUri() {
@@ -196,16 +203,16 @@ public class CxfProducerTest {
             }
         });
         return exchange;
-
     }
 
     private Exchange sendSimpleMessageWithRawMessage(String endpointUri) {
         Exchange exchange = template.request(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
-                exchange.getIn().setBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-                                         + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                         + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">hello world</arg0>"
-                                         + "</ns1:echo></soap:Body></soap:Envelope>");
+                exchange.getIn()
+                        .setBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                                + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">hello world</arg0>"
+                                + "</ns1:echo></soap:Body></soap:Envelope>");
             }
         });
         return exchange;
@@ -215,13 +222,13 @@ public class CxfProducerTest {
         Exchange exchange = template.request(endpointUri, new Processor() {
             public void process(final Exchange exchange) throws Exception {
                 Document document = new XmlConverter()
-                        .toDOMDocument("<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
-                                       + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">hello world</arg0>"
-                                       + "</ns1:echo>",
+                        .toDOMDocument(
+                                "<ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
+                                        + "<arg0 xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">hello world</arg0>"
+                                        + "</ns1:echo>",
                                 exchange);
                 exchange.getIn().setBody(CxfPayloadConverter.documentToCxfPayload(document, exchange));
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
-
             }
         });
         return exchange;
@@ -239,5 +246,4 @@ public class CxfProducerTest {
         });
         return exchange;
     }
-
 }

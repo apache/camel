@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -29,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRefProducerTest extends ManagementTestSupport {
@@ -76,8 +77,12 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
             assertTrue(registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri.equals("direct://start") || uri.equals("ref://foo") || uri.equals("mock://foo")
-                    || uri.equals("mock://result"), uri);
+            assertTrue(
+                    uri.equals("direct://start")
+                            || uri.equals("ref://foo")
+                            || uri.equals("mock://foo")
+                            || uri.equals("mock://result"),
+                    uri);
         }
     }
 
@@ -86,10 +91,8 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("foo")
-                        .to("ref:foo").to("mock:result");
+                from("direct:start").routeId("foo").to("ref:foo").to("mock:result");
             }
         };
     }
-
 }

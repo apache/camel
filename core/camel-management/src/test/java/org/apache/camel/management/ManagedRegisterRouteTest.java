@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRegisterRouteTest extends ManagementTestSupport {
@@ -67,7 +68,8 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // stop the route
-        context.getRouteController().stopRoute(context.getRouteDefinitions().get(0).getId());
+        context.getRouteController()
+                .stopRoute(context.getRouteDefinitions().get(0).getId());
 
         registered = mbeanServer.isRegistered(on);
         assertTrue(registered, "Should be registered");
@@ -82,10 +84,13 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute").routeGroup("myGroup").description("my cool route")
-                        .to("log:foo").to("mock:result");
+                from("direct:start")
+                        .routeId("myRoute")
+                        .routeGroup("myGroup")
+                        .description("my cool route")
+                        .to("log:foo")
+                        .to("mock:result");
             }
         };
     }
-
 }

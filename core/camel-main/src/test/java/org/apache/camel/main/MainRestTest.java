@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.RestConfiguration;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.main;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.RestConfiguration;
+import org.junit.jupiter.api.Test;
 
 public class MainRestTest {
 
@@ -58,5 +59,4 @@ public class MainRestTest {
 
         main.stop();
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.util.List;
@@ -114,5 +115,4 @@ public class SetVariablesProcessor extends BaseProcessorSupport implements Trace
     public List<Expression> getExpressions() {
         return expressions;
     }
-
 }

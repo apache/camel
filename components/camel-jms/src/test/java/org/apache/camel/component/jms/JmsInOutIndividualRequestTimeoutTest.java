@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -34,15 +39,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
 
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -62,9 +64,13 @@ public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
     public void testTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeader("direct:JmsInOutIndividualRequestTimeoutTest", "World",
-                        JmsConstants.JMS_REQUEST_TIMEOUT, 1500L,
+        Exception ex = assertThrows(
+                CamelExecutionException.class,
+                () -> template.requestBodyAndHeader(
+                        "direct:JmsInOutIndividualRequestTimeoutTest",
+                        "World",
+                        JmsConstants.JMS_REQUEST_TIMEOUT,
+                        1500L,
                         String.class),
                 "Should have thrown exception");
 
@@ -78,9 +84,12 @@ public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
     public void testIndividualTimeout() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        String out
-                = template.requestBodyAndHeader("direct:JmsInOutIndividualRequestTimeoutTest", "World",
-                        JmsConstants.JMS_REQUEST_TIMEOUT, 8000L, String.class);
+        String out = template.requestBodyAndHeader(
+                "direct:JmsInOutIndividualRequestTimeoutTest",
+                "World",
+                JmsConstants.JMS_REQUEST_TIMEOUT,
+                8000L,
+                String.class);
         assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
@@ -96,15 +105,20 @@ public class JmsInOutIndividualRequestTimeoutTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:JmsInOutIndividualRequestTimeoutTest")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:queue:JmsInOutIndividualRequestTimeoutTestRequest?replyTo=queue:JmsInOutIndividualRequestTimeoutTestReply&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:JmsInOutIndividualRequestTimeoutTestRequest")
-                        .choice().when(body().isEqualTo("World"))
+                        .choice()
+                        .when(body().isEqualTo("World"))
                         .log("Sleeping for 4 sec to force a timeout")
-                        .delay(Duration.ofSeconds(4).toMillis()).endChoice().end()
-                        .transform(body().prepend("Bye ")).to("log:reply");
+                        .delay(Duration.ofSeconds(4).toMillis())
+                        .endChoice()
+                        .end()
+                        .transform(body().prepend("Bye "))
+                        .to("log:reply");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.model;
 
 import java.util.Map;
@@ -32,11 +33,18 @@ public class CatalogBaseDTO {
     private String gav;
     private boolean deprecated;
 
-    public CatalogBaseDTO() {
-    }
+    public CatalogBaseDTO() {}
 
-    public CatalogBaseDTO(String name, String title, String level, String since, boolean nativeSupported, String description,
-                          String label, String gav, boolean deprecated) {
+    public CatalogBaseDTO(
+            String name,
+            String title,
+            String level,
+            String since,
+            boolean nativeSupported,
+            String description,
+            String label,
+            String gav,
+            boolean deprecated) {
         this.name = name;
         this.title = title;
         this.level = level;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.model.simple.spanLastRecord;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -24,8 +25,10 @@ public class RegexSpanLastRecord {
 
     @DataField(pos = 1)
     private int recordId;
+
     @DataField(pos = 2)
     private String name;
+
     @DataField(pos = 3)
     private String comment;
 
@@ -57,5 +60,4 @@ public class RegexSpanLastRecord {
     public String toString() {
         return "SpanLastRecord [recordId=" + recordId + ", name=" + name + ", comment=" + comment + "]";
     }
-
 }

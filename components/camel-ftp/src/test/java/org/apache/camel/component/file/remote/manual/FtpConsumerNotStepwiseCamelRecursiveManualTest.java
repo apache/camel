@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.manual;
 
 import java.nio.file.Path;
@@ -43,7 +44,8 @@ public class FtpConsumerNotStepwiseCamelRecursiveManualTest extends CamelTestSup
             @Override
             public void configure() {
                 from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true&stepwise=false")
-                        .to(TestSupport.fileUri(testDirectory)).to("mock:result");
+                        .to(TestSupport.fileUri(testDirectory))
+                        .to("mock:result");
             }
         };
     }

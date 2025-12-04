@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb.strategy;
 
 import java.time.Duration;
@@ -51,7 +52,8 @@ public class SmbChangedExclusiveReadLockStrategy
 
     @Override
     public boolean acquireExclusiveReadLock(
-            GenericFileOperations<FileIdBothDirectoryInformation> operations, GenericFile<FileIdBothDirectoryInformation> file,
+            GenericFileOperations<FileIdBothDirectoryInformation> operations,
+            GenericFile<FileIdBothDirectoryInformation> file,
             Exchange exchange) {
 
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
@@ -66,8 +68,11 @@ public class SmbChangedExclusiveReadLockStrategy
 
         SmbExclusiveReadLockCheck exclusiveReadLockCheck = new SmbExclusiveReadLockCheck(minAge, minLength);
 
-        if (!task.run(exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
-            CamelLogger.log(LOG, readLockLoggingLevel,
+        if (!task.run(
+                exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
+            CamelLogger.log(
+                    LOG,
+                    readLockLoggingLevel,
                     "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
 
             return false;
@@ -77,21 +82,24 @@ public class SmbChangedExclusiveReadLockStrategy
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<FileIdBothDirectoryInformation> operations, GenericFile<FileIdBothDirectoryInformation> file,
+            GenericFileOperations<FileIdBothDirectoryInformation> operations,
+            GenericFile<FileIdBothDirectoryInformation> file,
             Exchange exchange) {
         // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<FileIdBothDirectoryInformation> operations, GenericFile<FileIdBothDirectoryInformation> file,
+            GenericFileOperations<FileIdBothDirectoryInformation> operations,
+            GenericFile<FileIdBothDirectoryInformation> file,
             Exchange exchange) {
         // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<FileIdBothDirectoryInformation> operations, GenericFile<FileIdBothDirectoryInformation> file,
+            GenericFileOperations<FileIdBothDirectoryInformation> operations,
+            GenericFile<FileIdBothDirectoryInformation> file,
             Exchange exchange) {
         // noop
     }

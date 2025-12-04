@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -51,9 +52,8 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
         inflightRepository = camelContext.getInflightRepository();
         usedMDCLogging = camelContext.isUseMDCLogging() != null && camelContext.isUseMDCLogging();
         mdcLoggingKeysPattern = camelContext.getMDCLoggingKeysPattern();
-        allowUseOriginalMessage
-                = camelContext.isAllowUseOriginalMessage() != null ? camelContext.isAllowUseOriginalMessage() : false;
+        allowUseOriginalMessage =
+                camelContext.isAllowUseOriginalMessage() != null ? camelContext.isAllowUseOriginalMessage() : false;
         useBreadcrumb = camelContext.isUseBreadcrumb() != null ? camelContext.isUseBreadcrumb() : false;
     }
-
 }

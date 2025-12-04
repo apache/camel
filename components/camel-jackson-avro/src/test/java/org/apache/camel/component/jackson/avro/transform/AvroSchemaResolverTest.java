@@ -41,8 +41,8 @@ class AvroSchemaResolverTest {
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
 
-        Schema raw
-                = new Schema.Parser(NameValidator.UTF_VALIDATOR).parse(this.getClass().getResourceAsStream("Person.avsc"));
+        Schema raw = new Schema.Parser(NameValidator.UTF_VALIDATOR)
+                .parse(this.getClass().getResourceAsStream("Person.avsc"));
         AvroSchema avroSchema = new AvroSchema(raw);
         exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, avroSchema);
         exchange.getMessage().setBody(person);
@@ -61,7 +61,8 @@ class AvroSchemaResolverTest {
 
         exchange.setProperty(SchemaHelper.CONTENT_CLASS, Person.class.getName());
 
-        String schemaString = new String(this.getClass().getResourceAsStream("Person.avsc").readAllBytes());
+        String schemaString =
+                new String(this.getClass().getResourceAsStream("Person.avsc").readAllBytes());
         exchange.setProperty(SchemaHelper.SCHEMA, schemaString);
         exchange.getMessage().setBody(person);
 
@@ -69,7 +70,9 @@ class AvroSchemaResolverTest {
         schemaResolver.process(exchange);
 
         Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
-        Assertions.assertEquals(AvroSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(
+                AvroSchema.class,
+                exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.AVRO.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
     }
@@ -85,7 +88,9 @@ class AvroSchemaResolverTest {
         schemaResolver.process(exchange);
 
         Assertions.assertNotNull(exchange.getProperty(SchemaHelper.CONTENT_SCHEMA));
-        Assertions.assertEquals(AvroSchema.class, exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
+        Assertions.assertEquals(
+                AvroSchema.class,
+                exchange.getProperty(SchemaHelper.CONTENT_SCHEMA).getClass());
         Assertions.assertEquals(SchemaType.AVRO.type(), exchange.getProperty(SchemaHelper.CONTENT_SCHEMA_TYPE));
         Assertions.assertEquals(Person.class.getName(), exchange.getProperty(SchemaHelper.CONTENT_CLASS));
     }

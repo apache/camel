@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2.client;
 
 import org.apache.camel.component.aws2.ec2.AWS2EC2Configuration;
@@ -27,8 +28,7 @@ import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientStandardImpl
  */
 public final class AWS2EC2ClientFactory {
 
-    private AWS2EC2ClientFactory() {
-    }
+    private AWS2EC2ClientFactory() {}
 
     /**
      * Return the correct AWS EC2 client (based on remote vs local).

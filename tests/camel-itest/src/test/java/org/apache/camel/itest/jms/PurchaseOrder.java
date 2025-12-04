@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.jms;
 
 import java.io.Serializable;
@@ -29,10 +30,13 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PurchaseOrder implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @XmlAttribute
     private String name;
+
     @XmlAttribute
     private double price;
+
     @XmlAttribute
     private double amount;
 
@@ -45,7 +49,8 @@ public class PurchaseOrder implements Serializable {
     public boolean equals(Object o) {
         if (o instanceof PurchaseOrder) {
             PurchaseOrder that = (PurchaseOrder) o;
-            return ObjectHelper.equal(this.name, that.name) && ObjectHelper.equal(this.amount, that.amount)
+            return ObjectHelper.equal(this.name, that.name)
+                    && ObjectHelper.equal(this.amount, that.amount)
                     && ObjectHelper.equal(this.price, that.price);
         }
         return false;
@@ -79,5 +84,4 @@ public class PurchaseOrder implements Serializable {
     public void setPrice(double price) {
         this.price = price;
     }
-
 }

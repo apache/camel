@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Map;
 
@@ -26,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test of bean can propagate headers in a pipeline
@@ -49,7 +50,9 @@ public class BeanPipelineTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:input").pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz").to("mock:result");
+                from("direct:input")
+                        .pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz")
+                        .to("mock:result");
             }
         };
     }

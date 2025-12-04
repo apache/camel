@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import java.io.IOException;
@@ -49,8 +50,7 @@ public class EhcacheComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private EhcacheConfiguration configuration = new EhcacheConfiguration();
 
-    public EhcacheComponent() {
-    }
+    public EhcacheComponent() {}
 
     public EhcacheComponent(CamelContext context) {
         super(context);
@@ -76,10 +76,7 @@ public class EhcacheComponent extends DefaultComponent {
 
             return managers.computeIfAbsent(
                     configuration.getCacheManager(),
-                    m -> new EhcacheManager(
-                            CacheManager.class.cast(m),
-                            false,
-                            configuration));
+                    m -> new EhcacheManager(CacheManager.class.cast(m), false, configuration));
         }
 
         // Check if a cache manager configuration has been provided
@@ -89,9 +86,7 @@ public class EhcacheComponent extends DefaultComponent {
             return managers.computeIfAbsent(
                     configuration.getCacheManagerConfiguration(),
                     c -> new EhcacheManager(
-                            CacheManagerBuilder.newCacheManager(Configuration.class.cast(c)),
-                            true,
-                            configuration));
+                            CacheManagerBuilder.newCacheManager(Configuration.class.cast(c)), true, configuration));
         }
 
         // Check if a configuration file has been provided

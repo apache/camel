@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.HashMap;
@@ -43,8 +44,7 @@ import org.apache.camel.util.function.Suppliers;
  */
 public final class BeanModelHelper {
 
-    private BeanModelHelper() {
-    }
+    private BeanModelHelper() {}
 
     /**
      * Creates a new bean.
@@ -146,8 +146,7 @@ public final class BeanModelHelper {
      * @param  routeTemplateContext the context into which the bean factory should be bound.
      * @throws Exception            if an error occurs while trying to bind the bean factory
      */
-    public static void bind(BeanFactoryDefinition<?> def, RouteTemplateContext routeTemplateContext)
-            throws Exception {
+    public static void bind(BeanFactoryDefinition<?> def, RouteTemplateContext routeTemplateContext) throws Exception {
 
         final Map<String, Object> props = new HashMap<>();
         if (def.getProperties() != null) {
@@ -200,8 +199,7 @@ public final class BeanModelHelper {
                             routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
                         }
                     } catch (Exception e) {
-                        throw new IllegalStateException(
-                                "Cannot create bean: " + def.getType(), e);
+                        throw new IllegalStateException("Cannot create bean: " + def.getType(), e);
                     }
                     return local;
                 }));
@@ -234,8 +232,7 @@ public final class BeanModelHelper {
                             return null;
                         }
                     } catch (Exception e) {
-                        throw new IllegalStateException(
-                                "Cannot create bean: " + def.getType(), e);
+                        throw new IllegalStateException("Cannot create bean: " + def.getType(), e);
                     }
                 }));
             }
@@ -290,15 +287,14 @@ public final class BeanModelHelper {
                     }
                     return local;
                 } catch (Exception e) {
-                    throw new IllegalStateException(
-                            "Cannot create bean: " + def.getType(), e);
+                    throw new IllegalStateException("Cannot create bean: " + def.getType(), e);
                 }
             }));
         } else {
             // invalid syntax for the local bean, so lets report an exception
             throw new IllegalArgumentException(
                     "Route template local bean: " + def.getName() + " has invalid type syntax: " + def.getType()
-                                               + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
+                            + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
         }
     }
 

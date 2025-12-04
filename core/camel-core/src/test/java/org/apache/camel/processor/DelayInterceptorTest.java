@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Delay interceptor unit test.
@@ -52,13 +53,14 @@ public class DelayInterceptorTest extends ContextTestSupport {
 
                 // regular routes here
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // do nothing
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // do nothing
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

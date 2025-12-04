@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.task.task;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
@@ -25,10 +30,6 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
 
@@ -53,7 +54,8 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         assertFalse(completed, "The task did not complete, the return should be false");
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a supplier and initial delay")
+    @DisplayName(
+            "Test that the task does not run for more than the max iterations when using a supplier and initial delay")
     @Test
     @Timeout(10)
     void testRunNoMoreSupplierWithDelay() {
@@ -72,7 +74,8 @@ public class BackgroundIterationTimeTaskTest extends TaskTestSupport {
         assertFalse(completed, "The task did not complete, the return should be false");
     }
 
-    @DisplayName("Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
+    @DisplayName(
+            "Test that the task does not run for more than the max iterations when using a predicate and an initial delay")
     @Test
     @Timeout(10)
     void testRunNoMorePredicate() {

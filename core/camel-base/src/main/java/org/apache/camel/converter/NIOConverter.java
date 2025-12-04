@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter;
+
+import static org.apache.camel.util.BufferCaster.cast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,8 +34,6 @@ import org.apache.camel.ExchangePropertyKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.BufferCaster.cast;
-
 /**
  * Some core java.nio based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
@@ -44,8 +45,7 @@ public final class NIOConverter {
     /**
      * Utility classes should not have a public constructor.
      */
-    private NIOConverter() {
-    }
+    private NIOConverter() {}
 
     @Converter(order = 1)
     public static byte[] toByteArray(ByteBuffer buffer) {
@@ -80,8 +80,7 @@ public final class NIOConverter {
         if (length > Integer.MAX_VALUE) {
             // very big file we cannot load into memory
             throw new IOException(
-                    "Cannot convert file: " + file + " to ByteBuffer. The file length is too large: "
-                                  + length);
+                    "Cannot convert file: " + file + " to ByteBuffer. The file length is too large: " + length);
         }
         return ByteBuffer.wrap(Files.readAllBytes(file));
     }
@@ -149,5 +148,4 @@ public final class NIOConverter {
     public static InputStream toInputStream(ByteBuffer bufferbuffer) {
         return IOConverter.toInputStream(toByteArray(bufferbuffer));
     }
-
 }

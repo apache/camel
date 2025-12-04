@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc.server;
 
 import java.util.Map;
@@ -25,8 +26,11 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
 
 public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStreamObserver {
 
-    public GrpcRequestDelegationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
-                                               StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    public GrpcRequestDelegationStreamObserver(
+            GrpcEndpoint endpoint,
+            GrpcConsumer consumer,
+            StreamObserver<Object> responseObserver,
+            Map<String, Object> headers) {
         super(endpoint, consumer, responseObserver, headers);
         if (!endpoint.getConfiguration().isRouteControlledStreamObserver()) {
             throw new IllegalStateException(
@@ -40,8 +44,7 @@ public class GrpcRequestDelegationStreamObserver extends GrpcRequestAbstractStre
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
         exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
-        consumer.process(exchange, doneSync -> {
-        });
+        consumer.process(exchange, doneSync -> {});
     }
 
     @Override

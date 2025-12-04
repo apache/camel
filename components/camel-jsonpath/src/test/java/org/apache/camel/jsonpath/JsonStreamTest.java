@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,10 +27,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JsonStreamTest {
 
@@ -36,8 +37,8 @@ public class JsonStreamTest {
 
     @Test
     public void iSO88591() {
-        AssertionError error = assertThrows(AssertionError.class, () -> test("json_stream/jsonISO8859-1.txt", "ISO-8859-1"),
-                "Error expected");
+        AssertionError error = assertThrows(
+                AssertionError.class, () -> test("json_stream/jsonISO8859-1.txt", "ISO-8859-1"), "Error expected");
         assertEquals("expected: <ISO-8859-1> but was: <UTF-8>", error.getMessage());
     }
 
@@ -97,7 +98,8 @@ public class JsonStreamTest {
     }
 
     private void test(String file, String encoding) throws Exception {
-        test(file,
+        test(
+                file,
                 encoding,
                 "{ \"a\": \"1\", \"b\": \"2\", \"c\": { \"a\": \"c.a.1\", \"b\": \"c.b.2\" }, \"d\": [\"a\", \"b\", \"c\"], \"e\": [1, 2, 3], \"f\": true, \"g\": null}");
     }

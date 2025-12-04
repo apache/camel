@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.FooBar;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FromRestConfigurationTest extends FromRestGetTest {
 
@@ -39,13 +40,20 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
         assertEquals("localhost", context.getRestConfiguration().getHost());
         assertEquals(9090, context.getRestConfiguration().getPort());
-        assertEquals("bar", context.getRestConfiguration().getComponentProperties().get("foo"));
-        assertEquals("stuff", context.getRestConfiguration().getComponentProperties().get("other"));
-        assertEquals("200", context.getRestConfiguration().getEndpointProperties().get("size"));
-        assertEquals("1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
-        assertEquals("#myDummy", context.getRestConfiguration().getConsumerProperties().get("dummy"));
+        assertEquals(
+                "bar", context.getRestConfiguration().getComponentProperties().get("foo"));
+        assertEquals(
+                "stuff", context.getRestConfiguration().getComponentProperties().get("other"));
+        assertEquals(
+                "200", context.getRestConfiguration().getEndpointProperties().get("size"));
+        assertEquals(
+                "1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
+        assertEquals(
+                "#myDummy",
+                context.getRestConfiguration().getConsumerProperties().get("dummy"));
 
-        DummyRestConsumerFactory factory = (DummyRestConsumerFactory) context.getRegistry().lookupByName("dummy-rest");
+        DummyRestConsumerFactory factory =
+                (DummyRestConsumerFactory) context.getRegistry().lookupByName("dummy-rest");
 
         Object dummy = context.getRegistry().lookupByName("myDummy");
         assertSame(dummy, factory.getDummy());
@@ -56,9 +64,14 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("dummy-rest").host("localhost").port(9090).componentProperty("foo", "bar")
+                restConfiguration()
+                        .component("dummy-rest")
+                        .host("localhost")
+                        .port(9090)
+                        .componentProperty("foo", "bar")
                         .componentProperty("other", "stuff")
-                        .endpointProperty("size", "200").consumerProperty("pollTimeout", "1000")
+                        .endpointProperty("size", "200")
+                        .consumerProperty("pollTimeout", "1000")
                         .consumerProperty("dummy", "#myDummy");
 
                 rest("/say/hello").get().to("log:hello");

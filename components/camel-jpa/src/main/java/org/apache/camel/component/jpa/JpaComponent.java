@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jpa;
 
 import java.util.HashMap;
@@ -43,12 +44,16 @@ public class JpaComponent extends HealthCheckComponent {
 
     @Metadata(autowired = true)
     private EntityManagerFactory entityManagerFactory;
+
     @Metadata
     private TransactionStrategy transactionStrategy;
+
     @Metadata(defaultValue = "true")
     private boolean joinTransaction = true;
+
     @Metadata
     private boolean sharedEntityManager;
+
     @Metadata
     private Map<String, Class<?>> aliases = new HashMap<>();
 
@@ -57,7 +62,7 @@ public class JpaComponent extends HealthCheckComponent {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
     }
@@ -126,8 +131,8 @@ public class JpaComponent extends HealthCheckComponent {
         try {
             if (pollingConsumerExecutorService == null) {
                 LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
-                pollingConsumerExecutorService
-                        = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
+                pollingConsumerExecutorService =
+                        getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
             }
             return pollingConsumerExecutorService;
         } finally {
@@ -136,7 +141,7 @@ public class JpaComponent extends HealthCheckComponent {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected Endpoint createEndpoint(String uri, String path, Map<String, Object> options) throws Exception {

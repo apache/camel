@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,22 +29,19 @@ import org.infinispan.protostream.sampledomain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InfinispanEmbeddedQueryConsumerTest extends InfinispanEmbeddedQueryTestSupport {
 
     @BindToRegistry("continuousQueryBuilder")
-    private InfinispanQueryBuilder continuousQueryBuilder = InfinispanQueryBuilder.create(
-            "FROM org.infinispan.protostream.sampledomain.User WHERE name like 'CQ%'");
+    private InfinispanQueryBuilder continuousQueryBuilder =
+            InfinispanQueryBuilder.create("FROM org.infinispan.protostream.sampledomain.User WHERE name like 'CQ%'");
 
     @BindToRegistry("continuousQueryBuilderNoMatch")
-    private InfinispanQueryBuilder continuousQueryBuilderNoMatch = InfinispanQueryBuilder.create(
-            "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%TEST%'");
+    private InfinispanQueryBuilder continuousQueryBuilderNoMatch =
+            InfinispanQueryBuilder.create("FROM org.infinispan.protostream.sampledomain.User WHERE name like '%TEST%'");
 
     @BindToRegistry("continuousQueryBuilderAll")
-    private InfinispanQueryBuilder continuousQueryBuilderAll = InfinispanQueryBuilder.create(
-            "FROM org.infinispan.protostream.sampledomain.User WHERE name like '%Q0%'");
+    private InfinispanQueryBuilder continuousQueryBuilderAll =
+            InfinispanQueryBuilder.create("FROM org.infinispan.protostream.sampledomain.User WHERE name like '%Q0%'");
 
     // *****************************
     //
@@ -58,29 +59,33 @@ public class InfinispanEmbeddedQueryConsumerTest extends InfinispanEmbeddedQuery
         continuousQuery.expectedMessageCount(4);
 
         for (int i = 0; i < 4; i++) {
-            continuousQuery.message(i)
-                    .header(InfinispanConstants.KEY)
-                    .isEqualTo(createKey(CQ_USERS[i % 2]));
+            continuousQuery.message(i).header(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
 
             continuousQuery
                     .message(i)
-                    .header(InfinispanConstants.CACHE_NAME).isEqualTo(getCache().getName());
+                    .header(InfinispanConstants.CACHE_NAME)
+                    .isEqualTo(getCache().getName());
 
             if (i >= 2) {
-                continuousQuery.message(i)
+                continuousQuery
+                        .message(i)
                         .header(InfinispanConstants.EVENT_TYPE)
                         .isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
-                continuousQuery.message(i)
+                continuousQuery
+                        .message(i)
                         .header(InfinispanConstants.EVENT_DATA)
                         .isNull();
             } else {
-                continuousQuery.message(i)
+                continuousQuery
+                        .message(i)
                         .header(InfinispanConstants.EVENT_TYPE)
                         .isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
-                continuousQuery.message(i)
+                continuousQuery
+                        .message(i)
                         .header(InfinispanConstants.EVENT_DATA)
                         .isNotNull();
-                continuousQuery.message(i)
+                continuousQuery
+                        .message(i)
                         .header(InfinispanConstants.EVENT_DATA)
                         .isInstanceOf(User.class);
             }

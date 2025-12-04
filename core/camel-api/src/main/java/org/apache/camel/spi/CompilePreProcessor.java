@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
@@ -38,5 +39,4 @@ public interface CompilePreProcessor {
      * @throws Exception    is thrown if error during post-processing
      */
     void preCompile(CamelContext camelContext, String name, String code) throws Exception;
-
 }

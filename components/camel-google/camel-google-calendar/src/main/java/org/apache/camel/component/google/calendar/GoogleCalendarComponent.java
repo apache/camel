@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.calendar;
 
 import com.google.api.services.calendar.Calendar;
@@ -31,8 +32,10 @@ public class GoogleCalendarComponent
 
     @Metadata
     GoogleCalendarConfiguration configuration;
+
     @Metadata(label = "advanced")
     private Calendar client;
+
     @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
 
@@ -51,15 +54,30 @@ public class GoogleCalendarComponent
 
     public Calendar getClient(GoogleCalendarConfiguration config) {
         if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(),
-                        config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(),
-                        config.getApplicationName(), config.getDelegate());
+            if (config.getClientId() != null
+                    && !config.getClientId().isBlank()
+                    && config.getClientSecret() != null
+                    && !config.getClientSecret().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                config.getClientId(),
+                                config.getClientSecret(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getRefreshToken(),
+                                config.getAccessToken(),
+                                config.getEmailAddress(),
+                                config.getP12FileName(),
+                                config.getUser());
+            } else if (config.getServiceAccountKey() != null
+                    && !config.getServiceAccountKey().isBlank()) {
+                client = getClientFactory()
+                        .makeClient(
+                                getCamelContext(),
+                                config.getServiceAccountKey(),
+                                config.getScopesAsList(),
+                                config.getApplicationName(),
+                                config.getDelegate());
             } else {
                 throw new IllegalArgumentException(
                         "(clientId and clientSecret) or serviceAccountKey are required to create Google Calendar client");
@@ -101,7 +119,9 @@ public class GoogleCalendarComponent
 
     @Override
     protected Endpoint createEndpoint(
-            String uri, String methodName, GoogleCalendarApiName apiName,
+            String uri,
+            String methodName,
+            GoogleCalendarApiName apiName,
             GoogleCalendarConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);

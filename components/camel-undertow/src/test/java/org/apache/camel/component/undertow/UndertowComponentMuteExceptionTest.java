@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -24,9 +28,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class UndertowComponentMuteExceptionTest extends BaseUndertowTest {
 
     @Test
@@ -34,7 +35,7 @@ public class UndertowComponentMuteExceptionTest extends BaseUndertowTest {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/mute");
         get.addHeader("Accept", "application/text");
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(get)) {
+                CloseableHttpResponse response = httpClient.execute(get)) {
 
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             assertNotNull(responseString);
@@ -50,7 +51,7 @@ public class UndertowComponentMuteExceptionTest extends BaseUndertowTest {
         get.addHeader("Accept", "application/text");
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(get)) {
+                CloseableHttpResponse response = httpClient.execute(get)) {
 
             String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
             assertNotNull(responseString);
@@ -68,14 +69,14 @@ public class UndertowComponentMuteExceptionTest extends BaseUndertowTest {
                 UndertowComponent uc = context.getComponent("undertow", UndertowComponent.class);
                 uc.setMuteException(true);
 
-                from("undertow:http://localhost:" + getPort() + "/test/mute").to("mock:input")
+                from("undertow:http://localhost:" + getPort() + "/test/mute")
+                        .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
 
-                from("undertow:http://localhost:" + getPort()
-                     + "/test/muteWithTransfer?transferException=true").to("mock:input")
+                from("undertow:http://localhost:" + getPort() + "/test/muteWithTransfer?transferException=true")
+                        .to("mock:input")
                         .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.zipfile;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
@@ -30,14 +33,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ZipSplitAggregateTransactedStreamingIssueTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZipSplitAggregateTransactedStreamingIssueTest.class);
 
-    String zipArchiveWithTwoFiles
-            = "UEsDBBQAAAAIAFlrtFDFAfecUAAAAB4BAAALAAAAT3JkZXJzMS54bWyzyS9KSS0qtuPl4oQwQSxOm8wUOxMb/cwUCK+gKD+lNLkEzOG0yUvMTbWDCik42uiD+WB1+kgKbfThxqEZbEqUwU6kG2xGlMHOhA2GsortAFBLAwQUAAAACABBW9hQgBf0tVgAAAAqAQAACwAAAE9yZGVyczIueG1ss8kvSkktKrbj5eKEMEEsTpvMFDtDQ0Mb/cwUCL+gKD+lNLkEzOG0yUvMTbWDCimA1YFFwCr1kZTa6MONRDPcyMiIKMPB6kg13NjYmCjDweoIGQ5lFdsBAFBLAQIfABQAAAAIAFlrtFDFAfecUAAAAB4BAAALACQAAAAAAAAAIAAAAAAAAABPcmRlcnMxLnhtbAoAIAAAAAAAAQAYAAD57I2ZLtYBg97kuHn02gEA+eyNmS7WAVBLAQIfABQAAAAIAEFb2FCAF/S1WAAAACoBAAALACQAAAAAAAAAIAAAAHkAAABPcmRlcnMyLnhtbAoAIAAAAAAAAQAYAAAxPXoJStYBjn3iuHn02gEAMT16CUrWAVBLBQYAAAAAAgACALoAAAD6AAAAAAA=";
+    String zipArchiveWithTwoFiles =
+            "UEsDBBQAAAAIAFlrtFDFAfecUAAAAB4BAAALAAAAT3JkZXJzMS54bWyzyS9KSS0qtuPl4oQwQSxOm8wUOxMb/cwUCK+gKD+lNLkEzOG0yUvMTbWDCik42uiD+WB1+kgKbfThxqEZbEqUwU6kG2xGlMHOhA2GsortAFBLAwQUAAAACABBW9hQgBf0tVgAAAAqAQAACwAAAE9yZGVyczIueG1ss8kvSkktKrbj5eKEMEEsTpvMFDtDQ0Mb/cwUCL+gKD+lNLkEzOG0yUvMTbWDCimA1YFFwCr1kZTa6MONRDPcyMiIKMPB6kg13NjYmCjDweoIGQ5lFdsBAFBLAQIfABQAAAAIAFlrtFDFAfecUAAAAB4BAAALACQAAAAAAAAAIAAAAAAAAABPcmRlcnMxLnhtbAoAIAAAAAAAAQAYAAD57I2ZLtYBg97kuHn02gEA+eyNmS7WAVBLAQIfABQAAAAIAEFb2FCAF/S1WAAAACoBAAALACQAAAAAAAAAIAAAAHkAAABPcmRlcnMyLnhtbAoAIAAAAAAAAQAYAAAxPXoJStYBjn3iuHn02gEAMT16CUrWAVBLBQYAAAAAAgACALoAAAD6AAAAAAA=";
 
     @Test
     public void testIfAllSplitsAggregated() throws Exception {
@@ -76,12 +77,18 @@ public class ZipSplitAggregateTransactedStreamingIssueTest extends CamelTestSupp
                 getContext().getRegistry().bind("transacted", springTransactionPolicy);
                 getContext().getRegistry().bind("zipSplitter", new ZipSplitter());
 
-                from("direct:start").streamCache(true)
+                from("direct:start")
+                        .streamCache(true)
                         .transacted("transacted")
-                        .setBody().simple(zipArchiveWithTwoFiles)
-                        .unmarshal().base64()
-                        .split().ref("zipSplitter").streaming().aggregationStrategy(new StringAggregationStrategy())
-                            .log("Splitting ${header.CamelFileName}")
+                        .setBody()
+                        .simple(zipArchiveWithTwoFiles)
+                        .unmarshal()
+                        .base64()
+                        .split()
+                        .ref("zipSplitter")
+                        .streaming()
+                        .aggregationStrategy(new StringAggregationStrategy())
+                        .log("Splitting ${header.CamelFileName}")
                         .end()
                         .to("mock:result");
             }

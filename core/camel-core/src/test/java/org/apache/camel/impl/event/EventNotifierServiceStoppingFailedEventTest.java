@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.event;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +28,6 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupport {
 
@@ -84,8 +85,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         }
 
         @Override
-        public void start() {
-        }
+        public void start() {}
 
         @Override
         public void stop() {
@@ -101,5 +101,4 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
             return name;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ibm.watson.discovery;
 
 import java.io.InputStream;
@@ -71,8 +72,8 @@ public class WatsonDiscoveryProducer extends DefaultProducer {
     }
 
     private WatsonDiscoveryOperations determineOperation(Exchange exchange) {
-        WatsonDiscoveryOperations operation
-                = exchange.getIn().getHeader(WatsonDiscoveryConstants.OPERATION, WatsonDiscoveryOperations.class);
+        WatsonDiscoveryOperations operation =
+                exchange.getIn().getHeader(WatsonDiscoveryConstants.OPERATION, WatsonDiscoveryOperations.class);
 
         if (operation == null) {
             operation = getEndpoint().getConfiguration().getOperation();
@@ -100,9 +101,8 @@ public class WatsonDiscoveryProducer extends DefaultProducer {
 
         LOG.trace("Executing query: {}", queryText);
 
-        QueryOptions.Builder builder = new QueryOptions.Builder()
-                .projectId(projectId)
-                .naturalLanguageQuery(queryText);
+        QueryOptions.Builder builder =
+                new QueryOptions.Builder().projectId(projectId).naturalLanguageQuery(queryText);
 
         // Optional parameters
         Integer count = exchange.getIn().getHeader(WatsonDiscoveryConstants.COUNT, Integer.class);
@@ -135,11 +135,11 @@ public class WatsonDiscoveryProducer extends DefaultProducer {
 
         LOG.trace("Listing collections for project: {}", projectId);
 
-        ListCollectionsOptions options = new ListCollectionsOptions.Builder()
-                .projectId(projectId)
-                .build();
+        ListCollectionsOptions options =
+                new ListCollectionsOptions.Builder().projectId(projectId).build();
 
-        ListCollectionsResponse result = discovery.listCollections(options).execute().getResult();
+        ListCollectionsResponse result =
+                discovery.listCollections(options).execute().getResult();
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
@@ -156,16 +156,16 @@ public class WatsonDiscoveryProducer extends DefaultProducer {
 
         LOG.trace("Creating collection: {}", name);
 
-        CreateCollectionOptions.Builder builder = new CreateCollectionOptions.Builder()
-                .projectId(projectId)
-                .name(name);
+        CreateCollectionOptions.Builder builder =
+                new CreateCollectionOptions.Builder().projectId(projectId).name(name);
 
         String description = exchange.getIn().getHeader(WatsonDiscoveryConstants.COLLECTION_DESCRIPTION, String.class);
         if (description != null) {
             builder.description(description);
         }
 
-        CollectionDetails result = discovery.createCollection(builder.build()).execute().getResult();
+        CollectionDetails result =
+                discovery.createCollection(builder.build()).execute().getResult();
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
@@ -328,7 +328,8 @@ public class WatsonDiscoveryProducer extends DefaultProducer {
                 .documentId(documentId)
                 .build();
 
-        DeleteDocumentResponse result = discovery.deleteDocument(options).execute().getResult();
+        DeleteDocumentResponse result =
+                discovery.deleteDocument(options).execute().getResult();
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);

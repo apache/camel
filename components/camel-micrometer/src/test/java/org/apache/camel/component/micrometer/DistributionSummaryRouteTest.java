@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
+
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -33,11 +39,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_HISTOGRAM_VALUE;
-import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringTest
 public class DistributionSummaryRouteTest extends CamelSpringTestSupport {
@@ -64,9 +65,7 @@ public class DistributionSummaryRouteTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in-1")
-                        .to("micrometer:summary:A?value=332491")
-                        .to("mock:out");
+                from("direct:in-1").to("micrometer:summary:A?value=332491").to("mock:out");
                 from("direct:in-2")
                         .to("micrometer:summary:${body}?value=${header.nextValue}")
                         .to("mock:out");

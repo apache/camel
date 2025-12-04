@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.services;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class MockCommitService extends CommitService {
 
     public synchronized RepositoryCommit addRepositoryCommit(String message) {
         User author = new User();
-        author.setEmail("someguy@gmail.com");       // TODO change
+        author.setEmail("someguy@gmail.com"); // TODO change
         author.setHtmlUrl("http://github/someguy");
         author.setLogin("someguy");
 
@@ -77,9 +78,7 @@ public class MockCommitService extends CommitService {
     }
 
     @Override
-    public CommitStatus createStatus(
-            IRepositoryIdProvider repository,
-            String sha, CommitStatus status) {
+    public CommitStatus createStatus(IRepositoryIdProvider repository, String sha, CommitStatus status) {
         commitStatus.put(sha, status);
 
         return status;

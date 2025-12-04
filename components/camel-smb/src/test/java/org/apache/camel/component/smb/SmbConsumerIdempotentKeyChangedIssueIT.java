@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ public class SmbConsumerIdempotentKeyChangedIssueIT extends SmbServerTestSupport
     protected String getSmbUrl() {
         return String.format(
                 "smb:%s/%s/idempotentkey?username=%s&password=%s&readLock=changed&idempotent=true"
-                             + "&idempotentKey=${file:onlyname}-${file:size}",
+                        + "&idempotentKey=${file:onlyname}-${file:size}",
                 service.address(), service.shareName(), service.userName(), service.password());
     }
 
@@ -51,8 +52,14 @@ public class SmbConsumerIdempotentKeyChangedIssueIT extends SmbServerTestSupport
         MockEndpoint.resetMocks(context);
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World Again");
 
-        template.sendBodyAndHeaders(endpoint, "Hello World Again", Map.of(Exchange.FILE_NAME, "hello.txt",
-                SmbConstants.SMB_FILE_EXISTS, GenericFileExist.Override.name()));
+        template.sendBodyAndHeaders(
+                endpoint,
+                "Hello World Again",
+                Map.of(
+                        Exchange.FILE_NAME,
+                        "hello.txt",
+                        SmbConstants.SMB_FILE_EXISTS,
+                        GenericFileExist.Override.name()));
 
         MockEndpoint.assertIsSatisfied(context);
     }

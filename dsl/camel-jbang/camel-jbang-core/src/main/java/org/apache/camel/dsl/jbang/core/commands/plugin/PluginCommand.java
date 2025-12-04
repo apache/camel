@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "plugin",
-                     description = "Manage plugins that add sub-commands to this CLI.")
+@CommandLine.Command(name = "plugin", description = "Manage plugins that add sub-commands to this CLI.")
 public class PluginCommand extends PluginBaseCommand {
 
     public PluginCommand(CamelJBangMain main) {

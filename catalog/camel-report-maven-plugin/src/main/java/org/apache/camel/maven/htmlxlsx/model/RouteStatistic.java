@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.List;
@@ -108,14 +109,13 @@ public class RouteStatistic {
     @Override
     public String toString() {
 
-        return "RouteStatistic{" +
-               "id='" + id + '\'' +
-               ", totalEips=" + totalEips +
-               ", totalEipsTested=" + totalEipsTested +
-               ", totalProcessingTime=" + totalProcessingTime +
-               ", coverage=" + coverage +
-               ", totalEipsInitialized=" + totalEipsInitialized +
-               ", eipStatisticMap=" + eipStatisticMap +
-               '}';
+        return "RouteStatistic{" + "id='"
+                + id + '\'' + ", totalEips="
+                + totalEips + ", totalEipsTested="
+                + totalEipsTested + ", totalProcessingTime="
+                + totalProcessingTime + ", coverage="
+                + coverage + ", totalEipsInitialized="
+                + totalEipsInitialized + ", eipStatisticMap="
+                + eipStatisticMap + '}';
     }
 }

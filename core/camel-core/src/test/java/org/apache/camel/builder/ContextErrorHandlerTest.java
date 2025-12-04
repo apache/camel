@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -30,10 +35,6 @@ import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
@@ -114,7 +115,8 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
 
             Channel channel = unwrapChannel(processor);
             assertNotNull(channel, "The channel should not be null");
-            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
+            DeadLetterChannel deadLetterChannel =
+                    assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
 
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
@@ -122,5 +124,4 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             assertTrue(redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dropbox.integration.producer;
 
 import java.util.Map;
@@ -46,8 +47,8 @@ public class DropboxPutProducer extends DropboxProducer {
 
         DropboxConfigurationValidator.validatePutOp(localPath, remotePath, uploadMode);
 
-        DropboxFileUploadResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .put(localPath, remotePath, uploadMode);
+        DropboxFileUploadResult result =
+                new DropboxAPIFacade(configuration.getClient(), exchange).put(localPath, remotePath, uploadMode);
 
         Map<String, DropboxResultCode> map = result.getResults();
         if (map.size() == 1) {
@@ -69,5 +70,4 @@ public class DropboxPutProducer extends DropboxProducer {
             LOG.debug("Uploaded: {}", result);
         }
     }
-
 }

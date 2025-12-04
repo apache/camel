@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,8 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
                 onException(Exception.class).handled(true).to("mock:exception");
 
                 from("direct:start")
-                        .throwException(new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
+                        .throwException(
+                                new MyUnmarshalException("Could not unmarshal", new IllegalArgumentException("Damn")));
             }
         };
     }
@@ -54,6 +56,5 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
         private MyUnmarshalException(String message, Throwable cause) {
             super(message, cause);
         }
-
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.nio.file.Files;
@@ -23,8 +24,11 @@ import java.util.Map;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays running service(s) information", sortOptions = false,
-                     showDefaultValues = true)
+@CommandLine.Command(
+        name = "get",
+        description = "Displays running service(s) information",
+        sortOptions = false,
+        showDefaultValues = true)
 public class InfraGet extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")

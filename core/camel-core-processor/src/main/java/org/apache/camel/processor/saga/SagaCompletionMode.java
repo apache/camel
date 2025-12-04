@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 /**
@@ -34,5 +35,4 @@ public enum SagaCompletionMode {
     public static SagaCompletionMode defaultCompletionMode() {
         return AUTO;
     }
-
 }

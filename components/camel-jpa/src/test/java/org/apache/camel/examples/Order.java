@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.examples;
 
 import jakarta.persistence.Entity;
@@ -26,6 +27,7 @@ public class Order {
 
     @Id
     private Long id;
+
     private String productName;
     private String productSku;
     private Integer quantity;

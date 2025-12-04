@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
@@ -61,12 +62,19 @@ public class OnExceptionRouteScopedErrorHandlerRefIssueTwoRoutesTest extends Con
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").errorHandler("myDLC").to("mock:foo")
+                from("direct:foo")
+                        .errorHandler("myDLC")
+                        .to("mock:foo")
                         .throwException(new IllegalArgumentException("Damn Foo"));
 
-                from("direct:start").errorHandler("myDLC")
-                        .onException(IllegalArgumentException.class).handled(true).to("mock:handled").end()
-                        .to("mock:a").throwException(new IllegalArgumentException("Damn"));
+                from("direct:start")
+                        .errorHandler("myDLC")
+                        .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .to("mock:handled")
+                        .end()
+                        .to("mock:a")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

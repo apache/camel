@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.namespaces;
+
+import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
-
 public class KubernetesNamespacesProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesNamespacesProducer.class);
@@ -56,7 +57,6 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
 
         switch (operation) {
-
             case KubernetesOperations.LIST_NAMESPACE_OPERATION:
                 doList(exchange);
                 break;
@@ -87,19 +87,25 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        NamespaceList namespacesList = getEndpoint().getKubernetesClient().namespaces().list();
+        NamespaceList namespacesList =
+                getEndpoint().getKubernetesClient().namespaces().list();
 
         prepareOutboundMessage(exchange, namespacesList.getItems());
     }
 
     protected void doListNamespaceByLabel(Exchange exchange) {
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
             LOG.error("Get a specific namespace by labels require specify a labels set");
             throw new IllegalArgumentException("Get a specific namespace by labels require specify a labels set");
         }
 
-        NamespaceList namespace = getEndpoint().getKubernetesClient().namespaces().withLabels(labels).list();
+        NamespaceList namespace = getEndpoint()
+                .getKubernetesClient()
+                .namespaces()
+                .withLabels(labels)
+                .list();
 
         prepareOutboundMessage(exchange, namespace.getItems());
     }
@@ -110,7 +116,11 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             LOG.error("Get a specific namespace require specify a namespace name");
             throw new IllegalArgumentException("Get a specific namespace require specify a namespace name");
         }
-        Namespace namespace = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).get();
+        Namespace namespace = getEndpoint()
+                .getKubernetesClient()
+                .namespaces()
+                .withName(namespaceName)
+                .get();
 
         prepareOutboundMessage(exchange, namespace);
     }
@@ -131,17 +141,29 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     String.format("%s a specific namespace require specify a namespace name", operationName));
         }
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
-        HashMap<String, String> annotations
-                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_ANNOTATIONS, HashMap.class);
+        Map<String, String> labels =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, Map.class);
+        HashMap<String, String> annotations =
+                exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_ANNOTATIONS, HashMap.class);
         Namespace ns;
         if (ObjectHelper.isEmpty(annotations)) {
-            ns = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels).endMetadata().build();
+            ns = new NamespaceBuilder()
+                    .withNewMetadata()
+                    .withName(namespaceName)
+                    .withLabels(labels)
+                    .endMetadata()
+                    .build();
         } else {
-            ns = new NamespaceBuilder().withNewMetadata().withName(namespaceName).withLabels(labels)
-                    .withAnnotations(annotations).endMetadata().build();
+            ns = new NamespaceBuilder()
+                    .withNewMetadata()
+                    .withName(namespaceName)
+                    .withLabels(labels)
+                    .withAnnotations(annotations)
+                    .endMetadata()
+                    .build();
         }
-        Namespace namespace = operation.apply(getEndpoint().getKubernetesClient().namespaces().resource(ns));
+        Namespace namespace =
+                operation.apply(getEndpoint().getKubernetesClient().namespaces().resource(ns));
 
         prepareOutboundMessage(exchange, namespace);
     }
@@ -153,7 +175,11 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific namespace require specify a namespace name");
         }
 
-        List<StatusDetails> statusDetails = getEndpoint().getKubernetesClient().namespaces().withName(namespaceName).delete();
+        List<StatusDetails> statusDetails = getEndpoint()
+                .getKubernetesClient()
+                .namespaces()
+                .withName(namespaceName)
+                .delete();
         boolean namespaceDeleted = ObjectHelper.isNotEmpty(statusDetails);
 
         prepareOutboundMessage(exchange, namespaceDeleted);

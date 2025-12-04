@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ironmq.integrationtest;
 
 import java.util.concurrent.TimeUnit;
@@ -35,10 +36,10 @@ public class Queue2QueueExampleManualTest extends CamelTestSupport {
     // replace with your token
     private String token = "myIronMQToken";
 
-    private final String ironQueue1
-            = "ironmq:queue1?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
-    private final String ironQueue2
-            = "ironmq:queue2?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
+    private final String ironQueue1 = "ironmq:queue1?projectId=" + projectId + "&token=" + token
+            + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
+    private final String ironQueue2 = "ironmq:queue2?projectId=" + projectId + "&token=" + token
+            + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io";
 
     @BeforeEach
     public void clean() {

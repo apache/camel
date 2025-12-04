@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.camel.Exchange.SPLIT_COMPLETE;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.camel.Exchange.SPLIT_COMPLETE;
 
 public class SplitAggregateParallelProcessingStackOverflowIssueTest extends ContextTestSupport {
 
@@ -51,7 +52,10 @@ public class SplitAggregateParallelProcessingStackOverflowIssueTest extends Cont
             @Override
             public void configure() {
                 from("direct:start")
-                        .split().tokenize("\n").streaming().parallelProcessing()
+                        .split()
+                        .tokenize("\n")
+                        .streaming()
+                        .parallelProcessing()
                         .aggregate(constant("foo"), new GroupedBodyAggregationStrategy())
                         .completeAllOnStop()
                         .eagerCheckCompletion()

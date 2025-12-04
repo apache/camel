@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.onexception;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionContinueTwoTest extends ContextTestSupport {
 
@@ -53,10 +54,14 @@ public class OnExceptionContinueTwoTest extends ContextTestSupport {
                 // thrown
                 onException(IllegalArgumentException.class).continued(true);
 
-                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
+                from("direct:start")
+                        .to("mock:start")
+                        .throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:middle")
                         // throw a second time to validate that the exchange is
                         // reset appropriately
-                        .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
+                        .throwException(new IllegalArgumentException("Forced Again"))
+                        .to("mock:result");
             }
         };
     }

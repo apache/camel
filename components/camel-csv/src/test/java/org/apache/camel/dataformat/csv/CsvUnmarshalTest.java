@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.csv;
+
+import static org.apache.camel.dataformat.csv.TestUtils.asMap;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,10 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.dataformat.csv.TestUtils.asMap;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests standard unmarshalling
@@ -53,7 +54,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:default", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(3, body.size());
         assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
         assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
@@ -67,7 +69,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:delimiter", CSV_SAMPLE.replace(',', '_'));
         output.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(Arrays.asList("A", "B", "C"), body.get(0));
         assertEquals(Arrays.asList("1", "2", "3"), body.get(1));
         assertEquals(Arrays.asList("one", "two", "three"), body.get(2));
@@ -109,7 +112,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:map", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -125,7 +129,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:orderedmap", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), body.get(0));
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), body.get(1));
@@ -164,7 +169,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:map_headers", CSV_SAMPLE);
         output.assertIsSatisfied();
 
-        List<?> body = assertIsInstanceOf(List.class, output.getExchanges().get(0).getIn().getBody());
+        List<?> body = assertIsInstanceOf(
+                List.class, output.getExchanges().get(0).getIn().getBody());
         assertEquals(2, body.size());
         assertEquals(asMap("AA", "1", "BB", "2", "CC", "3"), body.get(0));
         assertEquals(asMap("AA", "one", "BB", "two", "CC", "three"), body.get(1));
@@ -176,9 +182,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // Default format
-                from("direct:default")
-                        .unmarshal(new CsvDataFormat())
-                        .to("mock:output");
+                from("direct:default").unmarshal(new CsvDataFormat()).to("mock:output");
 
                 // Format with special delimiter
                 from("direct:delimiter")
@@ -193,7 +197,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 // Lazy load
                 from("direct:lazy")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true))
-                        .split().body()
+                        .split()
+                        .body()
                         .to("mock:line");
 
                 // Use maps
@@ -209,13 +214,16 @@ public class CsvUnmarshalTest extends CamelTestSupport {
                 // Use lazy load and maps
                 from("direct:lazy_map")
                         .unmarshal(new CsvDataFormat().setLazyLoad(true).setUseMaps(true))
-                        .split().body()
+                        .split()
+                        .body()
                         .to("mock:line");
 
                 // Use map without first line and headers
                 from("direct:map_headers")
-                        .unmarshal(new CsvDataFormat().setUseMaps(true).setSkipHeaderRecord(true)
-                                .setHeader(new String[] { "AA", "BB", "CC" }))
+                        .unmarshal(new CsvDataFormat()
+                                .setUseMaps(true)
+                                .setSkipHeaderRecord(true)
+                                .setHeader(new String[] {"AA", "BB", "CC"}))
                         .to("mock:output");
             }
         };

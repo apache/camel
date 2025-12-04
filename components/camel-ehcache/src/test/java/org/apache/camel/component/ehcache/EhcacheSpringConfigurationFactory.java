@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import org.ehcache.config.CacheConfiguration;
@@ -51,11 +52,11 @@ public class EhcacheSpringConfigurationFactory extends AbstractFactoryBean<Cache
     @Override
     protected CacheConfiguration createInstance() {
         return CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                keyType,
-                valueType,
-                ResourcePoolsBuilder.newResourcePoolsBuilder()
-                        .heap(100, EntryUnit.ENTRIES)
-                        .offheap(1, MemoryUnit.MB))
+                        keyType,
+                        valueType,
+                        ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                .heap(100, EntryUnit.ENTRIES)
+                                .offheap(1, MemoryUnit.MB))
                 .build();
     }
 }

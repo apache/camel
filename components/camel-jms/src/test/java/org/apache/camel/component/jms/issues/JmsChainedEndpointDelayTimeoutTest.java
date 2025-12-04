@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.CamelContext;
@@ -40,6 +41,7 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -71,23 +73,23 @@ public class JmsChainedEndpointDelayTimeoutTest extends AbstractJMSTest {
             @Override
             public void configure() {
 
-                onException(ExchangeTimedOutException.class)
-                        .handled(true)
-                        .to("mock:exception");
+                onException(ExchangeTimedOutException.class).handled(true).to("mock:exception");
 
                 from("activemq:JmsChainedEndpointDelayTimeoutTest.test")
-                        .to(ExchangePattern.InOut, "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500")
+                        .to(
+                                ExchangePattern.InOut,
+                                "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500")
                         .delay(constant(1000));
 
                 from("activemq:JmsChainedEndpointDelayTimeoutTest.fixed")
-                        .to(ExchangePattern.InOut,
+                        .to(
+                                ExchangePattern.InOut,
                                 "activemq:JmsChainedEndpointDelayTimeoutTest.ping?requestTimeout=500&replyToType=Exclusive&replyTo=JmsChainedEndpointDelayTimeoutTest.reply")
                         .delay(constant(1000));
 
                 from("activemq:JmsChainedEndpointDelayTimeoutTest.ping")
                         .to("mock:ping")
                         .log("pong");
-
             }
         };
     }

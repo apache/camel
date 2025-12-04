@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cometd;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -32,10 +37,6 @@ import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
  */
@@ -48,10 +49,10 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     @Test
     void testProducer() {
         Person person = new Person("David", "Greco");
-        //act
+        // act
         template.requestBodyAndHeader("direct:input", person, "testHeading", "value");
 
-        //assert
+        // assert
         MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
         List<Exchange> exchanges = ep.getReceivedExchanges();
         for (Exchange exchange : exchanges) {
@@ -64,14 +65,14 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
 
     @Test
     void testHeadersSupported() {
-        //setup
+        // setup
         String headerName = "testHeading";
         String headerValue = "value";
 
-        //act
+        // act
         template.requestBodyAndHeader("direct:input", "message", headerName, headerValue);
 
-        //assert
+        // assert
         MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
         List<Exchange> exchanges = ep.getReceivedExchanges();
         assertTrue(exchanges.size() > 0);
@@ -88,11 +89,11 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         CometdComponent component = context.getComponent("cometd", CometdComponent.class);
 
         // act
-        Endpoint result = component
-                .createEndpoint("cometd://127.0.0.1:"
-                                + port
-                                + "/service/testArgs?baseResource=file:./target/test-classes/webapp&"
-                                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2");
+        Endpoint result = component.createEndpoint(
+                "cometd://127.0.0.1:"
+                        + port
+                        + "/service/testArgs?baseResource=file:./target/test-classes/webapp&"
+                        + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2");
 
         // assert
         assertTrue(result instanceof CometdEndpoint);
@@ -119,7 +120,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     public void doPreSetup() {
         port = AvailablePortFinder.getNextAvailable();
         uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-              + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2";
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2";
     }
 
     @Override
@@ -134,7 +135,6 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
                 from(uri).to("mock:test");
             }
         };
-
     }
 
     private SecurityPolicy createTestSecurityPolicy() {
@@ -142,16 +142,14 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
 
             @Override
             public boolean canSubscribe(
-                    BayeuxServer server, ServerSession session, ServerChannel channel,
-                    ServerMessage message) {
+                    BayeuxServer server, ServerSession session, ServerChannel channel, ServerMessage message) {
                 session.setAttribute("Subscribed", true);
                 return true;
             }
 
             @Override
             public boolean canPublish(
-                    BayeuxServer server, ServerSession session, ServerChannel channel,
-                    ServerMessage message) {
+                    BayeuxServer server, ServerSession session, ServerChannel channel, ServerMessage message) {
                 return true;
             }
 
@@ -163,8 +161,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
 
             @Override
             public boolean canCreate(
-                    BayeuxServer server, ServerSession session, String channelId,
-                    ServerMessage message) {
+                    BayeuxServer server, ServerSession session, String channelId, ServerMessage message) {
                 return true;
             }
         };

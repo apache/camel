@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ehcache;
 
 import java.util.Collections;
@@ -31,7 +32,8 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     private final EhcacheManager manager;
     private final Cache cache;
 
-    public EhcacheProducer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration) throws Exception {
+    public EhcacheProducer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration)
+            throws Exception {
         super(endpoint, EhcacheConstants.ACTION, configuration::getAction);
 
         this.configuration = configuration;
@@ -61,7 +63,9 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_PUT)
     public void onPut(Message message) throws Exception {
-        cache.put(getKey(message), getValue(message, cache.getRuntimeConfiguration().getValueType()));
+        cache.put(
+                getKey(message),
+                getValue(message, cache.getRuntimeConfiguration().getValueType()));
 
         setResult(message, true, null, null);
     }
@@ -75,7 +79,9 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_PUT_IF_ABSENT)
     public void onPutIfAbsent(Message message) throws Exception {
-        Object oldValue = cache.putIfAbsent(getKey(message), getValue(message, cache.getRuntimeConfiguration().getValueType()));
+        Object oldValue = cache.putIfAbsent(
+                getKey(message),
+                getValue(message, cache.getRuntimeConfiguration().getValueType()));
 
         setResult(message, true, null, oldValue);
     }
@@ -89,8 +95,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_GET_ALL)
     public void onGetAll(Message message) throws Exception {
-        Object result = cache.getAll(
-                message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class));
+        Object result = cache.getAll(message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, result, null);
     }
@@ -110,8 +115,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_REMOVE_ALL)
     public void onRemoveAll(Message message) throws Exception {
-        cache.removeAll(
-                message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class));
+        cache.removeAll(message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, null, null);
     }
@@ -139,7 +143,8 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     private Object getKey(final Message message) throws Exception {
         Object value;
         if (configuration.getKeyType() != null) {
-            Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getKeyType());
+            Class<?> clazz =
+                    getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getKeyType());
             value = message.getHeader(EhcacheConstants.KEY, clazz);
         } else {
             value = message.getHeader(EhcacheConstants.KEY);
@@ -162,7 +167,8 @@ public class EhcacheProducer extends HeaderSelectorProducer {
         Object value = message.getHeader(EhcacheConstants.VALUE);
         if (value == null) {
             if (type instanceof String) {
-                Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass((String) type);
+                Class<?> clazz =
+                        getEndpoint().getCamelContext().getClassResolver().resolveClass((String) type);
                 value = message.getBody(clazz);
             } else if (type instanceof Class) {
                 value = message.getBody((Class) type);
@@ -173,8 +179,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                    "No value provided in header or body (" + EhcacheConstants.VALUE + ")",
-                    message.getExchange());
+                    "No value provided in header or body (" + EhcacheConstants.VALUE + ")", message.getExchange());
         }
 
         return value;

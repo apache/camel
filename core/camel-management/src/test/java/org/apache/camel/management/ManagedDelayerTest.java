@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
+import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -23,12 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_PROCESSOR;
-import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDelayerTest extends ManagementTestSupport {
@@ -59,7 +60,7 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         assertTrue(total > 90, "Should take around 0.1 sec: was " + total);
 
         // change the delay time using JMX
-        mbeanServer.invoke(delayerName, "constantDelay", new Object[] { 200 }, new String[] { "java.lang.Integer" });
+        mbeanServer.invoke(delayerName, "constantDelay", new Object[] {200}, new String[] {"java.lang.Integer"});
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -81,12 +82,8 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("log:foo")
-                        .delay(100).id("mydelayer")
-                        .to("mock:result");
+                from("direct:start").to("log:foo").delay(100).id("mydelayer").to("mock:result");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake.operations;
 
 import java.time.Duration;
@@ -28,7 +29,8 @@ public class DataLakeServiceOperations {
     private final DataLakeServiceClientWrapper client;
     private final DataLakeConfigurationOptionsProxy configurationProxy;
 
-    public DataLakeServiceOperations(final DataLakeConfiguration configuration, final DataLakeServiceClientWrapper client) {
+    public DataLakeServiceOperations(
+            final DataLakeConfiguration configuration, final DataLakeServiceClientWrapper client) {
         this.client = client;
         configurationProxy = new DataLakeConfigurationOptionsProxy(configuration);
     }

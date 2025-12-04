@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
@@ -68,7 +69,8 @@ public class TopDevConsole extends AbstractDevConsole {
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
         final StringBuilder sb = new StringBuilder();
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             if (subPath == null || subPath.isBlank()) {
                 Function<ManagedRouteMBean, Object> task = mrb -> {
@@ -83,15 +85,18 @@ public class TopDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
                     sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
                     sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
-                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
-                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
-                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
                     sb.append("\n");
                     return null;
                 };
@@ -109,7 +114,8 @@ public class TopDevConsole extends AbstractDevConsole {
                         int line = mpb.getSourceLineNumber();
                         try {
                             loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
+                            Resource resource = PluginHelper.getResourceLoader(getCamelContext())
+                                    .resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                                 for (int i = 1; i < line + 3; i++) {
@@ -139,15 +145,18 @@ public class TopDevConsole extends AbstractDevConsole {
                     sb.append(String.format("\n    Total: %s", mpb.getExchangesTotal()));
                     sb.append(String.format("\n    Failed: %s", mpb.getExchangesFailed()));
                     sb.append(String.format("\n    Inflight: %s", mpb.getExchangesInflight()));
-                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mpb.getMeanProcessingTime(), true)));
-                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime(), true)));
-                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Last Time: %s", TimeUtils.printDuration(mpb.getLastProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
-                    sb.append(
-                            String.format("\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Mean Time: %s", TimeUtils.printDuration(mpb.getMeanProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Last Time: %s", TimeUtils.printDuration(mpb.getLastProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
+                    sb.append(String.format(
+                            "\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
                     sb.append("\n");
                     return null;
                 };
@@ -169,7 +178,8 @@ public class TopDevConsole extends AbstractDevConsole {
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext mcc =
+                getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             if (subPath == null || subPath.isBlank()) {
                 Function<ManagedRouteMBean, Object> task = mrb -> {
@@ -202,7 +212,8 @@ public class TopDevConsole extends AbstractDevConsole {
                         int line = mpb.getSourceLineNumber();
                         try {
                             loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
+                            Resource resource = PluginHelper.getResourceLoader(getCamelContext())
+                                    .resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                                 for (int i = 1; i < line + 3; i++) {
@@ -275,9 +286,7 @@ public class TopDevConsole extends AbstractDevConsole {
         return stats;
     }
 
-    private void topRoutes(
-            String filter, int max, ManagedCamelContext mcc,
-            Function<ManagedRouteMBean, Object> task) {
+    private void topRoutes(String filter, int max, ManagedCamelContext mcc, Function<ManagedRouteMBean, Object> task) {
         List<Route> routes = getCamelContext().getRoutes();
         routes.stream()
                 .map(route -> mcc.getManagedRoute(route.getRouteId()))
@@ -289,7 +298,10 @@ public class TopDevConsole extends AbstractDevConsole {
     }
 
     private void topProcessors(
-            String filter, String subPath, int max, ManagedCamelContext mcc,
+            String filter,
+            String subPath,
+            int max,
+            ManagedCamelContext mcc,
             Function<ManagedProcessorMBean, Object> task) {
         List<Route> routes = getCamelContext().getRoutes();
         Collection<String> ids = new ArrayList<>();
@@ -347,5 +359,4 @@ public class TopDevConsole extends AbstractDevConsole {
             return 0;
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.Date;
@@ -49,23 +50,35 @@ public interface CommentsSPI {
     @Path("/v{apiVersion}/comments")
     @Produces(MediaType.APPLICATION_JSON)
     List<Comment> list(
-            @PathParam("apiVersion") String apiVersion, @QueryParam("context") Context context,
-            @QueryParam("page") Integer page, @QueryParam("per_page") Integer perPage,
-            @QueryParam("search") String search, @QueryParam("after") Date after, @QueryParam("author") List<Integer> author,
+            @PathParam("apiVersion") String apiVersion,
+            @QueryParam("context") Context context,
+            @QueryParam("page") Integer page,
+            @QueryParam("per_page") Integer perPage,
+            @QueryParam("search") String search,
+            @QueryParam("after") Date after,
+            @QueryParam("author") List<Integer> author,
             @QueryParam("author_exclude") List<Integer> authorExclude,
-            @QueryParam("author_email") String authorEmail, @QueryParam("before") Date before,
-            @QueryParam("exclude") List<Integer> exclude, @QueryParam("include") List<Integer> include,
-            @QueryParam("karma") Integer karma, @QueryParam("offset") List<Integer> offset, @QueryParam("order") Order order,
+            @QueryParam("author_email") String authorEmail,
+            @QueryParam("before") Date before,
+            @QueryParam("exclude") List<Integer> exclude,
+            @QueryParam("include") List<Integer> include,
+            @QueryParam("karma") Integer karma,
+            @QueryParam("offset") List<Integer> offset,
+            @QueryParam("order") Order order,
             @QueryParam("orderby") CommentOrderBy orderBy,
-            @QueryParam("parent") List<Integer> parent, @QueryParam("parent_exclude") List<Integer> parentExclude,
+            @QueryParam("parent") List<Integer> parent,
+            @QueryParam("parent_exclude") List<Integer> parentExclude,
             @QueryParam("post") List<Integer> post,
-            @QueryParam("status") CommentStatus status, @QueryParam("type") String type);
+            @QueryParam("status") CommentStatus status,
+            @QueryParam("type") String type);
 
     @GET
     @Path("/v{apiVersion}/comments/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     Comment retrieve(
-            @PathParam("apiVersion") String apiVersion, @PathParam("id") Integer id, @QueryParam("context") Context context);
+            @PathParam("apiVersion") String apiVersion,
+            @PathParam("id") Integer id,
+            @QueryParam("context") Context context);
 
     // @formatter:on
     @POST
@@ -83,6 +96,6 @@ public interface CommentsSPI {
 
     @DELETE
     @Path("/v{apiVersion}/comments/{id}")
-    Comment delete(@PathParam("apiVersion") String apiVersion, @PathParam("id") int id, @QueryParam("force") boolean force);
-
+    Comment delete(
+            @PathParam("apiVersion") String apiVersion, @PathParam("id") int id, @QueryParam("force") boolean force);
 }

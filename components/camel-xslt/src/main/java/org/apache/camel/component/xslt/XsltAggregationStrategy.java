@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
@@ -62,9 +63,10 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
  */
-@Metadata(label = "bean",
-          description = "The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.",
-          annotations = { "interfaceName=org.apache.camel.AggregationStrategy" })
+@Metadata(
+        label = "bean",
+        description = "The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.",
+        annotations = {"interfaceName=org.apache.camel.AggregationStrategy"})
 @Configurer(metadataOnly = true)
 public class XsltAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
@@ -77,14 +79,24 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
 
     @Metadata(description = "The name of the XSL transformation file to use", required = true)
     private String xslFile;
-    @Metadata(description = "The exchange property name that contains the XML payloads as an input",
-              defaultValue = "" + DEFAULT_PROPERTY_NAME)
+
+    @Metadata(
+            description = "The exchange property name that contains the XML payloads as an input",
+            defaultValue = "" + DEFAULT_PROPERTY_NAME)
     private String propertyName;
+
     private TransformerFactory transformerFactory;
-    @Metadata(label = "advanced", description = "To use a custom XSLT transformer factory, specified as a FQN class name")
+
+    @Metadata(
+            label = "advanced",
+            description = "To use a custom XSLT transformer factory, specified as a FQN class name")
     private String transformerFactoryClass;
-    @Metadata(defaultValue = "string", enums = "string,bytes,DOM,file",
-              description = "Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three"
+
+    @Metadata(
+            defaultValue = "string",
+            enums = "string,bytes,DOM,file",
+            description =
+                    "Option to specify which output type to use. Possible values are: string, bytes, DOM, file. The first three"
                             + " options are all in memory based, where as file is streamed directly to a java.io.File. For file you must specify"
                             + " the filename in the IN header with the key XsltConstants.XSLT_FILE_NAME which is also CamelXsltFileName. Also any"
                             + " paths leading to the filename must be created beforehand, otherwise an exception is thrown at runtime.")
@@ -257,9 +269,11 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         this.xslt = createXsltBuilder();
 
         if (transformerFactory == null && transformerFactoryClass != null) {
-            Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
-                    XsltAggregationStrategy.class.getClassLoader());
-            TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
+            Class<?> factoryClass = camelContext
+                    .getClassResolver()
+                    .resolveMandatoryClass(transformerFactoryClass, XsltAggregationStrategy.class.getClassLoader());
+            TransformerFactory factory =
+                    (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
             xslt.setTransformerFactory(factory);
         } else if (transformerFactory != null) {
             xslt.setTransformerFactory(transformerFactory);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,9 +28,10 @@ public class RoutingSlipOnExceptionTest extends DynamicRouterOnExceptionTest {
             public void configure() {
                 onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(5);
 
-                from("direct:start").routingSlip(method(RoutingSlipOnExceptionTest.class, "whereTo")).to("mock:end");
+                from("direct:start")
+                        .routingSlip(method(RoutingSlipOnExceptionTest.class, "whereTo"))
+                        .to("mock:end");
             }
         };
     }
-
 }

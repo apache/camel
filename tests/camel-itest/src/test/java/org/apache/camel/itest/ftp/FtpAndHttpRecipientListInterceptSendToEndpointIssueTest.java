@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.itest.ftp;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -55,15 +56,11 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
         return new RouteBuilder() {
             @Override
             public void configure() {
-                interceptSendToEndpoint("(ftp|http|seda):.*")
-                        .to("mock:intercept");
+                interceptSendToEndpoint("(ftp|http|seda):.*").to("mock:intercept");
 
-                from("direct:start")
-                        .recipientList(header("foo"))
-                        .to("mock:result");
+                from("direct:start").recipientList(header("foo")).to("mock:result");
 
-                from("jetty:http://0.0.0.0:" + httpPort + "/myapp")
-                        .transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:" + httpPort + "/myapp").transform().constant("Bye World");
 
                 from("seda:foo").to("mock:foo");
             }

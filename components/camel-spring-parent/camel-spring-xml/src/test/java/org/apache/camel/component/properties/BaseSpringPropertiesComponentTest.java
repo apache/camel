@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
 import org.apache.camel.spring.SpringTestSupport;
@@ -25,7 +26,8 @@ abstract class BaseSpringPropertiesComponentTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/SpringPropertiesComponentTest.xml");
     }
 
     @Test
@@ -63,5 +65,4 @@ abstract class BaseSpringPropertiesComponentTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

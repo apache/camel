@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.avro;
+
+import static org.apache.camel.component.avro.AvroConstants.AVRO_HTTP_TRANSPORT;
+import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,9 +39,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.avro.AvroConstants.AVRO_HTTP_TRANSPORT;
-import static org.apache.camel.component.avro.AvroConstants.AVRO_NETTY_TRANSPORT;
 
 /**
  * This class holds server that listen to given protocol:host:port combination and dispatches messages to different
@@ -79,17 +80,19 @@ public class AvroListener {
         return newServer;
     }
 
-    private static Server createServer(AvroConfiguration configuration, CamelContext camelContext, SpecificResponder responder)
-            throws Exception {
+    private static Server createServer(
+            AvroConfiguration configuration, CamelContext camelContext, SpecificResponder responder) throws Exception {
         if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             AvroRpcHttpServerFactory factory = camelContext
                     .getCamelContextExtension()
                     .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
                     .newInstance("avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "AvroRpcHttpServerFactory is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
+                    .orElseThrow(
+                            () -> new IllegalStateException(
+                                    "AvroRpcHttpServerFactory is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
             return factory.create(responder, configuration.getPort());
-        } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
+        } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(
+                configuration.getTransport().name())) {
             return new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else {
             throw new IllegalArgumentException("Unknown transport " + configuration.getTransport());
@@ -106,15 +109,14 @@ public class AvroListener {
     public void register(String messageName, AvroConsumer consumer) throws AvroComponentException {
         if (messageName == null) {
             if (this.defaultConsumer != null) {
-                throw new AvroComponentException(
-                        "Default consumer already registered for uri: " + consumer.getEndpoint().getEndpointUri());
+                throw new AvroComponentException("Default consumer already registered for uri: "
+                        + consumer.getEndpoint().getEndpointUri());
             }
             this.defaultConsumer = consumer;
         } else {
             if (consumerRegistry.putIfAbsent(messageName, consumer) != null) {
-                throw new AvroComponentException(
-                        "Consumer already registered for message: " + messageName + " and uri: "
-                                                 + consumer.getEndpoint().getEndpointUri());
+                throw new AvroComponentException("Consumer already registered for message: " + messageName
+                        + " and uri: " + consumer.getEndpoint().getEndpointUri());
             }
         }
     }
@@ -155,7 +157,8 @@ public class AvroListener {
             throw new AvroComponentException("No consumer defined for message: " + message.getName());
         }
 
-        Object params = extractParams(message, request, consumer.getEndpoint().getConfiguration().isSingleParameter(), data);
+        Object params = extractParams(
+                message, request, consumer.getEndpoint().getConfiguration().isSingleParameter(), data);
 
         return processExchange(consumer, message, params);
     }
@@ -195,7 +198,8 @@ public class AvroListener {
      * @return           Response of exchange processing
      * @throws Exception
      */
-    private static Object processExchange(AvroConsumer consumer, Protocol.Message message, Object params) throws Exception {
+    private static Object processExchange(AvroConsumer consumer, Protocol.Message message, Object params)
+            throws Exception {
         Object response;
         Exchange exchange = createExchange(consumer, message, params);
 
@@ -234,5 +238,4 @@ public class AvroListener {
         exchange.getIn().setHeader(AvroConstants.AVRO_MESSAGE_NAME, message.getName());
         return exchange;
     }
-
 }

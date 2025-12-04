@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -29,9 +33,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to test exception configuration
@@ -52,11 +53,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm a NPE");
 
-        final RuntimeCamelException e
-                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello NPE"),
-                        "Should have thrown a RuntimeCamelException");
+        final RuntimeCamelException e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBody("direct:a", "Hello NPE"),
+                "Should have thrown a RuntimeCamelException");
 
-        assertInstanceOf(NullPointerException.class, e.getCause(), "Exception cause should have been a NullPointerException");
+        assertInstanceOf(
+                NullPointerException.class, e.getCause(), "Exception cause should have been a NullPointerException");
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
@@ -68,7 +71,9 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm somekind of IO exception");
 
-        Exception e = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello IO"),
+        Exception e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBody("direct:a", "Hello IO"),
                 "Should have thrown a RuntimeCamelException");
 
         assertInstanceOf(IOException.class, e.getCause(), "Should have thrown a IOException");
@@ -83,7 +88,9 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm just exception");
 
-        Exception e = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello Exception"),
+        Exception e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBody("direct:a", "Hello Exception"),
                 "Should have thrown a RuntimeCamelException");
         assertInstanceOf(Exception.class, e.getCause(), "Should have thrown a IOException");
 
@@ -98,7 +105,9 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my business is not going to well");
 
-        Exception e = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "Hello business"),
+        Exception e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBody("direct:a", "Hello business"),
                 "Should have thrown a RuntimeCamelException");
         assertInstanceOf(MyBusinessException.class, e.getCause(), "Should have thrown a MyBusinessException");
         MockEndpoint.assertIsSatisfied(result, mock);
@@ -113,9 +122,10 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some security error");
 
-        Exception e
-                = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:a", "I am not allowed to do this"),
-                        "Should have thrown a RuntimeCamelException");
+        Exception e = assertThrows(
+                RuntimeCamelException.class,
+                () -> template.sendBody("direct:a", "I am not allowed to do this"),
+                "Should have thrown a RuntimeCamelException");
         assertInstanceOf(GeneralSecurityException.class, e.getCause(), "Should have thrown a GeneralSecurityException");
 
         MockEndpoint.assertIsSatisfied(result, mock);
@@ -130,7 +140,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some access error");
 
-        Exception e = assertThrows(RuntimeCamelException.class,
+        Exception e = assertThrows(
+                RuntimeCamelException.class,
                 () -> template.sendBody("direct:a", "I am not allowed to access this"),
                 "Should have thrown a RuntimeCamelException");
         assertInstanceOf(IllegalAccessException.class, e.getCause(), "Should have thrown a IllegalAccessException");
@@ -153,48 +164,64 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class).maximumRedeliveries(0).setHeader(MESSAGE_INFO, constant("Damm a NPE"))
+                onException(NullPointerException.class)
+                        .maximumRedeliveries(0)
+                        .setHeader(MESSAGE_INFO, constant("Damm a NPE"))
                         .to(ERROR_QUEUE);
 
-                onException(IOException.class).redeliveryDelay(10).maximumRedeliveries(3).maximumRedeliveryDelay(30 * 1000L)
-                        .backOffMultiplier(1.0).useExponentialBackOff()
-                        .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception")).to(ERROR_QUEUE);
+                onException(IOException.class)
+                        .redeliveryDelay(10)
+                        .maximumRedeliveries(3)
+                        .maximumRedeliveryDelay(30 * 1000L)
+                        .backOffMultiplier(1.0)
+                        .useExponentialBackOff()
+                        .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception"))
+                        .to(ERROR_QUEUE);
 
-                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2)
-                        .setHeader(MESSAGE_INFO, constant("Damm just exception")).to(ERROR_QUEUE);
+                onException(Exception.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(2)
+                        .setHeader(MESSAGE_INFO, constant("Damm just exception"))
+                        .to(ERROR_QUEUE);
 
-                onException(MyBaseBusinessException.class).redeliveryDelay(0).maximumRedeliveries(3)
+                onException(MyBaseBusinessException.class)
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(3)
                         .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
                         .to(BUSINESS_ERROR_QUEUE);
 
-                onException(GeneralSecurityException.class, KeyException.class).maximumRedeliveries(1)
+                onException(GeneralSecurityException.class, KeyException.class)
+                        .maximumRedeliveries(1)
                         .setHeader(MESSAGE_INFO, constant("Damm some security error"))
                         .to(SECURITY_ERROR_QUEUE);
 
                 onException(InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class)
                         .maximumRedeliveries(0)
-                        .setHeader(MESSAGE_INFO, constant("Damm some access error")).to(ERROR_QUEUE);
+                        .setHeader(MESSAGE_INFO, constant("Damm some access error"))
+                        .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
-                from("direct:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String s = exchange.getIn().getBody(String.class);
-                        if ("Hello NPE".equals(s)) {
-                            throw new NullPointerException();
-                        } else if ("Hello IO".equals(s)) {
-                            throw new ConnectException("Forced for testing - cannot connect to remote server");
-                        } else if ("Hello Exception".equals(s)) {
-                            throw new CamelExchangeException("Forced for testing", exchange);
-                        } else if ("Hello business".equals(s)) {
-                            throw new MyBusinessException();
-                        } else if ("I am not allowed to do this".equals(s)) {
-                            throw new KeyManagementException();
-                        } else if ("I am not allowed to access this".equals(s)) {
-                            throw new IllegalAccessException();
-                        }
-                        exchange.getMessage().setBody("Hello World");
-                    }
-                }).to("mock:result");
+                from("direct:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String s = exchange.getIn().getBody(String.class);
+                                if ("Hello NPE".equals(s)) {
+                                    throw new NullPointerException();
+                                } else if ("Hello IO".equals(s)) {
+                                    throw new ConnectException("Forced for testing - cannot connect to remote server");
+                                } else if ("Hello Exception".equals(s)) {
+                                    throw new CamelExchangeException("Forced for testing", exchange);
+                                } else if ("Hello business".equals(s)) {
+                                    throw new MyBusinessException();
+                                } else if ("I am not allowed to do this".equals(s)) {
+                                    throw new KeyManagementException();
+                                } else if ("I am not allowed to access this".equals(s)) {
+                                    throw new IllegalAccessException();
+                                }
+                                exchange.getMessage().setBody("Hello World");
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -24,10 +29,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport {
 
@@ -62,8 +63,10 @@ class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:trigger").pollEnrich("ftp://admin@localhost:{{ftp.server.port}}/poll?password=admin&delete=true")
-                        .routeId("foo").to("mock:result");
+                from("seda:trigger")
+                        .pollEnrich("ftp://admin@localhost:{{ftp.server.port}}/poll?password=admin&delete=true")
+                        .routeId("foo")
+                        .to("mock:result");
             }
         };
     }

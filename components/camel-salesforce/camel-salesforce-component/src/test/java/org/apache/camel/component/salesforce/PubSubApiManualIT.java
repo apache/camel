@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.io.ByteArrayOutputStream;
@@ -47,8 +48,9 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    final Schema camelEventSchema = new Schema.Parser().parse(
-            """
+    final Schema camelEventSchema = new Schema.Parser()
+            .parse(
+                    """
                     {
                         "type": "record",
                         "name": "CamelEventMessage__e",
@@ -77,8 +79,9 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
                     }
                     """);
 
-    final Schema camelEvent2Schema = new Schema.Parser().parse(
-            """
+    final Schema camelEvent2Schema = new Schema.Parser()
+            .parse(
+                    """
                     {
                         "type": "record",
                         "name": "CamelEventNote__e",
@@ -183,7 +186,8 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
 
     @Test
     public void canPublishJsonEvents() throws InterruptedException {
-        String record = """
+        String record =
+                """
                 {
                     "Message__c": "hello world",
                     "CreatedDate": 123,
@@ -212,19 +216,20 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
         record.setCreatedById("123");
 
         try (PubSubApiClient client = new PubSubApiClient(
-                component.getSession(), new SalesforceLoginConfig(),
-                "api.pubsub.salesforce.com", 7443, 0, 0, true)) {
+                component.getSession(), new SalesforceLoginConfig(), "api.pubsub.salesforce.com", 7443, 0, 0, true)) {
             client.start();
 
             byte[] bytes;
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(buffer, null);
-            final SpecificDatumWriter<CamelEventMessage__e> writer = new SpecificDatumWriter<>(CamelEventMessage__e.class);
+            final SpecificDatumWriter<CamelEventMessage__e> writer =
+                    new SpecificDatumWriter<>(CamelEventMessage__e.class);
             writer.write(record, encoder);
             bytes = buffer.toByteArray();
 
             ProducerEvent.newBuilder()
-                    .setSchemaId(client.getTopicInfo("/event/CamelEventMessage__e").getSchemaId())
+                    .setSchemaId(
+                            client.getTopicInfo("/event/CamelEventMessage__e").getSchemaId())
                     .setPayload(ByteString.copyFrom(bytes))
                     .build();
 
@@ -331,9 +336,8 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("salesforce:pubSubSubscribe:/event/CamelEventNote__e" +
-                     "?replayPreset=CUSTOM" +
-                     "&pubSubReplayId={{pubSubReplayId}}")
+                from("salesforce:pubSubSubscribe:/event/CamelEventNote__e" + "?replayPreset=CUSTOM"
+                                + "&pubSubReplayId={{pubSubReplayId}}")
                         .routeId("r.subscriberWithReplayId")
                         .autoStartup(false)
                         .to("mock:SubscriberWithReplayId");
@@ -354,14 +358,11 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(InvalidReplayIdException.class)
-                        .handled(true)
-                        .to("mock:HandleInvalidReplayIdException");
+                onException(InvalidReplayIdException.class).handled(true).to("mock:HandleInvalidReplayIdException");
 
-                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" +
-                     "?replayPreset=CUSTOM" +
-                     "&pubSubReplayId={{invalidPubSubReplayId}}" +
-                     "&bridgeErrorHandler=true")
+                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" + "?replayPreset=CUSTOM"
+                                + "&pubSubReplayId={{invalidPubSubReplayId}}"
+                                + "&bridgeErrorHandler=true")
                         .routeId("r.subscriberWithInvalidReplayId")
                         .autoStartup(false)
                         .to("mock:SubscriberWithInvalidReplayId");
@@ -393,10 +394,9 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" +
-                     "?replayPreset=CUSTOM" +
-                     "&pubSubReplayId={{invalidPubSubReplayId}}" +
-                     "&fallbackToLatestReplayId=true")
+                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" + "?replayPreset=CUSTOM"
+                                + "&pubSubReplayId={{invalidPubSubReplayId}}"
+                                + "&fallbackToLatestReplayId=true")
                         .routeId("r.subscriberWithFallbackToLatestReplayId")
                         .to("mock:SubscriberWithFallbackToLatestReplayId");
             }
@@ -433,28 +433,24 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
             @Override
             public void configure() throws Exception {
 
-                from("direct:publishCamelEventMessage")
-                        .to("salesforce:pubSubPublish:/event/CamelEventMessage__e");
+                from("direct:publishCamelEventMessage").to("salesforce:pubSubPublish:/event/CamelEventMessage__e");
 
-                from("direct:publishCamelEventNote")
-                        .to("salesforce:pubSubPublish:/event/CamelEventNote__e");
+                from("direct:publishCamelEventNote").to("salesforce:pubSubPublish:/event/CamelEventNote__e");
 
                 from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e?pubSubBatchSize=10")
                         .routeId("org.apache.camel.component.salesforce.sub1")
                         .log(LoggingLevel.DEBUG, "${body}")
                         .to("mock:CamelTestTopic");
 
-                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" +
-                     "?pubSubBatchSize=10" +
-                     "&pubSubDeserializeType=JSON")
+                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" + "?pubSubBatchSize=10"
+                                + "&pubSubDeserializeType=JSON")
                         .routeId("org.apache.camel.component.salesforce.sub3")
                         .log(LoggingLevel.DEBUG, "${body}")
                         .to("mock:CamelTestTopicJson");
 
-                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" +
-                     "?pubSubBatchSize=10" +
-                     "&pubSubDeserializeType=POJO" +
-                     "&pubSubPojoClass=org.apache.camel.component.salesforce.PubSubPojoEvent")
+                from("salesforce:pubSubSubscribe:/event/CamelEventMessage__e" + "?pubSubBatchSize=10"
+                                + "&pubSubDeserializeType=POJO"
+                                + "&pubSubPojoClass=org.apache.camel.component.salesforce.PubSubPojoEvent")
                         .routeId("org.apache.camel.component.salesforce.sub4")
                         .log(LoggingLevel.DEBUG, "${body}")
                         .to("mock:CamelTestTopicPojo");
@@ -474,11 +470,10 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
 
         @Override
         public String toString() {
-            return "PojoEvent{" +
-                   "Message__c='" + Message__c + '\'' +
-                   ", CreatedDate=" + CreatedDate +
-                   ", CreatedById='" + CreatedById + '\'' +
-                   '}';
+            return "PojoEvent{" + "Message__c='"
+                    + Message__c + '\'' + ", CreatedDate="
+                    + CreatedDate + ", CreatedById='"
+                    + CreatedById + '\'' + '}';
         }
 
         public String getMessage__c() {

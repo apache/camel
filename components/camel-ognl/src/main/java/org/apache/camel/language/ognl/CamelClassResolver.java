@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.ognl;
 
 import ognl.ClassResolver;
@@ -34,5 +35,4 @@ public class CamelClassResolver implements ClassResolver {
     public Class<?> classForName(String className, OgnlContext context) throws ClassNotFoundException {
         return delegateClassResolver.resolveClass(className);
     }
-
 }

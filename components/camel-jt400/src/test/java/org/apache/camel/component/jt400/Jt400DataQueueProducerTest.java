@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jt400;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
 
 public class Jt400DataQueueProducerTest extends Jt400TestSupport {
 
@@ -38,5 +39,4 @@ public class Jt400DataQueueProducerTest extends Jt400TestSupport {
     public void testToStringHidesPassword() {
         assertFalse(producer.toString().contains(PASSWORD));
     }
-
 }

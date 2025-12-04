@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
@@ -57,7 +58,8 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 Processor output = null;
                 if (!isDisabled(camelContext, whenClause)) {
                     // ensure id is assigned on when
-                    whenClause.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+                    whenClause.idOrCreate(
+                            camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
                     when = createPredicate(whenClause.getExpression());
                     output = createOutputsProcessor(whenClause.getOutputs());
                     if (output == null) {
@@ -78,9 +80,11 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         if (definition.getOtherwise() != null) {
             if (!isDisabled(camelContext, definition.getOtherwise())) {
                 // ensure id is assigned on otherwise
-                definition.getOtherwise()
+                definition
+                        .getOtherwise()
                         .idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-                otherwiseProcessor = createOutputsProcessor(definition.getOtherwise().getOutputs());
+                otherwiseProcessor =
+                        createOutputsProcessor(definition.getOtherwise().getOutputs());
             }
         }
         ChoiceProcessor answer = new ChoiceProcessor(filters, otherwiseProcessor);
@@ -117,5 +121,4 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
         LOG.debug("doSwitch no when or otherwise selected");
         return null;
     }
-
 }

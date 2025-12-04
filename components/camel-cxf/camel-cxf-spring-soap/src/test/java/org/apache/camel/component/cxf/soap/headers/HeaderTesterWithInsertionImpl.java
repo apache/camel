@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.soap.headers;
 
 import java.util.List;
@@ -35,10 +36,8 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
     protected boolean validateOutOfBandHander() {
         MessageContext ctx = context == null ? null : context.getMessageContext();
         if (!relayHeaders) {
-            if (ctx != null
-                    && !ctx.containsKey(Header.HEADER_LIST)
-                    || ctx.containsKey(Header.HEADER_LIST)
-                            && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0) {
+            if (ctx != null && !ctx.containsKey(Header.HEADER_LIST)
+                    || ctx.containsKey(Header.HEADER_LIST) && ((List<?>) ctx.get(Header.HEADER_LIST)).size() == 0) {
                 return true;
             }
             return false;
@@ -65,21 +64,19 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         if (hdr instanceof Header && ((Header) hdr).getObject() instanceof Node) {
             Header hdr1 = (Header) hdr;
             try {
-                JAXBElement<?> job
-                        = (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                JAXBElement<?> job =
+                        (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
                                 .createUnmarshaller()
                                 .unmarshal((Node) hdr1.getObject());
                 OutofBandHeader ob = (OutofBandHeader) job.getValue();
                 if (!headerName.equals(ob.getName())) {
                     throw new RuntimeException(
-                            "test failed expected name ' + headerName + ' but found '"
-                                               + ob.getName() + "'");
+                            "test failed expected name ' + headerName + ' but found '" + ob.getName() + "'");
                 }
 
                 if (!headerValue.equals(ob.getValue())) {
                     throw new RuntimeException(
-                            "test failed expected name ' + headerValue + ' but found '"
-                                               + ob.getValue() + "'");
+                            "test failed expected name ' + headerValue + ' but found '" + ob.getValue() + "'");
                 }
             } catch (JAXBException ex) {
                 throw new RuntimeException("test failed", ex);
@@ -87,7 +84,5 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         } else {
             throw new RuntimeException("test failed. Unexpected type " + hdr.getClass());
         }
-
     }
-
 }

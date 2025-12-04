@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxws;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +38,6 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeaderTestAbstract {
 
     @Override
@@ -45,21 +46,23 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: payload_soap_header_set
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        CallerIDHeaderType callerId = new CallerIDHeaderType();
-                        callerId.setName("Willem");
-                        callerId.setPhoneNumber("108");
-                        SoapHeader soapHeader = new SoapHeader(
-                                new QName("http://camel.apache.org/pizza/types", "CallerIDHeader"),
-                                callerId, new JAXBDataBinding(CallerIDHeaderType.class));
-                        List<SoapHeader> soapHeaders = new ArrayList<>(1);
-                        soapHeaders.add(soapHeader);
-                        // sets the SOAP header via a camel header
-                        exchange.getIn().setHeader(Header.HEADER_LIST, soapHeaders);
-                    }
-
-                }).to(getServiceEndpointURI()) //
+                from("direct:start")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                CallerIDHeaderType callerId = new CallerIDHeaderType();
+                                callerId.setName("Willem");
+                                callerId.setPhoneNumber("108");
+                                SoapHeader soapHeader = new SoapHeader(
+                                        new QName("http://camel.apache.org/pizza/types", "CallerIDHeader"),
+                                        callerId,
+                                        new JAXBDataBinding(CallerIDHeaderType.class));
+                                List<SoapHeader> soapHeaders = new ArrayList<>(1);
+                                soapHeaders.add(soapHeader);
+                                // sets the SOAP header via a camel header
+                                exchange.getIn().setHeader(Header.HEADER_LIST, soapHeaders);
+                            }
+                        })
+                        .to(getServiceEndpointURI()) //
                         .to("mock:end");
                 // END SNIPPET: payload_soap_header_set
             }
@@ -68,8 +71,8 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
 
     @Test
     public void testCreateSoapHeaderViaCamelHeaderForSoapRequest() throws Exception {
-        String body
-                = "<OrderRequest xmlns=\"http://camel.apache.org/pizza/types\"><Toppings><Topping>topping_value</Topping></Toppings></OrderRequest>";
+        String body =
+                "<OrderRequest xmlns=\"http://camel.apache.org/pizza/types\"><Toppings><Topping>topping_value</Topping></Toppings></OrderRequest>";
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(1);
         sendBody("direct:start", body);
@@ -85,5 +88,4 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
          */
         assertEquals("208", elMinutesUntilReady.getTextContent());
     }
-
 }

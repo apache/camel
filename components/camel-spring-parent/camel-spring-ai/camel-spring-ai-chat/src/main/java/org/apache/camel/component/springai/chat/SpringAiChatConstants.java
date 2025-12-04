@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.springai.chat;
 
 import org.apache.camel.spi.Metadata;
@@ -38,8 +39,9 @@ public final class SpringAiChatConstants {
     @Metadata(description = "The prompt template with placeholders for variable substitution", javaType = "String")
     public static final String PROMPT_TEMPLATE = "CamelSpringAiChatPromptTemplate";
 
-    @Metadata(description = "Augmented data for RAG as List<org.springframework.ai.document.Document>",
-              javaType = "java.util.List<org.springframework.ai.document.Document>")
+    @Metadata(
+            description = "Augmented data for RAG as List<org.springframework.ai.document.Document>",
+            javaType = "java.util.List<org.springframework.ai.document.Document>")
     public static final String AUGMENTED_DATA = "CamelSpringAiChatAugmentedData";
 
     @Metadata(description = "System message for the conversation", javaType = "String")
@@ -63,10 +65,14 @@ public final class SpringAiChatConstants {
     @Metadata(description = "Media data for multimodal requests (image or audio)", javaType = "byte[]")
     public static final String MEDIA_DATA = "CamelSpringAiChatMediaData";
 
-    @Metadata(description = "Media type (MIME type) for multimodal requests (e.g., image/png, audio/wav)", javaType = "String")
+    @Metadata(
+            description = "Media type (MIME type) for multimodal requests (e.g., image/png, audio/wav)",
+            javaType = "String")
     public static final String MEDIA_TYPE = "CamelSpringAiChatMediaType";
 
-    @Metadata(description = "The output format type for structured output conversion (BEAN, MAP, LIST)", javaType = "String")
+    @Metadata(
+            description = "The output format type for structured output conversion (BEAN, MAP, LIST)",
+            javaType = "String")
     public static final String OUTPUT_FORMAT = "CamelSpringAiChatOutputFormat";
 
     @Metadata(description = "The Java class to use for structured output bean conversion", javaType = "Class<?>")
@@ -78,15 +84,17 @@ public final class SpringAiChatConstants {
     @Metadata(description = "Comma-separated list of sensitive words for SafeGuard advisor", javaType = "String")
     public static final String SAFEGUARD_SENSITIVE_WORDS = "CamelSpringAiChatSafeguardSensitiveWords";
 
-    @Metadata(description = "Failure response message for SafeGuard advisor when sensitive content is detected",
-              javaType = "String")
+    @Metadata(
+            description = "Failure response message for SafeGuard advisor when sensitive content is detected",
+            javaType = "String")
     public static final String SAFEGUARD_FAILURE_RESPONSE = "CamelSpringAiChatSafeguardFailureResponse";
 
     @Metadata(description = "Order of execution for SafeGuard advisor", javaType = "Integer")
     public static final String SAFEGUARD_ORDER = "CamelSpringAiChatSafeguardOrder";
 
-    @Metadata(description = "List of custom advisors to add to the request",
-              javaType = "java.util.List<org.springframework.ai.chat.client.advisor.api.Advisor>")
+    @Metadata(
+            description = "List of custom advisors to add to the request",
+            javaType = "java.util.List<org.springframework.ai.chat.client.advisor.api.Advisor>")
     public static final String ADVISORS = "CamelSpringAiChatAdvisors";
 
     @Metadata(description = "The Java class to use for entity response conversion", javaType = "Class<?>")
@@ -98,15 +106,19 @@ public final class SpringAiChatConstants {
     @Metadata(description = "Metadata to attach to system messages", javaType = "java.util.Map<String, Object>")
     public static final String SYSTEM_METADATA = "CamelSpringAiChatSystemMetadata";
 
-    @Metadata(description = "Conversation ID for managing separate conversation contexts in chat memory", javaType = "String")
+    @Metadata(
+            description = "Conversation ID for managing separate conversation contexts in chat memory",
+            javaType = "String")
     public static final String CONVERSATION_ID = "CamelSpringAiChatConversationId";
 
-    @Metadata(description = "Maximum file size in bytes for multimodal content. Overrides endpoint configuration.",
-              javaType = "Long")
+    @Metadata(
+            description = "Maximum file size in bytes for multimodal content. Overrides endpoint configuration.",
+            javaType = "Long")
     public static final String MAX_FILE_SIZE = "CamelSpringAiChatMaxFileSize";
 
-    @Metadata(description = "The reason why the chat response generation stopped (e.g., STOP, LENGTH, TOOL_CALLS)",
-              javaType = "String")
+    @Metadata(
+            description = "The reason why the chat response generation stopped (e.g., STOP, LENGTH, TOOL_CALLS)",
+            javaType = "String")
     public static final String FINISH_REASON = "CamelSpringAiChatFinishReason";
 
     @Metadata(description = "The name of the AI model used to generate the response", javaType = "String")
@@ -115,10 +127,10 @@ public final class SpringAiChatConstants {
     @Metadata(description = "The unique ID of the chat response", javaType = "String")
     public static final String RESPONSE_ID = "CamelSpringAiChatResponseId";
 
-    @Metadata(description = "Full response metadata as a Map containing all available metadata fields",
-              javaType = "java.util.Map<String, Object>")
+    @Metadata(
+            description = "Full response metadata as a Map containing all available metadata fields",
+            javaType = "java.util.Map<String, Object>")
     public static final String RESPONSE_METADATA = "CamelSpringAiChatResponseMetadata";
 
-    private SpringAiChatConstants() {
-    }
+    private SpringAiChatConstants() {}
 }

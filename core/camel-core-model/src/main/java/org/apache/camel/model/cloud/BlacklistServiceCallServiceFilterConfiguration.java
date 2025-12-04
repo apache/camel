@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import java.util.ArrayList;
@@ -113,7 +114,8 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     // *************************************************************************
 
     @Override
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters)
+            throws Exception {
         List<String> servers = List.class.cast(parameters.get("servers"));
 
         if (ObjectHelper.isNotEmpty(servers)) {

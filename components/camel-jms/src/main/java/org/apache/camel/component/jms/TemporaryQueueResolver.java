@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.JMSException;
@@ -37,5 +38,4 @@ public interface TemporaryQueueResolver {
      * Deletes the temporary queue when no longer in use, Camel is shutting down, or the JMS session is refreshed.
      */
     void delete(TemporaryQueue queue);
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -42,8 +43,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.eclipse.aether.RepositorySystem;
 
-@Mojo(name = "dev", defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
-      requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(
+        name = "dev",
+        defaultPhase = LifecyclePhase.PREPARE_PACKAGE,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DevMojo extends RunMojo {
 
     @Parameter(defaultValue = "${mojoExecution}", readonly = true)
@@ -87,22 +90,23 @@ public class DevMojo extends RunMojo {
         System.setProperty("camel.main.routesReloadDirectoryRecursive", "true");
         System.setProperty("camel.main.sourceLocationEnabled", "true");
         System.setProperty("camel.main.durationMaxAction", "stop");
-        System.setProperty("camel.main.routesReloadPattern",
-                "*.xml,*.yaml,*.java");
+        System.setProperty("camel.main.routesReloadPattern", "*.xml,*.yaml,*.java");
     }
 
     @Override
     protected List<Artifact> getClasspath() throws MojoExecutionException, MojoFailureException {
         List<Artifact> classpath = super.getClasspath();
-        if (classpath.stream().anyMatch(artifact -> "org.apache.camel".equals(artifact.getGroupId())
-                && "camel-debug".equals(artifact.getArtifactId()))) {
+        if (classpath.stream()
+                .anyMatch(artifact -> "org.apache.camel".equals(artifact.getGroupId())
+                        && "camel-debug".equals(artifact.getArtifactId()))) {
             getLog().debug("The component camel-debug has been detected in the classpath so no need to add it");
             return classpath;
         }
         getLog().info("The component camel-debug is not available in the classpath, it will be added automatically");
         Optional<String> camelCoreVersion = classpath.stream()
                 .filter(artifact -> "org.apache.camel".equals(artifact.getGroupId())
-                        && Objects.nonNull(artifact.getArtifactId()) && artifact.getArtifactId().startsWith("camel-core"))
+                        && Objects.nonNull(artifact.getArtifactId())
+                        && artifact.getArtifactId().startsWith("camel-core"))
                 .map(Artifact::getBaseVersion)
                 .filter(Objects::nonNull)
                 .findAny();
@@ -140,10 +144,14 @@ public class DevMojo extends RunMojo {
         request.setMirrors(session.getRequest().getMirrors());
         request.setProxies(session.getRequest().getProxies());
         request.setManagedVersionMap(Collections.emptyMap());
-        request.setArtifact(
-                new DefaultArtifact(
-                        "org.apache.camel", artifactId, version, Artifact.SCOPE_RUNTIME, "jar", null,
-                        new DefaultArtifactHandler("jar")));
+        request.setArtifact(new DefaultArtifact(
+                "org.apache.camel",
+                artifactId,
+                version,
+                Artifact.SCOPE_RUNTIME,
+                "jar",
+                null,
+                new DefaultArtifactHandler("jar")));
         request.setResolutionFilter(new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME));
         ArtifactResolutionResult result = artifactResolver.resolve(request);
         if (result.isSuccess()) {
@@ -153,15 +161,13 @@ public class DevMojo extends RunMojo {
         }
 
         if (result.hasMissingArtifacts()) {
-            getLog().warn(
-                    String.format(
-                            "Could not find the artifacts: %s",
-                            result.getMissingArtifacts().stream().map(Objects::toString).collect(Collectors.joining(", "))));
+            getLog().warn(String.format(
+                    "Could not find the artifacts: %s",
+                    result.getMissingArtifacts().stream().map(Objects::toString).collect(Collectors.joining(", "))));
         }
         if (result.hasExceptions()) {
-            result.getExceptions().forEach(
-                    ex -> getLog()
-                            .warn(String.format("An error occurred while retrieving %s:%s", artifactId, ex.getMessage())));
+            result.getExceptions().forEach(ex -> getLog().warn(
+                            String.format("An error occurred while retrieving %s:%s", artifactId, ex.getMessage())));
         }
     }
 
@@ -169,5 +175,4 @@ public class DevMojo extends RunMojo {
     protected String goal() {
         return "camel:dev";
     }
-
 }

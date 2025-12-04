@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.bedrock.agent;
 
 import org.apache.camel.Endpoint;
@@ -60,8 +61,8 @@ public class BedrockAgentProducer extends DefaultProducer {
     }
 
     private BedrockAgentOperations determineOperation(Exchange exchange) {
-        BedrockAgentOperations operation
-                = exchange.getIn().getHeader(BedrockAgentConstants.OPERATION, BedrockAgentOperations.class);
+        BedrockAgentOperations operation =
+                exchange.getIn().getHeader(BedrockAgentConstants.OPERATION, BedrockAgentOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -75,8 +76,8 @@ public class BedrockAgentProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (bedrockAgentProducerToString == null) {
-            bedrockAgentProducerToString
-                    = "BedrockAgentProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            bedrockAgentProducerToString = "BedrockAgentProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return bedrockAgentProducerToString;
     }
@@ -95,7 +96,9 @@ public class BedrockAgentProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentClient.startIngestionJob((StartIngestionJobRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Start Ingestion Job command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -140,7 +143,9 @@ public class BedrockAgentProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentClient.listIngestionJobs((ListIngestionJobsRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Start Ingestion Job command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -185,7 +190,9 @@ public class BedrockAgentProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentClient.getIngestionJob((GetIngestionJobRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Get Ingestion Job command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -198,7 +205,8 @@ public class BedrockAgentProducer extends DefaultProducer {
             GetIngestionJobRequest.Builder builder = GetIngestionJobRequest.builder();
             if (ObjectHelper.isEmpty(getConfiguration().getKnowledgeBaseId())) {
                 if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID))) {
-                    knowledgeBaseId = exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID, String.class);
+                    knowledgeBaseId =
+                            exchange.getMessage().getHeader(BedrockAgentConstants.KNOWLEDGE_BASE_ID, String.class);
                 } else {
                     throw new IllegalArgumentException("KnowledgeBaseId must be specified");
                 }
@@ -216,7 +224,8 @@ public class BedrockAgentProducer extends DefaultProducer {
             }
             if (ObjectHelper.isEmpty(getConfiguration().getIngestionJobId())) {
                 if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockAgentConstants.INGESTION_JOB_ID))) {
-                    ingestionJobId = exchange.getMessage().getHeader(BedrockAgentConstants.INGESTION_JOB_ID, String.class);
+                    ingestionJobId =
+                            exchange.getMessage().getHeader(BedrockAgentConstants.INGESTION_JOB_ID, String.class);
                 } else {
                     throw new IllegalArgumentException("IngestionJobId must be specified");
                 }
@@ -244,14 +253,17 @@ public class BedrockAgentProducer extends DefaultProducer {
 
     private void prepareGetIngestionJobResponse(GetIngestionJobResponse result, Message message) {
         message.setBody(result.ingestionJob());
-        message.setHeader(BedrockAgentConstants.INGESTION_JOB_STATUS, result.ingestionJob().status());
+        message.setHeader(
+                BedrockAgentConstants.INGESTION_JOB_STATUS,
+                result.ingestionJob().status());
         if (result.ingestionJob().hasFailureReasons()) {
-            message.setHeader(BedrockAgentConstants.INGESTION_JOB_FAILURE_REASONS, result.ingestionJob().failureReasons());
+            message.setHeader(
+                    BedrockAgentConstants.INGESTION_JOB_FAILURE_REASONS,
+                    result.ingestionJob().failureReasons());
         }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
-
 }

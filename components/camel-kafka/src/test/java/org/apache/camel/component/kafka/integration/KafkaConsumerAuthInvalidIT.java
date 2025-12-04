@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.integration;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.Map;
@@ -52,16 +56,15 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * A KafkaContainer that supports JAAS+SASL based authentication
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
-                                 disabledReason = "Requires Kafka 3.x"),
-        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+    @EnabledIfSystemProperty(
+            named = "kafka.instance.type",
+            matches = "local-kafka3-container",
+            disabledReason = "Requires Kafka 3.x"),
+    @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
 })
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -75,6 +78,7 @@ public class KafkaConsumerAuthInvalidIT {
     @Order(1)
     @RegisterExtension
     private static final KafkaService service = KafkaServiceFactory.createSingletonService();
+
     @Order(2)
     @RegisterExtension
     private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
@@ -84,7 +88,8 @@ public class KafkaConsumerAuthInvalidIT {
     @BeforeEach
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
-        props.put(SaslConfigs.SASL_JAAS_CONFIG,
+        props.put(
+                SaslConfigs.SASL_JAAS_CONFIG,
                 ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret"));
         props.put("security.protocol", "SASL_PLAINTEXT");
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
@@ -124,22 +129,26 @@ public class KafkaConsumerAuthInvalidIT {
 
             @Override
             public void configure() {
-                final String simpleSaslJaasConfig
-                        = ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-invalid-secret");
+                final String simpleSaslJaasConfig =
+                        ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-invalid-secret");
 
-                getCamelContext().getCamelContextExtension()
-                        .setErrorHandlerFactory(
-                                deadLetterChannel("mock:dlq"));
+                getCamelContext().getCamelContextExtension().setErrorHandlerFactory(deadLetterChannel("mock:dlq"));
 
-                fromF("kafka:%s"
-                      + "?brokers=%s&groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                      + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                      + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
-                      + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
-                        service.getBootstrapServers(), "KafkaConsumerAuthInvalidIT", simpleSaslJaasConfig)
-                        .process(
-                                exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                        .routeId("should-no-work").to(KafkaTestUtil.MOCK_RESULT);
+                fromF(
+                                "kafka:%s"
+                                        + "?brokers=%s&groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                        + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                                        + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
+                                        + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s",
+                                TOPIC,
+                                service.getBootstrapServers(),
+                                "KafkaConsumerAuthInvalidIT",
+                                simpleSaslJaasConfig)
+                        .process(exchange -> LOG.trace(
+                                "Captured on the processor: {}",
+                                exchange.getMessage().getBody()))
+                        .routeId("should-no-work")
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -157,9 +166,8 @@ public class KafkaConsumerAuthInvalidIT {
         to.expectedMessageCount(0);
         to.assertIsSatisfied(3000);
 
-        final Map<String, ConsumerGroupDescription> allGroups
-                = assertDoesNotThrow(() -> KafkaAdminUtil.getConsumerGroupInfo("KafkaConsumerAuthInvalidIT",
-                        kafkaAdminClient));
+        final Map<String, ConsumerGroupDescription> allGroups = assertDoesNotThrow(
+                () -> KafkaAdminUtil.getConsumerGroupInfo("KafkaConsumerAuthInvalidIT", kafkaAdminClient));
         final ConsumerGroupDescription groupInfo = allGroups.get("KafkaConsumerAuthInvalidIT");
 
         Assertions.assertEquals(0, groupInfo.members().size(), "There should be no members in this group");
@@ -168,5 +176,4 @@ public class KafkaConsumerAuthInvalidIT {
             Assertions.assertEquals("should-no-work", exchange.getFromRouteId());
         }
     }
-
 }

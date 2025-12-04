@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi.annotations;
 
 import java.lang.annotation.Documented;
@@ -24,7 +25,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @ServiceFactory("language")
 public @interface Language {
 
@@ -42,5 +43,4 @@ public @interface Language {
      * {@code String} constant representing its name and defined in the functions class.
      */
     Class<?> functionsClass() default void.class;
-
 }

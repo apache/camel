@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -29,8 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteNodePrefixIdTest extends ManagementTestSupport {
 
@@ -43,25 +44,29 @@ public class ManagedRouteNodePrefixIdTest extends ManagementTestSupport {
         assertEquals(4, set.size());
 
         // hardcoded ids should also be prefixed
-        ManagedProcessorMBean mb
-                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
-                        .getManagedProcessor("aaamyMock");
+        ManagedProcessorMBean mb = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedProcessor("aaamyMock");
         assertEquals("aaamyMock", mb.getProcessorId());
         assertEquals("foo", mb.getRouteId());
         assertEquals("aaa", mb.getNodePrefixId());
-        mb = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedProcessor("bbbmyMock");
+        mb = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedProcessor("bbbmyMock");
         assertEquals("bbbmyMock", mb.getProcessorId());
         assertEquals("bar", mb.getRouteId());
         assertEquals("bbb", mb.getNodePrefixId());
 
         // auto assigned ids should be prefixed
-        mb = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedProcessor("aaalog2",
-                ManagedLogMBean.class);
+        mb = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedProcessor("aaalog2", ManagedLogMBean.class);
         assertEquals("aaalog2", mb.getProcessorId());
         assertEquals("foo", mb.getRouteId());
         assertEquals("aaa", mb.getNodePrefixId());
-        mb = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedProcessor("bbblog4",
-                ManagedLogMBean.class);
+        mb = context.getCamelContextExtension()
+                .getContextPlugin(ManagedCamelContext.class)
+                .getManagedProcessor("bbblog4", ManagedLogMBean.class);
         assertEquals("bbblog4", mb.getProcessorId());
         assertEquals("bar", mb.getRouteId());
         assertEquals("bbb", mb.getNodePrefixId());
@@ -72,15 +77,20 @@ public class ManagedRouteNodePrefixIdTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").routeId("foo").nodePrefixId("aaa")
-                        .to("mock:foo").id("myMock")
+                from("direct:foo")
+                        .routeId("foo")
+                        .nodePrefixId("aaa")
+                        .to("mock:foo")
+                        .id("myMock")
                         .log("Hello foo");
 
-                from("direct:bar").nodePrefixId("bbb").routeId("bar")
-                        .to("mock:bar").id("myMock")
+                from("direct:bar")
+                        .nodePrefixId("bbb")
+                        .routeId("bar")
+                        .to("mock:bar")
+                        .id("myMock")
                         .log("Hello bar");
             }
         };
     }
-
 }

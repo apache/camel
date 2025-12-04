@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.throttling;
 
 import java.util.LinkedHashSet;
@@ -52,9 +53,11 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} when the current {@link Exchange} is done.
  */
-@Metadata(label = "bean",
-          description = "A throttle based RoutePolicy which is capable of dynamic throttling a route based on number of current inflight exchanges.",
-          annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
+@Metadata(
+        label = "bean",
+        description =
+                "A throttle based RoutePolicy which is capable of dynamic throttling a route based on number of current inflight exchanges.",
+        annotations = {"interfaceName=org.apache.camel.spi.RoutePolicy"})
 @Configurer(metadataOnly = true)
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
@@ -69,28 +72,41 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private ContextScopedEventNotifier eventNotifier;
     private CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
-    @Metadata(description = "Sets which scope the throttling should be based upon, either route or total scoped.",
-              enums = "Context,Route", defaultValue = "Route")
+
+    @Metadata(
+            description = "Sets which scope the throttling should be based upon, either route or total scoped.",
+            enums = "Context,Route",
+            defaultValue = "Route")
     private ThrottlingScope scope = ThrottlingScope.Route;
-    @Metadata(description = "Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should suspend the route.",
-              defaultValue = "1000")
+
+    @Metadata(
+            description =
+                    "Sets the upper limit of number of concurrent inflight exchanges at which point reached the throttler should suspend the route.",
+            defaultValue = "1000")
     private int maxInflightExchanges = 1000;
-    @Metadata(description = "Sets at which percentage of the max the throttler should start resuming the route.",
-              defaultValue = "70")
+
+    @Metadata(
+            description = "Sets at which percentage of the max the throttler should start resuming the route.",
+            defaultValue = "70")
     private int resumePercentOfMax = 70;
+
     private int resumeInflightExchanges = 700;
-    @Metadata(description = "Sets the logging level to report the throttling activity.",
-              javaType = "org.apache.camel.LoggingLevel", defaultValue = "INFO", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+
+    @Metadata(
+            description = "Sets the logging level to report the throttling activity.",
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "INFO",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
+
     private CamelLogger logger;
 
-    public ThrottlingInflightRoutePolicy() {
-    }
+    public ThrottlingInflightRoutePolicy() {}
 
     @Override
     public String toString() {
-        return "ThrottlingInflightRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope
-               + "]";
+        return "ThrottlingInflightRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope "
+                + scope + "]";
     }
 
     @Override
@@ -261,7 +277,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private void startConsumer(int size, Consumer consumer) throws Exception {
         boolean started = resumeOrStartConsumer(consumer);
         if (started) {
-            getLogger().log("Throttling consumer: " + size + " <= " + resumeInflightExchanges
+            getLogger()
+                    .log("Throttling consumer: " + size + " <= " + resumeInflightExchanges
                             + " inflight exchange by resuming consumer: " + consumer);
         }
     }
@@ -269,7 +286,8 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private void stopConsumer(int size, Consumer consumer) throws Exception {
         boolean stopped = suspendOrStopConsumer(consumer);
         if (stopped) {
-            getLogger().log("Throttling consumer: " + size + " > " + maxInflightExchanges
+            getLogger()
+                    .log("Throttling consumer: " + size + " > " + maxInflightExchanges
                             + " inflight exchange by suspending consumer: " + consumer);
         }
     }
@@ -320,5 +338,4 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
             return "ContextScopedEventNotifier";
         }
     }
-
 }

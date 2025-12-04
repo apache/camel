@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.obs.models;
 
 import java.util.HashMap;
@@ -27,8 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 public final class OBSRegion {
     private static final Map<String, String> REGIONS = createRegions();
 
-    private OBSRegion() {
-    }
+    private OBSRegion() {}
 
     /**
      * Create map of all OBS regions and endpoints

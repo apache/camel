@@ -39,8 +39,9 @@ import org.apache.camel.spi.Transformer;
  * representation. Uses given Avro schema from the Exchange properties when marshalling the payload (usually already
  * resolved via schema resolver).
  */
-@DataTypeTransformer(name = "avro-binary",
-                     description = "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)")
+@DataTypeTransformer(
+        name = "avro-binary",
+        description = "Transforms from JSon to binary (byte array) using Jackson Avro (supports Avro schema)")
 public class AvroBinaryDataTypeTransformer extends Transformer {
 
     @Override
@@ -48,7 +49,8 @@ public class AvroBinaryDataTypeTransformer extends Transformer {
         AvroSchema schema = message.getExchange().getProperty(SchemaHelper.CONTENT_SCHEMA, AvroSchema.class);
 
         if (schema == null) {
-            throw new CamelExecutionException("Missing proper avro schema for data type processing", message.getExchange());
+            throw new CamelExecutionException(
+                    "Missing proper avro schema for data type processing", message.getExchange());
         }
 
         try {
@@ -56,21 +58,26 @@ public class AvroBinaryDataTypeTransformer extends Transformer {
 
             String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), null);
             if (contentClass != null) {
-                Class<?> contentType
-                        = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
-                marshalled = Avro.mapper().writer().forType(contentType).with(schema)
-                        .writeValueAsBytes(message.getBody());
+                Class<?> contentType =
+                        message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
+                marshalled =
+                        Avro.mapper().writer().forType(contentType).with(schema).writeValueAsBytes(message.getBody());
             } else {
-                marshalled = Avro.mapper().writer().forType(JsonNode.class).with(schema)
+                marshalled = Avro.mapper()
+                        .writer()
+                        .forType(JsonNode.class)
+                        .with(schema)
                         .writeValueAsBytes(getBodyAsJsonNode(message, schema));
             }
 
             message.setBody(marshalled);
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.AVRO_BINARY.type());
-            message.setHeader(SchemaHelper.CONTENT_SCHEMA, schema.getAvroSchema().getFullName());
+            message.setHeader(
+                    SchemaHelper.CONTENT_SCHEMA, schema.getAvroSchema().getFullName());
         } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
-            throw new CamelExecutionException("Failed to apply Avro binary data type on exchange", message.getExchange(), e);
+            throw new CamelExecutionException(
+                    "Failed to apply Avro binary data type on exchange", message.getExchange(), e);
         }
     }
 
@@ -84,8 +91,7 @@ public class AvroBinaryDataTypeTransformer extends Transformer {
             return Json.mapper().readerFor(JsonNode.class).readTree(jsonString);
         }
 
-        return Avro.mapper().reader().forType(JsonNode.class).with(schema)
-                .readValue(getBodyAsStream(message));
+        return Avro.mapper().reader().forType(JsonNode.class).with(schema).readValue(getBodyAsStream(message));
     }
 
     private InputStream getBodyAsStream(Message message) throws InvalidPayloadException {

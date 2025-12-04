@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
@@ -50,7 +51,10 @@ public class FhirCreate {
      * @return                 The {@link MethodOutcome}
      */
     public MethodOutcome resource(
-            IBaseResource resource, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
+            IBaseResource resource,
+            String url,
+            PreferReturnEnum preferReturn,
+            Map<ExtraParameters, Object> extraParameters) {
         ICreateTyped createTyped = client.create().resource(resource);
         processOptionalParams(url, preferReturn, createTyped);
         ExtraParameters.process(extraParameters, createTyped);
@@ -73,7 +77,10 @@ public class FhirCreate {
      * @return                  The {@link MethodOutcome}
      */
     public MethodOutcome resource(
-            String resourceAsString, String url, PreferReturnEnum preferReturn, Map<ExtraParameters, Object> extraParameters) {
+            String resourceAsString,
+            String url,
+            PreferReturnEnum preferReturn,
+            Map<ExtraParameters, Object> extraParameters) {
         ICreateTyped createTyped = client.create().resource(resourceAsString);
         processOptionalParams(url, preferReturn, createTyped);
         ExtraParameters.process(extraParameters, createTyped);

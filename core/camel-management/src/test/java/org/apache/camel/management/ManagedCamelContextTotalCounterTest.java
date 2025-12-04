@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,9 +29,6 @@ import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextTotalCounterTest extends ManagementTestSupport {
@@ -68,18 +69,12 @@ public class ManagedCamelContextTotalCounterTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:a")
-                        .to("log:a")
-                        .to("direct:b");
+                from("direct:a").to("log:a").to("direct:b");
 
-                from("direct:b")
-                        .to("log:b")
-                        .to("direct:c");
+                from("direct:b").to("log:b").to("direct:c");
 
-                from("direct:c")
-                        .to("log:c");
+                from("direct:c").to("log:c");
             }
         };
     }
-
 }

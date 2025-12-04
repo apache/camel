@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ThrowExceptionMessageTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringThrowExceptionMessageTest extends ThrowExceptionMessageTest {
 
@@ -27,5 +28,4 @@ public class SpringThrowExceptionMessageTest extends ThrowExceptionMessageTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringThrowExceptionMessageTest.xml");
     }
-
 }

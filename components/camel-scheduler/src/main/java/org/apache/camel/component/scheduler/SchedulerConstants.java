@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.scheduler;
 
 import org.apache.camel.Exchange;
@@ -24,7 +25,5 @@ public final class SchedulerConstants {
     @Metadata(description = "The timestamp of the message", javaType = "long")
     public static final String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
-    private SchedulerConstants() {
-
-    }
+    private SchedulerConstants() {}
 }

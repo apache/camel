@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.servlet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -24,8 +27,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
 
@@ -42,12 +43,12 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
     }
 
     private void checkServletEndpointURI(String servletEndpointURI) throws Exception {
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName name = new ObjectName(
                 "org.apache.camel:context=" + context.getName() + ",type=endpoints,name=" + servletEndpointURI);
         Set<ObjectName> objectNamesSet = mbeanServer.queryNames(name, null);
         assertEquals(1, objectNamesSet.size(), "Expect one MBean for the servlet endpoint");
-
     }
 
     @Override
@@ -60,8 +61,6 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
                 from("servlet:test2?servletName=test2").to("mock:jmx");
                 from("servlet:test3?matchOnUriPrefix=true&servletName=test3").to("mock:jmx");
             }
-
         };
     }
-
 }

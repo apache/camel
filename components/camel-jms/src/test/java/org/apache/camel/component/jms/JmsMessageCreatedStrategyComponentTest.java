@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import jakarta.jms.JMSException;
@@ -39,6 +40,7 @@ public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     protected final String componentName = "activemq";
     protected CamelContext context;
     protected ProducerTemplate template;
@@ -72,8 +74,7 @@ public class JmsMessageCreatedStrategyComponentTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:JmsMessageCreatedStrategyComponentTest")
-                        .to("mock:result");
+                from("activemq:queue:JmsMessageCreatedStrategyComponentTest").to("mock:result");
             }
         };
     }

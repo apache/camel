@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.frs.mock;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.huaweicloud.sdk.frs.v2.model.DetectLiveByUrlResponse;
 import org.apache.camel.BindToRegistry;
@@ -26,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class LiveDetectionWithVideoUrlAndMockClientTest extends CamelTestSupport {
     TestConfiguration testConfiguration = new TestConfiguration();
 
@@ -39,16 +40,17 @@ public class LiveDetectionWithVideoUrlAndMockClientTest extends CamelTestSupport
         return new RouteBuilder() {
             public void configure() {
                 from("direct:trigger_route")
-                        .setProperty(FaceRecognitionProperties.FACE_VIDEO_URL,
+                        .setProperty(
+                                FaceRecognitionProperties.FACE_VIDEO_URL,
                                 constant(testConfiguration.getProperty("videoUrl")))
                         .to("hwcloud-frs:faceLiveDetection?"
-                            + "accessKey=" + testConfiguration.getProperty("accessKey")
-                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
-                            + "&projectId=" + testConfiguration.getProperty("projectId")
-                            + "&region=" + testConfiguration.getProperty("region")
-                            + "&actions=1"
-                            + "&ignoreSslVerification=true"
-                            + "&frsClient=#frsClient")
+                                + "accessKey=" + testConfiguration.getProperty("accessKey")
+                                + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                                + "&projectId=" + testConfiguration.getProperty("projectId")
+                                + "&region=" + testConfiguration.getProperty("region")
+                                + "&actions=1"
+                                + "&ignoreSslVerification=true"
+                                + "&frsClient=#frsClient")
                         .log("perform faceLiveDetection successful")
                         .to("mock:perform_live_detection_result");
             }
@@ -70,9 +72,9 @@ public class LiveDetectionWithVideoUrlAndMockClientTest extends CamelTestSupport
         mock.assertIsSatisfied();
 
         assertTrue(responseExchange.getIn().getBody() instanceof DetectLiveByUrlResponse);
-        DetectLiveByUrlResponse response = (DetectLiveByUrlResponse) responseExchange.getIn().getBody();
+        DetectLiveByUrlResponse response =
+                (DetectLiveByUrlResponse) responseExchange.getIn().getBody();
         assertEquals(MockResult.getLiveDetectResult(), response.getVideoResult());
         assertEquals(0, response.getWarningList().size());
     }
-
 }

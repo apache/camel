@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dummy;
 
 import org.apache.camel.Endpoint;
@@ -39,7 +40,8 @@ public class DummyProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         total += amount;
 
-        exchange.getIn().setBody("total " + total + " of " + drink.name().toLowerCase() + " ordered"
-                                 + (celebrity ? " from famous person" : ""));
+        exchange.getIn()
+                .setBody("total " + total + " of " + drink.name().toLowerCase() + " ordered"
+                        + (celebrity ? " from famous person" : ""));
     }
 }

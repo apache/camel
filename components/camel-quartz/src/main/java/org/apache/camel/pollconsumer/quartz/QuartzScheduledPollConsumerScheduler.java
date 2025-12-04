@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.pollconsumer.quartz;
 
 import java.util.HashMap;
@@ -223,7 +224,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
             map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
 
-            job = JobBuilder.newJob(QuartzScheduledPollConsumerJob.class).usingJobData(map).build();
+            job = JobBuilder.newJob(QuartzScheduledPollConsumerJob.class)
+                    .usingJobData(map)
+                    .build();
             // Let user parameters to further set JobDetail properties.
             if (jobParameters != null && jobParameters.size() > 0) {
                 // need to use a copy to keep the parameters
@@ -235,7 +238,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             // store additional information on job such as camel context etc
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
 
-            trigger = TriggerBuilder.newTrigger().withIdentity(id, triggerGroup)
+            trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(id, triggerGroup)
                     .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
                     .build();
             if (triggerParameters != null && triggerParameters.size() > 0) {
@@ -254,13 +258,15 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             job = quartzScheduler.getJobDetail(existingTrigger.getJobKey());
             JobDataMap jobData = job.getJobDataMap();
             jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
-            jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
+            jobData.put(
+                    QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
 
             // store additional information on job such as camel context etc
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
             LOG.debug("Updated jobData map to {}", jobData);
 
-            trigger = existingTrigger.getTriggerBuilder()
+            trigger = existingTrigger
+                    .getTriggerBuilder()
                     .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
                     .build();
 
@@ -290,9 +296,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
         }
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                    trigger.getKey(), trigger.getClass().getSimpleName(),
-                    job.getJobClass().getSimpleName(), trigger.getNextFireTime());
+            LOG.info(
+                    "Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                    trigger.getKey(),
+                    trigger.getClass().getSimpleName(),
+                    job.getJobClass().getSimpleName(),
+                    trigger.getNextFireTime());
         }
     }
 
@@ -302,8 +311,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-    }
+    protected void doShutdown() throws Exception {}
 
     private void unscheduleJob() throws SchedulerException {
         if (trigger != null && deleteJob) {
@@ -319,9 +327,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
         JobDataMap jobDataMap = trigger.getJobDataMap();
         String routeIdFromTrigger = jobDataMap.getString("routeId");
         if (routeIdFromTrigger != null && !routeIdFromTrigger.equals(routeId)) {
-            throw new IllegalArgumentException(
-                    "Trigger key " + trigger.getKey() + " is already used by route: " + routeIdFromTrigger
-                                               + ". Cannot re-use it for another route: " + routeId);
+            throw new IllegalArgumentException("Trigger key " + trigger.getKey() + " is already used by route: "
+                    + routeIdFromTrigger + ". Cannot re-use it for another route: " + routeId);
         }
     }
 
@@ -339,5 +346,4 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
             return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
         }
     }
-
 }

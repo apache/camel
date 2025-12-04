@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
 import java.util.List;
@@ -25,9 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
     protected final String expectedBody = "<hello>world!</hello>";
 
@@ -36,7 +37,8 @@ public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.requestBodyAndHeader("http://localhost:{{port}}/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader(
+                "http://localhost:{{port}}/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -55,7 +57,9 @@ public class ConvertPayloadToInputStreamTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/test").convertBodyTo(InputStream.class).to("mock:result");
+                from("jetty:http://localhost:{{port}}/test")
+                        .convertBodyTo(InputStream.class)
+                        .to("mock:result");
             }
         };
     }

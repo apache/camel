@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ChangeHeaderCaseIssueTest extends ContextTestSupport {
 
@@ -42,7 +43,8 @@ public class ChangeHeaderCaseIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // only the changed case header should exist
-        Map<String, Object> headers = new HashMap<>(mock.getReceivedExchanges().get(0).getIn().getHeaders());
+        Map<String, Object> headers =
+                new HashMap<>(mock.getReceivedExchanges().get(0).getIn().getHeaders());
         assertEquals("cool", headers.get("SoapAction"));
         assertNull(headers.get("SOAPAction"));
     }

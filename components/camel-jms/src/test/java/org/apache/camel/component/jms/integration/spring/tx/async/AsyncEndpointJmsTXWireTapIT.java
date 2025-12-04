@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.async;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
@@ -26,10 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class AsyncEndpointJmsTXWireTapIT extends AbstractSpringJMSITSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
@@ -73,7 +74,8 @@ public class AsyncEndpointJmsTXWireTapIT extends AbstractSpringJMSITSupport {
                             assertFalse(exchange.isTransacted(), "Exchange should NOT be transacted");
                         })
                         .to("async:hi:camel")
-                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
+                        .process(exchange ->
+                                afterThreadName = Thread.currentThread().getName())
                         .to("mock:tap");
             }
         };

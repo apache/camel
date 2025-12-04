@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.issues;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -29,10 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  *
  */
@@ -45,8 +46,8 @@ public class CamelContextModelErrorHandlerIssueTest {
         JAXBContext jaxbContext = new SpringModelJAXBContextFactory().newJAXBContext();
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        Object obj = unmarshaller.unmarshal(
-                new File("src/test/resources/org/apache/camel/spring/issues/CamelContextModelErrorHandlerIssueTest.xml"));
+        Object obj = unmarshaller.unmarshal(new File(
+                "src/test/resources/org/apache/camel/spring/issues/CamelContextModelErrorHandlerIssueTest.xml"));
         assertNotNull(obj);
 
         CamelContextFactoryBean context = (CamelContextFactoryBean) obj;

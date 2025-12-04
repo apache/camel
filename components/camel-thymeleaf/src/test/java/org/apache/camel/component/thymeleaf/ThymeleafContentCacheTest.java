@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.thymeleaf;
+
+import static java.util.Map.entry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import static java.util.Map.entry;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
@@ -45,7 +46,9 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         // create a template file in the classpath
         template.sendBodyAndHeader(
                 "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+                stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
     }
 
     @Test
@@ -61,8 +64,11 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                "not-cached\n" + stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
 
         mock.reset();
         mock.expectedBodiesReceived(expectedNoCache());
@@ -84,8 +90,11 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                "not-cached\n" + stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
 
         mock.reset();
         // we must expect the original file content since caching is enabled
@@ -108,8 +117,11 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again .... with no delay
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                "not-cached\n" + stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
 
         mock.reset();
         // we must expect the original file content since caching is enabled
@@ -118,10 +130,14 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         template.sendBodyAndHeaders(DIRECT_START_CACHE_TTL, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
-        // now change content in the file in the classpath and try again .... after delaying longer than the cache update delay
+        // now change content in the file in the classpath and try again .... after delaying longer than the cache
+        // update delay
         Thread.sleep(1000);
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                "not-cached\n" + stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
 
         mock.reset();
         // we must expect the new content, because the cache has expired
@@ -144,8 +160,11 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+        template.sendBodyAndHeader(
+                "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
+                "not-cached\n" + stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
 
         mock.reset();
 
@@ -156,7 +175,8 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         mock.assertIsSatisfied();
 
         // clear the cache via the mbean server
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        MBeanServer mbeanServer =
+                context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(
                 new ObjectName("org.apache.camel:type=endpoints,name=\"thymeleaf:*cacheable=true*\",*"), null);
         // each endpoint has its own template resolver, so cycle through all of them
@@ -167,7 +187,9 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         // change content in the file in the classpath and try again
         template.sendBodyAndHeader(
                 "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                "not-cached\n" + stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+                "not-cached\n" + stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
         mock.reset();
 
         // we expect the updated file content because caching was disabled
@@ -176,10 +198,13 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
         template.sendBodyAndHeaders(DIRECT_START_WITH_CACHE, SPAZZ_TESTING_SERVICE, headerMap);
         mock.assertIsSatisfied();
 
-        // change content in the file in the classpath and try again to verify that the caching is still in effect after clearing the cache
+        // change content in the file in the classpath and try again to verify that the caching is still in effect after
+        // clearing the cache
         template.sendBodyAndHeader(
                 "file://target/test-classes/org/apache/camel/component/thymeleaf?fileExist=Override",
-                stringTemplate(), Exchange.FILE_NAME, "letter-cached.html");
+                stringTemplate(),
+                Exchange.FILE_NAME,
+                "letter-cached.html");
         mock.reset();
 
         // we expect the cached content from the prior update
@@ -198,17 +223,20 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
 
                 from(DIRECT_START_NO_CACHE)
                         .setProperty(ORDER_NUMBER, simple("7"))
-                        .to("thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=false&allowContextMapAll=true")
+                        .to(
+                                "thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=false&allowContextMapAll=true")
                         .to(MOCK_RESULT);
 
                 from(DIRECT_START_WITH_CACHE)
                         .setProperty(ORDER_NUMBER, simple("7"))
-                        .to("thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=true&allowContextMapAll=true")
+                        .to(
+                                "thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=true&allowContextMapAll=true")
                         .to(MOCK_RESULT);
 
                 from(DIRECT_START_CACHE_TTL)
                         .setProperty(ORDER_NUMBER, simple("7"))
-                        .to("thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=true&cacheTimeToLive=100&allowContextMapAll=true")
+                        .to(
+                                "thymeleaf://org/apache/camel/component/thymeleaf/letter-cached.html?cacheable=true&cacheTimeToLive=100&allowContextMapAll=true")
                         .to(MOCK_RESULT);
             }
         };
@@ -218,5 +246,4 @@ public class ThymeleafContentCacheTest extends ThymeleafAbstractBaseTest {
 
         return "not-cached\n" + expected();
     }
-
 }

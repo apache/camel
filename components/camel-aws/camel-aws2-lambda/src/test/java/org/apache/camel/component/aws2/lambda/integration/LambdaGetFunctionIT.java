@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.lambda.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,9 +33,6 @@ import org.apache.camel.component.aws2.lambda.Lambda2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LambdaGetFunctionIT extends Aws2LambdaBase {
 
@@ -51,14 +52,13 @@ public class LambdaGetFunctionIT extends Aws2LambdaBase {
                 exchange.getIn().setHeader(Lambda2Constants.RUNTIME, "nodejs16.x");
                 exchange.getIn().setHeader(Lambda2Constants.HANDLER, "GetHelloWithName.handler");
                 exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Hello with node.js on Lambda");
-                exchange.getIn().setHeader(Lambda2Constants.ROLE,
-                        "arn:aws:iam::643534317684:role/lambda-execution-role");
+                exchange.getIn()
+                        .setHeader(Lambda2Constants.ROLE, "arn:aws:iam::643534317684:role/lambda-execution-role");
 
                 ClassLoader classLoader = getClass().getClassLoader();
-                File file = new File(
-                        classLoader
-                                .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
-                                .getFile());
+                File file = new File(classLoader
+                        .getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
+                        .getFile());
                 FileInputStream inputStream = new FileInputStream(file);
                 exchange.getIn().setBody(inputStream);
             }
@@ -66,9 +66,7 @@ public class LambdaGetFunctionIT extends Aws2LambdaBase {
 
         template.send("direct:getFunction", ExchangePattern.InOut, new Processor() {
             @Override
-            public void process(Exchange exchange) {
-
-            }
+            public void process(Exchange exchange) {}
         });
 
         MockEndpoint.assertIsSatisfied(context);

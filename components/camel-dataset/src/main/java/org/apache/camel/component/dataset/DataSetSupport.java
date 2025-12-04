@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
 
 import java.util.HashMap;
@@ -32,8 +33,7 @@ public abstract class DataSetSupport implements DataSet {
     private long size = 10;
     private long reportCount = -1;
 
-    protected DataSetSupport() {
-    }
+    protected DataSetSupport() {}
 
     protected DataSetSupport(int size) {
         setSize(size);
@@ -64,7 +64,7 @@ public abstract class DataSetSupport implements DataSet {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public long getSize() {
@@ -115,19 +115,17 @@ public abstract class DataSetSupport implements DataSet {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected abstract Object createMessageBody(long messageIndex);
 
     /**
      * Allows derived classes to add some custom headers for a given message
      */
-    protected void applyHeaders(Exchange exchange, long messageIndex) {
-    }
+    protected void applyHeaders(Exchange exchange, long messageIndex) {}
 
     /**
      * Allows derived classes to customize a default set of properties
      */
-    protected void populateDefaultHeaders(Map<String, Object> map) {
-    }
+    protected void populateDefaultHeaders(Map<String, Object> map) {}
 }

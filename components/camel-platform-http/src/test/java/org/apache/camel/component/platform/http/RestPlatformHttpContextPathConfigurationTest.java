@@ -14,27 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
+
+import static org.hamcrest.CoreMatchers.containsString;
 
 import io.restassured.RestAssured;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-
 public class RestPlatformHttpContextPathConfigurationTest extends AbstractPlatformHttpTest {
 
     @Test
     public void contextPath() {
-        RestAssured.get("/rest/get")
-                .then()
-                .body(containsString("GET: /get"));
+        RestAssured.get("/rest/get").then().body(containsString("GET: /get"));
 
-        RestAssured.given()
-                .contentType("text/plain")
-                .post("/rest/post")
-                .then()
-                .body(containsString("POST: /post"));
+        RestAssured.given().contentType("text/plain").post("/rest/post").then().body(containsString("POST: /post"));
     }
 
     @Override
@@ -42,21 +37,18 @@ public class RestPlatformHttpContextPathConfigurationTest extends AbstractPlatfo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration()
-                        .component("platform-http")
-                        .contextPath("/rest");
+                restConfiguration().component("platform-http").contextPath("/rest");
 
-                rest()
-                        .get("/get").to("direct:get")
-                        .post("/post").consumes("text/plain").produces("text/plain").to("direct:post");
+                rest().get("/get")
+                        .to("direct:get")
+                        .post("/post")
+                        .consumes("text/plain")
+                        .produces("text/plain")
+                        .to("direct:post");
 
-                from("direct:get")
-                        .setBody(constant("GET: /get"));
-                from("direct:post")
-                        .setBody(constant("POST: /post"));
-
+                from("direct:get").setBody(constant("GET: /get"));
+                from("direct:post").setBody(constant("POST: /post"));
             }
         };
     }
-
 }

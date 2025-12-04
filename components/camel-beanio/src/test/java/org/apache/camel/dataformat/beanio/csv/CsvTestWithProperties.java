@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.beanio.csv;
 
 import java.util.Properties;
@@ -31,8 +32,7 @@ public class CsvTestWithProperties extends CsvTest {
                 // START SNIPPET: e1
                 // setup beanio data format using the mapping file, loaded from the classpath
                 BeanIODataFormat format = new BeanIODataFormat(
-                        "org/apache/camel/dataformat/beanio/csv/mappingsWithProperties.xml",
-                        "stream1");
+                        "org/apache/camel/dataformat/beanio/csv/mappingsWithProperties.xml", "stream1");
                 Properties properties = new Properties();
                 properties.setProperty("field1", "firstName");
                 properties.setProperty("field2", "lastName");
@@ -48,12 +48,9 @@ public class CsvTestWithProperties extends CsvTest {
                         .to("mock:beanio-unmarshal");
 
                 // convert list of java objects back to flat format
-                from("direct:marshal")
-                        .marshal(format)
-                        .to("mock:beanio-marshal");
+                from("direct:marshal").marshal(format).to("mock:beanio-marshal");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

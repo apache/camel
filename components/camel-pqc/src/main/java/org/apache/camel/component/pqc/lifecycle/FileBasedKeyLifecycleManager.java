@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.BufferedInputStream;
@@ -161,19 +162,15 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     public void storeKey(String keyId, KeyPair keyPair, KeyMetadata metadata) throws Exception {
         // Store key pair
         Path keyFile = getKeyFile(keyId);
-        try (ObjectOutputStream oos = new ObjectOutputStream(
-                new BufferedOutputStream(
-                        Files.newOutputStream(keyFile, StandardOpenOption.CREATE,
-                                StandardOpenOption.TRUNCATE_EXISTING)))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
+                Files.newOutputStream(keyFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)))) {
             oos.writeObject(keyPair);
         }
 
         // Store metadata
         Path metadataFile = getMetadataFile(keyId);
-        try (ObjectOutputStream oos = new ObjectOutputStream(
-                new BufferedOutputStream(
-                        Files.newOutputStream(metadataFile, StandardOpenOption.CREATE,
-                                StandardOpenOption.TRUNCATE_EXISTING)))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(
+                metadataFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)))) {
             oos.writeObject(metadata);
         }
 
@@ -213,7 +210,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             return null;
         }
 
-        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(metadataFile)))) {
+        try (ObjectInputStream ois =
+                new ObjectInputStream(new BufferedInputStream(Files.newInputStream(metadataFile)))) {
             KeyMetadata metadata = (KeyMetadata) ois.readObject();
             metadataCache.put(keyId, metadata);
             return metadata;
@@ -223,10 +221,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     @Override
     public void updateKeyMetadata(String keyId, KeyMetadata metadata) throws Exception {
         Path metadataFile = getMetadataFile(keyId);
-        try (ObjectOutputStream oos = new ObjectOutputStream(
-                new BufferedOutputStream(
-                        Files.newOutputStream(metadataFile, StandardOpenOption.CREATE,
-                                StandardOpenOption.TRUNCATE_EXISTING)))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(
+                metadataFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)))) {
             oos.writeObject(metadata);
         }
         metadataCache.put(keyId, metadata);
@@ -283,8 +279,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         KeyMetadata metadata = getKeyMetadata(keyId);
         if (metadata != null) {
             metadata.setStatus(KeyMetadata.KeyStatus.REVOKED);
-            metadata.setDescription((metadata.getDescription() != null ? metadata.getDescription() + "; " : "")
-                                    + "Revoked: " + reason);
+            metadata.setDescription(
+                    (metadata.getDescription() != null ? metadata.getDescription() + "; " : "") + "Revoked: " + reason);
             updateKeyMetadata(keyId, metadata);
             LOG.info("Revoked key: {} - {}", keyId, reason);
         }
@@ -292,18 +288,17 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     private void loadExistingKeys() {
         try (Stream<Path> files = Files.list(keyDirectory)) {
-            files.filter(path -> path.toString().endsWith(".metadata"))
-                    .forEach(path -> {
-                        try {
-                            String keyId = path.getFileName().toString().replace(".metadata", "");
-                            KeyMetadata metadata = getKeyMetadata(keyId);
-                            if (metadata != null) {
-                                LOG.debug("Loaded existing key: {}", metadata);
-                            }
-                        } catch (Exception e) {
-                            LOG.warn("Failed to load key metadata: {}", path, e);
-                        }
-                    });
+            files.filter(path -> path.toString().endsWith(".metadata")).forEach(path -> {
+                try {
+                    String keyId = path.getFileName().toString().replace(".metadata", "");
+                    KeyMetadata metadata = getKeyMetadata(keyId);
+                    if (metadata != null) {
+                        LOG.debug("Loaded existing key: {}", metadata);
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Failed to load key metadata: {}", path, e);
+                }
+            });
         } catch (IOException e) {
             LOG.warn("Failed to list existing keys", e);
         }
@@ -359,8 +354,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
                     return org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
                     return new org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec(
-                            10,
-                            org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
+                            10, org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
                 case "XMSSMT":
                     return org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
                 case "LMS":

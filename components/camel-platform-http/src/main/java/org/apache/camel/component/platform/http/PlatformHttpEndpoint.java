@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http;
 
 import java.util.Set;
@@ -41,9 +42,14 @@ import org.apache.camel.util.MimeTypeHelper;
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path",
-             category = { Category.HTTP }, consumerOnly = true)
-@Metadata(annotations = { "protocol=http" })
+@UriEndpoint(
+        firstVersion = "3.0.0",
+        scheme = "platform-http",
+        title = "Platform HTTP",
+        syntax = "platform-http:path",
+        category = {Category.HTTP},
+        consumerOnly = true)
+@Metadata(annotations = {"protocol=http"})
 public class PlatformHttpEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
@@ -82,59 +88,107 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     @UriPath(description = "The path under which this endpoint serves the HTTP requests, for proxy use 'proxy'")
     @Metadata(required = true)
     private final String path;
-    @UriParam(label = "consumer", defaultValue = "false",
-              description = "Whether or not the consumer should try to find a target consumer "
-                            + "by matching the URI prefix if no exact match is found.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "false",
+            description = "Whether or not the consumer should try to find a target consumer "
+                    + "by matching the URI prefix if no exact match is found.")
     private boolean matchOnUriPrefix;
-    @UriParam(label = "consumer", description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
-                                                + " If no methods are specified, all methods will be served.")
+
+    @UriParam(
+            label = "consumer",
+            description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
+                    + " If no methods are specified, all methods will be served.")
     private String httpMethodRestrict;
-    @UriParam(label = "consumer", description = "The content type this endpoint accepts as an input, such as"
-                                                + " application/xml or application/json. <code>null</code> or <code>&#42;/&#42;</code> mean no restriction.")
+
+    @UriParam(
+            label = "consumer",
+            description =
+                    "The content type this endpoint accepts as an input, such as"
+                            + " application/xml or application/json. <code>null</code> or <code>&#42;/&#42;</code> mean no restriction.")
     private String consumes;
-    @UriParam(label = "consumer", description = "The content type this endpoint produces, such as"
-                                                + " application/xml or application/json.")
+
+    @UriParam(
+            label = "consumer",
+            description = "The content type this endpoint produces, such as" + " application/xml or application/json.")
     private String produces;
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+
+    @UriParam(
+            label = "consumer",
+            defaultValue = "true",
+            description =
+                    "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     private boolean muteException = true;
-    @UriParam(label = "consumer,advanced", description = "A comma or whitespace separated list of file extensions."
-                                                         + " Uploads having these extensions will be stored locally."
-                                                         + " Null value or asterisk (*) will allow all files.")
+
+    @UriParam(
+            label = "consumer,advanced",
+            description = "A comma or whitespace separated list of file extensions."
+                    + " Uploads having these extensions will be stored locally."
+                    + " Null value or asterisk (*) will allow all files.")
     private String fileNameExtWhitelist;
-    @UriParam(label = "advanced", description = "An HTTP Server engine implementation to serve the requests of this"
-                                                + " endpoint.")
+
+    @UriParam(
+            label = "advanced",
+            description = "An HTTP Server engine implementation to serve the requests of this" + " endpoint.")
     private PlatformHttpEngine platformHttpEngine;
-    @UriParam(label = "advanced",
-              description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
+
+    @UriParam(
+            label = "advanced",
+            description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam(label = "advanced,consumer",
-              description = "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
+
+    @UriParam(
+            label = "advanced,consumer",
+            description =
+                    "Whether to use streaming for large requests and responses (currently only supported by camel-platform-http-vertx)")
     private boolean useStreaming;
-    @UriParam(label = "advanced,consumer", description = "The properties set on a Cookies when a Cookie is added via the"
-                                                         + " Cookie Handler (currently only supported by camel-platform-http-vertx)")
+
+    @UriParam(
+            label = "advanced,consumer",
+            description = "The properties set on a Cookies when a Cookie is added via the"
+                    + " Cookie Handler (currently only supported by camel-platform-http-vertx)")
     private CookieConfiguration cookieConfiguration = new CookieConfiguration();
-    @UriParam(label = "advanced,consumer",
-              description = "Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval"
-                            + " (currently only supported by camel-platform-http-vertx)")
+
+    @UriParam(
+            label = "advanced,consumer",
+            description = "Whether to enable the Cookie Handler that allows Cookie addition, expiry, and retrieval"
+                    + " (currently only supported by camel-platform-http-vertx)")
     private boolean useCookieHandler;
-    @UriParam(label = "advanced,consumer", defaultValue = "false",
-              description = "Whether to include HTTP request headers (Accept, User-Agent, etc.) into HTTP response produced by this endpoint.")
+
+    @UriParam(
+            label = "advanced,consumer",
+            defaultValue = "false",
+            description =
+                    "Whether to include HTTP request headers (Accept, User-Agent, etc.) into HTTP response produced by this endpoint.")
     private boolean returnHttpRequestHeaders;
-    @UriParam(label = "advanced,consumer", defaultValue = "false",
-              description = "When Camel is complete processing the message, and the HTTP server is writing response. This option controls whether Camel"
+
+    @UriParam(
+            label = "advanced,consumer",
+            defaultValue = "false",
+            description =
+                    "When Camel is complete processing the message, and the HTTP server is writing response. This option controls whether Camel"
                             + " should catch any failure during writing response and store this on the Exchange, which allows onCompletion/UnitOfWork to"
                             + " regard the Exchange as failed and have access to the caused exception from the HTTP server.")
     private boolean handleWriteResponseError;
-    @UriParam(label = "advanced,consumer", defaultValue = "true",
-              description = "Whether to populate the message Body with a Map containing application/x-www-form-urlencoded form properties.")
+
+    @UriParam(
+            label = "advanced,consumer",
+            defaultValue = "true",
+            description =
+                    "Whether to populate the message Body with a Map containing application/x-www-form-urlencoded form properties.")
     private boolean populateBodyWithForm = true;
 
-    @UriParam(label = "advanced,consumer", defaultValue = "true",
-              description = "Whether to use BodyHandler for the request. If set to false then the request will no be read and parsed.")
+    @UriParam(
+            label = "advanced,consumer",
+            defaultValue = "true",
+            description =
+                    "Whether to use BodyHandler for the request. If set to false then the request will no be read and parsed.")
     private boolean useBodyHandler = true;
-    @UriParam(label = "advanced,consumer",
-              description = "The period in milliseconds after which the request should be timed out.")
+
+    @UriParam(
+            label = "advanced,consumer",
+            description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
@@ -296,9 +350,7 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
     }
 
     PlatformHttpEngine getOrCreateEngine() {
-        return platformHttpEngine != null
-                ? platformHttpEngine
-                : getComponent().getOrCreateEngine();
+        return platformHttpEngine != null ? platformHttpEngine : getComponent().getOrCreateEngine();
     }
 
     public boolean isHttpProxy() {

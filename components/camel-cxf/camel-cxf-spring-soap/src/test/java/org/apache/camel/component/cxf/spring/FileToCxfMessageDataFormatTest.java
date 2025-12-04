@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.HelloService;
@@ -29,10 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FileToCxfMessageDataFormatTest.class);
@@ -64,7 +65,8 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/spring/FileToCxfMessageDataFormatTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/cxf/spring/FileToCxfMessageDataFormatTest.xml");
     }
 
     @Test
@@ -84,12 +86,12 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
     private String createBody() throws Exception {
         return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.component.camel.apache.org/\">\n"
-               + "   <soapenv:Header/>\n"
-               + "   <soapenv:Body>\n"
-               + "      <cxf:echo>\n"
-               + "          <cxf:arg0>Camel</cxf:arg0>\n"
-               + "      </cxf:echo>\n"
-               + "   </soapenv:Body>\n"
-               + "</soapenv:Envelope>";
+                + "   <soapenv:Header/>\n"
+                + "   <soapenv:Body>\n"
+                + "      <cxf:echo>\n"
+                + "          <cxf:arg0>Camel</cxf:arg0>\n"
+                + "      </cxf:echo>\n"
+                + "   </soapenv:Body>\n"
+                + "</soapenv:Envelope>";
     }
 }

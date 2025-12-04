@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import org.apache.camel.LineNumberAware;
@@ -26,8 +27,7 @@ import org.apache.camel.util.StringHelper;
  */
 public final class LoggerHelper {
 
-    private LoggerHelper() {
-    }
+    private LoggerHelper() {}
 
     /**
      * If the node is {@link LineNumberAware} then get a logger name that will point to the source:line, otherwise
@@ -145,5 +145,4 @@ public final class LoggerHelper {
         }
         return null;
     }
-
 }

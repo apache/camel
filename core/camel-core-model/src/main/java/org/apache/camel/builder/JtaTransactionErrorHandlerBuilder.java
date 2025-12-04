@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.builder;
 
 import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
@@ -23,8 +24,7 @@ import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
  */
 public class JtaTransactionErrorHandlerBuilder extends JtaTransactionErrorHandlerDefinition {
 
-    public JtaTransactionErrorHandlerBuilder() {
-    }
+    public JtaTransactionErrorHandlerBuilder() {}
 
     public JtaTransactionErrorHandlerBuilder(Object transactedPolicy) {
         if (transactedPolicy instanceof String str) {
@@ -33,5 +33,4 @@ public class JtaTransactionErrorHandlerBuilder extends JtaTransactionErrorHandle
             setTransactedPolicy(transactedPolicy);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main.app;
 
 public class Bean2 {
@@ -27,5 +28,4 @@ public class Bean2 {
     public Bean1 getBean() {
         return bean;
     }
-
 }

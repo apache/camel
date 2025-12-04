@@ -14,28 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.main.Main;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class JaxbXmlMainTemplatedRouteTest {
 
     @Test
     void testMainRoutesCollector() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-template.xml,org/apache/camel/main/xml/camel-my-templated-route.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-template.xml,org/apache/camel/main/xml/camel-my-templated-route.xml");
     }
 
     @Test
     void testMainRoutesCollectorScan() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-template*.xml,org/apache/camel/main/xml/camel-my-templated-route*.xml");
+        doTestMain(
+                "org/apache/camel/main/xml/camel-template*.xml,org/apache/camel/main/xml/camel-my-templated-route*.xml");
     }
 
     @Test
@@ -53,7 +56,8 @@ class JaxbXmlMainTemplatedRouteTest {
     @Test
     void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("classpath:org/apache/camel/main/xml/camel-t*.xml,classpath:org/apache/camel/main/**/camel-my-t*.xml");
+        doTestMain(
+                "classpath:org/apache/camel/main/xml/camel-t*.xml,classpath:org/apache/camel/main/**/camel-my-t*.xml");
     }
 
     protected void doTestMain(String includes) throws Exception {

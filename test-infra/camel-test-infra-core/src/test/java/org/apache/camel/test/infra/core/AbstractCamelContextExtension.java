@@ -29,9 +29,10 @@ abstract class AbstractCamelContextExtension implements CamelContextExtension {
         return new DefaultCamelContext();
     }
 
-    protected CamelContext createCamelContext(AnnotationProcessor annotationProcessor, ExtensionContext extensionContext) {
-        CamelContext context
-                = annotationProcessor.setupContextProvider(extensionContext, ContextProvider.class, CamelContext.class);
+    protected CamelContext createCamelContext(
+            AnnotationProcessor annotationProcessor, ExtensionContext extensionContext) {
+        CamelContext context =
+                annotationProcessor.setupContextProvider(extensionContext, ContextProvider.class, CamelContext.class);
         if (context == null) {
             context = createCamelContext();
         }
@@ -40,9 +41,11 @@ abstract class AbstractCamelContextExtension implements CamelContextExtension {
     }
 
     protected void setupBeanPostProcessors(CamelContext context, Object testInstance) throws Exception {
-        PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(testInstance,
-                testInstance.getClass().getName());
-        PluginHelper.getBeanPostProcessor(context).postProcessAfterInitialization(testInstance,
-                testInstance.getClass().getName());
+        PluginHelper.getBeanPostProcessor(context)
+                .postProcessBeforeInitialization(
+                        testInstance, testInstance.getClass().getName());
+        PluginHelper.getBeanPostProcessor(context)
+                .postProcessAfterInitialization(
+                        testInstance, testInstance.getClass().getName());
     }
 }

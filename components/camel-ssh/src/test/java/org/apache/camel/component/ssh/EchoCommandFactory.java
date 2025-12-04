@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ssh;
 
 import java.io.IOException;
@@ -45,8 +46,7 @@ public class EchoCommandFactory implements CommandFactory {
         }
 
         @Override
-        public void setInputStream(InputStream in) {
-        }
+        public void setInputStream(InputStream in) {}
 
         @Override
         public void setOutputStream(OutputStream out) {

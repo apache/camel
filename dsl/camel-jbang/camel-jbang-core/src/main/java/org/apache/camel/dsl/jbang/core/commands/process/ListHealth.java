@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.time.ZonedDateTime;
@@ -40,36 +41,51 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "health", description = "Get health check status of running Camel integrations", sortOptions = false,
-         showDefaultValues = true)
+@Command(
+        name = "health",
+        description = "Get health check status of running Camel integrations",
+        sortOptions = false,
+        showDefaultValues = true)
 public class ListHealth extends ProcessWatchCommand {
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--level" },
-                        description = "Level of details: full, or default", defaultValue = "default")
+    @CommandLine.Option(
+            names = {"--level"},
+            description = "Level of details: full, or default",
+            defaultValue = "default")
     String level;
 
-    @CommandLine.Option(names = { "--down" },
-                        description = "Show only checks which are DOWN")
+    @CommandLine.Option(
+            names = {"--down"},
+            description = "Show only checks which are DOWN")
     boolean down;
 
-    @CommandLine.Option(names = { "--ready" },
-                        description = "Show only readiness checks")
+    @CommandLine.Option(
+            names = {"--ready"},
+            description = "Show only readiness checks")
     boolean ready;
 
-    @CommandLine.Option(names = { "--live" },
-                        description = "Show only liveness checks")
+    @CommandLine.Option(
+            names = {"--live"},
+            description = "Show only liveness checks")
     boolean live;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces in error messages", defaultValue = "false")
+    @CommandLine.Option(
+            names = {"--trace"},
+            description = "Include stack-traces in error messages",
+            defaultValue = "false")
     boolean trace;
 
-    @CommandLine.Option(names = { "--depth" },
-                        description = "Max depth of stack-trace", defaultValue = "1")
+    @CommandLine.Option(
+            names = {"--depth"},
+            description = "Max depth of stack-trace",
+            defaultValue = "1")
     int depth;
 
     public ListHealth(CamelJBangMain main) {
@@ -86,135 +102,161 @@ public class ListHealth extends ProcessWatchCommand {
         }
 
         List<Long> pids = findPids("*");
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        JsonObject hc = (JsonObject) root.get("healthChecks");
-                        if (hc == null) {
-                            return;
-                        }
-                        JsonArray array = (JsonArray) hc.get("checks");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
-                            Row row = new Row();
-                            row.pid = Long.toString(ph.pid());
-                            row.uptime = extractSince(ph);
-                            row.ago = TimeUtils.printSince(row.uptime);
-                            row.name = context.getString("name");
-                            if ("CamelJBang".equals(row.name)) {
-                                row.name = ProcessHelper.extractName(root, ph);
-                            }
-                            row.id = o.getString("id");
-                            row.group = o.getString("group");
-                            row.state = o.getString("state");
-                            row.readiness = o.getBoolean("readiness");
-                            row.liveness = o.getBoolean("liveness");
-                            row.message = o.getString("message");
-                            row.stackTrace = o.getCollection("stackTrace");
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                JsonObject hc = (JsonObject) root.get("healthChecks");
+                if (hc == null) {
+                    return;
+                }
+                JsonArray array = (JsonArray) hc.get("checks");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject o = (JsonObject) array.get(i);
+                    Row row = new Row();
+                    row.pid = Long.toString(ph.pid());
+                    row.uptime = extractSince(ph);
+                    row.ago = TimeUtils.printSince(row.uptime);
+                    row.name = context.getString("name");
+                    if ("CamelJBang".equals(row.name)) {
+                        row.name = ProcessHelper.extractName(root, ph);
+                    }
+                    row.id = o.getString("id");
+                    row.group = o.getString("group");
+                    row.state = o.getString("state");
+                    row.readiness = o.getBoolean("readiness");
+                    row.liveness = o.getBoolean("liveness");
+                    row.message = o.getString("message");
+                    row.stackTrace = o.getCollection("stackTrace");
 
-                            JsonObject d = (JsonObject) o.get("details");
-                            if (d != null) {
-                                row.total = d.getString("invocation.count");
-                                row.success = d.getString("success.count");
-                                row.failure = d.getString("failure.count");
-                                String kind = d.getString("check.kind");
-                                if ("READINESS".equals(kind)) {
-                                    row.liveness = false;
-                                } else if ("LIVENESS".equals(kind)) {
-                                    row.readiness = false;
+                    JsonObject d = (JsonObject) o.get("details");
+                    if (d != null) {
+                        row.total = d.getString("invocation.count");
+                        row.success = d.getString("success.count");
+                        row.failure = d.getString("failure.count");
+                        String kind = d.getString("check.kind");
+                        if ("READINESS".equals(kind)) {
+                            row.liveness = false;
+                        } else if ("LIVENESS".equals(kind)) {
+                            row.readiness = false;
+                        }
+                        // calc how long time since the check was invoked
+                        String time = d.getString("invocation.time");
+                        if (time != null) {
+                            ZonedDateTime zdt = ZonedDateTime.parse(time);
+                            long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                            row.sinceLast = TimeUtils.printAge(delta);
+                        }
+                        time = d.getString("success.start.time");
+                        if (time != null) {
+                            ZonedDateTime zdt = ZonedDateTime.parse(time);
+                            long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                            row.sinceStartSuccess = TimeUtils.printAge(delta);
+                        }
+                        time = d.getString("failure.start.time");
+                        if (time != null) {
+                            ZonedDateTime zdt = ZonedDateTime.parse(time);
+                            long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
+                            row.sinceStartFailure = TimeUtils.printAge(delta);
+                        }
+                        for (Map.Entry<String, Object> entry : d.entrySet()) {
+                            String k = entry.getKey();
+                            // gather custom details
+                            if (!HealthCheckHelper.isReservedKey(k)) {
+                                if (row.customMeta == null) {
+                                    row.customMeta = new TreeMap<>();
                                 }
-                                // calc how long time since the check was invoked
-                                String time = d.getString("invocation.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                    row.sinceLast = TimeUtils.printAge(delta);
-                                }
-                                time = d.getString("success.start.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                    row.sinceStartSuccess = TimeUtils.printAge(delta);
-                                }
-                                time = d.getString("failure.start.time");
-                                if (time != null) {
-                                    ZonedDateTime zdt = ZonedDateTime.parse(time);
-                                    long delta = Math.abs(ZonedDateTime.now().until(zdt, ChronoUnit.MILLIS));
-                                    row.sinceStartFailure = TimeUtils.printAge(delta);
-                                }
-                                for (Map.Entry<String, Object> entry : d.entrySet()) {
-                                    String k = entry.getKey();
-                                    // gather custom details
-                                    if (!HealthCheckHelper.isReservedKey(k)) {
-                                        if (row.customMeta == null) {
-                                            row.customMeta = new TreeMap<>();
-                                        }
-                                        row.customMeta.put(k, entry.getValue());
-                                    }
-                                }
-                            }
-
-                            boolean add = true;
-                            if (live && !row.liveness) {
-                                add = false;
-                            }
-                            if (ready && !row.readiness) {
-                                add = false;
-                            }
-                            if (down && !row.state.equals("DOWN")) {
-                                add = false;
-                            }
-                            if (level == null || "default".equals(level)) {
-                                if (row.state.equals("UP") && "camel".equals(row.group)
-                                        && (row.id.startsWith("route:") || row.id.startsWith("consumer:"))) {
-                                    // skip camel/route: camel/consumer: checks when they are UP
-                                    // as they are less relevant and is verbose
-                                    add = false;
-                                }
-                            }
-                            if (add) {
-                                rows.add(row);
+                                row.customMeta.put(k, entry.getValue());
                             }
                         }
                     }
-                });
+
+                    boolean add = true;
+                    if (live && !row.liveness) {
+                        add = false;
+                    }
+                    if (ready && !row.readiness) {
+                        add = false;
+                    }
+                    if (down && !row.state.equals("DOWN")) {
+                        add = false;
+                    }
+                    if (level == null || "default".equals(level)) {
+                        if (row.state.equals("UP")
+                                && "camel".equals(row.group)
+                                && (row.id.startsWith("route:") || row.id.startsWith("consumer:"))) {
+                            // skip camel/route: camel/consumer: checks when they are UP
+                            // as they are less relevant and is verbose
+                            add = false;
+                        }
+                    }
+                    if (add) {
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getId),
-                    new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.CENTER)
-                            .with(r -> r.state),
-                    new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getRate),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getSince),
-                    new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.message))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("AGE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.ago),
+                                    new Column()
+                                            .header("ID")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(this::getId),
+                                    new Column()
+                                            .header("RL")
+                                            .minWidth(4)
+                                            .maxWidth(4)
+                                            .with(this::getLR),
+                                    new Column()
+                                            .header("STATUS")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.state),
+                                    new Column()
+                                            .header("RATE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getRate),
+                                    new Column()
+                                            .header("SINCE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(this::getSince),
+                                    new Column()
+                                            .header("MESSAGE")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                            .with(r -> r.message))));
         }
         if (trace) {
-            var traces
-                    = rows.stream().filter(r -> r.stackTrace != null && !r.stackTrace.isEmpty()).collect(Collectors.toList());
+            var traces = rows.stream()
+                    .filter(r -> r.stackTrace != null && !r.stackTrace.isEmpty())
+                    .collect(Collectors.toList());
             if (!traces.isEmpty()) {
                 for (Row row : traces) {
                     printer().println("\n");
@@ -317,5 +359,4 @@ public class ListHealth extends ProcessWatchCommand {
         List<String> stackTrace;
         Map<String, Object> customMeta;
     }
-
 }

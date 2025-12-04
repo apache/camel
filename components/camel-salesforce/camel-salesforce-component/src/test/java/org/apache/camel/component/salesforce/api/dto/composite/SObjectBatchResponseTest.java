@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto.composite;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,38 +30,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class SObjectBatchResponseTest {
 
     @Test
     public void shouldDeserializeFromJson() throws IOException {
 
-        final String json = "{\n"//
-                            + "   \"hasErrors\" : false,\n"//
-                            + "   \"results\" : [{\n"//
-                            + "      \"statusCode\" : 204,\n"//
-                            + "      \"result\" : null\n"//
-                            + "      },{\n"//
-                            + "      \"statusCode\" : 200,\n"//
-                            + "      \"result\": {\n"//
-                            + "         \"attributes\" : {\n"//
-                            + "            \"type\" : \"Account\",\n"//
-                            + "            \"url\" : \"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\"\n"//
-                            + "         },\n"//
-                            + "         \"Name\" : \"NewName\",\n"//
-                            + "         \"BillingPostalCode\" : \"94105\",\n"//
-                            + "         \"Id\" : \"001D000000K0fXOIAZ\"\n"//
-                            + "      }\n"//
-                            + "   }]\n"//
-                            + "}";
+        final String json = "{\n" //
+                + "   \"hasErrors\" : false,\n" //
+                + "   \"results\" : [{\n" //
+                + "      \"statusCode\" : 204,\n" //
+                + "      \"result\" : null\n" //
+                + "      },{\n" //
+                + "      \"statusCode\" : 200,\n" //
+                + "      \"result\": {\n" //
+                + "         \"attributes\" : {\n" //
+                + "            \"type\" : \"Account\",\n" //
+                + "            \"url\" : \"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\"\n" //
+                + "         },\n" //
+                + "         \"Name\" : \"NewName\",\n" //
+                + "         \"BillingPostalCode\" : \"94105\",\n" //
+                + "         \"Id\" : \"001D000000K0fXOIAZ\"\n" //
+                + "      }\n" //
+                + "   }]\n" //
+                + "}";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final SObjectBatchResponse response = mapper.readerFor(SObjectBatchResponse.class).readValue(json);
+        final SObjectBatchResponse response =
+                mapper.readerFor(SObjectBatchResponse.class).readValue(json);
 
         assertResponse(response);
     }
@@ -79,14 +81,20 @@ public class SObjectBatchResponseTest {
         final Map<String, Object> secondResultMap = (Map<String, Object>) secondResult.getResult();
         @SuppressWarnings("unchecked")
         final Map<String, String> attributes = (Map<String, String>) secondResultMap.get("attributes");
-        assertEquals("Account", attributes.get("type"), "Second result data should have attribute type set to `Account`");
-        assertEquals("/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ", attributes.get("url"),
+        assertEquals(
+                "Account", attributes.get("type"), "Second result data should have attribute type set to `Account`");
+        assertEquals(
+                "/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ",
+                attributes.get("url"),
                 "Second result data should have attribute url set as expected");
 
-        assertEquals("NewName", secondResultMap.get("Name"), "Second result data should have `NewName` set as expected");
-        assertEquals("94105", secondResultMap.get("BillingPostalCode"),
+        assertEquals(
+                "NewName", secondResultMap.get("Name"), "Second result data should have `NewName` set as expected");
+        assertEquals(
+                "94105",
+                secondResultMap.get("BillingPostalCode"),
                 "Second result data should have `BillingPostalCode` set as expected");
-        assertEquals("001D000000K0fXOIAZ", secondResultMap.get("Id"), "Second result data should have `Id` set as expected");
+        assertEquals(
+                "001D000000K0fXOIAZ", secondResultMap.get("Id"), "Second result data should have `Id` set as expected");
     }
-
 }

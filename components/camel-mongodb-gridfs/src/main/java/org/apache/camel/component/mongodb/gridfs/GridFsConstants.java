@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.gridfs;
 
 import org.apache.camel.Exchange;
@@ -23,14 +24,19 @@ public final class GridFsConstants {
 
     @Metadata(label = "consumer", description = "The content type of the file.", javaType = "String")
     public static final String FILE_CONTENT_TYPE = Exchange.FILE_CONTENT_TYPE;
+
     @Metadata(label = "consumer", description = "The size of the file.", javaType = "long")
     public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
+
     @Metadata(label = "consumer", description = "The size of the file.", javaType = "Date")
     public static final String FILE_LAST_MODIFIED = Exchange.FILE_LAST_MODIFIED;
+
     @Metadata(label = "producer", description = "The name of the file.", javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;
+
     @Metadata(label = "producer", description = "The content type of the file.", javaType = "String")
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
+
     @Metadata(label = "producer", description = "The file name produced.", javaType = "String")
     public static final String FILE_NAME_PRODUCED = Exchange.FILE_NAME_PRODUCED;
 
@@ -40,17 +46,27 @@ public final class GridFsConstants {
     public static final String GRIDFS_FILE_KEY_FILENAME = "filename";
     public static final String GRIDFS_FILE_KEY_UPLOAD_DATE = "uploadDate";
     public static final String PERSISTENT_TIMESTAMP_KEY = "timestamp";
+
     @Metadata(description = "Any additional metadata stored along with the file in JSON format.", javaType = "String")
     public static final String GRIDFS_METADATA = "gridfs.metadata";
+
     @Metadata(label = "producer", description = "The operation to perform.", javaType = "String")
     public static final String GRIDFS_OPERATION = "gridfs.operation";
-    @Metadata(label = "producer", description = "The number of bytes per chunk for the uploaded file.", javaType = "Integer")
+
+    @Metadata(
+            label = "producer",
+            description = "The number of bytes per chunk for the uploaded file.",
+            javaType = "Integer")
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
-    @Metadata(label = "producer", description = "The ObjectId of the file produced", javaType = "org.bson.types.ObjectId")
+
+    @Metadata(
+            label = "producer",
+            description = "The ObjectId of the file produced",
+            javaType = "org.bson.types.ObjectId")
     public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
+
     @Metadata(label = "producer", description = "The ObjectId of the file.", javaType = "org.bson.types.ObjectId")
     public static final String GRIDFS_OBJECT_ID = "gridfs.objectid";
 
-    private GridFsConstants() {
-    }
+    private GridFsConstants() {}
 }

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcr;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -26,11 +32,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class JcrNodePathCreationTest extends JcrRouteTestSupport {
 
     private Value[] multiValued;
@@ -40,9 +41,7 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
         Session session = openSession();
 
         ValueFactory valFact = session.getValueFactory();
-        multiValued = new Value[] {
-                valFact.createValue("value-1"),
-                valFact.createValue("value-2") };
+        multiValued = new Value[] {valFact.createValue("value-1"), valFact.createValue("value-2")};
 
         session.logout();
     }
@@ -79,7 +78,8 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
             assertNotNull(node);
             assertEquals("/home/test/node/with/path", node.getPath());
             assertTrue(node.getProperty("my.contents.property").isMultiple());
-            assertArrayEquals(multiValued, node.getProperty("my.contents.property").getValues());
+            assertArrayEquals(
+                    multiValued, node.getProperty("my.contents.property").getValues());
         } finally {
             if (session != null && session.isLive()) {
                 session.logout();
@@ -93,11 +93,12 @@ public class JcrNodePathCreationTest extends JcrRouteTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: jcr
-                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
-                        .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
+                from("direct:a")
+                        .setHeader(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
+                        .setHeader("my.contents.property", body())
+                        .to("jcr://user:pass@repository/home/test");
                 // END SNIPPET: jcr
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
 
 import java.util.Map;
@@ -34,7 +35,8 @@ public class DaprComponent extends DefaultComponent {
             throw new IllegalArgumentException("Operation name must be specified.");
         }
 
-        final DaprConfiguration config = this.configuration != null ? this.configuration.copy() : new DaprConfiguration();
+        final DaprConfiguration config =
+                this.configuration != null ? this.configuration.copy() : new DaprConfiguration();
         config.setOperation(DaprOperation.valueOf(remaining));
 
         Endpoint endpoint = new DaprEndpoint(uri, this, config);

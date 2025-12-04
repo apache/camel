@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.tools.spec;
 
 import java.util.Objects;
@@ -60,8 +61,7 @@ public class CamelToolSpecification {
             return false;
         }
         CamelToolSpecification that = (CamelToolSpecification) o;
-        return Objects.equals(toolSpecification, that.toolSpecification) && Objects.equals(consumer,
-                that.consumer);
+        return Objects.equals(toolSpecification, that.toolSpecification) && Objects.equals(consumer, that.consumer);
     }
 
     @Override
@@ -71,9 +71,6 @@ public class CamelToolSpecification {
 
     @Override
     public String toString() {
-        return "CamelToolSpecification{" +
-               "toolSpecification=" + toolSpecification +
-               ", consumer=" + consumer +
-               '}';
+        return "CamelToolSpecification{" + "toolSpecification=" + toolSpecification + ", consumer=" + consumer + '}';
     }
 }

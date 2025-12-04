@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainBeansClassFactoryMethodTest {
 
@@ -37,7 +38,8 @@ public class MainBeansClassFactoryMethodTest {
         main.addProperty("myUrl", "localhost:2121");
         main.addProperty("myUsername", "scott");
         main.addProperty("myPassword", "tiger");
-        main.addProperty("camel.beans.driver",
+        main.addProperty(
+                "camel.beans.driver",
                 "#class:" + MyDriver.class.getName() + "('{{myUrl}}', '{{myUsername}}', '{{myPassword}}')");
 
         main.start();
@@ -85,5 +87,4 @@ public class MainBeansClassFactoryMethodTest {
             return password;
         }
     }
-
 }

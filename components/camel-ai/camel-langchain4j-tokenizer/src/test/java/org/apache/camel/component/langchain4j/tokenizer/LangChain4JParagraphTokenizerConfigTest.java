@@ -54,8 +54,9 @@ public class LangChain4JParagraphTokenizerConfigTest extends LangChain4JTokenize
                         .tokenize(tokenizer()
                                 .byParagraph()
                                 .configuration(langChain4JConfiguration)
-                                    .end())
-                        .split().body()
+                                .end())
+                        .split()
+                        .body()
                         .to("mock:result");
             }
         };

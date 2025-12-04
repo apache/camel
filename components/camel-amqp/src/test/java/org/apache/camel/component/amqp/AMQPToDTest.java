@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -25,8 +28,6 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
 public class AMQPToDTest extends AMQPTestSupport {
     private ProducerTemplate template;

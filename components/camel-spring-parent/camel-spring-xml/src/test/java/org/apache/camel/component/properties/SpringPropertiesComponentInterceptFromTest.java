@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
 
-import org.apache.camel.CamelContext;
-
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+import org.apache.camel.CamelContext;
 
 public class SpringPropertiesComponentInterceptFromTest extends PropertiesComponentInterceptFromTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/component/properties/SpringPropertiesComponentInterceptFromTest.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/component/properties/SpringPropertiesComponentInterceptFromTest.xml");
     }
-
 }

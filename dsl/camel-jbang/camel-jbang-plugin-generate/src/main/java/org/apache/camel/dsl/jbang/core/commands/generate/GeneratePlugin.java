@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -32,5 +33,4 @@ public class GeneratePlugin implements Plugin {
 
         commandLine.addSubcommand("generate", cmd);
     }
-
 }

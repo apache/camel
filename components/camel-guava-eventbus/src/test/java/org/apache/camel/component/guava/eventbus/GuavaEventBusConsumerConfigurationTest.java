@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.guava.eventbus;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.CamelContext;
@@ -23,10 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
 
@@ -57,5 +58,4 @@ public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
             assertEquals("You cannot set both 'eventClass' and 'listenerInterface' parameters.", ise.getMessage());
         }
     }
-
 }

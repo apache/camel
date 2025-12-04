@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import jakarta.annotation.Resource;
@@ -31,7 +32,8 @@ public class EchoServiceSessionImpl implements EchoService {
     public String echo(String text) {
         // Find the HttpSession
         MessageContext mc = context.getMessageContext();
-        HttpSession session = ((jakarta.servlet.http.HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+        HttpSession session =
+                ((jakarta.servlet.http.HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
         if (session == null) {
             throw new WebServiceException("No HTTP Session found");
         }

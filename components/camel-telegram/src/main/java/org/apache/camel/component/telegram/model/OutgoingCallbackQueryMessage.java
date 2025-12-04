@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,9 +43,7 @@ public class OutgoingCallbackQueryMessage extends OutgoingMessage {
     @JsonProperty("cache_time")
     private Integer cacheTime;
 
-    public OutgoingCallbackQueryMessage() {
-
-    }
+    public OutgoingCallbackQueryMessage() {}
 
     public String getCallbackQueryId() {
         return callbackQueryId;

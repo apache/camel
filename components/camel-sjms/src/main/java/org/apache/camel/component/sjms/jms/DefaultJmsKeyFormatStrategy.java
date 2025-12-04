@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.jms;
 
 /**
@@ -36,5 +37,4 @@ public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
         answer = answer.replace("_DOT_", ".");
         return answer;
     }
-
 }

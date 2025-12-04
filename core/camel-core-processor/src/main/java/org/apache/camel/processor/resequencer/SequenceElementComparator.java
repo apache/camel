@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
 
 import java.util.Comparator;
@@ -48,5 +49,4 @@ public interface SequenceElementComparator<E> extends Comparator<E> {
      * @return    true if it's usable for this comparator
      */
     boolean isValid(E o1);
-
 }

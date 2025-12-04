@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.version;
 
 import java.util.List;
@@ -54,5 +55,4 @@ class VersionListTest extends CamelCommandBaseTest {
         Assertions.assertThat(lines.stream().collect(Collectors.joining("\n")))
                 .contains("4.14.0       3.27.0    17,21   LTS");
     }
-
 }

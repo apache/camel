@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.openstack.neutron;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +45,6 @@ import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.RouterInterface;
 import org.openstack4j.openstack.networking.domain.NeutronRouterInterface;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RouterProducerTest extends NeutronProducerTestSupport {
@@ -168,7 +169,8 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
         final String portId = "port";
         final String subnetId = "subnet";
         final RouterInterface ifce = new NeutronRouterInterface(subnetId, portId);
-        when(routerService.detachInterface(anyString(), anyString(), anyString())).thenReturn(ifce);
+        when(routerService.detachInterface(anyString(), anyString(), anyString()))
+                .thenReturn(ifce);
 
         msg.setHeader(OpenstackConstants.OPERATION, NeutronConstants.DETACH_INTERFACE);
         msg.setHeader(NeutronConstants.ROUTER_ID, routerID);
@@ -177,7 +179,8 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        verify(routerService).detachInterface(routerIdCaptor.capture(), subnetIdCaptor.capture(), portIdCaptor.capture());
+        verify(routerService)
+                .detachInterface(routerIdCaptor.capture(), subnetIdCaptor.capture(), portIdCaptor.capture());
 
         assertEquals(routerID, routerIdCaptor.getValue());
         assertEquals(subnetId, subnetIdCaptor.getValue());
@@ -200,7 +203,8 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         producer.process(exchange);
 
-        verify(routerService).attachInterface(routerIdCaptor.capture(), itfTypeCaptor.capture(), subnetIdCaptor.capture());
+        verify(routerService)
+                .attachInterface(routerIdCaptor.capture(), itfTypeCaptor.capture(), subnetIdCaptor.capture());
 
         assertEquals(routerID, routerIdCaptor.getValue());
         assertEquals(AttachInterfaceType.SUBNET, itfTypeCaptor.getValue());
@@ -210,10 +214,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
     }
 
     private Router createRouter() {
-        return Builders.router()
-                .name("name")
-                .tenantId("tenantID")
-                .build();
+        return Builders.router().name("name").tenantId("tenantID").build();
     }
 
     private void assertEqualsRouter(Router old, Router newRouter) {

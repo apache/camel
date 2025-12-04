@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.config_maps.vault;
 
 import java.time.Instant;
@@ -45,8 +46,10 @@ import org.slf4j.LoggerFactory;
 public class ConfigmapsReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
     private CamelContext camelContext;
+
     @Metadata(defaultValue = "true")
     private boolean reloadEnabled = true;
+
     private String configmaps;
     private KubernetesClient kubernetesClient;
     private ConfigMapPropertiesFunction propertiesFunction;
@@ -96,7 +99,8 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
         // specific secrets
         configmaps = camelContext.getVaultConfiguration().kubernetesConfigmaps().getConfigmaps();
         if (ObjectHelper.isEmpty(configmaps) && propertiesFunction == null) {
-            throw new IllegalArgumentException("Configmaps must be configured on Kubernetes configmaps vault configuration");
+            throw new IllegalArgumentException(
+                    "Configmaps must be configured on Kubernetes configmaps vault configuration");
         }
 
         kubernetesClient = propertiesFunction.getClient();
@@ -120,33 +124,38 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
     public void run() {
         startingTime = Instant.now();
         final CountDownLatch isWatchClosed = new CountDownLatch(1);
-        Watch watch = kubernetesClient.configMaps().inNamespace(kubernetesClient.getNamespace()).watch(new Watcher<>() {
-            @Override
-            public void eventReceived(Action action, ConfigMap configMap) {
-                switch (action.name()) {
-                    case "MODIFIED":
-                        if (isReloadEnabled()) {
-                            if (matchSecret(configMap.getMetadata().getName())) {
-                                LOG.info("Update for Kubernetes Configmaps: {} detected, triggering CamelContext reload",
-                                        configMap.getMetadata().getName());
-                                ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
-                                if (reload != null) {
-                                    // trigger reload
-                                    reload.onReload(this);
+        Watch watch = kubernetesClient
+                .configMaps()
+                .inNamespace(kubernetesClient.getNamespace())
+                .watch(new Watcher<>() {
+                    @Override
+                    public void eventReceived(Action action, ConfigMap configMap) {
+                        switch (action.name()) {
+                            case "MODIFIED":
+                                if (isReloadEnabled()) {
+                                    if (matchSecret(configMap.getMetadata().getName())) {
+                                        LOG.info(
+                                                "Update for Kubernetes Configmaps: {} detected, triggering CamelContext reload",
+                                                configMap.getMetadata().getName());
+                                        ContextReloadStrategy reload =
+                                                camelContext.hasService(ContextReloadStrategy.class);
+                                        if (reload != null) {
+                                            // trigger reload
+                                            reload.onReload(this);
+                                        }
+                                    }
                                 }
-                            }
+                                break;
+                            default:
+                                LOG.debug("Not watched event {}", action.name());
                         }
-                        break;
-                    default:
-                        LOG.debug("Not watched event {}", action.name());
-                }
-            }
+                    }
 
-            @Override
-            public void onClose(WatcherException e) {
-                isWatchClosed.countDown();
-            }
-        });
+                    @Override
+                    public void onClose(WatcherException e) {
+                        isWatchClosed.countDown();
+                    }
+                });
 
         // Wait till watch gets closed
         try {

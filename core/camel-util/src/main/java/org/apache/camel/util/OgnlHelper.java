@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
 
 import java.util.ArrayList;
@@ -29,8 +30,7 @@ public final class OgnlHelper {
 
     private static final Pattern INDEX_PATTERN = Pattern.compile("^(.*)\\[(.*)\\]$");
 
-    private OgnlHelper() {
-    }
+    private OgnlHelper() {}
 
     /**
      * Tests whether or not the given String is a Camel OGNL expression.
@@ -186,8 +186,11 @@ public final class OgnlHelper {
         StringBuilder sb = new StringBuilder(256);
 
         int j = 0; // j is used as counter per method
-        int squareBracketCnt = 0; // special to keep track if and how deep we are inside a square bracket block, eg: [foo]
-        int parenthesisBracketCnt = 0; // special to keep track if and how deep we are inside a parenthesis block, eg: bar(${body}, ${header.foo})
+        int squareBracketCnt =
+                0; // special to keep track if and how deep we are inside a square bracket block, eg: [foo]
+        int parenthesisBracketCnt =
+                0; // special to keep track if and how deep we are inside a parenthesis block, eg: bar(${body},
+        // ${header.foo})
         boolean singleQuoted = false;
         boolean doubleQuoted = false;
 
@@ -206,8 +209,7 @@ public final class OgnlHelper {
             }
 
             // special for starting a new method
-            if (j == 0 || j == 1 && ognl.charAt(i - 1) == '?'
-                    || ch != '.' && ch != '?' && ch != ']') {
+            if (j == 0 || j == 1 && ognl.charAt(i - 1) == '?' || ch != '.' && ch != '?' && ch != ']') {
                 sb.append(ch);
 
                 // special if we are doing square bracket
@@ -320,5 +322,4 @@ public final class OgnlHelper {
 
         return sb.toString();
     }
-
 }

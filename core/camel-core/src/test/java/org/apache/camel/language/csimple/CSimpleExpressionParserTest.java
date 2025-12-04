@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.csimple;
 
 import org.junit.jupiter.api.Assertions;
@@ -164,8 +165,8 @@ public class CSimpleExpressionParserTest {
         Assertions.assertEquals("\"Hello \" + exchangeProperty(exchange, \"foo\")", code);
 
         code = parser.parseExpression("Hello ${exchangePropertyAs(foo, \"com.foo.MyUser\").firstName}");
-        Assertions.assertEquals("\"Hello \" + exchangePropertyAs(exchange, \"foo\", com.foo.MyUser.class).getFirstName()",
-                code);
+        Assertions.assertEquals(
+                "\"Hello \" + exchangePropertyAs(exchange, \"foo\", com.foo.MyUser.class).getFirstName()", code);
     }
 
     @Test
@@ -179,5 +180,4 @@ public class CSimpleExpressionParserTest {
         code = parser.parseExpression("${exceptionAs(com.foo.MyException).errorCode}");
         Assertions.assertEquals("exceptionAs(exchange, com.foo.MyException.class).getErrorCode()", code);
     }
-
 }

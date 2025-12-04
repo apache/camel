@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.Map;
@@ -63,9 +64,8 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
         }
 
         String timeout = definition.getTimeout();
-        CamelSagaStep step = new CamelSagaStep(
-                compensationEndpoint, completionEndpoint, optionsMap,
-                parseDuration(timeout));
+        CamelSagaStep step =
+                new CamelSagaStep(compensationEndpoint, completionEndpoint, optionsMap, parseDuration(timeout));
 
         SagaPropagation propagation = parse(SagaPropagation.class, definition.getPropagation());
         if (propagation == null) {
@@ -84,9 +84,14 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         camelSagaService.registerStep(step);
 
-        SagaProcessor answer = new SagaProcessorBuilder().camelContext(camelContext).childProcessor(childProcessor)
-                .sagaService(camelSagaService).step(step)
-                .propagation(propagation).completionMode(completionMode).build();
+        SagaProcessor answer = new SagaProcessorBuilder()
+                .camelContext(camelContext)
+                .childProcessor(childProcessor)
+                .sagaService(camelSagaService)
+                .step(step)
+                .propagation(propagation)
+                .completionMode(completionMode)
+                .build();
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }
@@ -109,5 +114,4 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         return mandatoryFindSingleByType(CamelSagaService.class);
     }
-
 }

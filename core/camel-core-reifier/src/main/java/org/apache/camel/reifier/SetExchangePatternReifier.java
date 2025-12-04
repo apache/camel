@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import org.apache.camel.ExchangePattern;
@@ -31,7 +32,8 @@ public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatte
 
     @Override
     public Processor createProcessor() {
-        ExchangePatternProcessor answer = new ExchangePatternProcessor(parse(ExchangePattern.class, definition.getPattern()));
+        ExchangePatternProcessor answer =
+                new ExchangePatternProcessor(parse(ExchangePattern.class, definition.getPattern()));
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }

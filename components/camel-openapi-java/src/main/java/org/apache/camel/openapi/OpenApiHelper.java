@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -24,8 +25,7 @@ import org.apache.camel.util.FileUtil;
 
 public final class OpenApiHelper {
 
-    private OpenApiHelper() {
-    }
+    private OpenApiHelper() {}
 
     public static String buildUrl(String path1, String path2) {
         String answer;
@@ -53,9 +53,9 @@ public final class OpenApiHelper {
         if (openApi.getExtensions() != null) {
             openApi.getExtensions().clear();
         }
-        if (openApi.getComponents() != null
-                && openApi.getComponents().getSchemas() != null) {
-            for (Schema<?> schemaDefinition : openApi.getComponents().getSchemas().values()) {
+        if (openApi.getComponents() != null && openApi.getComponents().getSchemas() != null) {
+            for (Schema<?> schemaDefinition :
+                    openApi.getComponents().getSchemas().values()) {
                 if (schemaDefinition.getExtensions() != null) {
                     schemaDefinition.getExtensions().clear();
                 }

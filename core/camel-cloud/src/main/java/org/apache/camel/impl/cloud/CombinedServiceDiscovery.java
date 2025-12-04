@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.cloud;
 
 import java.util.Arrays;
@@ -40,9 +41,7 @@ public class CombinedServiceDiscovery implements ServiceDiscovery {
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
-        return delegates.stream()
-                .flatMap(d -> d.getServices(name).stream())
-                .toList();
+        return delegates.stream().flatMap(d -> d.getServices(name).stream()).toList();
     }
 
     // **********************

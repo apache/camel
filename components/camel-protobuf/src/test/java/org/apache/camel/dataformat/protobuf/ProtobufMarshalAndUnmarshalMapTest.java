@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.protobuf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,8 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProtobufMarshalAndUnmarshalMapTest extends CamelTestSupport {
 
@@ -80,12 +81,14 @@ public class ProtobufMarshalAndUnmarshalMapTest extends CamelTestSupport {
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
-                from("direct:marshal").marshal()
+                from("direct:marshal")
+                        .marshal()
                         .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person");
-                from("direct:unmarshalA").unmarshal()
-                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:unmarshalA")
+                        .unmarshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person")
+                        .to("mock:reverse");
             }
         };
     }
-
 }

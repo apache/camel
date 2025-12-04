@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.docling.integration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -37,17 +42,16 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * Integration test for Docling-Serve producer operations using test-infra for container management.
  *
  * This test demonstrates how to use the camel-test-infra-docling module to automatically spin up a Docling-Serve
  * container for testing without manual setup.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfSystemProperty(
+        named = "ci.env.name",
+        matches = ".*",
+        disabledReason = "Too much resources on GitHub Actions")
 public class DoclingServeProducerIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingServeProducerIT.class);
@@ -76,9 +80,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testMarkdownConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-markdown-serve",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-markdown-serve",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -90,9 +97,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testHtmlConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-html-serve",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-html-serve",
                 testFile.toString(),
-                DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
+                DoclingHeaders.OPERATION,
+                DoclingOperations.CONVERT_TO_HTML,
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -117,9 +127,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testJsonConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-json-serve",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-json-serve",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result);
         assertTrue(result.length() > 0);
@@ -134,9 +147,8 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         Path testFile = createTestFile();
 
         // Send the file path to the route that converts and writes to file
-        template.sendBodyAndHeader("direct:convert-and-write",
-                testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString());
+        template.sendBodyAndHeader(
+                "direct:convert-and-write", testFile.toString(), DoclingHeaders.INPUT_FILE_PATH, testFile.toString());
 
         // Verify the output file was created
         File outputFile = new File(outputDir.toFile(), "converted-output.md");
@@ -156,9 +168,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testAsyncMarkdownConversion() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-async-markdown",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-async-markdown",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result, "Async conversion result should not be null");
         assertTrue(result.length() > 0, "Async conversion result should not be empty");
@@ -170,9 +185,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testAsyncHtmlConversion() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-async-html",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-async-html",
                 testFile.toString(),
-                DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
+                DoclingHeaders.OPERATION,
+                DoclingOperations.CONVERT_TO_HTML,
+                String.class);
 
         assertNotNull(result, "Async HTML conversion result should not be null");
         assertTrue(result.length() > 0, "Async HTML conversion result should not be empty");
@@ -184,9 +202,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testAsyncJsonConversion() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-async-json",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-async-json",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result, "Async JSON conversion result should not be null");
         assertTrue(result.length() > 0, "Async JSON conversion result should not be empty");
@@ -211,9 +232,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
     public void testAsyncConversionWithCustomTimeout() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-async-custom-timeout",
+        String result = template.requestBodyAndHeader(
+                "direct:convert-async-custom-timeout",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result, "Async conversion with custom timeout should not be null");
         assertTrue(result.length() > 0, "Async conversion with custom timeout should not be empty");
@@ -226,7 +250,8 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         Path testFile = createTestFile();
 
         // Use sync endpoint but override with async header
-        String result = template.requestBodyAndHeaders("direct:convert-markdown-serve",
+        String result = template.requestBodyAndHeaders(
+                "direct:convert-markdown-serve",
                 testFile.toString(),
                 new java.util.HashMap<String, Object>() {
                     {
@@ -235,7 +260,8 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                         put(DoclingHeaders.ASYNC_POLL_INTERVAL, 1000L);
                         put(DoclingHeaders.ASYNC_TIMEOUT, 120000L);
                     }
-                }, String.class);
+                },
+                String.class);
 
         assertNotNull(result, "Async conversion via header override should not be null");
         assertTrue(result.length() > 0, "Async conversion via header override should not be empty");
@@ -248,9 +274,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         Path testFile = createTestFile();
 
         // Submit async conversion and get task ID
-        String taskId = template.requestBodyAndHeader("direct:submit-async",
+        String taskId = template.requestBodyAndHeader(
+                "direct:submit-async",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(taskId, "Task ID should not be null");
         assertTrue(taskId.length() > 0, "Task ID should not be empty");
@@ -263,9 +292,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         Path testFile = createTestFile();
 
         // First, submit async conversion
-        String taskId = template.requestBodyAndHeader("direct:submit-async",
+        String taskId = template.requestBodyAndHeader(
+                "direct:submit-async",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(taskId, "Task ID should not be null");
 
@@ -287,9 +319,12 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         Path testFile = createTestFile();
 
         // Custom workflow: submit, poll until complete, get result
-        String taskId = template.requestBodyAndHeader("direct:submit-async",
+        String taskId = template.requestBodyAndHeader(
+                "direct:submit-async",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(taskId, "Task ID should not be null");
         LOG.info("Submitted conversion with task ID: {}", taskId);
@@ -316,13 +351,15 @@ public class DoclingServeProducerIT extends CamelTestSupport {
 
         assertNotNull(status, "Final status should not be null");
         if (!status.isCompleted()) {
-            fail(String.format("Task did not complete within %d seconds. Last status: %s",
-                    maxAttempts, status.getStatus()));
+            fail(String.format(
+                    "Task did not complete within %d seconds. Last status: %s", maxAttempts, status.getStatus()));
         }
 
         if (status.getResult() != null) {
             assertTrue(status.getResult().length() > 0, "Result should not be empty");
-            LOG.info("Successfully retrieved result: {} characters", status.getResult().length());
+            LOG.info(
+                    "Successfully retrieved result: {} characters",
+                    status.getResult().length());
         }
     }
 
@@ -332,20 +369,25 @@ public class DoclingServeProducerIT extends CamelTestSupport {
 
         // This test demonstrates using the built-in async mode with a route
         // The built-in mode handles polling automatically, which is the recommended approach
-        String result = template.requestBodyAndHeader("direct:custom-polling-workflow",
+        String result = template.requestBodyAndHeader(
+                "direct:custom-polling-workflow",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH,
+                testFile.toString(),
+                String.class);
 
         assertNotNull(result, "Result should not be null");
         assertTrue(result.length() > 0, "Result should not be empty");
 
-        LOG.info("Custom polling workflow (using built-in async mode) completed successfully with {} characters",
+        LOG.info(
+                "Custom polling workflow (using built-in async mode) completed successfully with {} characters",
                 result.length());
     }
 
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-serve-test", ".md");
-        Files.write(tempFile,
+        Files.write(
+                tempFile,
                 "# Test Document\n\nThis is a test document for Docling-Serve processing.\n\n## Section 1\n\nSome content here.\n\n- List item 1\n- List item 2\n"
                         .getBytes());
         return tempFile;
@@ -360,14 +402,11 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                 from("direct:convert-markdown-serve")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
 
-                from("direct:convert-html-serve")
-                        .to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true");
+                from("direct:convert-html-serve").to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true");
 
-                from("direct:convert-json-serve")
-                        .to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true");
+                from("direct:convert-json-serve").to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true");
 
-                from("direct:convert-url-serve")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
+                from("direct:convert-url-serve").to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
 
                 from("direct:convert-and-write")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true")
@@ -375,36 +414,37 @@ public class DoclingServeProducerIT extends CamelTestSupport {
 
                 // Asynchronous conversion routes
                 from("direct:convert-async-markdown")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to(
+                                "docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-html")
-                        .to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to(
+                                "docling:convert?operation=CONVERT_TO_HTML&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-json")
-                        .to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to(
+                                "docling:convert?operation=CONVERT_TO_JSON&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-url")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to(
+                                "docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-custom-timeout")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=500&asyncTimeout=300000");
+                        .to(
+                                "docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=500&asyncTimeout=300000");
 
                 // Custom async workflow routes
-                from("direct:submit-async")
-                        .to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION");
+                from("direct:submit-async").to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION");
 
-                from("direct:check-status")
-                        .to("docling:convert?operation=CHECK_CONVERSION_STATUS");
+                from("direct:check-status").to("docling:convert?operation=CHECK_CONVERSION_STATUS");
 
                 // Custom polling workflow - demonstrates submit and poll pattern
                 // This uses built-in async mode instead of manual polling to avoid complexity
                 from("direct:custom-polling-workflow")
                         .log("Starting custom polling workflow for file: ${header.CamelDoclingInputFilePath}")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&" +
-                            "useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
-
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&"
+                                + "useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson.transform;
 
 import java.nio.charset.StandardCharsets;
@@ -33,8 +34,9 @@ import org.apache.camel.spi.Transformer;
  * Data type uses Jackson data format to marshal given Exchange payload to a Json (binary byte array representation).
  * Requires Exchange payload as JsonNode representation.
  */
-@DataTypeTransformer(name = "application-json",
-                     description = "Transforms from JSon to binary (byte array) using Jackson")
+@DataTypeTransformer(
+        name = "application-json",
+        description = "Transforms from JSon to binary (byte array) using Jackson")
 public class JsonDataTypeTransformer extends Transformer {
 
     @Override
@@ -45,8 +47,8 @@ public class JsonDataTypeTransformer extends Transformer {
                 marshalled = jsonString.getBytes(StandardCharsets.UTF_8);
             } else {
                 String contentClass = SchemaHelper.resolveContentClass(message.getExchange(), JsonNode.class.getName());
-                Class<?> contentType
-                        = message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
+                Class<?> contentType =
+                        message.getExchange().getContext().getClassResolver().resolveMandatoryClass(contentClass);
 
                 marshalled = Json.mapper().writer().forType(contentType).writeValueAsBytes(message.getBody());
             }
@@ -59,7 +61,8 @@ public class JsonDataTypeTransformer extends Transformer {
                 message.setHeader(SchemaHelper.CONTENT_SCHEMA, contentSchema);
             }
         } catch (JsonProcessingException | ClassNotFoundException e) {
-            throw new CamelExecutionException("Failed to apply Json output data type on exchange", message.getExchange(), e);
+            throw new CamelExecutionException(
+                    "Failed to apply Json output data type on exchange", message.getExchange(), e);
         }
     }
 }

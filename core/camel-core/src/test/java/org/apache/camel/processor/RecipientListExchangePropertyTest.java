@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
@@ -41,7 +42,8 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        MyStuff stuff = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getProperty("foo", MyStuff.class);
+        MyStuff stuff =
+                getMockEndpoint("mock:result").getReceivedExchanges().get(0).getProperty("foo", MyStuff.class);
         assertSame(myStuff, stuff, "Should be same instance");
     }
 
@@ -52,7 +54,6 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
                 from("direct:a").recipientList(constant("mock:x,mock:y,mock:z")).to("mock:result");
             }
         };
-
     }
 
     private static final class MyStuff {
@@ -67,5 +68,4 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
             return name;
         }
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.UUID;
@@ -26,8 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBeginFailureOneTimeTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
@@ -57,7 +58,8 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&processStrategy=#myStrategy")).convertBodyTo(String.class)
+                from(fileUri("?initialDelay=0&delay=10&processStrategy=#myStrategy"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -69,12 +71,14 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         @Override
         public void prepareOnStartup(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint) { //noop
+                GenericFileOperations<File> fileGenericFileOperations,
+                GenericFileEndpoint<File> fileGenericFileEndpoint) { // noop
         }
 
         @Override
         public boolean begin(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                GenericFileOperations<File> fileGenericFileOperations,
+                GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
                 GenericFile<File> fileGenericFile) {
             invoked.increment();
@@ -86,7 +90,8 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         @Override
         public void abort(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                GenericFileOperations<File> fileGenericFileOperations,
+                GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
                 GenericFile<File> fileGenericFile) {
             // noop
@@ -94,21 +99,22 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
 
         @Override
         public void commit(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                GenericFileOperations<File> fileGenericFileOperations,
+                GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
                 GenericFile<File> fileGenericFile) { // noop - has to implement interface, but nothing to do
         }
 
         @Override
         public void rollback(
-                GenericFileOperations<File> fileGenericFileOperations, GenericFileEndpoint<File> fileGenericFileEndpoint,
+                GenericFileOperations<File> fileGenericFileOperations,
+                GenericFileEndpoint<File> fileGenericFileEndpoint,
                 Exchange exchange,
-                GenericFile<File> fileGenericFile) { //noop - has to implement interface, but nothing to do
+                GenericFile<File> fileGenericFile) { // noop - has to implement interface, but nothing to do
         }
 
         public int getInvoked() {
             return invoked.intValue();
         }
     }
-
 }

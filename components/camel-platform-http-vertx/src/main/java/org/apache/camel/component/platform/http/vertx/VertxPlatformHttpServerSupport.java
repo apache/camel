@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
 
 import java.util.Collection;
@@ -46,8 +47,7 @@ public final class VertxPlatformHttpServerSupport {
 
     private static final String DEFAULT_UPLOAD_DIR = "${java.io.tmpdir}/camel/camel-tmp-#uuid#/";
 
-    private VertxPlatformHttpServerSupport() {
-    }
+    private VertxPlatformHttpServerSupport() {}
 
     // *****************************
     //
@@ -75,7 +75,8 @@ public final class VertxPlatformHttpServerSupport {
         bodyHandler.setPreallocateBodyBuffer(configuration.getBodyHandler().isPreallocateBodyBuffer());
 
         if (configuration.getBodyHandler().isHandleFileUploads()) {
-            LOG.debug("Vert.x HttpServer file-upload dir: {}",
+            LOG.debug(
+                    "Vert.x HttpServer file-upload dir: {}",
                     configuration.getBodyHandler().getUploadsDirectory());
         }
 
@@ -104,18 +105,24 @@ public final class VertxPlatformHttpServerSupport {
             } else {
                 final String requestedMethods = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD);
                 if (requestedMethods != null) {
-                    processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestedMethods,
+                    processHeaders(
+                            response,
+                            HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                            requestedMethods,
                             corsConfig.getMethods());
                 }
 
                 final String requestedHeaders = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
                 if (requestedHeaders != null) {
-                    processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestedHeaders,
+                    processHeaders(
+                            response,
+                            HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                            requestedHeaders,
                             corsConfig.getHeaders());
                 }
 
-                final boolean allowsOrigin
-                        = ObjectHelper.isEmpty(corsConfig.getOrigins()) || corsConfig.getOrigins().contains(origin);
+                final boolean allowsOrigin = ObjectHelper.isEmpty(corsConfig.getOrigins())
+                        || corsConfig.getOrigins().contains(origin);
                 if (allowsOrigin) {
                     response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
                 }
@@ -123,15 +130,19 @@ public final class VertxPlatformHttpServerSupport {
                 response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
 
                 if (ObjectHelper.isNotEmpty(corsConfig.getExposedHeaders())) {
-                    response.headers().set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
-                            String.join(",", corsConfig.getExposedHeaders()));
+                    response.headers()
+                            .set(
+                                    HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                                    String.join(",", corsConfig.getExposedHeaders()));
                 }
 
                 if (request.method().equals(HttpMethod.OPTIONS)) {
                     if ((requestedHeaders != null || requestedMethods != null)
                             && corsConfig.getAccessControlMaxAge() != null) {
-                        response.putHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE,
-                                String.valueOf(corsConfig.getAccessControlMaxAge().getSeconds()));
+                        response.putHeader(
+                                HttpHeaders.ACCESS_CONTROL_MAX_AGE,
+                                String.valueOf(
+                                        corsConfig.getAccessControlMaxAge().getSeconds()));
                     }
                     response.end();
                 } else {

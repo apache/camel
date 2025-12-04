@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support.batching;
 
 import java.util.Queue;
@@ -60,7 +61,10 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
         @Override
         public void onComplete(Exchange exchange) {
-            LOG.debug("Calling commit on {} exchanges using {}", size, commitManager.getClass().getSimpleName());
+            LOG.debug(
+                    "Calling commit on {} exchanges using {}",
+                    size,
+                    commitManager.getClass().getSimpleName());
             commitManager.commit();
         }
 
@@ -77,13 +81,16 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
 
                     // Commit the batch where the error occurred (similar to streaming mode behavior)
                     // This allows the consumer to move forward and potentially retry the problematic batch
-                    LOG.debug("Calling commit on {} exchanges using {} due to breakOnFirstError", size,
+                    LOG.debug(
+                            "Calling commit on {} exchanges using {} due to breakOnFirstError",
+                            size,
                             commitManager.getClass().getSimpleName());
                     commitManager.commit();
                 } else {
                     // Standard error handling - just log and continue (original behavior)
                     exceptionHandler.handleException(
-                            "Error during processing exchange. Will attempt to process the message on next poll.", exchange,
+                            "Error during processing exchange. Will attempt to process the message on next poll.",
+                            exchange,
                             cause);
                 }
             } else {
@@ -93,7 +100,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         }
     }
 
-    public KafkaRecordBatchingProcessor(KafkaConfiguration configuration, Processor processor, CommitManager commitManager) {
+    public KafkaRecordBatchingProcessor(
+            KafkaConfiguration configuration, Processor processor, CommitManager commitManager) {
         this.configuration = configuration;
         this.processor = processor;
         this.commitManager = commitManager;
@@ -101,7 +109,9 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
     }
 
     public Exchange toExchange(
-            KafkaConsumer camelKafkaConsumer, TopicPartition topicPartition, ConsumerRecord<Object, Object> consumerRecord) {
+            KafkaConsumer camelKafkaConsumer,
+            TopicPartition topicPartition,
+            ConsumerRecord<Object, Object> consumerRecord) {
         final Exchange exchange = camelKafkaConsumer.createExchange(false);
         Message message = exchange.getMessage();
 
@@ -117,8 +127,11 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         return exchange;
     }
 
-    public ProcessingResult processExchange(KafkaConsumer camelKafkaConsumer, ConsumerRecords<Object, Object> consumerRecords) {
-        LOG.debug("There's {} records to process ... max poll is set to {}", consumerRecords.count(),
+    public ProcessingResult processExchange(
+            KafkaConsumer camelKafkaConsumer, ConsumerRecords<Object, Object> consumerRecords) {
+        LOG.debug(
+                "There's {} records to process ... max poll is set to {}",
+                consumerRecords.count(),
                 configuration.getMaxPollRecords());
 
         // Aggregate all consumer records in a single exchange
@@ -162,7 +175,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             }
         }
 
-        // None of the states provided by the processing result are relevant for batch processing. We can simply return the
+        // None of the states provided by the processing result are relevant for batch processing. We can simply return
+        // the
         // default state
         return ProcessingResult.newUnprocessed();
     }
@@ -195,7 +209,8 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             if (configuration.isAllowManualCommit()) {
                 Exchange last = exchanges.isEmpty() ? null : exchanges.get(exchanges.size() - 1);
                 if (last != null) {
-                    message.setHeader(KafkaConstants.MANUAL_COMMIT, last.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT));
+                    message.setHeader(
+                            KafkaConstants.MANUAL_COMMIT, last.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT));
                 }
                 result = manualCommitResultProcessing(camelKafkaConsumer, exchange, exchanges);
             } else {

@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,12 +38,6 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteFileIgnoreDoPollErrorTest {
 
@@ -88,7 +89,8 @@ public class RemoteFileIgnoreDoPollErrorTest {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("IllegalStateException", false);
         List<GenericFile<Object>> list = Collections.emptyList();
 
-        Exception ex = assertThrows(GenericFileOperationFailedException.class,
+        Exception ex = assertThrows(
+                GenericFileOperationFailedException.class,
                 () -> consumer.doSafePollSubDirectory(null, "anyPath", "adir", list, 0));
 
         assertInstanceOf(IllegalStateException.class, ex.getCause());
@@ -99,7 +101,8 @@ public class RemoteFileIgnoreDoPollErrorTest {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("GenericFileOperationFailedException", false);
         List<GenericFile<Object>> list = Collections.emptyList();
 
-        Exception ex = assertThrows(GenericFileOperationFailedException.class,
+        Exception ex = assertThrows(
+                GenericFileOperationFailedException.class,
                 () -> consumer.doSafePollSubDirectory(null, "anyPath", "adir", list, 0));
 
         assertNull(ex.getCause());
@@ -114,7 +117,10 @@ public class RemoteFileIgnoreDoPollErrorTest {
             @Override
             protected boolean doPollDirectory(
                     Exchange dynamic,
-                    String absolutePath, String dirName, List<GenericFile<Object>> genericFiles, int depth) {
+                    String absolutePath,
+                    String dirName,
+                    List<GenericFile<Object>> genericFiles,
+                    int depth) {
                 if ("IllegalStateException".equals(doPollResult)) {
                     throw new IllegalStateException("Problem");
                 } else if ("GenericFileOperationFailedException".equals(doPollResult)) {
@@ -146,7 +152,8 @@ public class RemoteFileIgnoreDoPollErrorTest {
             }
 
             @Override
-            protected Supplier<String> getRelativeFilePath(String endpointPath, String path, String absolutePath, Object file) {
+            protected Supplier<String> getRelativeFilePath(
+                    String endpointPath, String path, String absolutePath, Object file) {
                 return null;
             }
         };

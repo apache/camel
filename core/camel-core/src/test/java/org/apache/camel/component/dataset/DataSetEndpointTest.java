@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dataset;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DataSetEndpointTest extends ContextTestSupport {
 
@@ -57,8 +58,8 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDataSetEndpointCtr() throws Exception {
-        final DataSetEndpoint endpoint
-                = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
+        final DataSetEndpoint endpoint =
+                new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
         endpoint.setConsumeDelay(2);
         assertEquals(2, endpoint.getConsumeDelay());
@@ -81,8 +82,8 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
     @Test
     public void testDataSetReporter() throws Exception {
-        final DataSetEndpoint endpoint
-                = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
+        final DataSetEndpoint endpoint =
+                new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
         endpoint.setInitialDelay(0);
 
         final AtomicBoolean reported = new AtomicBoolean();
@@ -149,5 +150,4 @@ public class DataSetEndpointTest extends ContextTestSupport {
             return "Message " + messageIndex;
         }
     }
-
 }

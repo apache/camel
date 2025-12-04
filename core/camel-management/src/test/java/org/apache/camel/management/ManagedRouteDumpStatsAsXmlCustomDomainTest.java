@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSupport {
 
@@ -38,8 +39,8 @@ public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSu
     public void testPerformanceCounterStats() throws Exception {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName
-                .getInstance(CUSTOM_DOMAIN_NAME + ":context=" + context.getManagementName() + ",type=routes,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance(
+                CUSTOM_DOMAIN_NAME + ":context=" + context.getManagementName() + ",type=routes,name=\"foo\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -47,15 +48,16 @@ public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSu
 
         assertMockEndpointsSatisfied();
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteStatsAsXml", new Object[] { false, true },
-                new String[] { "boolean", "boolean" });
+        String xml = (String) mbeanServer.invoke(
+                on, "dumpRouteStatsAsXml", new Object[] {false, true}, new String[] {"boolean", "boolean"});
         log.info(xml);
 
         // should be valid XML
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
         assertNotNull(doc);
 
-        int processors = doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
+        int processors =
+                doc.getDocumentElement().getElementsByTagName("processorStat").getLength();
         assertEquals(3, processors);
     }
 
@@ -67,12 +69,14 @@ public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSu
                 //              System.setProperty("org.apache.camel.jmx.mbeanObjectDomainName", CUSTOM_DOMAIN_NAME);
                 //              Or
                 getContext().getManagementStrategy().getManagementAgent().setMBeanObjectDomainName(CUSTOM_DOMAIN_NAME);
-                from("direct:start").routeId("foo")
-                        .to("log:foo").id("to-log")
+                from("direct:start")
+                        .routeId("foo")
+                        .to("log:foo")
+                        .id("to-log")
                         .delay(100)
-                        .to("mock:result").id("to-mock");
+                        .to("mock:result")
+                        .id("to-mock");
             }
         };
     }
-
 }

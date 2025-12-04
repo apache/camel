@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,7 +25,7 @@ public class BeanByteArrayBodyTest extends ContextTestSupport {
 
     @Test
     public void testByteArray() throws Exception {
-        byte[] bytes = new byte[] { 65, 66, 67 };
+        byte[] bytes = new byte[] {65, 66, 67};
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 3);
@@ -39,8 +40,10 @@ public class BeanByteArrayBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").log("Body is ${body} and of type ${in.body.getClass.getCanonicalName}")
-                        .setHeader("foo", simple("${in.body.length}")).to("mock:result");
+                from("direct:start")
+                        .log("Body is ${body} and of type ${in.body.getClass.getCanonicalName}")
+                        .setHeader("foo", simple("${in.body.length}"))
+                        .to("mock:result");
             }
         };
     }

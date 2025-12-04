@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.barcode;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -34,8 +37,6 @@ import org.apache.camel.spi.DataFormat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class BarcodeUnmarshalTest extends BarcodeTestBase {
 
     @TempDir
@@ -52,7 +53,6 @@ public class BarcodeUnmarshalTest extends BarcodeTestBase {
         });
 
         assertEquals(180, exchange.getMessage().getHeader("ORIENTATION"));
-
     }
 
     @Override
@@ -73,12 +73,14 @@ public class BarcodeUnmarshalTest extends BarcodeTestBase {
                                         new HybridBinarizer(new BufferedImageLuminanceSource(ImageIO.read(bis))));
                                 BitMatrix blackMatrix = bitmap.getBlackMatrix();
                                 blackMatrix.rotate180();
-                                File file = testDirectory.resolve("TestImage.png").toFile();
+                                File file =
+                                        testDirectory.resolve("TestImage.png").toFile();
                                 FileOutputStream outputStream = new FileOutputStream(file);
                                 MatrixToImageWriter.writeToStream(blackMatrix, "png", outputStream);
                                 exchange.getIn().setBody(file);
                             }
-                        }).unmarshal(code1)
+                        })
+                        .unmarshal(code1)
                         .to("log:OUT")
                         .to("mock:out");
             }

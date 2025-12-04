@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.util.HashMap;
@@ -87,7 +88,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         super(endpoint, processor);
     }
 
-    public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
+    public ScheduledPollConsumer(
+            Endpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor);
         // we have been given an existing thread pool, so we should not manage its lifecycle
         // so we should keep shutdownExecutor as false
@@ -132,13 +134,19 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
         } catch (Error e) {
             // need to log so there is visibility as otherwise the user may not see anything in logs
-            LOG.error("Fatal error occurred during running scheduled task on: {}, due: {}.",
-                    this.getEndpoint(), e.getMessage(), e);
+            LOG.error(
+                    "Fatal error occurred during running scheduled task on: {}, due: {}.",
+                    this.getEndpoint(),
+                    e.getMessage(),
+                    e);
             throw e;
         } catch (Throwable e) {
-            LOG.error("Error occurred during running scheduled task on: {}, due: {}."
-                      + " This exception is ignored and the task will run again on next poll.",
-                    this.getEndpoint(), e.getMessage(), e);
+            LOG.error(
+                    "Error occurred during running scheduled task on: {}, due: {}."
+                            + " This exception is ignored and the task will run again on next poll.",
+                    this.getEndpoint(),
+                    e.getMessage(),
+                    e);
         }
     }
 
@@ -150,18 +158,27 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         // should we backoff if its enabled, and either the idle or error counter is > the threshold
         if (backoffMultiplier > 0
-                // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
-                && idleCounter.longValue() >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
-                || errorCounter.longValue() >= (backoffErrorThreshold > 0 ? backoffErrorThreshold : Integer.MAX_VALUE)) {
+                        // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if
+                        // not in use
+                        && idleCounter.longValue()
+                                >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
+                || errorCounter.longValue()
+                        >= (backoffErrorThreshold > 0 ? backoffErrorThreshold : Integer.MAX_VALUE)) {
             final int currentBackoffCounter = backoffCounter.incrementAndGet();
             if (currentBackoffCounter < backoffMultiplier) {
                 // yes we should backoff
                 if (idleCounter.intValue() > 0) {
-                    LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter.longValue(),
-                            backoffCounter.intValue(), backoffMultiplier);
+                    LOG.debug(
+                            "doRun() backoff due subsequent {} idles (backoff at {}/{})",
+                            idleCounter.longValue(),
+                            backoffCounter.intValue(),
+                            backoffMultiplier);
                 } else {
-                    LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter.intValue(),
-                            backoffCounter.intValue(), backoffMultiplier);
+                    LOG.debug(
+                            "doRun() backoff due subsequent {} errors (backoff at {}/{})",
+                            errorCounter.intValue(),
+                            backoffCounter.intValue(),
+                            backoffMultiplier);
                 }
                 return;
             } else {
@@ -177,7 +194,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         long count = counter.incrementAndGet();
         boolean stopFire = repeatCount > 0 && count > repeatCount;
         if (stopFire) {
-            LOG.debug("Cancelling {} scheduler as repeat count limit reached after {} counts.", getEndpoint(), repeatCount);
+            LOG.debug(
+                    "Cancelling {} scheduler as repeat count limit reached after {} counts.",
+                    getEndpoint(),
+                    repeatCount);
             scheduler.unscheduleTask();
             return;
         }
@@ -220,7 +240,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                 retryCounter = -1;
                                 LOG.trace("Greedy polling after processing {} messages", polledMessages);
 
-                                // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
+                                // clear any error that might be since we have successfully polled, otherwise readiness
+                                // checks might believe the
                                 // consumer to be unhealthy
                                 errorCounter.set(0);
                                 lastError = null;
@@ -256,11 +277,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
             if (cause != null && isRunAllowed()) {
                 // let exception handler deal with the caused exception
-                // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
+                // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced
+                // shutdown
                 try {
-                    getExceptionHandler().handleException("Failed polling endpoint: " + getEndpoint()
-                                                          + ". Will try again at next poll",
-                            cause);
+                    getExceptionHandler()
+                            .handleException(
+                                    "Failed polling endpoint: " + getEndpoint() + ". Will try again at next poll",
+                                    cause);
                 } catch (Exception e) {
                     LOG.warn("Error handling exception. This exception will be ignored.", e);
                 }
@@ -294,8 +317,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         // now first pool is done after the poll is complete
         firstPollDone = true;
 
-        LOG.trace("doRun() done with idleCounter={}, successCounter={}, errorCounter={}", idleCounter.longValue(),
-                successCounter.longValue(), errorCounter.longValue());
+        LOG.trace(
+                "doRun() done with idleCounter={}, successCounter={}, errorCounter={}",
+                idleCounter.longValue(),
+                successCounter.longValue(),
+                errorCounter.longValue());
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
     }
@@ -627,8 +653,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 throw new IllegalArgumentException(
                         "backoffIdleThreshold and/or backoffErrorThreshold must be configured to a positive value when using backoffMultiplier");
             }
-            LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier,
-                    backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
+            LOG.debug(
+                    "Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}",
+                    backoffMultiplier,
+                    backoffIdleThreshold,
+                    backoffErrorThreshold,
+                    getEndpoint());
         }
         if (pollStrategy == null) {
             pollStrategy = new DefaultPollingConsumerPollStrategy();
@@ -641,8 +671,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         boolean newScheduler = false;
         if (scheduler == null) {
-            DefaultScheduledPollConsumerScheduler scheduler
-                    = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            DefaultScheduledPollConsumerScheduler scheduler =
+                    new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
             scheduler.setDelay(delay);
             scheduler.setInitialDelay(initialDelay);
             scheduler.setTimeUnit(timeUnit);
@@ -661,15 +691,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             // special for trigger and job parameters
             Map<String, Object> triggerParameters = PropertiesHelper.extractProperties(copy, "trigger.");
             Map<String, Object> jobParameters = PropertiesHelper.extractProperties(copy, "job.");
-            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "triggerParameters",
-                    triggerParameters);
-            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, "jobParameters", jobParameters);
+            PropertyBindingSupport.build()
+                    .bind(getEndpoint().getCamelContext(), scheduler, "triggerParameters", triggerParameters);
+            PropertyBindingSupport.build()
+                    .bind(getEndpoint().getCamelContext(), scheduler, "jobParameters", jobParameters);
             if (!copy.isEmpty()) {
                 throw new FailedToCreateConsumerException(
-                        getEndpoint(), "There are " + copy.size()
-                                       + " scheduler parameters that couldn't be set on the endpoint."
-                                       + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                                       + " Unknown parameters=[" + copy + "]");
+                        getEndpoint(),
+                        "There are " + copy.size()
+                                + " scheduler parameters that couldn't be set on the endpoint."
+                                + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                                + " Unknown parameters=[" + copy + "]");
             }
         }
         afterConfigureScheduler(scheduler, newScheduler);
@@ -763,5 +795,4 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             ServiceHelper.stopService(this);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ec2;
 
 import java.util.Map;
@@ -39,14 +40,13 @@ public class AWS2EC2Component extends HealthCheckComponent {
 
     public AWS2EC2Component(CamelContext context) {
         super(context);
-
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        AWS2EC2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new AWS2EC2Configuration();
+        AWS2EC2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new AWS2EC2Configuration();
         AWS2EC2Endpoint endpoint = new AWS2EC2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

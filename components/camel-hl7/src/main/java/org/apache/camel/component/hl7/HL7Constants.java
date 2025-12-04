@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hl7;
 
 /**
@@ -35,6 +36,5 @@ public final class HL7Constants {
     public static final String HL7_CONTEXT = "CamelHL7Context";
     public static final String HL7_CHARSET = "CamelHL7Charset";
 
-    private HL7Constants() {
-    }
+    private HL7Constants() {}
 }

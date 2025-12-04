@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
@@ -39,8 +40,8 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     private boolean markerFile = true;
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
         if (markerFile && !marker.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -51,8 +52,7 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
         try {
             if (markerFile) {
@@ -65,8 +65,7 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
         try {
             if (markerFile) {
@@ -79,8 +78,7 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
         try {
             if (markerFile) {
@@ -95,5 +93,4 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     public void setMarkerFiler(boolean markerFile) {
         this.markerFile = markerFile;
     }
-
 }

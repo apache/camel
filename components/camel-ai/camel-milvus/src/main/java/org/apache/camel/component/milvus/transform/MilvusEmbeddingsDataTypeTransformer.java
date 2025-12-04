@@ -27,7 +27,6 @@ import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.UpsertParam;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
-import org.apache.camel.component.milvus.Milvus;
 import org.apache.camel.component.milvus.MilvusAction;
 import org.apache.camel.component.milvus.MilvusHeaders;
 import org.apache.camel.spi.DataType;
@@ -39,13 +38,15 @@ import org.apache.camel.util.ObjectHelper;
  * Maps a LangChain4j Embeddings to a Milvus InsertParam/Upsert Param to write an embeddings vector on a Milvus
  * Database.
  */
-@DataTypeTransformer(name = "milvus:embeddings",
-                     description = "Prepares the message to become an object writable by Milvus component")
+@DataTypeTransformer(
+        name = "milvus:embeddings",
+        description = "Prepares the message to become an object writable by Milvus component")
 public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
-        Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        Embedding embedding =
+                message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         String textFieldName = message.getHeader(MilvusHeaders.TEXT_FIELD_NAME, () -> "text", String.class);
         String vectorFieldName = message.getHeader(MilvusHeaders.VECTOR_FIELD_NAME, () -> "vector", String.class);
         String collectionName = message.getHeader(MilvusHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
@@ -54,17 +55,23 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
         TextSegment text = message.getBody(TextSegment.class);
         final MilvusAction action = message.getHeader(MilvusHeaders.ACTION, MilvusAction.class);
         switch (action) {
-            case INSERT -> insertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
-                    keyValue, keyName);
-            case UPSERT -> upsertEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName,
-                    keyValue, keyName);
+            case INSERT -> insertEmbeddingOperation(
+                    message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue, keyName);
+            case UPSERT -> upsertEmbeddingOperation(
+                    message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue, keyName);
             default -> throw new IllegalStateException("The only operations supported are insert and upsert");
         }
     }
 
     private static void insertEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
-            String collectionName, Object keyValue, String keyName) {
+            Message message,
+            Embedding embedding,
+            String vectorFieldName,
+            String textFieldName,
+            TextSegment text,
+            String collectionName,
+            Object keyValue,
+            String keyName) {
         List<InsertParam.Field> fields = new ArrayList<>();
         ArrayList list = new ArrayList<>();
         list.add(embedding.vectorAsList());
@@ -86,8 +93,14 @@ public class MilvusEmbeddingsDataTypeTransformer extends Transformer {
     }
 
     private static void upsertEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
-            String collectionName, Object keyValue, String keyName) {
+            Message message,
+            Embedding embedding,
+            String vectorFieldName,
+            String textFieldName,
+            TextSegment text,
+            String collectionName,
+            Object keyValue,
+            String keyName) {
         List<InsertParam.Field> fields = new ArrayList<>();
         ArrayList list = new ArrayList<>();
         list.add(embedding.vectorAsList());

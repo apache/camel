@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.servicebus;
 
 import java.util.Map;
@@ -33,17 +34,22 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Send and receive messages to/from Azure Service Bus.
  */
-@UriEndpoint(firstVersion = "3.12.0", scheme = "azure-servicebus", title = "Azure ServiceBus",
-             syntax = "azure-servicebus:topicOrQueueName", category = {
-                     Category.CLOUD, Category.MESSAGING },
-             headersClass = ServiceBusConstants.class)
+@UriEndpoint(
+        firstVersion = "3.12.0",
+        scheme = "azure-servicebus",
+        title = "Azure ServiceBus",
+        syntax = "azure-servicebus:topicOrQueueName",
+        category = {Category.CLOUD, Category.MESSAGING},
+        headersClass = ServiceBusConstants.class)
 public class ServiceBusEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
     private ServiceBusConfiguration configuration;
+
     private ServiceBusClientFactory serviceBusClientFactory = new ServiceBusClientFactory();
 
-    public ServiceBusEndpoint(final String uri, final Component component, final ServiceBusConfiguration configuration) {
+    public ServiceBusEndpoint(
+            final String uri, final Component component, final ServiceBusConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

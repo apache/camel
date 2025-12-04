@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.platform.http.vertx;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 public class VertxInvalidJSonClientRequestValidationTest {
 
@@ -40,8 +41,10 @@ public class VertxInvalidJSonClientRequestValidationTest {
                             .clientRequestValidation(true);
 
                     // use the rest DSL to define the rest services
-                    rest("/users/").post("{id}/update2")
-                            .consumes("application/json").produces("application/json")
+                    rest("/users/")
+                            .post("{id}/update2")
+                            .consumes("application/json")
+                            .produces("application/json")
                             .to("direct:update");
                     from("direct:update").setBody(constant("{ \"status\": \"ok\"}"));
                 }
@@ -49,8 +52,7 @@ public class VertxInvalidJSonClientRequestValidationTest {
 
             context.start();
 
-            given()
-                    .when()
+            given().when()
                     .contentType("application/json")
                     .body("{\"name\": \"Donald\"") // the body is invalid as the ending } is missing
                     .post("/users/123/update2")
@@ -61,5 +63,4 @@ public class VertxInvalidJSonClientRequestValidationTest {
             context.stop();
         }
     }
-
 }

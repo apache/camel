@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
 
 import java.io.IOException;
@@ -42,13 +43,12 @@ public class SanityCheckGeneratedClassesMojo extends AbstractGeneratorMojo {
         Path generated = project.getBasedir().toPath().resolve("src/generated/java");
         if (Files.isDirectory(generated)) {
             try (Stream<Path> stream = Files.walk(generated)) {
-                stream.filter(Files::isRegularFile)
-                        .forEach(clazz -> {
-                            String source = read(clazz);
-                            if (!source.contains("@Generated")) {
-                                getLog().warn("Generated class is missing @Generated: " + clazz);
-                            }
-                        });
+                stream.filter(Files::isRegularFile).forEach(clazz -> {
+                    String source = read(clazz);
+                    if (!source.contains("@Generated")) {
+                        getLog().warn("Generated class is missing @Generated: " + clazz);
+                    }
+                });
             } catch (Exception e) {
                 throw new MojoFailureException("Error sanity checking generated classes", e);
             }
@@ -62,5 +62,4 @@ public class SanityCheckGeneratedClassesMojo extends AbstractGeneratorMojo {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics.spi;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,13 +42,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class InstrumentedThreadPoolFactoryTest {
@@ -96,29 +97,30 @@ public class InstrumentedThreadPoolFactoryTest {
         assertThat(executorService, is(notNullValue()));
         assertThat(executorService, is(instanceOf(InstrumentedExecutorService.class)));
 
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "submitted" }));
-        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] { "running" }));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "completed" }));
-        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[] { "duration" }));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] {"submitted"}));
+        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] {"running"}));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] {"completed"}));
+        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[] {"duration"}));
     }
 
     @Test
     public void testNewScheduledThreadPool() {
-        final ScheduledExecutorService scheduledExecutorService
-                = instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
+        final ScheduledExecutorService scheduledExecutorService =
+                instrumentedThreadPoolFactory.newScheduledThreadPool(profile, threadFactory);
 
         assertThat(scheduledExecutorService, is(notNullValue()));
         assertThat(scheduledExecutorService, is(instanceOf(InstrumentedScheduledExecutorService.class)));
 
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "submitted" }));
-        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] { "running" }));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "completed" }));
-        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[] { "duration" }));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.once" }));
-        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.repetitively" }));
-        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.overrun" }));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] {"submitted"}));
+        inOrder.verify(registry, times(1)).counter(MetricRegistry.name(METRICS_NAME, new String[] {"running"}));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] {"completed"}));
+        inOrder.verify(registry, times(1)).timer(MetricRegistry.name(METRICS_NAME, new String[] {"duration"}));
+        inOrder.verify(registry, times(1)).meter(MetricRegistry.name(METRICS_NAME, new String[] {"scheduled.once"}));
         inOrder.verify(registry, times(1))
-                .histogram(MetricRegistry.name(METRICS_NAME, new String[] { "scheduled.percent-of-period" }));
+                .meter(MetricRegistry.name(METRICS_NAME, new String[] {"scheduled.repetitively"}));
+        inOrder.verify(registry, times(1))
+                .counter(MetricRegistry.name(METRICS_NAME, new String[] {"scheduled.overrun"}));
+        inOrder.verify(registry, times(1))
+                .histogram(MetricRegistry.name(METRICS_NAME, new String[] {"scheduled.percent-of-period"}));
     }
-
 }

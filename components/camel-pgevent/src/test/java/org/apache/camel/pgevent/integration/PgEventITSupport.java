@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.pgevent.integration;
 
 import org.apache.camel.test.infra.jdbc.services.JDBCLocalContainerService;
@@ -28,8 +29,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 public class PgEventITSupport extends CamelTestSupport {
 
     @RegisterExtension
-    public static JDBCService service = JDBCServiceFactory
-            .builder()
+    public static JDBCService service = JDBCServiceFactory.builder()
             .addLocalMapping(PgEventITSupport::createLocalService)
             .build();
 
@@ -47,9 +47,7 @@ public class PgEventITSupport extends CamelTestSupport {
 
         container = new PostgreSQLContainer(postgresImage);
 
-        container.withUsername(POSTGRES_USER)
-                .withPassword(POSTGRES_PASSWORD)
-                .withDatabaseName(POSTGRES_DB);
+        container.withUsername(POSTGRES_USER).withPassword(POSTGRES_PASSWORD).withDatabaseName(POSTGRES_DB);
 
         return new JDBCLocalContainerService<>(container);
     }
@@ -61,5 +59,4 @@ public class PgEventITSupport extends CamelTestSupport {
     public String getHost() {
         return container.getHost();
     }
-
 }

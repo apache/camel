@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mapstruct;
 
 import java.util.Map;
@@ -33,6 +34,7 @@ public class MapstructComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", autowired = true)
     private MapStructMapperFinder mapStructConverter;
+
     @Metadata(required = true)
     private String mapperPackageName;
 

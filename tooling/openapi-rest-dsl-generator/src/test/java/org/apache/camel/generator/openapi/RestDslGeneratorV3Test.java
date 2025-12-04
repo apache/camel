@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.generator.openapi;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +33,6 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class RestDslGeneratorV3Test {
 
     static OpenAPI document;
@@ -41,7 +42,8 @@ public class RestDslGeneratorV3Test {
     @Test
     public void shouldCreateDefinitions() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            final RestsDefinition definition = RestDslGenerator.toDefinition(document).generate();
+            final RestsDefinition definition =
+                    RestDslGenerator.toDefinition(document).generate();
             assertThat(definition).isNotNull();
             assertThat(definition.getRests()).hasSize(1);
             assertThat(definition.getRests().get(0).getPath()).isEqualTo("/api/v3");
@@ -52,11 +54,11 @@ public class RestDslGeneratorV3Test {
     public void shouldGenerateSourceCodeWithDefaults() throws Exception {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(document)
-                .withGeneratedTime(generated)
-                .generate(code);
+        RestDslGenerator.toAppendable(document).withGeneratedTime(generated).generate(code);
 
-        final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3Petstore.txt").toURI();
+        final URI file = RestDslGeneratorV3Test.class
+                .getResource("/OpenApiV3Petstore.txt")
+                .toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
         assertThat(code.toString()).isEqualTo(expectedContent);
     }
@@ -75,7 +77,9 @@ public class RestDslGeneratorV3Test {
                 .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId())
                 .generate(code);
 
-        final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteFilterV3.txt").toURI();
+        final URI file = RestDslGeneratorV3Test.class
+                .getResource("/MyRestRouteFilterV3.txt")
+                .toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
         assertThat(code.toString()).isEqualTo(expectedContent);
     }
@@ -93,7 +97,8 @@ public class RestDslGeneratorV3Test {
                 .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId())
                 .generate(code);
 
-        final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteV3.txt").toURI();
+        final URI file =
+                RestDslGeneratorV3Test.class.getResource("/MyRestRouteV3.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
         assertThat(code.toString()).isEqualTo(expectedContent);
     }
@@ -108,7 +113,9 @@ public class RestDslGeneratorV3Test {
                 .withRestContextPath("/")
                 .generate(code);
 
-        final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponent.txt").toURI();
+        final URI file = RestDslGeneratorV3Test.class
+                .getResource("/OpenApiV3PetstoreWithRestComponent.txt")
+                .toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(code.toString()).isEqualTo(expectedContent);
@@ -116,6 +123,7 @@ public class RestDslGeneratorV3Test {
 
     @BeforeAll
     public static void readOpenApiDoc() throws Exception {
-        document = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
+        document =
+                new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-spec.json");
     }
 }

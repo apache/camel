@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jgroups;
 
 import java.util.Map;
@@ -32,17 +33,19 @@ public class JGroupsComponent extends DefaultComponent {
 
     @Metadata
     private JChannel channel;
+
     @Metadata
     private String channelProperties;
+
     @Metadata(label = "consumer")
     private boolean enableViewMessages;
 
-    public JGroupsComponent() {
-    }
+    public JGroupsComponent() {}
 
     @Override
     protected Endpoint createEndpoint(String uri, String clusterName, Map<String, Object> parameters) throws Exception {
-        JGroupsEndpoint endpoint = new JGroupsEndpoint(uri, this, channel, clusterName, channelProperties, enableViewMessages);
+        JGroupsEndpoint endpoint =
+                new JGroupsEndpoint(uri, this, channel, clusterName, channelProperties, enableViewMessages);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -80,5 +83,4 @@ public class JGroupsComponent extends DefaultComponent {
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
     }
-
 }

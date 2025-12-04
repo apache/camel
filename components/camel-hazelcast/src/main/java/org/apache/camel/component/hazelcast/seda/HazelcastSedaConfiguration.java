@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.seda;
 
 import org.apache.camel.spi.UriParam;
@@ -30,17 +31,20 @@ public class HazelcastSedaConfiguration {
 
     @UriParam(label = "seda", defaultValue = "1")
     private int concurrentConsumers = 1;
+
     @UriParam(label = "seda", defaultValue = "1000")
     private int pollTimeout = 1000;
+
     @UriParam(label = "seda", defaultValue = "1000")
     private int onErrorDelay = 1000;
+
     @UriParam(label = "seda")
     private boolean transferExchange;
+
     @UriParam(label = "seda")
     private boolean transacted;
 
-    public HazelcastSedaConfiguration() {
-    }
+    public HazelcastSedaConfiguration() {}
 
     public int getConcurrentConsumers() {
         return concurrentConsumers;
@@ -126,5 +130,4 @@ public class HazelcastSedaConfiguration {
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }
-
 }

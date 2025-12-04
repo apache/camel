@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.batch;
 
 import org.apache.camel.EndpointInject;
@@ -34,7 +35,7 @@ public class SpringBatchJobLauncherIT extends CamelSpringTestSupport {
     @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
-    String[] inputMessages = new String[] { "foo", "bar", "baz", null };
+    String[] inputMessages = new String[] {"foo", "bar", "baz", null};
 
     @Override
     @BeforeEach

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
@@ -37,7 +38,8 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         DataFormat dataFormat = null;
 
         // lookup in registry first
-        DataFormatFactory dataFormatFactory = ResolverHelper.lookupDataFormatFactoryInRegistryWithFallback(context, name);
+        DataFormatFactory dataFormatFactory =
+                ResolverHelper.lookupDataFormatFactoryInRegistryWithFallback(context, name);
         if (dataFormatFactory != null) {
             dataFormat = dataFormatFactory.newInstance();
         }
@@ -70,13 +72,11 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
             if (DataFormat.class.isAssignableFrom(type)) {
                 dataFormat = (DataFormat) context.getInjector().newInstance(type, false);
             } else {
-                throw new IllegalArgumentException(
-                        "Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: "
-                                                   + type.getName());
+                throw new IllegalArgumentException("Resolving dataformat: " + name
+                        + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
             }
         }
 
         return dataFormat;
     }
-
 }

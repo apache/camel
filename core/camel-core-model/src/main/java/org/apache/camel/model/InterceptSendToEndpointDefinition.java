@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.List;
@@ -39,18 +40,22 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     @XmlAttribute(required = true)
     private String uri;
+
     @XmlAttribute
     private String skipSendToOriginalEndpoint;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String afterUri;
-    @Metadata(description = "To use an expression to only trigger intercepting sending to an endpoint in specific situations")
+
+    @Metadata(
+            description =
+                    "To use an expression to only trigger intercepting sending to an endpoint in specific situations")
     @XmlElement
     @AsPredicate
     private OnWhenDefinition onWhen;
 
-    public InterceptSendToEndpointDefinition() {
-    }
+    public InterceptSendToEndpointDefinition() {}
 
     protected InterceptSendToEndpointDefinition(InterceptSendToEndpointDefinition source) {
         super(source);
@@ -203,5 +208,4 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     public void setAfterUri(String afterProcessor) {
         this.afterUri = afterProcessor;
     }
-
 }

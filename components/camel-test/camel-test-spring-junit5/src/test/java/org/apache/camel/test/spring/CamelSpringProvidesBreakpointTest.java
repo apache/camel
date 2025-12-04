@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
@@ -24,13 +30,7 @@ import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.test.spring.junit5.ProvidesBreakpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class CamelSpringProvidesBreakpointTest
-        extends CamelSpringPlainTest {
+public class CamelSpringProvidesBreakpointTest extends CamelSpringPlainTest {
 
     @ProvidesBreakpoint
     public static Breakpoint createBreakpoint() {
@@ -48,7 +48,9 @@ public class CamelSpringProvidesBreakpointTest
         assertNotNull(camelContext.getDebugger().getBreakpoints());
         assertEquals(1, camelContext.getDebugger().getBreakpoints().size());
 
-        assertInstanceOf(TestBreakpoint.class, camelContext.getDebugger().getBreakpoints().get(0));
+        assertInstanceOf(
+                TestBreakpoint.class,
+                camelContext.getDebugger().getBreakpoints().get(0));
         assertTrue(((TestBreakpoint) camelContext.getDebugger().getBreakpoints().get(0)).isBreakpointHit());
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -30,18 +31,25 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
 
     @Metadata(defaultValue = "true")
     private Boolean enabled;
+
     @Metadata(defaultValue = "true")
     private Boolean routesEnabled;
+
     @Metadata(defaultValue = "true")
     private Boolean consumersEnabled;
+
     @Metadata(defaultValue = "false")
     private Boolean producersEnabled;
+
     @Metadata(defaultValue = "true")
     private Boolean registryEnabled;
+
     @Metadata
     private String excludePattern;
+
     @Metadata(enums = "full,default,oneline", defaultValue = "default")
     private String exposureLevel;
+
     @Metadata(enums = "up,down,unknown", defaultValue = "down")
     private String initialState;
 
@@ -235,5 +243,4 @@ public class HealthConfigurationProperties implements BootstrapCloseable {
         this.initialState = initialState;
         return this;
     }
-
 }

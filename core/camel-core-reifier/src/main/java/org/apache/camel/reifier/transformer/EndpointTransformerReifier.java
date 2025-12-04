@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.transformer;
 
 import org.apache.camel.CamelContext;
@@ -40,11 +41,11 @@ public class EndpointTransformerReifier extends TransformerReifier<EndpointTrans
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         @SuppressWarnings("resource")
         // NOTE: the client must take care of closing this resource.
-        Transformer t = new ProcessorTransformer(camelContext).setProcessor(processor)
+        Transformer t = new ProcessorTransformer(camelContext)
+                .setProcessor(processor)
                 .setName(parseString(definition.getScheme()), parseString(definition.getName()))
                 .setFrom(parseString(definition.getFromType()))
                 .setTo(parseString(definition.getToType()));
         return t;
     }
-
 }

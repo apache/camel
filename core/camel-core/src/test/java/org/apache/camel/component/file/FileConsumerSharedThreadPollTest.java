@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -55,19 +56,28 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
                 pool = new ThreadPoolBuilder(context).poolSize(1).buildScheduled(this, "MySharedPool");
                 context.getRegistry().bind("myPool", pool);
 
-                from(fileUri("a?initialDelay=0&delay=10&scheduledExecutorService=#myPool")).routeId("a")
+                from(fileUri("a?initialDelay=0&delay=10&scheduledExecutorService=#myPool"))
+                        .routeId("a")
                         .to("direct:shared");
 
-                from(fileUri("b?initialDelay=0&delay=10&scheduledExecutorService=#myPool")).routeId("b")
+                from(fileUri("b?initialDelay=0&delay=10&scheduledExecutorService=#myPool"))
+                        .routeId("b")
                         .to("direct:shared");
 
-                from("direct:shared").routeId("shared").convertBodyTo(String.class).log("Get ${file:name} using ${threadName}")
+                from("direct:shared")
+                        .routeId("shared")
+                        .convertBodyTo(String.class)
+                        .log("Get ${file:name} using ${threadName}")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                exchange.getIn().setHeader("threadName", Thread.currentThread().getName());
+                                exchange.getIn()
+                                        .setHeader(
+                                                "threadName",
+                                                Thread.currentThread().getName());
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

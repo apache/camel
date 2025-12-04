@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest.openapi;
 
 import org.apache.camel.CamelContext;
@@ -30,8 +31,7 @@ public class RestOpenApiDelegateHttpsV3Test extends HttpsV3Test {
         // since camel context is not started, then we need to manually initialize the delegate
         final Component delegate;
         try {
-            delegate = PluginHelper.getComponentResolver(camelContext)
-                    .resolveComponent(componentName, camelContext);
+            delegate = PluginHelper.getComponentResolver(camelContext).resolveComponent(componentName, camelContext);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -53,5 +53,4 @@ public class RestOpenApiDelegateHttpsV3Test extends HttpsV3Test {
 
         return camelContext;
     }
-
 }

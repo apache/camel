@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jackson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -23,9 +27,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSupport {
 
@@ -74,5 +75,4 @@ public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSuppor
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/jackson/SpringJacksonMarshalUnmarshalListTest.xml");
     }
-
 }

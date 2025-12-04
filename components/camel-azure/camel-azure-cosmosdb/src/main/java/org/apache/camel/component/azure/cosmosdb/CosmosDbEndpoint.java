@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.cosmosdb;
 
 import java.util.Map;
@@ -34,9 +35,12 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To read and write records to the CosmosDB database on Azure cloud platform.
  */
-@UriEndpoint(firstVersion = "3.10.0", scheme = "azure-cosmosdb", title = "Azure CosmosDB",
-             syntax = "azure-cosmosdb:databaseName/containerName", category = {
-                     Category.CLOUD, Category.DATABASE })
+@UriEndpoint(
+        firstVersion = "3.10.0",
+        scheme = "azure-cosmosdb",
+        title = "Azure CosmosDB",
+        syntax = "azure-cosmosdb:databaseName/containerName",
+        category = {Category.CLOUD, Category.DATABASE})
 public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -57,7 +61,8 @@ public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointService
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         // we need to have database and container set to consume events
-        if (ObjectHelper.isEmpty(configuration.getDatabaseName()) || ObjectHelper.isEmpty(configuration.getContainerName())) {
+        if (ObjectHelper.isEmpty(configuration.getDatabaseName())
+                || ObjectHelper.isEmpty(configuration.getContainerName())) {
             throw new IllegalArgumentException("Database name and container name must be set.");
         }
 
@@ -72,7 +77,8 @@ public class CosmosDbEndpoint extends DefaultEndpoint implements EndpointService
         super.doStart();
 
         cosmosAsyncClient = configuration.getCosmosAsyncClient() != null
-                ? configuration.getCosmosAsyncClient() : CosmosDbClientFactory.createCosmosAsyncClient(configuration);
+                ? configuration.getCosmosAsyncClient()
+                : CosmosDbClientFactory.createCosmosAsyncClient(configuration);
     }
 
     @Override

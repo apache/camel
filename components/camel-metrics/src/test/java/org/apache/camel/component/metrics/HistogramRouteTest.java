@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.metrics;
+
+import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
@@ -32,13 +40,6 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @CamelSpringTest
 public class HistogramRouteTest extends CamelSpringTestSupport {
@@ -77,9 +78,7 @@ public class HistogramRouteTest extends CamelSpringTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in")
-                        .to("metrics:histogram:A?value=332491")
-                        .to("mock:out");
+                from("direct:in").to("metrics:histogram:A?value=332491").to("mock:out");
             }
         };
     }

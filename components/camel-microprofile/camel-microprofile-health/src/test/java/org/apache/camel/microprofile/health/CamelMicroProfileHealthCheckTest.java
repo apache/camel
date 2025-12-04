@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.microprofile.health;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Map;
 
@@ -33,17 +39,14 @@ import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponse.Status;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTestSupport {
 
     @Test
     public void testCamelContextHealthCheckUpStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
-        context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class).register(new ContextHealthCheck());
+        context.getCamelContextExtension()
+                .getContextPlugin(HealthCheckRegistry.class)
+                .register(new ContextHealthCheck());
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -66,7 +69,9 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
     @Test
     public void testCamelContextHealthCheckDownStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
-        context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class).register(new ContextHealthCheck());
+        context.getCamelContextExtension()
+                .getContextPlugin(HealthCheckRegistry.class)
+                .register(new ContextHealthCheck());
 
         context.stop();
 
@@ -288,8 +293,8 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         JsonArray checks = healthObject.getJsonArray("checks");
         assertEquals(1, checks.size());
 
-        assertHealthCheckOutput(CamelMicroProfileHealthCheck.class.getName(), Status.DOWN, checks.getJsonObject(0),
-                jsonObject -> {
+        assertHealthCheckOutput(
+                CamelMicroProfileHealthCheck.class.getName(), Status.DOWN, checks.getJsonObject(0), jsonObject -> {
                     assertEquals(errorMessage, jsonObject.getString("rootCause"));
                 });
     }
@@ -339,7 +344,8 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         };
 
         healthCheckRegistry.register(failingCheck);
-        healthCheckRegistry.register(createLivenessCheck("liveness-1", true, builder -> builder.detail("test", "test").up()));
+        healthCheckRegistry.register(createLivenessCheck(
+                "liveness-1", true, builder -> builder.detail("test", "test").up()));
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -382,7 +388,8 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         };
 
         healthCheckRegistry.register(failingCheck);
-        healthCheckRegistry.register(createLivenessCheck("liveness-1", true, builder -> builder.detail("test", "test").up()));
+        healthCheckRegistry.register(createLivenessCheck(
+                "liveness-1", true, builder -> builder.detail("test", "test").up()));
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -425,7 +432,8 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         };
 
         healthCheckRegistry.register(failingCheck);
-        healthCheckRegistry.register(createLivenessCheck("liveness-1", true, builder -> builder.detail("test", "test").up()));
+        healthCheckRegistry.register(createLivenessCheck(
+                "liveness-1", true, builder -> builder.detail("test", "test").up()));
 
         SmallRyeHealth health = reporter.getHealth();
 

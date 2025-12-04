@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.asterisk;
 
 import java.io.IOException;
@@ -55,12 +56,14 @@ public final class AsteriskConnection {
     }
 
     public void login()
-            throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
+            throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException,
+                    CamelAsteriskException {
         // Lazy connect if not done before
         connect();
 
-        if (managerConnection != null && (managerConnection.getState() == ManagerConnectionState.DISCONNECTED
-                || managerConnection.getState() == ManagerConnectionState.INITIAL)) {
+        if (managerConnection != null
+                && (managerConnection.getState() == ManagerConnectionState.DISCONNECTED
+                        || managerConnection.getState() == ManagerConnectionState.INITIAL)) {
             managerConnection.login("on");
 
             LOG.debug("asterisk login done!");

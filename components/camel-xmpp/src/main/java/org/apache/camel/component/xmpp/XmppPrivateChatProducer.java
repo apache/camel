@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import java.io.IOException;
@@ -88,20 +89,23 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending XMPP message to {} from {} : {}", participant, endpoint.getUser(), message.getBody());
+                LOG.debug(
+                        "Sending XMPP message to {} from {} : {}", participant, endpoint.getUser(), message.getBody());
             }
             chat.send(message);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeExchangeException(
-                    "Interrupted while sending XMPP message to " + participant + " from " + endpoint.getUser() + " : " + message
-                                               + " to: " + XmppEndpoint.getConnectionMessage(connection),
-                    exchange, e);
+                    "Interrupted while sending XMPP message to " + participant + " from " + endpoint.getUser() + " : "
+                            + message + " to: " + XmppEndpoint.getConnectionMessage(connection),
+                    exchange,
+                    e);
         } catch (Exception e) {
             throw new RuntimeExchangeException(
                     "Could not send XMPP message to " + participant + " from " + endpoint.getUser() + " : " + message
-                                               + " to: " + XmppEndpoint.getConnectionMessage(connection),
-                    exchange, e);
+                            + " to: " + XmppEndpoint.getConnectionMessage(connection),
+                    exchange,
+                    e);
         }
     }
 
@@ -134,7 +138,8 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                     throw new RuntimeCamelException(
                             "Could not establish connection to XMPP server: " + endpoint.getConnectionDescription(), e);
                 } else {
-                    LOG.warn("Could not connect to XMPP server: {} Producer will attempt lazy connection when needed.",
+                    LOG.warn(
+                            "Could not connect to XMPP server: {} Producer will attempt lazy connection when needed.",
                             e.getMessage());
                 }
             }

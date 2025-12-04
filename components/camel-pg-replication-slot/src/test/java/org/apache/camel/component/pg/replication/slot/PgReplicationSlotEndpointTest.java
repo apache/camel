@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pg.replication.slot;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+package org.apache.camel.component.pg.replication.slot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class PgReplicationSlotEndpointTest {
@@ -48,7 +49,8 @@ public class PgReplicationSlotEndpointTest {
         assertEquals("slot", endpoint.getSlot());
         assertEquals("plugin", endpoint.getOutputPlugin());
 
-        endpoint = new PgReplicationSlotEndpoint("pg-replication-slot:remote-server:333/database/slot:plugin", component);
+        endpoint =
+                new PgReplicationSlotEndpoint("pg-replication-slot:remote-server:333/database/slot:plugin", component);
 
         assertEquals("database", endpoint.getDatabase());
         assertEquals(Integer.valueOf(333), endpoint.getPort());
@@ -56,7 +58,8 @@ public class PgReplicationSlotEndpointTest {
         assertEquals("slot", endpoint.getSlot());
         assertEquals("plugin", endpoint.getOutputPlugin());
 
-        endpoint = new PgReplicationSlotEndpoint("pg-replication-slot://remote-server:333/database/slot:plugin", component);
+        endpoint = new PgReplicationSlotEndpoint(
+                "pg-replication-slot://remote-server:333/database/slot:plugin", component);
 
         assertEquals("database", endpoint.getDatabase());
         assertEquals(Integer.valueOf(333), endpoint.getPort());
@@ -68,7 +71,8 @@ public class PgReplicationSlotEndpointTest {
     @Test
     public void testParsingBadUri() {
         PgReplicationSlotComponent component = mock(PgReplicationSlotComponent.class);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> new PgReplicationSlotEndpoint("pg-replication-slot:/database/slot", component));
     }
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.catalog.impl;
+
+import static org.apache.camel.util.StringHelper.isDashed;
 
 import java.io.LineNumberReader;
 import java.io.StringReader;
@@ -63,8 +66,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
-
-import static org.apache.camel.util.StringHelper.isDashed;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
@@ -207,8 +208,10 @@ public abstract class AbstractCamelCatalog {
     }
 
     private EndpointValidationResult validateProperties(
-            String scheme, Map<String, String> properties,
-            boolean lenient, boolean consumerOnly,
+            String scheme,
+            Map<String, String> properties,
+            boolean lenient,
+            boolean consumerOnly,
             boolean producerOnly) {
         EndpointValidationResult result = new EndpointValidationResult(scheme);
 
@@ -290,11 +293,11 @@ public abstract class AbstractCamelCatalog {
                 }
 
                 String prefix = row.getPrefix();
-                boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+                boolean valuePlaceholder =
+                        value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
                 boolean lookup = value.startsWith("#") && value.length() > 1;
                 // we cannot evaluate multi values as strict as the others, as we don't know their expected types
-                boolean multiValue = prefix != null && originalName.startsWith(prefix)
-                        && row.isMultiValue();
+                boolean multiValue = prefix != null && originalName.startsWith(prefix) && row.isMultiValue();
 
                 // default value
                 Object defaultValue = row.getDefaultValue();
@@ -371,7 +374,8 @@ public abstract class AbstractCamelCatalog {
                     // value must be an number
                     boolean valid = false;
                     try {
-                        valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
+                        valid = !Double.valueOf(value).isNaN()
+                                || !Float.valueOf(value).isNaN();
                     } catch (Exception e) {
                         // ignore
                     }
@@ -389,12 +393,17 @@ public abstract class AbstractCamelCatalog {
             String key2 = apiSyntax.length > 1 ? properties.get(apiSyntax[1]) : null;
 
             if (key1 != null && key2 != null) {
-                ApiModel api = model.getApiOptions().stream().filter(o -> o.getName().equalsIgnoreCase(key1)).findFirst()
+                ApiModel api = model.getApiOptions().stream()
+                        .filter(o -> o.getName().equalsIgnoreCase(key1))
+                        .findFirst()
                         .orElse(null);
                 if (api == null) {
                     result.addInvalidEnum(apiSyntax[0], key1);
-                    result.addInvalidEnumChoices(apiSyntax[0],
-                            model.getApiOptions().stream().map(ApiModel::getName).toArray(String[]::new));
+                    result.addInvalidEnumChoices(
+                            apiSyntax[0],
+                            model.getApiOptions().stream()
+                                    .map(ApiModel::getName)
+                                    .toArray(String[]::new));
                 } else {
                     // walk each method and match against its name/alias
                     boolean found = false;
@@ -408,15 +417,18 @@ public abstract class AbstractCamelCatalog {
                     if (!found) {
                         result.addInvalidEnum(apiSyntax[1], key2);
 
-                        result.addInvalidEnumChoices(apiSyntax[1], api.getMethods().stream()
-                                .map(m -> {
-                                    // favour using method alias in choices
-                                    String answer = apiMethodAlias(api, m);
-                                    if (answer == null) {
-                                        answer = m.getName();
-                                    }
-                                    return answer;
-                                }).toArray(String[]::new));
+                        result.addInvalidEnumChoices(
+                                apiSyntax[1],
+                                api.getMethods().stream()
+                                        .map(m -> {
+                                            // favour using method alias in choices
+                                            String answer = apiMethodAlias(api, m);
+                                            if (answer == null) {
+                                                answer = m.getName();
+                                            }
+                                            return answer;
+                                        })
+                                        .toArray(String[]::new));
                     }
                 }
             }
@@ -511,7 +523,8 @@ public abstract class AbstractCamelCatalog {
         String syntax = model.getSyntax();
         String alternativeSyntax = model.getAlternativeSyntax();
         if (syntax == null) {
-            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
+            throw new IllegalArgumentException(
+                    "Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
         // only if we support alternative syntax, and the uri contains the username and password in the authority
@@ -693,7 +706,9 @@ public abstract class AbstractCamelCatalog {
                     // build a string with the extra multi valued options with the prefix and & as separator
                     String csb = values.entrySet().stream()
                             .map(multi -> prefix + multi.getKey() + "="
-                                          + (multi.getValue() != null ? multi.getValue().toString() : ""))
+                                    + (multi.getValue() != null
+                                            ? multi.getValue().toString()
+                                            : ""))
                             .collect(Collectors.joining("&"));
                     // append the extra multi-values to the existing (which contains the first multi value)
                     if (!csb.isEmpty()) {
@@ -768,7 +783,9 @@ public abstract class AbstractCamelCatalog {
             String ecKey2 = StringHelper.asEnumConstantValue(key2);
             for (ApiModel am : model.getApiOptions()) {
                 String aKey = am.getName();
-                if (aKey.equalsIgnoreCase("DEFAULT") || aKey.equalsIgnoreCase(key) || aKey.equalsIgnoreCase(ecKey)
+                if (aKey.equalsIgnoreCase("DEFAULT")
+                        || aKey.equalsIgnoreCase(key)
+                        || aKey.equalsIgnoreCase(ecKey)
                         || aKey.equalsIgnoreCase(dashKey)) {
                     am.getMethods().stream()
                             .filter(m -> {
@@ -777,7 +794,8 @@ public abstract class AbstractCamelCatalog {
                                     return true;
                                 }
                                 String name = m.getName();
-                                if (name.equalsIgnoreCase(key2) || name.equalsIgnoreCase(ecKey2)
+                                if (name.equalsIgnoreCase(key2)
+                                        || name.equalsIgnoreCase(ecKey2)
                                         || name.equalsIgnoreCase(dashKey2)) {
                                     return true;
                                 }
@@ -786,15 +804,15 @@ public abstract class AbstractCamelCatalog {
                                 if (key3 != null) {
                                     String dashKey3 = StringHelper.camelCaseToDash(key3);
                                     String ecKey3 = StringHelper.asEnumConstantValue(key3);
-                                    if (key2.equalsIgnoreCase(key3) || ecKey2.equalsIgnoreCase(ecKey3)
+                                    if (key2.equalsIgnoreCase(key3)
+                                            || ecKey2.equalsIgnoreCase(ecKey3)
                                             || dashKey2.equalsIgnoreCase(dashKey3)) {
                                         return true;
                                     }
                                 }
                                 return false;
                             })
-                            .forEach(m -> m.getOptions()
-                                    .forEach(o -> answer.put(o.getName(), o)));
+                            .forEach(m -> m.getOptions().forEach(o -> answer.put(o.getName(), o)));
                 }
             }
         }
@@ -883,7 +901,8 @@ public abstract class AbstractCamelCatalog {
         }
         String originalSyntax = model.getSyntax();
         if (originalSyntax == null) {
-            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
+            throw new IllegalArgumentException(
+                    "Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
         }
 
         // do any properties filtering which can be needed for some special components
@@ -980,7 +999,8 @@ public abstract class AbstractCamelCatalog {
 
                 boolean contains = properties.containsKey(key);
                 if (!contains) {
-                    // if the key are similar we have no explicit value and can try to find a default value if the option is required
+                    // if the key are similar we have no explicit value and can try to find a default value if the
+                    // option is required
                     BaseOptionModel row = rows.get(key);
                     if (row != null && row.isRequired()) {
                         Object value = row.getDefaultValue();
@@ -1174,8 +1194,15 @@ public abstract class AbstractCamelCatalog {
     }
 
     private void validateConfigurationProperty(
-            int posDot, int posBracket, String suffix, String nOption, ConfigurationPropertiesValidationResult result,
-            Map<String, BaseOptionModel> rows, String name, String value, String longKey) {
+            int posDot,
+            int posBracket,
+            String suffix,
+            String nOption,
+            ConfigurationPropertiesValidationResult result,
+            Map<String, BaseOptionModel> rows,
+            String name,
+            String value,
+            String longKey) {
         if (posDot > 0 && posBracket > 0) {
             int first = Math.min(posDot, posBracket);
             suffix = nOption.substring(first);
@@ -1194,12 +1221,17 @@ public abstract class AbstractCamelCatalog {
     private void doValidateConfigurationProperty(
             ConfigurationPropertiesValidationResult result,
             Map<String, BaseOptionModel> rows,
-            String name, String value, String longKey,
-            String lookupKey, String suffix) {
+            String name,
+            String value,
+            String longKey,
+            String lookupKey,
+            String suffix) {
 
         // find option
         String rowKey = rows.keySet().stream()
-                .filter(n -> n.toLowerCase(Locale.ENGLISH).equals(lookupKey)).findFirst().orElse(null);
+                .filter(n -> n.toLowerCase(Locale.ENGLISH).equals(lookupKey))
+                .findFirst()
+                .orElse(null);
         if (rowKey == null) {
             // unknown option
             result.addUnknown(longKey);
@@ -1210,7 +1242,8 @@ public abstract class AbstractCamelCatalog {
                 }
             }
         } else {
-            boolean optionPlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+            boolean optionPlaceholder =
+                    value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
             boolean lookup = value.startsWith("#") && value.length() > 1;
 
             // deprecated
@@ -1251,7 +1284,8 @@ public abstract class AbstractCamelCatalog {
                 // value must be an number
                 boolean valid = false;
                 try {
-                    valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
+                    valid = !Double.valueOf(value).isNaN()
+                            || !Float.valueOf(value).isNaN();
                 } catch (Exception e) {
                     // ignore
                 }
@@ -1279,7 +1313,9 @@ public abstract class AbstractCamelCatalog {
             }
 
             String javaType = row.getJavaType();
-            if (!optionPlaceholder && !lookup && javaType != null
+            if (!optionPlaceholder
+                    && !lookup
+                    && javaType != null
                     && (javaType.startsWith("java.util.Map") || javaType.startsWith("java.util.Properties"))) {
                 // there must be a valid suffix
                 if (isValidSuffix(suffix)) {
@@ -1360,9 +1396,13 @@ public abstract class AbstractCamelCatalog {
             Throwable cause = null;
             try {
                 if (predicate) {
-                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, resolved);
+                    instance.getClass()
+                            .getMethod("createPredicate", String.class)
+                            .invoke(instance, resolved);
                 } else {
-                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, resolved);
+                    instance.getClass()
+                            .getMethod("createExpression", String.class)
+                            .invoke(instance, resolved);
                 }
             } catch (InvocationTargetException e) {
                 cause = e.getTargetException();
@@ -1379,8 +1419,12 @@ public abstract class AbstractCamelCatalog {
                 answer.setError(errMsg);
 
                 // is it simple parser exception then we can grab the index where the problem is
-                if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")
-                        || cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleParserException")) {
+                if (cause.getClass()
+                                .getName()
+                                .equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")
+                        || cause.getClass()
+                                .getName()
+                                .equals("org.apache.camel.language.simple.types.SimpleParserException")) {
                     try {
                         // we need to grab the index field from those simple parser exceptions
                         Method method = cause.getClass().getMethod("getIndex");
@@ -1395,7 +1439,9 @@ public abstract class AbstractCamelCatalog {
                 }
 
                 // we need to grab the short message field from this simple syntax exception
-                if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")) {
+                if (cause.getClass()
+                        .getName()
+                        .equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")) {
                     try {
                         Method method = cause.getClass().getMethod("getShortMessage");
                         Object result = method.invoke(cause);
@@ -1458,9 +1504,13 @@ public abstract class AbstractCamelCatalog {
             Throwable cause = null;
             try {
                 if (predicate) {
-                    instance.getClass().getMethod("validatePredicate", String.class).invoke(instance, resolved);
+                    instance.getClass()
+                            .getMethod("validatePredicate", String.class)
+                            .invoke(instance, resolved);
                 } else {
-                    instance.getClass().getMethod("validateExpression", String.class).invoke(instance, resolved);
+                    instance.getClass()
+                            .getMethod("validateExpression", String.class)
+                            .invoke(instance, resolved);
                 }
             } catch (InvocationTargetException e) {
                 cause = e.getTargetException();
@@ -1600,18 +1650,26 @@ public abstract class AbstractCamelCatalog {
                 try {
                     // favour using the validate method if present as this is for tooling usage
                     if (predicate) {
-                        instance.getClass().getMethod("validatePredicate", String.class).invoke(instance, text);
+                        instance.getClass()
+                                .getMethod("validatePredicate", String.class)
+                                .invoke(instance, text);
                     } else {
-                        instance.getClass().getMethod("validateExpression", String.class).invoke(instance, text);
+                        instance.getClass()
+                                .getMethod("validateExpression", String.class)
+                                .invoke(instance, text);
                     }
                     return answer;
                 } catch (NoSuchMethodException e) {
                     // ignore
                 }
                 if (predicate) {
-                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, text);
+                    instance.getClass()
+                            .getMethod("createPredicate", String.class)
+                            .invoke(instance, text);
                 } else {
-                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, text);
+                    instance.getClass()
+                            .getMethod("createExpression", String.class)
+                            .invoke(instance, text);
                 }
             } catch (InvocationTargetException e) {
                 cause = e.getTargetException();
@@ -1671,7 +1729,10 @@ public abstract class AbstractCamelCatalog {
         }
         if (!valid) {
             try {
-                if (value.startsWith("P") || value.startsWith("-P") || value.startsWith("p") || value.startsWith("-p")) {
+                if (value.startsWith("P")
+                        || value.startsWith("-P")
+                        || value.startsWith("p")
+                        || value.startsWith("-p")) {
                     // its a duration
                     Duration.parse(value);
                 } else {
@@ -1737,5 +1798,4 @@ public abstract class AbstractCamelCatalog {
         }
         return sb.toString();
     }
-
 }

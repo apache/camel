@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -35,19 +36,22 @@ public class TransactionalClientDataSourceTransactedTest extends TransactionalCl
                         // marks this route as transacted, and we dont pass in any parameters so we
                         // will auto lookup and use the Policy defined in the spring XML file
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Elephant in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Elephant in Action"))
+                        .bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
                 from("direct:fail")
                         // marks this route as transacted, and we dont pass in any parameters so we
                         // will auto lookup and use the Policy defined in the spring XML file
                         .transacted()
-                        .setBody(constant("Tiger in Action")).bean("bookService")
-                        .setBody(constant("Donkey in Action")).bean("bookService");
+                        .setBody(constant("Tiger in Action"))
+                        .bean("bookService")
+                        .setBody(constant("Donkey in Action"))
+                        .bean("bookService");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.CamelContext;
@@ -32,8 +33,7 @@ public class ContainerWideInterceptor implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(
-            final CamelContext context, final NamedNode definition,
-            final Processor target, final Processor nextTarget)
+            final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget)
             throws Exception {
 
         // as this is based on an unit test we are a bit lazy and just create an inlined processor

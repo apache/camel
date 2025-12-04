@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.jms;
 
 import jakarta.jms.DeliveryMode;
@@ -33,13 +34,19 @@ import org.apache.camel.util.ObjectHelper;
 public class Jms11ObjectFactory implements JmsObjectFactory {
 
     @Override
-    public MessageConsumer createMessageConsumer(Session session, Endpoint endpoint)
-            throws Exception {
+    public MessageConsumer createMessageConsumer(Session session, Endpoint endpoint) throws Exception {
         SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
-        Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session,
-                sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
-        return createMessageConsumer(session, destination, sjmsEndpoint.getMessageSelector(), sjmsEndpoint.isTopic(),
-                sjmsEndpoint.getDurableSubscriptionName(), true, false);
+        Destination destination = sjmsEndpoint
+                .getDestinationCreationStrategy()
+                .createDestination(session, sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
+        return createMessageConsumer(
+                session,
+                destination,
+                sjmsEndpoint.getMessageSelector(),
+                sjmsEndpoint.isTopic(),
+                sjmsEndpoint.getDurableSubscriptionName(),
+                true,
+                false);
     }
 
     @Override
@@ -58,22 +65,28 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
             boolean shared)
             throws Exception {
         // noLocal is default false according to JMS spec
-        return createMessageConsumer(session, destination, messageSelector, topic, subscriptionName, durable, shared, false);
+        return createMessageConsumer(
+                session, destination, messageSelector, topic, subscriptionName, durable, shared, false);
     }
 
     @Override
     public MessageConsumer createMessageConsumer(
-            Session session, Destination destination,
-            String messageSelector, boolean topic, String subscriptionName, boolean durable,
-            boolean shared, boolean noLocal)
+            Session session,
+            Destination destination,
+            String messageSelector,
+            boolean topic,
+            String subscriptionName,
+            boolean durable,
+            boolean shared,
+            boolean noLocal)
             throws Exception {
         MessageConsumer messageConsumer;
 
         if (topic) {
             if (ObjectHelper.isNotEmpty(subscriptionName)) {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createDurableSubscriber((Topic) destination, subscriptionName,
-                            messageSelector, noLocal);
+                    messageConsumer = session.createDurableSubscriber(
+                            (Topic) destination, subscriptionName, messageSelector, noLocal);
                 } else {
                     messageConsumer = session.createDurableSubscriber((Topic) destination, subscriptionName);
                 }
@@ -95,17 +108,18 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
-    public MessageProducer createMessageProducer(Session session, Endpoint endpoint)
-            throws Exception {
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint) throws Exception {
         SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
         return createMessageProducer(session, endpoint, sjmsEndpoint.getDestinationName());
     }
 
     @Override
-    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName) throws Exception {
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName)
+            throws Exception {
         SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
-        Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session,
-                destinationName, sjmsEndpoint.isTopic());
+        Destination destination = sjmsEndpoint
+                .getDestinationCreationStrategy()
+                .createDestination(session, destinationName, sjmsEndpoint.isTopic());
 
         boolean persistent = sjmsEndpoint.isDeliveryPersistent();
         if (sjmsEndpoint.getDeliveryMode() != null) {
@@ -116,7 +130,8 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
-    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception {
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination)
+            throws Exception {
         SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
 
         boolean persistent = sjmsEndpoint.isDeliveryPersistent();
@@ -128,11 +143,7 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
-    public MessageProducer createMessageProducer(
-            Session session,
-            Destination destination,
-            boolean persistent,
-            long ttl)
+    public MessageProducer createMessageProducer(Session session, Destination destination, boolean persistent, long ttl)
             throws Exception {
         // NOTE: the object must be closed byt the client
         MessageProducer messageProducer = session.createProducer(destination); // NOSONAR

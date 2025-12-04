@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jsonapi;
 
 import com.github.jasminb.jsonapi.annotations.Id;
@@ -27,6 +28,7 @@ import com.github.jasminb.jsonapi.annotations.Type;
 public class MyBook {
     @Id
     private String isbn;
+
     private String title;
 
     @Relationship("author")

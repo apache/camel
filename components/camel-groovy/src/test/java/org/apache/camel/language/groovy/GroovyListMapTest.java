@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.groovy;
 
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class GroovyListMapTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .filter().groovy("body.get(0).get('foo') == 'bar'")
+                        .filter()
+                        .groovy("body.get(0).get('foo') == 'bar'")
                         .to("mock:result");
             }
         };

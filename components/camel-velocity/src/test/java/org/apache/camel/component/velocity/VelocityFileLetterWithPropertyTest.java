@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,9 +28,10 @@ public class VelocityFileLetterWithPropertyTest extends VelocityLetterTest {
 
                 System.setProperty("ENV", "src/test/resources/");
 
-                from("direct:a").to("velocity:file:{{ENV}}org/apache/camel/component/velocity/letter.vm").to("mock:result");
+                from("direct:a")
+                        .to("velocity:file:{{ENV}}org/apache/camel/component/velocity/letter.vm")
+                        .to("mock:result");
             }
         };
     }
-
 }

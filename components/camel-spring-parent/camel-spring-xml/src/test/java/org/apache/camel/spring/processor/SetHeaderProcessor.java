@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.Exchange;
@@ -35,5 +36,4 @@ public class SetHeaderProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         exchange.getIn().setHeader(headerName, headerValue);
     }
-
 }

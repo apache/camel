@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.timestream;
 
 import java.util.Map;
@@ -42,14 +43,15 @@ public class Timestream2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Timestream2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Timestream2Configuration();
+        Timestream2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Timestream2Configuration();
 
         if (!remaining.isBlank()) {
             String[] uriPath = remaining.split(":");
             Timestream2ClientType timestream2ClientType = Timestream2ClientType.valueOf(uriPath[0]);
             if (Timestream2ClientType.write.equals(timestream2ClientType)) {
-                Timestream2WriteEndpoint timestream2WriteEndpoint = new Timestream2WriteEndpoint(uri, this, configuration);
+                Timestream2WriteEndpoint timestream2WriteEndpoint =
+                        new Timestream2WriteEndpoint(uri, this, configuration);
                 setProperties(timestream2WriteEndpoint, parameters);
                 if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
                         && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
@@ -60,7 +62,8 @@ public class Timestream2Component extends HealthCheckComponent {
                 }
                 return timestream2WriteEndpoint;
             } else if (Timestream2ClientType.query.equals(timestream2ClientType)) {
-                Timestream2QueryEndpoint timestream2QueryEndpoint = new Timestream2QueryEndpoint(uri, this, configuration);
+                Timestream2QueryEndpoint timestream2QueryEndpoint =
+                        new Timestream2QueryEndpoint(uri, this, configuration);
                 setProperties(timestream2QueryEndpoint, parameters);
                 if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
                         && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider())
@@ -74,9 +77,9 @@ public class Timestream2Component extends HealthCheckComponent {
                 throw new IllegalArgumentException("Invalid Endpoint Type. It should be either write or query");
             }
         } else {
-            throw new IllegalArgumentException("Type of Endpoint is missing from uri, it should be either write or query");
+            throw new IllegalArgumentException(
+                    "Type of Endpoint is missing from uri, it should be either write or query");
         }
-
     }
 
     public Timestream2Configuration getConfiguration() {
@@ -89,5 +92,4 @@ public class Timestream2Component extends HealthCheckComponent {
     public void setConfiguration(Timestream2Configuration configuration) {
         this.configuration = configuration;
     }
-
 }

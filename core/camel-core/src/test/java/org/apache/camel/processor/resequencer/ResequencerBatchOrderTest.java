@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.resequencer;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class ResequencerBatchOrderTest extends ContextTestSupport {
@@ -35,7 +36,12 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").resequence(body()).batch().size(2).timeout(50).to("mock:result");
+                from("direct:start")
+                        .resequence(body())
+                        .batch()
+                        .size(2)
+                        .timeout(50)
+                        .to("mock:result");
             }
         };
     }

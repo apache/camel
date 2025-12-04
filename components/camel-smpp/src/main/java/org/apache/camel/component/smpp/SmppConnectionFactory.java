@@ -14,36 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * The connectProxy() method implementation is inspired from
- * com.jcraft.jsch.ProxyHTTP available under a BSD style license (below).
- *
- * Copyright (c) 2002-2010 ymnk, JCraft,Inc. All rights reserved.
 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
-
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
-
- * 2. Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in
- * the documentation and/or other materials provided with the distribution.
-
- * 3. The names of the authors may not be used to endorse or promote products
- * derived from this software without specific prior written permission.
-
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
- * INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
 package org.apache.camel.component.smpp;
 
 import java.io.BufferedReader;
@@ -86,19 +57,21 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             Socket socket;
             SocketFactory socketFactory;
             socketFactory = config.isUsingSSL() && config.getHttpProxyHost() == null
-                    ? SSLSocketFactory
-                            .getDefault()
+                    ? SSLSocketFactory.getDefault()
                     : SocketFactory.getDefault();
             // NOTE: the socket must be closed by the factory method client.
             socket = socketFactory.createSocket(); // NOSONAR
             if (config.getHttpProxyHost() != null) {
                 // setup the proxy tunnel
-                // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
-                socket.connect(new InetSocketAddress(config.getHttpProxyHost(), config.getHttpProxyPort()),
+                // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial
+                // connection
+                socket.connect(
+                        new InetSocketAddress(config.getHttpProxyHost(), config.getHttpProxyPort()),
                         config.getEnquireLinkTimer());
                 connectProxy(host, port, socket);
             } else {
-                // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
+                // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial
+                // connection
                 socket.connect(new InetSocketAddress(host, port), config.getEnquireLinkTimer());
             }
 
@@ -162,9 +135,8 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 code = Integer.parseInt(response.substring(ch + 1, bar));
                 reason = response.substring(bar + 1);
             } catch (NumberFormatException e) {
-                throw new RuntimeCamelException(
-                        "Invalid response to CONNECT request to host " + host + ":" + port
-                                                + " - cannot parse code from response string: " + response);
+                throw new RuntimeCamelException("Invalid response to CONNECT request to host " + host + ":" + port
+                        + " - cannot parse code from response string: " + response);
             }
             if (code != 200) {
                 throw new RuntimeCamelException("Proxy error: " + reason);

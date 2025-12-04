@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import org.apache.camel.LoggingLevel;
@@ -31,32 +32,46 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean enabled;
+
     @Metadata
     private boolean standby;
+
     @Metadata(label = "advanced")
     private boolean waitForAttach;
+
     @Metadata(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
+
     @Metadata
     private String breakpoints;
+
     @Metadata(label = "advanced")
     private boolean singleStepIncludeStartEnd;
+
     @Metadata(defaultValue = "32768")
     private int bodyMaxChars = 32 * 1024;
+
     @Metadata
     private boolean bodyIncludeStreams;
+
     @Metadata(defaultValue = "true")
     private boolean bodyIncludeFiles = true;
+
     @Metadata(defaultValue = "true")
     private boolean includeExchangeProperties = true;
+
     @Metadata(defaultValue = "true")
     private boolean includeExchangeVariables = true;
+
     @Metadata(defaultValue = "true")
     private boolean includeException = true;
+
     @Metadata(label = "advanced", defaultValue = "300")
     private long fallbackTimeout = 300;
+
     @Metadata(label = "advanced", defaultValue = "true")
     private boolean jmxConnectorEnabled = true;
+
     @Metadata(label = "advanced", defaultValue = "1099")
     private int jmxConnectorPort = 1099;
 
@@ -377,5 +392,4 @@ public class DebuggerConfigurationProperties implements BootstrapCloseable {
         this.jmxConnectorPort = jmxConnectorPort;
         return this;
     }
-
 }

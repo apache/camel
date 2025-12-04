@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio.integration;
+
+import static org.apache.camel.component.minio.MinioTestUtils.countObjectsInBucket;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,10 +45,6 @@ import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.minio.MinioTestUtils.countObjectsInBucket;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
 
     private static final String BUCKET_NAME = "mycamel2";
@@ -60,8 +61,7 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioListObjectsOperationIT() {
-    }
+    MinioListObjectsOperationIT() {}
 
     @SuppressWarnings("unchecked")
     @Test
@@ -72,8 +72,8 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
 
         result.expectedMessageCount(1);
 
-        template.send("direct:listBuckets",
-                exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
+        template.send("direct:listBuckets", exchange -> exchange.getIn()
+                .setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
 
         template.send("direct:addObject", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");
@@ -86,7 +86,8 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
             exchange13.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listObjects);
         });
 
-        Iterable<Result<Item>> respond = (Iterable<Result<Item>>) exchange.getMessage().getBody();
+        Iterable<Result<Item>> respond =
+                (Iterable<Result<Item>>) exchange.getMessage().getBody();
         Iterator<Result<Item>> respondSize = respond.iterator();
         Iterator<Result<Item>> respondIterator = respond.iterator();
 
@@ -139,7 +140,8 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
         template.send("direct:deleteObjects", exchange -> {
             exchange.getIn().setHeader(MinioConstants.BUCKET_NAME, BUCKET_NAME);
             exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.deleteObjects);
-            exchange.getIn().setBody(RemoveObjectsArgs.builder().bucket(BUCKET_NAME).objects(objects));
+            exchange.getIn()
+                    .setBody(RemoveObjectsArgs.builder().bucket(BUCKET_NAME).objects(objects));
         });
 
         assertEquals(0, countObjectsInBucket(client, BUCKET_NAME));
@@ -164,7 +166,6 @@ class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
                 from("direct:listObjects").to(minioEndpoint);
 
                 from("direct:deleteBucket").to(minioEndpoint).to("mock:result");
-
             }
         };
     }

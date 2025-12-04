@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.management.JMX;
 import javax.management.MBeanServer;
@@ -24,8 +27,6 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {

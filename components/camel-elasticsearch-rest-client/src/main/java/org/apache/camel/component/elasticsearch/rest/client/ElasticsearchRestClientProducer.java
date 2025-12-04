@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.elasticsearch.rest.client;
+
+import static org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestClientConstant.OPERATION;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +37,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -57,8 +59,6 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.sniff.Sniffer;
-
-import static org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestClientConstant.OPERATION;
 
 public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     public static final String PUT = "PUT";
@@ -93,8 +93,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isEmpty(indexName)) {
             indexName = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.INDEX_NAME, String.class);
             if (ObjectHelper.isEmpty(indexName)) {
-                throw new IllegalArgumentException(
-                        "Index Name is mandatory");
+                throw new IllegalArgumentException("Index Name is mandatory");
             }
         }
 
@@ -146,57 +145,53 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     /**
      * Async request to Elasticsearch or equivalent Server
      */
-    private void performRequest(
-            Exchange exchange, AsyncCallback callback, Request request) {
-        restClient.performRequestAsync(
-                request,
-                new ResponseListener() {
-                    @Override
-                    public void onSuccess(Response response) {
-                        try {
-                            // Get response
-                            String responseBody = EntityUtils.toString(response.getEntity());
-                            // Create a Json Object from the response
-                            JsonObject jsonObject = convertHttpEntityToJsonObject(responseBody);
-                            populateExchange(jsonObject);
-                        } catch (Exception e) {
-                            exchange.setException(e);
-                        }
+    private void performRequest(Exchange exchange, AsyncCallback callback, Request request) {
+        restClient.performRequestAsync(request, new ResponseListener() {
+            @Override
+            public void onSuccess(Response response) {
+                try {
+                    // Get response
+                    String responseBody = EntityUtils.toString(response.getEntity());
+                    // Create a Json Object from the response
+                    JsonObject jsonObject = convertHttpEntityToJsonObject(responseBody);
+                    populateExchange(jsonObject);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
 
-                        callback.done(false);
-                    }
+                callback.done(false);
+            }
 
-                    private JsonObject convertHttpEntityToJsonObject(String httpResponse) throws IOException {
-                        // Jackson ObjectMapper
-                        ObjectMapper objectMapper = new ObjectMapper();
+            private JsonObject convertHttpEntityToJsonObject(String httpResponse) throws IOException {
+                // Jackson ObjectMapper
+                ObjectMapper objectMapper = new ObjectMapper();
 
-                        // Convert JSON content to Map<String, Object>
-                        Map<String, Object> map = objectMapper.readValue(httpResponse, new TypeReference<>() {
-                        });
-                        // convert to JsonObject
-                        return new JsonObject(map);
-                    }
+                // Convert JSON content to Map<String, Object>
+                Map<String, Object> map = objectMapper.readValue(httpResponse, new TypeReference<>() {});
+                // convert to JsonObject
+                return new JsonObject(map);
+            }
 
-                    /**
-                     * Generate response Body of the Exchange, depending on operation Type
-                     */
-                    private void populateExchange(JsonObject doc) {
-                        ElasticsearchRestClientOperation operation = resolveOperation(endpoint, exchange);
-                        switch (operation) {
-                            case INDEX_OR_UPDATE -> exchange.getMessage().setBody(extractID(doc));
-                            case CREATE_INDEX, DELETE_INDEX -> exchange.getMessage().setBody(extractAck(doc));
-                            case DELETE -> exchange.getMessage().setBody(extractDeleted(doc));
-                            case GET_BY_ID -> exchange.getMessage().setBody(extractDocument(doc));
-                            case SEARCH -> exchange.getMessage().setBody(extractSearch(doc));
-                        }
-                    }
+            /**
+             * Generate response Body of the Exchange, depending on operation Type
+             */
+            private void populateExchange(JsonObject doc) {
+                ElasticsearchRestClientOperation operation = resolveOperation(endpoint, exchange);
+                switch (operation) {
+                    case INDEX_OR_UPDATE -> exchange.getMessage().setBody(extractID(doc));
+                    case CREATE_INDEX, DELETE_INDEX -> exchange.getMessage().setBody(extractAck(doc));
+                    case DELETE -> exchange.getMessage().setBody(extractDeleted(doc));
+                    case GET_BY_ID -> exchange.getMessage().setBody(extractDocument(doc));
+                    case SEARCH -> exchange.getMessage().setBody(extractSearch(doc));
+                }
+            }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        exchange.setException(e);
-                        callback.done(false);
-                    }
-                });
+            @Override
+            public void onFailure(Exception e) {
+                exchange.setException(e);
+                callback.done(false);
+            }
+        });
     }
 
     /***
@@ -205,8 +200,8 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     private Request createIndexRequest(String indexName, Exchange exchange) {
         var endpoint = String.format("/%s", indexName);
         var request = new Request(PUT, endpoint);
-        var additionalParameters
-                = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.INDEX_SETTINGS, String.class);
+        var additionalParameters =
+                exchange.getMessage().getHeader(ElasticSearchRestClientConstant.INDEX_SETTINGS, String.class);
         if (ObjectHelper.isNotEmpty(additionalParameters)) {
             request.setEntity(new NStringEntity(additionalParameters, ContentType.APPLICATION_JSON));
         }
@@ -249,8 +244,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isEmpty(id)) {
             id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
             if (ObjectHelper.isEmpty(id)) {
-                throw new IllegalArgumentException(
-                        "id value is mandatory when performing GET_BY_ID operation");
+                throw new IllegalArgumentException("id value is mandatory when performing GET_BY_ID operation");
             }
         }
         var endpoint = String.format("/%s/_doc/%s", indexName, id);
@@ -265,8 +259,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isEmpty(id)) {
             id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
             if (ObjectHelper.isEmpty(id)) {
-                throw new IllegalArgumentException(
-                        "id value is mandatory when performing DELETE operation");
+                throw new IllegalArgumentException("id value is mandatory when performing DELETE operation");
             }
         }
         var endpoint = String.format("/%s/_doc/%s", indexName, id);
@@ -364,9 +357,8 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         Map<String, Object> hitsLevel1 = doc.getMap("hits");
         List<Map<String, Object>> hitsLevel2;
         hitsLevel2 = (List<Map<String, Object>>) hitsLevel1.get("hits");
-        List<Object> extractedValues = hitsLevel2.stream()
-                .map(map -> map.get("_source"))
-                .collect(Collectors.toList());
+        List<Object> extractedValues =
+                hitsLevel2.stream().map(map -> map.get("_source")).collect(Collectors.toList());
         JsonArray response = new JsonArray(extractedValues);
         return response.toJson();
     }
@@ -378,11 +370,13 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         final RestClientBuilder builder = RestClient.builder(getHttpHosts());
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
-                .setConnectTimeout(this.endpoint.getConnectionTimeout()).setSocketTimeout(this.endpoint.getSocketTimeout()));
+                .setConnectTimeout(this.endpoint.getConnectionTimeout())
+                .setSocketTimeout(this.endpoint.getSocketTimeout()));
 
         if (this.endpoint.getUser() != null && this.endpoint.getPassword() != null) {
             final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
+            credentialsProvider.setCredentials(
+                    AuthScope.ANY,
                     new UsernamePasswordCredentials(this.endpoint.getUser(), this.endpoint.getPassword()));
             builder.setHttpClientConfigCallback(httpClientBuilder -> {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
@@ -406,8 +400,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
 
     private HttpHost[] getHttpHosts() {
         if (ObjectHelper.isEmpty(this.endpoint.getHostAddressesList())) {
-            throw new IllegalArgumentException(
-                    "RestClient or HostAddressesList is mandatory");
+            throw new IllegalArgumentException("RestClient or HostAddressesList is mandatory");
         }
 
         String[] hostAdresses = this.endpoint.getHostAddressesList().split(",");
@@ -427,17 +420,16 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
     private SSLContext createSslContextFromCa() {
         try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(),
-                            this.endpoint.getCertificatePath());
+            InputStream resolveMandatoryResourceAsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                    getEndpoint().getCamelContext(), this.endpoint.getCertificatePath());
             Certificate trustedCa = factory.generateCertificate(resolveMandatoryResourceAsInputStream);
             KeyStore trustStore = KeyStore.getInstance("pkcs12");
             trustStore.load(null, null);
             trustStore.setCertificateEntry("ca", trustedCa);
 
             final SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-            TrustManagerFactory trustManagerFactory
-                    = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustManagerFactory =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
             sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
             return sslContext;
@@ -446,9 +438,10 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
         }
     }
 
-    private ElasticsearchRestClientOperation resolveOperation(ElasticsearchRestClientEndpoint endpoint, Exchange exchange) {
-        ElasticsearchRestClientOperation operation
-                = exchange.getMessage().getHeader(OPERATION, endpoint.getOperation(), ElasticsearchRestClientOperation.class);
+    private ElasticsearchRestClientOperation resolveOperation(
+            ElasticsearchRestClientEndpoint endpoint, Exchange exchange) {
+        ElasticsearchRestClientOperation operation = exchange.getMessage()
+                .getHeader(OPERATION, endpoint.getOperation(), ElasticsearchRestClientOperation.class);
         if (operation == null) {
             throw new IllegalArgumentException("operation value is mandatory");
         }

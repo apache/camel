@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.debezium;
 
 import org.apache.camel.component.debezium.configuration.FileConnectorEmbeddedDebeziumConfiguration;
@@ -24,14 +25,15 @@ public final class DebeziumTestEndpoint extends DebeziumEndpoint<FileConnectorEm
     @UriParam
     private FileConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumTestEndpoint(final String uri, final DebeziumTestComponent component,
-                                final FileConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumTestEndpoint(
+            final String uri,
+            final DebeziumTestComponent component,
+            final FileConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public DebeziumTestEndpoint() {
-    }
+    public DebeziumTestEndpoint() {}
 
     @Override
     public FileConnectorEmbeddedDebeziumConfiguration getConfiguration() {

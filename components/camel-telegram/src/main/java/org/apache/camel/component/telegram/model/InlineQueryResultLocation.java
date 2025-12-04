@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -71,8 +72,7 @@ public class InlineQueryResultLocation extends InlineQueryResult {
         private String title;
         private InputMessageContent inputMessageContext;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder id(String id) {
             this.id = id;

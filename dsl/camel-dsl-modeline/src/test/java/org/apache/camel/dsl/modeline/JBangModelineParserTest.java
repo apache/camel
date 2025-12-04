@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.modeline;
 
 import java.util.ArrayList;
@@ -82,5 +83,4 @@ public class JBangModelineParserTest extends CamelTestSupport {
         Assertions.assertEquals("org.my:application:1.0", deps.get(0));
         Assertions.assertEquals("com.foo:myapp:2.1", deps.get(1));
     }
-
 }

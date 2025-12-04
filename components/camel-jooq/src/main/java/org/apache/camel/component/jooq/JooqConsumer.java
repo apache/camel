@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
 
 import java.util.LinkedList;
@@ -36,8 +37,7 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
     private static final class DataHolder {
         private Exchange exchange;
 
-        private DataHolder() {
-        }
+        private DataHolder() {}
     }
 
     public JooqConsumer(JooqEndpoint endpoint, Processor processor) {
@@ -58,7 +58,8 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
         DSLContext context = DSL.using(dbConfig);
 
         Queue<DataHolder> answer = new LinkedList<>();
-        Result<UpdatableRecord<?>> results = context.selectFrom(getTable(entityType)).fetch();
+        Result<UpdatableRecord<?>> results =
+                context.selectFrom(getTable(entityType)).fetch();
 
         // okay we have some response from jooq so lets mark the consumer as ready
         forceConsumerAsReady();

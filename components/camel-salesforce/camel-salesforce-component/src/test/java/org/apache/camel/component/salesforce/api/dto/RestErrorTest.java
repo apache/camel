@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.api.dto;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
@@ -22,8 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestErrorTest {
 
@@ -34,11 +35,11 @@ public class RestErrorTest {
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final ObjectReader reader = objectMapper.readerFor(RestError.class);
 
-        final RestError gotWithErrorCode = reader.<RestError> readValue(
+        final RestError gotWithErrorCode = reader.<RestError>readValue(
                 "{\"errorCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
         assertEquals(gotWithErrorCode, error);
 
-        final RestError gotWithStatusCode = reader.<RestError> readValue(
+        final RestError gotWithStatusCode = reader.<RestError>readValue(
                 "{\"statusCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");
         assertEquals(gotWithStatusCode, error);
     }

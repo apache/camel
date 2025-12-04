@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -28,8 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
@@ -101,12 +102,13 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10")).routeId("foo")
-                        .routeDescription("This is the foo route").routeNote("Some route note here")
+                from(fileUri("?initialDelay=0&delay=10"))
+                        .routeId("foo")
+                        .routeDescription("This is the foo route")
+                        .routeNote("Some route note here")
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
     }
-
 }

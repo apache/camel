@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.http;
 
 import java.util.ArrayList;
@@ -36,49 +37,72 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     @UriPath(enums = "http,https,proxy")
     @Metadata(required = true)
     private String protocol;
+
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath(name = "port")
     private int dummy;
+
     @UriPath
     private String path;
+
     @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
+
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean mapHeaders = true;
+
     @UriParam(label = "consumer,advanced")
     private boolean compression;
+
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
+
     @UriParam(label = "advanced")
     private boolean transferException;
+
     @UriParam(label = "consumer")
     private boolean muteException;
+
     @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
+
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean logWarnOnBadRequest;
+
     @UriParam
     private boolean bridgeEndpoint;
+
     @UriParam(label = "advanced")
     private boolean disableStreamCache;
+
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean send503whenSuspended = true;
+
     @UriParam(label = "consumer,advanced", defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
+
     @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
+
     @UriParam(label = "consumer,advanced", defaultValue = "4096")
     private int maxInitialLineLength = 4096;
+
     @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxChunkSize = 8192;
+
     @UriParam(label = "producer,advanced", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean useRelativePath = true;
-    @UriParam(defaultValue = "false", label = "advanced",
-              description = "Sets whether synchronous processing should be strictly used")
+
+    @UriParam(
+            defaultValue = "false",
+            label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
 
     public NettyHttpConfiguration() {

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
@@ -28,8 +31,6 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for poll strategy
@@ -50,7 +51,8 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10")).convertBodyTo(String.class)
+                from(fileUri("?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10"))
+                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         };
@@ -68,7 +70,9 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         // give the file consumer a bit of time
-        Awaitility.await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> assertTrue(event.startsWith("rollbackcommit")));
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(1))
+                .untilAsserted(() -> assertTrue(event.startsWith("rollbackcommit")));
     }
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
@@ -95,5 +99,4 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
             return false;
         }
     }
-
 }

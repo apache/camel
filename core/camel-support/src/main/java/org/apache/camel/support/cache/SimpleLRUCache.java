@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
 
 import java.util.Collection;
@@ -65,8 +66,8 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
     /**
      * The last changes recorded.
      */
-    private final AtomicReference<Deque<Entry<K, ValueHolder<V>>>> lastChanges
-            = new AtomicReference<>(new ConcurrentLinkedDeque<>());
+    private final AtomicReference<Deque<Entry<K, ValueHolder<V>>>> lastChanges =
+            new AtomicReference<>(new ConcurrentLinkedDeque<>());
     /**
      * The total number of changes recorded.
      */
@@ -129,11 +130,8 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(Object value) {
-        if (value == null)
-            throw new NullPointerException();
-        return delegate.values().stream()
-                .map(ValueHolder::get)
-                .anyMatch(v -> Objects.equals(v, value));
+        if (value == null) throw new NullPointerException();
+        return delegate.values().stream().map(ValueHolder::get).anyMatch(v -> Objects.equals(v, value));
     }
 
     @Override
@@ -149,16 +147,14 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
         }
         K keyK = (K) key;
         try (OperationContext<K, V> context = new OperationContext<>(this, keyK)) {
-            delegate.compute(
-                    keyK,
-                    (k, v) -> {
-                        V extractedValue = extractValue(v);
-                        if (Objects.equals(value, extractedValue)) {
-                            context.result = extractedValue;
-                            return null;
-                        }
-                        return v;
-                    });
+            delegate.compute(keyK, (k, v) -> {
+                V extractedValue = extractValue(v);
+                if (Objects.equals(value, extractedValue)) {
+                    context.result = extractedValue;
+                    return null;
+                }
+                return v;
+            });
             return context.result != null;
         }
     }
@@ -169,12 +165,10 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            delegate.compute(
-                    key,
-                    (k, v) -> {
-                        context.result = extractValue(v);
-                        return addChange(context, x -> value);
-                    });
+            delegate.compute(key, (k, v) -> {
+                context.result = extractValue(v);
+                return addChange(context, x -> value);
+            });
             return context.result;
         }
     }
@@ -190,15 +184,13 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            delegate.compute(
-                    key,
-                    (k, v) -> {
-                        context.result = extractValue(v);
-                        if (v != null) {
-                            return v;
-                        }
-                        return addChange(context, x -> value);
-                    });
+            delegate.compute(key, (k, v) -> {
+                context.result = extractValue(v);
+                if (v != null) {
+                    return v;
+                }
+                return addChange(context, x -> value);
+            });
             return context.result;
         }
     }
@@ -219,8 +211,8 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return extractValue(delegate.computeIfPresent(key,
-                    (k, v) -> addChange(context, x -> remappingFunction.apply(x, extractValue(v)))));
+            return extractValue(delegate.computeIfPresent(
+                    key, (k, v) -> addChange(context, x -> remappingFunction.apply(x, extractValue(v)))));
         }
     }
 
@@ -230,8 +222,8 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return extractValue(
-                    delegate.compute(key, (k, v) -> addChange(context, x -> remappingFunction.apply(x, extractValue(v)))));
+            return extractValue(delegate.compute(
+                    key, (k, v) -> addChange(context, x -> remappingFunction.apply(x, extractValue(v)))));
         }
     }
 
@@ -241,12 +233,10 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            return extractValue(delegate.compute(
-                    key,
-                    (k, oldValue) -> {
-                        V newValue = (oldValue == null) ? value : remappingFunction.apply(oldValue.get(), value);
-                        return addChange(context, x -> newValue);
-                    }));
+            return extractValue(delegate.compute(key, (k, oldValue) -> {
+                V newValue = (oldValue == null) ? value : remappingFunction.apply(oldValue.get(), value);
+                return addChange(context, x -> newValue);
+            }));
         }
     }
 
@@ -256,16 +246,14 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            delegate.computeIfPresent(
-                    key,
-                    (k, v) -> {
-                        if (Objects.equals(oldValue, extractValue(v))) {
-                            ValueHolder<V> result = addChange(context, x -> newValue);
-                            context.result = extractValue(result);
-                            return result;
-                        }
-                        return v;
-                    });
+            delegate.computeIfPresent(key, (k, v) -> {
+                if (Objects.equals(oldValue, extractValue(v))) {
+                    ValueHolder<V> result = addChange(context, x -> newValue);
+                    context.result = extractValue(result);
+                    return result;
+                }
+                return v;
+            });
             return context.result != null && Objects.equals(context.result, newValue);
         }
     }
@@ -276,12 +264,10 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             throw new NullPointerException();
         }
         try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-            delegate.computeIfPresent(
-                    key,
-                    (k, v) -> {
-                        context.result = extractValue(v);
-                        return addChange(context, x -> value);
-                    });
+            delegate.computeIfPresent(key, (k, v) -> {
+                context.result = extractValue(v);
+                return addChange(context, x -> value);
+            });
             return context.result;
         }
     }
@@ -324,9 +310,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             K key = e.getKey();
             V value = e.getValue();
             try (OperationContext<K, V> context = new OperationContext<>(this, key)) {
-                delegate.computeIfPresent(
-                        key,
-                        (k, v) -> addChange(context, x -> function.apply(x, value)));
+                delegate.computeIfPresent(key, (k, v) -> addChange(context, x -> function.apply(x, value)));
             }
         }
     }
@@ -334,7 +318,8 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         return delegate.entrySet().stream()
-                .map(entry -> new CacheEntry<>(this, entry.getKey(), entry.getValue().get()))
+                .map(entry ->
+                        new CacheEntry<>(this, entry.getKey(), entry.getValue().get()))
                 .collect(Collectors.toUnmodifiableSet());
     }
 
@@ -492,8 +477,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
 
         @Override
         public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass())
-                return false;
+            if (o == null || getClass() != o.getClass()) return false;
             ValueHolder<?> that = (ValueHolder<?>) o;
             return revision == that.revision;
         }
@@ -537,8 +521,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
 
         @Override
         public V setValue(V value) {
-            if (value == null)
-                throw new NullPointerException();
+            if (value == null) throw new NullPointerException();
             V v = val;
             val = value;
             cache.put(key, value);

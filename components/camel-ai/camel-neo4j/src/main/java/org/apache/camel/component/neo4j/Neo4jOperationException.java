@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.neo4j;
 
 public class Neo4jOperationException extends Exception {
@@ -31,10 +32,6 @@ public class Neo4jOperationException extends Exception {
 
     @Override
     public String toString() {
-        return "Neo4jActionException{"
-               + "action=" + operation
-               + ", "
-               + "message=" + super.getLocalizedMessage()
-               + '}';
+        return "Neo4jActionException{" + "action=" + operation + ", " + "message=" + super.getLocalizedMessage() + '}';
     }
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tika;
 
 import org.apache.camel.Category;
@@ -28,8 +29,14 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Parse documents and extract metadata and text using Apache Tika.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true,
-             remote = false, category = { Category.DOCUMENT, Category.TRANSFORMATION })
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "tika",
+        title = "Tika",
+        syntax = "tika:operation",
+        producerOnly = true,
+        remote = false,
+        category = {Category.DOCUMENT, Category.TRANSFORMATION})
 public class TikaEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -62,5 +69,4 @@ public class TikaEndpoint extends DefaultEndpoint {
     public void setTikaConfiguration(TikaConfiguration tikaConfiguration) {
         this.tikaConfiguration = tikaConfiguration;
     }
-
 }

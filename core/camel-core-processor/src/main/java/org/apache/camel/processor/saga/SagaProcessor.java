@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.saga;
 
 import java.util.concurrent.CompletableFuture;
@@ -43,8 +44,12 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     private String id;
     private String routeId;
 
-    public SagaProcessor(CamelContext camelContext, Processor childProcessor, CamelSagaService sagaService,
-                         SagaCompletionMode completionMode, CamelSagaStep step) {
+    public SagaProcessor(
+            CamelContext camelContext,
+            Processor childProcessor,
+            CamelSagaService sagaService,
+            SagaCompletionMode completionMode,
+            CamelSagaStep step) {
         super(ObjectHelper.notNull(childProcessor, "childProcessor"));
         this.sagaService = ObjectHelper.notNull(sagaService, "sagaService");
         this.completionMode = ObjectHelper.notNull(completionMode, "completionMode");
@@ -70,24 +75,30 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     }
 
     protected void handleSagaCompletion(
-            Exchange exchange, CamelSagaCoordinator coordinator, CamelSagaCoordinator previousCoordinator,
+            Exchange exchange,
+            CamelSagaCoordinator coordinator,
+            CamelSagaCoordinator previousCoordinator,
             AsyncCallback callback) {
         if (this.completionMode == SagaCompletionMode.AUTO) {
             if (exchange.getException() != null) {
                 if (coordinator != null) {
-                    coordinator.compensate(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
-                        setCurrentSagaCoordinator(exchange, previousCoordinator);
-                        callback.done(false);
-                    }));
+                    coordinator
+                            .compensate(exchange)
+                            .whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
+                                setCurrentSagaCoordinator(exchange, previousCoordinator);
+                                callback.done(false);
+                            }));
                 } else {
                     // No coordinator available, so no saga available.
                     callback.done(false);
                 }
             } else {
-                coordinator.complete(exchange).whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
-                    setCurrentSagaCoordinator(exchange, previousCoordinator);
-                    callback.done(false);
-                }));
+                coordinator
+                        .complete(exchange)
+                        .whenComplete((done, ex) -> ifNotException(ex, exchange, callback, () -> {
+                            setCurrentSagaCoordinator(exchange, previousCoordinator);
+                            callback.done(false);
+                        }));
             }
         } else if (this.completionMode == SagaCompletionMode.MANUAL) {
             // Completion will be handled manually by the user
@@ -136,8 +147,13 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     }
 
     protected void ifNotException(
-            Throwable ex, Exchange exchange, boolean handleCompletion, CamelSagaCoordinator coordinator,
-            CamelSagaCoordinator previousCoordinator, AsyncCallback callback, Runnable code) {
+            Throwable ex,
+            Exchange exchange,
+            boolean handleCompletion,
+            CamelSagaCoordinator coordinator,
+            CamelSagaCoordinator previousCoordinator,
+            AsyncCallback callback,
+            Runnable code) {
         if (ex != null) {
             exchange.setException(ex);
             if (handleCompletion) {

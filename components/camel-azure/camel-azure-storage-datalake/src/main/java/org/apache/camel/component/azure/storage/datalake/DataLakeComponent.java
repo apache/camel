@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.datalake;
 
 import java.util.Map;
@@ -31,8 +32,7 @@ public class DataLakeComponent extends HealthCheckComponent {
     @Metadata(description = "configuration object for data lake")
     private DataLakeConfiguration configuration = new DataLakeConfiguration();
 
-    public DataLakeComponent() {
-    }
+    public DataLakeComponent() {}
 
     public DataLakeComponent(final CamelContext camelContext) {
         super(camelContext);
@@ -65,7 +65,8 @@ public class DataLakeComponent extends HealthCheckComponent {
 
         if (ObjectHelper.isEmpty(configuration.getServiceClient())) {
             // ensure we use default credential type if not configured
-            if (configuration.getSharedKeyCredential() == null && configuration.getSasCredential() == null
+            if (configuration.getSharedKeyCredential() == null
+                    && configuration.getSasCredential() == null
                     && configuration.getClientSecretCredential() == null) {
                 if (configuration.getCredentialType() == null) {
                     configuration.setCredentialType(CredentialType.CLIENT_SECRET);
@@ -91,5 +92,4 @@ public class DataLakeComponent extends HealthCheckComponent {
     public void setConfiguration(DataLakeConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }

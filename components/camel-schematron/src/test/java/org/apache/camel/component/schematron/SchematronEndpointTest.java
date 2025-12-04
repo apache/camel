@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.schematron;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.charset.Charset;
 
@@ -28,8 +31,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Unit test for SchematronEndpoint.
  *
@@ -39,8 +40,8 @@ public class SchematronEndpointTest extends CamelTestSupport {
     @Test
     public void testSchematronFileReadFromClassPath() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"), Charset.defaultCharset());
         Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
@@ -57,8 +58,8 @@ public class SchematronEndpointTest extends CamelTestSupport {
     @Test
     public void testSchematronFileReadFromFileSystem() throws Exception {
 
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"),
-                Charset.defaultCharset());
+        String payload =
+                IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"), Charset.defaultCharset());
         String path = ClassLoader.getSystemResource("sch/schematron-1.sch").getPath();
         Endpoint endpoint = context().getEndpoint("schematron://" + path);
         Producer producer = endpoint.createProducer();
@@ -72,5 +73,4 @@ public class SchematronEndpointTest extends CamelTestSupport {
         String report = exchange.getMessage().getHeader(Constants.VALIDATION_REPORT, String.class);
         assertNotNull(report);
     }
-
 }

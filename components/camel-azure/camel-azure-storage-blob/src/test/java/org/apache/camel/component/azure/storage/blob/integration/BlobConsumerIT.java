@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob.integration;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -34,17 +40,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class BlobConsumerIT extends Base {
 
     @TempDir
     static Path testDir;
+
     @EndpointInject("direct:start")
     private ProducerTemplate templateStart;
+
     private String batchContainerName;
     private String prefixContainerName;
     private String blobName;
@@ -156,7 +159,8 @@ class BlobConsumerIT extends Base {
             templateStart.send("direct:createBlob", exchange -> {
                 exchange.getIn().setBody("Block Batch PDF Blob with RegEx Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
-                exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "pdf"));
+                exchange.getIn()
+                        .setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "pdf"));
             });
         }
 
@@ -165,7 +169,8 @@ class BlobConsumerIT extends Base {
             templateStart.send("direct:createBlob", exchange -> {
                 exchange.getIn().setBody("Block Batch PDF Blob with Prefix Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
-                exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("aaaa-test_batch_blob_", "pdf"));
+                exchange.getIn()
+                        .setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("aaaa-test_batch_blob_", "pdf"));
             });
         }
 
@@ -175,7 +180,8 @@ class BlobConsumerIT extends Base {
             templateStart.send("direct:createBlob", exchange -> {
                 exchange.getIn().setBody("Block Batch DOCX Blob Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
-                exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "docx"));
+                exchange.getIn()
+                        .setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "docx"));
             });
         }
 
@@ -230,26 +236,24 @@ class BlobConsumerIT extends Base {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:createBlob")
-                        .to("azure-storage-blob://cameldev?operation=uploadBlockBlob");
+                from("direct:createBlob").to("azure-storage-blob://cameldev?operation=uploadBlockBlob");
 
                 from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName
-                     + "&blobServiceClient=#serviceClient&fileDir="
-                     + testDir.toString()).to("mock:result");
+                                + "&blobServiceClient=#serviceClient&fileDir="
+                                + testDir.toString())
+                        .to("mock:result");
 
                 from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName2
-                     + "&blobServiceClient=#serviceClient")
+                                + "&blobServiceClient=#serviceClient")
                         .to("mock:resultOutputStream");
 
-                from("azure-storage-blob://cameldev/" + batchContainerName)
-                        .to("mock:resultBatch");
+                from("azure-storage-blob://cameldev/" + batchContainerName).to("mock:resultBatch");
 
-                from("azure-storage-blob://cameldev/" + batchContainerName + "?fileDir="
-                     + testDir.toString()).to("mock:resultBatchFile");
+                from("azure-storage-blob://cameldev/" + batchContainerName + "?fileDir=" + testDir.toString())
+                        .to("mock:resultBatchFile");
 
                 // if regex is set then prefix should have no effect
-                from("azure-storage-blob://cameldev/" + batchContainerName
-                     + "?prefix=aaaa&regex=" + regex)
+                from("azure-storage-blob://cameldev/" + batchContainerName + "?prefix=aaaa&regex=" + regex)
                         .idempotentConsumer(body(), new MemoryIdempotentRepository())
                         .to("mock:resultRegex");
 

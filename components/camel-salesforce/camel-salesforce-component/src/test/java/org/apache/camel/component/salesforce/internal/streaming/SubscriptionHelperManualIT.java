@@ -14,7 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.streaming;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperManualIT.MessageArgumentMatcher.messageWithName;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -42,20 +57,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelperManualIT.MessageArgumentMatcher.messageWithName;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 @TestInstance(Lifecycle.PER_CLASS)
 public class SubscriptionHelperManualIT {
 
@@ -78,11 +79,9 @@ public class SubscriptionHelperManualIT {
         public boolean matches(final Message message) {
             final Map<String, Object> data = message.getDataAsMap();
             @SuppressWarnings("unchecked")
-            final Map<String, Object> event = (Map<String, Object>) data.get(
-                    "event");
+            final Map<String, Object> event = (Map<String, Object>) data.get("event");
             @SuppressWarnings("unchecked")
-            final Map<String, Object> sobject = (Map<String, Object>) data.get(
-                    "sobject");
+            final Map<String, Object> sobject = (Map<String, Object>) data.get("sobject");
             return "created".equals(event.get("type")) && name.equals(sobject.get("Name"));
         }
 
@@ -94,22 +93,21 @@ public class SubscriptionHelperManualIT {
     public SubscriptionHelperManualIT() throws SalesforceException {
         server = new StubServer();
         LoggerFactory.getLogger(SubscriptionHelperManualIT.class)
-                .info("Port for wireshark to filter: {}",
-                        server.port());
+                .info("Port for wireshark to filter: {}", server.port());
         final String instanceUrl = "http://localhost:" + server.port();
         server.replyTo(
-                "POST", "/services/oauth2/token",
-                "{\n" +
-                                                  "    \"instance_url\": \"" + instanceUrl + "\",\n" +
-                                                  "    \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
-                                                  "    \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\"\n"
-                                                  +
-                                                  "}");
+                "POST",
+                "/services/oauth2/token",
+                "{\n" + "    \"instance_url\": \""
+                        + instanceUrl + "\",\n" + "    \"access_token\": \"00D4100000xxxxx!faketoken\",\n"
+                        + "    \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\"\n"
+                        + "}");
 
         server.replyTo("GET", "/services/oauth2/revoke?token=token", 200);
 
         server.replyTo(
-                "POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/handshake",
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/handshake",
                 """
                         [
                           {
@@ -129,10 +127,13 @@ public class SubscriptionHelperManualIT {
                           }
                         ]""");
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
+        server.replyTo(
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
                 req -> {
                     return req.contains("\"timeout\":0");
-                }, """
+                },
+                """
                         [
                           {
                             "clientId": "1f0agp5a95yiaeb1kifib37r5z4g",
@@ -147,10 +148,11 @@ public class SubscriptionHelperManualIT {
                           }
                         ]""");
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
-                messages);
+        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect", messages);
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/disconnect",
+        server.replyTo(
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/disconnect",
                 """
                         [
                           {
@@ -194,7 +196,8 @@ public class SubscriptionHelperManualIT {
         var consumer = createConsumer("Account");
         subscription.subscribe(consumer);
 
-        messages.add("""
+        messages.add(
+                """
                 [
                   {
                     "data": {
@@ -217,14 +220,16 @@ public class SubscriptionHelperManualIT {
                     "successful": true
                   }
                 ]""");
-        verify(consumer, Mockito.timeout(10000)).processMessage(any(ClientSessionChannel.class),
-                messageWithName("shouldResubscribeOnConnectionFailures 1"));
+        verify(consumer, Mockito.timeout(10000))
+                .processMessage(
+                        any(ClientSessionChannel.class), messageWithName("shouldResubscribeOnConnectionFailures 1"));
 
-        subscription.client.getChannel("/meta/subscribe").addListener(
-                (MessageListener) (clientSessionChannel, message) -> {
+        subscription.client.getChannel("/meta/subscribe").addListener((MessageListener)
+                (clientSessionChannel, message) -> {
                     var subscription = (String) message.get("subscription");
                     if (subscription != null && subscription.contains("Account")) {
-                        messages.add("""
+                        messages.add(
+                                """
                                 [
                                   {
                                     "data": {
@@ -250,7 +255,8 @@ public class SubscriptionHelperManualIT {
                     }
                 });
         subscription.client.disconnect(10000);
-        messages.add("""
+        messages.add(
+                """
                 [
                   {
                     "clientId": "5ra4927ikfky6cb12juthkpofeu8",
@@ -263,8 +269,9 @@ public class SubscriptionHelperManualIT {
                   }
                 ]""");
 
-        verify(consumer, timeout(20000)).processMessage(any(ClientSessionChannel.class),
-                messageWithName("shouldResubscribeOnConnectionFailures 2"));
+        verify(consumer, timeout(20000))
+                .processMessage(
+                        any(ClientSessionChannel.class), messageWithName("shouldResubscribeOnConnectionFailures 2"));
 
         verify(consumer, atLeastOnce()).getEndpoint();
         verify(consumer, atLeastOnce()).getTopicName();
@@ -275,8 +282,8 @@ public class SubscriptionHelperManualIT {
     void shouldResubscribeOnSubscriptionFailure() {
         var consumer = createConsumer("Contact");
         var subscribeAttempts = new AtomicInteger(0);
-        subscription.client.getChannel("/meta/subscribe").addListener(
-                (MessageListener) (clientSessionChannel, message) -> {
+        subscription.client.getChannel("/meta/subscribe").addListener((MessageListener)
+                (clientSessionChannel, message) -> {
                     var subscription = (String) message.get("subscription");
                     if (subscription != null && subscription.contains("Contact")) {
                         subscribeAttempts.incrementAndGet();
@@ -284,7 +291,9 @@ public class SubscriptionHelperManualIT {
                 });
 
         server.reset();
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+        server.replyTo(
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
                 s -> s.contains("/topic/Contact"),
                 """
                         [
@@ -301,7 +310,9 @@ public class SubscriptionHelperManualIT {
         assertThat(subscription.client.getChannel("/topic/Contact").getSubscribers(), hasSize(0));
 
         server.reset();
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+        server.replyTo(
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
                 s -> s.contains("/topic/Contact"),
                 """
                         [
@@ -313,7 +324,8 @@ public class SubscriptionHelperManualIT {
                             "successful": true
                           }
                         ]""");
-        messages.add("""
+        messages.add(
+                """
                 [
                   {
                     "clientId": "5ra4927ikfky6cb12juthkpofeu8",
@@ -331,7 +343,8 @@ public class SubscriptionHelperManualIT {
         var consumer = createConsumer("Person");
         subscription.subscribe(consumer);
 
-        messages.add("""
+        messages.add(
+                """
                 [
                   {
                     "data": {
@@ -354,15 +367,16 @@ public class SubscriptionHelperManualIT {
                     "successful": true
                   }
                 ]""");
-        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
-                messageWithName("shouldResubscribeOnHelperRestart 1"));
+        verify(consumer, timeout(10000))
+                .processMessage(any(ClientSessionChannel.class), messageWithName("shouldResubscribeOnHelperRestart 1"));
 
         // stop and start the subscription helper
         subscription.stop();
         subscription.start();
 
         // queue next message for when the client recovers
-        messages.add("""
+        messages.add(
+                """
                 [
                   {
                     "data": {
@@ -387,8 +401,8 @@ public class SubscriptionHelperManualIT {
                 ]""");
 
         // assert last message was received, recovery can take a bit
-        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
-                messageWithName("shouldResubscribeOnHelperRestart 2"));
+        verify(consumer, timeout(10000))
+                .processMessage(any(ClientSessionChannel.class), messageWithName("shouldResubscribeOnHelperRestart 2"));
 
         verify(consumer, atLeastOnce()).getEndpoint();
         verify(consumer, atLeastOnce()).getTopicName();
@@ -400,7 +414,9 @@ public class SubscriptionHelperManualIT {
         var consumer = mock(StreamingApiConsumer.class, topic + ":consumer");
         when(consumer.getTopicName()).thenReturn(topic);
         when(consumer.getEndpoint()).thenReturn(endpoint);
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
+        server.replyTo(
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/subscribe",
                 s -> s.contains("\"subscription\":\"/topic/" + topic + "\""),
                 """
                         [
@@ -408,12 +424,16 @@ public class SubscriptionHelperManualIT {
                             "clientId": "5ra4927ikfky6cb12juthkpofeu8qqq",
                             "channel": "/meta/subscribe",
                             "id": "$id",
-                            "subscription": "/topic/""" + topic + "\"," + """
+                            "subscription": "/topic/"""
+                        + topic + "\","
+                        + """
                             "successful": true
                           }
                         ]""");
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/unsubscribe",
+        server.replyTo(
+                "POST",
+                "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/unsubscribe",
                 s -> s.contains("\"subscription\":\"/topic/" + topic + "\""),
                 """
                         [
@@ -421,7 +441,9 @@ public class SubscriptionHelperManualIT {
                             "clientId": "5ra4927ikfky6cb12juthkpofeu8",
                             "channel": "/meta/unsubscribe",
                             "id": "$id",
-                            "subscription": "/topic/""" + topic + "\"," + """
+                            "subscription": "/topic/"""
+                        + topic + "\","
+                        + """
                             "successful": true
                           }
                         ]""");
@@ -435,5 +457,4 @@ public class SubscriptionHelperManualIT {
         when(endpoint.getTopicName()).thenReturn(topic);
         return endpoint;
     }
-
 }

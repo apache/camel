@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -29,8 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @Isolated("This test is regularly flaky")
@@ -79,8 +80,8 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     @Test
     public void testCustomTrustManager() throws Exception {
         TrustManager myTm = new TrustManager() {
-            // noop
-        };
+                    // noop
+                };
 
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setTrustManager(myTm);
@@ -109,7 +110,9 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     @Test
     public void testExplicitProvider() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
-        tmp.setProvider(TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).getProvider().getName());
+        tmp.setProvider(TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+                .getProvider()
+                .getName());
 
         TrustManager[] tms = tmp.createTrustManagers();
         validateTrustManagers(tms);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 @Deprecated(since = "3.19.0")
@@ -27,6 +28,5 @@ public final class ServiceCallDefinitionConstants {
     public static final String DEFAULT_SERVICE_CHOOSER_ID = "service-chooser";
     public static final String DEFAULT_LOAD_BALANCER_ID = "load-balancer";
 
-    private ServiceCallDefinitionConstants() {
-    }
+    private ServiceCallDefinitionConstants() {}
 }

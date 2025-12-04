@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
@@ -35,23 +36,33 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "logger",
-                     description = "List or change logging levels", sortOptions = false, showDefaultValues = true)
+@CommandLine.Command(
+        name = "logger",
+        description = "List or change logging levels",
+        sortOptions = false,
+        showDefaultValues = true)
 public class LoggerAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @CommandLine.Option(
+            names = {"--sort"},
+            completionCandidates = PidNameAgeCompletionCandidates.class,
+            description = "Sort by pid, name or age",
+            defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                        description = "To change logging level (${COMPLETION-CANDIDATES})")
+    @CommandLine.Option(
+            names = {"--logging-level"},
+            completionCandidates = LoggingLevelCompletionCandidates.class,
+            description = "To change logging level (${COMPLETION-CANDIDATES})")
     String loggingLevel;
 
-    @CommandLine.Option(names = { "--logger" },
-                        description = "The logger name", defaultValue = "root")
+    @CommandLine.Option(
+            names = {"--logger"},
+            description = "The logger name",
+            defaultValue = "root")
     String logger;
 
     public LoggerAction(CamelJBangMain main) {
@@ -89,49 +100,65 @@ public class LoggerAction extends ActionBaseCommand {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids("*");
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        JsonObject jo = (JsonObject) root.get("logger");
-                        if (jo != null) {
-                            Map<String, String> levels = jo.getMap("levels");
-                            levels.forEach((k, v) -> {
-                                // create a copy for 2+ levels
-                                Row cp = row.copy();
-                                cp.logger = k;
-                                cp.level = v;
-                                rows.add(cp);
-                            });
-                        }
-                    }
-                });
+        ProcessHandle.allProcesses().filter(ph -> pids.contains(ph.pid())).forEach(ph -> {
+            JsonObject root = loadStatus(ph.pid());
+            if (root != null) {
+                Row row = new Row();
+                row.pid = Long.toString(ph.pid());
+                row.uptime = extractSince(ph);
+                row.ago = TimeUtils.printSince(row.uptime);
+                JsonObject context = (JsonObject) root.get("context");
+                if (context == null) {
+                    return;
+                }
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                JsonObject jo = (JsonObject) root.get("logger");
+                if (jo != null) {
+                    Map<String, String> levels = jo.getMap("levels");
+                    levels.forEach((k, v) -> {
+                        // create a copy for 2+ levels
+                        Row cp = row.copy();
+                        cp.logger = k;
+                        cp.level = v;
+                        rows.add(cp);
+                    });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                    new Column().header("LOGGER").dataAlign(HorizontalAlign.LEFT).with(r -> r.logger),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.RIGHT).with(r -> r.level))));
+            printer()
+                    .println(AsciiTable.getTable(
+                            AsciiTable.NO_BORDERS,
+                            rows,
+                            Arrays.asList(
+                                    new Column()
+                                            .header("PID")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.pid),
+                                    new Column()
+                                            .header("NAME")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                            .with(r -> r.name),
+                                    new Column()
+                                            .header("AGE")
+                                            .headerAlign(HorizontalAlign.CENTER)
+                                            .with(r -> r.ago),
+                                    new Column()
+                                            .header("LOGGER")
+                                            .dataAlign(HorizontalAlign.LEFT)
+                                            .with(r -> r.logger),
+                                    new Column()
+                                            .header("LEVEL")
+                                            .dataAlign(HorizontalAlign.RIGHT)
+                                            .with(r -> r.level))));
         }
 
         return 0;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.File;
@@ -55,8 +56,10 @@ import org.apache.maven.project.MavenProject;
 /**
  * Injects EIP documentation to camel schema.
  */
-@Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+@Mojo(
+        name = "eip-documentation-enricher",
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class EipDocumentationEnricherMojo extends AbstractMojo {
 
     /**
@@ -133,7 +136,8 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
 
         // skip if input file does not exist
         if (inputCamelSchemaFile == null || !inputCamelSchemaFile.exists()) {
-            getLog().info("Input Camel schema file: " + inputCamelSchemaFile + " does not exist. Skip EIP document enrichment");
+            getLog().info("Input Camel schema file: " + inputCamelSchemaFile
+                    + " does not exist. Skip EIP document enrichment");
             return;
         }
 
@@ -163,7 +167,8 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         Set<File> files = new HashSet<>();
 
         // Do not include the model/app/bean.json file for enhancement (there are two bean.json)
-        Predicate<File> beanFilter = f -> !(f.getName().equals("bean.json") && f.getParentFile().getName().equals("app"));
+        Predicate<File> beanFilter = f ->
+                !(f.getName().equals("bean.json") && f.getParentFile().getName().equals("app"));
         PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files, beanFilter);
         PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files, beanFilter);
 
@@ -232,9 +237,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         return sw.toString();
     }
 
-    private boolean jsonFileExistsForElement(
-            Map<String, File> jsonFiles,
-            String elementName) {
+    private boolean jsonFileExistsForElement(Map<String, File> jsonFiles, String elementName) {
         return jsonFiles.containsKey(elementName);
     }
 

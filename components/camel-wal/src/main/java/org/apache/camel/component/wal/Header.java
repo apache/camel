@@ -41,8 +41,8 @@ public final class Header {
         }
 
         if (formatName.length() > FORMAT_NAME_SIZE) {
-            throw new IllegalArgumentException(
-                    "The format name '" + formatName + "' is too short. Its length must be less than " + FORMAT_NAME_SIZE);
+            throw new IllegalArgumentException("The format name '" + formatName
+                    + "' is too short. Its length must be less than " + FORMAT_NAME_SIZE);
         }
 
         this.formatName = formatName;

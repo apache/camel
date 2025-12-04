@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
 
 import java.io.File;
@@ -39,9 +40,11 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
                 from("direct:start")
                         .streamCaching()
                         .choice()
-                        .when().jsonpath("$.store.book[?(@.price < 10)]")
+                        .when()
+                        .jsonpath("$.store.book[?(@.price < 10)]")
                         .to("mock:cheap")
-                        .when().jsonpath("$.store.book[?(@.price < 30)]")
+                        .when()
+                        .jsonpath("$.store.book[?(@.price < 30)]")
                         .to("mock:average")
                         .otherwise()
                         .to("mock:expensive");
@@ -49,7 +52,8 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
                 from("direct:bicycle")
                         .streamCaching()
                         .choice()
-                        .when().method(new BeanPredicate())
+                        .when()
+                        .method(new BeanPredicate())
                         .to("mock:cheap")
                         .otherwise()
                         .to("mock:expensive");
@@ -122,5 +126,4 @@ public class JsonPathStreamCachingCBRTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
     }
-
 }

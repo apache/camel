@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cm.test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 import java.util.UUID;
@@ -31,10 +34,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @CamelSpringTest
-@ContextConfiguration(classes = { ValidatorConfiguration.class })
+@ContextConfiguration(classes = {ValidatorConfiguration.class})
 public class CMConfigurationTest {
 
     @Autowired
@@ -56,7 +57,7 @@ public class CMConfigurationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "123456789012" })
+    @ValueSource(strings = {"", "123456789012"})
     @NullSource
     public void testDefaultFrom(String defaultFrom) {
         final CMConfiguration configuration = new CMConfiguration();
@@ -73,7 +74,7 @@ public class CMConfigurationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 0, 9 })
+    @ValueSource(ints = {0, 9})
     public void testNumberOfParts(int numberOfParts) {
 
         final CMConfiguration configuration = new CMConfiguration();

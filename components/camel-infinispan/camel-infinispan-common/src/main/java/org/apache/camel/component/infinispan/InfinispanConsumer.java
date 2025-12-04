@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan;
 
 import java.util.function.Consumer;
@@ -25,18 +26,21 @@ import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 
 public abstract class InfinispanConsumer<
-        ContainerType extends BasicCacheContainer,
-        ManagerType extends InfinispanManager<ContainerType>,
-        ConfigurationType extends InfinispanConfiguration>
-        extends DefaultConsumer
-        implements InfinispanEventProcessor {
+                ContainerType extends BasicCacheContainer,
+                ManagerType extends InfinispanManager<ContainerType>,
+                ConfigurationType extends InfinispanConfiguration>
+        extends DefaultConsumer implements InfinispanEventProcessor {
 
     protected final ConfigurationType configuration;
     protected final ManagerType manager;
     protected final String cacheName;
 
-    protected InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, ManagerType manager,
-                                 ConfigurationType configuration) {
+    protected InfinispanConsumer(
+            InfinispanEndpoint endpoint,
+            Processor processor,
+            String cacheName,
+            ManagerType manager,
+            ConfigurationType configuration) {
         super(endpoint, processor);
         this.cacheName = cacheName;
         this.configuration = configuration;
@@ -44,7 +48,8 @@ public abstract class InfinispanConsumer<
     }
 
     @Override
-    public void processEvent(String eventType, String cacheName, Object key, Object eventData, Consumer<Exchange> consumer) {
+    public void processEvent(
+            String eventType, String cacheName, Object key, Object eventData, Consumer<Exchange> consumer) {
         Exchange exchange = createExchange(false);
         try {
             exchange.getMessage().setHeader(InfinispanConstants.EVENT_TYPE, eventType);

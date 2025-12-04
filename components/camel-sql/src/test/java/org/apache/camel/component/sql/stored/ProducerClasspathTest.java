@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sql.stored;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,11 +27,14 @@ public class ProducerClasspathTest extends ProducerTest {
             @Override
             public void configure() {
                 // required for the sql component
-                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
+                getContext()
+                        .getComponent("sql-stored", SqlStoredComponent.class)
+                        .setDataSource(db);
 
-                from("direct:query").to("sql-stored:classpath:sql/selectStored.sql").to("mock:query");
+                from("direct:query")
+                        .to("sql-stored:classpath:sql/selectStored.sql")
+                        .to("mock:query");
             }
         };
     }
-
 }

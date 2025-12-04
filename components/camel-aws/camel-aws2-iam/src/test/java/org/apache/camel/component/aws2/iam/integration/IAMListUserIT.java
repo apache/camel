@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.iam.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,8 +28,6 @@ import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.iam.model.ListUsersResponse;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IAMListUserIT extends Aws2IAMBase {
 
@@ -56,7 +57,6 @@ public class IAMListUserIT extends Aws2IAMBase {
         ListUsersResponse resultGet = (ListUsersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.users().size());
         assertEquals("test", resultGet.users().get(0).userName());
-
     }
 
     @Override
@@ -65,8 +65,9 @@ public class IAMListUserIT extends Aws2IAMBase {
             @Override
             public void configure() {
                 from("direct:createUser").to("aws2-iam://test?operation=createUser");
-                from("direct:listUsers").to("aws2-iam://test?operation=listUsers").to("mock:result");
-
+                from("direct:listUsers")
+                        .to("aws2-iam://test?operation=listUsers")
+                        .to("mock:result");
             }
         };
     }

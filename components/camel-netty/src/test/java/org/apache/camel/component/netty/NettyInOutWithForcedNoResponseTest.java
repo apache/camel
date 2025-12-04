@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.netty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
 
@@ -48,8 +49,10 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}")
                         .choice()
-                        .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
-                        .otherwise().transform(constant(null));
+                        .when(body().isEqualTo("Copenhagen"))
+                        .transform(constant("Hello Claus"))
+                        .otherwise()
+                        .transform(constant(null));
             }
         };
     }

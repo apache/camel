@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.codegen;
 
 import java.util.Collections;
@@ -47,10 +48,15 @@ public final class ObjectDescriptions {
 
     private final long responseTimeout;
 
-    public ObjectDescriptions(final RestClient client, final long responseTimeout, final String[] includes,
-                              final String includePattern, final String[] excludes,
-                              final String excludePattern, final Logger log)
-                                                                             throws Exception {
+    public ObjectDescriptions(
+            final RestClient client,
+            final long responseTimeout,
+            final String[] includes,
+            final String includePattern,
+            final String[] excludes,
+            final String excludePattern,
+            final Logger log)
+            throws Exception {
         this.client = client;
         this.responseTimeout = responseTimeout;
 
@@ -70,7 +76,9 @@ public final class ObjectDescriptions {
     }
 
     List<SObjectField> externalIdsOf(final String name) {
-        return descriptionOf(name).getFields().stream().filter(SObjectField::isExternalId).collect(Collectors.toList());
+        return descriptionOf(name).getFields().stream()
+                .filter(SObjectField::isExternalId)
+                .collect(Collectors.toList());
     }
 
     boolean hasExternalIds(final String name) {
@@ -104,12 +112,16 @@ public final class ObjectDescriptions {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Interrupted while getting SObject description for '" + name + "'", e);
         } catch (final Exception e) {
-            throw new IllegalStateException("Error getting SObject description for '" + name + "': " + e.getMessage(), e);
+            throw new IllegalStateException(
+                    "Error getting SObject description for '" + name + "': " + e.getMessage(), e);
         }
     }
 
     private void fetchSpecifiedDescriptions(
-            final String[] includes, final String includePattern, final String[] excludes, final String excludePattern,
+            final String[] includes,
+            final String includePattern,
+            final String[] excludes,
+            final String excludePattern,
             final Logger log)
             throws Exception {
         // use Jackson json
@@ -142,14 +154,16 @@ public final class ObjectDescriptions {
         }
 
         // check if we are generating POJOs for all objects or not
-        if (includes != null && includes.length > 0 || excludes != null && excludes.length > 0
+        if (includes != null && includes.length > 0
+                || excludes != null && excludes.length > 0
                 || ObjectHelper.isNotEmpty(includePattern)
                 || ObjectHelper.isNotEmpty(excludePattern)) {
 
             filterObjectNames(objectNames, includes, includePattern, excludes, excludePattern, log);
 
         } else {
-            log.warn(String.format("Generating Java classes for all %s Objects, this may take a while...", objectNames.size()));
+            log.warn(String.format(
+                    "Generating Java classes for all %s Objects, this may take a while...", objectNames.size()));
         }
 
         log.info("Retrieving Object descriptions...");
@@ -159,8 +173,12 @@ public final class ObjectDescriptions {
     }
 
     private static void filterObjectNames(
-            final Set<String> objectNames, final String[] includes, final String includePattern, final String[] excludes,
-            final String excludePattern, final Logger log)
+            final Set<String> objectNames,
+            final String[] includes,
+            final String includePattern,
+            final String[] excludes,
+            final String excludePattern,
+            final Logger log)
             throws Exception {
         log.info("Looking for matching Object names...");
         // create a list of accepted names
@@ -211,7 +229,8 @@ public final class ObjectDescriptions {
         for (final String name : objectNames) {
             // name is included, or matches include pattern
             // and is not excluded and does not match exclude pattern
-            if ((includedNames.contains(name) || incPattern.matcher(name).matches()) && !excludedNames.contains(name)
+            if ((includedNames.contains(name) || incPattern.matcher(name).matches())
+                    && !excludedNames.contains(name)
                     && !excPattern.matcher(name).matches()) {
                 acceptedNames.add(name);
             }

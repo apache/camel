@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.Map;
@@ -33,8 +34,13 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 /**
  * Receive messages from AWS DynamoDB Stream.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-ddbstream", title = "AWS DynamoDB Streams", consumerOnly = true,
-             syntax = "aws2-ddbstream:tableName", category = { Category.CLOUD, Category.MESSAGING })
+@UriEndpoint(
+        firstVersion = "3.1.0",
+        scheme = "aws2-ddbstream",
+        title = "AWS DynamoDB Streams",
+        consumerOnly = true,
+        syntax = "aws2-ddbstream:tableName",
+        category = {Category.CLOUD, Category.MESSAGING})
 public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -95,9 +101,10 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements Endpoin
     @Override
     public String toString() {
         return "DdbStreamEndpoint{" + "tableName=" + configuration.getTableName()
-               + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
-               + configuration.getMaxResultsPerRequest() + ", streamIteratorType=" + configuration.getStreamIteratorType()
-               + ", uri=" + getEndpointUri() + '}';
+                + ", amazonDynamoDbStreamsClient=[redacted], maxResultsPerRequest="
+                + configuration.getMaxResultsPerRequest() + ", streamIteratorType="
+                + configuration.getStreamIteratorType()
+                + ", uri=" + getEndpointUri() + '}';
     }
 
     @Override

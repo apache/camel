@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kafka.consumer.support.classic;
 
 import java.util.Collection;
@@ -35,8 +36,8 @@ public class ClassicRebalanceListener implements ConsumerRebalanceListener {
     private final PartitionAssignmentAdapter assignmentAdapter;
     private final CommitManager commitManager;
 
-    public ClassicRebalanceListener(String threadId, KafkaConfiguration configuration,
-                                    CommitManager commitManager, Consumer<?, ?> consumer) {
+    public ClassicRebalanceListener(
+            String threadId, KafkaConfiguration configuration, CommitManager commitManager, Consumer<?, ?> consumer) {
         this.threadId = threadId;
         this.configuration = configuration;
         this.commitManager = commitManager;

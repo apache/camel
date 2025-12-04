@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
@@ -48,9 +49,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("seda:foo?multipleConsumers=true").id("testRoute").to("mock:c");
-
             }
-
         });
         resetMocks();
 

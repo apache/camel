@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.component.file.GenericFile;
@@ -86,5 +87,4 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
     public String toString() {
         return "RemoteFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
     }
-
 }

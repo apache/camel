@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.IOException;
@@ -92,13 +93,20 @@ public abstract class AbstractClientBase extends ServiceSupport
     private final long terminationTimeout;
     private final ObjectMapper objectMapper;
 
-    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                              SalesforceLoginConfig loginConfig) {
+    public AbstractClientBase(
+            String version,
+            SalesforceSession session,
+            SalesforceHttpClient httpClient,
+            SalesforceLoginConfig loginConfig) {
         this(version, session, httpClient, loginConfig, DEFAULT_TERMINATION_TIMEOUT);
     }
 
-    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                       SalesforceLoginConfig loginConfig, int terminationTimeout) {
+    AbstractClientBase(
+            String version,
+            SalesforceSession session,
+            SalesforceHttpClient httpClient,
+            SalesforceLoginConfig loginConfig,
+            int terminationTimeout) {
         this.version = version;
         this.session = session;
         this.httpClient = httpClient;
@@ -167,9 +175,10 @@ public abstract class AbstractClientBase extends ServiceSupport
     }
 
     protected Request getRequest(String method, String url, Map<String, List<String>> headers) {
-        HttpRequest request
-                = (HttpRequest) httpClient.newHttpRequest(new HttpConversation(), URI.create(url)).method(method)
-                        .timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
+        HttpRequest request = (HttpRequest) httpClient
+                .newHttpRequest(new HttpConversation(), URI.create(url))
+                .method(method)
+                .timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
         request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
         addHeadersTo(request, headers);
 
@@ -216,53 +225,67 @@ public abstract class AbstractClientBase extends ServiceSupport
                         // from SalesforceSecurityHandler
                         Throwable failure = result.getFailure();
                         if (failure instanceof SalesforceException) {
-                            httpClient.getWorkerPool()
+                            httpClient
+                                    .getWorkerPool()
                                     .execute(() -> callback.onResponse(null, headers, (SalesforceException) failure));
                         } else {
-                            final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}", response.getStatus(),
-                                    response.getReason(), request.getMethod(),
-                                    request.getURI());
-                            httpClient.getWorkerPool().execute(() -> callback.onResponse(null, headers,
-                                    new SalesforceException(msg, response.getStatus(), failure)));
+                            final String msg = String.format(
+                                    "Unexpected error {%s:%s} executing {%s:%s}",
+                                    response.getStatus(), response.getReason(), request.getMethod(), request.getURI());
+                            httpClient
+                                    .getWorkerPool()
+                                    .execute(() -> callback.onResponse(
+                                            null,
+                                            headers,
+                                            new SalesforceException(msg, response.getStatus(), failure)));
                         }
                     } else {
 
                         // HTTP error status
                         final int status = response.getStatus();
-                        HttpRequest request
-                                = (HttpRequest) ((HttpRequest) result.getRequest()).getConversation()
-                                        .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
+                        HttpRequest request = (HttpRequest) ((HttpRequest) result.getRequest())
+                                .getConversation()
+                                .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
 
                         if (status == HttpStatus.BAD_REQUEST_400 && request != null) {
                             // parse login error
-                            ContentResponse contentResponse
-                                    = new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
+                            ContentResponse contentResponse =
+                                    new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
                             try {
 
                                 session.parseLoginResponse(contentResponse, getContentAsString());
-                                final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}", status,
-                                        response.getReason(), request.getMethod(), request.getURI());
-                                httpClient.getWorkerPool()
-                                        .execute(() -> callback.onResponse(null, headers, new SalesforceException(msg, null)));
+                                final String msg = String.format(
+                                        "Unexpected Error {%s:%s} executing {%s:%s}",
+                                        status, response.getReason(), request.getMethod(), request.getURI());
+                                httpClient
+                                        .getWorkerPool()
+                                        .execute(() ->
+                                                callback.onResponse(null, headers, new SalesforceException(msg, null)));
                             } catch (SalesforceException e) {
 
-                                final String msg = String.format("Error {%s:%s} executing {%s:%s}", status,
-                                        response.getReason(), request.getMethod(), request.getURI());
-                                httpClient.getWorkerPool().execute(() -> callback.onResponse(null, headers,
-                                        new SalesforceException(msg, response.getStatus(), e)));
+                                final String msg = String.format(
+                                        "Error {%s:%s} executing {%s:%s}",
+                                        status, response.getReason(), request.getMethod(), request.getURI());
+                                httpClient
+                                        .getWorkerPool()
+                                        .execute(() -> callback.onResponse(
+                                                null, headers, new SalesforceException(msg, response.getStatus(), e)));
                             }
                         } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
                             // Salesforce HTTP failure!
-                            final SalesforceException exception = createRestException(response, getContentAsInputStream());
+                            final SalesforceException exception =
+                                    createRestException(response, getContentAsInputStream());
 
                             // for APIs that return body on status 400, such as
                             // Composite API we need content as well
-                            httpClient.getWorkerPool()
+                            httpClient
+                                    .getWorkerPool()
                                     .execute(() -> callback.onResponse(getContentAsInputStream(), headers, exception));
                         } else {
 
                             // Success!!!
-                            httpClient.getWorkerPool()
+                            httpClient
+                                    .getWorkerPool()
                                     .execute(() -> callback.onResponse(getContentAsInputStream(), headers, null));
                         }
                     }
@@ -294,8 +317,7 @@ public abstract class AbstractClientBase extends ServiceSupport
         return httpClient;
     }
 
-    final List<RestError> readErrorsFrom(
-            final InputStream responseContent, final ObjectMapper objectMapper)
+    final List<RestError> readErrorsFrom(final InputStream responseContent, final ObjectMapper objectMapper)
             throws IOException {
         final List<RestError> restErrors;
         restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
@@ -338,20 +360,21 @@ public abstract class AbstractClientBase extends ServiceSupport
                     }
 
                     return new SalesforceException(
-                            restErrors, statusCode,
+                            restErrors,
+                            statusCode,
                             "Unexpected error: " + reason + ". See exception `errors` property for detail. " + body,
                             responseContent);
                 }
             }
         } catch (IOException | RuntimeException e) {
             // log and ignore
-            String msg = "Unexpected Error parsing error response body + [" + responseContent + "] : "
-                         + e.getMessage();
+            String msg = "Unexpected Error parsing error response body + [" + responseContent + "] : " + e.getMessage();
             log.warn(msg, e);
         }
 
         // just report HTTP status info
-        return new SalesforceException("Unexpected error: " + reason + ", with content: " + responseContent, statusCode);
+        return new SalesforceException(
+                "Unexpected error: " + reason + ", with content: " + responseContent, statusCode);
     }
 
     static Map<String, String> determineHeadersFrom(final Response response) {
@@ -403,8 +426,10 @@ public abstract class AbstractClientBase extends ServiceSupport
                 } else if (headerValue instanceof String[]) {
                     answer.put(headerName, Arrays.asList((String[]) headerValue));
                 } else if (headerValue instanceof Collection) {
-                    answer.put(headerName,
-                            ((Collection<?>) headerValue).stream().map(String::valueOf).collect(Collectors.<String> toList()));
+                    answer.put(
+                            headerName,
+                            ((Collection<?>) headerValue)
+                                    .stream().map(String::valueOf).collect(Collectors.<String>toList()));
                 } else {
                     throw new IllegalArgumentException(
                             "Given value for header `" + headerName + "`, is not String, String array or a Collection");

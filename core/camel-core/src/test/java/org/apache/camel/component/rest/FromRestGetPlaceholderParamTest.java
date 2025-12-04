@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -26,9 +30,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
 
@@ -45,7 +46,8 @@ public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
         assertNotNull(rest);
         assertEquals("items/", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        ToDefinition to =
+                assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
 
         // Validate params
@@ -61,7 +63,8 @@ public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
         assertNotNull(rest);
         assertEquals("items/", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        ToDefinition to =
+                assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
 
         // Validate params
@@ -81,16 +84,11 @@ public class FromRestGetPlaceholderParamTest extends ContextTestSupport {
             @Override
             public void configure() {
                 restConfiguration().host("localhost");
-                rest("items/")
-                        .get("/{id}")
-                        .to("direct:hello");
+                rest("items/").get("/{id}").to("direct:hello");
 
-                rest("items/")
-                        .get("{id}/{filename}.{content-type}")
-                        .to("direct:hello");
+                rest("items/").get("{id}/{filename}.{content-type}").to("direct:hello");
 
-                from("direct:hello")
-                        .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -29,13 +30,19 @@ public interface ManagedAsyncProcessorAwaitManagerMBean extends ManagedServiceMB
     @ManagedAttribute(description = "Whether to interrupt any blocking threads during stopping.")
     void setInterruptThreadsWhileStopping(boolean interruptThreadsWhileStopping);
 
-    @ManagedAttribute(description = "Number of threads that are blocked waiting for other threads to trigger the callback when they are done processing the exchange")
+    @ManagedAttribute(
+            description =
+                    "Number of threads that are blocked waiting for other threads to trigger the callback when they are done processing the exchange")
     int getSize();
 
-    @ManagedOperation(description = "Lists all the exchanges which are currently inflight, having a blocked thread awaiting for other threads to trigger the callback when they are done")
+    @ManagedOperation(
+            description =
+                    "Lists all the exchanges which are currently inflight, having a blocked thread awaiting for other threads to trigger the callback when they are done")
     TabularData browse();
 
-    @ManagedOperation(description = "To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread to be released.")
+    @ManagedOperation(
+            description =
+                    "To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread to be released.")
     void interrupt(String exchangeId);
 
     @ManagedAttribute(description = "Number of threads that has been blocked")
@@ -64,5 +71,4 @@ public interface ManagedAsyncProcessorAwaitManagerMBean extends ManagedServiceMB
 
     @ManagedAttribute(description = "Utilization statistics enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
-
 }

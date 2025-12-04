@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.cli.services;
 
 import java.io.IOException;
@@ -44,22 +45,24 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     private String mavenRepos;
 
     public CliLocalContainerService() {
-        this(new CliBuiltContainer.CliBuiltContainerParams()
-                .setCamelRepo(System.getProperty(CliProperties.REPO, "apache/camel"))
-                .setCamelRef(System.getProperty(CliProperties.BRANCH, "main"))
-                .setCamelJBangVersion(System.getProperty(CliProperties.VERSION, "default"))
-                .setKeepContainerRunning(true)
-                .setDataFolder(System.getProperty(CliProperties.DATA_FOLDER))
-                .setSshPassword(System.getProperty(CliProperties.SSH_PASSWORD, "jbang"))
-                .setExtraHosts(getHostsMap())
-                .setTrustedCertPaths(getCertPaths())
-                .setLocalMavenRepo(System.getProperty(CliProperties.MVN_LOCAL_REPO))
-                .setDockerFile(System.getProperty(CliProperties.DOCKERFILE)),
-             System.getProperty(CliProperties.FORCE_RUN_VERSION, ""), System.getProperty(CliProperties.MVN_REPOS));
+        this(
+                new CliBuiltContainer.CliBuiltContainerParams()
+                        .setCamelRepo(System.getProperty(CliProperties.REPO, "apache/camel"))
+                        .setCamelRef(System.getProperty(CliProperties.BRANCH, "main"))
+                        .setCamelJBangVersion(System.getProperty(CliProperties.VERSION, "default"))
+                        .setKeepContainerRunning(true)
+                        .setDataFolder(System.getProperty(CliProperties.DATA_FOLDER))
+                        .setSshPassword(System.getProperty(CliProperties.SSH_PASSWORD, "jbang"))
+                        .setExtraHosts(getHostsMap())
+                        .setTrustedCertPaths(getCertPaths())
+                        .setLocalMavenRepo(System.getProperty(CliProperties.MVN_LOCAL_REPO))
+                        .setDockerFile(System.getProperty(CliProperties.DOCKERFILE)),
+                System.getProperty(CliProperties.FORCE_RUN_VERSION, ""),
+                System.getProperty(CliProperties.MVN_REPOS));
     }
 
-    protected CliLocalContainerService(CliBuiltContainer.CliBuiltContainerParams containerParams,
-                                       String forceToRunVersion, String mavenRepos) {
+    protected CliLocalContainerService(
+            CliBuiltContainer.CliBuiltContainerParams containerParams, String forceToRunVersion, String mavenRepos) {
         container = new CliBuiltContainer(containerParams);
         this.forceToRunVersion = forceToRunVersion;
         this.mavenRepos = mavenRepos;
@@ -67,7 +70,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public void registerProperties() {
-        //do nothing
+        // do nothing
     }
 
     @Override
@@ -92,7 +95,6 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
         } else {
             LOG.debug("the container is already running");
         }
-
     }
 
     @Override
@@ -103,7 +105,6 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
         } else {
             LOG.debug("the container is already stopped");
         }
-
     }
 
     @Override
@@ -118,7 +119,8 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String executeBackground(String command) {
-        final String pid = StringHelper.after(execute(command.concat(" --background")), "PID:").trim();
+        final String pid = StringHelper.after(execute(command.concat(" --background")), "PID:")
+                .trim();
         return org.apache.camel.support.ObjectHelper.isNumber(pid) ? pid : StringHelper.before(pid, " ");
     }
 
@@ -128,8 +130,9 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
             LOG.debug("Executing command: {}", command);
             Container.ExecResult execResult = container.execInContainer("/bin/bash", "-c", command);
             if (execResult.getExitCode() != 0) {
-                Assertions.fail(String.format("command %s failed with output %s and error %s", command, execResult.getStdout(),
-                        execResult.getStderr()));
+                Assertions.fail(String.format(
+                        "command %s failed with output %s and error %s",
+                        command, execResult.getStdout(), execResult.getStderr()));
             }
             if (LOG.isDebugEnabled()) {
                 if (ObjectHelper.isNotEmpty(execResult.getStdout())) {
@@ -149,8 +152,12 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     @Override
     public void copyFileInternally(String source, String destination) {
         try {
-            Assertions.assertEquals(0,
-                    container.execInContainer(String.format("cp %s %s", source, destination).split(" ")).getExitCode(),
+            Assertions.assertEquals(
+                    0,
+                    container
+                            .execInContainer(String.format("cp %s %s", source, destination)
+                                    .split(" "))
+                            .getExitCode(),
                     "copy file exit code");
         } catch (IOException | InterruptedException e) {
             Assertions.fail(String.format("unable to copy file %s to %s", source, destination), e);
@@ -192,17 +199,18 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String version() {
-        return Optional.ofNullable(version)
-                .orElseGet(() -> {
-                    final String versionSummary = execute("version");
-                    if (versionSummary.contains("User configuration") && versionSummary.contains("camel-version = ")) {
-                        version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
-                    }
-                    if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
-                    }
-                    return version;
-                });
+        return Optional.ofNullable(version).orElseGet(() -> {
+            final String versionSummary = execute("version");
+            if (versionSummary.contains("User configuration") && versionSummary.contains("camel-version = ")) {
+                version = StringHelper.between(versionSummary, "camel-version = ", "\n")
+                        .trim();
+            }
+            if (version == null) {
+                version = StringHelper.between(versionSummary, "Camel JBang version:", "\n")
+                        .trim();
+            }
+            return version;
+        });
     }
 
     @Override
@@ -216,17 +224,15 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     }
 
     private static Map<String, String> getHostsMap() {
-        return Optional.ofNullable(System.getProperty(CliProperties.EXTRA_HOSTS))
-                .map(p -> p.split(","))
-                .stream().flatMap(strings -> Arrays.asList(strings).stream())
+        return Optional.ofNullable(System.getProperty(CliProperties.EXTRA_HOSTS)).map(p -> p.split(",")).stream()
+                .flatMap(strings -> Arrays.asList(strings).stream())
                 .map(s -> s.split("="))
                 .collect(Collectors.toMap(entry -> entry[0], entry -> entry[1]));
     }
 
     private static List<String> getCertPaths() {
-        return Optional.ofNullable(System.getProperty(CliProperties.TRUSTED_CERT_PATHS))
-                .map(p -> p.split(","))
-                .stream().flatMap(strings -> Arrays.asList(strings).stream())
+        return Optional.ofNullable(System.getProperty(CliProperties.TRUSTED_CERT_PATHS)).map(p -> p.split(",")).stream()
+                .flatMap(strings -> Arrays.asList(strings).stream())
                 .collect(Collectors.toList());
     }
 }

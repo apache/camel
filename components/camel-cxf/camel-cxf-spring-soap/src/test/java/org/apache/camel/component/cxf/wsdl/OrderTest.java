@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.wsdl;
 
 import java.io.InputStream;
@@ -42,16 +43,16 @@ public class OrderTest extends CamelSpringTestSupport {
 
     @Test
     public void testCamelWsdl() throws Exception {
-        Object body = template.sendBody("http://localhost:" + CXFTestSupport.getPort1() + "/camel-order/?wsdl",
-                ExchangePattern.InOut, null);
+        Object body = template.sendBody(
+                "http://localhost:" + CXFTestSupport.getPort1() + "/camel-order/?wsdl", ExchangePattern.InOut, null);
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, body);
         checkWsdl(is);
     }
 
     @Test
     public void testCxfWsdl() throws Exception {
-        Object body = template.sendBody("http://localhost:" + CXFTestSupport.getPort1() + "/cxf-order/?wsdl",
-                ExchangePattern.InOut, null);
+        Object body = template.sendBody(
+                "http://localhost:" + CXFTestSupport.getPort1() + "/cxf-order/?wsdl", ExchangePattern.InOut, null);
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, body);
         checkWsdl(is);
     }
@@ -66,12 +67,10 @@ public class OrderTest extends CamelSpringTestSupport {
                 containsOrderComplexType = true;
                 // break;
             }
-
         }
 
         if (!containsOrderComplexType) {
             throw new RuntimeException("WSDL does not contain complex type defintion for class Order");
         }
-
     }
 }

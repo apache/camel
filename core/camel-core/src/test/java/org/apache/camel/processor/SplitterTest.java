@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.net.URL;
@@ -34,8 +37,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SplitterTest extends ContextTestSupport {
 
@@ -124,7 +125,7 @@ public class SplitterTest extends ContextTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Set<Integer> numbersFound = new TreeSet<>();
-        final String[] names = { "James", "Guillaume", "Hiram", "Rob" };
+        final String[] names = {"James", "Guillaume", "Hiram", "Rob"};
 
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
@@ -292,24 +293,37 @@ public class SplitterTest extends ContextTestSupport {
             public void configure() {
                 onException(CamelException.class).to("mock:failed");
 
-                from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
-                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing()
+                from("direct:seqential")
+                        .split(body().tokenize(","), new UseLatestAggregationStrategy())
                         .to("mock:result");
-                from("direct:parallelAggregate").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing()
-                        .parallelAggregate().to("mock:result");
+                from("direct:parallel")
+                        .split(body().tokenize(","), new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .to("mock:result");
+                from("direct:parallelAggregate")
+                        .split(body().tokenize(","), new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .parallelAggregate()
+                        .to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
-                from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing()
-                        .streaming().to("mock:result");
-                from("direct:exception").split(body().tokenize(",")).aggregationStrategy(new MyAggregationStrategy())
-                        .parallelProcessing().process(new Processor() {
+                from("direct:parallel-streaming")
+                        .split(body().tokenize(","), new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .streaming()
+                        .to("mock:result");
+                from("direct:exception")
+                        .split(body().tokenize(","))
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .parallelProcessing()
+                        .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String string = exchange.getIn().getBody(String.class);
                                 if ("Exception".equals(string)) {
                                     throw new CamelException("Just want to throw exception here");
                                 }
-
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
                 from("direct:simple").split(body()).to("mock:result");
             }
         };

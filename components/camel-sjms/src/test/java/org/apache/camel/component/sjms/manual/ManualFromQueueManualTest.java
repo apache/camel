@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.sjms.manual;
 
 import java.util.concurrent.TimeUnit;
@@ -64,9 +65,7 @@ public class ManualFromQueueManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("sjms:queue:foo?asyncStartListener=true")
-                        .to("log:foo")
-                        .to("mock:foo");
+                from("sjms:queue:foo?asyncStartListener=true").to("log:foo").to("mock:foo");
             }
         };
     }

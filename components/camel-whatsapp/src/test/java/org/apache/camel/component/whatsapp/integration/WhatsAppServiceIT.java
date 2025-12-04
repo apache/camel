@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.whatsapp.integration;
 
 import java.io.File;
@@ -49,12 +50,19 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
 
 @EnabledIfEnvironmentVariables({
-        @EnabledIfEnvironmentVariable(named = "WHATSAPP_AUTHORIZATION_TOKEN", matches = ".*",
-                                      disabledReason = "WhatsApp Authorization Token not provided"),
-        @EnabledIfEnvironmentVariable(named = "WHATSAPP_PHONE_NUMBER_ID", matches = ".*",
-                                      disabledReason = "WhatsApp phone number ID not provided"),
-        @EnabledIfEnvironmentVariable(named = "WHATSAPP_RECIPIENT_PHONE_NUMBER", matches = ".*",
-                                      disabledReason = "WhatsApp recipient phone number not provided") })
+    @EnabledIfEnvironmentVariable(
+            named = "WHATSAPP_AUTHORIZATION_TOKEN",
+            matches = ".*",
+            disabledReason = "WhatsApp Authorization Token not provided"),
+    @EnabledIfEnvironmentVariable(
+            named = "WHATSAPP_PHONE_NUMBER_ID",
+            matches = ".*",
+            disabledReason = "WhatsApp phone number ID not provided"),
+    @EnabledIfEnvironmentVariable(
+            named = "WHATSAPP_RECIPIENT_PHONE_NUMBER",
+            matches = ".*",
+            disabledReason = "WhatsApp recipient phone number not provided")
+})
 public class WhatsAppServiceIT extends WhatsAppTestSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -116,7 +124,8 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
     @Test
     public void testInteractiveListMessage() throws IOException {
         InteractiveMessageRequest request = MAPPER.readValue(
-                WhatsAppServiceIT.class.getResourceAsStream("/interactive-list-message.json"), InteractiveMessageRequest.class);
+                WhatsAppServiceIT.class.getResourceAsStream("/interactive-list-message.json"),
+                InteractiveMessageRequest.class);
         request.setTo(recipientPhoneNumber);
 
         MessageResponse response = (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, request);
@@ -126,9 +135,9 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
 
     @Test
     public void testInteractiveButtonMessage() throws IOException {
-        InteractiveMessageRequest request
-                = MAPPER.readValue(WhatsAppServiceIT.class.getResourceAsStream("/interactive-button-message.json"),
-                        InteractiveMessageRequest.class);
+        InteractiveMessageRequest request = MAPPER.readValue(
+                WhatsAppServiceIT.class.getResourceAsStream("/interactive-button-message.json"),
+                InteractiveMessageRequest.class);
         request.setTo(recipientPhoneNumber);
 
         MessageResponse response = (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, request);
@@ -167,12 +176,12 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
     public void testMediaUploadImage() throws URISyntaxException {
         UploadMediaRequest uploadMediaRequest = new UploadMediaRequest();
         UploadMedia uploadMedia = new UploadMedia(
-                new File(WhatsAppServiceIT.class.getResource("/camel.jpg").toURI()),
-                "image/jpeg");
+                new File(WhatsAppServiceIT.class.getResource("/camel.jpg").toURI()), "image/jpeg");
         uploadMediaRequest.setUploadMedia(uploadMedia);
 
         // Upload media
-        MessageResponse response = (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, uploadMediaRequest);
+        MessageResponse response =
+                (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, uploadMediaRequest);
 
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.getId()).isNotNull();
@@ -191,14 +200,13 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
     @Test
     public void testMediaUploadVideoWithInputStream() {
         UploadMediaRequest uploadMediaRequest = new UploadMediaRequest();
-        UploadMedia uploadMedia = new UploadMedia(
-                "sample.mp4",
-                WhatsAppServiceIT.class.getResourceAsStream("/sample.mp4"),
-                "video/mp4");
+        UploadMedia uploadMedia =
+                new UploadMedia("sample.mp4", WhatsAppServiceIT.class.getResourceAsStream("/sample.mp4"), "video/mp4");
         uploadMediaRequest.setUploadMedia(uploadMedia);
 
         // Upload media
-        MessageResponse response = (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, uploadMediaRequest);
+        MessageResponse response =
+                (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, uploadMediaRequest);
 
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.getId()).isNotNull();
@@ -216,9 +224,8 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
 
     @Test
     public void testTemplateMessage() throws IOException {
-        TemplateMessageRequest request
-                = MAPPER.readValue(WhatsAppServiceIT.class.getResourceAsStream("/template-message.json"),
-                        TemplateMessageRequest.class);
+        TemplateMessageRequest request = MAPPER.readValue(
+                WhatsAppServiceIT.class.getResourceAsStream("/template-message.json"), TemplateMessageRequest.class);
         request.setTo(recipientPhoneNumber);
 
         MessageResponse response = (MessageResponse) template.requestBody("whatsapp://" + phoneNumberId, request);

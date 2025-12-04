@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.minio;
+
+import static org.apache.camel.util.ObjectHelper.cast;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,10 +55,6 @@ import org.apache.camel.util.URISupport;
 import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.cast;
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * A Consumer of messages from the Minio Storage Service.
@@ -101,12 +102,14 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private boolean bucketExists(String bucketName) throws Exception {
-        return getMinioClient().bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        return getMinioClient()
+                .bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
     }
 
     private void makeBucket(String bucketName) throws Exception {
-        MakeBucketArgs.Builder makeBucketRequest
-                = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
+        MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder()
+                .bucket(bucketName)
+                .objectLock(getConfiguration().isObjectLock());
         if (isNotEmpty(getConfiguration().getRegion())) {
             makeBucketRequest.region(getConfiguration().getRegion());
         }
@@ -164,7 +167,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 listObjectRequest.startAfter(continuationToken);
             }
 
-            Iterator<Result<Item>> listObjects = getMinioClient().listObjects(listObjectRequest.build()).iterator();
+            Iterator<Result<Item>> listObjects =
+                    getMinioClient().listObjects(listObjectRequest.build()).iterator();
 
             // we have listed some objects so mark the consumer as ready
             forceConsumerAsReady();
@@ -233,19 +237,23 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private InputStream getObject(String bucketName, MinioClient minioClient, String objectName) throws Exception {
-        GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
+        GetObjectArgs.Builder getObjectRequest =
+                GetObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
-                getObjectRequest::ssec);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getServerSideEncryptionCustomerKey, getObjectRequest::ssec);
         MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, getObjectRequest::offset);
         MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, getObjectRequest::length);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, getObjectRequest::versionId);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, getObjectRequest::matchETag);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag, getObjectRequest::notMatchETag);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
-                getObjectRequest::modifiedSince);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
-                getObjectRequest::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getVersionId, getObjectRequest::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getMatchETag, getObjectRequest::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getNotMatchETag, getObjectRequest::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getModifiedSince, getObjectRequest::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getUnModifiedSince, getObjectRequest::unmodifiedSince);
 
         return minioClient.getObject(getObjectRequest.build());
     }
@@ -321,8 +329,11 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             if (getConfiguration().isDeleteAfterRead() || getConfiguration().isMoveAfterRead()) {
                 if (getConfiguration().isMoveAfterRead()) {
                     copyObject(srcBucketName, srcObjectName);
-                    LOG.trace("Copied object from bucket {} with objectName {} to bucket {}...",
-                            srcBucketName, srcObjectName, getConfiguration().getDestinationBucketName());
+                    LOG.trace(
+                            "Copied object from bucket {} with objectName {} to bucket {}...",
+                            srcBucketName,
+                            srcObjectName,
+                            getConfiguration().getDestinationBucketName());
                 }
 
                 LOG.trace("Deleting object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
@@ -330,8 +341,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Deleted object from bucket {} with objectName {}...", srcBucketName, srcObjectName);
             }
         } catch (MinioException | NoSuchAlgorithmException | InvalidKeyException | IOException e) {
-            getExceptionHandler().handleException("Error occurred during moving or deleting object. This exception is ignored.",
-                    exchange, e);
+            getExceptionHandler()
+                    .handleException(
+                            "Error occurred during moving or deleting object. This exception is ignored.", exchange, e);
         }
     }
 
@@ -361,30 +373,37 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 ? getConfiguration().getDestinationObjectName()
                 : srcObjectName;
 
-        LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
-                srcBucketName, srcObjectName, destinationBucketName);
+        LOG.trace(
+                "Copying object from bucket {} with objectName {} to bucket {}...",
+                srcBucketName,
+                srcObjectName,
+                destinationBucketName);
 
-        CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
+        CopySource.Builder copySourceBuilder =
+                CopySource.builder().bucket(srcBucketName).object(srcObjectName);
 
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
-                copySourceBuilder::ssec);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getServerSideEncryptionCustomerKey, copySourceBuilder::ssec);
         MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, copySourceBuilder::offset);
         MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, copySourceBuilder::length);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, copySourceBuilder::versionId);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, copySourceBuilder::matchETag);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag,
-                copySourceBuilder::notMatchETag);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
-                copySourceBuilder::modifiedSince);
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
-                copySourceBuilder::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getVersionId, copySourceBuilder::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getMatchETag, copySourceBuilder::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getNotMatchETag, copySourceBuilder::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getModifiedSince, copySourceBuilder::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getUnModifiedSince, copySourceBuilder::unmodifiedSince);
 
         CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                 .source(copySourceBuilder.build())
                 .bucket(getConfiguration().getDestinationBucketName())
                 .object(destinationObjectName);
 
-        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryption, copyObjectRequest::sse);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(
+                getConfiguration()::getServerSideEncryption, copyObjectRequest::sse);
 
         getMinioClient().copyObject(copyObjectRequest.build());
     }
@@ -417,7 +436,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private Exchange createExchange(String objectName) throws Exception {
-        LOG.trace("Getting object with objectName {} from bucket {}...", objectName, getConfiguration().getBucketName());
+        LOG.trace(
+                "Getting object with objectName {} from bucket {}...",
+                objectName,
+                getConfiguration().getBucketName());
 
         Exchange exchange = createExchange(true);
         exchange.setPattern(getEndpoint().getExchangePattern());
@@ -432,7 +454,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (isEmpty(minioConsumerToString)) {
-            minioConsumerToString = "MinioConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            minioConsumerToString =
+                    "MinioConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return minioConsumerToString;
     }

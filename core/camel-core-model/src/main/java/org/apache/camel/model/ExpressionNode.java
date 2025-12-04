@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
 
 import java.util.Collections;
@@ -38,14 +39,12 @@ import org.apache.camel.model.language.ExpressionDefinition;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
-        implements HasExpressionType {
+public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode> implements HasExpressionType {
 
     @XmlElementRef
     private ExpressionDefinition expression;
 
-    public ExpressionNode() {
-    }
+    public ExpressionNode() {}
 
     public ExpressionNode(ExpressionDefinition expression) {
         setExpression(expression);
@@ -140,7 +139,8 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
             if (getExpression().getPredicate() != null) {
                 getExpression().setExpression(getExpression().getPredicate().toString());
             } else if (getExpression().getExpressionValue() != null) {
-                getExpression().setExpression(getExpression().getExpressionValue().toString());
+                getExpression()
+                        .setExpression(getExpression().getExpressionValue().toString());
             }
         }
     }
@@ -149,5 +149,4 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
     }
-
 }

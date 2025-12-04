@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,7 +55,10 @@ public class InterceptSimpleRouteWhenStopTest extends ContextTestSupport {
             @Override
             public void configure() {
                 // START SNIPPET: e1
-                intercept().onWhen(body().contains("Hello")).to("mock:intercepted").stop();
+                intercept()
+                        .onWhen(body().contains("Hello"))
+                        .to("mock:intercepted")
+                        .stop();
 
                 from("direct:start").to("mock:foo", "mock:bar", "mock:result");
                 // END SNIPPET: e1

@@ -75,10 +75,11 @@ public class DefaultMetricsCollector implements DevConsoleMetricsCollector {
                 Map<TopicPartition, OffsetAndMetadata> commits = consumer.committed(consumer.assignment());
                 commitRecords.clear();
                 for (var e : commits.entrySet()) {
-                    KafkaTopicPosition p
-                            = new KafkaTopicPosition(
-                                    e.getKey().topic(), e.getKey().partition(), e.getValue().offset(),
-                                    e.getValue().leaderEpoch().orElse(0));
+                    KafkaTopicPosition p = new KafkaTopicPosition(
+                            e.getKey().topic(),
+                            e.getKey().partition(),
+                            e.getValue().offset(),
+                            e.getValue().leaderEpoch().orElse(0));
                     commitRecords.add(p);
                 }
                 CountDownLatch count = latch.get();
@@ -89,7 +90,8 @@ public class DefaultMetricsCollector implements DevConsoleMetricsCollector {
                 // ignore cannot get last commit details
                 LOG.debug(
                         "Cannot get last offset committed from Kafka brokers due to: {}. This exception is ignored.",
-                        e.getMessage(), e);
+                        e.getMessage(),
+                        e);
             }
         }
     }

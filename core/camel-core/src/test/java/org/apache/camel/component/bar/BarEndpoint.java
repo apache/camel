@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bar;
 
 import org.apache.camel.Component;
@@ -61,5 +62,4 @@ public class BarEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
-
 }

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.caffeine;
 
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("caffeine-cache")
-public class CaffeineSendDynamicAware extends DefaultCaffeineSendDynamicAware {
-
-}
+public class CaffeineSendDynamicAware extends DefaultCaffeineSendDynamicAware {}

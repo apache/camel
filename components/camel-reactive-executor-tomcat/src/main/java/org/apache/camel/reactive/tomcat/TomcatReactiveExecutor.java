@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reactive.tomcat;
 
 import java.lang.reflect.Field;
@@ -168,8 +169,11 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
     @Override
     protected void doStop() throws Exception {
         if (LOG.isDebugEnabled() && statisticsEnabled) {
-            LOG.debug("Stopping TomcatReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
-                    getCreatedWorkers(), getRunningWorkers(), getPendingTasks());
+            LOG.debug(
+                    "Stopping TomcatReactiveExecutor [createdWorkers: {}, runningWorkers: {}, pendingTasks: {}]",
+                    getCreatedWorkers(),
+                    getRunningWorkers(),
+                    getPendingTasks());
         }
     }
 
@@ -229,7 +233,7 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
                     executor.runningWorkers.increment();
                 }
                 try {
-                    for (;;) {
+                    for (; ; ) {
                         final Runnable polled = queue.pollFirst();
                         if (polled == null) {
                             if (back != null && !back.isEmpty()) {
@@ -248,8 +252,10 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
                             }
                             polled.run();
                         } catch (Exception e) {
-                            LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
-                                    e.getMessage(), e);
+                            LOG.warn(
+                                    "Error executing reactive work due to {}. This exception is ignored.",
+                                    e.getMessage(),
+                                    e);
                         }
                     }
                 } finally {
@@ -284,7 +290,5 @@ public class TomcatReactiveExecutor extends ServiceSupport implements ReactiveEx
             }
             return true;
         }
-
     }
-
 }

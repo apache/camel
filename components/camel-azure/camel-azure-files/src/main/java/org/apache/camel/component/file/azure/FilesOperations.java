@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.azure;
 
 import java.io.ByteArrayInputStream;
@@ -151,8 +152,10 @@ public class FilesOperations extends NormalizedOperations {
     private boolean deleteRemote(ShareDirectoryClient dirClient, String fileName) {
         log.trace("{}> rm {}", dirClient.getDirectoryPath(), fileName);
         var status = dirClient
-                .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE).getStatusCode();
-        // doc: If Response's status code is 202, the file was successfully deleted. If status code is 404, the file does not exist.
+                .deleteFileIfExistsWithResponse(fileName, endpoint.getMetadataTimeout(), Context.NONE)
+                .getStatusCode();
+        // doc: If Response's status code is 202, the file was successfully deleted. If status code is 404, the file
+        // does not exist.
         return status == HTTP_NOT_FOUND || status == HTTP_ACCEPTED;
     }
 
@@ -186,7 +189,9 @@ public class FilesOperations extends NormalizedOperations {
         // known strategies try to remove an existing target file before calling rename
         // but it is neither atomic nor sure so instruct Azure Files to overwrite the file
         options.setReplaceIfExists(Boolean.TRUE);
-        var renamed = fileClient.renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE).getValue();
+        var renamed = fileClient
+                .renameWithResponse(options, endpoint.getMetadataTimeout(), Context.NONE)
+                .getValue();
         return existsRemote(renamed);
     }
 
@@ -249,13 +254,13 @@ public class FilesOperations extends NormalizedOperations {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "resource" })
+    @SuppressWarnings({"unchecked", "resource"})
     private boolean retrieveFileToBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         boolean success;
-        GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange
-                .getProperty(FileComponent.FILE_EXCHANGE_FILE);
-        org.apache.camel.util.ObjectHelper.notNull(target,
-                "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+        GenericFile<ShareFileItem> target =
+                (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        org.apache.camel.util.ObjectHelper.notNull(
+                target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
         String path = FileUtil.onlyPath(name);
         if (path != null) {
@@ -275,8 +280,8 @@ public class FilesOperations extends NormalizedOperations {
             log.trace("Downloading {} to byte[] body.", remoteName);
             var os = new ByteArrayOutputStream();
             ShareFileRange range = new ShareFileRange(0);
-            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null, endpoint.getDataTimeout(),
-                    Context.NONE);
+            var ret = cwd().getFileClient(remoteName)
+                    .downloadWithResponse(os, range, null, endpoint.getDataTimeout(), Context.NONE);
             success = ret.getStatusCode() == HTTP_OK;
             IOHelper.close(os);
             target.setBody(os.toByteArray());
@@ -295,10 +300,10 @@ public class FilesOperations extends NormalizedOperations {
 
         try {
             // use relative filename in local work directory
-            GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange
-                    .getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            org.apache.camel.util.ObjectHelper.notNull(target,
-                    "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+            GenericFile<ShareFileItem> target =
+                    (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            org.apache.camel.util.ObjectHelper.notNull(
+                    target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 
             inProgress = new File(local, relativeName + ".inprogress");
@@ -353,8 +358,8 @@ public class FilesOperations extends NormalizedOperations {
 
         boolean result;
         try {
-            GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange
-                    .getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            GenericFile<ShareFileItem> target =
+                    (GenericFile<ShareFileItem>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             // store the java.io.File handle as the body
             target.setBody(local);
 
@@ -372,8 +377,8 @@ public class FilesOperations extends NormalizedOperations {
                 range = new ShareFileRange(existingSize);
             }
             log.trace("Downloading {} to local work directory.", remoteName);
-            var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null, endpoint.getDataTimeout(),
-                    Context.NONE);
+            var ret = cwd().getFileClient(remoteName)
+                    .downloadWithResponse(os, range, null, endpoint.getDataTimeout(), Context.NONE);
             result = ret.getStatusCode() == HTTP_OK;
 
         } catch (RuntimeException e) {
@@ -390,7 +395,8 @@ public class FilesOperations extends NormalizedOperations {
                 if (!deleted) {
                     log.warn(
                             "Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
-                            inProgress, name);
+                            inProgress,
+                            name);
                 }
             }
             throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -502,8 +508,12 @@ public class FilesOperations extends NormalizedOperations {
             }
             if (log.isDebugEnabled()) {
                 long time = watch.taken();
-                log.debug("Took {} ({} millis) to store: {} and files client returned: {}",
-                        TimeUtils.printDuration(time, true), time, targetName, answer);
+                log.debug(
+                        "Took {} ({} millis) to store: {} and files client returned: {}",
+                        TimeUtils.printDuration(time, true),
+                        time,
+                        targetName,
+                        answer);
             }
 
             return answer;
@@ -527,8 +537,9 @@ public class FilesOperations extends NormalizedOperations {
     }
 
     private boolean createRemote(ShareFileClient fileClient, int length) {
-        var code = fileClient.createWithResponse(length, null, null, null, null,
-                endpoint.getMetadataTimeout(), Context.NONE).getStatusCode();
+        var code = fileClient
+                .createWithResponse(length, null, null, null, null, endpoint.getMetadataTimeout(), Context.NONE)
+                .getStatusCode();
         return code == HTTP_CREATED || code == HTTP_OK;
     }
 
@@ -544,8 +555,9 @@ public class FilesOperations extends NormalizedOperations {
 
     private boolean existsRemote(ShareDirectoryClient dirClient) {
         try {
-            return Boolean.TRUE.equals(
-                    dirClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
+            return Boolean.TRUE.equals(dirClient
+                    .existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE)
+                    .getValue());
         } catch (ShareStorageException ex) {
             // observed "Status code 404, ParentNotFound" for deep checks
             if (ex.getStatusCode() == HTTP_NOT_FOUND) {
@@ -557,8 +569,9 @@ public class FilesOperations extends NormalizedOperations {
 
     private boolean existsRemote(ShareFileClient fileClient) {
         try {
-            return Boolean.TRUE
-                    .equals(fileClient.existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE).getValue());
+            return Boolean.TRUE.equals(fileClient
+                    .existsWithResponse(endpoint.getMetadataTimeout(), Context.NONE)
+                    .getValue());
         } catch (ShareStorageException ex) {
             // observed "Status code 404, ParentNotFound" for deep checks
             if (ex.getStatusCode() == HTTP_NOT_FOUND) {
@@ -581,7 +594,8 @@ public class FilesOperations extends NormalizedOperations {
     @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (FilesPath.isEmpty(path) || path.equals(FilesPath.CWD)
+        if (FilesPath.isEmpty(path)
+                || path.equals(FilesPath.CWD)
                 || path.equals(FilesPath.SHARE_ROOT + cwd().getDirectoryPath())) {
             return;
         }
@@ -729,5 +743,4 @@ public class FilesOperations extends NormalizedOperations {
             connect(configuration, exchange);
         }
     }
-
 }

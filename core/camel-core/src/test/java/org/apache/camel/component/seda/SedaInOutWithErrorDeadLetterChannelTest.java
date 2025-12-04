@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,12 +38,15 @@ public class SedaInOutWithErrorDeadLetterChannelTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
+                errorHandler(
+                        deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
 
                 from("direct:start").to("seda:foo");
 
-                from("seda:foo").transform(constant("Bye World"))
-                        .throwException(new IllegalArgumentException("Damn I cannot do this")).to("mock:result");
+                from("seda:foo")
+                        .transform(constant("Bye World"))
+                        .throwException(new IllegalArgumentException("Damn I cannot do this"))
+                        .to("mock:result");
             }
         };
     }

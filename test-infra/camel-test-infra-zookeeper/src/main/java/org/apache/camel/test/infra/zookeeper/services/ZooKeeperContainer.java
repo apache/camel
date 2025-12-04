@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.zookeeper.services;
 
 import org.slf4j.Logger;
@@ -41,9 +42,7 @@ public class ZooKeeperContainer extends GenericContainer<ZooKeeperContainer> {
 
         setWaitStrategy(Wait.forListeningPort());
 
-        withNetworkAliases(name)
-                .withExposedPorts(CLIENT_PORT)
-                .withLogConsumer(new Slf4jLogConsumer(LOGGER));
+        withNetworkAliases(name).withExposedPorts(CLIENT_PORT).withLogConsumer(new Slf4jLogConsumer(LOGGER));
     }
 
     public ZooKeeperContainer(String name, int clientPort) {
@@ -51,8 +50,7 @@ public class ZooKeeperContainer extends GenericContainer<ZooKeeperContainer> {
 
         setWaitStrategy(Wait.forListeningPort());
 
-        withNetworkAliases(name)
-                .withLogConsumer(new Slf4jLogConsumer(LOGGER));
+        withNetworkAliases(name).withLogConsumer(new Slf4jLogConsumer(LOGGER));
 
         if (clientPort > 0) {
             addFixedExposedPort(clientPort, CLIENT_PORT);

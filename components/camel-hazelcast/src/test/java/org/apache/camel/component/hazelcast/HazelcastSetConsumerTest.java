@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.UUID;
@@ -32,14 +41,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
 
     @Mock
@@ -50,7 +51,7 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String> getSet("foo")).thenReturn(set);
+        when(hazelcastInstance.<String>getSet("foo")).thenReturn(set);
         when(set.addItemListener(any(), eq(true))).thenReturn(UUID.randomUUID());
     }
 
@@ -93,11 +94,16 @@ public class HazelcastSetConsumerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast-%sfoo", HazelcastConstants.SET_PREFIX)).log("object...").choice()
+                from(String.format("hazelcast-%sfoo", HazelcastConstants.SET_PREFIX))
+                        .log("object...")
+                        .choice()
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-                        .log("...added").to("mock:added")
+                        .log("...added")
+                        .to("mock:added")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED))
-                        .log("...removed").to("mock:removed").otherwise()
+                        .log("...removed")
+                        .to("mock:removed")
+                        .otherwise()
                         .log("fail!");
             }
         };

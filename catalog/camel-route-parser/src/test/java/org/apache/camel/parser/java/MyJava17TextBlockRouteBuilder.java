@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,8 @@ public class MyJava17TextBlockRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from("timer:foo")
-                .toD("""
+                .toD(
+                        """
                             file:output?
                             fileExist=Append
                             &chmod=777

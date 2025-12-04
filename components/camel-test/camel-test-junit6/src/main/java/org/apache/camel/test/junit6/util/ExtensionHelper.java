@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.junit6.util;
 
 import java.lang.annotation.Annotation;
@@ -54,7 +55,11 @@ public final class ExtensionHelper {
     }
 
     public static boolean hasUnsupported(Class<?> clazz) {
-        hasClassAnnotation(clazz, ExtensionHelper::throwUnsupportedClassException, SPRING_BOOT_TEST, QUARKUS_TEST,
+        hasClassAnnotation(
+                clazz,
+                ExtensionHelper::throwUnsupportedClassException,
+                SPRING_BOOT_TEST,
+                QUARKUS_TEST,
                 CAMEL_QUARKUS_TEST);
         return true;
     }

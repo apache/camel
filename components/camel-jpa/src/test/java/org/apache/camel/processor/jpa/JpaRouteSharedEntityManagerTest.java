@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.jpa;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -33,10 +38,6 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -70,10 +71,10 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     }
 
     private int getBrokerCount() {
-        LocalEntityManagerFactoryBean entityManagerFactory
-                = applicationContext.getBean("&entityManagerFactory", LocalEntityManagerFactoryBean.class);
+        LocalEntityManagerFactoryBean entityManagerFactory =
+                applicationContext.getBean("&entityManagerFactory", LocalEntityManagerFactoryBean.class);
 
-        //uses Spring EL so we don't need to reference the classes
+        // uses Spring EL so we don't need to reference the classes
         StandardEvaluationContext context = new StandardEvaluationContext(entityManagerFactory);
         context.setBeanResolver(new BeanFactoryResolver(applicationContext));
         SpelExpressionParser parser = new SpelExpressionParser();
@@ -113,9 +114,15 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
                 from("direct:startShared")
                         .to("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=true&joinTransaction=false");
                 from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=true&joinTransaction=false")
-                        .routeId("jpaShared").autoStartup(false).process(new LatchProcessor()).to("mock:result");
-                from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=false").routeId("jpaOwn").autoStartup(false)
-                        .process(new LatchProcessor()).to("mock:result");
+                        .routeId("jpaShared")
+                        .autoStartup(false)
+                        .process(new LatchProcessor())
+                        .to("mock:result");
+                from("jpa://" + SendEmail.class.getName() + "?sharedEntityManager=false")
+                        .routeId("jpaOwn")
+                        .autoStartup(false)
+                        .process(new LatchProcessor())
+                        .to("mock:result");
             }
         };
     }

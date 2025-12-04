@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import java.io.IOException;
@@ -50,7 +51,8 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     }
 
     private String getUri(String systemId) {
-        if (resourcePath != null && !systemId.toLowerCase().startsWith("http:")
+        if (resourcePath != null
+                && !systemId.toLowerCase().startsWith("http:")
                 && !systemId.toLowerCase().startsWith("https:")) {
             return FileUtil.onlyPath(resourceUri) + "/" + systemId;
         } else {
@@ -62,10 +64,10 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
         // systemId should be mandatory
         if (systemId == null) {
-            throw new IllegalArgumentException(
-                    String.format("Resource: %s refers an invalid resource without SystemId."
-                                  + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s",
-                            resourceUri, type, namespaceURI, publicId, systemId, baseURI));
+            throw new IllegalArgumentException(String.format(
+                    "Resource: %s refers an invalid resource without SystemId."
+                            + " Invalid resource has type: %s, namespaceURI: %s, publicId: %s, systemId: %s, baseURI: %s",
+                    resourceUri, type, namespaceURI, publicId, systemId, baseURI));
         }
         String resourceURI = null;
         // Build up the relative path for using relatedURI and baseURI
@@ -211,5 +213,4 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             return "DefaultLSInput[" + uri + "]";
         }
     }
-
 }

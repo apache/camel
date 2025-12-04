@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.issues;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -25,7 +26,10 @@ public class RetryContextScopedUntilRecipientListIssueTest extends RetryRouteSco
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end();
+                onException(Exception.class)
+                        .redeliveryDelay(0)
+                        .retryWhile(method("myRetryBean"))
+                        .end();
 
                 from("seda:start").recipientList(header("recipientListHeader")).to("mock:result");
 
@@ -33,5 +37,4 @@ public class RetryContextScopedUntilRecipientListIssueTest extends RetryRouteSco
             }
         };
     }
-
 }

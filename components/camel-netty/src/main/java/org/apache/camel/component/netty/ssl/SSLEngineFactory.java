@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.netty.ssl;
 
 import java.io.InputStream;
@@ -32,12 +33,15 @@ public final class SSLEngineFactory {
 
     private static final String SSL_PROTOCOL = "TLS";
 
-    public SSLEngineFactory() {
-    }
+    public SSLEngineFactory() {}
 
     public SSLContext createSSLContext(
-            CamelContext camelContext, String keyStoreFormat, String securityProvider,
-            String keyStoreResource, String trustStoreResource, char[] passphrase)
+            CamelContext camelContext,
+            String keyStoreFormat,
+            String securityProvider,
+            String keyStoreResource,
+            String trustStoreResource,
+            char[] passphrase)
             throws Exception {
         SSLContext answer;
         KeyStore ks = KeyStore.getInstance(keyStoreFormat);
@@ -84,5 +88,4 @@ public final class SSLEngineFactory {
         clientEngine.setUseClientMode(true);
         return clientEngine;
     }
-
 }

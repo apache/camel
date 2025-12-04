@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.cache;
+
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -35,8 +38,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A base class for a pool for either producers or consumers used by {@link org.apache.camel.spi.ProducerCache} and
@@ -69,7 +70,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         void cleanUp();
     }
 
-    public ServicePool(ThrowingFunction<Endpoint, S, Exception> creator, Function<S, Endpoint> getEndpoint, int capacity) {
+    public ServicePool(
+            ThrowingFunction<Endpoint, S, Exception> creator, Function<S, Endpoint> getEndpoint, int capacity) {
         this.creator = creator;
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
@@ -364,5 +366,4 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             }
         }
     }
-
 }

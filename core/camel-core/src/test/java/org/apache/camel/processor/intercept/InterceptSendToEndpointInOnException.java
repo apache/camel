@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.intercept;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -24,8 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class InterceptSendToEndpointInOnException extends ContextTestSupport {
 
@@ -103,5 +104,4 @@ public class InterceptSendToEndpointInOnException extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

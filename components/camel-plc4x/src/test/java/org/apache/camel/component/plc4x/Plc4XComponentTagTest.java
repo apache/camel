@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.plc4x;
 
 import java.util.Collections;
@@ -42,11 +43,13 @@ public class Plc4XComponentTagTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:plc4x")
-                        .setBody(constant(Collections.singletonMap("test", Collections.singletonMap("testAddress", false))))
+                        .setBody(constant(
+                                Collections.singletonMap("test", Collections.singletonMap("testAddress", false))))
                         .to("plc4x:mock:10.10.10.1/1/1")
                         .to("mock:result");
                 from("direct:plc4x2")
-                        .setBody(constant(Collections.singletonMap("test2", Collections.singletonMap("testAddress2", 0x05))))
+                        .setBody(constant(
+                                Collections.singletonMap("test2", Collections.singletonMap("testAddress2", 0x05))))
                         .to("plc4x:mock:10.10.10.1/1/1")
                         .to("mock:result");
                 from("plc4x:mock:10.10.10.1/1/1?autoReconnect=true&tag.Test1=%TestQuery")
@@ -54,5 +57,4 @@ public class Plc4XComponentTagTest extends CamelTestSupport {
             }
         };
     }
-
 }

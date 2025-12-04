@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.tahu;
 
 import org.apache.camel.CamelContext;
@@ -38,13 +39,11 @@ public class TahuHostConsumerRouteBuilder extends RouteBuilder {
 
         String baseUri = TahuConstants.HOST_APP_SCHEME + ":" + HOST_ID;
 
-        TahuHostEndpoint tahuHostEndpoint
-                = context.getEndpoint(baseUri + "?clientId=" + CLIENT_ID, TahuHostEndpoint.class);
+        TahuHostEndpoint tahuHostEndpoint =
+                context.getEndpoint(baseUri + "?clientId=" + CLIENT_ID, TahuHostEndpoint.class);
 
         MockEndpoint mockHostReceive = MockUtils.getMockEndpoint(context, "mock:" + baseUri, true);
 
-        from(tahuHostEndpoint)
-                .id(HOST_DATA_TEST_ROUTE_ID)
-                .to(mockHostReceive);
+        from(tahuHostEndpoint).id(HOST_DATA_TEST_ROUTE_ID).to(mockHostReceive);
     }
 }

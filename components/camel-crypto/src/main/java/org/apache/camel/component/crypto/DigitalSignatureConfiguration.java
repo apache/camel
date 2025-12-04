@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.crypto;
 
 import java.security.KeyStore;
@@ -40,45 +41,63 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     @UriPath
     @Metadata(required = true)
     private CryptoOperation cryptoOperation;
+
     @UriPath
     @Metadata(required = true)
     private String name;
+
     @UriParam(secret = true)
     private PrivateKey privateKey;
+
     @UriParam(label = "advanced")
     private KeyStoreParameters keyStoreParameters;
+
     @UriParam
     private KeyStore keystore;
+
     @UriParam(label = "advanced", secret = true)
     private SecureRandom secureRandom;
+
     @UriParam(defaultValue = "SHA256withRSA")
     private String algorithm = "SHA256withRSA";
+
     @UriParam(label = "advanced", defaultValue = "" + 2048)
     private Integer bufferSize = 2048;
+
     @UriParam
     private String provider;
+
     @UriParam
     private String signatureHeaderName;
+
     @UriParam
     private String alias;
+
     @UriParam(label = "security", secret = true)
     private String password;
+
     @UriParam(label = "advanced")
     private PublicKey publicKey;
+
     @UriParam(label = "advanced")
     private Certificate certificate;
 
     /** references that should be resolved when the context changes */
     @UriParam
     private String publicKeyName;
+
     @UriParam
     private String certificateName;
+
     @UriParam(secret = true)
     private String privateKeyName;
+
     @UriParam
     private String keystoreName;
+
     @UriParam
     private String secureRandomName;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean clearHeaders = true;
 
@@ -493,5 +512,4 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     public CryptoOperation getCryptoOperation() {
         return cryptoOperation;
     }
-
 }

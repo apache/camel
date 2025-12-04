@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.sqs;
+
+import static org.awaitility.Awaitility.await;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +35,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.awaitility.Awaitility.await;
 
 public class Sqs2ConsumerHealthCheckIAMProfileCredsIT extends CamelTestSupport {
 
@@ -72,7 +73,9 @@ public class Sqs2ConsumerHealthCheckIAMProfileCredsIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("aws2-sqs://queue1?region=l&useProfileCredentialsProvider=true&autoCreateQueue=true")
-                        .startupOrder(2).log("${body}").routeId("test-health-it");
+                        .startupOrder(2)
+                        .log("${body}")
+                        .routeId("test-health-it");
             }
         };
     }
@@ -88,12 +91,11 @@ public class Sqs2ConsumerHealthCheckIAMProfileCredsIT extends CamelTestSupport {
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
-            boolean containsAws2SqsHealthCheck = res2.stream()
-                    .anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
+            boolean containsAws2SqsHealthCheck =
+                    res2.stream().anyMatch(result -> result.getCheck().getId().startsWith("consumer:test-health-it"));
 
             Assertions.assertTrue(down, "liveness check");
             Assertions.assertTrue(containsAws2SqsHealthCheck, "aws2-sqs check");
         });
-
     }
 }

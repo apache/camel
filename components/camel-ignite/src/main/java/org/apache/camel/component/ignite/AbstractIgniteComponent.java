@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.ignite;
 
 import java.io.InputStream;
@@ -51,8 +52,10 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
 
     @Metadata
     private IgniteConfiguration igniteConfiguration;
+
     @Metadata
     private Object configurationResource;
+
     @Metadata
     private Ignite ignite;
 
@@ -75,7 +78,7 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
             } else {
                 throw new IllegalStateException(
                         "An unsupported configuration resource was provided to the Ignite component. "
-                                                + "Supported types are: URL, InputStream, String.");
+                                + "Supported types are: URL, InputStream, String.");
             }
         } else if (igniteConfiguration != null) {
             ignite = Ignition.start(igniteConfiguration);
@@ -131,5 +134,4 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
     public void setIgniteConfiguration(IgniteConfiguration igniteConfiguration) {
         this.igniteConfiguration = igniteConfiguration;
     }
-
 }

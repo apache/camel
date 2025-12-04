@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import java.io.File;
@@ -76,7 +77,10 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for annotations of {} in packages: {}", annotation.getName(), Arrays.asList(packageNames));
+            LOG.debug(
+                    "Searching for annotations of {} in packages: {}",
+                    annotation.getName(),
+                    Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
@@ -118,7 +122,10 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for implementations of {} in packages: {}", parent.getName(), Arrays.asList(packageNames));
+            LOG.debug(
+                    "Searching for implementations of {} in packages: {}",
+                    parent.getName(),
+                    Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
@@ -165,8 +172,11 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: {} in package: {} using classloader: {}",
-                    test, packageName, loader.getClass().getName());
+            LOG.trace(
+                    "Searching for: {} in package: {} using classloader: {}",
+                    test,
+                    packageName,
+                    loader.getClass().getName());
         }
 
         Enumeration<URL> urls = getUrls(packageName, loader);
@@ -196,7 +206,8 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                 } else {
                     InputStream stream = null;
                     try {
-                        if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
+                        if (urlPath.startsWith("http:")
+                                || urlPath.startsWith("https:")
                                 || urlPath.startsWith("sonicfs:")
                                 || isAcceptableScheme(urlPath)) {
                             // load resources using http/https, sonicfs and other acceptable scheme
@@ -251,11 +262,13 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
      *                 would be <i>org/apache</i>
      * @param location a File object representing a directory
      */
-    private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class<?>> classes) {
+    private void loadImplementationsInDirectory(
+            PackageScanFilter test, String parent, File location, Set<Class<?>> classes) {
         File[] files = location.listFiles();
         StringBuilder builder;
 
-        // this will prevent NullPointerException, but there are no means to tell caller class that the location folder is empty
+        // this will prevent NullPointerException, but there are no means to tell caller class that the location folder
+        // is empty
         if (files == null) {
             return;
         }
@@ -286,8 +299,12 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
      * @param jarCache cache for JARs to speedup loading
      */
     private void loadImplementationsInJar(
-            PackageScanFilter test, String parent, InputStream stream,
-            String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
+            PackageScanFilter test,
+            String parent,
+            InputStream stream,
+            String urlPath,
+            Set<Class<?>> classes,
+            Map<String, List<String>> jarCache) {
         ObjectHelper.notNull(classes, "classes");
 
         List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
@@ -365,7 +382,10 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test,
+                    LOG.trace(
+                            "Testing for class {} matches criteria [{}] using classloader: {}",
+                            externalName,
+                            test,
                             classLoader);
                 }
                 try {
@@ -379,13 +399,21 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                     break;
                 } catch (ClassNotFoundException e) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Cannot find class '{}' in classloader: {}. Reason: {}", fqn, classLoader,
-                                e.getMessage(), e);
+                        LOG.trace(
+                                "Cannot find class '{}' in classloader: {}. Reason: {}",
+                                fqn,
+                                classLoader,
+                                e.getMessage(),
+                                e);
                     }
                 } catch (NoClassDefFoundError e) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Cannot find the class definition '{}' in classloader: {}. Reason: {}", fqn, classLoader,
-                                e.getMessage(), e);
+                        LOG.trace(
+                                "Cannot find the class definition '{}' in classloader: {}. Reason: {}",
+                                fqn,
+                                classLoader,
+                                e.getMessage(),
+                                e);
                     }
                 }
             }
@@ -393,9 +421,12 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
                 LOG.debug("Cannot find class '{}' in any classloaders: {}", fqn, set);
             }
         } catch (Exception e) {
-            LOG.warn("Cannot examine class '{}' due to a {} with message: {}", fqn, e.getClass().getName(),
-                    e.getMessage(), e);
-
+            LOG.warn(
+                    "Cannot examine class '{}' due to a {} with message: {}",
+                    fqn,
+                    e.getClass().getName(),
+                    e.getMessage(),
+                    e);
         }
     }
 
@@ -411,5 +442,4 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
     protected void doStop() throws Exception {
         clearCache();
     }
-
 }

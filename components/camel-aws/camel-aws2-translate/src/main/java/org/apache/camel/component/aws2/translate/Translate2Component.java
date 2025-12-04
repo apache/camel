@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.translate;
 
 import java.util.Map;
@@ -43,8 +44,8 @@ public class Translate2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Translate2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Translate2Configuration();
+        Translate2Configuration configuration =
+                this.configuration != null ? this.configuration.copy() : new Translate2Configuration();
 
         Translate2Endpoint endpoint = new Translate2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

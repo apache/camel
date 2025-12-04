@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jooq;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -25,13 +29,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Only for testing XML DSL. All basic tests are located here: {@link JooqProducerTest}, {@link JooqConsumerTest}.
  */
-@ContextConfiguration(locations = { "/jooq-spring.xml", "/camel-context.xml" })
+@ContextConfiguration(locations = {"/jooq-spring.xml", "/camel-context.xml"})
 public class JooqXMLTest extends BaseJooqTest {
 
     @Autowired
@@ -40,8 +41,8 @@ public class JooqXMLTest extends BaseJooqTest {
     @Test
     public void testInsert() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        UpdatableRecord entity = (UpdatableRecord) producerTemplate.sendBody(context.getEndpoint("direct:insert"),
-                ExchangePattern.InOut, "empty");
+        UpdatableRecord entity = (UpdatableRecord)
+                producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, "empty");
         assertNotNull(entity);
     }
 

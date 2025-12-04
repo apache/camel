@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import java.util.HashMap;
@@ -70,8 +71,13 @@ import org.springframework.util.ErrorHandler;
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName",
-             category = { Category.MESSAGING }, headersClass = JmsConstants.class)
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "jms",
+        title = "JMS",
+        syntax = "jms:destinationType:destinationName",
+        category = {Category.MESSAGING},
+        headersClass = JmsConstants.class)
 @Metadata(excludeProperties = "bridgeErrorHandler")
 public class JmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, EndpointServiceLocation {
@@ -84,23 +90,33 @@ public class JmsEndpoint extends DefaultEndpoint
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic",
-             description = "The kind of destination to use")
+
+    @UriPath(
+            defaultValue = "queue",
+            enums = "queue,topic,temp-queue,temp-topic",
+            description = "The kind of destination to use")
     private String destinationType;
+
     @UriPath(description = "Name of the queue or topic to use as destination")
     @Metadata(required = true)
     private String destinationName;
-    @UriParam(label = "advanced",
-              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+
+    @UriParam(
+            label = "advanced",
+            description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
+
     @UriParam
     private JmsConfiguration configuration;
 
-    public JmsEndpoint() {
-    }
+    public JmsEndpoint() {}
 
-    public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain,
-                       JmsConfiguration configuration) {
+    public JmsEndpoint(
+            String uri,
+            JmsComponent component,
+            String destinationName,
+            boolean pubSubDomain,
+            JmsConfiguration configuration) {
         super(UnsafeUriCharactersEncoder.encode(uri), component);
         this.configuration = configuration;
         this.destinationName = destinationName;
@@ -112,8 +128,12 @@ public class JmsEndpoint extends DefaultEndpoint
         }
     }
 
-    public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName,
-                       boolean pubSubDomain) {
+    public JmsEndpoint(
+            String endpointUri,
+            JmsBinding binding,
+            JmsConfiguration configuration,
+            String destinationName,
+            boolean pubSubDomain) {
         super(UnsafeUriCharactersEncoder.encode(endpointUri), null);
         this.binding = binding;
         this.configuration = configuration;
@@ -127,7 +147,12 @@ public class JmsEndpoint extends DefaultEndpoint
     }
 
     public JmsEndpoint(String endpointUri, String destinationName, boolean pubSubDomain) {
-        this(UnsafeUriCharactersEncoder.encode(endpointUri), null, new JmsConfiguration(), destinationName, pubSubDomain);
+        this(
+                UnsafeUriCharactersEncoder.encode(endpointUri),
+                null,
+                new JmsConfiguration(),
+                destinationName,
+                pubSubDomain);
         this.binding = new JmsBinding(this);
         if (pubSubDomain) {
             this.destinationType = "topic";
@@ -238,7 +263,9 @@ public class JmsEndpoint extends DefaultEndpoint
 
         if (configuration.getTaskExecutor() != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(),
+                LOG.debug(
+                        "Using custom TaskExecutor: {} on listener container: {}",
+                        configuration.getTaskExecutor(),
                         listenerContainer);
             }
             setContainerTaskExecutor(listenerContainer, configuration.getTaskExecutor());
@@ -253,17 +280,21 @@ public class JmsEndpoint extends DefaultEndpoint
             // preserve backwards compatibility if an explicit Default TaskExecutor Type was not set;
             // otherwise, defer the creation of the TaskExecutor
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
-            ExecutorService executor
-                    = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
+            ExecutorService executor =
+                    getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
             setContainerTaskExecutor(listenerContainer, executor);
-            // we created a new private thread pool that this listener container is using, now store a reference on the consumer
+            // we created a new private thread pool that this listener container is using, now store a reference on the
+            // consumer
             // so when the consumer is stopped we can shutdown the thread pool also, to ensure all resources is shutdown
             consumer.setListenerContainerExecutorService(executor, true);
         } else {
-            // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
+            // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit
+            // DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            LOG.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
-                    listenerContainer, getDefaultTaskExecutorType());
+            LOG.debug(
+                    "Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
+                    listenerContainer,
+                    getDefaultTaskExecutorType());
         }
 
         // set a default transaction name if none provided
@@ -327,11 +358,10 @@ public class JmsEndpoint extends DefaultEndpoint
 
         String replyTo = consumer.getEndpoint().getReplyTo();
         if (replyTo != null && consumer.getEndpoint().getDestinationName().equals(replyTo)) {
-            throw new IllegalArgumentException(
-                    "Invalid Endpoint configuration: " + consumer.getEndpoint()
-                                               + ". ReplyTo=" + replyTo
-                                               + " cannot be the same as the destination name on the JmsConsumer as that"
-                                               + " would lead to the consumer sending reply messages to itself in an endless loop.");
+            throw new IllegalArgumentException("Invalid Endpoint configuration: " + consumer.getEndpoint()
+                    + ". ReplyTo=" + replyTo
+                    + " cannot be the same as the destination name on the JmsConsumer as that"
+                    + " would lead to the consumer sending reply messages to itself in an endless loop.");
         }
 
         return consumer;
@@ -368,7 +398,8 @@ public class JmsEndpoint extends DefaultEndpoint
      * Factory method for creating a new template for InOut message exchanges
      */
     public JmsOperations createInOutTemplate() {
-        return configuration.createInOutTemplate(this, pubSubDomain, destinationName, configuration.getRequestTimeout());
+        return configuration.createInOutTemplate(
+                this, pubSubDomain, destinationName, configuration.getRequestTimeout());
     }
 
     @Override
@@ -506,7 +537,7 @@ public class JmsEndpoint extends DefaultEndpoint
     }
 
     // Delegated properties from the configuration
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     @ManagedAttribute
     public int getAcknowledgementMode() {
         return getConfiguration().getAcknowledgementMode();
@@ -1346,7 +1377,7 @@ public class JmsEndpoint extends DefaultEndpoint
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     protected String createEndpointUri() {
@@ -1360,5 +1391,4 @@ public class JmsEndpoint extends DefaultEndpoint
         }
         return super.createEndpointUri();
     }
-
 }

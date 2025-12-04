@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Collection;
@@ -86,5 +87,4 @@ public interface PackageScanResourceResolver extends StaticService {
      * @throws Exception can be thrown during scanning for resources.
      */
     Collection<Resource> findResources(String location, Predicate<String> filter) throws Exception;
-
 }

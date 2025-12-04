@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.List;
@@ -29,9 +33,6 @@ import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
 
@@ -48,9 +49,11 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
 
         // Test with invalid string timestamp - should fall back to current time
         for (int i = 0; i < 5; i++) {
-            template.sendBodyAndHeader("direct:timestampGrouping",
+            template.sendBodyAndHeader(
+                    "direct:timestampGrouping",
                     "Message with invalid timestamp: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, "invalid-timestamp-" + i);
+                    Exchange.MESSAGE_TIMESTAMP,
+                    "invalid-timestamp-" + i);
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -75,17 +78,19 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
         long baseTime = 1704096000000L; // 2024-01-01 08:00:00 UTC
 
         // Mix of Long, Date, String, and invalid timestamps
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message 1 - Long",
-                Exchange.MESSAGE_TIMESTAMP, baseTime);
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message 2 - Date",
-                Exchange.MESSAGE_TIMESTAMP, new Date(baseTime + 60000));
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message 3 - String",
-                Exchange.MESSAGE_TIMESTAMP, String.valueOf(baseTime + 120000));
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message 4 - Invalid",
-                Exchange.MESSAGE_TIMESTAMP, "not-a-timestamp");
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping", "Message 1 - Long", Exchange.MESSAGE_TIMESTAMP, baseTime);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping", "Message 2 - Date", Exchange.MESSAGE_TIMESTAMP, new Date(baseTime + 60000));
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping",
+                "Message 3 - String",
+                Exchange.MESSAGE_TIMESTAMP,
+                String.valueOf(baseTime + 120000));
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping", "Message 4 - Invalid", Exchange.MESSAGE_TIMESTAMP, "not-a-timestamp");
         template.sendBody("direct:timestampGrouping", "Message 5 - No header");
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message 6 - Null",
-                Exchange.MESSAGE_TIMESTAMP, null);
+        template.sendBodyAndHeader("direct:timestampGrouping", "Message 6 - Null", Exchange.MESSAGE_TIMESTAMP, null);
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -112,9 +117,11 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
         // Send messages spread over 30 minutes - should all go to same window
         for (int i = 0; i < 10; i++) {
             long timestamp = baseTime + (i * 180000); // 3 minutes apart
-            template.sendBodyAndHeader("direct:timestampGroupingLargeWindow",
+            template.sendBodyAndHeader(
+                    "direct:timestampGroupingLargeWindow",
                     "Message in large window: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, timestamp);
+                    Exchange.MESSAGE_TIMESTAMP,
+                    timestamp);
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -141,22 +148,37 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
 
         // Send messages spread across 3 different 5-second windows to ensure clear separation
         // Window 1: 08:00:00 - 08:00:05
-        template.sendBodyAndHeader("direct:timestampGroupingSmallWindow",
-                "Message in window 1a", Exchange.MESSAGE_TIMESTAMP, baseTime);
-        template.sendBodyAndHeader("direct:timestampGroupingSmallWindow",
-                "Message in window 1b", Exchange.MESSAGE_TIMESTAMP, baseTime + 2000);
+        template.sendBodyAndHeader(
+                "direct:timestampGroupingSmallWindow", "Message in window 1a", Exchange.MESSAGE_TIMESTAMP, baseTime);
+        template.sendBodyAndHeader(
+                "direct:timestampGroupingSmallWindow",
+                "Message in window 1b",
+                Exchange.MESSAGE_TIMESTAMP,
+                baseTime + 2000);
 
         // Window 2: 08:00:10 - 08:00:15 (skip 5 seconds to be in different window)
-        template.sendBodyAndHeader("direct:timestampGroupingSmallWindow",
-                "Message in window 2a", Exchange.MESSAGE_TIMESTAMP, baseTime + 10000);
-        template.sendBodyAndHeader("direct:timestampGroupingSmallWindow",
-                "Message in window 2b", Exchange.MESSAGE_TIMESTAMP, baseTime + 12000);
+        template.sendBodyAndHeader(
+                "direct:timestampGroupingSmallWindow",
+                "Message in window 2a",
+                Exchange.MESSAGE_TIMESTAMP,
+                baseTime + 10000);
+        template.sendBodyAndHeader(
+                "direct:timestampGroupingSmallWindow",
+                "Message in window 2b",
+                Exchange.MESSAGE_TIMESTAMP,
+                baseTime + 12000);
 
         // Window 3: 08:00:20 - 08:00:25
-        template.sendBodyAndHeader("direct:timestampGroupingSmallWindow",
-                "Message in window 3a", Exchange.MESSAGE_TIMESTAMP, baseTime + 20000);
-        template.sendBodyAndHeader("direct:timestampGroupingSmallWindow",
-                "Message in window 3b", Exchange.MESSAGE_TIMESTAMP, baseTime + 22000);
+        template.sendBodyAndHeader(
+                "direct:timestampGroupingSmallWindow",
+                "Message in window 3a",
+                Exchange.MESSAGE_TIMESTAMP,
+                baseTime + 20000);
+        template.sendBodyAndHeader(
+                "direct:timestampGroupingSmallWindow",
+                "Message in window 3b",
+                Exchange.MESSAGE_TIMESTAMP,
+                baseTime + 22000);
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -185,18 +207,33 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
         long windowSize = 300000L; // 5 minutes
 
         // Send messages at exact boundaries
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message at window start",
-                Exchange.MESSAGE_TIMESTAMP, windowStart);
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message 1ms before window end",
-                Exchange.MESSAGE_TIMESTAMP, windowStart + windowSize - 1);
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message at next window start",
-                Exchange.MESSAGE_TIMESTAMP, windowStart + windowSize);
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message in first window middle",
-                Exchange.MESSAGE_TIMESTAMP, windowStart + windowSize / 2);
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message in second window middle",
-                Exchange.MESSAGE_TIMESTAMP, windowStart + windowSize + windowSize / 2);
-        template.sendBodyAndHeader("direct:timestampGrouping", "Message at exact boundary",
-                Exchange.MESSAGE_TIMESTAMP, windowStart + windowSize);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping", "Message at window start", Exchange.MESSAGE_TIMESTAMP, windowStart);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping",
+                "Message 1ms before window end",
+                Exchange.MESSAGE_TIMESTAMP,
+                windowStart + windowSize - 1);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping",
+                "Message at next window start",
+                Exchange.MESSAGE_TIMESTAMP,
+                windowStart + windowSize);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping",
+                "Message in first window middle",
+                Exchange.MESSAGE_TIMESTAMP,
+                windowStart + windowSize / 2);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping",
+                "Message in second window middle",
+                Exchange.MESSAGE_TIMESTAMP,
+                windowStart + windowSize + windowSize / 2);
+        template.sendBodyAndHeader(
+                "direct:timestampGrouping",
+                "Message at exact boundary",
+                Exchange.MESSAGE_TIMESTAMP,
+                windowStart + windowSize);
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -222,9 +259,11 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
 
         for (int i = 0; i < 8; i++) {
             long timestamp = oldBaseTime + (i * 60000); // 1 minute apart
-            template.sendBodyAndHeader("direct:timestampGrouping",
+            template.sendBodyAndHeader(
+                    "direct:timestampGrouping",
                     "Message with old timestamp: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, timestamp);
+                    Exchange.MESSAGE_TIMESTAMP,
+                    timestamp);
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -262,9 +301,11 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
 
         for (int i = 0; i < 6; i++) {
             long timestamp = futureBaseTime + (i * 60000); // 1 minute apart
-            template.sendBodyAndHeader("direct:timestampGrouping",
+            template.sendBodyAndHeader(
+                    "direct:timestampGrouping",
                     "Message with future timestamp: " + i,
-                    Exchange.MESSAGE_TIMESTAMP, timestamp);
+                    Exchange.MESSAGE_TIMESTAMP,
+                    timestamp);
         }
 
         MockEndpoint.assertIsSatisfied(context);
@@ -300,8 +341,8 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
                 // Standard timestamp grouping route
                 String timestampGroupingEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=edgeTest.txt"
-                                                                 + "&batchMessageNumber=3&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
-                                                                 + "&timestampHeaderName=CamelMessageTimestamp",
+                                + "&batchMessageNumber=3&timestampGroupingEnabled=true&timestampWindowSizeMillis=300000"
+                                + "&timestampHeaderName=CamelMessageTimestamp",
                         name.get());
 
                 from("direct:timestampGrouping").to(timestampGroupingEndpoint).to("mock:result");
@@ -309,20 +350,24 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
                 // Large window test (1 hour)
                 String largeWindowEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=largeWindowTest.txt"
-                                                           + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=3600000"
-                                                           + "&timestampHeaderName=CamelMessageTimestamp",
+                                + "&batchMessageNumber=5&timestampGroupingEnabled=true&timestampWindowSizeMillis=3600000"
+                                + "&timestampHeaderName=CamelMessageTimestamp",
                         name.get());
 
-                from("direct:timestampGroupingLargeWindow").to(largeWindowEndpoint).to("mock:result");
+                from("direct:timestampGroupingLargeWindow")
+                        .to(largeWindowEndpoint)
+                        .to("mock:result");
 
                 // Small window test (5 seconds)
                 String smallWindowEndpoint = String.format(
                         "aws2-s3://%s?autoCreateBucket=true&streamingUploadMode=true&keyName=smallWindowTest.txt"
-                                                           + "&batchMessageNumber=3&timestampGroupingEnabled=true&timestampWindowSizeMillis=5000"
-                                                           + "&timestampHeaderName=CamelMessageTimestamp&streamingUploadTimeout=2000",
+                                + "&batchMessageNumber=3&timestampGroupingEnabled=true&timestampWindowSizeMillis=5000"
+                                + "&timestampHeaderName=CamelMessageTimestamp&streamingUploadTimeout=2000",
                         name.get());
 
-                from("direct:timestampGroupingSmallWindow").to(smallWindowEndpoint).to("mock:result");
+                from("direct:timestampGroupingSmallWindow")
+                        .to(smallWindowEndpoint)
+                        .to("mock:result");
 
                 // Common route for listing objects
                 String listEndpoint = String.format("aws2-s3://%s?autoCreateBucket=true", name.get());

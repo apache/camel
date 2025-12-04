@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.server;
 
 import java.util.function.Consumer;
@@ -69,5 +70,4 @@ public class MiloServerConsumer extends DefaultConsumer {
             Messages.fillFromDataValue(value, message);
         }
     }
-
 }

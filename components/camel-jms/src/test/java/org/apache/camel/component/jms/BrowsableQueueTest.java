@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -33,17 +36,16 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Isolated("Needs greater isolation due to CAMEL-20269")
 public class BrowsableQueueTest extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);
 
     protected final String componentName = "activemq";
-    protected final Object[] expectedBodies = { "body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8" };
+    protected final Object[] expectedBodies = {"body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8"};
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kubernetes.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +35,6 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnableKubernetesMockClient
 public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSupport {
 
@@ -47,9 +48,18 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
 
     @Test
     void listTest() {
-        server.expect().withPath("/api/v1/persistentvolumes")
-                .andReturn(200,
-                        new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/api/v1/persistentvolumes")
+                .andReturn(
+                        200,
+                        new PersistentVolumeListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
         List<?> result = template.requestBody("direct:list", "", List.class);
 
@@ -58,9 +68,18 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
 
     @Test
     void listByLabelsTest() throws Exception {
-        server.expect().withPath("/api/v1/persistentvolumes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-                .andReturn(200,
-                        new PersistentVolumeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+        server.expect()
+                .withPath("/api/v1/persistentvolumes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
+                .andReturn(
+                        200,
+                        new PersistentVolumeListBuilder()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .addNewItem()
+                                .and()
+                                .build())
                 .once();
         Exchange ex = template.request("direct:listByLabels", exchange -> {
             Map<String, String> labels = new HashMap<>();
@@ -79,10 +98,12 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:list").to(
-                        "kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes");
-                from("direct:listByLabels").to(
-                        "kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels");
+                from("direct:list")
+                        .to(
+                                "kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumes");
+                from("direct:listByLabels")
+                        .to(
+                                "kubernetes-persistent-volumes:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesByLabels");
             }
         };
     }

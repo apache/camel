@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging;
+
+import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -51,13 +54,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 
-import static org.apache.camel.tooling.util.PackageHelper.findCamelDirectory;
-
 /**
  * Generate Endpoint DSL source files for Components.
  */
-@Mojo(name = "generate-endpoint-dsl", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(
+        name = "generate-endpoint-dsl",
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointDslMojo extends AbstractGeneratorMojo {
     /**
      * The project build directory
@@ -104,7 +108,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
     /**
      * The catalog directory where the component json files are
      */
-    @Parameter(defaultValue = "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
+    @Parameter(
+            defaultValue =
+                    "${project.basedir}/../../catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/components")
     protected File jsonDir;
 
     @Inject
@@ -136,7 +142,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             outputResourcesDir = root.resolve("src/generated/resources").toFile();
         }
         if (componentsMetadata == null) {
-            componentsMetadata = outputResourcesDir.toPath().resolve("metadata.json").toFile();
+            componentsMetadata =
+                    outputResourcesDir.toPath().resolve("metadata.json").toFile();
         }
 
         List<ComponentModel> models = new ArrayList<>();
@@ -159,13 +166,15 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
 
         // Group the models by implementing classes
-        Map<String, List<ComponentModel>> models
-                = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType,
+        Map<String, List<ComponentModel>> models = allModels.stream()
+                .collect(Collectors.groupingBy(
+                        ComponentModel::getJavaType,
                         // order components by name
                         HashMap::new,
                         // if there are alias then we need to sort scheme according to the alternative schemes position
                         Collectors.collectingAndThen(Collectors.toList(), l -> {
-                            l.sort(Comparator.comparingInt(o -> o.getAlternativeSchemes().indexOf(o.getScheme())));
+                            l.sort(Comparator.comparingInt(
+                                    o -> o.getAlternativeSchemes().indexOf(o.getScheme())));
                             return l;
                         })));
 
@@ -213,7 +222,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         ctx.put("mojo", this);
         String source = velocity("velocity/endpoint-builder.vm", ctx);
 
-        return writeSourceIfChanged(source, componentsFactoriesPackageName.replace('.', '/'),
+        return writeSourceIfChanged(
+                source,
+                componentsFactoriesPackageName.replace('.', '/'),
                 componentName + "EndpointBuilderFactory.java");
     }
 
@@ -227,11 +238,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return name;
     }
 
-    public String createBaseDescription(BaseOptionModel option, String kind, boolean ignoreMultiValue, String optionDoc) {
+    public String createBaseDescription(
+            BaseOptionModel option, String kind, boolean ignoreMultiValue, String optionDoc) {
         String baseDesc = option.getDescription();
         if (Strings.isEmpty(baseDesc)) {
             return baseDesc;
-
         }
 
         // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
@@ -248,9 +259,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         }
         baseDescBuilder.append("\n").append(optionDoc);
         if (option.isMultiValue()) {
-            baseDescBuilder.append("\nThe option is multivalued, and you can use the ")
+            baseDescBuilder
+                    .append("\nThe option is multivalued, and you can use the ")
                     .append(option.getName())
-                    .append("(String, Object) method to add a value (call the method multiple times to set more values).");
+                    .append(
+                            "(String, Object) method to add a value (call the method multiple times to set more values).");
         }
         baseDescBuilder.append("\n");
         // the Endpoint DSL currently requires to provide the entire
@@ -294,7 +307,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     String factoryName = Strings.before(factory.getName(), ".");
                     String endpointsName = factoryName.replace("EndpointBuilderFactory", "Builders");
                     return componentsFactoriesPackageName + "." + factoryName + "." + endpointsName;
-                }).toList();
+                })
+                .toList();
 
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("generatorClass", getClass().getName());
@@ -304,8 +318,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         ctx.put("mojo", this);
         String source = velocity("velocity/endpoint-builder-factory.vm", ctx);
 
-        return writeSourceIfChanged(source,
-                endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
+        return writeSourceIfChanged(
+                source, endpointFactoriesPackageName.replace('.', '/'), "EndpointBuilderFactory.java");
     }
 
     private boolean synchronizeEndpointBuildersInterface(List<File> factories) throws MojoFailureException {
@@ -313,7 +327,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 .map(factory -> {
                     String factoryName = Strings.before(factory.getName(), ".");
                     return componentsFactoriesPackageName + "." + factoryName;
-                }).toList();
+                })
+                .toList();
 
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("generatorClass", getClass().getName());
@@ -323,13 +338,11 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         ctx.put("mojo", this);
         String source = velocity("velocity/endpoint-builders.vm", ctx);
 
-        return writeSourceIfChanged(source,
-                endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
+        return writeSourceIfChanged(source, endpointFactoriesPackageName.replace(".", "/"), "EndpointBuilders.java");
     }
 
     private boolean synchronizeEndpointBuildersStaticClass(
-            List<ComponentModel> allModels, Map<String, List<ComponentModel>> models)
-            throws MojoFailureException {
+            List<ComponentModel> allModels, Map<String, List<ComponentModel>> models) throws MojoFailureException {
         List<ComponentModel> sortedModels = new ArrayList<>(allModels);
         sortedModels.sort(Comparator.comparing(ComponentModel::getScheme));
 
@@ -343,13 +356,13 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         ctx.put("mojo", this);
         String source = velocity("velocity/endpoint-static-builders.vm", ctx);
 
-        return writeSourceIfChanged(source,
-                endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
+        return writeSourceIfChanged(
+                source, endpointFactoriesPackageName.replace(".", "/"), "StaticEndpointBuilders.java");
     }
 
     private List<File> loadAllComponentsDslEndpointFactoriesAsFile() {
-        final File allComponentsDslEndpointFactory
-                = new File(sourcesOutputDir, componentsFactoriesPackageName.replace('.', '/'));
+        final File allComponentsDslEndpointFactory =
+                new File(sourcesOutputDir, componentsFactoriesPackageName.replace('.', '/'));
         FileFilter fileFilter = file -> file.isFile() && file.getName().endsWith(".java");
         final File[] files = allComponentsDslEndpointFactory.listFiles(fileFilter);
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.infinispan.embedded;
 
 import org.apache.camel.Message;
@@ -27,20 +28,23 @@ import org.infinispan.context.Flag;
 
 public final class InfinispanEmbeddedUtil extends InfinispanUtil {
 
-    protected InfinispanEmbeddedUtil() {
-    }
+    protected InfinispanEmbeddedUtil() {}
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Cache<K, V> getCacheWithFlags(InfinispanEmbeddedManager manager, String cacheName, Flag... flags) {
+    public static <K, V> Cache<K, V> getCacheWithFlags(
+            InfinispanEmbeddedManager manager, String cacheName, Flag... flags) {
         final Cache<K, V> cache = manager.getCache(cacheName, Cache.class);
 
-        return flags == null || flags.length == 0 ? cache : cache.getAdvancedCache().withFlags(flags);
+        return flags == null || flags.length == 0
+                ? cache
+                : cache.getAdvancedCache().withFlags(flags);
     }
 
     public static Query<?> buildQuery(
             InfinispanConfiguration configuration, Cache<Object, Object> cache, Message message) {
 
-        InfinispanQueryBuilder builder = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
+        InfinispanQueryBuilder builder =
+                message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (builder == null) {
             builder = configuration.getQueryBuilder();
         }

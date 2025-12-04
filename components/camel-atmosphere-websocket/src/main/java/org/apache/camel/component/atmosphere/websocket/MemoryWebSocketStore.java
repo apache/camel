@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.util.Collection;
@@ -42,8 +43,7 @@ public class MemoryWebSocketStore implements WebSocketStore {
      * @see org.apache.camel.Service#start()
      */
     @Override
-    public void start() {
-    }
+    public void start() {}
 
     /* (non-Javadoc)
      * @see org.apache.camel.Service#stop()
@@ -113,5 +113,4 @@ public class MemoryWebSocketStore implements WebSocketStore {
     public Collection<WebSocket> getAllWebSockets() {
         return values.values();
     }
-
 }

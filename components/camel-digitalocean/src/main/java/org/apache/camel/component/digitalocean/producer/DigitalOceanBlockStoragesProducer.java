@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.digitalocean.producer;
 
 import java.util.List;
@@ -47,7 +48,6 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
 
         switch (determineOperation(exchange)) {
-
             case list:
                 getVolumes(exchange);
                 break;
@@ -89,7 +89,6 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         Volumes volumes = getEndpoint().getDigitalOceanClient().getAvailableVolumes(region);
         LOG.trace("All Volumes for region {} [{}] ", region, volumes.getVolumes());
         exchange.getMessage().setBody(volumes.getVolumes());
-
     }
 
     private void createVolume(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -134,12 +133,14 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
             String region = exchange.getIn().getHeader(DigitalOceanHeaders.REGION, String.class);
 
             if (ObjectHelper.isEmpty(name) && ObjectHelper.isEmpty(region)) {
-                throw new IllegalArgumentException(
-                        DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.NAME + " and " + DigitalOceanHeaders.REGION
-                                                   + " must be specified");
+                throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.NAME + " and "
+                        + DigitalOceanHeaders.REGION + " must be specified");
             }
 
-            List<Volume> volumes = getEndpoint().getDigitalOceanClient().getVolumeInfo(name, region).getVolumes();
+            List<Volume> volumes = getEndpoint()
+                    .getDigitalOceanClient()
+                    .getVolumeInfo(name, region)
+                    .getVolumes();
             if (!volumes.isEmpty()) {
                 // the volume is the first element in the list
                 volume = volumes.get(0);
@@ -150,7 +151,6 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
 
         LOG.trace("Volume [{}] ", volume);
         exchange.getMessage().setBody(volume);
-
     }
 
     private void getVolumeSnapshots(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -159,8 +159,9 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
         }
 
-        Snapshots snapshots = getEndpoint().getDigitalOceanClient().getVolumeSnapshots(volumeId, configuration.getPage(),
-                configuration.getPerPage());
+        Snapshots snapshots = getEndpoint()
+                .getDigitalOceanClient()
+                .getVolumeSnapshots(volumeId, configuration.getPage(), configuration.getPerPage());
         LOG.trace("All Snapshots for volume {} [{}] ", volumeId, snapshots.getSnapshots());
         exchange.getMessage().setBody(snapshots.getSnapshots());
     }
@@ -173,9 +174,8 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
             String region = exchange.getIn().getHeader(DigitalOceanHeaders.REGION, String.class);
 
             if (ObjectHelper.isEmpty(name) && ObjectHelper.isEmpty(region)) {
-                throw new IllegalArgumentException(
-                        DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.NAME + " and " + DigitalOceanHeaders.REGION
-                                                   + " must be specified");
+                throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.NAME + " and "
+                        + DigitalOceanHeaders.REGION + " must be specified");
             }
 
             delete = getEndpoint().getDigitalOceanClient().deleteVolume(name, region);
@@ -186,7 +186,6 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
 
         LOG.trace("Delete Volume [{}] ", delete);
         exchange.getMessage().setBody(delete);
-
     }
 
     private void attachVolumeToDroplet(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -247,7 +246,6 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         }
 
         exchange.getMessage().setBody(action);
-
     }
 
     private void resizeVolume(Exchange exchange) throws RequestUnsuccessfulException, DigitalOceanException {
@@ -284,5 +282,4 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         LOG.trace("Actions for Volume {} [{}] ", volumeId, actions.getActions());
         exchange.getMessage().setBody(actions.getActions());
     }
-
 }

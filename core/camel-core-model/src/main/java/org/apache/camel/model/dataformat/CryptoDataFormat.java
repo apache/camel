@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -29,34 +30,45 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Java Cryptography Extension (JCE).
  */
-@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
+@Metadata(
+        firstVersion = "2.3.0",
+        label = "dataformat,transformation,security",
+        title = "Crypto (Java Cryptographic Extension)")
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
     private String algorithm;
+
     @XmlAttribute
     @Metadata(javaType = "java.security.Key")
     private String key;
+
     @XmlAttribute
     @Metadata(label = "advanced")
     private String cryptoProvider;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "byte[]")
     private String initVector;
+
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.security.spec.AlgorithmParameterSpec")
     private String algorithmParameterSpec;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "4096")
     private String bufferSize;
+
     @XmlAttribute
     @Metadata(defaultValue = "HmacSHA1")
     private String macAlgorithm = "HmacSHA1";
+
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
     private String shouldAppendHMAC;
+
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean")
     private String inline;

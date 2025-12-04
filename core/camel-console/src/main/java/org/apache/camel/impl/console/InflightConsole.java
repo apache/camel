@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
@@ -57,9 +58,14 @@ public class InflightConsole extends AbstractDevConsole {
         if (repo.isInflightBrowseEnabled()) {
             for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 String age = TimeUtils.printDuration(ie.getDuration(), true);
-                sb.append(String.format("\n    %s (from: %s at: %s/%s remote: %b age: %s)",
-                        ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.getAtRouteId(), ie.getNodeId(),
-                        ie.isFromRemoteEndpoint(), age));
+                sb.append(String.format(
+                        "\n    %s (from: %s at: %s/%s remote: %b age: %s)",
+                        ie.getExchange().getExchangeId(),
+                        ie.getFromRouteId(),
+                        ie.getAtRouteId(),
+                        ie.getNodeId(),
+                        ie.isFromRemoteEndpoint(),
+                        age));
             }
         }
 

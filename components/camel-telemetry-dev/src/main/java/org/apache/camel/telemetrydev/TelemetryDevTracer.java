@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.telemetrydev;
 
 import java.util.UUID;
@@ -149,7 +150,6 @@ public class TelemetryDevTracer extends Tracer {
                 injector.put(Tracer.SPAN_HEADER, spanAdapter.getTag("spanid"));
             }
         }
-
     }
 
     private static String spanTraceId(Span span) {
@@ -165,5 +165,4 @@ public class TelemetryDevTracer extends Tracer {
         }
         return span.toString().split("-")[1];
     }
-
 }

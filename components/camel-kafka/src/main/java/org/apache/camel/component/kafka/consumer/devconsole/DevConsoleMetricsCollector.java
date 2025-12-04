@@ -44,9 +44,7 @@ public interface DevConsoleMetricsCollector {
 
     CountDownLatch fetchCommitRecords();
 
-    record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {
-    }
+    record GroupMetadata(String groupId, String groupInstanceId, String memberId, int generationId) {}
 
-    record KafkaTopicPosition(String topic, int partition, long offset, int epoch) {
-    }
+    record KafkaTopicPosition(String topic, int partition, long offset, int epoch) {}
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.http;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 
@@ -30,8 +33,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
 
@@ -55,7 +56,10 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
 
             @Override
             public void populateRequestHeaders(
-                    VertxHttpEndpoint endpoint, Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy) {
+                    VertxHttpEndpoint endpoint,
+                    Exchange exchange,
+                    HttpRequest<Buffer> request,
+                    HeaderFilterStrategy strategy) {
                 // Noop
             }
 
@@ -72,7 +76,8 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
             }
 
             @Override
-            public Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) {
+            public Throwable handleResponseFailure(
+                    VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) {
                 return null;
             }
 
@@ -96,8 +101,7 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getTestServerUri() + "/overridden")
-                        .setBody(constant("Hello World"));
+                from(getTestServerUri() + "/overridden").setBody(constant("Hello World"));
             }
         };
     }

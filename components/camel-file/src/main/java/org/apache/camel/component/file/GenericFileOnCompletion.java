@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
@@ -41,9 +42,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private final GenericFile<T> file;
     private final String absoluteFileName;
 
-    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
-                                   GenericFileProcessStrategy processStrategy, GenericFile<T> file,
-                                   String absoluteFileName) {
+    public GenericFileOnCompletion(
+            GenericFileEndpoint<T> endpoint,
+            GenericFileOperations<T> operations,
+            GenericFileProcessStrategy processStrategy,
+            GenericFile<T> file,
+            String absoluteFileName) {
         this.endpoint = endpoint;
         this.operations = operations;
         this.processStrategy = processStrategy;

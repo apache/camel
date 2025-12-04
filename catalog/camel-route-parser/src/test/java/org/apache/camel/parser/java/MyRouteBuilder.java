@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -22,10 +23,6 @@ public class MyRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("timer:foo")
-                .log("I was here")
-                .toD("log:a")
-                .wireTap("mock:tap")
-                .to("log:b");
+        from("timer:foo").log("I was here").toD("log:a").wireTap("mock:tap").to("log:b");
     }
 }

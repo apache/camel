@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.spring;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -22,9 +26,6 @@ import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.test.spring.junit5.EnableRouteDump;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableRouteDump
 public class CamelSpringRouteProcessorDumpRouteTest extends CamelSpringPlainTest {
@@ -44,5 +45,4 @@ public class CamelSpringRouteProcessorDumpRouteTest extends CamelSpringPlainTest
         assertNotNull(names);
         assertTrue(names.length > 0);
     }
-
 }

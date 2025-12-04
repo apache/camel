@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.amqp;
+
+import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.function.Consumer;
 
@@ -36,10 +41,6 @@ import org.apache.qpid.jms.message.JmsMessage;
 import org.apache.qpid.jms.provider.amqp.message.AmqpJmsMessageFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AMQPRouteTest extends AMQPTestSupport {
 
@@ -98,8 +99,11 @@ public class AMQPRouteTest extends AMQPTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         // default doesn't map annotations to headers
         resultEndpoint.message(0).header("JMS_AMQP_MA_cheese").isNull();
-        sendAmqpMessage(contextExtension.getContext().getComponent("amqp-customized", AMQPComponent.class),
-                "ping", expectedBody, facade -> {
+        sendAmqpMessage(
+                contextExtension.getContext().getComponent("amqp-customized", AMQPComponent.class),
+                "ping",
+                expectedBody,
+                facade -> {
                     try {
                         facade.setApplicationProperty("cheese", 123);
                         facade.setTracingAnnotation("cheese", 456);
@@ -115,8 +119,11 @@ public class AMQPRouteTest extends AMQPTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
         resultEndpoint.message(0).header("JMS_AMQP_MA_cheese").isEqualTo(456);
-        sendAmqpMessage(contextExtension.getContext().getComponent("amqp-customized2", AMQPComponent.class),
-                "ping2", expectedBody, facade -> {
+        sendAmqpMessage(
+                contextExtension.getContext().getComponent("amqp-customized2", AMQPComponent.class),
+                "ping2",
+                expectedBody,
+                facade -> {
                     try {
                         facade.setApplicationProperty("cheese", 123);
                         facade.setTracingAnnotation("cheese", 456);
@@ -128,13 +135,12 @@ public class AMQPRouteTest extends AMQPTestSupport {
     }
 
     private void sendAmqpMessage(
-            AMQPComponent component, String queue, String body,
-            Consumer<AmqpJmsMessageFacade> messageCustomizer)
+            AMQPComponent component, String queue, String body, Consumer<AmqpJmsMessageFacade> messageCustomizer)
             throws JMSException {
         ConnectionFactory factory = component.getConfiguration().getConnectionFactory();
         try (Connection connection = factory.createConnection();
-             Session session = connection.createSession();
-             MessageProducer producer = session.createProducer(session.createQueue(queue))) {
+                Session session = connection.createSession();
+                MessageProducer producer = session.createProducer(session.createQueue(queue))) {
             TextMessage message = session.createTextMessage(body);
             messageCustomizer.accept((AmqpJmsMessageFacade) ((JmsMessage) message).getFacade());
             producer.send(message);
@@ -159,32 +165,19 @@ public class AMQPRouteTest extends AMQPTestSupport {
     private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("amqp-customized:queue:ping")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-customized:queue:ping").to("log:routing").to("mock:result");
 
-                from("amqp-customized2:queue:ping2")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-customized2:queue:ping2").to("log:routing").to("mock:result");
 
-                from("amqp-customized:queue:inOut")
-                        .setBody().constant("response");
+                from("amqp-customized:queue:inOut").setBody().constant("response");
 
-                from("amqp-customized:topic:ping")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-customized:topic:ping").to("log:routing").to("mock:result");
 
-                from("amqp-customized:topic:ping")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-customized:topic:ping").to("log:routing").to("mock:result");
 
-                from("amqp-customized:queue:wildcard.#")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp-customized:queue:wildcard.#").to("log:routing").to("mock:result");
 
-                from("amqp:queue:uriEndpoint")
-                        .to("log:routing")
-                        .to("mock:result");
+                from("amqp:queue:uriEndpoint").to("log:routing").to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -60,17 +61,21 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
 
                 // the seda:start could be any other kind of fire and forget
                 // endpoint
-                from("seda:start").to("log:start", "mock:start").transform(body().prepend("Hello ")).process(new Processor() {
-                    private int counter;
+                from("seda:start")
+                        .to("log:start", "mock:start")
+                        .transform(body().prepend("Hello "))
+                        .process(new Processor() {
+                            private int counter;
 
-                    @Override
-                    public void process(Exchange exchange) {
-                        // fail the first 3 times
-                        if (counter++ <= 3) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                    }
-                }).to("mock:result");
+                            @Override
+                            public void process(Exchange exchange) {
+                                // fail the first 3 times
+                                if (counter++ <= 3) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
@@ -98,5 +103,4 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
             }
         }
     }
-
 }

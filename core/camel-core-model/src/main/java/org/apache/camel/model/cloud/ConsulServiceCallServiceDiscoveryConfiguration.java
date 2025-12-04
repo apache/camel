@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -34,29 +35,38 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlAttribute
     private String url;
+
     @XmlAttribute
     private String datacenter;
+
     @XmlAttribute
     @Metadata(label = "security")
     private String aclToken;
+
     @XmlAttribute
     @Metadata(label = "security")
     private String userName;
+
     @XmlAttribute
     @Metadata(label = "security")
     private String password;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String connectTimeoutMillis;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String readTimeoutMillis;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Long")
     private String writeTimeoutMillis;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "10")
     private String blockSeconds = Integer.toString(10);
+
     @XmlTransient
     private SSLContextParameters sslContextParameters;
 
@@ -289,7 +299,8 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     /**
      * To configure security using SSLContextParameters.
      */
-    public ConsulServiceCallServiceDiscoveryConfiguration sslContextParameters(SSLContextParameters sslContextParameters) {
+    public ConsulServiceCallServiceDiscoveryConfiguration sslContextParameters(
+            SSLContextParameters sslContextParameters) {
         setSslContextParameters(sslContextParameters);
         return this;
     }

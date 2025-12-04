@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.dataformat;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,15 +36,20 @@ import org.apache.camel.spi.Metadata;
 public class BarcodeDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(enums = "AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION",
-              defaultValue = "QR_CODE")
+    @Metadata(
+            enums =
+                    "AZTEC,CODABAR,CODE_39,CODE_93,CODE_128,DATA_MATRIX,EAN_8,EAN_13,ITF,MAXICODE,PDF_417,QR_CODE,RSS_14,RSS_EXPANDED,UPC_A,UPC_E,UPC_EAN_EXTENSION",
+            defaultValue = "QR_CODE")
     private String barcodeFormat;
+
     @XmlAttribute
     @Metadata(enums = "JPG,GIF,PNG", defaultValue = "PNG")
     private String imageType;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "100")
     private String width;
+
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "100")
     private String height;

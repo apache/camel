@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven.packaging.endpoint;
 
 import org.apache.camel.spi.Metadata;
 
 public final class SomeConstants {
     @Deprecated
-    @Metadata(description = "key full desc", label = "my label", displayName = "my display name",
-              javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum", required = true,
-              defaultValue = "VAL1", deprecationNote = "my deprecated note", secret = true)
+    @Metadata(
+            description = "key full desc",
+            label = "my label",
+            displayName = "my display name",
+            javaType = "org.apache.camel.maven.packaging.endpoint.SomeEndpoint$MyEnum",
+            required = true,
+            defaultValue = "VAL1",
+            deprecationNote = "my deprecated note",
+            secret = true)
     public static final String KEY_FULL = "KEY_FULL";
+
     @Metadata
     public static final String KEY_EMPTY = "KEY_EMPTY";
     /**
@@ -32,6 +40,5 @@ public final class SomeConstants {
     @Metadata
     public static final String KEY_EMPTY_WITH_JAVA_DOC = "KEY_EMPTY_WITH_JAVA_DOC";
 
-    private SomeConstants() {
-    }
+    private SomeConstants() {}
 }

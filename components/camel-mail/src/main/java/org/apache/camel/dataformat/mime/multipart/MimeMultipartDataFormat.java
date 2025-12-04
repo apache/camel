@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.mime.multipart;
 
 import java.io.ByteArrayOutputStream;
@@ -65,7 +66,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
-    private static final String[] STANDARD_HEADERS = { "Message-ID", "MIME-Version", "Content-Type" };
+    private static final String[] STANDARD_HEADERS = {"Message-ID", "MIME-Version", "Content-Type"};
     private String multipartSubType = "mixed";
     private boolean multipartWithoutAttachment;
     private boolean headersInline;
@@ -124,7 +125,9 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream)
             throws NoTypeConversionAvailableException, MessagingException, IOException {
-        if (multipartWithoutAttachment || headersInline || exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+        if (multipartWithoutAttachment
+                || headersInline
+                || exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             ContentType contentType = getContentType(exchange);
             // remove the Content-Type header. This will be wrong afterwards...
             exchange.getMessage().removeHeader(Exchange.CONTENT_TYPE);
@@ -137,7 +140,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             mp.addBodyPart(part);
             if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
                 List<String> idsToRemove = new ArrayList<>();
-                for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects()
+                for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class)
+                        .getAttachmentObjects()
                         .entrySet()) {
                     String attachmentFilename = entry.getKey();
                     Attachment attachment = entry.getValue();
@@ -170,7 +174,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             // copy headers if required and if the content can be converted into
             // a String
             if (headersInline && includeHeadersPattern != null) {
-                for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+                for (Map.Entry<String, Object> entry :
+                        exchange.getIn().getHeaders().entrySet()) {
                     if (includeHeadersPattern.matcher(entry.getKey()).matches()) {
                         String headerStr = ExchangeHelper.convertToType(exchange, String.class, entry.getValue());
                         if (headerStr != null) {
@@ -296,8 +301,10 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
                     Header header = headers.nextElement();
                     camelAttachment.addHeader(header.getName(), header.getValue());
                 }
-                camelMessage.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(getAttachmentKey(bp),
-                        camelAttachment);
+                camelMessage
+                        .getExchange()
+                        .getMessage(AttachmentMessage.class)
+                        .addAttachmentObject(getAttachmentKey(bp), camelAttachment);
             }
         }
         if (content instanceof BodyPart) {
@@ -351,5 +358,4 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             this.includeHeadersPattern = Pattern.compile(includeHeaders, Pattern.CASE_INSENSITIVE);
         }
     }
-
 }

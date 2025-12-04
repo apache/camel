@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -25,18 +30,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisabledOnOs(OS.AIX)
 public class ManagedTracerTest extends ManagementTestSupport {
 
     @Test
     public void testDefaultTracer() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=DefaultTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=DefaultTracer");
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
@@ -58,8 +59,8 @@ public class ManagedTracerTest extends ManagementTestSupport {
     @Test
     public void testDefaultTracerPattern() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on
-                = new ObjectName("org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=DefaultTracer");
+        ObjectName on = new ObjectName(
+                "org.apache.camel:context=" + context.getManagementName() + ",type=tracer,name=DefaultTracer");
         assertNotNull(on);
         assertTrue(mbeanServer.isRegistered(on));
 
@@ -90,11 +91,8 @@ public class ManagedTracerTest extends ManagementTestSupport {
                 context.setUseBreadcrumb(false);
                 context.setTracing(true);
 
-                from("direct:start")
-                        .to("mock:foo").id("foo")
-                        .to("mock:bar").id("bar");
+                from("direct:start").to("mock:foo").id("foo").to("mock:bar").id("bar");
             }
         };
     }
-
 }

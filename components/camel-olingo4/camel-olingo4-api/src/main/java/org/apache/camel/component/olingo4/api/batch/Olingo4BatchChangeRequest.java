@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4.api.batch;
 
 import java.util.Map;
@@ -41,9 +42,19 @@ public class Olingo4BatchChangeRequest extends Olingo4BatchRequest {
 
     @Override
     public String toString() {
-        return new StringBuilder("Batch Change Request{ ").append(resourceUri).append("/").append(resourcePath)
-                .append(", headers=").append(headers).append(", contentId=")
-                .append(contentId).append(", operation=").append(operation).append(", body=").append(body).append('}')
+        return new StringBuilder("Batch Change Request{ ")
+                .append(resourceUri)
+                .append("/")
+                .append(resourcePath)
+                .append(", headers=")
+                .append(headers)
+                .append(", contentId=")
+                .append(contentId)
+                .append(", operation=")
+                .append(operation)
+                .append(", body=")
+                .append(body)
+                .append('}')
                 .toString();
     }
 

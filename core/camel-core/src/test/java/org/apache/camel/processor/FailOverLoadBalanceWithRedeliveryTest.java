@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,7 +63,8 @@ public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
                         // service call
                         // but we use mock for unit testing so no error handler here
                         // please
-                        .errorHandler(noErrorHandler()).to("mock:a")
+                        .errorHandler(noErrorHandler())
+                        .to("mock:a")
                         .throwException(new IllegalArgumentException("I cannot do this"));
 
                 from("direct:b")
@@ -72,7 +74,9 @@ public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
                         // service call
                         // but we use mock for unit testing so no error handler here
                         // please
-                        .errorHandler(noErrorHandler()).to("mock:b").process(new Processor() {
+                        .errorHandler(noErrorHandler())
+                        .to("mock:b")
+                        .process(new Processor() {
                             public void process(Exchange exchange) {
                                 // fail on the first try but succeed on the 2nd try
                                 if (counter++ < 1) {
@@ -80,7 +84,8 @@ public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
                                 }
                                 exchange.getIn().setBody("Bye World");
                             }
-                        }).to("mock:result");
+                        })
+                        .to("mock:result");
             }
         };
     }

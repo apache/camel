@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.parquet.avro;
+
+import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
+import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
 
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
@@ -44,9 +48,6 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.parquet.hadoop.ParquetFileWriter.Mode.OVERWRITE;
-import static org.apache.parquet.hadoop.metadata.CompressionCodecName.GZIP;
-
 @Dataformat("parquetAvro")
 public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
@@ -71,9 +72,8 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
         FileSystem.get(conf).setWriteChecksum(false);
 
         BufferedOutputStream parquetOutput = new BufferedOutputStream(stream);
-        ParquetOutputStream parquetOutputStream = new ParquetOutputStream(
-                DEFAULT_UUID_GENERATOR.generateUuid(),
-                parquetOutput);
+        ParquetOutputStream parquetOutputStream =
+                new ParquetOutputStream(DEFAULT_UUID_GENERATOR.generateUuid(), parquetOutput);
 
         List<?> list = (List<?>) graph;
 
@@ -110,9 +110,8 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
         // unmarshal from the input stream of parquet-avro to Java object or GenericRecord (graph)
         Configuration conf = new Configuration();
 
-        ParquetInputStream parquetInputStream = new ParquetInputStream(
-                DEFAULT_UUID_GENERATOR.generateUuid(),
-                stream.readAllBytes());
+        ParquetInputStream parquetInputStream =
+                new ParquetInputStream(DEFAULT_UUID_GENERATOR.generateUuid(), stream.readAllBytes());
 
         Class<?> type = GenericRecord.class;
         GenericData model = GenericData.get();
@@ -128,8 +127,7 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
 
         if (lazyLoad) {
             ParquetIterator<?> iterator = new ParquetIterator<>(builder.build());
-            exchange.getExchangeExtension()
-                    .addOnCompletion(new ParquetUnmarshalOnCompletion(iterator));
+            exchange.getExchangeExtension().addOnCompletion(new ParquetUnmarshalOnCompletion(iterator));
             return iterator;
         } else {
             try (ParquetReader<?> reader = builder.build()) {
@@ -194,5 +192,4 @@ public class ParquetAvroDataFormat extends ServiceSupport implements DataFormat,
     public void setLazyLoad(boolean lazyLoad) {
         this.lazyLoad = lazyLoad;
     }
-
 }

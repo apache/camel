@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow.handlers;
 
 import java.util.ArrayList;
@@ -39,12 +40,12 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 public class RestRootHandler implements HttpHandler {
 
-    private static final List<String> METHODS
-            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
+    private static final List<String> METHODS =
+            Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     private final Set<UndertowConsumer> consumers = new CopyOnWriteArraySet<>();
 
-    //private int port; // unread field
+    // private int port; // unread field
     private String token;
     private int len;
 
@@ -52,7 +53,7 @@ public class RestRootHandler implements HttpHandler {
      * Initializes this handler with the given port.
      */
     public void init(int port) {
-        //this.port = port;
+        // this.port = port;
         this.token = ":" + port;
         this.len = token.length();
     }
@@ -62,7 +63,8 @@ public class RestRootHandler implements HttpHandler {
      */
     public void addConsumer(UndertowConsumer consumer) {
         consumers.add(consumer);
-        RestConsumerContextPathMatcher.register(consumer.getEndpoint().getHttpURI().getPath());
+        RestConsumerContextPathMatcher.register(
+                consumer.getEndpoint().getHttpURI().getPath());
     }
 
     /**
@@ -70,7 +72,8 @@ public class RestRootHandler implements HttpHandler {
      */
     public void removeConsumer(UndertowConsumer consumer) {
         consumers.remove(consumer);
-        RestConsumerContextPathMatcher.unRegister(consumer.getEndpoint().getHttpURI().getPath());
+        RestConsumerContextPathMatcher.unRegister(
+                consumer.getEndpoint().getHttpURI().getPath());
     }
 
     /**
@@ -89,10 +92,11 @@ public class RestRootHandler implements HttpHandler {
             handler.handleRequest(httpServerExchange);
         } else {
             // okay we cannot process this requires so return either 404 or 405.
-            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same"
+            // request
             boolean hasAnyMethod = METHODS.stream().anyMatch(m -> isHttpMethodAllowed(httpServerExchange, m));
             if (hasAnyMethod) {
-                //method match error, return 405
+                // method match error, return 405
                 httpServerExchange.setStatusCode(405);
                 httpServerExchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
                 httpServerExchange.getResponseSender().send("Method not allowed");
@@ -126,8 +130,8 @@ public class RestRootHandler implements HttpHandler {
             paths.add(new RestConsumerPath(consumer));
         }
 
-        RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer> best
-                = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<UndertowConsumer> best =
+                RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
             answer = best.getConsumer();
         }
@@ -147,7 +151,8 @@ public class RestRootHandler implements HttpHandler {
         }
 
         // extra filter by restrict
-        candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
+        candidates = candidates.stream()
+                .filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict()))
                 .collect(Collectors.toList());
         if (candidates.size() == 1) {
             answer = candidates.get(0);
@@ -180,5 +185,4 @@ public class RestRootHandler implements HttpHandler {
     private boolean isHttpMethodAllowed(HttpServerExchange httpServerExchange, String method) {
         return getHandler(httpServerExchange, method) != null;
     }
-
 }

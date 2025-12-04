@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateInstanceRmqFunctional1Test extends CamelTestSupport {
     private static final String ACCESS_KEY = "replace_this_with_access_key";
@@ -60,24 +61,23 @@ public class CreateInstanceRmqFunctional1Test extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:operation")
-                        .to("hwcloud-dms:createInstance?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true" +
-                            "&engine=rabbitmq" +
-
-                            "&name=" + NAME +
-                            "&engineVersion=" + ENGINE_VERSION +
-                            "&storageSpace=" + STORAGE_SPACE +
-                            "&accessUser=" + ACCESS_USER +
-                            "&password=" + PASSWORD +
-                            "&vpcId=" + VPC_ID +
-                            "&securityGroupId=" + SECURITY_GROUP_ID +
-                            "&subnetId=" + SUBNET_ID +
-                            "&availableZones=#availableZones" +
-                            "&productId=" + PRODUCT_ID +
-                            "&storageSpecCode=" + STORAGE_SPEC_CODE)
+                        .to("hwcloud-dms:createInstance?" + "serviceKeys=#serviceKeys"
+                                + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true"
+                                + "&engine=rabbitmq"
+                                + "&name="
+                                + NAME + "&engineVersion="
+                                + ENGINE_VERSION + "&storageSpace="
+                                + STORAGE_SPACE + "&accessUser="
+                                + ACCESS_USER + "&password="
+                                + PASSWORD + "&vpcId="
+                                + VPC_ID + "&securityGroupId="
+                                + SECURITY_GROUP_ID + "&subnetId="
+                                + SUBNET_ID + "&availableZones=#availableZones"
+                                + "&productId="
+                                + PRODUCT_ID + "&storageSpecCode="
+                                + STORAGE_SPEC_CODE)
                         .log("Operation successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:operation_result");

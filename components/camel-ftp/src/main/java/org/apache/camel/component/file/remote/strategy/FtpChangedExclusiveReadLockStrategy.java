@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.strategy;
 
 import java.time.Duration;
@@ -50,8 +51,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
     @Override
     public boolean acquireExclusiveReadLock(
-            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
         BlockingTask task = Tasks.foregroundTask()
@@ -64,8 +64,11 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
         ExclusiveReadLockCheck exclusiveReadLockCheck = new ExclusiveReadLockCheck(fastExistsCheck, minAge, minLength);
 
-        if (!task.run(exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
-            CamelLogger.log(LOG, readLockLoggingLevel,
+        if (!task.run(
+                exchange.getContext(), () -> exclusiveReadLockCheck.tryAcquireExclusiveReadLock(operations, file))) {
+            CamelLogger.log(
+                    LOG,
+                    readLockLoggingLevel,
                     "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
 
             return false;
@@ -76,22 +79,19 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
     @Override
     public void releaseExclusiveReadLockOnAbort(
-            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnRollback(
-            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         // noop
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(
-            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange)
-            throws Exception {
+            GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         // noop
     }
 

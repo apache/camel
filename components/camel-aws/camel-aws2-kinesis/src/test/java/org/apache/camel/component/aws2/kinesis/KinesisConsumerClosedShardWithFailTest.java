@@ -14,7 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -39,21 +50,12 @@ import software.amazon.awssdk.services.kinesis.model.SequenceNumberRange;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class KinesisConsumerClosedShardWithFailTest {
 
     @Mock
     private KinesisClient kinesisClient;
+
     @Mock
     private AsyncProcessor processor;
 
@@ -64,19 +66,20 @@ public class KinesisConsumerClosedShardWithFailTest {
 
     @BeforeEach
     public void setup() {
-        SequenceNumberRange range = SequenceNumberRange.builder().endingSequenceNumber("20").build();
-        Shard shard = Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
+        SequenceNumberRange range =
+                SequenceNumberRange.builder().endingSequenceNumber("20").build();
+        Shard shard =
+                Shard.builder().shardId("shardId").sequenceNumberRange(range).build();
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
 
-        when(kinesisClient
-                .getRecords(any(GetRecordsRequest.class)))
+        when(kinesisClient.getRecords(any(GetRecordsRequest.class)))
                 .thenReturn(GetRecordsResponse.builder().nextShardIterator(null).build());
-        when(kinesisClient
-                .getShardIterator(any(GetShardIteratorRequest.class)))
-                .thenReturn(GetShardIteratorResponse.builder().shardIterator("shardIterator").build());
-        when(kinesisClient
-                .listShards(any(ListShardsRequest.class)))
+        when(kinesisClient.getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenReturn(GetShardIteratorResponse.builder()
+                        .shardIterator("shardIterator")
+                        .build());
+        when(kinesisClient.listShards(any(ListShardsRequest.class)))
                 .thenReturn(ListShardsResponse.builder().shards(shardList).build());
 
         component.start();
@@ -107,10 +110,9 @@ public class KinesisConsumerClosedShardWithFailTest {
             underTest.poll();
         });
 
-        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap
-                = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
-        final ArgumentCaptor<ListShardsRequest> getListShardsCap
-                = ArgumentCaptor.forClass(ListShardsRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap =
+                ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+        final ArgumentCaptor<ListShardsRequest> getListShardsCap = ArgumentCaptor.forClass(ListShardsRequest.class);
 
         verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
         assertThat(getShardIteratorReqCap.getValue().streamName(), is("streamName"));

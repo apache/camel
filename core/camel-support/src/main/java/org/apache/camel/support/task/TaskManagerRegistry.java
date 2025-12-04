@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.task;
 
 import java.util.Set;
@@ -44,5 +45,4 @@ public interface TaskManagerRegistry extends StaticService {
      * Gets the current list of tasks
      */
     Set<Task> getTasks();
-
 }

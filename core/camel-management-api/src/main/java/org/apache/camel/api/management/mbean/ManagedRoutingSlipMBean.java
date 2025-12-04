@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.api.management.mbean;
 
 import javax.management.openmbean.TabularData;
@@ -26,21 +27,24 @@ public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean, ManagedE
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.",
-                      mask = true)
+    @ManagedAttribute(
+            description =
+                    "Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.",
+            mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "The uri delimiter to use")
     String getUriDelimiter();
 
-    @ManagedAttribute(description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
+    @ManagedAttribute(
+            description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers")
     Integer getCacheSize();
 
-    @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
+    @ManagedAttribute(
+            description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoints();
 
     @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
-
 }

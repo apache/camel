@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.validator;
 
 import java.nio.charset.StandardCharsets;
@@ -83,9 +84,11 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("validator:pd:somefile.xsd").convertBodyTo(String.class).to("log:after")
+                from("direct:start")
+                        .to("validator:pd:somefile.xsd")
+                        .convertBodyTo(String.class)
+                        .to("log:after")
                         .to("mock:result");
-
             }
         };
     }
@@ -93,9 +96,11 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
     private class Sender implements Runnable {
 
         private final String message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + //
-                                       "<p:TestMessage xmlns:p=\"http://apache.camel.org/test\">" + //
-                                       "<MessageContent>MessageContent</MessageContent>" + //
-                                       "</p:TestMessage>";
+                "<p:TestMessage xmlns:p=\"http://apache.camel.org/test\">"
+                + //
+                "<MessageContent>MessageContent</MessageContent>"
+                + //
+                "</p:TestMessage>";
 
         private final byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
 
@@ -111,7 +116,6 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
                 sendBody("direct:start", messageBytes);
             }
         }
-
     }
 
     private class ClearCache implements Runnable {
@@ -127,7 +131,6 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     private void clearCachedSchema() {
@@ -145,5 +148,4 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
             }
         }
     }
-
 }

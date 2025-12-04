@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -69,8 +70,8 @@ public interface PollDynamicAware extends Service, CamelContextAware {
         private final Map<String, Object> properties;
         private final Map<String, Object> lenientProperties;
 
-        public DynamicAwareEntry(String uri, String originalUri, Map<String, Object> properties,
-                                 Map<String, Object> lenientProperties) {
+        public DynamicAwareEntry(
+                String uri, String originalUri, Map<String, Object> properties, Map<String, Object> lenientProperties) {
             this.uri = uri;
             this.originalUri = originalUri;
             this.properties = properties;
@@ -115,5 +116,4 @@ public interface PollDynamicAware extends Service, CamelContextAware {
      * @throws Exception is thrown if error resolving the static uri.
      */
     String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception;
-
 }

@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.stepfunctions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.regions.Region;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StepFunctions2ComponentConfigurationTest extends CamelTestSupport {
 
@@ -31,7 +32,8 @@ public class StepFunctions2ComponentConfigurationTest extends CamelTestSupport {
         StepFunctions2Component component = context.getComponent("aws2-step-functions", StepFunctions2Component.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint) component.createEndpoint("aws2-step-functions://label");
+        StepFunctions2Endpoint endpoint =
+                (StepFunctions2Endpoint) component.createEndpoint("aws2-step-functions://label");
 
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
@@ -43,9 +45,8 @@ public class StepFunctions2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        StepFunctions2Endpoint endpoint
-                = (StepFunctions2Endpoint) component
-                        .createEndpoint("aws2-step-functions://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint) component.createEndpoint(
+                "aws2-step-functions://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
@@ -58,8 +59,8 @@ public class StepFunctions2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint) component
-                .createEndpoint(
+        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint)
+                component.createEndpoint(
                         "aws2-step-functions://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
@@ -76,8 +77,8 @@ public class StepFunctions2ComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Region.US_WEST_1.toString());
-        StepFunctions2Endpoint endpoint
-                = (StepFunctions2Endpoint) component.createEndpoint(
+        StepFunctions2Endpoint endpoint = (StepFunctions2Endpoint)
+                component.createEndpoint(
                         "aws2-step-functions://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&overrideEndpoint=true&uriEndpointOverride=http://localhost:9090");
 
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());

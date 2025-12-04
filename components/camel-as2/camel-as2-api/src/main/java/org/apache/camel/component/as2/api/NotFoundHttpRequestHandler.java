@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
@@ -27,7 +28,8 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 public class NotFoundHttpRequestHandler implements HttpRequestHandler {
 
     @Override
-    public void handle(ClassicHttpRequest classicHttpRequest, ClassicHttpResponse classicHttpResponse, HttpContext httpContext)
+    public void handle(
+            ClassicHttpRequest classicHttpRequest, ClassicHttpResponse classicHttpResponse, HttpContext httpContext)
             throws HttpException, IOException {
         classicHttpResponse.setCode(404);
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file;
 
 import java.io.File;
@@ -44,8 +45,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Read and write files.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName",
-             category = { Category.FILE, Category.CORE }, headersClass = FileConstants.class)
+@UriEndpoint(
+        firstVersion = "1.0.0",
+        scheme = "file",
+        title = "File",
+        syntax = "file:directoryName",
+        category = {Category.FILE, Category.CORE},
+        headersClass = FileConstants.class)
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileEndpoint.class);
@@ -61,35 +67,47 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriPath(name = "directoryName")
     @Metadata(required = true)
     private File file;
+
     @UriParam(label = "advanced")
     protected boolean autoCreateStepwise;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;
+
     @UriParam(label = "advanced")
     private boolean renameUsingCopy;
+
     @UriParam(label = "consumer,advanced")
     private boolean includeHiddenFiles;
+
     @UriParam(label = "consumer,advanced")
     private boolean includeHiddenDirs;
+
     @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustExist;
+
     @UriParam(label = "consumer,advanced")
     private boolean startingDirectoryMustHaveAccess;
+
     @UriParam(label = "consumer,advanced")
     private boolean directoryMustExist;
+
     @UriParam(label = "consumer,advanced")
     private boolean probeContentType;
+
     @UriParam(label = "consumer,advanced")
     private String extendedAttributes;
+
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean forceWrites = true;
+
     @UriParam(label = "producer,advanced")
     private String chmod;
+
     @UriParam(label = "producer,advanced")
     private String chmodDirectory;
 
-    public FileEndpoint() {
-    }
+    public FileEndpoint() {}
 
     public FileEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -114,7 +132,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         // if idempotent and no repository set, then create a default one
         if (isIdempotentSet() && Boolean.TRUE.equals(isIdempotent()) && idempotentRepository == null) {
-            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            LOG.info(
+                    "Using default memory based idempotent repository with cache max size: {}",
+                    DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
@@ -151,8 +171,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+            LOG.debug(
+                    "Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(),
+                    isPollingConsumerBlockWhenFull(),
                     getPollingConsumerBlockTimeout());
         }
         GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
@@ -170,7 +192,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         // you cannot use temp file and file exists append
         if (getFileExist() == GenericFileExist.Append && (getTempPrefix() != null || getTempFileName() != null)) {
-            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
+            throw new IllegalArgumentException(
+                    "You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
 
         // ensure fileExist and moveExisting are configured correctly if in use
@@ -420,8 +443,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         }
 
         String chmodString = chmod.substring(chmod.length() - 3); // if 4 digits
-                                                                 // chop off
-                                                                 // leading one
+        // chop off
+        // leading one
 
         int ownerValue = Integer.parseInt(chmodString.substring(0, 1));
         int groupValue = Integer.parseInt(chmodString.substring(1, 2));
@@ -537,5 +560,4 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             throw new IllegalArgumentException("chmodDirectory option [" + chmodDirectory + "] is not valid");
         }
     }
-
 }

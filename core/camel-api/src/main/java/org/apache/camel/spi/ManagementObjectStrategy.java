@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -55,17 +56,19 @@ public interface ManagementObjectStrategy {
 
     Object getManagedObjectForProducer(CamelContext context, Producer producer);
 
-    Object getManagedObjectForProcessor(
-            CamelContext context, Processor processor,
-            NamedNode definition, Route route);
+    Object getManagedObjectForProcessor(CamelContext context, Processor processor, NamedNode definition, Route route);
 
     Object getManagedObjectForService(CamelContext context, Service service);
 
     Object getManagedObjectForClusterService(CamelContext context, CamelClusterService service);
 
     Object getManagedObjectForThreadPool(
-            CamelContext context, ThreadPoolExecutor threadPool,
-            String id, String sourceId, String routeId, String threadPoolProfileId);
+            CamelContext context,
+            ThreadPoolExecutor threadPool,
+            String id,
+            String sourceId,
+            String routeId,
+            String threadPoolProfileId);
 
     Object getManagedObjectForEventNotifier(CamelContext context, EventNotifier eventNotifier);
 }

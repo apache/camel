@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.http;
 
 import java.util.List;
@@ -41,8 +42,13 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
     private final String bearerToken;
     private final HttpCredentialsHelper credentialsHelper;
 
-    public DefaultAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host, String bearerToken,
-                                                     HttpCredentialsHelper credentialsHelper) {
+    public DefaultAuthenticationHttpClientConfigurer(
+            String user,
+            String pwd,
+            String domain,
+            String host,
+            String bearerToken,
+            HttpCredentialsHelper credentialsHelper) {
         this.username = user;
         this.password = pwd == null ? new char[0] : pwd.toCharArray();
         this.domain = domain;
@@ -57,7 +63,7 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
         if (domain != null) {
             defaultcreds = new NTCredentials(username, password, host, domain);
             // NTLM is not included by default so we need to rebuild the registry to include NTLM
-            var autoSchemes = RegistryBuilder.<AuthSchemeFactory> create()
+            var autoSchemes = RegistryBuilder.<AuthSchemeFactory>create()
                     .register(StandardAuthScheme.BASIC, BasicSchemeFactory.INSTANCE)
                     .register(StandardAuthScheme.DIGEST, DigestSchemeFactory.INSTANCE)
                     .register(StandardAuthScheme.BEARER, BearerSchemeFactory.INSTANCE)
@@ -69,9 +75,7 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
                     .setTargetPreferredAuthSchemes(List.of(StandardAuthScheme.NTLM))
                     .build();
 
-            clientBuilder
-                    .setDefaultAuthSchemeRegistry(autoSchemes)
-                    .setDefaultRequestConfig(requestConfig);
+            clientBuilder.setDefaultAuthSchemeRegistry(autoSchemes).setDefaultRequestConfig(requestConfig);
 
             clientBuilder.setDefaultAuthSchemeRegistry(autoSchemes);
         } else if (bearerToken != null) {
@@ -79,8 +83,6 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
         } else {
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
-        clientBuilder.setDefaultCredentialsProvider(credentialsHelper
-                .getCredentialsProvider(host, null, defaultcreds));
+        clientBuilder.setDefaultCredentialsProvider(credentialsHelper.getCredentialsProvider(host, null, defaultcreds));
     }
-
 }

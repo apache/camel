@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -33,12 +34,15 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
     @XmlAttribute
     @Metadata(javaType = "org.apache.camel.spi.TransactedPolicy")
     private String transactedPolicyRef;
+
     @XmlAttribute
-    @Metadata(javaType = "org.apache.camel.LoggingLevel", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
+    @Metadata(
+            javaType = "org.apache.camel.LoggingLevel",
+            defaultValue = "WARN",
+            enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private String rollbackLoggingLevel;
 
-    public TransactionErrorHandlerDefinition() {
-    }
+    public TransactionErrorHandlerDefinition() {}
 
     public TransactionErrorHandlerDefinition(TransactionErrorHandlerDefinition source) {
         super(source);
@@ -129,5 +133,4 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
         setRollbackLoggingLevel(rollbackLoggingLevel.name());
         return this;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.model;
 
 import java.util.Map;
@@ -35,13 +36,21 @@ public class DependencyRuntimeDTO {
     private String camelQuarkusBomGroupId;
     private String camelQuarkusBomArtifactId;
 
-    public DependencyRuntimeDTO() {
-    }
+    public DependencyRuntimeDTO() {}
 
-    public DependencyRuntimeDTO(String runtime, String camelVersion, String camelSpringBootVersion, String camelQuarkusVersion,
-                                String springBootVersion, String quarkusVersion, String camelSpringBootBomGroupId,
-                                String camelSpringBootBomArtifactId, String quarkusBomGroupId, String quarkusBomArtifactId,
-                                String camelQuarkusBomGroupId, String camelQuarkusBomArtifactId) {
+    public DependencyRuntimeDTO(
+            String runtime,
+            String camelVersion,
+            String camelSpringBootVersion,
+            String camelQuarkusVersion,
+            String springBootVersion,
+            String quarkusVersion,
+            String camelSpringBootBomGroupId,
+            String camelSpringBootBomArtifactId,
+            String quarkusBomGroupId,
+            String quarkusBomArtifactId,
+            String camelQuarkusBomGroupId,
+            String camelQuarkusBomArtifactId) {
         this.runtime = runtime;
         this.camelVersion = camelVersion;
         this.camelSpringBootVersion = camelSpringBootVersion;

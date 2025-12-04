@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
@@ -25,9 +29,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(InvokeFunctionServiceKeyFunctionalTest.class.getName());
@@ -47,13 +48,12 @@ public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
             public void configure() {
                 from("direct:invoke_function")
                         .setProperty(FunctionGraphProperties.XCFFLOGTYPE, constant("tail"))
-                        .to("hwcloud-functiongraph:invokeFunction?" +
-                            "serviceKeys=#serviceKeys" +
-                            "&functionName=" + FUNCTION_NAME +
-                            "&functionPackage=" + FUNCTION_PACKAGE +
-                            "&projectId=" + PROJECT_ID +
-                            "&region=" + REGION +
-                            "&ignoreSslVerification=true")
+                        .to("hwcloud-functiongraph:invokeFunction?" + "serviceKeys=#serviceKeys"
+                                + "&functionName="
+                                + FUNCTION_NAME + "&functionPackage="
+                                + FUNCTION_PACKAGE + "&projectId="
+                                + PROJECT_ID + "&region="
+                                + REGION + "&ignoreSslVerification=true")
                         .log("Invoke function successful")
                         .to("log:LOG?showAll=true")
                         .to("mock:invoke_function_result");
@@ -80,6 +80,10 @@ public class InvokeFunctionServiceKeyFunctionalTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         assertNotNull(responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS));
-        assertTrue(responseExchange.getProperty(FunctionGraphProperties.XCFFLOGS).toString().length() > 0);
+        assertTrue(responseExchange
+                        .getProperty(FunctionGraphProperties.XCFFLOGS)
+                        .toString()
+                        .length()
+                > 0);
     }
 }

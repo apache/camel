@@ -39,5 +39,5 @@ public class TestAWSCredentials implements AwsCredentials {
     public String secretAccessKey() {
         return secretKey;
     }
-
-};
+}
+;

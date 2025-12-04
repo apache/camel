@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier;
 
 import java.util.concurrent.ExecutorService;
@@ -100,9 +101,14 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         boolean isCopy = parseBoolean(definition.getCopy(), true);
 
         WireTapProcessor answer = new WireTapProcessor(
-                dynamicSendProcessor, target, uri,
-                parse(ExchangePattern.class, definition.getPattern()), isCopy,
-                threadPool, shutdownThreadPool, dynamic);
+                dynamicSendProcessor,
+                target,
+                uri,
+                parse(ExchangePattern.class, definition.getPattern()),
+                isCopy,
+                threadPool,
+                shutdownThreadPool,
+                dynamic);
         answer.setDisabled(isDisabled(camelContext, definition));
         Processor prepare = definition.getOnPrepareProcessor();
         if (prepare == null && definition.getOnPrepare() != null) {
@@ -121,5 +127,4 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
             return camelContext.resolveLanguage("constant").createExpression(uri);
         }
     }
-
 }

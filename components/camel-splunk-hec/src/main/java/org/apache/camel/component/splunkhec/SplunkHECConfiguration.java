@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunkhec;
 
 import java.net.UnknownHostException;
@@ -32,25 +33,35 @@ public class SplunkHECConfiguration {
 
     @UriParam(defaultValue = "camel")
     private String index = "camel";
+
     @UriParam(defaultValue = "camel")
     private String sourceType = "camel";
+
     @UriParam(defaultValue = "camel")
     private String source = "camel";
+
     @UriParam
     private String host;
+
     @UriParam(defaultValue = "/services/collector/event")
     private String splunkEndpoint = "/services/collector/event";
+
     @UriParam(label = "security", secret = true)
     @Metadata(required = true)
     private String token;
+
     @UriParam(label = "security")
     private boolean skipTlsVerify;
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean https = true;
+
     @UriParam
     private boolean bodyOnly;
+
     @UriParam
     private boolean headersOnly;
+
     @UriParam
     private Long time;
 
@@ -187,5 +198,4 @@ public class SplunkHECConfiguration {
     public void setTime(Long time) {
         this.time = time;
     }
-
 }

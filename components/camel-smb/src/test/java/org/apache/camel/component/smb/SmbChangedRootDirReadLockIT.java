@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -37,8 +40,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SmbChangedRootDirReadLockIT extends SmbServerTestSupport {
 
@@ -63,7 +64,8 @@ public class SmbChangedRootDirReadLockIT extends SmbServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        String content = context.getTypeConverter().convertTo(String.class, testDirectory.resolve("slowfile.dat").toFile());
+        String content = context.getTypeConverter()
+                .convertTo(String.class, testDirectory.resolve("slowfile.dat").toFile());
         String[] lines = content.split(System.lineSeparator());
         assertEquals(20, lines.length, "There should be 20 lines in the file");
         for (int i = 0; i < 20; i++) {
@@ -75,15 +77,19 @@ public class SmbChangedRootDirReadLockIT extends SmbServerTestSupport {
         try (SMBClient smbClient = new SMBClient()) {
             int port = Integer.parseInt(service.address().split(":")[1]);
             try (Connection connection = smbClient.connect("localhost", port)) {
-                AuthenticationContext ac
-                        = new AuthenticationContext(service.userName(), service.password().toCharArray(), null);
+                AuthenticationContext ac = new AuthenticationContext(
+                        service.userName(), service.password().toCharArray(), null);
                 Session session = connection.authenticate(ac);
 
                 // write file to SMB dir
                 try (DiskShare share = (DiskShare) session.connectShare(service.shareName())) {
-                    try (File f = share.openFile("slowfile.dat", EnumSet.of(AccessMask.FILE_WRITE_DATA),
-                            EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL), SMB2ShareAccess.ALL,
-                            SMB2CreateDisposition.FILE_OPEN_IF, EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
+                    try (File f = share.openFile(
+                            "slowfile.dat",
+                            EnumSet.of(AccessMask.FILE_WRITE_DATA),
+                            EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
+                            SMB2ShareAccess.ALL,
+                            SMB2CreateDisposition.FILE_OPEN_IF,
+                            EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
 
                         int offset = 0;
                         for (int i = 0; i < 20; i++) {

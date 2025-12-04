@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.eventbridge;
 
 import java.io.IOException;
@@ -121,8 +122,8 @@ public class EventbridgeProducer extends DefaultProducer {
     }
 
     private EventbridgeOperations determineOperation(Exchange exchange) {
-        EventbridgeOperations operation
-                = exchange.getIn().getHeader(EventbridgeConstants.OPERATION, EventbridgeOperations.class);
+        EventbridgeOperations operation =
+                exchange.getIn().getHeader(EventbridgeConstants.OPERATION, EventbridgeOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
@@ -136,12 +137,14 @@ public class EventbridgeProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (eventbridgeProducerToString == null) {
-            eventbridgeProducerToString = "EventbridgeProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            eventbridgeProducerToString = "EventbridgeProducer["
+                    + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return eventbridgeProducerToString;
     }
 
-    private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException, IOException {
+    private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange)
+            throws InvalidPayloadException, IOException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof PutRuleRequest) {
@@ -149,7 +152,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.putRule((PutRuleRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("PutRule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "PutRule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -162,8 +167,8 @@ public class EventbridgeProducer extends DefaultProducer {
                 builder.name(ruleName);
             }
             if (ObjectHelper.isEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
-                try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
-                        getConfiguration().getEventPatternFile())) {
+                try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(
+                        this.getEndpoint().getCamelContext(), getConfiguration().getEventPatternFile())) {
                     String eventPattern = IOUtils.toString(s, Charset.defaultCharset());
                     builder.eventPattern(eventPattern);
                 }
@@ -176,7 +181,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.putRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Put Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -192,7 +199,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.putTargets((PutTargetsRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("PutTargets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "PutTargets command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -215,7 +224,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.putTargets(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Put Targets command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -231,7 +242,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.removeTargets((RemoveTargetsRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("RemoveTargets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "RemoveTargets command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -254,7 +267,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.removeTargets(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Remove Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Remove Targets command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -270,7 +285,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.deleteRule((DeleteRuleRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Delete Rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -287,7 +304,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.deleteRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Delete Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -303,7 +322,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.enableRule((EnableRuleRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Enable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Enable Rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -320,7 +341,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.enableRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Enable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Enable Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -336,7 +359,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.disableRule((DisableRuleRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Disable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Disable Rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -353,7 +378,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.disableRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Disable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Disable Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -369,7 +396,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.listRules((ListRulesRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Rules command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Rules command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -386,7 +415,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.listRules(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Disable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Disable Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -402,7 +433,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.describeRule((DescribeRuleRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "Describe Rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -419,7 +452,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.describeRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Describe Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -427,7 +462,8 @@ public class EventbridgeProducer extends DefaultProducer {
         }
     }
 
-    private void listTargetsByRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+    private void listTargetsByRule(EventBridgeClient eventbridgeClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListTargetsByRuleRequest) {
@@ -435,7 +471,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.listTargetsByRule((ListTargetsByRuleRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Targets by Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "List Targets by Rule command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -452,7 +490,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.listTargetsByRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Targets by Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Targets by Rule command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -460,7 +500,8 @@ public class EventbridgeProducer extends DefaultProducer {
         }
     }
 
-    private void listRuleNamesByTarget(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+    private void listRuleNamesByTarget(EventBridgeClient eventbridgeClient, Exchange exchange)
+            throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof ListRuleNamesByTargetRequest) {
@@ -468,7 +509,8 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.listRuleNamesByTarget((ListRuleNamesByTargetRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Rule Name by Targets command returned the error code {}",
+                    LOG.trace(
+                            "List Rule Name by Targets command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
@@ -486,7 +528,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.listRuleNamesByTarget(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Rule by Target command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "List Rule by Target command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -502,7 +546,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.putEvents((PutEventsRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("PutEvents command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace(
+                            "PutEvents command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -512,7 +558,8 @@ public class EventbridgeProducer extends DefaultProducer {
             PutEventsRequest.Builder builder = PutEventsRequest.builder();
             PutEventsRequestEntry.Builder entryBuilder = PutEventsRequestEntry.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN))) {
-                String resourcesArn = exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, String.class);
+                String resourcesArn =
+                        exchange.getIn().getHeader(EventbridgeConstants.EVENT_RESOURCES_ARN, String.class);
                 entryBuilder.resources(Stream.of(resourcesArn.split(",")).toList());
             } else {
                 throw new IllegalArgumentException("At least one resource ARN must be specified");
@@ -537,7 +584,9 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.putEvents(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Events command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace(
+                        "Put Events command returned the error code {}",
+                        ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -558,9 +607,7 @@ public class EventbridgeProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
         healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "producers",
-                WritableHealthCheckRepository.class);
+                getEndpoint().getCamelContext(), "producers", WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
             String id = getEndpoint().getId();
@@ -577,5 +624,4 @@ public class EventbridgeProducer extends DefaultProducer {
             producerHealthCheck = null;
         }
     }
-
 }

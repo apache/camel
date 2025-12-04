@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.cloud;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -33,55 +34,73 @@ public class KubernetesServiceCallServiceDiscoveryConfiguration extends ServiceC
     @XmlAttribute
     @Metadata(defaultValue = "environment", enums = "environment,dns,client")
     private String lookup = "environment";
+
     @XmlAttribute
     @Metadata(label = "dns,dnssrv")
     private String dnsDomain;
+
     @XmlAttribute
     @Metadata(label = "dns,dnssrv")
     private String portName;
+
     @XmlAttribute
     @Metadata(label = "dns,dnssrv")
     private String portProtocol = "tcp";
+
     @XmlAttribute
     private String namespace;
+
     @XmlAttribute
     private String apiVersion;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String masterUrl;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String username;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String password;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String oauthToken;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String caCertData;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String caCertFile;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String clientCertData;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String clientCertFile;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String clientKeyAlgo;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String clientKeyData;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String clientKeyFile;
+
     @XmlAttribute
     @Metadata(label = "client")
     private String clientKeyPassphrase;
+
     @XmlAttribute
     @Metadata(label = "client", javaType = "java.lang.Boolean")
     private String trustCerts;

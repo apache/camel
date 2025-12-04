@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -26,9 +30,6 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SchemaMojoManualIT {
 
     @TempDir
@@ -39,7 +40,7 @@ public class SchemaMojoManualIT {
         final SchemaMojo mojo = new SchemaMojo();
         setup(mojo);
 
-        mojo.includes = new String[] { "Account" };
+        mojo.includes = new String[] {"Account"};
         mojo.outputDirectory = temp.toFile();
         mojo.jsonSchemaFilename = "test-schema.json";
         mojo.jsonSchemaId = JsonUtils.DEFAULT_ID_PREFIX;
@@ -48,12 +49,14 @@ public class SchemaMojoManualIT {
         mojo.execute();
 
         // validate generated schema
-        final File schemaFile = mojo.outputDirectory.toPath().resolve("test-schema.json").toFile();
+        final File schemaFile =
+                mojo.outputDirectory.toPath().resolve("test-schema.json").toFile();
         assertTrue(schemaFile.exists(), "Output file was not created");
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
-        assertTrue(jsonSchema.isObjectSchema() && !((ObjectSchema) jsonSchema).getOneOf().isEmpty(),
+        assertTrue(
+                jsonSchema.isObjectSchema()
+                        && !((ObjectSchema) jsonSchema).getOneOf().isEmpty(),
                 "Expected root JSON schema with oneOf element");
     }
-
 }

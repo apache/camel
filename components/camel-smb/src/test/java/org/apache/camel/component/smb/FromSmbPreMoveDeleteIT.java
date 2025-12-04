@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.smb;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,10 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FromSmbPreMoveDeleteIT extends SmbServerTestSupport {
 
@@ -58,15 +59,18 @@ public class FromSmbPreMoveDeleteIT extends SmbServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getSmbUrl()).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // assert the file is pre moved
-                        await().atMost(3, TimeUnit.SECONDS)
-                                .untilAsserted(() -> assertEquals("Hello World this file will be moved",
-                                        new String(copyFileContentFromContainer("/data/rw/premove/work/hello.txt"))));
-
-                    }
-                }).to("mock:result");
+                from(getSmbUrl())
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // assert the file is pre moved
+                                await().atMost(3, TimeUnit.SECONDS)
+                                        .untilAsserted(() -> assertEquals(
+                                                "Hello World this file will be moved",
+                                                new String(copyFileContentFromContainer(
+                                                        "/data/rw/premove/work/hello.txt"))));
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

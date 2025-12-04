@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.salesforce;
 
 import java.lang.reflect.Method;
@@ -65,7 +66,8 @@ public class SalesforceHttpClient extends HttpClient {
         this(null, Executors.newCachedThreadPool(), sslContextFactory);
     }
 
-    public SalesforceHttpClient(CamelContext context, ExecutorService workerPool, SslContextFactory.Client sslContextFactory) {
+    public SalesforceHttpClient(
+            CamelContext context, ExecutorService workerPool, SslContextFactory.Client sslContextFactory) {
         super(new HttpClientTransportOverHTTP(newConnector(sslContextFactory)));
         this.workerPool = workerPool;
         this.camelContext = context;
@@ -75,7 +77,8 @@ public class SalesforceHttpClient extends HttpClient {
         // List<ProtocolHandler, in 9.3 onward it returns ProtocolHandlers
         // instance, this enables us to work with user supplied Jetty (>= 9.2)
         try {
-            final Class<?> getProtocolHandlersType = HttpClient.class.getMethod("getProtocolHandlers").getReturnType();
+            final Class<?> getProtocolHandlersType =
+                    HttpClient.class.getMethod("getProtocolHandlers").getReturnType();
             final boolean isJetty92 = List.class.equals(getProtocolHandlersType);
             if (isJetty92) {
                 addProtocolHandlerMethod = List.class.getMethod("add", Object.class);

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn.constants;
 
 public final class SmnServices {
 
     public static final String PUBLISH_MESSAGE = "publishMessageService";
 
-    private SmnServices() {
-    }
+    private SmnServices() {}
 }

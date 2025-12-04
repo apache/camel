@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmlsecurity.util;
 
 import java.util.ArrayList;
@@ -42,5 +43,4 @@ public class XmlSignature2Message2MessageWithTimestampProperty extends DefaultXm
         }
         return result;
     }
-
 }

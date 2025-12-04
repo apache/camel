@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.olingo4.api.impl;
+
+import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -31,8 +34,6 @@ import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-
-import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
 
 /**
  * Helper implementation of {@link org.apache.http.concurrent.FutureCallback} for
@@ -59,9 +60,13 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
                     final ContentType responseContentType = getContentTypeHeader(response);
 
                     if (responseContentType != null
-                            && ODATA_MIME_TYPE_PATTERN.matcher(responseContentType.toContentTypeString()).matches()) {
-                        final ODataReader reader = ODataClientFactory.getClient().getReader();
-                        final ODataError error = reader.readError(response.getEntity().getContent(), responseContentType);
+                            && ODATA_MIME_TYPE_PATTERN
+                                    .matcher(responseContentType.toContentTypeString())
+                                    .matches()) {
+                        final ODataReader reader =
+                                ODataClientFactory.getClient().getReader();
+                        final ODataError error =
+                                reader.readError(response.getEntity().getContent(), responseContentType);
 
                         throw new ODataClientErrorException(statusLine, error);
                     }

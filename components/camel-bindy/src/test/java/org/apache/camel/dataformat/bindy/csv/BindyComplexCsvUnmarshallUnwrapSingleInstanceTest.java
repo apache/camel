@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.csv;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -28,13 +31,12 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ContextConfiguration
 @CamelSpringTest
 public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest {
 
-    private static final Class<?> TYPE = org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
+    private static final Class<?> TYPE =
+            org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
 
     @Produce("direct:start")
     protected ProducerTemplate template;
@@ -62,9 +64,7 @@ public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest {
     public static class ContextConfig extends RouteBuilder {
         @Override
         public void configure() {
-            from("direct:start")
-                    .unmarshal().bindy(BindyType.Csv, TYPE, false)
-                    .to("mock:result");
+            from("direct:start").unmarshal().bindy(BindyType.Csv, TYPE, false).to("mock:result");
         }
     }
 }

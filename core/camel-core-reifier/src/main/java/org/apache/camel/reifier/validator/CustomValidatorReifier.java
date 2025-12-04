@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.reifier.validator;
 
 import org.apache.camel.CamelContext;
@@ -41,13 +42,13 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
                 throw new IllegalArgumentException("Cannot find validator with ref:" + definition.getRef());
             }
             if (validator.getType() != null) {
-                throw new IllegalArgumentException(
-                        String.format("Validator '%s' is already in use. Please check if duplicate validator exists.",
-                                definition.getRef()));
+                throw new IllegalArgumentException(String.format(
+                        "Validator '%s' is already in use. Please check if duplicate validator exists.",
+                        definition.getRef()));
             }
         } else {
-            Class<Validator> validatorClass
-                    = camelContext.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
+            Class<Validator> validatorClass =
+                    camelContext.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
             if (validatorClass == null) {
                 throw new IllegalArgumentException("Cannot find validator class: " + definition.getClassName());
             }
@@ -57,5 +58,4 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
         validator.setCamelContext(camelContext);
         return validator.setType(definition.getType());
     }
-
 }

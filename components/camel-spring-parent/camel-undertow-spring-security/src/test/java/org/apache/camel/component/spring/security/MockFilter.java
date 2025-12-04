@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.spring.security;
 
 import java.io.IOException;
@@ -40,9 +41,7 @@ public class MockFilter implements Filter {
     private boolean putJwtIntoContext = true;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -63,9 +62,7 @@ public class MockFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() {}
 
     public void setJwt(Jwt jwt) {
         this.jwt = jwt;

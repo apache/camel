@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.CountDownLatch;
@@ -87,7 +88,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     private void doHandleHangup() {
         // you can get a weird log4j exception so build string without placeholders
         LOG.info("JVM shutdown hook triggered by SIGTERM (PID " + getPid() + "). Shutting down " + getAppName() + " "
-                 + getAppVersion());
+                + getAppVersion());
         // and shutdown listener to allow camel context to graceful shutdown if JVM shutdown hook is triggered
         // as otherwise the JVM terminates before Camel is graceful shutdown
         addShutdownListener(() -> {
@@ -106,15 +107,19 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
 
                 // use timeout from camel shutdown strategy and add extra to allow camel to shut down graceful
                 long max = TimeUnit.SECONDS.toMillis(getExtraShutdownTimeout())
-                           + main.getCamelContext().getShutdownStrategy().getTimeUnit()
-                                   .toMillis(main.getCamelContext().getShutdownStrategy().getTimeout());
+                        + main.getCamelContext()
+                                .getShutdownStrategy()
+                                .getTimeUnit()
+                                .toMillis(main.getCamelContext()
+                                        .getShutdownStrategy()
+                                        .getTimeout());
                 int waits = 0;
                 boolean done = false;
                 StopWatch watch = new StopWatch();
                 while (!main.getCamelContext().isStopped() && !done && watch.taken() < max) {
                     String msg = "Waiting for CamelContext to graceful shutdown (max:"
-                                 + TimeUtils.printDuration(max, true) + ", elapsed:"
-                                 + TimeUtils.printDuration(watch.taken(), true) + ")";
+                            + TimeUtils.printDuration(max, true) + ", elapsed:"
+                            + TimeUtils.printDuration(watch.taken(), true) + ")";
                     if (waits > 0 && waits % 5 == 0) {
                         // do some info logging every 5th time
                         LOG.info(msg);
@@ -131,8 +136,8 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 }
                 boolean success = done || main.getCamelContext().isStopped();
                 if (!success) {
-                    LOG.warn("CamelContext not yet shutdown completely after: " + TimeUtils.printDuration(watch.taken(), true)
-                             + ". Forcing shutdown.");
+                    LOG.warn("CamelContext not yet shutdown completely after: "
+                            + TimeUtils.printDuration(watch.taken(), true) + ". Forcing shutdown.");
                 }
                 tracker.close();
             }

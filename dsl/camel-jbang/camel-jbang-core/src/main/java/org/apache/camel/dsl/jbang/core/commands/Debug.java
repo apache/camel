@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands;
+
+import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
+import static org.apache.camel.util.IOHelper.buffered;
 
 import java.io.BufferedReader;
 import java.io.Console;
@@ -68,66 +72,88 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
-import static org.apache.camel.util.IOHelper.buffered;
-
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true)
 public class Debug extends Run {
 
-    @CommandLine.Option(names = { "--breakpoint" },
-                        description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
+    @CommandLine.Option(
+            names = {"--breakpoint"},
+            description =
+                    "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
     String breakpoint;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "File to store the current message body (will override). This allows for manual inspecting the message later.")
+    @CommandLine.Option(
+            names = {"--output"},
+            description =
+                    "File to store the current message body (will override). This allows for manual inspecting the message later.")
     String output;
 
-    @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true",
-                        description = "Whether to stop the running Camel on exit")
+    @CommandLine.Option(
+            names = {"--stop-on-exit"},
+            defaultValue = "true",
+            description = "Whether to stop the running Camel on exit")
     boolean stopOnExit = true;
 
-    @CommandLine.Option(names = { "--log-lines" }, defaultValue = "10",
-                        description = "Number of log lines to display on top of screen")
+    @CommandLine.Option(
+            names = {"--log-lines"},
+            defaultValue = "10",
+            description = "Number of log lines to display on top of screen")
     int logLines = 10;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
-                        description = "Print timestamp.")
+    @CommandLine.Option(
+            names = {"--timestamp"},
+            defaultValue = "true",
+            description = "Print timestamp.")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    @CommandLine.Option(
+            names = {"--ago"},
+            description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @CommandLine.Option(
+            names = {"--mask"},
+            description =
+                    "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @CommandLine.Option(
+            names = {"--source"},
+            description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in debug messages")
+    @CommandLine.Option(
+            names = {"--show-exchange-properties"},
+            defaultValue = "false",
+            description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
-                        description = "Show exchange variables in debug messages")
+    @CommandLine.Option(
+            names = {"--show-exchange-variables"},
+            defaultValue = "true",
+            description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in debug messages")
+    @CommandLine.Option(
+            names = {"--show-headers"},
+            defaultValue = "true",
+            description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in debug messages")
+    @CommandLine.Option(
+            names = {"--show-body"},
+            defaultValue = "true",
+            description = "Show message body in debug messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @CommandLine.Option(
+            names = {"--show-exception"},
+            defaultValue = "true",
+            description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @CommandLine.Option(
+            names = {"--pretty"},
+            description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
     private MessageTableHelper tableHelper;
@@ -170,9 +196,11 @@ public class Debug extends Run {
         // read log input
         final AtomicBoolean quit = new AtomicBoolean();
         final Console c = System.console();
-        Thread t = new Thread(() -> {
-            doReadLog(quit);
-        }, "ReadLog");
+        Thread t = new Thread(
+                () -> {
+                    doReadLog(quit);
+                },
+                "ReadLog");
         t.start();
 
         // read CLI input from user
@@ -334,7 +362,13 @@ public class Debug extends Run {
             }
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "spring-boot:repackage");
+            pb.command(
+                    mvnw,
+                    "-Dmaven.test.skip",
+                    "--file",
+                    "camel-jbang-debug-pom.xml",
+                    "package",
+                    "spring-boot:repackage");
             Process p = pb.start();
 
             if (p.waitFor(30, TimeUnit.SECONDS)) {
@@ -366,14 +400,17 @@ public class Debug extends Run {
 
                 // okay build is complete then run java
                 pb = new ProcessBuilder();
-                pb.command("java",
+                pb.command(
+                        "java",
                         "-Dcamel.debug.enabled=true",
                         (breakpoint == null
-                                ? "-Dcamel.debug.breakpoints=_all_routes_" : "-Dcamel.debug.breakpoints=" + breakpoint),
+                                ? "-Dcamel.debug.breakpoints=_all_routes_"
+                                : "-Dcamel.debug.breakpoints=" + breakpoint),
                         "-Dcamel.debug.loggingLevel=DEBUG",
                         "-Dcamel.debug.singleStepIncludeStartEnd=true",
                         loggingColor ? "-Dspring.output.ansi.enabled=ALWAYS" : "-Dspring.output.ansi.enabled=NEVER",
-                        "-jar", "target/camel-jbang-debug.jar");
+                        "-jar",
+                        "target/camel-jbang-debug.jar");
 
                 p = pb.start();
                 processRef.set(p);
@@ -482,14 +519,17 @@ public class Debug extends Run {
 
                 // okay build is complete then run java
                 pb = new ProcessBuilder();
-                pb.command("java",
+                pb.command(
+                        "java",
                         "-Dcamel.debug.enabled=true",
                         (breakpoint == null
-                                ? "-Dcamel.debug.breakpoints=_all_routes_" : "-Dcamel.debug.breakpoints=" + breakpoint),
+                                ? "-Dcamel.debug.breakpoints=_all_routes_"
+                                : "-Dcamel.debug.breakpoints=" + breakpoint),
                         "-Dcamel.debug.loggingLevel=DEBUG",
                         "-Dcamel.debug.singleStepIncludeStartEnd=true",
                         "-Dcamel.main.sourceLocationEnabled=true",
-                        "-jar", "target/quarkus-app/quarkus-run.jar");
+                        "-jar",
+                        "target/quarkus-app/quarkus-run.jar");
 
                 p = pb.start();
                 processRef.set(p);
@@ -550,11 +590,13 @@ public class Debug extends Run {
 
     private void removeDebugOnlyOptions(List<String> cmds) {
         // only check Debug.class (not super classes)
-        RunHelper.doWithFields(Debug.class, fc -> cmds.removeIf(c -> {
-            String n1 = "--" + fc.getName();
-            String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
-            return c.startsWith(n1) || c.startsWith(n2);
-        }));
+        RunHelper.doWithFields(
+                Debug.class,
+                fc -> cmds.removeIf(c -> {
+                    String n1 = "--" + fc.getName();
+                    String n2 = "--" + StringHelper.camelCaseToDash(fc.getName());
+                    return c.startsWith(n1) || c.startsWith(n2);
+                }));
     }
 
     protected int doWatch() {
@@ -648,8 +690,9 @@ public class Debug extends Run {
                 if (arr != null) {
 
                     if (arr.size() > 1) {
-                        printer().println(
-                                "WARN: Multiple suspended breakpoints is not supported (You can use --breakpoint option to specify a starting breakpoint)");
+                        printer()
+                                .println(
+                                        "WARN: Multiple suspended breakpoints is not supported (You can use --breakpoint option to specify a starting breakpoint)");
                         return;
                     }
 
@@ -789,14 +832,20 @@ public class Debug extends Run {
 
                 String msg;
                 if (!last && !first && isSkipOverSupported(version)) {
-                    msg = "    Breakpoint suspended (i = step into (default), o = step over, s = skip over, N = step to index). Press ENTER to continue (q = quit).";
+                    msg =
+                            "    Breakpoint suspended (i = step into (default), o = step over, s = skip over, N = step to index). Press ENTER to continue (q = quit).";
                 } else if (!last && !first && isStepOverSupported(version)) {
-                    msg = "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue (q = quit).";
+                    msg =
+                            "    Breakpoint suspended (i = step into (default), o = step over). Press ENTER to continue (q = quit).";
                 } else {
                     msg = "    Breakpoint suspended. Press ENTER to continue (q = quit).";
                 }
                 if (loggingColor) {
-                    AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
+                    AnsiConsole.out()
+                            .println(Ansi.ansi()
+                                    .a(Ansi.Attribute.INTENSITY_BOLD)
+                                    .a(msg)
+                                    .reset());
                 } else {
                     printer().println(msg);
                 }
@@ -815,8 +864,7 @@ public class Debug extends Run {
                 loc = "";
             }
             panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
-            panel.add(Panel.withCode("-".repeat(80))
-                    .andHistory("-".repeat(90)));
+            panel.add(Panel.withCode("-".repeat(80)).andHistory("-".repeat(90)));
 
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
@@ -959,7 +1007,12 @@ public class Debug extends Run {
                 ts = sdf.format(new Date(row.timestamp));
             }
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+                AnsiConsole.out()
+                        .print(Ansi.ansi()
+                                .fgBrightDefault()
+                                .a(Ansi.Attribute.INTENSITY_FAINT)
+                                .a(ts)
+                                .reset());
             } else {
                 printer().print(ts);
             }
@@ -969,7 +1022,12 @@ public class Debug extends Run {
         String p = String.format("%5.5s", row.pid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(" --- ")
+                            .reset());
         } else {
             printer().print(p);
             printer().print(" --- ");
@@ -981,7 +1039,12 @@ public class Debug extends Run {
         }
         tn = String.format("[%25.25s]", tn);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+            AnsiConsole.out()
+                    .print(Ansi.ansi()
+                            .fgBrightDefault()
+                            .a(Ansi.Attribute.INTENSITY_FAINT)
+                            .a(tn)
+                            .reset());
         } else {
             printer().print(tn);
         }
@@ -1017,7 +1080,8 @@ public class Debug extends Run {
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+                AnsiConsole.out()
+                        .print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
                 printer().print("(" + e + ")");
             }
@@ -1067,9 +1131,8 @@ public class Debug extends Run {
     }
 
     private String getDataAsTable(SuspendedRow r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService,
-                r.message,
-                r.exception);
+        return tableHelper.getDataAsTable(
+                r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService, r.message, r.exception);
     }
 
     private String getStatus(SuspendedRow r) {
@@ -1085,7 +1148,11 @@ public class Debug extends Run {
         } else if (r.last) {
             String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
             if (loggingColor) {
-                return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(done).reset().toString();
+                return Ansi.ansi()
+                        .fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN)
+                        .a(done)
+                        .reset()
+                        .toString();
             } else {
                 return done;
             }
@@ -1206,7 +1273,5 @@ public class Debug extends Run {
             this.historyLength = length;
             return this;
         }
-
     }
-
 }

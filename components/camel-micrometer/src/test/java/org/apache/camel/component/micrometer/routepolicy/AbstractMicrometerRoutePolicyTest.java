@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer.routepolicy;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -62,5 +63,4 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
         context.addService(factory);
         return context;
     }
-
 }

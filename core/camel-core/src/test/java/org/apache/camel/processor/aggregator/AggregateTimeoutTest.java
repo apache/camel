@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregator;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,10 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AggregateTimeoutTest extends ContextTestSupport {
 
@@ -51,8 +52,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.assertIsSatisfied(200);
 
         // should invoke the timeout method
-        await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> assertEquals(1, invoked.get()));
+        await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertEquals(1, invoked.get()));
 
         assertNotNull(receivedExchange);
         assertEquals("AB", receivedExchange.getIn().getBody());
@@ -72,8 +72,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         mock.assertIsSatisfied(150);
 
         // should have not invoked the timeout method anymore
-        await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> assertEquals(1, invoked.get()));
+        await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> assertEquals(1, invoked.get()));
     }
 
     @Override
@@ -81,10 +80,14 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).discardOnCompletionTimeout()
+                from("direct:start")
+                        .aggregate(header("id"), new MyAggregationStrategy())
+                        .discardOnCompletionTimeout()
                         .completionSize(3)
                         // use a 0.1 second timeout
-                        .completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                        .completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:aggregated");
             }
         };
     }
@@ -121,5 +124,4 @@ public class AggregateTimeoutTest extends ContextTestSupport {
             return oldExchange;
         }
     }
-
 }

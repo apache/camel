@@ -27,9 +27,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 
 public final class KafkaErrorStrategies {
 
-    private KafkaErrorStrategies() {
-
-    }
+    private KafkaErrorStrategies() {}
 
     public static PollExceptionStrategy strategies(
             KafkaFetchRecords recordFetcher, KafkaEndpoint endpoint, Consumer<?, ?> consumer) {

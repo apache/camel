@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo.client;
+
+import static org.apache.camel.component.milo.MiloConstants.SCHEME_CLIENT;
 
 import java.util.Objects;
 
@@ -30,13 +33,16 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
-import static org.apache.camel.component.milo.MiloConstants.SCHEME_CLIENT;
-
 /**
  * Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_CLIENT, syntax = "milo-client:endpointUri", title = "OPC UA Client",
-             category = { Category.IOT }, headersClass = MiloConstants.class)
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = SCHEME_CLIENT,
+        syntax = "milo-client:endpointUri",
+        title = "OPC UA Client",
+        category = {Category.IOT},
+        headersClass = MiloConstants.class)
 public class MiloClientEndpoint extends DefaultEndpoint {
 
     private final MiloClientConnectionManager connectionManager;
@@ -90,8 +96,11 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     @UriParam
     private MonitorFilterType monitorFilterType;
 
-    public MiloClientEndpoint(final String uri, final MiloClientComponent component, final String endpointUri,
-                              final MiloClientConnectionManager connectionManager) {
+    public MiloClientEndpoint(
+            final String uri,
+            final MiloClientComponent component,
+            final String endpointUri,
+            final MiloClientConnectionManager connectionManager) {
         super(uri, component);
 
         Objects.requireNonNull(component);

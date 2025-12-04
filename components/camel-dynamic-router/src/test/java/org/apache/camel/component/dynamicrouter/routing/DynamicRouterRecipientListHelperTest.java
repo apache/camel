@@ -14,7 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dynamicrouter.routing;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -35,19 +49,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DynamicRouterRecipientListHelperTest {
@@ -97,8 +98,8 @@ class DynamicRouterRecipientListHelperTest {
     @Test
     void testCreateBiFunctionAdapter() {
         when(mockConfig.isAggregationStrategyMethodAllowNull()).thenReturn(true);
-        AggregationStrategyBiFunctionAdapter result
-                = DynamicRouterRecipientListHelper.createBiFunctionAdapter.apply(mockBiFunction, mockConfig);
+        AggregationStrategyBiFunctionAdapter result =
+                DynamicRouterRecipientListHelper.createBiFunctionAdapter.apply(mockBiFunction, mockConfig);
         assertNotNull(result);
         assertTrue(result.isAllowNullNewExchange());
         assertTrue(result.isAllowNullOldExchange());
@@ -107,7 +108,8 @@ class DynamicRouterRecipientListHelperTest {
     @Test
     void testCreateBeanAdapter() {
         when(mockConfig.isAggregationStrategyMethodAllowNull()).thenReturn(true);
-        AggregationStrategyBeanAdapter result = DynamicRouterRecipientListHelper.createBeanAdapter.apply(mockBean, mockConfig);
+        AggregationStrategyBeanAdapter result =
+                DynamicRouterRecipientListHelper.createBeanAdapter.apply(mockBean, mockConfig);
         assertNotNull(result);
         assertTrue(result.isAllowNullNewExchange());
         assertTrue(result.isAllowNullOldExchange());
@@ -115,36 +117,39 @@ class DynamicRouterRecipientListHelperTest {
 
     @Test
     void testConvertAggregationStrategyWithAggregationStrategyClass() {
-        AggregationStrategy result
-                = DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(mockStrategy, mockConfig);
+        AggregationStrategy result =
+                DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(mockStrategy, mockConfig);
         assertSame(mockStrategy, result);
     }
 
     @Test
     void testConvertAggregationStrategyWithBiFunctionClass() {
-        AggregationStrategy result
-                = DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(mockBiFunction, mockConfig);
+        AggregationStrategy result =
+                DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(mockBiFunction, mockConfig);
         assertEquals(AggregationStrategyBiFunctionAdapter.class, result.getClass());
     }
 
     @Test
     void testConvertAggregationStrategyWithBean() {
-        AggregationStrategy result = DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(mockBean, mockConfig);
+        AggregationStrategy result =
+                DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(mockBean, mockConfig);
         assertEquals(AggregationStrategyBeanAdapter.class, result.getClass());
     }
 
     @Test
     void testConvertAggregationStrategyWithNull() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> DynamicRouterRecipientListHelper.convertAggregationStrategy.apply(null, mockConfig));
     }
 
     @Test
     void testCreateProcessor() {
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
-        when(mockRecipientListSupplier.apply(eq(camelContext), any(Expression.class))).thenReturn(recipientList);
-        Processor processor
-                = DynamicRouterRecipientListHelper.createProcessor(camelContext, mockConfig, mockRecipientListSupplier);
+        when(mockRecipientListSupplier.apply(eq(camelContext), any(Expression.class)))
+                .thenReturn(recipientList);
+        Processor processor =
+                DynamicRouterRecipientListHelper.createProcessor(camelContext, mockConfig, mockRecipientListSupplier);
         Assertions.assertNotNull(processor);
     }
 
@@ -193,15 +198,18 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.isParallelProcessing()).thenReturn(false);
         when(mockConfig.getTimeout()).thenReturn(1000L);
         // Invoke the method under test
-        Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> DynamicRouterRecipientListHelper.setPropertiesForRecipientList(recipientList, camelContext, mockConfig));
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> DynamicRouterRecipientListHelper.setPropertiesForRecipientList(
+                        recipientList, camelContext, mockConfig));
         assertEquals("Timeout is used but ParallelProcessing has not been enabled.", ex.getMessage());
     }
 
     @Test
     void testCreateAggregationStrategyWithInstance() {
         when(mockConfig.getAggregationStrategyBean()).thenReturn(mockStrategy);
-        AggregationStrategy strategy = DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
+        AggregationStrategy strategy =
+                DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
         Assertions.assertNotNull(strategy);
     }
 
@@ -210,7 +218,8 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.getAggregationStrategy()).thenReturn("ref");
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
         when(mockRegistry.lookupByNameAndType("ref", Object.class)).thenReturn(mockStrategy);
-        AggregationStrategy strategy = DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
+        AggregationStrategy strategy =
+                DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
         Assertions.assertNotNull(strategy);
     }
 
@@ -219,7 +228,8 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.getAggregationStrategy()).thenReturn("ref");
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
         when(mockRegistry.lookupByNameAndType("ref", Object.class)).thenReturn(null);
-        Exception ex = assertThrows(IllegalArgumentException.class,
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
                 () -> DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig));
         assertEquals("Cannot find AggregationStrategy in Registry with name: ref", ex.getMessage());
     }
@@ -228,14 +238,16 @@ class DynamicRouterRecipientListHelperTest {
     void testCreateAggregationStrategyNoOp() {
         when(mockConfig.getAggregationStrategyBean()).thenReturn(null);
         when(mockConfig.getAggregationStrategy()).thenReturn(null);
-        AggregationStrategy strategy = DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
+        AggregationStrategy strategy =
+                DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
         Assertions.assertInstanceOf(DynamicRouterRecipientListHelper.NoopAggregationStrategy.class, strategy);
     }
 
     @Test
     void testCreateAggregationStrategyWithShareUnitOfWorkStrategy() {
         when(mockConfig.isShareUnitOfWork()).thenReturn(true);
-        AggregationStrategy strategy = DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
+        AggregationStrategy strategy =
+                DynamicRouterRecipientListHelper.createAggregationStrategy(camelContext, mockConfig);
         Assertions.assertNotNull(strategy);
     }
 
@@ -246,9 +258,10 @@ class DynamicRouterRecipientListHelperTest {
         String executorServiceRef = "ThreadPoolRef";
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
-        when(mockRegistry.lookupByNameAndType(executorServiceRef, ExecutorService.class)).thenReturn(existingThreadPool);
-        Optional<ExecutorService> executorService
-                = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(camelContext, name, source, executorServiceRef);
+        when(mockRegistry.lookupByNameAndType(executorServiceRef, ExecutorService.class))
+                .thenReturn(existingThreadPool);
+        Optional<ExecutorService> executorService = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(
+                camelContext, name, source, executorServiceRef);
         Assertions.assertTrue(executorService.isPresent());
     }
 
@@ -258,9 +271,10 @@ class DynamicRouterRecipientListHelperTest {
         Object source = new Object();
         String executorServiceRef = "ThreadPoolRef";
         when(camelContext.getExecutorServiceManager()).thenReturn(null);
-        Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> DynamicRouterRecipientListHelper.lookupExecutorServiceRef(camelContext, name, source,
-                        executorServiceRef));
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> DynamicRouterRecipientListHelper.lookupExecutorServiceRef(
+                        camelContext, name, source, executorServiceRef));
         assertEquals("ExecutorServiceManager must be specified", ex.getMessage());
     }
 
@@ -269,7 +283,8 @@ class DynamicRouterRecipientListHelperTest {
         String name = "ThreadPool";
         Object source = new Object();
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
-        Exception ex = assertThrows(IllegalArgumentException.class,
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
                 () -> DynamicRouterRecipientListHelper.lookupExecutorServiceRef(camelContext, name, source, null));
         assertEquals("executorServiceRef must be specified", ex.getMessage());
     }
@@ -281,8 +296,8 @@ class DynamicRouterRecipientListHelperTest {
         String executorServiceRef = "InvalidRef";
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
-        Optional<ExecutorService> executorService
-                = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(camelContext, name, source, executorServiceRef);
+        Optional<ExecutorService> executorService = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(
+                camelContext, name, source, executorServiceRef);
         Assertions.assertFalse(executorService.isPresent());
     }
 
@@ -295,8 +310,8 @@ class DynamicRouterRecipientListHelperTest {
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
         when(camelContext.getRegistry().lookupByNameAndType(executorServiceRef, ExecutorService.class))
                 .thenReturn(existingThreadPool);
-        Optional<ExecutorService> executorService
-                = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(camelContext, name, source, executorServiceRef);
+        Optional<ExecutorService> executorService = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(
+                camelContext, name, source, executorServiceRef);
         Assertions.assertTrue(executorService.isPresent());
         Assertions.assertEquals(existingThreadPool, executorService.get());
     }
@@ -309,8 +324,8 @@ class DynamicRouterRecipientListHelperTest {
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
         when(manager.newThreadPool(source, name, executorServiceRef)).thenReturn(newThreadPool);
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
-        Optional<ExecutorService> executorService
-                = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(camelContext, name, source, executorServiceRef);
+        Optional<ExecutorService> executorService = DynamicRouterRecipientListHelper.lookupExecutorServiceRef(
+                camelContext, name, source, executorServiceRef);
         Assertions.assertTrue(executorService.isPresent());
         Assertions.assertEquals(newThreadPool, executorService.get());
     }
@@ -320,16 +335,17 @@ class DynamicRouterRecipientListHelperTest {
         String name = "ExistingObject";
         Object existingObject = new Object();
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
-        when(camelContext.getRegistry().lookupByNameAndType(name, Object.class))
-                .thenReturn(existingObject);
-        Optional<Object> object = DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, name, Object.class);
+        when(camelContext.getRegistry().lookupByNameAndType(name, Object.class)).thenReturn(existingObject);
+        Optional<Object> object =
+                DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, name, Object.class);
         Assertions.assertTrue(object.isPresent());
         Assertions.assertEquals(existingObject, object.get());
     }
 
     @Test
     void testLookupByNameAndTypeWithNullName() {
-        Optional<Object> object = DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, null, Object.class);
+        Optional<Object> object =
+                DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, null, Object.class);
         Assertions.assertFalse(object.isPresent());
     }
 
@@ -337,14 +353,16 @@ class DynamicRouterRecipientListHelperTest {
     void testLookupByNameAndTypeWithReferenceParameter() {
         String name = "#referenceParameter";
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
-        Optional<Object> object = DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, name, Object.class);
+        Optional<Object> object =
+                DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, name, Object.class);
         Assertions.assertFalse(object.isPresent());
     }
 
     @Test
     void testLookupByNameAndTypeWithEmptyName() {
         String name = "";
-        Optional<Object> object = DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, name, Object.class);
+        Optional<Object> object =
+                DynamicRouterRecipientListHelper.lookupByNameAndType(camelContext, name, Object.class);
         Assertions.assertFalse(object.isPresent());
     }
 
@@ -376,8 +394,8 @@ class DynamicRouterRecipientListHelperTest {
     void testGetConfiguredExecutorServiceWithExecutorServiceBean() {
         when(mockConfig.getExecutorServiceBean()).thenReturn(existingThreadPool);
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
-        ExecutorService result
-                = DynamicRouterRecipientListHelper.getConfiguredExecutorService(camelContext, "someName", mockConfig, true);
+        ExecutorService result = DynamicRouterRecipientListHelper.getConfiguredExecutorService(
+                camelContext, "someName", mockConfig, true);
         assertEquals(existingThreadPool, result);
     }
 
@@ -387,15 +405,17 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.getExecutorService()).thenReturn("existingThreadPool");
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
-        when(mockRegistry.lookupByNameAndType("existingThreadPool", ExecutorService.class)).thenReturn(existingThreadPool);
-        ExecutorService result
-                = DynamicRouterRecipientListHelper.getConfiguredExecutorService(camelContext, "someName", mockConfig, true);
+        when(mockRegistry.lookupByNameAndType("existingThreadPool", ExecutorService.class))
+                .thenReturn(existingThreadPool);
+        ExecutorService result = DynamicRouterRecipientListHelper.getConfiguredExecutorService(
+                camelContext, "someName", mockConfig, true);
         assertEquals(existingThreadPool, result);
     }
 
     @Test
     void testGetConfiguredExecutorServiceWithInvalidExecutorServiceRef() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> DynamicRouterRecipientListHelper.getConfiguredExecutorService(
                         camelContext, "someName", mockConfig, true));
     }
@@ -406,8 +426,8 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.getExecutorService()).thenReturn(null);
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
         when(manager.newDefaultThreadPool(mockConfig, "someName")).thenReturn(newThreadPool);
-        ExecutorService result
-                = DynamicRouterRecipientListHelper.getConfiguredExecutorService(camelContext, "someName", mockConfig, true);
+        ExecutorService result = DynamicRouterRecipientListHelper.getConfiguredExecutorService(
+                camelContext, "someName", mockConfig, true);
         assertEquals(newThreadPool, result);
     }
 
@@ -416,8 +436,8 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.getExecutorServiceBean()).thenReturn(null);
         when(mockConfig.getExecutorService()).thenReturn(null);
         when(camelContext.getExecutorServiceManager()).thenReturn(manager);
-        ExecutorService result
-                = DynamicRouterRecipientListHelper.getConfiguredExecutorService(camelContext, "someName", mockConfig, false);
+        ExecutorService result = DynamicRouterRecipientListHelper.getConfiguredExecutorService(
+                camelContext, "someName", mockConfig, false);
         assertNull(result);
     }
 
@@ -429,8 +449,10 @@ class DynamicRouterRecipientListHelperTest {
         when(camelContext.getRegistry()).thenReturn(mockRegistry);
         when(camelContext.getRegistry().lookupByNameAndType(ref, ExecutorService.class))
                 .thenReturn(null);
-        Exception ex = assertThrows(IllegalArgumentException.class,
-                () -> DynamicRouterRecipientListHelper.getConfiguredExecutorService(camelContext, ref, mockConfig, false));
+        Exception ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> DynamicRouterRecipientListHelper.getConfiguredExecutorService(
+                        camelContext, ref, mockConfig, false));
         assertEquals(
                 "ExecutorServiceRef 'executorServiceRef' not found in registry as an ExecutorService instance or as a thread pool profile",
                 ex.getMessage());
@@ -438,24 +460,24 @@ class DynamicRouterRecipientListHelperTest {
 
     @Test
     void testNoOpAggregationStrategy() {
-        DynamicRouterRecipientListHelper.NoopAggregationStrategy strategy
-                = new DynamicRouterRecipientListHelper.NoopAggregationStrategy();
+        DynamicRouterRecipientListHelper.NoopAggregationStrategy strategy =
+                new DynamicRouterRecipientListHelper.NoopAggregationStrategy();
         Exchange result = strategy.aggregate(oldExchange, newExchange);
         assertEquals(oldExchange, result);
     }
 
     @Test
     void testNoOpAggregationStrategyWithNullOldExchange() {
-        DynamicRouterRecipientListHelper.NoopAggregationStrategy strategy
-                = new DynamicRouterRecipientListHelper.NoopAggregationStrategy();
+        DynamicRouterRecipientListHelper.NoopAggregationStrategy strategy =
+                new DynamicRouterRecipientListHelper.NoopAggregationStrategy();
         Exchange result = strategy.aggregate(null, newExchange);
         assertEquals(newExchange, result);
     }
 
     @Test
     void testNoOpAggregationStrategyWithNullNewExchange() {
-        DynamicRouterRecipientListHelper.NoopAggregationStrategy strategy
-                = new DynamicRouterRecipientListHelper.NoopAggregationStrategy();
+        DynamicRouterRecipientListHelper.NoopAggregationStrategy strategy =
+                new DynamicRouterRecipientListHelper.NoopAggregationStrategy();
         Exchange result = strategy.aggregate(oldExchange, null);
         assertEquals(oldExchange, result);
     }

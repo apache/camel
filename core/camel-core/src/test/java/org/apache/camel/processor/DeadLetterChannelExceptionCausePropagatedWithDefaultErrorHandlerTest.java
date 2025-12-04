@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -27,11 +28,12 @@ public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTes
             public void configure() {
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
-                from("direct:start").process(e -> {
-                    throw RUNTIME_EXCEPTION;
-                }).to("mock:success");
+                from("direct:start")
+                        .process(e -> {
+                            throw RUNTIME_EXCEPTION;
+                        })
+                        .to("mock:success");
             }
         };
     }
-
 }

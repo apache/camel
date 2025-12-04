@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.mongodb.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.apache.camel.component.mongodb.MongoDbComponent;
 import org.apache.camel.component.mongodb.MongoDbEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
     @Test
@@ -34,7 +35,8 @@ public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
         context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
         context.getRegistry().bind("myDb", client);
 
-        MongoDbEndpoint testEndpoint = context.getEndpoint("mongodb:anyName?mongoConnection=#myDb", MongoDbEndpoint.class);
+        MongoDbEndpoint testEndpoint =
+                context.getEndpoint("mongodb:anyName?mongoConnection=#myDb", MongoDbEndpoint.class);
 
         assertNotEquals("myDb", testEndpoint.getConnectionBean());
         assertEquals(client, testEndpoint.getMongoConnection());
@@ -61,7 +63,8 @@ public class MongoDbConnectionBeansIT extends AbstractMongoDbITSupport {
         context.getRegistry().bind("myDb", client1);
         context.getRegistry().bind("myDbS", client2);
 
-        MongoDbEndpoint testEndpoint = context.getEndpoint("mongodb:myDb?mongoConnection=#myDbS", MongoDbEndpoint.class);
+        MongoDbEndpoint testEndpoint =
+                context.getEndpoint("mongodb:myDb?mongoConnection=#myDbS", MongoDbEndpoint.class);
         MongoClient myDbS = context.getRegistry().lookupByNameAndType("myDbS", MongoClient.class);
 
         assertEquals("myDb", testEndpoint.getConnectionBean());

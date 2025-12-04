@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,8 @@ public class DefaultSpringErrorHandler implements ErrorHandler {
     private final LoggingExceptionHandler handler;
     private final boolean logStackTrace;
 
-    public DefaultSpringErrorHandler(CamelContext camelContext, Class<?> owner, LoggingLevel level, boolean logStackTrace) {
+    public DefaultSpringErrorHandler(
+            CamelContext camelContext, Class<?> owner, LoggingLevel level, boolean logStackTrace) {
         this.handler = new LoggingExceptionHandler(camelContext, owner, level);
         this.logStackTrace = logStackTrace;
     }
@@ -39,9 +41,8 @@ public class DefaultSpringErrorHandler implements ErrorHandler {
         if (logStackTrace) {
             handler.handleException("Execution of JMS message listener failed", throwable);
         } else {
-            handler.handleException("Execution of JMS message listener failed. Caused by: [" + throwable.getMessage() + "]",
-                    null);
+            handler.handleException(
+                    "Execution of JMS message listener failed. Caused by: [" + throwable.getMessage() + "]", null);
         }
     }
-
 }

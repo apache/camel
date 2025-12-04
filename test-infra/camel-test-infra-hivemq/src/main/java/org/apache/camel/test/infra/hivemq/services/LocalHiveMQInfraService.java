@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.hivemq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -22,9 +23,7 @@ import org.apache.camel.test.infra.hivemq.common.HiveMQProperties;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = HiveMQInfraService.class,
-              description = "MQTT Platform HiveMQ",
-              serviceAlias = "hive-mq")
+@InfraService(service = HiveMQInfraService.class, description = "MQTT Platform HiveMQ", serviceAlias = "hive-mq")
 public class LocalHiveMQInfraService extends AbstractLocalHiveMQService<LocalHiveMQInfraService> {
 
     public LocalHiveMQInfraService() {
@@ -32,8 +31,6 @@ public class LocalHiveMQInfraService extends AbstractLocalHiveMQService<LocalHiv
     }
 
     protected HiveMQContainer initContainer(String imageName) {
-        return new HiveMQContainer(
-                DockerImageName.parse(imageName)
-                        .asCompatibleSubstituteFor("hivemq/hivemq-ce"));
+        return new HiveMQContainer(DockerImageName.parse(imageName).asCompatibleSubstituteFor("hivemq/hivemq-ce"));
     }
 }

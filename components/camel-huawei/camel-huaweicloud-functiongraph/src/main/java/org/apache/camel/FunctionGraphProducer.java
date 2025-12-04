@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel;
 
 import java.util.HashMap;
@@ -104,8 +105,8 @@ public class FunctionGraphProducer extends DefaultProducer {
         }
 
         InvokeFunctionResponse response = functionGraphClient.invokeFunction(invokeFunctionRequest);
-        String responseBody
-                = FunctionGraphUtils.extractJsonFieldAsString(response.getResult(), FunctionGraphConstants.RESPONSE_BODY);
+        String responseBody =
+                FunctionGraphUtils.extractJsonFieldAsString(response.getResult(), FunctionGraphConstants.RESPONSE_BODY);
         exchange.getMessage().setBody(responseBody);
         if (ObjectHelper.isNotEmpty(clientConfigurations.getXCffLogType())) {
             exchange.setProperty(FunctionGraphProperties.XCFFLOGS, response.getLog());

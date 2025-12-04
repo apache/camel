@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.simple;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -55,8 +56,8 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${header.high} == true && ${header.foo} == 123", true, null);
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${header.high} == true && ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange), "Should match");
@@ -68,11 +69,10 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser
-                = new SimplePredicateParser(context, "${header.high} == false || ${header.foo} == 123", true, null);
+        SimplePredicateParser parser =
+                new SimplePredicateParser(context, "${header.high} == false || ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange), "Should match");
     }
-
 }

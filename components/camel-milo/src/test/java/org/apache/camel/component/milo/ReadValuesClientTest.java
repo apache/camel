@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.milo;
 
 import java.util.Arrays;
@@ -39,8 +40,8 @@ public class ReadValuesClientTest extends AbstractMiloServerTest {
 
     private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
-    private static final String MILO_CLIENT_ITEM_C1_1
-            = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?allowedSecurityPolicies=None&overrideHost=true";
+    private static final String MILO_CLIENT_ITEM_C1_1 =
+            "milo-client:opc.tcp://foo:bar@localhost:@@port@@?allowedSecurityPolicies=None&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
 
@@ -78,7 +79,8 @@ public class ReadValuesClientTest extends AbstractMiloServerTest {
                             public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                                 return newExchange;
                             }
-                        }).to(MOCK_TEST_1);
+                        })
+                        .to(MOCK_TEST_1);
             }
         };
     }

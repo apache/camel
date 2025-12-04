@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.smn;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishTemplatedMessageTest.class.getName());
 
@@ -47,11 +48,11 @@ public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends Cam
     private static final String ENDPOINT = "replace_this_with_endpoint";
 
     @BindToRegistry("serviceKeys")
-    ServiceKeys serviceKeys
-            = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
+    ServiceKeys serviceKeys = new ServiceKeys(ACCESS_KEY, SECRET_KEY);
 
     protected RouteBuilder createRouteBuilder() {
-        // populating tag values. user has to adjust the map entries according to the structure of their respective templates
+        // populating tag values. user has to adjust the map entries according to the structure of their respective
+        // templates
         Map<String, String> tags = new HashMap<>();
 
         // create a map of your placeholder variables
@@ -67,11 +68,12 @@ public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends Cam
                         .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
                         .setProperty(SmnProperties.TEMPLATE_TAGS, constant(tags))
                         .setProperty(SmnProperties.TEMPLATE_NAME, constant(TEMPLATE_NAME))
-                        .to("hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"
-                            + "&projectId=" + PROJECT_ID
-                            + "&region=" + REGION
-                            + "&endpoint=" + ENDPOINT
-                            + "&ignoreSslVerification=true")
+                        .to(
+                                "hwcloud-smn:publishMessageService?serviceKeys=#serviceKeys&operation=publishAsTemplatedMessage"
+                                        + "&projectId=" + PROJECT_ID
+                                        + "&region=" + REGION
+                                        + "&endpoint=" + ENDPOINT
+                                        + "&ignoreSslVerification=true")
                         .log("templated notification sent")
                         .to("mock:publish_templated_message_result");
             }
@@ -97,8 +99,15 @@ public class PublishTemplatedMessageWithCustomEndpointFunctionalTest extends Cam
 
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID));
         assertNotNull(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID));
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_MESSAGE_ID).toString().length() > 0);
-        assertTrue(responseExchange.getProperty(SmnProperties.SERVICE_REQUEST_ID).toString().length() > 0);
+        assertTrue(responseExchange
+                        .getProperty(SmnProperties.SERVICE_MESSAGE_ID)
+                        .toString()
+                        .length()
+                > 0);
+        assertTrue(responseExchange
+                        .getProperty(SmnProperties.SERVICE_REQUEST_ID)
+                        .toString()
+                        .length()
+                > 0);
     }
-
 }

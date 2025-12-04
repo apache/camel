@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +25,6 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterCollateTest extends ContextTestSupport {
 
@@ -41,8 +42,16 @@ public class SplitterCollateTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List chunk = getMockEndpoint("mock:line").getReceivedExchanges().get(0).getIn().getBody(List.class);
-        List chunk2 = getMockEndpoint("mock:line").getReceivedExchanges().get(1).getIn().getBody(List.class);
+        List chunk = getMockEndpoint("mock:line")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(List.class);
+        List chunk2 = getMockEndpoint("mock:line")
+                .getReceivedExchanges()
+                .get(1)
+                .getIn()
+                .getBody(List.class);
 
         assertEquals(3, chunk.size());
         assertEquals(2, chunk2.size());

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.language;
 
 import java.util.ArrayList;
@@ -43,11 +44,11 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     @XmlElement(name = "namespace")
     @Metadata(label = "common")
     private List<PropertyDefinition> namespace;
+
     @XmlTransient
     private Map<String, String> namespaces;
 
-    protected NamespaceAwareExpression() {
-    }
+    protected NamespaceAwareExpression() {}
 
     protected NamespaceAwareExpression(NamespaceAwareExpression source) {
         super(source);
@@ -116,7 +117,7 @@ public abstract class NamespaceAwareExpression extends SingleInputTypedExpressio
     @XmlTransient
     @SuppressWarnings("unchecked")
     protected abstract static class AbstractNamespaceAwareBuilder<
-            T extends AbstractNamespaceAwareBuilder<T, E>, E extends NamespaceAwareExpression>
+                    T extends AbstractNamespaceAwareBuilder<T, E>, E extends NamespaceAwareExpression>
             extends AbstractBuilder<T, E> {
 
         private List<PropertyDefinition> namespace;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast.seda;
 
 import java.util.concurrent.ExecutorService;
@@ -53,8 +54,9 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         int concurrentConsumers = endpoint.getConfiguration().getConcurrentConsumers();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
-                concurrentConsumers);
+        executor = endpoint.getCamelContext()
+                .getExecutorServiceManager()
+                .newFixedThreadPool(this, endpoint.getEndpointUri(), concurrentConsumers);
         for (int i = 0; i < concurrentConsumers; i++) {
             executor.execute(this);
         }
@@ -73,7 +75,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     public void run() {
-        BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
+        BaseQueue<?> queue = endpoint.getHazelcastInstance()
+                .getQueue(endpoint.getConfiguration().getQueueName());
 
         while (queue != null && isRunAllowed()) {
             final Exchange exchange = createExchange(true);
@@ -87,7 +90,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     if (transactionCtx != null) {
                         LOG.trace("Begin transaction: {}", transactionCtx.getTxnId());
                         transactionCtx.beginTransaction();
-                        queue = transactionCtx.getQueue(endpoint.getConfiguration().getQueueName());
+                        queue = transactionCtx.getQueue(
+                                endpoint.getConfiguration().getQueueName());
                     }
                 }
 
@@ -109,8 +113,9 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                                     if (txc != null) {
                                         txc.rollbackTransaction();
                                     }
-                                    getExceptionHandler().handleException("Error processing exchange", exchange,
-                                            exchange.getException());
+                                    getExceptionHandler()
+                                            .handleException(
+                                                    "Error processing exchange", exchange, exchange.getException());
                                 }
                                 // It's OK, I commit
                                 if (exchange.getException() == null && txc != null) {
@@ -156,5 +161,4 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
             }
         }
     }
-
 }

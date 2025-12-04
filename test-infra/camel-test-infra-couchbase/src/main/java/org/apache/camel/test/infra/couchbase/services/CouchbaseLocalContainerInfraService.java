@@ -35,10 +35,12 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.CouchbaseContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@InfraService(service = CouchbaseInfraService.class,
-              description = "NoSQL database Couchbase",
-              serviceAlias = { "couchbase" })
-public class CouchbaseLocalContainerInfraService implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
+@InfraService(
+        service = CouchbaseInfraService.class,
+        description = "NoSQL database Couchbase",
+        serviceAlias = {"couchbase"})
+public class CouchbaseLocalContainerInfraService
+        implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
@@ -72,8 +74,7 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
 
     public CouchbaseLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
-                CouchbaseLocalContainerInfraService.class,
-                CouchbaseProperties.COUCHBASE_CONTAINER));
+                CouchbaseLocalContainerInfraService.class, CouchbaseProperties.COUCHBASE_CONTAINER));
     }
 
     public CouchbaseLocalContainerInfraService(String imageName) {
@@ -147,14 +148,11 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
         String bucketName = "myBucket";
 
         Cluster cluster = Cluster.connect(getConnectionString(), username(), password());
-        cluster.buckets().createBucket(
-                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE));
+        cluster.buckets().createBucket(BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE));
 
         DesignDocument designDoc = new DesignDocument(
                 designDocumentName(),
-                Collections.singletonMap(
-                        viewName(),
-                        new View("function (doc, meta) {  emit(meta.id, doc);}")));
+                Collections.singletonMap(viewName(), new View("function (doc, meta) {  emit(meta.id, doc);}")));
         cluster.bucket(bucketName).viewIndexes().upsertDesignDocument(designDoc, DesignDocumentNamespace.PRODUCTION);
 
         return bucketName;

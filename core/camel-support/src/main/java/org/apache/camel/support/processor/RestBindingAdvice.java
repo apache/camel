@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.processor;
 
 import java.util.HashMap;
@@ -82,19 +83,31 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     /**
      * Use {@link RestBindingAdviceFactory} to create.
      */
-    public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
-                             DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
-                             String consumes, String produces, String bindingMode,
-                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean clientResponseValidation,
-                             boolean enableCORS, boolean enableNoContentResponse,
-                             Map<String, String> corsHeaders,
-                             Map<String, String> queryDefaultValues,
-                             Map<String, String> queryAllowedValues,
-                             boolean requiredBody, Set<String> requiredQueryParameters,
-                             Set<String> requiredHeaders,
-                             Map<String, String> responseCodes, Set<String> responseHeaders,
-                             RestClientRequestValidator clientRequestValidator,
-                             RestClientResponseValidator clientResponseValidator) throws Exception {
+    public RestBindingAdvice(
+            CamelContext camelContext,
+            DataFormat jsonDataFormat,
+            DataFormat xmlDataFormat,
+            DataFormat outJsonDataFormat,
+            DataFormat outXmlDataFormat,
+            String consumes,
+            String produces,
+            String bindingMode,
+            boolean skipBindingOnErrorCode,
+            boolean clientRequestValidation,
+            boolean clientResponseValidation,
+            boolean enableCORS,
+            boolean enableNoContentResponse,
+            Map<String, String> corsHeaders,
+            Map<String, String> queryDefaultValues,
+            Map<String, String> queryAllowedValues,
+            boolean requiredBody,
+            Set<String> requiredQueryParameters,
+            Set<String> requiredHeaders,
+            Map<String, String> responseCodes,
+            Set<String> responseHeaders,
+            RestClientRequestValidator clientRequestValidator,
+            RestClientResponseValidator clientResponseValidator)
+            throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -323,14 +336,13 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             state.put(STATE_KEY_DO_MARSHAL, STATE_JSON);
         } else {
             if (bindingMode.contains("xml")) {
-                exchange.setException(
-                        new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
+                exchange.setException(new CamelExchangeException(
+                        "Cannot bind to xml as message body is not xml compatible", exchange));
             } else {
-                exchange.setException(
-                        new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
+                exchange.setException(new CamelExchangeException(
+                        "Cannot bind to json as message body is not json compatible", exchange));
             }
         }
-
     }
 
     private void marshal(Exchange exchange, Map<String, Object> state) {
@@ -436,7 +448,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                     setOutputDataType(exchange, new DataType("xml"));
 
                     if (enableNoContentResponse) {
-                        String body = MessageHelper.extractBodyAsString(exchange.getMessage()).replace("\n", "");
+                        String body = MessageHelper.extractBodyAsString(exchange.getMessage())
+                                .replace("\n", "");
                         if (ObjectHelper.isNotEmpty(body)) {
                             int open = 0;
                             int close = body.indexOf('>');
@@ -556,7 +569,12 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     public RestClientRequestValidator.ValidationError doClientRequestValidation(Exchange exchange) {
         if (clientRequestValidation && clientRequestValidator != null) {
             RestClientRequestValidator.ValidationContext vc = new RestClientRequestValidator.ValidationContext(
-                    consumes, produces, requiredBody, queryDefaultValues, queryAllowedValues, requiredQueryParameters,
+                    consumes,
+                    produces,
+                    requiredBody,
+                    queryDefaultValues,
+                    queryAllowedValues,
+                    requiredQueryParameters,
                     requiredHeaders);
             return clientRequestValidator.validate(exchange, vc);
         }

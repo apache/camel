@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
 
 import java.io.IOException;
@@ -42,17 +43,20 @@ public class HttpProxyMojoManualIT extends CamelSalesforceMojoManualIT {
     public void startProxy() {
         httpProxyPort = AvailablePortFinder.getNextAvailable();
 
-        proxy = DefaultHttpProxyServer.bootstrap().withPort(httpProxyPort).withProxyAuthenticator(new ProxyAuthenticator() {
-            @Override
-            public String getRealm() {
-                return HTTP_PROXY_REALM;
-            }
+        proxy = DefaultHttpProxyServer.bootstrap()
+                .withPort(httpProxyPort)
+                .withProxyAuthenticator(new ProxyAuthenticator() {
+                    @Override
+                    public String getRealm() {
+                        return HTTP_PROXY_REALM;
+                    }
 
-            @Override
-            public boolean authenticate(String userName, String password) {
-                return HTTP_PROXY_USER_NAME.equals(userName) && HTTP_PROXY_PASSWORD.equals(password);
-            }
-        }).start();
+                    @Override
+                    public boolean authenticate(String userName, String password) {
+                        return HTTP_PROXY_USER_NAME.equals(userName) && HTTP_PROXY_PASSWORD.equals(password);
+                    }
+                })
+                .start();
     }
 
     @AfterEach

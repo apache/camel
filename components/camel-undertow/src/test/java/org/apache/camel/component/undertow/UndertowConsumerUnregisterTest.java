@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.undertow;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.ConnectException;
 
@@ -25,21 +30,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
 
     @Test
     public void testUnregisterUndertowConsumersForPort() {
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
-        UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
-        UndertowConsumer consumerBar = (UndertowConsumer) context.getRoute("route-bar").getConsumer();
+        UndertowConsumer consumerFoo =
+                (UndertowConsumer) context.getRoute("route-foo").getConsumer();
+        UndertowConsumer consumerBar =
+                (UndertowConsumer) context.getRoute("route-bar").getConsumer();
 
-        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(),
+        component.unregisterEndpoint(
+                consumerFoo,
+                consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(),
                 consumerFoo.getEndpoint().getSslContext());
-        component.unregisterEndpoint(consumerBar, consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(),
+        component.unregisterEndpoint(
+                consumerBar,
+                consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(),
                 consumerBar.getEndpoint().getSslContext());
 
         try {
@@ -72,8 +79,11 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
         assertEquals("test", ret.getMessage().getBody(String.class));
 
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
-        UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
-        component.unregisterEndpoint(consumerFoo, consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(),
+        UndertowConsumer consumerFoo =
+                (UndertowConsumer) context.getRoute("route-foo").getConsumer();
+        component.unregisterEndpoint(
+                consumerFoo,
+                consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(),
                 consumerFoo.getEndpoint().getSslContext());
 
         ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
@@ -94,12 +104,14 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/foo")
                         .id("route-foo")
-                        .setBody().constant("test")
+                        .setBody()
+                        .constant("test")
                         .to("mock:foo");
 
                 from("undertow:http://localhost:{{port}}/bar")
                         .id("route-bar")
-                        .setBody().constant("test")
+                        .setBody()
+                        .constant("test")
                         .to("mock:bar");
             }
         };

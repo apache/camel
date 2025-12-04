@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.asn1;
 
 import java.io.ByteArrayInputStream;
@@ -24,11 +25,9 @@ import org.apache.commons.io.FileUtils;
 
 final class ASN1DataFormatTestHelper {
 
-    private ASN1DataFormatTestHelper() {
-    }
+    private ASN1DataFormatTestHelper() {}
 
     public static ByteArrayInputStream reteriveByteArrayInputStream(File file) throws IOException {
         return new ByteArrayInputStream(FileUtils.readFileToByteArray(file));
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.jsonpath;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -24,10 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonPathSplitSingleListTest extends CamelTestSupport {
 
@@ -39,7 +40,8 @@ public class JsonPathSplitSingleListTest extends CamelTestSupport {
                 from("direct:start")
                         // we select first book, but since we split after wards then ensure
                         // it will be wrapped inside a List object.
-                        .split().jsonpath("$.store.book[0]", List.class)
+                        .split()
+                        .jsonpath("$.store.book[0]", List.class)
                         .to("mock:authors")
                         .convertBodyTo(String.class);
             }
@@ -55,7 +57,11 @@ public class JsonPathSplitSingleListTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        Map row = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(Map.class);
+        Map row = getMockEndpoint("mock:authors")
+                .getReceivedExchanges()
+                .get(0)
+                .getIn()
+                .getBody(Map.class);
         assertEquals("Nigel Rees", row.get("author"));
         assertEquals(Double.valueOf("8.95"), row.get("price"));
 
@@ -65,5 +71,4 @@ public class JsonPathSplitSingleListTest extends CamelTestSupport {
         assertTrue(out.contains("\"title\": \"Sword's of Honour\""));
         assertTrue(out.contains("\"price\": 12.99,"));
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.issues;
 
 import java.util.Collections;
@@ -32,8 +33,8 @@ import org.junit.jupiter.api.Test;
  */
 public class AdviceWithIssueIT extends CamelTestSupport {
 
-    final String pub
-            = "activemq:topic:integrations?allowNullBody=false&asyncConsumer=true&concurrentConsumers=10&jmsMessageType=Map&preserveMessageQos=true";
+    final String pub =
+            "activemq:topic:integrations?allowNullBody=false&asyncConsumer=true&concurrentConsumers=10&jmsMessageType=Map&preserveMessageQos=true";
     final String advicedPub = "activemq:topic:integrations";
 
     @Override
@@ -73,8 +74,7 @@ public class AdviceWithIssueIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("starter")
-                        .to(pub).to("mock:result");
+                from("direct:start").routeId("starter").to(pub).to("mock:result");
             }
         };
     }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.soap;
 
 import java.io.IOException;
@@ -50,5 +51,4 @@ public interface SoapDataFormatAdapter {
      * @return the payload
      */
     Object doUnmarshal(Exchange exchange, InputStream stream, Object rootObject) throws IOException;
-
 }

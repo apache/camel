@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.knative;
 
 import java.util.Map;
@@ -27,8 +28,7 @@ import org.apache.camel.component.knative.spi.KnativeResource;
  */
 public final class KnativeEnvironmentSupport {
 
-    private KnativeEnvironmentSupport() {
-    }
+    private KnativeEnvironmentSupport() {}
 
     public static KnativeResource endpoint(Knative.EndpointKind endpointKind, String name, String url) {
         return KnativeEnvironment.serviceBuilder(Knative.Type.endpoint, name)

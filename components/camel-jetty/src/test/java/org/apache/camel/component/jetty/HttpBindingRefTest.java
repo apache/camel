@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jetty;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -26,8 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for http binding ref option.
@@ -50,7 +51,9 @@ public class HttpBindingRefTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
-        assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
+        assertEquals(
+                "Something went wrong but we dont care",
+                context.getTypeConverter().convertTo(String.class, out));
     }
 
     @Override
@@ -60,7 +63,8 @@ public class HttpBindingRefTest extends BaseJettyTest {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform()
+                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default")
+                        .transform()
                         .constant("Bye World");
 
                 from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder")

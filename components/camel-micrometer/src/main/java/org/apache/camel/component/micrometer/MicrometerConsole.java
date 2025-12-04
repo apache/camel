@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.micrometer;
 
 import java.util.ArrayList;
@@ -63,8 +64,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         MeterRegistry mr = lookupMeterRegistry();
         sb.append(String.format("MeterRegistry: %s\n\n", mr.getClass().getName()));
 
-        List<Meter> meters = mr.getMeters()
-                .stream()
+        List<Meter> meters = mr.getMeters().stream()
                 .filter(meter -> accept(meter.getId().getName(), filter))
                 .toList();
 
@@ -117,7 +117,8 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long total = Math.round(t.totalTime(TimeUnit.MILLISECONDS));
-                sb.append(String.format("    %s: %d (total: %dms mean: %dms max: %dms)\n", name, count, total, mean, max));
+                sb.append(String.format(
+                        "    %s: %d (total: %dms mean: %dms max: %dms)\n", name, count, total, mean, max));
                 if (tags) {
                     addTags(sb, t.getId());
                 }
@@ -136,8 +137,8 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long duration = Math.round(t.duration(TimeUnit.MILLISECONDS));
-                sb.append(
-                        String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
+                sb.append(String.format(
+                        "    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
                 if (tags) {
                     addTags(sb, t.getId());
                 }
@@ -186,8 +187,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         MeterRegistry mr = lookupMeterRegistry();
         root.put("meterRegistryClass", mr.getClass().getName());
 
-        List<Meter> meters = mr.getMeters()
-                .stream()
+        List<Meter> meters = mr.getMeters().stream()
                 .filter(meter -> accept(meter.getId().getName(), filter))
                 .toList();
 
@@ -335,8 +335,8 @@ public class MicrometerConsole extends AbstractDevConsole {
     }
 
     private MeterRegistry lookupMeterRegistry() {
-        return MicrometerUtils.getOrCreateMeterRegistry(getCamelContext().getRegistry(),
-                MicrometerConstants.METRICS_REGISTRY_NAME);
+        return MicrometerUtils.getOrCreateMeterRegistry(
+                getCamelContext().getRegistry(), MicrometerConstants.METRICS_REGISTRY_NAME);
     }
 
     private int sortByName(JsonObject o1, JsonObject o2) {

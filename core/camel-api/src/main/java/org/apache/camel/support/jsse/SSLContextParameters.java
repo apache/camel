@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
@@ -275,7 +276,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         if (this.getProvider() == null) {
             context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()));
         } else {
-            context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()),
+            context = SSLContext.getInstance(
+                    this.parsePropertyValue(this.getSecureSocketProtocol()),
                     this.parsePropertyValue(this.getProvider()));
         }
 
@@ -284,8 +286,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
                 if (keyManagers[idx] instanceof X509KeyManager x509KeyManager) {
                     try {
                         keyManagers[idx] = new AliasedX509ExtendedKeyManager(
-                                this.parsePropertyValue(this.getCertAlias()),
-                                x509KeyManager);
+                                this.parsePropertyValue(this.getCertAlias()), x509KeyManager);
                     } catch (Exception e) {
                         throw new GeneralSecurityException(e);
                     }
@@ -295,7 +296,12 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         LOG.debug(
                 "SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
-                context, this, context.getProvider(), context.getProtocol(), keyManagers, trustManagers,
+                context,
+                this,
+                context.getProvider(),
+                context.getProtocol(),
+                keyManagers,
+                trustManagers,
                 secureRandom);
 
         context.init(keyManagers, trustManagers, secureRandom);
@@ -303,12 +309,11 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.configureSSLContext(context);
 
         // Decorate the context.
-        context = new SSLContextDecorator(
-                new SSLContextSpiDecorator(
-                        context,
-                        this.getSSLEngineConfigurers(context),
-                        this.getSSLSocketFactoryConfigurers(context),
-                        this.getSSLServerSocketFactoryConfigurers(context)));
+        context = new SSLContextDecorator(new SSLContextSpiDecorator(
+                context,
+                this.getSSLEngineConfigurers(context),
+                this.getSSLSocketFactoryConfigurers(context),
+                this.getSSLServerSocketFactoryConfigurers(context)));
 
         return context;
     }
@@ -319,13 +324,15 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         super.configureSSLContext(context);
 
         if (this.getClientParameters() != null) {
-            LOG.trace("Overriding client-side SSLContext parameters on SSLContext [{}] with configured client parameters.",
+            LOG.trace(
+                    "Overriding client-side SSLContext parameters on SSLContext [{}] with configured client parameters.",
                     context);
             this.getClientParameters().configureSSLContext(context);
         }
 
         if (this.getServerParameters() != null) {
-            LOG.trace("Overriding server-side SSLContext parameters on SSLContext [{}] with configured server parameters.",
+            LOG.trace(
+                    "Overriding server-side SSLContext parameters on SSLContext [{}] with configured server parameters.",
                     context);
             this.getServerParameters().configureSSLContext(context);
         }
@@ -339,13 +346,15 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         List<Configurer<SSLEngine>> configurers = super.getSSLEngineConfigurers(context);
 
         if (this.getClientParameters() != null) {
-            LOG.trace("Augmenting SSLEngine configurers with configurers from client parameters on SSLContext [{}].",
+            LOG.trace(
+                    "Augmenting SSLEngine configurers with configurers from client parameters on SSLContext [{}].",
                     context);
             configurers.addAll(this.getClientParameters().getSSLEngineConfigurers(context));
         }
 
         if (this.getServerParameters() != null) {
-            LOG.trace("Augmenting SSLEngine configurers with configurers from server parameters on SSLContext [{}].",
+            LOG.trace(
+                    "Augmenting SSLEngine configurers with configurers from server parameters on SSLContext [{}].",
                     context);
             configurers.addAll(this.getServerParameters().getSSLEngineConfigurers(context));
         }
@@ -361,7 +370,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         List<Configurer<SSLSocketFactory>> configurers = super.getSSLSocketFactoryConfigurers(context);
 
         if (this.getClientParameters() != null) {
-            LOG.trace("Augmenting SSLSocketFactory configurers with configurers from client parameters on SSLContext [{}].",
+            LOG.trace(
+                    "Augmenting SSLSocketFactory configurers with configurers from client parameters on SSLContext [{}].",
                     context);
             configurers.addAll(this.getClientParameters().getSSLSocketFactoryConfigurers(context));
         }
@@ -420,5 +430,4 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append("]");
         return builder.toString();
     }
-
 }

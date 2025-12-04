@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
@@ -51,10 +52,12 @@ public class BatchResequencerJMSPriorityTest extends ContextTestSupport {
                         // have same JMSPriority)
                         // and use reverse ordering so 9 is first output (most
                         // important), and 0 is last
-                        .resequence(header("JMSPriority")).allowDuplicates().reverse().to("mock:result");
+                        .resequence(header("JMSPriority"))
+                        .allowDuplicates()
+                        .reverse()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }

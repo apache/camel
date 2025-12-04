@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
 
 import java.io.IOException;
@@ -69,9 +70,15 @@ public class WireTapProcessor extends BaseProcessorSupport
     private PooledExchangeTaskFactory taskFactory;
     private Processor onPrepare;
 
-    public WireTapProcessor(SendDynamicProcessor dynamicSendProcessor, Processor processor, String uri,
-                            ExchangePattern exchangePattern, boolean copy,
-                            ExecutorService executorService, boolean shutdownExecutorService, boolean dynamicUri) {
+    public WireTapProcessor(
+            SendDynamicProcessor dynamicSendProcessor,
+            Processor processor,
+            String uri,
+            ExchangePattern exchangePattern,
+            boolean copy,
+            ExecutorService executorService,
+            boolean shutdownExecutorService,
+            boolean dynamicUri) {
         this.dynamicSendProcessor = dynamicSendProcessor;
         this.uri = uri;
         this.processor = processor;
@@ -314,12 +321,15 @@ public class WireTapProcessor extends BaseProcessorSupport
     @Override
     protected void doBuild() throws Exception {
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
-                .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
+        this.processorExchangeFactory = getCamelContext()
+                .getCamelContextExtension()
+                .getProcessorExchangeFactory()
+                .newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());
 
-        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
+        boolean pooled =
+                camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
             taskFactory = new PooledTaskFactory(getId()) {
                 @Override
@@ -327,7 +337,8 @@ public class WireTapProcessor extends BaseProcessorSupport
                     return new WireTapTask();
                 }
             };
-            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
+            int capacity =
+                    camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
         } else {
             taskFactory = new PrototypeTaskFactory() {

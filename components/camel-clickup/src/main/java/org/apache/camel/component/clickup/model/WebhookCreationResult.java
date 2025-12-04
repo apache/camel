@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.model;
 
 import java.io.Serial;
@@ -62,12 +63,10 @@ public class WebhookCreationResult implements Serializable {
 
     @Override
     public String toString() {
-        return "WebhookCreationResult{" +
-               "id='" + id + '\'' +
-               ", webhook=" + webhook +
-               ", error='" + error + '\'' +
-               ", errorCode='" + errorCode + '\'' +
-               '}';
+        return "WebhookCreationResult{" + "id='"
+                + id + '\'' + ", webhook="
+                + webhook + ", error='"
+                + error + '\'' + ", errorCode='"
+                + errorCode + '\'' + '}';
     }
-
 }

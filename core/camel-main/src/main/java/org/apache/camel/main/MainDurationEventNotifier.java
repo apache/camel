@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
 
 import java.util.concurrent.Executors;
@@ -66,9 +67,14 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
     private volatile StopWatch watch;
     private volatile ScheduledExecutorService idleExecutorService;
 
-    public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
-                                     MainShutdownStrategy shutdownStrategy, boolean stopCamelContext,
-                                     boolean restartDuration, String action) {
+    public MainDurationEventNotifier(
+            CamelContext camelContext,
+            int maxMessages,
+            long maxIdleSeconds,
+            MainShutdownStrategy shutdownStrategy,
+            boolean stopCamelContext,
+            boolean restartDuration,
+            String action) {
         this.camelContext = camelContext;
         this.maxMessages = maxMessages;
         this.maxIdleSeconds = maxIdleSeconds;
@@ -134,12 +140,16 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         if (action == Action.SHUTDOWN) {
             LOG.info("Duration max messages triggering shutdown of the JVM");
             // use thread to shut down Camel as otherwise we would block current thread
-            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask)
+            camelContext
+                    .getExecutorServiceManager()
+                    .newThread("CamelMainShutdownCamelContext", this::shutdownTask)
                     .start();
         } else if (action == Action.STOP) {
             LOG.info("Duration max messages triggering stopping all routes");
             // use thread to stop routes as otherwise we would block current thread
-            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask)
+            camelContext
+                    .getExecutorServiceManager()
+                    .newThread("CamelMainShutdownCamelContext", this::stopTask)
                     .start();
         }
     }
@@ -168,8 +178,10 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
 
     @Override
     public boolean isEnabled(CamelEvent event) {
-        return event.getType() == CamelEvent.Type.ExchangeCreated || event.getType() == CamelEvent.Type.ExchangeCompleted
-                || event.getType() == CamelEvent.Type.ExchangeFailed || event.getType() == CamelEvent.Type.RouteReloaded;
+        return event.getType() == CamelEvent.Type.ExchangeCreated
+                || event.getType() == CamelEvent.Type.ExchangeCompleted
+                || event.getType() == CamelEvent.Type.ExchangeFailed
+                || event.getType() == CamelEvent.Type.RouteReloaded;
     }
 
     @Override
@@ -266,11 +278,17 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         if (action == Action.SHUTDOWN) {
             LOG.info("Duration max idle triggering shutdown of the JVM");
             // use thread to stop Camel as otherwise we would block current thread
-            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask).start();
+            camelContext
+                    .getExecutorServiceManager()
+                    .newThread("CamelMainShutdownCamelContext", this::shutdownTask)
+                    .start();
         } else if (action == Action.STOP) {
             LOG.info("Duration max idle triggering stopping all routes");
             // use thread to stop Camel as otherwise we would block current thread
-            camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::stopTask).start();
+            camelContext
+                    .getExecutorServiceManager()
+                    .newThread("CamelMainShutdownCamelContext", this::stopTask)
+                    .start();
         }
     }
 }

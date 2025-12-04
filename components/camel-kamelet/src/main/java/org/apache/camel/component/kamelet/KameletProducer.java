@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.AsyncCallback;
@@ -101,7 +102,8 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
                     return consumer.getAsyncProcessor().process(exchange, callback);
                 } else {
                     // kamelet producer that calls its kamelet consumer to process the incoming exchange
-                    // create exchange copy to let a new lifecycle originate from the calling route (not the kamelet route)
+                    // create exchange copy to let a new lifecycle originate from the calling route (not the kamelet
+                    // route)
                     final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false, true);
                     // fake copy as being created by the consumer
                     copy.getExchangeExtension().setFromEndpoint(consumer.getEndpoint());
@@ -147,5 +149,4 @@ final class KameletProducer extends DefaultAsyncProducer implements RouteIdAware
             registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.UUID;
@@ -96,21 +97,21 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey())));
             } else if (ObjectHelper.isNotEmpty(configuration.getProfileCredentialsName())) {
-                clientBuilder = clientBuilder
-                        .credentialsProvider(
-                                ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+                clientBuilder = clientBuilder.credentialsProvider(
+                        ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
             } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
                     && ObjectHelper.isNotEmpty(configuration.getSecretKey())
                     && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
-                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
+                clientBuilder =
+                        clientBuilder.credentialsProvider(StaticCredentialsProvider.create(AwsSessionCredentials.create(
+                                configuration.getAccessKey(),
+                                configuration.getSecretKey(),
                                 configuration.getSessionToken())));
             }
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
             }
-            dynamoDbAsyncClient
-                    = clientBuilder.build();
+            dynamoDbAsyncClient = clientBuilder.build();
         } else {
             dynamoDbAsyncClient = getEndpoint().getConfiguration().getDynamoDbAsyncClient();
         }
@@ -121,14 +122,15 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey())));
             } else if (ObjectHelper.isNotEmpty(configuration.getProfileCredentialsName())) {
-                clientBuilder = clientBuilder
-                        .credentialsProvider(
-                                ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+                clientBuilder = clientBuilder.credentialsProvider(
+                        ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
             } else if (ObjectHelper.isNotEmpty(configuration.getAccessKey())
                     && ObjectHelper.isNotEmpty(configuration.getSecretKey())
                     && ObjectHelper.isNotEmpty(configuration.getSessionToken())) {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider
-                        .create(AwsSessionCredentials.create(configuration.getAccessKey(), configuration.getSecretKey(),
+                clientBuilder =
+                        clientBuilder.credentialsProvider(StaticCredentialsProvider.create(AwsSessionCredentials.create(
+                                configuration.getAccessKey(),
+                                configuration.getSecretKey(),
                                 configuration.getSessionToken())));
             }
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
@@ -140,8 +142,12 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         }
         this.executor = this.getEndpoint().createExecutor(this);
         this.executor.submit(new KclKinesisConsumingTask(
-                configuration.getStreamName(), configuration.getApplicationName(), kinesisAsyncClient, dynamoDbAsyncClient,
-                cloudWatchAsyncClient, configuration.isKclDisableCloudwatchMetricsExport()));
+                configuration.getStreamName(),
+                configuration.getApplicationName(),
+                kinesisAsyncClient,
+                dynamoDbAsyncClient,
+                cloudWatchAsyncClient,
+                configuration.isKclDisableCloudwatchMetricsExport()));
     }
 
     @Override
@@ -192,15 +198,15 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         @Override
         public void processRecords(ProcessRecordsInput processRecordsInput) {
             try {
-                LOG.debug("Processing {} record(s)", processRecordsInput.records().size());
-                processRecordsInput.records()
-                        .forEach(r -> {
-                            try {
-                                processor.process(createExchange(r, shardId));
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                LOG.debug(
+                        "Processing {} record(s)", processRecordsInput.records().size());
+                processRecordsInput.records().forEach(r -> {
+                    try {
+                        processor.process(createExchange(r, shardId));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             } catch (Throwable t) {
                 LOG.error("Caught throwable while processing records. Aborting.");
             }
@@ -234,7 +240,8 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         protected Exchange createExchange(KinesisClientRecord dataRecord, String shardId) {
             Exchange exchange = endpoint.createExchange();
             exchange.getMessage().setBody(dataRecord.data());
-            exchange.getMessage().setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, dataRecord.approximateArrivalTimestamp());
+            exchange.getMessage()
+                    .setHeader(Kinesis2Constants.APPROX_ARRIVAL_TIME, dataRecord.approximateArrivalTimestamp());
             exchange.getMessage().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
             exchange.getMessage().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
             exchange.getMessage().setHeader(Kinesis2Constants.SHARD_ID, shardId);
@@ -255,9 +262,13 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         private final String applicationName;
         private final boolean disableMetricsExport;
 
-        KclKinesisConsumingTask(String streamName, String applicationName, KinesisAsyncClient kinesisAsyncClient,
-                                DynamoDbAsyncClient dynamoDbAsyncClient, CloudWatchAsyncClient cloudWatchAsyncClient,
-                                boolean disableMetricsExport) {
+        KclKinesisConsumingTask(
+                String streamName,
+                String applicationName,
+                KinesisAsyncClient kinesisAsyncClient,
+                DynamoDbAsyncClient dynamoDbAsyncClient,
+                CloudWatchAsyncClient cloudWatchAsyncClient,
+                boolean disableMetricsExport) {
             this.cloudWatchAsyncClient = cloudWatchAsyncClient;
             this.dynamoDbAsyncClient = dynamoDbAsyncClient;
             this.kinesisAsyncClient = kinesisAsyncClient;
@@ -270,8 +281,11 @@ public class KclKinesis2Consumer extends DefaultConsumer {
         public void run() {
             try {
                 ConfigsBuilder configsBuilder = new ConfigsBuilder(
-                        streamName, applicationName,
-                        kinesisAsyncClient, dynamoDbAsyncClient, cloudWatchAsyncClient,
+                        streamName,
+                        applicationName,
+                        kinesisAsyncClient,
+                        dynamoDbAsyncClient,
+                        cloudWatchAsyncClient,
                         "KclKinesisConsumingTask-" + UUID.randomUUID().toString(),
                         new CamelKinesisRecordProcessorFactory());
 
@@ -281,12 +295,16 @@ public class KclKinesis2Consumer extends DefaultConsumer {
                         configsBuilder.leaseManagementConfig(),
                         configsBuilder.lifecycleConfig(),
                         disableMetricsExport
-                                ? configsBuilder.metricsConfig().metricsLevel(MetricsLevel.NONE)
+                                ? configsBuilder
+                                        .metricsConfig()
+                                        .metricsLevel(MetricsLevel.NONE)
                                         .metricsFactory(new NullMetricsFactory())
                                 : configsBuilder.metricsConfig(),
                         configsBuilder.processorConfig(),
-                        configsBuilder.retrievalConfig().retrievalSpecificConfig(new PollingConfig(
-                                getEndpoint().getConfiguration().getStreamName(), kinesisAsyncClient)));
+                        configsBuilder
+                                .retrievalConfig()
+                                .retrievalSpecificConfig(new PollingConfig(
+                                        getEndpoint().getConfiguration().getStreamName(), kinesisAsyncClient)));
 
                 schedulerKcl = scheduler;
                 Thread schedulerThread = new Thread(scheduler);
@@ -294,7 +312,6 @@ public class KclKinesis2Consumer extends DefaultConsumer {
             } catch (final Exception e) {
                 KclKinesis2Consumer.this.getExceptionHandler().handleException("Error during processing", e);
             }
-
         }
     }
 }

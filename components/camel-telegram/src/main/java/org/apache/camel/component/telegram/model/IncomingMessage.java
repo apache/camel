@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -71,8 +72,7 @@ public class IncomingMessage implements Serializable {
 
     private IncomingGame game;
 
-    public IncomingMessage() {
-    }
+    public IncomingMessage() {}
 
     public Long getMessageId() {
         return messageId;

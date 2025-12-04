@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.List;
@@ -54,8 +55,11 @@ public interface ModelToXMLDumper {
      * @throws Exception           is throw if error marshalling to XML
      */
     String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders,
-            boolean generatedIds, boolean sourceLocation)
+            CamelContext context,
+            NamedNode definition,
+            boolean resolvePlaceholders,
+            boolean generatedIds,
+            boolean sourceLocation)
             throws Exception;
 
     /**
@@ -77,5 +81,4 @@ public interface ModelToXMLDumper {
      * @throws Exception   is throw if error marshalling to XML
      */
     String dumpDataFormatsAsXml(CamelContext context, Map<String, Object> dataFormats) throws Exception;
-
 }

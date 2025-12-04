@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jcache;
 
 import java.util.LinkedList;
@@ -39,40 +40,58 @@ public class JCacheConfiguration {
 
     @UriParam(label = "common")
     private String cachingProvider;
+
     @UriParam(label = "advanced")
     private Configuration cacheConfiguration;
+
     @UriParam
     private Properties cacheConfigurationProperties;
+
     @UriParam
     private String configurationUri;
+
     @UriParam(label = "advanced")
     private Factory<CacheLoader> cacheLoaderFactory;
+
     @UriParam(label = "advanced")
     private Factory<CacheWriter> cacheWriterFactory;
+
     @UriParam(label = "advanced")
     private Factory<ExpiryPolicy> expiryPolicyFactory;
+
     @UriParam
     private boolean readThrough;
+
     @UriParam
     private boolean writeThrough;
+
     @UriParam(defaultValue = "true")
     private boolean storeByValue = true;
+
     @UriParam
     private boolean statisticsEnabled;
+
     @UriParam
     private boolean managementEnabled;
+
     @UriParam(label = "consumer", enums = "CREATED,UPDATED,REMOVED,EXPIRED")
     private String filteredEvents;
+
     @UriParam(label = "consumer,advanced")
     private List<CacheEntryEventFilter> eventFilters;
+
     @UriParam(label = "consumer")
     private boolean oldValueRequired;
+
     @UriParam(label = "consumer")
     private boolean synchronous;
+
     @UriParam(label = "producer")
     private String action;
+
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean createCacheIfNotExists = true;
+
     @UriParam(label = "advanced")
     private boolean lookupProviders;
 
@@ -109,9 +128,7 @@ public class JCacheConfiguration {
     }
 
     public ClassLoader getApplicationContextClassLoader() {
-        return this.camelContext != null
-                ? this.camelContext.getApplicationContextClassLoader()
-                : null;
+        return this.camelContext != null ? this.camelContext.getApplicationContextClassLoader() : null;
     }
 
     /**
@@ -272,8 +289,8 @@ public class JCacheConfiguration {
     }
 
     public void setEventFilters(String eventFilter) {
-        this.eventFilters
-                = EndpointHelper.resolveReferenceListParameter(camelContext, eventFilter, CacheEntryEventFilter.class);
+        this.eventFilters =
+                EndpointHelper.resolveReferenceListParameter(camelContext, eventFilter, CacheEntryEventFilter.class);
     }
 
     /**

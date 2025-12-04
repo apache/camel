@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.git.producer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -28,9 +32,6 @@ import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitRemoteProducerTest extends GitTestSupport {
 
@@ -82,5 +83,4 @@ public class GitRemoteProducerTest extends GitTestSupport {
             }
         };
     }
-
 }

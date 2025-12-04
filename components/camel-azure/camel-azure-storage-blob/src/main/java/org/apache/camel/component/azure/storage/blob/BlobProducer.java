@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.azure.storage.blob;
 
 import com.azure.storage.blob.changefeed.BlobChangefeedClient;
@@ -43,7 +44,8 @@ public class BlobProducer extends DefaultProducer {
     public BlobProducer(final Endpoint endpoint) {
         super(endpoint);
         this.configuration = getEndpoint().getConfiguration();
-        this.blobServiceClientWrapper = new BlobServiceClientWrapper(getEndpoint().getBlobServiceClient());
+        this.blobServiceClientWrapper =
+                new BlobServiceClientWrapper(getEndpoint().getBlobServiceClient());
         this.blobServiceOperations = new BlobServiceOperations(configuration, blobServiceClientWrapper);
         this.configurationProxy = new BlobConfigurationOptionsProxy(configuration);
     }
@@ -57,11 +59,11 @@ public class BlobProducer extends DefaultProducer {
         }
 
         switch (operation) {
-            // service operations
+                // service operations
             case listBlobContainers:
                 setResponse(exchange, blobServiceOperations.listBlobContainers(exchange));
                 break;
-            // container operations
+                // container operations
             case createBlobContainer:
                 setResponse(exchange, getContainerOperations(exchange).createContainer(exchange));
                 break;
@@ -71,7 +73,7 @@ public class BlobProducer extends DefaultProducer {
             case listBlobs:
                 setResponse(exchange, getContainerOperations(exchange).listBlobs(exchange));
                 break;
-            // blob operations
+                // blob operations
             case getBlob:
                 setResponse(exchange, getBlobOperations(exchange).getBlob(exchange));
                 break;
@@ -84,7 +86,7 @@ public class BlobProducer extends DefaultProducer {
             case downloadLink:
                 setResponse(exchange, getBlobOperations(exchange).downloadLink(exchange));
                 break;
-            // block blob operations
+                // block blob operations
             case uploadBlockBlob:
                 setResponse(exchange, getBlobOperations(exchange).uploadBlockBlob(exchange));
                 break;
@@ -97,14 +99,14 @@ public class BlobProducer extends DefaultProducer {
             case getBlobBlockList:
                 setResponse(exchange, getBlobOperations(exchange).getBlobBlockList(exchange));
                 break;
-            // append blob operations
+                // append blob operations
             case createAppendBlob:
                 setResponse(exchange, getBlobOperations(exchange).createAppendBlob(exchange));
                 break;
             case commitAppendBlob:
                 setResponse(exchange, getBlobOperations(exchange).commitAppendBlob(exchange));
                 break;
-            // page blob operations
+                // page blob operations
             case createPageBlob:
                 setResponse(exchange, getBlobOperations(exchange).createPageBlob(exchange));
                 break;
@@ -147,20 +149,21 @@ public class BlobProducer extends DefaultProducer {
 
     private BlobContainerOperations getContainerOperations(final Exchange exchange) {
         return new BlobContainerOperations(
-                configuration, blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
+                configuration,
+                blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange)));
     }
 
     private BlobOperations getBlobOperations(final Exchange exchange) {
-        final BlobClientWrapper clientWrapper
-                = blobServiceClientWrapper.getBlobContainerClientWrapper(determineContainerName(exchange))
-                        .getBlobClientWrapper(determineBlobName(exchange));
+        final BlobClientWrapper clientWrapper = blobServiceClientWrapper
+                .getBlobContainerClientWrapper(determineContainerName(exchange))
+                .getBlobClientWrapper(determineBlobName(exchange));
 
         return new BlobOperations(configuration, clientWrapper);
     }
 
     private BlobChangeFeedOperations getBlobChangeFeedOperations() {
-        final BlobChangefeedClient changefeedClient
-                = new BlobChangefeedClientBuilder(getEndpoint().getBlobServiceClient()).buildClient();
+        final BlobChangefeedClient changefeedClient =
+                new BlobChangefeedClientBuilder(getEndpoint().getBlobServiceClient()).buildClient();
 
         return new BlobChangeFeedOperations(changefeedClient, configurationProxy);
     }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -22,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.processor.OnCompletionTest;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
 
@@ -33,8 +34,16 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         camelContext.addRoutes(new RouteConfigurationBuilder() {
             @Override
             public void configuration() {
-                routeConfiguration().onCompletion().onCompleteOnly().to("log:ok").to("mock:ok");
-                routeConfiguration().onCompletion().onFailureOnly().to("log:fail").to("mock:fail");
+                routeConfiguration()
+                        .onCompletion()
+                        .onCompleteOnly()
+                        .to("log:ok")
+                        .to("mock:ok");
+                routeConfiguration()
+                        .onCompletion()
+                        .onFailureOnly()
+                        .to("log:fail")
+                        .to("mock:fail");
             }
         });
 
@@ -58,8 +67,8 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:fail").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"),
-                "Should have thrown exception");
+        assertThrows(
+                Exception.class, () -> template.sendBody("direct:start", "Kaboom"), "Should have thrown exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -71,8 +80,7 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "Hello World");
-        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"),
-                "Should throw exception");
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Kaboom"), "Should throw exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -82,8 +90,7 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
-                        .to("direct:end");
+                from("direct:start").to("direct:end");
 
                 from("direct:end")
                         // CAMEL-18835: apply the processor by this route and not the one above to
@@ -93,5 +100,4 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
             }
         };
     }
-
 }

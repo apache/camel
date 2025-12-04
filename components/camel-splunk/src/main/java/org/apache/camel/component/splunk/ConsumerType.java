@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.splunk;
 
 public enum ConsumerType {
@@ -29,5 +30,4 @@ public enum ConsumerType {
         }
         throw new RuntimeException("Unable to construct consumerType from uri : " + uri);
     }
-
 }

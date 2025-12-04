@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.velocity;
 
 import java.util.Map;
@@ -30,15 +31,17 @@ public class VelocityComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache = true;
+
     @Metadata
     private boolean allowTemplateFromHeader;
+
     @Metadata
     private boolean allowContextMapAll;
+
     @Metadata(label = "advanced", autowired = true)
     private VelocityEngine velocityEngine;
 
-    public VelocityComponent() {
-    }
+    public VelocityComponent() {}
 
     public VelocityEngine getVelocityEngine() {
         return velocityEngine;

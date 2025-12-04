@@ -17,16 +17,16 @@
 
 package org.apache.camel.http.base;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class HttpHelperTest {
 
@@ -35,7 +35,8 @@ class HttpHelperTest {
     void testEvalPlaceholdersCanParse() {
         Map<String, Object> headers = new HashMap<>();
 
-        assertDoesNotThrow(() -> HttpHelper.evalPlaceholders(headers, "/some/url/value", "/some/url/{key}"),
+        assertDoesNotThrow(
+                () -> HttpHelper.evalPlaceholders(headers, "/some/url/value", "/some/url/{key}"),
                 "Parsing the URL should not cause an exception");
         assertNotEquals(0, headers.size());
         assertEquals("value", headers.get("key"));
@@ -46,7 +47,8 @@ class HttpHelperTest {
     void testEvalPlaceholdersOutOfBound() {
         Map<String, Object> headers = new HashMap<>();
 
-        assertThrows(ArrayIndexOutOfBoundsException.class,
+        assertThrows(
+                ArrayIndexOutOfBoundsException.class,
                 () -> HttpHelper.evalPlaceholders(headers, "/some/url", "/some/url/{key}"),
                 "The sizes of the URLs differ and it should throw an exception");
     }
@@ -56,7 +58,8 @@ class HttpHelperTest {
     void testEvalPlaceholdersOutOfBound2() {
         Map<String, Object> headers = new HashMap<>();
 
-        assertDoesNotThrow(() -> HttpHelper.evalPlaceholders(headers, "/some/url/value", "/some/{key}"),
+        assertDoesNotThrow(
+                () -> HttpHelper.evalPlaceholders(headers, "/some/url/value", "/some/{key}"),
                 "The provided path is greater than the consumer path, so it should not throw an exception");
         assertNotEquals(0, headers.size());
         assertEquals("url", headers.get("key"));

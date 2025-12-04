@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.error;
 
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -26,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * To demonstrate the TransactionErrorHandlerBuilder configured in Spring XML.
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class TransactionErrorHandlerBuilderAsSpringBeanIT extends AbstractSpringJMSITSupport {
 
     @Override

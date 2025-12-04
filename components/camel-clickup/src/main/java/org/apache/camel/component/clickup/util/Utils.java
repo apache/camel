@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.clickup.util;
 
 import java.security.InvalidKeyException;
@@ -43,7 +44,8 @@ public class Utils {
 
             return DatatypeConverter.printHexBinary(hash);
         } catch (NoSuchAlgorithmException e) {
-            LOG.debug("This exception should never occur: cannot find the hashing algorithm. {}", HMAC_HASHING_ALGORITHM);
+            LOG.debug(
+                    "This exception should never occur: cannot find the hashing algorithm. {}", HMAC_HASHING_ALGORITHM);
 
             throw new RuntimeCamelException(e);
         } catch (InvalidKeyException e) {
@@ -52,5 +54,4 @@ public class Utils {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

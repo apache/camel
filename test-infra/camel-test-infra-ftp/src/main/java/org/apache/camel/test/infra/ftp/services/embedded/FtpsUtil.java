@@ -31,9 +31,7 @@ public final class FtpsUtil {
     private static boolean checked;
     private static boolean hasRequiredAlgorithms;
 
-    private FtpsUtil() {
-
-    }
+    private FtpsUtil() {}
 
     public static boolean hasRequiredAlgorithms() {
         if (!checked) {
@@ -54,7 +52,11 @@ public final class FtpsUtil {
             String name = System.getProperty("os.name");
             String message = e.getMessage();
 
-            LOG.warn("SunX509 is not available on this platform [{}] Testing is skipped! Real cause: {}", name, message, e);
+            LOG.warn(
+                    "SunX509 is not available on this platform [{}] Testing is skipped! Real cause: {}",
+                    name,
+                    message,
+                    e);
             return false;
         } finally {
             checked = true;

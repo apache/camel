@@ -14,26 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.docling.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class DoclingServiceFactory {
-    private DoclingServiceFactory() {
-
-    }
+    private DoclingServiceFactory() {}
 
     public static SimpleTestServiceBuilder<DoclingService> builder() {
         return new SimpleTestServiceBuilder<>("docling");
     }
 
     public static DoclingService createService() {
-        return builder()
-                .addLocalMapping(DoclingLocalContainerService::new)
-                .build();
+        return builder().addLocalMapping(DoclingLocalContainerService::new).build();
     }
 
     public static class DoclingLocalContainerService extends DoclingLocalContainerInfraService
-            implements DoclingService {
-    }
+            implements DoclingService {}
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.redis.integration;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -41,10 +42,8 @@ public class RedisConsumerManualIT extends RedisTestSupport {
     @BeforeAll
     public static void beforeAll() {
         jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.getStandaloneConfiguration()
-                .setHostName(service.host());
-        jedisConnectionFactory.getStandaloneConfiguration()
-                .setPort(service.port());
+        jedisConnectionFactory.getStandaloneConfiguration().setHostName(service.host());
+        jedisConnectionFactory.getStandaloneConfiguration().setPort(service.port());
 
         jedisConnectionFactory.afterPropertiesSet();
         LISTENER_CONTAINER.setConnectionFactory(jedisConnectionFactory);
@@ -69,7 +68,7 @@ public class RedisConsumerManualIT extends RedisTestSupport {
                 String serviceAddress = service.getServiceAddress();
 
                 from("spring-redis://" + serviceAddress
-                     + "?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
+                                + "?command=SUBSCRIBE&channels=one,two&listenerContainer=#listenerContainer&redisTemplate=#redisTemplate")
                         .startupOrder(1)
                         .to("mock:result");
 

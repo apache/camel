@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.reply;
 
 import jakarta.jms.Message;
@@ -39,8 +40,13 @@ public class ReplyHolder {
     /**
      * Constructor to use when a reply message was received
      */
-    public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
-                       String correlationId, Message message, Session session) {
+    public ReplyHolder(
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            Message message,
+            Session session) {
         this.exchange = exchange;
         this.callback = callback;
         this.originalCorrelationId = originalCorrelationId;
@@ -52,8 +58,12 @@ public class ReplyHolder {
     /**
      * Constructor to use when a timeout occurred
      */
-    public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
-                       String correlationId, long timeout) {
+    public ReplyHolder(
+            Exchange exchange,
+            AsyncCallback callback,
+            String originalCorrelationId,
+            String correlationId,
+            long timeout) {
         this(exchange, callback, originalCorrelationId, correlationId, null, null);
         this.timeout = timeout;
     }

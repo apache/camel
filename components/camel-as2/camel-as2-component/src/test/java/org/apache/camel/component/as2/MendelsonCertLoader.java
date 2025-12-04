@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.as2;
 
 import java.io.IOException;
@@ -60,7 +61,8 @@ public class MendelsonCertLoader {
         try {
             InputStream keyStoreAsStream = getClass().getClassLoader().getResourceAsStream(keyStorePath);
             KeyStore keyStore = getKeyStore(keyStoreAsStream, keyStorePassword);
-            sslContext = SSLContexts.custom().setKeyStoreType("PKCS12")
+            sslContext = SSLContexts.custom()
+                    .setKeyStoreType("PKCS12")
                     .loadTrustMaterial(keyStore, new TrustAllStrategy())
                     .build();
         } catch (KeyStoreException | IOException | KeyManagementException | NoSuchAlgorithmException e) {
@@ -91,13 +93,13 @@ public class MendelsonCertLoader {
 
         InputStream certificateAsStream = getClass().getClassLoader().getResourceAsStream(certificatePath);
         if (certificateAsStream == null) {
-            //LOG.error("Couldn't read out client certificate as stream.");
+            // LOG.error("Couldn't read out client certificate as stream.");
             throw new IllegalStateException("Couldn't read out certificate as stream.");
         }
 
         InputStream keyStoreAsStream = getClass().getClassLoader().getResourceAsStream(keyStorePath);
         if (keyStoreAsStream == null) {
-            //LOG.error("Couldn't read out private key as stream.");
+            // LOG.error("Couldn't read out private key as stream.");
             throw new IllegalStateException("Couldn't read out key storage as stream.");
         }
 
@@ -105,18 +107,21 @@ public class MendelsonCertLoader {
             Certificate certificate = getCertificateFromStream(certificateAsStream);
             chainAsList.add(certificate);
 
-            //private key
+            // private key
             privateKey = getPrivateKeyFromPKCSStream(keyStoreAsStream, keyStorePassword);
 
         } catch (IOException e) {
-            String errMsg
-                    = "Error while trying to load certificate to the key store. IO error when reading a byte array.  " + e;
+            String errMsg =
+                    "Error while trying to load certificate to the key store. IO error when reading a byte array.  "
+                            + e;
             LOG.error(errMsg);
         } catch (NoSuchAlgorithmException e) {
-            String errMsg = "Error while trying to load certificate to the key store. Requested algorithm isn't found.  " + e;
+            String errMsg =
+                    "Error while trying to load certificate to the key store. Requested algorithm isn't found.  " + e;
             LOG.error(errMsg);
         } catch (CertificateException e) {
-            String errMsg = "Error while trying to load certificate to the key store. There is a certificate problem.  " + e;
+            String errMsg =
+                    "Error while trying to load certificate to the key store. There is a certificate problem.  " + e;
             LOG.error(errMsg);
         } catch (InvalidKeySpecException e) {
             String errMsg = "Can not init private key store  " + e;
@@ -155,7 +160,7 @@ public class MendelsonCertLoader {
         return certificateFactory.generateCertificate(inputStream);
     }
 
-    //https://stackoverflow.com/questions/18644286/creating-privatekey-object-from-pkcs12
+    // https://stackoverflow.com/questions/18644286/creating-privatekey-object-from-pkcs12
     private PrivateKey getPrivateKeyFromPKCSStream(InputStream inputStream, String keyStorePassword)
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         KeyStore ks = null;
@@ -170,9 +175,7 @@ public class MendelsonCertLoader {
             LOG.error("Error while loading the certificate: {}", e.getMessage(), e);
         }
         try {
-            return (PrivateKey) ks.getKey(
-                    ks.aliases().nextElement(),
-                    keyStorePassword.toCharArray());
+            return (PrivateKey) ks.getKey(ks.aliases().nextElement(), keyStorePassword.toCharArray());
         } catch (KeyStoreException e) {
             LOG.error("Error while retrieving private key: {}", e.getMessage(), e);
         } catch (UnrecoverableKeyException e) {
@@ -182,8 +185,9 @@ public class MendelsonCertLoader {
     }
 
     private byte[] getBytesFromPem(InputStream inputStream) throws IOException {
-        String privateKeyPEM
-                = IOUtils.toString(inputStream, StandardCharsets.UTF_8).replaceAll("-{5}.+-{5}", "").replaceAll("\\s", "");
+        String privateKeyPEM = IOUtils.toString(inputStream, StandardCharsets.UTF_8)
+                .replaceAll("-{5}.+-{5}", "")
+                .replaceAll("\\s", "");
         return Base64.getDecoder().decode(privateKeyPEM);
     }
 
@@ -191,5 +195,4 @@ public class MendelsonCertLoader {
         String privateKeyPKCS12 = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         return privateKeyPKCS12.getBytes(StandardCharsets.UTF_8);
     }
-
 }

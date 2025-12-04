@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.langchain4j.embeddings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +37,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 // Must be manually tested. Provide your own accessKey and secretKey using -Dpinecone.token
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "pinecone.token", matches = ".*", disabledReason = "Pinecone token not provided"),
+    @EnabledIfSystemProperty(named = "pinecone.token", matches = ".*", disabledReason = "Pinecone token not provided"),
 })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -59,10 +60,10 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
     @Order(1)
     public void createServerlessIndex() {
 
-        Exchange result = fluentTemplate.to(PINECONE_URI)
+        Exchange result = fluentTemplate
+                .to(PINECONE_URI)
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.CREATE_SERVERLESS_INDEX)
-                .withBody(
-                        "hello")
+                .withBody("hello")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
                 .withHeader(PineconeVectorDbHeaders.COLLECTION_SIMILARITY_METRIC, "cosine")
                 .withHeader(PineconeVectorDbHeaders.COLLECTION_DIMENSION, 384)
@@ -78,7 +79,8 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
     @Order(2)
     public void upsert() {
 
-        Exchange result = fluentTemplate.to("direct:in")
+        Exchange result = fluentTemplate
+                .to("direct:in")
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.UPSERT)
                 .withBody("hi")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
@@ -95,27 +97,28 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
 
         List<Float> elements = generateFloatVector();
 
-        Exchange result = fluentTemplate.to(PINECONE_URI)
+        Exchange result = fluentTemplate
+                .to(PINECONE_URI)
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.QUERY)
-                .withBody(
-                        elements)
+                .withBody(elements)
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
                 .withHeader(PineconeVectorDbHeaders.QUERY_TOP_K, 384)
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(((QueryResponseWithUnsignedIndices) result.getMessage().getBody()).getMatchesList()).isNotNull();
+        assertThat(((QueryResponseWithUnsignedIndices) result.getMessage().getBody()).getMatchesList())
+                .isNotNull();
     }
 
     @Test
     @Order(4)
     public void deleteIndex() {
 
-        Exchange result = fluentTemplate.to(PINECONE_URI)
+        Exchange result = fluentTemplate
+                .to(PINECONE_URI)
                 .withHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.DELETE_INDEX)
-                .withBody(
-                        "test")
+                .withBody("test")
                 .withHeader(PineconeVectorDbHeaders.INDEX_NAME, "embeddings")
                 .request(Exchange.class);
 
@@ -129,10 +132,11 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(PineconeVectorDbHeaders.ACTION).constant(PineconeVectorDbAction.UPSERT)
-                        .setHeader(PineconeVectorDbHeaders.INDEX_ID).constant(POINT_ID)
-                        .transformDataType(
-                                new DataType("pinecone:embeddings"))
+                        .setHeader(PineconeVectorDbHeaders.ACTION)
+                        .constant(PineconeVectorDbAction.UPSERT)
+                        .setHeader(PineconeVectorDbHeaders.INDEX_ID)
+                        .constant(POINT_ID)
+                        .transformDataType(new DataType("pinecone:embeddings"))
                         .to(PINECONE_URI);
             }
         };

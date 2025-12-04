@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.athena;
 
 import java.util.LinkedList;
@@ -71,8 +72,12 @@ public class AmazonAthenaClientMock implements AthenaClient {
             throws SdkException {
         QueryExecution defaultResult = QueryExecution.builder()
                 .queryExecutionId("11111111-1111-1111-1111-111111111111")
-                .status(QueryExecutionStatus.builder().state(QueryExecutionState.SUCCEEDED).build())
-                .resultConfiguration(ResultConfiguration.builder().outputLocation("s3://bucket/file.csv").build())
+                .status(QueryExecutionStatus.builder()
+                        .state(QueryExecutionState.SUCCEEDED)
+                        .build())
+                .resultConfiguration(ResultConfiguration.builder()
+                        .outputLocation("s3://bucket/file.csv")
+                        .build())
                 .build();
         QueryExecution result = getQueryExecutionResults.isEmpty() ? defaultResult : getQueryExecutionResults.poll();
 
@@ -85,18 +90,14 @@ public class AmazonAthenaClientMock implements AthenaClient {
             }
         }
 
-        return GetQueryExecutionResponse.builder()
-                .queryExecution(result)
-                .build();
+        return GetQueryExecutionResponse.builder().queryExecution(result).build();
     }
 
     @Override
     public ListQueryExecutionsResponse listQueryExecutions(ListQueryExecutionsRequest listQueryExecutionsRequest)
             throws SdkException {
         return ListQueryExecutionsResponse.builder()
-                .queryExecutionIds(
-                        "11111111-1111-1111-1111-111111111111",
-                        "22222222-2222-2222-2222-222222222222")
+                .queryExecutionIds("11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222")
                 .nextToken(listQueryExecutionsRequest.nextToken())
                 .build();
     }
@@ -107,9 +108,7 @@ public class AmazonAthenaClientMock implements AthenaClient {
         String defaultResult = "11111111-1111-1111-1111-111111111111";
         String result = startQueryExecutionResults.isEmpty() ? defaultResult : startQueryExecutionResults.poll();
 
-        return StartQueryExecutionResponse.builder()
-                .queryExecutionId(result)
-                .build();
+        return StartQueryExecutionResponse.builder().queryExecutionId(result).build();
     }
 
     @Override
@@ -147,5 +146,4 @@ public class AmazonAthenaClientMock implements AthenaClient {
     public void close() {
         // noop
     }
-
 }

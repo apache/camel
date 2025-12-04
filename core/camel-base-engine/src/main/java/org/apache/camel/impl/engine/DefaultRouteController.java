@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl.engine;
 
 import java.util.Collection;
@@ -149,7 +150,8 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     }
 
     @Override
-    public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+    public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+            throws Exception {
         return getInternalRouteController().stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
     }
 

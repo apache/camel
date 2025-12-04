@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.jms;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -34,9 +36,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
-@Tags({ @Tag("jms") })
+@Tags({@Tag("jms")})
 public abstract class AbstractJMSTest implements CamelTestSupportHelper, ConfigurableRoute, ConfigurableContext {
 
     @Order(1)
@@ -58,8 +58,7 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
         return buildComponent(connectionFactory);
     }
 
-    protected JmsComponent setupComponent(
-            CamelContext camelContext, ArtemisService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
 
         return setupComponent(camelContext, connectionFactory, componentName);
@@ -83,5 +82,4 @@ public abstract class AbstractJMSTest implements CamelTestSupportHelper, Configu
             context.addRoutes(routeBuilder);
         }
     }
-
 }

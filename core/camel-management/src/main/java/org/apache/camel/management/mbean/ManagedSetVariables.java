@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
@@ -25,7 +26,8 @@ import org.apache.camel.processor.SetVariablesProcessor;
 @ManagedResource(description = "Managed SetVariables")
 public class ManagedSetVariables extends ManagedProcessor implements ManagedSetVariablesMBean {
 
-    public ManagedSetVariables(CamelContext context, SetVariablesProcessor processor, SetVariablesDefinition definition) {
+    public ManagedSetVariables(
+            CamelContext context, SetVariablesProcessor processor, SetVariablesDefinition definition) {
         super(context, processor, definition);
     }
 
@@ -41,7 +43,9 @@ public class ManagedSetVariables extends ManagedProcessor implements ManagedSetV
 
     @Override
     public String[] getVariableNames() {
-        return getProcessor().getVariableNames()
-                .stream().map(Object::toString).distinct().toArray(String[]::new);
+        return getProcessor().getVariableNames().stream()
+                .map(Object::toString)
+                .distinct()
+                .toArray(String[]::new);
     }
 }

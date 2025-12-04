@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
@@ -46,7 +47,9 @@ public class BeanPropertiesFunction implements PropertiesFunction, CamelContextA
 
         String answer = "";
         try {
-            answer += camelContext.getTypeConverter().convertTo(String.class, ObjectHelper.invokeMethodSafe(methodName, bean));
+            answer += camelContext
+                    .getTypeConverter()
+                    .convertTo(String.class, ObjectHelper.invokeMethodSafe(methodName, bean));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
@@ -62,5 +65,4 @@ public class BeanPropertiesFunction implements PropertiesFunction, CamelContextA
     public CamelContext getCamelContext() {
         return camelContext;
     }
-
 }

@@ -30,8 +30,8 @@ public class PgReplicationITSupport extends CamelTestSupport {
 
     static {
         PostgreSQLContainer container = new PostgreSQLContainer(
-                DockerImageName.parse(PostgresLocalContainerService.DEFAULT_POSTGRES_CONTAINER)
-                        .asCompatibleSubstituteFor("postgres"))
+                        DockerImageName.parse(PostgresLocalContainerService.DEFAULT_POSTGRES_CONTAINER)
+                                .asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("camel")
                 .withCommand("postgres -c wal_level=logical");
 

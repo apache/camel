@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.huaweicloud.dms.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -145,14 +146,13 @@ public class UpdateInstanceRequestBody {
 
     @Override
     public String toString() {
-        return "UpdateInstanceRequestBody{" +
-               "name='" + name + '\'' +
-               ", description='" + description + '\'' +
-               ", maintainBegin='" + maintainBegin + '\'' +
-               ", maintainEnd='" + maintainEnd + '\'' +
-               ", securityGroupId='" + securityGroupId + '\'' +
-               ", enablePublicip=" + enablePublicip +
-               ", publicipId='" + publicipId + '\'' +
-               '}';
+        return "UpdateInstanceRequestBody{" + "name='"
+                + name + '\'' + ", description='"
+                + description + '\'' + ", maintainBegin='"
+                + maintainBegin + '\'' + ", maintainEnd='"
+                + maintainEnd + '\'' + ", securityGroupId='"
+                + securityGroupId + '\'' + ", enablePublicip="
+                + enablePublicip + ", publicipId='"
+                + publicipId + '\'' + '}';
     }
 }

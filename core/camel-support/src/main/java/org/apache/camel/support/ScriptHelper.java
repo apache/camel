@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support;
 
 import java.io.IOException;
@@ -28,8 +29,7 @@ import org.apache.camel.util.StringHelper;
 
 public final class ScriptHelper {
 
-    private ScriptHelper() {
-    }
+    private ScriptHelper() {}
 
     /**
      * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc. This
@@ -60,7 +60,8 @@ public final class ScriptHelper {
      * </tt>?optional=true<tt> as suffix will mark the resource as optional and <tt>null</tt> is returned if the
      * resource could not be loaded.
      */
-    public static String resolveOptionalExternalScript(CamelContext camelContext, Exchange exchange, String expression) {
+    public static String resolveOptionalExternalScript(
+            CamelContext camelContext, Exchange exchange, String expression) {
         if (expression == null) {
             return null;
         }

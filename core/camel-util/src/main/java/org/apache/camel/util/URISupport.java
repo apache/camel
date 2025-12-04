@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.util;
+
+import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -36,8 +39,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
-
 /**
  * URI utilities.
  *
@@ -48,8 +49,8 @@ import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
 public final class URISupport {
 
     public static final String RAW_TOKEN_PREFIX = "RAW";
-    public static final char[] RAW_TOKEN_START = { '(', '{' };
-    public static final char[] RAW_TOKEN_END = { ')', '}' };
+    public static final char[] RAW_TOKEN_START = {'(', '{'};
+    public static final char[] RAW_TOKEN_END = {')', '}'};
 
     @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
     private static final String PRE_SECRETS_FORMAT = "([?&][^=]*(?:%s)[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)";
@@ -57,9 +58,8 @@ public final class URISupport {
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern ALL_SECRETS
-            = Pattern.compile(PRE_SECRETS_FORMAT.formatted(SensitiveUtils.getSensitivePattern()),
-                    Pattern.CASE_INSENSITIVE);
+    private static final Pattern ALL_SECRETS = Pattern.compile(
+            PRE_SECRETS_FORMAT.formatted(SensitiveUtils.getSensitivePattern()), Pattern.CASE_INSENSITIVE);
 
     // Match the user password in the URI as second capture group
     // (applies to URI with authority component and userinfo token in the form
@@ -96,8 +96,7 @@ public final class URISupport {
                 pattern.add("\\Q" + key.toLowerCase(Locale.ROOT) + "\\E");
             }
         }
-        EXTRA_SECRETS = Pattern.compile(PRE_SECRETS_FORMAT.formatted(pattern),
-                Pattern.CASE_INSENSITIVE);
+        EXTRA_SECRETS = Pattern.compile(PRE_SECRETS_FORMAT.formatted(pattern), Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -260,7 +259,8 @@ public final class URISupport {
      * @see                       #RAW_TOKEN_START
      * @see                       #RAW_TOKEN_END
      */
-    public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
+    public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient)
+            throws URISyntaxException {
         if (uri == null || uri.isEmpty()) {
             // return an empty map
             return Collections.emptyMap();
@@ -269,7 +269,9 @@ public final class URISupport {
         // must check for trailing & as the uri.split("&") will ignore those
         if (!lenient && uri.endsWith("&")) {
             throw new URISyntaxException(
-                    uri, "Invalid uri syntax: Trailing & marker found. " + "Check the uri and remove the trailing & marker.");
+                    uri,
+                    "Invalid uri syntax: Trailing & marker found. "
+                            + "Check the uri and remove the trailing & marker.");
         }
 
         URIScanner scanner = new URIScanner();
@@ -539,7 +541,7 @@ public final class URISupport {
             // values
             if (value instanceof List) {
                 List<String> list = (List<String>) value;
-                for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                for (Iterator<String> it = list.iterator(); it.hasNext(); ) {
                     String s = it.next();
                     appendQueryStringParameter(key, s, rc, encode);
                     // append & separator if there is more in the list
@@ -796,7 +798,8 @@ public final class URISupport {
         }
     }
 
-    private static String buildReorderingParameters(String scheme, String path, String query) throws URISyntaxException {
+    private static String buildReorderingParameters(String scheme, String path, String query)
+            throws URISyntaxException {
         Map<String, Object> parameters = null;
         if (query.indexOf('&') != -1) {
             // only parse if there are parameters
@@ -826,7 +829,6 @@ public final class URISupport {
 
                 query = URISupport.createQueryString(array, parameters, true);
             }
-
         }
         return buildUri(scheme, path, query);
     }
@@ -849,7 +851,7 @@ public final class URISupport {
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         Map<String, Object> rc = new LinkedHashMap<>(properties.size());
 
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, Object> entry = it.next();
             String name = entry.getKey();
             if (name.startsWith(optionPrefix)) {
@@ -983,5 +985,4 @@ public final class URISupport {
         }
         return uri;
     }
-
 }

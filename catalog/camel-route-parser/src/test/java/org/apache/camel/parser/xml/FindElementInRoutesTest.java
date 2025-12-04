@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.parser.xml;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -25,8 +28,6 @@ import org.apache.camel.parser.helper.CamelXmlHelper;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FindElementInRoutesTest {
 
@@ -41,5 +42,4 @@ public class FindElementInRoutesTest {
 
         LOG.info("Found element {}", element.getTagName());
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.thrift;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.Gson;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,12 +27,10 @@ import org.apache.camel.dataformat.thrift.generated.Work;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class ThriftMarshalAndUnmarshalJsonTest extends CamelTestSupport {
 
-    private static final String WORK_JSON_TEST
-            = "{\"1\":{\"i32\":1},\"2\":{\"i32\":100},\"3\":{\"i32\":3},\"4\":{\"str\":\"This is a test thrift data\"}}";
+    private static final String WORK_JSON_TEST =
+            "{\"1\":{\"i32\":1},\"2\":{\"i32\":100},\"3\":{\"i32\":3},\"4\":{\"str\":\"This is a test thrift data\"}}";
     private static final String WORK_TEST_COMMENT = "This is a test thrift data";
     private static final int WORK_TEST_NUM1 = 1;
     private static final int WORK_TEST_NUM2 = 100;
@@ -98,12 +99,17 @@ public class ThriftMarshalAndUnmarshalJsonTest extends CamelTestSupport {
                 from("direct:in").unmarshal(format).to("mock:reverse");
                 from("direct:back").marshal(format);
 
-                from("direct:marshal").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work", "json")
+                from("direct:marshal")
+                        .unmarshal()
+                        .thrift("org.apache.camel.dataformat.thrift.generated.Work", "json")
                         .to("mock:reverse");
                 from("direct:unmarshalA").marshal().thrift();
 
-                from("direct:marshal-sjson").marshal().thrift("org.apache.camel.dataformat.thrift.generated.Work", "sjson")
-                        .convertBodyTo(String.class).to("mock:reverse-sjson");
+                from("direct:marshal-sjson")
+                        .marshal()
+                        .thrift("org.apache.camel.dataformat.thrift.generated.Work", "sjson")
+                        .convertBodyTo(String.class)
+                        .to("mock:reverse-sjson");
             }
         };
     }

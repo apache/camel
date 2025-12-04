@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.google.bigquery.unit.sql;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GoogleBigQuerySQLComponentTest extends CamelTestSupport {
 
@@ -29,19 +30,21 @@ public class GoogleBigQuerySQLComponentTest extends CamelTestSupport {
     public void testQuerySet() throws Exception {
         String uri = "google-bigquery-sql:myproject:insert into testDatasetId.testTableId(id) values(1)";
 
-        GoogleBigQuerySQLEndpoint endpoint
-                = (GoogleBigQuerySQLEndpoint) new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
+        GoogleBigQuerySQLEndpoint endpoint =
+                (GoogleBigQuerySQLEndpoint) new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
 
         assertEquals("myproject", endpoint.getConfiguration().getProjectId());
-        assertEquals("insert into testDatasetId.testTableId(id) values(1)", endpoint.getConfiguration().getQueryString());
+        assertEquals(
+                "insert into testDatasetId.testTableId(id) values(1)",
+                endpoint.getConfiguration().getQueryString());
     }
 
     @Test
     public void testQueryFromResourceSet() throws Exception {
         String uri = "google-bigquery-sql:myproject:classpath:sql/delete.sql";
 
-        GoogleBigQuerySQLEndpoint endpoint
-                = (GoogleBigQuerySQLEndpoint) new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
+        GoogleBigQuerySQLEndpoint endpoint =
+                (GoogleBigQuerySQLEndpoint) new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
 
         assertEquals("myproject", endpoint.getConfiguration().getProjectId());
         assertEquals("classpath:sql/delete.sql", endpoint.getConfiguration().getQueryString());

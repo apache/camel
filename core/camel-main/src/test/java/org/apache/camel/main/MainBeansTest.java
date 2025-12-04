@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.main;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 import java.util.Map;
@@ -22,12 +29,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MainBeansTest {
 
@@ -54,8 +55,11 @@ public class MainBeansTest {
         Object foo = camelContext.getRegistry().lookupByName("foo");
         assertNotNull(foo);
 
-        MySedaBlockingQueueFactory myBQF
-                = camelContext.getRegistry().findByType(MySedaBlockingQueueFactory.class).iterator().next();
+        MySedaBlockingQueueFactory myBQF = camelContext
+                .getRegistry()
+                .findByType(MySedaBlockingQueueFactory.class)
+                .iterator()
+                .next();
         assertSame(foo, myBQF);
 
         assertEquals(123, myBQF.getCounter());
@@ -278,5 +282,4 @@ public class MainBeansTest {
             from("direct:start").to("mock:foo");
         }
     }
-
 }

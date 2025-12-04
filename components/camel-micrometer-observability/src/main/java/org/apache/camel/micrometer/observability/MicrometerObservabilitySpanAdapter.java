@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.micrometer.observability;
 
 import java.util.Map;
@@ -70,14 +71,11 @@ public class MicrometerObservabilitySpanAdapter implements Span {
         this.span.end();
     }
 
-    protected void deactivate() {
-
-    }
+    protected void deactivate() {}
 
     @Override
     public String toString() {
-        return "MicrometerObservabilitySpanAdapter [traceId=" +
-               span.context().traceId() + " spanId=" + span.context().spanId() + "]";
+        return "MicrometerObservabilitySpanAdapter [traceId=" + span.context().traceId() + " spanId="
+                + span.context().spanId() + "]";
     }
-
 }

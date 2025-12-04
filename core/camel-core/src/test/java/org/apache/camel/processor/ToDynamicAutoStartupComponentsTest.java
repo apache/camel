@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ToDynamicAutoStartupComponentsTest extends ContextTestSupport {
 
@@ -80,5 +81,4 @@ public class ToDynamicAutoStartupComponentsTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

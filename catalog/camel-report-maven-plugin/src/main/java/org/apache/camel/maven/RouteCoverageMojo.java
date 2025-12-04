@@ -14,7 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.maven;
+
+import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
+import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
+import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
+import static org.apache.camel.catalog.common.CatalogHelper.matchRouteFile;
+import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -63,12 +70,6 @@ import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-
-import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
-import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
-import static org.apache.camel.catalog.common.CatalogHelper.findXmlRouters;
-import static org.apache.camel.catalog.common.CatalogHelper.matchRouteFile;
-import static org.apache.camel.catalog.common.CatalogHelper.stripRootPath;
 
 /**
  * Performs route coverage reports after running Camel unit tests with camel-test modules
@@ -181,9 +182,10 @@ public class RouteCoverageMojo extends AbstractMojo {
         final AtomicInteger coveredNodes = new AtomicInteger();
         int totalNumberOfNodes = 0;
 
-        List<CamelNodeDetails> routeIdTrees = routeTrees.stream().filter(t -> t.getRouteId() != null).toList();
-        List<CamelNodeDetails> anonymousRouteTrees
-                = new ArrayList<>(routeTrees.stream().filter(t -> t.getRouteId() == null).toList());
+        List<CamelNodeDetails> routeIdTrees =
+                routeTrees.stream().filter(t -> t.getRouteId() != null).toList();
+        List<CamelNodeDetails> anonymousRouteTrees = new ArrayList<>(
+                routeTrees.stream().filter(t -> t.getRouteId() == null).toList());
         Document document = null;
         File file = null;
         Element report = null;
@@ -220,9 +222,17 @@ public class RouteCoverageMojo extends AbstractMojo {
             }
 
             // grab dump data for the route
-            totalNumberOfNodes
-                    += grabDumpData(t, routeId, totalNumberOfNodes, fileName, notCovered, coveredNodes, report, document,
-                            sourceFileName, pack);
+            totalNumberOfNodes += grabDumpData(
+                    t,
+                    routeId,
+                    totalNumberOfNodes,
+                    fileName,
+                    notCovered,
+                    coveredNodes,
+                    report,
+                    document,
+                    sourceFileName,
+                    pack);
         }
         List<CamelNodeDetails> anonymousHandled = new ArrayList<>();
         for (CamelNodeDetails t : anonymousRouteTrees) {
@@ -240,9 +250,17 @@ public class RouteCoverageMojo extends AbstractMojo {
             }
 
             // grab dump data for the route
-            int extra = grabDumpDataBySourceLocation(t, loc, totalNumberOfNodes, fileName, notCovered, coveredNodes, report,
+            int extra = grabDumpDataBySourceLocation(
+                    t,
+                    loc,
+                    totalNumberOfNodes,
+                    fileName,
+                    notCovered,
+                    coveredNodes,
+                    report,
                     document,
-                    sourceFileName, pack);
+                    sourceFileName,
+                    pack);
             if (extra > 0) {
                 anonymousHandled.add(t);
             }
@@ -252,11 +270,11 @@ public class RouteCoverageMojo extends AbstractMojo {
 
         if (!anonymousRouteTrees.isEmpty()) {
             if (anonymousRoutes) {
-                totalNumberOfNodes = handleAnonymousRoutes(anonymousRouteTrees, totalNumberOfNodes, notCovered, coveredNodes);
+                totalNumberOfNodes =
+                        handleAnonymousRoutes(anonymousRouteTrees, totalNumberOfNodes, notCovered, coveredNodes);
             } else {
-                getLog().warn(
-                        "Discovered " + anonymousRouteTrees.size()
-                              + " anonymous routes. Add route ids to these routes for route coverage support.");
+                getLog().warn("Discovered " + anonymousRouteTrees.size()
+                        + " anonymous routes. Add route ids to these routes for route coverage support.");
             }
         }
 
@@ -314,15 +332,24 @@ public class RouteCoverageMojo extends AbstractMojo {
     }
 
     private int grabDumpData(
-            CamelNodeDetails t, String routeId, int totalNumberOfNodes, String fileName, AtomicInteger notCovered,
-            AtomicInteger coveredNodes, Element report, Document document, String sourceFileName, Element pack)
+            CamelNodeDetails t,
+            String routeId,
+            int totalNumberOfNodes,
+            String fileName,
+            AtomicInteger notCovered,
+            AtomicInteger coveredNodes,
+            Element report,
+            Document document,
+            String sourceFileName,
+            Element pack)
             throws MojoExecutionException {
         try {
-            List<CoverageData> coverageData = RouteCoverageHelper
-                    .parseDumpRouteCoverageByRouteId(project.getBasedir() + DESTINATION_DIR, routeId);
+            List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId(
+                    project.getBasedir() + DESTINATION_DIR, routeId);
             if (coverageData.isEmpty()) {
-                getLog().warn("No route coverage data found for route: " + routeId
-                              + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
+                getLog().warn(
+                                "No route coverage data found for route: " + routeId
+                                        + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
             } else {
                 List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
                 totalNumberOfNodes += coverage.size();
@@ -342,15 +369,24 @@ public class RouteCoverageMojo extends AbstractMojo {
     }
 
     private int grabDumpDataBySourceLocation(
-            CamelNodeDetails t, String sourceLocation, int totalNumberOfNodes, String fileName, AtomicInteger notCovered,
-            AtomicInteger coveredNodes, Element report, Document document, String sourceFileName, Element pack)
+            CamelNodeDetails t,
+            String sourceLocation,
+            int totalNumberOfNodes,
+            String fileName,
+            AtomicInteger notCovered,
+            AtomicInteger coveredNodes,
+            Element report,
+            Document document,
+            String sourceFileName,
+            Element pack)
             throws MojoExecutionException {
         try {
-            List<CoverageData> coverageData = RouteCoverageHelper
-                    .parseDumpRouteCoverageByLineNumber(project.getBasedir() + DESTINATION_DIR, sourceLocation);
+            List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByLineNumber(
+                    project.getBasedir() + DESTINATION_DIR, sourceLocation);
             if (coverageData.isEmpty()) {
-                getLog().warn("No route coverage data found for route: " + sourceLocation
-                              + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
+                getLog().warn(
+                                "No route coverage data found for route: " + sourceLocation
+                                        + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
             } else {
                 List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(List.of(t), coverageData);
                 totalNumberOfNodes += coverage.size();
@@ -365,7 +401,8 @@ public class RouteCoverageMojo extends AbstractMojo {
             }
 
         } catch (Exception e) {
-            throw new MojoExecutionException("Error during gathering route coverage data for route: " + sourceFileName, e);
+            throw new MojoExecutionException(
+                    "Error during gathering route coverage data for route: " + sourceFileName, e);
         }
         return totalNumberOfNodes;
     }
@@ -380,16 +417,19 @@ public class RouteCoverageMojo extends AbstractMojo {
     }
 
     private int handleAnonymousRoutes(
-            List<CamelNodeDetails> anonymousRouteTrees, int totalNumberOfNodes, AtomicInteger notCovered,
+            List<CamelNodeDetails> anonymousRouteTrees,
+            int totalNumberOfNodes,
+            AtomicInteger notCovered,
             AtomicInteger coveredNodes)
             throws MojoExecutionException {
         // grab dump data for the route
         try {
-            Map<String, List<CoverageData>> datas = RouteCoverageHelper
-                    .parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + DESTINATION_DIR);
+            Map<String, List<CoverageData>> datas = RouteCoverageHelper.parseDumpRouteCoverageByClassAndTestMethod(
+                    project.getBasedir() + DESTINATION_DIR);
             if (datas.isEmpty()) {
-                getLog().warn("No route coverage data found"
-                              + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
+                getLog().warn(
+                                "No route coverage data found"
+                                        + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
             } else {
                 Map<String, List<CamelNodeDetails>> routes = groupAnonymousRoutesByClassName(anonymousRouteTrees);
                 // attempt to match anonymous routes via the unit test class
@@ -411,8 +451,8 @@ public class RouteCoverageMojo extends AbstractMojo {
 
                     if (!coverage.isEmpty()) {
                         totalNumberOfNodes += coverage.size();
-                        String fileName
-                                = stripRootPath(asRelativeFile(t.getValue().get(0).getFileName(), project), project);
+                        String fileName =
+                                stripRootPath(asRelativeFile(t.getValue().get(0).getFileName(), project), project);
                         String out = templateCoverageData(fileName, null, coverage, notCovered, coveredNodes);
                         getLog().info("Route coverage summary:\n\n" + out);
                         getLog().info("");
@@ -486,7 +526,8 @@ public class RouteCoverageMojo extends AbstractMojo {
         }
     }
 
-    private Map<String, List<CamelNodeDetails>> groupAnonymousRoutesByClassName(List<CamelNodeDetails> anonymousRouteTrees) {
+    private Map<String, List<CamelNodeDetails>> groupAnonymousRoutesByClassName(
+            List<CamelNodeDetails> anonymousRouteTrees) {
         Map<String, List<CamelNodeDetails>> answer = new LinkedHashMap<>();
 
         for (CamelNodeDetails t : anonymousRouteTrees) {
@@ -539,7 +580,10 @@ public class RouteCoverageMojo extends AbstractMojo {
     }
 
     private String templateCoverageData(
-            String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered,
+            String fileName,
+            String routeId,
+            List<RouteCoverageNode> model,
+            AtomicInteger notCovered,
             AtomicInteger coveredNodes) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PrintStream sw = new PrintStream(bos);
@@ -578,8 +622,8 @@ public class RouteCoverageMojo extends AbstractMojo {
         }
 
         sw.println();
-        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format(Locale.ROOT, "%.1f", percentage)
-                   + "% / threshold " + coverageThreshold + ".0%)");
+        sw.println("Coverage: " + covered + " out of " + model.size() + " ("
+                + String.format(Locale.ROOT, "%.1f", percentage) + "% / threshold " + coverageThreshold + ".0%)");
         sw.println("Status: " + (success ? "Success" : "Failed"));
         sw.println();
 
@@ -597,8 +641,8 @@ public class RouteCoverageMojo extends AbstractMojo {
         overallCoverageAboveThreshold.set(coveredNodes == totalNumberOfNodes || percentage >= overallCoverageThreshold);
 
         sw.println("Coverage: " + coveredNodes + " out of " + totalNumberOfNodes + " ("
-                   + String.format(Locale.ROOT, "%.1f", percentage)
-                   + "% / threshold " + overallCoverageThreshold + ".0%)");
+                + String.format(Locale.ROOT, "%.1f", percentage)
+                + "% / threshold " + overallCoverageThreshold + ".0%)");
         sw.println("Status: " + (overallCoverageAboveThreshold.get() ? "Success" : "Failed"));
         sw.println();
 
@@ -620,7 +664,8 @@ public class RouteCoverageMojo extends AbstractMojo {
 
     private static void gatherRouteCoverageSummary(
             CamelNodeDetails node, Iterator<CoverageData> it, AtomicInteger level, List<RouteCoverageNode> answer) {
-        // we want to skip data for policy/transacted as they are abstract nodes and just gather their children immediately
+        // we want to skip data for policy/transacted as they are abstract nodes and just gather their children
+        // immediately
         boolean skipData = "policy".equals(node.getName()) || "transacted".equals(node.getName());
         if (skipData) {
             for (CamelNodeDetails child : node.getOutputs()) {
@@ -671,8 +716,7 @@ public class RouteCoverageMojo extends AbstractMojo {
     }
 
     private void appendSourcefileNode(
-            Document document, String sourceFileName, Element pack,
-            List<RouteCoverageNode> coverage) {
+            Document document, String sourceFileName, Element pack, List<RouteCoverageNode> coverage) {
         Element sourcefile = document.createElement("sourcefile");
         createAttrString(document, sourcefile, "name", sourceFileName);
         pack.appendChild(sourcefile);

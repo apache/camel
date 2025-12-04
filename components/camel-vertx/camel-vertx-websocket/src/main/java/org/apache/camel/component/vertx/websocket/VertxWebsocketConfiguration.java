@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
@@ -36,39 +37,56 @@ public class VertxWebsocketConfiguration {
     @UriPath
     @Metadata(required = true)
     private String host;
+
     @UriPath
     @Metadata(required = true)
     private int port;
+
     @UriPath
     private String path;
+
     @UriParam(label = "consumer")
     private String allowedOriginPattern;
+
     @UriParam(label = "consumer,advanced")
     private Router router;
+
     @UriParam(label = "consumer,advanced")
     private HttpServerOptions serverOptions;
+
     @UriParam(label = "consumer")
     private boolean consumeAsClient;
+
     @UriParam(label = "consumer")
     private int reconnectInitialDelay;
+
     @UriParam(label = "consumer", defaultValue = "1000")
     private int reconnectInterval = 1000;
+
     @UriParam(label = "consumer")
     private int maxReconnectAttempts;
+
     @UriParam(label = "producer,advanced")
     private HttpClientOptions clientOptions;
+
     @UriParam(label = "producer")
     private boolean sendToAll;
+
     @UriParam(label = "producer")
     private String clientSubProtocols;
+
     @UriParam(label = "consumer")
     private boolean fireWebSocketConnectionEvents;
+
     @UriParam(label = "security", defaultValue = "true")
     private boolean allowOriginHeader = true;
+
     @UriParam(label = "security")
     private String originHeaderUrl;
+
     @UriParam(label = "security", prefix = "handshake.", multiValue = true)
     private Map<String, Object> handshakeHeaders;
+
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 

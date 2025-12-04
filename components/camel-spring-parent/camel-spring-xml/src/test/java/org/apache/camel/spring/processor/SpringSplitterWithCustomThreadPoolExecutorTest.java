@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.SplitterWithCustomThreadPoolExecutorTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSplitterWithCustomThreadPoolExecutorTest extends SplitterWithCustomThreadPoolExecutorTest {
 
@@ -32,6 +33,7 @@ public class SpringSplitterWithCustomThreadPoolExecutorTest extends SplitterWith
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/splitterWithCustomThreadPoolExecutor.xml");
+        return createSpringCamelContext(
+                this, "org/apache/camel/spring/processor/splitterWithCustomThreadPoolExecutor.xml");
     }
 }

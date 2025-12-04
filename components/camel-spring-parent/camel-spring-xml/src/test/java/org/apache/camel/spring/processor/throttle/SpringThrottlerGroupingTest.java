@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.processor.throttle;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.Semaphore;
 
@@ -23,15 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.throttle.concurrent.ThrottlingGroupingTest;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SpringThrottlerGroupingTest extends ThrottlingGroupingTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/ThrottlerGroupingTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/ThrottlerGroupingTest.xml");
     }
 
     public static class IncrementProcessor implements Processor {
@@ -39,9 +39,14 @@ public class SpringThrottlerGroupingTest extends ThrottlingGroupingTest {
         public void process(Exchange exchange) throws Exception {
             String key = (String) exchange.getMessage().getHeader("key");
             assertTrue(
-                    semaphores.computeIfAbsent(key, k -> new Semaphore(
-                            exchange.getMessage().getHeader("throttleValue") == null
-                                    ? CONCURRENT_REQUESTS : (Integer) exchange.getMessage().getHeader("throttleValue")))
+                    semaphores
+                            .computeIfAbsent(
+                                    key,
+                                    k -> new Semaphore(
+                                            exchange.getMessage().getHeader("throttleValue") == null
+                                                    ? CONCURRENT_REQUESTS
+                                                    : (Integer) exchange.getMessage()
+                                                            .getHeader("throttleValue")))
                             .tryAcquire(),
                     "too many requests for key " + key);
         }

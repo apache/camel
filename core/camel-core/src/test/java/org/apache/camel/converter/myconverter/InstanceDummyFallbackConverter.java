@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.converter.myconverter;
 
 import java.util.Currency;
@@ -46,5 +47,4 @@ public class InstanceDummyFallbackConverter implements CamelContextAware {
         }
         return null;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.support.scan;
 
 import java.lang.reflect.Modifier;
@@ -30,8 +31,7 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
     private final Set<Class<?>> parents = new HashSet<>();
     private boolean includeAbstract;
 
-    public AssignableToPackageScanFilter() {
-    }
+    public AssignableToPackageScanFilter() {}
 
     public AssignableToPackageScanFilter(Class<?> parentType) {
         parents.add(parentType);

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -26,8 +27,8 @@ public class HazelcastDefaultConsumer extends DefaultConsumer {
     protected final String cacheName;
     protected HazelcastInstance hazelcastInstance;
 
-    public HazelcastDefaultConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
-                                    String cacheName) {
+    public HazelcastDefaultConsumer(
+            HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(endpoint, processor);
         this.cacheName = cacheName;
         this.hazelcastInstance = hazelcastInstance;

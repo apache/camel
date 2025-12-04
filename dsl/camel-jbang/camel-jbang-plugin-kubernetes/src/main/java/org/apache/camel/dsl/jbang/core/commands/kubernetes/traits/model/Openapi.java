@@ -27,21 +27,19 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "configmaps", "enabled" })
+@JsonPropertyOrder({"configmaps", "enabled"})
 public class Openapi {
     @JsonProperty("configmaps")
     @JsonPropertyDescription("The configmaps holding the spec of the OpenAPI")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private List<String> configmaps;
+
     @JsonProperty("enabled")
     @JsonPropertyDescription("Can be used to enable or disable a trait.")
-    @JsonSetter(
-                nulls = Nulls.SKIP)
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean enabled;
 
-    public Openapi() {
-    }
+    public Openapi() {}
 
     public List<String> getConfigmaps() {
         return this.configmaps;

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
 
 import java.util.concurrent.TimeUnit;
@@ -33,10 +34,10 @@ public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
     public void testTwoDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME,
-                "bye.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -45,8 +46,8 @@ public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
     public void testOneDoneFileMissing() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME,
-                "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // give chance to poll 2nd file but it lacks the done file
@@ -58,9 +59,10 @@ public class FtpConsumerDualDoneFileNameIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl() + "&doneFileName=${file:name}.ready").convertBodyTo(String.class).to("mock:result");
+                from(getFtpUrl() + "&doneFileName=${file:name}.ready")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
-
 }

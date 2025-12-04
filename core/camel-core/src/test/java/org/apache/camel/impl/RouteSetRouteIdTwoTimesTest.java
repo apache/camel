@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteSetRouteIdTwoTimesTest extends TestSupport {
 
@@ -29,14 +30,20 @@ public class RouteSetRouteIdTwoTimesTest extends TestSupport {
     public void testRouteIdTwice() {
         CamelContext context = new DefaultCamelContext();
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:hello").routeId("foo").to("mock:result").to("mock:bar").routeId("bar");
-                }
-            });
-        }, "Should have thrown exception");
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    context.addRoutes(new RouteBuilder() {
+                        @Override
+                        public void configure() {
+                            from("direct:hello")
+                                    .routeId("foo")
+                                    .to("mock:result")
+                                    .to("mock:bar")
+                                    .routeId("bar");
+                        }
+                    });
+                },
+                "Should have thrown exception");
     }
-
 }

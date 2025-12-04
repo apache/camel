@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.management;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Set;
 
@@ -27,9 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
@@ -61,12 +62,12 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         assertEquals("myRoute", routeId);
 
         String xml = "<route id=\"myRoute\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                     + "  <from uri=\"direct:start\"/>"
-                     + "  <log message=\"This is a changed route saying ${body}\"/>"
-                     + "  <to uri=\"mock:changed\"/>"
-                     + "</route>";
+                + "  <from uri=\"direct:start\"/>"
+                + "  <log message=\"This is a changed route saying ${body}\"/>"
+                + "  <to uri=\"mock:changed\"/>"
+                + "</route>";
 
-        mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "updateRouteFromXml", new Object[] {xml}, new String[] {"java.lang.String"});
 
         assertEquals(1, context.getRoutes().size());
 
@@ -94,12 +95,12 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         assertEquals("myRoute", routeId);
 
         String xml = "<route xmlns=\"http://camel.apache.org/schema/spring\">"
-                     + "  <from uri=\"direct:start\"/>"
-                     + "  <log message=\"This is a changed route saying ${body}\"/>"
-                     + "  <to uri=\"mock:changed\"/>"
-                     + "</route>";
+                + "  <from uri=\"direct:start\"/>"
+                + "  <log message=\"This is a changed route saying ${body}\"/>"
+                + "  <to uri=\"mock:changed\"/>"
+                + "</route>";
 
-        mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "updateRouteFromXml", new Object[] {xml}, new String[] {"java.lang.String"});
 
         assertEquals(1, context.getRoutes().size());
 
@@ -127,17 +128,18 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         assertEquals("myRoute", routeId);
 
         String xml = "<route id=\"foo\" xmlns=\"http://camel.apache.org/schema/spring\">"
-                     + "  <from uri=\"direct:start\"/>"
-                     + "  <log message=\"This is a changed route saying ${body}\"/>"
-                     + "  <to uri=\"mock:changed\"/>"
-                     + "</route>";
+                + "  <from uri=\"direct:start\"/>"
+                + "  <log message=\"This is a changed route saying ${body}\"/>"
+                + "  <to uri=\"mock:changed\"/>"
+                + "</route>";
 
         try {
-            mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
+            mbeanServer.invoke(on, "updateRouteFromXml", new Object[] {xml}, new String[] {"java.lang.String"});
             fail("Should have thrown exception");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo",
+            assertEquals(
+                    "Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo",
                     e.getCause().getMessage());
         }
     }
@@ -154,11 +156,8 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("myRoute")
-                        .log("Got ${body}")
-                        .to("mock:result");
+                from("direct:start").routeId("myRoute").log("Got ${body}").to("mock:result");
             }
         };
     }
-
 }

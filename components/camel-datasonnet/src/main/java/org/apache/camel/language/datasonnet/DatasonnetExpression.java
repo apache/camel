@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.datasonnet;
 
 import java.io.File;
@@ -107,15 +108,19 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     private Document<?> doEvaluate(Exchange exchange) {
         MediaType bodyMT = bodyMediaType;
         if (bodyMT == null && !expression.startsWith(Header.DATASONNET_HEADER)) {
-            //Try to auto-detect input mime type if it was not explicitly set
-            String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
-                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE), String.class);
+            // Try to auto-detect input mime type if it was not explicitly set
+            String typeHeader = exchange.getProperty(
+                    DatasonnetConstants.BODY_MEDIATYPE,
+                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE),
+                    String.class);
             if (typeHeader != null) {
                 bodyMT = MediaType.valueOf(typeHeader);
             }
         }
 
-        Object payload = source != null ? source.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
+        Object payload = source != null
+                ? source.evaluate(exchange, Object.class)
+                : exchange.getMessage().getBody();
         Document<?> doc = null;
         if (payload != null) {
             doc = exchange.getContext().getTypeConverter().tryConvertTo(Document.class, exchange, payload);
@@ -123,7 +128,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         if (doc == null) {
             String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, payload);
             if (exchange.getMessage().getBody() == null || "".equals(text)) {
-                //Empty body, force type to be application/java
+                // Empty body, force type to be application/java
                 doc = new DefaultDocument<>("", MediaTypes.APPLICATION_JAVA);
             } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMT) || bodyMT == null) {
                 doc = new DefaultDocument<>(payload);
@@ -141,7 +146,8 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                     .withLibrary(CML.getInstance())
                     .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
 
-            Set<Library> additionalLibraries = exchange.getContext().getRegistry().findByType(com.datasonnet.spi.Library.class);
+            Set<Library> additionalLibraries =
+                    exchange.getContext().getRegistry().findByType(com.datasonnet.spi.Library.class);
             for (Library lib : additionalLibraries) {
                 builder = builder.withLibrary(lib);
             }
@@ -150,9 +156,11 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
         MediaType outMT = outputMediaType;
         if (outMT == null) {
-            //Try to auto-detect output mime type if it was not explicitly set
-            String typeHeader = exchange.getProperty(DatasonnetConstants.OUTPUT_MEDIATYPE,
-                    exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE), String.class);
+            // Try to auto-detect output mime type if it was not explicitly set
+            String typeHeader = exchange.getProperty(
+                    DatasonnetConstants.OUTPUT_MEDIATYPE,
+                    exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE),
+                    String.class);
             if (typeHeader != null) {
                 outMT = MediaType.valueOf(typeHeader);
             } else {
@@ -304,5 +312,4 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
     public String toString() {
         return "datasonnet: " + expression;
     }
-
 }

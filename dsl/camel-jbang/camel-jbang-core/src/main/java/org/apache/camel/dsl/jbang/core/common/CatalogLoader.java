@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
@@ -43,12 +44,12 @@ public final class CatalogLoader {
     public static final String QUARKUS_GROUP_ID = "io.quarkus.platform";
     private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
 
-    private static final String SPRING_BOOT_CATALOG_PROVIDER = "org.apache.camel.springboot.catalog.SpringBootRuntimeProvider";
+    private static final String SPRING_BOOT_CATALOG_PROVIDER =
+            "org.apache.camel.springboot.catalog.SpringBootRuntimeProvider";
 
     private static final String QUARKUS_CATALOG_PROVIDER = "org.apache.camel.catalog.quarkus.QuarkusRuntimeProvider";
 
-    private CatalogLoader() {
-    }
+    private CatalogLoader() {}
 
     public static CamelCatalog loadCatalog(String repos, String version, boolean download) throws Exception {
         CamelCatalog answer = new DefaultCamelCatalog();
@@ -121,8 +122,11 @@ public final class CatalogLoader {
             }
 
             final String camelVersion = version;
-            ma = downloader.downloadArtifact("org.apache.camel.springboot", "camel-catalog-provider-springboot",
-                    PropertyResolver.fromSystemProperty(CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion));
+            ma = downloader.downloadArtifact(
+                    "org.apache.camel.springboot",
+                    "camel-catalog-provider-springboot",
+                    PropertyResolver.fromSystemProperty(
+                            CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion));
             if (ma != null) {
                 cl.addFile(ma.getFile());
             } else {
@@ -152,8 +156,8 @@ public final class CatalogLoader {
         return answer;
     }
 
-    public static CamelCatalog loadQuarkusCatalog(String repos, String quarkusVersion, String quarkusGroupId, boolean download)
-            throws Exception {
+    public static CamelCatalog loadQuarkusCatalog(
+            String repos, String quarkusVersion, String quarkusGroupId, boolean download) throws Exception {
         String camelQuarkusVersion = null;
         CamelCatalog answer = new DefaultCamelCatalog();
 
@@ -193,9 +197,11 @@ public final class CatalogLoader {
                     for (int i = 0; i < nl.getLength(); i++) {
                         Element node = (Element) nl.item(i);
                         String g = node.getElementsByTagName("groupId").item(0).getTextContent();
-                        String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
+                        String a =
+                                node.getElementsByTagName("artifactId").item(0).getTextContent();
                         if ("org.apache.camel.quarkus".equals(g) && "camel-quarkus-catalog".equals(a)) {
-                            camelQuarkusVersion = node.getElementsByTagName("version").item(0).getTextContent();
+                            camelQuarkusVersion =
+                                    node.getElementsByTagName("version").item(0).getTextContent();
                         }
                     }
                 }
@@ -203,11 +209,12 @@ public final class CatalogLoader {
 
             if (camelQuarkusVersion != null) {
                 // download camel-quarkus-catalog we use to know if we have an extension or not
-                List<MavenArtifact> artifacts = downloader.downloadArtifacts("org.apache.camel.quarkus",
-                        "camel-quarkus-catalog", camelQuarkusVersion, true);
+                List<MavenArtifact> artifacts = downloader.downloadArtifacts(
+                        "org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion, true);
                 if (artifacts != null) {
                     // this will add to classpath
-                    downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
+                    downloader.downloadDependency(
+                            "org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
 
                     Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
                     if (clazz != null) {
@@ -233,8 +240,8 @@ public final class CatalogLoader {
         return answer;
     }
 
-    public static String resolveCamelVersionFromSpringBoot(String repos, String camelSpringBootVersion, boolean download)
-            throws Exception {
+    public static String resolveCamelVersionFromSpringBoot(
+            String repos, String camelSpringBootVersion, boolean download) throws Exception {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setRepositories(repos);
@@ -243,9 +250,8 @@ public final class CatalogLoader {
         try {
             downloader.start();
 
-            List<MavenArtifact> artifacts
-                    = downloader.downloadArtifacts("org.apache.camel.springboot", "camel-catalog-provider-springboot",
-                            camelSpringBootVersion, true);
+            List<MavenArtifact> artifacts = downloader.downloadArtifacts(
+                    "org.apache.camel.springboot", "camel-catalog-provider-springboot", camelSpringBootVersion, true);
             for (MavenArtifact ma : artifacts) {
                 String g = ma.getGav().getGroupId();
                 String a = ma.getGav().getArtifactId();
@@ -262,8 +268,7 @@ public final class CatalogLoader {
     }
 
     public static String resolveSpringBootVersionFromCamelSpringBoot(
-            String repos, String camelSpringBootVersion, boolean download)
-            throws Exception {
+            String repos, String camelSpringBootVersion, boolean download) throws Exception {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
         MavenDependencyDownloader downloader = new MavenDependencyDownloader();
         downloader.setRepositories(repos);
@@ -272,9 +277,8 @@ public final class CatalogLoader {
         try {
             downloader.start();
 
-            List<MavenArtifact> artifacts
-                    = downloader.downloadArtifacts("org.apache.camel.springboot", "camel-core-starter", camelSpringBootVersion,
-                            true);
+            List<MavenArtifact> artifacts = downloader.downloadArtifacts(
+                    "org.apache.camel.springboot", "camel-core-starter", camelSpringBootVersion, true);
             for (MavenArtifact ma : artifacts) {
                 String g = ma.getGav().getGroupId();
                 String a = ma.getGav().getArtifactId();
@@ -300,8 +304,8 @@ public final class CatalogLoader {
         try {
             downloader.start();
 
-            List<MavenArtifact> artifacts = downloader.downloadArtifacts("org.apache.camel.quarkus", "camel-quarkus-catalog",
-                    camelQuarkusVersion, true);
+            List<MavenArtifact> artifacts = downloader.downloadArtifacts(
+                    "org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion, true);
             for (MavenArtifact ma : artifacts) {
                 String g = ma.getGav().getGroupId();
                 String a = ma.getGav().getArtifactId();
@@ -362,5 +366,4 @@ public final class CatalogLoader {
             return classLoader.getResourceAsStream(name);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spring.util;
 
 import java.lang.reflect.Field;
@@ -36,10 +37,10 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
                 f.setAccessible(oldAccessible);
             }
         } catch (IllegalArgumentException ex) {
-            throw new UnsupportedOperationException("Cannot inject value of class: " + value.getClass() + " into: " + f);
+            throw new UnsupportedOperationException(
+                    "Cannot inject value of class: " + value.getClass() + " into: " + f);
         } catch (IllegalAccessException ex) {
             handleReflectionException(ex);
         }
     }
-
 }

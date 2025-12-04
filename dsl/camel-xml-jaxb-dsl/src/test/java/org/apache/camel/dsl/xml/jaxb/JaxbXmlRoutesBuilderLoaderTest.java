@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.xml.jaxb;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -22,48 +26,45 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class JaxbXmlRoutesBuilderLoaderTest {
 
     private static final String NAMESPACE_ATTRIBUTE = "xmlns=\"http://camel.apache.org/schema/spring\"";
     private final String routesContent = ""
-                                         + "<routes " + NAMESPACE_ATTRIBUTE + ">"
-                                         + "   <route id=\"xpath-route\">"
-                                         + "      <from uri=\"direct:test\"/>"
-                                         + "      <setBody>"
-                                         + "         <xpath resultType=\"java.lang.String\">"
-                                         + "            /foo:orders/order[1]/country/text()"
-                                         + "         </xpath>"
-                                         + "      </setBody>"
-                                         + "   </route>"
-                                         + "   <route id=\"timer\">"
-                                         + "      <from uri=\"timer:test\"/>"
-                                         + "      <log/>"
-                                         + "   </route>"
-                                         + "</routes>";
+            + "<routes " + NAMESPACE_ATTRIBUTE + ">"
+            + "   <route id=\"xpath-route\">"
+            + "      <from uri=\"direct:test\"/>"
+            + "      <setBody>"
+            + "         <xpath resultType=\"java.lang.String\">"
+            + "            /foo:orders/order[1]/country/text()"
+            + "         </xpath>"
+            + "      </setBody>"
+            + "   </route>"
+            + "   <route id=\"timer\">"
+            + "      <from uri=\"timer:test\"/>"
+            + "      <log/>"
+            + "   </route>"
+            + "</routes>";
 
     private final String routesTemplateContent = ""
-                                                 + "<routeTemplates " + NAMESPACE_ATTRIBUTE + ">"
-                                                 + "  <routeTemplate id=\"myTemplate\">"
-                                                 + "    <templateParameter name=\"foo\"/>"
-                                                 + "    <templateParameter name=\"bar\"/>"
-                                                 + "    <route>"
-                                                 + "      <from uri=\"direct:{{foo}}\"/>"
-                                                 + "      <to uri=\"mock:{{bar}}\"/>"
-                                                 + "    </route>"
-                                                 + "  </routeTemplate>"
-                                                 + "</routeTemplates>";
+            + "<routeTemplates " + NAMESPACE_ATTRIBUTE + ">"
+            + "  <routeTemplate id=\"myTemplate\">"
+            + "    <templateParameter name=\"foo\"/>"
+            + "    <templateParameter name=\"bar\"/>"
+            + "    <route>"
+            + "      <from uri=\"direct:{{foo}}\"/>"
+            + "      <to uri=\"mock:{{bar}}\"/>"
+            + "    </route>"
+            + "  </routeTemplate>"
+            + "</routeTemplates>";
 
     private final String restsContent = ""
-                                        + "<rests " + NAMESPACE_ATTRIBUTE + ">"
-                                        + "  <rest id=\"bar\" path=\"/say/hello\">"
-                                        + "    <get path=\"/bar\">"
-                                        + "      <to uri=\"mock:bar\"/>"
-                                        + "    </get>"
-                                        + "  </rest>"
-                                        + "</rests>";
+            + "<rests " + NAMESPACE_ATTRIBUTE + ">"
+            + "  <rest id=\"bar\" path=\"/say/hello\">"
+            + "    <get path=\"/bar\">"
+            + "      <to uri=\"mock:bar\"/>"
+            + "    </get>"
+            + "  </rest>"
+            + "</rests>";
 
     @Test
     public void canLoadRoutes() throws Exception {

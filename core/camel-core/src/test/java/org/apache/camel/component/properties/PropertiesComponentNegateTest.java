@@ -14,15 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.properties;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertiesComponentNegateTest extends ContextTestSupport {
 
@@ -37,10 +38,14 @@ public class PropertiesComponentNegateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:ftp").routeId("ftp").autoStartup("{{integration.ftpEnabled}}")
+                from("direct:ftp")
+                        .routeId("ftp")
+                        .autoStartup("{{integration.ftpEnabled}}")
                         .to("mock:ftp");
 
-                from("direct:jms").routeId("jms").autoStartup("{{!integration.ftpEnabled}}")
+                from("direct:jms")
+                        .routeId("jms")
+                        .autoStartup("{{!integration.ftpEnabled}}")
                         .to("mock:jms");
             }
         };
@@ -49,8 +54,8 @@ public class PropertiesComponentNegateTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.getPropertiesComponent()
+                .setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
-
 }

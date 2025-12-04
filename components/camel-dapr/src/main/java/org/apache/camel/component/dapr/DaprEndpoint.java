@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
 
 import io.dapr.client.DaprClient;
@@ -33,12 +34,18 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Dapr component which interfaces with Dapr Building Blocks.
  */
-@UriEndpoint(firstVersion = "4.12.0", scheme = "dapr", title = "Dapr", syntax = "dapr:operation", category = {
-        Category.CLOUD, Category.SAAS }, headersClass = DaprConstants.class)
+@UriEndpoint(
+        firstVersion = "4.12.0",
+        scheme = "dapr",
+        title = "Dapr",
+        syntax = "dapr:operation",
+        category = {Category.CLOUD, Category.SAAS},
+        headersClass = DaprConstants.class)
 public class DaprEndpoint extends DefaultEndpoint {
 
     @UriParam
     private DaprConfiguration configuration;
+
     private DaprClient client;
     private DaprPreviewClient previewClient;
     private DaprWorkflowClient workflowClient;
@@ -65,7 +72,6 @@ public class DaprEndpoint extends DefaultEndpoint {
             default:
                 throw new IllegalArgumentException("Cannot create Dapr consumer with type " + operation);
         }
-
     }
 
     @Override
@@ -73,9 +79,11 @@ public class DaprEndpoint extends DefaultEndpoint {
         super.doStart();
         client = configuration.getClient() != null ? configuration.getClient() : new DaprClientBuilder().build();
         previewClient = configuration.getPreviewClient() != null
-                ? configuration.getPreviewClient() : new DaprClientBuilder().buildPreviewClient();
-        workflowClient
-                = configuration.getWorkflowClient() != null ? configuration.getWorkflowClient() : new DaprWorkflowClient();
+                ? configuration.getPreviewClient()
+                : new DaprClientBuilder().buildPreviewClient();
+        workflowClient = configuration.getWorkflowClient() != null
+                ? configuration.getWorkflowClient()
+                : new DaprWorkflowClient();
     }
 
     /**

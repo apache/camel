@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.ddb;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+package org.apache.camel.component.aws2.ddb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class DdbComponentRegistryClientTest extends CamelTestSupport {
 
@@ -48,7 +49,8 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
         AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
         context.getRegistry().bind("ddbClient", ddbClient);
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
-        Ddb2Endpoint endpoint = (Ddb2Endpoint) component.createEndpoint("aws2-ddb://myTable?accessKey=xxx&secretKey=yyy");
+        Ddb2Endpoint endpoint =
+                (Ddb2Endpoint) component.createEndpoint("aws2-ddb://myTable?accessKey=xxx&secretKey=yyy");
 
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertSame(ddbClient, endpoint.getConfiguration().getAmazonDDBClient());

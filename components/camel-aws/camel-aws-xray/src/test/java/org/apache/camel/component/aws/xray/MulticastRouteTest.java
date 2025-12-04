@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws.xray;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,39 +27,36 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class MulticastRouteTest extends CamelAwsXRayTestSupport {
 
     public MulticastRouteTest() {
-        super(
-              TestDataBuilder.createTrace()
-                      .withSegment(TestDataBuilder.createSegment("start")
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:a")))
-                      .withSegment(TestDataBuilder.createSegment("a")
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
-                              .withSubsegment(TestDataBuilder.createSubsegment("seda:c")))
-                      .withSegment(TestDataBuilder.createSegment("b"))
-                      .withSegment(TestDataBuilder.createSegment("c")
-                      // disabled by the LogSegmentDecorator (-> .to("log:..."); .log("...") is still working)
-                      //.withSubsegment(TestDataBuilder.createSubsegment("log:routing%20at%20$%7BrouteId%7D"))
-                      ));
+        super(TestDataBuilder.createTrace()
+                .withSegment(TestDataBuilder.createSegment("start")
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:a")))
+                .withSegment(TestDataBuilder.createSegment("a")
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                        .withSubsegment(TestDataBuilder.createSubsegment("seda:c")))
+                .withSegment(TestDataBuilder.createSegment("b"))
+                .withSegment(
+                        TestDataBuilder.createSegment("c")
+                        // disabled by the LogSegmentDecorator (-> .to("log:..."); .log("...") is still working)
+                        // .withSubsegment(TestDataBuilder.createSubsegment("log:routing%20at%20$%7BrouteId%7D"))
+                        ));
     }
 
     @Test
     public void testRoute() {
         NotifyBuilder notify = new NotifyBuilder(context)
-                .from("seda:b").whenDone(1)
+                .from("seda:b")
+                .whenDone(1)
                 .and()
-                .from("seda:c").whenDone(1)
+                .from("seda:c")
+                .whenDone(1)
                 .create();
 
         template.requestBody("direct:start", "Hello");
 
-        assertThat("Not all exchanges were fully processed",
-                notify.matches(5, TimeUnit.SECONDS), is(equalTo(true)));
+        assertThat("Not all exchanges were fully processed", notify.matches(5, TimeUnit.SECONDS), is(equalTo(true)));
 
         verify();
     }
@@ -64,24 +66,20 @@ public class MulticastRouteTest extends CamelAwsXRayTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").routeId("start")
-                        .to("seda:a");
+                from("direct:start").routeId("start").to("seda:a");
 
-                from("seda:a").routeId("a")
+                from("seda:a")
+                        .routeId("a")
                         .log("routing at ${routeId}")
                         .multicast()
-                            .to("seda:b")
-                            .to("seda:c")
+                        .to("seda:b")
+                        .to("seda:c")
                         .end()
                         .log("End of routing");
 
-                from("seda:b").routeId("b")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"));
+                from("seda:b").routeId("b").log("routing at ${routeId}").delay(simple("${random(1000,2000)}"));
 
-                from("seda:c").routeId("c")
-                        .to("log:routing at ${routeId}")
-                        .delay(simple("${random(0,100)}"));
+                from("seda:c").routeId("c").to("log:routing at ${routeId}").delay(simple("${random(0,100)}"));
             }
         };
     }

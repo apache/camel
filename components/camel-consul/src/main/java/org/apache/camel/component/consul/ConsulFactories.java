@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.consul;
 
 import org.apache.camel.Consumer;
@@ -28,6 +29,7 @@ public interface ConsulFactories {
 
     @FunctionalInterface
     interface ConsumerFactory {
-        Consumer create(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) throws Exception;
+        Consumer create(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor)
+                throws Exception;
     }
 }

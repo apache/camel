@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
@@ -22,8 +25,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteSedaStopStartTest extends ContextTestSupport {
 
@@ -43,7 +44,8 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
         context.getRouteController().stopRoute("foo");
 
-        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Stopped", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService statefulService) {
             assertEquals("Stopped", statefulService.getStatus().name());
@@ -60,7 +62,8 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals(
+                "Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService statefulService) {
             assertEquals("Started", statefulService.getStatus().name());

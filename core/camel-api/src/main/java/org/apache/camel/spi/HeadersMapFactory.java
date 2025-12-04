@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
 import java.util.Map;
@@ -66,5 +67,4 @@ public interface HeadersMapFactory {
      * can yield faster performance. Therefore use case sensitive implementation with care.
      */
     boolean isCaseInsensitive();
-
 }

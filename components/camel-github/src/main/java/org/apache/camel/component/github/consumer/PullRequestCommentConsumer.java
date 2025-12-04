@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.github.consumer;
 
 import java.util.ArrayDeque;
@@ -51,7 +52,9 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
-            LOG.debug("Using PullRequestService found in registry {}", service.getClass().getCanonicalName());
+            LOG.debug(
+                    "Using PullRequestService found in registry {}",
+                    service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {
             pullRequestService = new PullRequestService();
@@ -69,8 +72,8 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         LOG.info("GitHub PullRequestCommentConsumer: Indexing current pull request comments...");
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
         for (PullRequest pullRequest : pullRequests) {
-            List<CommitComment> commitComments = pullRequestService.getComments(getRepository(),
-                    pullRequest.getNumber());
+            List<CommitComment> commitComments =
+                    pullRequestService.getComments(getRepository(), pullRequest.getNumber());
             for (Comment comment : commitComments) {
                 commentIds.add(comment.getId());
             }
@@ -91,7 +94,8 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         // In the end, we want comments oldest to newest.
         ArrayDeque<Comment> newComments = new ArrayDeque<>();
         for (PullRequest pullRequest : pullRequests) {
-            List<CommitComment> commitComments = pullRequestService.getComments(getRepository(), pullRequest.getNumber());
+            List<CommitComment> commitComments =
+                    pullRequestService.getComments(getRepository(), pullRequest.getNumber());
             for (Comment comment : commitComments) {
                 if (!commentIds.contains(comment.getId())) {
                     newComments.add(comment);
@@ -121,5 +125,4 @@ public class PullRequestCommentConsumer extends AbstractGitHubConsumer {
         }
         return processBatch(exchanges);
     }
-
 }

@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.tx.async;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
@@ -25,9 +28,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@Tags({@Tag("not-parallel"), @Tag("spring"), @Tag("tx")})
 public class TransactedAsyncUsingThreadsIT extends AbstractSpringJMSITSupport {
 
     private static int counter;
@@ -105,10 +106,9 @@ public class TransactedAsyncUsingThreadsIT extends AbstractSpringJMSITSupport {
                                 // do redelivery
                                 throw new IllegalAccessException("Damn");
                             }
-                        }).to("mock:result");
-
+                        })
+                        .to("mock:result");
             }
         };
     }
-
 }

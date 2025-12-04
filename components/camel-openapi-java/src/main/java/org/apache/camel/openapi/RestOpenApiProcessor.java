@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.openapi;
 
 import java.util.Collections;
@@ -40,8 +41,7 @@ public class RestOpenApiProcessor extends ServiceSupport implements Processor, C
     private final RestOpenApiSupport support;
     private final RestConfiguration configuration;
 
-    public RestOpenApiProcessor(Map<String, Object> parameters,
-                                RestConfiguration configuration) {
+    public RestOpenApiProcessor(Map<String, Object> parameters, RestConfiguration configuration) {
         this.configuration = configuration;
         this.support = new RestOpenApiSupport();
         this.openApiConfig = new BeanConfig();
@@ -68,14 +68,28 @@ public class RestOpenApiProcessor extends ServiceSupport implements Processor, C
 
         // optimize if not using forward headers
         if (!configuration.isUseXForwardHeaders()) {
-            StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
-            StartupStep step = recorder.beginStep(RestOpenApiProcessor.class, "openapi", "Generating OpenAPI specification");
+            StartupStepRecorder recorder =
+                    camelContext.getCamelContextExtension().getStartupStepRecorder();
+            StartupStep step =
+                    recorder.beginStep(RestOpenApiProcessor.class, "openapi", "Generating OpenAPI specification");
             try {
-                support.renderResourceListing(camelContext, jsonAdapter, openApiConfig, true,
-                        camelContext.getClassResolver(), configuration, null);
+                support.renderResourceListing(
+                        camelContext,
+                        jsonAdapter,
+                        openApiConfig,
+                        true,
+                        camelContext.getClassResolver(),
+                        configuration,
+                        null);
                 yamlAdapter.setOpenApi(jsonAdapter.getOpenApi()); // no need to compute OpenApi again
-                support.renderResourceListing(camelContext, yamlAdapter, openApiConfig, false,
-                        camelContext.getClassResolver(), configuration, null);
+                support.renderResourceListing(
+                        camelContext,
+                        yamlAdapter,
+                        openApiConfig,
+                        false,
+                        camelContext.getClassResolver(),
+                        configuration,
+                        null);
             } finally {
                 recorder.endStep(step);
             }
@@ -112,13 +126,18 @@ public class RestOpenApiProcessor extends ServiceSupport implements Processor, C
         if (configuration.isUseXForwardHeaders()) {
             // re-create api as using x-forward headers impacts the rendered output
             adapter = new DefaultRestApiResponseAdapter();
-            support.renderResourceListing(camelContext, adapter, openApiConfig, json,
-                    camelContext.getClassResolver(), configuration, exchange);
+            support.renderResourceListing(
+                    camelContext,
+                    adapter,
+                    openApiConfig,
+                    json,
+                    camelContext.getClassResolver(),
+                    configuration,
+                    exchange);
         } else {
             // use pre-build adapter
             adapter = json ? jsonAdapter : yamlAdapter;
         }
         adapter.copyResult(exchange);
     }
-
 }

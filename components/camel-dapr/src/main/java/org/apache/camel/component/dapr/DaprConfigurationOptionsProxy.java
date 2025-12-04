@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dapr;
 
 import java.time.Duration;
@@ -48,7 +49,8 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public String getServiceToInvoke(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getServiceToInvokeFromHeaders, configuration::getServiceToInvoke, exchange);
+        return getOption(
+                DaprExchangeHeaders::getServiceToInvokeFromHeaders, configuration::getServiceToInvoke, exchange);
     }
 
     public String getMethodToInvoke(final Exchange exchange) {
@@ -136,7 +138,8 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public String getBindingOperation(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getBindingOperationFromHeaders, configuration::getBindingOperation, exchange);
+        return getOption(
+                DaprExchangeHeaders::getBindingOperationFromHeaders, configuration::getBindingOperation, exchange);
     }
 
     public String getConfigKeys(final Exchange exchange) {
@@ -164,11 +167,13 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public Integer getExpiryInSeconds(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getExpiryInSecondsFromHeaders, configuration::getExpiryInSeconds, exchange);
+        return getOption(
+                DaprExchangeHeaders::getExpiryInSecondsFromHeaders, configuration::getExpiryInSeconds, exchange);
     }
 
     public WorkflowOperation getWorkflowOperation(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getWorkflowOperationFromHeaders, configuration::getWorkflowOperation, exchange);
+        return getOption(
+                DaprExchangeHeaders::getWorkflowOperationFromHeaders, configuration::getWorkflowOperation, exchange);
     }
 
     public String getWorkflowClass(final Exchange exchange) {
@@ -176,15 +181,18 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public String getWorkflowVersion(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getWorkflowVersionFromHeaders, configuration::getWorkflowVersion, exchange);
+        return getOption(
+                DaprExchangeHeaders::getWorkflowVersionFromHeaders, configuration::getWorkflowVersion, exchange);
     }
 
     public String getWorkflowInstanceId(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getWorkflowInstanceIdFromHeaders, configuration::getWorkflowInstanceId, exchange);
+        return getOption(
+                DaprExchangeHeaders::getWorkflowInstanceIdFromHeaders, configuration::getWorkflowInstanceId, exchange);
     }
 
     public Instant getWorkflowStartTime(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getWorkflowStartTimeFromHeaders, configuration::getWorkflowStartTime, exchange);
+        return getOption(
+                DaprExchangeHeaders::getWorkflowStartTimeFromHeaders, configuration::getWorkflowStartTime, exchange);
     }
 
     public String getReason(final Exchange exchange) {
@@ -203,11 +211,12 @@ public class DaprConfigurationOptionsProxy {
         return getOption(DaprExchangeHeaders::getEventNameFromHeaders, configuration::getEventName, exchange);
     }
 
-    private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
-        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
+    private <R> R getOption(
+            final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
+        // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a
+        // function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))
                 ? fallbackFn.get()
                 : exchangeFn.apply(exchange);
     }
-
 }

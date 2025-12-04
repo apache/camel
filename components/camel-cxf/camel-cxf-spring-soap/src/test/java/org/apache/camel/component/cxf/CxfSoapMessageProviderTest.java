@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URL;
@@ -30,9 +34,6 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.SOAPService;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
@@ -61,8 +62,10 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
         String response2 = new String("Bonjour");
         try {
             Greeter greeter = service.getPort(portName, Greeter.class);
-            ((BindingProvider) greeter).getRequestContext()
-                    .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+            ((BindingProvider) greeter)
+                    .getRequestContext()
+                    .put(
+                            BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                             "http://localhost:" + port + "/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort");
             for (int idx = 0; idx < 2; idx++) {
                 String greeting = greeter.greetMe("Milestone-" + idx);
@@ -79,9 +82,9 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
         assertEquals(8, fromHandler.getMessageCount(), "Can't get the right message count");
         assertEquals(0, fromHandler.getFaultCount(), "Can't get the right fault count");
-        //From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have headers
-        //assertEquals(fromHandler.getGetHeadersCount(), 4, "Can't get the right headers count");
+        // From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have
+        // headers
+        // assertEquals(fromHandler.getGetHeadersCount(), 4, "Can't get the right headers count");
 
     }
-
 }

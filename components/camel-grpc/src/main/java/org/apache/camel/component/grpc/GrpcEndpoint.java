@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.grpc;
 
 import org.apache.camel.Category;
@@ -30,11 +31,17 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Expose gRPC endpoints and access external gRPC endpoints.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service",
-             category = { Category.RPC }, headersClass = GrpcConstants.class)
-@Metadata(annotations = {
-        "protocol=http",
-})
+@UriEndpoint(
+        firstVersion = "2.19.0",
+        scheme = "grpc",
+        title = "gRPC",
+        syntax = "grpc:host:port/service",
+        category = {Category.RPC},
+        headersClass = GrpcConstants.class)
+@Metadata(
+        annotations = {
+            "protocol=http",
+        })
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;

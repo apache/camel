@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.mllp;
 
 import java.text.SimpleDateFormat;
@@ -23,24 +24,24 @@ public final class Hl7TestMessageGenerator {
     static SimpleDateFormat timestampFormat = new SimpleDateFormat("YYYYMMddHHmmss");
     static String messageControlIdFormat = "%05d";
 
-    static String hl7MessageTemplate
-            = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|<MESSAGE_TIMESTAMP>||ORM^O01|<MESSAGE_CONTROL_ID>|D|2.3|||AL|NE|||" + '\r'
-              + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
-              + '\r'
-              + "NTE|1||Free text for entering clinical details|" + '\r'
-              + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
-              + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
-              + '\r'
-              + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
-              + '\r'
-              + '\n';
+    static String hl7MessageTemplate =
+            "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|<MESSAGE_TIMESTAMP>||ORM^O01|<MESSAGE_CONTROL_ID>|D|2.3|||AL|NE|||"
+                    + '\r'
+                    + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
+                    + '\r'
+                    + "NTE|1||Free text for entering clinical details|" + '\r'
+                    + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+                    + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
+                    + '\r'
+                    + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+                    + '\r'
+                    + '\n';
 
-    private Hl7TestMessageGenerator() {
-    }
+    private Hl7TestMessageGenerator() {}
 
     public static String generateMessage() {
         return generateMessage(new Date(), 1);
@@ -78,5 +79,4 @@ public final class Hl7TestMessageGenerator {
     public static void setMessageControlIdFormat(String messageControlIdFormat) {
         Hl7TestMessageGenerator.messageControlIdFormat = messageControlIdFormat;
     }
-
 }

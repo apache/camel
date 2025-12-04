@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.language.joor;
 
 import java.lang.invoke.MethodHandles;
@@ -130,7 +131,8 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             Class<?> clazz = result.getClass(className);
             if (clazz != null) {
                 LOG.debug("Compiled to Java class: {}", clazz);
-                answer = (JoorScriptingMethod) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
+                answer = (JoorScriptingMethod)
+                        clazz.getConstructor(CamelContext.class).newInstance(camelContext);
             } else {
                 answer = null;
             }
@@ -145,8 +147,7 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
 
     @SuppressWarnings("unchecked")
     public String evalCode(
-            CamelContext camelContext, String fqn, String script, Map<String, Object> bindings,
-            boolean singleQuotes) {
+            CamelContext camelContext, String fqn, String script, Map<String, Object> bindings, boolean singleQuotes) {
         String qn = fqn.substring(0, fqn.lastIndexOf('.'));
         String name = fqn.substring(fqn.lastIndexOf('.') + 1);
 
@@ -189,26 +190,37 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
             sb.append(";\n");
         }
         sb.append("\n");
-        sb.append("public class ").append(name).append(" implements org.apache.camel.language.joor.JoorScriptingMethod {\n");
+        sb.append("public class ")
+                .append(name)
+                .append(" implements org.apache.camel.language.joor.JoorScriptingMethod {\n");
         sb.append("\n");
         // local beans variables
         for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
-            sb.append("    private ").append(entry.getValue().getSimpleName()).append(" ").append(entry.getKey()).append(";\n");
+            sb.append("    private ")
+                    .append(entry.getValue().getSimpleName())
+                    .append(" ")
+                    .append(entry.getKey())
+                    .append(";\n");
         }
         sb.append("\n");
 
         // constructor to lookup beans
         sb.append("    public ").append(name).append("(CamelContext context) throws Exception {\n");
         for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
-            sb.append("        ").append(entry.getKey()).append(" = ").append("context.getRegistry().lookupByNameAndType(\"")
-                    .append(entry.getKey()).append("\", ").append(entry.getValue().getSimpleName()).append(".class);\n");
+            sb.append("        ")
+                    .append(entry.getKey())
+                    .append(" = ")
+                    .append("context.getRegistry().lookupByNameAndType(\"")
+                    .append(entry.getKey())
+                    .append("\", ")
+                    .append(entry.getValue().getSimpleName())
+                    .append(".class);\n");
         }
         sb.append("    }\n");
         sb.append("\n");
 
         sb.append("    @Override\n");
-        sb.append(
-                "    public Object evaluate(Map<String, Object> args) throws Exception {\n");
+        sb.append("    public Object evaluate(Map<String, Object> args) throws Exception {\n");
         sb.append("        ");
 
         // bindings as local variables
@@ -270,5 +282,4 @@ public class JoorScriptingCompiler extends ServiceSupport implements StaticServi
     private static String nextFQN() {
         return "org.apache.camel.language.joor.compiled.scripting.JoorScripting" + UUID.incrementAndGet();
     }
-
 }

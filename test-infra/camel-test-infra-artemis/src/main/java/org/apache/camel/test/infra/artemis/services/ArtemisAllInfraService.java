@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
@@ -23,9 +24,10 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@InfraService(service = ArtemisInfraService.class,
-              description = "Apache Artemis is an open source message broker",
-              serviceAlias = "artemis")
+@InfraService(
+        service = ArtemisInfraService.class,
+        description = "Apache Artemis is an open source message broker",
+        serviceAlias = "artemis")
 public class ArtemisAllInfraService implements ArtemisInfraService, ContainerService<ArtemisContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ArtemisAllInfraService.class);
 
@@ -64,9 +66,7 @@ public class ArtemisAllInfraService implements ArtemisInfraService, ContainerSer
     }
 
     @Override
-    public void restart() {
-
-    }
+    public void restart() {}
 
     @Override
     public long countMessages(String queue) throws Exception {

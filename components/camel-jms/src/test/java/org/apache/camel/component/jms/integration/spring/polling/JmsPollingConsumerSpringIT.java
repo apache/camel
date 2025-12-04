@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.integration.spring.polling;
 
 import org.apache.camel.ConsumerTemplate;
@@ -32,7 +33,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({@Tag("not-parallel"), @Tag("spring")})
 public class JmsPollingConsumerSpringIT extends SpringJMSBasic {
 
     @Produce("jms:JmsPollingConsumerSpringITStartConsumer")
@@ -100,7 +101,6 @@ public class JmsPollingConsumerSpringIT extends SpringJMSBasic {
             }
 
             return result.toString();
-
         }
 
         @Override

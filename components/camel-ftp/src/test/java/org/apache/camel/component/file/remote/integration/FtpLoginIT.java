@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.file.remote.integration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
@@ -23,11 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for login failure due bad password and login with accepted password
@@ -59,8 +60,8 @@ public class FtpLoginIT extends FtpServerTestSupport {
     }
 
     private void uploadFile(String username, String password) throws Exception {
-        Endpoint endpoint
-                = context.getEndpoint("ftp://" + username + "@localhost:{{ftp.server.port}}/login?password=" + password);
+        Endpoint endpoint =
+                context.getEndpoint("ftp://" + username + "@localhost:{{ftp.server.port}}/login?password=" + password);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

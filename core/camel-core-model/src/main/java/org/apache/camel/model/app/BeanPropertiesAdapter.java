@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.model.app;
 
 import java.util.Arrays;
@@ -65,5 +66,4 @@ public class BeanPropertiesAdapter extends XmlAdapter<BeanPropertiesDefinition, 
         propertiesDefinition.setProperties(Arrays.asList(result));
         return propertiesDefinition;
     }
-
 }

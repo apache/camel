@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.io.IOException;
@@ -64,16 +65,19 @@ public class JdbcAggregateRecoverDeadLetterChannelFailedTest extends AbstractJdb
             public void configure() {
                 configureJdbcAggregationRepository();
 
-                from("direct:start").routeId("start")
+                from("direct:start")
+                        .routeId("start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionSize(5).aggregationRepository(repo)
+                        .completionSize(5)
+                        .aggregationRepository(repo)
                         .log("aggregated exchange id ${exchangeId} with ${body}")
                         .to("mock:aggregated")
                         .throwException(new IllegalArgumentException("Damn"))
                         .to("mock:result")
                         .end();
 
-                from("direct:dead").routeId("dead")
+                from("direct:dead")
+                        .routeId("dead")
                         .log("sending recovered aggregated exchange to dead letter channel with ${body}")
                         .to("mock:dead")
                         .throwException(new IOException("We are dead"));

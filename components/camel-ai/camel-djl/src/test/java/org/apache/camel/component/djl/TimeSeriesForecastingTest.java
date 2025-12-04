@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.djl;
 
 import java.time.LocalDateTime;
@@ -51,8 +52,9 @@ public class TimeSeriesForecastingTest extends CamelTestSupport {
                             input.setStartTime(LocalDateTime.now());
                             var manager = NDManager.newBaseManager("PyTorch");
                             var data = manager.create(new float[] {
-                                    1.0f, 2.0f, 1.0f, 2.0f, 3.0f,
-                                    1.0f, 2.0f, 3.0f, 4.0f, 1.0f });
+                                1.0f, 2.0f, 1.0f, 2.0f, 3.0f,
+                                1.0f, 2.0f, 3.0f, 4.0f, 1.0f
+                            });
                             input.setField(FieldName.TARGET, data);
                             exchange.getIn().setBody(input);
                             exchange.getIn().setHeader("NDManager", manager);
@@ -71,5 +73,4 @@ public class TimeSeriesForecastingTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.jaxrs;
 
 public class CxfRsConsumerClientDisconnectedSynchronousTest extends CxfRsConsumerClientDisconnectedTest {
@@ -22,5 +23,4 @@ public class CxfRsConsumerClientDisconnectedSynchronousTest extends CxfRsConsume
     protected boolean isSynchronous() {
         return true;
     }
-
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
@@ -45,7 +46,8 @@ class PluginDeleteTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("Plugin kubernetes removed", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
+        Assertions.assertEquals(
+                "{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
     }
 
     @Test
@@ -56,7 +58,7 @@ class PluginDeleteTest extends CamelCommandBaseTest {
 
         Assertions.assertEquals("Plugin foo not found in configuration", printer.getOutput());
 
-        Assertions.assertEquals("{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
+        Assertions.assertEquals(
+                "{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
     }
-
 }

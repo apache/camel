@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.dataformat.bindy.fixed.implied;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -32,8 +35,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -115,11 +116,10 @@ public class BindyImpliedTest {
             bindy.setLocale("en");
             bindy.type(BindyType.Fixed);
 
-            from(URI_DIRECT_MARSHALL)
-                    .marshal(bindy)
-                    .to(URI_MOCK_MARSHALL_RESULT);
+            from(URI_DIRECT_MARSHALL).marshal(bindy).to(URI_MOCK_MARSHALL_RESULT);
             from(URI_DIRECT_UNMARSHALL)
-                    .unmarshal().bindy(BindyType.Fixed, Record.class)
+                    .unmarshal()
+                    .bindy(BindyType.Fixed, Record.class)
                     .to(URI_MOCK_UNMARSHALL_RESULT);
         }
     }
@@ -208,13 +208,13 @@ public class BindyImpliedTest {
         @Override
         public String toString() {
             return "Record{"
-                   + "field1=<" + field1 + ">"
-                   + ", field2=<" + field2 + ">"
-                   + ", field3=<" + field3 + ">"
-                   + ", field4=<" + field4 + ">"
-                   + ", field5=<" + field6 + ">"
-                   + ", field6=<" + field6 + ">"
-                   + "}";
+                    + "field1=<" + field1 + ">"
+                    + ", field2=<" + field2 + ">"
+                    + ", field3=<" + field3 + ">"
+                    + ", field4=<" + field4 + ">"
+                    + ", field5=<" + field6 + ">"
+                    + ", field6=<" + field6 + ">"
+                    + "}";
         }
     }
 }

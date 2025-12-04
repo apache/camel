@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.flink;
 
 import java.util.List;
@@ -118,11 +119,13 @@ public class DataStreamFlinkProducer extends DefaultProducer {
         // Configure execution mode (BATCH, STREAMING, AUTOMATIC)
         if (getEndpoint().getExecutionMode() != null) {
             try {
-                RuntimeExecutionMode mode = RuntimeExecutionMode.valueOf(getEndpoint().getExecutionMode());
+                RuntimeExecutionMode mode =
+                        RuntimeExecutionMode.valueOf(getEndpoint().getExecutionMode());
                 env.setRuntimeMode(mode);
                 LOG.info("Set Flink runtime execution mode to: {}", mode);
             } catch (IllegalArgumentException e) {
-                LOG.warn("Invalid execution mode '{}'. Valid values are: STREAMING, BATCH, AUTOMATIC",
+                LOG.warn(
+                        "Invalid execution mode '{}'. Valid values are: STREAMING, BATCH, AUTOMATIC",
                         getEndpoint().getExecutionMode());
             }
         }
@@ -147,11 +150,13 @@ public class DataStreamFlinkProducer extends DefaultProducer {
             // Configure checkpointing mode
             if (getEndpoint().getCheckpointingMode() != null) {
                 try {
-                    CheckpointingMode mode = CheckpointingMode.valueOf(getEndpoint().getCheckpointingMode());
+                    CheckpointingMode mode =
+                            CheckpointingMode.valueOf(getEndpoint().getCheckpointingMode());
                     env.getCheckpointConfig().setCheckpointingMode(mode);
                     LOG.info("Set checkpointing mode to: {}", mode);
                 } catch (IllegalArgumentException e) {
-                    LOG.warn("Invalid checkpointing mode '{}'. Valid values are: EXACTLY_ONCE, AT_LEAST_ONCE",
+                    LOG.warn(
+                            "Invalid checkpointing mode '{}'. Valid values are: EXACTLY_ONCE, AT_LEAST_ONCE",
                             getEndpoint().getCheckpointingMode());
                 }
             }
@@ -166,7 +171,8 @@ public class DataStreamFlinkProducer extends DefaultProducer {
             if (getEndpoint().getMinPauseBetweenCheckpoints() != null) {
                 env.getCheckpointConfig()
                         .setMinPauseBetweenCheckpoints(getEndpoint().getMinPauseBetweenCheckpoints());
-                LOG.info("Set min pause between checkpoints to: {} ms",
+                LOG.info(
+                        "Set min pause between checkpoints to: {} ms",
                         getEndpoint().getMinPauseBetweenCheckpoints());
             }
         }

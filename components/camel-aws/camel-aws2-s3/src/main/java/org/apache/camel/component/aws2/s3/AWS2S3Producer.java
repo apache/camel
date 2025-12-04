@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.aws2.s3;
 
 import java.io.ByteArrayInputStream;
@@ -203,18 +204,25 @@ public class AWS2S3Producer extends DefaultProducer {
         long partSize = getConfiguration().getPartSize();
         if (contentLength == 0 || contentLength < partSize) {
             // optimize to do a single op if content length is known and < part size
-            LOG.debug("Payload size < partSize ({} > {}). Uploading payload in single operation", contentLength, partSize);
+            LOG.debug(
+                    "Payload size < partSize ({} > {}). Uploading payload in single operation",
+                    contentLength,
+                    partSize);
             doPutObject(exchange, objectMetadata, filePayload, inputStream, contentLength);
             return;
         }
 
-        LOG.debug("Payload size >= partSize ({} > {}). Uploading payload using multi-part operation", contentLength, partSize);
+        LOG.debug(
+                "Payload size >= partSize ({} > {}). Uploading payload using multi-part operation",
+                contentLength,
+                partSize);
         objectMetadata.put("Content-Length", "" + contentLength);
 
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
-        CreateMultipartUploadRequest.Builder createMultipartUploadRequest
-                = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
+        CreateMultipartUploadRequest.Builder createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
+                .bucket(getConfiguration().getBucketName())
+                .key(keyName);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
         if (storageClass != null) {
@@ -259,8 +267,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         LOG.trace("Initiating multipart upload [{}] from exchange [{}]...", createMultipartUploadRequest, exchange);
 
-        CreateMultipartUploadResponse initResponse
-                = getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
+        CreateMultipartUploadResponse initResponse =
+                getEndpoint().getS3Client().createMultipartUpload(createMultipartUploadRequest.build());
         List<CompletedPart> completedParts = new ArrayList<CompletedPart>();
         CompleteMultipartUploadResponse uploadResult;
 
@@ -269,23 +277,32 @@ public class AWS2S3Producer extends DefaultProducer {
             for (int part = 1; position < contentLength; part++) {
                 partSize = Math.min(partSize, contentLength - position);
 
-                UploadPartRequest uploadRequest = UploadPartRequest.builder().bucket(getConfiguration().getBucketName())
-                        .key(keyName).uploadId(initResponse.uploadId())
-                        .partNumber(part).build();
+                UploadPartRequest uploadRequest = UploadPartRequest.builder()
+                        .bucket(getConfiguration().getBucketName())
+                        .key(keyName)
+                        .uploadId(initResponse.uploadId())
+                        .partNumber(part)
+                        .build();
 
                 LOG.debug("Uploading multi-part [{}] at position: [{}] for {}", part, position, keyName);
 
-                String etag = getEndpoint().getS3Client()
-                        .uploadPart(uploadRequest, RequestBody.fromInputStream(inputStream, partSize)).eTag();
-                CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
+                String etag = getEndpoint()
+                        .getS3Client()
+                        .uploadPart(uploadRequest, RequestBody.fromInputStream(inputStream, partSize))
+                        .eTag();
+                CompletedPart partUpload =
+                        CompletedPart.builder().partNumber(part).eTag(etag).build();
                 completedParts.add(partUpload);
                 position += partSize;
             }
 
             LOG.debug("Completing multi-part upload for {}", keyName);
-            CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
+            CompletedMultipartUpload completeMultipartUpload =
+                    CompletedMultipartUpload.builder().parts(completedParts).build();
             CompleteMultipartUploadRequest.Builder compRequestBuilder = CompleteMultipartUploadRequest.builder()
-                    .multipartUpload(completeMultipartUpload).bucket(getConfiguration().getBucketName()).key(keyName)
+                    .multipartUpload(completeMultipartUpload)
+                    .bucket(getConfiguration().getBucketName())
+                    .key(keyName)
                     .uploadId(initResponse.uploadId());
             if (getConfiguration().isConditionalWritesEnabled()) {
                 compRequestBuilder.ifNoneMatch("*");
@@ -293,9 +310,13 @@ public class AWS2S3Producer extends DefaultProducer {
             uploadResult = getEndpoint().getS3Client().completeMultipartUpload(compRequestBuilder.build());
 
         } catch (Exception e) {
-            getEndpoint().getS3Client()
-                    .abortMultipartUpload(AbortMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName())
-                            .key(keyName).uploadId(initResponse.uploadId()).build());
+            getEndpoint()
+                    .getS3Client()
+                    .abortMultipartUpload(AbortMultipartUploadRequest.builder()
+                            .bucket(getConfiguration().getBucketName())
+                            .key(keyName)
+                            .uploadId(initResponse.uploadId())
+                            .build());
             throw e;
         } finally {
             IOHelper.close(inputStream);
@@ -361,8 +382,11 @@ public class AWS2S3Producer extends DefaultProducer {
     }
 
     private void doPutObject(
-            Exchange exchange, Map<String, String> objectMetadata,
-            File file, InputStream inputStream, long contentLength) {
+            Exchange exchange,
+            Map<String, String> objectMetadata,
+            File file,
+            InputStream inputStream,
+            long contentLength) {
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
 
@@ -470,7 +494,8 @@ public class AWS2S3Producer extends DefaultProducer {
         final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
         final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
         final String destinationKey = exchange.getIn().getHeader(AWS2S3Constants.DESTINATION_KEY, String.class);
-        final String bucketNameDestination = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, String.class);
+        final String bucketNameDestination =
+                exchange.getIn().getHeader(AWS2S3Constants.BUCKET_DESTINATION_NAME, String.class);
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof CopyObjectRequest) {
@@ -481,13 +506,17 @@ public class AWS2S3Producer extends DefaultProducer {
             }
         } else {
             if (ObjectHelper.isEmpty(bucketNameDestination)) {
-                throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
+                throw new IllegalArgumentException(
+                        "Bucket Name Destination must be specified for copyObject Operation");
             }
             if (ObjectHelper.isEmpty(destinationKey)) {
                 throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
             }
-            CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder().destinationBucket(bucketNameDestination)
-                    .destinationKey(destinationKey).sourceBucket(bucketName).sourceKey(keyName);
+            CopyObjectRequest.Builder copyObjectRequest = CopyObjectRequest.builder()
+                    .destinationBucket(bucketNameDestination)
+                    .destinationKey(destinationKey)
+                    .sourceBucket(bucketName)
+                    .sourceKey(keyName);
 
             if (getConfiguration().isUseAwsKMS()) {
                 if (ObjectHelper.isNotEmpty(getConfiguration().getAwsKMSKeyId())) {
@@ -511,13 +540,14 @@ public class AWS2S3Producer extends DefaultProducer {
                     copyObjectRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                 }
             }
-            final String ifMatchCondition = exchange.getMessage().getHeader(AWS2S3Constants.IF_MATCH_CONDITION, String.class);
-            final Instant ifModifiedSinceCondition
-                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_MODIFIED_SINCE_CONDITION, Instant.class);
-            final String ifNoneMatchCondition
-                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_NONE_MATCH_CONDITION, String.class);
-            final Instant ifUnmodifiedSince
-                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_UNMODIFIED_SINCE_CONDITION, Instant.class);
+            final String ifMatchCondition =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_MATCH_CONDITION, String.class);
+            final Instant ifModifiedSinceCondition =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_MODIFIED_SINCE_CONDITION, Instant.class);
+            final String ifNoneMatchCondition =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_NONE_MATCH_CONDITION, String.class);
+            final Instant ifUnmodifiedSince =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_UNMODIFIED_SINCE_CONDITION, Instant.class);
             if (ObjectHelper.isNotEmpty(ifMatchCondition)) {
                 copyObjectRequest.copySourceIfMatch(ifMatchCondition);
             }
@@ -554,7 +584,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(true);
             }
         } else {
-            DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(keyName);
+            DeleteObjectRequest.Builder deleteObjectRequest =
+                    DeleteObjectRequest.builder().bucket(bucketName).key(keyName);
             s3Client.deleteObject(deleteObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
@@ -582,7 +613,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(resp);
             }
         } else {
-            DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
+            DeleteBucketRequest.Builder deleteBucketRequest =
+                    DeleteBucketRequest.builder().bucket(bucketName);
             DeleteBucketResponse resp = s3Client.deleteBucket(deleteBucketRequest.build());
 
             Message message = getMessageForResponse(exchange);
@@ -594,8 +626,8 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetObjectRequest) {
-                ResponseInputStream<GetObjectResponse> res
-                        = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> res =
+                        s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 if (!getConfiguration().isIgnoreBody()) {
                     message.setBody(res);
@@ -605,14 +637,16 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
             final String keyName = AWS2S3Utils.determineKey(exchange, getConfiguration());
-            final String ifMatchCondition = exchange.getMessage().getHeader(AWS2S3Constants.IF_MATCH_CONDITION, String.class);
-            final Instant ifModifiedSinceCondition
-                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_MODIFIED_SINCE_CONDITION, Instant.class);
-            final String ifNoneMatchCondition
-                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_NONE_MATCH_CONDITION, String.class);
-            final Instant ifUnmodifiedSince
-                    = exchange.getMessage().getHeader(AWS2S3Constants.IF_UNMODIFIED_SINCE_CONDITION, Instant.class);
-            GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(keyName);
+            final String ifMatchCondition =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_MATCH_CONDITION, String.class);
+            final Instant ifModifiedSinceCondition =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_MODIFIED_SINCE_CONDITION, Instant.class);
+            final String ifNoneMatchCondition =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_NONE_MATCH_CONDITION, String.class);
+            final Instant ifUnmodifiedSince =
+                    exchange.getMessage().getHeader(AWS2S3Constants.IF_UNMODIFIED_SINCE_CONDITION, Instant.class);
+            GetObjectRequest.Builder req =
+                    GetObjectRequest.builder().bucket(bucketName).key(keyName);
             if (ObjectHelper.isNotEmpty(ifMatchCondition)) {
                 req.ifMatch(ifMatchCondition);
             }
@@ -625,7 +659,8 @@ public class AWS2S3Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(ifUnmodifiedSince)) {
                 req.ifUnmodifiedSince(ifUnmodifiedSince);
             }
-            ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
+            ResponseInputStream<GetObjectResponse> res =
+                    s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
             if (!getConfiguration().isIgnoreBody()) {
@@ -646,8 +681,8 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetObjectRequest) {
-                ResponseInputStream<GetObjectResponse> res
-                        = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
+                ResponseInputStream<GetObjectResponse> res =
+                        s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
             }
@@ -657,9 +692,12 @@ public class AWS2S3Producer extends DefaultProducer {
                         "A Range start and range end header must be configured to perform a range get operation.");
             }
 
-            GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(keyName)
+            GetObjectRequest.Builder req = GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(keyName)
                     .range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
-            ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
+            ResponseInputStream<GetObjectResponse> res =
+                    s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(res);
@@ -679,13 +717,12 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(objectList.contents());
             }
         } else {
-            final String delimiter
-                    = exchange.getIn().getHeader(AWS2S3Constants.DELIMITER, getConfiguration().getDelimiter(), String.class);
-            final String prefix
-                    = exchange.getIn().getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
+            final String delimiter = exchange.getIn()
+                    .getHeader(AWS2S3Constants.DELIMITER, getConfiguration().getDelimiter(), String.class);
+            final String prefix = exchange.getIn()
+                    .getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
 
-            final ListObjectsRequest listObjectsRequest = ListObjectsRequest
-                    .builder()
+            final ListObjectsRequest listObjectsRequest = ListObjectsRequest.builder()
                     .bucket(bucketName)
                     .delimiter(delimiter)
                     .prefix(prefix)
@@ -716,9 +753,10 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             S3Presigner.Builder builder = S3Presigner.builder();
             builder.credentialsProvider(
-                    getConfiguration().isUseDefaultCredentialsProvider()
-                            ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
-                                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                            getConfiguration().isUseDefaultCredentialsProvider()
+                                    ? DefaultCredentialsProvider.create()
+                                    : StaticCredentialsProvider.create(AwsBasicCredentials.create(
+                                            getConfiguration().getAccessKey(),
                                             getConfiguration().getSecretKey())))
                     .region(Region.of(getConfiguration().getRegion()));
 
@@ -730,10 +768,8 @@ public class AWS2S3Producer extends DefaultProducer {
             presigner = builder.build();
         }
 
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(keyName)
-                .build();
+        GetObjectRequest getObjectRequest =
+                GetObjectRequest.builder().bucket(bucketName).key(keyName).build();
 
         GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMillis(milliSeconds))
@@ -744,14 +780,16 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedGetObjectRequest.url().toString());
-        message.setHeader(AWS2S3Constants.DOWNLOAD_LINK_BROWSER_COMPATIBLE, presignedGetObjectRequest.isBrowserExecutable());
+        message.setHeader(
+                AWS2S3Constants.DOWNLOAD_LINK_BROWSER_COMPATIBLE, presignedGetObjectRequest.isBrowserExecutable());
         message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
         message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
 
         if (!presignedGetObjectRequest.isBrowserExecutable()) {
             LOG.debug(
                     "The download link url is not browser compatible and please check the option of checksum validations in Amazon S3 client");
-            message.setHeader(AWS2S3Constants.DOWNLOAD_LINK_HTTP_REQUEST_HEADERS,
+            message.setHeader(
+                    AWS2S3Constants.DOWNLOAD_LINK_HTTP_REQUEST_HEADERS,
                     presignedGetObjectRequest.httpRequest().headers());
             presignedGetObjectRequest.signedPayload().ifPresent(payload -> {
                 message.setHeader(AWS2S3Constants.DOWNLOAD_LINK_SIGNED_PAYLOAD, payload.asUtf8String());
@@ -766,13 +804,13 @@ public class AWS2S3Producer extends DefaultProducer {
     private void headBucket(S3Client s3Client, Exchange exchange) {
         String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
         if (ObjectHelper.isEmpty(bucketName)) {
-            throw new IllegalArgumentException(
-                    "Head Bucket operation requires to specify a bucket name via Header");
+            throw new IllegalArgumentException("Head Bucket operation requires to specify a bucket name via Header");
         }
         Message message = getMessageForResponse(exchange);
         boolean exists = true;
         try {
-            HeadBucketResponse headBucketResponse = s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
+            HeadBucketResponse headBucketResponse = s3Client.headBucket(
+                    HeadBucketRequest.builder().bucket(bucketName).build());
             if (!getConfiguration().isIgnoreBody()) {
                 message.setBody(headBucketResponse);
             }
@@ -785,11 +823,12 @@ public class AWS2S3Producer extends DefaultProducer {
     private void headObject(S3Client s3Client, Exchange exchange) {
         String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
         if (ObjectHelper.isEmpty(key)) {
-            throw new IllegalArgumentException(
-                    "Head Object operation requires to specify a bucket name via Header");
+            throw new IllegalArgumentException("Head Object operation requires to specify a bucket name via Header");
         }
         HeadObjectResponse headObjectResponse = s3Client.headObject(HeadObjectRequest.builder()
-                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration())).key(key).build());
+                .bucket(AWS2S3Utils.determineBucketName(exchange, getConfiguration()))
+                .key(key)
+                .build());
 
         Message message = getMessageForResponse(exchange);
         message.setBody(headObjectResponse);
@@ -844,9 +883,8 @@ public class AWS2S3Producer extends DefaultProducer {
             Integer days = exchange.getIn().getHeader(AWS2S3Constants.RESTORE_DAYS, 1, Integer.class);
             String tier = exchange.getIn().getHeader(AWS2S3Constants.RESTORE_TIER, "Standard", String.class);
 
-            GlacierJobParameters glacierJobParameters = GlacierJobParameters.builder()
-                    .tier(Tier.fromValue(tier))
-                    .build();
+            GlacierJobParameters glacierJobParameters =
+                    GlacierJobParameters.builder().tier(Tier.fromValue(tier)).build();
 
             RestoreRequest restoreRequest = RestoreRequest.builder()
                     .days(days)
@@ -912,7 +950,10 @@ public class AWS2S3Producer extends DefaultProducer {
 
             List<Tag> tagSet = new ArrayList<>();
             for (Map.Entry<String, String> entry : tags.entrySet()) {
-                tagSet.add(Tag.builder().key(entry.getKey()).value(entry.getValue()).build());
+                tagSet.add(Tag.builder()
+                        .key(entry.getKey())
+                        .value(entry.getValue())
+                        .build());
             }
 
             Tagging tagging = Tagging.builder().tagSet(tagSet).build();
@@ -1035,9 +1076,10 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             S3Presigner.Builder builder = S3Presigner.builder();
             builder.credentialsProvider(
-                    getConfiguration().isUseDefaultCredentialsProvider()
-                            ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
-                                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                            getConfiguration().isUseDefaultCredentialsProvider()
+                                    ? DefaultCredentialsProvider.create()
+                                    : StaticCredentialsProvider.create(AwsBasicCredentials.create(
+                                            getConfiguration().getAccessKey(),
                                             getConfiguration().getSecretKey())))
                     .region(Region.of(getConfiguration().getRegion()));
 
@@ -1049,30 +1091,30 @@ public class AWS2S3Producer extends DefaultProducer {
             presigner = builder.build();
         }
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(keyName)
-                .build();
+        PutObjectRequest putObjectRequest =
+                PutObjectRequest.builder().bucket(bucketName).key(keyName).build();
 
-        software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest putObjectPresignRequest
-                = software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.builder()
+        software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest putObjectPresignRequest =
+                software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.builder()
                         .signatureDuration(Duration.ofMillis(milliSeconds))
                         .putObjectRequest(putObjectRequest)
                         .build();
 
-        software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPutObjectRequest
-                = presigner.presignPutObject(putObjectPresignRequest);
+        software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPutObjectRequest =
+                presigner.presignPutObject(putObjectPresignRequest);
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedPutObjectRequest.url().toString());
-        message.setHeader(AWS2S3Constants.UPLOAD_LINK_BROWSER_COMPATIBLE, presignedPutObjectRequest.isBrowserExecutable());
+        message.setHeader(
+                AWS2S3Constants.UPLOAD_LINK_BROWSER_COMPATIBLE, presignedPutObjectRequest.isBrowserExecutable());
         message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
         message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
 
         if (!presignedPutObjectRequest.isBrowserExecutable()) {
             LOG.debug(
                     "The upload link url is not browser compatible and please check the option of checksum validations in Amazon S3 client");
-            message.setHeader(AWS2S3Constants.UPLOAD_LINK_HTTP_REQUEST_HEADERS,
+            message.setHeader(
+                    AWS2S3Constants.UPLOAD_LINK_HTTP_REQUEST_HEADERS,
                     presignedPutObjectRequest.httpRequest().headers());
             presignedPutObjectRequest.signedPayload().ifPresent(payload -> {
                 message.setHeader(AWS2S3Constants.UPLOAD_LINK_SIGNED_PAYLOAD, payload.asUtf8String());
@@ -1095,7 +1137,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-            CreateBucketRequest.Builder requestBuilder = CreateBucketRequest.builder().bucket(bucketName);
+            CreateBucketRequest.Builder requestBuilder =
+                    CreateBucketRequest.builder().bucket(bucketName);
 
             // Add location constraint if region is not us-east-1
             String region = getConfiguration().getRegion();
@@ -1125,9 +1168,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(result.tagSet());
             }
         } else {
-            GetBucketTaggingRequest request = GetBucketTaggingRequest.builder()
-                    .bucket(bucketName)
-                    .build();
+            GetBucketTaggingRequest request =
+                    GetBucketTaggingRequest.builder().bucket(bucketName).build();
 
             GetBucketTaggingResponse result = s3Client.getBucketTagging(request);
 
@@ -1155,7 +1197,10 @@ public class AWS2S3Producer extends DefaultProducer {
 
             List<Tag> tagSet = new ArrayList<>();
             for (Map.Entry<String, String> entry : tags.entrySet()) {
-                tagSet.add(Tag.builder().key(entry.getKey()).value(entry.getValue()).build());
+                tagSet.add(Tag.builder()
+                        .key(entry.getKey())
+                        .value(entry.getValue())
+                        .build());
             }
 
             Tagging tagging = Tagging.builder().tagSet(tagSet).build();
@@ -1183,9 +1228,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-            DeleteBucketTaggingRequest request = DeleteBucketTaggingRequest.builder()
-                    .bucket(bucketName)
-                    .build();
+            DeleteBucketTaggingRequest request =
+                    DeleteBucketTaggingRequest.builder().bucket(bucketName).build();
 
             DeleteBucketTaggingResponse result = s3Client.deleteBucketTagging(request);
 
@@ -1206,9 +1250,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-            GetBucketVersioningRequest request = GetBucketVersioningRequest.builder()
-                    .bucket(bucketName)
-                    .build();
+            GetBucketVersioningRequest request =
+                    GetBucketVersioningRequest.builder().bucket(bucketName).build();
 
             GetBucketVersioningResponse result = s3Client.getBucketVersioning(request);
 
@@ -1231,11 +1274,12 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             String versioningStatus = exchange.getIn().getHeader(AWS2S3Constants.VERSIONING_STATUS, String.class);
             if (ObjectHelper.isEmpty(versioningStatus)) {
-                throw new IllegalArgumentException("Versioning status must be specified for putBucketVersioning Operation");
+                throw new IllegalArgumentException(
+                        "Versioning status must be specified for putBucketVersioning Operation");
             }
 
-            VersioningConfiguration.Builder versioningConfigBuilder = VersioningConfiguration.builder()
-                    .status(BucketVersioningStatus.fromValue(versioningStatus));
+            VersioningConfiguration.Builder versioningConfigBuilder =
+                    VersioningConfiguration.builder().status(BucketVersioningStatus.fromValue(versioningStatus));
 
             String mfaDelete = exchange.getIn().getHeader(AWS2S3Constants.MFA_DELETE, String.class);
             if (ObjectHelper.isNotEmpty(mfaDelete)) {
@@ -1266,9 +1310,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(result.policy());
             }
         } else {
-            GetBucketPolicyRequest request = GetBucketPolicyRequest.builder()
-                    .bucket(bucketName)
-                    .build();
+            GetBucketPolicyRequest request =
+                    GetBucketPolicyRequest.builder().bucket(bucketName).build();
 
             GetBucketPolicyResponse result = s3Client.getBucketPolicy(request);
 
@@ -1318,9 +1361,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-            DeleteBucketPolicyRequest request = DeleteBucketPolicyRequest.builder()
-                    .bucket(bucketName)
-                    .build();
+            DeleteBucketPolicyRequest request =
+                    DeleteBucketPolicyRequest.builder().bucket(bucketName).build();
 
             DeleteBucketPolicyResponse result = s3Client.deleteBucketPolicy(request);
 
@@ -1376,5 +1418,4 @@ public class AWS2S3Producer extends DefaultProducer {
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
     }
-
 }

@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jms.issues;
+
+import static org.apache.camel.ServiceStatus.Started;
+import static org.apache.camel.ServiceStatus.Stopped;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -31,18 +36,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.ServiceStatus.Started;
-import static org.apache.camel.ServiceStatus.Stopped;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsLifecycleIssueTest extends AbstractJMSTest {
 
     public static final String ROUTE_ID = "JmsLifecycleIssueTestRoute";
     public static final String ENDPOINT_URI = "activemq:JmsLifecycleIssueTest.processOrder";
+
     @Order(2)
     @RegisterExtension
     public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected CamelContext context;
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
@@ -90,7 +93,9 @@ public class JmsLifecycleIssueTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(ENDPOINT_URI).routeId(ROUTE_ID).autoStartup(false)
+                from(ENDPOINT_URI)
+                        .routeId(ROUTE_ID)
+                        .autoStartup(false)
                         .to("log:input")
                         .to("mock:result");
             }
